@@ -675,6 +675,7 @@ flat in float vDirPx;
 uniform vec2  uWedge;
 uniform float uWedgeNorm;
 uniform int   uDirOut;
+uniform int   uRate;            // 1: the rate map's three sums, see render/rateMap.ts
 
 // Occlusion against the scene the level was drawn into. The depth texture is
 // sampled here rather than in the vertex shader because a vertex-stage fetch of
@@ -830,6 +831,13 @@ ${Array.from(
     outHeat = vec4(a * vDir.x, a * vDir.y, a, 0.0);
     return;
   }
+  if (uRate == 1) {
+    // The rate map's sums (render/rateMap.ts): the heat, the + side's heat, and
+    // the square over the pass's weight, from which the composite counts the rows.
+    float a = abs(v);
+    outHeat = vec4(a, vSign > 0.0 ? a : 0.0, a * a / max(uWeight, 1e-20), 0.0);
+    return;
+  }
   outHeat = vec4(v, v * vTeamAB.x, v * vTeamAB.y, 0.0);
 }
 `;
@@ -857,6 +865,9 @@ uniform int  uPerspectiveDepth;
 // Team colours: read the mixture out of G,B instead of ramping through the LUT.
 uniform int   uTeamColors;
 uniform float uTeamBoost;
+// The rate map (render/rateMap.ts): on, and overall share, prior rows, fewest rows, span.
+uniform int   uRate;
+uniform vec4  uRateCfg;
 
 /**
  * Oklab to sRGB, Björn Ottosson's matrices plus the transfer function.
@@ -954,6 +965,26 @@ void main() {
   // geometry happens to sit behind it would be wrong wherever it floats in front.
   vec3 scene = uDof.x > 0.0 ? sceneWithDof() : texture(uScene, vUv).rgb;
   vec4 hv = texture(uHeat, vUv);
+  if (uRate == 1) {
+    // The rate map: the + side's share here, pulled toward the overall share by
+    // the rows it rests on, coloured by how far it lies above or below it. A copy
+    // of rateComposite in render/rateMap.ts; the tests hold the two together.
+    float rr = max(hv.r * uInvFrames, 0.0);
+    float pp = max(hv.g * uInvFrames, 0.0);
+    float ss = max(hv.b * uInvFrames, 1e-30);
+    float n = rr * rr / ss;
+    float raw = pp / max(rr, 1e-30);
+    float m = max(uRateCfg.y, 0.0);
+    float p = (raw * n + m * uRateCfg.x) / max(n + m, 1e-30);
+    float d = p - uRateCfg.x;
+    float rt = min(abs(d) / max(uRateCfg.w, 1e-6), 1.0);
+    float lo = max(uRateCfg.z, 0.0);
+    float fade = lo > 0.0 ? smoothstep(lo * 0.5, lo, n) : (rr > 1e-12 ? 1.0 : 0.0);
+    if (uFloor > 0.0 && fade > 0.0) rt = mix(uFloor, 1.0, rt);
+    vec4 rc = texture(uLut, vec2(rt, d < 0.0 ? 0.75 : 0.25));
+    outColor = vec4(mix(scene, rc.rgb, rc.a * fade), 1.0);
+    return;
+  }
   float h = hv.r * uInvFrames;
   float k = abs(h) / max(uSaturation, 1e-6);
   float t;

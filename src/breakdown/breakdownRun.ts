@@ -102,7 +102,9 @@ export function otherColumn(ds: Dataset): AttributeColumn | null {
 }
 
 export function wonColumn(ds: Dataset): AttributeColumn | null {
-  return ds.attrs.find((a) => a.kind !== 'category' && WON_COLUMN.test(a.name) && a.min >= 0 && a.max <= 1) ?? null;
+  // The round's outcome before the match's, where a file has both (`data/outcome.ts`).
+  const flags = ds.attrs.filter((a) => a.kind !== 'category' && WON_COLUMN.test(a.name) && a.min >= 0 && a.max <= 1);
+  return flags.find((a) => !/^match/i.test(a.name)) ?? flags[0] ?? null;
 }
 
 export function roundColumn(ds: Dataset): AttributeColumn | null {

@@ -1523,7 +1523,7 @@ export class Webgl2Renderer implements Renderer {
       params.width,
       params.height,
       params.heatScale,
-      params.heat.teamColors ? 4 : 1,
+      params.heat.teamColors || params.heat.rate ? 4 : 1,
     );
 
     if (params.colorLutDirty) {
@@ -2433,6 +2433,7 @@ export class Webgl2Renderer implements Renderer {
     u.f1('uGroundY', params.heat.groundY);
     u.i1('uSigned', params.useTeamSign ? 1 : 0);
     u.i1('uTeamColors', params.heat.teamColors ? 1 : 0);
+    u.i1('uRate', params.heat.rate ? 1 : 0);
     u.f1('uTeamCount', Math.max(1, params.heat.teamCount));
     u.f1('uTeamNeutral', params.heat.teamNeutral);
     u.f1('uTeamSlices', Math.max(1, params.heat.teamSlices));
@@ -2774,6 +2775,10 @@ export class Webgl2Renderer implements Renderer {
     u.i1('uPerspectiveDepth', params.perspective ? 1 : 0);
     u.i1('uTeamColors', params.heat.teamColors ? 1 : 0);
     u.f1('uTeamBoost', params.heat.teamBoost);
+    // The rate map's (render/rateMap.ts): composite-only, so moving them never restarts the accumulation.
+    const rate = params.heat.rate;
+    u.i1('uRate', rate ? 1 : 0);
+    u.f4('uRateCfg', rate?.overall ?? 0.5, rate?.prior ?? 0, rate?.minSamples ?? 0, rate?.span ?? 1);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, this.sceneColor);

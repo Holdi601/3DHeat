@@ -60,6 +60,8 @@
   "volumes.stats.matches": "Partite",
   "volumes.stats.dwell": "Tempo dentro",
   "volumes.stats.entries": "Ingressi / uscite",
+  "volumes.stats.winRate": "Percentuale di vittorie",
+  "volumes.stats.winRateValue": "{rate} · {won} round vinti su {played} · tutto il mostrato {overall}",
   "volumes.stats.peak": "Calore massimo",
   "volumes.stats.mean": "Calore medio",
   "volumes.stats.density": "{v} /unità² (celle {cell})",

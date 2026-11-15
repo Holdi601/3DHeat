@@ -60,6 +60,8 @@
   "volumes.stats.matches": "Мачове",
   "volumes.stats.dwell": "Време вътре",
   "volumes.stats.entries": "Влизания / излизания",
+  "volumes.stats.winRate": "Дял на победите",
+  "volumes.stats.winRateValue": "{rate} · спечелени {won} от {played} рунда · всичко показано {overall}",
   "volumes.stats.peak": "Пикова топлина",
   "volumes.stats.mean": "Средна топлина",
   "volumes.stats.density": "{v} /ед.² (клетки {cell})",

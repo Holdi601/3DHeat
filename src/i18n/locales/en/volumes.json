@@ -60,6 +60,8 @@
   "volumes.stats.matches": "Matches",
   "volumes.stats.dwell": "Time inside",
   "volumes.stats.entries": "Entries / exits",
+  "volumes.stats.winRate": "Win rate",
+  "volumes.stats.winRateValue": "{rate} · {won} of {played} rounds won · all shown {overall}",
   "volumes.stats.peak": "Peak heat",
   "volumes.stats.mean": "Mean heat",
   "volumes.stats.density": "{v} /unit² (cells {cell})",

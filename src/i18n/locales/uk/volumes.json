@@ -60,6 +60,8 @@
   "volumes.stats.matches": "Матчі",
   "volumes.stats.dwell": "Час всередині",
   "volumes.stats.entries": "Входи / виходи",
+  "volumes.stats.winRate": "Частка перемог",
+  "volumes.stats.winRateValue": "{rate} · виграно {won} з {played} раундів · усе показане {overall}",
   "volumes.stats.peak": "Пік тепла",
   "volumes.stats.mean": "Середнє тепло",
   "volumes.stats.density": "{v} /од.² (комірки {cell})",

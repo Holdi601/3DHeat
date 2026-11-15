@@ -77,6 +77,20 @@ export interface HeatSettings {
    * than which side simply has more rows. See `sideScales`.
    */
   splitShares: boolean;
+  /**
+   * Difference mode as a rate: per place the + side's share of the rows on
+   * either side, coloured above (warm) or below (cool) its share over
+   * everything shown - with + the rounds won and − the rounds lost, a win-rate
+   * map (`render/rateMap.ts`, docs/win-rate.md). The three below shape it at
+   * composite, so they never restart the accumulation.
+   */
+  splitRate: boolean;
+  /** Rows a place needs before the rate map colours it. */
+  rateMinSamples: number;
+  /** Rows of the overall share each place's rate starts from. */
+  ratePrior: number;
+  /** Share above or below the overall one that takes the full colour, 0..1. */
+  rateSpan: number;
   /** Ignore Z and flatten all heat onto the ground plane. */
   groundProjected: boolean;
   /** S-curve the per-sprite ramp instead of using the raw falloff. */
@@ -674,6 +688,12 @@ export const useStore = create<AppState>((set) => ({
     zoomInvariant: true,
     followExposure: true,
     splitShares: false,
+    splitRate: false,
+    // Rows, not rounds: a player standing still adds a row a sample, so a place
+    // needs a few seconds of presence before its share says anything.
+    rateMinSamples: 12,
+    ratePrior: 12,
+    rateSpan: 0.2,
     groundProjected: false,
     smoothRamp: true,
     useCurve: false,

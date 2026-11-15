@@ -60,6 +60,8 @@
   "volumes.stats.matches": "Meccsek",
   "volumes.stats.dwell": "Idő belül",
   "volumes.stats.entries": "Belépések / kilépések",
+  "volumes.stats.winRate": "Győzelmi arány",
+  "volumes.stats.winRateValue": "{rate} · {played} körből {won} nyert · minden megjelenített {overall}",
   "volumes.stats.peak": "Csúcshő",
   "volumes.stats.mean": "Átlagos hő",
   "volumes.stats.density": "{v} /egység² (cellák {cell})",

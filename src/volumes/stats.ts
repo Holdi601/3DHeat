@@ -21,6 +21,7 @@
 import type { ActiveFilter } from '../render/types';
 import { filterColumnData } from '../render/filterTables';
 import type { Dataset } from '../state/types';
+import { outcomeColumns, roundNumberColumn, shrunkRate, WIN_PRIOR } from '../data/outcome';
 import {
   compiled,
   compiledContains,
@@ -89,6 +90,23 @@ export type ColumnStats =
       histMax: number;
     };
 
+/**
+ * How often the rows' side won, where the data says who won (`data/outcome.ts`):
+ * one round per player (else side) and round of a match that has a row inside,
+ * each counted once, as the breakdown counts them (`breakdown/breakdown.ts`).
+ */
+export interface WinStats {
+  /** Rounds (or matches) with a row inside, and of those won. */
+  played: number;
+  won: number;
+  /** won / played, and pulled toward `overall` by `WIN_PRIOR` rounds. */
+  rate: number;
+  shrunk: number;
+  /** The same over every row shown, inside or not. */
+  overall: number;
+  overallPlayed: number;
+}
+
 export interface VolumeStats {
   /** The volume's id, or `SELECTION_ID` for the combination. */
   id: string;
@@ -122,6 +140,8 @@ export interface VolumeStats {
   volume: number | null;
   footprint: number | null;
   columns: ColumnStats[];
+  /** Null without an outcome column. */
+  win: WinStats | null;
 }
 
 export interface StatsResult {
@@ -175,6 +195,9 @@ interface Acc {
   time: Float64Array | null;
   cats: (Uint32Array | null)[];
   num: ({ sum: number; n: number; min: number; max: number; fine: Uint32Array } | null)[];
+  /** The round instances with a row inside (`WinStats`), and per person the last one added, to skip repeats. */
+  inst: Set<number> | null;
+  lastInst: Float64Array | null;
 }
 
 /** Everything a pass needs, prepared once. */
@@ -189,6 +212,12 @@ export interface StatsJob {
   filterData: { f: ActiveFilter; data: ArrayLike<number> | null }[];
   dwellCap: number;
   next: number;
+  /** The outcome: the won column's and the round column's values, every instance's result and per person the last. */
+  won: Float32Array | null;
+  round: Float32Array | Uint32Array | null;
+  rounds: number;
+  instWon: Map<number, number> | null;
+  lastInst: Float64Array | null;
 }
 
 /** The targets: each visible volume, and the combination when there is more than one. */
@@ -241,6 +270,8 @@ export function dwellCapOf(ds: Dataset): number {
 export function prepareStats(ds: Dataset, volumes: readonly Volume[], scope: Scope, heatRadius: number): StatsJob {
   const targets = targetsOf(volumes, ds);
   const persons = ds.personId ? ds.personLabels.length : 0;
+  const wonCol = outcomeColumns(ds).round;
+  const roundCol = wonCol ? roundNumberColumn(ds) : null;
   const accs: Acc[] = targets.map((t) => {
     const ext = Math.max(t.max[0] - t.min[0], t.max[2] - t.min[2], 1e-6);
     const cell = Math.max(heatRadius > 0 ? heatRadius * 2 : 0, ext / GRID_SIDE);
@@ -267,6 +298,8 @@ export function prepareStats(ds: Dataset, volumes: readonly Volume[], scope: Sco
       time: ds.time ? new Float64Array(TIME_BINS) : null,
       cats: ds.attrs.map((a) => (a.kind === 'category' && a.categories ? new Uint32Array(a.categories.length) : null)),
       num: ds.attrs.map((a) => (a.kind === 'number' ? { sum: 0, n: 0, min: Infinity, max: -Infinity, fine: new Uint32Array(FINE_BINS) } : null)),
+      inst: wonCol ? new Set<number>() : null,
+      lastInst: wonCol ? new Float64Array(persons + 65536).fill(-1) : null,
     };
   });
   return {
@@ -280,7 +313,33 @@ export function prepareStats(ds: Dataset, volumes: readonly Volume[], scope: Sco
     filterData: scope.filters.map((f) => ({ f, data: filterColumnData(ds, f.column) })),
     dwellCap: dwellCapOf(ds),
     next: 0,
+    won: wonCol ? (wonCol.data as Float32Array) : null,
+    round: roundCol ? roundCol.data : null,
+    rounds: roundCol ? (roundCol.kind === 'category' ? (roundCol.categories?.length ?? 1) : Math.max(1, Math.floor(roundCol.max) + 1)) : 1,
+    instWon: wonCol ? new Map<number, number>() : null,
+    lastInst: wonCol ? new Float64Array(persons + 65536).fill(-1) : null,
   };
+}
+
+/**
+ * The round instance a row belongs to - (match, round, player, else side) as
+ * one number - or -1 where the row does not say who won.
+ */
+function instanceOf(job: StatsJob, i: number, who: number): number {
+  const w = job.won![i];
+  if (w !== w) return -1;
+  const { ds } = job;
+  const R = job.rounds;
+  const P = ds.personId ? ds.personLabels.length : 0;
+  const sess = ds.sessionId ? ds.sessionId[i] : 0;
+  const rd = job.round ? Math.max(0, Math.min(R - 1, Math.trunc(job.round[i]) || 0)) : 0;
+  return (sess * R + rd) * (P + 65536) + who;
+}
+
+/** Who a row's round is counted for: the person, else the side past the persons. */
+function whoOf(ds: Dataset, i: number): number {
+  const P = ds.personId ? ds.personLabels.length : 0;
+  return ds.personId ? ds.personId[i] : (ds.teamId ? ds.teamId[i] : 0) + P;
 }
 
 /** Whether row `i` is among the rows the view shows. */
@@ -332,6 +391,18 @@ export function stepStats(job: StatsJob, rows: number): boolean {
     const z = pz[i];
     if (!Number.isFinite(x) || !Number.isFinite(y) || !Number.isFinite(z)) continue;
     const shown = shownRow(job, i);
+    // The row's round instance, where the rows say who won: added once per person
+    // and round - a row of the same round as the person's last is skipped.
+    let inst = -1;
+    let who = 0;
+    if (shown && job.instWon) {
+      who = whoOf(ds, i);
+      inst = instanceOf(job, i, who);
+      if (inst >= 0 && job.lastInst![who] !== inst) {
+        job.lastInst![who] = inst;
+        job.instWon.set(inst, job.won![i] >= 0.5 ? 1 : 0);
+      }
+    }
     if (shown) {
       job.shown++;
       for (let c = 0; c < attrs.length; c++) {
@@ -373,6 +444,10 @@ export function stepStats(job: StatsJob, rows: number): boolean {
       acc.rowsAll++;
       if (!shown) continue;
       acc.rows++;
+      if (acc.inst && inst >= 0 && acc.lastInst![who] !== inst) {
+        acc.lastInst![who] = inst;
+        acc.inst.add(inst);
+      }
       if (acc.persons && person >= 0) acc.persons[person] = 1;
       if (acc.teams && teamId) acc.teams[teamId[i]] = 1;
       if (acc.sessions && sessionId) acc.sessions[sessionId[i]] = 1;
@@ -442,6 +517,24 @@ function quantile(fine: Uint32Array, n: number, q: number, lo: number, hi: numbe
 export function finishStats(job: StatsJob, selectionName: string): StatsResult {
   const { ds } = job;
   const shown = job.shown;
+  let overallWon = 0;
+  if (job.instWon) for (const w of job.instWon.values()) overallWon += w;
+  const overallPlayed = job.instWon?.size ?? 0;
+  const overall = overallPlayed > 0 ? overallWon / overallPlayed : NaN;
+  const winOf = (acc: Acc): WinStats | null => {
+    if (!acc.inst || !job.instWon) return null;
+    let won = 0;
+    for (const k of acc.inst) won += job.instWon.get(k) ?? 0;
+    const played = acc.inst.size;
+    return {
+      played,
+      won,
+      rate: played > 0 ? won / played : NaN,
+      shrunk: shrunkRate(won, played, overall, WIN_PRIOR),
+      overall,
+      overallPlayed,
+    };
+  };
   const out: VolumeStats[] = job.accs.map((acc) => {
     const t = acc.t;
     // Density over the cells with data: rows per square unit.
@@ -539,6 +632,7 @@ export function finishStats(job: StatsJob, selectionName: string): StatsResult {
       volume: t.volume,
       footprint: t.footprint,
       columns,
+      win: winOf(acc),
     };
   });
   return { totalRows: ds.count, shownRows: shown, volumes: out, complete: job.next >= ds.count };

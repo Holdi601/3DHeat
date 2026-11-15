@@ -141,12 +141,13 @@ export function parseHints(text: string | undefined | null): MappingHints | null
 const ROLE_COLUMNS = ['x', 'y', 'z', 'time', 'personId', 'teamId', 'sessionId', 'yaw', 'pitch', 'dirX', 'dirY', 'dirZ'] as const;
 
 const FACTOR_COLUMN = /^(state|active)_./i;
-const RESULT_COLUMN = /^(won|win|is.?win(ner)?|victory|round.?won|match.?won|round|round.?num(ber)?|round.?index|round.?no)$/i;
+const RESULT_COLUMN = /^(won|win|is.?win(ner)?|victory|round.?won|match.?won|round|round.?num(ber)?|round.?index|round.?no|round.?end.?reason|end.?reason|match.?end.?reason|round.?win.?reason|win.?reason)$/i;
 const LIST_FACTOR_COLUMN = /^(inventory|loadout|perks|buffs|debuffs|abilities|attachments|modules|modifications|upgrades)$/i;
 
 /**
  * The columns the breakdown's factors and results read (docs/breakdown.md):
- * `state_*`, `active_*`, `won`, `round` and the list columns, of those a
+ * `state_*`, `active_*`, the outcome columns (`won`, `matchWon`, `round`,
+ * `roundEndReason`: `data/outcome.ts`) and the list columns, of those a
  * source has, less those known to hold one value throughout - each loaded one
  * is 4 bytes a row, and a constant one measures nothing.
  */

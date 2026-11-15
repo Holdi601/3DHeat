@@ -60,6 +60,8 @@
   "volumes.stats.matches": "Logħbiet",
   "volumes.stats.dwell": "Ħin ġewwa",
   "volumes.stats.entries": "Dħul / ħruġ",
+  "volumes.stats.winRate": "Rata ta’ rebħ",
+  "volumes.stats.winRateValue": "{rate} · {won} minn {played} rawnds mirbuħa · dak kollu muri {overall}",
   "volumes.stats.peak": "Quċċata tas-sħana",
   "volumes.stats.mean": "Sħana medja",
   "volumes.stats.density": "{v} /unità² (ċelloli {cell})",

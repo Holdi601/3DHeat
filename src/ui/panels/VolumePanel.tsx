@@ -344,6 +344,17 @@ function StatsView({ s }: { s: VolumeStats; stats: StatsResult }) {
       {s.sessions !== null && <Line label={t('volumes.stats.matches')} value={big(s.sessions)} />}
       {s.dwell !== null && <Line label={t('volumes.stats.dwell')} value={duration(s.dwell)} />}
       {s.entries !== null && <Line label={t('volumes.stats.entries')} value={`${big(s.entries)} / ${big(s.exits)}`} />}
+      {s.win && s.win.played > 0 && (
+        <Line
+          label={t('volumes.stats.winRate')}
+          value={t('volumes.stats.winRateValue', {
+            rate: pct(s.win.shrunk),
+            won: big(s.win.won),
+            played: big(s.win.played),
+            overall: pct(s.win.overall),
+          })}
+        />
+      )}
       <Line label={t('volumes.stats.peak')} value={t('volumes.stats.density', { v: dec(s.peakDensity), cell: dec(s.cellSize) })} />
       <Line label={t('volumes.stats.mean')} value={dec(s.meanDensity)} />
       {s.volume !== null && <Line label={t('volumes.stats.size')} value={t('volumes.stats.sizeValue', { v: dec(s.volume), a: dec(s.footprint ?? 0) })} />}
@@ -427,6 +438,9 @@ function CompareTable({ stats }: { stats: StatsResult }) {
     [t('volumes.stats.players'), (s) => big(s.persons)],
     [t('volumes.stats.dwell'), (s) => duration(s.dwell)],
     [t('volumes.stats.entries'), (s) => big(s.entries)],
+    ...(stats.volumes.some((s) => s.win && s.win.played > 0)
+      ? [[t('volumes.stats.winRate'), (s: VolumeStats) => (s.win && s.win.played > 0 ? `${pct(s.win.shrunk)} (${big(s.win.played)})` : '—')] as [string, (s: VolumeStats) => string]]
+      : []),
     [t('volumes.stats.peak'), (s) => dec(s.peakDensity)],
     [t('volumes.stats.mean'), (s) => dec(s.meanDensity)],
   ];

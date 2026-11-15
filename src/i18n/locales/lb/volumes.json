@@ -60,6 +60,8 @@
   "volumes.stats.matches": "Matcher",
   "volumes.stats.dwell": "Zäit dobannen",
   "volumes.stats.entries": "Androen / Ausgäng",
+  "volumes.stats.winRate": "Gewannquot",
+  "volumes.stats.winRateValue": "{rate} · {won} vu {played} Ronne gewonnen · alles gewisen {overall}",
   "volumes.stats.peak": "Spëtzewäermt",
   "volumes.stats.mean": "Mëttel Wäermt",
   "volumes.stats.density": "{v} /Eenheet² (Zellen {cell})",

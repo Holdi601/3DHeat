@@ -60,6 +60,8 @@
   "volumes.stats.matches": "比赛",
   "volumes.stats.dwell": "内部时间",
   "volumes.stats.entries": "进入 / 离开",
+  "volumes.stats.winRate": "胜率",
+  "volumes.stats.winRateValue": "{rate} · {played} 回合中胜 {won} · 全部显示 {overall}",
   "volumes.stats.peak": "峰值热度",
   "volumes.stats.mean": "平均热度",
   "volumes.stats.density": "{v} /单位² (单元格 {cell})",

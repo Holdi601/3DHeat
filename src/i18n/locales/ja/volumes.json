@@ -60,6 +60,8 @@
   "volumes.stats.matches": "マッチ",
   "volumes.stats.dwell": "内側にいた時間",
   "volumes.stats.entries": "出入り回数",
+  "volumes.stats.winRate": "勝率",
+  "volumes.stats.winRateValue": "{rate} · {played} ラウンド中 {won} 勝 · 表示全体 {overall}",
   "volumes.stats.peak": "ピーク熱量",
   "volumes.stats.mean": "平均熱量",
   "volumes.stats.density": "{v} /単位² (セル {cell})",

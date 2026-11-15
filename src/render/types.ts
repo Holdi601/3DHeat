@@ -5,6 +5,7 @@ import type { LineData } from '../data/lines';
 import type { Dataset, ViewMode } from '../state/types';
 import type { Level } from './level';
 import type { WorldTile } from '../world/tileSet';
+import type { RateParams } from './rateMap';
 
 export type BackendKind = 'webgpu' | 'webgl2';
 
@@ -155,6 +156,12 @@ export interface HeatUniforms {
    * targets when this changes.
    */
   teamColors: boolean;
+  /**
+   * Difference mode as a rate (`render/rateMap.ts`): the + side's share per
+   * place against `overall`, on the four-channel target team colours use.
+   * Null draws the difference itself. Only `teamColors` or this, never both.
+   */
+  rate: RateParams | null;
   /**
    * How many groups the hue circle is divided between.
    *

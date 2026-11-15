@@ -60,6 +60,8 @@
   "volumes.stats.matches": "Ndeshje",
   "volumes.stats.dwell": "Koha brenda",
   "volumes.stats.entries": "Hyrje / dalje",
+  "volumes.stats.winRate": "Shkalla e fitoreve",
+  "volumes.stats.winRateValue": "{rate} · {won} nga {played} raunde të fituara · gjithçka e shfaqur {overall}",
   "volumes.stats.peak": "Pika e nxehtësisë",
   "volumes.stats.mean": "Nxehtësia mesatare",
   "volumes.stats.density": "{v} /njësi² (qeliza {cell})",

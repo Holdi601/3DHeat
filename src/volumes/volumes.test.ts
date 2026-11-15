@@ -259,6 +259,33 @@ describe('statistics', () => {
     expect(s.exits).toBeGreaterThan(0);
   });
 
+  it('says how often the side of the players inside won, a round each, pulled toward the overall rate', () => {
+    const d = grid();
+    // Ten rounds, a row of the grid each, at both heights.
+    const n = d.count;
+    const won = new Float32Array(n);
+    const round = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      round[i] = 1 + Math.floor((i % 100) / 10);
+      // Round r is won by person 0's side where r is odd, by person 1's where even.
+      won[i] = d.personId![i] === (round[i] % 2 === 1 ? 0 : 1) ? 1 : 0;
+    }
+    d.attrs.push({ name: 'won', kind: 'number', data: won, min: 0, max: 1 }, { name: 'round', kind: 'number', data: round, min: 1, max: 10 });
+    // The rows of rounds 1 to 3 (z 0 to 2), both heights.
+    const s = computeStats(d, [vol(box(4.5, 2.5, 1, 10, 6, 2.9))]).volumes[0];
+    // Two persons in three rounds: six round instances, three of them won.
+    expect(s.win).not.toBeNull();
+    expect([s.win!.played, s.win!.won]).toEqual([6, 3]);
+    expect(s.win!.overall).toBeCloseTo(0.5);
+    expect(s.win!.overallPlayed).toBe(20);
+    expect(s.win!.shrunk).toBeCloseTo(0.5);
+    // Only person a: the rounds a's side won are 1 and 3.
+    const a = computeStats(d, [vol(box(4.5, 2.5, 1, 10, 6, 2.9))], { ...FULL_SCOPE, filters: [{ column: 'won', kind: 'range', min: 1, max: 1, mask: null, key: 'w' }] }).volumes[0];
+    expect(a.win!.rate).toBe(1);
+    expect(grid().attrs.length).toBe(2);
+    expect(computeStats(grid(), [vol(box(4.5, 2.5, 1, 10, 6, 2.9))]).volumes[0].win).toBeNull();
+  });
+
   it('writes the statistics as CSV', () => {
     const d = grid();
     const csv = statsCsv(computeStats(d, [vol(box(1, 0, 1, 2.2, 1, 2.2), 'include', 'c')]));

@@ -60,6 +60,8 @@
   "volumes.stats.matches": "Mečevi",
   "volumes.stats.dwell": "Vrijeme unutra",
   "volumes.stats.entries": "Ulasci / izlasci",
+  "volumes.stats.winRate": "Procenat pobjeda",
+  "volumes.stats.winRateValue": "{rate} · {won} od {played} rundi dobijeno · sve prikazano {overall}",
   "volumes.stats.peak": "Vrh toplote",
   "volumes.stats.mean": "Prosječna toplota",
   "volumes.stats.density": "{v} /jed.² (ćelije {cell})",

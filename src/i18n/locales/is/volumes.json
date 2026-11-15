@@ -60,6 +60,8 @@
   "volumes.stats.matches": "Leikir",
   "volumes.stats.dwell": "Tími inni",
   "volumes.stats.entries": "Inngöngur / útgöngur",
+  "volumes.stats.winRate": "Sigurhlutfall",
+  "volumes.stats.winRateValue": "{rate} · {won} af {played} lotum unnar · allt sýnt {overall}",
   "volumes.stats.peak": "Hámarkshiti",
   "volumes.stats.mean": "Meðalhiti",
   "volumes.stats.density": "{v} /eining² (reitir {cell})",

@@ -30,6 +30,8 @@ export const FLAG_TEAM_COLORS = 128;
 export const FLAG_CONSERVE = 256;
 /** This chunk's bearings are bound (`dirs`): directional heat, see render/direction.ts. */
 export const FLAG_HAS_DIRS = 512;
+/** Difference mode as a rate: the three sums of render/rateMap.ts instead of signed heat. */
+export const FLAG_RATE = 1024;
 
 /**
  * Bytes in the heat pass uniform buffer.
@@ -162,8 +164,8 @@ fn fsPeel(in : PeelOut) {
 /** Bytes in the peel pass uniform buffer: a mat4 and one vec4. */
 export const PEEL_UNIFORM_BYTES = 80;
 
-/** Bytes in the composite pass uniform buffer: four `vec4<f32>`. */
-export const COMPOSITE_UNIFORM_BYTES = 64;
+/** Bytes in the composite pass uniform buffer: five `vec4<f32>` (the fifth the rate map's). */
+export const COMPOSITE_UNIFORM_BYTES = 80;
 
 const POINT_HEAT_WGSL = /* wgsl */ `
 struct HeatUniforms {
@@ -736,6 +738,12 @@ fn fsHeat(in : VsOut) -> @location(0) vec4<f32> {
   // Three of the four channels are written even when the target is
   // single-channel, in which case G and B are discarded — the same shader serves
   // both, and only the pipeline's target format differs.
+  if ((u.rowCfg.w & ${FLAG_RATE}u) != 0u) {
+    // The rate map's sums (render/rateMap.ts): the heat, the + side's heat, and
+    // the square over the pass's weight, from which the composite counts the rows.
+    let a = abs(v);
+    return vec4<f32>(a, select(0.0, a, in.sign > 0.0), a * a / max(u.shape2.y, 1e-20), 0.0);
+  }
   return vec4<f32>(v, v * in.teamAB.x, v * in.teamAB.y, 0.0);
 }
 `;
@@ -957,8 +965,10 @@ struct CompositeUniforms {
   cfg2 : vec4<f32>,
   // near, far, texel width, texel height
   cfg3 : vec4<f32>,
-  // perspective depth flag, team-colour flag, chroma boost, unused
+  // perspective depth flag, team-colour flag, chroma boost, rate-map flag
   cfg4 : vec4<f32>,
+  // The rate map (render/rateMap.ts): overall share, prior rows, fewest rows, span
+  cfg5 : vec4<f32>,
 };
 
 @group(0) @binding(0) var<uniform> u : CompositeUniforms;
@@ -1074,6 +1084,26 @@ fn fsComposite(in : FsOut) -> @location(0) vec4<f32> {
     scene = textureSample(sceneTex, samp, in.uv).rgb;
   }
   let hv = textureSample(heatTex, samp, in.uv);
+  if (u.cfg4.w > 0.5) {
+    // The rate map: the + side's share here, pulled toward the overall share by
+    // the rows it rests on, coloured by how far it lies above or below it. A copy
+    // of rateComposite in render/rateMap.ts; the tests hold the two together.
+    let rr = max(hv.r * u.cfg.x, 0.0);
+    let pp = max(hv.g * u.cfg.x, 0.0);
+    let ss = max(hv.b * u.cfg.x, 1e-30);
+    let n = rr * rr / ss;
+    let raw = pp / max(rr, 1e-30);
+    let m = max(u.cfg5.y, 0.0);
+    let p = (raw * n + m * u.cfg5.x) / max(n + m, 1e-30);
+    let d = p - u.cfg5.x;
+    var rt = min(abs(d) / max(u.cfg5.w, 1e-6), 1.0);
+    let lo = max(u.cfg5.z, 0.0);
+    var fade = select(0.0, 1.0, rr > 1e-12);
+    if (lo > 0.0) { fade = smoothstep(lo * 0.5, lo, n); }
+    if (u.cfg2.x > 0.0 && fade > 0.0) { rt = mix(u.cfg2.x, 1.0, rt); }
+    let rc = textureSample(lutTex, samp, vec2<f32>(rt, select(0.25, 0.75, d < 0.0)));
+    return vec4<f32>(mix(scene, rc.rgb, rc.a * fade), 1.0);
+  }
   let h = hv.r * u.cfg.x;
   let k = abs(h) / max(u.cfg.y, 1e-6);
   var t = k;

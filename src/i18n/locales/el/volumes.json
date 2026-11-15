@@ -60,6 +60,8 @@
   "volumes.stats.matches": "Αγώνες",
   "volumes.stats.dwell": "Χρόνος μέσα",
   "volumes.stats.entries": "Είσοδοι / έξοδοι",
+  "volumes.stats.winRate": "Ποσοστό νικών",
+  "volumes.stats.winRateValue": "{rate} · {won} από {played} γύρους νίκες · όλα τα εμφανιζόμενα {overall}",
   "volumes.stats.peak": "Μέγιστη θερμότητα",
   "volumes.stats.mean": "Μέση θερμότητα",
   "volumes.stats.density": "{v} /μονάδα² (κελιά {cell})",

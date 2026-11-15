@@ -60,6 +60,8 @@
   "volumes.stats.matches": "Rungtynės",
   "volumes.stats.dwell": "Laikas viduje",
   "volumes.stats.entries": "Įėjimai / išėjimai",
+  "volumes.stats.winRate": "Laimėjimų dalis",
+  "volumes.stats.winRateValue": "{rate} · laimėta {won} iš {played} raundų · visa rodoma {overall}",
   "volumes.stats.peak": "Šilumos pikas",
   "volumes.stats.mean": "Vidutinė šiluma",
   "volumes.stats.density": "{v} /vnt.² (langeliai {cell})",

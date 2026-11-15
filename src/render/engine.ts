@@ -74,6 +74,7 @@ import { lookAtDistance, lookAtPitch, type Vec3 } from './pose';
 import { useInspectStore } from '../state/inspectStore';
 import { effectiveGpuBudget } from './budget';
 import { buildActiveFilters, frameSignTables, sideScales, splitSideCounts, type SideCounts, type SplitTable } from './filterTables';
+import { overallShare } from './rateMap';
 import { ExposureFollower } from './exposureFollow';
 import { publishSplitStatus } from '../state/splitStatus';
 import {
@@ -2766,10 +2767,13 @@ export class Engine {
     const activeFilters = buildActiveFilters(this.dataset, s.filters, this.filterCache);
     // Heat weighed by a value column (render/valueWeight.ts).
     const weight = valueWeight(this.dataset, s.heat.weightBy);
+    // The difference as a rate (render/rateMap.ts): a share of counts, so the
+    // sides keep their own weights - normalising them would make every place 50%.
+    const rateMap = heatMode === 'heat-difference' && !raceTab && s.mode !== 'team' && s.heat.splitRate;
     const splitScale = this.updateSideCounts(
       now,
       heatMode === 'heat-difference' && !raceTab && s.mode !== 'team',
-      s.heat.splitShares,
+      s.heat.splitShares && !rateMap,
       timeLo,
       rowsHi,
       activeFilters,
@@ -3030,6 +3034,8 @@ export class Engine {
       `${split.mode}:${split.column ?? ''}:${split.sign ? split.sign.join(',') : ''}:${split.positiveRange.join(',')}:${split.negativeRange.join(',')}`,
       // Each side's weight, when the sides are normalised to their totals.
       splitScale.join(','),
+      // A rate map accumulates three sums where the difference has one.
+      rateMap ? 'rate' : '',
       // So does weighing rows by value.
       weight ? `${weight.column}:${weight.scale}` : '',
       // Switching between all/play or changing the expiry rule invalidates the
@@ -3730,6 +3736,14 @@ export class Engine {
         groundY,
         signed: heatMode === 'heat-difference' || !!weight?.signed,
         teamColors: heatMode === 'heat-teams' && (this.dataset?.teamLabels.length ?? 0) > 0,
+        rate: rateMap
+          ? {
+              overall: overallShare(this.sideCounts.positive, this.sideCounts.negative),
+              prior: Math.max(0, h.ratePrior),
+              minSamples: Math.max(0, h.rateMinSamples),
+              span: Math.min(1, Math.max(0.01, h.rateSpan)),
+            }
+          : null,
         // Every group, including the hidden ones. See HeatUniforms.teamCount.
         teamCount: Math.max(1, this.dataset?.teamLabels.length ?? 1),
         teamNeutral: this.teamPalette.neutral,

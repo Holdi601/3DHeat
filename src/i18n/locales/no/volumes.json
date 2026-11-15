@@ -60,6 +60,8 @@
   "volumes.stats.matches": "Kamper",
   "volumes.stats.dwell": "Tid inni",
   "volumes.stats.entries": "Innganger / utganger",
+  "volumes.stats.winRate": "Seiersandel",
+  "volumes.stats.winRateValue": "{rate} · {won} av {played} runder vunnet · alt vist {overall}",
   "volumes.stats.peak": "Toppvarme",
   "volumes.stats.mean": "Middelvarme",
   "volumes.stats.density": "{v} /enhet² (celler {cell})",

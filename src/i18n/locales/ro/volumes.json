@@ -60,6 +60,8 @@
   "volumes.stats.matches": "Meciuri",
   "volumes.stats.dwell": "Timp în interior",
   "volumes.stats.entries": "Intrări / ieșiri",
+  "volumes.stats.winRate": "Rata de victorie",
+  "volumes.stats.winRateValue": "{rate} · {won} din {played} runde câștigate · tot ce e afișat {overall}",
   "volumes.stats.peak": "Căldură maximă",
   "volumes.stats.mean": "Căldură medie",
   "volumes.stats.density": "{v} /unitate² (celule {cell})",

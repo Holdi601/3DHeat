@@ -60,6 +60,8 @@
   "volumes.stats.matches": "Matcher",
   "volumes.stats.dwell": "Tid inuti",
   "volumes.stats.entries": "In- / utgångar",
+  "volumes.stats.winRate": "Vinstandel",
+  "volumes.stats.winRateValue": "{rate} · {won} av {played} ronder vunna · allt visat {overall}",
   "volumes.stats.peak": "Toppvärme",
   "volumes.stats.mean": "Medelvärme",
   "volumes.stats.density": "{v} /enhet² (celler {cell})",

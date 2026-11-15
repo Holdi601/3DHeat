@@ -60,6 +60,8 @@
   "volumes.stats.matches": "Zápasy",
   "volumes.stats.dwell": "Čas uvnitř",
   "volumes.stats.entries": "Vstupy / výstupy",
+  "volumes.stats.winRate": "Podíl výher",
+  "volumes.stats.winRateValue": "{rate} · vyhráno {won} z {played} kol · vše zobrazené {overall}",
   "volumes.stats.peak": "Špičkové teplo",
   "volumes.stats.mean": "Střední teplo",
   "volumes.stats.density": "{v} /jednotka² (buňky {cell})",

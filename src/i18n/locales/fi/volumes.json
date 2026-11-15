@@ -60,6 +60,8 @@
   "volumes.stats.matches": "Ottelut",
   "volumes.stats.dwell": "Aika sisällä",
   "volumes.stats.entries": "Sisään- / ulostulot",
+  "volumes.stats.winRate": "Voittojen osuus",
+  "volumes.stats.winRateValue": "{rate} · {won}/{played} erää voitettu · kaikki näytetty {overall}",
   "volumes.stats.peak": "Huippulämpö",
   "volumes.stats.mean": "Keskilämpö",
   "volumes.stats.density": "{v} /yksikkö² (solut {cell})",

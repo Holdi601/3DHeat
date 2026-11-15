@@ -60,6 +60,8 @@
   "volumes.stats.matches": "Mängud",
   "volumes.stats.dwell": "Aeg sees",
   "volumes.stats.entries": "Sisenemised / väljumised",
+  "volumes.stats.winRate": "Võitude osakaal",
+  "volumes.stats.winRateValue": "{rate} · võidetud {won}/{played} raundi · kõik näidatud {overall}",
   "volumes.stats.peak": "Soojuse tipp",
   "volumes.stats.mean": "Keskmine soojus",
   "volumes.stats.density": "{v} /ühik² (lahtrid {cell})",

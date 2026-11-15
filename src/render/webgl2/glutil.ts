@@ -150,6 +150,10 @@ export class UniformCache {
     const l = this.loc(name);
     if (l) this.gl.uniform3f(l, x, y, z);
   }
+  f4(name: string, x: number, y: number, z: number, w: number): void {
+    const l = this.loc(name);
+    if (l) this.gl.uniform4f(l, x, y, z, w);
+  }
   mat4(name: string, m: Float32Array): void {
     const l = this.loc(name);
     if (l) this.gl.uniformMatrix4fv(l, false, m);

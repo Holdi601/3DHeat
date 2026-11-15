@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useStore } from '../../state/store';
 import { CANON, isCanonical } from '../../data/canonical';
+import { END_REASON, endReasonKey, outcomeKind } from '../../data/outcome';
 import { filterSlots } from '../../render/filterTables';
 import { MAX_FILTER_SLOTS } from '../../render/types';
 import type { AttributeColumn, FilterSpec } from '../../state/types';
-import { Section } from '../controls';
+import { Section, Segmented } from '../controls';
 import { num, t } from '../../i18n';
 import { NumberBox } from '../NumberBox';
 
@@ -78,7 +79,7 @@ export function FilterPanel() {
       <div className="hint">{t('heat.filterPanel.hint')}</div>
       {personSlot && <div className="hint">{t('heat.filterPanel.personSlot')}</div>}
 
-      {[...dataset.attrs].sort((a, b) => Number(isCanonical(b.name)) - Number(isCanonical(a.name))).map((attr) => (
+      {[...dataset.attrs].sort((a, b) => listOrder(a) - listOrder(b)).map((attr) => (
         <FilterRow
           key={attr.name}
           attr={{ ...attr, data: NO_ROWS }}
@@ -112,6 +113,32 @@ function FilterRow({
   const overflowed = slot >= MAX_FILTER_SLOTS;
   const [query, setQuery] = useState('');
   const title = columnLabel(attr.name);
+  const outcome = outcomeKind(attr);
+
+  if (outcome === 'round' || outcome === 'match') {
+    // A 0/1 outcome: won, lost or either, rather than a range over 0 to 1.
+    const on = spec && spec.kind === 'range' ? (spec.min >= 0.5 ? 'won' : spec.max < 0.5 ? 'lost' : 'any') : 'any';
+    const pick = (v: 'any' | 'won' | 'lost') =>
+      onChange(v === 'any' ? null : { kind: 'range', column: attr.name, min: v === 'won' ? 1 : 0, max: v === 'won' ? 1 : 0 });
+    return (
+      <div className="field" data-testid={`outcome-${outcome}`}>
+        <div className="label">
+          <span style={{ opacity: overflowed ? 0.45 : 1 }}>
+            {overflowed ? t('heat.filterPanel.notApplied', { column: title }) : title}
+          </span>
+        </div>
+        <Segmented
+          value={on}
+          onChange={pick}
+          options={[
+            { value: 'any', label: t('heat.filterPanel.outcome.any') },
+            { value: 'won', label: t('heat.filterPanel.outcome.won') },
+            { value: 'lost', label: t('heat.filterPanel.outcome.lost') },
+          ]}
+        />
+      </div>
+    );
+  }
 
   if (attr.kind === 'number') {
     const min = spec && spec.kind === 'range' ? spec.min : attr.min;
@@ -199,7 +226,7 @@ function FilterRow({
     <div className="field">
       <div className="label">
         <span style={{ opacity: overflowed ? 0.45 : 1 }}>
-          {overflowed ? t('heat.filterPanel.notApplied', { column: attr.name }) : attr.name}
+          {overflowed ? t('heat.filterPanel.notApplied', { column: title }) : title}
         </span>
         <span className="val">
           {allowed.size}/{categories.length}
@@ -251,19 +278,36 @@ const CANON_KEY: Record<string, string> = {
   [CANON.targetClass]: 'vehicleClass',
 };
 
-/** A column's name as the panel says it: an added column's in the viewer's language. */
+/** Where a column is listed: the viewer's own columns first, then the outcome (`data/outcome.ts`), then the rest. */
+function listOrder(a: AttributeColumn): number {
+  if (isCanonical(a.name)) return 0;
+  const o = outcomeKind(a);
+  return o === 'round' ? 1 : o === 'match' ? 2 : o === 'reason' ? 3 : 4;
+}
+
+/** A column's name as the panel says it: an added column's or an outcome column's in the viewer's language. */
 export function columnLabel(name: string): string {
   if (name === CANON.event) return t('heat.filterPanel.col.event');
   if (name === CANON.actor) return t('heat.filterPanel.col.actor');
   if (name === CANON.vehicleClass) return t('heat.filterPanel.col.vehicleClass');
   if (name === CANON.targetClass) return t('heat.filterPanel.col.targetClass');
+  // Named only, so a column that turns out not to be 0/1 keeps its file name in the list it is drawn by.
+  const o = outcomeKind({ name, kind: END_REASON.test(name.trim()) ? 'category' : 'number', min: 0, max: 1 });
+  if (o === 'round') return t('heat.filterPanel.col.roundWon');
+  if (o === 'match') return t('heat.filterPanel.col.matchWon');
+  if (o === 'reason') return t('heat.filterPanel.col.endReason');
   return name;
 }
 
-/** A value as the panel says it: an added column's in the viewer's language, else as the data has it. */
+/** A value as the panel says it: an added column's or an end reason in the viewer's language, else as the data has it. */
 export function valueLabel(column: string, value: string): string {
   const k = CANON_KEY[column];
-  return k && value ? t(`heat.filterPanel.${k}.${value}`) : value;
+  if (k && value) return t(`heat.filterPanel.${k}.${value}`);
+  if (value && END_REASON.test(column.trim())) {
+    const r = endReasonKey(value);
+    if (r) return t(`heat.filterPanel.reason.${r}`);
+  }
+  return value;
 }
 
 function fmt(v: number): string {

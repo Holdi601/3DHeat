@@ -60,6 +60,8 @@
   "volumes.stats.matches": "Kampe",
   "volumes.stats.dwell": "Tid indeni",
   "volumes.stats.entries": "Ind- / udgange",
+  "volumes.stats.winRate": "Sejrsandel",
+  "volumes.stats.winRateValue": "{rate} · {won} af {played} runder vundet · alt vist {overall}",
   "volumes.stats.peak": "Spidsvarme",
   "volumes.stats.mean": "Middelvarme",
   "volumes.stats.density": "{v} /enhed² (celler {cell})",

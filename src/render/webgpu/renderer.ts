@@ -46,6 +46,7 @@ import {
   FLAG_PERSPECTIVE,
   FLAG_SMOOTH_RAMP,
   FLAG_TEAM_COLORS,
+  FLAG_RATE,
   FLAG_CONSERVE,
   FLAG_HAS_DIRS,
   FLAG_USE_CURVE,
@@ -2042,7 +2043,7 @@ export class WebgpuRenderer implements Renderer {
       params.width,
       params.height,
       params.heatScale,
-      params.heat.teamColors ? 4 : 1,
+      params.heat.teamColors || params.heat.rate ? 4 : 1,
     );
     if (!this.sceneView || !this.depthView || !this.heatView) return { gpuMs: null };
 
@@ -2972,6 +2973,13 @@ export class WebgpuRenderer implements Renderer {
     u[12] = params.perspective ? 1 : 0;
     u[13] = params.heat.teamColors ? 1 : 0;
     u[14] = params.heat.teamBoost;
+    // The rate map's (render/rateMap.ts): composite-only, so moving them never restarts the accumulation.
+    const rate = params.heat.rate;
+    u[15] = rate ? 1 : 0;
+    u[16] = rate?.overall ?? 0.5;
+    u[17] = rate?.prior ?? 0;
+    u[18] = rate?.minSamples ?? 0;
+    u[19] = rate?.span ?? 1;
     const offset = this.uniforms.push(u, COMPOSITE_UNIFORM_BYTES);
 
     const group = this.cachedBindGroup(
@@ -3276,6 +3284,7 @@ export class WebgpuRenderer implements Renderer {
     if (params.heat.smoothRamp) flags |= FLAG_SMOOTH_RAMP;
     if (params.heat.useCurve) flags |= FLAG_USE_CURVE;
     if (params.heat.teamColors) flags |= FLAG_TEAM_COLORS;
+    if (params.heat.rate) flags |= FLAG_RATE;
     if (params.heat.zoomInvariant) flags |= FLAG_CONSERVE;
     if (hasDirs) flags |= FLAG_HAS_DIRS;
     i[40] = plan.minRow;

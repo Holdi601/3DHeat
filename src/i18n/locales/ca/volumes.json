@@ -60,6 +60,8 @@
   "volumes.stats.matches": "Partides",
   "volumes.stats.dwell": "Temps dins",
   "volumes.stats.entries": "Entrades / sortides",
+  "volumes.stats.winRate": "Taxa de victòria",
+  "volumes.stats.winRateValue": "{rate} · {won} de {played} rondes guanyades · tot el mostrat {overall}",
   "volumes.stats.peak": "Calor màxima",
   "volumes.stats.mean": "Calor mitjana",
   "volumes.stats.density": "{v} /unitat² (cel·les {cell})",

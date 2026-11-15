@@ -60,6 +60,8 @@
   "volumes.stats.matches": "Mecze",
   "volumes.stats.dwell": "Czas wewnątrz",
   "volumes.stats.entries": "Wejścia / wyjścia",
+  "volumes.stats.winRate": "Odsetek wygranych",
+  "volumes.stats.winRateValue": "{rate} · wygrane {won} z {played} rund · wszystko pokazane {overall}",
   "volumes.stats.peak": "Szczyt ciepła",
   "volumes.stats.mean": "Średnie ciepło",
   "volumes.stats.density": "{v} /jednostka² (komórki {cell})",

@@ -60,6 +60,8 @@
   "volumes.stats.matches": "매치",
   "volumes.stats.dwell": "안쪽 시간",
   "volumes.stats.entries": "진입 / 이탈",
+  "volumes.stats.winRate": "승률",
+  "volumes.stats.winRateValue": "{rate} · {played}라운드 중 {won}승 · 표시된 전체 {overall}",
   "volumes.stats.peak": "최고 열",
   "volumes.stats.mean": "평균 열",
   "volumes.stats.density": "{v} /단위² (셀 {cell})",

@@ -60,6 +60,8 @@
   "volumes.stats.matches": "Maçlar",
   "volumes.stats.dwell": "İçeride geçen süre",
   "volumes.stats.entries": "Girişler / çıkışlar",
+  "volumes.stats.winRate": "Kazanma oranı",
+  "volumes.stats.winRateValue": "{rate} · {played} rauntta {won} galibiyet · gösterilen tümü {overall}",
   "volumes.stats.peak": "En yüksek ısı",
   "volumes.stats.mean": "Ortalama ısı",
   "volumes.stats.density": "{v} /birim² (hücreler {cell})",

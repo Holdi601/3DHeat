@@ -60,6 +60,8 @@
   "volumes.stats.matches": "Cluichí",
   "volumes.stats.dwell": "Am istigh",
   "volumes.stats.entries": "Isteach / amach",
+  "volumes.stats.winRate": "Ráta buaite",
+  "volumes.stats.winRateValue": "{rate} · {won} as {played} babhta buaite · gach rud taispeánta {overall}",
   "volumes.stats.peak": "Buaic teasa",
   "volumes.stats.mean": "Meántheas",
   "volumes.stats.density": "{v} /aonad² (cealla {cell})",

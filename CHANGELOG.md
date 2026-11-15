@@ -5,6 +5,7 @@ What changed for people who use the viewer, newest first. The format follows [Ke
 ## Unreleased (since 2026-11-14)
 
 ### Added
+- **Win rate:** a win-rate map - each place coloured by how often the side of the rows there went on to win the round (or the match), against the overall rate, small samples pulled toward it - and outcome filters (round won or lost, match won or lost, how the round ended); a volume's statistics show its win rate. The outcome columns every converter writes are documented for new games.
 - **Directional heat:** heat drawn as wedges that point the way each row faced, a field of arrows or streamlines over the heat, and a polar chart of the directions at a clicked spot or in a volume.
 - **Value weighting:** what weapons, munitions, vehicles and fuel cost, as heat weights and totals, in real-world money or the game's own currency.
 - **Filters for every source:** Event type, Player or AI, Vehicle class and Target class are worked out for every dataset; long category lists can be searched.

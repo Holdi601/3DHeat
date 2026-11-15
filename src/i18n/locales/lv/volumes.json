@@ -60,6 +60,8 @@
   "volumes.stats.matches": "Spēles",
   "volumes.stats.dwell": "Laiks iekšā",
   "volumes.stats.entries": "Ieejas / izejas",
+  "volumes.stats.winRate": "Uzvaru daļa",
+  "volumes.stats.winRateValue": "{rate} · uzvarēti {won} no {played} raundiem · viss rādītais {overall}",
   "volumes.stats.peak": "Siltuma maksimums",
   "volumes.stats.mean": "Vidējais siltums",
   "volumes.stats.density": "{v} /vienība² (šūnas {cell})",

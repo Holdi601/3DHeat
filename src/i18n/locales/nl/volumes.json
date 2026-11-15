@@ -60,6 +60,8 @@
   "volumes.stats.matches": "Wedstrijden",
   "volumes.stats.dwell": "Tijd binnen",
   "volumes.stats.entries": "Ingangen / uitgangen",
+  "volumes.stats.winRate": "Winstpercentage",
+  "volumes.stats.winRateValue": "{rate} · {won} van {played} rondes gewonnen · alles getoond {overall}",
   "volumes.stats.peak": "Piekhitte",
   "volumes.stats.mean": "Gemiddelde hitte",
   "volumes.stats.density": "{v} /eenheid² (cellen {cell})",

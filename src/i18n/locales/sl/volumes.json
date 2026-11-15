@@ -60,6 +60,8 @@
   "volumes.stats.matches": "Tekme",
   "volumes.stats.dwell": "Čas znotraj",
   "volumes.stats.entries": "Vstopi / izstopi",
+  "volumes.stats.winRate": "Delež zmag",
+  "volumes.stats.winRateValue": "{rate} · {won} od {played} krogov zmaganih · vse prikazano {overall}",
   "volumes.stats.peak": "Vrh toplote",
   "volumes.stats.mean": "Povprečna toplota",
   "volumes.stats.density": "{v} /enota² (celice {cell})",

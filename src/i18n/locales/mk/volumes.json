@@ -60,6 +60,8 @@
   "volumes.stats.matches": "Натпревари",
   "volumes.stats.dwell": "Време внатре",
   "volumes.stats.entries": "Влегувања / излегувања",
+  "volumes.stats.winRate": "Удел на победи",
+  "volumes.stats.winRateValue": "{rate} · добиени {won} од {played} рунди · сè прикажано {overall}",
   "volumes.stats.peak": "Врв на топлина",
   "volumes.stats.mean": "Просечна топлина",
   "volumes.stats.density": "{v} /ед.² (ќелии {cell})",
