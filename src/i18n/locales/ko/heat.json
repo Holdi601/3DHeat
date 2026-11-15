@@ -267,6 +267,8 @@
   "heat.levelPanel.dotaLoading": "Dota 2 맵을 내려받는 중",
   "heat.levelPanel.dotaFailed": "Dota 2 맵을 내려받지 못했습니다: {reason}",
   "heat.levelPanel.dotaNotice": "맵 그림: OpenDota (opendota.com). Dota 2와 그 맵은 Valve의 소유이며, Valve는 이 프로젝트를 보증하지 않습니다.",
+  "heat.levelPanel.dota3dNotice": "Watcher의 dota-map으로 사용자의 Dota 2 설치에서 만들어 라이브러리에 보관한 3D Dota 2 맵입니다. 이제부터 Dota 2 맵 버튼이 이 맵을 불러옵니다. Dota 2와 그 맵은 Valve의 소유이며, Valve는 이 프로젝트를 보증하지 않습니다.",
+  "heat.levelPanel.dota3dHint": "Dota 2가 설치되어 있으면 Watcher가 맵을 3D로 만듭니다: python -m heat3d_watch dota-map -o dota.glb. 이 파일을 {model}(으)로 한 번 불러오면 이후 이 버튼이 이를 사용합니다.",
   "heat.levelPanel.simplification": "단순화 목표",
   "heat.levelPanel.simplificationHint": "모델을 가져올 때 적용됩니다. 이차 오차 기반 엣지 축소라 실루엣과 날카로운 모서리가 살아남습니다 — 레벨 지오메트리는 배경일 뿐이라 삼각형을 전부 쓸 필요가 없습니다. 지원 형식: {extensions}.",
   "heat.levelPanel.busy": "{label}…",

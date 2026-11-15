@@ -267,6 +267,8 @@
   "heat.levelPanel.dotaLoading": "Sťahuje sa mapa Dota 2",
   "heat.levelPanel.dotaFailed": "Mapu Dota 2 sa nepodarilo stiahnuť: {reason}",
   "heat.levelPanel.dotaNotice": "Kresba mapy: OpenDota (opendota.com). Dota 2 a jej mapa patria spoločnosti Valve, ktorá tento projekt nepodporuje.",
+  "heat.levelPanel.dota3dNotice": "Mapa Dota 2 v 3D, vytvorená z vašej vlastnej inštalácie Dota 2 príkazom dota-map z Watchera a uložená v knižnici: tlačidlo Mapa Dota 2 ju odteraz načíta. Dota 2 a jej mapa patria spoločnosti Valve, ktorá tento projekt nepodporuje.",
+  "heat.levelPanel.dota3dHint": "S nainštalovanou hrou Dota 2 vytvorí Watcher mapu v 3D: python -m heat3d_watch dota-map -o dota.glb. Načítajte ten súbor raz cez {model} a toto tlačidlo ho potom bude používať.",
   "heat.levelPanel.simplification": "Cieľ zjednodušenia",
   "heat.levelPanel.simplificationHint": "Uplatní sa pri importe modelu. Kolaps hrán s kvadratickou chybou, takže siluety a ostré hrany prežijú – geometria levelu je kulisa a nepotrebuje plný počet trojuholníkov. Prijíma {extensions}.",
   "heat.levelPanel.busy": "{label}…",

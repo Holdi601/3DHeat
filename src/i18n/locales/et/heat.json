@@ -267,6 +267,8 @@
   "heat.levelPanel.dotaLoading": "Dota 2 kaardi laadimine",
   "heat.levelPanel.dotaFailed": "Dota 2 kaarti ei õnnestunud laadida: {reason}",
   "heat.levelPanel.dotaNotice": "Kaardi joonis: OpenDota (opendota.com). Dota 2 ja selle kaart kuuluvad Valve’ile, kes seda projekti ei toeta.",
+  "heat.levelPanel.dota3dNotice": "Dota 2 kaart 3D-s, tehtud sinu enda Dota 2 paigaldusest Watcheri käsuga dota-map ja hoitud teegis: nupp Dota 2 kaart laadib selle edaspidi. Dota 2 ja selle kaart kuuluvad Valve’ile, kes seda projekti ei toeta.",
+  "heat.levelPanel.dota3dHint": "Kui Dota 2 on paigaldatud, teeb Watcher kaardi 3D-s: python -m heat3d_watch dota-map -o dota.glb. Laadi see fail üks kord nupuga {model} ja see nupp kasutab seda edaspidi.",
   "heat.levelPanel.simplification": "Lihtsustamise siht",
   "heat.levelPanel.simplificationHint": "Rakendatakse mudeli importimisel. Servade kokkutõmbamine ruutvea järgi, nii et siluetid ja teravad servad säilivad — taseme geomeetria on taust ega vaja kogu oma kolmnurkade arvu. Toetatud: {extensions}.",
   "heat.levelPanel.busy": "{label}…",

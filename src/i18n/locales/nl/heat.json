@@ -267,6 +267,8 @@
   "heat.levelPanel.dotaLoading": "Dota 2-kaart downloaden",
   "heat.levelPanel.dotaFailed": "Kan de Dota 2-kaart niet downloaden: {reason}",
   "heat.levelPanel.dotaNotice": "Kaarttekening door OpenDota (opendota.com). Dota 2 en de kaart zijn van Valve, dat dit project niet onderschrijft.",
+  "heat.levelPanel.dota3dNotice": "De Dota 2-kaart in 3D, gemaakt uit je eigen Dota 2-installatie door dota-map van de Watcher en bewaard in de bibliotheek: de knop Dota 2-kaart laadt hem voortaan. Dota 2 en de kaart zijn van Valve, dat dit project niet onderschrijft.",
+  "heat.levelPanel.dota3dHint": "Met Dota 2 geïnstalleerd maakt de Watcher de kaart in 3D: python -m heat3d_watch dota-map -o dota.glb. Laad dat bestand één keer met {model} en deze knop gebruikt het voortaan.",
   "heat.levelPanel.simplification": "Vereenvoudigingsdoel",
   "heat.levelPanel.simplificationHint": "Toegepast wanneer een model wordt geïmporteerd. Edge-collapse met kwadratische fout, zodat silhouetten en harde randen overblijven – levelgeometrie is een decor en heeft haar volledige aantal driehoeken niet nodig. Accepteert {extensions}.",
   "heat.levelPanel.busy": "{label}…",

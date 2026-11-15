@@ -267,6 +267,8 @@
   "heat.levelPanel.dotaLoading": "Ladataan Dota 2 -karttaa",
   "heat.levelPanel.dotaFailed": "Dota 2 -karttaa ei voitu ladata: {reason}",
   "heat.levelPanel.dotaNotice": "Karttapiirros: OpenDota (opendota.com). Dota 2 ja sen kartta kuuluvat Valvelle, joka ei tue tätä projektia.",
+  "heat.levelPanel.dota3dNotice": "Dota 2 -kartta 3D:nä, tehty omasta Dota 2 -asennuksestasi Watcherin dota-map-komennolla ja tallennettu kirjastoon: Dota 2 -kartta-painike lataa sen tästä lähtien. Dota 2 ja sen kartta kuuluvat Valvelle, joka ei tue tätä projektia.",
+  "heat.levelPanel.dota3dHint": "Kun Dota 2 on asennettu, Watcher tekee kartan 3D:nä: python -m heat3d_watch dota-map -o dota.glb. Lataa tiedosto kerran kohdasta {model}, niin tämä painike käyttää sitä jatkossa.",
   "heat.levelPanel.simplification": "Yksinkertaistuksen tavoite",
   "heat.levelPanel.simplificationHint": "Sovelletaan, kun malli tuodaan. Reunojen yhdistäminen kvadrisella virheellä, joten siluetit ja terävät reunat säilyvät — kentän geometria on taustaa eikä tarvitse täyttä kolmiomääräänsä. Hyväksyy: {extensions}.",
   "heat.levelPanel.busy": "{label}…",

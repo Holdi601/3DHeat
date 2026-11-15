@@ -1,9 +1,10 @@
 /**
  * Dota 2's map as a level for the heatmap: OpenDota's drawing of the current
  * map (opendota.com, whose site code is MIT), fetched when asked for and never
- * shipped. Dota's own minimap sits in the game's VPK archives; with Dota 2
- * installed, a 3D map can come out of them the way 3DHeat CS2's `map` takes
- * CS2's; this image is for everyone else.
+ * shipped. With Dota 2 installed, the Watcher's `dota-map` command makes the
+ * map in 3D from the game's own files (terrain, water, trees, buildings, in the
+ * replay tables' frame); once such a level has been loaded it is kept in the
+ * level library and preferred (`isDotaLevel`). This image is for everyone else.
  *
  * Calibration: OpenDota draws its map over the 128-unit cells 64 to 191 of
  * Source 2's grid, north up (its `gameCoordToUV`). A cell starts 16384 units
@@ -86,3 +87,16 @@ export async function dotaLevel(fetcher: typeof fetch = fetch): Promise<ImageLev
     flipZ: true,
   };
 }
+
+/**
+ * Whether a level's parts are the Watcher's `dota-map` export: its part names
+ * (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`,
+ * ...) say so. Ancients are Dota's alone, so no other game's level matches.
+ */
+export function isDotaLevel(partNames: readonly string[] | undefined): boolean {
+  const names = new Set(partNames ?? []);
+  return ['ground:terrain', 'structure:tower', 'structure:ancient', 'structure:tree'].every((n) => names.has(n));
+}
+
+/** What the level library notes on a saved Dota 3D level, so the Dota button finds it again. */
+export const DOTA_GAME = 'dota2';

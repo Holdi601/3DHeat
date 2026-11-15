@@ -267,6 +267,8 @@
   "heat.levelPanel.dotaLoading": "Pobieranie mapy Dota 2",
   "heat.levelPanel.dotaFailed": "Nie udało się pobrać mapy Dota 2: {reason}",
   "heat.levelPanel.dotaNotice": "Rysunek mapy: OpenDota (opendota.com). Dota 2 i jej mapa należą do Valve, które nie popiera tego projektu.",
+  "heat.levelPanel.dota3dNotice": "Mapa Dota 2 w 3D, utworzona z Twojej własnej instalacji Dota 2 przez dota-map z Watchera i zachowana w bibliotece: przycisk Mapa Dota 2 wczytuje ją od teraz. Dota 2 i jej mapa należą do Valve, które nie popiera tego projektu.",
+  "heat.levelPanel.dota3dHint": "Gdy Dota 2 jest zainstalowana, Watcher tworzy mapę w 3D: python -m heat3d_watch dota-map -o dota.glb. Wczytaj ten plik raz przez {model}, a ten przycisk będzie go potem używał.",
   "heat.levelPanel.simplification": "Cel upraszczania",
   "heat.levelPanel.simplificationHint": "Stosowany przy imporcie modelu. Zwijanie krawędzi z błędem kwadrykowym, więc sylwetki i ostre krawędzie przetrwają – geometria poziomu to tło i nie potrzebuje pełnej liczby trójkątów. Obsługuje {extensions}.",
   "heat.levelPanel.busy": "{label}…",

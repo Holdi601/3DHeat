@@ -267,6 +267,8 @@
   "heat.levelPanel.dotaLoading": "Dota 2 マップをダウンロード中",
   "heat.levelPanel.dotaFailed": "Dota 2 マップをダウンロードできませんでした: {reason}",
   "heat.levelPanel.dotaNotice": "マップの描画: OpenDota (opendota.com)。Dota 2 とそのマップは Valve に帰属し、Valve は本プロジェクトを支持していません。",
+  "heat.levelPanel.dota3dNotice": "Watcher の dota-map でお使いの Dota 2 のインストールから作成し、ライブラリに保存した 3D の Dota 2 マップです。今後は「Dota 2 マップ」ボタンでこれを読み込みます。Dota 2 とそのマップは Valve に帰属し、Valve は本プロジェクトを支持していません。",
+  "heat.levelPanel.dota3dHint": "Dota 2 がインストールされていれば、Watcher がマップを 3D で作成します: python -m heat3d_watch dota-map -o dota.glb。このファイルを一度 {model} で読み込むと、以降このボタンがそれを使います。",
   "heat.levelPanel.simplification": "簡略化の目標",
   "heat.levelPanel.simplificationHint": "モデルの読み込み時に適用されます。二次誤差によるエッジ縮約なので、シルエットや鋭いエッジは残ります — レベルのジオメトリは背景なので、三角形を全部使う必要はありません。対応形式：{extensions}。",
   "heat.levelPanel.busy": "{label}…",

@@ -58,7 +58,11 @@ The image is a single textured quad at the elevation. At full opacity it writes 
 
 Checked on a public match's replay of patch 7.40: every hero's track follows the drawn lanes, and the towers, barracks and ancients the replay places fall on the drawn bases. The **Top** view shows the map with north at the bottom of the screen, as it shows any Z-up table with Y flipped.
 
-The drawing is OpenDota's, of Valve's map; Valve does not endorse 3DHeat. A 3D map of Dota needs the game installed: see the Watcher's notes on Dota 2 replays.
+The drawing is OpenDota's, of Valve's map; Valve does not endorse 3DHeat.
+
+### The 3D map
+
+With Dota 2 installed, the Watcher's [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) command (`python -m heat3d_watch dota-map -o dota.glb`) makes the map in 3D from the game's own files: ground, cliffs, water, trees and buildings, in the replay tables' units and axes. Load the file once with **3D model…**: the viewer knows it by its parts (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` in `dotaMap.ts`), puts it in the [level library](level-library.md) at once, replacing an older one, and says so. From then on **Dota 2 map** loads that 3D map from the library instead of fetching the drawing; with none in the library it fetches the drawing and says how to make the 3D map. The file comes from your own install and stays on your machine.
 
 ## For developers
 

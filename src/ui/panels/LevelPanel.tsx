@@ -33,7 +33,7 @@ import {
 } from '../../render/level';
 import { useStore } from '../../state/store';
 import { canResimplify, cancelResimplify, resimplifyLevel } from '../../render/levelSimplify';
-import { dotaLevel } from '../../tactics/dotaMap';
+import { DOTA_GAME, dotaLevel, isDotaLevel } from '../../tactics/dotaMap';
 import { Check, Section, Slider } from '../controls';
 import { int, num, t } from '../../i18n';
 import type { BackdropResult } from '../../world/backdrop';
@@ -100,6 +100,30 @@ function lodLabel(lod: LodPreset): string {
 
 /** A fraction as a percentage, the way the sliders show it. */
 const percent = (v: number, digits = 0) => t('heat.levelPanel.percent', { value: num(v * 100, digits) });
+
+/** What the level library keeps of a model level. */
+function modelPayload(level: ModelLevel) {
+  return {
+    vertices: level.vertices,
+    colours: level.colours,
+    uvs: level.uvs,
+    uvTiles: level.uvTiles,
+    tileRects: level.tileRects,
+    atlas: level.atlas,
+    indices: level.indices,
+    structureIndices: level.structureIndices ?? new Uint32Array(0),
+    structureEdges: level.structureEdges ?? new Uint32Array(0),
+    waterIndices: level.waterIndices ?? new Uint32Array(0),
+    triangles: level.triangles,
+    sourceTriangles: level.sourceTriangles,
+    credits: level.credits,
+    placement: level.placement,
+    labels: level.labels,
+    // A streamed theatre is kept as what it streams, not as tiles.
+    ...(level.stream ? { stream: level.stream, bounds: level.bounds } : {}),
+    ...(isDotaLevel(level.partNames) ? { game: DOTA_GAME } : {}),
+  };
+}
 
 /** Assemble a ModelLevel from what the worker produced. */
 function modelLevelFrom(name: string, m: LoadedModel): ModelLevel {
@@ -370,14 +394,24 @@ export function LevelPanel() {
     }
   };
 
-  /** OpenDota's drawing of the Dota 2 map, placed under the Watcher's Dota replay tables. */
+  /**
+   * The Dota 2 map under the Watcher's Dota replay tables: the 3D one made by
+   * the Watcher's `dota-map` when the library holds it (it goes there when it
+   * is first loaded), else OpenDota's drawing.
+   */
   const loadDota = async () => {
+    const saved = (await listLevels().catch(() => [] as StoredLevelMeta[])).find((m) => m.game === DOTA_GAME);
+    if (saved) {
+      await loadFromLibrary(saved);
+      setNote(t('heat.levelPanel.dota3dNotice'));
+      return;
+    }
     setBusy(t('heat.levelPanel.dotaLoading'));
     setError(null);
     setNote(null);
     try {
       setLevel(await dotaLevel());
-      setNote(t('heat.levelPanel.dotaNotice'));
+      setNote(`${t('heat.levelPanel.dotaNotice')} ${t('heat.levelPanel.dota3dHint', { model: t('heat.levelPanel.model') })}`);
     } catch (err) {
       setError(t('heat.levelPanel.dotaFailed', { reason: err instanceof Error ? err.message : String(err) }));
     } finally {
@@ -393,7 +427,22 @@ export function LevelPanel() {
     setBusy(t('heat.levelPanel.reading'));
     try {
       const m = await modelLoader.load(file, LOD_TARGETS[lod], (p) => setBusy(p.label));
-      setLevel(modelLevelFrom(file.name, m));
+      const loaded = modelLevelFrom(file.name, m);
+      setLevel(loaded);
+      // The Dota 2 map from the Watcher's dota-map goes to the library at once,
+      // replacing an older one, so the Dota 2 map button finds it from now on.
+      let dota = isDotaLevel(m.partNames);
+      if (dota) {
+        try {
+          const older = (await listLevels()).filter((e) => e.game === DOTA_GAME);
+          await saveModelLevel(loaded.name, modelPayload(loaded));
+          for (const e of older) await deleteLevel(e.id);
+          refreshLibrary();
+        } catch {
+          // No room in the library (or no IndexedDB): the level is loaded all the same, only not kept.
+          dota = false;
+        }
+      }
       const totalSource = m.sourceTriangles + m.sourceStructureTriangles;
       const totalNow = m.triangles + m.structureTriangles + m.waterTriangles;
       const structures = m.partClasses.filter((c) => c === 'structure').length;
@@ -420,6 +469,7 @@ export function LevelPanel() {
                 suggested: lodLabel(suggestLod(totalSource)),
               })
             : t('heat.levelPanel.importedAt', { lod: lodLabel(lod) }),
+          ...(dota ? [t('heat.levelPanel.dota3dNotice')] : []),
         ].join(' '),
       );
     } catch (err) {
@@ -444,25 +494,7 @@ export function LevelPanel() {
         if (!blob) throw new Error(t('heat.levelPanel.encodeFailed'));
         await saveImageLevel(level.name, blob, level.width, level.height, level.anchors);
       } else {
-        await saveModelLevel(level.name, {
-          vertices: level.vertices,
-          colours: level.colours,
-          uvs: level.uvs,
-          uvTiles: level.uvTiles,
-          tileRects: level.tileRects,
-          atlas: level.atlas,
-          indices: level.indices,
-          structureIndices: level.structureIndices ?? new Uint32Array(0),
-          structureEdges: level.structureEdges ?? new Uint32Array(0),
-          waterIndices: level.waterIndices ?? new Uint32Array(0),
-          triangles: level.triangles,
-          sourceTriangles: level.sourceTriangles,
-          credits: level.credits,
-          placement: level.placement,
-          labels: level.labels,
-          // A streamed theatre is kept as what it streams, not as tiles.
-          ...(level.stream ? { stream: level.stream, bounds: level.bounds } : {}),
-        });
+        await saveModelLevel(level.name, modelPayload(level));
       }
       refreshLibrary();
       setNote(t('heat.levelPanel.saved'));

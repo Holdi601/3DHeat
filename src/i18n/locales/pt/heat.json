@@ -267,6 +267,8 @@
   "heat.levelPanel.dotaLoading": "A transferir o mapa de Dota 2",
   "heat.levelPanel.dotaFailed": "Não foi possível transferir o mapa de Dota 2: {reason}",
   "heat.levelPanel.dotaNotice": "Desenho do mapa: OpenDota (opendota.com). Dota 2 e o seu mapa pertencem à Valve, que não apoia este projeto.",
+  "heat.levelPanel.dota3dNotice": "O mapa de Dota 2 em 3D, criado a partir da sua própria instalação de Dota 2 pelo dota-map do Watcher e guardado na biblioteca: o botão Mapa de Dota 2 passa a carregá-lo. Dota 2 e o seu mapa pertencem à Valve, que não apoia este projeto.",
+  "heat.levelPanel.dota3dHint": "Com o Dota 2 instalado, o Watcher cria o mapa em 3D: python -m heat3d_watch dota-map -o dota.glb. Carregue esse ficheiro uma vez com {model} e este botão passa a usá-lo.",
   "heat.levelPanel.simplification": "Objetivo de simplificação",
   "heat.levelPanel.simplificationHint": "Aplicado quando um modelo é importado. Colapso de arestas com erro quádrico, por isso as silhuetas e as arestas vivas sobrevivem: a geometria do nível é um cenário e não precisa de todos os seus triângulos. Aceita {extensions}.",
   "heat.levelPanel.busy": "{label}…",

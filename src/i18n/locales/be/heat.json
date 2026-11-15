@@ -267,6 +267,8 @@
   "heat.levelPanel.dotaLoading": "Спампоўваецца мапа Dota 2",
   "heat.levelPanel.dotaFailed": "Не ўдалося спампаваць мапу Dota 2: {reason}",
   "heat.levelPanel.dotaNotice": "Малюнак мапы: OpenDota (opendota.com). Dota 2 і яе мапа належаць Valve, якая не падтрымлівае гэты праект.",
+  "heat.levelPanel.dota3dNotice": "Мапа Dota 2 у 3D, створаная з вашай уласнай усталёўкі Dota 2 камандай dota-map з Watcher і захаваная ў бібліятэцы: кнопка «Мапа Dota 2» цяпер загружае яе. Dota 2 і яе мапа належаць Valve, якая не падтрымлівае гэты праект.",
+  "heat.levelPanel.dota3dHint": "Калі Dota 2 усталяваная, Watcher стварае мапу ў 3D: python -m heat3d_watch dota-map -o dota.glb. Загрузіце гэты файл адзін раз праз {model}, і гэтая кнопка будзе выкарыстоўваць яго і далей.",
   "heat.levelPanel.simplification": "Мэта спрашчэння",
   "heat.levelPanel.simplificationHint": "Ужываецца пры імпарце мадэлі. Сцягванне рэбраў з квадрычнай памылкай, таму сілуэты і рэзкія рэбры захоўваюцца — геаметрыя ўзроўню толькі фон, і ёй не патрэбна поўная колькасць трохвугольнікаў. Прымае {extensions}.",
   "heat.levelPanel.busy": "{label}…",

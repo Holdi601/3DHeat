@@ -267,6 +267,8 @@
   "heat.levelPanel.dotaLoading": "A Dota 2-térkép letöltése",
   "heat.levelPanel.dotaFailed": "A Dota 2-térkép nem tölthető le: {reason}",
   "heat.levelPanel.dotaNotice": "Térképrajz: OpenDota (opendota.com). A Dota 2 és térképe a Valve tulajdona, amely nem támogatja ezt a projektet.",
+  "heat.levelPanel.dota3dNotice": "A Dota 2-térkép 3D-ben, a saját Dota 2-telepítésedből készítve a Watcher dota-map parancsával, és a könyvtárban tárolva: a Dota 2-térkép gomb mostantól ezt tölti be. A Dota 2 és térképe a Valve tulajdona, amely nem támogatja ezt a projektet.",
+  "heat.levelPanel.dota3dHint": "Telepített Dota 2 mellett a Watcher 3D-ben elkészíti a térképet: python -m heat3d_watch dota-map -o dota.glb. Töltsd be egyszer ezt a fájlt ezzel: {model}, és ez a gomb onnantól azt használja.",
   "heat.levelPanel.simplification": "Egyszerűsítési cél",
   "heat.levelPanel.simplificationHint": "Modell importálásakor érvényesül. Élösszevonás kvadratikus hibametrikával, így a sziluettek és az éles élek megmaradnak — a pálya geometriája csak háttér, nincs szüksége a teljes háromszögszámára. Elfogadott formátumok: {extensions}.",
   "heat.levelPanel.busy": "{label}…",

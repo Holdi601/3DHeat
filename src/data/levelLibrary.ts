@@ -46,6 +46,8 @@ export interface StoredLevelMeta {
    */
   stream?: { theatre: string; runways: boolean; imagery: boolean };
   bounds?: Bounds;
+  /** The game a level is known to be the map of (`dota2`: the Watcher's `dota-map`), so a button can find it again. */
+  game?: string;
 }
 
 interface StoredLevel extends StoredLevelMeta {
@@ -166,6 +168,7 @@ export interface ModelLevelPayload {
   labels?: WorldLabel[];
   stream?: { theatre: string; runways: boolean; imagery: boolean };
   bounds?: Bounds;
+  game?: string;
 }
 
 export async function saveModelLevel(name: string, p: ModelLevelPayload): Promise<string> {
@@ -195,6 +198,7 @@ export async function saveModelLevel(name: string, p: ModelLevelPayload): Promis
       ...(p.placement ? { placement: JSON.parse(JSON.stringify(p.placement)) as GeoPlacement } : {}),
       ...(p.labels?.length ? { labels: p.labels.map((l) => ({ ...l })) } : {}),
       ...(p.stream ? { stream: { ...p.stream }, ...(p.bounds ? { bounds: { ...p.bounds } } : {}) } : {}),
+      ...(p.game ? { game: p.game } : {}),
       vertices: p.vertices.slice().buffer,
       ...(p.colours ? { colours: p.colours.slice().buffer } : {}),
       ...(p.uvs && p.atlas ? { uvs: p.uvs.slice().buffer, atlas: p.atlas } : {}),

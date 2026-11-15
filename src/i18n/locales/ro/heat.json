@@ -267,6 +267,8 @@
   "heat.levelPanel.dotaLoading": "Se descarcă harta Dota 2",
   "heat.levelPanel.dotaFailed": "Harta Dota 2 nu a putut fi descărcată: {reason}",
   "heat.levelPanel.dotaNotice": "Desenul hărții: OpenDota (opendota.com). Dota 2 și harta sa aparțin Valve, care nu susține acest proiect.",
+  "heat.levelPanel.dota3dNotice": "Harta Dota 2 în 3D, creată din propria instalare Dota 2 de comanda dota-map a Watcher și păstrată în bibliotecă: butonul Harta Dota 2 o încarcă de acum înainte. Dota 2 și harta sa aparțin Valve, care nu susține acest proiect.",
+  "heat.levelPanel.dota3dHint": "Cu Dota 2 instalat, Watcher creează harta în 3D: python -m heat3d_watch dota-map -o dota.glb. Încarcă acel fișier o dată cu {model} și acest buton îl va folosi de atunci.",
   "heat.levelPanel.simplification": "Ținta simplificării",
   "heat.levelPanel.simplificationHint": "Aplicată la importul unui model. Colapsare de muchii cu eroare cvadrică, astfel încât siluetele și muchiile ascuțite rămân – geometria nivelului este un fundal și nu are nevoie de toate triunghiurile. Acceptă {extensions}.",
   "heat.levelPanel.busy": "{label}…",

@@ -267,6 +267,8 @@
   "heat.levelPanel.dotaLoading": "Dota 2 haritası indiriliyor",
   "heat.levelPanel.dotaFailed": "Dota 2 haritası indirilemedi: {reason}",
   "heat.levelPanel.dotaNotice": "Harita çizimi: OpenDota (opendota.com). Dota 2 ve haritası Valve’a aittir; Valve bu projeyi desteklemez.",
+  "heat.levelPanel.dota3dNotice": "Kendi Dota 2 kurulumunuzdan Watcher’ın dota-map komutuyla oluşturulan ve kitaplıkta saklanan 3B Dota 2 haritası: Dota 2 haritası düğmesi artık bunu yükler. Dota 2 ve haritası Valve’a aittir; Valve bu projeyi desteklemez.",
+  "heat.levelPanel.dota3dHint": "Dota 2 kuruluysa Watcher haritayı 3B olarak oluşturur: python -m heat3d_watch dota-map -o dota.glb. Bu dosyayı bir kez {model} ile yükleyin; bu düğme bundan sonra onu kullanır.",
   "heat.levelPanel.simplification": "Sadeleştirme hedefi",
   "heat.levelPanel.simplificationHint": "Bir model içe aktarılırken uygulanır. Kuadrik hatalı kenar daraltma kullanır, böylece siluetler ve keskin kenarlar korunur — bölüm geometrisi bir fondur ve tam üçgen sayısına ihtiyaç duymaz. Kabul edilenler: {extensions}.",
   "heat.levelPanel.busy": "{label}…",

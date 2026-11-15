@@ -267,6 +267,8 @@
   "heat.levelPanel.dotaLoading": "Dota-2-Karte wird geladen",
   "heat.levelPanel.dotaFailed": "Die Dota-2-Karte konnte nicht geladen werden: {reason}",
   "heat.levelPanel.dotaNotice": "Kartenzeichnung von OpenDota (opendota.com). Dota 2 und seine Karte gehören Valve, das dieses Projekt nicht unterstützt.",
+  "heat.levelPanel.dota3dNotice": "Die Dota-2-Karte in 3D, mit dota-map des Watchers aus deiner eigenen Dota-2-Installation erstellt und in der Bibliothek abgelegt: Die Schaltfläche Dota-2-Karte lädt ab jetzt diese. Dota 2 und seine Karte gehören Valve, das dieses Projekt nicht unterstützt.",
+  "heat.levelPanel.dota3dHint": "Mit installiertem Dota 2 erstellt der Watcher die Karte in 3D: python -m heat3d_watch dota-map -o dota.glb. Lade die Datei einmal mit {model}, danach verwendet diese Schaltfläche sie.",
   "heat.levelPanel.simplification": "Vereinfachungsziel",
   "heat.levelPanel.simplificationHint": "Wird beim Import eines Modells angewendet. Kantenkollaps mit quadratischem Fehlermaß, sodass Silhouetten und harte Kanten erhalten bleiben – Level-Geometrie ist Kulisse und braucht nicht ihre volle Dreieckszahl. Akzeptiert {extensions}.",
   "heat.levelPanel.busy": "{label}…",

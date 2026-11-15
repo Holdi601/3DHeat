@@ -267,6 +267,8 @@
   "heat.levelPanel.dotaLoading": "Atsisiunčiamas Dota 2 žemėlapis",
   "heat.levelPanel.dotaFailed": "Nepavyko atsisiųsti Dota 2 žemėlapio: {reason}",
   "heat.levelPanel.dotaNotice": "Žemėlapio piešinys: OpenDota (opendota.com). Dota 2 ir jos žemėlapis priklauso Valve, kuri šio projekto neremia.",
+  "heat.levelPanel.dota3dNotice": "Dota 2 žemėlapis 3D, sukurtas iš jūsų pačių Dota 2 diegimo Watcher komanda dota-map ir laikomas bibliotekoje: mygtukas Dota 2 žemėlapis nuo šiol įkelia jį. Dota 2 ir jos žemėlapis priklauso Valve, kuri šio projekto neremia.",
+  "heat.levelPanel.dota3dHint": "Įdiegus Dota 2, Watcher sukuria žemėlapį 3D: python -m heat3d_watch dota-map -o dota.glb. Vieną kartą įkelkite šį failą per {model}, ir šis mygtukas toliau jį naudos.",
   "heat.levelPanel.simplification": "Supaprastinimo tikslas",
   "heat.levelPanel.simplificationHint": "Taikoma importuojant modelį. Briaunų sutraukimas su kvadratine paklaida, todėl siluetai ir aštrios briaunos išlieka — lygio geometrija yra tik fonas, ir jai nereikia viso trikampių skaičiaus. Priimami formatai: {extensions}.",
   "heat.levelPanel.busy": "{label}…",

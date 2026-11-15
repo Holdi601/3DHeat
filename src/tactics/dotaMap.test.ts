@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { mapQuadFromAnchors, type ImageLevel } from '../render/level';
-import { DOTA_MAX, DOTA_MIN, dotaAnchors, dotaToMinimap, FALLBACK, newestDotaMap, patchOf } from './dotaMap';
+import { DOTA_MAX, DOTA_MIN, dotaAnchors, dotaToMinimap, FALLBACK, isDotaLevel, newestDotaMap, patchOf } from './dotaMap';
 
 describe('the Dota 2 map', () => {
   it('puts the fountains in the corners, Radiant bottom left', () => {
@@ -34,5 +34,13 @@ describe('the Dota 2 map', () => {
     }) as unknown as typeof fetch;
     expect(await newestDotaMap(offline)).toBe(FALLBACK);
     expect(patchOf('detailed_740.webp')).toBe('7.40');
+  });
+
+  it('knows a dota-map level by its parts', () => {
+    const parts = ['ground:terrain', 'structure:terrain', 'structure:tower', 'structure:ancient', 'structure:tree', 'water:river'];
+    expect(isDotaLevel(parts)).toBe(true);
+    expect(isDotaLevel(parts.filter((p) => p !== 'structure:ancient'))).toBe(false);
+    expect(isDotaLevel(['ground:concrete', 'structure:metal'])).toBe(false);
+    expect(isDotaLevel(undefined)).toBe(false);
   });
 });
