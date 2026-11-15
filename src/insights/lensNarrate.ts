@@ -10,6 +10,7 @@ import { t } from '../i18n';
 import { KB_BY_ID } from './knowledge';
 import { domainsOf, ofInsight, ofMetrics, readShows, type LensHit, type LensPick } from './lens';
 import type { Insight, InsightReport } from './types';
+import { isBehaviour } from './behaviour/shows';
 
 export interface LensParagraph {
   text: string;
@@ -53,6 +54,11 @@ export function lensParagraphs(r: InsightReport, lead: Insight[], lens: LensPick
     for (const [id, s] of metrics.slice(0, 3)) {
       const rd = readShows(id, s, lens, domains, 4);
       say(id, pick(rd.literature, MIN_LIT), pick(rd.parallels, MIN_CASE));
+    }
+    // The strongest collective-behaviour measures get their literature too (`behaviour/shows.ts`).
+    for (const [id, s] of metrics.slice(3).filter(([id, s]) => isBehaviour(id) && s.weight >= 0.5).slice(0, 2)) {
+      const rd = readShows(id, s, lens, domains, 4);
+      say(id, pick(rd.literature, MIN_LIT), undefined);
     }
   }
   return out;

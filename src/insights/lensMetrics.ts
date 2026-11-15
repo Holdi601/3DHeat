@@ -36,6 +36,7 @@ import type { CompareScope } from '../volumes/compare';
 import { rowShown } from '../volumes/compare';
 import { COARSE, MID, type InsightChunk, type InsightJob, type InsightMeta } from './pass';
 import { binomTwoSided, quantileSorted } from './stats';
+import type { BehaviourMetrics } from './behaviour/types';
 
 export interface LensEvents {
   launch: number;
@@ -210,6 +211,8 @@ export interface LensMetrics {
   killChain?: KillChainMetric;
   dispersion?: DispersionMetric;
   sorties?: SortieMetric;
+  /** Collective behaviour: crowds, flocking, herding, morale, decisions under pressure (`behaviour/`). */
+  behaviour?: BehaviourMetrics;
 }
 
 class Grow {
