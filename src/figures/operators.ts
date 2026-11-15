@@ -15,7 +15,7 @@
  */
 
 import { finish, newKit, PAINT, type Kit, type Template } from './kit';
-import { blob, block, tube } from './parts';
+import { blob, block, ring, tube } from './parts';
 import { personInto, type Kitbag, type PersonAnchors, type Stance } from './infantry';
 import type { Rgb } from '../race/geometry';
 
@@ -25,7 +25,7 @@ export type Head =
 export type Face = 'goggles' | 'gasmask' | 'shades' | 'trilens' | 'mask' | 'beard' | 'eyepiece' | 'balaclava';
 export type Back =
   | 'hammer' | 'charge-box' | 'drone' | 'quad' | 'canisters' | 'tank' | 'tube' | 'crossbow' | 'panel' | 'window' | 'clear-shield'
-  | 'bag' | 'jammer' | 'dish' | 'cluster' | 'trap' | 'cross-box' | 'drum' | 'projector' | 'robot-box' | 'medic' | 'cape';
+  | 'bag' | 'jammer' | 'dish' | 'cluster' | 'trap' | 'cross-box' | 'drum' | 'projector' | 'robot-box' | 'medic' | 'cape' | 'ghillie';
 export type Hand = 'arm-launcher' | 'wrist' | 'gauntlet' | 'claw' | 'phone' | 'hip' | 'hook' | 'underbarrel' | 'rifle-shield' | 'knife' | 'flash-shield' | 'riot-glow';
 export type Build = 'light' | 'medium' | 'heavy';
 export type Outfit = 'vest' | 'coat' | 'suit' | 'sneaking';
@@ -34,6 +34,8 @@ export type Pattern = 'shoulders' | 'belt' | 'head' | 'back';
 
 export interface OperatorLook {
   side: 'attack' | 'defense';
+  /** Their clothes: jacket and sleeves, trousers, gear (plate carrier, pack, helmet) - after their default public look. */
+  wear: [Rgb, Rgb, Rgb];
   build: Build;
   head: Head;
   face?: Face;
@@ -64,6 +66,31 @@ export const ACCENTS: Rgb[] = [
   [0.55, 0.36, 0.18], // brown
 ];
 
+// Clothes.
+const BLK: Rgb = [0.1, 0.1, 0.11];
+const CHAR: Rgb = [0.22, 0.23, 0.24];
+const GRY: Rgb = [0.45, 0.46, 0.48];
+const LGRY: Rgb = [0.68, 0.69, 0.7];
+const WHT: Rgb = [0.9, 0.9, 0.88];
+const SLATE: Rgb = [0.3, 0.36, 0.44];
+const NAVY: Rgb = [0.13, 0.18, 0.34];
+const BLUE: Rgb = [0.18, 0.35, 0.7];
+const LBLUE: Rgb = [0.45, 0.62, 0.85];
+const TEAL: Rgb = [0.1, 0.55, 0.55];
+const GRN: Rgb = [0.18, 0.4, 0.2];
+const OLV: Rgb = [0.36, 0.4, 0.22];
+const DOLV: Rgb = [0.22, 0.25, 0.15];
+const KHK: Rgb = [0.6, 0.53, 0.36];
+const TAN: Rgb = [0.72, 0.6, 0.42];
+const SAND: Rgb = [0.82, 0.74, 0.55];
+const BRN: Rgb = [0.4, 0.27, 0.15];
+const DBRN: Rgb = [0.25, 0.17, 0.1];
+const RED: Rgb = [0.7, 0.14, 0.12];
+const MAROON: Rgb = [0.42, 0.1, 0.14];
+const ORNG: Rgb = [0.9, 0.45, 0.1];
+const YEL: Rgb = [0.9, 0.78, 0.15];
+const PURP: Rgb = [0.38, 0.2, 0.55];
+
 const BLACK: Rgb = [0.07, 0.07, 0.07];
 const BROWN: Rgb = [0.24, 0.16, 0.1];
 const BLOND: Rgb = [0.78, 0.62, 0.35];
@@ -80,86 +107,86 @@ const D = (o: Omit<OperatorLook, 'side'>): OperatorLook => ({ side: 'defense', .
 /** Every operator by name as the reader writes it, with the weapon classes of their primaries (Ubisoft's loadouts, 2026-11). */
 export const OPERATORS: Record<string, { look: OperatorLook; carries: Kitbag[] }> = {
   // Attack.
-  Ace: { look: L({ build: 'medium', head: 'helmet', face: 'goggles', back: 'canisters', accent: 0 }), carries: ['rifle', 'shotgun'] },
-  Amaru: { look: L({ build: 'medium', head: 'hair', hair: BLACK, hand: 'hook', accent: 1, pattern: 'belt' }), carries: ['lmg', 'shotgun'] },
-  Ash: { look: L({ build: 'light', head: 'cap', hair: KHAKI, hand: 'arm-launcher', accent: 2 }), carries: ['rifle'] },
-  Blackbeard: { look: L({ build: 'medium', head: 'helmet', face: 'beard', hair: BROWN, hand: 'rifle-shield', accent: 3 }), carries: ['rifle', 'dmr'] },
-  Blitz: { look: L({ build: 'medium', head: 'visor-helmet', shield: 'standard', hand: 'flash-shield', accent: 4 }), carries: ['shield'] },
-  Brava: { look: L({ build: 'light', head: 'helmet', face: 'shades', back: 'drone', accent: 5 }), carries: ['rifle', 'dmr'] },
-  Buck: { look: L({ build: 'medium', head: 'beanie', hair: CLOTH_DARK, face: 'beard', hand: 'underbarrel', accent: 6 }), carries: ['rifle', 'dmr'] },
-  'Capitão': { look: L({ build: 'light', head: 'boonie', hair: OLIVE, back: 'crossbow', accent: 7 }), carries: ['lmg', 'rifle'] },
-  Deimos: { look: L({ build: 'medium', head: 'hat', hair: BLACK, face: 'beard', outfit: 'coat', accent: 0, pattern: 'belt' }), carries: ['rifle', 'shotgun'] },
-  Dokkaebi: { look: L({ build: 'medium', head: 'headset', hair: BLACK, hand: 'phone', accent: 8 }), carries: ['shotgun', 'dmr'] },
-  Finka: { look: L({ build: 'medium', head: 'hair-pony', hair: BLOND, hand: 'wrist', back: 'medic', accent: 9 }), carries: ['lmg', 'shotgun', 'rifle'] },
-  Flores: { look: L({ build: 'medium', head: 'cap-back', hair: CLOTH_DARK, back: 'robot-box', accent: 10, pattern: 'head' }), carries: ['rifle', 'dmr', 'lmg'] },
-  Fuze: { look: L({ build: 'heavy', head: 'heavy-helmet', face: 'gasmask', back: 'cluster', accent: 11 }), carries: ['rifle', 'lmg', 'shield'] },
-  Glaz: { look: L({ build: 'medium', head: 'hood', hair: OLIVE, face: 'balaclava', back: 'cape', accent: 1 }), carries: ['dmr'] },
-  Gridlock: { look: L({ build: 'heavy', head: 'cap', hair: KHAKI, back: 'drum', accent: 2, pattern: 'belt' }), carries: ['rifle', 'lmg'] },
-  Grim: { look: L({ build: 'light', head: 'beanie', hair: OLIVE, hand: 'arm-launcher', accent: 3, pattern: 'head' }), carries: ['rifle', 'shotgun'] },
-  Hibana: { look: L({ build: 'light', head: 'hair-bun', hair: BLACK, face: 'goggles', hand: 'arm-launcher', accent: 0, pattern: 'back' }), carries: ['shotgun', 'rifle'] },
-  Iana: { look: L({ build: 'medium', head: 'visor-helmet', hand: 'wrist', accent: 5, pattern: 'belt' }), carries: ['rifle'] },
-  IQ: { look: L({ build: 'light', head: 'hair-pony', hair: BLOND, face: 'goggles', hand: 'wrist', accent: 6, pattern: 'belt' }), carries: ['rifle', 'lmg'] },
-  Jackal: { look: L({ build: 'medium', head: 'beanie', hair: BLACK, face: 'eyepiece', accent: 7, pattern: 'belt' }), carries: ['rifle', 'smg', 'shotgun'] },
-  Kali: { look: L({ build: 'light', head: 'cap', hair: CLOTH_DARK, face: 'shades', hand: 'underbarrel', accent: 8, pattern: 'back' }), carries: ['dmr'] },
-  Lion: { look: L({ build: 'medium', head: 'helmet', face: 'goggles', back: 'quad', accent: 9, pattern: 'head' }), carries: ['dmr', 'shotgun', 'rifle'] },
-  Maverick: { look: L({ build: 'light', head: 'cap', hair: CLOTH_DARK, face: 'balaclava', back: 'tank', accent: 10 }), carries: ['rifle'] },
-  Montagne: { look: L({ build: 'heavy', head: 'visor-helmet', shield: 'tall', accent: 11, pattern: 'head' }), carries: ['shield'] },
-  'Nøkk': { look: L({ build: 'medium', head: 'hood', hair: CLOTH_DARK, face: 'mask', accent: 4 }), carries: ['smg', 'shotgun', 'rifle'] },
-  Nomad: { look: L({ build: 'medium', head: 'headscarf', hair: KHAKI, face: 'goggles', hand: 'underbarrel', accent: 5, pattern: 'back' }), carries: ['rifle'] },
-  Osa: { look: L({ build: 'medium', head: 'hair-bun', hair: BLOND, back: 'clear-shield', accent: 6 }), carries: ['rifle', 'smg'] },
-  Ram: { look: L({ build: 'heavy', head: 'helmet', back: 'robot-box', accent: 7, pattern: 'belt' }), carries: ['lmg', 'rifle'] },
-  Rauora: { look: L({ build: 'medium', head: 'visor-helmet', back: 'panel', accent: 8, pattern: 'belt' }), carries: ['dmr', 'lmg'] },
-  Sens: { look: L({ build: 'heavy', head: 'robot', back: 'projector', accent: 9 }), carries: ['dmr', 'rifle'] },
-  Sledge: { look: L({ build: 'medium', head: 'helmet', face: 'balaclava', back: 'hammer', accent: 10, pattern: 'head' }), carries: ['rifle', 'shotgun'] },
-  'Solid Snake': { look: L({ build: 'light', head: 'bandana', hair: BLACK, outfit: 'sneaking', hand: 'wrist', accent: 0 }), carries: ['rifle'] },
-  Striker: { look: L({ build: 'medium', head: 'helmet', accent: 1, pattern: 'back' }), carries: ['rifle', 'lmg', 'dmr'] },
-  Thatcher: { look: L({ build: 'medium', head: 'beret', hair: CLOTH_DARK, face: 'beard', hand: 'hip', accent: 2, pattern: 'back' }), carries: ['rifle', 'shotgun'] },
-  Thermite: { look: L({ build: 'medium', head: 'cap', hair: OLIVE, back: 'charge-box', accent: 3, pattern: 'belt' }), carries: ['rifle', 'shotgun'] },
-  Twitch: { look: L({ build: 'medium', head: 'hair-pony', hair: BROWN, face: 'goggles', back: 'drone', accent: 4, pattern: 'head' }), carries: ['rifle', 'dmr', 'shotgun'] },
-  Ying: { look: L({ build: 'medium', head: 'hair-bun', hair: BLACK, hand: 'hip', accent: 5, pattern: 'head' }), carries: ['lmg', 'shotgun'] },
-  Zero: { look: L({ build: 'medium', head: 'beanie', hair: CLOTH_DARK, face: 'trilens', accent: 6, pattern: 'head' }), carries: ['smg', 'rifle'] },
-  Zofia: { look: L({ build: 'heavy', head: 'helmet', face: 'goggles', back: 'tube', accent: 8 }), carries: ['lmg', 'rifle'] },
+  Ace: { look: L({ wear: [NAVY, CHAR, ORNG], build: 'medium', head: 'helmet', face: 'goggles', back: 'canisters', accent: 0 }), carries: ['rifle', 'shotgun'] },
+  Amaru: { look: L({ wear: [OLV, KHK, BRN], build: 'medium', head: 'hair', hair: BLACK, hand: 'hook', accent: 1, pattern: 'belt' }), carries: ['lmg', 'shotgun'] },
+  Ash: { look: L({ wear: [TAN, KHK, BRN], build: 'light', head: 'cap', hair: KHAKI, hand: 'arm-launcher', accent: 2 }), carries: ['rifle'] },
+  Blackbeard: { look: L({ wear: [CHAR, KHK, OLV], build: 'medium', head: 'helmet', face: 'beard', hair: BROWN, hand: 'rifle-shield', accent: 3 }), carries: ['rifle', 'dmr'] },
+  Blitz: { look: L({ wear: [GRY, CHAR, BLK], build: 'medium', head: 'visor-helmet', shield: 'standard', hand: 'flash-shield', accent: 4 }), carries: ['shield'] },
+  Brava: { look: L({ wear: [SLATE, CHAR, ORNG], build: 'light', head: 'helmet', face: 'shades', back: 'drone', accent: 5 }), carries: ['rifle', 'dmr'] },
+  Buck: { look: L({ wear: [LGRY, OLV, TAN], build: 'medium', head: 'beanie', hair: CLOTH_DARK, face: 'beard', hand: 'underbarrel', accent: 6 }), carries: ['rifle', 'dmr'] },
+  'Capitão': { look: L({ wear: [GRN, KHK, BRN], build: 'light', head: 'boonie', hair: OLIVE, back: 'crossbow', accent: 7 }), carries: ['lmg', 'rifle'] },
+  Deimos: { look: L({ wear: [DBRN, BLK, CHAR], build: 'medium', head: 'hat', hair: BLACK, face: 'beard', outfit: 'coat', accent: 0, pattern: 'belt' }), carries: ['rifle', 'shotgun'] },
+  Dokkaebi: { look: L({ wear: [WHT, CHAR, GRY], build: 'medium', head: 'headset', hair: BLACK, hand: 'phone', accent: 8 }), carries: ['shotgun', 'dmr'] },
+  Finka: { look: L({ wear: [OLV, GRY, WHT], build: 'medium', head: 'hair-pony', hair: BLOND, hand: 'wrist', back: 'medic', accent: 9 }), carries: ['lmg', 'shotgun', 'rifle'] },
+  Flores: { look: L({ wear: [BLUE, KHK, RED], build: 'medium', head: 'cap-back', hair: CLOTH_DARK, back: 'robot-box', accent: 10, pattern: 'head' }), carries: ['rifle', 'dmr', 'lmg'] },
+  Fuze: { look: L({ wear: [DOLV, OLV, BRN], build: 'heavy', head: 'heavy-helmet', face: 'gasmask', back: 'cluster', accent: 11 }), carries: ['rifle', 'lmg', 'shield'] },
+  Glaz: { look: L({ wear: [GRN, DOLV, OLV], build: 'medium', head: 'hood', hair: OLIVE, face: 'balaclava', back: 'ghillie', accent: 1 }), carries: ['dmr'] },
+  Gridlock: { look: L({ wear: [TAN, DBRN, ORNG], build: 'heavy', head: 'cap', hair: KHAKI, back: 'drum', accent: 2, pattern: 'belt' }), carries: ['rifle', 'lmg'] },
+  Grim: { look: L({ wear: [DOLV, CHAR, TEAL], build: 'light', head: 'beanie', hair: OLIVE, hand: 'arm-launcher', accent: 3, pattern: 'head' }), carries: ['rifle', 'shotgun'] },
+  Hibana: { look: L({ wear: [LGRY, BLK, RED], build: 'light', head: 'hair-pony', hair: BLACK, face: 'goggles', hand: 'arm-launcher', accent: 0, pattern: 'back' }), carries: ['shotgun', 'rifle'] },
+  Iana: { look: L({ wear: [WHT, NAVY, LGRY], build: 'medium', head: 'visor-helmet', hand: 'wrist', accent: 5, pattern: 'belt' }), carries: ['rifle'] },
+  IQ: { look: L({ wear: [CHAR, GRY, WHT], build: 'light', head: 'hair-pony', hair: BLOND, face: 'goggles', hand: 'wrist', accent: 6, pattern: 'belt' }), carries: ['rifle', 'lmg'] },
+  Jackal: { look: L({ wear: [SLATE, NAVY, ORNG], build: 'medium', head: 'beanie', hair: BLACK, face: 'eyepiece', accent: 7, pattern: 'belt' }), carries: ['rifle', 'smg', 'shotgun'] },
+  Kali: { look: L({ wear: [MAROON, BLK, GRY], build: 'light', head: 'beret', hair: CLOTH_DARK, face: 'shades', hand: 'underbarrel', accent: 8, pattern: 'back' }), carries: ['dmr'] },
+  Lion: { look: L({ wear: [NAVY, GRY, WHT], build: 'medium', head: 'helmet', face: 'goggles', back: 'quad', accent: 9, pattern: 'head' }), carries: ['dmr', 'shotgun', 'rifle'] },
+  Maverick: { look: L({ wear: [SAND, OLV, BRN], build: 'light', head: 'cap', hair: CLOTH_DARK, face: 'balaclava', back: 'tank', accent: 10 }), carries: ['rifle'] },
+  Montagne: { look: L({ wear: [NAVY, BLK, GRY], build: 'heavy', head: 'visor-helmet', shield: 'tall', accent: 11, pattern: 'head' }), carries: ['shield'] },
+  'Nøkk': { look: L({ wear: [BLK, BLK, CHAR], build: 'medium', head: 'hood', hair: CLOTH_DARK, face: 'mask', accent: 4 }), carries: ['smg', 'shotgun', 'rifle'] },
+  Nomad: { look: L({ wear: [SAND, TAN, BRN], build: 'medium', head: 'headscarf', hair: KHAKI, face: 'goggles', hand: 'underbarrel', accent: 5, pattern: 'back' }), carries: ['rifle'] },
+  Osa: { look: L({ wear: [LGRY, CHAR, BLUE], build: 'medium', head: 'hair-bun', hair: BLOND, back: 'clear-shield', accent: 6 }), carries: ['rifle', 'smg'] },
+  Ram: { look: L({ wear: [RED, CHAR, ORNG], build: 'heavy', head: 'helmet', back: 'robot-box', accent: 7, pattern: 'belt' }), carries: ['lmg', 'rifle'] },
+  Rauora: { look: L({ wear: [GRN, BLK, TAN], build: 'medium', head: 'visor-helmet', back: 'panel', accent: 8, pattern: 'belt' }), carries: ['dmr', 'lmg'] },
+  Sens: { look: L({ wear: [WHT, BLK, PURP], build: 'heavy', head: 'robot', back: 'projector', accent: 9 }), carries: ['dmr', 'rifle'] },
+  Sledge: { look: L({ wear: [CHAR, DOLV, KHK], build: 'medium', head: 'helmet', face: 'balaclava', back: 'hammer', accent: 10, pattern: 'head' }), carries: ['rifle', 'shotgun'] },
+  'Solid Snake': { look: L({ wear: [SLATE, SLATE, BLK], build: 'light', head: 'bandana', hair: BLACK, outfit: 'sneaking', hand: 'wrist', accent: 0 }), carries: ['rifle'] },
+  Striker: { look: L({ wear: [KHK, CHAR, YEL], build: 'medium', head: 'helmet', back: 'bag', accent: 1, pattern: 'back' }), carries: ['rifle', 'lmg', 'dmr'] },
+  Thatcher: { look: L({ wear: [KHK, OLV, BRN], build: 'medium', head: 'beret', hair: CLOTH_DARK, face: 'beard', hand: 'hip', accent: 2, pattern: 'back' }), carries: ['rifle', 'shotgun'] },
+  Thermite: { look: L({ wear: [KHK, NAVY, BRN], build: 'medium', head: 'cap', hair: OLIVE, back: 'charge-box', accent: 3, pattern: 'belt' }), carries: ['rifle', 'shotgun'] },
+  Twitch: { look: L({ wear: [LBLUE, TAN, GRY], build: 'medium', head: 'hair-pony', hair: BROWN, face: 'goggles', back: 'drone', accent: 4, pattern: 'head' }), carries: ['rifle', 'dmr', 'shotgun'] },
+  Ying: { look: L({ wear: [RED, BLK, CHAR], build: 'medium', head: 'hair-bun', hair: BLACK, hand: 'hip', accent: 5, pattern: 'head' }), carries: ['lmg', 'shotgun'] },
+  Zero: { look: L({ wear: [BLK, CHAR, GRN], build: 'medium', head: 'beanie', hair: CLOTH_DARK, face: 'trilens', accent: 6, pattern: 'head' }), carries: ['smg', 'rifle'] },
+  Zofia: { look: L({ wear: [GRN, DOLV, BLK], build: 'heavy', head: 'helmet', face: 'goggles', back: 'tube', accent: 8 }), carries: ['lmg', 'rifle'] },
   // Defence.
-  Alibi: { look: D({ build: 'light', head: 'hair-pony', hair: BLACK, face: 'shades', hand: 'hip', accent: 0 }), carries: ['smg', 'shotgun'] },
-  Aruni: { look: D({ build: 'light', head: 'hair-bun', hair: BLACK, hand: 'gauntlet', accent: 1 }), carries: ['smg', 'dmr'] },
-  Azami: { look: D({ build: 'medium', head: 'top-knot', hair: BLACK, hand: 'hip', accent: 2, pattern: 'back' }), carries: ['smg', 'shotgun'] },
-  Bandit: { look: D({ build: 'light', head: 'bald', hair: BROWN, face: 'shades', back: 'jammer', accent: 3, pattern: 'belt' }), carries: ['smg', 'shotgun'] },
-  Castle: { look: D({ build: 'heavy', head: 'helmet', back: 'panel', accent: 4 }), carries: ['smg', 'shotgun'] },
-  Caveira: { look: D({ build: 'light', head: 'bald', hair: BLACK, face: 'mask', hand: 'knife', accent: 5, pattern: 'back' }), carries: ['smg', 'shotgun'] },
-  Clash: { look: D({ build: 'heavy', head: 'visor-helmet', shield: 'riot', hand: 'riot-glow', accent: 6 }), carries: ['shield'] },
-  Denari: { look: D({ build: 'medium', head: 'hair', hair: BLACK, outfit: 'suit', hand: 'wrist', accent: 7 }), carries: ['smg'] },
-  Doc: { look: D({ build: 'heavy', head: 'helmet', back: 'medic', accent: 8, pattern: 'head' }), carries: ['smg', 'shotgun'] },
-  Echo: { look: D({ build: 'heavy', head: 'headset', hair: BLACK, back: 'quad', accent: 9 }), carries: ['smg', 'shotgun'] },
-  Ela: { look: D({ build: 'light', head: 'hair', hair: GREEN, hand: 'hip', accent: 10, pattern: 'back' }), carries: ['smg', 'shotgun'] },
-  Fenrir: { look: D({ build: 'medium', head: 'helmet', face: 'mask', hand: 'hip', accent: 11, pattern: 'belt' }), carries: ['smg', 'shotgun'] },
-  Frost: { look: D({ build: 'medium', head: 'beanie', hair: CLOTH_DARK, back: 'trap', accent: 0, pattern: 'head' }), carries: ['shotgun', 'smg'] },
-  Goyo: { look: D({ build: 'heavy', head: 'helmet', face: 'shades', back: 'tank', accent: 1, pattern: 'belt' }), carries: ['smg', 'shotgun'] },
-  'Jäger': { look: D({ build: 'light', head: 'helmet', face: 'shades', back: 'dish', accent: 2 }), carries: ['shotgun', 'rifle'] },
-  Kaid: { look: D({ build: 'heavy', head: 'headscarf', hair: WHITE, face: 'beard', hand: 'claw', accent: 3 }), carries: ['smg', 'shotgun'] },
-  Kapkan: { look: D({ build: 'medium', head: 'ushanka', hair: BROWN, hand: 'hip', accent: 4, pattern: 'belt' }), carries: ['smg', 'shotgun'] },
-  Lesion: { look: D({ build: 'medium', head: 'cap', hair: CLOTH_DARK, face: 'mask', hand: 'hip', accent: 5 }), carries: ['shotgun', 'smg'] },
-  Maestro: { look: D({ build: 'heavy', head: 'bald', hair: BLACK, face: 'beard', back: 'jammer', accent: 6, pattern: 'back' }), carries: ['lmg', 'shotgun'] },
-  Melusi: { look: D({ build: 'light', head: 'hair-pony', hair: BLACK, hand: 'hip', accent: 7, pattern: 'head' }), carries: ['smg', 'shotgun'] },
-  Mira: { look: D({ build: 'heavy', head: 'hair-bun', hair: BROWN, back: 'window', accent: 8 }), carries: ['smg', 'shotgun'] },
-  Mozzie: { look: D({ build: 'medium', head: 'cap-back', hair: OLIVE, face: 'goggles', hand: 'arm-launcher', accent: 9 }), carries: ['rifle', 'smg'] },
-  Mute: { look: D({ build: 'medium', head: 'cap', hair: CLOTH_DARK, face: 'gasmask', back: 'jammer', accent: 10, pattern: 'head' }), carries: ['smg', 'shotgun'] },
-  Noor: { look: D({ build: 'medium', head: 'headscarf', hair: OLIVE, back: 'tube', accent: 11 }), carries: ['rifle', 'lmg'] },
-  Oryx: { look: D({ build: 'medium', head: 'bald', hair: BLACK, face: 'beard', outfit: 'sneaking', accent: 0, pattern: 'belt' }), carries: ['shotgun', 'smg'] },
-  Pulse: { look: D({ build: 'light', head: 'cap', hair: KHAKI, face: 'shades', hand: 'wrist', accent: 1, pattern: 'back' }), carries: ['smg', 'shotgun'] },
-  Rook: { look: D({ build: 'heavy', head: 'heavy-helmet', back: 'bag', accent: 2, pattern: 'head' }), carries: ['smg', 'shotgun'] },
-  Sentry: { look: D({ build: 'medium', head: 'helmet', face: 'goggles', accent: 3, pattern: 'back' }), carries: ['rifle', 'shotgun'] },
-  'Skopós': { look: D({ build: 'medium', head: 'robot', outfit: 'sneaking', accent: 4, pattern: 'belt' }), carries: ['rifle'] },
-  Smoke: { look: D({ build: 'medium', head: 'beanie', hair: BLACK, face: 'gasmask', back: 'canisters', accent: 5, pattern: 'head' }), carries: ['shotgun', 'smg'] },
-  Solis: { look: D({ build: 'medium', head: 'headset', hair: BROWN, face: 'goggles', accent: 6, pattern: 'belt' }), carries: ['shotgun', 'smg'] },
-  Tachanka: { look: D({ build: 'heavy', head: 'visor-helmet', back: 'drum', accent: 7, pattern: 'belt' }), carries: ['lmg'] },
-  Thorn: { look: D({ build: 'medium', head: 'hood', hair: GREEN, back: 'cape', accent: 8, pattern: 'belt' }), carries: ['smg', 'shotgun'] },
-  Thunderbird: { look: D({ build: 'medium', head: 'hair-pony', hair: BLACK, back: 'cross-box', accent: 9, pattern: 'belt' }), carries: ['shotgun', 'rifle'] },
-  'Tubarão': { look: D({ build: 'medium', head: 'visor-helmet', hand: 'hip', accent: 10, pattern: 'back' }), carries: ['smg', 'rifle'] },
-  Valkyrie: { look: D({ build: 'light', head: 'cap', hair: BLOND, hand: 'hip', accent: 11, pattern: 'head' }), carries: ['smg', 'shotgun'] },
-  Vigil: { look: D({ build: 'light', head: 'hood', hair: BLACK, face: 'mask', accent: 0, pattern: 'back' }), carries: ['smg', 'shotgun'] },
-  Wamai: { look: D({ build: 'medium', head: 'beanie', hair: KHAKI, back: 'trap', accent: 1, pattern: 'belt' }), carries: ['rifle', 'smg'] },
-  Warden: { look: D({ build: 'medium', head: 'hair', hair: BROWN, face: 'shades', outfit: 'suit', accent: 2 }), carries: ['shotgun', 'smg'] },
-  Recruit: { look: D({ build: 'medium', head: 'helmet', accent: 9, pattern: 'belt' }), carries: ['rifle', 'smg', 'shotgun'] },
+  Alibi: { look: D({ wear: [LGRY, BLK, GRY], build: 'light', head: 'hair-pony', hair: BLACK, face: 'shades', hand: 'hip', accent: 0 }), carries: ['smg', 'shotgun'] },
+  Aruni: { look: D({ wear: [TAN, OLV, ORNG], build: 'light', head: 'hair-bun', hair: BLACK, hand: 'gauntlet', accent: 1 }), carries: ['smg', 'dmr'] },
+  Azami: { look: D({ wear: [PURP, PURP, WHT], build: 'medium', head: 'top-knot', hair: BLACK, hand: 'hip', accent: 2, pattern: 'back' }), carries: ['smg', 'shotgun'] },
+  Bandit: { look: D({ wear: [BLK, BLUE, CHAR], build: 'light', head: 'bald', hair: BROWN, face: 'shades', back: 'jammer', accent: 3, pattern: 'belt' }), carries: ['smg', 'shotgun'] },
+  Castle: { look: D({ wear: [BLUE, KHK, BLK], build: 'heavy', head: 'helmet', back: 'panel', accent: 4 }), carries: ['smg', 'shotgun'] },
+  Caveira: { look: D({ wear: [DBRN, GRN, BLK], build: 'light', head: 'bald', hair: BLACK, face: 'mask', hand: 'knife', accent: 5, pattern: 'back' }), carries: ['smg', 'shotgun'] },
+  Clash: { look: D({ wear: [BLK, GRY, BLUE], build: 'heavy', head: 'visor-helmet', shield: 'riot', hand: 'riot-glow', accent: 6 }), carries: ['shield'] },
+  Denari: { look: D({ wear: [LGRY, LGRY, BLK], build: 'medium', head: 'hair', hair: BLACK, outfit: 'suit', hand: 'wrist', accent: 7 }), carries: ['smg'] },
+  Doc: { look: D({ wear: [NAVY, CHAR, WHT], build: 'heavy', head: 'helmet', back: 'medic', accent: 8, pattern: 'head' }), carries: ['smg', 'shotgun'] },
+  Echo: { look: D({ wear: [GRY, BLK, TEAL], build: 'heavy', head: 'headset', hair: BLACK, back: 'quad', accent: 9 }), carries: ['smg', 'shotgun'] },
+  Ela: { look: D({ wear: [OLV, BLK, GRN], build: 'light', head: 'hair', hair: GREEN, hand: 'hip', accent: 10, pattern: 'back' }), carries: ['smg', 'shotgun'] },
+  Fenrir: { look: D({ wear: [CHAR, GRY, BLUE], build: 'medium', head: 'helmet', face: 'mask', hand: 'hip', accent: 11, pattern: 'belt' }), carries: ['smg', 'shotgun'] },
+  Frost: { look: D({ wear: [WHT, OLV, BRN], build: 'medium', head: 'beanie', hair: CLOTH_DARK, back: 'trap', accent: 0, pattern: 'head' }), carries: ['shotgun', 'smg'] },
+  Goyo: { look: D({ wear: [GRN, TAN, ORNG], build: 'heavy', head: 'helmet', face: 'shades', back: 'tank', accent: 1, pattern: 'belt' }), carries: ['smg', 'shotgun'] },
+  'Jäger': { look: D({ wear: [GRN, GRY, BLK], build: 'light', head: 'helmet', face: 'shades', back: 'dish', accent: 2 }), carries: ['shotgun', 'rifle'] },
+  Kaid: { look: D({ wear: [BRN, TAN, MAROON], build: 'heavy', head: 'headscarf', hair: WHITE, face: 'beard', hand: 'claw', accent: 3 }), carries: ['smg', 'shotgun'] },
+  Kapkan: { look: D({ wear: [DOLV, KHK, BRN], build: 'medium', head: 'ushanka', hair: BROWN, hand: 'hip', accent: 4, pattern: 'belt' }), carries: ['smg', 'shotgun'] },
+  Lesion: { look: D({ wear: [BLK, KHK, RED], build: 'medium', head: 'cap', hair: CLOTH_DARK, face: 'mask', hand: 'hip', accent: 5 }), carries: ['shotgun', 'smg'] },
+  Maestro: { look: D({ wear: [CHAR, OLV, MAROON], build: 'heavy', head: 'bald', hair: BLACK, face: 'beard', back: 'jammer', accent: 6, pattern: 'back' }), carries: ['lmg', 'shotgun'] },
+  Melusi: { look: D({ wear: [SAND, BRN, GRN], build: 'light', head: 'hair-bun', hair: BLACK, back: 'dish', hand: 'hip', accent: 7, pattern: 'head' }), carries: ['smg', 'shotgun'] },
+  Mira: { look: D({ wear: [NAVY, BLK, ORNG], build: 'heavy', head: 'hair-bun', hair: BROWN, back: 'window', accent: 8 }), carries: ['smg', 'shotgun'] },
+  Mozzie: { look: D({ wear: [KHK, OLV, ORNG], build: 'medium', head: 'cap-back', hair: OLIVE, face: 'goggles', hand: 'arm-launcher', accent: 9 }), carries: ['rifle', 'smg'] },
+  Mute: { look: D({ wear: [NAVY, GRY, BLK], build: 'medium', head: 'cap', hair: CLOTH_DARK, face: 'gasmask', back: 'jammer', accent: 10, pattern: 'head' }), carries: ['smg', 'shotgun'] },
+  Noor: { look: D({ wear: [MAROON, BLK, TAN], build: 'medium', head: 'headscarf', hair: OLIVE, back: 'tube', accent: 11 }), carries: ['rifle', 'lmg'] },
+  Oryx: { look: D({ wear: [DBRN, TAN, CHAR], build: 'medium', head: 'bald', hair: BLACK, face: 'beard', outfit: 'sneaking', accent: 0, pattern: 'belt' }), carries: ['shotgun', 'smg'] },
+  Pulse: { look: D({ wear: [TAN, NAVY, BLUE], build: 'light', head: 'cap', hair: KHAKI, face: 'shades', hand: 'wrist', accent: 1, pattern: 'back' }), carries: ['smg', 'shotgun'] },
+  Rook: { look: D({ wear: [BLUE, NAVY, BLK], build: 'heavy', head: 'heavy-helmet', back: 'bag', accent: 2, pattern: 'head' }), carries: ['smg', 'shotgun'] },
+  Sentry: { look: D({ wear: [GRY, BLK, OLV], build: 'medium', head: 'helmet', face: 'goggles', accent: 3, pattern: 'back' }), carries: ['rifle', 'shotgun'] },
+  'Skopós': { look: D({ wear: [WHT, LGRY, TEAL], build: 'medium', head: 'robot', outfit: 'sneaking', accent: 4, pattern: 'belt' }), carries: ['rifle'] },
+  Smoke: { look: D({ wear: [DOLV, TAN, YEL], build: 'medium', head: 'beanie', hair: BLACK, face: 'gasmask', back: 'canisters', accent: 5, pattern: 'head' }), carries: ['shotgun', 'smg'] },
+  Solis: { look: D({ wear: [LBLUE, CHAR, WHT], build: 'medium', head: 'headset', hair: BROWN, face: 'goggles', accent: 6, pattern: 'belt' }), carries: ['shotgun', 'smg'] },
+  Tachanka: { look: D({ wear: [CHAR, DOLV, RED], build: 'heavy', head: 'visor-helmet', back: 'drum', accent: 7, pattern: 'belt' }), carries: ['lmg'] },
+  Thorn: { look: D({ wear: [DOLV, CHAR, GRN], build: 'medium', head: 'hood', hair: GREEN, back: 'cape', accent: 8, pattern: 'belt' }), carries: ['smg', 'shotgun'] },
+  Thunderbird: { look: D({ wear: [WHT, BRN, RED], build: 'medium', head: 'hair-pony', hair: BLACK, back: 'cross-box', accent: 9, pattern: 'belt' }), carries: ['shotgun', 'rifle'] },
+  'Tubarão': { look: D({ wear: [BLUE, GRY, YEL], build: 'medium', head: 'visor-helmet', hand: 'hip', accent: 10, pattern: 'back' }), carries: ['smg', 'rifle'] },
+  Valkyrie: { look: D({ wear: [OLV, GRY, TEAL], build: 'light', head: 'hair-pony', hair: BLOND, hand: 'hip', accent: 11, pattern: 'head' }), carries: ['smg', 'shotgun'] },
+  Vigil: { look: D({ wear: [BLK, CHAR, WHT], build: 'light', head: 'hood', hair: BLACK, face: 'mask', accent: 0, pattern: 'back' }), carries: ['smg', 'shotgun'] },
+  Wamai: { look: D({ wear: [LGRY, KHK, ORNG], build: 'medium', head: 'beanie', hair: KHAKI, back: 'trap', accent: 1, pattern: 'belt' }), carries: ['rifle', 'smg'] },
+  Warden: { look: D({ wear: [NAVY, NAVY, LGRY], build: 'medium', head: 'hair', hair: BROWN, face: 'shades', outfit: 'suit', accent: 2 }), carries: ['shotgun', 'smg'] },
+  Recruit: { look: D({ wear: [LGRY, NAVY, GRY], build: 'medium', head: 'helmet', accent: 9, pattern: 'belt' }), carries: ['rifle', 'smg', 'shotgun'] },
 };
 
 /** An operator's figure-name part: letters and digits, accents dropped ("Capitão" -> "capitao", "Solid Snake" -> "solid-snake"). */
@@ -185,10 +212,10 @@ export function operatorFigureName(slug: string, carry: Kitbag, stance: Stance, 
   return `op-${slug}-${carry}${stance === 'stand' ? '' : `-${stance}`}-${side}`;
 }
 
-const BUILD_BULK: Record<Build, number> = { light: 0.9, medium: 1, heavy: 1.13 };
+const BUILD_BULK: Record<Build, number> = { light: 0.84, medium: 1, heavy: 1.28 };
 
 /** Builds an operator's figure. */
-export function buildOperator(look: OperatorLook, carry: Kitbag, stance: Stance, band: Rgb): Template {
+export function buildOperator(look: OperatorLook, carry: Kitbag, stance: Stance, band: Rgb, groundRing = true): Template {
   const k = newKit();
   const shieldCarry = carry === 'shield';
   const a = personInto(k, {
@@ -200,16 +227,23 @@ export function buildOperator(look: OperatorLook, carry: Kitbag, stance: Stance,
     pack: false,
     bulk: BUILD_BULK[look.build],
     shield: shieldCarry ? (look.shield ?? 'standard') : undefined,
+    outfit: { top: look.wear[0], bottom: look.wear[1], gear: look.wear[2] },
   });
   const accent = ACCENTS[look.accent % ACCENTS.length];
   build(k, a, look, accent, carry);
+  // The side, apart from the clothes: a ring on the ground in its colour with the team's colour inside it, and a band round the head.
+  if (groundRing) {
+    ring(k.fixed, k.fr, 0, 0, 0.015, 0.55 * a.s, band, 1, 28, 0.45 * a.s);
+    ring(k.team, k.fr, 0, 0, 0.012, 0.45 * a.s, [0.95, 0.95, 0.95], 1, 28, 0.39 * a.s);
+  }
+  const [hx, hy, hz] = a.head;
+  ring(k.fixed, k.fr, hx, hy, hz + (a.prone ? 0.02 : 0.05) * a.s, 0.155 * a.s, band, 1, 16, 0.1 * a.s);
   return finish(k, 'ground');
 }
 
 type V3 = [number, number, number];
 
 function build(k: Kit, a: PersonAnchors, look: OperatorLook, accent: Rgb, carry: Kitbag): void {
-  const T = k.team;
   const F = k.fixed;
   const fr = k.fr;
   const s = a.s;
@@ -223,17 +257,17 @@ function build(k: Kit, a: PersonAnchors, look: OperatorLook, accent: Rgb, carry:
   // Headgear.
   switch (look.head) {
     case 'helmet':
-      blob(T, fr, h(-0.03, 0, 0.06), [0.15 * s, 0.14 * s, 0.09 * s], [0.5, 0.5, 0.5]);
+      blob(F, fr, h(-0.03, 0, 0.06), [0.16 * s, 0.15 * s, 0.1 * s], look.wear[2]);
       if (accentHead) block(F, fr, h(-0.03, 0, 0.14), 0.22 * s, 0.05 * s, 0.03 * s, accent);
       break;
     case 'visor-helmet':
-      blob(T, fr, h(-0.03, 0, 0.06), [0.15 * s, 0.14 * s, 0.09 * s], [0.45, 0.45, 0.45]);
+      blob(F, fr, h(-0.03, 0, 0.06), [0.16 * s, 0.15 * s, 0.1 * s], look.wear[2]);
       block(F, fr, h(0.1, 0, -0.01), 0.03 * s, 0.2 * s, 0.17 * s, PAINT.glass);
       if (accentHead) block(F, fr, h(-0.03, 0, 0.14), 0.22 * s, 0.05 * s, 0.03 * s, accent);
       break;
     case 'heavy-helmet':
-      blob(T, fr, h(-0.02, 0, 0.05), [0.17 * s, 0.16 * s, 0.12 * s], [0.42, 0.42, 0.42]);
-      block(T, fr, h(-0.12, 0, -0.06), 0.06 * s, 0.26 * s, 0.12 * s, [0.42, 0.42, 0.42]);
+      blob(F, fr, h(-0.02, 0, 0.05), [0.19 * s, 0.18 * s, 0.13 * s], look.wear[2]);
+      block(F, fr, h(-0.13, 0, -0.06), 0.07 * s, 0.3 * s, 0.14 * s, look.wear[2]);
       block(F, fr, h(0.12, 0, 0), 0.03 * s, 0.22 * s, 0.1 * s, PAINT.glass);
       if (accentHead) block(F, fr, h(-0.02, 0, 0.17), 0.26 * s, 0.06 * s, 0.03 * s, accent);
       break;
@@ -241,7 +275,7 @@ function build(k: Kit, a: PersonAnchors, look: OperatorLook, accent: Rgb, carry:
     case 'cap-back': {
       blob(F, fr, h(-0.01, 0, 0.07), [0.12 * s, 0.115 * s, 0.065 * s], capCol);
       const fwd = look.head === 'cap' ? 1 : -1;
-      block(F, fr, h(0.13 * fwd, 0, 0.06), 0.12 * s, 0.17 * s, 0.015 * s, capCol);
+      block(F, fr, h(0.15 * fwd, 0, 0.06), 0.16 * s, 0.2 * s, 0.02 * s, capCol);
       break;
     }
     case 'beanie':
@@ -252,15 +286,16 @@ function build(k: Kit, a: PersonAnchors, look: OperatorLook, accent: Rgb, carry:
       break;
     case 'boonie':
       blob(F, fr, h(-0.01, 0, 0.08), [0.11 * s, 0.11 * s, 0.07 * s], capCol);
-      tube(F, fr, h(-0.01, 0, 0.055), h(-0.01, 0, 0.07), 0.21 * s, 0.2 * s, capCol, 12);
+      tube(F, fr, h(-0.01, 0, 0.055), h(-0.01, 0, 0.075), 0.27 * s, 0.25 * s, capCol, 12);
       break;
     case 'ushanka':
-      blob(F, fr, h(-0.01, 0, 0.08), [0.15 * s, 0.15 * s, 0.11 * s], capCol);
-      for (const o of [-1, 1]) block(F, fr, h(-0.01, o * 0.13, -0.03), 0.12 * s, 0.04 * s, 0.13 * s, capCol);
+      blob(F, fr, h(-0.01, 0, 0.09), [0.18 * s, 0.18 * s, 0.13 * s], capCol);
+      for (const o of [-1, 1]) block(F, fr, h(-0.01, o * 0.15, -0.03), 0.14 * s, 0.05 * s, 0.15 * s, capCol);
       break;
     case 'hood':
-      blob(F, fr, h(-0.03, 0, 0.02), [0.15 * s, 0.14 * s, 0.155 * s], capCol);
-      block(F, fr, h(-0.12, 0, -0.14), 0.08 * s, 0.3 * s, 0.14 * s, capCol);
+      // A hood: over the head, down the neck and onto the shoulders.
+      blob(F, fr, h(-0.03, 0, 0.03), [0.17 * s, 0.16 * s, 0.17 * s], capCol);
+      block(F, fr, h(-0.12, 0, -0.16), 0.12 * s, 0.4 * s, 0.18 * s, capCol);
       break;
     case 'bandana':
       blob(F, fr, h(-0.01, 0, 0.04), [0.113 * s, 0.103 * s, 0.09 * s], BLACK);
@@ -293,10 +328,10 @@ function build(k: Kit, a: PersonAnchors, look: OperatorLook, accent: Rgb, carry:
       break;
     case 'hat':
       block(F, fr, h(-0.01, 0, 0.11), 0.2 * s, 0.19 * s, 0.1 * s, capCol);
-      tube(F, fr, h(-0.01, 0, 0.06), h(-0.01, 0, 0.075), 0.19 * s, 0.19 * s, capCol, 12);
+      tube(F, fr, h(-0.01, 0, 0.06), h(-0.01, 0, 0.08), 0.25 * s, 0.25 * s, capCol, 12);
       break;
     case 'robot':
-      block(T, fr, h(0, 0, 0.01), 0.22 * s, 0.2 * s, 0.24 * s, [0.6, 0.6, 0.6]);
+      block(F, fr, h(0, 0, 0.01), 0.24 * s, 0.22 * s, 0.26 * s, look.wear[0]);
       block(F, fr, h(0.11, 0, 0.03), 0.02 * s, 0.17 * s, 0.04 * s, accent);
       break;
   }
@@ -333,12 +368,18 @@ function build(k: Kit, a: PersonAnchors, look: OperatorLook, accent: Rgb, carry:
   }
 
   // Outfit and shoulders.
-  const pad = look.build === 'heavy' ? [0.2, 0.17, 0.09] : look.build === 'light' ? [0.09, 0.1, 0.035] : [0.14, 0.13, 0.05];
+  // Shoulder pads in the accent: what shows from straight above besides the head and the back.
+  const pad = look.build === 'heavy' ? [0.26, 0.22, 0.12] : look.build === 'light' ? [0.13, 0.13, 0.05] : [0.17, 0.16, 0.07];
   if (!a.prone) {
     const sh = a.shoulder;
     for (const o of [-1, 1]) block(F, fr, [0, o * 0.24 * b * s, sh + pad[2] / 2 * s + 0.02 * s], pad[0] * s, pad[1] * s, pad[2] * s, accent);
-    if (look.build === 'heavy') block(T, fr, [0.1 * b * s, 0, a.hip - 0.08 * s], 0.06 * s, 0.26 * s, 0.18 * s, [0.42, 0.42, 0.42]);
-    if (look.outfit === 'coat') block(T, fr, [-0.02 * s, 0, a.hip - 0.18 * s], 0.3 * b * s, 0.46 * b * s, 0.5 * s, [0.35, 0.35, 0.35]);
+    if (look.build === 'heavy') {
+      // Heavy armour: a groin plate and a raised collar.
+      block(F, fr, [0.12 * b * s, 0, a.hip - 0.08 * s], 0.06 * s, 0.3 * s, 0.2 * s, look.wear[2]);
+      block(F, fr, [0, 0, a.chest - 0.02 * s], 0.3 * b * s, 0.4 * b * s, 0.08 * s, look.wear[2]);
+    }
+    // A long coat to the knees.
+    if (look.outfit === 'coat') block(F, fr, [-0.04 * s, 0, a.hip - 0.22 * s], 0.34 * b * s, 0.54 * b * s, 0.66 * s, look.wear[0]);
     if (look.outfit === 'suit') {
       block(F, fr, [0.135 * b * s, 0, a.chest - 0.2 * s], 0.01 * s, 0.05 * s, 0.32 * s, BLACK);
       block(F, fr, [0.137 * b * s, 0, a.chest - 0.1 * s], 0.01 * s, 0.03 * s, 0.12 * s, accent);
@@ -352,7 +393,7 @@ function build(k: Kit, a: PersonAnchors, look: OperatorLook, accent: Rgb, carry:
 
   // What they carry on the back: standing up behind them, or lying on their back when prone.
   if (look.back) {
-    const col = look.pattern === 'back' ? accent : backColour(look.back);
+    const col = look.pattern === 'back' ? accent : backColour(look.back, look.wear[2]);
     if (a.prone) block(F, fr, [0.15 * s, 0, 0.36 * s], 0.42 * s, 0.3 * s, 0.1 * s, col);
     else backItem(k, a, look.back, col, accent);
   }
@@ -361,10 +402,12 @@ function build(k: Kit, a: PersonAnchors, look: OperatorLook, accent: Rgb, carry:
   if (look.hand && !a.prone) handItem(k, a, look.hand, accent, carry);
 }
 
-function backColour(back: Back): Rgb {
+function backColour(back: Back, gear: Rgb): Rgb {
   switch (back) {
     case 'cape':
       return [0.3, 0.33, 0.24];
+    case 'ghillie':
+      return [0.34, 0.4, 0.2];
     case 'clear-shield':
       return [0.6, 0.75, 0.85];
     case 'medic':
@@ -373,14 +416,15 @@ function backColour(back: Back): Rgb {
     case 'cluster':
       return [0.45, 0.42, 0.28];
     default:
-      return [0.22, 0.23, 0.24];
+      return gear;
   }
 }
 
 function backItem(k: Kit, a: PersonAnchors, back: Back, col: Rgb, accent: Rgb): void {
   const F = k.fixed;
   const fr = k.fr;
-  const s = a.s;
+  // A third larger than life: what tells an operator from above has to show at replay distance.
+  const s = a.s * 1.35;
   const bx = -0.15 * a.bulk * s;
   const mid = a.hip + 0.32 * s;
   const p = (f: number, side: number, up: number): V3 => [bx + f * s, side * s, mid + up * s];
@@ -466,7 +510,12 @@ function backItem(k: Kit, a: PersonAnchors, back: Back, col: Rgb, accent: Rgb): 
       block(F, fr, p(-0.145, 0, 0), 0.01 * s, 0.06 * s, 0.2 * s, [0.9, 0.15, 0.15]);
       break;
     case 'cape':
-      block(F, fr, p(-0.02, 0, -0.2), 0.04 * s, 0.5 * a.bulk * s, 0.95 * s, col);
+      block(F, fr, p(-0.02, 0, -0.25), 0.05 * s, 0.5 * a.bulk * s, 0.9 * s, col);
+      break;
+    case 'ghillie':
+      // Shaggy tufts over the shoulders and down the back.
+      for (const [f, o, u, r] of [[0, -0.15, 0.25, 0.16], [0, 0.15, 0.25, 0.16], [0.05, 0, 0.32, 0.15], [-0.02, -0.12, -0.05, 0.17], [-0.02, 0.12, -0.05, 0.17], [-0.02, 0, -0.35, 0.16]] as const)
+        blob(F, fr, p(f, o, u), [0.1 * s, r * s, r * s], col);
       break;
   }
 }
@@ -481,7 +530,7 @@ function handItem(k: Kit, a: PersonAnchors, hand: Hand, accent: Rgb, carry: Kitb
   switch (hand) {
     case 'arm-launcher':
       // On the left forearm, pointing forward.
-      tube(F, fr, [0.1 * s, -0.2 * b * s, sh - 0.12 * s], [0.42 * s, -0.12 * s, sh - 0.16 * s], 0.045 * s, 0.04 * s, PAINT.dark, 8);
+      tube(F, fr, [0.05 * s, -0.22 * b * s, sh - 0.1 * s], [0.48 * s, -0.14 * s, sh - 0.16 * s], 0.07 * s, 0.06 * s, PAINT.dark, 8);
       blob(F, fr, [0.2 * s, -0.19 * b * s, sh - 0.11 * s], [0.04 * s, 0.04 * s, 0.04 * s], accent);
       break;
     case 'wrist':

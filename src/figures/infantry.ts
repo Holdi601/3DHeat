@@ -37,6 +37,11 @@ export interface PersonSpec {
   bulk?: number;
   /** A shield's shape: a ballistic shield (0.6 by 1 m), a tall one covering the whole body, or a wider riot shield. */
   shield?: 'standard' | 'tall' | 'riot';
+  /**
+   * Fixed clothes in place of the team's colour: jacket and sleeves, trousers,
+   * and gear (plate carrier, pack, shield). The side then shows by `band` alone.
+   */
+  outfit?: { top: Rgb; bottom: Rgb; gear: Rgb };
 }
 
 /** Where a built person's parts are, for parts put on afterwards (template frame: forward, side, up). */
@@ -77,16 +82,25 @@ export function personInto(k: Kit, spec: PersonSpec = {}): PersonAnchors {
   const v = (f: number, side: number, up: number): [number, number, number] => [f * s, side * s, up * s];
   const b = spec.bulk ?? 1;
   const helmet = spec.helmet ?? true;
+  const o = spec.outfit;
+  // A part's buffer and colour: the team's shade, or the outfit's colour darkened by the same step.
+  const P = (part: 'top' | 'bottom' | 'gear', shade: number, base: number): [typeof T, Rgb] =>
+    o ? [F, scale(o[part], shade / base)] : [T, grey(shade)];
 
   if (stance === 'prone') {
     // Lying along the forward axis, head forward, weapon ahead of the head.
-    block(T, fr, v(-0.55, -0.1, 0.12), 0.9 * s, 0.14 * s, 0.16 * s, grey(0.85));
-    block(T, fr, v(-0.55, 0.1, 0.12), 0.9 * s, 0.14 * s, 0.16 * s, grey(0.85));
-    block(T, fr, v(0.2, 0, 0.16), 0.7 * s, 0.42 * s, 0.24 * s, WHITE_SHADE);
+    const [lb, lc] = P('bottom', 0.85, 0.85);
+    block(lb, fr, v(-0.55, -0.1 * b, 0.12), 0.9 * s, 0.14 * b * s, 0.16 * s, lc);
+    block(lb, fr, v(-0.55, 0.1 * b, 0.12), 0.9 * s, 0.14 * b * s, 0.16 * s, lc);
+    const [tb, tc] = o ? P('top', 1, 1) : [T, WHITE_SHADE];
+    block(tb, fr, v(0.2, 0, 0.16), 0.7 * s, 0.42 * b * s, 0.24 * s, tc);
     blob(F, fr, v(0.68, 0, 0.24), v(0.12, 0.1, 0.11), PAINT.skin);
     if (helmet) blob(T, fr, v(0.69, 0, 0.3), v(0.14, 0.13, 0.08), grey(0.55));
     if (carry === 'rifle' || carry === 'sniper') tube(F, fr, v(0.45, 0.12, 0.2), v(carry === 'sniper' ? 1.65 : 1.35, 0.12, 0.2), 0.03 * s, 0.025 * s, PAINT.dark, 6);
-    if (spec.vest) block(spec.band ? F : T, fr, v(0.25, 0, 0.3), 0.5 * s, 0.44 * s, 0.06 * s, spec.band ?? grey(0.45));
+    if (spec.vest) {
+      const [vb, vc] = o ? P('gear', 1, 1) : spec.band ? [F, spec.band] : [T, grey(0.45)];
+      block(vb, fr, v(0.25, 0, 0.3), 0.5 * s, 0.44 * b * s, 0.06 * s, vc);
+    }
     const reach: Partial<Record<Kitbag, number>> = { smg: 1.1, shotgun: 1.45, dmr: 1.5, lmg: 1.45, pistol: 0.95 };
     const end = reach[carry];
     if (end !== undefined) {
@@ -96,7 +110,7 @@ export function personInto(k: Kit, spec: PersonSpec = {}): PersonAnchors {
       if (carry === 'dmr') tube(F, fr, v(0.62, 0.12, 0.26), v(0.85, 0.12, 0.26), 0.03 * s, 0.03 * s, PAINT.metal, 6);
     }
     // A shield lies ahead of the head, standing on its edge.
-    if (carry === 'shield') block(T, fr, v(0.98, 0.04, 0.28), 0.05 * s, 0.6 * s, 0.56 * s, SHIELD);
+    if (carry === 'shield') block(o ? F : T, fr, v(0.98, 0.04, 0.28), 0.05 * s, 0.6 * s, 0.56 * s, SHIELD);
     if (spec.band && helmet) blob(F, fr, v(0.69, 0, 0.27), v(0.15, 0.14, 0.03), spec.band);
     return { prone: true, head: v(0.68, 0, 0.24), hip: 0.12 * s, chest: 0.28 * s, shoulder: 0.2 * s, hands: v(0.45, 0.12, 0.2), bulk: b, s };
   }
@@ -106,22 +120,33 @@ export function personInto(k: Kit, spec: PersonSpec = {}): PersonAnchors {
   // Legs: standing, two upright blocks; crouching, a thigh forward and a shin down.
   for (const side of [-0.11 * b, 0.11 * b]) {
     if (crouch) {
-      block(T, fr, v(0.16, side, 0.5), 0.38 * s, 0.15 * b * s, 0.15 * s, grey(0.8));
-      block(T, fr, v(0.33, side, 0.24), 0.15 * s, 0.15 * b * s, 0.48 * s, grey(0.75));
+      const [ub, uc] = P('bottom', 0.8, 0.8);
+      const [db, dc] = P('bottom', 0.75, 0.8);
+      block(ub, fr, v(0.16, side, 0.5), 0.38 * s, 0.15 * b * s, 0.15 * s, uc);
+      block(db, fr, v(0.33, side, 0.24), 0.15 * s, 0.15 * b * s, 0.48 * s, dc);
     } else {
-      block(T, fr, v(0, side, hip / 2), 0.17 * s, 0.15 * b * s, hip * s, grey(0.8));
+      const [ub, uc] = P('bottom', 0.8, 0.8);
+      block(ub, fr, v(0, side, hip / 2), 0.17 * b * s, 0.15 * b * s, hip * s, uc);
     }
     block(F, fr, v(crouch ? 0.38 : 0.04, side, 0.04), 0.26 * s, 0.12 * s, 0.08 * s, PAINT.dark);
   }
   // Torso and backpack.
   const chest = hip + 0.58;
-  block(T, fr, v(0, 0, (hip + chest) / 2), 0.26 * b * s, 0.44 * b * s, (chest - hip) * s, WHITE_SHADE);
-  if (spec.pack ?? true) block(T, fr, v(-0.2, 0, hip + 0.32), 0.16 * s, 0.34 * s, 0.4 * s, grey(0.62));
+  {
+    const [tb, tc] = o ? P('top', 1, 1) : [T, WHITE_SHADE];
+    block(tb, fr, v(0, 0, (hip + chest) / 2), 0.26 * b * s, 0.44 * b * s, (chest - hip) * s, tc);
+  }
+  if (spec.pack ?? true) {
+    const [pb, pc] = P('gear', 0.62, 0.62);
+    block(pb, fr, v(-0.2, 0, hip + 0.32), 0.16 * s, 0.34 * s, 0.4 * s, pc);
+  }
   // A plate carrier: front and back plates over the chest, a shade darker.
   // With a band, the carrier's front plate is in the band's colour: the side shows from far off.
   if (spec.vest) {
-    block(spec.band ? F : T, fr, v(0.09 * b, 0, hip + 0.36), 0.1 * s, 0.4 * b * s, 0.36 * s, spec.band ?? grey(0.45));
-    block(T, fr, v(0.15 * b, 0, hip + 0.2), 0.06 * s, 0.36 * b * s, 0.1 * s, grey(0.4));
+    const [vb, vc] = o ? P('gear', 1, 1) : spec.band ? [F, spec.band] : [T, grey(0.45)];
+    block(vb, fr, v(0.09 * b, 0, hip + 0.36), 0.1 * s, 0.4 * b * s, 0.36 * s, vc);
+    const [wb, wc] = P('gear', 0.4, 0.45);
+    block(wb, fr, v(0.15 * b, 0, hip + 0.2), 0.06 * s, 0.36 * b * s, 0.1 * s, wc);
   }
   // Head, helmet a shade darker so the face shows the way they look.
   blob(F, fr, v(0.02, 0, chest + 0.14), v(0.11, 0.1, 0.12), PAINT.skin);
@@ -134,10 +159,12 @@ export function personInto(k: Kit, spec: PersonSpec = {}): PersonAnchors {
   const hands: [number, number, number] = out ? v(0.55, 0, shoulder - 0.08) : v(0.42, 0.04, shoulder - 0.2);
   if (carry === 'shield') {
     // The left arm holds the shield's grip, the right a handgun past its edge.
-    tube(T, fr, v(0, -0.25 * b, shoulder), v(0.36, -0.1, shoulder - 0.2), 0.05 * b * s, 0.045 * b * s, grey(0.78), 5);
-    tube(T, fr, v(0, 0.25 * b, shoulder), v(0.45, 0.36, shoulder - 0.1), 0.05 * b * s, 0.045 * b * s, grey(0.78), 5);
+    const [ab, ac] = P('top', 0.78, 0.85);
+    tube(ab, fr, v(0, -0.25 * b, shoulder), v(0.36, -0.1, shoulder - 0.2), 0.05 * b * s, 0.045 * b * s, ac, 5);
+    tube(ab, fr, v(0, 0.25 * b, shoulder), v(0.45, 0.36, shoulder - 0.1), 0.05 * b * s, 0.045 * b * s, ac, 5);
   } else {
-    for (const side of [-0.25 * b, 0.25 * b]) tube(T, fr, v(0, side, shoulder), hands, 0.05 * b * s, 0.045 * b * s, grey(0.78), 5);
+    const [ab, ac] = P('top', 0.78, 0.85);
+    for (const side of [-0.25 * b, 0.25 * b]) tube(ab, fr, v(0, side, shoulder), hands, 0.05 * b * s, 0.045 * b * s, ac, 5);
   }
   if (carry === 'rifle') tube(F, fr, v(0.12, 0.08, shoulder - 0.12), v(0.92, 0.04, shoulder - 0.2), 0.035 * s, 0.025 * s, PAINT.dark, 6);
   if (carry === 'sniper') {
@@ -173,15 +200,19 @@ export function personInto(k: Kit, spec: PersonSpec = {}): PersonAnchors {
     const kind = spec.shield ?? 'standard';
     const [sw, sh] = kind === 'tall' ? [0.72, crouch ? 1.2 : 1.6] : kind === 'riot' ? [0.66, crouch ? 1.1 : 1.4] : [0.6, 1.0];
     const mid = kind === 'standard' ? (crouch ? 0.55 : 0.98) : sh / 2 + 0.02;
-    block(T, fr, v(0.42, -0.04, mid), 0.05 * s, sw * s, sh * s, SHIELD);
+    block(o ? F : T, fr, v(0.42, -0.04, mid), 0.05 * s, sw * s, sh * s, SHIELD);
     block(F, fr, v(0.45, -0.04, chest + 0.1), 0.02 * s, 0.26 * s, 0.08 * s, PAINT.glass);
     block(F, fr, v(0.52, 0.38, shoulder - 0.08), 0.18 * s, 0.035 * s, 0.13 * s, PAINT.dark);
   }
   if (spec.band) {
-    for (const side of [-0.25 * b, 0.25 * b]) block(F, fr, v(0.03, side * 1.02, shoulder - 0.08), 0.12 * s, 0.11 * s, 0.07 * s, spec.band);
+    // Without the team's colour on the body (an outfit), the arm bands are broader.
+    const ab = o ? 1.35 : 1;
+    for (const side of [-0.25 * b, 0.25 * b]) block(F, fr, v(0.03, side * 1.02, shoulder - (o ? 0.1 : 0.08)), 0.12 * ab * s, 0.11 * ab * s, 0.07 * ab * ab * s, spec.band);
     if (helmet) block(F, fr, v(-0.01, 0, chest + 0.16), 0.31 * s, 0.29 * s, 0.035 * s, spec.band);
   }
   return { prone: false, head: v(0.02, 0, chest + 0.14), hip: hip * s, chest: chest * s, shoulder: shoulder * s, hands, bulk: b, s };
 }
 
 const WHITE_SHADE: Rgb = [0.95, 0.95, 0.95];
+
+const scale = (c: Rgb, k: number): Rgb => [Math.min(1, c[0] * k), Math.min(1, c[1] * k), Math.min(1, c[2] * k)];
