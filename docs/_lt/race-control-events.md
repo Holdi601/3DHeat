@@ -4,9 +4,9 @@ parent: "Lenktynių analizė"
 nav_order: 54
 lang: "lt"
 source: "race-control-events.md"
-source_hash: "9ab565885c61"
+source_hash: "18fe9a0507bc"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Automobilio valdymo įvykiai
@@ -145,7 +145,7 @@ Kiekvienas automobilis taip pat gauna:
 | **airborne** | `airborne` virš 0,5 | - |
 | **hit**, **crash** | žr. [Smūgiai ir avarijos](#hits-and-crashes) | greitis, kurį smūgis atėmė |
 
-Dreifo kampo minimumai pagal paviršių: asfaltas **7°**, mišri **10°**, biri ir sniegas **15°**, ledas **10°**. Automobilis, kuris paprastai slysta labiau - arkadinis padangos modelis, žvyro specialistas - turi savo, aukštesnę ribą pagal savo ratus (1,5 × jo įprotis).
+Dreifo kampo minimumai pagal paviršių: asfaltas **7°**, mišri **10°**, biri ir sniegas **15°**, ledas **10°**. Jos remiasi literatūra: padangos šoninio slydimo kampas asfalte pasiekia piką ties 3–10°, o lengvojo automobilio kėbulo slydimo kampo stabilumo riba sausame asfalte yra apie 12°, tuo tarpu ralis ir dreifas važiuojami 30–50° kampu ([Lenktynių analitika, šaltiniai](race-analytics.md#sources)). Automobilis, kuris paprastai slysta labiau - arkadinis padangos modelis, žvyro specialistas - turi savo, aukštesnę ribą pagal savo ratus (1,5 × jo įprotis).
 
 **Kuria kryptimi automobilis sukasi** (dėl „prieš posūkį"): kelio, kuriuo ratas važiavo, krypties pokytis per ±6 m (bent 2 tinklelio taškai); griežčiau nei 600 m spindulys laikoma posūkiu; dešinė ar kairė priklauso nuo to, ar pasaulis veidrodinis. Vairas yra **prieš** posūkį, kai abs(vairas) > 0,05 ir jo ženklas priešingas posūkiui - slydimas **sugaunamas** priešingu vairu.
 

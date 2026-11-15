@@ -3,9 +3,9 @@ title: "Αρχική"
 nav_order: 1
 lang: "el"
 source: "index.md"
-source_hash: "25c1fded750f"
+source_hash: "88cb04e3aeb4"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -119,19 +119,19 @@ npm run dev      # http://127.0.0.1:5273
 
 Ο περιηγητής διαβάζει δεδομένα· αυτά τα εργαλεία τα φτιάχνουν. Το καθένα είναι δικό του δημόσιο αποθετήριο (MIT) με τη δική του τεκμηρίωση. Κανένα δεν συνοδεύεται από δεδομένα παιχνιδιών: τα επίπεδα, οι χάρτες και οι εγγραφές φτιάχνονται στον δικό σας υπολογιστή, από παιχνίδια που σας ανήκουν.
 
-| Αποθετήριο | Τι κάνει | Χρήσιμο για |
-|---|---|---|
-| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Διαβάζει πίστες και επίπεδα από τα αρχεία που συνοδεύουν τα παιχνίδια (Forza Horizon, BeamNG, Assetto Corsa Rally· αναγνώστες για Unreal, Unity, Frostbite και Source 2) σε μορφή glTF | ένα τρισδιάστατο επίπεδο κάτω από τη θερμότητα ή την επανάληψή σας |
-| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Καταγράφει τηλεμετρία γύρων από τις διεπαφές που δημοσιεύουν τα αγωνιστικά παιχνίδια, και ξαναφτιάχνει επίπεδα από βίντεο παιχνιδιού | γύρους για την Ανάλυση αγώνα· ένα επίπεδο όπου δεν μπορούν να διαβαστούν αρχεία |
-| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Πρόσθετο του Unreal Editor που εξάγει ένα επίπεδο ως ένα αρχείο glTF | επίπεδα από δικά σας έργα Unreal |
-| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Demos του Counter-Strike 2 σε πίνακες χαρτών θερμότητας και συνόψεις αγώνων, χάρτες CS2 σε γεωμετρία | θερμότητα CS2, επαναλήψεις και την καρτέλα Αγώνας |
-| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Καταγράφει το παιχνίδι σας στο παρασκήνιο από όσα δημοσιεύουν τα παιχνίδια: τηλεμετρία, ενσωματώσεις κατάστασης παιχνιδιού, αρχεία καταγραφής, επαναλήψεις | τα δικά σας στατιστικά χωρίς να κάνετε τίποτα με το χέρι |
-| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | Επαναλήψεις του War Thunder (`.wrpl`) σε πίνακες: διαδρομές αέρος και εδάφους, βολές, χτυπήματα, σκοτωμούς, πύργους, στόχους | επαναλήψεις War Thunder, σημάδια χτυπημάτων και συμπεράσματα |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | Επαναλήψεις του World of Tanks σε πίνακες: η θέση κάθε οχήματος, θάνατοι και σκοτωμοί | θερμότητα και επαναλήψεις World of Tanks |
-| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | Επαναλήψεις του World of Warships σε πίνακες: η θέση κάθε πλοίου και οι βυθίσεις | θερμότητα και επαναλήψεις World of Warships |
-| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Demos διακομιστών Squad σε πίνακες: η θέση, η ομάδα και το τάγμα κάθε παίκτη | θερμότητα και επαναλήψεις Squad |
-| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | Εδάφη του DCS World από τη δική σας εγκατάσταση σε επίπεδα: έδαφος, δρόμοι, πόλεις, αεροδρόμια, χωράφια, νερό | DCS και εγγραφές Tacview πάνω στο πραγματικό τους έδαφος |
-| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | Χάρτες του IL-2 Great Battles σε επίπεδα | εγγραφές IL-2 πάνω στον χάρτη τους |
+| Αποθετήριο | Τι κάνει | Χρήσιμο για | Τεκμηρίωση |
+|---|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Διαβάζει πίστες και επίπεδα από τα αρχεία που συνοδεύουν τα παιχνίδια (Forza Horizon, BeamNG, Assetto Corsa Rally· αναγνώστες για Unreal, Unity, Frostbite και Source 2) σε μορφή glTF | ένα τρισδιάστατο επίπεδο κάτω από τη θερμότητα ή την επανάληψή σας | [ιστότοπος](https://holdi601.github.io/3DHeat-GameFiles/) |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Καταγράφει τηλεμετρία γύρων από τις διεπαφές που δημοσιεύουν τα αγωνιστικά παιχνίδια, και ξαναφτιάχνει επίπεδα από βίντεο παιχνιδιού | γύρους για την Ανάλυση αγώνα· ένα επίπεδο όπου δεν μπορούν να διαβαστούν αρχεία | [ιστότοπος](https://holdi601.github.io/3DHeat-GameCapture/) |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Πρόσθετο του Unreal Editor που εξάγει ένα επίπεδο ως ένα αρχείο glTF | επίπεδα από δικά σας έργα Unreal | [ιστότοπος](https://holdi601.github.io/3DHeat-UnrealExporter/) |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Demos του Counter-Strike 2 σε πίνακες χαρτών θερμότητας και συνόψεις αγώνων, χάρτες CS2 σε γεωμετρία | θερμότητα CS2, επαναλήψεις και την καρτέλα Αγώνας | [ιστότοπος](https://holdi601.github.io/3DHeat-CS2/) |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Καταγράφει το παιχνίδι σας στο παρασκήνιο από όσα δημοσιεύουν τα παιχνίδια: τηλεμετρία, ενσωματώσεις κατάστασης παιχνιδιού, αρχεία καταγραφής, επαναλήψεις | τα δικά σας στατιστικά χωρίς να κάνετε τίποτα με το χέρι | [ιστότοπος](https://holdi601.github.io/3DHeat-Watcher/) |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | Επαναλήψεις του War Thunder (`.wrpl`) σε πίνακες: διαδρομές αέρος και εδάφους, βολές, χτυπήματα, σκοτωμούς, πύργους, στόχους | επαναλήψεις War Thunder, σημάδια χτυπημάτων και συμπεράσματα | [ιστότοπος](https://holdi601.github.io/3DHeat-Ext-WarThunder/) |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | Επαναλήψεις του World of Tanks σε πίνακες: η θέση κάθε οχήματος, θάνατοι και σκοτωμοί | θερμότητα και επαναλήψεις World of Tanks | [ιστότοπος](https://holdi601.github.io/3DHeat-Ext-WoT/) |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | Επαναλήψεις του World of Warships σε πίνακες: η θέση κάθε πλοίου και οι βυθίσεις | θερμότητα και επαναλήψεις World of Warships | [ιστότοπος](https://holdi601.github.io/3DHeat-Ext-WoWs/) |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Demos διακομιστών Squad σε πίνακες: η θέση, η ομάδα και το τάγμα κάθε παίκτη | θερμότητα και επαναλήψεις Squad | [ιστότοπος](https://holdi601.github.io/3DHeat-Ext-Squad/) |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | Εδάφη του DCS World από τη δική σας εγκατάσταση σε επίπεδα: έδαφος, δρόμοι, πόλεις, αεροδρόμια, χωράφια, νερό | DCS και εγγραφές Tacview πάνω στο πραγματικό τους έδαφος | [ιστότοπος](https://holdi601.github.io/3DHeat-Ext-DCS/) |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | Χάρτες του IL-2 Great Battles σε επίπεδα | εγγραφές IL-2 πάνω στον χάρτη τους | [ιστότοπος](https://holdi601.github.io/3DHeat-Ext-IL2/) |
 
 ## Συνοπτικά, η δομή του κώδικα {#source-layout-briefly}
 

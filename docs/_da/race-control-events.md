@@ -4,9 +4,9 @@ parent: "Løbsanalyse"
 nav_order: 54
 lang: "da"
 source: "race-control-events.md"
-source_hash: "9ab565885c61"
+source_hash: "18fe9a0507bc"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Hændelser for bilkontrol
@@ -145,7 +145,7 @@ Hver bil får også:
 | **airborne** | `airborne` over 0,5 | - |
 | **hit**, **crash** | se [Træf og styrt](#hits-and-crashes) | den fart stødet tog |
 
-Driftvinkel-gulve pr. underlag: asfalt **7°**, blandet **10°**, løst og sne **15°**, is **10°**. En bil, der glider mere som en selvfølge - en arkademodel for dæk, en grussspecialist - har sin egen, højere grænse ud fra sine egne runder (1,5 × dens vane).
+Driftvinkel-gulve pr. underlag: asfalt **7°**, blandet **10°**, løst og sne **15°**, is **10°**. De følger litteraturen: et dæks slipvinkel topper ved 3-10° på asfalt, og en personbils stabilitetsgrænse for karrossens slipvinkel er omkring 12° på tør asfalt, mens rally og drifting køres ved 30-50° ([Løbsanalyse, kilder](race-analytics.md#sources)). En bil, der glider mere som en selvfølge - en arkademodel for dæk, en grussspecialist - har sin egen, højere grænse ud fra sine egne runder (1,5 × dens vane).
 
 **Hvilken vej bilen drejer** (til "mod svinget"): ændringen i rundens egen bane over ±6 m (mindst 2 gitterpunkter); strammere end en 600 m radius tæller som sving; højre eller venstre efter om verden er spejlvendt. Styringen er **mod** svinget, når abs(styr) > 0,05, og fortegnet er modsat svinget - en glidning der bliver **fanget** med modsat rat.
 

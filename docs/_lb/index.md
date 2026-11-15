@@ -3,9 +3,9 @@ title: "Heem"
 nav_order: 1
 lang: "lb"
 source: "index.md"
-source_hash: "25c1fded750f"
+source_hash: "88cb04e3aeb4"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -118,19 +118,19 @@ De Server bindet nëmmen un `127.0.0.1`, sou datt keen vun deenen Weeër vum Net
 
 De Viewer liest Daten; dës Werkzeich maachen s. All ass en eegent ëffentlecht Repository (MIT) mat der eegener Dokumentatioun. Keent vun hinnen liwwert Spillmaterial: Levelen, Kaarten a Opnamen ginn op Ärem eegenen Rechner gemaach, aus Spiller, déi Dir besëtzt.
 
-| Repository | Wat et mécht | Gutt fir |
-|---|---|---|
-| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Liest Kurse a Levelen aus den Archiven, déi Spiller mat sech bréngen (Forza Horizon, BeamNG, Assetto Corsa Rally; Lieser fir Unreal, Unity, Frostbite a Source 2) als glTF | en 3D-Level ënner Ärer Hëtzt oder Ärem Replay |
-| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Nimmt Rondentelemetrie aus den Schnëttstellen op, déi Rennspiller veröffentlechen, a baut Levelen aus Spillvideoe nei op | Ronnen fir d'Course-Analys; e Level, wou keng Dateie gelies kënne ginn |
-| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Plugin fir den Unreal Editor, deen e Level als eng glTF-Datei exportéiert | Levelen vun Ären eegenen Unreal-Projeten |
-| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike-2-Demoen an Hëtzttabellen an Zesummefassunge vun de Matcher, CS2-Kaarte an Geometrie | CS2-Hëtzt, Replayen an de Match-Tab |
-| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Nimmt Äert Spill am Hannergrond op, aus deem wat d'Spiller verëffentlechen: Telemetrie, Spillstatus-Integratiounen, Logbicher, Replayen | Är eegen Statistiken, ouni datt Dir eppes Hand maacht |
-| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War-Thunder-Replayen (`.wrpl`) an Tabellen: Luft- a Buedemspueren, Schëss, Treffer, Ofschoss, Tierm, Ziler | War-Thunder-Replayen, Treffermarken a Erkenntnisser |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World-of-Tanks-Replayen an Tabellen: d'Positioun all Gefier, Doudesfäll an Ofschoss | World-of-Tanks-Hëtzt a Replayen |
-| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World-of-Warships-Replayen an Tabellen: d'Positioun vum all Schëff an d'Versenkungen | World-of-Warships-Hëtzt a Replayen |
-| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squad-Serverdemoen an Tabellen: d'Positioun vun all Spiller, Team a Squad | Squad-Hëtzt a Replayen |
-| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | DCS-World-Terrainen aus Ärer eegener Installatioun zu Levelen: Buedem, Stroosse, Dierfer, Fligerhaff, Felder, Waasser | DCS- an Tacview-Opnamen op hirem richtege Terrain |
-| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | IL-2-Great-Battles-Kaarte fir Levelen | IL-2-Opnamen op hirer Kaart |
+| Repository | Wat et mécht | Gutt fir | Dokumentatioun |
+|---|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Liest Kurse a Levelen aus den Archiven, déi Spiller mat sech bréngen (Forza Horizon, BeamNG, Assetto Corsa Rally; Lieser fir Unreal, Unity, Frostbite a Source 2) als glTF | en 3D-Level ënner Ärer Hëtzt oder Ärem Replay | [Websäit](https://holdi601.github.io/3DHeat-GameFiles/) |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Nimmt Rondentelemetrie aus den Schnëttstellen op, déi Rennspiller veröffentlechen, a baut Levelen aus Spillvideoe nei op | Ronnen fir d'Course-Analys; e Level, wou keng Dateie gelies kënne ginn | [Websäit](https://holdi601.github.io/3DHeat-GameCapture/) |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Plugin fir den Unreal Editor, deen e Level als eng glTF-Datei exportéiert | Levelen vun Ären eegenen Unreal-Projeten | [Websäit](https://holdi601.github.io/3DHeat-UnrealExporter/) |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike-2-Demoen an Hëtzttabellen an Zesummefassunge vun de Matcher, CS2-Kaarte an Geometrie | CS2-Hëtzt, Replayen an de Match-Tab | [Websäit](https://holdi601.github.io/3DHeat-CS2/) |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Nimmt Äert Spill am Hannergrond op, aus deem wat d'Spiller verëffentlechen: Telemetrie, Spillstatus-Integratiounen, Logbicher, Replayen | Är eegen Statistiken, ouni datt Dir eppes Hand maacht | [Websäit](https://holdi601.github.io/3DHeat-Watcher/) |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War-Thunder-Replayen (`.wrpl`) an Tabellen: Luft- a Buedemspueren, Schëss, Treffer, Ofschoss, Tierm, Ziler | War-Thunder-Replayen, Treffermarken a Erkenntnisser | [Websäit](https://holdi601.github.io/3DHeat-Ext-WarThunder/) |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World-of-Tanks-Replayen an Tabellen: d'Positioun all Gefier, Doudesfäll an Ofschoss | World-of-Tanks-Hëtzt a Replayen | [Websäit](https://holdi601.github.io/3DHeat-Ext-WoT/) |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World-of-Warships-Replayen an Tabellen: d'Positioun vum all Schëff an d'Versenkungen | World-of-Warships-Hëtzt a Replayen | [Websäit](https://holdi601.github.io/3DHeat-Ext-WoWs/) |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squad-Serverdemoen an Tabellen: d'Positioun vun all Spiller, Team a Squad | Squad-Hëtzt a Replayen | [Websäit](https://holdi601.github.io/3DHeat-Ext-Squad/) |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | DCS-World-Terrainen aus Ärer eegener Installatioun zu Levelen: Buedem, Stroosse, Dierfer, Fligerhaff, Felder, Waasser | DCS- an Tacview-Opnamen op hirem richtege Terrain | [Websäit](https://holdi601.github.io/3DHeat-Ext-DCS/) |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | IL-2-Great-Battles-Kaarte fir Levelen | IL-2-Opnamen op hirer Kaart | [Websäit](https://holdi601.github.io/3DHeat-Ext-IL2/) |
 
 ## Quelltext-Opbau, kuerz {#source-layout-briefly}
 

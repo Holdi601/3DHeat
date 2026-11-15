@@ -3,9 +3,9 @@ title: "Головна"
 nav_order: 1
 lang: "uk"
 source: "index.md"
-source_hash: "25c1fded750f"
+source_hash: "88cb04e3aeb4"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -120,19 +120,19 @@ npm run dev      # http://127.0.0.1:5273
 
 Переглядач читає дані; ці інструменти їх створюють. Кожен - окремий публічний репозиторій (MIT) з власною документацією. Жоден не постачає ігрових даних: рівні, карти й записи створюються на вашому комп’ютері, з ігор, які у вас є.
 
-| Репозиторій | Що робить | Корисно для |
-|---|---|---|
-| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Читає траси і рівні з архівів, які постачають ігри (Forza Horizon, BeamNG, Assetto Corsa Rally; читачі Unreal, Unity, Frostbite і Source 2) у форматі glTF | 3D-рівень під вашим теплом або розбором |
-| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Записує телеметрію кіл з інтерфейсів, які публікують гонкові ігри, і відтворює рівні з ігрового відео | кола для Аналізу заїздів; рівень там, де файли не читаються |
-| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Плагін Unreal Editor, який експортує рівень одним файлом glTF | рівні ваших проєктів Unreal |
-| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Демо Counter-Strike 2 у таблиці теплової карти і зведення матчів, карти CS2 у геометрію | тепло CS2, розбори і вкладка Матч |
-| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Записує вашу гру у фоні з того, що публікують ігри: телеметрія, інтеграції стану гри, журнали, повтори | вашу власну статистику без ручної роботи |
-| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | Повтори War Thunder (`.wrpl`) у таблиці: треки в повітрі й на землі, постріли, влучання, знищення, башти, цілі | повтори War Thunder, позначки влучань і висновки |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | Повтори World of Tanks у таблиці: позиція кожної машини, смерті й знищення | тепло і повтори World of Tanks |
-| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | Повтори World of Warships у таблиці: позиція кожного корабля і потоплення | тепло і повтори World of Warships |
-| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Демо серверів Squad у таблиці: позиція, команда й загін кожного гравця | тепло і повтори Squad |
-| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | Місцевості DCS World з вашої інсталяції в рівні: земля, дороги, міста, аеродроми, поля, вода | DCS і записи Tacview на їхній справжній місцевості |
-| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | Карти IL-2 Great Battles у рівні | записи IL-2 на їхній карті |
+| Репозиторій | Що робить | Корисно для | Документація |
+|---|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Читає траси і рівні з архівів, які постачають ігри (Forza Horizon, BeamNG, Assetto Corsa Rally; читачі Unreal, Unity, Frostbite і Source 2) у форматі glTF | 3D-рівень під вашим теплом або розбором | [сайт](https://holdi601.github.io/3DHeat-GameFiles/) |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Записує телеметрію кіл з інтерфейсів, які публікують гонкові ігри, і відтворює рівні з ігрового відео | кола для Аналізу заїздів; рівень там, де файли не читаються | [сайт](https://holdi601.github.io/3DHeat-GameCapture/) |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Плагін Unreal Editor, який експортує рівень одним файлом glTF | рівні ваших проєктів Unreal | [сайт](https://holdi601.github.io/3DHeat-UnrealExporter/) |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Демо Counter-Strike 2 у таблиці теплової карти і зведення матчів, карти CS2 у геометрію | тепло CS2, розбори і вкладка Матч | [сайт](https://holdi601.github.io/3DHeat-CS2/) |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Записує вашу гру у фоні з того, що публікують ігри: телеметрія, інтеграції стану гри, журнали, повтори | вашу власну статистику без ручної роботи | [сайт](https://holdi601.github.io/3DHeat-Watcher/) |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | Повтори War Thunder (`.wrpl`) у таблиці: треки в повітрі й на землі, постріли, влучання, знищення, башти, цілі | повтори War Thunder, позначки влучань і висновки | [сайт](https://holdi601.github.io/3DHeat-Ext-WarThunder/) |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | Повтори World of Tanks у таблиці: позиція кожної машини, смерті й знищення | тепло і повтори World of Tanks | [сайт](https://holdi601.github.io/3DHeat-Ext-WoT/) |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | Повтори World of Warships у таблиці: позиція кожного корабля і потоплення | тепло і повтори World of Warships | [сайт](https://holdi601.github.io/3DHeat-Ext-WoWs/) |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Демо серверів Squad у таблиці: позиція, команда й загін кожного гравця | тепло і повтори Squad | [сайт](https://holdi601.github.io/3DHeat-Ext-Squad/) |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | Місцевості DCS World з вашої інсталяції в рівні: земля, дороги, міста, аеродроми, поля, вода | DCS і записи Tacview на їхній справжній місцевості | [сайт](https://holdi601.github.io/3DHeat-Ext-DCS/) |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | Карти IL-2 Great Battles у рівні | записи IL-2 на їхній карті | [сайт](https://holdi601.github.io/3DHeat-Ext-IL2/) |
 
 ## Структура коду, коротко {#source-layout-briefly}
 

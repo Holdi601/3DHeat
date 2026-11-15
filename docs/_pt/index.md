@@ -3,9 +3,9 @@ title: "Início"
 nav_order: 1
 lang: "pt"
 source: "index.md"
-source_hash: "25c1fded750f"
+source_hash: "88cb04e3aeb4"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -120,19 +120,19 @@ O servidor liga-se apenas a `127.0.0.1`, pelo que nenhuma destas rotas é acess�
 
 O visualizador lê dados; estas ferramentas criam-nos. Cada uma é um repositório público próprio (MIT) com a sua própria documentação. Nenhuma inclui dados de jogos: os níveis, mapas e gravações são feitos na sua própria máquina, a partir de jogos que possui.
 
-| Repositório | O que faz | Útil para |
-|---|---|---|
-| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Lê percursos e níveis dos arquivos que os jogos distribuem (Forza Horizon, BeamNG, Assetto Corsa Rally; leitores de Unreal, Unity, Frostbite e Source 2) em glTF | um nível 3D por baixo do seu calor ou da sua repetição |
-| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Grava a telemetria das voltas a partir das interfaces que os jogos de corrida publicam, e reconstrói níveis a partir de vídeo de jogo | voltas para a Análise de corrida; um nível onde não se conseguem ler ficheiros |
-| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Plugin do Unreal Editor que exporta um nível como um único ficheiro glTF | níveis dos seus próprios projetos Unreal |
-| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Demos de Counter-Strike 2 em tabelas de mapa de calor e resumos de partidas; mapas de CS2 em geometria | calor de CS2, repetições e o separador Partida |
-| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Regista o seu jogo em segundo plano a partir do que os jogos publicam: telemetria, integrações de estado de jogo, registos, repetições | as suas próprias estatísticas sem fazer nada à mão |
-| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | Repetições de War Thunder (`.wrpl`) em tabelas: trajetos aéreos e terrestres, disparos, impactos, abates, torres, objetivos | repetições de War Thunder, marcas de impactos e descobertas |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | Repetições de World of Tanks em tabelas: a posição de cada veículo, mortes e abates | calor e repetições de World of Tanks |
-| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | Repetições de World of Warships em tabelas: a posição de cada navio e os afundamentos | calor e repetições de World of Warships |
-| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Demos de servidores de Squad em tabelas: a posição, equipa e esquadra de cada jogador | calor e repetições de Squad |
-| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | Terrenos do DCS World da sua própria instalação para níveis: solo, estradas, cidades, aeródromos, campos, água | DCS e gravações Tacview sobre o seu terreno real |
-| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | Mapas do IL-2 Great Battles em níveis | gravações do IL-2 sobre o seu mapa |
+| Repositório | O que faz | Útil para | Documentação |
+|---|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Lê percursos e níveis dos arquivos que os jogos distribuem (Forza Horizon, BeamNG, Assetto Corsa Rally; leitores de Unreal, Unity, Frostbite e Source 2) em glTF | um nível 3D por baixo do seu calor ou da sua repetição | [site](https://holdi601.github.io/3DHeat-GameFiles/) |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Grava a telemetria das voltas a partir das interfaces que os jogos de corrida publicam, e reconstrói níveis a partir de vídeo de jogo | voltas para a Análise de corrida; um nível onde não se conseguem ler ficheiros | [site](https://holdi601.github.io/3DHeat-GameCapture/) |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Plugin do Unreal Editor que exporta um nível como um único ficheiro glTF | níveis dos seus próprios projetos Unreal | [site](https://holdi601.github.io/3DHeat-UnrealExporter/) |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Demos de Counter-Strike 2 em tabelas de mapa de calor e resumos de partidas; mapas de CS2 em geometria | calor de CS2, repetições e o separador Partida | [site](https://holdi601.github.io/3DHeat-CS2/) |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Regista o seu jogo em segundo plano a partir do que os jogos publicam: telemetria, integrações de estado de jogo, registos, repetições | as suas próprias estatísticas sem fazer nada à mão | [site](https://holdi601.github.io/3DHeat-Watcher/) |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | Repetições de War Thunder (`.wrpl`) em tabelas: trajetos aéreos e terrestres, disparos, impactos, abates, torres, objetivos | repetições de War Thunder, marcas de impactos e descobertas | [site](https://holdi601.github.io/3DHeat-Ext-WarThunder/) |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | Repetições de World of Tanks em tabelas: a posição de cada veículo, mortes e abates | calor e repetições de World of Tanks | [site](https://holdi601.github.io/3DHeat-Ext-WoT/) |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | Repetições de World of Warships em tabelas: a posição de cada navio e os afundamentos | calor e repetições de World of Warships | [site](https://holdi601.github.io/3DHeat-Ext-WoWs/) |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Demos de servidores de Squad em tabelas: a posição, equipa e esquadra de cada jogador | calor e repetições de Squad | [site](https://holdi601.github.io/3DHeat-Ext-Squad/) |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | Terrenos do DCS World da sua própria instalação para níveis: solo, estradas, cidades, aeródromos, campos, água | DCS e gravações Tacview sobre o seu terreno real | [site](https://holdi601.github.io/3DHeat-Ext-DCS/) |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | Mapas do IL-2 Great Battles em níveis | gravações do IL-2 sobre o seu mapa | [site](https://holdi601.github.io/3DHeat-Ext-IL2/) |
 
 ## Estrutura do código, em resumo {#source-layout-briefly}
 

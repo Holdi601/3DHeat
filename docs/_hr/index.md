@@ -3,9 +3,9 @@ title: "Početna"
 nav_order: 1
 lang: "hr"
 source: "index.md"
-source_hash: "25c1fded750f"
+source_hash: "88cb04e3aeb4"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -119,19 +119,19 @@ Poslužitelj se veže samo na `127.0.0.1`, pa do obje rute nije moguće doći s 
 
 Preglednik čita podatke; ovi alati ih stvaraju. Svaki je zaseban javni repozitorij (MIT) s vlastitom dokumentacijom. Nijedan ne isporučuje podatke iz igara: razine, karte i snimke izrađuju se na vašem računalu, iz igara koje posjedujete.
 
-| Repozitorij | Što radi | Korisno za |
-|---|---|---|
-| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Čita staze i razine iz arhiva koje igre isporučuju (Forza Horizon, BeamNG, Assetto Corsa Rally; čitači za Unreal, Unity, Frostbite i Source 2) kao glTF | 3D razinu ispod vaše topline ili reprodukcije |
-| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Bilježi telemetriju krugova iz sučelja koja utrkaške igre objavljuju, i rekonstruira razine iz videa igranja | krugove za Analizu utrke; razinu tamo gdje se datoteke ne mogu čitati |
-| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Dodatak za Unreal Editor koji izvozi razinu kao jednu glTF datoteku | razine vaših vlastitih Unreal projekata |
-| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike 2 demo snimke u tablice toplinskih karata i sažetke utakmica, CS2 karte u geometriju | CS2 toplinu, reprodukcije i karticu Meč |
-| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Bilježi vašu igru u pozadini iz onoga što igre objavljuju: telemetriju, integracije stanja igre, zapisnike, reprodukcije | vašu vlastitu statistiku bez ručnog rada |
-| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War Thunder reprodukcije (`.wrpl`) u tablice: zračne i kopnene putanje, pucanja, pogodci, ubojstva, kupole, ciljevi | War Thunder reprodukcije, oznake pogodaka i uvide |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World of Tanks reprodukcije u tablice: položaj svakog vozila, smrti i ubojstva | World of Tanks toplinu i reprodukcije |
-| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World of Warships reprodukcije u tablice: položaj svakog broda i potonuća | World of Warships toplinu i reprodukcije |
-| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squad demo snimke servera u tablice: položaj, tim i odred svakog igrača | Squad toplinu i reprodukcije |
-| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | DCS World terene iz vaše vlastite instalacije u razine: tlo, ceste, gradove, zračne luke, polja, vodu | DCS i Tacview snimke na njihovom stvarnom terenu |
-| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | IL-2 Great Battles karte u razine | IL-2 snimke na njihovoj karti |
+| Repozitorij | Što radi | Korisno za | Dokumentacija |
+|---|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Čita staze i razine iz arhiva koje igre isporučuju (Forza Horizon, BeamNG, Assetto Corsa Rally; čitači za Unreal, Unity, Frostbite i Source 2) kao glTF | 3D razinu ispod vaše topline ili reprodukcije | [stranica](https://holdi601.github.io/3DHeat-GameFiles/) |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Bilježi telemetriju krugova iz sučelja koja utrkaške igre objavljuju, i rekonstruira razine iz videa igranja | krugove za Analizu utrke; razinu tamo gdje se datoteke ne mogu čitati | [stranica](https://holdi601.github.io/3DHeat-GameCapture/) |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Dodatak za Unreal Editor koji izvozi razinu kao jednu glTF datoteku | razine vaših vlastitih Unreal projekata | [stranica](https://holdi601.github.io/3DHeat-UnrealExporter/) |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike 2 demo snimke u tablice toplinskih karata i sažetke utakmica, CS2 karte u geometriju | CS2 toplinu, reprodukcije i karticu Meč | [stranica](https://holdi601.github.io/3DHeat-CS2/) |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Bilježi vašu igru u pozadini iz onoga što igre objavljuju: telemetriju, integracije stanja igre, zapisnike, reprodukcije | vašu vlastitu statistiku bez ručnog rada | [stranica](https://holdi601.github.io/3DHeat-Watcher/) |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War Thunder reprodukcije (`.wrpl`) u tablice: zračne i kopnene putanje, pucanja, pogodci, ubojstva, kupole, ciljevi | War Thunder reprodukcije, oznake pogodaka i uvide | [stranica](https://holdi601.github.io/3DHeat-Ext-WarThunder/) |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World of Tanks reprodukcije u tablice: položaj svakog vozila, smrti i ubojstva | World of Tanks toplinu i reprodukcije | [stranica](https://holdi601.github.io/3DHeat-Ext-WoT/) |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World of Warships reprodukcije u tablice: položaj svakog broda i potonuća | World of Warships toplinu i reprodukcije | [stranica](https://holdi601.github.io/3DHeat-Ext-WoWs/) |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squad demo snimke servera u tablice: položaj, tim i odred svakog igrača | Squad toplinu i reprodukcije | [stranica](https://holdi601.github.io/3DHeat-Ext-Squad/) |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | DCS World terene iz vaše vlastite instalacije u razine: tlo, ceste, gradove, zračne luke, polja, vodu | DCS i Tacview snimke na njihovom stvarnom terenu | [stranica](https://holdi601.github.io/3DHeat-Ext-DCS/) |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | IL-2 Great Battles karte u razine | IL-2 snimke na njihovoj karti | [stranica](https://holdi601.github.io/3DHeat-Ext-IL2/) |
 
 ## Raspored izvornog koda, ukratko {#source-layout-briefly}
 

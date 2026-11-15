@@ -4,9 +4,9 @@ parent: "Analiza utrke"
 nav_order: 54
 lang: "hr"
 source: "race-control-events.md"
-source_hash: "9ab565885c61"
+source_hash: "18fe9a0507bc"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Događaji kontrole automobila
@@ -145,7 +145,7 @@ Svaki automobil dobiva i:
 | **airborne** | `airborne` iznad 0,5 | - |
 | **hit**, **crash** | vidi [Pogodci i padovi](#hits-and-crashes) | brzina koju je udar oduzeo |
 
-Pragovi nagiba driftanja po podlozi: asfalt **7°**, mješovita **10°**, rahla i snijeg **15°**, led **10°**. Automobil koji se po sebi više kliže (model gume za arkadu, specijalist za šljunak) ima vlastiti, viši prag iz vlastitih krugova: 1,5 puta njegove navike.
+Pragovi nagiba driftanja po podlozi: asfalt **7°**, mješovita **10°**, rahla i snijeg **15°**, led **10°**. Prate literaturu: kut klizanja gume doseže vrhunac na 3–10° na asfaltu, a granica stabilnosti cestovnog automobila po kutu klizanja karoserije je oko 12° na suhom asfaltu, dok se reli i drift voze na 30–50° ([Analitika utrka, izvori](race-analytics.md#sources)). Automobil koji se po sebi više kliže (model gume za arkadu, specijalist za šljunak) ima vlastiti, viši prag iz vlastitih krugova: 1,5 puta njegove navike.
 
 **Kuda automobil skreće** (za "suprotno zavoju"): promjena smjera putanje kruga preko ±6 m (najmanje 2 točke mreže). Uža od radijusa 600 m računa se kao skretanje. Desno ili lijevo ovisi o tome je li svijet zrcaljen. Upravljanje je **suprotno** zavoju kad je abs(upravljanje) > 0,05 i predznak mu je suprotan skretanju, to jest klizanje se **hvata** suprotnim upravljanjem.
 

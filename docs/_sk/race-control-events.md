@@ -4,9 +4,9 @@ parent: "Analýza pretekov"
 nav_order: 54
 lang: "sk"
 source: "race-control-events.md"
-source_hash: "9ab565885c61"
+source_hash: "18fe9a0507bc"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Udalosti ovládania auta
@@ -145,7 +145,7 @@ Každé auto tiež dostane:
 | **airborne** | `airborne` nad 0,5 | - |
 | **hit**, **crash** | pozri [Zásahy a havárie](#hits-and-crashes) | rýchlosť, ktorú náraz odniesol |
 
-Prahy driftu podľa povrchu: asfalt **7°**, zmiešané **10°**, nespevnený a sneh **15°**, ľad **10°**. Auto, ktoré sa samozrejme šmýka viac - model pneumatík typu arkáda, špecialista na štrk - má vlastný, vyšší prah z vlastných kôl (1,5-násobok svojho návyku).
+Prahy driftu podľa povrchu: asfalt **7°**, zmiešané **10°**, nespevnený a sneh **15°**, ľad **10°**. Vychádzajú z literatúry: uhol šmyku pneumatiky má vrchol pri 3–10° na asfalte a hranica stability cestného auta podľa uhla šmyku karosérie je asi 12° na suchom asfalte, zatiaľ čo rely a drift sa jazdia pri 30–50° ([Analytika závodov, zdroje](race-analytics.md#sources)). Auto, ktoré sa samozrejme šmýka viac - model pneumatík typu arkáda, špecialista na štrk - má vlastný, vyšší prah z vlastných kôl (1,5-násobok svojho návyku).
 
 **Ktorým smerom sa auto otáča** (pre „proti zákrute“): zmena smeru vlastnej dráhy kola cez ±6 m (aspoň 2 body mriežky); užšie než polomer 600 m sa počíta ako zatáčanie; doprava alebo doľava podľa toho, či je svet zrkadlový. Riadenie je **proti** zákrute, keď abs(riadenie) > 0,05 a jeho znamienko je opačné k zákrute - šmyk **zachytený** opačným natočením volantu.
 

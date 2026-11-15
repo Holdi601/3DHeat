@@ -3,9 +3,9 @@ title: "Avaleht"
 nav_order: 1
 lang: "et"
 source: "index.md"
-source_hash: "25c1fded750f"
+source_hash: "88cb04e3aeb4"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -119,19 +119,19 @@ Server seob end ainult aadressiga `127.0.0.1`, nii et kumbagi marsruuti ei jõua
 
 Vaatur loeb andmeid; need tööriistad teevad need. Igaüks on oma avalik hoidla (MIT) oma dokumentatsiooniga. Ükski neist ei anna kaasa mängu andmeid: tasemed, kaardid ja salvestised tehakse sinu enda arvutis, mängudest, mis on sinu omad.
 
-| Hoidla | Mida ta teeb | Kasulik |
-|---|---|---|
-| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Loeb rajad ja tasemed välja arhiividest, mida mängud kaasa toovad (Forza Horizon, BeamNG, Assetto Corsa Rally; Unreal, Unity, Frostbite ja Source 2 lugejad) glTF-ina | 3D-tase sinu soojuse või kordusel alla |
-| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Salvestab ringitelemeetria, mida võidusõidumängud avaldavad, ja ehitab tasemed mängu videost | ringid Sõiduanalüüsi jaoks; tase kohas, kus failisid lugeda ei saa |
-| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Unreal Editori plugin, mis ekspordib taseme ühe glTF-failina | sinu enda Unreal-projektide tasemed |
-| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike 2 demod soojustabeliteks ja matšikokkuvõteteks, CS2 kaardid geomeetriaks | CS2 soojus, kordused ja Matši vahekaart |
-| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Salvestab sinu mängu taustal sellest, mida mängud avaldavad: telemeetria, mängu oleku integratsioonid, logid, kordused | sinu enda statistika ilma käsitsi tegemata |
-| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War Thunderi kordused (`.wrpl`) tabeliteks: õhu- ja maismaajäljed, lasud, tabamused, tapmised, torned, eesmärgid | War Thunderi kordused, tabamusmärgid ja tähelepanekud |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World of Tanksi kordused tabeliteks: iga sõiduki asukoht, surmad ja tapmised | World of Tanksi soojus ja kordused |
-| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World of Warshipsi kordused tabeliteks: iga laeva asukoht ja uppumised | World of Warshipsi soojus ja kordused |
-| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squadi serveri demod tabeliteks: iga mängija asukoht, meeskond ja salk | Squadi soojus ja kordused |
-| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | DCS World'i maastikud sinu enda installist tasemeteks: maapind, teed, linnad, lennuväljad, väljad, vesi | DCS ja Tacview salvestised nende päris maastikul |
-| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | IL-2 Great Battlesi kaardid tasemeteks | IL-2 salvestised nende kaardil |
+| Hoidla | Mida ta teeb | Kasulik | Dokumentatsioon |
+|---|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Loeb rajad ja tasemed välja arhiividest, mida mängud kaasa toovad (Forza Horizon, BeamNG, Assetto Corsa Rally; Unreal, Unity, Frostbite ja Source 2 lugejad) glTF-ina | 3D-tase sinu soojuse või kordusel alla | [sait](https://holdi601.github.io/3DHeat-GameFiles/) |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Salvestab ringitelemeetria, mida võidusõidumängud avaldavad, ja ehitab tasemed mängu videost | ringid Sõiduanalüüsi jaoks; tase kohas, kus failisid lugeda ei saa | [sait](https://holdi601.github.io/3DHeat-GameCapture/) |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Unreal Editori plugin, mis ekspordib taseme ühe glTF-failina | sinu enda Unreal-projektide tasemed | [sait](https://holdi601.github.io/3DHeat-UnrealExporter/) |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike 2 demod soojustabeliteks ja matšikokkuvõteteks, CS2 kaardid geomeetriaks | CS2 soojus, kordused ja Matši vahekaart | [sait](https://holdi601.github.io/3DHeat-CS2/) |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Salvestab sinu mängu taustal sellest, mida mängud avaldavad: telemeetria, mängu oleku integratsioonid, logid, kordused | sinu enda statistika ilma käsitsi tegemata | [sait](https://holdi601.github.io/3DHeat-Watcher/) |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War Thunderi kordused (`.wrpl`) tabeliteks: õhu- ja maismaajäljed, lasud, tabamused, tapmised, torned, eesmärgid | War Thunderi kordused, tabamusmärgid ja tähelepanekud | [sait](https://holdi601.github.io/3DHeat-Ext-WarThunder/) |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World of Tanksi kordused tabeliteks: iga sõiduki asukoht, surmad ja tapmised | World of Tanksi soojus ja kordused | [sait](https://holdi601.github.io/3DHeat-Ext-WoT/) |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World of Warshipsi kordused tabeliteks: iga laeva asukoht ja uppumised | World of Warshipsi soojus ja kordused | [sait](https://holdi601.github.io/3DHeat-Ext-WoWs/) |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squadi serveri demod tabeliteks: iga mängija asukoht, meeskond ja salk | Squadi soojus ja kordused | [sait](https://holdi601.github.io/3DHeat-Ext-Squad/) |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | DCS World'i maastikud sinu enda installist tasemeteks: maapind, teed, linnad, lennuväljad, väljad, vesi | DCS ja Tacview salvestised nende päris maastikul | [sait](https://holdi601.github.io/3DHeat-Ext-DCS/) |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | IL-2 Great Battlesi kaardid tasemeteks | IL-2 salvestised nende kaardil | [sait](https://holdi601.github.io/3DHeat-Ext-IL2/) |
 
 ## Lähtekoodi paigutus lühidalt {#source-layout-briefly}
 

@@ -3,9 +3,9 @@ title: "Domov"
 nav_order: 1
 lang: "sk"
 source: "index.md"
-source_hash: "25c1fded750f"
+source_hash: "88cb04e3aeb4"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -118,19 +118,19 @@ Server sa viaže iba na `127.0.0.1`, takže k žiadnej z týchto ciest sa nedá 
 
 Prehliadač číta dáta; tieto nástroje ich vytvárajú. Každý je vlastný verejný repozitár (MIT) s vlastnou dokumentáciou. Žiadny z nich nedodáva herné dáta: levely, mapy a nahrávky vytvárate na svojom počítači, z hier, ktoré vlastníte.
 
-| Repozitár | Čo robí | Na čo je dobrý |
-|---|---|---|
-| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Číta trate a levely z archívov, ktoré hry dodávajú (Forza Horizon, BeamNG, Assetto Corsa Rally; čítače Unreal, Unity, Frostbite a Source 2), ako glTF | 3D level pod vaším teplom alebo prehrávaním |
-| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Zaznamenáva telemetriu kôl z rozhraní, ktoré závodné hry zverejňujú, a z herného videa rekonštruuje levely | kolá pre Analýzu pretekov; level tam, kde sa súbory nedajú prečítať |
-| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Plugin pre Unreal Editor, ktorý exportuje level ako jeden súbor glTF | levely vašich vlastných projektov Unreal |
-| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Dema Counter-Strike 2 na tabuľky tepla a súhrny zápasov, mapy CS2 na geometriu | teplo CS2, prehrávania a karta Zápas |
-| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Na pozadí zaznamenáva vašu hru z toho, čo hry zverejňujú: telemetriu, herné integrácie, logy, prehrávky | vaše vlastné štatistiky bez ručnej práce |
-| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | Prehrávky War Thunder (`.wrpl`) na tabuľky: letecké a pozemné trasy, výstrely, zásahy, zostrely, veže, ciele | prehrávky War Thunder, značky zásahov a zistenia |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | Prehrávky World of Tanks na tabuľky: pozícia každého vozidla, smrti a zostrely | teplo a prehrávky World of Tanks |
-| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | Prehrávky World of Warships na tabuľky: pozícia a potopenie každej lode | teplo a prehrávky World of Warships |
-| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Dema serverov Squad na tabuľky: pozícia, tím a squad každého hráča | teplo a prehrávky Squad |
-| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | Terény DCS World z vašej vlastnej inštalácie na levely: zem, cesty, mestá, letiská, polia, voda | DCS a nahrávky Tacview na ich skutočnom teréne |
-| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | Mapy IL-2 Great Battles na levely | nahrávky IL-2 na ich mape |
+| Repozitár | Čo robí | Na čo je dobrý | Dokumentácia |
+|---|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Číta trate a levely z archívov, ktoré hry dodávajú (Forza Horizon, BeamNG, Assetto Corsa Rally; čítače Unreal, Unity, Frostbite a Source 2), ako glTF | 3D level pod vaším teplom alebo prehrávaním | [web](https://holdi601.github.io/3DHeat-GameFiles/) |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Zaznamenáva telemetriu kôl z rozhraní, ktoré závodné hry zverejňujú, a z herného videa rekonštruuje levely | kolá pre Analýzu pretekov; level tam, kde sa súbory nedajú prečítať | [web](https://holdi601.github.io/3DHeat-GameCapture/) |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Plugin pre Unreal Editor, ktorý exportuje level ako jeden súbor glTF | levely vašich vlastných projektov Unreal | [web](https://holdi601.github.io/3DHeat-UnrealExporter/) |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Dema Counter-Strike 2 na tabuľky tepla a súhrny zápasov, mapy CS2 na geometriu | teplo CS2, prehrávania a karta Zápas | [web](https://holdi601.github.io/3DHeat-CS2/) |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Na pozadí zaznamenáva vašu hru z toho, čo hry zverejňujú: telemetriu, herné integrácie, logy, prehrávky | vaše vlastné štatistiky bez ručnej práce | [web](https://holdi601.github.io/3DHeat-Watcher/) |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | Prehrávky War Thunder (`.wrpl`) na tabuľky: letecké a pozemné trasy, výstrely, zásahy, zostrely, veže, ciele | prehrávky War Thunder, značky zásahov a zistenia | [web](https://holdi601.github.io/3DHeat-Ext-WarThunder/) |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | Prehrávky World of Tanks na tabuľky: pozícia každého vozidla, smrti a zostrely | teplo a prehrávky World of Tanks | [web](https://holdi601.github.io/3DHeat-Ext-WoT/) |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | Prehrávky World of Warships na tabuľky: pozícia a potopenie každej lode | teplo a prehrávky World of Warships | [web](https://holdi601.github.io/3DHeat-Ext-WoWs/) |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Dema serverov Squad na tabuľky: pozícia, tím a squad každého hráča | teplo a prehrávky Squad | [web](https://holdi601.github.io/3DHeat-Ext-Squad/) |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | Terény DCS World z vašej vlastnej inštalácie na levely: zem, cesty, mestá, letiská, polia, voda | DCS a nahrávky Tacview na ich skutočnom teréne | [web](https://holdi601.github.io/3DHeat-Ext-DCS/) |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | Mapy IL-2 Great Battles na levely | nahrávky IL-2 na ich mape | [web](https://holdi601.github.io/3DHeat-Ext-IL2/) |
 
 ## Stručne o rozložení zdrojového kódu {#source-layout-briefly}
 

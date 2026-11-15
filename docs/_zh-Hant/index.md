@@ -3,9 +3,9 @@ title: "首頁"
 nav_order: 1
 lang: "zh-Hant"
 source: "index.md"
-source_hash: "25c1fded750f"
+source_hash: "88cb04e3aeb4"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -120,19 +120,19 @@ npm run dev      # http://127.0.0.1:5273
 
 檢視器負責讀取資料；這些工具負責製作資料。每一個都是獨立的公開儲存庫（MIT），並有自己的文件。它們都不附帶遊戲資料：關卡、地圖與錄影都是在你自己的電腦上，從你擁有的遊戲製作的。
 
-| 儲存庫 | 功能 | 用途 |
-|---|---|---|
-| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | 從遊戲附帶的壓縮檔中讀取賽道與關卡（Forza Horizon、BeamNG、Assetto Corsa Rally；Unreal、Unity、Frostbite 與 Source 2 讀取器），輸出為 glTF | 熱度或重播底下的 3D 關卡 |
-| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | 從賽車遊戲公開的介面記錄單圈遙測資料，並從遊戲影片重建關卡 | 賽車分析用的單圈資料；無法讀取檔案時的關卡來源 |
-| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Unreal Editor 外掛，把關卡匯出為一個 glTF 檔案 | 你自己 Unreal 專案的關卡 |
-| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | 把 Counter-Strike 2 示範檔轉為熱度表格與比賽摘要，並把 CS2 地圖轉為幾何 | CS2 熱度、重播與對戰頁籤 |
-| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | 在背景中，依遊戲公開的內容記錄你的遊戲過程：遙測、遊戲狀態整合、記錄檔與重播 | 不需手動操作，即可取得你自己的統計資料 |
-| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | 把 War Thunder 重播（`.wrpl`）轉為表格：空中與地面軌跡、射擊、命中、擊殺、砲塔、目標 | War Thunder 重播、命中標記與洞察 |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | 把 World of Tanks 重播轉為表格：每台載具的位置、死亡與擊殺 | World of Tanks 熱度與重播 |
-| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | 把 World of Warships 重播轉為表格：每艘艦艇的位置與擊沉 | World of Warships 熱度與重播 |
-| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | 把 Squad 伺服器示範檔轉為表格：每位玩家的位置、隊伍與小隊 | Squad 熱度與重播 |
-| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | 把你自己安裝的 DCS World 地形轉為關卡：地面、道路、城鎮、機場、田野、水域 | DCS 與 Tacview 錄影在其真實地形上呈現 |
-| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | 把 IL-2 Great Battles 地圖轉為關卡 | IL-2 錄影在其地圖上呈現 |
+| 儲存庫 | 功能 | 用途 | 文件 |
+|---|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | 從遊戲附帶的壓縮檔中讀取賽道與關卡（Forza Horizon、BeamNG、Assetto Corsa Rally；Unreal、Unity、Frostbite 與 Source 2 讀取器），輸出為 glTF | 熱度或重播底下的 3D 關卡 | [網站](https://holdi601.github.io/3DHeat-GameFiles/) |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | 從賽車遊戲公開的介面記錄單圈遙測資料，並從遊戲影片重建關卡 | 賽車分析用的單圈資料；無法讀取檔案時的關卡來源 | [網站](https://holdi601.github.io/3DHeat-GameCapture/) |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Unreal Editor 外掛，把關卡匯出為一個 glTF 檔案 | 你自己 Unreal 專案的關卡 | [網站](https://holdi601.github.io/3DHeat-UnrealExporter/) |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | 把 Counter-Strike 2 示範檔轉為熱度表格與比賽摘要，並把 CS2 地圖轉為幾何 | CS2 熱度、重播與對戰頁籤 | [網站](https://holdi601.github.io/3DHeat-CS2/) |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | 在背景中，依遊戲公開的內容記錄你的遊戲過程：遙測、遊戲狀態整合、記錄檔與重播 | 不需手動操作，即可取得你自己的統計資料 | [網站](https://holdi601.github.io/3DHeat-Watcher/) |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | 把 War Thunder 重播（`.wrpl`）轉為表格：空中與地面軌跡、射擊、命中、擊殺、砲塔、目標 | War Thunder 重播、命中標記與洞察 | [網站](https://holdi601.github.io/3DHeat-Ext-WarThunder/) |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | 把 World of Tanks 重播轉為表格：每台載具的位置、死亡與擊殺 | World of Tanks 熱度與重播 | [網站](https://holdi601.github.io/3DHeat-Ext-WoT/) |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | 把 World of Warships 重播轉為表格：每艘艦艇的位置與擊沉 | World of Warships 熱度與重播 | [網站](https://holdi601.github.io/3DHeat-Ext-WoWs/) |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | 把 Squad 伺服器示範檔轉為表格：每位玩家的位置、隊伍與小隊 | Squad 熱度與重播 | [網站](https://holdi601.github.io/3DHeat-Ext-Squad/) |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | 把你自己安裝的 DCS World 地形轉為關卡：地面、道路、城鎮、機場、田野、水域 | DCS 與 Tacview 錄影在其真實地形上呈現 | [網站](https://holdi601.github.io/3DHeat-Ext-DCS/) |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | 把 IL-2 Great Battles 地圖轉為關卡 | IL-2 錄影在其地圖上呈現 | [網站](https://holdi601.github.io/3DHeat-Ext-IL2/) |
 
 ## 原始碼結構簡述 {#source-layout-briefly}
 

@@ -4,9 +4,9 @@ parent: "Analiżi tat-tellieqa"
 nav_order: 54
 lang: "mt"
 source: "race-control-events.md"
-source_hash: "9ab565885c61"
+source_hash: "18fe9a0507bc"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Avvenimenti tal-kontroll tal-karozza
@@ -145,7 +145,7 @@ Kull karozza tirċievi wkoll:
 | **airborne** | `airborne` fuq 0.5 | - |
 | **hit**, **crash** | ara [Daqqiet u ħabtiet](#hits-and-crashes) | il-veloċità li l-impatt ħa |
 
-Limiti ta' drift skont l-art: tarmac **7°**, mixed **10°**, loose u borra **15°**, silġ **10°**. Karozza li tiġri aktar bħala ħaġa normali - mudell ta' tajer arkada, speċjalista tal-gravel - għandha limitu tagħha stess, ogħla, mil-lapsijiet tagħha (1.5 × l-abitudni tagħha).
+Limiti ta' drift skont l-art: tarmac **7°**, mixed **10°**, loose u borra **15°**, silġ **10°**. Isegwu l-letteratura: l-angolu ta' slip tat-tajer jilħaq il-quċċata f'3-10° fuq l-asfalt u l-limitu ta' stabbiltà ta' karozza tat-triq fl-angolu ta' żlieq tal-karozzerija huwa madwar 12° fuq asfalt niexef, filwaqt li r-rally u d-drift isuqu f'30-50° ([Analitika tat-tellieqa, sorsi](race-analytics.md#sources)). Karozza li tiġri aktar bħala ħaġa normali - mudell ta' tajer arkada, speċjalista tal-gravel - għandha limitu tagħha stess, ogħla, mil-lapsijiet tagħha (1.5 × l-abitudni tagħha).
 
 **Liema triq tidur il-karozza** (għal "kontra l-kurva"): il-bidla fid-direzzjoni tal-mogħdija tal-lap stess fuq ±6 m (mill-inqas 2 punti tal-grilja); iqsar minn raġġ ta' 600 m jitqies bħala kurva; xellug jew lemin skont jekk id-dinja hijiex imqalba. L-isterżar huwa **kontra** l-kurva meta abs(steer) > 0.05 u s-sinjal tiegħu jkun oppost għal dik il-kurva - slide li qed **tinżamm** b'lock oppost.
 

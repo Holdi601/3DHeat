@@ -4,9 +4,9 @@ parent: "Kappakstursgreining"
 nav_order: 54
 lang: "is"
 source: "race-control-events.md"
-source_hash: "9ab565885c61"
+source_hash: "18fe9a0507bc"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Atburðir í stýringu bíls
@@ -145,7 +145,7 @@ Hver bíll fær líka:
 | **airborne** | `airborne` yfir 0,5 | - |
 | **hit**, **crash** | sjá [Högg og brotlendingar](#hits-and-crashes) | hraðinn sem áreksturinn tók |
 
-Lágmörk rekhorns eftir yfirborði: malbik **7°**, blandað **10°**, laust og snjór **15°**, ís **10°**. Bíll sem keyrir meira sem sjálfsagt mál - arcade-dekkjalíkan, mölsérfræðingur - hefur sín eigin, hærri mörk úr eigin hringjum (1,5 × aksturslag hans).
+Lágmörk rekhorns eftir yfirborði: malbik **7°**, blandað **10°**, laust og snjór **15°**, ís **10°**. Þau fylgja fræðunum: rennihorn hjólbarða nær hámarki við 3–10° á malbiki og stöðugleikamörk fólksbíls fyrir rennihorn yfirbyggingar eru um 12° á þurru malbiki, en rall og drift er ekið við 30–50° ([Kappakstursgreining, heimildir](race-analytics.md#sources)). Bíll sem keyrir meira sem sjálfsagt mál - arcade-dekkjalíkan, mölsérfræðingur - hefur sín eigin, hærri mörk úr eigin hringjum (1,5 × aksturslag hans).
 
 **Hvaða leið bíllinn beygir** (fyrir „á móti beygjunni“): breyting stefnu eigin leiðar hringsins yfir ±6 m (að minnsta kosti 2 punktar í grind); þrengra en 600 m radíus telst beygja; hægri eða vinstri eftir því hvort heimurinn er speglaður. Stýrið er **á móti** beygjunni þegar abs(stýri) > 0,05 og formerki þess er andstætt beygjunni - rennsli sem er **gripið** með andstæðu stýri.
 

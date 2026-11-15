@@ -4,9 +4,9 @@ parent: "Analisi di gara"
 nav_order: 54
 lang: "it"
 source: "race-control-events.md"
-source_hash: "9ab565885c61"
+source_hash: "18fe9a0507bc"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Eventi di controllo dell’auto
@@ -145,7 +145,7 @@ Ogni auto ottiene anche:
 | **in volo** | `airborne` sopra 0,5 | - |
 | **urto**, **incidente** | vedi [Urti e incidenti](#hits-and-crashes) | la velocità che l’urto ha tolto |
 
-Soglie di angolo di derapata per fondo: asfalto **7°**, misto **10°**, smosso e neve **15°**, ghiaccio **10°**. Un’auto che deriva di più come cosa normale – un modello di pneumatico arcade, uno specialista dello sterrato – ha una soglia sua, più alta, dai suoi giri (1,5 × la sua abitudine).
+Soglie di angolo di derapata per fondo: asfalto **7°**, misto **10°**, smosso e neve **15°**, ghiaccio **10°**. Seguono la letteratura: l'angolo di slittamento di uno pneumatico raggiunge il picco a 3-10° su asfalto e il limite di stabilità per angolo di assetto della scocca di un'auto stradale è di circa 12° su asfalto asciutto, mentre rally e drift si guidano a 30-50° ([Analisi delle gare, fonti](race-analytics.md#sources)). Un’auto che deriva di più come cosa normale – un modello di pneumatico arcade, uno specialista dello sterrato – ha una soglia sua, più alta, dai suoi giri (1,5 × la sua abitudine).
 
 **Da che parte gira l’auto** (per «contro la curva»): il cambio di direzione del percorso del giro su ±6 m (almeno 2 punti della griglia); più stretto di un raggio di 600 m conta come curva; destra o sinistra secondo se il mondo è specchiato. Lo sterzo è **contro** la curva quando abs(sterzo) > 0,05 e il suo segno è opposto a quello della curva – una scivolata **recuperata** con controsterzo.
 

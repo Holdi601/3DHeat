@@ -3,9 +3,9 @@ title: "Strona główna"
 nav_order: 1
 lang: "pl"
 source: "index.md"
-source_hash: "25c1fded750f"
+source_hash: "88cb04e3aeb4"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -119,19 +119,19 @@ Serwer wiąże się tylko z `127.0.0.1`, więc żadna z tras nie jest dostępna 
 
 Przeglądarka czyta dane; te narzędzia je tworzą. Każde z nich to osobne publiczne repozytorium (MIT) z własną dokumentacją. Żadne nie dołącza danych gry: poziomy, mapy i nagrania powstają na Twoim komputerze, z gier, które posiadasz.
 
-| Repozytorium | Co robi | Przydatne do |
-|---|---|---|
-| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Odczytuje trasy i poziomy z archiwów, które gry dołączają (Forza Horizon, BeamNG, Assetto Corsa Rally; czytniki Unreal, Unity, Frostbite i Source 2), jako glTF | poziom 3D pod Twoim ciepłem lub powtórką |
-| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Nagrywa telemetrię okrążeń z interfejsów, które publikują gry wyścigowe, i odtwarza poziomy z nagrań wideo z rozgrywki | okrążenia do Analizy wyścigowej; poziom tam, gdzie nie da się odczytać plików |
-| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Wtyczka do Unreal Editor, która eksportuje poziom jako jeden plik glTF | poziomy Twoich własnych projektów Unreal |
-| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Dema Counter-Strike 2 na tabele ciepła i podsumowania meczów, mapy CS2 na geometrię | ciepło CS2, powtórki i karta Mecz |
-| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Zapisuje Twoją grę w tle z tego, co publikują gry: telemetrię, integracje stanu gry, logi, powtórki | Twoje własne statystyki bez ręcznej pracy |
-| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | Powtórki War Thunder (`.wrpl`) na tabele: trasy powietrzne i naziemne, strzały, trafienia, zabójstwa, wieże, cele | powtórki War Thunder, znaczniki trafień i wnioski |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | Powtórki World of Tanks na tabele: pozycja każdego pojazdu, zgony i zabójstwa | ciepło i powtórki World of Tanks |
-| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | Powtórki World of Warships na tabele: pozycja każdego okrętu i zatopienia | ciepło i powtórki World of Warships |
-| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Dema serwerów Squad na tabele: pozycja każdego gracza, drużyna i oddział | ciepło i powtórki Squad |
-| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | Tereny DCS World z Twojej własnej instalacji na poziomy: ziemia, drogi, miasta, lotniska, pola, woda | DCS i nagrania Tacview na ich prawdziwym terenie |
-| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | Mapy IL-2 Great Battles na poziomy | nagrania IL-2 na ich mapie |
+| Repozytorium | Co robi | Przydatne do | Dokumentacja |
+|---|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Odczytuje trasy i poziomy z archiwów, które gry dołączają (Forza Horizon, BeamNG, Assetto Corsa Rally; czytniki Unreal, Unity, Frostbite i Source 2), jako glTF | poziom 3D pod Twoim ciepłem lub powtórką | [strona](https://holdi601.github.io/3DHeat-GameFiles/) |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Nagrywa telemetrię okrążeń z interfejsów, które publikują gry wyścigowe, i odtwarza poziomy z nagrań wideo z rozgrywki | okrążenia do Analizy wyścigowej; poziom tam, gdzie nie da się odczytać plików | [strona](https://holdi601.github.io/3DHeat-GameCapture/) |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Wtyczka do Unreal Editor, która eksportuje poziom jako jeden plik glTF | poziomy Twoich własnych projektów Unreal | [strona](https://holdi601.github.io/3DHeat-UnrealExporter/) |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Dema Counter-Strike 2 na tabele ciepła i podsumowania meczów, mapy CS2 na geometrię | ciepło CS2, powtórki i karta Mecz | [strona](https://holdi601.github.io/3DHeat-CS2/) |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Zapisuje Twoją grę w tle z tego, co publikują gry: telemetrię, integracje stanu gry, logi, powtórki | Twoje własne statystyki bez ręcznej pracy | [strona](https://holdi601.github.io/3DHeat-Watcher/) |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | Powtórki War Thunder (`.wrpl`) na tabele: trasy powietrzne i naziemne, strzały, trafienia, zabójstwa, wieże, cele | powtórki War Thunder, znaczniki trafień i wnioski | [strona](https://holdi601.github.io/3DHeat-Ext-WarThunder/) |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | Powtórki World of Tanks na tabele: pozycja każdego pojazdu, zgony i zabójstwa | ciepło i powtórki World of Tanks | [strona](https://holdi601.github.io/3DHeat-Ext-WoT/) |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | Powtórki World of Warships na tabele: pozycja każdego okrętu i zatopienia | ciepło i powtórki World of Warships | [strona](https://holdi601.github.io/3DHeat-Ext-WoWs/) |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Dema serwerów Squad na tabele: pozycja każdego gracza, drużyna i oddział | ciepło i powtórki Squad | [strona](https://holdi601.github.io/3DHeat-Ext-Squad/) |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | Tereny DCS World z Twojej własnej instalacji na poziomy: ziemia, drogi, miasta, lotniska, pola, woda | DCS i nagrania Tacview na ich prawdziwym terenie | [strona](https://holdi601.github.io/3DHeat-Ext-DCS/) |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | Mapy IL-2 Great Battles na poziomy | nagrania IL-2 na ich mapie | [strona](https://holdi601.github.io/3DHeat-Ext-IL2/) |
 
 ## Krótko o układzie źródeł {#source-layout-briefly}
 

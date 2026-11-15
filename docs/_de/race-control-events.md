@@ -4,9 +4,9 @@ parent: "Rennanalyse"
 nav_order: 54
 lang: "de"
 source: "race-control-events.md"
-source_hash: "9ab565885c61"
+source_hash: "18fe9a0507bc"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Fahrzeugkontroll-Ereignisse
@@ -145,7 +145,7 @@ Jedes Auto bekommt außerdem:
 | **airborne** | `airborne` über 0,5 | - |
 | **hit**, **crash** | siehe [Treffer und Unfälle](#hits-and-crashes) | die Geschwindigkeit, die der Aufprall nahm |
 
-Driftwinkel-Untergrenzen nach Untergrund: Asphalt **7°**, gemischt **10°**, lose und Schnee **15°**, Eis **10°**. Ein Auto, das von sich aus mehr rutscht – ein Arcade-Reifenmodell, ein Schotter-Spezialist –, bekommt eine eigene, höhere Schwelle aus seinen eigenen Runden (1,5 × seine Gewohnheit).
+Driftwinkel-Untergrenzen nach Untergrund: Asphalt **7°**, gemischt **10°**, lose und Schnee **15°**, Eis **10°**. Sie folgen der Literatur: Der Schlupfwinkel eines Reifens erreicht sein Maximum bei 3–10° auf Asphalt, die Stabilitätsgrenze eines Straßenautos beim Schwimmwinkel liegt bei etwa 12° auf trockenem Asphalt, während Rallye und Drift mit 30–50° gefahren werden ([Rennanalyse, Quellen](race-analytics.md#sources)). Ein Auto, das von sich aus mehr rutscht – ein Arcade-Reifenmodell, ein Schotter-Spezialist –, bekommt eine eigene, höhere Schwelle aus seinen eigenen Runden (1,5 × seine Gewohnheit).
 
 **In welche Richtung das Auto dreht** (für „gegen die Kurve“): die Richtungsänderung der eigenen Bahn der Runde über ±6 m (mindestens 2 Rasterpunkte); enger als 600 m Radius zählt als Kurve; rechts oder links, je nachdem, ob die Welt gespiegelt ist. Die Lenkung ist **gegen** die Kurve, wenn abs(Lenkung) über 0,05 liegt und ihr Vorzeichen dem der Kurve entgegengesetzt ist – ein Rutschen, das mit Gegenlenkung **eingefangen** wird.
 

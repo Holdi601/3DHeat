@@ -4,9 +4,9 @@ parent: "Sõiduanalüüs"
 nav_order: 54
 lang: "et"
 source: "race-control-events.md"
-source_hash: "9ab565885c61"
+source_hash: "18fe9a0507bc"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Sõiduki juhtimise sündmused
@@ -145,7 +145,7 @@ Igal autol on ka:
 | **airborne** | `airborne` üle 0,5 | - |
 | **hit**, **crash** | vt [Löögid ja allakukkumised](#hits-and-crashes) | löögi võetud kiirus |
 
-Triivinurga põhjad pinna järgi: asfalt **7°**, segapinnas **10°**, lahtine pinnas ja lumi **15°**, jää **10°**. Auto, mis libiseb rohkem iseenesestmõistetavalt (arkaadne rehvimudel, kruusaspetsialist), saab oma kõrgema läve oma ringidelt (1,5 × tema harjumus).
+Triivinurga põhjad pinna järgi: asfalt **7°**, segapinnas **10°**, lahtine pinnas ja lumi **15°**, jää **10°**. Need järgivad kirjandust: rehvi libisemisnurk saavutab asfaldil tipu 3–10° juures ja tavaauto kere libisemisnurga stabiilsuspiir on kuival asfaldil umbes 12°, samas kui ralli ja triiv sõidavad 30–50° juures ([Sõidu analüütika, allikad](race-analytics.md#sources)). Auto, mis libiseb rohkem iseenesestmõistetavalt (arkaadne rehvimudel, kruusaspetsialist), saab oma kõrgema läve oma ringidelt (1,5 × tema harjumus).
 
 **Mis suunas auto pöörab** (pööre "vastu"): raja enda peasuuna muutus ±6 m jooksul (vähemalt 2 ruudustiku punkti). Kitsam kui 600 m raadius loeb pööramiseks. Parem või vasak sõltub sellest, kas maailm on peegeldatud. Roolimine on **vastu** pööret, kui abs(roolimine) on üle 0,05 ja märk on pöördega vastupidine. See on libisemine, mida **püütakse kinni** vastupidise rooliga.
 

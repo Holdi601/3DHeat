@@ -4,9 +4,9 @@ parent: "Analiză de cursă"
 nav_order: 54
 lang: "ro"
 source: "race-control-events.md"
-source_hash: "9ab565885c61"
+source_hash: "18fe9a0507bc"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Evenimente de control al mașinii
@@ -145,7 +145,7 @@ Fiecare mașină mai primește:
 | **airborne** | `airborne` peste 0,5 | - |
 | **hit**, **crash** | vezi [Lovituri și prăbușiri](#hits-and-crashes) | viteza pe care a luat-o lovitura |
 
-Pragurile de derapaj după teren: asfalt **7°**, mixt **10°**, neasfaltat și zăpadă **15°**, gheață **10°**. O mașină care derapează mai mult de la sine – un model de pneuri arcade sau un specialist pe pietriș – are propriul prag, mai mare, din turele ei (1,5 × obiceiul ei).
+Pragurile de derapaj după teren: asfalt **7°**, mixt **10°**, neasfaltat și zăpadă **15°**, gheață **10°**. Ele urmează literatura: unghiul de alunecare al unei anvelope atinge vârful la 3–10° pe asfalt, iar limita de stabilitate a unei mașini de stradă după unghiul de derivă al caroseriei este de circa 12° pe asfalt uscat, în timp ce raliul și driftul se conduc la 30–50° ([Analiza cursei, surse](race-analytics.md#sources)). O mașină care derapează mai mult de la sine – un model de pneuri arcade sau un specialist pe pietriș – are propriul prag, mai mare, din turele ei (1,5 × obiceiul ei).
 
 **În care sens virează mașina** (pentru „împotriva virajului”): schimbarea direcției traseului turului pe ±6 m (cel puțin 2 puncte de grilă); mai strâns decât o rază de 600 m înseamnă viraj; dreapta sau stânga după cum lumea este oglindită. Direcția este **împotriva** virajului când abs(direcție) > 0,05 și semnul ei este opus virajului – o alunecare **prinsă** cu contrabraj.
 

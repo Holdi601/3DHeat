@@ -3,9 +3,9 @@ title: "Почетна"
 nav_order: 1
 lang: "sr"
 source: "index.md"
-source_hash: "25c1fded750f"
+source_hash: "88cb04e3aeb4"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -119,19 +119,19 @@ npm run dev      # http://127.0.0.1:5273
 
 Приказивач чита податке; ови алати их праве. Сваки је сопствени јавни репозиторијум (MIT) са сопственом документацијом. Ни један не испоручује податке из игара: нивои, мапе и снимци се праве на вашем рачунару, из игара које поседујете.
 
-| Репозиторијум | Шта ради | Корисно за |
-|---|---|---|
-| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Чита стазе и нивое из архива које игре испоручују (Forza Horizon, BeamNG, Assetto Corsa Rally; читачи за Unreal, Unity, Frostbite и Source 2) у glTF | 3D ниво испод ваше топлоте или репризе |
-| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Снима телеметрију кругова из интерфејса које тркачке игре објављују, и обнавља нивое из видеа игре | кругови за Анализу трке; ниво тамо где се датотеке не могу читати |
-| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Додатак за Unreal Editor који извози ниво као једну glTF датотеку | нивои ваших Unreal пројеката |
-| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike 2 демои у табеле топлоте и резимеа мечева, CS2 мапе у геометрију | CS2 топлота, репризе и картица Меч |
-| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Бележи вашу игру у позадини из онога што игре објављују: телеметрија, game-state интеграције, дневници, репризе | ваша сопствена статистика без ручног рада |
-| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War Thunder репризе (`.wrpl`) у табеле: ваздушне и копнене путање, пуцњи, погоци, убиства, куполе, циљеви | War Thunder репризе, ознаке погодака и увиди |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World of Tanks репризе у табеле: положај сваког возила, смрти и убиства | World of Tanks топлота и репризе |
-| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World of Warships репризе у табеле: положај сваког брода и потапања | World of Warships топлота и репризе |
-| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squad серверски демои у табеле: положај, тим и одељење сваког играча | Squad топлота и репризе |
-| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | DCS World терени из ваше сопствене инсталације у нивое: тло, путеви, градови, аеродроми, поља, вода | DCS и Tacview снимци на њиховом правом терену |
-| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | IL-2 Great Battles мапе у нивое | IL-2 снимци на њиховој мапи |
+| Репозиторијум | Шта ради | Корисно за | Документација |
+|---|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Чита стазе и нивое из архива које игре испоручују (Forza Horizon, BeamNG, Assetto Corsa Rally; читачи за Unreal, Unity, Frostbite и Source 2) у glTF | 3D ниво испод ваше топлоте или репризе | [сајт](https://holdi601.github.io/3DHeat-GameFiles/) |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Снима телеметрију кругова из интерфејса које тркачке игре објављују, и обнавља нивое из видеа игре | кругови за Анализу трке; ниво тамо где се датотеке не могу читати | [сајт](https://holdi601.github.io/3DHeat-GameCapture/) |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Додатак за Unreal Editor који извози ниво као једну glTF датотеку | нивои ваших Unreal пројеката | [сајт](https://holdi601.github.io/3DHeat-UnrealExporter/) |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike 2 демои у табеле топлоте и резимеа мечева, CS2 мапе у геометрију | CS2 топлота, репризе и картица Меч | [сајт](https://holdi601.github.io/3DHeat-CS2/) |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Бележи вашу игру у позадини из онога што игре објављују: телеметрија, game-state интеграције, дневници, репризе | ваша сопствена статистика без ручног рада | [сајт](https://holdi601.github.io/3DHeat-Watcher/) |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War Thunder репризе (`.wrpl`) у табеле: ваздушне и копнене путање, пуцњи, погоци, убиства, куполе, циљеви | War Thunder репризе, ознаке погодака и увиди | [сајт](https://holdi601.github.io/3DHeat-Ext-WarThunder/) |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World of Tanks репризе у табеле: положај сваког возила, смрти и убиства | World of Tanks топлота и репризе | [сајт](https://holdi601.github.io/3DHeat-Ext-WoT/) |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World of Warships репризе у табеле: положај сваког брода и потапања | World of Warships топлота и репризе | [сајт](https://holdi601.github.io/3DHeat-Ext-WoWs/) |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squad серверски демои у табеле: положај, тим и одељење сваког играча | Squad топлота и репризе | [сајт](https://holdi601.github.io/3DHeat-Ext-Squad/) |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | DCS World терени из ваше сопствене инсталације у нивое: тло, путеви, градови, аеродроми, поља, вода | DCS и Tacview снимци на њиховом правом терену | [сајт](https://holdi601.github.io/3DHeat-Ext-DCS/) |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | IL-2 Great Battles мапе у нивое | IL-2 снимци на њиховој мапи | [сајт](https://holdi601.github.io/3DHeat-Ext-IL2/) |
 
 ## Укратко о изворном коду {#source-layout-briefly}
 

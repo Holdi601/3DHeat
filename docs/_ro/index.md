@@ -3,9 +3,9 @@ title: "Acasă"
 nav_order: 1
 lang: "ro"
 source: "index.md"
-source_hash: "25c1fded750f"
+source_hash: "88cb04e3aeb4"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -119,19 +119,19 @@ Serverul se leagă doar de `127.0.0.1`, deci nicio rută nu este accesibilă din
 
 Vizualizatorul citește date; aceste instrumente le produc. Fiecare este un depozit public propriu (MIT), cu documentația lui. Niciunul nu livrează date de joc: nivelurile, hărțile și înregistrările sunt făcute pe calculatorul tău, din jocuri pe care le deții.
 
-| Depozit | Ce face | Util pentru |
-|---|---|---|
-| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Citește traseele și nivelurile din arhivele pe care le livrează jocurile (Forza Horizon, BeamNG, Assetto Corsa Rally; cititoare pentru Unreal, Unity, Frostbite și Source 2) ca glTF | un nivel 3D sub căldura sau reluarea ta |
-| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Înregistrează telemetria turelor din interfețele pe care le publică jocurile de curse și reconstruiește niveluri din videoclipuri de joc | ture pentru Analiză de cursă; un nivel unde nu se pot citi fișiere |
-| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Plugin pentru Unreal Editor care exportă un nivel ca un singur fișier glTF | niveluri din proiectele tale Unreal |
-| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Demo-uri Counter-Strike 2 în tabele de căldură și rezumate de meci; hărți CS2 în geometrie | căldura CS2, reluările și fila Meci |
-| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Înregistrează jocul tău în fundal, din ce publică jocurile: telemetrie, integrări de stare a jocului, jurnale, reluări | statisticile tale, fără să faci nimic manual |
-| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | Reluări War Thunder (`.wrpl`) în tabele: trasee aeriene și terestre, trageri, lovituri, eliminări, turele, obiective | reluări War Thunder, marcaje de lovituri și observații |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | Reluări World of Tanks în tabele: poziția fiecărui vehicul, morți și eliminări | căldura și reluările World of Tanks |
-| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | Reluări World of Warships în tabele: poziția fiecărei nave și scufundările | căldura și reluările World of Warships |
-| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Demo-uri de server Squad în tabele: poziția fiecărui jucător, echipa și grupa | căldura și reluările Squad |
-| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | Terenurile DCS World din instalarea ta în niveluri: sol, drumuri, orașe, aerodromuri, câmpuri, apă | înregistrările DCS și Tacview pe terenul lor real |
-| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | Hărțile IL-2 Great Battles în niveluri | înregistrările IL-2 pe harta lor |
+| Depozit | Ce face | Util pentru | Documentație |
+|---|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Citește traseele și nivelurile din arhivele pe care le livrează jocurile (Forza Horizon, BeamNG, Assetto Corsa Rally; cititoare pentru Unreal, Unity, Frostbite și Source 2) ca glTF | un nivel 3D sub căldura sau reluarea ta | [site](https://holdi601.github.io/3DHeat-GameFiles/) |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Înregistrează telemetria turelor din interfețele pe care le publică jocurile de curse și reconstruiește niveluri din videoclipuri de joc | ture pentru Analiză de cursă; un nivel unde nu se pot citi fișiere | [site](https://holdi601.github.io/3DHeat-GameCapture/) |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Plugin pentru Unreal Editor care exportă un nivel ca un singur fișier glTF | niveluri din proiectele tale Unreal | [site](https://holdi601.github.io/3DHeat-UnrealExporter/) |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Demo-uri Counter-Strike 2 în tabele de căldură și rezumate de meci; hărți CS2 în geometrie | căldura CS2, reluările și fila Meci | [site](https://holdi601.github.io/3DHeat-CS2/) |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Înregistrează jocul tău în fundal, din ce publică jocurile: telemetrie, integrări de stare a jocului, jurnale, reluări | statisticile tale, fără să faci nimic manual | [site](https://holdi601.github.io/3DHeat-Watcher/) |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | Reluări War Thunder (`.wrpl`) în tabele: trasee aeriene și terestre, trageri, lovituri, eliminări, turele, obiective | reluări War Thunder, marcaje de lovituri și observații | [site](https://holdi601.github.io/3DHeat-Ext-WarThunder/) |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | Reluări World of Tanks în tabele: poziția fiecărui vehicul, morți și eliminări | căldura și reluările World of Tanks | [site](https://holdi601.github.io/3DHeat-Ext-WoT/) |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | Reluări World of Warships în tabele: poziția fiecărei nave și scufundările | căldura și reluările World of Warships | [site](https://holdi601.github.io/3DHeat-Ext-WoWs/) |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Demo-uri de server Squad în tabele: poziția fiecărui jucător, echipa și grupa | căldura și reluările Squad | [site](https://holdi601.github.io/3DHeat-Ext-Squad/) |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | Terenurile DCS World din instalarea ta în niveluri: sol, drumuri, orașe, aerodromuri, câmpuri, apă | înregistrările DCS și Tacview pe terenul lor real | [site](https://holdi601.github.io/3DHeat-Ext-DCS/) |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | Hărțile IL-2 Great Battles în niveluri | înregistrările IL-2 pe harta lor | [site](https://holdi601.github.io/3DHeat-Ext-IL2/) |
 
 ## Organizarea codului, pe scurt {#source-layout-briefly}
 

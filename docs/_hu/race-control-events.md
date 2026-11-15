@@ -4,9 +4,9 @@ parent: "Versenyelemzés"
 nav_order: 54
 lang: "hu"
 source: "race-control-events.md"
-source_hash: "9ab565885c61"
+source_hash: "18fe9a0507bc"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Autóirányítási események
@@ -145,7 +145,7 @@ Minden autó emellett kap:
 | **levegőben** | `airborne` 0,5 felett | - |
 | **koccanás**, **baleset** | lásd: [Koccanások és balesetek](#hits-and-crashes) | az ütközés által elvett sebesség |
 
-A driftszög alsó határai talajonként: aszfalt **7°**, vegyes **10°**, laza és hó **15°**, jég **10°**. Az az autó, amely eleve többet csúszik (egy arcade gumimodell, egy kavicsspecialista), a saját köreiből saját, magasabb küszöböt kap: 1,5-szerest a driftszokásából.
+A driftszög alsó határai talajonként: aszfalt **7°**, vegyes **10°**, laza és hó **15°**, jég **10°**. A szakirodalmat követik: a gumiabroncs csúszási szöge aszfalton 3–10°-nál éri el a csúcsát, egy közúti autó karosszéria-csúszásiszög szerinti stabilitási határa száraz aszfalton körülbelül 12°, míg a rali és a drift 30–50°-kal megy ([Versenyelemzés, források](race-analytics.md#sources)). Az az autó, amely eleve többet csúszik (egy arcade gumimodell, egy kavicsspecialista), a saját köreiből saját, magasabb küszöböt kap: 1,5-szerest a driftszokásából.
 
 **Melyik irányba fordul az autó** (a „kanyarral szemben” kifejezéshez): a kör saját pályájának fejirány-változása ±6 m-en (legalább 2 rácspont). A 600 m-nél szorosabb sugár kanyarnak számít. Jobbra vagy balra aszerint, hogy a világ tükrözött-e. A kormány **a kanyarral szemben** áll, ha abs(kormány) > 0,05, és az előjele a kanyarral ellentétes. Ilyenkor a csúszást **ellenkormányzással** fogják meg.
 

@@ -4,9 +4,9 @@ parent: "Análise de corrida"
 nav_order: 54
 lang: "pt"
 source: "race-control-events.md"
-source_hash: "9ab565885c61"
+source_hash: "18fe9a0507bc"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Eventos de controlo do carro
@@ -145,7 +145,7 @@ Cada carro também recebe:
 | **airborne** | `airborne` acima de 0,5 | - |
 | **hit**, **crash** | ver [Toques e embates](#hits-and-crashes) | a velocidade que o impacto levou |
 
-Os mínimos de ângulo de derrapagem por superfície: asfalto **7°**, misto **10°**, solto e neve **15°**, gelo **10°**. Um carro que derrapa mais por natureza - um modelo de pneu arcade, um especialista em cascalho - tem o seu próprio limiar, mais alto, a partir das suas próprias voltas (1,5 × o seu hábito).
+Os mínimos de ângulo de derrapagem por superfície: asfalto **7°**, misto **10°**, solto e neve **15°**, gelo **10°**. Seguem a literatura: o ângulo de escorregamento de um pneu atinge o máximo a 3-10° em asfalto e o limite de estabilidade por ângulo de deriva da carroçaria de um carro de estrada ronda os 12° em asfalto seco, enquanto o rali e o drift se conduzem a 30-50° ([Análise de corrida, fontes](race-analytics.md#sources)). Um carro que derrapa mais por natureza - um modelo de pneu arcade, um especialista em cascalho - tem o seu próprio limiar, mais alto, a partir das suas próprias voltas (1,5 × o seu hábito).
 
 **Para que lado vira o carro** (para «contra a curva»): a mudança de orientação do traçado da própria volta em ±6 m (pelo menos 2 pontos da grelha); mais apertado que um raio de 600 m conta como curva; direita ou esquerda conforme o mundo esteja espelhado. O volante está **contra** a curva quando abs(volante) > 0,05 e o seu sinal é oposto ao da curva - uma derrapagem a ser **travada** com contraviragem.
 

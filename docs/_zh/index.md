@@ -3,9 +3,9 @@ title: "首页"
 nav_order: 1
 lang: "zh"
 source: "index.md"
-source_hash: "25c1fded750f"
+source_hash: "88cb04e3aeb4"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -119,19 +119,19 @@ npm run dev      # http://127.0.0.1:5273
 
 查看器读取数据；这些工具负责生成数据。每个工具都是独立的公开仓库（MIT 许可），附带自己的文档。它们都不附带游戏数据：关卡、地图和录像都在你自己的机器上，基于你拥有的游戏制作。
 
-| 仓库 | 作用 | 用途 |
-|---|---|---|
-| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | 从游戏发行的归档中读取赛道和关卡（Forza Horizon、BeamNG、Assetto Corsa Rally；Unreal、Unity、Frostbite 和 Source 2 读取器），输出为 glTF | 放在你的热度或回放下方的 3D 关卡 |
-| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | 从赛车游戏公开的接口记录圈速遥测，并从游戏视频重建关卡 | 赛车分析的圈次数据；无法读取文件时的关卡 |
-| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Unreal 编辑器插件，将关卡导出为一个 glTF 文件 | 你自己的 Unreal 项目中的关卡 |
-| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | 将 Counter-Strike 2 的 demo 转换为热力图表和对局摘要，并将 CS2 地图转换为几何体 | CS2 热度、回放和对局标签页 |
-| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | 在后台根据游戏公开的内容记录你的游戏：遥测、游戏状态集成、日志、回放 | 无需手动操作即可获得你自己的统计数据 |
-| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | 将战争雷霆回放（`.wrpl`）转换为表格：空中和地面轨迹、射击、命中、击杀、炮塔、目标 | 战争雷霆回放、命中标记和洞察 |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | 将坦克世界回放转换为表格：每辆载具的位置、死亡和击杀 | 坦克世界热度和回放 |
-| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | 将战舰世界回放转换为表格：每艘舰船的位置和击沉 | 战舰世界热度和回放 |
-| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | 将 Squad 服务器 demo 转换为表格：每位玩家的位置、队伍和小队 | Squad 热度和回放 |
-| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | 将你本机安装的 DCS World 地形转换为关卡：地面、道路、城镇、机场、田野、水域 | DCS 和 Tacview 录像在其真实地形上的显示 |
-| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | 将 IL-2 Great Battles 地图转换为关卡 | 在其地图上显示的 IL-2 录像 |
+| 仓库 | 作用 | 用途 | 文档 |
+|---|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | 从游戏发行的归档中读取赛道和关卡（Forza Horizon、BeamNG、Assetto Corsa Rally；Unreal、Unity、Frostbite 和 Source 2 读取器），输出为 glTF | 放在你的热度或回放下方的 3D 关卡 | [网站](https://holdi601.github.io/3DHeat-GameFiles/) |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | 从赛车游戏公开的接口记录圈速遥测，并从游戏视频重建关卡 | 赛车分析的圈次数据；无法读取文件时的关卡 | [网站](https://holdi601.github.io/3DHeat-GameCapture/) |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Unreal 编辑器插件，将关卡导出为一个 glTF 文件 | 你自己的 Unreal 项目中的关卡 | [网站](https://holdi601.github.io/3DHeat-UnrealExporter/) |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | 将 Counter-Strike 2 的 demo 转换为热力图表和对局摘要，并将 CS2 地图转换为几何体 | CS2 热度、回放和对局标签页 | [网站](https://holdi601.github.io/3DHeat-CS2/) |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | 在后台根据游戏公开的内容记录你的游戏：遥测、游戏状态集成、日志、回放 | 无需手动操作即可获得你自己的统计数据 | [网站](https://holdi601.github.io/3DHeat-Watcher/) |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | 将战争雷霆回放（`.wrpl`）转换为表格：空中和地面轨迹、射击、命中、击杀、炮塔、目标 | 战争雷霆回放、命中标记和洞察 | [网站](https://holdi601.github.io/3DHeat-Ext-WarThunder/) |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | 将坦克世界回放转换为表格：每辆载具的位置、死亡和击杀 | 坦克世界热度和回放 | [网站](https://holdi601.github.io/3DHeat-Ext-WoT/) |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | 将战舰世界回放转换为表格：每艘舰船的位置和击沉 | 战舰世界热度和回放 | [网站](https://holdi601.github.io/3DHeat-Ext-WoWs/) |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | 将 Squad 服务器 demo 转换为表格：每位玩家的位置、队伍和小队 | Squad 热度和回放 | [网站](https://holdi601.github.io/3DHeat-Ext-Squad/) |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | 将你本机安装的 DCS World 地形转换为关卡：地面、道路、城镇、机场、田野、水域 | DCS 和 Tacview 录像在其真实地形上的显示 | [网站](https://holdi601.github.io/3DHeat-Ext-DCS/) |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | 将 IL-2 Great Battles 地图转换为关卡 | 在其地图上显示的 IL-2 录像 | [网站](https://holdi601.github.io/3DHeat-Ext-IL2/) |
 
 ## 源代码结构（简述）{#source-layout-briefly}
 

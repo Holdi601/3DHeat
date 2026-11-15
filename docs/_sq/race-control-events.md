@@ -4,9 +4,9 @@ parent: "Analiza e garës"
 nav_order: 54
 lang: "sq"
 source: "race-control-events.md"
-source_hash: "9ab565885c61"
+source_hash: "18fe9a0507bc"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Ngjarjet e kontrollit të makinës
@@ -145,7 +145,7 @@ Secila makinë merr gjithashtu:
 | **airborne** | `airborne` mbi 0,5 | - |
 | **goditje**, **përplasje** | shih [Goditjet dhe përplasjet](#hits-and-crashes) | shpejtësia që mori goditja |
 
-Pragjet e driftit sipas sipërfaqes: asfalt **7°**, i përzier **10°**, i shkrifët dhe borë **15°**, akull **10°**. Një makinë që rrëshqet më shumë si gjë e zakonshme - një model gome arkade, një specialist zhavorri - ka pragun e vet, më të lartë, nga xhirot e saj (1,5 × zakoni i saj).
+Pragjet e driftit sipas sipërfaqes: asfalt **7°**, i përzier **10°**, i shkrifët dhe borë **15°**, akull **10°**. Ato ndjekin literaturën: këndi i rrëshqitjes së gomës arrin kulmin në 3–10° në asfalt dhe kufiri i qëndrueshmërisë së një makine rrugore sipas këndit të rrëshqitjes së karrocerisë është rreth 12° në asfalt të thatë, ndërsa rally dhe drift ngasin në 30–50° ([Analitika e garës, burimet](race-analytics.md#sources)). Një makinë që rrëshqet më shumë si gjë e zakonshme - një model gome arkade, një specialist zhavorri - ka pragun e vet, më të lartë, nga xhirot e saj (1,5 × zakoni i saj).
 
 **Nga cila anë kthehet makina** (për "kundër kthesës"): ndryshimi i drejtimit të shtegut të vetë xhiros mbi ±6 m (të paktën 2 pika të rrjetit); më i ngushtë se rreze 600 m numërohet si kthesë; djathtas ose majtas sipas asaj nëse bota është e pasqyruar. Timoni është **kundër** kthesës kur abs(timoni) > 0,05 dhe shenja e tij është e kundërt me kthesën - një rrëshqitje që **kapet** me timon të kundërt.
 

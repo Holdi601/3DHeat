@@ -4,9 +4,9 @@ parent: "Analyse de course"
 nav_order: 54
 lang: "fr"
 source: "race-control-events.md"
-source_hash: "9ab565885c61"
+source_hash: "18fe9a0507bc"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Événements de contrôle des voitures
@@ -145,7 +145,7 @@ Chaque voiture reçoit aussi :
 | **en l'air** (airborne) | `airborne` au-dessus de 0,5 | - |
 | **contact**, **accident** | voir [Contacts et accidents](#hits-and-crashes) | vitesse perdue lors du choc |
 
-Seuils plancher d'angle de glisse par revêtement : asphalte **7°**, mixte **10°**, meuble et neige **15°**, glace **10°**. Une voiture qui glisse davantage naturellement (un modèle de pneu d'arcade, un spécialiste du gravier) a son propre seuil, plus haut, tiré de ses propres tours (1,5 × son habitude).
+Seuils plancher d'angle de glisse par revêtement : asphalte **7°**, mixte **10°**, meuble et neige **15°**, glace **10°**. Ils suivent la littérature : l'angle de dérive d'un pneu culmine à 3-10° sur asphalte et la limite de stabilité en angle de dérive de caisse d'une voiture de route est d'environ 12° sur asphalte sec, tandis que le rallye et le drift se pratiquent à 30-50° ([Analyse de course, sources](race-analytics.md#sources)). Une voiture qui glisse davantage naturellement (un modèle de pneu d'arcade, un spécialiste du gravier) a son propre seuil, plus haut, tiré de ses propres tours (1,5 × son habitude).
 
 **Dans quel sens tourne la voiture** (pour « contre le virage ») : le changement de cap de la trajectoire du tour sur ±6 m (au moins 2 points de grille). Plus serré qu'un rayon de 600 m, c'est un virage ; à droite ou à gauche selon que le monde est miroité. Le braquage est **contre** le virage lorsque abs(braquage) > 0,05 et que son signe est opposé à celui du virage : une glissade qu'on **rattrape** avec un braquage contraire.
 

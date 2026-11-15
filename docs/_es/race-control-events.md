@@ -4,9 +4,9 @@ parent: "Análisis de carrera"
 nav_order: 54
 lang: "es"
 source: "race-control-events.md"
-source_hash: "9ab565885c61"
+source_hash: "18fe9a0507bc"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Eventos de control del coche
@@ -145,7 +145,7 @@ Cada coche también recibe:
 | **airborne** | `airborne` por encima de 0,5 | - |
 | **hit**, **crash** | ver [Impactos y estrellados](#hits-and-crashes) | la velocidad que se perdió en el impacto |
 
-Los suelos mínimos de ángulo de deriva por superficie: asfalto **7°**, mixto **10°**, suelto y nieve **15°**, hielo **10°**. Un coche que derrapa más de forma normal (un modelo de neumático arcade, un especialista en grava) tiene su propio umbral, más alto, a partir de sus propias vueltas (1,5 × su hábito).
+Los suelos mínimos de ángulo de deriva por superficie: asfalto **7°**, mixto **10°**, suelto y nieve **15°**, hielo **10°**. Siguen la literatura: el ángulo de deslizamiento de un neumático alcanza su máximo a 3-10° en asfalto y el límite de estabilidad por ángulo de deriva de la carrocería de un coche de calle ronda los 12° en asfalto seco, mientras que el rally y el drift se conducen a 30-50° ([Análisis de carreras, fuentes](race-analytics.md#sources)). Un coche que derrapa más de forma normal (un modelo de neumático arcade, un especialista en grava) tiene su propio umbral, más alto, a partir de sus propias vueltas (1,5 × su hábito).
 
 **Hacia dónde gira el coche** (para "contra la curva"): el cambio de rumbo de la trayectoria de la vuelta en ±6 m (al menos 2 puntos de rejilla); más cerrado que un radio de 600 m cuenta como curva; derecha o izquierda según si el mundo está reflejado. La dirección está **contra** la curva cuando abs(dirección) > 0,05 y su signo es opuesto al de la curva: un deslizamiento que se **corrige** con contravolante.
 

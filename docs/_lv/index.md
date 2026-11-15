@@ -3,9 +3,9 @@ title: "Sākums"
 nav_order: 1
 lang: "lv"
 source: "index.md"
-source_hash: "25c1fded750f"
+source_hash: "88cb04e3aeb4"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -120,19 +120,19 @@ Serveris piesaistās tikai pie `127.0.0.1`, tāpēc neviens no maršrutiem nav s
 
 Skatītājs lasa datus; šie rīki tos veido. Katrs ir sava publiska repozitorija (MIT) ar savu dokumentāciju. Neviens no tiem nepiegādā spēļu datus: līmeņi, kartes un ieraksti tiek veidoti jūsu datorā, no spēlēm, kas jums pieder.
 
-| Repozitorija | Ko tā dara | Noderīga |
-|---|---|---|
-| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Nolasa trases un līmeņus no arhīviem, ko spēles piegādā (Forza Horizon, BeamNG, Assetto Corsa Rally; Unreal, Unity, Frostbite un Source 2 lasītāji) kā glTF | 3D līmenis zem jūsu siltuma vai atkārtojuma |
-| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Ieraksta apļu telemetriju no saskarnēm, ko publicē sacīkšu spēles, un atjauno līmeņus no spēles video | apļi Sacīkšu analīzei; līmenis, kur failus nevar nolasīt |
-| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Unreal Editor spraudnis, kas eksportē līmeni kā vienu glTF failu | jūsu pašu Unreal projektu līmeņi |
-| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike 2 demo ierakstus pārvērš siltuma tabulās un spēļu kopsavilkumos, CS2 kartes - ģeometrijā | CS2 siltums, atkārtojumi un cilne Mačs |
-| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Fonā ieraksta jūsu spēli no tā, ko spēles publicē: telemetriju, spēles stāvokļa integrācijas, žurnālus, atkārtojumus | jūsu pašu statistika bez manuāla darba |
-| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War Thunder atkārtojumi (`.wrpl`) tabulās: gaisa un zemes trajektorijas, šāvieni, trāpījumi, nogalinājumi, torņi, mērķi | War Thunder atkārtojumi, trāpījumu zīmes un atziņas |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World of Tanks atkārtojumi tabulās: katra transportlīdzekļa pozīcija, nāves un nogalinājumi | World of Tanks siltums un atkārtojumi |
-| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World of Warships atkārtojumi tabulās: katra kuģa pozīcija un nogremdēšanas | World of Warships siltums un atkārtojumi |
-| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squad servera demo tabulās: katra spēlētāja pozīcija, komanda un vienība | Squad siltums un atkārtojumi |
-| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | DCS World reljefi no jūsu pašu instalācijas līmeņos: zeme, ceļi, pilsētas, lidlauki, lauki, ūdens | DCS un Tacview ieraksti uz to reālā reljefa |
-| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | IL-2 Great Battles kartes līmeņos | IL-2 ieraksti uz to kartes |
+| Repozitorija | Ko tā dara | Noderīga | Dokumentācija |
+|---|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Nolasa trases un līmeņus no arhīviem, ko spēles piegādā (Forza Horizon, BeamNG, Assetto Corsa Rally; Unreal, Unity, Frostbite un Source 2 lasītāji) kā glTF | 3D līmenis zem jūsu siltuma vai atkārtojuma | [vietne](https://holdi601.github.io/3DHeat-GameFiles/) |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Ieraksta apļu telemetriju no saskarnēm, ko publicē sacīkšu spēles, un atjauno līmeņus no spēles video | apļi Sacīkšu analīzei; līmenis, kur failus nevar nolasīt | [vietne](https://holdi601.github.io/3DHeat-GameCapture/) |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Unreal Editor spraudnis, kas eksportē līmeni kā vienu glTF failu | jūsu pašu Unreal projektu līmeņi | [vietne](https://holdi601.github.io/3DHeat-UnrealExporter/) |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike 2 demo ierakstus pārvērš siltuma tabulās un spēļu kopsavilkumos, CS2 kartes - ģeometrijā | CS2 siltums, atkārtojumi un cilne Mačs | [vietne](https://holdi601.github.io/3DHeat-CS2/) |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Fonā ieraksta jūsu spēli no tā, ko spēles publicē: telemetriju, spēles stāvokļa integrācijas, žurnālus, atkārtojumus | jūsu pašu statistika bez manuāla darba | [vietne](https://holdi601.github.io/3DHeat-Watcher/) |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War Thunder atkārtojumi (`.wrpl`) tabulās: gaisa un zemes trajektorijas, šāvieni, trāpījumi, nogalinājumi, torņi, mērķi | War Thunder atkārtojumi, trāpījumu zīmes un atziņas | [vietne](https://holdi601.github.io/3DHeat-Ext-WarThunder/) |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World of Tanks atkārtojumi tabulās: katra transportlīdzekļa pozīcija, nāves un nogalinājumi | World of Tanks siltums un atkārtojumi | [vietne](https://holdi601.github.io/3DHeat-Ext-WoT/) |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World of Warships atkārtojumi tabulās: katra kuģa pozīcija un nogremdēšanas | World of Warships siltums un atkārtojumi | [vietne](https://holdi601.github.io/3DHeat-Ext-WoWs/) |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squad servera demo tabulās: katra spēlētāja pozīcija, komanda un vienība | Squad siltums un atkārtojumi | [vietne](https://holdi601.github.io/3DHeat-Ext-Squad/) |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | DCS World reljefi no jūsu pašu instalācijas līmeņos: zeme, ceļi, pilsētas, lidlauki, lauki, ūdens | DCS un Tacview ieraksti uz to reālā reljefa | [vietne](https://holdi601.github.io/3DHeat-Ext-DCS/) |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | IL-2 Great Battles kartes līmeņos | IL-2 ieraksti uz to kartes | [vietne](https://holdi601.github.io/3DHeat-Ext-IL2/) |
 
 ## Pirmkoda izkārtojums, īsumā {#source-layout-briefly}
 

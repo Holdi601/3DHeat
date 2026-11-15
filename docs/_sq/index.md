@@ -3,9 +3,9 @@ title: "Kryefaqja"
 nav_order: 1
 lang: "sq"
 source: "index.md"
-source_hash: "25c1fded750f"
+source_hash: "88cb04e3aeb4"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -120,19 +120,19 @@ Serveri lidhet vetëm me `127.0.0.1`, kështu që asnjëra prej rrugëve nuk arr
 
 Shikuesi lexon të dhëna; këto vegla i krijojnë. Secila është depo publike e vetë (MIT) me dokumentacionin e saj. Asnjëra nuk vjen me të dhëna loje: nivelet, hartat dhe regjistrimet bëhen në kompjuterin tënd, nga lojërat që zotëron.
 
-| Depoja | Çfarë bën | E dobishme për |
-|---|---|---|
-| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Lexon pistat dhe nivelet nga arkivat që lojërat i japin (Forza Horizon, BeamNG, Assetto Corsa Rally; lexues për Unreal, Unity, Frostbite dhe Source 2) si glTF | një nivel 3D nën nxehtësinë ose riluajtjen tënde |
-| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Regjistron telemetrinë e xhirove nga ndërfaqet që publikojnë lojërat me makina, dhe rindërton nivele nga video e lojës | xhiro për Analizën e garës; një nivel kur skedarët nuk mund të lexohen |
-| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Shtojcë për Unreal Editor që eksporton një nivel si një skedar të vetëm glTF | nivele të projekteve të tua Unreal |
-| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Demot e Counter-Strike 2 në tabela nxehtësie dhe përmbledhje ndeshjesh, hartat e CS2 në gjeometri | nxehtësia e CS2, riluajtjet dhe skeda Ndeshja |
-| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Regjistron lojën tënde në sfond nga ajo që publikojnë lojërat: telemetri, integrime të gjendjes së lojës, regjistra, riluajtje | statistikat e tua pa bërë asgjë me dorë |
-| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | Riluajtjet e War Thunder (`.wrpl`) në tabela: gjurmët ajrore dhe tokësore, të shtënat, goditjet, vrasjet, kullat, objektivat | riluajtjet e War Thunder, shenjat e goditjeve dhe vëzhgimet |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | Riluajtjet e World of Tanks në tabela: pozicioni i çdo mjeti, vdekjet dhe vrasjet | nxehtësia dhe riluajtjet e World of Tanks |
-| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | Riluajtjet e World of Warships në tabela: pozicioni i çdo anijeje dhe fundosjet | nxehtësia dhe riluajtjet e World of Warships |
-| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Demot e serverëve Squad në tabela: pozicioni, ekipi dhe skuadra e çdo lojtari | nxehtësia dhe riluajtjet e Squad |
-| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | Terrenet e DCS World nga instalimi yt, në nivele: toka, rrugët, qytetet, aeroportet, fushat, uji | DCS dhe regjistrimet Tacview në terrenin e tyre real |
-| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | Hartat e IL-2 Great Battles si nivele | regjistrimet e IL-2 në hartën e tyre |
+| Depoja | Çfarë bën | E dobishme për | Dokumentacioni |
+|---|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Lexon pistat dhe nivelet nga arkivat që lojërat i japin (Forza Horizon, BeamNG, Assetto Corsa Rally; lexues për Unreal, Unity, Frostbite dhe Source 2) si glTF | një nivel 3D nën nxehtësinë ose riluajtjen tënde | [faqja](https://holdi601.github.io/3DHeat-GameFiles/) |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Regjistron telemetrinë e xhirove nga ndërfaqet që publikojnë lojërat me makina, dhe rindërton nivele nga video e lojës | xhiro për Analizën e garës; një nivel kur skedarët nuk mund të lexohen | [faqja](https://holdi601.github.io/3DHeat-GameCapture/) |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Shtojcë për Unreal Editor që eksporton një nivel si një skedar të vetëm glTF | nivele të projekteve të tua Unreal | [faqja](https://holdi601.github.io/3DHeat-UnrealExporter/) |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Demot e Counter-Strike 2 në tabela nxehtësie dhe përmbledhje ndeshjesh, hartat e CS2 në gjeometri | nxehtësia e CS2, riluajtjet dhe skeda Ndeshja | [faqja](https://holdi601.github.io/3DHeat-CS2/) |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Regjistron lojën tënde në sfond nga ajo që publikojnë lojërat: telemetri, integrime të gjendjes së lojës, regjistra, riluajtje | statistikat e tua pa bërë asgjë me dorë | [faqja](https://holdi601.github.io/3DHeat-Watcher/) |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | Riluajtjet e War Thunder (`.wrpl`) në tabela: gjurmët ajrore dhe tokësore, të shtënat, goditjet, vrasjet, kullat, objektivat | riluajtjet e War Thunder, shenjat e goditjeve dhe vëzhgimet | [faqja](https://holdi601.github.io/3DHeat-Ext-WarThunder/) |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | Riluajtjet e World of Tanks në tabela: pozicioni i çdo mjeti, vdekjet dhe vrasjet | nxehtësia dhe riluajtjet e World of Tanks | [faqja](https://holdi601.github.io/3DHeat-Ext-WoT/) |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | Riluajtjet e World of Warships në tabela: pozicioni i çdo anijeje dhe fundosjet | nxehtësia dhe riluajtjet e World of Warships | [faqja](https://holdi601.github.io/3DHeat-Ext-WoWs/) |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Demot e serverëve Squad në tabela: pozicioni, ekipi dhe skuadra e çdo lojtari | nxehtësia dhe riluajtjet e Squad | [faqja](https://holdi601.github.io/3DHeat-Ext-Squad/) |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | Terrenet e DCS World nga instalimi yt, në nivele: toka, rrugët, qytetet, aeroportet, fushat, uji | DCS dhe regjistrimet Tacview në terrenin e tyre real | [faqja](https://holdi601.github.io/3DHeat-Ext-DCS/) |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | Hartat e IL-2 Great Battles si nivele | regjistrimet e IL-2 në hartën e tyre | [faqja](https://holdi601.github.io/3DHeat-Ext-IL2/) |
 
 ## Struktura e burimit, shkurtimisht {#source-layout-briefly}
 

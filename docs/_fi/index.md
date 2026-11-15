@@ -3,9 +3,9 @@ title: "Etusivu"
 nav_order: 1
 lang: "fi"
 source: "index.md"
-source_hash: "25c1fded750f"
+source_hash: "88cb04e3aeb4"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -119,19 +119,19 @@ Palvelin sitoutuu vain osoitteeseen `127.0.0.1`, joten kumpaakaan reittiä ei sa
 
 Katselin lukee dataa; nämä työkalut tekevät sen. Jokainen on oma julkinen tietovarastonsa (MIT) omine ohjeineen. Mikään niistä ei sisällä pelidataa: kentät, kartat ja tallenteet tehdään omalla koneellasi omista peleistäsi.
 
-| Tietovarasto | Mitä se tekee | Hyödyllinen |
-|---|---|---|
-| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Lukee ratoja ja kenttiä pelien julkaisemista arkistoista (Forza Horizon, BeamNG, Assetto Corsa Rally; Unreal-, Unity-, Frostbite- ja Source 2 -lukijat) glTF-muotoon | 3D-kenttä lämmön tai toiston alle |
-| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Tallentaa kierrostelemetrian racing-pelien julkaisemista liittymistä ja rakentaa kenttiä pelivideosta | kierroksia Kisa-analyysiin; kenttä, jos tiedostoja ei voi lukea |
-| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Unreal Editor -liitännäinen, joka vie kentän yhtenä glTF-tiedostona | omien Unreal-projektien kentät |
-| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike 2 -demot lämpötaulukoiksi ja ottelun yhteenvedoiksi, CS2-kartat geometriaksi | CS2-lämpö, toistot ja Ottelu-välilehti |
-| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Tallentaa pelaamisesi taustalla pelien julkaisemasta datasta: telemetria, pelitilaliitännät, lokit, toistot | omat tilastot ilman käsityötä |
-| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War Thunder -toistot (`.wrpl`) taulukoiksi: ilma- ja maareitit, laukaukset, osumat, tappot, tornit, tavoitteet | War Thunder -toistot, osumamerkit ja havainnot |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World of Tanks -toistot taulukoiksi: jokaisen ajoneuvon sijainti, kuolemat ja tappot | World of Tanks -lämpö ja toistot |
-| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World of Warships -toistot taulukoiksi: jokaisen laivan sijainti ja upotukset | World of Warships -lämpö ja toistot |
-| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squad-palvelimen demot taulukoiksi: jokaisen pelaajan sijainti, joukkue ja ryhmä | Squad-lämpö ja toistot |
-| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | DCS World -maastot omasta asennuksesta kentiksi: maa, tiet, kaupungit, lentokentät, pellot, vesi | DCS- ja Tacview-tallenteet niiden oikealla maastolla |
-| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | IL-2 Great Battles -kartat kentiksi | IL-2-tallenteet niiden kartalla |
+| Tietovarasto | Mitä se tekee | Hyödyllinen | Dokumentaatio |
+|---|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Lukee ratoja ja kenttiä pelien julkaisemista arkistoista (Forza Horizon, BeamNG, Assetto Corsa Rally; Unreal-, Unity-, Frostbite- ja Source 2 -lukijat) glTF-muotoon | 3D-kenttä lämmön tai toiston alle | [sivusto](https://holdi601.github.io/3DHeat-GameFiles/) |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Tallentaa kierrostelemetrian racing-pelien julkaisemista liittymistä ja rakentaa kenttiä pelivideosta | kierroksia Kisa-analyysiin; kenttä, jos tiedostoja ei voi lukea | [sivusto](https://holdi601.github.io/3DHeat-GameCapture/) |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Unreal Editor -liitännäinen, joka vie kentän yhtenä glTF-tiedostona | omien Unreal-projektien kentät | [sivusto](https://holdi601.github.io/3DHeat-UnrealExporter/) |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike 2 -demot lämpötaulukoiksi ja ottelun yhteenvedoiksi, CS2-kartat geometriaksi | CS2-lämpö, toistot ja Ottelu-välilehti | [sivusto](https://holdi601.github.io/3DHeat-CS2/) |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Tallentaa pelaamisesi taustalla pelien julkaisemasta datasta: telemetria, pelitilaliitännät, lokit, toistot | omat tilastot ilman käsityötä | [sivusto](https://holdi601.github.io/3DHeat-Watcher/) |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War Thunder -toistot (`.wrpl`) taulukoiksi: ilma- ja maareitit, laukaukset, osumat, tappot, tornit, tavoitteet | War Thunder -toistot, osumamerkit ja havainnot | [sivusto](https://holdi601.github.io/3DHeat-Ext-WarThunder/) |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World of Tanks -toistot taulukoiksi: jokaisen ajoneuvon sijainti, kuolemat ja tappot | World of Tanks -lämpö ja toistot | [sivusto](https://holdi601.github.io/3DHeat-Ext-WoT/) |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World of Warships -toistot taulukoiksi: jokaisen laivan sijainti ja upotukset | World of Warships -lämpö ja toistot | [sivusto](https://holdi601.github.io/3DHeat-Ext-WoWs/) |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squad-palvelimen demot taulukoiksi: jokaisen pelaajan sijainti, joukkue ja ryhmä | Squad-lämpö ja toistot | [sivusto](https://holdi601.github.io/3DHeat-Ext-Squad/) |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | DCS World -maastot omasta asennuksesta kentiksi: maa, tiet, kaupungit, lentokentät, pellot, vesi | DCS- ja Tacview-tallenteet niiden oikealla maastolla | [sivusto](https://holdi601.github.io/3DHeat-Ext-DCS/) |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | IL-2 Great Battles -kartat kentiksi | IL-2-tallenteet niiden kartalla | [sivusto](https://holdi601.github.io/3DHeat-Ext-IL2/) |
 
 ## Lähdekoodin rakenne lyhyesti {#source-layout-briefly}
 

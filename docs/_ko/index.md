@@ -3,9 +3,9 @@ title: "홈"
 nav_order: 1
 lang: "ko"
 source: "index.md"
-source_hash: "25c1fded750f"
+source_hash: "88cb04e3aeb4"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -117,19 +117,19 @@ npm run dev      # http://127.0.0.1:5273
 
 뷰어는 데이터를 읽고, 이 도구들은 데이터를 만듭니다. 각각은 자기 문서가 있는 공개 저장소(MIT)입니다. 어느 것도 게임 데이터를 함께 주지 않습니다. 레벨, 맵, 기록은 여러분의 컴퓨터에서, 여러분이 가진 게임으로 만듭니다.
 
-| 저장소 | 하는 일 | 쓰임새 |
-|---|---|---|
-| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | 게임이 함께 배포하는 압축 파일에서 코스와 레벨을 꺼내 glTF로 만듭니다(Forza Horizon, BeamNG, Assetto Corsa Rally; Unreal, Unity, Frostbite, Source 2 판독기 포함) | 히트나 리플레이 아래의 3D 레벨 |
-| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | 레이싱 게임이 공개하는 인터페이스에서 랩 텔레메트리를 기록하고, 게임플레이 영상에서 레벨을 다시 만듭니다 | 레이스 분석용 랩. 파일을 읽을 수 없는 레벨 |
-| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | 레벨을 glTF 파일 하나로 내보내는 언리얼 에디터 플러그인 | 여러분 자신의 언리얼 프로젝트 레벨 |
-| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | 카운터 스트라이크 2 데모를 히트맵 표와 경기 요약으로, CS2 맵을 지오메트리로 바꿉니다 | CS2 히트, 리플레이, 매치 탭 |
-| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | 게임이 공개하는 것(텔레메트리, 게임 상태 연동, 로그, 리플레이)으로 여러분의 플레이를 백그라운드에서 기록합니다 | 손으로 하지 않고 얻는 여러분의 통계 |
-| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War Thunder 리플레이(`.wrpl`)를 표로 바꿉니다. 공중과 지상 궤적, 발사, 명중, 격추, 포탑, 목표 | War Thunder 리플레이, 명중 표시, 인사이트 |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World of Tanks 리플레이를 표로 바꿉니다. 모든 차량의 위치, 사망, 격파 | World of Tanks 히트와 리플레이 |
-| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World of Warships 리플레이를 표로 바꿉니다. 모든 함선의 위치와 침몰 | World of Warships 히트와 리플레이 |
-| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squad 서버 데모를 표로 바꿉니다. 모든 플레이어의 위치, 팀, 분대 | Squad 히트와 리플레이 |
-| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | 여러분의 설치본에 있는 DCS World 지형을 레벨로 바꿉니다. 지면, 도로, 마을, 비행장, 들판, 물 | DCS와 Tacview 기록을 실제 지형 위에서 |
-| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | IL-2 Great Battles 맵을 레벨로 바꿉니다 | 그 맵 위의 IL-2 기록 |
+| 저장소 | 하는 일 | 쓰임새 | 문서 |
+|---|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | 게임이 함께 배포하는 압축 파일에서 코스와 레벨을 꺼내 glTF로 만듭니다(Forza Horizon, BeamNG, Assetto Corsa Rally; Unreal, Unity, Frostbite, Source 2 판독기 포함) | 히트나 리플레이 아래의 3D 레벨 | [사이트](https://holdi601.github.io/3DHeat-GameFiles/) |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | 레이싱 게임이 공개하는 인터페이스에서 랩 텔레메트리를 기록하고, 게임플레이 영상에서 레벨을 다시 만듭니다 | 레이스 분석용 랩. 파일을 읽을 수 없는 레벨 | [사이트](https://holdi601.github.io/3DHeat-GameCapture/) |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | 레벨을 glTF 파일 하나로 내보내는 언리얼 에디터 플러그인 | 여러분 자신의 언리얼 프로젝트 레벨 | [사이트](https://holdi601.github.io/3DHeat-UnrealExporter/) |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | 카운터 스트라이크 2 데모를 히트맵 표와 경기 요약으로, CS2 맵을 지오메트리로 바꿉니다 | CS2 히트, 리플레이, 매치 탭 | [사이트](https://holdi601.github.io/3DHeat-CS2/) |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | 게임이 공개하는 것(텔레메트리, 게임 상태 연동, 로그, 리플레이)으로 여러분의 플레이를 백그라운드에서 기록합니다 | 손으로 하지 않고 얻는 여러분의 통계 | [사이트](https://holdi601.github.io/3DHeat-Watcher/) |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War Thunder 리플레이(`.wrpl`)를 표로 바꿉니다. 공중과 지상 궤적, 발사, 명중, 격추, 포탑, 목표 | War Thunder 리플레이, 명중 표시, 인사이트 | [사이트](https://holdi601.github.io/3DHeat-Ext-WarThunder/) |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World of Tanks 리플레이를 표로 바꿉니다. 모든 차량의 위치, 사망, 격파 | World of Tanks 히트와 리플레이 | [사이트](https://holdi601.github.io/3DHeat-Ext-WoT/) |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World of Warships 리플레이를 표로 바꿉니다. 모든 함선의 위치와 침몰 | World of Warships 히트와 리플레이 | [사이트](https://holdi601.github.io/3DHeat-Ext-WoWs/) |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squad 서버 데모를 표로 바꿉니다. 모든 플레이어의 위치, 팀, 분대 | Squad 히트와 리플레이 | [사이트](https://holdi601.github.io/3DHeat-Ext-Squad/) |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | 여러분의 설치본에 있는 DCS World 지형을 레벨로 바꿉니다. 지면, 도로, 마을, 비행장, 들판, 물 | DCS와 Tacview 기록을 실제 지형 위에서 | [사이트](https://holdi601.github.io/3DHeat-Ext-DCS/) |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | IL-2 Great Battles 맵을 레벨로 바꿉니다 | 그 맵 위의 IL-2 기록 | [사이트](https://holdi601.github.io/3DHeat-Ext-IL2/) |
 
 ## 소스 구조 간단히 {#source-layout-briefly}
 

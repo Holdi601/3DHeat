@@ -4,9 +4,9 @@ parent: "Løpsanalyse"
 nav_order: 54
 lang: "no"
 source: "race-control-events.md"
-source_hash: "9ab565885c61"
+source_hash: "18fe9a0507bc"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Bilkontrollhendelser
@@ -145,7 +145,7 @@ Hver bil får også:
 | **airborne** | `airborne` over 0,5 | - |
 | **treff**, **krasj** | se [Treff og krasj](#hits-and-crashes) | farten støtet tok |
 
-Driftvinkelgulvene per underlag: asfalt **7°**, blandet **10°**, løst og snø **15°**, is **10°**. En bil som kjører mer som en selvfølge – en arkademodell for dekk, en grusspesialist – får en egen, høyere terskel fra sine egne runder (1,5 × driftvanen).
+Driftvinkelgulvene per underlag: asfalt **7°**, blandet **10°**, løst og snø **15°**, is **10°**. De følger litteraturen: et dekks glidevinkel topper ved 3–10° på asfalt, og en personbils stabilitetsgrense for karosseriets glidevinkel er rundt 12° på tørr asfalt, mens rally og drifting kjøres ved 30–50° ([Løpsanalyse, kilder](race-analytics.md#sources)). En bil som kjører mer som en selvfølge – en arkademodell for dekk, en grusspesialist – får en egen, høyere terskel fra sine egne runder (1,5 × driftvanen).
 
 **Hvilken vei bilen svinger** (for "mot svingen"): endringen i rundens egen bane i retning over ±6 m (minst 2 rutepunkter). Strammere enn 600 m radius teller som sving. Høyre eller venstre avgjøres av om verden er speilvendt. Styringen er **mot** svingen når abs(styring) er over 0,05 og fortegnet er motsatt av svingen. Det er en glidning som blir **fanget** med motstyring.
 

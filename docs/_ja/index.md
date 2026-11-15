@@ -3,9 +3,9 @@ title: "ホーム"
 nav_order: 1
 lang: "ja"
 source: "index.md"
-source_hash: "25c1fded750f"
+source_hash: "88cb04e3aeb4"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -117,19 +117,19 @@ npm run dev      # http://127.0.0.1:5273
 
 ビューアーはデータを読みます。これらのツールがデータを作ります。それぞれが独自の公開リポジトリ（MIT）で、独自のドキュメントを持ちます。どれもゲームのデータは同梱していません。レベル、マップ、記録は、あなたが持っているゲームから、ご自身のマシン上で作ります。
 
-| リポジトリ | 役割 | 用途 |
-|---|---|---|
-| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | ゲームが同梱するアーカイブ（Forza Horizon、BeamNG、Assetto Corsa Rally。Unreal、Unity、Frostbite、Source 2 の読み取り）からコースとレベルを読み出し、glTF にします | ヒートやリプレイの下に置く3Dレベル |
-| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | レーシングゲームが公開するインターフェースからラップのテレメトリを記録し、ゲームプレイの動画からレベルを再構築します | レース分析用のラップ。ファイルを読めないときのレベル |
-| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | レベルを1つの glTF ファイルとして書き出す Unreal Editor のプラグイン | ご自身の Unreal プロジェクトのレベル |
-| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike 2 のデモをヒートの表と試合の要約に、CS2 のマップをジオメトリに変換します | CS2 のヒート、リプレイ、試合タブ |
-| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | ゲームが公開する情報（テレメトリ、ゲーム状態の連携、ログ、リプレイ）から、バックグラウンドでプレイを記録します | 手作業なしのご自身の統計 |
-| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War Thunder のリプレイ（`.wrpl`）を表にします。空中と地上の軌跡、射撃、命中、撃墜、砲塔、目標 | War Thunder のリプレイ、命中マーク、インサイト |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World of Tanks のリプレイを表にします。すべての車両の位置、撃破、撃墜 | World of Tanks のヒートとリプレイ |
-| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World of Warships のリプレイを表にします。すべての艦の位置と撃沈 | World of Warships のヒートとリプレイ |
-| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squad のサーバーのデモを表にします。すべてのプレイヤーの位置、チーム、分隊 | Squad のヒートとリプレイ |
-| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | ご自身のインストールにある DCS World の地形を、地上、道路、町、飛行場、畑、水域のあるレベルにします | DCS と Tacview の記録を実際の地形の上で |
-| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | IL-2 Great Battles のマップをレベルにします | IL-2 の記録をそのマップの上で |
+| リポジトリ | 役割 | 用途 | ドキュメント |
+|---|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | ゲームが同梱するアーカイブ（Forza Horizon、BeamNG、Assetto Corsa Rally。Unreal、Unity、Frostbite、Source 2 の読み取り）からコースとレベルを読み出し、glTF にします | ヒートやリプレイの下に置く3Dレベル | [サイト](https://holdi601.github.io/3DHeat-GameFiles/) |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | レーシングゲームが公開するインターフェースからラップのテレメトリを記録し、ゲームプレイの動画からレベルを再構築します | レース分析用のラップ。ファイルを読めないときのレベル | [サイト](https://holdi601.github.io/3DHeat-GameCapture/) |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | レベルを1つの glTF ファイルとして書き出す Unreal Editor のプラグイン | ご自身の Unreal プロジェクトのレベル | [サイト](https://holdi601.github.io/3DHeat-UnrealExporter/) |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike 2 のデモをヒートの表と試合の要約に、CS2 のマップをジオメトリに変換します | CS2 のヒート、リプレイ、試合タブ | [サイト](https://holdi601.github.io/3DHeat-CS2/) |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | ゲームが公開する情報（テレメトリ、ゲーム状態の連携、ログ、リプレイ）から、バックグラウンドでプレイを記録します | 手作業なしのご自身の統計 | [サイト](https://holdi601.github.io/3DHeat-Watcher/) |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War Thunder のリプレイ（`.wrpl`）を表にします。空中と地上の軌跡、射撃、命中、撃墜、砲塔、目標 | War Thunder のリプレイ、命中マーク、インサイト | [サイト](https://holdi601.github.io/3DHeat-Ext-WarThunder/) |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World of Tanks のリプレイを表にします。すべての車両の位置、撃破、撃墜 | World of Tanks のヒートとリプレイ | [サイト](https://holdi601.github.io/3DHeat-Ext-WoT/) |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World of Warships のリプレイを表にします。すべての艦の位置と撃沈 | World of Warships のヒートとリプレイ | [サイト](https://holdi601.github.io/3DHeat-Ext-WoWs/) |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squad のサーバーのデモを表にします。すべてのプレイヤーの位置、チーム、分隊 | Squad のヒートとリプレイ | [サイト](https://holdi601.github.io/3DHeat-Ext-Squad/) |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | ご自身のインストールにある DCS World の地形を、地上、道路、町、飛行場、畑、水域のあるレベルにします | DCS と Tacview の記録を実際の地形の上で | [サイト](https://holdi601.github.io/3DHeat-Ext-DCS/) |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | IL-2 Great Battles のマップをレベルにします | IL-2 の記録をそのマップの上で | [サイト](https://holdi601.github.io/3DHeat-Ext-IL2/) |
 
 ## ソースの構成（概要） {#source-layout-briefly}
 

@@ -4,9 +4,9 @@ parent: "Yarış analizi"
 nav_order: 54
 lang: "tr"
 source: "race-control-events.md"
-source_hash: "9ab565885c61"
+source_hash: "18fe9a0507bc"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Araç kontrolü olayları
@@ -145,7 +145,7 @@ Her araba ayrıca şunları alır:
 | **airborne** | `airborne` 0,5'in üzerinde | - |
 | **hit**, **crash** | bkz. [Temaslar ve düşmeler](#hits-and-crashes) | darbenin aldığı hız |
 
-Zemine göre kayma açısı tabanları: asfalt **7°**, karışık **10°**, gevşek ve kar **15°**, buz **10°**. Kendiliğinden daha çok kayan bir araba — arcade bir lastik modeli, bir çakıl uzmanı — kendi turlarından, kendi (daha yüksek) eşiğine sahiptir (1,5 × alışkanlığı).
+Zemine göre kayma açısı tabanları: asfalt **7°**, karışık **10°**, gevşek ve kar **15°**, buz **10°**. Bunlar literatürü izler: bir lastiğin kayma açısı asfaltta 3–10°'de zirve yapar ve bir yol aracının gövde kayma açısı kararlılık sınırı kuru asfaltta yaklaşık 12°'dir; ralli ve drift ise 30–50° ile sürülür ([Yarış analitiği, kaynaklar](race-analytics.md#sources)). Kendiliğinden daha çok kayan bir araba — arcade bir lastik modeli, bir çakıl uzmanı — kendi turlarından, kendi (daha yüksek) eşiğine sahiptir (1,5 × alışkanlığı).
 
 **Araba hangi yöne döner** ("virajın tersine" için): turun kendi yolunun ±6 m üzerindeki yön değişimi (en az 2 ızgara noktası); 600 m yarıçaptan daha sıkısı dönüş sayılır; sağ ya da sol, dünyanın aynalanıp aynalanmadığına göre. Direksiyon **tersine** olduğunda, mutlak(direksiyon) > 0,05 ve işareti dönüşün tersi ise — bir kaymanın ters direksiyonla **yakalanması**.
 

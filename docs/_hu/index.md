@@ -3,9 +3,9 @@ title: "Főoldal"
 nav_order: 1
 lang: "hu"
 source: "index.md"
-source_hash: "25c1fded750f"
+source_hash: "88cb04e3aeb4"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -120,19 +120,19 @@ A kiszolgáló csak a `127.0.0.1` címen figyel, így egyik útvonal sem érhet�
 
 A megjelenítő adatokat olvas; ezek az eszközök készítik őket. Mindegyik saját, nyilvános tároló (MIT), saját dokumentációval. Egyikük sem tartalmaz játékadatot: a pályákat, térképeket és felvételeket az Ön gépén, az Ön által birtokolt játékokból készítik.
 
-| Tároló | Mit csinál | Mire jó |
-|---|---|---|
-| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | A játékok által szállított archívumokból pályákat és versenypályákat olvas ki (Forza Horizon, BeamNG, Assetto Corsa Rally; Unreal-, Unity-, Frostbite- és Source 2-olvasók) glTF-formátumban | 3D-s pályát a hője vagy visszajátszása alá |
-| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | A versenyjátékok nyilvánosan közzétett felületeiből rögzíti a körtelemetriát, és játékmenet-videóból építi újra a pályákat | körök a Versenyelemzéshez; pálya, ha nem olvashatók a fájlok |
-| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Unreal Editor-bővítmény, amely egy pályát egyetlen glTF-fájlba exportál | saját Unreal-projektek pályái |
-| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike 2 demókat hőtérképtáblákká és meccsösszegzésekké, a CS2-térképeket geometriává alakít | CS2-hő, visszajátszások és a Meccs fül |
-| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | A játékok által közzétett adatokból rögzíti a játékát a háttérben: telemetria, játékállapot-integrációk, naplók, visszajátszások | saját statisztikák kézi munka nélkül |
-| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War Thunder-visszajátszásokat (`.wrpl`) táblázatokká alakít: légi és földi útvonalak, lövések, találatok, halálok, tornyok, célok | War Thunder-visszajátszások, találatjelek és felismerések |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World of Tanks-visszajátszásokat táblázatokká alakít: minden jármű pozíciója, halálai és öléseit | World of Tanks-hő és -visszajátszások |
-| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World of Warships-visszajátszásokat táblázatokká alakít: minden hajó pozíciója és elsüllyesztései | World of Warships-hő és -visszajátszások |
-| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squad-szerverdemókat táblázatokká alakít: minden játékos pozíciója, csapata és rajja | Squad-hő és -visszajátszások |
-| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | A DCS World terepeit az Ön saját telepítéséből pályákká alakítja: talaj, utak, városok, repülőterek, mezők, víz | DCS- és Tacview-felvételek a valódi terepükön |
-| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | Az IL-2 Great Battles térképeit pályákká alakítja | IL-2-felvételek a saját térképükön |
+| Tároló | Mit csinál | Mire jó | Dokumentáció |
+|---|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | A játékok által szállított archívumokból pályákat és versenypályákat olvas ki (Forza Horizon, BeamNG, Assetto Corsa Rally; Unreal-, Unity-, Frostbite- és Source 2-olvasók) glTF-formátumban | 3D-s pályát a hője vagy visszajátszása alá | [oldal](https://holdi601.github.io/3DHeat-GameFiles/) |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | A versenyjátékok nyilvánosan közzétett felületeiből rögzíti a körtelemetriát, és játékmenet-videóból építi újra a pályákat | körök a Versenyelemzéshez; pálya, ha nem olvashatók a fájlok | [oldal](https://holdi601.github.io/3DHeat-GameCapture/) |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Unreal Editor-bővítmény, amely egy pályát egyetlen glTF-fájlba exportál | saját Unreal-projektek pályái | [oldal](https://holdi601.github.io/3DHeat-UnrealExporter/) |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike 2 demókat hőtérképtáblákká és meccsösszegzésekké, a CS2-térképeket geometriává alakít | CS2-hő, visszajátszások és a Meccs fül | [oldal](https://holdi601.github.io/3DHeat-CS2/) |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | A játékok által közzétett adatokból rögzíti a játékát a háttérben: telemetria, játékállapot-integrációk, naplók, visszajátszások | saját statisztikák kézi munka nélkül | [oldal](https://holdi601.github.io/3DHeat-Watcher/) |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War Thunder-visszajátszásokat (`.wrpl`) táblázatokká alakít: légi és földi útvonalak, lövések, találatok, halálok, tornyok, célok | War Thunder-visszajátszások, találatjelek és felismerések | [oldal](https://holdi601.github.io/3DHeat-Ext-WarThunder/) |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World of Tanks-visszajátszásokat táblázatokká alakít: minden jármű pozíciója, halálai és öléseit | World of Tanks-hő és -visszajátszások | [oldal](https://holdi601.github.io/3DHeat-Ext-WoT/) |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World of Warships-visszajátszásokat táblázatokká alakít: minden hajó pozíciója és elsüllyesztései | World of Warships-hő és -visszajátszások | [oldal](https://holdi601.github.io/3DHeat-Ext-WoWs/) |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squad-szerverdemókat táblázatokká alakít: minden játékos pozíciója, csapata és rajja | Squad-hő és -visszajátszások | [oldal](https://holdi601.github.io/3DHeat-Ext-Squad/) |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | A DCS World terepeit az Ön saját telepítéséből pályákká alakítja: talaj, utak, városok, repülőterek, mezők, víz | DCS- és Tacview-felvételek a valódi terepükön | [oldal](https://holdi601.github.io/3DHeat-Ext-DCS/) |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | Az IL-2 Great Battles térképeit pályákká alakítja | IL-2-felvételek a saját térképükön | [oldal](https://holdi601.github.io/3DHeat-Ext-IL2/) |
 
 ## A forráskód röviden {#source-layout-briefly}
 

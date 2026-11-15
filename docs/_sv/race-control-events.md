@@ -4,9 +4,9 @@ parent: "Racinganalys"
 nav_order: 54
 lang: "sv"
 source: "race-control-events.md"
-source_hash: "9ab565885c61"
+source_hash: "18fe9a0507bc"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Händelser för bilkontroll
@@ -145,7 +145,7 @@ Varje bil får också:
 | **airborne** | `airborne` över 0,5 | - |
 | **hit**, **crash** | se [Träffar och krascher](#hits-and-crashes) | farten som stöten tog |
 
-Golven för driftvinkel per underlag: asfalt **7°**, blandat **10°**, löst och snö **15°**, is **10°**. En bil som glider mer som en självklarhet – en arkadmässig däckmodell, en grusspecialist – får en egen, högre gräns från sina egna varv (1,5 gånger dess vana).
+Golven för driftvinkel per underlag: asfalt **7°**, blandat **10°**, löst och snö **15°**, is **10°**. De följer litteraturen: ett däcks slipvinkel toppar vid 3–10° på asfalt och en personbils stabilitetsgräns för karossens slipvinkel ligger kring 12° på torr asfalt, medan rally och drifting körs vid 30–50° ([Racinganalys, källor](race-analytics.md#sources)). En bil som glider mer som en självklarhet – en arkadmässig däckmodell, en grusspecialist – får en egen, högre gräns från sina egna varv (1,5 gånger dess vana).
 
 **Vilket håll bilen svänger åt** (för ”mot svängen”): ändringen av varvets egen bana i riktning över ±6 m (minst 2 rutnätspunkter); snävare än 600 m radie räknas som sväng; höger eller vänster beroende på om världen är spegelvänd. Styrningen är **mot** svängen när abs(styrning) > 0,05 och dess tecken är motsatt svängen – en glidning som **fångas** med motstyrning.
 

@@ -4,9 +4,9 @@ parent: "Race-analyse"
 nav_order: 54
 lang: "nl"
 source: "race-control-events.md"
-source_hash: "9ab565885c61"
+source_hash: "18fe9a0507bc"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Gebeurtenissen bij wagenbeheersing
@@ -145,7 +145,7 @@ Elke auto krijgt ook:
 | **airborne** | `airborne` boven 0,5 | - |
 | **contact**, **neerstorting** | zie [Contacten en neerstortingen](#hits-and-crashes) | snelheid die de klap kostte |
 
-Slipshoek-drempels per ondergrond: asfalt **7°**, gemengd **10°**, los en sneeuw **15°**, ijs **10°**. Een auto die vanzelfsprekend meer slipt - een arcade-bandenmodel, een grind-specialist - krijgt een eigen, hogere drempel uit zijn eigen rondes (1,5 × zijn gewoonte).
+Slipshoek-drempels per ondergrond: asfalt **7°**, gemengd **10°**, los en sneeuw **15°**, ijs **10°**. Ze volgen de literatuur: de sliphoek van een band piekt bij 3-10° op asfalt en de stabiliteitsgrens van een personenauto voor de sliphoek van de carrosserie ligt rond 12° op droog asfalt, terwijl rally en drift op 30-50° rijden ([Race-analyse, bronnen](race-analytics.md#sources)). Een auto die vanzelfsprekend meer slipt - een arcade-bandenmodel, een grind-specialist - krijgt een eigen, hogere drempel uit zijn eigen rondes (1,5 × zijn gewoonte).
 
 **Welke kant de auto op draait** (voor "tegen de bocht in"): de verandering van de koers van het eigen pad van de ronde over ±6 m (minstens 2 rasterpunten); krapper dan een straal van 600 m telt als bochten; rechts of links naargelang de wereld gespiegeld is. Het stuur is **tegen** de bocht in wanneer abs(stuur) > 0,05 en het teken tegengesteld is aan de bocht: een slip die **wordt opgevangen** met tegenstuur.
 

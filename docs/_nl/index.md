@@ -3,9 +3,9 @@ title: "Startpagina"
 nav_order: 1
 lang: "nl"
 source: "index.md"
-source_hash: "25c1fded750f"
+source_hash: "88cb04e3aeb4"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -120,19 +120,19 @@ De server bindt alleen aan `127.0.0.1`, dus geen van beide routes is vanuit het 
 
 De viewer leest data; deze tools maken ze. Elk is een eigen openbare repository (MIT) met eigen documentatie. Geen van hen levert spelgegevens mee: niveaus, kaarten en opnamen worden op je eigen computer gemaakt, uit spellen die je bezit.
 
-| Repository | Wat het doet | Handig voor |
-|---|---|---|
-| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Leest banen en niveaus uit de archieven die spellen meeleveren (Forza Horizon, BeamNG, Assetto Corsa Rally; lezers voor Unreal, Unity, Frostbite en Source 2) als glTF | een 3D-niveau onder je warmte of replay |
-| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Legt rondetelemetrie vast uit de interfaces die racespellen publiceren, en bouwt niveaus opnieuw op uit gameplayvideo | rondes voor Race-analyse; een niveau waar geen bestanden gelezen kunnen worden |
-| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Unreal Editor-plug-in die een niveau exporteert als één glTF-bestand | niveaus van je eigen Unreal-projecten |
-| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike 2-demo's naar warmtetabellen en wedstrijdsamenvattingen, CS2-kaarten naar geometrie | CS2-warmte, replays en het tabblad Match |
-| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Legt je spel op de achtergrond vast uit wat spellen publiceren: telemetrie, game-state-integraties, logs, replays | je eigen statistieken zonder iets met de hand te doen |
-| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War Thunder-replays (`.wrpl`) naar tabellen: lucht- en grondroutes, schoten, treffers, kills, torentjes, doelen | War Thunder-replays, trefferen en inzichten |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World of Tanks-replays naar tabellen: de positie van elk voertuig, sterfgevallen en kills | World of Tanks-warmte en -replays |
-| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World of Warships-replays naar tabellen: de positie van elk schip en zinkingen | World of Warships-warmte en -replays |
-| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squad-serverdemo's naar tabellen: de positie, het team en de squad van elke speler | Squad-warmte en -replays |
-| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | DCS World-terreinen uit je eigen installatie naar niveaus: grond, wegen, steden, vliegvelden, velden, water | DCS- en Tacview-opnamen op hun echte terrein |
-| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | IL-2 Great Battles-kaarten naar niveaus | IL-2-opnamen op hun kaart |
+| Repository | Wat het doet | Handig voor | Documentatie |
+|---|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Leest banen en niveaus uit de archieven die spellen meeleveren (Forza Horizon, BeamNG, Assetto Corsa Rally; lezers voor Unreal, Unity, Frostbite en Source 2) als glTF | een 3D-niveau onder je warmte of replay | [site](https://holdi601.github.io/3DHeat-GameFiles/) |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Legt rondetelemetrie vast uit de interfaces die racespellen publiceren, en bouwt niveaus opnieuw op uit gameplayvideo | rondes voor Race-analyse; een niveau waar geen bestanden gelezen kunnen worden | [site](https://holdi601.github.io/3DHeat-GameCapture/) |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Unreal Editor-plug-in die een niveau exporteert als één glTF-bestand | niveaus van je eigen Unreal-projecten | [site](https://holdi601.github.io/3DHeat-UnrealExporter/) |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike 2-demo's naar warmtetabellen en wedstrijdsamenvattingen, CS2-kaarten naar geometrie | CS2-warmte, replays en het tabblad Match | [site](https://holdi601.github.io/3DHeat-CS2/) |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Legt je spel op de achtergrond vast uit wat spellen publiceren: telemetrie, game-state-integraties, logs, replays | je eigen statistieken zonder iets met de hand te doen | [site](https://holdi601.github.io/3DHeat-Watcher/) |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War Thunder-replays (`.wrpl`) naar tabellen: lucht- en grondroutes, schoten, treffers, kills, torentjes, doelen | War Thunder-replays, trefferen en inzichten | [site](https://holdi601.github.io/3DHeat-Ext-WarThunder/) |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World of Tanks-replays naar tabellen: de positie van elk voertuig, sterfgevallen en kills | World of Tanks-warmte en -replays | [site](https://holdi601.github.io/3DHeat-Ext-WoT/) |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World of Warships-replays naar tabellen: de positie van elk schip en zinkingen | World of Warships-warmte en -replays | [site](https://holdi601.github.io/3DHeat-Ext-WoWs/) |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squad-serverdemo's naar tabellen: de positie, het team en de squad van elke speler | Squad-warmte en -replays | [site](https://holdi601.github.io/3DHeat-Ext-Squad/) |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | DCS World-terreinen uit je eigen installatie naar niveaus: grond, wegen, steden, vliegvelden, velden, water | DCS- en Tacview-opnamen op hun echte terrein | [site](https://holdi601.github.io/3DHeat-Ext-DCS/) |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | IL-2 Great Battles-kaarten naar niveaus | IL-2-opnamen op hun kaart | [site](https://holdi601.github.io/3DHeat-Ext-IL2/) |
 
 ## Kort over de broncode-indeling {#source-layout-briefly}
 

@@ -4,9 +4,9 @@ parent: "Sacīkšu analīze"
 nav_order: 54
 lang: "lv"
 source: "race-control-events.md"
-source_hash: "9ab565885c61"
+source_hash: "18fe9a0507bc"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Auto vadības notikumi
@@ -193,7 +193,7 @@ Katrai automašīnai arī tiek noteikts:
 | **hit**, **crash** | skat. [Trāpījumi un avārijas](#hits-and-crashes) | ātrums, ko trieciens atņēma |
 
 Drifta leņķa zemākās robežas pēc virsmas: asfaltam **7°**, jauktai **10°**, irdenai un sniegam
-**15°**, ledum **10°**. Auto, kas slīd kā parasta lieta - arkādes riepu modelis,
+**15°**, ledum **10°**. Tās seko literatūrai: riepas slīdes leņķis uz asfalta sasniedz maksimumu pie 3–10°, un vieglā auto virsbūves sānslīdes leņķa stabilitātes robeža uz sausa asfalta ir aptuveni 12°, savukārt rallijs un drifts notiek pie 30–50° ([Sacīkšu analītika, avoti](race-analytics.md#sources)). Auto, kas slīd kā parasta lieta - arkādes riepu modelis,
 grants speciālists - tai ir savs, augstāks slieksnis no pašas aplēm
 (1,5 × tās paradums).
 

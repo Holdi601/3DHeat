@@ -3,9 +3,9 @@ title: "Baile"
 nav_order: 1
 lang: "ga"
 source: "index.md"
-source_hash: "25c1fded750f"
+source_hash: "88cb04e3aeb4"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -120,19 +120,19 @@ Ní ceanglaíonn an freastalaí ach le `127.0.0.1`, mar sin ní fhaightear na be
 
 Léann an t-amharcóir sonraí; déanann na huirlisí seo iad. Is stóras poiblí é gach ceann (MIT) le a dhoiciméadú féin. Níl sonraí cluiche ar bith sa chuid is mó díobh: déantar leibhéil, léarscáileanna agus taifeadtaí ar do ríomhaire féin, ó chluichí atá agat.
 
-| Stór | Cad a dhéanann sé | Úsáideach le haghaidh |
-|---|---|---|
-| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Léann cúrsaí agus leibhéil as na cartlanna a sheolann cluichí (Forza Horizon, BeamNG, Assetto Corsa Rally; léitheoirí Unreal, Unity, Frostbite agus Source 2) mar glTF | leibhéal 3D faoi do theas nó d'athsheinm |
-| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Taifeadann telemetry lap ó na comhéadain a fhoilsíonn cluichí rásaíochta, agus atógann leibhéil ó físeán cluiche | laps do Anailís rása; leibhéal nuair nach féidir aon chomhad a léamh |
-| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Breiseán Unreal Editor a easpórtálann leibhéal mar chomhad glTF amháin | leibhéil de do thionscadail Unreal féin |
-| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Demos Counter-Strike 2 ina dtáblaí léarscáile teasa agus achoimrí cluiche, léarscáileanna CS2 ina ngeoiméadracht | teas CS2, athsheinmeanna agus cluaisín Cluiche |
-| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Taifeadann do sheinm sa chúlra ó na rudaí a fhoilsíonn cluichí: telemetry, comhtháthuithe staide cluiche, logaí, athsheinmeanna | do staitisticí féin gan rud ar bith a dhéanamh de láimh |
-| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | Athsheinmeanna War Thunder (`.wrpl`) ina dtáblaí: rianta aeir agus talún, urchair, buillí, marbhanna, túiríní, cuspóirí | athsheinmeanna War Thunder, marcanna buillí agus léargais |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | Athsheinmeanna World of Tanks ina dtáblaí: suíomh gach feithicle, básanna agus marbhanna | teas agus athsheinmeanna World of Tanks |
-| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | Athsheinmeanna World of Warships ina dtáblaí: suíomh gach loinge agus a báthadh | teas agus athsheinmeanna World of Warships |
-| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Demos freastalaí Squad ina dtáblaí: suíomh, foireann agus scuad gach imreora | teas agus athsheinmeanna Squad |
-| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | Tír-raonta DCS World ó do shuiteáil féin ina leibhéil: talamh, bóithre, bailte, aerpháirceanna, páirceanna, uisce | DCS agus taifeadtaí Tacview ar a dtír-raon fíor |
-| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | Léarscáileanna IL-2 Great Battles ina leibhéil | taifeadtaí IL-2 ar a léarscáil |
+| Stór | Cad a dhéanann sé | Úsáideach le haghaidh | Doiciméadú |
+|---|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Léann cúrsaí agus leibhéil as na cartlanna a sheolann cluichí (Forza Horizon, BeamNG, Assetto Corsa Rally; léitheoirí Unreal, Unity, Frostbite agus Source 2) mar glTF | leibhéal 3D faoi do theas nó d'athsheinm | [suíomh](https://holdi601.github.io/3DHeat-GameFiles/) |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Taifeadann telemetry lap ó na comhéadain a fhoilsíonn cluichí rásaíochta, agus atógann leibhéil ó físeán cluiche | laps do Anailís rása; leibhéal nuair nach féidir aon chomhad a léamh | [suíomh](https://holdi601.github.io/3DHeat-GameCapture/) |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Breiseán Unreal Editor a easpórtálann leibhéal mar chomhad glTF amháin | leibhéil de do thionscadail Unreal féin | [suíomh](https://holdi601.github.io/3DHeat-UnrealExporter/) |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Demos Counter-Strike 2 ina dtáblaí léarscáile teasa agus achoimrí cluiche, léarscáileanna CS2 ina ngeoiméadracht | teas CS2, athsheinmeanna agus cluaisín Cluiche | [suíomh](https://holdi601.github.io/3DHeat-CS2/) |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Taifeadann do sheinm sa chúlra ó na rudaí a fhoilsíonn cluichí: telemetry, comhtháthuithe staide cluiche, logaí, athsheinmeanna | do staitisticí féin gan rud ar bith a dhéanamh de láimh | [suíomh](https://holdi601.github.io/3DHeat-Watcher/) |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | Athsheinmeanna War Thunder (`.wrpl`) ina dtáblaí: rianta aeir agus talún, urchair, buillí, marbhanna, túiríní, cuspóirí | athsheinmeanna War Thunder, marcanna buillí agus léargais | [suíomh](https://holdi601.github.io/3DHeat-Ext-WarThunder/) |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | Athsheinmeanna World of Tanks ina dtáblaí: suíomh gach feithicle, básanna agus marbhanna | teas agus athsheinmeanna World of Tanks | [suíomh](https://holdi601.github.io/3DHeat-Ext-WoT/) |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | Athsheinmeanna World of Warships ina dtáblaí: suíomh gach loinge agus a báthadh | teas agus athsheinmeanna World of Warships | [suíomh](https://holdi601.github.io/3DHeat-Ext-WoWs/) |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Demos freastalaí Squad ina dtáblaí: suíomh, foireann agus scuad gach imreora | teas agus athsheinmeanna Squad | [suíomh](https://holdi601.github.io/3DHeat-Ext-Squad/) |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | Tír-raonta DCS World ó do shuiteáil féin ina leibhéil: talamh, bóithre, bailte, aerpháirceanna, páirceanna, uisce | DCS agus taifeadtaí Tacview ar a dtír-raon fíor | [suíomh](https://holdi601.github.io/3DHeat-Ext-DCS/) |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | Léarscáileanna IL-2 Great Battles ina leibhéil | taifeadtaí IL-2 ar a léarscáil | [suíomh](https://holdi601.github.io/3DHeat-Ext-IL2/) |
 
 ## Leagan amach an fhoinse, go hachomair {#source-layout-briefly}
 

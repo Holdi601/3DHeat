@@ -3,9 +3,9 @@ title: "Pagrindinis"
 nav_order: 1
 lang: "lt"
 source: "index.md"
-source_hash: "25c1fded750f"
+source_hash: "88cb04e3aeb4"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -120,19 +120,19 @@ Serveris klauso tik `127.0.0.1`, todėl nei vienas maršrutas nepasiekiamas per 
 
 Peržiūros programa skaito duomenis; šie įrankiai juos sukuria. Kiekviena yra atskira viešoji saugykla (MIT) su savo dokumentacija. Nė vienas iš jų nepateikia žaidimo duomenų: lygiai, žemėlapiai ir įrašai daromi jūsų kompiuteryje, iš žaidimų, kuriuos turite.
 
-| Saugykla | Ką daro | Naudinga |
-|---|---|---|
-| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Iš archyvų, kuriuos žaidimai pateikia (Forza Horizon, BeamNG, Assetto Corsa Rally; Unreal, Unity, Frostbite ir Source 2 skaitytojai), išskaito trasas ir lygius kaip glTF | 3D lygis po jūsų šiluma ar pakartojimu |
-| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Įrašo ratų telemetriją iš sąsajų, kurias lenktynių žaidimai skelbia, ir atkuria lygius iš žaidimo vaizdo įrašų | ratai Lenktynių analizei; lygis, kai failų skaityti neįmanoma |
-| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Unreal Editor įskiepis, eksportuojantis lygį kaip vieną glTF failą | jūsų Unreal projektų lygiai |
-| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike 2 demonstracijos į šilumos lenteles ir rungtynių santraukas, CS2 žemėlapiai į geometriją | CS2 šiluma, pakartojimai ir Rungtynių skirtukas |
-| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Fone įrašo jūsų žaidimą pagal tai, ką žaidimai skelbia: telemetriją, žaidimo būsenos integracijas, žurnalus, pakartojimus | jūsų statistika be rankinio darbo |
-| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War Thunder pakartojimai (`.wrpl`) į lenteles: oro ir sausumos trajektorijos, šūviai, pataikymai, nužudymai, bokštai, tikslai | War Thunder pakartojimai, pataikymų žymės ir įžvalgos |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World of Tanks pakartojimai į lenteles: kiekvienos technikos pozicija, mirtys ir nužudymai | World of Tanks šiluma ir pakartojimai |
-| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World of Warships pakartojimai į lenteles: kiekvieno laivo pozicija ir nuskandinimai | World of Warships šiluma ir pakartojimai |
-| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squad serverių demonstracijos į lenteles: kiekvieno žaidėjo pozicija, komanda ir būrys | Squad šiluma ir pakartojimai |
-| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | DCS World reljefai iš jūsų diegimo į lygius: žemė, keliai, miestai, aerodromai, laukai, vanduo | DCS ir Tacview įrašai jų tikrame reljefe |
-| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | IL-2 Great Battles žemėlapiai į lygius | IL-2 įrašai jų žemėlapyje |
+| Saugykla | Ką daro | Naudinga | Dokumentacija |
+|---|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Iš archyvų, kuriuos žaidimai pateikia (Forza Horizon, BeamNG, Assetto Corsa Rally; Unreal, Unity, Frostbite ir Source 2 skaitytojai), išskaito trasas ir lygius kaip glTF | 3D lygis po jūsų šiluma ar pakartojimu | [svetainė](https://holdi601.github.io/3DHeat-GameFiles/) |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Įrašo ratų telemetriją iš sąsajų, kurias lenktynių žaidimai skelbia, ir atkuria lygius iš žaidimo vaizdo įrašų | ratai Lenktynių analizei; lygis, kai failų skaityti neįmanoma | [svetainė](https://holdi601.github.io/3DHeat-GameCapture/) |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Unreal Editor įskiepis, eksportuojantis lygį kaip vieną glTF failą | jūsų Unreal projektų lygiai | [svetainė](https://holdi601.github.io/3DHeat-UnrealExporter/) |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike 2 demonstracijos į šilumos lenteles ir rungtynių santraukas, CS2 žemėlapiai į geometriją | CS2 šiluma, pakartojimai ir Rungtynių skirtukas | [svetainė](https://holdi601.github.io/3DHeat-CS2/) |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Fone įrašo jūsų žaidimą pagal tai, ką žaidimai skelbia: telemetriją, žaidimo būsenos integracijas, žurnalus, pakartojimus | jūsų statistika be rankinio darbo | [svetainė](https://holdi601.github.io/3DHeat-Watcher/) |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War Thunder pakartojimai (`.wrpl`) į lenteles: oro ir sausumos trajektorijos, šūviai, pataikymai, nužudymai, bokštai, tikslai | War Thunder pakartojimai, pataikymų žymės ir įžvalgos | [svetainė](https://holdi601.github.io/3DHeat-Ext-WarThunder/) |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World of Tanks pakartojimai į lenteles: kiekvienos technikos pozicija, mirtys ir nužudymai | World of Tanks šiluma ir pakartojimai | [svetainė](https://holdi601.github.io/3DHeat-Ext-WoT/) |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World of Warships pakartojimai į lenteles: kiekvieno laivo pozicija ir nuskandinimai | World of Warships šiluma ir pakartojimai | [svetainė](https://holdi601.github.io/3DHeat-Ext-WoWs/) |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squad serverių demonstracijos į lenteles: kiekvieno žaidėjo pozicija, komanda ir būrys | Squad šiluma ir pakartojimai | [svetainė](https://holdi601.github.io/3DHeat-Ext-Squad/) |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | DCS World reljefai iš jūsų diegimo į lygius: žemė, keliai, miestai, aerodromai, laukai, vanduo | DCS ir Tacview įrašai jų tikrame reljefe | [svetainė](https://holdi601.github.io/3DHeat-Ext-DCS/) |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | IL-2 Great Battles žemėlapiai į lygius | IL-2 įrašai jų žemėlapyje | [svetainė](https://holdi601.github.io/3DHeat-Ext-IL2/) |
 
 ## Šaltinio kodo struktūra trumpai {#source-layout-briefly}
 

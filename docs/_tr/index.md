@@ -3,9 +3,9 @@ title: "Ana sayfa"
 nav_order: 1
 lang: "tr"
 source: "index.md"
-source_hash: "25c1fded750f"
+source_hash: "88cb04e3aeb4"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -120,19 +120,19 @@ Sunucu yalnızca `127.0.0.1` adresine bağlanır; bu yüzden iki yol da ağdan e
 
 Görüntüleyici veriyi okur; bu araçlar veriyi üretir. Her biri kendi belgeleriyle birlikte kendi herkese açık deposudur (MIT). Hiçbiri oyun verisi içermez: haritalar, harita verileri ve kayıtlar, sahip olduğunuz oyunlardan, kendi makinenizde yapılır.
 
-| Depo | Ne yapar | Kullanım alanı |
-|---|---|---|
-| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Oyunların gönderdiği arşivlerden (Forza Horizon, BeamNG, Assetto Corsa Rally; Unreal, Unity, Frostbite ve Source 2 okuyucuları) pistleri ve haritaları glTF olarak çıkarır | ısı haritanızın ya da tekrarınızın altındaki bir 3B harita |
-| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Yarış oyunlarının yayımladığı arayüzlerden tur telemetrisini kaydeder ve oynanış videosundan haritaları yeniden kurar | Yarış analizi için turlar; hiçbir dosyanın okunamadığı bir harita |
-| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Bir haritayı tek bir glTF dosyası olarak dışa aktaran Unreal Editor eklentisi | kendi Unreal projelerinizin haritaları |
-| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike 2 demolarını ısı haritası tablolarına ve maç özetlerine, CS2 haritalarını geometriye dönüştürür | CS2 ısısı, tekrarlar ve Maç sekmesi |
-| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Oyunların yayımladığı verilerden arka planda oyununuzu kaydeder: telemetri, oyun durumu entegrasyonları, günlükler, tekrarlar | elle hiçbir şey yapmadan kendi istatistikleriniz |
-| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War Thunder tekrarlarını (`.wrpl`) tablolara çevirir: hava ve kara izleri, atışlar, isabetler, öldürmeler, taretler, hedefler | War Thunder tekrarları, isabet işaretleri ve içgörüler |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World of Tanks tekrarlarını tablolara çevirir: her aracın konumu, ölümleri ve öldürmeleri | World of Tanks ısısı ve tekrarları |
-| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World of Warships tekrarlarını tablolara çevirir: her geminin konumu ve batırmaları | World of Warships ısısı ve tekrarları |
-| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squad sunucu demolarını tablolara çevirir: her oyuncunun konumu, takımı ve bölüğü | Squad ısısı ve tekrarları |
-| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | Kendi kurulumunuzdaki DCS World arazilerini haritalara çevirir: zemin, yollar, kasabalar, hava alanları, tarlalar, su | DCS ve Tacview kayıtları gerçek arazilerinde |
-| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | IL-2 Great Battles haritalarını haritalara çevirir | IL-2 kayıtları kendi haritalarında |
+| Depo | Ne yapar | Kullanım alanı | Belgeler |
+|---|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Oyunların gönderdiği arşivlerden (Forza Horizon, BeamNG, Assetto Corsa Rally; Unreal, Unity, Frostbite ve Source 2 okuyucuları) pistleri ve haritaları glTF olarak çıkarır | ısı haritanızın ya da tekrarınızın altındaki bir 3B harita | [site](https://holdi601.github.io/3DHeat-GameFiles/) |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Yarış oyunlarının yayımladığı arayüzlerden tur telemetrisini kaydeder ve oynanış videosundan haritaları yeniden kurar | Yarış analizi için turlar; hiçbir dosyanın okunamadığı bir harita | [site](https://holdi601.github.io/3DHeat-GameCapture/) |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Bir haritayı tek bir glTF dosyası olarak dışa aktaran Unreal Editor eklentisi | kendi Unreal projelerinizin haritaları | [site](https://holdi601.github.io/3DHeat-UnrealExporter/) |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike 2 demolarını ısı haritası tablolarına ve maç özetlerine, CS2 haritalarını geometriye dönüştürür | CS2 ısısı, tekrarlar ve Maç sekmesi | [site](https://holdi601.github.io/3DHeat-CS2/) |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Oyunların yayımladığı verilerden arka planda oyununuzu kaydeder: telemetri, oyun durumu entegrasyonları, günlükler, tekrarlar | elle hiçbir şey yapmadan kendi istatistikleriniz | [site](https://holdi601.github.io/3DHeat-Watcher/) |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War Thunder tekrarlarını (`.wrpl`) tablolara çevirir: hava ve kara izleri, atışlar, isabetler, öldürmeler, taretler, hedefler | War Thunder tekrarları, isabet işaretleri ve içgörüler | [site](https://holdi601.github.io/3DHeat-Ext-WarThunder/) |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World of Tanks tekrarlarını tablolara çevirir: her aracın konumu, ölümleri ve öldürmeleri | World of Tanks ısısı ve tekrarları | [site](https://holdi601.github.io/3DHeat-Ext-WoT/) |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World of Warships tekrarlarını tablolara çevirir: her geminin konumu ve batırmaları | World of Warships ısısı ve tekrarları | [site](https://holdi601.github.io/3DHeat-Ext-WoWs/) |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squad sunucu demolarını tablolara çevirir: her oyuncunun konumu, takımı ve bölüğü | Squad ısısı ve tekrarları | [site](https://holdi601.github.io/3DHeat-Ext-Squad/) |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | Kendi kurulumunuzdaki DCS World arazilerini haritalara çevirir: zemin, yollar, kasabalar, hava alanları, tarlalar, su | DCS ve Tacview kayıtları gerçek arazilerinde | [site](https://holdi601.github.io/3DHeat-Ext-DCS/) |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | IL-2 Great Battles haritalarını haritalara çevirir | IL-2 kayıtları kendi haritalarında | [site](https://holdi601.github.io/3DHeat-Ext-IL2/) |
 
 ## Kaynak yapısı, kısaca {#source-layout-briefly}
 

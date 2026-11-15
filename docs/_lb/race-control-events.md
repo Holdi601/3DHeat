@@ -4,9 +4,9 @@ parent: "Course-Analys"
 nav_order: 54
 lang: "lb"
 source: "race-control-events.md"
-source_hash: "9ab565885c61"
+source_hash: "18fe9a0507bc"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Autokontroll-Evenementer
@@ -145,7 +145,7 @@ All Wagen kritt och:
 | **airborne** | `airborne` iwwer 0,5 | - |
 | **hit**, **crash** | kuckt [Treffer an Ofstuerzen](#hits-and-crashes) | d'Geschwindegkeet, déi den Treffer geholl huet |
 
-Drift-Wénkel-Minima no Buedem: Asphalt **7°**, gemëscht **10°**, lass an Schnéi **15°**, Äis **10°**. E Wagen, deen als Gewunnecht méi dréit - e Reifemodell fir d'Arcade, e Spezialist fir Schotter - huet säin eegenen, méi héijen Wäert aus sengen eegenen Ronnen (1,5 × seng Gewunnecht).
+Drift-Wénkel-Minima no Buedem: Asphalt **7°**, gemëscht **10°**, lass an Schnéi **15°**, Äis **10°**. Si halen sech un d'Literatur: De Schlupfwénkel vun engem Pneu erreecht säi Maximum bei 3–10° op Asphalt, d'Stabilitéitsgrenz vun engem Stroossenauto beim Schwammwénkel läit bei ongeféier 12° op dréchenem Asphalt, wärend Rallye an Drift mat 30–50° gefuer ginn ([Rennanalys, Quellen](race-analytics.md#sources)). E Wagen, deen als Gewunnecht méi dréit - e Reifemodell fir d'Arcade, e Spezialist fir Schotter - huet säin eegenen, méi héijen Wäert aus sengen eegenen Ronnen (1,5 × seng Gewunnecht).
 
 **An wéi enger Richtung de Wagen dréit** (fir „géint d'Kurv"): d'Ännerung vun der Richtung vum Pad vun der Ronn iwwer ±6 m (mindestens 2 Gitterpunkten); méi enk wéi 600 m Radius zielt als Kurv; riets oder lénks no deem, ob d'Welt gespigelt ass. D'Lenkung ass **géint** d'Kurv, wann abs(Lenkung) iwwer 0,05 ass an hiert Zeechen dem vun der Kurv entgéint ass - en Rutsch, deen **agefaangen** gëtt mat Géigenlenkung.
 

@@ -3,9 +3,9 @@ title: "Accueil"
 nav_order: 1
 lang: "fr"
 source: "index.md"
-source_hash: "25c1fded750f"
+source_hash: "88cb04e3aeb4"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -120,19 +120,19 @@ Le serveur n'est lié qu'à `127.0.0.1`, donc aucune de ces routes n'est accessi
 
 La visionneuse lit les données ; ces outils les produisent. Chacun est un dépôt public (MIT) avec sa propre documentation. Aucun ne fournit de données de jeu : les niveaux, les cartes et les enregistrements sont créés sur votre propre machine, à partir de jeux que vous possédez.
 
-| Dépôt | Ce qu'il fait | Utile pour |
-|---|---|---|
-| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Lit les parcours et les niveaux dans les archives que les jeux fournissent (Forza Horizon, BeamNG, Assetto Corsa Rally ; lecteurs Unreal, Unity, Frostbite et Source 2) et les exporte en glTF | un niveau 3D sous votre chaleur ou votre replay |
-| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Enregistre la télémétrie des tours à partir des interfaces que publient les jeux de course, et reconstruit des niveaux à partir de vidéos de jeu | des tours pour l'Analyse de course ; un niveau là où aucun fichier ne peut être lu |
-| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Extension de l'éditeur Unreal qui exporte un niveau dans un seul fichier glTF | les niveaux de vos propres projets Unreal |
-| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Démos de Counter-Strike 2 en tables de chaleur et en bilans de match, cartes CS2 en géométrie | la chaleur CS2, les replays et l'onglet Match |
-| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Enregistre votre jeu en arrière-plan à partir de ce que publient les jeux : télémétrie, intégrations d'état de jeu, journaux, replays | vos propres statistiques sans rien faire à la main |
-| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | Replays War Thunder (`.wrpl`) en tables : trajectoires aériennes et terrestres, tirs, impacts, éliminations, tourelles, objectifs | les replays War Thunder, les marques de coups et les observations |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | Replays World of Tanks en tables : position de chaque véhicule, morts et éliminations | la chaleur et les replays de World of Tanks |
-| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | Replays World of Warships en tables : position de chaque navire et coulages | la chaleur et les replays de World of Warships |
-| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Démos de serveur Squad en tables : position, équipe et escouade de chaque joueur | la chaleur et les replays de Squad |
-| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | Terrains de DCS World, depuis votre propre installation, en niveaux : sol, routes, villes, aérodromes, champs, eau | DCS et les enregistrements Tacview sur leur vrai terrain |
-| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | Cartes d'IL-2 Great Battles en niveaux | les enregistrements d'IL-2 sur leur carte |
+| Dépôt | Ce qu'il fait | Utile pour | Documentation |
+|---|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Lit les parcours et les niveaux dans les archives que les jeux fournissent (Forza Horizon, BeamNG, Assetto Corsa Rally ; lecteurs Unreal, Unity, Frostbite et Source 2) et les exporte en glTF | un niveau 3D sous votre chaleur ou votre replay | [site](https://holdi601.github.io/3DHeat-GameFiles/) |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Enregistre la télémétrie des tours à partir des interfaces que publient les jeux de course, et reconstruit des niveaux à partir de vidéos de jeu | des tours pour l'Analyse de course ; un niveau là où aucun fichier ne peut être lu | [site](https://holdi601.github.io/3DHeat-GameCapture/) |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Extension de l'éditeur Unreal qui exporte un niveau dans un seul fichier glTF | les niveaux de vos propres projets Unreal | [site](https://holdi601.github.io/3DHeat-UnrealExporter/) |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Démos de Counter-Strike 2 en tables de chaleur et en bilans de match, cartes CS2 en géométrie | la chaleur CS2, les replays et l'onglet Match | [site](https://holdi601.github.io/3DHeat-CS2/) |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Enregistre votre jeu en arrière-plan à partir de ce que publient les jeux : télémétrie, intégrations d'état de jeu, journaux, replays | vos propres statistiques sans rien faire à la main | [site](https://holdi601.github.io/3DHeat-Watcher/) |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | Replays War Thunder (`.wrpl`) en tables : trajectoires aériennes et terrestres, tirs, impacts, éliminations, tourelles, objectifs | les replays War Thunder, les marques de coups et les observations | [site](https://holdi601.github.io/3DHeat-Ext-WarThunder/) |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | Replays World of Tanks en tables : position de chaque véhicule, morts et éliminations | la chaleur et les replays de World of Tanks | [site](https://holdi601.github.io/3DHeat-Ext-WoT/) |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | Replays World of Warships en tables : position de chaque navire et coulages | la chaleur et les replays de World of Warships | [site](https://holdi601.github.io/3DHeat-Ext-WoWs/) |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Démos de serveur Squad en tables : position, équipe et escouade de chaque joueur | la chaleur et les replays de Squad | [site](https://holdi601.github.io/3DHeat-Ext-Squad/) |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | Terrains de DCS World, depuis votre propre installation, en niveaux : sol, routes, villes, aérodromes, champs, eau | DCS et les enregistrements Tacview sur leur vrai terrain | [site](https://holdi601.github.io/3DHeat-Ext-DCS/) |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | Cartes d'IL-2 Great Battles en niveaux | les enregistrements d'IL-2 sur leur carte | [site](https://holdi601.github.io/3DHeat-Ext-IL2/) |
 
 ## Structure des sources, en bref {#source-layout-briefly}
 

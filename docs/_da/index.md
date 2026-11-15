@@ -3,9 +3,9 @@ title: "Start"
 nav_order: 1
 lang: "da"
 source: "index.md"
-source_hash: "25c1fded750f"
+source_hash: "88cb04e3aeb4"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -117,19 +117,19 @@ Serveren binder kun til `127.0.0.1`, så ingen af ruterne kan nås fra netværke
 
 Vieweren læser data; disse værktøjer laver dem. Hvert er sit eget offentlige repositorium (MIT) med egen dokumentation. Ingen af dem leverer spildata: baner, kort og optagelser laves på din egen maskine, ud fra spil du ejer.
 
-| Repositorium | Hvad det gør | Nyttigt til |
-|---|---|---|
-| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Læser racerbaner og baner ud af de arkiver, spil leverer (Forza Horizon, BeamNG, Assetto Corsa Rally; læsere til Unreal, Unity, Frostbite og Source 2), som glTF | en 3D-bane under din varme eller dit replay |
-| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Optager omgangstelemetri fra de grænseflader, racerspil udgiver, og genskaber baner ud fra spilvideo | omgange til Løbsanalyse; en bane, hvor ingen filer kan læses |
-| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Unreal Editor-plugin, der eksporterer en bane som én glTF-fil | baner i dine egne Unreal-projekter |
-| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike 2-demoer til heatmap-tabeller og kampopsummeringer, CS2-kort til geometri | CS2-varme, replays og fanen Kamp |
-| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Optager dit spil i baggrunden ud fra det, spil udgiver: telemetri, game-state-integrationer, logfiler, replays | din egen statistik uden at gøre noget manuelt |
-| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War Thunder-replays (`.wrpl`) til tabeller: spor i luften og på jorden, skud, træffere, drab, tårne, mål | War Thunder-replays, træfmærker og indsigter |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World of Tanks-replays til tabeller: hvert køretøjs position, dødsfald og drab | World of Tanks-varme og replays |
-| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World of Warships-replays til tabeller: hvert skibs position og sænkninger | World of Warships-varme og replays |
-| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squad-serverdemoer til tabeller: hver spillers position, hold og trop | Squad-varme og replays |
-| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | DCS World-terræner fra din egen installation til baner: jord, veje, byer, flyvepladser, marker, vand | DCS- og Tacview-optagelser på deres rigtige terræn |
-| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | IL-2 Great Battles-kort til baner | IL-2-optagelser på deres kort |
+| Repositorium | Hvad det gør | Nyttigt til | Dokumentation |
+|---|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Læser racerbaner og baner ud af de arkiver, spil leverer (Forza Horizon, BeamNG, Assetto Corsa Rally; læsere til Unreal, Unity, Frostbite og Source 2), som glTF | en 3D-bane under din varme eller dit replay | [side](https://holdi601.github.io/3DHeat-GameFiles/) |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Optager omgangstelemetri fra de grænseflader, racerspil udgiver, og genskaber baner ud fra spilvideo | omgange til Løbsanalyse; en bane, hvor ingen filer kan læses | [side](https://holdi601.github.io/3DHeat-GameCapture/) |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Unreal Editor-plugin, der eksporterer en bane som én glTF-fil | baner i dine egne Unreal-projekter | [side](https://holdi601.github.io/3DHeat-UnrealExporter/) |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike 2-demoer til heatmap-tabeller og kampopsummeringer, CS2-kort til geometri | CS2-varme, replays og fanen Kamp | [side](https://holdi601.github.io/3DHeat-CS2/) |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Optager dit spil i baggrunden ud fra det, spil udgiver: telemetri, game-state-integrationer, logfiler, replays | din egen statistik uden at gøre noget manuelt | [side](https://holdi601.github.io/3DHeat-Watcher/) |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War Thunder-replays (`.wrpl`) til tabeller: spor i luften og på jorden, skud, træffere, drab, tårne, mål | War Thunder-replays, træfmærker og indsigter | [side](https://holdi601.github.io/3DHeat-Ext-WarThunder/) |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World of Tanks-replays til tabeller: hvert køretøjs position, dødsfald og drab | World of Tanks-varme og replays | [side](https://holdi601.github.io/3DHeat-Ext-WoT/) |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World of Warships-replays til tabeller: hvert skibs position og sænkninger | World of Warships-varme og replays | [side](https://holdi601.github.io/3DHeat-Ext-WoWs/) |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squad-serverdemoer til tabeller: hver spillers position, hold og trop | Squad-varme og replays | [side](https://holdi601.github.io/3DHeat-Ext-Squad/) |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | DCS World-terræner fra din egen installation til baner: jord, veje, byer, flyvepladser, marker, vand | DCS- og Tacview-optagelser på deres rigtige terræn | [side](https://holdi601.github.io/3DHeat-Ext-DCS/) |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | IL-2 Great Battles-kort til baner | IL-2-optagelser på deres kort | [side](https://holdi601.github.io/3DHeat-Ext-IL2/) |
 
 ## Kildekodens opbygning, kort {#source-layout-briefly}
 

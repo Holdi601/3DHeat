@@ -3,9 +3,9 @@ title: "Почетна"
 nav_order: 1
 lang: "mk"
 source: "index.md"
-source_hash: "25c1fded750f"
+source_hash: "88cb04e3aeb4"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -119,19 +119,19 @@ npm run dev      # http://127.0.0.1:5273
 
 Прегледувачот ги чита податоците; овие алатки ги прават. Секој е свој јавен репозиториум (MIT) со своја документација. Ниедна не испорачува податоци од игри: нивоата, мапите и снимките се направени на вашата машина, од игри што ги поседувате.
 
-| Репозиториум | Што прави | Корисно за |
-|---|---|---|
-| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Чита патеки и нивоа од архивите што ги испорачуваат игрите (Forza Horizon, BeamNG, Assetto Corsa Rally; читачи за Unreal, Unity, Frostbite и Source 2) како glTF | 3D ниво под вашата топлина или повторување |
-| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Снима телеметрија од кругови од интерфејсите што ги објавуваат тркачките игри, и ги обновува нивоата од видео на игра | кругови за Анализа на трки; ниво каде што датотеките не можат да се читаат |
-| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Додаток за Unreal Editor што го извезува нивото како една glTF датотека | нивоа од вашите Unreal проекти |
-| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Демо снимки од Counter-Strike 2 во табели за топлинска мапа и резимеа на натпревари, мапи на CS2 во геометрија | топлина за CS2, повторувања и картичката Меч |
-| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Ја снима вашата игра во позадина од она што игрите го објавуваат: телеметрија, интеграции на состојбата на игрите, дневници, повторувања | ваша статистика без да правите ништо рачно |
-| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | Повторувања од War Thunder (`.wrpl`) во табели: патеки на воздух и на тло, испаљувања, погодоци, убиства, куполи, цели | повторувања од War Thunder, ознаки за погодоци и увиди |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | Повторувања од World of Tanks во табели: позиција на секое возило, смрти и убиства | топлина и повторувања за World of Tanks |
-| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | Повторувања од World of Warships во табели: позиција на секој брод и потонувања | топлина и повторувања за World of Warships |
-| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Демо снимки од Squad сервери во табели: позиција, тим и одред на секој играч | топлина и повторувања за Squad |
-| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | Терени на DCS World од вашата инсталација во нивоа: тло, патишта, градови, аеродроми, полиња, вода | DCS и снимки од Tacview на нивниот вистински терен |
-| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | Мапи на IL-2 Great Battles во нивоа | снимки од IL-2 на нивната мапа |
+| Репозиториум | Што прави | Корисно за | Документација |
+|---|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Чита патеки и нивоа од архивите што ги испорачуваат игрите (Forza Horizon, BeamNG, Assetto Corsa Rally; читачи за Unreal, Unity, Frostbite и Source 2) како glTF | 3D ниво под вашата топлина или повторување | [страница](https://holdi601.github.io/3DHeat-GameFiles/) |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Снима телеметрија од кругови од интерфејсите што ги објавуваат тркачките игри, и ги обновува нивоата од видео на игра | кругови за Анализа на трки; ниво каде што датотеките не можат да се читаат | [страница](https://holdi601.github.io/3DHeat-GameCapture/) |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Додаток за Unreal Editor што го извезува нивото како една glTF датотека | нивоа од вашите Unreal проекти | [страница](https://holdi601.github.io/3DHeat-UnrealExporter/) |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Демо снимки од Counter-Strike 2 во табели за топлинска мапа и резимеа на натпревари, мапи на CS2 во геометрија | топлина за CS2, повторувања и картичката Меч | [страница](https://holdi601.github.io/3DHeat-CS2/) |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Ја снима вашата игра во позадина од она што игрите го објавуваат: телеметрија, интеграции на состојбата на игрите, дневници, повторувања | ваша статистика без да правите ништо рачно | [страница](https://holdi601.github.io/3DHeat-Watcher/) |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | Повторувања од War Thunder (`.wrpl`) во табели: патеки на воздух и на тло, испаљувања, погодоци, убиства, куполи, цели | повторувања од War Thunder, ознаки за погодоци и увиди | [страница](https://holdi601.github.io/3DHeat-Ext-WarThunder/) |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | Повторувања од World of Tanks во табели: позиција на секое возило, смрти и убиства | топлина и повторувања за World of Tanks | [страница](https://holdi601.github.io/3DHeat-Ext-WoT/) |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | Повторувања од World of Warships во табели: позиција на секој брод и потонувања | топлина и повторувања за World of Warships | [страница](https://holdi601.github.io/3DHeat-Ext-WoWs/) |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Демо снимки од Squad сервери во табели: позиција, тим и одред на секој играч | топлина и повторувања за Squad | [страница](https://holdi601.github.io/3DHeat-Ext-Squad/) |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | Терени на DCS World од вашата инсталација во нивоа: тло, патишта, градови, аеродроми, полиња, вода | DCS и снимки од Tacview на нивниот вистински терен | [страница](https://holdi601.github.io/3DHeat-Ext-DCS/) |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | Мапи на IL-2 Great Battles во нивоа | снимки од IL-2 на нивната мапа | [страница](https://holdi601.github.io/3DHeat-Ext-IL2/) |
 
 ## Распоред на изворниот код, накратко {#source-layout-briefly}
 

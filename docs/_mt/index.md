@@ -3,9 +3,9 @@ title: "Id-dar"
 nav_order: 1
 lang: "mt"
 source: "index.md"
-source_hash: "25c1fded750f"
+source_hash: "88cb04e3aeb4"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -120,19 +120,19 @@ Is-server jorbot biss ma' `127.0.0.1`, għalhekk ebda minn dawn ir-routes ma tin
 
 Il-viewer jaqra d-data; dawn l-għodod joħolquha. Kull wieħed huwa repożitorju pubbliku tiegħu (MIT) bid-dokumentazzjoni tiegħu. Ebda wieħed minnhom ma jġib data tal-logħob: il-livelli, il-mapep u r-reġistrazzjonijiet isiru fuq il-magna tiegħek, minn logħob li għandek.
 
-| Repożitorju | X'jagħmel | Utli għal |
-|---|---|---|
-| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Jaqra kursi u livelli mill-arkivji li l-logħob jgħaddi magħhom (Forza Horizon, BeamNG, Assetto Corsa Rally; qarrejja ta' Unreal, Unity, Frostbite u Source 2) bħala glTF | livell 3D taħt is-sħana jew ir-replay tiegħek |
-| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Jirreġistra telemetrija tal-ġirjiet mill-interfaces li l-logħob tat-tellieqa jippubblika, u jerġa' jibni livelli mill-vidjo tal-logħba | ġirjiet għal Analiżi tat-tellieqa; livell fejn ebda fajl ma jinqara |
-| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Plugin tal-Unreal Editor li jesporta livell bħala fajl glTF wieħed | livelli tal-proġetti tiegħek ta' Unreal |
-| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Demos ta' Counter-Strike 2 f'tabelli ta' sħana u sommarji ta' partiti, mapep ta' CS2 f'ġeometrija | sħana ta' CS2, replays u t-tab Partita |
-| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Jirreġistra l-logħba tiegħek fil-background minn dak li l-logħob jippubblika: telemetrija, integrazzjonijiet tal-istat tal-logħba, logs, replays | l-istatistika tiegħek stess mingħajr ma tagħmel xejn bl-idejn |
-| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | Replays ta' War Thunder (`.wrpl`) f'tabelli: traċċi tal-ajru u tal-art, tiri, laqtiet, qtil, turretti, għanijiet | replays ta' War Thunder, marki tal-laqtiet u għarfien |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | Replays ta' World of Tanks f'tabelli: il-pożizzjoni ta' kull vettura, mewt u qtil | sħana u replays ta' World of Tanks |
-| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | Replays ta' World of Warships f'tabelli: il-pożizzjoni ta' kull bastiment u l-affondar | sħana u replays ta' World of Warships |
-| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Demos tas-server ta' Squad f'tabelli: il-pożizzjoni ta' kull plejer, it-tim u s-squad | sħana u replays ta' Squad |
-| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | Termini ta' DCS World mill-installazzjoni tiegħek għal livelli: art, toroq, bliet, ajruporti, għelieqi, ilma | DCS u reġistrazzjonijiet ta' Tacview fuq it-terren reali tagħhom |
-| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | Mapep ta' IL-2 Great Battles f'livelli | reġistrazzjonijiet ta' IL-2 fuq il-mappa tagħhom |
+| Repożitorju | X'jagħmel | Utli għal | Dokumentazzjoni |
+|---|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Jaqra kursi u livelli mill-arkivji li l-logħob jgħaddi magħhom (Forza Horizon, BeamNG, Assetto Corsa Rally; qarrejja ta' Unreal, Unity, Frostbite u Source 2) bħala glTF | livell 3D taħt is-sħana jew ir-replay tiegħek | [sit](https://holdi601.github.io/3DHeat-GameFiles/) |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Jirreġistra telemetrija tal-ġirjiet mill-interfaces li l-logħob tat-tellieqa jippubblika, u jerġa' jibni livelli mill-vidjo tal-logħba | ġirjiet għal Analiżi tat-tellieqa; livell fejn ebda fajl ma jinqara | [sit](https://holdi601.github.io/3DHeat-GameCapture/) |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Plugin tal-Unreal Editor li jesporta livell bħala fajl glTF wieħed | livelli tal-proġetti tiegħek ta' Unreal | [sit](https://holdi601.github.io/3DHeat-UnrealExporter/) |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Demos ta' Counter-Strike 2 f'tabelli ta' sħana u sommarji ta' partiti, mapep ta' CS2 f'ġeometrija | sħana ta' CS2, replays u t-tab Partita | [sit](https://holdi601.github.io/3DHeat-CS2/) |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Jirreġistra l-logħba tiegħek fil-background minn dak li l-logħob jippubblika: telemetrija, integrazzjonijiet tal-istat tal-logħba, logs, replays | l-istatistika tiegħek stess mingħajr ma tagħmel xejn bl-idejn | [sit](https://holdi601.github.io/3DHeat-Watcher/) |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | Replays ta' War Thunder (`.wrpl`) f'tabelli: traċċi tal-ajru u tal-art, tiri, laqtiet, qtil, turretti, għanijiet | replays ta' War Thunder, marki tal-laqtiet u għarfien | [sit](https://holdi601.github.io/3DHeat-Ext-WarThunder/) |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | Replays ta' World of Tanks f'tabelli: il-pożizzjoni ta' kull vettura, mewt u qtil | sħana u replays ta' World of Tanks | [sit](https://holdi601.github.io/3DHeat-Ext-WoT/) |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | Replays ta' World of Warships f'tabelli: il-pożizzjoni ta' kull bastiment u l-affondar | sħana u replays ta' World of Warships | [sit](https://holdi601.github.io/3DHeat-Ext-WoWs/) |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Demos tas-server ta' Squad f'tabelli: il-pożizzjoni ta' kull plejer, it-tim u s-squad | sħana u replays ta' Squad | [sit](https://holdi601.github.io/3DHeat-Ext-Squad/) |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | Termini ta' DCS World mill-installazzjoni tiegħek għal livelli: art, toroq, bliet, ajruporti, għelieqi, ilma | DCS u reġistrazzjonijiet ta' Tacview fuq it-terren reali tagħhom | [sit](https://holdi601.github.io/3DHeat-Ext-DCS/) |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | Mapep ta' IL-2 Great Battles f'livelli | reġistrazzjonijiet ta' IL-2 fuq il-mappa tagħhom | [sit](https://holdi601.github.io/3DHeat-Ext-IL2/) |
 
 ## Il-layout tas-sors, qosor {#source-layout-briefly}
 

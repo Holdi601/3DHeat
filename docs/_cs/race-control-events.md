@@ -4,9 +4,9 @@ parent: "Analýza závodu"
 nav_order: 54
 lang: "cs"
 source: "race-control-events.md"
-source_hash: "9ab565885c61"
+source_hash: "18fe9a0507bc"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Události ovládání vozidla
@@ -145,7 +145,7 @@ Každé auto také dostane:
 | **ve vzduchu** | `airborne` nad 0,5 | - |
 | **zásah**, **havárie** | viz [Zásahy a havárie](#hits-and-crashes) | rychlost, kterou náraz vzal |
 
-Prahy úhlu driftu podle povrchu: asfalt **7°**, smíšený **10°**, sypký a sníh **15°**, led **10°**. Auto, které takhle jede běžně (arkádový model pneumatik, specialista na štěrk), má vlastní, vyšší práh z vlastních kol: 1,5 × jeho návyk.
+Prahy úhlu driftu podle povrchu: asfalt **7°**, smíšený **10°**, sypký a sníh **15°**, led **10°**. Vycházejí z literatury: úhel skluzu pneumatiky má vrchol při 3–10° na asfaltu a mez stability silničního auta podle úhlu skluzu karoserie je asi 12° na suchém asfaltu, zatímco rallye a drift se jezdí při 30–50° ([Analytika závodů, zdroje](race-analytics.md#sources)). Auto, které takhle jede běžně (arkádový model pneumatik, specialista na štěrk), má vlastní, vyšší práh z vlastních kol: 1,5 × jeho návyk.
 
 **Kam se auto točí** (pro „proti zatáčce“): změna směru dráhy kola na ±6 m (aspoň 2 body mřížky). Těsnější než poloměr 600 m se počítá jako zatáčení. Vpravo nebo vlevo podle toho, zda je svět zrcadlen. Natočení je **proti** zatáčce, když abs(natočení) je nad 0,05 a jeho znaménko je opačné než směr zatáčení. Je to smyk, který je **zachycen** protiřízením.
 

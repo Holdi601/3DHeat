@@ -3,9 +3,9 @@ title: "Forsíða"
 nav_order: 1
 lang: "is"
 source: "index.md"
-source_hash: "25c1fded750f"
+source_hash: "88cb04e3aeb4"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # 3DHeat
@@ -117,19 +117,19 @@ Skoðarinn er kyrrstæð vefsíða, en þróunarþjónninn (sjá `vite.config.ts
 
 Skoðarinn les gögn; þessi verkfæri búa þau til. Hvert þeirra er sín eigin opinbera geymsla (MIT) með sín eigin skjöl. Engin þeirra fylgir leikjagögnum: borð, kort og upptökur eru gerð á þinni eigin vél, úr leikjum sem þú átt.
 
-| Geymsla | Hvað hún gerir | Gagnleg fyrir |
-|---|---|---|
-| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Les brautir og borð úr skjalasöfnunum sem leikir fylgja (Forza Horizon, BeamNG, Assetto Corsa Rally; lesarar fyrir Unreal, Unity, Frostbite og Source 2) sem glTF | þrívítt borð undir hitanum þínum eða endurspilun |
-| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Tekur upp hringjamælingar úr viðmótunum sem kappakstursleikir birta, og smíðar borð úr myndböndum af leik | hringi fyrir Kappakstursgreiningu; borð þar sem engar skrár er hægt að lesa |
-| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Viðbót fyrir Unreal Editor sem flytur út borð sem eina glTF-skrá | borð í þínum eigin Unreal-verkefnum |
-| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike 2-demó í hitatöflur og leikjasamantektir, CS2-kort í rúmfræði | CS2-hita, endurspilanir og flipann Leikur |
-| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Skráir spilun þína í bakgrunni úr því sem leikir birta: mælingar, samþættingar leikjastöðu, atvikaskrár, endurspilanir | þína eigin tölfræði án handavinnu |
-| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War Thunder-endurspilanir (`.wrpl`) í töflur: loft- og landslóðir, skot, högg, dráp, turna, markmið | War Thunder-endurspilanir, höggmerki og innsýn |
-| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World of Tanks-endurspilanir í töflur: staðsetningu hvers farartækis, dauða og dráp | World of Tanks-hita og endurspilanir |
-| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World of Warships-endurspilanir í töflur: staðsetningu hvers skips og sökkvingar | World of Warships-hita og endurspilanir |
-| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squad-þjónademó í töflur: staðsetningu, lið og herdeild hvers leikmanns | Squad-hita og endurspilanir |
-| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | DCS World-landslag úr þinni eigin uppsetningu í borð: land, vegi, bæi, flugvelli, akra, vatn | DCS- og Tacview-upptökur á raunverulegu landslagi þeirra |
-| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | IL-2 Great Battles-kort í borð | IL-2-upptökur á kortinu þeirra |
+| Geymsla | Hvað hún gerir | Gagnleg fyrir | Skjölun |
+|---|---|---|---|
+| [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles) | Les brautir og borð úr skjalasöfnunum sem leikir fylgja (Forza Horizon, BeamNG, Assetto Corsa Rally; lesarar fyrir Unreal, Unity, Frostbite og Source 2) sem glTF | þrívítt borð undir hitanum þínum eða endurspilun | [vefur](https://holdi601.github.io/3DHeat-GameFiles/) |
+| [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture) | Tekur upp hringjamælingar úr viðmótunum sem kappakstursleikir birta, og smíðar borð úr myndböndum af leik | hringi fyrir Kappakstursgreiningu; borð þar sem engar skrár er hægt að lesa | [vefur](https://holdi601.github.io/3DHeat-GameCapture/) |
+| [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter) | Viðbót fyrir Unreal Editor sem flytur út borð sem eina glTF-skrá | borð í þínum eigin Unreal-verkefnum | [vefur](https://holdi601.github.io/3DHeat-UnrealExporter/) |
+| [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike 2-demó í hitatöflur og leikjasamantektir, CS2-kort í rúmfræði | CS2-hita, endurspilanir og flipann Leikur | [vefur](https://holdi601.github.io/3DHeat-CS2/) |
+| [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Skráir spilun þína í bakgrunni úr því sem leikir birta: mælingar, samþættingar leikjastöðu, atvikaskrár, endurspilanir | þína eigin tölfræði án handavinnu | [vefur](https://holdi601.github.io/3DHeat-Watcher/) |
+| [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder) | War Thunder-endurspilanir (`.wrpl`) í töflur: loft- og landslóðir, skot, högg, dráp, turna, markmið | War Thunder-endurspilanir, höggmerki og innsýn | [vefur](https://holdi601.github.io/3DHeat-Ext-WarThunder/) |
+| [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT) | World of Tanks-endurspilanir í töflur: staðsetningu hvers farartækis, dauða og dráp | World of Tanks-hita og endurspilanir | [vefur](https://holdi601.github.io/3DHeat-Ext-WoT/) |
+| [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs) | World of Warships-endurspilanir í töflur: staðsetningu hvers skips og sökkvingar | World of Warships-hita og endurspilanir | [vefur](https://holdi601.github.io/3DHeat-Ext-WoWs/) |
+| [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad) | Squad-þjónademó í töflur: staðsetningu, lið og herdeild hvers leikmanns | Squad-hita og endurspilanir | [vefur](https://holdi601.github.io/3DHeat-Ext-Squad/) |
+| [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS) | DCS World-landslag úr þinni eigin uppsetningu í borð: land, vegi, bæi, flugvelli, akra, vatn | DCS- og Tacview-upptökur á raunverulegu landslagi þeirra | [vefur](https://holdi601.github.io/3DHeat-Ext-DCS/) |
+| [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2) | IL-2 Great Battles-kort í borð | IL-2-upptökur á kortinu þeirra | [vefur](https://holdi601.github.io/3DHeat-Ext-IL2/) |
 
 ## Uppbygging frumkóðans, í stuttu máli {#source-layout-briefly}
 

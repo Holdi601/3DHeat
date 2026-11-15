@@ -4,9 +4,9 @@ parent: "Anailís rása"
 nav_order: 54
 lang: "ga"
 source: "race-control-events.md"
-source_hash: "9ab565885c61"
+source_hash: "18fe9a0507bc"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Imeachtaí smachta gluaisteáin
@@ -145,7 +145,7 @@ Faigheann gach carr freisin:
 | **airborne** | `airborne` os cionn 0.5 | - |
 | **hit**, **crash** | féach [Buillí agus tuairteanna](#hits-and-crashes) | an luas a bhain an tionchar |
 
-Urláir uillinne drift de réir dromchla: tarmac **7°**, measctha **10°**, scaoilte agus sneachta **15°**, oighear **10°**. Tá tairseach níos airde ag carr a rithfidh níos mó mar ghnáth - samhail rothair arcade, speisialtóir gaineamh - ó na laps féin (1.5 × a nós).
+Urláir uillinne drift de réir dromchla: tarmac **7°**, measctha **10°**, scaoilte agus sneachta **15°**, oighear **10°**. Leanann siad an litríocht: buaicíonn uillinn sleamhnaithe boinn ag 3-10° ar tharmac agus tá teorainn chobhsaíochta uillinn sleamhnaithe choirp chairr bhóthair thart ar 12° ar asfalt tirim, agus tiomáintear rally agus drift ag 30-50° ([Anailís rásaí, foinsí](race-analytics.md#sources)). Tá tairseach níos airde ag carr a rithfidh níos mó mar ghnáth - samhail rothair arcade, speisialtóir gaineamh - ó na laps féin (1.5 × a nós).
 
 **Cén treo a lúbann an carr** (le haghaidh "in aghaidh an chasaidh"): athrú ceann-treo chosán an lap féin thar ±6 m (2 phointe greille ar a laghad); níos dlúithe ná ga 600 m, áirítear mar lúbadh; ar dheis nó ar chlé de réir an bhfuil an domhan íomhánaithe. Tá an stiúradh **in aghaidh** an chasaidh nuair a bhíonn abs(steer) > 0.05 agus a chomhartha contrártha leis an gcasadh - sleamhnú a **ghabhtar** le glas contrártha.
 

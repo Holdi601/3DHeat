@@ -4,9 +4,9 @@ parent: "Anàlisi de curses"
 nav_order: 54
 lang: "ca"
 source: "race-control-events.md"
-source_hash: "9ab565885c61"
+source_hash: "18fe9a0507bc"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Esdeveniments de control del cotxe
@@ -145,7 +145,7 @@ Cada cotxe també rep:
 | **airborne** (a l'aire) | `airborne` per sobre de 0,5 | - |
 | **cop**, **estavellat** | vegeu [Cops i estavellats](#hits-and-crashes) | la velocitat que va perdre l'impacte |
 
-Els mínims d'angle de deriva per terreny: asfalt **7°**, mixt **10°**, solt i neu **15°**, gel **10°**. Un cotxe que deriva més com a cosa normal - un model de pneumàtic arcade, un especialista en grava - té el seu propi llindar, més alt, a partir de les seves pròpies voltes (1,5 × el seu hàbit).
+Els mínims d'angle de deriva per terreny: asfalt **7°**, mixt **10°**, solt i neu **15°**, gel **10°**. Segueixen la literatura: l'angle de lliscament d'un pneumàtic té el màxim a 3-10° sobre asfalt i el límit d'estabilitat per angle de deriva de la carrosseria d'un cotxe de carrer és d'uns 12° sobre asfalt sec, mentre que el ral·li i el drift van a 30-50° ([Analítica de curses, fonts](race-analytics.md#sources)). Un cotxe que deriva més com a cosa normal - un model de pneumàtic arcade, un especialista en grava - té el seu propi llindar, més alt, a partir de les seves pròpies voltes (1,5 × el seu hàbit).
 
 **Cap a quina banda gira el cotxe** (per a «en contra del gir»): el canvi de rumb del traçat propi de la volta sobre ±6 m (almenys 2 punts de la quadrícula); més tancat que un radi de 600 m compta com a giro; dreta o esquerra segons si el món està reflectit. El volant és **en contra** del gir quan abs(gir) > 0,05 i el seu signe és contrari al del gir - un lliscament que es **frena** amb el volant contrari.
 

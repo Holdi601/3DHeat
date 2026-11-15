@@ -4,9 +4,9 @@ parent: "Kisa-analyysi"
 nav_order: 54
 lang: "fi"
 source: "race-control-events.md"
-source_hash: "9ab565885c61"
+source_hash: "18fe9a0507bc"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Auton hallinnan tapahtumat
@@ -145,7 +145,7 @@ Jokaiselle autolle lasketaan myös:
 | **airborne** | `airborne` yli 0,5 | - |
 | **hit**, **crash** | katso [Osumat ja kolarit](#hits-and-crashes) | iskun nopeus |
 
-Driftikulman lattiat pinnoittain: asfaltti **7°**, sekapinta **10°**, irtonainen ja lumi **15°**, jää **10°**. Auto, joka liukuu enemmän tavallisesti, kuten arcade-rengasmalli tai sorarengaserikoisuus, saa oman, korkeamman rajansa omilta kierroksiltaan (1,5 × sen tapa).
+Driftikulman lattiat pinnoittain: asfaltti **7°**, sekapinta **10°**, irtonainen ja lumi **15°**, jää **10°**. Ne noudattavat kirjallisuutta: renkaan sivuliukukulma on huipussaan 3–10° asfaltilla, ja tieauton korin sivuliukukulman vakausraja on noin 12° kuivalla asfaltilla, kun taas ralli ja drifti ajetaan 30–50° kulmassa ([Kisa-analytiikka, lähteet](race-analytics.md#sources)). Auto, joka liukuu enemmän tavallisesti, kuten arcade-rengasmalli tai sorarengaserikoisuus, saa oman, korkeamman rajansa omilta kierroksiltaan (1,5 × sen tapa).
 
 **Mihin suuntaan auto kääntyy** (kääntöä vastaan -tarkistusta varten): radan suunnanmuutos ±6 m:n matkalla (vähintään 2 ruudukkopistettä). Tiukempi kuin 600 m:n säde lasketaan kääntymiseksi. Oikea tai vasen riippuu siitä, onko maailma peilattu. Ohjaus on **kääntöä vastaan**, kun abs(ohjaus) > 0,05 ja sen merkki on kääntymisen vastainen. Tämä tarkoittaa liu'un **kiinni ottamista** vastakkaisella ratilla.
 

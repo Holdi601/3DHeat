@@ -4,9 +4,9 @@ parent: "Analiza wyścigowa"
 nav_order: 54
 lang: "pl"
 source: "race-control-events.md"
-source_hash: "9ab565885c61"
+source_hash: "18fe9a0507bc"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Zdarzenia kontroli pojazdu
@@ -145,7 +145,7 @@ Każdy samochód dostaje też:
 | **airborne** | `airborne` powyżej 0,5 | - |
 | **hit**, **crash** | zob. [Uderzenia i rozbicia](#hits-and-crashes) | prędkość, jaką zabrało uderzenie |
 
-Progi kąta dryfu według nawierzchni: asfalt **7°**, mieszana **10°**, luźna i śnieg **15°**, lód **10°**. Samochód, który jeździ bokiem z natury — model opon arcade, specjalista od żwiru — ma własny, wyższy próg z własnych okrążeń (1,5 × nawyk).
+Progi kąta dryfu według nawierzchni: asfalt **7°**, mieszana **10°**, luźna i śnieg **15°**, lód **10°**. Opierają się na literaturze: kąt poślizgu opony osiąga szczyt przy 3–10° na asfalcie, a granica stabilności samochodu drogowego dla kąta poślizgu nadwozia wynosi około 12° na suchym asfalcie, podczas gdy rajdy i drift jeździ się przy 30–50° ([Analityka wyścigów, źródła](race-analytics.md#sources)). Samochód, który jeździ bokiem z natury — model opon arcade, specjalista od żwiru — ma własny, wyższy próg z własnych okrążeń (1,5 × nawyk).
 
 **W którą stronę skręca samochód** (dla „przeciwko zakrętowi”): zmiana kierunku toru okrążenia na ±6 m (co najmniej 2 punkty siatki); ciaśniejsze niż promień 600 m liczy się jako skręt; w prawo lub w lewo zależnie od tego, czy świat jest odbity lustrzanie. Skręt jest **przeciwko** zakrętowi, gdy abs(skręt) > 0,05, a jego znak jest przeciwny do skrętu — poślizg **opanowywany** kontrskrętem.
 

@@ -4,9 +4,9 @@ parent: "Analiza dirke"
 nav_order: 54
 lang: "sl"
 source: "race-control-events.md"
-source_hash: "9ab565885c61"
+source_hash: "18fe9a0507bc"
 translated: true
-outdated: true
+outdated: false
 ---
 
 # Dogodki vožnje avtomobila
@@ -145,7 +145,7 @@ Vsak avto dobi tudi:
 | **airborne** | `airborne` nad 0,5 | - |
 | **hit**, **crash** | glej [Udarci in strmoglavljenja](#hits-and-crashes) | hitrost, ki jo je udarec vzel |
 
-Podlagine spodnje meje kota zdrsa: asfalt **7°**, mešana **10°**, rahla in sneg **15°**, led **10°**. Avto, ki se zdrsa več kot samo po sebi – model gume za arkado, specialist za gramoz – ima svoj, višji prag iz svojih lastnih krogov (1,5 × njegova navada).
+Podlagine spodnje meje kota zdrsa: asfalt **7°**, mešana **10°**, rahla in sneg **15°**, led **10°**. Sledijo literaturi: kot zdrsa pnevmatike doseže vrh pri 3–10° na asfaltu, meja stabilnosti cestnega avtomobila po kotu zdrsa karoserije je okoli 12° na suhem asfaltu, medtem ko se reli in drift vozita pri 30–50° ([Analitika dirke, viri](race-analytics.md#sources)). Avto, ki se zdrsa več kot samo po sebi – model gume za arkado, specialist za gramoz – ima svoj, višji prag iz svojih lastnih krogov (1,5 × njegova navada).
 
 **Na katero stran avto zavija** (za "proti zavoju"): sprememba smeri poti kroga čez ±6 m (vsaj 2 točki mreže); ožje od polmera 600 m šteje kot zavijanje; desno ali levo glede na to, ali je svet zrcaljen. Krmiljenje je **proti** zavoju, kadar je abs(krmiljenje) > 0,05 in njegov predznak nasproten zavoju – zdrs, ki je **ujet** z nasprotnim krmiljenjem.
 
