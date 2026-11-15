@@ -23,6 +23,7 @@ There are about 2,000 named vehicles, aircraft, ships, weapons and soldiers, all
 | Sea | warships by class, carriers, submarines, boats, merchants |
 | Weapons | missiles, rockets, bombs, torpedoes, flares and chaff |
 | Markers | smoke, flash and fire grenades, planted bombs, flags, spawns, waypoints |
+| Close quarters | soldiers in plate carriers with an assault rifle, SMG, shotgun, DMR, LMG, handgun or shield; drones, cameras, barbed wire, shields, wall reinforcement, barricades, breaching charges, traps, windows, grenades, the defuser |
 
 ## How the figures are made
 
@@ -42,6 +43,18 @@ The viewer looks at the data's own columns:
 So the easiest way to get the right figures is a `vehicle` column with the real names, or a `type` column with Tacview tags.
 
 **My unit shows as a box or a soldier.** Add a `vehicle` column with the real name, or a `type` column with a Tacview tag. Hover the unit to see which name was matched. Data that has such columns but says nothing about a unit leaves it a box; data with neither is drawn as soldiers.
+
+## Close-quarters figures (Rainbow Six Siege)
+
+Tables written like the Rainbow Six Siege replay reader's (columns `operator`, `pawn`, `primaryClass`, `side`) get figures of their own:
+
+- **Players** are a soldier in a plate carrier, about 1.8 m tall, holding the class of their primary weapon: an assault rifle, an SMG with its magazine, a shotgun with its pump, a DMR with its scope, an LMG with its box, a handgun held out in both hands, or a ballistic shield with a view port. The uniform takes the team's colour; the plate carrier, the arm bands and the helmet band show the side: **amber for attack, pale cyan for defence**. A `stance` column (stand, crouch, prone) poses them; without one they stand.
+- **Labels** name the player and the operator played at that moment, with the operator's role as a symbol: ✸ hard breacher, ⚒ soft breacher, ➤ entry, ✦ fragger, ✚ support, ⬟ shield, ◉ intel, ◇ flex, ↺ flank watch, ⚓ anchor, ✕ trapper, ⇄ roamer, ↯ anti-gadget, ▣ anti-breach.
+- **Drones** are a two-wheeled throwable drone, about 30 cm across, each a track of its own named after its owner ("Ash · drone 2").
+- **Placed gadgets** stand where they were put, from then until the round ends, each as the figure of what it does: a camera, barbed wire, a deployable shield, a breaching charge, a hard-breach charge, a small sticky charge, a floor trap, a claymore with its trip laser, a one-way window, an armour panel, a grenade, a gas canister, a jammer, a sensor, a laser gate, a supply box. One figure serves every gadget that does the same job. A gadget whose kind the data does not say is a small device with a light.
+- **The defuser** stands where it was planted for its 45 seconds.
+
+Each drone and gadget becomes a track of its own when the file loads, so the player's own figure stays on their body. All of these are the viewer's own designs at the real-world size of the thing (a claymore about 22 cm wide, a door-sized panel 1 m by 2.1 m), not models from the game.
 
 ## Settings
 
