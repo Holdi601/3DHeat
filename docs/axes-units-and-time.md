@@ -10,7 +10,22 @@ Games and maps do not agree on which way is up, how long a unit is, or how time 
 
 If your map stands like a wall instead of lying like a floor, switch **Up axis in source**.
 
-![The same data drawn with Up axis in source set wrongly (standing like a wall) and rightly (lying like a floor)](assets/img/en/axes-units-and-time-up-axis.webp)
+```mermaid
+flowchart LR
+  subgraph G["Game file: Z is up"]
+    G1["X: east"]
+    G2["Y: north"]
+    G3["Z: height"]
+  end
+  subgraph V["The viewer: Y is up"]
+    V1["X: east"]
+    V2["Z: south"]
+    V3["Y: height"]
+  end
+  G -->|"Up axis in source = Z is up"| V
+```
+
+With the wrong **Up axis in source** the map stands like a wall; with the right one it lies like a floor.
 
 ## The world the viewer draws in
 

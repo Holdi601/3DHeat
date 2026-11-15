@@ -8,7 +8,7 @@ nav_order: 2
 
 A file is a table, and 3DHeat has to know which column holds the east-west position, which holds the time, which holds the player's name, and so on. This panel is where it says what it guessed, and where you fix a wrong guess.
 
-![The Column mapping panel after loading a Parquet file: every box already filled in](assets/img/en/column-mapping-panel.webp)
+![The Column mapping panel after loading a Parquet file: every box already filled in - 1 X, 2 Y, 3 Z, 4 Time, 5 Person id, 6 Session / match, 7 Team / group](assets/img/en/column-mapping-panel.webp)
 
 *The file named its own columns, so every box is already filled.*
 

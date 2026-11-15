@@ -8,7 +8,7 @@ nav_order: 54
 
 The viewer watches how each lap was driven and marks where the driver made the car slide, spin, hit something or waste grip. This is useful because a mistake that cost time is the quickest thing to fix.
 
-![A corner finding opened in Where to improve, with the Car control table below it](assets/img/en/race-control-table.webp)
+![The Car control section: how often each lap locked a wheel, spun or pushed wide, and the list of faults with one opened](assets/img/en/race-control-table.webp)
 
 ## In plain words
 

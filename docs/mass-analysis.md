@@ -78,8 +78,14 @@ The **Insights** tab finds, over all matches, vehicles that trade or win better 
 
 ## Scale
 
-The summaries, the panel's tabs, the insights and the drill-down all run in
-workers, so the view keeps its frame rate while they work.
+You can repeat a small version of this yourself: `node tools/demo-data.mjs` writes 150 synthetic tank matches to `tools/.shots/demo/mass` (about 1,000 rows each). Measured on those 150 synthetic demo matches of `tools/demo-data.mjs` on a desktop PC (a real match is far larger):
+
+- `tools/3dheat-summarize.mjs` with 4 workers: 2.6 to 4.8 s for all 150, 8 to 21 ms a match inside a worker; a second run that only reads the summaries takes about 2 s.
+- Opening the folder in the panel, with the index present, until the window shows: 0.9 to 1.6 s (the worker's own part, reading the 150 index lines, is 20 to 40 ms).
+- Switching to a tab, until its table is drawn: Overview 10 to 30 ms, Balance 30 to 70 ms, Trends 30 to 45 ms, Players 15 to 35 ms, Sides 15 to 20 ms, Map 55 to 130 ms.
+- The store holds the 150 matches in about 0.5 MB.
+
+Opening the window takes one short frame: the picked files go to the worker 16 at a time, and the date fields and the first tab come a frame after the window.
 
 The store keeps about 15 KB a match, so 10,000 matches take ~150 MB in the
 worker; grids are never held for more than the map asked for.

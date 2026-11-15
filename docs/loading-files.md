@@ -13,7 +13,7 @@ This page shows how to give 3DHeat your files and what it does with them. Drop a
 3. Read the selection line and the **Memory estimate** (see the picture below).
 4. Press **Load**.
 
-![The Source panel after dropping a folder of ten matches: the selection line, the Memory estimate at fits, and Load 10 files](assets/img/en/loading-files-source.webp)
+![The Source panel after dropping a folder of ten matches: 1 the selection line, 2 the Memory estimate at fits, and 3 Load 10 files](assets/img/en/loading-files-source.webp)
 
 *After you drop a folder, 3DHeat tells you what it found and whether it fits.*
 

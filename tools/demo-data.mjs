@@ -21,7 +21,8 @@
  * Each Parquet file carries `heat3d` footer hints, so it loads without any
  * column mapping.
  */
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, writeFileSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
 import { join, resolve } from 'node:path';
 import { parquetWriteBuffer } from 'hyparquet-writer';
 
@@ -603,4 +604,8 @@ for (let r = 1; r <= 12; r++) {
   for (let i = first; i < shooter.n; i++) shooter.data.won[i] = shooter.data.team[i] === winner ? 1 : 0;
 }
 console.log('shooter rows', shooter.write(join(OUT, 'shooter.parquet'), SHOOT_HINTS));
+// More demo sets live in tools/demo-<name>.mjs: each default-exports a function of the output folder.
+for (const f of readdirSync(import.meta.dirname).filter((n) => /^demo-[\w-]+\.mjs$/.test(n) && n !== 'demo-data.mjs').sort()) {
+  await (await import(pathToFileURL(join(import.meta.dirname, f)).href)).default(OUT);
+}
 console.log('written to', OUT);

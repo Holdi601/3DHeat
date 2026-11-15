@@ -15,7 +15,14 @@ Before 3DHeat can draw anything it needs a table: every row says where something
 3. Check the **Memory estimate** says *fits*.
 4. Press **Load**.
 
-![The steps from file to picture: Source, Preview, Column mapping, Memory estimate, Load, picture](assets/img/en/getting-data-in-flow.webp)
+```mermaid
+flowchart LR
+  A["Source<br/>pick files or a folder"] --> B["Preview<br/>first rows"]
+  B --> C["Column mapping<br/>X, Y, Z, time, person, team"]
+  C --> D["Memory estimate<br/>fits, tight or won't fit"]
+  D --> E["Load"]
+  E --> F["The picture"]
+```
 
 Everything the Heatmap tab shows comes from one **dataset**: a table of rows, each with a position and, optionally, a time, a person, a group, a session, a look direction and any number of extra columns kept for filtering. This section explains how a dataset is made.
 
