@@ -13,6 +13,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { create } from 'zustand';
+import { SITUATION_COLUMN } from '../../insights/cqb/factors';
 import type { BreakdownResult } from '../../breakdown/breakdown';
 import {
   dimensionsOf,
@@ -145,6 +146,8 @@ function groupLabel(d: Dimension, label: string): string {
 }
 
 function factorLabel(f: Factor): string {
+  // The close-quarters situations (`insights/cqb/factors.ts`) are the viewer's own words.
+  if (f.column === SITUATION_COLUMN && f.value) return `${t('breakdown.situations')}: ${t(`breakdown.situation.${f.value}`)}`;
   const col = columnLabel(f.name);
   return f.value === null ? col : `${col}: ${f.value}`;
 }

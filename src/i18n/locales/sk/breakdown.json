@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Granát / výbava",
   "breakdown.wclass.launcher": "Odpaľovač",
   "breakdown.wclass.vehicle": "Zbraň vozidla",
-  "breakdown.wclass.other": "Iné"
+  "breakdown.wclass.other": "Iné",
+  "breakdown.situations": "Situácia",
+  "breakdown.situation.flashed": "oslepený",
+  "breakdown.situation.traded": "smrť oplatená",
+  "breakdown.situation.opening": "úvodný súboj",
+  "breakdown.situation.man-up": "presila",
+  "breakdown.situation.even": "vyrovnaný počet",
+  "breakdown.situation.man-down": "oslabenie"
 }

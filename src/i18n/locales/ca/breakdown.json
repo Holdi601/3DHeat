@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Granada / utilitat",
   "breakdown.wclass.launcher": "Llançador",
   "breakdown.wclass.vehicle": "Arma de vehicle",
-  "breakdown.wclass.other": "Altre"
+  "breakdown.wclass.other": "Altre",
+  "breakdown.situations": "Situació",
+  "breakdown.situation.flashed": "encegat",
+  "breakdown.situation.traded": "mort venjada",
+  "breakdown.situation.opening": "duel d'obertura",
+  "breakdown.situation.man-up": "superioritat",
+  "breakdown.situation.even": "igualtat",
+  "breakdown.situation.man-down": "inferioritat"
 }

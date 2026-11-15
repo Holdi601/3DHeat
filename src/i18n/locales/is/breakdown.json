@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Handsprengja / hjálpartæki",
   "breakdown.wclass.launcher": "Skotvarpa",
   "breakdown.wclass.vehicle": "Farartækisvopn",
-  "breakdown.wclass.other": "Annað"
+  "breakdown.wclass.other": "Annað",
+  "breakdown.situations": "Staða",
+  "breakdown.situation.flashed": "blindaður",
+  "breakdown.situation.traded": "dauða hefnt",
+  "breakdown.situation.opening": "opnunareinvígi",
+  "breakdown.situation.man-up": "liðsmunur með",
+  "breakdown.situation.even": "jafnt",
+  "breakdown.situation.man-down": "liðsmunur á móti"
 }

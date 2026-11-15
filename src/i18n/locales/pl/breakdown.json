@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Granat / gadżet",
   "breakdown.wclass.launcher": "Wyrzutnia",
   "breakdown.wclass.vehicle": "Broń pojazdu",
-  "breakdown.wclass.other": "Inne"
+  "breakdown.wclass.other": "Inne",
+  "breakdown.situations": "Sytuacja",
+  "breakdown.situation.flashed": "oślepiony",
+  "breakdown.situation.traded": "śmierć pomszczona",
+  "breakdown.situation.opening": "pojedynek otwierający",
+  "breakdown.situation.man-up": "przewaga liczebna",
+  "breakdown.situation.even": "równe siły",
+  "breakdown.situation.man-down": "mniejszość liczebna"
 }

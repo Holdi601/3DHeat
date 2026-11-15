@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Granaat / utility",
   "breakdown.wclass.launcher": "Lanceerder",
   "breakdown.wclass.vehicle": "Voertuigwapen",
-  "breakdown.wclass.other": "Overig"
+  "breakdown.wclass.other": "Overig",
+  "breakdown.situations": "Situatie",
+  "breakdown.situation.flashed": "verblind",
+  "breakdown.situation.traded": "dood gewroken",
+  "breakdown.situation.opening": "openingsduel",
+  "breakdown.situation.man-up": "overtal",
+  "breakdown.situation.even": "gelijk aantal",
+  "breakdown.situation.man-down": "ondertal"
 }

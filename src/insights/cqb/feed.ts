@@ -23,6 +23,8 @@ export interface CqbMeta {
 }
 
 export type CqbChunk = CompareChunk & {
+  /** The dataset row of row 0. */
+  row0: number;
   yaw: Float32Array | null;
   raw: Uint32Array | null;
   other: Uint32Array | null;
@@ -75,5 +77,6 @@ export function feedRows(meta: CqbMeta, c: CqbChunk): CqbRows {
     flashed: c.flashed,
     buy,
     shown,
+    row0: c.row0,
   };
 }

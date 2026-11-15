@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Gránáid / áirgiúlacht",
   "breakdown.wclass.launcher": "Lainseálaí",
   "breakdown.wclass.vehicle": "Arm feithicle",
-  "breakdown.wclass.other": "Eile"
+  "breakdown.wclass.other": "Eile",
+  "breakdown.situations": "Staid",
+  "breakdown.situation.flashed": "dallta",
+  "breakdown.situation.traded": "bás díoltasaithe",
+  "breakdown.situation.opening": "comhrac tosaigh",
+  "breakdown.situation.man-up": "barr líon",
+  "breakdown.situation.even": "líon cothrom",
+  "breakdown.situation.man-down": "easpa líon"
 }

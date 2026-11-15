@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "수류탄 / 유틸리티",
   "breakdown.wclass.launcher": "발사기",
   "breakdown.wclass.vehicle": "차량 무기",
-  "breakdown.wclass.other": "기타"
+  "breakdown.wclass.other": "기타",
+  "breakdown.situations": "상황",
+  "breakdown.situation.flashed": "실명",
+  "breakdown.situation.traded": "트레이드된 죽음",
+  "breakdown.situation.opening": "오프닝 듀얼",
+  "breakdown.situation.man-up": "수적 우위",
+  "breakdown.situation.even": "동수",
+  "breakdown.situation.man-down": "수적 열세"
 }

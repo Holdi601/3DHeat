@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Grenadă / utilitar",
   "breakdown.wclass.launcher": "Lansator",
   "breakdown.wclass.vehicle": "Armă de vehicul",
-  "breakdown.wclass.other": "Altele"
+  "breakdown.wclass.other": "Altele",
+  "breakdown.situations": "Situație",
+  "breakdown.situation.flashed": "orbit",
+  "breakdown.situation.traded": "moarte răzbunată",
+  "breakdown.situation.opening": "duel de deschidere",
+  "breakdown.situation.man-up": "superioritate numerică",
+  "breakdown.situation.even": "egalitate",
+  "breakdown.situation.man-down": "inferioritate numerică"
 }

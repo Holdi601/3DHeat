@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Χειροβομβίδα / βοηθητικό",
   "breakdown.wclass.launcher": "Εκτοξευτής",
   "breakdown.wclass.vehicle": "Όπλο οχήματος",
-  "breakdown.wclass.other": "Άλλο"
+  "breakdown.wclass.other": "Άλλο",
+  "breakdown.situations": "Κατάσταση",
+  "breakdown.situation.flashed": "τυφλωμένος",
+  "breakdown.situation.traded": "θάνατος εκδικήθηκε",
+  "breakdown.situation.opening": "εναρκτήρια μονομαχία",
+  "breakdown.situation.man-up": "αριθμητική υπεροχή",
+  "breakdown.situation.even": "ισοπαλία",
+  "breakdown.situation.man-down": "αριθμητική μειονεξία"
 }

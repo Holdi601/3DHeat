@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Kranaatti / apuväline",
   "breakdown.wclass.launcher": "Laukaisin",
   "breakdown.wclass.vehicle": "Ajoneuvoase",
-  "breakdown.wclass.other": "Muu"
+  "breakdown.wclass.other": "Muu",
+  "breakdown.situations": "Tilanne",
+  "breakdown.situation.flashed": "sokaistu",
+  "breakdown.situation.traded": "kuolema kostettu",
+  "breakdown.situation.opening": "avauskaksintaistelu",
+  "breakdown.situation.man-up": "ylivoima",
+  "breakdown.situation.even": "tasaluku",
+  "breakdown.situation.man-down": "alivoima"
 }

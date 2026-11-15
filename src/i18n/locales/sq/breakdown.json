@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Granatë / mjet ndihmës",
   "breakdown.wclass.launcher": "Lëshues",
   "breakdown.wclass.vehicle": "Armë automjeti",
-  "breakdown.wclass.other": "Tjetër"
+  "breakdown.wclass.other": "Tjetër",
+  "breakdown.situations": "Situata",
+  "breakdown.situation.flashed": "i verbuar",
+  "breakdown.situation.traded": "vdekje e hakmarrë",
+  "breakdown.situation.opening": "duel hapës",
+  "breakdown.situation.man-up": "epërsi numerike",
+  "breakdown.situation.even": "numër i barabartë",
+  "breakdown.situation.man-down": "pakicë numerike"
 }

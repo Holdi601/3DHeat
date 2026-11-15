@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Grenade / utility",
   "breakdown.wclass.launcher": "Launcher",
   "breakdown.wclass.vehicle": "Vehicle weapon",
-  "breakdown.wclass.other": "Other"
+  "breakdown.wclass.other": "Other",
+  "breakdown.situations": "Situation",
+  "breakdown.situation.flashed": "blinded",
+  "breakdown.situation.traded": "death traded",
+  "breakdown.situation.opening": "opening duel",
+  "breakdown.situation.man-up": "man up",
+  "breakdown.situation.even": "even numbers",
+  "breakdown.situation.man-down": "man down"
 }

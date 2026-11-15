@@ -93,12 +93,12 @@ export function synthRounds(rounds: number, fx: SynthEffects, seed = 1): CqbRows
           if (!alive[p]) continue;
           if (p === P) {
             const yaw = bearing(pp, { x: hx, z: hz }) + (fx.aim ? (W === P ? 0.05 : 0.6) : (R() - 0.5) * 0.8) * (R() < 0.5 ? 1 : -1);
-            placeOf[p] = tt >= T - 0.5 ? place : 0;
+            // Into the stage's place as the stage begins: every entry is a peek, wherever it is.
+            placeOf[p] = place;
             emit(tt, p, K_POS, -1, { ...pp, yaw });
             pos[p] = { ...pp, yaw };
           } else if (p === H) {
             const yaw = bearing({ x: hx, z: hz }, pp) + (fx.aim ? (W === H ? 0.05 : 0.6) : (R() - 0.5) * 0.8) * (R() < 0.5 ? 1 : -1);
-            placeOf[p] = 0;
             emit(tt, p, K_POS, -1, { x: hx, z: hz, yaw });
             pos[p] = { x: hx, z: hz, yaw };
           } else if (p === C) {

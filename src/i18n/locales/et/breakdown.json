@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Granaat / abivahend",
   "breakdown.wclass.launcher": "Granaadiheitja",
   "breakdown.wclass.vehicle": "Sõiduki relv",
-  "breakdown.wclass.other": "Muu"
+  "breakdown.wclass.other": "Muu",
+  "breakdown.situations": "Olukord",
+  "breakdown.situation.flashed": "pimestatud",
+  "breakdown.situation.traded": "surm kättemakstud",
+  "breakdown.situation.opening": "avaduell",
+  "breakdown.situation.man-up": "arvuline ülekaal",
+  "breakdown.situation.even": "võrdne arv",
+  "breakdown.situation.man-down": "arvuline vähemus"
 }

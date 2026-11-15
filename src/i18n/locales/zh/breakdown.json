@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "手雷 / 道具",
   "breakdown.wclass.launcher": "发射器",
   "breakdown.wclass.vehicle": "载具武器",
-  "breakdown.wclass.other": "其他"
+  "breakdown.wclass.other": "其他",
+  "breakdown.situations": "局面",
+  "breakdown.situation.flashed": "被闪",
+  "breakdown.situation.traded": "阵亡被补",
+  "breakdown.situation.opening": "首杀对决",
+  "breakdown.situation.man-up": "人数优势",
+  "breakdown.situation.even": "人数相等",
+  "breakdown.situation.man-down": "人数劣势"
 }

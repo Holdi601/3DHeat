@@ -107,6 +107,8 @@ export interface CqbMetrics {
   impact?: { wpa: PlayerValue[]; rapm: PlayerValue[]; lambda: number; players: number; places: GroupValue[]; weapons: GroupValue[] };
   /** Tests run; q-values are Benjamini-Hochberg over all of them. */
   tests: number;
+  /** Tests with q under 0.05. */
+  discoveries: number;
 }
 
 const r3 = (v: number) => (Number.isFinite(v) ? Math.round(v * 1000) / 1000 : v);
@@ -694,11 +696,11 @@ function funnel(c: Ctx, out: CqbMetrics): void {
   for (const [pl, [n, k]] of by) {
     if (n < 20) continue;
     const [lo, hi] = wilson(k, n);
-    rows.push({ place: placeName(c, pl), entries: n, deaths: k, rate: r3(k / n), lo: r3(lo), hi: r3(hi), ratio: r3((k + m * base) / (n + m) / base), p: binomTwoSided(k, n, base) });
+    const row = { place: placeName(c, pl), entries: n, deaths: k, rate: r3(k / n), lo: r3(lo), hi: r3(hi), ratio: r3((k + m * base) / (n + m) / base), p: binomTwoSided(k, n, base) } as NonNullable<CqbMetrics['funnel']>['places'][number];
+    // Every place tried joins the one false discovery rate of all the tests, not only those shown.
+    test(c, row.p, (q) => (row.q = q));
+    rows.push(row);
   }
-  const q = bhAdjust(rows.map((r) => r.p));
-  rows.forEach((r, i) => (r.q = r3(q[i])));
-  // The places are a family of their own: their q is over the places.
   rows.sort((a, b) => b.ratio - a.ratio);
   out.funnel = { entries: w.entN, base: r3(base), places: rows.slice(0, 8) };
 }
@@ -826,6 +828,7 @@ export function finishCqb(w: CqbWalk, names: CqbNames): CqbMetrics | undefined {
     roundBased,
     duels: w.duelsSeen,
     tests: 0,
+    discoveries: 0,
   };
   if (roundBased) winProb(c, out);
   actions(c, out);
@@ -843,6 +846,7 @@ export function finishCqb(w: CqbWalk, names: CqbNames): CqbMetrics | undefined {
   const q = bhAdjust(c.tests.map((x) => x.p));
   c.tests.forEach((x, i) => x.set(r3(q[i])));
   out.tests = c.tests.length;
+  out.discoveries = [...q].filter((v) => v < 0.05).length;
   return jsonSafe(out);
 }
 

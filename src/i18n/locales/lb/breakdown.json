@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Granat / Utility",
   "breakdown.wclass.launcher": "Werfer",
   "breakdown.wclass.vehicle": "Gefierwaff",
-  "breakdown.wclass.other": "Aner"
+  "breakdown.wclass.other": "Aner",
+  "breakdown.situations": "Lag",
+  "breakdown.situation.flashed": "geblennt",
+  "breakdown.situation.traded": "Doud gerächt",
+  "breakdown.situation.opening": "Ouvertureduell",
+  "breakdown.situation.man-up": "Iwwerzuel",
+  "breakdown.situation.even": "Gläichstand",
+  "breakdown.situation.man-down": "Ënnerzuel"
 }

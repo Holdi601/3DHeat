@@ -13,7 +13,7 @@ import { chunkAt, COMPARE_CHUNK, prepareCompare } from '../../volumes/compareRun
 import { buyScore } from './buy';
 import { feedRows, type CqbChunk, type CqbMeta } from './feed';
 import { finishCqb, type CqbMetrics, type CqbNames } from './finish';
-import { canonKind, createWalk, rawKind, stepWalk } from './walk';
+import { canonKind, createWalk, finishFlags, rawKind, stepWalk } from './walk';
 
 const IN_FLIGHT = 3;
 const OTHER = ['other', 'victim', 'killer', 'attacker', 'target'];
@@ -79,7 +79,7 @@ function chunk(p: Prep, lo: number, n: number): { chunk: CqbChunk; transfer: Arr
     return s;
   };
   const k = p.cols;
-  return { chunk: { ...c, yaw: cut(k.yaw), raw: cut(k.raw), other: cut(k.other), place: cut(k.place), weapon: cut(k.weapon), won: cut(k.won), flashed: cut(k.flashed), buy: cut(k.buy) }, transfer };
+  return { chunk: { ...c, row0: lo, yaw: cut(k.yaw), raw: cut(k.raw), other: cut(k.other), place: cut(k.place), weapon: cut(k.weapon), won: cut(k.won), flashed: cut(k.flashed), buy: cut(k.buy) }, transfer };
 }
 
 function named(m: CqbMetrics | undefined, ds: Dataset): CqbMetrics | undefined {
@@ -87,29 +87,56 @@ function named(m: CqbMetrics | undefined, ds: Dataset): CqbMetrics | undefined {
   return m;
 }
 
+interface Done {
+  metrics?: CqbMetrics;
+  flags?: Uint32Array;
+}
+
 /** On this thread: the tests and small data. */
 export function cqbSync(ds: Dataset, scope: CompareScope): CqbMetrics | undefined {
+  return syncWalk(ds, scope, false).metrics;
+}
+
+/** Each row's situation bits (`walk.ts` F_*), on this thread; null where the data cannot carry them. */
+export function cqbFlagsSync(ds: Dataset, scope: CompareScope): Uint32Array | null {
+  return syncWalk(ds, scope, true).flags ?? null;
+}
+
+function syncWalk(ds: Dataset, scope: CompareScope, flags: boolean): Done {
   const p = prepare(ds, scope);
-  if (!p) return undefined;
-  const w = createWalk({ upm: p.meta.upm });
+  if (!p) return {};
+  const w = createWalk({ upm: p.meta.upm, rows: flags ? ds.count : 0 });
   for (let lo = p.cmp.lo; lo < p.cmp.hi; lo += COMPARE_CHUNK) stepWalk(w, feedRows(p.meta, chunk(p, lo, Math.min(COMPARE_CHUNK, p.cmp.hi - lo)).chunk));
-  return named(finishCqb(w, p.names), ds);
+  if (flags) {
+    const f = finishFlags(w);
+    return { flags: f ? Uint32Array.from(f) : undefined };
+  }
+  return { metrics: named(finishCqb(w, p.names), ds) };
 }
 
 /** In a worker; undefined when the data cannot carry it or the analysis fails (it never costs the report). */
 export function runCqb(ds: Dataset, scope: CompareScope, signal?: AbortSignal): Promise<CqbMetrics | undefined> {
+  return walkInWorker(ds, scope, false, signal).then((d) => named(d.metrics, ds));
+}
+
+/** Each row's situation bits, in a worker; null where the data cannot carry them. */
+export function runCqbFlags(ds: Dataset, scope: CompareScope, signal?: AbortSignal): Promise<Uint32Array | null> {
+  return walkInWorker(ds, scope, true, signal).then((d) => d.flags ?? null);
+}
+
+function walkInWorker(ds: Dataset, scope: CompareScope, flags: boolean, signal?: AbortSignal): Promise<Done> {
   const p = prepare(ds, scope);
-  if (!p) return Promise.resolve(undefined);
+  if (!p) return Promise.resolve({});
   return new Promise((resolveP) => {
     const worker = new Worker(new URL('./worker.ts', import.meta.url), { type: 'module' });
     let next = p.cmp.lo;
     let inFlight = 0;
     let over = false;
-    const end = (m?: CqbMetrics) => {
+    const end = (d: Done = {}) => {
       if (over) return;
       over = true;
       worker.terminate();
-      resolveP(named(m, ds));
+      resolveP(d);
     };
     signal?.addEventListener('abort', () => end(), { once: true });
     const pump = () => {
@@ -122,18 +149,18 @@ export function runCqb(ds: Dataset, scope: CompareScope, signal?: AbortSignal): 
       }
       if (!over && next >= p.cmp.hi && inFlight === 0) worker.postMessage({ type: 'finish', names: p.names });
     };
-    worker.onmessage = (e: MessageEvent<{ type: 'ack' } | { type: 'done'; metrics?: CqbMetrics }>) => {
+    worker.onmessage = (e: MessageEvent<{ type: 'ack' } | ({ type: 'done' } & Done)>) => {
       if (e.data.type === 'ack') {
         inFlight--;
         pump();
-      } else end(e.data.metrics);
+      } else end({ metrics: e.data.metrics, flags: e.data.flags });
     };
     worker.onerror = (e) => {
       console.warn('cqb worker failed', e.message);
       end();
     };
     if (signal?.aborted) return end();
-    worker.postMessage({ type: 'start', meta: p.meta });
+    worker.postMessage({ type: 'start', meta: p.meta, rows: flags ? ds.count : 0 });
     pump();
   });
 }

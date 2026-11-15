@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Granada / utilidad",
   "breakdown.wclass.launcher": "Lanzador",
   "breakdown.wclass.vehicle": "Arma de vehículo",
-  "breakdown.wclass.other": "Otro"
+  "breakdown.wclass.other": "Otro",
+  "breakdown.situations": "Situación",
+  "breakdown.situation.flashed": "cegado",
+  "breakdown.situation.traded": "muerte vengada",
+  "breakdown.situation.opening": "duelo de apertura",
+  "breakdown.situation.man-up": "superioridad",
+  "breakdown.situation.even": "igualdad",
+  "breakdown.situation.man-down": "inferioridad"
 }

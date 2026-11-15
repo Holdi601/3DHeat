@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Granata / pagalbinė priemonė",
   "breakdown.wclass.launcher": "Paleidiklis",
   "breakdown.wclass.vehicle": "Transporto ginklas",
-  "breakdown.wclass.other": "Kita"
+  "breakdown.wclass.other": "Kita",
+  "breakdown.situations": "Padėtis",
+  "breakdown.situation.flashed": "apakintas",
+  "breakdown.situation.traded": "mirtis atkeršyta",
+  "breakdown.situation.opening": "pradinė dvikova",
+  "breakdown.situation.man-up": "skaitinis pranašumas",
+  "breakdown.situation.even": "lygus skaičius",
+  "breakdown.situation.man-down": "skaitinė mažuma"
 }

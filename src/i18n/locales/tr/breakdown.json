@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "El bombası / yardımcı eşya",
   "breakdown.wclass.launcher": "Fırlatıcı",
   "breakdown.wclass.vehicle": "Araç silahı",
-  "breakdown.wclass.other": "Diğer"
+  "breakdown.wclass.other": "Diğer",
+  "breakdown.situations": "Durum",
+  "breakdown.situation.flashed": "kör",
+  "breakdown.situation.traded": "ölüm takaslandı",
+  "breakdown.situation.opening": "açılış düellosu",
+  "breakdown.situation.man-up": "sayısal üstünlük",
+  "breakdown.situation.even": "eşit sayı",
+  "breakdown.situation.man-down": "sayısal azınlık"
 }

@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Граната / гаджет",
   "breakdown.wclass.launcher": "Гранатомет",
   "breakdown.wclass.vehicle": "Зброя техніки",
-  "breakdown.wclass.other": "Інше"
+  "breakdown.wclass.other": "Інше",
+  "breakdown.situations": "Ситуація",
+  "breakdown.situation.flashed": "засліплений",
+  "breakdown.situation.traded": "смерть помщена",
+  "breakdown.situation.opening": "стартова дуель",
+  "breakdown.situation.man-up": "чисельна перевага",
+  "breakdown.situation.even": "рівність",
+  "breakdown.situation.man-down": "меншість"
 }

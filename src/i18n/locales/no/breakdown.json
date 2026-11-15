@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Granat / utility",
   "breakdown.wclass.launcher": "Utskyter",
   "breakdown.wclass.vehicle": "Kjøretøyvåpen",
-  "breakdown.wclass.other": "Annet"
+  "breakdown.wclass.other": "Annet",
+  "breakdown.situations": "Situasjon",
+  "breakdown.situation.flashed": "blendet",
+  "breakdown.situation.traded": "død hevnet",
+  "breakdown.situation.opening": "åpningsduell",
+  "breakdown.situation.man-up": "overtall",
+  "breakdown.situation.even": "likt antall",
+  "breakdown.situation.man-down": "undertall"
 }

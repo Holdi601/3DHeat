@@ -65,6 +65,7 @@ Pick a folder (or files; **Add folder...** joins another). The window has the fi
 | Trends | use (share of presence), K/D or win rate of the top vehicles or classes a day, week or month |
 | Players | distinct players, matches a player, players a match, the most frequent players |
 | Sides | each side of each map: matches won against an even split |
+| Close quarters | round data: opening duels by side and their conversion, trades, peeker against holder, crossfires, flashed entries, aim, plants, man advantage and, **By map**, the places that kill the players entering them - each a share with its Wilson interval, from the summaries' `cqb` counts ([Close quarters and rounds](close-quarters.md)) |
 | Map | a map's summed grid: presence, kills, deaths, K/D, any event, flow, and **hot in how many matches** (stability); by team, at 1, 2, 4 or 8 times the cell |
 | Places | places that stand out in the numbers but not in the heat (a large area busy as a whole, corridors, height bands); **Find places** |
 | Niches | groups doing markedly better or worse than the rest (a vehicle on one map, a sector at one height); **Find niches** |

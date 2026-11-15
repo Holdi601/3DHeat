@@ -36,9 +36,9 @@ The measures come from room-clearing and urban doctrine (the fatal funnel, point
 | Fatal funnels | Entries into each place (a change of the place column, else of an 8 m cell) and deaths within 2.5 s of entering, against the map's rate | Exact binomial test, q over places; ratio shrunk with 20 entries at the map's rate |
 | Player impact | Win probability added per round by each player (kills, deaths, plants), shrunk by empirical Bayes; ridge adjusted plus-minus of round results against the model's start; kill value by place and weapon, shrunk | Penalty chosen by five-fold cross-validation |
 
-All the tests of one analysis share one false discovery rate (Benjamini-Hochberg); the q shown is over all of them. The model and its calibration are fitted to the data loaded, so they describe that population: a professional model misjudges casual play and the other way round.
+All the tests of one analysis share one false discovery rate (Benjamini-Hochberg), every place tried included, not only the places shown; the q shown is over all of them. The model and its calibration are fitted to the data loaded, so they describe that population: a professional model misjudges casual play and the other way round.
 
-Checked on synthetic rounds with planted effects (a peeker's advantage, crossfires, flashes, one fatal funnel, better aim winning) and on the same rounds without them, where none should be found (`src/insights/cqb/cqb.test.ts`); on about a thousand real rounds the model scored a Brier score of 0.14 against 0.25 for the base rate, a calibration error of 0.03 and a recalibration slope of 1.0.
+Checked on synthetic rounds with planted effects (a peeker's advantage, crossfires, flashes, one fatal funnel, better aim winning), and on 100 datasets of the same rounds without them, where the false discovery rate of the planted-effect tests must stay at the nominal 5% (within a band) (`src/insights/cqb/cqb.test.ts`); on about a thousand real rounds the model scored a Brier score of 0.14 against 0.25 for the base rate, a calibration error of 0.03 and a recalibration slope of 1.0.
 
 ## Data it needs
 
@@ -50,10 +50,14 @@ Checked on synthetic rounds with planted effects (a peeker's advantage, crossfir
 
 Positions should be sampled several times a second; speeds, aim and crossfires read the last two seconds before each death.
 
+## In the breakdown
+
+The [breakdown](breakdown.md) measures four of the situations as factors, with against without: *blinded*, *death traded*, *opening duel* and the numbers (*man up*, *even numbers*, *man down*), each on K/D, rounds won, survival and kills a minute.
+
 ## Many matches
 
-Every match summary of the [many-match analysis](mass-analysis.md) of data with a round column carries the same measures as counts (`cqb` in the summary): opening duels, trades, peeks, crossfires, flashed entries, aim, man advantage, plants and the 40 most entered places with their entries and deaths. Counts add up over matches, so a thousand matches give the same shares as one large analysis.
+Every match summary of the [many-match analysis](mass-analysis.md) of data with a round column carries the same measures as counts (`cqb` in the summary): opening duels, trades, peeks, crossfires, flashed entries, aim, man advantage, plants and the 40 most entered places with their entries and deaths. Counts add up over matches, so a thousand matches give the same shares as one large analysis. The panel's **Close quarters** tab shows them as shares with their intervals, over all maps or by map; a click on a row loads the matches it came from.
 
 ## For developers
 
-`src/insights/cqb/`: `walk.ts` (one pass over rows in time order, rounds kept apart, duels recorded with their state), `finish.ts` (the metrics and the per-match counts), `model.ts` (logistic regression by IRLS, calibration, ridge by conjugate gradients, empirical Bayes, Fisher, Newcombe, permutation tests), `run.ts` and `worker.ts` (the viewer: its own worker, beside the insight pass), `summary.ts` (the many-match summary's collector), `shows.ts` (what the lens reads), `synth.ts` (the test rounds). The knowledge entries are in `src/insights/knowledge/cqb.ts`, the patterns in `patterns-cqb.ts`. The results go into the report as `lens.cqb`.
+`src/insights/cqb/`: `walk.ts` (one pass over rows in time order, rounds kept apart, duels recorded with their state), `finish.ts` (the metrics and the per-match counts), `model.ts` (logistic regression by IRLS, calibration, ridge by conjugate gradients, empirical Bayes, Fisher, Newcombe, permutation tests), `run.ts` and `worker.ts` (the viewer: its own worker, beside the insight pass), `summary.ts` (the many-match summary's collector), `factors.ts` (the breakdown's situations), `shows.ts` (what the lens reads), `synth.ts` (the test rounds). The knowledge entries are in `src/insights/knowledge/cqb.ts`, the patterns in `patterns-cqb.ts`. The results go into the report as `lens.cqb`.

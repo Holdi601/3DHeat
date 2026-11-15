@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "グレネード / ユーティリティ",
   "breakdown.wclass.launcher": "ランチャー",
   "breakdown.wclass.vehicle": "車両兵器",
-  "breakdown.wclass.other": "その他"
+  "breakdown.wclass.other": "その他",
+  "breakdown.situations": "状況",
+  "breakdown.situation.flashed": "目くらまし",
+  "breakdown.situation.traded": "トレードされた死亡",
+  "breakdown.situation.opening": "オープニングデュエル",
+  "breakdown.situation.man-up": "人数有利",
+  "breakdown.situation.even": "同数",
+  "breakdown.situation.man-down": "人数不利"
 }

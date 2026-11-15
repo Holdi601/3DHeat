@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Granata / pomoćno sredstvo",
   "breakdown.wclass.launcher": "Bacač",
   "breakdown.wclass.vehicle": "Oružje vozila",
-  "breakdown.wclass.other": "Ostalo"
+  "breakdown.wclass.other": "Ostalo",
+  "breakdown.situations": "Situacija",
+  "breakdown.situation.flashed": "zaslijepljen",
+  "breakdown.situation.traded": "smrt osvećena",
+  "breakdown.situation.opening": "uvodni dvoboj",
+  "breakdown.situation.man-up": "brojčana nadmoć",
+  "breakdown.situation.even": "jednak broj",
+  "breakdown.situation.man-down": "brojčana podređenost"
 }

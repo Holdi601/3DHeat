@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Граната / помощно",
   "breakdown.wclass.launcher": "Гранатомет",
   "breakdown.wclass.vehicle": "Оръжие на машина",
-  "breakdown.wclass.other": "Друго"
+  "breakdown.wclass.other": "Друго",
+  "breakdown.situations": "Ситуация",
+  "breakdown.situation.flashed": "заслепен",
+  "breakdown.situation.traded": "смърт отмъстена",
+  "breakdown.situation.opening": "начален дуел",
+  "breakdown.situation.man-up": "числено превъзходство",
+  "breakdown.situation.even": "равен брой",
+  "breakdown.situation.man-down": "числено малцинство"
 }

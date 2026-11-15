@@ -3,12 +3,14 @@ import { CANON } from '../../data/canonical';
 import type { Dataset } from '../../state/types';
 import { FULL_SCOPE } from '../../volumes/stats';
 import { KB, KB_BY_ID, PATTERNS, REF_BY_ID } from '../knowledge';
+import { buildFactors } from '../../breakdown/breakdownRun';
 import { cqbSync } from './run';
+import { SITUATION_COLUMN, situationsSync } from './factors';
 import { cqbShows } from './shows';
 import { finishCqb, type CqbMetrics } from './finish';
 import { calibrate, ebShrink, fisher, fitLogit, newcombe, permMeans, ridgeSparse } from './model';
 import { NULL_EFFECTS, synthRounds, type SynthEffects } from './synth';
-import { createWalk, rawKind, stepWalk, K_DEATH, K_FLASH, K_KILL, K_PLANT, K_POS, K_SKIP } from './walk';
+import { createWalk, rawKind, stepWalk, F_MAN_SHIFT, F_OPENING, F_TRADED, K_DEATH, K_FLASH, K_KILL, K_PLANT, K_POS, K_SKIP } from './walk';
 
 function run(rounds: number, fx: SynthEffects, seed: number): CqbMetrics {
   const w = createWalk({ upm: 1 });
@@ -105,19 +107,36 @@ describe('close-quarters statistics', () => {
     expect(shows.get('lens.cqbWinProb')!.why).toMatch(/Brier/);
   });
 
-  it('finds nothing in the null rounds', () => {
-    const m = run(500, NULL_EFFECTS, 6);
-    expect(m.peek!.p).toBeGreaterThan(0.01);
-    expect(m.crossfire!.p).toBeGreaterThan(0.01);
-    expect(m.utility!.flashEntry!.p).toBeGreaterThan(0.01);
-    // Entering a stage is deadlier than walking home (peekers die there), but no stage more than another.
-    const stages = m.funnel!.places.filter((p) => p.place !== 'home');
-    const hi = stages.reduce((a, b) => (b.rate > a.rate ? b : a));
-    const lo = stages.reduce((a, b) => (b.rate < a.rate ? b : a));
-    // The extremes of six: Bonferroni over the 15 pairs.
-    expect(fisher(hi.deaths, hi.entries - hi.deaths, lo.deaths, lo.entries - lo.deaths)).toBeGreaterThan(0.05 / 15);
-    expect(Math.abs(m.aim!.betterAimed.share - 0.5)).toBeLessThan(0.06);
-  });
+  it('keeps the false discovery rate over 100 null datasets', () => {
+    // Every effect off: the tests of planted effects are true nulls. The others (the value of an
+    // opening kill, trades, man advantage) measure real structure of any elimination round.
+    const SEEDS = 100;
+    let fdp = 0;
+    let any = 0;
+    let nullTests = 0;
+    for (let seed = 1; seed <= SEEDS; seed++) {
+      const m = run(150, NULL_EFFECTS, 1000 + seed);
+      const qs = [
+        m.peek?.q,
+        m.crossfire?.q,
+        m.utility?.flashEntry?.q,
+        m.utility?.openingFlash?.q,
+        m.aim?.q,
+        m.aim?.holderOnAngle?.q,
+        m.actions?.find((a) => a.kind === 'flashedKill')?.q,
+        ...(m.funnel?.places ?? []).map((p) => p.q),
+        ...(m.opening?.places ?? []).map((p) => p.q),
+      ].filter((q): q is number => typeof q === 'number');
+      nullTests += qs.length;
+      const v = qs.filter((q) => q < 0.05).length;
+      fdp += v / Math.max(1, m.discoveries);
+      if (v) any++;
+    }
+    expect(nullTests / SEEDS).toBeGreaterThan(15);
+    // Nominal 5%, with a band for 100 datasets.
+    expect(fdp / SEEDS).toBeLessThanOrEqual(0.05 + 0.03);
+    expect(any / SEEDS).toBeLessThanOrEqual(0.15);
+  }, 180_000);
 
   it('has knowledge entries for every CQB pattern, with resolving references', () => {
     const cqb = PATTERNS.filter((p) => ['fatal-funnel', 'crossfire', 'peeker-advantage', 'entry', 'utility-support', 'man-advantage', 'clutch', 'action-value', 'lurk', 'rotation'].includes(p.id));
@@ -188,5 +207,22 @@ describe('close-quarters statistics', () => {
     expect(viaDs.crossfire!.with.n).toBe(direct.crossfire!.with.n);
     expect(viaDs.funnel!.places[0].place).toBe('p3');
     expect(viaDs.decided).toBe(120);
+    // The situations as breakdown factors: one opening duel a round, on its kill and its death row.
+    const col = situationsSync(ds)!;
+    const bits = col.data as Uint32Array;
+    let opening = 0;
+    let traded = 0;
+    let man = 0;
+    for (let i = 0; i < bits.length; i++) {
+      if (bits[i] & F_OPENING) opening++;
+      if (bits[i] & F_TRADED) traded++;
+      if ((bits[i] >> F_MAN_SHIFT) & 3) man++;
+    }
+    // The kill row, the death row and the victim's row before it (what the breakdown reads a death by).
+    expect(opening).toBe(360);
+    expect(traded).toBeGreaterThan(0);
+    expect(man).toBeGreaterThan(bits.length * 0.5);
+    const names = buildFactors(ds).factors.filter((f) => f.column === SITUATION_COLUMN).map((f) => f.value);
+    expect(names).toEqual(expect.arrayContaining(['opening', 'traded', 'man-up', 'even', 'man-down', 'flashed']));
   });
 });

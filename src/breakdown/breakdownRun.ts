@@ -30,6 +30,7 @@
  */
 
 import { CANON } from '../data/canonical';
+import { ensureSituations, situationColumns } from '../insights/cqb/factors';
 import { buildSplitTable, buildGroupTable, filterColumnData } from '../render/filterTables';
 import { lowerBound } from '../render/sampling';
 import type { AttributeColumn, Dataset, SplitRule } from '../state/types';
@@ -260,7 +261,8 @@ export function buildFactors(ds: Dataset): BuiltFactors {
   const columns: string[] = [];
   const factors: Factor[] = [];
   const room = () => factors.length < MAX_FACTORS;
-  for (const a of ds.attrs) {
+  // The dataset's columns, and the close-quarters situations once worked out (`insights/cqb/factors.ts`).
+  for (const a of [...ds.attrs, ...situationColumns(ds)]) {
     if (!room()) break;
     const prefixed = FACTOR_PREFIX.test(a.name);
     if (a.kind !== 'category') {
@@ -416,7 +418,7 @@ export function breakdownChunk(p: BreakdownPrep, lo: number, n: number): { chunk
     transfer.push(c.buffer as ArrayBuffer);
     return c;
   };
-  const col = (name: string | null) => (name ? ((ds.attrs.find((a) => a.name === name)?.data as ColumnSlice | undefined) ?? null) : null);
+  const col = (name: string | null) => (name ? (((ds.attrs.find((a) => a.name === name) ?? situationColumns(ds).find((a) => a.name === name))?.data as ColumnSlice | undefined) ?? null) : null);
   const d = p.dim;
   const dimData = !d ? null : d.column ? col(d.column) : p.req.dim!.kind === 'team' ? ds.teamId : p.req.dim!.kind === 'person' ? ds.personId : ds.sessionId;
   const chunk: BreakdownChunk = {
@@ -459,6 +461,15 @@ export function runBreakdown(
   ds: Dataset,
   req: BreakdownRequest,
   opts: { signal?: AbortSignal; onProgress?: (fraction: number) => void } = {},
+): Promise<{ prep: BreakdownPrep; result: BreakdownResult }> {
+  // The close-quarters situations join the factors where the data has rounds; worked out once a dataset.
+  return ensureSituations(ds, opts.signal).then(() => runBreakdownNow(ds, req, opts));
+}
+
+function runBreakdownNow(
+  ds: Dataset,
+  req: BreakdownRequest,
+  opts: { signal?: AbortSignal; onProgress?: (fraction: number) => void },
 ): Promise<{ prep: BreakdownPrep; result: BreakdownResult }> {
   const p = prepareBreakdown(ds, req);
   return new Promise((resolve, reject) => {

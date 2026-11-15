@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Gránát / kellék",
   "breakdown.wclass.launcher": "Kilövő",
   "breakdown.wclass.vehicle": "Járműfegyver",
-  "breakdown.wclass.other": "Egyéb"
+  "breakdown.wclass.other": "Egyéb",
+  "breakdown.situations": "Helyzet",
+  "breakdown.situation.flashed": "elvakítva",
+  "breakdown.situation.traded": "halál megbosszulva",
+  "breakdown.situation.opening": "nyitó párbaj",
+  "breakdown.situation.man-up": "létszámfölény",
+  "breakdown.situation.even": "egyenlő létszám",
+  "breakdown.situation.man-down": "létszámhátrány"
 }

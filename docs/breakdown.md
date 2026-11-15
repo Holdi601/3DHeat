@@ -63,6 +63,8 @@ Switch from **Ranking** to **Factors**, pick **Effect on**, and read *Helps most
 
 Each factor's effect on K/D, rounds won, survival (minutes per death), kills a minute and net money a minute, with a 95% interval: ratios as x, rounds won as a difference in points. The ranking pulls each estimate toward no effect by its own uncertainty, so a rare factor needs a clear effect to rank high; the interval shown is the unpulled one.
 
+Data with rounds adds the close-quarters **situations** ([Close quarters and rounds](close-quarters.md)), worked out once a dataset: *blinded* (the row's `state_flashed`, or an enemy flash within 15 m in the last 3 s), *death traded*, *opening duel*, and *man up*, *even numbers* or *man down* (players alive on the row's side against the enemy). A death counts in the situation its victim was in just before it.
+
 At most 256 factors are measured in one pass.
 
 ## For developers

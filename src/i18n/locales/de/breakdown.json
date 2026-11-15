@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Granate / Utility",
   "breakdown.wclass.launcher": "Werfer",
   "breakdown.wclass.vehicle": "Fahrzeugwaffe",
-  "breakdown.wclass.other": "Sonstige"
+  "breakdown.wclass.other": "Sonstige",
+  "breakdown.situations": "Lage",
+  "breakdown.situation.flashed": "geblendet",
+  "breakdown.situation.traded": "Tod getradet",
+  "breakdown.situation.opening": "Eröffnungsduell",
+  "breakdown.situation.man-up": "Überzahl",
+  "breakdown.situation.even": "Gleichstand",
+  "breakdown.situation.man-down": "Unterzahl"
 }

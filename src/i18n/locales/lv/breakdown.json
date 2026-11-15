@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Granāta / palīglīdzeklis",
   "breakdown.wclass.launcher": "Palaidējs",
   "breakdown.wclass.vehicle": "Transportlīdzekļa ierocis",
-  "breakdown.wclass.other": "Cits"
+  "breakdown.wclass.other": "Cits",
+  "breakdown.situations": "Situācija",
+  "breakdown.situation.flashed": "apžilbināts",
+  "breakdown.situation.traded": "nāve atriebta",
+  "breakdown.situation.opening": "sākuma duelis",
+  "breakdown.situation.man-up": "skaitliskais pārsvars",
+  "breakdown.situation.even": "vienāds skaits",
+  "breakdown.situation.man-down": "skaitliskais mazākums"
 }

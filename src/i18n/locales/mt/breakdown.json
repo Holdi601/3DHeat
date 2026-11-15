@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Granata / utility",
   "breakdown.wclass.launcher": "Launcher",
   "breakdown.wclass.vehicle": "Arma tal-vettura",
-  "breakdown.wclass.other": "Oħra"
+  "breakdown.wclass.other": "Oħra",
+  "breakdown.situations": "Sitwazzjoni",
+  "breakdown.situation.flashed": "agħma",
+  "breakdown.situation.traded": "mewt ivvendikata",
+  "breakdown.situation.opening": "duell tal-ftuħ",
+  "breakdown.situation.man-up": "superjorità numerika",
+  "breakdown.situation.even": "numru ugwali",
+  "breakdown.situation.man-down": "inferjorità numerika"
 }

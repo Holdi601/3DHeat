@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Granat / utility",
   "breakdown.wclass.launcher": "Raketkastare",
   "breakdown.wclass.vehicle": "Fordonsvapen",
-  "breakdown.wclass.other": "Övrigt"
+  "breakdown.wclass.other": "Övrigt",
+  "breakdown.situations": "Läge",
+  "breakdown.situation.flashed": "bländad",
+  "breakdown.situation.traded": "död hämnad",
+  "breakdown.situation.opening": "öppningsduell",
+  "breakdown.situation.man-up": "numerärt överläge",
+  "breakdown.situation.even": "lika antal",
+  "breakdown.situation.man-down": "numerärt underläge"
 }

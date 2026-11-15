@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Granat / utility",
   "breakdown.wclass.launcher": "Raketkaster",
   "breakdown.wclass.vehicle": "Køretøjsvåben",
-  "breakdown.wclass.other": "Andet"
+  "breakdown.wclass.other": "Andet",
+  "breakdown.situations": "Situation",
+  "breakdown.situation.flashed": "blændet",
+  "breakdown.situation.traded": "død hævnet",
+  "breakdown.situation.opening": "åbningsduel",
+  "breakdown.situation.man-up": "overtal",
+  "breakdown.situation.even": "lige antal",
+  "breakdown.situation.man-down": "undertal"
 }

@@ -88,13 +88,24 @@ export interface CqbRows {
   buy: ArrayLike<number> | null;
   /** Whether the row counts (the view's filters); absent: all. */
   shown?: ArrayLike<number> | null;
+  /** The dataset row of row 0, for the per-row situations (`CqbWalk.flags`). */
+  row0?: number;
 }
+
+/** Per-row situation bits (`CqbWalk.flags`): blinded, a traded death, the opening duel, and the numbers. */
+export const F_FLASHED = 1;
+export const F_TRADED = 2;
+export const F_OPENING = 4;
+/** Bits 3-4: 1 more players alive than the enemy, 2 even, 3 fewer; 0 unknown. */
+export const F_MAN_SHIFT = 3;
 
 export interface WalkOptions {
   /** World units in a metre. */
   upm: number;
   /** Place cells (metres) when the data has no place column. */
   cell?: number;
+  /** Dataset rows: when given, the walk writes each row's situation bits (`CqbWalk.flags`). */
+  rows?: number;
 }
 
 /** Samples a player keeps: two seconds at 8 Hz. */
@@ -150,6 +161,8 @@ export class Slot {
   lastT = NaN;
   watchOpen = -1;
   watchPlant = -1;
+  /** Dataset row of the player's last row so far (-1 none). */
+  lastRow = -1;
   constructor(
     readonly person: number,
     public team: number,
@@ -279,6 +292,14 @@ export interface Duel {
   /** The duel that traded this death (the killer killed in turn by the victim's side), -1 none. */
   tradedBy: number;
   tradeT: number;
+  /** Dataset rows of the kill and of the death (-1 unknown), for the per-row situations. */
+  killRow: number;
+  deathRow: number;
+  /**
+   * The victim's row before its death: the breakdown reads a death by the state the
+   * victim carried just before it (docs/breakdown.md), so the situation goes there too.
+   */
+  victimPrev: number;
 }
 
 export interface Plant {
@@ -338,6 +359,8 @@ export interface CqbWalk {
   hasWon: boolean;
   hasBuy: boolean;
   hasFlashed: boolean;
+  /** Per dataset row, the situation bits (F_*); null unless asked for (`createWalk` with `rows`). */
+  flags: Uint8Array | null;
 }
 
 const grow = <T extends Int32Array | Float32Array | Uint8Array | Int8Array | Int16Array>(a: T, need: number): T => {
@@ -349,7 +372,7 @@ const grow = <T extends Int32Array | Float32Array | Uint8Array | Int8Array | Int
 
 export function createWalk(opt: WalkOptions): CqbWalk {
   return {
-    opt: { upm: opt.upm > 0 ? opt.upm : 1, cell: opt.cell ?? 8 },
+    opt: { upm: opt.upm > 0 ? opt.upm : 1, cell: opt.cell ?? 8, rows: opt.rows ?? 0 },
     rounds: new Map(),
     order: [],
     duels: [],
@@ -378,6 +401,7 @@ export function createWalk(opt: WalkOptions): CqbWalk {
     hasWon: false,
     hasBuy: false,
     hasFlashed: false,
+    flags: opt.rows ? new Uint8Array(opt.rows) : null,
   };
 }
 
@@ -565,8 +589,23 @@ function entryOf(w: CqbWalk, s: Slot, place: number, t: number): void {
 }
 
 /** A death: the duel as it stood, then the victim down. */
+/** The duel a kill or death row at `t` belongs to when the other row already made it. */
+function duelOf(w: CqbWalk, r: Round, victim: number, t: number): Duel | null {
+  for (let j = r.duels.length - 1; j >= 0; j--) {
+    const d = w.duels[r.duels[j]];
+    if (Math.abs(d.t - t) > 0.5) break;
+    if (d.victim === victim) return d;
+  }
+  return null;
+}
+
 function death(w: CqbWalk, r: Round, victim: Slot, killer: Slot | null, t: number, rows: CqbRows, i: number, fromKillRow: boolean): void {
-  if (t - victim.lastDeathT < 0.5) return;
+  if (t - victim.lastDeathT < 0.5) {
+    const d = duelOf(w, r, victim.person, t);
+    if (d && fromKillRow) d.killRow = (rows.row0 ?? 0) + i;
+    else if (d) d.deathRow = (rows.row0 ?? 0) + i;
+    return;
+  }
   if (!victim.alive && victim.seen && victim.deaths > 0) return;
   victim.lastDeathT = t;
   victim.deaths++;
@@ -632,6 +671,9 @@ function death(w: CqbWalk, r: Round, victim: Slot, killer: Slot | null, t: numbe
     postPlant: Number.isFinite(r.plantT) && r.plantT <= t,
     tradedBy: -1,
     tradeT: NaN,
+    killRow: fromKillRow ? (rows.row0 ?? 0) + i : -1,
+    deathRow: fromKillRow ? -1 : (rows.row0 ?? 0) + i,
+    victimPrev: victim.lastRow,
   };
   // The victim's nearest teammate as it stood before going down.
   victim.alive = true;
@@ -673,6 +715,56 @@ function death(w: CqbWalk, r: Round, victim: Slot, killer: Slot | null, t: numbe
   }
 }
 
+/** A row's situation bits as it stands before the row: blinded, and the numbers on each side. */
+function situation(w: CqbWalk, r: Round, s: Slot, rows: CqbRows, i: number, t: number): number {
+  if (s.team < 0 || s.team >= MAX_TEAMS) return 0;
+  let f = 0;
+  if (rows.flashed && rows.flashed[i] > 0) f |= F_FLASHED;
+  else {
+    const x = rows.x[i];
+    const z = rows.z[i];
+    const range = UTIL_RANGE * w.opt.upm;
+    for (let k = r.util.length - 1; k >= 0; k--) {
+      const u = r.util[k];
+      if (t - u.t > FLASH_SECS) break;
+      if (u.kind === K_FLASH && u.team !== s.team && u.t <= t && Math.hypot(u.x - x, u.z - z) <= range) {
+        f |= F_FLASHED;
+        break;
+      }
+    }
+  }
+  if (s.alive) {
+    const a = alive(r, scratchAlive);
+    const own = a[s.team];
+    let enemy = 0;
+    for (let k = 0; k < MAX_TEAMS; k++) if (k !== s.team) enemy = Math.max(enemy, a[k]);
+    if (own > 0 && enemy > 0) f |= (own > enemy ? 1 : own === enemy ? 2 : 3) << F_MAN_SHIFT;
+  }
+  return f;
+}
+
+/** The situation bits known only after the fact: opening duels and traded deaths. */
+export function finishFlags(w: CqbWalk): Uint8Array | null {
+  const f = w.flags;
+  if (!f) return null;
+  const set = (row: number, bit: number) => {
+    if (row >= 0 && row < f.length) f[row] |= bit;
+  };
+  for (const d of w.duels) {
+    if (d.teamkill) continue;
+    if (d.opening) {
+      set(d.killRow, F_OPENING);
+      set(d.deathRow, F_OPENING);
+      set(d.victimPrev, F_OPENING);
+    }
+    if (d.tradedBy >= 0) {
+      set(d.deathRow, F_TRADED);
+      set(d.victimPrev, F_TRADED);
+    }
+  }
+  return f;
+}
+
 export function stepWalk(w: CqbWalk, rows: CqbRows): void {
   const upm = w.opt.upm;
   const cell = w.opt.cell * upm;
@@ -710,6 +802,7 @@ export function stepWalk(w: CqbWalk, rows: CqbRows): void {
       const b = rows.buy[i];
       if (Number.isFinite(b)) s.buy = b;
     }
+    if (w.flags) w.flags[(rows.row0 ?? 0) + i] = situation(w, r, s, rows, i, t);
     switch (kind) {
       case K_POS: {
         if (!s.seen) {
@@ -777,7 +870,11 @@ export function stepWalk(w: CqbWalk, rows: CqbRows): void {
         const o = rows.other ? rows.other[i] : -1;
         const victim = o >= 0 ? r.by.get(o) : undefined;
         if (victim) {
-          if (t - victim.lastDeathT < 0.5) break;
+          if (t - victim.lastDeathT < 0.5) {
+            const d = duelOf(w, r, victim.person, t);
+            if (d) d.killRow = (rows.row0 ?? 0) + i;
+            break;
+          }
           if (r.snaps.length === 0) snapshot(w, r, t);
           if (!victim.seen) {
             victim.seen = true;
@@ -826,5 +923,6 @@ export function stepWalk(w: CqbWalk, rows: CqbRows): void {
       default:
         break;
     }
+    s.lastRow = (rows.row0 ?? 0) + i;
   }
 }

@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Граната / помоћно средство",
   "breakdown.wclass.launcher": "Бацач",
   "breakdown.wclass.vehicle": "Оружје возила",
-  "breakdown.wclass.other": "Остало"
+  "breakdown.wclass.other": "Остало",
+  "breakdown.situations": "Ситуација",
+  "breakdown.situation.flashed": "заслепљен",
+  "breakdown.situation.traded": "смрт освећена",
+  "breakdown.situation.opening": "уводни дуел",
+  "breakdown.situation.man-up": "бројчана надмоћ",
+  "breakdown.situation.even": "једнак број",
+  "breakdown.situation.man-down": "бројчана подређеност"
 }

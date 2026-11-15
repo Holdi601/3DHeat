@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Grenade / utilitaire",
   "breakdown.wclass.launcher": "Lanceur",
   "breakdown.wclass.vehicle": "Arme de véhicule",
-  "breakdown.wclass.other": "Autre"
+  "breakdown.wclass.other": "Autre",
+  "breakdown.situations": "Situation",
+  "breakdown.situation.flashed": "aveuglé",
+  "breakdown.situation.traded": "mort échangée",
+  "breakdown.situation.opening": "duel d'ouverture",
+  "breakdown.situation.man-up": "supériorité",
+  "breakdown.situation.even": "égalité",
+  "breakdown.situation.man-down": "infériorité"
 }

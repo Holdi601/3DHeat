@@ -72,5 +72,12 @@
   "breakdown.wclass.utility": "Granata / pripomoček",
   "breakdown.wclass.launcher": "Metalec",
   "breakdown.wclass.vehicle": "Orožje vozila",
-  "breakdown.wclass.other": "Drugo"
+  "breakdown.wclass.other": "Drugo",
+  "breakdown.situations": "Položaj",
+  "breakdown.situation.flashed": "zaslepljen",
+  "breakdown.situation.traded": "smrt maščevana",
+  "breakdown.situation.opening": "uvodni dvoboj",
+  "breakdown.situation.man-up": "številčna premoč",
+  "breakdown.situation.even": "enako število",
+  "breakdown.situation.man-down": "številčna podrejenost"
 }
