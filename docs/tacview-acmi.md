@@ -40,7 +40,7 @@ A DCS multiplayer server records its missions with Tacview around the clock, and
 
 | Column | Meaning |
 |---|---|
-| `server` | the server or campaign, from the recording's header (its Title, Author and Comments name the known public servers - Blue Flag, SPS Contention, Growling Sidewinder; otherwise an Author that names someone); `--server Name` names it for a whole folder |
+| `server` | the server or campaign, from the recording's header (its Title, Author and Comments name the known public servers - Blue Flag, SPS Contention, Growling Sidewinder; otherwise an Author that names someone); `--server Name` names it for a whole folder. A recording whose header names no server - an Author such as `Admin`, a Title and Comments no known server writes - stays unattributed: `server` empty, even when it was downloaded from a server's recording page, since the page may hold other communities' missions too |
 | `mission` | the recording's Title without its version or campaign month: `Operation_Example_V7.7.99` becomes `Operation Example` |
 | `round` | the server's own number of the campaign the moment belongs to, from a rounds file (below); empty without one |
 | `won`, `matchWon` | 1 when the row's side (its Color, Red or Blue) won that campaign, 0 when it lost; empty where no rounds file names a winner, and on neutral rows. A campaign is the round and the match at once, so both hold the same |
@@ -94,3 +94,4 @@ What the known servers publish:
 | Blue Flag | a campaign round over many 5-hour missions; the Title's `_YYYY_MM` advances one month a restart | every enemy position taken; older rounds named the side holding more after a fixed time | not published in a form found so far: empty |
 | Growling Sidewinder | a mission run (6 hours) of an open-conflict mission | zones and airfields taken | its statistics page shows pilots, not results: empty |
 | Missions against the AI (capture-the-zones missions) | a mission run | the players' side against the mission's AI: no PvP outcome | empty |
+| Unattributed (header names no server) | - | - | empty, `server` empty too |
