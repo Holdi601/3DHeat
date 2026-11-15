@@ -15,9 +15,7 @@ import type { WorldLabel } from '../world/backdrop';
  * server can be put behind the same four calls later without touching the app.
  */
 
-const DB_NAME = '3dheat';
-const DB_VERSION = 1;
-const STORE = 'levels';
+import { listLevelMetas, openLevelDb, putLevelRecord, STORE } from './levelDb';
 
 export interface StoredLevelMeta {
   id: string;
@@ -84,17 +82,69 @@ interface StoredLevel extends StoredLevelMeta {
 }
 
 function openDb(): Promise<IDBDatabase> {
-  return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, DB_VERSION);
-    req.onupgradeneeded = () => {
-      const db = req.result;
-      if (!db.objectStoreNames.contains(STORE)) {
-        db.createObjectStore(STORE, { keyPath: 'id' });
-      }
-    };
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error ?? new Error(t('data.levelLibrary.openFailed')));
+  return openLevelDb().catch((err: unknown) => {
+    throw err instanceof Error && err.message !== 'IndexedDB open failed' ? err : new Error(t('data.levelLibrary.openFailed'));
   });
+}
+
+/** Bytes copied per step when a level is saved: about a millisecond of copying, so no frame waits on it. */
+const COPY_STEP = 4 << 20;
+
+/**
+ * A copy of a typed array's bytes, made a slice at a time with the event loop
+ * let through between slices, so a level of hundreds of megabytes is copied
+ * without holding up a frame. The copy is the library's own (the caller keeps
+ * drawing from the original) and is then transferred to the writing worker.
+ */
+async function copyInSteps(view: ArrayBufferView): Promise<ArrayBuffer> {
+  const src = new Uint8Array(view.buffer, view.byteOffset, view.byteLength);
+  const out = new Uint8Array(view.byteLength);
+  for (let at = 0; at < src.length; at += COPY_STEP) {
+    out.set(src.subarray(at, Math.min(src.length, at + COPY_STEP)), at);
+    if (at + COPY_STEP < src.length) await new Promise((r) => setTimeout(r, 0));
+  }
+  return out.buffer;
+}
+
+let storeWorker: Worker | null = null;
+let storeNext = 1;
+const storeWaiting = new Map<number, { resolve: (metas?: unknown[]) => void; reject: (e: Error) => void }>();
+
+/** The worker doing the library's heavy IndexedDB work (`levelStoreWorker.ts`); null where there can be none. */
+function store(): Worker | null {
+  if (storeWorker || typeof Worker === 'undefined') return storeWorker;
+  try {
+    storeWorker = new Worker(new URL('./levelStoreWorker.ts', import.meta.url), { type: 'module' });
+  } catch {
+    return null;
+  }
+  storeWorker.onmessage = (ev: MessageEvent<{ id: number; error?: string; metas?: unknown[] }>) => {
+    const w = storeWaiting.get(ev.data.id);
+    if (!w) return;
+    storeWaiting.delete(ev.data.id);
+    if (ev.data.error) w.reject(new Error(ev.data.error));
+    else w.resolve(ev.data.metas);
+  };
+  return storeWorker;
+}
+
+function ask(message: { op: 'put'; record: unknown } | { op: 'list' }, transfer: ArrayBuffer[] = []): Promise<unknown[] | undefined> {
+  const w = store()!;
+  const id = storeNext++;
+  return new Promise((resolve, reject) => {
+    storeWaiting.set(id, { resolve, reject });
+    w.postMessage({ id, ...message }, transfer);
+  });
+}
+
+/**
+ * Puts a record whose large buffers are listed in `transfer`: in the worker when
+ * there is one (the buffers move there without a copy, and IndexedDB's clone and
+ * write run on its thread), else here.
+ */
+async function putRecord(record: unknown, transfer: ArrayBuffer[]): Promise<void> {
+  if (!store()) return putLevelRecord(record);
+  await ask({ op: 'put', record }, transfer);
 }
 
 function tx<T>(mode: IDBTransactionMode, fn: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
@@ -112,10 +162,10 @@ function tx<T>(mode: IDBTransactionMode, fn: (store: IDBObjectStore) => IDBReque
 
 /** Everything in the library, newest first, without loading any payloads. */
 export async function listLevels(): Promise<StoredLevelMeta[]> {
-  const all = await tx<StoredLevel[]>('readonly', (s) => s.getAll() as IDBRequest<StoredLevel[]>);
-  return all
-    .map(({ blob: _blob, vertices: _v, indices: _i, ...meta }) => meta)
-    .sort((a, b) => b.createdAt - a.createdAt);
+  // Read in the worker where there is one: reading the store clones every
+  // level's geometry, which on this thread stalls a frame per large level.
+  const metas = ((store() ? await ask({ op: 'list' }) : await listLevelMetas()) ?? []) as StoredLevelMeta[];
+  return metas.sort((a, b) => b.createdAt - a.createdAt);
 }
 
 export async function saveImageLevel(
@@ -183,34 +233,43 @@ export async function saveModelLevel(name: string, p: ModelLevelPayload): Promis
     p.structureIndices.byteLength +
     p.structureEdges.byteLength +
     (p.waterIndices?.byteLength ?? 0);
-  // Copies, because the caller keeps using these arrays for rendering and
-  // IndexedDB would otherwise store a view onto a buffer we may transfer away.
-  await tx('readwrite', (s) =>
-    s.put({
-      id,
-      name,
-      kind: 'model',
-      createdAt: Date.now(),
-      bytes,
-      triangles: p.triangles,
-      sourceTriangles: p.sourceTriangles,
-      ...(p.credits?.length ? { credits: [...p.credits] } : {}),
-      ...(p.placement ? { placement: JSON.parse(JSON.stringify(p.placement)) as GeoPlacement } : {}),
-      ...(p.labels?.length ? { labels: p.labels.map((l) => ({ ...l })) } : {}),
-      ...(p.stream ? { stream: { ...p.stream }, ...(p.bounds ? { bounds: { ...p.bounds } } : {}) } : {}),
-      ...(p.game ? { game: p.game } : {}),
-      vertices: p.vertices.slice().buffer,
-      ...(p.colours ? { colours: p.colours.slice().buffer } : {}),
-      ...(p.uvs && p.atlas ? { uvs: p.uvs.slice().buffer, atlas: p.atlas } : {}),
-      ...(p.uvs && p.atlas && p.uvTiles && p.tileRects
-        ? { uvTiles: p.uvTiles.slice().buffer, tileRects: p.tileRects.slice().buffer }
-        : {}),
-      indices: p.indices.slice().buffer,
-      structureIndices: p.structureIndices.slice().buffer,
-      structureEdges: p.structureEdges.slice().buffer,
-      waterIndices: (p.waterIndices ?? new Uint32Array(0)).slice().buffer,
-    } satisfies StoredLevel),
+  // Copies, because the caller keeps using these arrays for rendering; made a
+  // slice at a time and written by a worker, so saving never holds up a frame.
+  const copy = (v: ArrayBufferView) => copyInSteps(v);
+  const vertices = await copy(p.vertices);
+  const colours = p.colours ? await copy(p.colours) : null;
+  const uvs = p.uvs && p.atlas ? await copy(p.uvs) : null;
+  const tiles = p.uvs && p.atlas && p.uvTiles && p.tileRects ? [await copy(p.uvTiles), await copy(p.tileRects)] : null;
+  const indices = await copy(p.indices);
+  const structureIndices = await copy(p.structureIndices);
+  const structureEdges = await copy(p.structureEdges);
+  const waterIndices = await copy(p.waterIndices ?? new Uint32Array(0));
+  const record = {
+    id,
+    name,
+    kind: 'model',
+    createdAt: Date.now(),
+    bytes,
+    triangles: p.triangles,
+    sourceTriangles: p.sourceTriangles,
+    ...(p.credits?.length ? { credits: [...p.credits] } : {}),
+    ...(p.placement ? { placement: JSON.parse(JSON.stringify(p.placement)) as GeoPlacement } : {}),
+    ...(p.labels?.length ? { labels: p.labels.map((l) => ({ ...l })) } : {}),
+    ...(p.stream ? { stream: { ...p.stream }, ...(p.bounds ? { bounds: { ...p.bounds } } : {}) } : {}),
+    ...(p.game ? { game: p.game } : {}),
+    vertices,
+    ...(colours ? { colours } : {}),
+    ...(uvs && p.atlas ? { uvs, atlas: p.atlas } : {}),
+    ...(tiles ? { uvTiles: tiles[0], tileRects: tiles[1] } : {}),
+    indices,
+    structureIndices,
+    structureEdges,
+    waterIndices,
+  } satisfies StoredLevel;
+  const transfer = [vertices, colours, uvs, ...(tiles ?? []), indices, structureIndices, structureEdges, waterIndices].filter(
+    (b): b is ArrayBuffer => !!b && b.byteLength > 0,
   );
+  await putRecord(record, transfer);
   return id;
 }
 
