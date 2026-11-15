@@ -4,7 +4,7 @@ parent: "Tryby ciepła"
 nav_order: 13
 lang: "pl"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ Gdzie stoi gracz, którędy idzie, gdzie rzuca granaty – i jak często jego st
 
 *Obraz pokazuje zmyślone dane: trzy trasy na pustym poziomie, z 68%, 50% i 33% ich wierszy w wygranych rundach.*
 
-Potrzebne są dane, które mówią, kto wygrał: [kolumny wyniku](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Konwertery CS2 i War Thunder je zapisują; może je mieć każdy plik.
+Potrzebne są dane, które mówią, kto wygrał: [kolumny wyniku](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Konwertery CS2 i War Thunder je zapisują, a konwerter Tacview dla kampanii serwera DCS ([Serwery DCS](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); może je mieć każdy plik.
 
 ## Wypróbuj {#try-it}
 

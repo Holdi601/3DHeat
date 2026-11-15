@@ -3,7 +3,7 @@ title: "Referência dos formatos de dados"
 nav_order: 19
 lang: "pt"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -96,7 +96,7 @@ Uma coluna Parquet `TIMESTAMP` guardada como coluna de filtro é um *intervalo* 
 
 ## Colunas de resultado {#outcome-columns}
 
-Quem ganhou, em cada linha. Assim, um lugar, um percurso ou uma jogada pode ser julgado pela frequência com que o seu lado ganhou depois ([Taxa de vitória](win-rate.md)). O visualizador guarda estas colunas por si, lista-as primeiro nos [filtros](filters.md), na língua do visualizador, e lê-as no [mapa de taxa de vitória](win-rate.md), no [detalhamento](breakdown.md) e nas [estatísticas de volume](volumes.md#statistics). Um conversor para um jogo por rondas (CS2, Valorant, Rainbow Six Siege) ou por partidas (War Thunder) escreve as quatro:
+Quem ganhou, em cada linha. Assim, um lugar, um percurso ou uma jogada pode ser julgado pela frequência com que o seu lado ganhou depois ([Taxa de vitória](win-rate.md)). O visualizador guarda estas colunas por si, lista-as primeiro nos [filtros](filters.md), na língua do visualizador, e lê-as no [mapa de taxa de vitória](win-rate.md), no [detalhamento](breakdown.md) e nas [estatísticas de volume](volumes.md#statistics). Um conversor para um jogo por rondas (CS2, Valorant, Rainbow Six Siege) ou por partidas (War Thunder) escreve as quatro; o conversor do Tacview escreve-as para as campanhas de um servidor de DCS quando um ficheiro de rondas diz quem ganhou ([Servidores de DCS](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)):
 
 | Coluna | Tipo | Significado |
 |---|---|---|
@@ -118,7 +118,7 @@ Os motivos de fim, comuns a todos os jogos para que um filtro sirva para todos (
 | `surrender` | um lado desistiu | CS2, Valorant, Rainbow Six Siege |
 | `draw` | sem vencedor | CS2 |
 | `objective` | um objetivo tomado ou mantido (refém extraído, zona assegurada) | Rainbow Six Siege |
-| `capture` | sem tickets enquanto o vencedor mantinha zonas de captura | War Thunder |
+| `capture` | sem tickets enquanto o vencedor mantinha zonas de captura; DCS: uma campanha persistente ganha ao tomar todos os aeródromos e zonas | War Thunder, DCS |
 | `tickets` | tickets perdidos para abates | War Thunder |
 | `destruction` | os últimos veículos perdidos de uma vez, ninguém mais para reaparecer | War Thunder |
 | `other` | tudo o resto | |

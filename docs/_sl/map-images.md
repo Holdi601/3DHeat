@@ -4,7 +4,7 @@ parent: "Ravni in geometrija ozadja"
 nav_order: 1
 lang: "sl"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ Risba je OpenDotina, zemljevid pa Valvov; Valve 3DHeat ne podpira.
 
 ### 3D zemljevid {#the-3d-map}
 
-Z nameščeno igro Dota 2 Watcherjev ukaz [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) (`python -m heat3d_watch dota-map -o dota.glb`) naredi zemljevid v 3D iz datotek same igre: tla, pečine, vodo, drevesa in stavbe, v enotah in oseh tabel iz posnetkov. Datoteko enkrat naložite z **3D-model…**: pregledovalnik jo prepozna po njenih delih (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` v `dotaMap.ts`), jo takoj shrani v [knjižnico ravni](level-library.md), kjer nadomesti starejšo, in to sporoči. Od takrat **Zemljevid Dota 2** naloži ta 3D zemljevid iz knjižnice, namesto da prenese risbo; če ga v knjižnici ni, prenese risbo in pove, kako narediti 3D zemljevid. Datoteka izvira iz vaše lastne namestitve in ostane na vašem računalniku.
+Z nameščeno igro Dota 2 ločeno orodje [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) (`heat3d-dota-maps level -o dota.glb`; zažene ga tudi Watcherjev ukaz [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html)) naredi zemljevid v 3D iz datotek same igre: tla, pečine, vodo, drevesa in stavbe, v enotah in oseh tabel iz posnetkov. Datoteko enkrat naložite z **3D-model…**: pregledovalnik jo prepozna po njenih delih (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` v `dotaMap.ts`), jo takoj shrani v [knjižnico ravni](level-library.md), kjer nadomesti starejšo, in to sporoči. Od takrat **Zemljevid Dota 2** naloži ta 3D zemljevid iz knjižnice, namesto da prenese risbo; če ga v knjižnici ni, prenese risbo in pove, kako narediti 3D zemljevid. Datoteka izvira iz vaše lastne namestitve in ostane na vašem računalniku.
 
 ## Za razvijalce {#for-developers}
 

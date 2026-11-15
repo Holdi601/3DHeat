@@ -4,7 +4,7 @@ parent: "ヒートモード"
 nav_order: 13
 lang: "ja"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ outdated: false
 
 *この画像は作り物のデータです。空のレベル上の 3 本のルートで、行のうち勝ったラウンドのものがそれぞれ 68%、50%、33% です。*
 
-誰が勝ったかを示すデータが必要です。[結果の列](data-formats.md#outcome-columns)（`won`、`matchWon`、`roundEndReason`）です。CS2 と War Thunder のコンバーターがこれを書き出します。どのファイルでも持つことができます。
+誰が勝ったかを示すデータが必要です。[結果の列](data-formats.md#outcome-columns)（`won`、`matchWon`、`roundEndReason`）です。CS2 と War Thunder のコンバーターがこれを書き出します。Tacview コンバーターも DCS サーバーのキャンペーンで書き出します（[DCS サーバー](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)）。どのファイルでも持つことができます。
 
 ## 試してみる {#try-it}
 

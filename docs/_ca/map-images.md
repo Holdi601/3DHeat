@@ -4,7 +4,7 @@ parent: "Nivells i geometria de fons"
 nav_order: 1
 lang: "ca"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ El dibuix és d'OpenDota, del mapa de Valve; Valve no avala 3DHeat.
 
 ### El mapa 3D {#the-3d-map}
 
-Amb Dota 2 instal·lat, l'ordre [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) del Watcher (`python -m heat3d_watch dota-map -o dota.glb`) fa el mapa en 3D a partir dels fitxers del mateix joc: terreny, penya-segats, aigua, arbres i edificis, en les unitats i els eixos de les taules de les repeticions. Carrega el fitxer un cop amb **Model 3D…**: el visor el reconeix per les seves parts (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` a `dotaMap.ts`), el posa de seguida a la [biblioteca de nivells](level-library.md), substituint-ne un de més antic, i ho diu. A partir d'aleshores, **Mapa de Dota 2** carrega aquest mapa 3D de la biblioteca en lloc de baixar el dibuix; si no n'hi ha cap a la biblioteca, baixa el dibuix i explica com fer el mapa 3D. El fitxer surt de la teva pròpia instal·lació i es queda a la teva màquina.
+Amb Dota 2 instal·lat, l'eina separada [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) (`heat3d-dota-maps level -o dota.glb`; l'ordre [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) del Watcher també l'executa) fa el mapa en 3D a partir dels fitxers del mateix joc: terreny, penya-segats, aigua, arbres i edificis, en les unitats i els eixos de les taules de les repeticions. Carrega el fitxer un cop amb **Model 3D…**: el visor el reconeix per les seves parts (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` a `dotaMap.ts`), el posa de seguida a la [biblioteca de nivells](level-library.md), substituint-ne un de més antic, i ho diu. A partir d'aleshores, **Mapa de Dota 2** carrega aquest mapa 3D de la biblioteca en lloc de baixar el dibuix; si no n'hi ha cap a la biblioteca, baixa el dibuix i explica com fer el mapa 3D. El fitxer surt de la teva pròpia instal·lació i es queda a la teva màquina.
 
 ## Per a desenvolupadors {#for-developers}
 

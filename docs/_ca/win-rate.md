@@ -4,7 +4,7 @@ parent: "Modes de calor"
 nav_order: 13
 lang: "ca"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ On es col·loca un jugador, cap on va, on llança les seves granades - i amb qui
 
 *La imatge són dades inventades: tres rutes en un nivell buit, amb el 68%, el 50% i el 33% de les seves files en rondes guanyades.*
 
-Necessita dades que diguin qui va guanyar: les [columnes de resultat](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Els convertidors de CS2 i War Thunder les escriuen; qualsevol fitxer les pot tenir.
+Necessita dades que diguin qui va guanyar: les [columnes de resultat](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Els convertidors de CS2 i War Thunder les escriuen, i el de Tacview per a les campanyes d'un servidor de DCS ([Servidors de DCS](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); qualsevol fitxer les pot tenir.
 
 ## Prova-ho {#try-it}
 

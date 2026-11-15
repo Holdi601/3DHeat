@@ -40,7 +40,15 @@ node tools/3dheat-summarize.mjs <folder>... [--jobs N] [--force] [--no-write] [-
 Tacview ACMI recordings (.acmi, .zip.acmi, .txt.acmi) to Parquet, a whole folder at a time, for the many-match overlay: one Parquet file per recording, the folder tree kept, so a map or a scenario loads as one folder.
 
 ```
-node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--force] [--loose]
+node tools/acmi-to-parquet.mjs <in-folder> <out-folder> [--jobs N] [--theatre Id] [--server Name] [--rounds file.json ...] [--force] [--loose]
+```
+
+### `dcs-campaign-rounds.mjs`
+
+A DCS server's campaign rounds from its Tacview recordings alone: each recording's start (the ground units and statics of both sides where the campaign left them) chained per server and map in time order, into rounds, their sessions, the places taken between sessions and, for a round that ended, who held the most (`src/data/dcsCampaign.ts`). Writes one rounds file per server (format heat3d-dcs-rounds, read by `acmi-to-parquet.mjs --rounds`) into the out folder.
+
+```
+node tools/dcs-campaign-rounds.mjs <out-folder> <folder>... [--official rounds.json ...] [--cache starts.jsonl]
 ```
 
 ## Pour les développeurs et la documentation {#for-developers-and-the-docs}

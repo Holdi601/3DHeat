@@ -3,7 +3,7 @@ title: "Référence des formats de données"
 nav_order: 19
 lang: "fr"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -96,7 +96,7 @@ Une colonne `TIMESTAMP` Parquet gardée comme colonne de filtre est une *plage* 
 
 ## Colonnes de résultat {#outcome-columns}
 
-Qui a gagné, sur chaque ligne. Ainsi, un endroit, un trajet ou une action peut être jugé selon la fréquence à laquelle son camp a ensuite gagné ([Taux de victoire](win-rate.md)). La visionneuse garde ces colonnes d’elle-même, les liste en premier dans les [filtres](filters.md), dans la langue de la visionneuse, et les lit dans la [carte des taux de victoire](win-rate.md), le [détail](breakdown.md) et les [statistiques de volume](volumes.md#statistics). Un convertisseur pour un jeu par manches (CS2, Valorant, Rainbow Six Siege) ou par matchs (War Thunder) écrit les quatre :
+Qui a gagné, sur chaque ligne. Ainsi, un endroit, un trajet ou une action peut être jugé selon la fréquence à laquelle son camp a ensuite gagné ([Taux de victoire](win-rate.md)). La visionneuse garde ces colonnes d’elle-même, les liste en premier dans les [filtres](filters.md), dans la langue de la visionneuse, et les lit dans la [carte des taux de victoire](win-rate.md), le [détail](breakdown.md) et les [statistiques de volume](volumes.md#statistics). Un convertisseur pour un jeu par manches (CS2, Valorant, Rainbow Six Siege) ou par matchs (War Thunder) écrit les quatre ; le convertisseur Tacview les écrit pour les campagnes d’un serveur DCS lorsqu’un fichier de manches dit qui a gagné ([Serveurs DCS](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)) :
 
 | Colonne | Type | Signification |
 |---|---|---|
@@ -118,7 +118,7 @@ Les raisons de fin, communes à tous les jeux pour qu'un seul filtre marche sur 
 | `surrender` | un camp a abandonné | CS2, Valorant, Rainbow Six Siege |
 | `draw` | pas de vainqueur | CS2 |
 | `objective` | un objectif pris ou tenu (otage extrait, zone sécurisée) | Rainbow Six Siege |
-| `capture` | à court de tickets pendant que le vainqueur tenait des zones de capture | War Thunder |
+| `capture` | à court de tickets pendant que le vainqueur tenait des zones de capture ; DCS : une campagne persistante gagnée en prenant chaque aérodrome et chaque zone | War Thunder, DCS |
 | `tickets` | tickets perdus à cause des éliminations | War Thunder |
 | `destruction` | les derniers véhicules perdus d'un coup, plus personne pour réapparaître | War Thunder |
 | `other` | tout le reste | |

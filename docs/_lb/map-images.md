@@ -4,7 +4,7 @@ parent: "Levelen an Hannergrondgeometrie"
 nav_order: 1
 lang: "lb"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ D'Zeechnung ass vun OpenDota, vun der Kaart vu Valve; Valve steet net hannert 3D
 
 ### D'3D-Kaart {#the-3d-map}
 
-Mat installéiertem Dota 2 mécht de Watcher-Befeel [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) (`python -m heat3d_watch dota-map -o dota.glb`) d'Kaart an 3D aus de Spill-eegene Fichieren: Buedem, Fielsen, Waasser, Beem a Gebaier, an den Eenheeten an Axe vun de Replay-Tabellen. Luet de Fichier eemol mat **3D-Modell…**: de Viewer erkennt e vun sengen Deeler (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` an `dotaMap.ts`), leet e sofort an d'[Level-Bibliothéik](level-library.md), ersetzt eng méi al, a seet dat. Vun do un lued **Dota-2-Kaart** dës 3D-Kaart aus der Bibliothéik amplaz d'Zeechnung erofzelueden; ass keng an der Bibliothéik, lued en d'Zeechnung a seet, wéi een d'3D-Kaart mécht. De Fichier kënnt aus denger eegener Installatioun a bleift op dengem Computer.
+Mat installéiertem Dota 2 mécht dat separat Tool [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) (`heat3d-dota-maps level -o dota.glb`; de Watcher-Befeel [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) start et och) d'Kaart an 3D aus de Spill-eegene Fichieren: Buedem, Fielsen, Waasser, Beem a Gebaier, an den Eenheeten an Axe vun de Replay-Tabellen. Luet de Fichier eemol mat **3D-Modell…**: de Viewer erkennt e vun sengen Deeler (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` an `dotaMap.ts`), leet e sofort an d'[Level-Bibliothéik](level-library.md), ersetzt eng méi al, a seet dat. Vun do un lued **Dota-2-Kaart** dës 3D-Kaart aus der Bibliothéik amplaz d'Zeechnung erofzelueden; ass keng an der Bibliothéik, lued en d'Zeechnung a seet, wéi een d'3D-Kaart mécht. De Fichier kënnt aus denger eegener Installatioun a bleift op dengem Computer.
 
 ## Fir Entwéckler {#for-developers}
 

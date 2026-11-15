@@ -4,7 +4,7 @@ parent: "Режими топлоте"
 nav_order: 13
 lang: "sr"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ outdated: false
 
 *Слика приказује измишљене податке: три пута на празном нивоу, 68 %, 50 % и 33 % њихових редова у освојеним рундама.*
 
-Потребни су подаци који говоре ко је победио: [колоне исхода](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Пишу их конвертери за CS2 и War Thunder; може их имати било која датотека.
+Потребни су подаци који говоре ко је победио: [колоне исхода](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Пишу их конвертери за CS2 и War Thunder, а конвертер за Tacview за кампање DCS сервера ([DCS сервери](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); може их имати било која датотека.
 
 ## Испробајте {#try-it}
 

@@ -4,7 +4,7 @@ parent: "Modos de calor"
 nav_order: 13
 lang: "pt"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ Onde um jogador se coloca, que caminho segue, onde atira as suas granadas, e com
 
 *A imagem mostra dados inventados: três percursos num nível vazio, com 68%, 50% e 33% das suas linhas em rondas ganhas.*
 
-Precisa de dados que digam quem ganhou: as [colunas de resultado](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Os conversores de CS2 e War Thunder escrevem-nas; qualquer ficheiro as pode ter.
+Precisa de dados que digam quem ganhou: as [colunas de resultado](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Os conversores de CS2 e War Thunder escrevem-nas, e o conversor do Tacview para as campanhas de um servidor de DCS ([Servidores de DCS](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); qualquer ficheiro as pode ter.
 
 ## Experimente {#try-it}
 

@@ -3,7 +3,7 @@ title: "Přehled datových formátů"
 nav_order: 19
 lang: "cs"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -96,7 +96,7 @@ Sloupec `TIMESTAMP` z Parquetu, zachovaný jako filtrační sloupec, je *rozsah*
 
 ## Sloupce výsledku {#outcome-columns}
 
-Kdo vyhrál, na každém řádku. Místo, trasu nebo akci tak lze posoudit podle toho, jak často jejich strana potom vyhrála ([Podíl výher](win-rate.md)). Prohlížeč si tyto sloupce ponechá sám, uvede je ve [filtrech](filters.md) jako první, v jazyce prohlížeče, a čte je v [mapě podílu výher](win-rate.md), v [rozpisu](breakdown.md) a ve [statistikách objemu](volumes.md#statistics). Převodník pro hru na kola (CS2, Valorant, Rainbow Six Siege) nebo na zápasy (War Thunder) zapíše všechny čtyři:
+Kdo vyhrál, na každém řádku. Místo, trasu nebo akci tak lze posoudit podle toho, jak často jejich strana potom vyhrála ([Podíl výher](win-rate.md)). Prohlížeč si tyto sloupce ponechá sám, uvede je ve [filtrech](filters.md) jako první, v jazyce prohlížeče, a čte je v [mapě podílu výher](win-rate.md), v [rozpisu](breakdown.md) a ve [statistikách objemu](volumes.md#statistics). Převodník pro hru na kola (CS2, Valorant, Rainbow Six Siege) nebo na zápasy (War Thunder) zapíše všechny čtyři; převodník Tacview je zapíše pro kampaně serveru DCS, kde soubor kol říká, kdo vyhrál ([Servery DCS](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)):
 
 | Sloupec | Typ | Význam |
 |---|---|---|
@@ -118,7 +118,7 @@ Důvody konce, společné pro všechny hry, aby jeden filtr fungoval na všechny
 | `surrender` | jedna strana se vzdala | CS2, Valorant, Rainbow Six Siege |
 | `draw` | žádný vítěz | CS2 |
 | `objective` | cíl dobytý nebo udržený (rukojmí vyvedeno, oblast zajištěna) | Rainbow Six Siege |
-| `capture` | došly tikety, zatímco vítěz držel zóny k obsazení | War Thunder |
+| `capture` | došly tikety, zatímco vítěz držel zóny k obsazení; DCS: trvalá kampaň vyhraná dobytím každého letiště a každé zóny | War Thunder, DCS |
 | `tickets` | tikety ztracené kvůli zabitím | War Thunder |
 | `destruction` | poslední vozidla ztracena najednou, nikdo nezbyl k oživení | War Thunder |
 | `other` | cokoli jiného | |

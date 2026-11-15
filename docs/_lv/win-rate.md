@@ -4,7 +4,7 @@ parent: "Siltuma režīmi"
 nav_order: 13
 lang: "lv"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ Kur spēlētājs stāv, kurp viņš dodas, kur viņš met savu aprīkojumu - un 
 
 *Attēlā ir izdomāti dati: trīs maršruti tukšā līmenī, ar 68%, 50% un 33% to rindu uzvarētos raundos.*
 
-Tam vajag datus, kas saka, kurš uzvarēja: [iznākuma kolonnas](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). CS2 un War Thunder konvertētāji tās raksta; tās var būt jebkurā failā.
+Tam vajag datus, kas saka, kurš uzvarēja: [iznākuma kolonnas](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). CS2 un War Thunder konvertētāji tās raksta, Tacview konvertētājs - DCS servera kampaņām ([DCS serveri](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); tās var būt jebkurā failā.
 
 ## Izmēģini {#try-it}
 

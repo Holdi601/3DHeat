@@ -4,7 +4,7 @@ parent: "Режими на топлина"
 nav_order: 13
 lang: "mk"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ outdated: false
 
 *Сликата покажува измислени податоци: три патеки на празно ниво, 68 %, 50 % и 33 % од нивните редови во добиени рунди.*
 
-Потребни се податоци што кажуваат кој победил: [колоните за исход](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Ги пишуваат конверторите за CS2 и War Thunder; може да ги има секоја датотека.
+Потребни се податоци што кажуваат кој победил: [колоните за исход](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Ги пишуваат конверторите за CS2 и War Thunder, а конверторот за Tacview за кампањите на DCS сервер ([DCS сервери](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); може да ги има секоја датотека.
 
 ## Пробајте {#try-it}
 

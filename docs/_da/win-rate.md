@@ -4,7 +4,7 @@ parent: "Varmetilstande"
 nav_order: 13
 lang: "da"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ Hvor en spiller står, hvilken vej de går, hvor de kaster deres udstyr - og hvo
 
 *Billedet er opdigtede data: tre ruter på en tom bane, med 68 %, 50 % og 33 % af deres rækker i vundne runder.*
 
-Det kræver data, der siger, hvem der vandt: [resultatkolonnerne](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). CS2- og War Thunder-konverterne skriver dem; enhver fil kan.
+Det kræver data, der siger, hvem der vandt: [resultatkolonnerne](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). CS2- og War Thunder-konverterne skriver dem, Tacview-konverteren for en DCS-servers kampagner ([DCS-servere](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); enhver fil kan.
 
 ## Prøv det {#try-it}
 

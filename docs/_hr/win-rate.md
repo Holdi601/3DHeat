@@ -4,7 +4,7 @@ parent: "Načini topline"
 nav_order: 13
 lang: "hr"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ Gdje igrač stoji, kojim putem ide, kamo baca granate i druga pomagala - i kolik
 
 *Slika prikazuje izmišljene podatke: tri puta na praznoj razini, 68 %, 50 % i 33 % njihovih redaka u osvojenim rundama.*
 
-Potrebni su podaci koji govore tko je pobijedio: [stupci ishoda](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Pišu ih pretvarači za CS2 i War Thunder; može ih imati bilo koja datoteka.
+Potrebni su podaci koji govore tko je pobijedio: [stupci ishoda](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Pišu ih pretvarači za CS2 i War Thunder, a pretvarač za Tacview za kampanje DCS poslužitelja ([DCS poslužitelji](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); može ih imati bilo koja datoteka.
 
 ## Isprobajte {#try-it}
 

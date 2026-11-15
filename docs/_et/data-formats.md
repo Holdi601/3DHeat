@@ -3,7 +3,7 @@ title: "Andmevormingute viide"
 nav_order: 19
 lang: "et"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -96,7 +96,7 @@ Parquet-i `TIMESTAMP`-veerg, mida hoitakse filtriveerguna, on *vahemik* epoch-mi
 
 ## Tulemuse veerud {#outcome-columns}
 
-Kes võitis, igal real, et kohta, marsruuti või käiku saaks hinnata selle järgi, kui tihti selle pool lõpuks võitis ([Võitude osakaal](win-rate.md)). Vaataja hoiab need veerud ise alles, loetleb need [filtrites](filters.md) esimesena vaataja keeles ja loeb neid [võitude kaardil](win-rate.md), [jaotuses](breakdown.md) ja [mahu statistikas](volumes.md#statistics). Raundipõhise mängu (CS2, Valorant, Rainbow Six Siege) või mängupõhise mängu (War Thunder) konverter kirjutab kõik neli:
+Kes võitis, igal real, et kohta, marsruuti või käiku saaks hinnata selle järgi, kui tihti selle pool lõpuks võitis ([Võitude osakaal](win-rate.md)). Vaataja hoiab need veerud ise alles, loetleb need [filtrites](filters.md) esimesena vaataja keeles ja loeb neid [võitude kaardil](win-rate.md), [jaotuses](breakdown.md) ja [mahu statistikas](volumes.md#statistics). Raundipõhise mängu (CS2, Valorant, Rainbow Six Siege) või mängupõhise mängu (War Thunder) konverter kirjutab kõik neli; Tacview konverter kirjutab need DCS-serveri kampaaniate jaoks, kus voorude fail ütleb, kes võitis ([DCS-serverid](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)):
 
 | Veerg | Tüüp | Tähendus |
 |---|---|---|
@@ -118,7 +118,7 @@ Lõpu põhjused on kõigil mängudel ühised, nii et üks filter töötab kõigi
 | `surrender` | üks pool andis alla | CS2, Valorant, Rainbow Six Siege |
 | `draw` | võitjat pole | CS2 |
 | `objective` | eesmärk võetud või hoitud (pantvang välja viidud, ala kindlustatud) | Rainbow Six Siege |
-| `capture` | piletid said otsa, kui võitja hoidis vallutustsoone | War Thunder |
+| `capture` | piletid said otsa, kui võitja hoidis vallutustsoone; DCS: püsiv kampaania, mis võideti kõigi lennuväljade ja tsoonide vallutamisega | War Thunder, DCS |
 | `tickets` | piletid kaotatud mahalaskmistega | War Thunder |
 | `destruction` | viimased sõidukid kaotatud korraga, kedagi pole enam ilmumas | War Thunder |
 | `other` | kõik muu | |

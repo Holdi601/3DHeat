@@ -4,7 +4,7 @@ parent: "Poziomy i geometria tła"
 nav_order: 1
 lang: "pl"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ Rysunek jest OpenDota, mapy Valve; Valve nie popiera 3DHeat.
 
 ### Mapa 3D {#the-3d-map}
 
-Gdy Dota 2 jest zainstalowana, polecenie [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) z Watchera (`python -m heat3d_watch dota-map -o dota.glb`) tworzy mapę w 3D z własnych plików gry: teren, klify, wodę, drzewa i budynki, w jednostkach i osiach tabel z powtórek. Wczytaj plik raz przez **Model 3D…**: przeglądarka rozpoznaje go po częściach (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` w `dotaMap.ts`), od razu odkłada do [biblioteki poziomów](level-library.md), zastępując starszy, i o tym informuje. Od tej pory **Mapa Dota 2** wczytuje tę mapę 3D z biblioteki zamiast pobierać rysunek; jeśli w bibliotece nie ma żadnej, pobiera rysunek i mówi, jak zrobić mapę 3D. Plik pochodzi z Twojej własnej instalacji i zostaje na Twoim komputerze.
+Gdy Dota 2 jest zainstalowana, osobne narzędzie [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) (`heat3d-dota-maps level -o dota.glb`; polecenie [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) z Watchera też je uruchamia) tworzy mapę w 3D z własnych plików gry: teren, klify, wodę, drzewa i budynki, w jednostkach i osiach tabel z powtórek. Wczytaj plik raz przez **Model 3D…**: przeglądarka rozpoznaje go po częściach (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` w `dotaMap.ts`), od razu odkłada do [biblioteki poziomów](level-library.md), zastępując starszy, i o tym informuje. Od tej pory **Mapa Dota 2** wczytuje tę mapę 3D z biblioteki zamiast pobierać rysunek; jeśli w bibliotece nie ma żadnej, pobiera rysunek i mówi, jak zrobić mapę 3D. Plik pochodzi z Twojej własnej instalacji i zostaje na Twoim komputerze.
 
 ## Dla programistów {#for-developers}
 

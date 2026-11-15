@@ -4,7 +4,7 @@ parent: "Baner og bakgrunnsgeometri"
 nav_order: 1
 lang: "no"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ Tegningen er OpenDotas, av Valves kart; Valve støtter ikke 3DHeat.
 
 ### 3D-kartet {#the-3d-map}
 
-Med Dota 2 installert lager Watcher-kommandoen [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) (`python -m heat3d_watch dota-map -o dota.glb`) kartet i 3D fra spillets egne filer: terreng, klipper, vann, trær og bygninger, i enhetene og aksene til replay-tabellene. Last inn filen én gang med **3D-modell…**: viseren kjenner den igjen på delene (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` i `dotaMap.ts`), legger den straks i [banebiblioteket](level-library.md), der den erstatter en eldre, og sier fra. Fra da av laster **Dota 2-kart** dette 3D-kartet fra biblioteket i stedet for å laste ned tegningen; finnes det ikke noe i biblioteket, laster den ned tegningen og forteller hvordan du lager 3D-kartet. Filen kommer fra din egen installasjon og blir på maskinen din.
+Med Dota 2 installert lager det separate verktøyet [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) (`heat3d-dota-maps level -o dota.glb`; Watcher-kommandoen [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) kjører det også) kartet i 3D fra spillets egne filer: terreng, klipper, vann, trær og bygninger, i enhetene og aksene til replay-tabellene. Last inn filen én gang med **3D-modell…**: viseren kjenner den igjen på delene (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` i `dotaMap.ts`), legger den straks i [banebiblioteket](level-library.md), der den erstatter en eldre, og sier fra. Fra da av laster **Dota 2-kart** dette 3D-kartet fra biblioteket i stedet for å laste ned tegningen; finnes det ikke noe i biblioteket, laster den ned tegningen og forteller hvordan du lager 3D-kartet. Filen kommer fra din egen installasjon og blir på maskinen din.
 
 ## For utviklere {#for-developers}
 

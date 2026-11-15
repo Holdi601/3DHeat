@@ -4,7 +4,7 @@ parent: "Hitastillingar"
 nav_order: 13
 lang: "is"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ Hvar leikmaður stendur, hvaða leið hann fer, hvar hann kastar búnaði sínum
 
 *Myndin sýnir tilbúin gögn: þrjár leiðir á tómu borði, með 68%, 50% og 33% af röðum sínum í unnum lotum.*
 
-Það þarf gögn sem segja hver vann: [úrslitadálkana](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Breytar CS2 og War Thunder skrifa þá; hvaða skrá sem er getur haft þá.
+Það þarf gögn sem segja hver vann: [úrslitadálkana](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Breytar CS2 og War Thunder skrifa þá, Tacview-breytirinn fyrir herferðir DCS-þjóns ([DCS-þjónar](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); hvaða skrá sem er getur haft þá.
 
 ## Prófaðu {#try-it}
 

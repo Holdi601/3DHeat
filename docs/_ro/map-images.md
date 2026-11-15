@@ -4,7 +4,7 @@ parent: "Niveluri și geometria fundalului"
 nav_order: 1
 lang: "ro"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ Desenul este al OpenDota, după harta Valve; Valve nu susține 3DHeat.
 
 ### Harta 3D {#the-3d-map}
 
-Cu Dota 2 instalat, comanda [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) a Watcher (`python -m heat3d_watch dota-map -o dota.glb`) creează harta în 3D din fișierele jocului însuși: teren, faleze, apă, copaci și clădiri, în unitățile și pe axele tabelelor din reluări. Încărcați fișierul o dată cu **Model 3D…**: vizualizatorul îl recunoaște după părțile sale (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` în `dotaMap.ts`), îl pune imediat în [biblioteca de niveluri](level-library.md), înlocuind unul mai vechi, și o spune. De atunci, **Harta Dota 2** încarcă această hartă 3D din bibliotecă în loc să descarce desenul; dacă nu există niciuna în bibliotecă, descarcă desenul și spune cum se face harta 3D. Fișierul provine din propria instalare și rămâne pe calculatorul dumneavoastră.
+Cu Dota 2 instalat, instrumentul separat [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) (`heat3d-dota-maps level -o dota.glb`; comanda [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) a Watcher îl rulează și ea) creează harta în 3D din fișierele jocului însuși: teren, faleze, apă, copaci și clădiri, în unitățile și pe axele tabelelor din reluări. Încărcați fișierul o dată cu **Model 3D…**: vizualizatorul îl recunoaște după părțile sale (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` în `dotaMap.ts`), îl pune imediat în [biblioteca de niveluri](level-library.md), înlocuind unul mai vechi, și o spune. De atunci, **Harta Dota 2** încarcă această hartă 3D din bibliotecă în loc să descarce desenul; dacă nu există niciuna în bibliotecă, descarcă desenul și spune cum se face harta 3D. Fișierul provine din propria instalare și rămâne pe calculatorul dumneavoastră.
 
 ## Pentru dezvoltatori {#for-developers}
 

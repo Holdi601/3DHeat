@@ -4,7 +4,7 @@ parent: "热度模式"
 nav_order: 13
 lang: "zh"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ outdated: false
 
 *图中是虚构的数据：空关卡上的三条路线，它们的行中分别有 68%、50% 和 33% 属于赢下的回合。*
 
-它需要说明谁获胜的数据：[结果列](data-formats.md#outcome-columns)（`won`、`matchWon`、`roundEndReason`）。CS2 和 War Thunder 的转换器会写入这些列；任何文件都可以带有它们。
+它需要说明谁获胜的数据：[结果列](data-formats.md#outcome-columns)（`won`、`matchWon`、`roundEndReason`）。CS2 和 War Thunder 的转换器会写入这些列，Tacview 转换器会为 DCS 服务器的战役写入它们（[DCS 服务器](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)）；任何文件都可以带有它们。
 
 ## 试一试 {#try-it}
 

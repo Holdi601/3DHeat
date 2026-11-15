@@ -3,7 +3,7 @@ title: "Referenca formata podataka"
 nav_order: 19
 lang: "hr"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -96,7 +96,7 @@ Stupac `TIMESTAMP` u Parquetu koji se koristi kao stupac filtra je *raspon* epoc
 
 ## Stupci ishoda {#outcome-columns}
 
-Tko je pobijedio, u svakom retku, kako bi se mjesto, put ili potez mogli ocijeniti po tome koliko je često njihova strana zatim pobijedila ([Postotak pobjeda](win-rate.md)). Preglednik te stupce zadržava sam, navodi ih prve u [filtrima](filters.md) na jeziku preglednika i čita ih u [karti postotka pobjeda](win-rate.md), u [raščlambi](breakdown.md) i u [statistici volumena](volumes.md#statistics). Pretvarač za igru s rundama (CS2, Valorant, Rainbow Six Siege) ili s mečevima (War Thunder) zapisuje sva četiri:
+Tko je pobijedio, u svakom retku, kako bi se mjesto, put ili potez mogli ocijeniti po tome koliko je često njihova strana zatim pobijedila ([Postotak pobjeda](win-rate.md)). Preglednik te stupce zadržava sam, navodi ih prve u [filtrima](filters.md) na jeziku preglednika i čita ih u [karti postotka pobjeda](win-rate.md), u [raščlambi](breakdown.md) i u [statistici volumena](volumes.md#statistics). Pretvarač za igru s rundama (CS2, Valorant, Rainbow Six Siege) ili s mečevima (War Thunder) zapisuje sva četiri; pretvarač za Tacview zapisuje ih za kampanje DCS poslužitelja kad datoteka krugova kaže tko je pobijedio ([DCS poslužitelji](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)):
 
 | Stupac | Vrsta | Značenje |
 |---|---|---|
@@ -118,7 +118,7 @@ Razlozi završetka zajednički su svim igrama, tako da jedan filtar radi na svim
 | `surrender` | strana se predala | CS2, Valorant, Rainbow Six Siege |
 | `draw` | bez pobjednika | CS2 |
 | `objective` | cilj zauzet ili zadržan (talac izveden, područje osigurano) | Rainbow Six Siege |
-| `capture` | bodovi su istekli dok je pobjednik držao zone za zauzimanje | War Thunder |
+| `capture` | bodovi su istekli dok je pobjednik držao zone za zauzimanje; DCS: trajna kampanja dobivena zauzimanjem svih uzletišta i zona | War Thunder, DCS |
 | `tickets` | bodovi izgubljeni zbog ubojstava | War Thunder |
 | `destruction` | posljednja vozila izgubljena odjednom, nitko više ne može ući | War Thunder |
 | `other` | bilo što drugo | |

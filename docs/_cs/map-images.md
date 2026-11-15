@@ -4,7 +4,7 @@ parent: "Levely a geometrie pozadí"
 nav_order: 1
 lang: "cs"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ Kresba je od OpenDota, mapy od Valve; Valve 3DHeat neschvaluje.
 
 ### 3D mapa {#the-3d-map}
 
-S nainstalovanou hrou Dota 2 vytvoří příkaz [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) z Watcheru (`python -m heat3d_watch dota-map -o dota.glb`) mapu ve 3D z vlastních souborů hry: terén, útesy, vodu, stromy a budovy, v jednotkách a osách tabulek ze záznamů. Načtěte soubor jednou přes **3D model…**: prohlížeč ho pozná podle jeho částí (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` v `dotaMap.ts`), hned ho uloží do [knihovny levelů](level-library.md), kde nahradí starší, a oznámí to. Od té doby **Mapa Dota 2** načítá tuto 3D mapu z knihovny místo stahování kresby; když v knihovně žádná není, stáhne kresbu a řekne, jak 3D mapu vytvořit. Soubor pochází z vaší vlastní instalace a zůstává na vašem počítači.
+S nainstalovanou hrou Dota 2 vytvoří samostatný nástroj [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) (`heat3d-dota-maps level -o dota.glb`; spouští ho i příkaz [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) z Watcheru) mapu ve 3D z vlastních souborů hry: terén, útesy, vodu, stromy a budovy, v jednotkách a osách tabulek ze záznamů. Načtěte soubor jednou přes **3D model…**: prohlížeč ho pozná podle jeho částí (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` v `dotaMap.ts`), hned ho uloží do [knihovny levelů](level-library.md), kde nahradí starší, a oznámí to. Od té doby **Mapa Dota 2** načítá tuto 3D mapu z knihovny místo stahování kresby; když v knihovně žádná není, stáhne kresbu a řekne, jak 3D mapu vytvořit. Soubor pochází z vaší vlastní instalace a zůstává na vašem počítači.
 
 ## Pro vývojáře {#for-developers}
 

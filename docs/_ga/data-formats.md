@@ -3,7 +3,7 @@ title: "Tagairt do fhormáidí sonraí"
 nav_order: 19
 lang: "ga"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -96,7 +96,7 @@ Is *raon* de mhilleasoin epoch é colún `TIMESTAMP` Parquet a choinnítear mar 
 
 ## Colúin toraidh {#outcome-columns}
 
-Cé a bhuaigh, ar gach sraith, ionas gur féidir áit, bealach nó beart a mheas de réir cé chomh minic a bhuaigh a thaobh ina dhiaidh sin ([Ráta buaite](win-rate.md)). Coinníonn an t-amharcóir na colúin seo leis féin, liostaíonn sé ar dtús iad sna [scagairí](filters.md) i dteanga an amharcóra, agus léann sé iad sa [léarscáil ráta buaite](win-rate.md), sa [mhiondealú](breakdown.md) agus i [staitisticí na dtoirteanna](volumes.md#statistics). Scríobhann tiontaire do chluiche bunaithe ar bhabhtaí (CS2, Valorant, Rainbow Six Siege) nó do chluiche bunaithe ar chluichí (War Thunder) na ceithre cinn:
+Cé a bhuaigh, ar gach sraith, ionas gur féidir áit, bealach nó beart a mheas de réir cé chomh minic a bhuaigh a thaobh ina dhiaidh sin ([Ráta buaite](win-rate.md)). Coinníonn an t-amharcóir na colúin seo leis féin, liostaíonn sé ar dtús iad sna [scagairí](filters.md) i dteanga an amharcóra, agus léann sé iad sa [léarscáil ráta buaite](win-rate.md), sa [mhiondealú](breakdown.md) agus i [staitisticí na dtoirteanna](volumes.md#statistics). Scríobhann tiontaire do chluiche bunaithe ar bhabhtaí (CS2, Valorant, Rainbow Six Siege) nó do chluiche bunaithe ar chluichí (War Thunder) na ceithre cinn; scríobhann tiontaire Tacview iad d'fheachtais fhreastalaí DCS nuair a deir comhad babhtaí cé a bhuaigh ([Freastalaithe DCS](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)):
 
 | Colún | Cineál | Brí |
 |---|---|---|
@@ -118,7 +118,7 @@ Na cúiseanna deiridh, comhroinnte ag gach cluiche ionas go n-oibríonn scagaire
 | `surrender` | ghéill taobh | CS2, Valorant, Rainbow Six Siege |
 | `draw` | gan buaiteoir | CS2 |
 | `objective` | cuspóir gafa nó coinnithe (giall tugtha amach, limistéar daingnithe) | Rainbow Six Siege |
-| `capture` | ticéid ídithe fad a choinnigh an buaiteoir criosanna gabhála | War Thunder |
+| `capture` | ticéid ídithe fad a choinnigh an buaiteoir criosanna gabhála; DCS: feachtas buan a buadh trí gach aerpháirc agus crios a ghlacadh | War Thunder, DCS |
 | `tickets` | ticéid caillte le marúcháin | War Thunder |
 | `destruction` | na feithiclí deireanacha caillte in éineacht, gan duine ar bith fágtha le teacht isteach | War Thunder |
 | `other` | aon rud eile | |

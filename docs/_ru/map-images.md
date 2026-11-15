@@ -4,7 +4,7 @@ parent: "Уровни и фоновая геометрия"
 nav_order: 1
 lang: "ru"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ outdated: false
 
 ### 3D-карта {#the-3d-map}
 
-Если Dota 2 установлена, команда [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) из Watcher (`python -m heat3d_watch dota-map -o dota.glb`) создаёт карту в 3D из собственных файлов игры: земля, скалы, вода, деревья и здания, в единицах и осях таблиц из повторов. Загрузите файл один раз через **3D-модель…**: программа узнаёт его по частям (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` в `dotaMap.ts`), сразу кладёт в [библиотеку уровней](level-library.md), заменяя более старую, и сообщает об этом. С этого момента **Карта Dota 2** загружает эту 3D-карту из библиотеки, а не скачивает рисунок; если в библиотеке её нет, кнопка скачивает рисунок и объясняет, как сделать 3D-карту. Файл берётся из вашей собственной установки и остаётся на вашем компьютере.
+Если Dota 2 установлена, отдельный инструмент [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) (`heat3d-dota-maps level -o dota.glb`; его запускает и команда [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) из Watcher) создаёт карту в 3D из собственных файлов игры: земля, скалы, вода, деревья и здания, в единицах и осях таблиц из повторов. Загрузите файл один раз через **3D-модель…**: программа узнаёт его по частям (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` в `dotaMap.ts`), сразу кладёт в [библиотеку уровней](level-library.md), заменяя более старую, и сообщает об этом. С этого момента **Карта Dota 2** загружает эту 3D-карту из библиотеки, а не скачивает рисунок; если в библиотеке её нет, кнопка скачивает рисунок и объясняет, как сделать 3D-карту. Файл берётся из вашей собственной установки и остаётся на вашем компьютере.
 
 ## Для разработчиков {#for-developers}
 

@@ -3,7 +3,7 @@ title: "Referens för dataformat"
 nav_order: 19
 lang: "sv"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -96,7 +96,7 @@ En Parquet-kolumn av typen `TIMESTAMP` som behålls som filterkolumn är ett *in
 
 ## Resultatkolumner {#outcome-columns}
 
-Vem som vann, på varje rad, så att en plats, en väg eller ett drag kan bedömas efter hur ofta dess sida sedan vann ([Vinstandel](win-rate.md)). Visaren behåller de här kolumnerna själv, listar dem först i [filtren](filters.md) på visarens språk och läser dem i [vinstandelskartan](win-rate.md), [uppdelningen](breakdown.md) och [volymstatistiken](volumes.md#statistics). En konverterare för ett rondbaserat spel (CS2, Valorant, Rainbow Six Siege) eller ett matchbaserat (War Thunder) skriver alla fyra:
+Vem som vann, på varje rad, så att en plats, en väg eller ett drag kan bedömas efter hur ofta dess sida sedan vann ([Vinstandel](win-rate.md)). Visaren behåller de här kolumnerna själv, listar dem först i [filtren](filters.md) på visarens språk och läser dem i [vinstandelskartan](win-rate.md), [uppdelningen](breakdown.md) och [volymstatistiken](volumes.md#statistics). En konverterare för ett rondbaserat spel (CS2, Valorant, Rainbow Six Siege) eller ett matchbaserat (War Thunder) skriver alla fyra; Tacview-konverteraren skriver dem för en DCS-servers kampanjer där en rundfil säger vem som vann ([DCS-servrar](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)):
 
 | Kolumn | Typ | Betydelse |
 |---|---|---|
@@ -118,7 +118,7 @@ Slutorsakerna är gemensamma för alla spel, så att ett filter fungerar på all
 | `surrender` | en sida gav upp | CS2, Valorant, Rainbow Six Siege |
 | `draw` | ingen vinnare | CS2 |
 | `objective` | ett mål taget eller hållet (gisslan ut, område säkrat) | Rainbow Six Siege |
-| `capture` | biljetterna tog slut medan vinnaren höll erövringszoner | War Thunder |
+| `capture` | biljetterna tog slut medan vinnaren höll erövringszoner; DCS: en beständig kampanj som vanns genom att ta alla flygfält och zoner | War Thunder, DCS |
 | `tickets` | biljetter förlorade genom nedskjutningar | War Thunder |
 | `destruction` | de sista fordonen förlorade på en gång, ingen kvar att spawna | War Thunder |
 | `other` | allt annat | |

@@ -4,7 +4,7 @@ parent: "Lygiai ir fono geometrija"
 nav_order: 1
 lang: "lt"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ Brėžinys yra OpenDota, Valve žemėlapio; Valve nepritaria 3DHeat.
 
 ### 3D žemėlapis {#the-3d-map}
 
-Įdiegus Dota 2, Watcher komanda [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) (`python -m heat3d_watch dota-map -o dota.glb`) iš paties žaidimo failų sukuria žemėlapį 3D: žemę, uolas, vandenį, medžius ir pastatus, pakartojimų lentelių vienetais ir ašimis. Vieną kartą įkelkite failą per **3D modelis…**: peržiūros programa atpažįsta jį pagal dalis (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` faile `dotaMap.ts`), iš karto įdeda į [lygių biblioteką](level-library.md), pakeisdama senesnį, ir tai praneša. Nuo tada **Dota 2 žemėlapis** įkelia šį 3D žemėlapį iš bibliotekos, užuot atsisiuntęs piešinį; jei bibliotekoje jo nėra, atsisiunčia piešinį ir paaiškina, kaip sukurti 3D žemėlapį. Failas gaunamas iš jūsų pačių diegimo ir lieka jūsų kompiuteryje.
+Įdiegus Dota 2, atskiras įrankis [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) (`heat3d-dota-maps level -o dota.glb`; jį paleidžia ir Watcher komanda [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html)) iš paties žaidimo failų sukuria žemėlapį 3D: žemę, uolas, vandenį, medžius ir pastatus, pakartojimų lentelių vienetais ir ašimis. Vieną kartą įkelkite failą per **3D modelis…**: peržiūros programa atpažįsta jį pagal dalis (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` faile `dotaMap.ts`), iš karto įdeda į [lygių biblioteką](level-library.md), pakeisdama senesnį, ir tai praneša. Nuo tada **Dota 2 žemėlapis** įkelia šį 3D žemėlapį iš bibliotekos, užuot atsisiuntęs piešinį; jei bibliotekoje jo nėra, atsisiunčia piešinį ir paaiškina, kaip sukurti 3D žemėlapį. Failas gaunamas iš jūsų pačių diegimo ir lieka jūsų kompiuteryje.
 
 ## Kūrėjams {#for-developers}
 

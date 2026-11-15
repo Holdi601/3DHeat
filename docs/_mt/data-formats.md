@@ -3,7 +3,7 @@ title: "Referenza tal-formati tad-data"
 nav_order: 19
 lang: "mt"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -96,7 +96,7 @@ Kolonna Parquet ta' `TIMESTAMP` miżmuma bħala kolonna ta' filtru hi *firxa* ta
 
 ## Kolonni tar-riżultat {#outcome-columns}
 
-Min rebaħ, f'kull ringiela, biex post, rotta jew mossa jkunu jistgħu jiġu ġġudikati minn kemm-il darba n-naħa tagħhom mbagħad rebħet ([Rata ta' rebħ](win-rate.md)). Il-viewer iżomm dawn il-kolonni waħdu, jelenkahom l-ewwel fil-[filtri](filters.md) fil-lingwa tal-viewer, u jaqrahom fil-[mappa tar-rata ta' rebħ](win-rate.md), fit-[tqassim](breakdown.md) u fl-[istatistika tal-volumi](volumes.md#statistics). Konvertitur għal logħba b'rawnds (CS2, Valorant, Rainbow Six Siege) jew b'partiti (War Thunder) jikteb l-erbgħa:
+Min rebaħ, f'kull ringiela, biex post, rotta jew mossa jkunu jistgħu jiġu ġġudikati minn kemm-il darba n-naħa tagħhom mbagħad rebħet ([Rata ta' rebħ](win-rate.md)). Il-viewer iżomm dawn il-kolonni waħdu, jelenkahom l-ewwel fil-[filtri](filters.md) fil-lingwa tal-viewer, u jaqrahom fil-[mappa tar-rata ta' rebħ](win-rate.md), fit-[tqassim](breakdown.md) u fl-[istatistika tal-volumi](volumes.md#statistics). Konvertitur għal logħba b'rawnds (CS2, Valorant, Rainbow Six Siege) jew b'partiti (War Thunder) jikteb l-erbgħa; il-konvertitur ta' Tacview jiktibhom għall-kampanji ta' server tad-DCS fejn fajl tar-rawnds jgħid min rebaħ ([Servers tad-DCS](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)):
 
 | Kolonna | Tip | Tifsira |
 |---|---|---|
@@ -118,7 +118,7 @@ Ir-raġunijiet tat-tmiem, komuni għal kull logħba biex filtru wieħed jaħdem 
 | `surrender` | naħa ċediet | CS2, Valorant, Rainbow Six Siege |
 | `draw` | l-ebda rebbieħ | CS2 |
 | `objective` | għan meħud jew miżmum (ostaġġ meħud 'il barra, żona żgurata) | Rainbow Six Siege |
-| `capture` | il-biljetti spiċċaw waqt li r-rebbieħ żamm iż-żoni tal-qbid | War Thunder |
+| `capture` | il-biljetti spiċċaw waqt li r-rebbieħ żamm iż-żoni tal-qbid; DCS: kampanja permanenti mirbuħa billi ttieħed kull ajruport u żona | War Thunder, DCS |
 | `tickets` | biljetti mitlufa minħabba qtil | War Thunder |
 | `destruction` | l-aħħar vetturi mitlufa f'daqqa, ħadd ma fadal biex jerġa' jidher | War Thunder |
 | `other` | kull ħaġa oħra | |

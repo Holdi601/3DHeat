@@ -4,7 +4,7 @@ parent: "Tasemed ja taustgeomeetria"
 nav_order: 1
 lang: "et"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ Joonis on OpenDota oma, Valve'i kaardist; Valve ei toeta 3DHeatit.
 
 ### 3D-kaart {#the-3d-map}
 
-Kui Dota 2 on paigaldatud, teeb Watcheri käsk [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) (`python -m heat3d_watch dota-map -o dota.glb`) kaardi 3D-s mängu enda failidest: pinnas, kaljud, vesi, puud ja hooned, korduste tabelite ühikutes ja telgedes. Laadi fail üks kord nupuga **3D-mudel…**: vaatur tunneb selle ära osade järgi (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` failis `dotaMap.ts`), paneb selle kohe [tasemete raamatukogusse](level-library.md), asendades vanema, ja ütleb seda. Edaspidi laadib **Dota 2 kaart** selle 3D-kaardi raamatukogust, selle asemel et joonist laadida; kui raamatukogus seda pole, laadib see joonise ja ütleb, kuidas 3D-kaarti teha. Fail tuleb sinu enda paigaldusest ja jääb sinu arvutisse.
+Kui Dota 2 on paigaldatud, teeb eraldi tööriist [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) (`heat3d-dota-maps level -o dota.glb`; Watcheri käsk [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) käivitab selle samuti) kaardi 3D-s mängu enda failidest: pinnas, kaljud, vesi, puud ja hooned, korduste tabelite ühikutes ja telgedes. Laadi fail üks kord nupuga **3D-mudel…**: vaatur tunneb selle ära osade järgi (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` failis `dotaMap.ts`), paneb selle kohe [tasemete raamatukogusse](level-library.md), asendades vanema, ja ütleb seda. Edaspidi laadib **Dota 2 kaart** selle 3D-kaardi raamatukogust, selle asemel et joonist laadida; kui raamatukogus seda pole, laadib see joonise ja ütleb, kuidas 3D-kaarti teha. Fail tuleb sinu enda paigaldusest ja jääb sinu arvutisse.
 
 ## Arendajatele {#for-developers}
 

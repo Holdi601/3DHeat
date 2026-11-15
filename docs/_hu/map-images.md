@@ -4,7 +4,7 @@ parent: "Pályák és háttérgeometria"
 nav_order: 1
 lang: "hu"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ A rajz az OpenDota-é, a Valve térképéről; a Valve nem támogatja a 3DHeat-e
 
 ### A 3D-s térkép {#the-3d-map}
 
-Telepített Dota 2 mellett a Watcher [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) parancsa (`python -m heat3d_watch dota-map -o dota.glb`) a játék saját fájljaiból 3D-ben elkészíti a térképet: talaj, sziklafalak, víz, fák és épületek, a visszajátszás-táblák egységeiben és tengelyeivel. Töltsd be a fájlt egyszer ezzel: **3D-modell…**. A néző a részeiről ismeri fel (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` a `dotaMap.ts` fájlban), azonnal a [pályakönyvtárba](level-library.md) teszi egy régebbi helyére, és ezt jelzi is. Onnantól a(z) **Dota 2-térkép** ezt a 3D-s térképet tölti be a könyvtárból a rajz letöltése helyett; ha nincs ilyen a könyvtárban, letölti a rajzot, és elmondja, hogyan készül a 3D-s térkép. A fájl a saját telepítésedből származik, és a gépeden marad.
+Telepített Dota 2 mellett a külön [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) eszköz (`heat3d-dota-maps level -o dota.glb`; a Watcher [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) parancsa is ezt futtatja) a játék saját fájljaiból 3D-ben elkészíti a térképet: talaj, sziklafalak, víz, fák és épületek, a visszajátszás-táblák egységeiben és tengelyeivel. Töltsd be a fájlt egyszer ezzel: **3D-modell…**. A néző a részeiről ismeri fel (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` a `dotaMap.ts` fájlban), azonnal a [pályakönyvtárba](level-library.md) teszi egy régebbi helyére, és ezt jelzi is. Onnantól a(z) **Dota 2-térkép** ezt a 3D-s térképet tölti be a könyvtárból a rajz letöltése helyett; ha nincs ilyen a könyvtárban, letölti a rajzot, és elmondja, hogyan készül a 3D-s térkép. A fájl a saját telepítésedből származik, és a gépeden marad.
 
 ## Fejlesztőknek {#for-developers}
 

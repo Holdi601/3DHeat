@@ -4,7 +4,7 @@ parent: "Haritalar ve arka plan geometrisi"
 nav_order: 1
 lang: "tr"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ Yama 7.40'ın herkese açık bir maçının tekrarında kontrol edildi: her kahr
 
 ### 3B harita {#the-3d-map}
 
-Dota 2 kuruluysa Watcher'ın [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) komutu (`python -m heat3d_watch dota-map -o dota.glb`) haritayı oyunun kendi dosyalarından 3B olarak oluşturur: zemin, uçurumlar, su, ağaçlar ve binalar, tekrar tablolarının birimleri ve eksenleriyle. Dosyayı bir kez **3B model…** ile yükleyin: görüntüleyici onu parçalarından tanır (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `dotaMap.ts` içindeki `isDotaLevel`), hemen [harita kitaplığına](level-library.md) koyar, eskisinin yerine geçirir ve bunu söyler. O andan itibaren **Dota 2 haritası** çizimi indirmek yerine bu 3B haritayı kitaplıktan yükler; kitaplıkta yoksa çizimi indirir ve 3B haritanın nasıl yapılacağını söyler. Dosya kendi kurulumunuzdan gelir ve makinenizde kalır.
+Dota 2 kuruluysa ayrı [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) aracı (`heat3d-dota-maps level -o dota.glb`; Watcher'ın [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) komutu da onu çalıştırır) haritayı oyunun kendi dosyalarından 3B olarak oluşturur: zemin, uçurumlar, su, ağaçlar ve binalar, tekrar tablolarının birimleri ve eksenleriyle. Dosyayı bir kez **3B model…** ile yükleyin: görüntüleyici onu parçalarından tanır (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `dotaMap.ts` içindeki `isDotaLevel`), hemen [harita kitaplığına](level-library.md) koyar, eskisinin yerine geçirir ve bunu söyler. O andan itibaren **Dota 2 haritası** çizimi indirmek yerine bu 3B haritayı kitaplıktan yükler; kitaplıkta yoksa çizimi indirir ve 3B haritanın nasıl yapılacağını söyler. Dosya kendi kurulumunuzdan gelir ve makinenizde kalır.
 
 ## Geliştiriciler için {#for-developers}
 

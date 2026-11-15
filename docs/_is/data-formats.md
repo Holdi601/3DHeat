@@ -3,7 +3,7 @@ title: "Yfirlit yfir gagnasnið"
 nav_order: 19
 lang: "is"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -96,7 +96,7 @@ Parquet-dálkur af gerðinni `TIMESTAMP` sem er geymdur sem síudálkur er *bil*
 
 ## Úrslitadálkar {#outcome-columns}
 
-Hver vann, á hverri röð, svo hægt sé að meta stað, leið eða leikfléttu eftir því hve oft hlið hennar vann að lokum ([Sigurhlutfall](win-rate.md)). Skoðarinn heldur þessum dálkum sjálfur, sýnir þá fyrsta í [síunum](filters.md) á tungumáli skoðarans og les þá í [sigurhlutfallskortinu](win-rate.md), [sundurliðuninni](breakdown.md) og [tölfræði rúmmála](volumes.md#statistics). Breytir fyrir lotuleik (CS2, Valorant, Rainbow Six Siege) eða leik sem gildir í heild (War Thunder) skrifar alla fjóra:
+Hver vann, á hverri röð, svo hægt sé að meta stað, leið eða leikfléttu eftir því hve oft hlið hennar vann að lokum ([Sigurhlutfall](win-rate.md)). Skoðarinn heldur þessum dálkum sjálfur, sýnir þá fyrsta í [síunum](filters.md) á tungumáli skoðarans og les þá í [sigurhlutfallskortinu](win-rate.md), [sundurliðuninni](breakdown.md) og [tölfræði rúmmála](volumes.md#statistics). Breytir fyrir lotuleik (CS2, Valorant, Rainbow Six Siege) eða leik sem gildir í heild (War Thunder) skrifar alla fjóra; Tacview-breytirinn skrifar þá fyrir herferðir DCS-þjóns þar sem umferðaskrá segir hver vann ([DCS-þjónar](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)):
 
 | Dálkur | Tegund | Merking |
 |---|---|---|
@@ -118,7 +118,7 @@ Endaástæðurnar eru sameiginlegar öllum leikjum, svo ein sía virkar á þá 
 | `surrender` | hlið gafst upp | CS2, Valorant, Rainbow Six Siege |
 | `draw` | enginn sigurvegari | CS2 |
 | `objective` | markmið tekið eða haldið (gísl fluttur út, svæði tryggt) | Rainbow Six Siege |
-| `capture` | miðarnir kláruðust á meðan sigurvegarinn hélt yfirtökusvæðum | War Thunder |
+| `capture` | miðarnir kláruðust á meðan sigurvegarinn hélt yfirtökusvæðum; DCS: varanleg herferð sem vannst með því að taka alla flugvelli og svæði | War Thunder, DCS |
 | `tickets` | miðar tapaðir vegna fellinga | War Thunder |
 | `destruction` | síðustu farartækin töpuð í einu, enginn eftir til að birtast | War Thunder |
 | `other` | allt annað | |

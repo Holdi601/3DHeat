@@ -3,7 +3,7 @@ title: "Referentie gegevensformaten"
 nav_order: 19
 lang: "nl"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -96,7 +96,7 @@ Een Parquet-`TIMESTAMP`-kolom die als filterkolom bewaard wordt, is een *bereik*
 
 ## Uitslagkolommen {#outcome-columns}
 
-Wie won, op elke rij. Zo kun je een plek, een route of een actie beoordelen naar hoe vaak de kant ervan daarna won ([Winstpercentage](win-rate.md)). De viewer houdt deze kolommen zelf, toont ze als eerste in de [filters](filters.md), in de taal van de viewer, en leest ze in de [winstpercentagekaart](win-rate.md), de [uitsplitsing](breakdown.md) en de [volumestatistieken](volumes.md#statistics). Een converter voor een spel met rondes (CS2, Valorant, Rainbow Six Siege) of met wedstrijden (War Thunder) schrijft ze alle vier:
+Wie won, op elke rij. Zo kun je een plek, een route of een actie beoordelen naar hoe vaak de kant ervan daarna won ([Winstpercentage](win-rate.md)). De viewer houdt deze kolommen zelf, toont ze als eerste in de [filters](filters.md), in de taal van de viewer, en leest ze in de [winstpercentagekaart](win-rate.md), de [uitsplitsing](breakdown.md) en de [volumestatistieken](volumes.md#statistics). Een converter voor een spel met rondes (CS2, Valorant, Rainbow Six Siege) of met wedstrijden (War Thunder) schrijft ze alle vier; de Tacview-converter schrijft ze voor de campagnes van een DCS-server waar een rondebestand zegt wie won ([DCS-servers](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)):
 
 | Kolom | Type | Betekenis |
 |---|---|---|
@@ -118,7 +118,7 @@ De eindredenen, gedeeld door alle spellen zodat één filter voor alle werkt (he
 | `surrender` | een kant gaf op | CS2, Valorant, Rainbow Six Siege |
 | `draw` | geen winnaar | CS2 |
 | `objective` | een doel ingenomen of vastgehouden (gijzelaar bevrijd, gebied beveiligd) | Rainbow Six Siege |
-| `capture` | door de tickets heen terwijl de winnaar veroveringszones vasthield | War Thunder |
+| `capture` | door de tickets heen terwijl de winnaar veroveringszones vasthield; DCS: een persistente campagne gewonnen door elk vliegveld en elke zone in te nemen | War Thunder, DCS |
 | `tickets` | tickets verloren door kills | War Thunder |
 | `destruction` | de laatste voertuigen tegelijk verloren, niemand meer over om te spawnen | War Thunder |
 | `other` | al het andere | |

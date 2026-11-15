@@ -4,7 +4,7 @@ parent: "Mënyrat e nxehtësisë"
 nav_order: 13
 lang: "sq"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ Ku qëndron një lojtar, nga shkon, nga i hedh granatat - dhe sa shpesh pala e t
 
 *Fotografia ka të dhëna të sajuara: tri rrugë në një nivel bosh, me 68%, 50% dhe 33% të rreshtave të tyre në raunde të fituara.*
 
-Duhen të dhëna që tregojnë kush fitoi: [kolonat e rezultatit](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Konvertuesit e CS2 dhe War Thunder i shkruajnë; çdo skedar mund t'i ketë.
+Duhen të dhëna që tregojnë kush fitoi: [kolonat e rezultatit](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Konvertuesit e CS2 dhe War Thunder i shkruajnë, kurse konvertuesi Tacview për fushatat e një serveri DCS ([Serverët DCS](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); çdo skedar mund t'i ketë.
 
 ## Provojeni {#try-it}
 

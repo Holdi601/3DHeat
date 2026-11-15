@@ -4,7 +4,7 @@ parent: "Načini toplote"
 nav_order: 13
 lang: "sl"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ Kje igralec stoji, v katero smer gre, kam vrže granate in druge pripomočke - i
 
 *Slika kaže izmišljene podatke: tri poti na prazni ravni, 68 %, 50 % in 33 % njihovih vrstic v zmaganih krogih.*
 
-Potrebuje podatke, ki povedo, kdo je zmagal: [stolpce izida](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Pišeta jih pretvornika za CS2 in War Thunder; ima jih lahko katera koli datoteka.
+Potrebuje podatke, ki povedo, kdo je zmagal: [stolpce izida](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Pišejo jih pretvorniki za CS2 in War Thunder, pretvornik Tacview pa za kampanje strežnika DCS ([Strežniki DCS](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); ima jih lahko katera koli datoteka.
 
 ## Preizkusite {#try-it}
 

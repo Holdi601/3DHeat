@@ -4,7 +4,7 @@ parent: "레벨과 배경 지오메트리"
 nav_order: 1
 lang: "ko"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ outdated: false
 
 ### 3D 맵 {#the-3d-map}
 
-Dota 2가 설치되어 있으면 Watcher의 [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) 명령(`python -m heat3d_watch dota-map -o dota.glb`)이 게임 자체 파일로 맵을 3D로 만듭니다. 지면, 절벽, 물, 나무, 건물을 리플레이 테이블과 같은 단위와 축으로 만듭니다. 이 파일을 **3D 모델…**(으)로 한 번 불러오면, 뷰어는 그 파츠(`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `dotaMap.ts`의 `isDotaLevel`)로 이를 알아보고 곧바로 [레벨 라이브러리](level-library.md)에 넣으며(이전 것은 대체), 그렇다고 알려 줍니다. 그 뒤로 **Dota 2 맵** 버튼은 그림을 내려받는 대신 라이브러리에서 이 3D 맵을 불러옵니다. 라이브러리에 없으면 그림을 내려받고 3D 맵을 만드는 방법을 알려 줍니다. 이 파일은 사용자 자신의 설치에서 나오며 사용자의 컴퓨터에 남습니다.
+Dota 2가 설치되어 있으면 별도의 도구인 [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/)(`heat3d-dota-maps level -o dota.glb`. Watcher의 [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) 명령도 이를 실행합니다)가 게임 자체 파일로 맵을 3D로 만듭니다. 지면, 절벽, 물, 나무, 건물을 리플레이 테이블과 같은 단위와 축으로 만듭니다. 이 파일을 **3D 모델…**(으)로 한 번 불러오면, 뷰어는 그 파츠(`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `dotaMap.ts`의 `isDotaLevel`)로 이를 알아보고 곧바로 [레벨 라이브러리](level-library.md)에 넣으며(이전 것은 대체), 그렇다고 알려 줍니다. 그 뒤로 **Dota 2 맵** 버튼은 그림을 내려받는 대신 라이브러리에서 이 3D 맵을 불러옵니다. 라이브러리에 없으면 그림을 내려받고 3D 맵을 만드는 방법을 알려 줍니다. 이 파일은 사용자 자신의 설치에서 나오며 사용자의 컴퓨터에 남습니다.
 
 ## 개발자용 {#for-developers}
 

@@ -3,7 +3,7 @@ title: "データ形式リファレンス"
 nav_order: 19
 lang: "ja"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -96,7 +96,7 @@ x,y,z,t,player,team
 
 ## 結果の列 {#outcome-columns}
 
-誰が勝ったかを、すべての行に持たせます。これで、場所、ルート、プレーを、その側がその後どれだけ勝ったかで判断できます（[勝率](win-rate.md)）。ビューアはこれらの列を自分で保持し、[フィルター](filters.md)の先頭にビューアの言語で並べ、[勝率マップ](win-rate.md)、[内訳](breakdown.md)、[ボリュームの統計](volumes.md#statistics)で読み取ります。ラウンド制のゲーム（CS2、Valorant、Rainbow Six Siege）や試合単位のゲーム（War Thunder）のコンバーターは、4 つすべてを書き出します:
+誰が勝ったかを、すべての行に持たせます。これで、場所、ルート、プレーを、その側がその後どれだけ勝ったかで判断できます（[勝率](win-rate.md)）。ビューアはこれらの列を自分で保持し、[フィルター](filters.md)の先頭にビューアの言語で並べ、[勝率マップ](win-rate.md)、[内訳](breakdown.md)、[ボリュームの統計](volumes.md#statistics)で読み取ります。ラウンド制のゲーム（CS2、Valorant、Rainbow Six Siege）や試合単位のゲーム（War Thunder）のコンバーターは、4 つすべてを書き出します。Tacview コンバーターは、勝者を示すラウンドファイルがある DCS サーバーのキャンペーンで、これらを書き出します（[DCS サーバー](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)）:
 
 | 列 | 型 | 意味 |
 |---|---|---|
@@ -118,7 +118,7 @@ x,y,z,t,player,team
 | `surrender` | 片方の側が降参した | CS2、Valorant、Rainbow Six Siege |
 | `draw` | 勝者なし | CS2 |
 | `objective` | 目標を奪った、または守った（人質の救出、エリアの確保） | Rainbow Six Siege |
-| `capture` | 勝者が占領ゾーンを保持している間にチケットが尽きた | War Thunder |
+| `capture` | 勝者が占領ゾーンを保持している間にチケットが尽きた。DCS: すべての飛行場とゾーンを奪って勝った永続型キャンペーン | War Thunder, DCS |
 | `tickets` | 撃破によってチケットを失った | War Thunder |
 | `destruction` | 最後の車両を一度に失い、出撃できる人が残っていない | War Thunder |
 | `other` | それ以外 | |

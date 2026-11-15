@@ -3,7 +3,7 @@ title: "데이터 형식 참조"
 nav_order: 19
 lang: "ko"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -96,7 +96,7 @@ x,y,z,t,player,team
 
 ## 결과 열 {#outcome-columns}
 
-누가 이겼는지를 모든 행에 둡니다. 그러면 장소, 경로, 플레이를 그 편이 나중에 얼마나 자주 이겼는지로 판단할 수 있습니다([승률](win-rate.md)). 뷰어는 이 열을 스스로 유지하고, [필터](filters.md)의 맨 앞에 뷰어의 언어로 나열하며, [승률 지도](win-rate.md), [상세 분석](breakdown.md), [볼륨 통계](volumes.md#statistics)에서 읽습니다. 라운드제 게임(CS2, Valorant, Rainbow Six Siege)이나 경기 단위 게임(War Thunder)의 변환기는 네 열을 모두 씁니다:
+누가 이겼는지를 모든 행에 둡니다. 그러면 장소, 경로, 플레이를 그 편이 나중에 얼마나 자주 이겼는지로 판단할 수 있습니다([승률](win-rate.md)). 뷰어는 이 열을 스스로 유지하고, [필터](filters.md)의 맨 앞에 뷰어의 언어로 나열하며, [승률 지도](win-rate.md), [상세 분석](breakdown.md), [볼륨 통계](volumes.md#statistics)에서 읽습니다. 라운드제 게임(CS2, Valorant, Rainbow Six Siege)이나 경기 단위 게임(War Thunder)의 변환기는 네 열을 모두 씁니다. Tacview 변환기는 라운드 파일이 승자를 알려 주는 DCS 서버의 캠페인에서 이 열을 씁니다([DCS 서버](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)):
 
 | 열 | 형식 | 의미 |
 |---|---|---|
@@ -118,7 +118,7 @@ x,y,z,t,player,team
 | `surrender` | 한 편이 항복함 | CS2, Valorant, Rainbow Six Siege |
 | `draw` | 승자 없음 | CS2 |
 | `objective` | 목표를 빼앗거나 지킴(인질 구출, 구역 확보) | Rainbow Six Siege |
-| `capture` | 승자가 점령 구역을 지키는 동안 티켓이 바닥남 | War Thunder |
+| `capture` | 승자가 점령 구역을 지키는 동안 티켓이 바닥남. DCS: 모든 비행장과 구역을 빼앗아 이긴 영구 캠페인 | War Thunder, DCS |
 | `tickets` | 처치로 티켓을 잃음 | War Thunder |
 | `destruction` | 마지막 차량들을 한꺼번에 잃고, 다시 출격할 사람이 없음 | War Thunder |
 | `other` | 그 밖의 모든 것 | |

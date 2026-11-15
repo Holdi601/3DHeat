@@ -4,7 +4,7 @@ parent: "Livelli u ġeometrija tal-isfond"
 nav_order: 1
 lang: "mt"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ Ir-rixma hi ta' OpenDota, ta' mappa ta' Valve; Valve ma tapprovax 3DHeat.
 
 ### Il-mappa 3D {#the-3d-map}
 
-Bid-Dota 2 installat, il-kmand [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) tal-Watcher (`python -m heat3d_watch dota-map -o dota.glb`) jagħmel il-mappa fi 3D mill-fajls tal-logħba stess: art, irdumijiet, ilma, siġar u bini, fl-unitajiet u l-assi tat-tabelli tar-replays. Għabbi l-fajl darba waħda b'**Mudell 3D…**: il-viewer jagħrfu mill-partijiet tiegħu (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` f'`dotaMap.ts`), idaħħlu minnufih fil-[librerija tal-livelli](level-library.md), minflok waħda eqdem, u jgħid hekk. Minn hemm 'il quddiem **Mappa ta’ Dota 2** tgħabbi dik il-mappa 3D mil-librerija minflok tniżżel it-tpinġija; jekk ma jkunx hemm waħda fil-librerija, tniżżel it-tpinġija u tgħid kif issir il-mappa 3D. Il-fajl ġej mill-installazzjoni tiegħek stess u jibqa' fuq il-magna tiegħek.
+Bid-Dota 2 installat, l-għodda separata [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) (`heat3d-dota-maps level -o dota.glb`; il-kmand [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) tal-Watcher iħaddimha wkoll) tagħmel il-mappa fi 3D mill-fajls tal-logħba stess: art, irdumijiet, ilma, siġar u bini, fl-unitajiet u l-assi tat-tabelli tar-replays. Għabbi l-fajl darba waħda b'**Mudell 3D…**: il-viewer jagħrfu mill-partijiet tiegħu (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` f'`dotaMap.ts`), idaħħlu minnufih fil-[librerija tal-livelli](level-library.md), minflok waħda eqdem, u jgħid hekk. Minn hemm 'il quddiem **Mappa ta’ Dota 2** tgħabbi dik il-mappa 3D mil-librerija minflok tniżżel it-tpinġija; jekk ma jkunx hemm waħda fil-librerija, tniżżel it-tpinġija u tgħid kif issir il-mappa 3D. Il-fajl ġej mill-installazzjoni tiegħek stess u jibqa' fuq il-magna tiegħek.
 
 ## Għall-iżviluppaturi {#for-developers}
 

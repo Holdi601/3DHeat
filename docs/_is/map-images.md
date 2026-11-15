@@ -4,7 +4,7 @@ parent: "Borð og bakgrunnsform"
 nav_order: 1
 lang: "is"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ Teikningin er frá OpenDota, af korti Valve; Valve styður ekki 3DHeat.
 
 ### Þrívíða kortið {#the-3d-map}
 
-Með Dota 2 uppsett býr skipunin [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) í Watcher (`python -m heat3d_watch dota-map -o dota.glb`) til kortið í þrívídd úr skrám leiksins sjálfs: jörð, klettar, vatn, tré og byggingar, í einingum og ásum endurspilunartaflnanna. Hladdu skránni inn einu sinni með **Þrívíddarlíkan…**: skoðarinn þekkir hana á hlutum hennar (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` í `dotaMap.ts`), setur hana strax í [borðasafnið](level-library.md) í stað eldri og segir frá því. Eftir það hleður **Dota 2-kort** þessu þrívíða korti úr safninu í stað þess að sækja teikninguna; sé ekkert í safninu sækir hann teikninguna og segir hvernig þrívíða kortið er búið til. Skráin kemur úr þinni eigin uppsetningu og verður áfram á tölvunni þinni.
+Með Dota 2 uppsett býr sérstaka tólið [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) (`heat3d-dota-maps level -o dota.glb`; skipunin [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) í Watcher keyrir það líka) til kortið í þrívídd úr skrám leiksins sjálfs: jörð, klettar, vatn, tré og byggingar, í einingum og ásum endurspilunartaflnanna. Hladdu skránni inn einu sinni með **Þrívíddarlíkan…**: skoðarinn þekkir hana á hlutum hennar (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` í `dotaMap.ts`), setur hana strax í [borðasafnið](level-library.md) í stað eldri og segir frá því. Eftir það hleður **Dota 2-kort** þessu þrívíða korti úr safninu í stað þess að sækja teikninguna; sé ekkert í safninu sækir hann teikninguna og segir hvernig þrívíða kortið er búið til. Skráin kemur úr þinni eigin uppsetningu og verður áfram á tölvunni þinni.
 
 ## Fyrir forritara {#for-developers}
 

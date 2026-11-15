@@ -4,7 +4,7 @@ parent: "Hëtztmodi"
 nav_order: 13
 lang: "lb"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ Wou e Spiller steet, wéi eng Richtung hie geet, wou hie seng Utility werft - a 
 
 *D'Bild weist erfonnt Daten: dräi Weeër op engem eidele Level, 68 %, 50 % an 33 % vun hiren Zeilen a gewonnene Ronnen.*
 
-Et brauch Daten, déi soen, wien gewonnen huet: d'[Resultatspalten](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). D'Konverter fir CS2 a War Thunder schreiwen se; all Fichier kann se hunn.
+Et brauch Daten, déi soen, wien gewonnen huet: d'[Resultatspalten](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). D'Konverter fir CS2 a War Thunder schreiwen se, den Tacview-Konverter fir d'Campagne vun engem DCS-Server ([DCS-Serveren](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); all Fichier kann se hunn.
 
 ## Probéiert et {#try-it}
 

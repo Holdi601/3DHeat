@@ -4,7 +4,7 @@ parent: "Λειτουργίες θερμότητας"
 nav_order: 13
 lang: "el"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ outdated: false
 
 *Η εικόνα έχει φανταστικά δεδομένα: τρεις διαδρομές σε ένα άδειο επίπεδο, με το 68%, το 50% και το 33% των γραμμών τους σε κερδισμένους γύρους.*
 
-Χρειάζεται δεδομένα που λένε ποιος κέρδισε: τις [στήλες αποτελέσματος](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Οι μετατροπείς για CS2 και War Thunder τις γράφουν· οποιοδήποτε αρχείο μπορεί να τις έχει.
+Χρειάζεται δεδομένα που λένε ποιος κέρδισε: τις [στήλες αποτελέσματος](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Οι μετατροπείς για CS2 και War Thunder τις γράφουν, και ο μετατροπέας Tacview για τις εκστρατείες ενός διακομιστή DCS ([Διακομιστές DCS](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended))· οποιοδήποτε αρχείο μπορεί να τις έχει.
 
 ## Δοκιμάστε το {#try-it}
 

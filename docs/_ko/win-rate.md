@@ -4,7 +4,7 @@ parent: "히트 모드"
 nav_order: 13
 lang: "ko"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ outdated: false
 
 *이 그림은 지어낸 데이터입니다. 빈 레벨의 세 경로이며, 각 경로의 행 중 이긴 라운드의 행이 68%, 50%, 33%입니다.*
 
-누가 이겼는지 알려 주는 데이터가 필요합니다. 바로 [결과 열](data-formats.md#outcome-columns)(`won`, `matchWon`, `roundEndReason`)입니다. CS2와 War Thunder 변환기가 이 열을 씁니다. 어떤 파일이든 이 열을 가질 수 있습니다.
+누가 이겼는지 알려 주는 데이터가 필요합니다. 바로 [결과 열](data-formats.md#outcome-columns)(`won`, `matchWon`, `roundEndReason`)입니다. CS2와 War Thunder 변환기가 이 열을 씁니다. Tacview 변환기도 DCS 서버의 캠페인에서 씁니다([DCS 서버](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)). 어떤 파일이든 이 열을 가질 수 있습니다.
 
 ## 해 보기 {#try-it}
 

@@ -4,7 +4,7 @@ parent: "Līmeņi un fona ģeometrija"
 nav_order: 1
 lang: "lv"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ Zīmējums ir OpenDota, Valve karte; Valve neatbalsta 3DHeat.
 
 ### 3D karte {#the-3d-map}
 
-Ja Dota 2 ir instalēta, Watcher komanda [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) (`python -m heat3d_watch dota-map -o dota.glb`) no pašas spēles failiem izveido karti 3D: zemi, klintis, ūdeni, kokus un ēkas, atkārtojumu tabulu vienībās un asīs. Ielādē failu vienreiz ar **3D modelis…**: skatītājs to atpazīst pēc daļām (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` failā `dotaMap.ts`), uzreiz ieliek [līmeņu bibliotēkā](level-library.md), aizstājot vecāku, un par to paziņo. No tā brīža **Dota 2 karte** ielādē šo 3D karti no bibliotēkas, nevis lejupielādē zīmējumu; ja bibliotēkā tādas nav, tā lejupielādē zīmējumu un pasaka, kā izveidot 3D karti. Fails nāk no tavas pašas instalācijas un paliek tavā datorā.
+Ja Dota 2 ir instalēta, atsevišķais rīks [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) (`heat3d-dota-maps level -o dota.glb`; to palaiž arī Watcher komanda [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html)) no pašas spēles failiem izveido karti 3D: zemi, klintis, ūdeni, kokus un ēkas, atkārtojumu tabulu vienībās un asīs. Ielādē failu vienreiz ar **3D modelis…**: skatītājs to atpazīst pēc daļām (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` failā `dotaMap.ts`), uzreiz ieliek [līmeņu bibliotēkā](level-library.md), aizstājot vecāku, un par to paziņo. No tā brīža **Dota 2 karte** ielādē šo 3D karti no bibliotēkas, nevis lejupielādē zīmējumu; ja bibliotēkā tādas nav, tā lejupielādē zīmējumu un pasaka, kā izveidot 3D karti. Fails nāk no tavas pašas instalācijas un paliek tavā datorā.
 
 ## Izstrādātājiem {#for-developers}
 

@@ -4,7 +4,7 @@ parent: "Moduri de căldură"
 nav_order: 13
 lang: "ro"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ Unde stă un jucător, încotro merge, de unde își aruncă grenadele - și câ
 
 *Imaginea are date inventate: trei trasee pe un nivel gol, cu 68 %, 50 % și 33 % din rândurile lor în runde câștigate.*
 
-Are nevoie de date care spun cine a câștigat: [coloanele de rezultat](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Convertoarele CS2 și War Thunder le scriu; orice fișier le poate avea.
+Are nevoie de date care spun cine a câștigat: [coloanele de rezultat](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Convertoarele CS2 și War Thunder le scriu, iar convertorul Tacview pentru campaniile unui server DCS ([Servere DCS](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); orice fișier le poate avea.
 
 ## Încercați {#try-it}
 

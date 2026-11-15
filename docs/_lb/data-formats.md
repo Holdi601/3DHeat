@@ -3,7 +3,7 @@ title: "Referenz vun de Datenformater"
 nav_order: 19
 lang: "lb"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -96,7 +96,7 @@ Eng Parquet-`TIMESTAMP`-Spalt, déi als Filterspalt behalen gëtt, ass e *Beräi
 
 ## Resultatspalten {#outcome-columns}
 
-Wien gewonnen huet, op all Zeil, sou datt eng Plaz, e Wee oder e Spillzuch dono beurteelt ka ginn, wéi dacks seng Säit duerno gewonnen huet ([Gewannquot](win-rate.md)). De Viewer behält dës Spalte vu selwer, weist se als éischt an de [Filteren](filters.md) an der Sprooch vum Viewer, a liest se an der [Gewannquot-Kaart](win-rate.md), an der [Opschlësselung](breakdown.md) an an de [Statistike vun de Volumen](volumes.md#statistics). E Konverter fir e Spill mat Ronnen (CS2, Valorant, Rainbow Six Siege) oder mat Matcher (War Thunder) schreift all véier:
+Wien gewonnen huet, op all Zeil, sou datt eng Plaz, e Wee oder e Spillzuch dono beurteelt ka ginn, wéi dacks seng Säit duerno gewonnen huet ([Gewannquot](win-rate.md)). De Viewer behält dës Spalte vu selwer, weist se als éischt an de [Filteren](filters.md) an der Sprooch vum Viewer, a liest se an der [Gewannquot-Kaart](win-rate.md), an der [Opschlësselung](breakdown.md) an an de [Statistike vun de Volumen](volumes.md#statistics). E Konverter fir e Spill mat Ronnen (CS2, Valorant, Rainbow Six Siege) oder mat Matcher (War Thunder) schreift all véier; den Tacview-Konverter schreift se fir d'Campagne vun engem DCS-Server, wou e Ronnen-Fichier seet, wien gewonnen huet ([DCS-Serveren](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)):
 
 | Spalt | Typ | Bedeitung |
 |---|---|---|
@@ -118,7 +118,7 @@ D'Grënn fir d'Enn, gemeinsam fir all Spill, sou datt ee Filter op all funktion�
 | `surrender` | eng Säit huet opginn | CS2, Valorant, Rainbow Six Siege |
 | `draw` | kee Gewënner | CS2 |
 | `objective` | en Zil geholl oder gehal (Geisel erausbruecht, Beräich geséchert) | Rainbow Six Siege |
-| `capture` | keng Ticketen méi, wärend de Gewënner Eruewerungszone gehal huet | War Thunder |
+| `capture` | keng Ticketen méi, wärend de Gewënner Eruewerungszone gehal huet; DCS: eng persistent Campagne, gewonnen, andeems all Fluchhafen an all Zon geholl gouf | War Thunder, DCS |
 | `tickets` | Ticketen duerch Ofschëss verluer | War Thunder |
 | `destruction` | déi lescht Gefierer op eemol verluer, keen méi do fir ze spawnen | War Thunder |
 | `other` | alles anescht | |

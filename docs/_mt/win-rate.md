@@ -4,7 +4,7 @@ parent: "Modi tas-sħana"
 nav_order: 13
 lang: "mt"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ Fejn jieqaf plejer, lejn fejn imur, minn fejn jitfa' l-granati tiegħu - u kemm-
 
 *L-istampa hija dejta invenzjoni: tliet rotot fuq livell vojt, b'68%, 50% u 33% tar-ringieli tagħhom f'rawnds mirbuħa.*
 
-Teħtieġ dejta li tgħid min rebaħ: il-[kolonni tar-riżultat](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Il-konvertituri ta' CS2 u War Thunder jiktbuhom; kwalunkwe fajl jista' jkollhom.
+Teħtieġ dejta li tgħid min rebaħ: il-[kolonni tar-riżultat](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Il-konvertituri ta' CS2 u War Thunder jiktbuhom, u l-konvertitur ta' Tacview għall-kampanji ta' server tad-DCS ([Servers tad-DCS](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); kwalunkwe fajl jista' jkollhom.
 
 ## Ipprova {#try-it}
 

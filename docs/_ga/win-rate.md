@@ -4,7 +4,7 @@ parent: "Modhanna teasa"
 nav_order: 13
 lang: "ga"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ Cá seasann imreoir, cén treo a théann sé, cá gcaitheann sé a fhearas - agu
 
 *Sonraí cumtha atá sa phictiúr: trí bhealach ar leibhéal folamh, 68%, 50% agus 33% dá sraitheanna i mbabhtaí buaite.*
 
-Teastaíonn sonraí uaidh a deir cé a bhuaigh: na [colúin toraidh](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Scríobhann tiontairí CS2 agus War Thunder iad; is féidir le comhad ar bith iad a bheith aige.
+Teastaíonn sonraí uaidh a deir cé a bhuaigh: na [colúin toraidh](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Scríobhann tiontairí CS2 agus War Thunder iad, agus tiontaire Tacview d'fheachtais fhreastalaí DCS ([Freastalaithe DCS](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); is féidir le comhad ar bith iad a bheith aige.
 
 ## Bain triail as {#try-it}
 

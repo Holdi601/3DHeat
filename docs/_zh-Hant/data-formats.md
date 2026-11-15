@@ -3,7 +3,7 @@ title: "資料格式參考"
 nav_order: 19
 lang: "zh-Hant"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -96,7 +96,7 @@ x,y,z,t,player,team
 
 ## 結果欄位 {#outcome-columns}
 
-誰獲勝，記在每一列上，這樣就能依一個位置、一條路線或一次戰術所屬的一方之後多常獲勝來評判它（[勝率](win-rate.md)）。檢視器會自行保留這些欄位，用檢視器的語言把它們列在 [篩選](filters.md) 的最前面，並在 [勝率地圖](win-rate.md)、[明細](breakdown.md) 和 [體積統計](volumes.md#statistics) 中讀取它們。回合制遊戲（CS2、Valorant、Rainbow Six Siege）或以比賽計的遊戲（War Thunder）的轉換器會寫入全部四個欄位：
+誰獲勝，記在每一列上，這樣就能依一個位置、一條路線或一次戰術所屬的一方之後多常獲勝來評判它（[勝率](win-rate.md)）。檢視器會自行保留這些欄位，用檢視器的語言把它們列在 [篩選](filters.md) 的最前面，並在 [勝率地圖](win-rate.md)、[明細](breakdown.md) 和 [體積統計](volumes.md#statistics) 中讀取它們。回合制遊戲（CS2、Valorant、Rainbow Six Siege）或以比賽計的遊戲（War Thunder）的轉換器會寫入全部四個欄位；對於有回合檔案寫明勝者的 DCS 伺服器戰役，Tacview 轉換器也會寫入它們（[DCS 伺服器](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)）：
 
 | 欄位 | 類型 | 意義 |
 |---|---|---|
@@ -118,7 +118,7 @@ x,y,z,t,player,team
 | `surrender` | 一方投降 | CS2、Valorant、Rainbow Six Siege |
 | `draw` | 沒有勝者 | CS2 |
 | `objective` | 奪取或守住了目標（救出人質、確保區域） | Rainbow Six Siege |
-| `capture` | 勝者佔領著佔領區時票數被耗盡 | War Thunder |
+| `capture` | 勝者佔領著佔領區時票數被耗盡；DCS：透過奪下每個機場和區域而贏得的持久型戰役 | War Thunder, DCS |
 | `tickets` | 因擊殺而失去票數 | War Thunder |
 | `destruction` | 最後的載具同時損失，沒有人可以再重生 | War Thunder |
 | `other` | 其他任何情況 | |

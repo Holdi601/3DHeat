@@ -3,7 +3,7 @@ title: "Referanse for dataformater"
 nav_order: 19
 lang: "no"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -96,7 +96,7 @@ En Parquet-kolonne av typen `TIMESTAMP` som beholdes som filterkolonne, er et *o
 
 ## Resultatkolonner {#outcome-columns}
 
-Hvem som vant, på hver rad, så et sted, en rute eller et trekk kan bedømmes etter hvor ofte siden det hører til, endte med å vinne ([Seiersandel](win-rate.md)). Visningsprogrammet beholder disse kolonnene selv, viser dem først i [filtrene](filters.md) på visningsprogrammets språk og leser dem i [seiersandelskartet](win-rate.md), [oppdelingen](breakdown.md) og [volumstatistikken](volumes.md#statistics). En konverter for et rundebasert spill (CS2, Valorant, Rainbow Six Siege) eller et kampbasert (War Thunder) skriver alle fire:
+Hvem som vant, på hver rad, så et sted, en rute eller et trekk kan bedømmes etter hvor ofte siden det hører til, endte med å vinne ([Seiersandel](win-rate.md)). Visningsprogrammet beholder disse kolonnene selv, viser dem først i [filtrene](filters.md) på visningsprogrammets språk og leser dem i [seiersandelskartet](win-rate.md), [oppdelingen](breakdown.md) og [volumstatistikken](volumes.md#statistics). En konverter for et rundebasert spill (CS2, Valorant, Rainbow Six Siege) eller et kampbasert (War Thunder) skriver alle fire; Tacview-konverteren skriver dem for en DCS-servers kampanjer der en rundefil sier hvem som vant ([DCS-servere](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)):
 
 | Kolonne | Type | Betydning |
 |---|---|---|
@@ -118,7 +118,7 @@ Sluttårsakene er felles for alle spill, så ett filter virker på alle (et spil
 | `surrender` | en side ga opp | CS2, Valorant, Rainbow Six Siege |
 | `draw` | ingen vinner | CS2 |
 | `objective` | et mål tatt eller holdt (gissel hentet ut, område sikret) | Rainbow Six Siege |
-| `capture` | gikk tom for billetter mens vinneren holdt erobringssoner | War Thunder |
+| `capture` | gikk tom for billetter mens vinneren holdt erobringssoner; DCS: en vedvarende kampanje som ble vunnet ved å ta alle flyplasser og soner | War Thunder, DCS |
 | `tickets` | billetter tapt til drap | War Thunder |
 | `destruction` | de siste kjøretøyene tapt på én gang, ingen igjen til å spawne | War Thunder |
 | `other` | alt annet | |

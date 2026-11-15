@@ -4,7 +4,7 @@ parent: "Niveaux et géométrie de fond"
 nav_order: 1
 lang: "fr"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ Le dessin est celui d’OpenDota, de la carte de Valve ; Valve n’approuve pas 
 
 ### La carte 3D {#the-3d-map}
 
-Avec Dota 2 installé, la commande [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) du Watcher (`python -m heat3d_watch dota-map -o dota.glb`) crée la carte en 3D à partir des fichiers du jeu lui-même : sol, falaises, eau, arbres et bâtiments, dans les unités et les axes des tables des replays. Chargez le fichier une fois avec **Modèle 3D…** : la visionneuse le reconnaît à ses parties (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree` ; `isDotaLevel` dans `dotaMap.ts`), le range aussitôt dans la [bibliothèque de niveaux](level-library.md) en remplaçant une version plus ancienne, et l'indique. Dès lors, **Carte de Dota 2** charge cette carte 3D depuis la bibliothèque au lieu de télécharger le dessin ; s'il n'y en a aucune dans la bibliothèque, il télécharge le dessin et explique comment créer la carte 3D. Le fichier vient de votre propre installation et reste sur votre machine.
+Avec Dota 2 installé, l’outil séparé [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) (`heat3d-dota-maps level -o dota.glb` ; la commande [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) du Watcher le lance aussi) crée la carte en 3D à partir des fichiers du jeu lui-même : sol, falaises, eau, arbres et bâtiments, dans les unités et les axes des tables des replays. Chargez le fichier une fois avec **Modèle 3D…** : la visionneuse le reconnaît à ses parties (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree` ; `isDotaLevel` dans `dotaMap.ts`), le range aussitôt dans la [bibliothèque de niveaux](level-library.md) en remplaçant une version plus ancienne, et l'indique. Dès lors, **Carte de Dota 2** charge cette carte 3D depuis la bibliothèque au lieu de télécharger le dessin ; s'il n'y en a aucune dans la bibliothèque, il télécharge le dessin et explique comment créer la carte 3D. Le fichier vient de votre propre installation et reste sur votre machine.
 
 ## Pour les développeurs {#for-developers}
 

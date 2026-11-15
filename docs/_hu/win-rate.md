@@ -4,7 +4,7 @@ parent: "Hőmódok"
 nav_order: 13
 lang: "hu"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ Hol áll egy játékos, merre megy, honnan dobja a gránátjait - és utána mil
 
 *A kép kitalált adat: három útvonal egy üres pályán, soraik 68%-a, 50%-a és 33%-a nyert körökben.*
 
-Olyan adat kell hozzá, amely megmondja, ki nyert: az [eredményoszlopok](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). A CS2 és a War Thunder konverter írja őket; bármely fájl tartalmazhatja.
+Olyan adat kell hozzá, amely megmondja, ki nyert: az [eredményoszlopok](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). A CS2 és a War Thunder konverter írja őket, a Tacview-konverter pedig egy DCS-szerver hadjárataihoz ([DCS-szerverek](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); bármely fájl tartalmazhatja.
 
 ## Próbálja ki {#try-it}
 

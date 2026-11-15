@@ -4,7 +4,7 @@ parent: "Режимы тепла"
 nav_order: 13
 lang: "ru"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ outdated: false
 
 *На картинке выдуманные данные: три маршрута на пустом уровне, 68 %, 50 % и 33 % их строк в выигранных раундах.*
 
-Нужны данные о том, кто победил: [столбцы итога](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Их пишут конвертеры CS2 и War Thunder; они могут быть в любом файле.
+Нужны данные о том, кто победил: [столбцы итога](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Их пишут конвертеры CS2 и War Thunder, а конвертер Tacview — для кампаний DCS-сервера ([DCS-серверы](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); они могут быть в любом файле.
 
 ## Попробуйте {#try-it}
 

@@ -4,7 +4,7 @@ parent: "Levels und Hintergrundgeometrie"
 nav_order: 1
 lang: "de"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ Die Zeichnung gehört OpenDota, von Valves Karte; Valve unterstützt 3DHeat nich
 
 ### Die 3D-Karte {#the-3d-map}
 
-Bei installiertem Dota 2 erstellt der Watcher-Befehl [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) (`python -m heat3d_watch dota-map -o dota.glb`) die Karte in 3D aus den eigenen Dateien des Spiels: Boden, Klippen, Wasser, Bäume und Gebäude, in den Einheiten und Achsen der Replay-Tabellen. Lade die Datei einmal mit **3D-Modell…**: Der Viewer erkennt sie an ihren Teilen (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` in `dotaMap.ts`), legt sie sofort in die [Level-Bibliothek](level-library.md), ersetzt dabei eine ältere und sagt das. Von da an lädt **Dota-2-Karte** diese 3D-Karte aus der Bibliothek, statt die Zeichnung zu laden; ist keine in der Bibliothek, lädt sie die Zeichnung und sagt, wie man die 3D-Karte erstellt. Die Datei stammt aus deiner eigenen Installation und bleibt auf deinem Rechner.
+Bei installiertem Dota 2 erstellt das separate Werkzeug [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) (`heat3d-dota-maps level -o dota.glb`; der Watcher-Befehl [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) führt es ebenfalls aus) die Karte in 3D aus den eigenen Dateien des Spiels: Boden, Klippen, Wasser, Bäume und Gebäude, in den Einheiten und Achsen der Replay-Tabellen. Lade die Datei einmal mit **3D-Modell…**: Der Viewer erkennt sie an ihren Teilen (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` in `dotaMap.ts`), legt sie sofort in die [Level-Bibliothek](level-library.md), ersetzt dabei eine ältere und sagt das. Von da an lädt **Dota-2-Karte** diese 3D-Karte aus der Bibliothek, statt die Zeichnung zu laden; ist keine in der Bibliothek, lädt sie die Zeichnung und sagt, wie man die 3D-Karte erstellt. Die Datei stammt aus deiner eigenen Installation und bleibt auf deinem Rechner.
 
 ## Für Entwickler {#for-developers}
 

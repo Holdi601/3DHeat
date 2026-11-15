@@ -4,7 +4,7 @@ parent: "Banor och bakgrundsgeometri"
 nav_order: 1
 lang: "sv"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ Ritningen är OpenDotas, av Valves karta. Valve står inte bakom 3DHeat.
 
 ### 3D-kartan {#the-3d-map}
 
-Med Dota 2 installerat skapar Watchers kommando [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) (`python -m heat3d_watch dota-map -o dota.glb`) kartan i 3D från spelets egna filer: mark, klippor, vatten, träd och byggnader, i repristabellernas enheter och axlar. Läs in filen en gång med **3D-modell…**: visaren känner igen den på dess delar (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` i `dotaMap.ts`), lägger den genast i [banbiblioteket](level-library.md), där den ersätter en äldre, och säger det. Därefter läser **Dota 2-karta** in den här 3D-kartan från biblioteket i stället för att hämta ritningen; finns ingen i biblioteket hämtar den ritningen och berättar hur du skapar 3D-kartan. Filen kommer från din egen installation och stannar på din dator.
+Med Dota 2 installerat skapar det separata verktyget [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) (`heat3d-dota-maps level -o dota.glb`; Watchers kommando [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) kör det också) kartan i 3D från spelets egna filer: mark, klippor, vatten, träd och byggnader, i repristabellernas enheter och axlar. Läs in filen en gång med **3D-modell…**: visaren känner igen den på dess delar (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` i `dotaMap.ts`), lägger den genast i [banbiblioteket](level-library.md), där den ersätter en äldre, och säger det. Därefter läser **Dota 2-karta** in den här 3D-kartan från biblioteket i stället för att hämta ritningen; finns ingen i biblioteket hämtar den ritningen och berättar hur du skapar 3D-kartan. Filen kommer från din egen installation och stannar på din dator.
 
 ## För utvecklare {#for-developers}
 

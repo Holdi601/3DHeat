@@ -3,7 +3,7 @@ title: "Referencia dátových formátov"
 nav_order: 19
 lang: "sk"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -96,7 +96,7 @@ Stĺpec `TIMESTAMP` v Parquet, ktorý sa ponechá ako filtračný stĺpec, je *r
 
 ## Stĺpce výsledku {#outcome-columns}
 
-Kto vyhral, v každom riadku, aby sa dalo miesto, trasu alebo akciu posúdiť podľa toho, ako často jej strana potom vyhrala ([Podiel výhier](win-rate.md)). Prehliadač si tieto stĺpce ponechá sám, uvádza ich prvé vo [filtroch](filters.md) v jazyku prehliadača a číta ich v [mape podielu výhier](win-rate.md), v [rozpise](breakdown.md) a v [štatistikách objemov](volumes.md#statistics). Konvertor pre hru s kolami (CS2, Valorant, Rainbow Six Siege) alebo so zápasmi (War Thunder) zapisuje všetky štyri:
+Kto vyhral, v každom riadku, aby sa dalo miesto, trasu alebo akciu posúdiť podľa toho, ako často jej strana potom vyhrala ([Podiel výhier](win-rate.md)). Prehliadač si tieto stĺpce ponechá sám, uvádza ich prvé vo [filtroch](filters.md) v jazyku prehliadača a číta ich v [mape podielu výhier](win-rate.md), v [rozpise](breakdown.md) a v [štatistikách objemov](volumes.md#statistics). Konvertor pre hru s kolami (CS2, Valorant, Rainbow Six Siege) alebo so zápasmi (War Thunder) zapisuje všetky štyri; konvertor Tacview ich zapisuje pre kampane servera DCS, kde súbor kôl hovorí, kto vyhral ([Servery DCS](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)):
 
 | Stĺpec | Typ | Význam |
 |---|---|---|
@@ -118,7 +118,7 @@ Dôvody konca sú spoločné pre všetky hry, aby jeden filter fungoval na všet
 | `surrender` | strana sa vzdala | CS2, Valorant, Rainbow Six Siege |
 | `draw` | bez víťaza | CS2 |
 | `objective` | cieľ dobytý alebo udržaný (rukojemník vyvedený, oblasť zabezpečená) | Rainbow Six Siege |
-| `capture` | tikety sa minuli, kým víťaz držal zóny na obsadenie | War Thunder |
+| `capture` | tikety sa minuli, kým víťaz držal zóny na obsadenie; DCS: trvalá kampaň vyhraná obsadením každého letiska a zóny | War Thunder, DCS |
 | `tickets` | tikety stratené zabitiami | War Thunder |
 | `destruction` | posledné vozidlá stratené naraz, nikto už nemôže nastúpiť | War Thunder |
 | `other` | čokoľvek iné | |

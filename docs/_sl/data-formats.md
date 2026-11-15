@@ -3,7 +3,7 @@ title: "Pregled podatkovnih formatov"
 nav_order: 19
 lang: "sl"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -97,7 +97,7 @@ epohe – drsnik, ne seznam.
 
 ## Stolpci izida {#outcome-columns}
 
-Kdo je zmagal, v vsaki vrstici, da lahko mesto, pot ali potezo ocenite po tem, kako pogosto je njena stran nato zmagala ([Delež zmag](win-rate.md)). Pregledovalnik te stolpce obdrži sam, jih navede prve v [filtrih](filters.md) v jeziku pregledovalnika in jih bere v [zemljevidu deleža zmag](win-rate.md), v [razčlenitvi](breakdown.md) in v [statistiki prostornin](volumes.md#statistics). Pretvornik za igro s krogi (CS2, Valorant, Rainbow Six Siege) ali s tekmami (War Thunder) zapiše vse štiri:
+Kdo je zmagal, v vsaki vrstici, da lahko mesto, pot ali potezo ocenite po tem, kako pogosto je njena stran nato zmagala ([Delež zmag](win-rate.md)). Pregledovalnik te stolpce obdrži sam, jih navede prve v [filtrih](filters.md) v jeziku pregledovalnika in jih bere v [zemljevidu deleža zmag](win-rate.md), v [razčlenitvi](breakdown.md) in v [statistiki prostornin](volumes.md#statistics). Pretvornik za igro s krogi (CS2, Valorant, Rainbow Six Siege) ali s tekmami (War Thunder) zapiše vse štiri; pretvornik Tacview jih zapiše za kampanje strežnika DCS, kjer datoteka krogov pove, kdo je zmagal ([Strežniki DCS](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)):
 
 | Stolpec | Tip | Pomen |
 |---|---|---|
@@ -119,7 +119,7 @@ Razlogi za konec so skupni vsem igram, da en filter deluje na vseh (lastna besed
 | `surrender` | stran se je predala | CS2, Valorant, Rainbow Six Siege |
 | `draw` | brez zmagovalca | CS2 |
 | `objective` | cilj zavzet ali zadržan (talec izpeljan, območje zavarovano) | Rainbow Six Siege |
-| `capture` | vstopnice so pošle, medtem ko je zmagovalec držal cone za zavzetje | War Thunder |
+| `capture` | vstopnice so pošle, medtem ko je zmagovalec držal cone za zavzetje; DCS: trajna kampanja, dobljena z zavzetjem vseh letališč in con | War Thunder, DCS |
 | `tickets` | vstopnice izgubljene zaradi ubojev | War Thunder |
 | `destruction` | zadnja vozila izgubljena naenkrat, nihče ne more več vstopiti | War Thunder |
 | `other` | karkoli drugega | |

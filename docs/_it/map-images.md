@@ -4,7 +4,7 @@ parent: "Livelli e geometria di sfondo"
 nav_order: 1
 lang: "it"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ Il disegno è di OpenDota, della mappa di Valve; Valve non approva 3DHeat.
 
 ### La mappa 3D {#the-3d-map}
 
-Con Dota 2 installato, il comando [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) del Watcher (`python -m heat3d_watch dota-map -o dota.glb`) crea la mappa in 3D dai file del gioco stesso: terreno, scogliere, acqua, alberi ed edifici, nelle unità e negli assi delle tabelle dei replay. Carica il file una volta con **Modello 3D…**: il visualizzatore lo riconosce dalle sue parti (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` in `dotaMap.ts`), lo mette subito nella [libreria dei livelli](level-library.md), sostituendone uno più vecchio, e lo segnala. Da allora **Mappa di Dota 2** carica quella mappa 3D dalla libreria invece di scaricare il disegno; se nella libreria non ce n'è nessuna, scarica il disegno e spiega come creare la mappa 3D. Il file viene dalla tua installazione e resta sul tuo computer.
+Con Dota 2 installato, lo strumento separato [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) (`heat3d-dota-maps level -o dota.glb`; anche il comando [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) del Watcher lo esegue) crea la mappa in 3D dai file del gioco stesso: terreno, scogliere, acqua, alberi ed edifici, nelle unità e negli assi delle tabelle dei replay. Carica il file una volta con **Modello 3D…**: il visualizzatore lo riconosce dalle sue parti (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` in `dotaMap.ts`), lo mette subito nella [libreria dei livelli](level-library.md), sostituendone uno più vecchio, e lo segnala. Da allora **Mappa di Dota 2** carica quella mappa 3D dalla libreria invece di scaricare il disegno; se nella libreria non ce n'è nessuna, scarica il disegno e spiega come creare la mappa 3D. Il file viene dalla tua installazione e resta sul tuo computer.
 
 ## Per gli sviluppatori {#for-developers}
 

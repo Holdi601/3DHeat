@@ -3,7 +3,7 @@ title: "Tietomuotojen viite"
 nav_order: 19
 lang: "fi"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -96,7 +96,7 @@ Parquet-sarake `TIMESTAMP`, joka on säilytetty suodatinsarakkeena, on *alue* ep
 
 ## Tulossarakkeet {#outcome-columns}
 
-Kuka voitti, jokaisella rivillä, jotta paikkaa, reittiä tai siirtoa voidaan arvioida sen mukaan, kuinka usein sen puoli lopulta voitti ([Voittojen osuus](win-rate.md)). Katselin säilyttää nämä sarakkeet itse, luettelee ne ensimmäisinä [suodattimissa](filters.md) katselimen kielellä ja lukee ne [voittokartassa](win-rate.md), [erittelyssä](breakdown.md) ja [tilavuuksien tilastoissa](volumes.md#statistics). Eräpohjaisen pelin (CS2, Valorant, Rainbow Six Siege) tai ottelupohjaisen pelin (War Thunder) muunnin kirjoittaa kaikki neljä:
+Kuka voitti, jokaisella rivillä, jotta paikkaa, reittiä tai siirtoa voidaan arvioida sen mukaan, kuinka usein sen puoli lopulta voitti ([Voittojen osuus](win-rate.md)). Katselin säilyttää nämä sarakkeet itse, luettelee ne ensimmäisinä [suodattimissa](filters.md) katselimen kielellä ja lukee ne [voittokartassa](win-rate.md), [erittelyssä](breakdown.md) ja [tilavuuksien tilastoissa](volumes.md#statistics). Eräpohjaisen pelin (CS2, Valorant, Rainbow Six Siege) tai ottelupohjaisen pelin (War Thunder) muunnin kirjoittaa kaikki neljä; Tacview-muunnin kirjoittaa ne DCS-palvelimen kampanjoille, joista kierrostiedosto kertoo voittajan ([DCS-palvelimet](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)):
 
 | Sarake | Tyyppi | Merkitys |
 |---|---|---|
@@ -118,7 +118,7 @@ Päättymissyyt ovat yhteiset kaikille peleille, joten yksi suodatin toimii kaik
 | `surrender` | puoli luovutti | CS2, Valorant, Rainbow Six Siege |
 | `draw` | ei voittajaa | CS2 |
 | `objective` | tavoite vallattu tai pidetty (panttivanki pelastettu, alue varmistettu) | Rainbow Six Siege |
-| `capture` | pisteet valuivat loppuun, kun voittaja piti valtausalueita | War Thunder |
+| `capture` | pisteet valuivat loppuun, kun voittaja piti valtausalueita; DCS: pysyvä kampanja, joka voitettiin valtaamalla kaikki lentokentät ja alueet | War Thunder, DCS |
 | `tickets` | pisteet menetetty tuhoissa | War Thunder |
 | `destruction` | viimeiset ajoneuvot menetetty kerralla, kukaan ei voi enää syntyä | War Thunder |
 | `other` | kaikki muu | |

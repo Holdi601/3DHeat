@@ -3,7 +3,7 @@ title: "Opis formatów danych"
 nav_order: 19
 lang: "pl"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -96,7 +96,7 @@ Kolumna `TIMESTAMP` w Parquet zachowana jako kolumna filtra jest *zakresem* mili
 
 ## Kolumny wyniku {#outcome-columns}
 
-Kto wygrał, w każdym wierszu. Dzięki temu miejsce, trasę albo zagranie można ocenić po tym, jak często jego strona potem wygrywała ([Odsetek wygranych](win-rate.md)). Przeglądarka sama zachowuje te kolumny, pokazuje je jako pierwsze w [filtrach](filters.md), w języku przeglądarki, i czyta je w [mapie odsetka wygranych](win-rate.md), w [zestawieniu](breakdown.md) i w [statystykach wolumenu](volumes.md#statistics). Konwerter dla gry z rundami (CS2, Valorant, Rainbow Six Siege) albo z meczami (War Thunder) zapisuje wszystkie cztery:
+Kto wygrał, w każdym wierszu. Dzięki temu miejsce, trasę albo zagranie można ocenić po tym, jak często jego strona potem wygrywała ([Odsetek wygranych](win-rate.md)). Przeglądarka sama zachowuje te kolumny, pokazuje je jako pierwsze w [filtrach](filters.md), w języku przeglądarki, i czyta je w [mapie odsetka wygranych](win-rate.md), w [zestawieniu](breakdown.md) i w [statystykach wolumenu](volumes.md#statistics). Konwerter dla gry z rundami (CS2, Valorant, Rainbow Six Siege) albo z meczami (War Thunder) zapisuje wszystkie cztery; konwerter Tacview zapisuje je dla kampanii serwera DCS, gdy plik rund mówi, kto wygrał ([Serwery DCS](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)):
 
 | Kolumna | Typ | Znaczenie |
 |---|---|---|
@@ -118,7 +118,7 @@ Powody zakończenia, wspólne dla wszystkich gier, żeby jeden filtr działał n
 | `surrender` | jedna strona się poddała | CS2, Valorant, Rainbow Six Siege |
 | `draw` | brak zwycięzcy | CS2 |
 | `objective` | cel zdobyty albo utrzymany (zakładnik wyprowadzony, obszar zabezpieczony) | Rainbow Six Siege |
-| `capture` | punkty wyczerpane, gdy zwycięzca utrzymywał strefy przejęcia | War Thunder |
+| `capture` | punkty wyczerpane, gdy zwycięzca utrzymywał strefy przejęcia; DCS: trwała kampania wygrana przez zajęcie każdego lotniska i każdej strefy | War Thunder, DCS |
 | `tickets` | punkty stracone przez zabójstwa | War Thunder |
 | `destruction` | ostatnie pojazdy stracone naraz, nikt nie został do odrodzenia | War Thunder |
 | `other` | wszystko inne | |

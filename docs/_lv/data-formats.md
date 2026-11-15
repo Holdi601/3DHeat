@@ -3,7 +3,7 @@ title: "Datu formātu uzziņa"
 nav_order: 19
 lang: "lv"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -96,7 +96,7 @@ Parquet `TIMESTAMP` kolonna, kas saglabāta kā filtra kolonna, ir *diapazons* e
 
 ## Iznākuma kolonnas {#outcome-columns}
 
-Kurš uzvarēja, katrā rindā, lai vietu, maršrutu vai gājienu varētu vērtēt pēc tā, cik bieži tā puse beigās uzvarēja ([Uzvaru daļa](win-rate.md)). Skatītājs pats patur šīs kolonnas, uzskaita tās pirmās [filtros](filters.md) skatītāja valodā un nolasa tās [uzvaru kartē](win-rate.md), [sadalījumā](breakdown.md) un [tilpumu statistikā](volumes.md#statistics). Konvertētājs raundu spēlei (CS2, Valorant, Rainbow Six Siege) vai spēlei, kas notiek kā viens mačs (War Thunder), raksta visas četras:
+Kurš uzvarēja, katrā rindā, lai vietu, maršrutu vai gājienu varētu vērtēt pēc tā, cik bieži tā puse beigās uzvarēja ([Uzvaru daļa](win-rate.md)). Skatītājs pats patur šīs kolonnas, uzskaita tās pirmās [filtros](filters.md) skatītāja valodā un nolasa tās [uzvaru kartē](win-rate.md), [sadalījumā](breakdown.md) un [tilpumu statistikā](volumes.md#statistics). Konvertētājs raundu spēlei (CS2, Valorant, Rainbow Six Siege) vai spēlei, kas notiek kā viens mačs (War Thunder), raksta visas četras; Tacview konvertētājs tās raksta DCS servera kampaņām, kur kārtu fails saka, kurš uzvarēja ([DCS serveri](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)):
 
 | Kolonna | Tips | Nozīme |
 |---|---|---|
@@ -118,7 +118,7 @@ Beigu iemesli ir kopīgi visām spēlēm, lai viens filtrs darbotos visās (spē
 | `surrender` | puse padevās | CS2, Valorant, Rainbow Six Siege |
 | `draw` | nav uzvarētāja | CS2 |
 | `objective` | mērķis ieņemts vai noturēts (ķīlnieks izvests, zona nodrošināta) | Rainbow Six Siege |
-| `capture` | biļetes beidzās, kamēr uzvarētājs turēja ieņemšanas zonas | War Thunder |
+| `capture` | biļetes beidzās, kamēr uzvarētājs turēja ieņemšanas zonas; DCS: pastāvīga kampaņa, kas uzvarēta, ieņemot visus lidlaukus un zonas | War Thunder, DCS |
 | `tickets` | biļetes zaudētas notriekšanās | War Thunder |
 | `destruction` | pēdējie transportlīdzekļi zaudēti uzreiz, neviena, kas varētu parādīties no jauna | War Thunder |
 | `other` | viss cits | |

@@ -3,7 +3,7 @@ title: "Referència de formats de dades"
 nav_order: 19
 lang: "ca"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -96,7 +96,7 @@ Una columna Parquet `TIMESTAMP` conservada com a columna de filtre és un *rang*
 
 ## Columnes de resultat {#outcome-columns}
 
-Qui va guanyar, a cada fila, perquè un lloc, una ruta o una jugada es pugui jutjar per la freqüència amb què el seu bàndol va acabar guanyant ([Taxa de victòria](win-rate.md)). El visor conserva aquestes columnes pel seu compte, les mostra primer als [filtres](filters.md) en l'idioma del visor i les llegeix al [mapa de taxa de victòria](win-rate.md), al [desglossament](breakdown.md) i a les [estadístiques dels volums](volumes.md#statistics). Un convertidor per a un joc per rondes (CS2, Valorant, Rainbow Six Siege) o per partides (War Thunder) les escriu totes quatre:
+Qui va guanyar, a cada fila, perquè un lloc, una ruta o una jugada es pugui jutjar per la freqüència amb què el seu bàndol va acabar guanyant ([Taxa de victòria](win-rate.md)). El visor conserva aquestes columnes pel seu compte, les mostra primer als [filtres](filters.md) en l'idioma del visor i les llegeix al [mapa de taxa de victòria](win-rate.md), al [desglossament](breakdown.md) i a les [estadístiques dels volums](volumes.md#statistics). Un convertidor per a un joc per rondes (CS2, Valorant, Rainbow Six Siege) o per partides (War Thunder) les escriu totes quatre; el convertidor de Tacview les escriu per a les campanyes d'un servidor de DCS on un fitxer de rondes diu qui va guanyar ([Servidors de DCS](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)):
 
 | Columna | Tipus | Significat |
 |---|---|---|
@@ -118,7 +118,7 @@ Els motius de final, compartits per tots els jocs perquè un sol filtre funcioni
 | `surrender` | un bàndol es va rendir | CS2, Valorant, Rainbow Six Siege |
 | `draw` | cap guanyador | CS2 |
 | `objective` | un objectiu pres o mantingut (ostatge extret, zona assegurada) | Rainbow Six Siege |
-| `capture` | sense tiquets mentre el guanyador mantenia zones de captura | War Thunder |
+| `capture` | sense tiquets mentre el guanyador mantenia zones de captura; DCS: una campanya persistent guanyada prenent tots els aeròdroms i zones | War Thunder, DCS |
 | `tickets` | tiquets perduts per baixes | War Thunder |
 | `destruction` | els últims vehicles perduts alhora, ningú no queda per reaparèixer | War Thunder |
 | `other` | qualsevol altra cosa | |

@@ -4,7 +4,7 @@ parent: "Lämmön tilat"
 nav_order: 13
 lang: "fi"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ Missä pelaaja seisoo, mihin suuntaan hän kulkee, mihin hän heittää varustee
 
 *Kuva on keksittyä dataa: kolme reittiä tyhjällä tasolla, ja niiden riveistä 68 %, 50 % ja 33 % voitetuissa erissä.*
 
-Se tarvitsee dataa, joka kertoo, kuka voitti: [tulossarakkeet](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). CS2:n ja War Thunderin muuntimet kirjoittavat ne; mikä tahansa tiedosto voi sisältää ne.
+Se tarvitsee dataa, joka kertoo, kuka voitti: [tulossarakkeet](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). CS2:n ja War Thunderin muuntimet kirjoittavat ne, Tacview-muunnin DCS-palvelimen kampanjoille ([DCS-palvelimet](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); mikä tahansa tiedosto voi sisältää ne.
 
 ## Kokeile {#try-it}
 

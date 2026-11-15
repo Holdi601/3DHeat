@@ -3,7 +3,7 @@ title: "Duomenų formatų nuoroda"
 nav_order: 19
 lang: "lt"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -96,7 +96,7 @@ Parquet `TIMESTAMP` stulpelis, paliktas kaip filtro stulpelis, yra *intervalas* 
 
 ## Rezultato stulpeliai {#outcome-columns}
 
-Kas laimėjo, kiekvienoje eilutėje, kad vietą, maršrutą ar ėjimą būtų galima įvertinti pagal tai, kaip dažnai jo pusė galiausiai laimėjo ([Laimėjimų dalis](win-rate.md)). Peržiūros programa šiuos stulpelius pasilieka pati, rodo juos pirmus [filtruose](filters.md) peržiūros programos kalba ir skaito juos [laimėjimų žemėlapyje](win-rate.md), [išskaidyme](breakdown.md) ir [tūrių statistikoje](volumes.md#statistics). Raundais paremto žaidimo (CS2, Valorant, Rainbow Six Siege) arba mačais paremto žaidimo (War Thunder) konverteris rašo visus keturis:
+Kas laimėjo, kiekvienoje eilutėje, kad vietą, maršrutą ar ėjimą būtų galima įvertinti pagal tai, kaip dažnai jo pusė galiausiai laimėjo ([Laimėjimų dalis](win-rate.md)). Peržiūros programa šiuos stulpelius pasilieka pati, rodo juos pirmus [filtruose](filters.md) peržiūros programos kalba ir skaito juos [laimėjimų žemėlapyje](win-rate.md), [išskaidyme](breakdown.md) ir [tūrių statistikoje](volumes.md#statistics). Raundais paremto žaidimo (CS2, Valorant, Rainbow Six Siege) arba mačais paremto žaidimo (War Thunder) konverteris rašo visus keturis; Tacview konverteris juos rašo DCS serverio kampanijoms, kai raundų failas nurodo, kas laimėjo ([DCS serveriai](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)):
 
 | Stulpelis | Tipas | Reikšmė |
 |---|---|---|
@@ -118,7 +118,7 @@ Pabaigos priežastys bendros visiems žaidimams, todėl vienas filtras veikia vi
 | `surrender` | viena pusė pasidavė | CS2, Valorant, Rainbow Six Siege |
 | `draw` | nugalėtojo nėra | CS2 |
 | `objective` | tikslas užimtas arba išlaikytas (įkaitas išvestas, zona užtikrinta) | Rainbow Six Siege |
-| `capture` | baigėsi bilietai, kol nugalėtojas laikė užėmimo zonas | War Thunder |
+| `capture` | baigėsi bilietai, kol nugalėtojas laikė užėmimo zonas; DCS: nuolatinė kampanija, laimėta užėmus visus aerodromus ir zonas | War Thunder, DCS |
 | `tickets` | bilietai prarasti dėl numušimų | War Thunder |
 | `destruction` | paskutinės transporto priemonės prarastos iš karto, nebeliko kam atsirasti | War Thunder |
 | `other` | visa kita | |

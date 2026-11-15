@@ -4,7 +4,7 @@ parent: "Niveaus en achtergrondgeometrie"
 nav_order: 1
 lang: "nl"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ De tekening is van OpenDota, van de kaart van Valve; Valve keurt 3DHeat niet goe
 
 ### De 3D-kaart {#the-3d-map}
 
-Met Dota 2 geïnstalleerd maakt het Watcher-commando [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) (`python -m heat3d_watch dota-map -o dota.glb`) de kaart in 3D uit de eigen bestanden van het spel: grond, kliffen, water, bomen en gebouwen, in de eenheden en assen van de replaytabellen. Laad het bestand één keer met **3D-model…**: de viewer herkent het aan zijn onderdelen (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` in `dotaMap.ts`), zet het meteen in de [niveaubibliotheek](level-library.md), ter vervanging van een oudere, en meldt dat. Vanaf dan laadt **Dota 2-kaart** die 3D-kaart uit de bibliotheek in plaats van de tekening te downloaden; staat er geen in de bibliotheek, dan downloadt de knop de tekening en vertelt hoe je de 3D-kaart maakt. Het bestand komt uit je eigen installatie en blijft op je eigen computer.
+Met Dota 2 geïnstalleerd maakt de aparte tool [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) (`heat3d-dota-maps level -o dota.glb`; het Watcher-commando [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) voert hem ook uit) de kaart in 3D uit de eigen bestanden van het spel: grond, kliffen, water, bomen en gebouwen, in de eenheden en assen van de replaytabellen. Laad het bestand één keer met **3D-model…**: de viewer herkent het aan zijn onderdelen (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` in `dotaMap.ts`), zet het meteen in de [niveaubibliotheek](level-library.md), ter vervanging van een oudere, en meldt dat. Vanaf dan laadt **Dota 2-kaart** die 3D-kaart uit de bibliotheek in plaats van de tekening te downloaden; staat er geen in de bibliotheek, dan downloadt de knop de tekening en vertelt hoe je de 3D-kaart maakt. Het bestand komt uit je eigen installatie en blijft op je eigen computer.
 
 ## Voor ontwikkelaars {#for-developers}
 

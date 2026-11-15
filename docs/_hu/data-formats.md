@@ -3,7 +3,7 @@ title: "Adatformátumok leírása"
 nav_order: 19
 lang: "hu"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -96,7 +96,7 @@ A Parquet `TIMESTAMP` oszlop, amely szűrőoszlopként marad meg, az epoch-ezred
 
 ## Eredményoszlopok {#outcome-columns}
 
-Ki nyert, minden sorban, hogy egy helyet, útvonalat vagy lépést aszerint lehessen megítélni, milyen gyakran nyert utána az oldala ([Győzelmi arány](win-rate.md)). A megjelenítő magától megtartja ezeket az oszlopokat, a [szűrőkben](filters.md) elsőként sorolja fel őket a megjelenítő nyelvén, és felhasználja őket a [győzelmi arány térképén](win-rate.md), a [bontásban](breakdown.md) és a [térfogatok statisztikájában](volumes.md#statistics). Egy körökre épülő játék (CS2, Valorant, Rainbow Six Siege) vagy egy meccsekre épülő (War Thunder) konvertere mind a négyet írja:
+Ki nyert, minden sorban, hogy egy helyet, útvonalat vagy lépést aszerint lehessen megítélni, milyen gyakran nyert utána az oldala ([Győzelmi arány](win-rate.md)). A megjelenítő magától megtartja ezeket az oszlopokat, a [szűrőkben](filters.md) elsőként sorolja fel őket a megjelenítő nyelvén, és felhasználja őket a [győzelmi arány térképén](win-rate.md), a [bontásban](breakdown.md) és a [térfogatok statisztikájában](volumes.md#statistics). Egy körökre épülő játék (CS2, Valorant, Rainbow Six Siege) vagy egy meccsekre épülő (War Thunder) konvertere mind a négyet írja; a Tacview-konverter egy DCS-szerver hadjárataihoz írja őket, ahol egy fordulófájl megmondja, ki nyert ([DCS-szerverek](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)):
 
 | Oszlop | Típus | Jelentés |
 |---|---|---|
@@ -118,7 +118,7 @@ A befejezés okai minden játékban közösek, így egy szűrő mindegyiken műk
 | `surrender` | egy oldal feladta | CS2, Valorant, Rainbow Six Siege |
 | `draw` | nincs győztes | CS2 |
 | `objective` | célpont elfoglalva vagy megtartva (túsz kimentve, terület biztosítva) | Rainbow Six Siege |
-| `capture` | elfogytak a jegyek, miközben a győztes tartotta az elfoglalási zónákat | War Thunder |
+| `capture` | elfogytak a jegyek, miközben a győztes tartotta az elfoglalási zónákat; DCS: egy állandó hadjárat, amelyet minden repülőtér és zóna elfoglalásával nyertek meg | War Thunder, DCS |
 | `tickets` | ölések miatt elvesztett jegyek | War Thunder |
 | `destruction` | az utolsó járművek egyszerre elvesztek, senki nem maradt, aki újraéledhet | War Thunder |
 | `other` | bármi más | |

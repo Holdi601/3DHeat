@@ -3,7 +3,7 @@ title: "Referenz der Datenformate"
 nav_order: 19
 lang: "de"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -96,7 +96,7 @@ Eine Parquet-Spalte vom Typ `TIMESTAMP`, die als Filterspalte behalten wird, ist
 
 ## Ergebnisspalten {#outcome-columns}
 
-Wer gewonnen hat, in jeder Zeile. So lässt sich ein Ort, ein Weg oder ein Spielzug danach beurteilen, wie oft seine Seite danach gewonnen hat ([Siegquote](win-rate.md)). Der Viewer behält diese Spalten von selbst, listet sie in den [Filtern](filters.md) zuerst, in der Sprache des Viewers, und liest sie in der [Siegquoten-Karte](win-rate.md), der [Aufschlüsselung](breakdown.md) und der [Volumen-Statistik](volumes.md#statistics). Ein Konverter für ein rundenbasiertes Spiel (CS2, Valorant, Rainbow Six Siege) oder ein matchbasiertes (War Thunder) schreibt alle vier:
+Wer gewonnen hat, in jeder Zeile. So lässt sich ein Ort, ein Weg oder ein Spielzug danach beurteilen, wie oft seine Seite danach gewonnen hat ([Siegquote](win-rate.md)). Der Viewer behält diese Spalten von selbst, listet sie in den [Filtern](filters.md) zuerst, in der Sprache des Viewers, und liest sie in der [Siegquoten-Karte](win-rate.md), der [Aufschlüsselung](breakdown.md) und der [Volumen-Statistik](volumes.md#statistics). Ein Konverter für ein rundenbasiertes Spiel (CS2, Valorant, Rainbow Six Siege) oder ein matchbasiertes (War Thunder) schreibt alle vier; der Tacview-Konverter schreibt sie für die Kampagnen eines DCS-Servers, wo eine Rundendatei sagt, wer gewonnen hat ([DCS-Server](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)):
 
 | Spalte | Typ | Bedeutung |
 |---|---|---|
@@ -118,7 +118,7 @@ Die Gründe für das Ende, gemeinsam für alle Spiele, damit ein Filter für all
 | `surrender` | eine Seite hat aufgegeben | CS2, Valorant, Rainbow Six Siege |
 | `draw` | kein Sieger | CS2 |
 | `objective` | ein Ziel eingenommen oder gehalten (Geisel befreit, Bereich gesichert) | Rainbow Six Siege |
-| `capture` | Tickets ausgeblutet, während der Sieger Eroberungszonen hielt | War Thunder |
+| `capture` | Tickets ausgeblutet, während der Sieger Eroberungszonen hielt; DCS: eine persistente Kampagne, gewonnen durch die Einnahme jedes Flugplatzes und jeder Zone | War Thunder, DCS |
 | `tickets` | Tickets durch Abschüsse verloren | War Thunder |
 | `destruction` | die letzten Fahrzeuge auf einmal verloren, niemand mehr übrig zum Spawnen | War Thunder |
 | `other` | alles andere | |

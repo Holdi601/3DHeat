@@ -4,7 +4,7 @@ parent: "Рэжымы цеплыні"
 nav_order: 13
 lang: "be"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ outdated: false
 
 *На малюнку выдуманыя даныя: тры маршруты на пустым узроўні, 68 %, 50 % і 33 % іх радкоў у выйграных раўндах.*
 
-Патрэбныя даныя, якія кажуць, хто перамог: [слупкі выніку](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Іх запісваюць канвертары CS2 і War Thunder; любы файл таксама можа.
+Патрэбныя даныя, якія кажуць, хто перамог: [слупкі выніку](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Іх запісваюць канвертары CS2 і War Thunder, а канвертар Tacview - для кампаній сервера DCS ([Серверы DCS](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); любы файл таксама можа.
 
 ## Паспрабуйце {#try-it}
 

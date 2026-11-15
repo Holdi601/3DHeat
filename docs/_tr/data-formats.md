@@ -3,7 +3,7 @@ title: "Veri biçimleri başvurusu"
 nav_order: 19
 lang: "tr"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -96,7 +96,7 @@ Süzgeç sütunu olarak tutulan bir Parquet `TIMESTAMP` sütunu, epoch milisaniy
 
 ## Sonuç sütunları {#outcome-columns}
 
-Kimin kazandığı, her satırda; böylece bir yer, bir rota ya da bir hamle, tarafının ardından ne sıklıkla kazandığına göre değerlendirilebilir ([Kazanma oranı](win-rate.md)). Görüntüleyici bu sütunları kendiliğinden tutar, [filtrelerde](filters.md) görüntüleyicinin dilinde ilk sırada listeler, ve [kazanma oranı haritasında](win-rate.md), [dökümde](breakdown.md) ve [hacim istatistiklerinde](volumes.md#statistics) okur. Raunt tabanlı bir oyun (CS2, Valorant, Rainbow Six Siege) ya da maç tabanlı bir oyun (War Thunder) için bir dönüştürücü dördünü de yazar:
+Kimin kazandığı, her satırda; böylece bir yer, bir rota ya da bir hamle, tarafının ardından ne sıklıkla kazandığına göre değerlendirilebilir ([Kazanma oranı](win-rate.md)). Görüntüleyici bu sütunları kendiliğinden tutar, [filtrelerde](filters.md) görüntüleyicinin dilinde ilk sırada listeler, ve [kazanma oranı haritasında](win-rate.md), [dökümde](breakdown.md) ve [hacim istatistiklerinde](volumes.md#statistics) okur. Raunt tabanlı bir oyun (CS2, Valorant, Rainbow Six Siege) ya da maç tabanlı bir oyun (War Thunder) için bir dönüştürücü dördünü de yazar; Tacview dönüştürücüsü bunları, bir tur dosyasının kimin kazandığını söylediği DCS sunucusu seferleri için yazar ([DCS sunucuları](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)):
 
 | Sütun | Tür | Anlam |
 |---|---|---|
@@ -118,7 +118,7 @@ Bitiş nedenleri her oyunda ortaktır, böylece tek bir filtre hepsinde çalış
 | `surrender` | bir taraf pes etti | CS2, Valorant, Rainbow Six Siege |
 | `draw` | kazanan yok | CS2 |
 | `objective` | bir hedef alındı ya da tutuldu (rehine çıkarıldı, alan güvenceye alındı) | Rainbow Six Siege |
-| `capture` | kazanan ele geçirme bölgelerini tutarken biletler tükendi | War Thunder |
+| `capture` | kazanan ele geçirme bölgelerini tutarken biletler tükendi; DCS: her havaalanı ve bölge alınarak kazanılan kalıcı bir sefer | War Thunder, DCS |
 | `tickets` | öldürmeler yüzünden biletler kaybedildi | War Thunder |
 | `destruction` | son araçlar bir anda kaybedildi, yeniden doğacak kimse kalmadı | War Thunder |
 | `other` | başka her şey | |

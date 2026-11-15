@@ -4,7 +4,7 @@ parent: "Нивои и геометрија позадине"
 nav_order: 1
 lang: "sr"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ outdated: false
 
 ### 3D мапа {#the-3d-map}
 
-Са инсталираном игром Dota 2, Watcher-ова команда [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) (`python -m heat3d_watch dota-map -o dota.glb`) прави мапу у 3D од сопствених датотека игре: тло, литице, вода, дрвеће и зграде, у јединицама и осама табела из снимака. Учитајте датотеку једном преко **3D модел…**: прегледач је препознаје по деловима (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` у `dotaMap.ts`), одмах је ставља у [библиотеку нивоа](level-library.md), замењујући старију, и то јавља. Од тада **Мапа игре Dota 2** учитава ту 3D мапу из библиотеке уместо да преузима цртеж; ако је у библиотеци нема, преузима цртеж и каже како се прави 3D мапа. Датотека потиче из ваше сопствене инсталације и остаје на вашем рачунару.
+Са инсталираном игром Dota 2, засебан алат [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) (`heat3d-dota-maps level -o dota.glb`; покреће га и Watcher-ова команда [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html)) прави мапу у 3D од сопствених датотека игре: тло, литице, вода, дрвеће и зграде, у јединицама и осама табела из снимака. Учитајте датотеку једном преко **3D модел…**: прегледач је препознаје по деловима (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` у `dotaMap.ts`), одмах је ставља у [библиотеку нивоа](level-library.md), замењујући старију, и то јавља. Од тада **Мапа игре Dota 2** учитава ту 3D мапу из библиотеке уместо да преузима цртеж; ако је у библиотеци нема, преузима цртеж и каже како се прави 3D мапа. Датотека потиче из ваше сопствене инсталације и остаје на вашем рачунару.
 
 ## За програмере {#for-developers}
 

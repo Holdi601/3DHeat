@@ -4,7 +4,7 @@ parent: "Leibhéil agus geoiméadracht chúlra"
 nav_order: 1
 lang: "ga"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -68,7 +68,7 @@ Is le OpenDota an líníocht, de léarscáil Valve; ní fhaomhann Valve 3DHeat.
 
 ### An léarscáil 3T {#the-3d-map}
 
-Le Dota 2 suiteáilte, déanann ordú [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) an Watcher (`python -m heat3d_watch dota-map -o dota.glb`) an léarscáil i 3T ó chomhaid an chluiche féin: talamh, aillte, uisce, crainn agus foirgnimh, in aonaid agus in aiseanna tháblaí na n-athsheinmeanna. Lódáil an comhad uair amháin le **Samhail 3T…**: aithníonn an breathnóir é ar a chodanna (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` in `dotaMap.ts`), cuireann sé sa [leabharlann leibhéal](level-library.md) láithreach é in áit cinn níos sine, agus deir sé amhlaidh. Ón uair sin, lódálann **Léarscáil Dota 2** an léarscáil 3T sin ón leabharlann in ionad an líníocht a íoslódáil; mura bhfuil ceann sa leabharlann, íoslódálann sé an líníocht agus insíonn sé conas an léarscáil 3T a dhéanamh. Is ó do shuiteáil féin a thagann an comhad agus fanann sé ar do ríomhaire.
+Le Dota 2 suiteáilte, déanann an uirlis ar leith [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) (`heat3d-dota-maps level -o dota.glb`; ritheann ordú [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) an Watcher í freisin) an léarscáil i 3T ó chomhaid an chluiche féin: talamh, aillte, uisce, crainn agus foirgnimh, in aonaid agus in aiseanna tháblaí na n-athsheinmeanna. Lódáil an comhad uair amháin le **Samhail 3T…**: aithníonn an breathnóir é ar a chodanna (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` in `dotaMap.ts`), cuireann sé sa [leabharlann leibhéal](level-library.md) láithreach é in áit cinn níos sine, agus deir sé amhlaidh. Ón uair sin, lódálann **Léarscáil Dota 2** an léarscáil 3T sin ón leabharlann in ionad an líníocht a íoslódáil; mura bhfuil ceann sa leabharlann, íoslódálann sé an líníocht agus insíonn sé conas an léarscáil 3T a dhéanamh. Is ó do shuiteáil féin a thagann an comhad agus fanann sé ar do ríomhaire.
 
 ## Do fhorbróirí {#for-developers}
 

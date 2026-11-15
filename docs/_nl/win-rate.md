@@ -4,7 +4,7 @@ parent: "Warmtemodi"
 nav_order: 13
 lang: "nl"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ Waar een speler staat, welke weg hij neemt, waar hij zijn granaten gooit, en hoe
 
 *De afbeelding toont verzonnen gegevens: drie routes op een leeg level, met 68%, 50% en 33% van hun rijen in gewonnen rondes.*
 
-Er zijn gegevens nodig die zeggen wie won: de [uitslagkolommen](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). De converters voor CS2 en War Thunder schrijven ze; elk bestand kan ze hebben.
+Er zijn gegevens nodig die zeggen wie won: de [uitslagkolommen](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). De converters voor CS2 en War Thunder schrijven ze, de Tacview-converter voor de campagnes van een DCS-server ([DCS-servers](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); elk bestand kan ze hebben.
 
 ## Probeer het {#try-it}
 

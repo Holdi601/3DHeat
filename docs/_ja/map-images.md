@@ -4,7 +4,7 @@ parent: "レベルと背景のジオメトリ"
 nav_order: 1
 lang: "ja"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ outdated: false
 
 ### 3D マップ {#the-3d-map}
 
-Dota 2 がインストールされていれば、Watcher の [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) コマンド（`python -m heat3d_watch dota-map -o dota.glb`）がゲーム自身のファイルからマップを 3D で作ります。地面、崖、水、木、建物を、リプレイのテーブルと同じ単位と軸で作成します。このファイルを **3Dモデル…** で一度読み込むと、ビューアーはそのパーツ（`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`。`dotaMap.ts` の `isDotaLevel`）で Dota のマップと見分け、すぐに[レベルライブラリ](level-library.md)へ入れ（古いものは置き換えます）、そのことを表示します。以後、**Dota 2 マップ** は図をダウンロードする代わりに、ライブラリからこの 3D マップを読み込みます。ライブラリにない場合は図をダウンロードし、3D マップの作り方を表示します。このファイルはご自身のインストールから作られ、お使いのマシンに留まります。
+Dota 2 がインストールされていれば、別のツールである [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/)（`heat3d-dota-maps level -o dota.glb`。Watcher の [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) コマンドもこれを実行します）がゲーム自身のファイルからマップを 3D で作ります。地面、崖、水、木、建物を、リプレイのテーブルと同じ単位と軸で作成します。このファイルを **3Dモデル…** で一度読み込むと、ビューアーはそのパーツ（`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`。`dotaMap.ts` の `isDotaLevel`）で Dota のマップと見分け、すぐに[レベルライブラリ](level-library.md)へ入れ（古いものは置き換えます）、そのことを表示します。以後、**Dota 2 マップ** は図をダウンロードする代わりに、ライブラリからこの 3D マップを読み込みます。ライブラリにない場合は図をダウンロードし、3D マップの作り方を表示します。このファイルはご自身のインストールから作られ、お使いのマシンに留まります。
 
 ## 開発者向け {#for-developers}
 

@@ -4,7 +4,7 @@ parent: "Niveles y geometría de fondo"
 nav_order: 1
 lang: "es"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ El dibujo es de OpenDota, del mapa de Valve; Valve no respalda a 3DHeat.
 
 ### El mapa 3D {#the-3d-map}
 
-Con Dota 2 instalado, el comando [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) del Watcher (`python -m heat3d_watch dota-map -o dota.glb`) crea el mapa en 3D a partir de los propios archivos del juego: terreno, acantilados, agua, árboles y edificios, en las unidades y los ejes de las tablas de las repeticiones. Carga el archivo una vez con **Modelo 3D…**: el visor lo reconoce por sus partes (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` en `dotaMap.ts`), lo guarda en el acto en la [biblioteca de niveles](level-library.md), sustituyendo uno anterior, y lo indica. A partir de entonces, **Mapa de Dota 2** carga ese mapa 3D de la biblioteca en lugar de descargar el dibujo; si no hay ninguno en la biblioteca, descarga el dibujo y explica cómo crear el mapa 3D. El archivo sale de tu propia instalación y se queda en tu equipo.
+Con Dota 2 instalado, la herramienta aparte [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) (`heat3d-dota-maps level -o dota.glb`; el comando [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) del Watcher también la ejecuta) crea el mapa en 3D a partir de los propios archivos del juego: terreno, acantilados, agua, árboles y edificios, en las unidades y los ejes de las tablas de las repeticiones. Carga el archivo una vez con **Modelo 3D…**: el visor lo reconoce por sus partes (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` en `dotaMap.ts`), lo guarda en el acto en la [biblioteca de niveles](level-library.md), sustituyendo uno anterior, y lo indica. A partir de entonces, **Mapa de Dota 2** carga ese mapa 3D de la biblioteca en lugar de descargar el dibujo; si no hay ninguno en la biblioteca, descarga el dibujo y explica cómo crear el mapa 3D. El archivo sale de tu propia instalación y se queda en tu equipo.
 
 ## Para desarrolladores {#for-developers}
 

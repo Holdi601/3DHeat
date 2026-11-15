@@ -4,7 +4,7 @@ parent: "Varmemodi"
 nav_order: 13
 lang: "no"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ Hvor en spiller står, hvilken vei de går, hvor de kaster utstyret sitt - og hv
 
 *Bildet er oppdiktede data: tre ruter på en tom bane, med 68 %, 50 % og 33 % av radene sine i vunne runder.*
 
-Det trenger data som sier hvem som vant: [resultatkolonnene](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Konverterne for CS2 og War Thunder skriver dem; enhver fil kan gjøre det.
+Det trenger data som sier hvem som vant: [resultatkolonnene](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Konverterne for CS2 og War Thunder skriver dem, Tacview-konverteren for en DCS-servers kampanjer ([DCS-servere](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); enhver fil kan gjøre det.
 
 ## Prøv det {#try-it}
 

@@ -4,7 +4,7 @@ parent: "關卡與背景幾何"
 nav_order: 1
 lang: "zh-Hant"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ outdated: false
 
 ### 3D 地圖 {#the-3d-map}
 
-安裝了 Dota 2 後，Watcher 的 [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) 指令（`python -m heat3d_watch dota-map -o dota.glb`）會從遊戲本身的檔案產生 3D 地圖：地面、懸崖、水、樹木與建築，採用重播資料表的單位與座標軸。用 **3D 模型…** 載入該檔案一次：檢視器會從它的部件（`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`；`dotaMap.ts` 中的 `isDotaLevel`）認出它，立即放進[關卡庫](level-library.md)並取代較舊的一份，同時告訴你。此後 **Dota 2 地圖** 會從關卡庫載入這張 3D 地圖，而不是下載圖稿；關卡庫裡沒有時，它會下載圖稿並說明如何製作 3D 地圖。該檔案來自你自己的安裝，並留在你的電腦上。
+安裝了 Dota 2 後，獨立的 [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) 工具（`heat3d-dota-maps level -o dota.glb`；Watcher 的 [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) 指令也會執行它）會從遊戲本身的檔案產生 3D 地圖：地面、懸崖、水、樹木與建築，採用重播資料表的單位與座標軸。用 **3D 模型…** 載入該檔案一次：檢視器會從它的部件（`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`；`dotaMap.ts` 中的 `isDotaLevel`）認出它，立即放進[關卡庫](level-library.md)並取代較舊的一份，同時告訴你。此後 **Dota 2 地圖** 會從關卡庫載入這張 3D 地圖，而不是下載圖稿；關卡庫裡沒有時，它會下載圖稿並說明如何製作 3D 地圖。該檔案來自你自己的安裝，並留在你的電腦上。
 
 ## 給開發者 {#for-developers}
 

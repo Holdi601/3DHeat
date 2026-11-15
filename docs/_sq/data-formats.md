@@ -3,7 +3,7 @@ title: "Referenca e formateve të të dhënave"
 nav_order: 19
 lang: "sq"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -96,7 +96,7 @@ Një kolonë Parquet `TIMESTAMP` e mbajtur si kolonë filtri është një *inter
 
 ## Kolonat e rezultatit {#outcome-columns}
 
-Kush fitoi, në çdo rresht, që një vend, një rrugë ose një lëvizje të gjykohet nga sa shpesh pala e saj fitoi më pas ([Shkalla e fitoreve](win-rate.md)). Shikuesi i mban vetë këto kolona, i rendit të parat te [filtrat](filters.md) në gjuhën e shikuesit, dhe i lexon te [harta e shkallës së fitoreve](win-rate.md), te [zbërthimi](breakdown.md) dhe te [statistikat e vëllimeve](volumes.md#statistics). Një konvertues për një lojë me raunde (CS2, Valorant, Rainbow Six Siege) ose me ndeshje (War Thunder) i shkruan të katërta:
+Kush fitoi, në çdo rresht, që një vend, një rrugë ose një lëvizje të gjykohet nga sa shpesh pala e saj fitoi më pas ([Shkalla e fitoreve](win-rate.md)). Shikuesi i mban vetë këto kolona, i rendit të parat te [filtrat](filters.md) në gjuhën e shikuesit, dhe i lexon te [harta e shkallës së fitoreve](win-rate.md), te [zbërthimi](breakdown.md) dhe te [statistikat e vëllimeve](volumes.md#statistics). Një konvertues për një lojë me raunde (CS2, Valorant, Rainbow Six Siege) ose me ndeshje (War Thunder) i shkruan të katërta; konvertuesi Tacview i shkruan për fushatat e një serveri DCS, kur një skedar raundesh tregon kush fitoi ([Serverët DCS](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)):
 
 | Kolona | Lloji | Kuptimi |
 |---|---|---|
@@ -118,7 +118,7 @@ Arsyet e mbarimit, të përbashkëta për çdo lojë që një filtër të punoj�
 | `surrender` | një palë u dorëzua | CS2, Valorant, Rainbow Six Siege |
 | `draw` | asnjë fitues | CS2 |
 | `objective` | një objektiv i marrë ose i mbajtur (peng i nxjerrë, zonë e siguruar) | Rainbow Six Siege |
-| `capture` | biletat mbaruan ndërsa fituesi mbante zonat e kapjes | War Thunder |
+| `capture` | biletat mbaruan ndërsa fituesi mbante zonat e kapjes; DCS: një fushatë e përhershme e fituar duke marrë çdo aeroport dhe zonë | War Thunder, DCS |
 | `tickets` | bileta të humbura nga asgjësimet | War Thunder |
 | `destruction` | mjetet e fundit të humbura njëherësh, askush nuk mbeti për t'u rishfaqur | War Thunder |
 | `other` | çdo gjë tjetër | |

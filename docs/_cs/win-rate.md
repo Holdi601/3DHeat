@@ -4,7 +4,7 @@ parent: "Režimy tepla"
 nav_order: 13
 lang: "cs"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ Kde hráč stojí, kudy jde, kam hází granáty – a jak často jeho strana po
 
 *Obrázek ukazuje vymyšlená data: tři trasy na prázdném levelu, 68 %, 50 % a 33 % jejich řádků ve vyhraných kolech.*
 
-Potřebuje data, která říkají, kdo vyhrál: [sloupce výsledku](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Zapisují je převodníky pro CS2 a War Thunder; může je mít jakýkoli soubor.
+Potřebuje data, která říkají, kdo vyhrál: [sloupce výsledku](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Zapisují je převodníky pro CS2 a War Thunder, převodník Tacview pro kampaně serveru DCS ([Servery DCS](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); může je mít jakýkoli soubor.
 
 ## Vyzkoušejte to {#try-it}
 

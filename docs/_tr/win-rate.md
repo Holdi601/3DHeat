@@ -4,7 +4,7 @@ parent: "Isı modları"
 nav_order: 13
 lang: "tr"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ Bir oyuncunun nerede durduğu, nereye gittiği, el bombalarını nereden attığ
 
 *Resimdeki veriler uydurmadır: boş bir seviyede üç rota, satırlarının %68'i, %50'si ve %33'ü kazanılan rauntlarda.*
 
-Kimin kazandığını söyleyen veri gerekir: [sonuç sütunları](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). CS2 ve War Thunder dönüştürücüleri bunları yazar; herhangi bir dosya da içerebilir.
+Kimin kazandığını söyleyen veri gerekir: [sonuç sütunları](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). CS2 ve War Thunder dönüştürücüleri bunları yazar, Tacview dönüştürücüsü de DCS sunucusu seferleri için ([DCS sunucuları](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); herhangi bir dosya da içerebilir.
 
 ## Deneyin {#try-it}
 

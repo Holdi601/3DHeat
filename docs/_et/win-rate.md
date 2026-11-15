@@ -4,7 +4,7 @@ parent: "Soojusrežiimid"
 nav_order: 13
 lang: "et"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ Kus mängija seisab, kuhu ta liigub, kuhu ta oma abivahendeid viskab - ja kui ti
 
 *Pilt on väljamõeldud andmed: kolm marsruuti tühjal tasemel, nende ridadest 68%, 50% ja 33% võidetud raundides.*
 
-Selleks on vaja andmeid, mis ütlevad, kes võitis: [tulemuse veerge](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). CS2 ja War Thunderi konverterid kirjutavad need; need võivad olla igas failis.
+Selleks on vaja andmeid, mis ütlevad, kes võitis: [tulemuse veerge](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). CS2 ja War Thunderi konverterid kirjutavad need, Tacview konverter DCS-serveri kampaaniate jaoks ([DCS-serverid](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); need võivad olla igas failis.
 
 ## Proovi {#try-it}
 

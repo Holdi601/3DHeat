@@ -4,7 +4,7 @@ parent: "Intensitätsmodi"
 nav_order: 13
 lang: "de"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ Wo ein Spieler steht, welchen Weg er nimmt, wohin er seine Granaten wirft – un
 
 *Das Bild zeigt erfundene Daten: drei Wege auf einem leeren Level, 68 %, 50 % und 33 % ihrer Zeilen in gewonnenen Runden.*
 
-Dafür braucht es Daten, die sagen, wer gewonnen hat: die [Ergebnisspalten](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Die Konverter für CS2 und War Thunder schreiben sie; jede Datei kann sie haben.
+Dafür braucht es Daten, die sagen, wer gewonnen hat: die [Ergebnisspalten](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Die Konverter für CS2 und War Thunder schreiben sie, der Tacview-Konverter für die Kampagnen eines DCS-Servers ([DCS-Server](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); jede Datei kann sie haben.
 
 ## Ausprobieren {#try-it}
 

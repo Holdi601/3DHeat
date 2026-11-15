@@ -4,7 +4,7 @@ parent: "Värmelägen"
 nav_order: 13
 lang: "sv"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ Var en spelare står, vilken väg de går, var de kastar sin utrustning - och hu
 
 *Bilden är påhittade data: tre vägar på en tom bana, med 68 %, 50 % och 33 % av sina rader i vunna ronder.*
 
-Den behöver data som säger vem som vann: [resultatkolumnerna](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Konverterarna för CS2 och War Thunder skriver dem; vilken fil som helst kan göra det.
+Den behöver data som säger vem som vann: [resultatkolumnerna](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). Konverterarna för CS2 och War Thunder skriver dem, Tacview-konverteraren för en DCS-servers kampanjer ([DCS-servrar](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); vilken fil som helst kan göra det.
 
 ## Prova {#try-it}
 

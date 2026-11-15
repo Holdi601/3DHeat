@@ -4,7 +4,7 @@ parent: "Рівні та фонова геометрія"
 nav_order: 1
 lang: "uk"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ outdated: false
 
 ### 3D-мапа {#the-3d-map}
 
-Якщо Dota 2 встановлено, команда [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) із Watcher (`python -m heat3d_watch dota-map -o dota.glb`) створює мапу в 3D із власних файлів гри: земля, скелі, вода, дерева та будівлі, в одиницях і осях таблиць із повторів. Завантажте файл один раз через **3D-модель…**: програма впізнає його за частинами (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` у `dotaMap.ts`), одразу кладе до [бібліотеки рівнів](level-library.md), замінюючи старішу, і повідомляє про це. Відтоді **Мапа Dota 2** завантажує цю 3D-мапу з бібліотеки замість того, щоб завантажувати малюнок; якщо в бібліотеці її немає, кнопка завантажує малюнок і пояснює, як зробити 3D-мапу. Файл походить із вашої власної інсталяції й залишається на вашому комп'ютері.
+Якщо Dota 2 встановлено, окремий інструмент [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) (`heat3d-dota-maps level -o dota.glb`; команда [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) із Watcher теж його запускає) створює мапу в 3D із власних файлів гри: земля, скелі, вода, дерева та будівлі, в одиницях і осях таблиць із повторів. Завантажте файл один раз через **3D-модель…**: програма впізнає його за частинами (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` у `dotaMap.ts`), одразу кладе до [бібліотеки рівнів](level-library.md), замінюючи старішу, і повідомляє про це. Відтоді **Мапа Dota 2** завантажує цю 3D-мапу з бібліотеки замість того, щоб завантажувати малюнок; якщо в бібліотеці її немає, кнопка завантажує малюнок і пояснює, як зробити 3D-мапу. Файл походить із вашої власної інсталяції й залишається на вашому комп'ютері.
 
 ## Для розробників {#for-developers}
 

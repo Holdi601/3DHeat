@@ -3,7 +3,7 @@ title: "Referință pentru formatele de date"
 nav_order: 19
 lang: "ro"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -96,7 +96,7 @@ O coloană Parquet `TIMESTAMP` păstrată ca filtru este un *interval* de milise
 
 ## Coloanele de rezultat {#outcome-columns}
 
-Cine a câștigat, pe fiecare rând, ca un loc, un traseu sau o acțiune să poată fi judecat după cât de des partea lui a câștigat apoi ([Rata de victorie](win-rate.md)). Vizualizatorul păstrează singur aceste coloane, le arată primele în [filtre](filters.md) în limba vizualizatorului și le citește în [harta ratei de victorie](win-rate.md), în [defalcare](breakdown.md) și în [statisticile volumelor](volumes.md#statistics). Un convertor pentru un joc pe runde (CS2, Valorant, Rainbow Six Siege) sau unul pe meciuri (War Thunder) le scrie pe toate patru:
+Cine a câștigat, pe fiecare rând, ca un loc, un traseu sau o acțiune să poată fi judecat după cât de des partea lui a câștigat apoi ([Rata de victorie](win-rate.md)). Vizualizatorul păstrează singur aceste coloane, le arată primele în [filtre](filters.md) în limba vizualizatorului și le citește în [harta ratei de victorie](win-rate.md), în [defalcare](breakdown.md) și în [statisticile volumelor](volumes.md#statistics). Un convertor pentru un joc pe runde (CS2, Valorant, Rainbow Six Siege) sau unul pe meciuri (War Thunder) le scrie pe toate patru; convertorul Tacview le scrie pentru campaniile unui server DCS, acolo unde un fișier de runde spune cine a câștigat ([Servere DCS](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)):
 
 | Coloană | Tip | Înțeles |
 |---|---|---|
@@ -118,7 +118,7 @@ Motivele de încheiere, comune tuturor jocurilor, ca un singur filtru să mearg�
 | `surrender` | o parte a renunțat | CS2, Valorant, Rainbow Six Siege |
 | `draw` | niciun câștigător | CS2 |
 | `objective` | un obiectiv luat sau ținut (ostatic extras, zonă securizată) | Rainbow Six Siege |
-| `capture` | rămas fără tichete cât timp câștigătorul a ținut zonele de captură | War Thunder |
+| `capture` | rămas fără tichete cât timp câștigătorul a ținut zonele de captură; DCS: o campanie persistentă câștigată prin luarea fiecărui aerodrom și a fiecărei zone | War Thunder, DCS |
 | `tickets` | tichete pierdute prin doborâri | War Thunder |
 | `destruction` | ultimele vehicule pierdute deodată, nimeni rămas care să reapară | War Thunder |
 | `other` | orice altceva | |

@@ -3,7 +3,7 @@ title: "数据格式参考"
 nav_order: 19
 lang: "zh"
 source: "data-formats.md"
-source_hash: "23c1890ce185"
+source_hash: "3b120416f7a6"
 translated: true
 outdated: false
 ---
@@ -96,7 +96,7 @@ x,y,z,t,player,team
 
 ## 结果列 {#outcome-columns}
 
-谁获胜，记在每一行上，这样就能按一个位置、一条路线或一次战术所在的一方之后多常获胜来评判它（[胜率](win-rate.md)）。查看器会自行保留这些列，用查看器的语言把它们列在 [筛选](filters.md) 的最前面，并在 [胜率地图](win-rate.md)、[明细](breakdown.md) 和 [体积统计](volumes.md#statistics) 中读取它们。回合制游戏（CS2、Valorant、Rainbow Six Siege）或按比赛计的游戏（War Thunder）的转换器会写入全部四列：
+谁获胜，记在每一行上，这样就能按一个位置、一条路线或一次战术所在的一方之后多常获胜来评判它（[胜率](win-rate.md)）。查看器会自行保留这些列，用查看器的语言把它们列在 [筛选](filters.md) 的最前面，并在 [胜率地图](win-rate.md)、[明细](breakdown.md) 和 [体积统计](volumes.md#statistics) 中读取它们。回合制游戏（CS2、Valorant、Rainbow Six Siege）或按比赛计的游戏（War Thunder）的转换器会写入全部四列；对于有回合文件写明胜者的 DCS 服务器战役，Tacview 转换器也会写入它们（[DCS 服务器](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)）：
 
 | 列 | 类型 | 含义 |
 |---|---|---|
@@ -118,7 +118,7 @@ x,y,z,t,player,team
 | `surrender` | 一方投降 | CS2、Valorant、Rainbow Six Siege |
 | `draw` | 没有胜者 | CS2 |
 | `objective` | 夺取或守住了目标（救出人质、确保区域） | Rainbow Six Siege |
-| `capture` | 胜者占领着占领区时票数被耗尽 | War Thunder |
+| `capture` | 胜者占领着占领区时票数被耗尽；DCS：通过夺下每个机场和区域而赢得的持久型战役 | War Thunder, DCS |
 | `tickets` | 因击杀而失去票数 | War Thunder |
 | `destruction` | 最后的载具同时损失，没有人可以再出生 | War Thunder |
 | `other` | 其他任何情况 | |

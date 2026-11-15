@@ -4,7 +4,7 @@ parent: "Razine i geometrija pozadine"
 nav_order: 1
 lang: "hr"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ Crtež je OpenDotin, Valveove karte; Valve ne odobrava 3DHeat.
 
 ### 3D karta {#the-3d-map}
 
-Uz instaliranu Dotu 2, Watcherova naredba [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) (`python -m heat3d_watch dota-map -o dota.glb`) izrađuje kartu u 3D-u iz vlastitih datoteka igre: tlo, litice, voda, drveće i zgrade, u jedinicama i osima tablica iz snimki. Učitajte datoteku jednom putem **3D model…**: preglednik je prepoznaje po dijelovima (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` u `dotaMap.ts`), odmah je sprema u [biblioteku razina](level-library.md), zamjenjujući stariju, i to javlja. Od tada **Karta Dote 2** učitava tu 3D kartu iz biblioteke umjesto da preuzima crtež; ako je u biblioteci nema, preuzima crtež i kaže kako izraditi 3D kartu. Datoteka dolazi iz vaše vlastite instalacije i ostaje na vašem računalu.
+Uz instaliranu Dotu 2, zaseban alat [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) (`heat3d-dota-maps level -o dota.glb`; pokreće ga i Watcherova naredba [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html)) izrađuje kartu u 3D-u iz vlastitih datoteka igre: tlo, litice, voda, drveće i zgrade, u jedinicama i osima tablica iz snimki. Učitajte datoteku jednom putem **3D model…**: preglednik je prepoznaje po dijelovima (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` u `dotaMap.ts`), odmah je sprema u [biblioteku razina](level-library.md), zamjenjujući stariju, i to javlja. Od tada **Karta Dote 2** učitava tu 3D kartu iz biblioteke umjesto da preuzima crtež; ako je u biblioteci nema, preuzima crtež i kaže kako izraditi 3D kartu. Datoteka dolazi iz vaše vlastite instalacije i ostaje na vašem računalu.
 
 ## Za razvojne programere {#for-developers}
 

@@ -4,7 +4,7 @@ parent: "Узроўні і фонавая геаметрыя"
 nav_order: 1
 lang: "be"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ outdated: false
 
 ### 3D-мапа {#the-3d-map}
 
-Калі Dota 2 усталяваная, каманда Watcher [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) (`python -m heat3d_watch dota-map -o dota.glb`) робіць мапу ў 3D з уласных файлаў гульні: зямля, скалы, вада, дрэвы і будынкі, у адзінках і восях табліц паўтораў. Загрузіце файл адзін раз праз **3D-мадэль…**: праграма пазнае яго па частках (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` у `dotaMap.ts`), адразу кладзе ў [бібліятэку ўзроўняў](level-library.md), замяняючы старэйшую, і паведамляе пра гэта. Пасля гэтага **Мапа Dota 2** загружае гэтую 3D-мапу з бібліятэкі замест таго, каб спампоўваць малюнак; калі ў бібліятэцы яе няма, кнопка спампоўвае малюнак і расказвае, як зрабіць 3D-мапу. Файл паходзіць з вашай уласнай усталёўкі і застаецца на вашай машыне.
+Калі Dota 2 усталяваная, асобны інструмент [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) (`heat3d-dota-maps level -o dota.glb`; каманда Watcher [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) таксама яго запускае) робіць мапу ў 3D з уласных файлаў гульні: зямля, скалы, вада, дрэвы і будынкі, у адзінках і восях табліц паўтораў. Загрузіце файл адзін раз праз **3D-мадэль…**: праграма пазнае яго па частках (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` у `dotaMap.ts`), адразу кладзе ў [бібліятэку ўзроўняў](level-library.md), замяняючы старэйшую, і паведамляе пра гэта. Пасля гэтага **Мапа Dota 2** загружае гэтую 3D-мапу з бібліятэкі замест таго, каб спампоўваць малюнак; калі ў бібліятэцы яе няма, кнопка спампоўвае малюнак і расказвае, як зрабіць 3D-мапу. Файл паходзіць з вашай уласнай усталёўкі і застаецца на вашай машыне.
 
 ## Для распрацоўшчыкаў {#for-developers}
 

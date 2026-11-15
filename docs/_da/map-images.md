@@ -4,7 +4,7 @@ parent: "Baner og baggrundsgeometri"
 nav_order: 1
 lang: "da"
 source: "map-images.md"
-source_hash: "e7a4a651d75d"
+source_hash: "f0bbaa4b019e"
 translated: true
 outdated: false
 ---
@@ -67,7 +67,7 @@ Tegningen er OpenDotas, af Valves kort; Valve godkender ikke 3DHeat.
 
 ### 3D-kortet {#the-3d-map}
 
-Med Dota 2 installeret laver Watchers kommando [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) (`python -m heat3d_watch dota-map -o dota.glb`) kortet i 3D ud fra spillets egne filer: terræn, klipper, vand, træer og bygninger, i replay-tabellernes enheder og akser. Indlæs filen én gang med **3D-model …**: vieweren kender den på dens dele (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` i `dotaMap.ts`), lægger den straks i [banebiblioteket](level-library.md), hvor den erstatter en ældre, og siger det. Derefter indlæser **Dota 2-kort** dette 3D-kort fra biblioteket i stedet for at hente tegningen; er der intet i biblioteket, henter den tegningen og fortæller, hvordan man laver 3D-kortet. Filen kommer fra din egen installation og bliver på din maskine.
+Med Dota 2 installeret laver det separate værktøj [3DHeat Dota](https://holdi601.github.io/3DHeat-Ext-Dota/) (`heat3d-dota-maps level -o dota.glb`; Watchers kommando [`dota-map`](https://holdi601.github.io/3DHeat-Watcher/dota-map.html) kører det også) kortet i 3D ud fra spillets egne filer: terræn, klipper, vand, træer og bygninger, i replay-tabellernes enheder og akser. Indlæs filen én gang med **3D-model …**: vieweren kender den på dens dele (`ground:terrain`, `structure:tower`, `structure:ancient`, `structure:tree`; `isDotaLevel` i `dotaMap.ts`), lægger den straks i [banebiblioteket](level-library.md), hvor den erstatter en ældre, og siger det. Derefter indlæser **Dota 2-kort** dette 3D-kort fra biblioteket i stedet for at hente tegningen; er der intet i biblioteket, henter den tegningen og fortæller, hvordan man laver 3D-kortet. Filen kommer fra din egen installation og bliver på din maskine.
 
 ## For udviklere {#for-developers}
 

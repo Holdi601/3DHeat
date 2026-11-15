@@ -4,7 +4,7 @@ parent: "Šilumos režimai"
 nav_order: 13
 lang: "lt"
 source: "win-rate.md"
-source_hash: "0d4814b30bba"
+source_hash: "e7d055e284b7"
 translated: true
 outdated: false
 ---
@@ -17,7 +17,7 @@ Kur žaidėjas stovi, kuria kryptimi eina, kur meta savo priemones - ir kaip da�
 
 *Paveikslėlyje išgalvoti duomenys: trys maršrutai tuščiame lygyje, 68 %, 50 % ir 33 % jų eilučių laimėtuose raunduose.*
 
-Tam reikia duomenų, kurie sako, kas laimėjo: [rezultato stulpelių](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). CS2 ir War Thunder konverteriai juos rašo; jie gali būti bet kuriame faile.
+Tam reikia duomenų, kurie sako, kas laimėjo: [rezultato stulpelių](data-formats.md#outcome-columns) (`won`, `matchWon`, `roundEndReason`). CS2 ir War Thunder konverteriai juos rašo, Tacview konverteris - DCS serverio kampanijoms ([DCS serveriai](tacview-acmi.md#dcs-servers-who-won-and-how-each-sortie-ended)); jie gali būti bet kuriame faile.
 
 ## Išbandykite {#try-it}
 
