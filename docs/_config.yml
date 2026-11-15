@@ -2,6 +2,7 @@ title: 3DHeat
 description: Realtime 3D telemetry heatmaps, race analysis and match review for very large positional datasets
 remote_theme: just-the-docs/just-the-docs@v0.10.0
 plugins:
+  - jekyll-relative-links
   - jekyll-remote-theme
 search_enabled: true
 heading_anchors: true
@@ -12,3 +13,365 @@ exclude:
   - "*.py"
 mermaid:
   version: "10.9.1"
+# i18n:begin (written by tools/docs-i18n.mjs)
+collections:
+  de:
+    output: true
+    permalink: /de/:name:output_ext
+  fr:
+    output: true
+    permalink: /fr/:name:output_ext
+  es:
+    output: true
+    permalink: /es/:name:output_ext
+  it:
+    output: true
+    permalink: /it/:name:output_ext
+  pt:
+    output: true
+    permalink: /pt/:name:output_ext
+  nl:
+    output: true
+    permalink: /nl/:name:output_ext
+  pl:
+    output: true
+    permalink: /pl/:name:output_ext
+  cs:
+    output: true
+    permalink: /cs/:name:output_ext
+  sk:
+    output: true
+    permalink: /sk/:name:output_ext
+  sl:
+    output: true
+    permalink: /sl/:name:output_ext
+  hr:
+    output: true
+    permalink: /hr/:name:output_ext
+  bs:
+    output: true
+    permalink: /bs/:name:output_ext
+  sr:
+    output: true
+    permalink: /sr/:name:output_ext
+  mk:
+    output: true
+    permalink: /mk/:name:output_ext
+  bg:
+    output: true
+    permalink: /bg/:name:output_ext
+  ro:
+    output: true
+    permalink: /ro/:name:output_ext
+  hu:
+    output: true
+    permalink: /hu/:name:output_ext
+  el:
+    output: true
+    permalink: /el/:name:output_ext
+  sq:
+    output: true
+    permalink: /sq/:name:output_ext
+  tr:
+    output: true
+    permalink: /tr/:name:output_ext
+  da:
+    output: true
+    permalink: /da/:name:output_ext
+  sv:
+    output: true
+    permalink: /sv/:name:output_ext
+  no:
+    output: true
+    permalink: /no/:name:output_ext
+  fi:
+    output: true
+    permalink: /fi/:name:output_ext
+  is:
+    output: true
+    permalink: /is/:name:output_ext
+  et:
+    output: true
+    permalink: /et/:name:output_ext
+  lv:
+    output: true
+    permalink: /lv/:name:output_ext
+  lt:
+    output: true
+    permalink: /lt/:name:output_ext
+  ga:
+    output: true
+    permalink: /ga/:name:output_ext
+  mt:
+    output: true
+    permalink: /mt/:name:output_ext
+  lb:
+    output: true
+    permalink: /lb/:name:output_ext
+  ca:
+    output: true
+    permalink: /ca/:name:output_ext
+  uk:
+    output: true
+    permalink: /uk/:name:output_ext
+  ru:
+    output: true
+    permalink: /ru/:name:output_ext
+  be:
+    output: true
+    permalink: /be/:name:output_ext
+  ja:
+    output: true
+    permalink: /ja/:name:output_ext
+  ko:
+    output: true
+    permalink: /ko/:name:output_ext
+  zh:
+    output: true
+    permalink: /zh/:name:output_ext
+  zh-Hant:
+    output: true
+    permalink: /zh-Hant/:name:output_ext
+relative_links:
+  enabled: true
+  collections: true
+defaults:
+  - scope:
+      path: ""
+    values:
+      lang: en
+  - scope:
+      path: ""
+      type: de
+    values:
+      lang: de
+      layout: default
+  - scope:
+      path: ""
+      type: fr
+    values:
+      lang: fr
+      layout: default
+  - scope:
+      path: ""
+      type: es
+    values:
+      lang: es
+      layout: default
+  - scope:
+      path: ""
+      type: it
+    values:
+      lang: it
+      layout: default
+  - scope:
+      path: ""
+      type: pt
+    values:
+      lang: pt
+      layout: default
+  - scope:
+      path: ""
+      type: nl
+    values:
+      lang: nl
+      layout: default
+  - scope:
+      path: ""
+      type: pl
+    values:
+      lang: pl
+      layout: default
+  - scope:
+      path: ""
+      type: cs
+    values:
+      lang: cs
+      layout: default
+  - scope:
+      path: ""
+      type: sk
+    values:
+      lang: sk
+      layout: default
+  - scope:
+      path: ""
+      type: sl
+    values:
+      lang: sl
+      layout: default
+  - scope:
+      path: ""
+      type: hr
+    values:
+      lang: hr
+      layout: default
+  - scope:
+      path: ""
+      type: bs
+    values:
+      lang: bs
+      layout: default
+  - scope:
+      path: ""
+      type: sr
+    values:
+      lang: sr
+      layout: default
+  - scope:
+      path: ""
+      type: mk
+    values:
+      lang: mk
+      layout: default
+  - scope:
+      path: ""
+      type: bg
+    values:
+      lang: bg
+      layout: default
+  - scope:
+      path: ""
+      type: ro
+    values:
+      lang: ro
+      layout: default
+  - scope:
+      path: ""
+      type: hu
+    values:
+      lang: hu
+      layout: default
+  - scope:
+      path: ""
+      type: el
+    values:
+      lang: el
+      layout: default
+  - scope:
+      path: ""
+      type: sq
+    values:
+      lang: sq
+      layout: default
+  - scope:
+      path: ""
+      type: tr
+    values:
+      lang: tr
+      layout: default
+  - scope:
+      path: ""
+      type: da
+    values:
+      lang: da
+      layout: default
+  - scope:
+      path: ""
+      type: sv
+    values:
+      lang: sv
+      layout: default
+  - scope:
+      path: ""
+      type: no
+    values:
+      lang: no
+      layout: default
+  - scope:
+      path: ""
+      type: fi
+    values:
+      lang: fi
+      layout: default
+  - scope:
+      path: ""
+      type: is
+    values:
+      lang: is
+      layout: default
+  - scope:
+      path: ""
+      type: et
+    values:
+      lang: et
+      layout: default
+  - scope:
+      path: ""
+      type: lv
+    values:
+      lang: lv
+      layout: default
+  - scope:
+      path: ""
+      type: lt
+    values:
+      lang: lt
+      layout: default
+  - scope:
+      path: ""
+      type: ga
+    values:
+      lang: ga
+      layout: default
+  - scope:
+      path: ""
+      type: mt
+    values:
+      lang: mt
+      layout: default
+  - scope:
+      path: ""
+      type: lb
+    values:
+      lang: lb
+      layout: default
+  - scope:
+      path: ""
+      type: ca
+    values:
+      lang: ca
+      layout: default
+  - scope:
+      path: ""
+      type: uk
+    values:
+      lang: uk
+      layout: default
+  - scope:
+      path: ""
+      type: ru
+    values:
+      lang: ru
+      layout: default
+  - scope:
+      path: ""
+      type: be
+    values:
+      lang: be
+      layout: default
+  - scope:
+      path: ""
+      type: ja
+    values:
+      lang: ja
+      layout: default
+  - scope:
+      path: ""
+      type: ko
+    values:
+      lang: ko
+      layout: default
+  - scope:
+      path: ""
+      type: zh
+    values:
+      lang: zh
+      layout: default
+  - scope:
+      path: ""
+      type: zh-Hant
+    values:
+      lang: zh-Hant
+      layout: default
+# i18n:end

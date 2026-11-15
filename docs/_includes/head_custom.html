@@ -1,0 +1,31 @@
+{%- comment -%}
+  On the English home page only: open the site in the reader's language - the
+  one picked before, else the first of the browser's languages the site has.
+  Picking English in the language menu stops it.
+{%- endcomment -%}
+{%- if page.url == "/" -%}
+<script>
+(function () {
+  var langs = {{ site.data.languages | map: "code" | jsonify }};
+  var pick = null;
+  try { pick = localStorage.getItem('docs-lang'); } catch (e) {}
+  if (!pick) {
+    var wanted = navigator.languages || [navigator.language || 'en'];
+    for (var i = 0; i < wanted.length && !pick; i++) {
+      var w = String(wanted[i]).toLowerCase();
+      if (/^zh-(tw|hk|mo|hant)/.test(w)) w = 'zh-hant';
+      if (/^(nb|nn)\b/.test(w)) w = 'no';
+      for (var j = 0; j < langs.length && !pick; j++) if (langs[j].toLowerCase() === w) pick = langs[j];
+      var base = w.split('-')[0];
+      for (var k = 0; k < langs.length && !pick; k++) if (langs[k].toLowerCase() === base) pick = langs[k];
+    }
+  }
+  if (pick && pick !== 'en' && langs.indexOf(pick) >= 0) location.replace('{{ "/" | relative_url }}' + pick + '/');
+})();
+</script>
+{%- endif -%}
+<style>
+  .i18n-bar { display: flex; align-items: center; gap: .75rem; padding: 0 1rem; font-size: .8rem; white-space: nowrap; }
+  .i18n-state { color: #b35c00; overflow: hidden; text-overflow: ellipsis; max-width: 22rem; }
+  .i18n-picker { font-size: .8rem; }
+</style>

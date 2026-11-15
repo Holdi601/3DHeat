@@ -1,6 +1,6 @@
 ---
-title: Column names
-parent: Reference
+title: "Column names"
+parent: "Reference"
 nav_order: 2
 ---
 

@@ -1,6 +1,6 @@
 ---
-title: Browser keys
-parent: Reference
+title: "Browser keys"
+parent: "Reference"
 nav_order: 4
 ---
 

@@ -1,6 +1,6 @@
 ---
-title: Value tables
-parent: Reference
+title: "Value tables"
+parent: "Reference"
 nav_order: 6
 ---
 

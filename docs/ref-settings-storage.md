@@ -1,6 +1,6 @@
 ---
-title: Stored settings
-parent: Reference
+title: "Stored settings"
+parent: "Reference"
 nav_order: 5
 ---
 

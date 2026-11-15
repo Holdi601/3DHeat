@@ -1,6 +1,6 @@
 ---
-title: Language list
-parent: Reference
+title: "Language list"
+parent: "Reference"
 nav_order: 3
 ---
 

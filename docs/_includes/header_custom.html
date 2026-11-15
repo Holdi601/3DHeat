@@ -1,0 +1,23 @@
+{%- comment -%}
+  The language picker and the page's translation state (tools/docs-i18n.mjs).
+  Every language has every page (a stub where it is not translated yet), so the
+  same page in another language is /<code>/<name>.html - no lookups needed.
+{%- endcomment -%}
+{%- assign i18n_lang = page.lang | default: "en" -%}
+{%- assign i18n_ui = site.data.i18n[i18n_lang].ui | default: site.data.i18n.en.ui -%}
+{%- if page.source -%}{%- assign i18n_src = page.source -%}{%- else -%}{%- assign i18n_src = page.path | split: "/" | last -%}{%- endif -%}
+{%- assign i18n_html = i18n_src | replace: ".md", ".html" -%}
+{%- if i18n_html == "index.html" -%}{%- assign i18n_html = "" -%}{%- endif -%}
+<div class="i18n-bar">
+  {%- if page.translated == false -%}
+  <span class="i18n-state">{{ i18n_ui.untranslated }}</span>
+  {%- elsif page.outdated == true -%}
+  <span class="i18n-state">{{ i18n_ui.outdated }}</span>
+  {%- endif -%}
+  <select class="i18n-picker" aria-label="{{ i18n_ui.language }}" onchange="try{localStorage.setItem('docs-lang',this.selectedOptions[0].dataset.lang)}catch(e){};location.href=this.value">
+    {%- for l in site.data.languages -%}
+    {%- if l.code == "en" -%}{%- capture i18n_url -%}/{{ i18n_html }}{%- endcapture -%}{%- else -%}{%- capture i18n_url -%}/{{ l.code }}/{{ i18n_html }}{%- endcapture -%}{%- endif -%}
+    <option data-lang="{{ l.code }}" value="{{ i18n_url | relative_url }}"{% if l.code == i18n_lang %} selected{% endif %}>{{ l.name }}</option>
+    {%- endfor -%}
+  </select>
+</div>

@@ -1,6 +1,6 @@
 ---
-title: Command-line tools
-parent: Reference
+title: "Command-line tools"
+parent: "Reference"
 nav_order: 7
 ---
 

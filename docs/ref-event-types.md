@@ -1,6 +1,6 @@
 ---
-title: Event types and classes
-parent: Reference
+title: "Event types and classes"
+parent: "Reference"
 nav_order: 1
 ---
 
