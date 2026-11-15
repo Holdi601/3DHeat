@@ -9,6 +9,7 @@ import { allFields, fieldName, fieldShort, fieldText, isNumeric, type FieldConte
 import { personAt, unitsOf, type Unit } from './units';
 import { groundProbe, teamName } from './replayView';
 import { labelCategory, labelRank, ruleFields } from './labelRules';
+import { unitCategory } from './objectType';
 import { isOverlay } from '../../match/overlay';
 import { limitSide } from './altitudeLimits';
 import { num, t } from '../../i18n';
@@ -237,7 +238,7 @@ export function ReplayOverlay() {
       const c = ctxOf(unit, tr.person, tr);
       const head: string[] = [];
       const nums: string[] = [];
-      for (const f of ruleFields(dataset, rule, r.labelFields)) {
+      for (const f of ruleFields(dataset, rule, r.labelFields, unitCategory(dataset, unit))) {
         const v = fieldText(c, f, team);
         if (!v) continue;
         if (isNumeric(f)) nums.push(`${fieldShort(f)} ${v}`);

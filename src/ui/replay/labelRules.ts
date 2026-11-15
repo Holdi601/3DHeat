@@ -18,8 +18,8 @@ export function labelCategory(d: Dataset, u: Unit, inQuestion: boolean): LabelCa
 }
 
 /** The fields a rule shows: its own, else the ones chosen for every unit. */
-export function ruleFields(d: Dataset, rule: LabelRule, chosen: string[] | null): string[] {
-  return rule.fields ?? labelFieldsFor(d, chosen);
+export function ruleFields(d: Dataset, rule: LabelRule, chosen: string[] | null, category?: 'air' | 'ground' | 'sea' | 'weapon'): string[] {
+  return rule.fields ?? labelFieldsFor(d, chosen, category);
 }
 
 /**

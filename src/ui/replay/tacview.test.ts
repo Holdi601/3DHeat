@@ -277,6 +277,13 @@ describe('object kinds and label rules', () => {
       'g',
     ]);
     expect(ruleFields(d, { show: true, fields: null, priority: 3 }, ['name'])).toEqual(['name']);
+    const own = { show: true, fields: null, priority: 3 };
+    expect(ruleFields(d, own, null, 'ground')).toEqual(['name', 'vehicle', 'gs']);
+    expect(ruleFields(d, own, null, 'sea')).toEqual(['name', 'vehicle', 'gs', 'heading']);
+    expect(ruleFields(d, own, null, 'air')).toEqual(['name', 'vehicle', 'alt', 'tas']);
+    expect(ruleFields(d, own, null, 'weapon')).toEqual(['name', 'vehicle', 'alt', 'tas']);
+    // A saved list equal to the old shared default was never a choice.
+    expect(readRules({ ground: { show: true, fields: ['name', 'vehicle', 'alt', 'tas'], priority: 2 } }).ground.fields).toBeNull();
   });
 
   it('reads saved rules and aids, dropping what is not one', () => {

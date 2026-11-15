@@ -12,9 +12,16 @@ import { DEFAULT_LOOK, readLook, type TacticalLook } from '../render/tacticalLoo
 import { create } from 'zustand';
 import type { UnitPrefs } from '../units/units';
 
-/** What the labels over the units show (field ids, `fields.ts`), until the viewer chooses: height and speed where things fly. */
+/**
+ * What the labels over the units show (field ids, `fields.ts`), until the viewer
+ * chooses: height and airspeed where things fly, ground speed for what drives,
+ * ground speed and heading for ships.
+ */
 export const DEFAULT_LABEL_FIELDS = ['name', 'vehicle', 'alt', 'tas'];
+/** Data in a map's own units (a shooter's players): no real speed or height to show. */
 export const DEFAULT_LABEL_FIELDS_GROUND = ['name', 'vehicle'];
+export const DEFAULT_LABEL_FIELDS_LAND = ['name', 'vehicle', 'gs'];
+export const DEFAULT_LABEL_FIELDS_SEA = ['name', 'vehicle', 'gs', 'heading'];
 /** What the selected unit's card shows. */
 export const DEFAULT_CARD_FIELDS = ['vehicle', 'team', 'range', 'bearing', 'aspect', 'alt', 'agl', 'tas', 'ias', 'mach', 'gs', 'vs', 'heading', 'pitch', 'roll', 'aoa', 'g', 'turnRate', 'energy', 'throttle', 'rpm', 'fuel', 'health'];
 export const DEFAULT_GRAPH = ['alt', 'tas'];
@@ -220,7 +227,7 @@ function saved(): Saved {
     const strings = (a: unknown, d: string[]) => (Array.isArray(a) && a.every((x) => typeof x === 'string') ? (a as string[]) : d);
     return {
       labels: v.labels !== false,
-      labelFields: Array.isArray(v.labelFields) ? strings(v.labelFields, []) : null,
+      labelFields: Array.isArray(v.labelFields) && !isOldDefault(strings(v.labelFields, [])) ? strings(v.labelFields, []) : null,
       cardFields: strings(v.cardFields, fallback.cardFields),
       graph: strings(v.graph, fallback.graph),
       declutter: v.declutter !== false,
@@ -249,6 +256,11 @@ function saved(): Saved {
 
 const scopeOf = (v: unknown, d: Scope): Scope => (SCOPES.includes(v as Scope) ? (v as Scope) : d);
 
+/** The one default every kind of object used to share; a saved list equal to it was never a choice, so the kind's own default replaces it. */
+function isOldDefault(a: string[]): boolean {
+  return a.length === DEFAULT_LABEL_FIELDS.length && a.every((x, i) => x === DEFAULT_LABEL_FIELDS[i]);
+}
+
 /** Saved label rules, each checked; what is missing or wrong is the default. */
 export function readRules(v: unknown): Record<LabelCategory, LabelRule> {
   const out = { ...DEFAULT_LABEL_RULES };
@@ -258,7 +270,7 @@ export function readRules(v: unknown): Record<LabelCategory, LabelRule> {
     if (!r || typeof r !== 'object') continue;
     out[c] = {
       show: typeof r.show === 'boolean' ? r.show : DEFAULT_LABEL_RULES[c].show,
-      fields: Array.isArray(r.fields) && r.fields.every((x) => typeof x === 'string') ? r.fields : null,
+      fields: Array.isArray(r.fields) && r.fields.every((x) => typeof x === 'string') && !isOldDefault(r.fields) ? r.fields : null,
       priority: typeof r.priority === 'number' && r.priority >= 1 && r.priority <= 5 ? Math.round(r.priority) : DEFAULT_LABEL_RULES[c].priority,
     };
   }
@@ -473,11 +485,14 @@ export const useReplayStore = create<ReplayState>((set, get) => {
 
 /**
  * The label fields for a dataset: the viewer's choice, else name and vehicle,
- * with height and speed where the data has real-world metres (not a shooter
- * whose players walk a map in its own units).
+ * with what suits the kind of object where the data has real-world metres (not
+ * a shooter whose players walk a map in its own units): height and airspeed in
+ * the air, ground speed on land, ground speed and heading at sea.
  */
-export function labelFieldsFor(d: { entitySize?: number }, chosen: string[] | null): string[] {
-  return chosen ?? (d.entitySize ? DEFAULT_LABEL_FIELDS_GROUND : DEFAULT_LABEL_FIELDS);
+export function labelFieldsFor(d: { entitySize?: number }, chosen: string[] | null, category?: 'air' | 'ground' | 'sea' | 'weapon'): string[] {
+  if (chosen) return chosen;
+  if (d.entitySize) return DEFAULT_LABEL_FIELDS_GROUND;
+  return category === 'ground' ? DEFAULT_LABEL_FIELDS_LAND : category === 'sea' ? DEFAULT_LABEL_FIELDS_SEA : DEFAULT_LABEL_FIELDS;
 }
 
 /** Bearing (degrees from north, clockwise), ground range, slant range and height difference from a to b, world metres. */
