@@ -152,11 +152,19 @@ const FUEL_GAP = 30;
 /** A second death of the same track this soon after the first is the same death, logged twice. */
 const DEATH_DEDUP = 2;
 
+/**
+ * Columns only the converter of a game without an in-game economy writes (Rainbow Six Siege's: an operator's,
+ * a gadget's and an ability's role). Such a file gets no table prices: its weapon names (P90, MP7, M4...)
+ * would otherwise be priced as another game's.
+ */
+const NO_ECONOMY = ['operatorRole', 'gadgetRole', 'abilityRole'];
+
 /** Value columns for the load: the tables' prices per row, totals and net per currency. */
 export function valueColumns(inp: ValueInput): AttributeColumn[] {
   const { n, cats, nums } = inp;
   if (n === 0) return [];
   const existing = new Set([...cats.map((c) => c.name), ...nums.map((c) => c.name)]);
+  if (inp.game === 'r6siege' || NO_ECONOMY.every((c) => existing.has(c))) return [];
   const fileCols = nums.flatMap((c) => {
     const p = parseValueColumn(c.name);
     return p ? [{ ...p, data: c.data }] : [];

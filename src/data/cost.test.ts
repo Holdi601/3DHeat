@@ -61,6 +61,15 @@ describe('the cost model', () => {
     expect(detectGame([], ['cashSpentTotal']).id).toBe('cs2');
   });
 
+  it('prices nothing in a game without an economy (Rainbow Six Siege)', () => {
+    const rows = [{ event: 'kill', name: '', cls: 'infantry', person: 0, t: 0, weapon: 'P90' }];
+    const roles = ['operatorRole', 'gadgetRole', 'abilityRole'].map((c) => cat(c, ['anchor']));
+    const base = input(rows);
+    expect(valueColumns({ ...base, cats: [...base.cats, ...roles] })).toEqual([]);
+    expect(valueColumns(input(rows, { game: 'r6siege' }))).toEqual([]);
+    expect(valueColumns(input(rows)).length).toBeGreaterThan(0);
+  });
+
   it('prices launches, losses and fuel in dollars, with totals', () => {
     const rows = [
       { event: 'position', name: 'F-16C_50', cls: 'fighter', person: 0, t: 0 },
