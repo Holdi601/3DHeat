@@ -324,7 +324,7 @@ export const STUDIES: KbEntry[] = [
     patterns: { 'urban-close': 1, vertical: 0.6, 'combined-arms': 0.6 },
     summary: 'A RAND study of urban warfare under constraints on civilian casualties and damage, weighing how doctrine, training and technology must change for regular forces to fight in cities.',
     lesson: 'Urban fights are shaped as much by what may not be destroyed as by the enemy; restrictions show in slower tempo and closer ranges.',
-    refs: ['glenn-1996', 'fm3-06-2022'],
+    refs: ['glenn-1996', 'fm3-06-2006'],
     see: ['concept.urban-terrain'],
   }),
   s({
@@ -615,9 +615,9 @@ export const STUDIES: KbEntry[] = [
     lenses: ['esports', 'design'],
     domains: ['any'],
     patterns: { 'fields-of-fire': 0.6, 'local-superiority': 0.4 },
-    summary: 'Shot-quality models estimate the probability a shot scores from its location and context; adding defender positions improved prediction, and early work already measured how few passes most goals come from.',
+    summary: 'Shot-quality models estimate the probability a shot scores from its location and context; early work already measured how few passes most goals come from, and later action-valuing models score every action by how it changes the chance of scoring.',
     lesson: 'Context of a shot - range, angle, defenders - predicts success; the same applies to kill probability by engagement geometry.',
-    refs: ['lucey-2015', 'pollard-reep-1997', 'reep-benjamin-1968'],
+    refs: ['decroos-2019', 'pollard-reep-1997', 'reep-benjamin-1968'],
   }),
   s({
     id: 'study.goldsberry-2012',

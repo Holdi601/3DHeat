@@ -348,7 +348,7 @@ export const CONCEPTS: KbEntry[] = [
     predicts: 'Aircraft losses to ground fire are front-loaded until air defences are neutralised, then fall sharply.',
     measure: 'Air deaths with a ground target class as killer (where target classes exist) by match time; classes `spaa` in `classPlace` findings.',
     lesson: 'If air losses to ground defences stay high late into matches, the defences were never suppressed.',
-    refs: ['jp3-01-2017', 'afdp3-01', 'lambeth-1984', 'gwaps-1993'],
+    refs: ['jp3-01-2017', 'afdd2-1.1-2002', 'lambeth-1984', 'gwaps-1993'],
     see: ['case.bekaa-1982', 'case.kosovo-1999', 'case.desert-storm-air'],
   }),
   c({
@@ -361,7 +361,7 @@ export const CONCEPTS: KbEntry[] = [
     predicts: 'The side with air superiority kills many more aircraft than it loses and its ground forces suffer less from the air.',
     measure: 'Lens metric `exchange` restricted to air classes (filter by class); `energy` for how it is won.',
     lesson: 'A lopsided air-to-air exchange is the signature of air superiority, and everything else in the match leans on it.',
-    refs: ['afdp3-01', 'jp3-01-2017', 'douhet-1921'],
+    refs: ['afdd2-1.1-2002', 'jp3-01-2017', 'douhet-1921'],
     see: ['case.battle-of-britain', 'case.desert-storm-air'],
   }),
   c({
@@ -493,7 +493,7 @@ export const CONCEPTS: KbEntry[] = [
     predicts: 'Short engagement ranges, high losses per metre gained, kills from above, and failures of vehicles unsupported by infantry.',
     measure: 'Lens metric `forceRatio` (engagement range), kill heights over victim heights, findings `classPlace.weak` for vehicles in dense geometry.',
     lesson: 'Short ranges, kills from above and costly vehicle losses in dense geometry are urban combat as doctrine describes it.',
-    refs: ['fm3-06-2022', 'fm90-10-1979'],
+    refs: ['fm3-06-2006', 'fm90-10-1979'],
     see: ['case.stalingrad', 'case.grozny', 'case.hue', 'case.fallujah'],
   }),
   c({

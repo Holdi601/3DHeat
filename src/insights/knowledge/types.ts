@@ -38,6 +38,8 @@ export interface Reference {
   pd?: boolean;
   /** ISO date the details were last checked against a catalogue, publisher or archive record. */
   verified?: string;
+  /** How far: 'detail' = authors, year, publisher/volume/pages matched a catalogue or publisher record; 'existence' = the work was found under that title and author. */
+  verifiedLevel?: 'detail' | 'existence';
 }
 
 export interface KbEntry {

@@ -279,4 +279,9 @@ describe('bibliography verification marker', () => {
     const bad = REFERENCES.filter((r) => r.verified !== undefined && !/^\d{4}-\d{2}-\d{2}$/.test(r.verified)).map((r) => r.id);
     expect(bad).toEqual([]);
   });
+
+  it('names how far a verified reference was checked', () => {
+    const bad = REFERENCES.filter((r) => r.verified !== undefined && r.verifiedLevel !== 'detail' && r.verifiedLevel !== 'existence').map((r) => r.id);
+    expect(bad).toEqual([]);
+  });
 });

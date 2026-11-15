@@ -62,7 +62,7 @@ Entries and findings meet through a **pattern taxonomy** (`src/insights/knowledg
 
 <!-- kb:begin -->
 
-The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical cases, 16 design principles, 86 studies) over 64 patterns, citing 443 references.
+The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical cases, 16 design principles, 86 studies) over 64 patterns, citing 441 references.
 
 ### Patterns (64)
 
@@ -162,8 +162,8 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `concept.mutual-support` | Mutual support | military, air, esports | mutual-support, combined-arms, defeat-in-detail | FM 3-90 2023; FM 3-21.8 2007; Shaw 1985; Xenopoulos et al. 2020 |
 | `concept.combined-arms` | Combined arms | military, design | combined-arms, class-counter | FM 3-0 2022; Biddle 2004; Doubler 1994 |
 | `concept.suppression` | Suppression | military, urban | combined-arms, mutual-support, cover | FM 3-90 2023; Biddle 2004 |
-| `concept.sead` | Suppression and destruction of enemy air defences (SEAD/DEAD) | air, military | sead, air-superiority, combined-arms | JP 3-01 2017; AFDP 3-01 2019; Lambeth 1984; Keaney & Cohen 1993 |
-| `concept.cap` | Combat air patrol and air superiority | air | air-superiority, exchange-ratio, key-terrain | AFDP 3-01 2019; JP 3-01 2017; Douhet 1942 |
+| `concept.sead` | Suppression and destruction of enemy air defences (SEAD/DEAD) | air, military | sead, air-superiority, combined-arms | JP 3-01 2017; Department of the Air Force 2002; Lambeth 1984; Keaney & Cohen 1993 |
+| `concept.cap` | Combat air patrol and air superiority | air | air-superiority, exchange-ratio, key-terrain | Department of the Air Force 2002; JP 3-01 2017; Douhet 1942 |
 | `concept.bvr` | Beyond-visual-range engagement | air | bvr, initiative, fields-of-fire | Michel 1997; Keaney & Cohen 1993; Shaw 1985 |
 | `concept.indirect-approach` | The indirect approach | military, esports, design | flank, surprise, avenue-of-approach | Liddell Hart 1954; Sun Tzu 1910 |
 | `concept.envelopment` | Envelopment and encirclement | military | envelopment, flank, concentration | FM 3-90 2023; Polybius 1889; Goldsworthy 2001 |
@@ -173,7 +173,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `concept.culminating-point` | Culminating point of the attack | military | attrition, tempo, interior-lines | Clausewitz 1873; FM 3-0 2022 |
 | `concept.surprise` | Surprise | military, air, naval, esports | surprise, initiative, ambush | Sun Tzu 1910; Dupuy 1987; MCDP 1 1997 |
 | `concept.economy-of-force` | Economy of force | military, esports | concentration, safe-ground, balance | FM 3-0 2022; MCDP 1 1997 |
-| `concept.urban-terrain` | Urban terrain | urban, military, esports | urban-close, vertical, cover, kill-zone | FM 3-06 2022; FM 90-10 1979 |
+| `concept.urban-terrain` | Urban terrain | urban, military, esports | urban-close, vertical, cover, kill-zone | FM 3-06 2006; FM 90-10 1979 |
 | `concept.sea-control` | Sea control and the decisive fleet battle | naval | fleet-salvo, concentration, scouting | Mahan 1890; Corbett 1911; Hughes 2000 |
 | `concept.salvo` | Hughes' salvo model: attack effectively first | naval, air | fleet-salvo, initiative, scouting | Hughes 1995; Hughes 2000 |
 | `concept.search-theory` | Search and detection theory | naval, air, military | scouting, fields-of-fire | Koopman 1946; Morse & Kimball 1951 |
@@ -209,9 +209,9 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `concept.crossing-the-t` | Crossing the T | naval, military | local-superiority, fields-of-fire, concentration | Hughes & Girrier 2018; Evans & Peattie 1997 |
 | `concept.convoy` | Convoy | naval | mutual-support, scouting, concentration | Waddington 1973; Blackett 1962; Corbett 1911 |
 | `concept.a2ad` | Anti-access and area denial | naval, air, military | fields-of-fire, sead, avenue-of-approach | Krepinevich et al. 2003; Till 2018 |
-| `concept.strongpoint` | Strongpoint defence in built-up areas | urban, military | urban-close, kill-zone, mutual-support, vertical | FM 3-06 2022; FM 90-10 1979 |
+| `concept.strongpoint` | Strongpoint defence in built-up areas | urban, military | urban-close, kill-zone, mutual-support, vertical | FM 3-06 2006; FM 90-10 1979 |
 | `concept.mouseholing` | Mouseholing and moving through buildings | urban, military, design | urban-close, flank, obstacle | FM 90-10 1979; ATP 3-21.8 2016 |
-| `concept.siege` | Siege | military, urban | envelopment, attrition, safe-ground | Vegetius 1767; FM 3-06 2022 |
+| `concept.siege` | Siege | military, urban | envelopment, attrition, safe-ground | Vegetius 1767; FM 3-06 2006 |
 | `concept.guerrilla` | Guerrilla warfare | military, urban | ambush, mobility, surprise, safe-ground | Lawrence 1920; Mao Tse-tung 1961; Deitchman 1962 |
 | `concept.counterinsurgency` | Counterinsurgency | military, urban | scouting, key-terrain, safe-ground | Galula 1964; FM 3-24 2006 |
 | `concept.sanctuary` | Sanctuary | military, design | safe-ground, balance | Galula 1964; Mao Tse-tung 1961 |
@@ -301,7 +301,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `case.desert-storm-air` | Desert Storm air campaign | Jan-Feb 1991 | campaign | air-superiority, sead, bvr, tempo | Keaney & Cohen 1993; Hallion 1992 |
 | `case.73-easting` | 73 Easting | 26 Feb 1991 | engagement | exchange-ratio, initiative, fields-of-fire, surprise | Krause 1991; Bourque 2002; Biddle 2004 |
 | `case.mogadishu` | Mogadishu | Oct 1993 | engagement | urban-close, kill-zone, avenue-of-approach, vertical | Bowden 1999 |
-| `case.grozny` | Grozny | Dec 1994-Feb 1995 | battle | vertical, urban-close, combined-arms, class-counter, ambush | Grau 1997; FM 3-06 2022 |
+| `case.grozny` | Grozny | Dec 1994-Feb 1995 | battle | vertical, urban-close, combined-arms, class-counter, ambush | Grau 1997; FM 3-06 2006 |
 | `case.hue` | Hue | Jan-Mar 1968 | battle | urban-close, attrition, combined-arms | Nolan 1983 |
 | `case.kosovo-1999` | Kosovo air campaign | Mar-Jun 1999 | campaign | sead, scouting, static-exposure | Lambeth 2001 |
 | `case.fallujah` | Fallujah (Operation Al Fajr) | Nov 2004 | battle | combined-arms, urban-close, mutual-support, envelopment | Matthews 2006 |
@@ -515,7 +515,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `case.uss-stark-1987` | USS Stark | 17 May 1987 | engagement | surprise, readability, fleet-salvo | Wise 2007 |
 | `case.praying-mantis-1988` | Operation Praying Mantis | 18 Apr 1988 | battle | exchange-ratio, combined-arms, fleet-salvo | Wise 2007 |
 | `case.evo-moment-37` | Evo Moment 37 | Aug 2004 | engagement | tempo, initiative, readability | ESPN 2016 |
-| `case.bisu-revolution` | The Bisu revolution | Mar 2007 | battle | balance, class-counter, mobility | Team Liquid (Hot_Bid) 2007; Taylor 2012 |
+| `case.bisu-revolution` | The Bisu revolution | Mar 2007 | battle | balance, class-counter, mobility | Taylor 2012 |
 | `case.dream-coil-ti3` | The Dream Coil at The International 2013 | Aug 2013 | engagement | interior-lines, defeat-in-detail, tempo, initiative | PC Gamer 2013 |
 | `case.faker-zed-2013` | Faker's Zed against Ryu | Sep 2013 | engagement | skill-dispersion, initiative, readability | Riot Games 2013 |
 | `case.olofboost` | The Overpass boost | Nov 2014 | engagement | sightlines, readability, balance, fields-of-fire | GameSpot 2014 |
@@ -590,7 +590,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `study.aircraft-camouflage` | White undersides for anti-submarine aircraft | Waddington 1973; Budiansky 2013 |
 | `study.wald-survivorship` | Wald: armour where the returning bombers were not hit | Mangel & Samaniego 1984 |
 | `study.optimal-search` | Optimal search: from submarines to AF447 | Stone 1975; Stone et al. 2014; Koopman 1946; Washburn 2002 |
-| `study.glenn-1996` | Glenn: combat in hell | Glenn 1996; FM 3-06 2022 |
+| `study.glenn-1996` | Glenn: combat in hell | Glenn 1996; FM 3-06 2006 |
 | `study.a2ad-2003` | Anti-access and area denial | Krepinevich et al. 2003 |
 | `study.bauckhage-2012` | How players lose interest | Bauckhage et al. 2012; Kaplan & Meier 1958 |
 | `study.drachen-sifa-2012` | Clustering player behaviour in the wild | Drachen et al. 2012; Drachen et al. 2009 |
@@ -618,7 +618,7 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 | `study.pitch-control` | Pitch control and space creation | Spearman 2018; Fernández & Bornn 2018; Taki et al. 1996 |
 | `study.franks-2015` | The spatial structure of defensive skill | Franks et al. 2015; Miller et al. 2014 |
 | `study.lucey-2013` | Team roles from tracking data | Lucey et al. 2013 |
-| `study.shot-quality` | Expected goals and shot quality | Lucey et al. 2015; Pollard & Reep 1997; Reep & Benjamin 1968 |
+| `study.shot-quality` | Expected goals and shot quality | Decroos et al. 2019; Pollard & Reep 1997; Reep & Benjamin 1968 |
 | `study.goldsberry-2012` | CourtVision: spatial shooting efficiency | Goldsberry 2012; Miller et al. 2014 |
 | `study.team-sports-survey` | Spatio-temporal analysis of team sports | Gudmundsson & Horton 2017 |
 | `study.ripley-k` | Ripley's K: clustering at every scale | Ripley 1977; Baddeley et al. 2015; Diggle 2013 |
@@ -638,449 +638,447 @@ The knowledge base holds 478 entries (81 concepts, 20 methods, 275 historical ca
 
 ### Bibliography
 
-- Adams, E.; Dormans, J. (2012). Game Mechanics: Advanced Game Design. New Riders, Berkeley.
-- Akaike, H. (1974). A new look at the statistical model identification. IEEE Transactions on Automatic Control 19(6): 716-723.
-- Alexander, C.; Ishikawa, S.; Silverstein, M. (1977). A Pattern Language. Oxford University Press, New York.
-- Alexander, J. H. (1993). Across the Reef: The Marine Assault of Tarawa. Marine Corps Historical Center, Washington DC. *(public domain)*
-- Ammianus Marcellinus (trans. Yonge, C. D.) (1862). The Roman History of Ammianus Marcellinus. Henry G. Bohn, London. *(public domain)*
-- Andreas, P. (2008). Blue Helmets and Black Markets: The Business of Survival in the Siege of Sarajevo. Cornell University Press, Ithaca.
-- Anselin, L. (1995). Local Indicators of Spatial Association—LISA. Geographical Analysis 27(2): 93-115.
-- Appleman, R. E. (1961). South to the Naktong, North to the Yalu (US Army in the Korean War). Office of the Chief of Military History, Washington DC. *(public domain)*
-- Appleman, R. E. (1987). East of Chosin: Entrapment and Breakout in Korea, 1950. Texas A&M University Press, College Station.
-- Appleman, R. E.; Burns, J. M.; Gugeler, R. A.; Stevens, J. (1948). Okinawa: The Last Battle (US Army in World War II). Historical Division, Department of the Army, Washington DC. *(public domain)*
-- Ardant du Picq, C. (trans. Greely, J. N.; Cotton, R. C.) (1921). Battle Studies: Ancient and Modern Battle. Macmillan, New York. https://www.gutenberg.org/ebooks/7294 *(public domain)*
-- Armstrong, M. J. (2005). A stochastic salvo model for naval surface combat. Operations Research 53(5): 830-841. doi:10.1287/opre.1040.0195
-- Arnold, T. D.; Fiore, N. (2019). Five operational lessons from the Battle for Mosul. Military Review (January-February 2019), Army University Press. *(public domain)*
-- Arrian (trans. Chinnock, E. J.) (1893). The Anabasis of Alexander. Hodder & Stoughton, London. https://www.gutenberg.org/ebooks/46976 *(public domain)*
-- Atkinson, R. (1993). Crusade: The Untold Story of the Persian Gulf War. Houghton Mifflin, Boston.
-- Ault, F. W. (1969). Report of the Air-to-Air Missile System Capability Review (the Ault Report). Naval Air Systems Command, Washington DC. *(public domain)*
-- Baddeley, A.; Rubak, E.; Turner, R. (2015). Spatial Point Patterns: Methodology and Applications with R. CRC Press, Boca Raton.
-- Ballard, M. B. (2004). Vicksburg: The Campaign That Opened the Mississippi. University of North Carolina Press, Chapel Hill.
-- Bar-Siman-Tov, Y. (1980). The Israeli-Egyptian War of Attrition, 1969-1970. Columbia University Press, New York.
-- Barr, N. (2004). Pendulum of War: The Three Battles of El Alamein. Jonathan Cape, London.
-- Barrow, G. W. S. (1965). Robert Bruce and the Community of the Realm of Scotland. Eyre & Spottiswoode, London.
-- Bartley, W. S. (1954). Iwo Jima: Amphibious Epic. Historical Branch, US Marine Corps, Washington DC. *(public domain)*
-- Bauckhage, C.; Kersting, K.; Sifa, R.; Thurau, C.; Drachen, A.; Canossa, A. (2012). How players lose interest in playing a game: an empirical study based on distributions of total playing times. Proc. IEEE Conference on Computational Intelligence and Games (CIG 2012): 139-146. doi:10.1109/CIG.2012.6374148
-- Bednárek, D.; Kruliš, M.; Yaghob, J.; Zavoral, F. (2017). Player performance evaluation in team-based first-person shooter eSport. Data Management Technologies and Applications (DATA 2017), CCIS, Springer.
-- Beevor, A. (1991). Crete: The Battle and the Resistance. John Murray, London.
-- Beevor, A. (1998). Stalingrad. Viking, London.
-- Beevor, A. (2002). Berlin: The Downfall 1945. Viking, London.
-- Benedikt, M. L. (1979). To take hold of space: isovists and isovist fields. Environment and Planning B 6(1): 47-65.
-- Benjamini, Y.; Hochberg, Y. (1995). Controlling the false discovery rate: a practical and powerful approach to multiple testing. Journal of the Royal Statistical Society B 57(1): 289-300.
-- Berner, C.; Brockman, G.; Chan, B.; Cheung, V.; et al. (OpenAI) (2019). Dota 2 with large scale deep reinforcement learning. arXiv:1912.06680. https://arxiv.org/abs/1912.06680
-- Biddle, S. (2004). Military Power: Explaining Victory and Defeat in Modern Battle. Princeton University Press, Princeton.
-- Björk, S.; Holopainen, J. (2005). Patterns in Game Design. Charles River Media, Hingham.
-- Blackett, P. M. S. (1962). Studies of War: Nuclear and Conventional. Oliver & Boyd, Edinburgh.
-- Blair, C. (1975). Silent Victory: The U.S. Submarine War Against Japan. Lippincott, Philadelphia.
-- Blair, C. (1998). Hitler's U-Boat War: The Hunted, 1942-1945. Random House, New York.
-- Block, F.; Hodge, V.; Hobson, S.; Sephton, N.; Devlin, S.; Ursu, M. F.; Drachen, A.; Cowling, P. I. (2018). Narrative bytes: data-driven content production in esports. Proc. ACM International Conference on Interactive Experiences for TV and Online Video (TVX 2018): 29-41.
-- Blumenson, M. (1961). Breakout and Pursuit (US Army in World War II). Office of the Chief of Military History, Washington DC. *(public domain)*
-- Blumenson, M. (1967). Kasserine Pass. Houghton Mifflin, Boston.
-- Bourque, S. A. (2002). Jayhawk! The VII Corps in the Persian Gulf War. Center of Military History, US Army, Washington DC. *(public domain)*
-- Bowden, M. (1999). Black Hawk Down: A Story of Modern War. Atlantic Monthly Press, New York.
-- Bowman, B.; Elmqvist, N.; Jankun-Kelly, T. J. (2012). Toward visualization for games: theory, design space, and patterns. IEEE Transactions on Visualization and Computer Graphics 18(11): 1956-1968.
-- Boyd, J. R. (1986). Patterns of Conflict (briefing). Unpublished briefing; archived by the Marine Corps University, Quantico. https://www.usmcu.edu/Research/Marine-Corps-History-Division/
-- Boyd, J. R.; Christie, T. P.; Gibson, J. E. (1966). Energy-Maneuverability (APGC-TR-66-4). Air Proving Ground Center, Eglin AFB.
-- Bracken, J. (1995). Lanchester models of the Ardennes campaign. Naval Research Logistics 42(4): 559-577.
-- Bradley, R. A.; Terry, M. E. (1952). Rank analysis of incomplete block designs: I. The method of paired comparisons. Biometrika 39(3/4): 324-345.
-- Bronk, J.; Reynolds, N.; Watling, J. (2022). The Russian Air War and Ukrainian Requirements for Air Defence. Royal United Services Institute, London (Special Resources, November 2022).
-- Budiansky, S. (2013). Blackett's War: The Men Who Defeated the Nazi U-Boats and Brought Science to the Art of Warfare. Alfred A. Knopf, New York.
-- Bungay, S. (2000). The Most Dangerous Enemy: A History of the Battle of Britain. Aurum Press, London.
-- Burg, S. L.; Shoup, P. S. (1999). The War in Bosnia-Herzegovina: Ethnic Conflict and International Intervention. M. E. Sharpe, Armonk.
-- Caesar, G. J. (trans. McDevitte, W. A.; Bohn, W. S.) (1869). The Commentaries: The Civil War. Harper & Brothers, New York. *(public domain)*
-- Caldwell, D.; Muller, R. (2007). The Luftwaffe over Germany: Defense of the Reich. Greenhill Books, London.
-- Campbell, N. J. M. (1986). Jutland: An Analysis of the Fighting. Conway Maritime Press, London.
-- Canossa, A.; Drachen, A.; Sørensen, J. R. M. (2011). Arrrgghh!!! - blending quantitative and qualitative methods to detect player frustration. Proc. 6th International Conference on Foundations of Digital Games (FDG 2011), ACM: 61-68.
-- Cervone, D.; D'Amour, A.; Bornn, L.; Goldsberry, K. (2016). A multiresolution stochastic process model for predicting basketball possession outcomes. Journal of the American Statistical Association 111(514): 585-599.
-- Chandler, D. G. (1966). The Campaigns of Napoleon. Macmillan, New York.
-- Chandler, D. G. (1973). Marlborough as Military Commander. Batsford, London.
-- Churchill, W. S. (1899). The River War: An Historical Account of the Reconquest of the Soudan. Longmans, Green, London. https://www.gutenberg.org/ebooks/4943 *(public domain)*
-- Cilliers, J. K. (1985). Counter-Insurgency in Rhodesia. Croom Helm, London.
-- Citino, R. M. (2005). The German Way of War: From the Thirty Years' War to the Third Reich. University Press of Kansas, Lawrence.
-- Clark, P. J.; Evans, F. C. (1954). Distance to nearest neighbor as a measure of spatial relationships in populations. Ecology 35(4): 445-453.
-- Clausewitz, C. von (trans. Graham, J. J.) (1873). On War. N. Trübner, London. https://www.gutenberg.org/ebooks/1946 *(public domain)*
-- Clodfelter, M. (1989). The Limits of Air Power: The American Bombing of North Vietnam. Free Press, New York.
-- Coddington, E. B. (1968). The Gettysburg Campaign: A Study in Command. Scribner, New York.
-- Cohen, A.; Hamilton, R. E. (2011). The Russian Military and the Georgia War: Lessons and Implications. Strategic Studies Institute, US Army War College, Carlisle. *(public domain)*
-- Cole, H. M. (1950). The Lorraine Campaign (US Army in World War II). Historical Division, Department of the Army, Washington DC. *(public domain)*
-- Cole, H. M. (1965). The Ardennes: Battle of the Bulge (US Army in World War II). Office of the Chief of Military History, Washington DC. *(public domain)*
-- Combat Studies Institute (2010). Wanat: Combat Action in Afghanistan, 2008. Combat Studies Institute Press, Fort Leavenworth. *(public domain)*
-- Connaughton, R. M. (1988). The War of the Rising Sun and Tumbling Bear: A Military History of the Russo-Japanese War, 1904-5. Routledge, London.
-- Cooper, B. (1967). The Ironclads of Cambrai. Souvenir Press, London.
-- Coox, A. D. (1985). Nomonhan: Japan Against Russia, 1939. Stanford University Press, Stanford.
-- Copp, T. (2003). Fields of Fire: The Canadians in Normandy. University of Toronto Press, Toronto.
-- Corbett, J. S. (1910). The Campaign of Trafalgar. Longmans, Green, London. *(public domain)*
-- Corbett, J. S. (1911). Some Principles of Maritime Strategy. Longmans, Green, London. https://www.gutenberg.org/ebooks/15076 *(public domain)*
-- Corbett, J. S. (1920). Naval Operations vol. 1 (History of the Great War). Longmans, Green, London. *(public domain)*
-- Corbett, J. S. (1921). Naval Operations vol. 2 (History of the Great War). Longmans, Green, London. *(public domain)*
-- Corbett, J. S. (1923). Naval Operations vol. 3 (History of the Great War). Longmans, Green, London. *(public domain)*
-- Cordesman, A. H.; Wagner, A. R. (1990). The Lessons of Modern War, Volume II: The Iran-Iraq War. Westview Press, Boulder.
-- Cox, D. R. (1972). Regression models and life-tables. Journal of the Royal Statistical Society B 34(2): 187-220.
-- Craven, W. F.; Cate, J. L. (eds.) (1949). The Army Air Forces in World War II, vol. 2: Europe: Torch to Pointblank, August 1942 to December 1943. University of Chicago Press, Chicago.
-- Craven, W. F.; Cate, J. L. (eds.) (1951). The Army Air Forces in World War II, vol. 3: Europe: Argument to V-E Day, January 1944 to May 1945. University of Chicago Press, Chicago.
-- Csikszentmihalyi, M. (1990). Flow: The Psychology of Optimal Experience. Harper & Row, New York.
-- Curry, A. (2005). Agincourt: A New History. Tempus, Stroud.
-- Cutler, T. J. (1994). The Battle of Leyte Gulf, 23-26 October 1944. HarperCollins, New York.
-- D'Este, C. (1983). Decision in Normandy. Collins, London.
-- Davies, N. (2003). Rising '44: The Battle for Warsaw. Macmillan, London.
-- Davis, R. G. (1993). Carl A. Spaatz and the Air War in Europe. Center for Air Force History, Washington DC. *(public domain)*
-- Decroos, T.; Bransen, L.; Van Haaren, J.; Davis, J. (2019). Actions speak louder than goals: valuing player actions in soccer. Proc. 25th ACM SIGKDD Conference on Knowledge Discovery and Data Mining (KDD 2019): 1851-1861. doi:10.1145/3292500.3330758
-- Deitchman, S. J. (1962). A Lanchester model of guerrilla warfare. Operations Research 10(6): 818-827. doi:10.1287/opre.10.6.818
-- Delbrück, H. (trans. Renfroe, W. J.) (1990). History of the Art of War, vol. 4: The Dawn of Modern Warfare (orig. 1920). University of Nebraska Press, Lincoln.
-- Desch, M. C. (2002). Democracy and victory: why regime type hardly matters. International Security 27(2): 5-47.
-- Diggle, P. J. (2013). Statistical Analysis of Spatial and Spatio-Temporal Point Patterns (3rd ed.). CRC Press, Boca Raton.
-- Doubler, M. D. (1994). Closing with the Enemy: How GIs Fought the War in Europe, 1944-1945. University Press of Kansas, Lawrence.
-- Doughty, R. A. (1990). The Breaking Point: Sedan and the Fall of France, 1940. Archon Books, Hamden.
-- Douhet, G. (trans. Ferrari, D.) (1942). The Command of the Air (orig. 1921). Coward-McCann, New York; reprinted Office of Air Force History 1983.
-- Drachen, A.; Canossa, A. (2009). Analyzing spatial user behavior in computer games using geographic information systems. Proc. 13th International MindTrek Conference, ACM: 182-189.
-- Drachen, A.; Canossa, A.; Yannakakis, G. N. (2009). Player modeling using self-organization in Tomb Raider: Underworld. Proc. IEEE Symposium on Computational Intelligence and Games: 1-8.
-- Drachen, A.; Sifa, R.; Bauckhage, C.; Thurau, C. (2012). Guns, swords and data: clustering of player behavior in computer games in the wild. Proc. IEEE Conference on Computational Intelligence and Games (CIG 2012): 163-170.
-- Drachen, A.; Yancey, M.; Maguire, J.; Chu, D.; Wang, I. Y.; Mahlmann, T.; Schubert, M.; Klabjan, D. (2014). Skill-based differences in spatio-temporal team behaviour in Defence of the Ancients 2 (DotA 2). Proc. IEEE Games Media Entertainment (GEM 2014): 1-8. doi:10.1109/GEM.2014.7048109
-- Drea, E. J. (1981). Nomonhan: Japanese-Soviet Tactical Combat, 1939 (Leavenworth Papers 2). Combat Studies Institute, Fort Leavenworth. *(public domain)*
-- Dugan, J.; Stewart, C. (1962). Ploesti: The Great Ground-Air Battle of 1 August 1943. Random House, New York.
-- Dupuy, T. N. (1979). Numbers, Predictions and War. Bobbs-Merrill, Indianapolis.
-- Dupuy, T. N. (1987). Understanding War: History and Theory of Combat. Paragon House, New York.
-- Dupuy, T. N. (1990). Attrition: Forecasting Battle Casualties and Equipment Losses in Modern War. HERO Books, Fairfax VA.
-- Echevarria, A. J. (2002). Clausewitz's Center of Gravity: Changing Our Warfighting Doctrine - Again!. Strategic Studies Institute, US Army War College, Carlisle PA. *(public domain)*
-- Efron, B. (1979). Bootstrap methods: another look at the jackknife. Annals of Statistics 7(1): 1-26.
-- Eggert, C.; Herrlich, M.; Smeddinck, J.; Malaka, R. (2015). Classification of player roles in the team-based multi-player game Dota 2. Entertainment Computing - ICEC 2015, LNCS 9353, Springer: 112-125.
-- Elias, G. S.; Garfield, R.; Gutschera, K. R. (2012). Characteristics of Games. MIT Press, Cambridge MA.
-- Elo, A. E. (1978). The Rating of Chessplayers, Past and Present. Arco, New York.
-- Engel, J. H. (1954). A verification of Lanchester's law. Journal of the Operations Research Society of America 2(2): 163-171. doi:10.1287/opre.2.2.163
-- Englund, P. (2003). The Battle That Shook Europe: Poltava and the Birth of the Russian Empire. I. B. Tauris, London.
-- Epstein, J. M. (1985). The Calculus of Conventional War: Dynamic Analysis without Lanchester Theory. Brookings Institution, Washington DC.
-- Epstein, J. M. (1989). The 3:1 rule, the adaptive dynamic model, and the future of security studies. International Security 13(4).
-- Erickson, J. (1975). The Road to Stalingrad: Stalin's War with Germany, Volume One. Harper & Row, New York.
-- ESPN (2016). Daigo and JWong: the legacy of Street Fighter's Moment 37. ESPN Esports. https://www.espn.com/espn/story/_/id/17391663
-- Ethell, J.; Price, A. (1983). Air War South Atlantic. Sidgwick & Jackson, London.
-- Evans, D. C.; Peattie, M. R. (1997). Kaigun: Strategy, Tactics, and Technology in the Imperial Japanese Navy, 1887-1941. Naval Institute Press, Annapolis.
-- Fain, J. B. (1977). The Lanchester equations and historical warfare: an analysis of sixty World War II land engagements. History, Numbers and War 1(1), Historical Evaluation and Research Organization, Dunn Loring VA.
-- Fall, B. B. (1966). Hell in a Very Small Place: The Siege of Dien Bien Phu. Lippincott, Philadelphia.
-- Farrell, T. (2017). Unwinnable: Britain's War in Afghanistan, 2001-2014. Bodley Head, London.
-- Fernández, J.; Bornn, L. (2018). Wide open spaces: a statistical technique for measuring space creation in professional soccer. MIT Sloan Sports Analytics Conference 2018.
-- Fisher, P. F. (1993). Algorithm and implementation uncertainty in viewshed analysis. International Journal of Geographical Information Systems 7(4): 331-347.
-- Fontenot, G.; Degen, E. J.; Tohn, D. (2004). On Point: The United States Army in Operation Iraqi Freedom. Combat Studies Institute Press, Fort Leavenworth. *(public domain)*
-- Forty, G. (2004). Villers Bocage (Battle Zone Normandy). Sutton, Stroud.
-- Fox, A. C. (2019). "Cyborgs at Little Stalingrad": A Brief History of the Battles of the Donetsk Airport, 26 May 2014 to 21 January 2015 (Land Warfare Paper). Association of the United States Army, Institute of Land Warfare, Arlington.
-- Fox, A. C.; Rossow, A. J. (2017). Making Sense of Russian Hybrid Warfare: A Brief Assessment of the Russo-Ukrainian War (Land Warfare Paper 112). Association of the United States Army, Institute of Land Warfare, Arlington.
-- Frank, R. B. (1990). Guadalcanal: The Definitive Account of the Landmark Battle. Random House, New York.
-- Franks, A.; Miller, A.; Bornn, L.; Goldsberry, K. (2015). Characterizing the spatial structure of defensive skill in professional basketball. Annals of Applied Statistics 9(1): 94-121.
-- Fricker, R. D. (1998). Attrition models of the Ardennes campaign. Naval Research Logistics 45(1): 1-22. https://www.rand.org/pubs/external_publications/EP19980204.html
-- Frieser, K.-H. (2005). The Blitzkrieg Legend: The 1940 Campaign in the West. Naval Institute Press, Annapolis.
-- Fuller, J. F. C. (1926). The Foundations of the Science of War. Hutchinson, London.
-- Fullerton, T.; Swain, C.; Hoffman, S. (2008). Game Design Workshop (2nd ed.). Morgan Kaufmann, Burlington.
-- Futrell, R. F. (1983). The United States Air Force in Korea, 1950-1953 (rev. ed.). Office of Air Force History, Washington DC. *(public domain)*
-- Gabriel, R. A. (1984). Operation Peace for Galilee: The Israeli-PLO War in Lebanon. Hill & Wang, New York.
-- Galula, D. (1964). Counterinsurgency Warfare: Theory and Practice. Praeger, New York.
-- GameSpot (2014). Counter-Strike eSports team forfeits victory after using map exploit. GameSpot. https://www.gamespot.com/articles/counter-strike-esports-team-forfeits-victory-after/1100-6423866/
-- Gayle, G. D. (1996). Bloody Beaches: The Marines at Peleliu. Marine Corps Historical Center, Washington DC. *(public domain)*
-- Getis, A.; Ord, J. K. (1992). The analysis of spatial association by use of distance statistics. Geographical Analysis 24(3): 189-206.
-- Gini, C. (1912). Variabilità e mutabilità. Tipografia di Paolo Cuppini, Bologna. *(public domain)*
-- Glantz, D. M. (1983). August Storm: The Soviet 1945 Strategic Offensive in Manchuria (Leavenworth Papers 7). Combat Studies Institute, Fort Leavenworth. *(public domain)*
-- Glantz, D. M. (1989). Soviet Military Deception in the Second World War. Frank Cass, London.
-- Glantz, D. M. (1991). From the Don to the Dnepr: Soviet Offensive Operations, December 1942-August 1943. Frank Cass, London.
-- Glantz, D. M. (1991). Soviet Military Operational Art: In Pursuit of Deep Battle. Frank Cass, London.
-- Glantz, D. M. (1998). Kharkov 1942: Anatomy of a Military Disaster Through Soviet Eyes. Ian Allan, Shepperton.
-- Glantz, D. M. (1999). Zhukov's Greatest Defeat: The Red Army's Epic Disaster in Operation Mars, 1942. University Press of Kansas, Lawrence.
-- Glantz, D. M. (2001). Barbarossa: Hitler's Invasion of Russia 1941. Tempus, Stroud.
-- Glantz, D. M.; House, J. M. (1995). When Titans Clashed: How the Red Army Stopped Hitler. University Press of Kansas, Lawrence.
-- Glantz, D. M.; House, J. M. (1999). The Battle of Kursk. University Press of Kansas, Lawrence.
-- Glenn, R. W. (1996). Combat in Hell: A Consideration of Constrained Urban Warfare (MR-780). RAND Corporation, Santa Monica. https://www.rand.org/pubs/monograph_reports/MR780.html
-- Glickman, M. E. (1999). Parameter estimation in large dynamic paired comparison experiments. Journal of the Royal Statistical Society C 48(3): 377-394.
-- Goldsberry, K. (2012). CourtVision: new visual and spatial analytics for the NBA. MIT Sloan Sports Analytics Conference 2012.
-- Goldsworthy, A. (2001). Cannae. Cassell, London.
-- Gordon, A. (1996). The Rules of the Game: Jutland and British Naval Command. John Murray, London.
-- Grau, L. W. (1997). Russian-manufactured armored vehicle vulnerability in urban combat: the Chechnya experience. Red Thrust Star (January 1997), Foreign Military Studies Office, Fort Leavenworth. *(public domain)*
-- Grau, L. W. (ed.) (1996). The Bear Went Over the Mountain: Soviet Combat Tactics in Afghanistan. National Defense University Press, Washington DC. *(public domain)*
-- Greene, J. A. (2005). The Guns of Independence: The Siege of Yorktown, 1781. Savas Beatie, New York.
-- Greene, J.; Massignani, A. (1998). The Naval War in the Mediterranean, 1940-1943. Chatham Publishing, London.
-- Gudmundsson, B. I. (1989). Stormtroop Tactics: Innovation in the German Army, 1914-1918. Praeger, New York.
-- Gudmundsson, J.; Horton, M. (2017). Spatio-temporal analysis of team sports. ACM Computing Surveys 50(2): article 22. https://arxiv.org/abs/1602.06994
-- Guilmartin, J. F. (1974). Gunpowder and Galleys: Changing Technology and Mediterranean Warfare at Sea in the Sixteenth Century. Cambridge University Press, Cambridge.
-- Güttler, C.; Johansson, T. D. (2003). Spatial principles of level-design in multi-player first-person shooters. Proc. 2nd Workshop on Network and System Support for Games (NetGames 2003), ACM: 158-170.
-- Haldon, J. (2001). The Byzantine Wars. Tempus, Stroud.
-- Hallion, R. P. (1992). Storm over Iraq: Air Power and the Gulf War. Smithsonian Institution Press, Washington DC.
-- Hardesty, V. (1982). Red Phoenix: The Rise of Soviet Air Power, 1941-1945. Smithsonian Institution Press, Washington DC.
-- Hardesty, V.; Grinberg, I. (2012). Red Phoenix Rising: The Soviet Air Force in World War II. University Press of Kansas, Lawrence.
-- Hartley, D. S. (1995). A mathematical model of attrition data. Naval Research Logistics 42(4): 585-607.
-- Hartley, D. S.; Helmbold, R. L. (1995). Validating Lanchester's square law and other attrition models. Naval Research Logistics 42(4): 609-633.
-- Hastings, M. (1984). Overlord: D-Day and the Battle for Normandy. Michael Joseph, London.
-- Hastings, M.; Jenkins, S. (1983). The Battle for the Falklands. Michael Joseph, London.
-- Hayward, J. S. A. (1998). Stopped at Stalingrad: The Luftwaffe and Hitler's Defeat in the East, 1942-1943. University Press of Kansas, Lawrence.
-- Headquarters, Department of the Army (1979). FM 90-10 Military Operations on Urbanized Terrain (MOUT). US Army, Washington DC. *(public domain)*
-- Headquarters, Department of the Army (1982). FM 100-5 Operations. US Army, Washington DC. *(public domain)*
-- Headquarters, Department of the Army (1990). FM 5-33 Terrain Analysis. US Army, Washington DC. *(public domain)*
-- Headquarters, Department of the Army (1994). FM 34-130 Intelligence Preparation of the Battlefield. US Army, Washington DC. *(public domain)*
-- Headquarters, Department of the Army (2006). FM 3-24 Counterinsurgency. US Army, Washington DC. *(public domain)*
-- Headquarters, Department of the Army (2007). FM 3-21.8 The Infantry Rifle Platoon and Squad. US Army, Washington DC. *(public domain)*
-- Headquarters, Department of the Army (2007). FM 3-20.15 Tank Platoon. US Army, Washington DC. *(public domain)*
-- Headquarters, Department of the Army (2013). FM 3-90-1 Offense and Defense, Volume 1. US Army, Washington DC. *(public domain)*
-- Headquarters, Department of the Army (2013). FM 3-90-2 Reconnaissance, Security, and Tactical Enabling Tasks, Volume 2. US Army, Washington DC. *(public domain)*
-- Headquarters, Department of the Army (2016). ATP 3-21.8 Infantry Platoon and Squad. US Army, Washington DC. *(public domain)*
-- Headquarters, Department of the Army (2019). ATP 2-01.3 Intelligence Preparation of the Battlefield. US Army, Washington DC. https://armypubs.army.mil *(public domain)*
-- Headquarters, Department of the Army (2022). FM 3-0 Operations. US Army, Washington DC. https://armypubs.army.mil *(public domain)*
-- Headquarters, Department of the Army (2022). FM 3-06 Urban Operations. US Army, Washington DC. *(public domain)*
-- Headquarters, Department of the Army (2023). FM 3-90 Tactics. US Army, Washington DC. https://armypubs.army.mil *(public domain)*
-- Healy, M. (1993). Qadesh 1300 BC: Clash of the Warrior Kings (Campaign 22). Osprey, London.
-- Heinl, R. D. (1968). Victory at High Tide: The Inchon-Seoul Campaign. Lippincott, Philadelphia.
-- Helmbold, R. L. (1995). Rates of advance in land combat operations. Naval Research Logistics 42(4): 635-669.
-- Herbrich, R.; Minka, T.; Graepel, T. (2007). TrueSkill: a Bayesian skill rating system. Advances in Neural Information Processing Systems 19, MIT Press: 569-576.
-- Hermes, W. G. (1966). Truce Tent and Fighting Front (US Army in the Korean War). Office of the Chief of Military History, Washington DC. *(public domain)*
-- Herodotus (trans. Rawlinson, G.) (1858). The History of Herodotus. John Murray, London. https://www.gutenberg.org/ebooks/2707 *(public domain)*
-- Herzog, C. (1975). The War of Atonement. Weidenfeld & Nicolson, London.
-- Herzog, C. (1982). The Arab-Israeli Wars: War and Peace in the Middle East. Random House, New York.
-- Hillier, B.; Hanson, J. (1984). The Social Logic of Space. Cambridge University Press, Cambridge.
-- Hinh, N. D. (1979). Lam Son 719 (Indochina Monographs). US Army Center of Military History, Washington DC. *(public domain)*
-- Hodge, V. J.; Devlin, S.; Sephton, N.; Block, F.; Cowling, P. I.; Drachen, A. (2021). Win prediction in multiplayer esports: live professional match prediction. IEEE Transactions on Games 13(4): 368-379.
-- Holland, J. (2003). Fortress Malta: An Island Under Siege, 1940-1943. Orion, London.
-- Hoobler, N.; Humphreys, G.; Agrawala, M. (2004). Visualizing competitive behaviors in multi-user virtual environments. Proc. IEEE Visualization 2004: 163-170.
-- Horne, A. (1962). The Price of Glory: Verdun 1916. Macmillan, London.
-- Horne, A. (1977). A Savage War of Peace: Algeria 1954-1962. Macmillan, London.
-- Hornfischer, J. D. (2004). The Last Stand of the Tin Can Sailors. Bantam, New York.
-- Hornfischer, J. D. (2011). Neptune's Inferno: The U.S. Navy at Guadalcanal. Bantam, New York.
-- House, J. M. (1984). Toward Combined Arms Warfare: A Survey of 20th-Century Tactics, Doctrine, and Organization. Combat Studies Institute, Fort Leavenworth. *(public domain)*
-- Howard, M. (1961). The Franco-Prussian War: The German Invasion of France, 1870-1871. Rupert Hart-Davis, London.
-- Hughes, W. P. (1995). A salvo model of warships in missile combat used to evaluate their staying power. Naval Research Logistics 42(2): 267-289.
-- Hughes, W. P. (2000). Fleet Tactics and Coastal Combat (2nd ed.). Naval Institute Press, Annapolis.
-- Hughes, W. P.; Girrier, R. P. (2018). Fleet Tactics and Naval Operations (3rd ed.). Naval Institute Press, Annapolis.
-- Hullett, K.; Whitehead, J. (2010). Design patterns in FPS levels. Proc. Foundations of Digital Games (FDG 2010), ACM: 78-85.
-- Isserson, G. S. (trans. Menning, B. W.) (2013). The Evolution of Operational Art (orig. 1936-37). Combat Studies Institute Press, Fort Leavenworth. *(public domain)*
-- Johnson, D. E.; Markel, M. W.; Shannon, B. (2013). The 2008 Battle of Sadr City: Reimagining Urban Combat (RR-160-A). RAND Corporation, Santa Monica.
-- Johnson, I. R.; MacKay, N. J. (2011). Lanchester models and the Battle of Britain. Naval Research Logistics 58(3): 210-222. doi:10.1002/nav.20328
-- Joint Chiefs of Staff (2017). JP 3-01 Countering Air and Missile Threats. US Joint Staff, Washington DC. *(public domain)*
-- Joint Chiefs of Staff (2018). JP 3-60 Joint Targeting. US Joint Staff, Washington DC. *(public domain)*
-- Joint Chiefs of Staff (2019). JP 3-09.3 Close Air Support. US Joint Staff, Washington DC. *(public domain)*
-- Joint Chiefs of Staff (2020). JP 5-0 Joint Planning. US Joint Staff, Washington DC. *(public domain)*
-- Jomini, A.-H. de (trans. Mendell, G. H.; Craighill, W. P.) (1862). The Art of War. J. B. Lippincott, Philadelphia. https://www.gutenberg.org/ebooks/13549 *(public domain)*
-- Juul, J. (2005). Half-Real: Video Games between Real Rules and Fictional Worlds. MIT Press, Cambridge MA.
-- Kahalani, A. (1984). The Heights of Courage: A Tank Leader's War on the Golan. Greenwood Press, Westport.
-- Kaplan, E. L.; Meier, P. (1958). Nonparametric estimation from incomplete observations. Journal of the American Statistical Association 53(282): 457-481.
-- Katona, A.; Spick, R.; Hodge, V. J.; Demediuk, S.; Block, F.; Drachen, A.; Walker, J. A. (2019). Time to die: death prediction in Dota 2 using deep learning. Proc. IEEE Conference on Games (CoG 2019): 1-8.
-- Keaney, T. A.; Cohen, E. A. (1993). Gulf War Air Power Survey: Summary Report. US Government Printing Office, Washington DC. *(public domain)*
-- Kendall, M. G. (1938). A new measure of rank correlation. Biometrika 30(1/2): 81-93.
-- Kennedy, H. (2007). The Great Arab Conquests: How the Spread of Islam Changed the World We Live In. Weidenfeld & Nicolson, London.
-- Kennedy, L. (1974). Pursuit: The Chase and Sinking of the Bismarck. Collins, London.
-- Ketchum, R. M. (1997). Saratoga: Turning Point of America's Revolutionary War. Henry Holt, New York.
-- Kim, J. H.; Gunn, D. V.; Schuh, E.; Phillips, B. C.; Pagulayan, R. J.; Wixon, D. (2008). Tracking real-time user experience (TRUE): a comprehensive instrumentation solution for complex systems. Proc. CHI 2008, ACM: 443-452.
-- Kirby, M. W. (2003). Operational Research in War and Peace: The British Experience from the 1930s to 1970. Imperial College Press, London.
-- Knight, I. (2002). Isandlwana 1879: The Great Zulu Victory. Osprey, Oxford.
-- Knox, E. G. (1964). The detection of space-time interactions. Journal of the Royal Statistical Society C 13(1): 25-30.
-- Koopman, B. O. (1946). Search and Screening (OEG Report 56). Operations Evaluation Group, Office of the Chief of Naval Operations, Washington DC. *(public domain)*
-- Koster, R. (2004). A Theory of Fun for Game Design. Paraglyph Press, Scottsdale.
-- Krause, M. D. (1991). The Battle of 73 Easting, 26 February 1991: A Historical Introduction to a Simulation. US Army Center of Military History / DARPA, Washington DC. *(public domain)*
-- Kremers, R. (2009). Level Design: Concept, Theory, and Practice. A K Peters, Wellesley.
-- Krepinevich, A.; Watts, B.; Work, R. (2003). Meeting the Anti-Access and Area-Denial Challenge. Center for Strategic and Budgetary Assessments, Washington DC.
-- Kress, M. (2012). Modeling armed conflicts. Science 336(6083): 865-869.
-- Kugler, R. (2007). Operation Anaconda in Afghanistan: A Case Study of Adaptation in Battle (Case Studies in Defense Transformation 5). Center for Technology and National Security Policy, National Defense University, Washington DC. *(public domain)*
-- Kulldorff, M. (1997). A spatial scan statistic. Communications in Statistics - Theory and Methods 26(6): 1481-1496.
-- Kuperman, A. J. (1999). The Stinger missile and U.S. intervention in Afghanistan. Political Science Quarterly 114(2): 219-263.
-- Lambeth, B. S. (1984). Moscow's Lessons from the 1982 Lebanon Air War. RAND Corporation, Santa Monica.
-- Lambeth, B. S. (2001). NATO's Air War for Kosovo: A Strategic and Operational Assessment (MR-1365-AF). RAND Corporation, Santa Monica. https://www.rand.org/pubs/monograph_reports/MR1365.html
-- Lanchester, F. W. (1916). Aircraft in Warfare: The Dawn of the Fourth Arm. Constable, London. https://archive.org/details/aircraftinwarfar00lancrich *(public domain)*
-- Lavery, B. (1998). Nelson and the Nile: The Naval War Against Bonaparte, 1798. Chatham Publishing, London.
-- Lawrence, C. A. (2015). Kursk: The Battle of Prokhorovka. Aberdeen Books, Sheridan CO.
-- Lawrence, C. A. (2017). War by Numbers: Understanding Conventional Combat. Potomac Books, Lincoln NE.
-- Lawrence, T. E. (1920). The evolution of a revolt. Army Quarterly 1(1): 55-69. *(public domain)*
-- Liddell Hart, B. H. (1954). Strategy: The Indirect Approach. Faber & Faber, London.
-- Livy (trans. Roberts, W. M.) (1905). History of Rome. J. M. Dent (Everyman's Library), London. *(public domain)*
-- Lloyd, M. (1967). Mean crowding. Journal of Animal Ecology 36(1): 1-30.
-- Lucas, T. W.; Dinges, J. A. (2004). The effect of battle circumstances on fitting Lanchester equations to the Battle of Kursk. Military Operations Research 9(2): 17-30.
-- Lucas, T. W.; Turkes, T. (2004). Fitting Lanchester equations to the battles of Kursk and Ardennes. Naval Research Logistics 51(1): 95-116. doi:10.1002/nav.10101
-- Lucey, P.; Bialkowski, A.; Carr, P.; Morgan, S.; Matthews, I.; Sheikh, Y. (2013). Representing and discovering adversarial team behaviors using player roles. Proc. IEEE Conference on Computer Vision and Pattern Recognition (CVPR 2013): 2706-2713.
-- Lucey, P.; Bialkowski, A.; Monfort, M.; Carr, P.; Matthews, I. (2015). "Quality vs quantity": improved shot prediction in soccer using strategic features from spatiotemporal data. MIT Sloan Sports Analytics Conference 2015.
-- Lundstrom, J. B. (1984). The First Team: Pacific Naval Air Combat from Pearl Harbor to Midway. Naval Institute Press, Annapolis.
-- Lundstrom, J. B. (1994). The First Team and the Guadalcanal Campaign: Naval Fighter Combat from August to November 1942. Naval Institute Press, Annapolis.
-- Lupfer, T. T. (1981). The Dynamics of Doctrine: The Changes in German Tactical Doctrine During the First World War (Leavenworth Papers 4). Combat Studies Institute, Fort Leavenworth. *(public domain)*
-- Lynch, K. (1960). The Image of the City. MIT Press, Cambridge MA.
-- MacDonald, C. B. (1963). The Siegfried Line Campaign (US Army in World War II). Office of the Chief of Military History, Washington DC. *(public domain)*
-- MacDonald, C. B. (1985). A Time for Trumpets: The Untold Story of the Battle of the Bulge. William Morrow, New York.
-- MacGarrigle, G. L. (1998). Taking the Offensive: October 1966 to October 1967 (US Army in Vietnam). Center of Military History, Washington DC. *(public domain)*
-- Mahan, A. T. (1890). The Influence of Sea Power upon History, 1660-1783. Little, Brown, Boston. https://www.gutenberg.org/ebooks/13529 *(public domain)*
-- Mahan, A. T. (1897). The Life of Nelson: The Embodiment of the Sea Power of Great Britain. Little, Brown, Boston. *(public domain)*
-- Makarov, I.; Savostyanov, D.; Litvyakov, B.; Ignatov, D. I. (2018). Predicting winning team and probabilistic ratings in Dota 2 and Counter-Strike: Global Offensive video games. Analysis of Images, Social Networks and Texts (AIST 2017), LNCS 10716, Springer: 183-196.
-- Mangel, M.; Samaniego, F. J. (1984). Abraham Wald's work on aircraft survivability. Journal of the American Statistical Association 79(386): 259-267.
-- Mann, H. B.; Whitney, D. R. (1947). On a test of whether one of two random variables is stochastically larger than the other. Annals of Mathematical Statistics 18(1): 50-60.
-- Manstein, E. von (1958). Lost Victories. Methuen, London.
-- Mao Tse-tung (trans. Griffith, S. B.) (1961). On Guerrilla Warfare (orig. 1937). Praeger, New York.
-- Marshall, S. L. A. (1956). Pork Chop Hill: The American Fighting Man in Action, Korea, Spring 1953. William Morrow, New York.
-- Martin, C.; Parker, G. (1988). The Spanish Armada. Hamish Hamilton, London.
-- Matthews, M. M. (2006). Operation AL FAJR: A Study in Army and Marine Corps Joint Operations. Combat Studies Institute Press, Fort Leavenworth. *(public domain)*
-- Matthews, M. M. (2008). We Were Caught Unprepared: The 2006 Hezbollah-Israeli War (Long War Series Occasional Paper 26). Combat Studies Institute Press, Fort Leavenworth. *(public domain)*
-- Mattingly, G. (1959). The Armada. Houghton Mifflin, Boston.
-- May, E. R. (2000). Strange Victory: Hitler's Conquest of France. Hill & Wang, New York.
-- McCloskey, J. F. (1987). The beginnings of operations research: 1934-1941. Operations Research 35(1): 143-152.
-- McCullagh, P.; Nelder, J. A. (1989). Generalized Linear Models (2nd ed.). Chapman & Hall, London.
-- McFarland, S. L.; Newton, W. P. (1991). To Command the Sky: The Battle for Air Superiority over Germany, 1942-1944. Smithsonian Institution Press, Washington DC.
-- Mearsheimer, J. J. (1989). Assessing the conventional balance: the 3:1 rule and its critics. International Security 13(4): 54-89 (Spring 1989). doi:10.2307/2538780
-- Medler, B.; John, M.; Lane, J. (2011). Data Cracker: developing a visual game analytic tool for analyzing online gameplay. Proc. CHI 2011, ACM: 2365-2374.
-- Michaels, J. (2010). A Chance in Hell: The Men Who Triumphed over Iraq's Deadliest City and Turned the Tide of War. St. Martin's Press, New York.
-- Michel, M. L. (1997). Clashes: Air Combat over North Vietnam 1965-1972. Naval Institute Press, Annapolis.
-- Michel, M. L. (2002). The Eleven Days of Christmas: America's Last Vietnam Battle. Encounter Books, San Francisco.
-- Middlebrook, M. (1971). The First Day on the Somme. Allen Lane, London.
-- Middlebrook, M. (1973). The Nuremberg Raid, 30-31 March 1944. Allen Lane, London.
-- Middlebrook, M. (1980). The Battle of Hamburg: Allied Bomber Forces Against a German City in 1943. Allen Lane, London.
-- Middlebrook, M. (1983). The Schweinfurt-Regensburg Mission. Allen Lane, London.
-- Middlebrook, M.; Mahoney, P. (1977). Battleship: The Loss of the Prince of Wales and the Repulse. Allen Lane, London.
-- Miller, A.; Bornn, L.; Adams, R.; Goldsberry, K. (2014). Factorized point process intensities: a spatial analysis of professional basketball. Proc. 31st International Conference on Machine Learning (ICML 2014), PMLR 32: 235-243.
-- Miller, J. L.; Crowcroft, J. (2009). Avatar movement in World of Warcraft battlegrounds. Proc. 8th Workshop on Network and System Support for Games (NetGames 2009), IEEE: 1-6. doi:10.1109/NETGAMES.2009.5446226
-- Minka, T.; Cleven, R.; Zaykov, Y. (2018). TrueSkill 2: an improved Bayesian skill rating system (MSR-TR-2018-8). Microsoft Research, Redmond.
-- Montross, L.; Canzona, N. A. (1957). The Chosin Reservoir Campaign (US Marine Operations in Korea 1950-1953, Volume III). Historical Branch, US Marine Corps, Washington DC. *(public domain)*
-- Moore, H. G.; Galloway, J. L. (1992). We Were Soldiers Once... and Young. Random House, New York.
-- Moran, P. A. P. (1950). Notes on continuous stochastic phenomena. Biometrika 37(1/2): 17-23.
-- Morillo, S. (ed.) (1996). The Battle of Hastings: Sources and Interpretations. Boydell Press, Woodbridge.
-- Morison, S. E. (1948). The Rising Sun in the Pacific, 1931-April 1942 (History of US Naval Operations in WWII, vol. 3). Little, Brown, Boston.
-- Morison, S. E. (1949). Coral Sea, Midway and Submarine Actions, May 1942-August 1942 (History of US Naval Operations in WWII, vol. 4). Little, Brown, Boston.
-- Morison, S. E. (1949). The Struggle for Guadalcanal, August 1942-February 1943 (History of US Naval Operations in WWII, vol. 5). Little, Brown, Boston.
-- Morison, S. E. (1950). Breaking the Bismarcks Barrier, 22 July 1942-1 May 1944 (History of US Naval Operations in WWII, vol. 6). Little, Brown, Boston.
-- Morison, S. E. (1953). New Guinea and the Marianas, March 1944-August 1944 (History of US Naval Operations in WWII, vol. 8). Little, Brown, Boston.
-- Morison, S. E. (1958). Leyte, June 1944-January 1945 (History of US Naval Operations in WWII, vol. 12). Little, Brown, Boston.
-- Morison, S. E. (1960). Victory in the Pacific, 1945 (History of US Naval Operations in WWII, vol. 14). Little, Brown, Boston.
-- Morse, P. M.; Kimball, G. E. (1951). Methods of Operations Research. Technology Press of MIT and John Wiley & Sons, New York, 1951. *(public domain)*
-- Mueller, K. P. (ed.) (2015). Precision and Purpose: Airpower in the Libyan Civil War (RR-676-AF). RAND Corporation, Santa Monica.
-- Murray, W. (1983). Strategy for Defeat: The Luftwaffe 1933-1945. Air University Press, Maxwell AFB. *(public domain)*
-- Murray, W.; Woods, K. M. (2014). The Iran-Iraq War: A Military and Strategic History. Cambridge University Press, Cambridge.
-- Nash, D. E. (2002). Hell's Gate: The Battle of the Cherkassy Pocket, January-February 1944. RZM Imports, Stamford, CT.
-- Naylor, S. (2005). Not a Good Day to Die: The Untold Story of Operation Anaconda. Berkley Books, New York.
-- Nelder, J. A.; Wedderburn, R. W. M. (1972). Generalized linear models. Journal of the Royal Statistical Society A 135(3): 370-384.
-- Nolan, K. W. (1983). Battle for Hue: Tet, 1968. Presidio Press, Novato.
-- Nolan, K. W. (1986). Into Laos: The Story of Dewey Canyon II/Lam Son 719, Vietnam 1971. Presidio Press, Novato.
-- Nordeen, L. O. (1990). Fighters over Israel. Orion Books, New York.
-- O'Neill, R. (1985). Australia in the Korean War 1950-53, Volume II: Combat Operations. Australian War Memorial and Australian Government Publishing Service, Canberra.
-- Oliker, O. (2001). Russia's Chechen Wars 1994-2000: Lessons from Urban Combat (MR-1289-A). RAND Corporation, Santa Monica.
-- Openshaw, S. (1984). The Modifiable Areal Unit Problem (CATMOG 38). Geo Books, Norwich.
-- Ord, J. K.; Getis, A. (1995). Local spatial autocorrelation statistics: distributional issues and an application. Geographical Analysis 27(4): 286-306.
-- Oren, M. B. (2002). Six Days of War: June 1967 and the Making of the Modern Middle East. Oxford University Press, New York.
-- Osinga, F. P. B. (2007). Science, Strategy and War: The Strategic Theory of John Boyd. Routledge, Abingdon.
-- Osipov, M. (trans. Helmbold, R. L.; Rehm, A. S.) (1995). The influence of the numerical strength of engaged forces on their casualties (orig. 1915). Naval Research Logistics 42(3): 435-490.
-- Overy, R. (2000). The Battle. Penguin, London, 2000. US edition: W. W. Norton, New York, 2001, as 'The Battle of Britain: The Myth and the Reality'.
-- Overy, R. (2013). The Bombing War: Europe 1939-1945. Allen Lane, London.
-- Paine, S. C. M. (2003). The Sino-Japanese War of 1894-1895: Perceptions, Power, and Primacy. Cambridge University Press, Cambridge.
-- Pakenham, T. (1979). The Boer War. Weidenfeld & Nicolson, London.
-- Pape, R. A. (1996). Bombing to Win: Air Power and Coercion in War. Cornell University Press, Ithaca.
-- Parshall, J. B.; Tully, A. P. (2005). Shattered Sword: The Untold Story of the Battle of Midway. Potomac Books, Washington DC.
-- PC Gamer (2013). The International 2013: Grand Finals in review. PC Gamer. https://www.pcgamer.com/the-international-2013-grand-finals-in-review
-- PC Gamer (2016). The best CS:GO plays of 2016. PC Gamer. https://www.pcgamer.com/the-best-csgo-plays-of-2016
-- Perla, P. P. (1990). The Art of Wargaming. Naval Institute Press, Annapolis.
-- Perla, P. P.; McGrady, E. D. (2011). Why wargaming works. Naval War College Review 64(3): 111-130.
-- Playfair, I. S. O.; Flynn, F. C.; Molony, C. J. C.; Gleave, T. P. (1960). The Mediterranean and Middle East, Volume III: British Fortunes Reach Their Lowest Ebb (History of the Second World War). HMSO, London.
-- Playfair, I. S. O.; Stitt, G. M. S.; Molony, C. J. C.; Toomer, S. E. (1954). The Mediterranean and Middle East, Volume I: The Early Successes against Italy (History of the Second World War). HMSO, London.
-- Plutarch (trans. Perrin, B.) (1916). Lives, Volume III: Pericles and Fabius Maximus, Nicias and Crassus (Loeb Classical Library). Heinemann, London; Macmillan, New York. *(public domain)*
-- Pollack, K. M. (2002). Arabs at War: Military Effectiveness, 1948-1991. University of Nebraska Press, Lincoln.
-- Pollard, R.; Reep, C. (1997). Measuring the effectiveness of playing strategies at soccer. Journal of the Royal Statistical Society D 46(4): 541-550.
-- Polybius (trans. Shuckburgh, E. S.) (1889). The Histories of Polybius. Macmillan, London. *(public domain)*
-- Pope, D. (1956). The Battle of the River Plate. William Kimber, London.
-- Prados, J.; Stubbe, R. W. (1991). Valley of Decision: The Siege of Khe Sanh. Houghton Mifflin, Boston.
-- Prange, G. W. (1981). At Dawn We Slept: The Untold Story of Pearl Harbor. McGraw-Hill, New York.
-- Prior, R.; Wilson, T. (1992). Command on the Western Front: The Military Career of Sir Henry Rawlinson, 1914-1918. Blackwell, Oxford.
-- Putney, D. T. (2004). Airpower Advantage: Planning the Gulf War Air Campaign, 1989-1991. Air Force History and Museums Program, Washington DC. *(public domain)*
-- Rabinovich, A. (1988). The Boats of Cherbourg. Seaver Books, New York.
-- Rabinovich, A. (2004). The Yom Kippur War: The Epic Encounter That Transformed the Middle East. Schocken, New York.
-- Reep, C.; Benjamin, B. (1968). Skill and chance in association football. Journal of the Royal Statistical Society A 131(4): 581-585.
-- Reiter, D.; Stam, A. C. (2002). Democracies at War. Princeton University Press, Princeton.
-- Reynolds, N. E. (2005). Basrah, Baghdad, and Beyond: The U.S. Marine Corps in the Second Iraq War. Naval Institute Press, Annapolis.
-- Riot Games (2013). Road to Worlds: Korea regionals recap. League of Legends Nexus. https://nexus.leagueoflegends.com/en-us/2013/09/road-to-worlds-korea-regionals-recap/
-- Rioult, F.; Métivier, J.-P.; Helleu, B.; Scelles, N.; Durand, C. (2014). Mining tracks of competitive video games. AASRI Procedia 8: 82-87.
-- Ripley, B. D. (1977). Modelling spatial patterns. Journal of the Royal Statistical Society B 39(2): 172-212.
-- Roberts, M. (1958). Gustavus Adolphus: A History of Sweden, 1611-1632, Volume II. Longmans, Green, London.
-- Robinson, L. (2004). Masters of Chaos: The Secret History of the Special Forces. PublicAffairs, New York.
-- Romjue, J. L. (1984). From Active Defense to AirLand Battle: The Development of Army Doctrine 1973-1982. US Army Training and Doctrine Command Historical Office, Fort Monroe. *(public domain)*
-- Rommel, E. (1937). Infanterie greift an (Infantry Attacks). Voggenreiter, Potsdam.
-- Rosenau, W. (2001). Special Operations Forces and Elusive Enemy Ground Targets: Lessons from Vietnam and the Persian Gulf War (MR-1408-AF). RAND Corporation, Santa Monica.
-- Roskill, S. W. (1954). The War at Sea 1939-1945, vol. 1: The Defensive. HMSO, London.
-- Roskill, S. W. (1956). The War at Sea 1939-1945, vol. 2: The Period of Balance. HMSO, London.
-- Roskill, S. W. (1960). The War at Sea 1939-1945, vol. 3, part 1: The Offensive. HMSO, London.
-- Rotte, R.; Schmidt, C. M. (2003). On the production of victory: empirical determinants of battlefield success in modern war. Defence and Peace Economics 14(3): 175-192. doi:10.1080/1024269022000000868
-- Ryan, C. (1974). A Bridge Too Far. Simon & Schuster, New York.
-- Salen, K.; Zimmerman, E. (2003). Rules of Play: Game Design Fundamentals. MIT Press, Cambridge MA.
-- Salmon, A. (2009). To the Last Round: The Epic British Stand on the Imjin River, Korea 1951. Aurum Press, London.
-- Scales, R. H. (1993). Certain Victory: The United States Army in the Gulf War. Office of the Chief of Staff, US Army, Washington DC. *(public domain)*
-- Schell, J. (2008). The Art of Game Design: A Book of Lenses. Morgan Kaufmann, Burlington.
-- Schubert, M.; Drachen, A.; Mahlmann, T. (2016). Esports analytics through encounter detection. MIT Sloan Sports Analytics Conference 2016.
-- Sears, S. W. (1983). Landscape Turned Red: The Battle of Antietam. Ticknor & Fields, New Haven.
-- Sears, S. W. (1996). Chancellorsville. Houghton Mifflin, Boston.
-- Seif El-Nasr, M.; Drachen, A.; Canossa, A. (eds.) (2013). Game Analytics: Maximizing the Value of Player Data. Springer, London.
-- Seif El-Nasr, M.; Nguyen, T.-H. D.; Canossa, A.; Drachen, A. (2021). Game Data Science. Oxford University Press, Oxford.
-- Semenov, A.; Romov, P.; Korolev, S.; Yashkov, D.; Neklyudov, K. (2017). Performance of machine learning algorithms in predicting game outcome from drafts in Dota 2. Analysis of Images, Social Networks and Texts (AIST 2016), CCIS 661, Springer: 26-37.
-- Shaikh, S.; Rumbaugh, W. (2020). The Air and Missile War in Nagorno-Karabakh: Lessons for the Future of Strike and Defense. Center for Strategic and International Studies, Washington DC.
-- Shaw, R. L. (1985). Fighter Combat: Tactics and Maneuvering. Naval Institute Press, Annapolis.
-- Showalter, D. E. (1991). Tannenberg: Clash of Empires. Archon Books, Hamden.
-- Showalter, D. E. (1996). The Wars of Frederick the Great. Longman, London.
-- Shulimson, J.; Blasiol, L. A.; Smith, C. R.; Dawson, D. A. (1997). U.S. Marines in Vietnam: The Defining Year, 1968. History and Museums Division, US Marine Corps, Washington DC. *(public domain)*
-- Siborne, W. (1844). History of the War in France and Belgium in 1815. T. & W. Boone, London. *(public domain)*
-- Silverman, B. W. (1986). Density Estimation for Statistics and Data Analysis. Chapman & Hall, London.
-- Sirlin, D. (2006). Playing to Win: Becoming the Champion. Lulu.com.
-- Smail, R. C. (1956). Crusading Warfare, 1097-1193. Cambridge University Press, Cambridge.
-- Smith, R. R. (1963). Triumph in the Philippines (US Army in World War II). Office of the Chief of Military History, Washington DC. *(public domain)*
-- Spearman, W. (2018). Beyond expected goals. MIT Sloan Sports Analytics Conference 2018.
-- Special Operations Review Group (Holloway, J. L., chair) (1980). Rescue Mission Report. Joint Chiefs of Staff, Washington DC. *(public domain)*
-- Stone, L. D. (1975). Theory of Optimal Search. Academic Press, New York.
-- Stone, L. D.; Keller, C. M.; Kratzke, T. M.; Strumpfer, J. P. (2014). Search for the wreckage of Air France flight AF 447. Statistical Science 29(1): 69-80. doi:10.1214/13-STS420
-- Strauss, B. (2004). The Battle of Salamis. Simon & Schuster, New York.
-- Sumption, J. (1990). The Hundred Years War, Volume I: Trial by Battle. Faber & Faber, London.
-- Sun Tzu (trans. Giles, L.) (1910). The Art of War. Luzac & Co., London. https://www.gutenberg.org/ebooks/132 *(public domain)*
-- Sweetman, J. (1982). Operation Chastise: The Dams Raid, Epic or Myth. Jane's, London.
-- Tacitus (trans. Church, A. J.; Brodribb, W. J.) (1876). The Annals. Macmillan, London. *(public domain)*
-- Taki, T.; Hasegawa, J.; Fukumura, T. (1996). Development of motion analysis system for quantitative evaluation of teamwork in soccer games. Proc. IEEE International Conference on Image Processing (ICIP 1996).
-- Tapper, J. (2012). The Outpost: An Untold Story of American Valor. Little, Brown, New York.
-- Taylor, J. G. (1983). Lanchester Models of Warfare (2 vols.). Operations Research Society of America, Military Applications Section, Arlington VA.
-- Taylor, T. L. (2012). Raising the Stakes: E-Sports and the Professionalization of Computer Gaming. MIT Press, Cambridge MA.
-- Team Liquid (Hot_Bid) (2007). Revolutionary Magic. TeamLiquid.net feature. https://tl.net/forum/featured/56672-revolutionary-magic
-- Thompson, W. W. (2000). To Hanoi and Back: The United States Air Force and North Vietnam, 1966-1973. Air Force History and Museums Program, Washington DC. *(public domain)*
-- Till, G. (2018). Seapower: A Guide for the Twenty-First Century (4th ed.). Routledge, Abingdon.
-- Tobler, W. R. (1970). A computer movie simulating urban growth in the Detroit region. Economic Geography 46 (supplement): 234-240.
-- Totten, C. W. (2019). An Architectural Approach to Level Design (2nd ed.). CRC Press, Boca Raton.
-- Trask, D. F. (1981). The War with Spain in 1898. Macmillan, New York.
-- Travers, T. (2001). Gallipoli 1915. Tempus, Stroud.
-- Triandafillov, V. K. (trans. Kipp, W. A.) (1994). The Nature of the Operations of Modern Armies (orig. 1929). Frank Cass, Ilford.
-- Trotter, W. R. (1991). A Frozen Hell: The Russo-Finnish Winter War of 1939-1940. Algonquin Books, Chapel Hill.
-- Tully, A. P. (2009). Battle of Surigao Strait. Indiana University Press, Bloomington.
-- Turnbull, S. (2003). Tannenberg 1410: Disaster for the Teutonic Knights (Campaign 122). Osprey, Oxford.
-- Turner, A.; Doxa, M.; O'Sullivan, D.; Penn, A. (2001). From isovists to visibility graphs: a methodology for the analysis of architectural space. Environment and Planning B 28(1): 103-121.
-- Upcomer (2018). CSGO 2018 retrospective: the reign of Astralis. Upcomer. https://upcomer.com/csgo-2018-retrospective-astralis/
-- US Air Force (2019). AFDP 3-01 Counterair Operations. LeMay Center for Doctrine, Maxwell AFB. *(public domain)*
-- US Marine Corps (1997). MCDP 1 Warfighting. Headquarters USMC, Washington DC. *(public domain)*
-- US Navy Department (1898). Official Records of the Union and Confederate Navies in the War of the Rebellion, Series I, vol. 7. Government Printing Office, Washington DC. *(public domain)*
-- US War Department (1888). The War of the Rebellion: Official Records of the Union and Confederate Armies, Series I vol. 21 (Fredericksburg). Government Printing Office, Washington DC. *(public domain)*
-- van Creveld, M. (1982). Fighting Power: German and U.S. Army Performance, 1939-1945. Greenwood Press, Westport.
-- Vegetius (trans. Clarke, J.) (1767). De Re Militari (The Military Institutions of the Romans). W. Griffin, London. *(public domain)*
-- Vego, M. N. (2007). Joint Operational Warfare: Theory and Practice. Naval War College, Newport. *(public domain)*
-- Venkus, R. E. (1992). Raid on Qaddafi. St. Martin's Press, New York.
-- Vinyals, O.; Babuschkin, I.; Czarnecki, W. M.; et al. (2019). Grandmaster level in StarCraft II using multi-agent reinforcement learning. Nature 575(7782): 350-354. doi:10.1038/s41586-019-1724-z
-- Waddington, C. H. (1973). O.R. in World War 2: Operational Research against the U-Boat. Elek Science, London.
-- Wallner, G. (ed.) (2019). Data Analytics Applications in Gaming and Entertainment. CRC Press, Boca Raton.
-- Wallner, G.; Kriglstein, S. (2013). Visualization-based analysis of gameplay data - a review of literature. Entertainment Computing 4(3): 143-155.
-- Wallner, G.; Kriglstein, S. (2014). PLATO: a visual analytics system for gameplay data. Computers & Graphics 38: 341-356.
-- Warden, J. A. (1988). The Air Campaign: Planning for Combat. National Defense University Press, Washington DC. *(public domain)*
-- Washburn, A. R. (2002). Search and Detection (4th ed.). INFORMS / Military Applications Section, Linthicum MD.
-- Washburn, A.; Kress, M. (2009). Combat Modeling. Springer, New York.
-- Watling, J.; Reynolds, N. (2022). Operation Z: The Death Throes of an Imperial Delusion. Royal United Services Institute, London (Special Report, April 2022).
-- Watling, J.; Reynolds, N. (2022). Ukraine at War: Paving the Road from Survival to Victory. Royal United Services Institute, London.
-- Watling, J.; Reynolds, N. (2023). Meatgrinder: Russian Tactics in the Second Year of Its Invasion of Ukraine. Royal United Services Institute, London.
-- Watling, J.; Reynolds, N. (2023). Stormbreak: Fighting Through Russian Defences in Ukraine's 2023 Offensive. Royal United Services Institute, London.
-- Wawro, G. (1996). The Austro-Prussian War: Austria's War with Prussia and Italy in 1866. Cambridge University Press, Cambridge.
-- Weapons Systems Evaluation Group (1967). Project Red Baron: Air-to-Air Encounters in Southeast Asia, Volume I (WSEG Report 116). Weapons Systems Evaluation Group, Washington DC (DTIC). *(public domain)*
-- Weiss, H. K. (1966). Combat models and historical data: the U.S. Civil War. Operations Research 14(5): 759-790. doi:10.1287/opre.14.5.759
-- Werrell, K. P. (2005). Sabres over MiG Alley: The F-86 and the Battle for Air Superiority in Korea. Naval Institute Press, Annapolis.
-- Werrell, K. P. (2005). Archie to SAM: A Short Operational History of Ground-Based Air Defense (2nd ed.). Air University Press, Maxwell AFB. *(public domain)*
-- Westermeyer, P. W. (2008). U.S. Marines in Battle: Al-Khafji, 28 January-1 February 1991. History Division, US Marine Corps, Washington DC. *(public domain)*
-- Willard, D. (1962). Lanchester as Force in History: An Analysis of Land Battles of the Years 1618-1905 (RAC-TP-74). Research Analysis Corporation, Bethesda MD.
-- Wilson, E. B. (1927). Probable inference, the law of succession, and statistical inference. Journal of the American Statistical Association 22(158): 209-212.
-- Wilson, H. W. (1896). Ironclads in Action: A Sketch of Naval Warfare from 1855 to 1895. Sampson Low, Marston, London. *(public domain)*
-- Wise, H. L. (2007). Inside the Danger Zone: The U.S. Military in the Persian Gulf, 1987-1988. Naval Institute Press, Annapolis.
-- Woodward, S.; Robinson, P. (1992). One Hundred Days: The Memoirs of the Falklands Battle Group Commander. HarperCollins, London.
-- Xenophon (trans. Dakyns, H. G.) (1897). Hellenica. Macmillan, London. https://www.gutenberg.org/ebooks/1174 *(public domain)*
-- Xenopoulos, P.; Doraiswamy, H.; Silva, C. (2020). Valuing player actions in Counter-Strike: Global Offensive. Proc. IEEE International Conference on Big Data 2020: 1283-1292. https://arxiv.org/abs/2011.01324
-- Xenopoulos, P.; Rulff, J.; Nonato, L. G.; Barr, B.; Silva, C. (2022). ggViz: accelerating large-scale esports game analysis. Proc. ACM on Human-Computer Interaction 6 (CHI PLAY): 238.
-- Y'Blood, W. T. (1981). Red Sun Setting: The Battle of the Philippine Sea. Naval Institute Press, Annapolis.
-- Yang, P.; Harrison, B.; Roberts, D. L. (2014). Identifying patterns in combat that are predictive of success in MOBA games. Proc. 9th International Conference on Foundations of Digital Games (FDG 2014).
-- Yannakakis, G. N.; Togelius, J. (2018). Artificial Intelligence and Games. Springer, Cham.
-- Zabrodskyi, M.; Watling, J.; Danylyuk, O. V.; Reynolds, N. (2022). Preliminary Lessons in Conventional Warfighting from Russia's Invasion of Ukraine: February-July 2022. Royal United Services Institute, London.
-- Zaffiri, S. (1988). Hamburger Hill: May 11-20, 1969. Presidio Press, Novato.
-- Zaloga, S. J. (1996). Bagration 1944: The Destruction of Army Group Centre (Campaign 42). Osprey, London.
-- Zaloga, S. J.; Madej, W. V. (1985). The Polish Campaign 1939. Hippocrene Books, New York.
-- Zetterling, N.; Frankson, A. (2000). Kursk 1943: A Statistical Analysis. Frank Cass, London.
-- Zucchino, D. (2004). Thunder Run: The Armored Strike to Capture Baghdad. Atlantic Monthly Press, New York.
-- Zuehlke, M. (1999). Ortona: Canada's Epic World War II Battle. Stoddart, Toronto.
+- Adams, E.; Dormans, J. (2012). Game Mechanics: Advanced Game Design. New Riders, Berkeley. *(checked 2026-11-15: detail)*
+- Akaike, H. (1974). A new look at the statistical model identification. IEEE Transactions on Automatic Control 19(6): 716-723. *(checked 2026-11-15: detail)*
+- Alexander, C.; Ishikawa, S.; Silverstein, M. (1977). A Pattern Language. Oxford University Press, New York. *(checked 2026-11-15: detail)*
+- Alexander, J. H. (1993). Across the Reef: The Marine Assault of Tarawa. Marine Corps Historical Center, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Ammianus Marcellinus (trans. Yonge, C. D.) (1862). The Roman History of Ammianus Marcellinus. Henry G. Bohn, London. *(public domain)* *(checked 2026-11-15: detail)*
+- Andreas, P. (2008). Blue Helmets and Black Markets: The Business of Survival in the Siege of Sarajevo. Cornell University Press, Ithaca. *(checked 2026-11-15: detail)*
+- Anselin, L. (1995). Local Indicators of Spatial Association—LISA. Geographical Analysis 27(2): 93-115. *(checked 2026-11-15: detail)*
+- Appleman, R. E. (1961). South to the Naktong, North to the Yalu (US Army in the Korean War). Office of the Chief of Military History, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Appleman, R. E. (1987). East of Chosin: Entrapment and Breakout in Korea, 1950. Texas A&M University Press, College Station. *(checked 2026-11-15: detail)*
+- Appleman, R. E.; Burns, J. M.; Gugeler, R. A.; Stevens, J. (1948). Okinawa: The Last Battle (US Army in World War II). Historical Division, Department of the Army, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Ardant du Picq, C. (trans. Greely, J. N.; Cotton, R. C.) (1921). Battle Studies: Ancient and Modern Battle. Macmillan, New York. https://www.gutenberg.org/ebooks/7294 *(public domain)* *(checked 2026-11-15: detail)*
+- Armstrong, M. J. (2005). A stochastic salvo model for naval surface combat. Operations Research 53(5): 830-841. doi:10.1287/opre.1040.0195 *(checked 2026-11-15: detail)*
+- Arnold, T. D.; Fiore, N. (2019). Five operational lessons from the Battle for Mosul. Military Review (January-February 2019), Army University Press. *(public domain)* *(checked 2026-11-15: existence)*
+- Arrian (trans. Chinnock, E. J.) (1893). The Anabasis of Alexander. Hodder & Stoughton, London. https://www.gutenberg.org/ebooks/46976 *(public domain)* *(checked 2026-11-15: detail)*
+- Atkinson, R. (1993). Crusade: The Untold Story of the Persian Gulf War. Houghton Mifflin, Boston. *(checked 2026-11-15: detail)*
+- Ault, F. W. (1969). Report of the Air-to-Air Missile System Capability Review (the Ault Report). Naval Air Systems Command, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Baddeley, A.; Rubak, E.; Turner, R. (2015). Spatial Point Patterns: Methodology and Applications with R. CRC Press, Boca Raton. *(checked 2026-11-15: detail)*
+- Ballard, M. B. (2004). Vicksburg: The Campaign That Opened the Mississippi. University of North Carolina Press, Chapel Hill. *(checked 2026-11-15: detail)*
+- Bar-Siman-Tov, Y. (1980). The Israeli-Egyptian War of Attrition, 1969-1970. Columbia University Press, New York. *(checked 2026-11-15: detail)*
+- Barr, N. (2004). Pendulum of War: The Three Battles of El Alamein. Jonathan Cape, London. *(checked 2026-11-15: detail)*
+- Barrow, G. W. S. (1965). Robert Bruce and the Community of the Realm of Scotland. Eyre & Spottiswoode, London. *(checked 2026-11-15: detail)*
+- Bartley, W. S. (1954). Iwo Jima: Amphibious Epic. Historical Branch, US Marine Corps, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
+- Bauckhage, C.; Kersting, K.; Sifa, R.; Thurau, C.; Drachen, A.; Canossa, A. (2012). How players lose interest in playing a game: an empirical study based on distributions of total playing times. Proc. IEEE Conference on Computational Intelligence and Games (CIG 2012): 139-146. doi:10.1109/CIG.2012.6374148 *(checked 2026-11-15: detail)*
+- Bednárek, D.; Kruliš, M.; Yaghob, J.; Zavoral, F. (2017). Player performance evaluation in team-based first-person shooter eSport. Data Management Technologies and Applications (DATA 2017), CCIS, Springer. *(checked 2026-11-15: existence)*
+- Beevor, A. (1991). Crete: The Battle and the Resistance. John Murray, London. *(checked 2026-11-15: detail)*
+- Beevor, A. (1998). Stalingrad. Viking, London. *(checked 2026-11-15: detail)*
+- Beevor, A. (2002). Berlin: The Downfall 1945. Viking, London. *(checked 2026-11-15: detail)*
+- Benedikt, M. L. (1979). To take hold of space: isovists and isovist fields. Environment and Planning B 6(1): 47-65. *(checked 2026-11-15: detail)*
+- Benjamini, Y.; Hochberg, Y. (1995). Controlling the false discovery rate: a practical and powerful approach to multiple testing. Journal of the Royal Statistical Society B 57(1): 289-300. *(checked 2026-11-15: detail)*
+- Berner, C.; Brockman, G.; Chan, B.; Cheung, V.; et al. (OpenAI) (2019). Dota 2 with large scale deep reinforcement learning. arXiv:1912.06680. https://arxiv.org/abs/1912.06680 *(checked 2026-11-15: detail)*
+- Biddle, S. (2004). Military Power: Explaining Victory and Defeat in Modern Battle. Princeton University Press, Princeton. *(checked 2026-11-15: detail)*
+- Björk, S.; Holopainen, J. (2005). Patterns in Game Design. Charles River Media, Hingham. *(checked 2026-11-15: detail)*
+- Blackett, P. M. S. (1962). Studies of War: Nuclear and Conventional. Oliver & Boyd, Edinburgh. *(checked 2026-11-15: detail)*
+- Blair, C. (1975). Silent Victory: The U.S. Submarine War Against Japan. Lippincott, Philadelphia. *(checked 2026-11-15: detail)*
+- Blair, C. (1998). Hitler's U-Boat War: The Hunted, 1942-1945. Random House, New York. *(checked 2026-11-15: detail)*
+- Block, F.; Hodge, V.; Hobson, S.; Sephton, N.; Devlin, S.; Ursu, M. F.; Drachen, A.; Cowling, P. I. (2018). Narrative bytes: data-driven content production in esports. Proc. ACM International Conference on Interactive Experiences for TV and Online Video (TVX 2018): 29-41. *(checked 2026-11-15: existence)*
+- Blumenson, M. (1961). Breakout and Pursuit (US Army in World War II). Office of the Chief of Military History, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Blumenson, M. (1967). Kasserine Pass. Houghton Mifflin, Boston. *(checked 2026-11-15: detail)*
+- Bourque, S. A. (2002). Jayhawk! The VII Corps in the Persian Gulf War. Center of Military History, US Army, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Bowden, M. (1999). Black Hawk Down: A Story of Modern War. Atlantic Monthly Press, New York. *(checked 2026-11-15: detail)*
+- Bowman, B.; Elmqvist, N.; Jankun-Kelly, T. J. (2012). Toward visualization for games: theory, design space, and patterns. IEEE Transactions on Visualization and Computer Graphics 18(11): 1956-1968. *(checked 2026-11-15: detail)*
+- Boyd, J. R. (1986). Patterns of Conflict (briefing). Unpublished briefing; archived by the Marine Corps University, Quantico. https://www.usmcu.edu/Research/Marine-Corps-History-Division/ *(checked 2026-11-15: existence)*
+- Boyd, J. R.; Christie, T. P.; Gibson, J. E. (1966). Energy-Maneuverability (APGC-TR-66-4). Air Proving Ground Center, Eglin AFB. *(checked 2026-11-15: detail)*
+- Bracken, J. (1995). Lanchester models of the Ardennes campaign. Naval Research Logistics 42(4): 559-577. *(checked 2026-11-15: detail)*
+- Bradley, R. A.; Terry, M. E. (1952). Rank analysis of incomplete block designs: I. The method of paired comparisons. Biometrika 39(3/4): 324-345. *(checked 2026-11-15: detail)*
+- Bronk, J.; Reynolds, N.; Watling, J. (2022). The Russian Air War and Ukrainian Requirements for Air Defence. Royal United Services Institute, London (Special Resources, November 2022). *(checked 2026-11-15: existence)*
+- Budiansky, S. (2013). Blackett's War: The Men Who Defeated the Nazi U-Boats and Brought Science to the Art of Warfare. Alfred A. Knopf, New York. *(checked 2026-11-15: detail)*
+- Bungay, S. (2000). The Most Dangerous Enemy: A History of the Battle of Britain. Aurum Press, London. *(checked 2026-11-15: detail)*
+- Burg, S. L.; Shoup, P. S. (1999). The War in Bosnia-Herzegovina: Ethnic Conflict and International Intervention. M. E. Sharpe, Armonk. *(checked 2026-11-15: detail)*
+- Caesar, G. J. (trans. McDevitte, W. A.; Bohn, W. S.) (1869). The Commentaries: The Civil War. Harper & Brothers, New York. *(public domain)* *(checked 2026-11-15: detail)*
+- Caldwell, D.; Muller, R. (2007). The Luftwaffe over Germany: Defense of the Reich. Greenhill Books, London. *(checked 2026-11-15: detail)*
+- Campbell, N. J. M. (1986). Jutland: An Analysis of the Fighting. Conway Maritime Press, London. *(checked 2026-11-15: detail)*
+- Canossa, A.; Drachen, A.; Sørensen, J. R. M. (2011). Arrrgghh!!! - blending quantitative and qualitative methods to detect player frustration. Proc. 6th International Conference on Foundations of Digital Games (FDG 2011), ACM: 61-68. *(checked 2026-11-15: detail)*
+- Cervone, D.; D'Amour, A.; Bornn, L.; Goldsberry, K. (2016). A multiresolution stochastic process model for predicting basketball possession outcomes. Journal of the American Statistical Association 111(514): 585-599. *(checked 2026-11-15: detail)*
+- Chandler, D. G. (1966). The Campaigns of Napoleon. Macmillan, New York. *(checked 2026-11-15: detail)*
+- Chandler, D. G. (1973). Marlborough as Military Commander. Batsford, London. *(checked 2026-11-15: detail)*
+- Churchill, W. S. (1899). The River War: An Historical Account of the Reconquest of the Soudan. Longmans, Green, London. https://www.gutenberg.org/ebooks/4943 *(public domain)* *(checked 2026-11-15: detail)*
+- Cilliers, J. K. (1985). Counter-Insurgency in Rhodesia. Croom Helm, London. *(checked 2026-11-15: detail)*
+- Citino, R. M. (2005). The German Way of War: From the Thirty Years' War to the Third Reich. University Press of Kansas, Lawrence. *(checked 2026-11-15: detail)*
+- Clark, P. J.; Evans, F. C. (1954). Distance to nearest neighbor as a measure of spatial relationships in populations. Ecology 35(4): 445-453. *(checked 2026-11-15: detail)*
+- Clausewitz, C. von (trans. Graham, J. J.) (1873). On War. N. Trübner, London. https://www.gutenberg.org/ebooks/1946 *(public domain)* *(checked 2026-11-15: existence)*
+- Clodfelter, M. (1989). The Limits of Air Power: The American Bombing of North Vietnam. Free Press, New York. *(checked 2026-11-15: detail)*
+- Coddington, E. B. (1968). The Gettysburg Campaign: A Study in Command. Scribner, New York. *(checked 2026-11-15: detail)*
+- Cohen, A.; Hamilton, R. E. (2011). The Russian Military and the Georgia War: Lessons and Implications. Strategic Studies Institute, US Army War College, Carlisle. *(public domain)* *(checked 2026-11-15: detail)*
+- Cole, H. M. (1950). The Lorraine Campaign (US Army in World War II). Historical Division, Department of the Army, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Cole, H. M. (1965). The Ardennes: Battle of the Bulge (US Army in World War II). Office of the Chief of Military History, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Combat Studies Institute (2010). Wanat: Combat Action in Afghanistan, 2008. Combat Studies Institute Press, Fort Leavenworth. *(public domain)* *(checked 2026-11-15: detail)*
+- Connaughton, R. M. (1988). The War of the Rising Sun and Tumbling Bear: A Military History of the Russo-Japanese War, 1904-5. Routledge, London. *(checked 2026-11-15: detail)*
+- Cooper, B. (1967). The Ironclads of Cambrai. Souvenir Press, London. *(checked 2026-11-15: detail)*
+- Coox, A. D. (1985). Nomonhan: Japan Against Russia, 1939. Stanford University Press, Stanford. *(checked 2026-11-15: detail)*
+- Copp, T. (2003). Fields of Fire: The Canadians in Normandy. University of Toronto Press, Toronto. *(checked 2026-11-15: detail)*
+- Corbett, J. S. (1910). The Campaign of Trafalgar. Longmans, Green, London. *(public domain)* *(checked 2026-11-15: detail)*
+- Corbett, J. S. (1911). Some Principles of Maritime Strategy. Longmans, Green, London. https://www.gutenberg.org/ebooks/15076 *(public domain)* *(checked 2026-11-15: detail)*
+- Corbett, J. S. (1920). Naval Operations vol. 1 (History of the Great War). Longmans, Green, London. *(public domain)* *(checked 2026-11-15: existence)*
+- Corbett, J. S. (1921). Naval Operations vol. 2 (History of the Great War). Longmans, Green, London. *(public domain)* *(checked 2026-11-15: existence)*
+- Corbett, J. S. (1923). Naval Operations vol. 3 (History of the Great War). Longmans, Green, London. *(public domain)* *(checked 2026-11-15: existence)*
+- Cordesman, A. H.; Wagner, A. R. (1990). The Lessons of Modern War, Volume II: The Iran-Iraq War. Westview Press, Boulder. *(checked 2026-11-15: existence)*
+- Cox, D. R. (1972). Regression models and life-tables. Journal of the Royal Statistical Society B 34(2): 187-220. *(checked 2026-11-15: detail)*
+- Craven, W. F.; Cate, J. L. (eds.) (1949). The Army Air Forces in World War II, vol. 2: Europe: Torch to Pointblank, August 1942 to December 1943. University of Chicago Press, Chicago. *(checked 2026-11-15: existence)*
+- Craven, W. F.; Cate, J. L. (eds.) (1951). The Army Air Forces in World War II, vol. 3: Europe: Argument to V-E Day, January 1944 to May 1945. University of Chicago Press, Chicago. *(checked 2026-11-15: existence)*
+- Csikszentmihalyi, M. (1990). Flow: The Psychology of Optimal Experience. Harper & Row, New York. *(checked 2026-11-15: detail)*
+- Curry, A. (2005). Agincourt: A New History. Tempus, Stroud. *(checked 2026-11-15: detail)*
+- Cutler, T. J. (1994). The Battle of Leyte Gulf, 23-26 October 1944. HarperCollins, New York. *(checked 2026-11-15: detail)*
+- D'Este, C. (1983). Decision in Normandy. Collins, London. *(checked 2026-11-15: existence)*
+- Davies, N. (2003). Rising '44: The Battle for Warsaw. Macmillan, London. *(checked 2026-11-15: detail)*
+- Davis, R. G. (1993). Carl A. Spaatz and the Air War in Europe. Center for Air Force History, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Decroos, T.; Bransen, L.; Van Haaren, J.; Davis, J. (2019). Actions speak louder than goals: valuing player actions in soccer. Proc. 25th ACM SIGKDD Conference on Knowledge Discovery and Data Mining (KDD 2019): 1851-1861. doi:10.1145/3292500.3330758 *(checked 2026-11-15: detail)*
+- Deitchman, S. J. (1962). A Lanchester model of guerrilla warfare. Operations Research 10(6): 818-827. doi:10.1287/opre.10.6.818 *(checked 2026-11-15: detail)*
+- Delbrück, H. (trans. Renfroe, W. J.) (1990). History of the Art of War, vol. 4: The Dawn of Modern Warfare (orig. 1920). University of Nebraska Press, Lincoln. *(checked 2026-11-15: existence)*
+- Department of the Air Force (2002). Counterair Operations (Air Force Doctrine Document 2-1.1). Headquarters US Air Force, Washington DC (DTIC ADA404825). doi:10.21236/ada404825 *(public domain)* *(checked 2026-11-15: existence)*
+- Desch, M. C. (2002). Democracy and victory: why regime type hardly matters. International Security 27(2): 5-47. *(checked 2026-11-15: detail)*
+- Diggle, P. J. (2013). Statistical Analysis of Spatial and Spatio-Temporal Point Patterns (3rd ed.). CRC Press, Boca Raton. *(checked 2026-11-15: detail)*
+- Doubler, M. D. (1994). Closing with the Enemy: How GIs Fought the War in Europe, 1944-1945. University Press of Kansas, Lawrence. *(checked 2026-11-15: detail)*
+- Doughty, R. A. (1990). The Breaking Point: Sedan and the Fall of France, 1940. Archon Books, Hamden. *(checked 2026-11-15: detail)*
+- Douhet, G. (trans. Ferrari, D.) (1942). The Command of the Air (orig. 1921). Coward-McCann, New York; reprinted Office of Air Force History 1983. *(checked 2026-11-15: detail)*
+- Drachen, A.; Canossa, A. (2009). Analyzing spatial user behavior in computer games using geographic information systems. Proc. 13th International MindTrek Conference, ACM: 182-189. *(checked 2026-11-15: detail)*
+- Drachen, A.; Canossa, A.; Yannakakis, G. N. (2009). Player modeling using self-organization in Tomb Raider: Underworld. Proc. IEEE Symposium on Computational Intelligence and Games: 1-8. *(checked 2026-11-15: detail)*
+- Drachen, A.; Sifa, R.; Bauckhage, C.; Thurau, C. (2012). Guns, swords and data: clustering of player behavior in computer games in the wild. Proc. IEEE Conference on Computational Intelligence and Games (CIG 2012): 163-170. *(checked 2026-11-15: detail)*
+- Drachen, A.; Yancey, M.; Maguire, J.; Chu, D.; Wang, I. Y.; Mahlmann, T.; Schubert, M.; Klabjan, D. (2014). Skill-based differences in spatio-temporal team behaviour in Defence of the Ancients 2 (DotA 2). Proc. IEEE Games Media Entertainment (GEM 2014): 1-8. doi:10.1109/GEM.2014.7048109 *(checked 2026-11-15: existence)*
+- Drea, E. J. (1981). Nomonhan: Japanese-Soviet Tactical Combat, 1939 (Leavenworth Papers 2). Combat Studies Institute, Fort Leavenworth. *(public domain)* *(checked 2026-11-15: detail)*
+- Dugan, J.; Stewart, C. (1962). Ploesti: The Great Ground-Air Battle of 1 August 1943. Random House, New York. *(checked 2026-11-15: detail)*
+- Dupuy, T. N. (1979). Numbers, Predictions and War. Bobbs-Merrill, Indianapolis. *(checked 2026-11-15: detail)*
+- Dupuy, T. N. (1987). Understanding War: History and Theory of Combat. Paragon House, New York. *(checked 2026-11-15: detail)*
+- Dupuy, T. N. (1990). Attrition: Forecasting Battle Casualties and Equipment Losses in Modern War. HERO Books, Fairfax VA. *(checked 2026-11-15: detail)*
+- Echevarria, A. J. (2002). Clausewitz's Center of Gravity: Changing Our Warfighting Doctrine - Again!. Strategic Studies Institute, US Army War College, Carlisle PA. *(public domain)* *(checked 2026-11-15: detail)*
+- Efron, B. (1979). Bootstrap methods: another look at the jackknife. Annals of Statistics 7(1): 1-26. *(checked 2026-11-15: detail)*
+- Eggert, C.; Herrlich, M.; Smeddinck, J.; Malaka, R. (2015). Classification of player roles in the team-based multi-player game Dota 2. Entertainment Computing - ICEC 2015, LNCS 9353, Springer: 112-125. *(checked 2026-11-15: existence)*
+- Elias, G. S.; Garfield, R.; Gutschera, K. R. (2012). Characteristics of Games. MIT Press, Cambridge MA. *(checked 2026-11-15: detail)*
+- Elo, A. E. (1978). The Rating of Chessplayers, Past and Present. Arco, New York. *(checked 2026-11-15: detail)*
+- Engel, J. H. (1954). A verification of Lanchester's law. Journal of the Operations Research Society of America 2(2): 163-171. doi:10.1287/opre.2.2.163 *(checked 2026-11-15: detail)*
+- Englund, P. (2003). The Battle That Shook Europe: Poltava and the Birth of the Russian Empire. I. B. Tauris, London. *(checked 2026-11-15: detail)*
+- Epstein, J. M. (1985). The Calculus of Conventional War: Dynamic Analysis without Lanchester Theory. Brookings Institution, Washington DC. *(checked 2026-11-15: detail)*
+- Epstein, J. M. (1989). The 3:1 rule, the adaptive dynamic model, and the future of security studies. International Security 13(4). *(checked 2026-11-15: detail)*
+- Erickson, J. (1975). The Road to Stalingrad: Stalin's War with Germany, Volume One. Harper & Row, New York. *(checked 2026-11-15: detail)*
+- ESPN (2016). Daigo and JWong: the legacy of Street Fighter's Moment 37. ESPN Esports. https://www.espn.com/espn/story/_/id/17391663 *(checked 2026-11-15: detail)*
+- Ethell, J.; Price, A. (1983). Air War South Atlantic. Sidgwick & Jackson, London. *(checked 2026-11-15: detail)*
+- Evans, D. C.; Peattie, M. R. (1997). Kaigun: Strategy, Tactics, and Technology in the Imperial Japanese Navy, 1887-1941. Naval Institute Press, Annapolis. *(checked 2026-11-15: detail)*
+- Fain, J. B. (1977). The Lanchester equations and historical warfare: an analysis of sixty World War II land engagements. History, Numbers and War 1(1), Historical Evaluation and Research Organization, Dunn Loring VA. *(checked 2026-11-15: detail)*
+- Fall, B. B. (1966). Hell in a Very Small Place: The Siege of Dien Bien Phu. Lippincott, Philadelphia. *(checked 2026-11-15: detail)*
+- Farrell, T. (2017). Unwinnable: Britain's War in Afghanistan, 2001-2014. Bodley Head, London. *(checked 2026-11-15: detail)*
+- Fernández, J.; Bornn, L. (2018). Wide open spaces: a statistical technique for measuring space creation in professional soccer. MIT Sloan Sports Analytics Conference 2018. *(checked 2026-11-15: detail)*
+- Fisher, P. F. (1993). Algorithm and implementation uncertainty in viewshed analysis. International Journal of Geographical Information Systems 7(4): 331-347. *(checked 2026-11-15: detail)*
+- Fontenot, G.; Degen, E. J.; Tohn, D. (2004). On Point: The United States Army in Operation Iraqi Freedom. Combat Studies Institute Press, Fort Leavenworth. *(public domain)* *(checked 2026-11-15: detail)*
+- Forty, G. (2004). Villers Bocage (Battle Zone Normandy). Sutton, Stroud. *(checked 2026-11-15: detail)*
+- Fox, A. C. (2019). "Cyborgs at Little Stalingrad": A Brief History of the Battles of the Donetsk Airport, 26 May 2014 to 21 January 2015 (Land Warfare Paper). Association of the United States Army, Institute of Land Warfare, Arlington. *(checked 2026-11-15: existence)*
+- Fox, A. C.; Rossow, A. J. (2017). Making Sense of Russian Hybrid Warfare: A Brief Assessment of the Russo-Ukrainian War (Land Warfare Paper 112). Association of the United States Army, Institute of Land Warfare, Arlington. *(checked 2026-11-15: detail)*
+- Frank, R. B. (1990). Guadalcanal: The Definitive Account of the Landmark Battle. Random House, New York. *(checked 2026-11-15: detail)*
+- Franks, A.; Miller, A.; Bornn, L.; Goldsberry, K. (2015). Characterizing the spatial structure of defensive skill in professional basketball. Annals of Applied Statistics 9(1): 94-121. *(checked 2026-11-15: detail)*
+- Fricker, R. D. (1998). Attrition models of the Ardennes campaign. Naval Research Logistics 45(1): 1-22. https://www.rand.org/pubs/external_publications/EP19980204.html *(checked 2026-11-15: detail)*
+- Frieser, K.-H. (2005). The Blitzkrieg Legend: The 1940 Campaign in the West. Naval Institute Press, Annapolis. *(checked 2026-11-15: detail)*
+- Fuller, J. F. C. (1926). The Foundations of the Science of War. Hutchinson, London. *(checked 2026-11-15: detail)*
+- Fullerton, T.; Swain, C.; Hoffman, S. (2008). Game Design Workshop (2nd ed.). Morgan Kaufmann, Burlington. *(checked 2026-11-15: detail)*
+- Futrell, R. F. (1983). The United States Air Force in Korea, 1950-1953 (rev. ed.). Office of Air Force History, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Gabriel, R. A. (1984). Operation Peace for Galilee: The Israeli-PLO War in Lebanon. Hill & Wang, New York. *(checked 2026-11-15: detail)*
+- Galula, D. (1964). Counterinsurgency Warfare: Theory and Practice. Praeger, New York. *(checked 2026-11-15: detail)*
+- GameSpot (2014). Counter-Strike eSports team forfeits victory after using map exploit. GameSpot. https://www.gamespot.com/articles/counter-strike-esports-team-forfeits-victory-after/1100-6423866/ *(checked 2026-11-15: detail)*
+- Gayle, G. D. (1996). Bloody Beaches: The Marines at Peleliu. Marine Corps Historical Center, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Getis, A.; Ord, J. K. (1992). The analysis of spatial association by use of distance statistics. Geographical Analysis 24(3): 189-206. *(checked 2026-11-15: detail)*
+- Gini, C. (1912). Variabilità e mutabilità. Tipografia di Paolo Cuppini, Bologna. *(public domain)* *(checked 2026-11-15: existence)*
+- Glantz, D. M. (1983). August Storm: The Soviet 1945 Strategic Offensive in Manchuria (Leavenworth Papers 7). Combat Studies Institute, Fort Leavenworth. *(public domain)* *(checked 2026-11-15: detail)*
+- Glantz, D. M. (1989). Soviet Military Deception in the Second World War. Frank Cass, London. *(checked 2026-11-15: detail)*
+- Glantz, D. M. (1991). From the Don to the Dnepr: Soviet Offensive Operations, December 1942-August 1943. Frank Cass, London. *(checked 2026-11-15: detail)*
+- Glantz, D. M. (1991). Soviet Military Operational Art: In Pursuit of Deep Battle. Frank Cass, London. *(checked 2026-11-15: detail)*
+- Glantz, D. M. (1998). Kharkov 1942: Anatomy of a Military Disaster Through Soviet Eyes. Ian Allan, Shepperton. *(checked 2026-11-15: detail)*
+- Glantz, D. M. (1999). Zhukov's Greatest Defeat: The Red Army's Epic Disaster in Operation Mars, 1942. University Press of Kansas, Lawrence. *(checked 2026-11-15: detail)*
+- Glantz, D. M. (2001). Barbarossa: Hitler's Invasion of Russia 1941. Tempus, Stroud. *(checked 2026-11-15: detail)*
+- Glantz, D. M.; House, J. M. (1995). When Titans Clashed: How the Red Army Stopped Hitler. University Press of Kansas, Lawrence. *(checked 2026-11-15: detail)*
+- Glantz, D. M.; House, J. M. (1999). The Battle of Kursk. University Press of Kansas, Lawrence. *(checked 2026-11-15: detail)*
+- Glenn, R. W. (1996). Combat in Hell: A Consideration of Constrained Urban Warfare (MR-780). RAND Corporation, Santa Monica. https://www.rand.org/pubs/monograph_reports/MR780.html *(checked 2026-11-15: detail)*
+- Glickman, M. E. (1999). Parameter estimation in large dynamic paired comparison experiments. Journal of the Royal Statistical Society C 48(3): 377-394. *(checked 2026-11-15: detail)*
+- Goldsberry, K. (2012). CourtVision: new visual and spatial analytics for the NBA. MIT Sloan Sports Analytics Conference 2012. *(checked 2026-11-15: detail)*
+- Goldsworthy, A. (2001). Cannae. Cassell, London. *(checked 2026-11-15: detail)*
+- Gordon, A. (1996). The Rules of the Game: Jutland and British Naval Command. John Murray, London. *(checked 2026-11-15: detail)*
+- Grau, L. W. (1997). Russian-manufactured armored vehicle vulnerability in urban combat: the Chechnya experience. Red Thrust Star (January 1997), Foreign Military Studies Office, Fort Leavenworth. *(public domain)* *(checked 2026-11-15: detail)*
+- Grau, L. W. (ed.) (1996). The Bear Went Over the Mountain: Soviet Combat Tactics in Afghanistan. National Defense University Press, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Greene, J. A. (2005). The Guns of Independence: The Siege of Yorktown, 1781. Savas Beatie, New York. *(checked 2026-11-15: detail)*
+- Greene, J.; Massignani, A. (1998). The Naval War in the Mediterranean, 1940-1943. Chatham Publishing, London. *(checked 2026-11-15: detail)*
+- Gudmundsson, B. I. (1989). Stormtroop Tactics: Innovation in the German Army, 1914-1918. Praeger, New York. *(checked 2026-11-15: detail)*
+- Gudmundsson, J.; Horton, M. (2017). Spatio-temporal analysis of team sports. ACM Computing Surveys 50(2): article 22. https://arxiv.org/abs/1602.06994 *(checked 2026-11-15: detail)*
+- Guilmartin, J. F. (1974). Gunpowder and Galleys: Changing Technology and Mediterranean Warfare at Sea in the Sixteenth Century. Cambridge University Press, Cambridge. *(checked 2026-11-15: detail)*
+- Güttler, C.; Johansson, T. D. (2003). Spatial principles of level-design in multi-player first-person shooters. Proc. 2nd Workshop on Network and System Support for Games (NetGames 2003), ACM: 158-170. *(checked 2026-11-15: detail)*
+- Haldon, J. (2001). The Byzantine Wars. Tempus, Stroud. *(checked 2026-11-15: detail)*
+- Hallion, R. P. (1992). Storm over Iraq: Air Power and the Gulf War. Smithsonian Institution Press, Washington DC. *(checked 2026-11-15: detail)*
+- Hardesty, V. (1982). Red Phoenix: The Rise of Soviet Air Power, 1941-1945. Smithsonian Institution Press, Washington DC. *(checked 2026-11-15: detail)*
+- Hardesty, V.; Grinberg, I. (2012). Red Phoenix Rising: The Soviet Air Force in World War II. University Press of Kansas, Lawrence. *(checked 2026-11-15: detail)*
+- Hartley, D. S. (1995). A mathematical model of attrition data. Naval Research Logistics 42(4): 585-607. *(checked 2026-11-15: detail)*
+- Hartley, D. S.; Helmbold, R. L. (1995). Validating Lanchester's square law and other attrition models. Naval Research Logistics 42(4): 609-633. *(checked 2026-11-15: detail)*
+- Hastings, M. (1984). Overlord: D-Day and the Battle for Normandy. Michael Joseph, London. *(checked 2026-11-15: detail)*
+- Hastings, M.; Jenkins, S. (1983). The Battle for the Falklands. Michael Joseph, London. *(checked 2026-11-15: detail)*
+- Hayward, J. S. A. (1998). Stopped at Stalingrad: The Luftwaffe and Hitler's Defeat in the East, 1942-1943. University Press of Kansas, Lawrence. *(checked 2026-11-15: detail)*
+- Headquarters, Department of the Army (1979). FM 90-10 Military Operations on Urbanized Terrain (MOUT). US Army, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
+- Headquarters, Department of the Army (1982). FM 100-5 Operations. US Army, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
+- Headquarters, Department of the Army (1990). FM 5-33 Terrain Analysis. US Army, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
+- Headquarters, Department of the Army (1994). FM 34-130 Intelligence Preparation of the Battlefield. US Army, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
+- Headquarters, Department of the Army (2006). FM 3-06 Urban Operations. US Army, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
+- Headquarters, Department of the Army (2006). FM 3-24 Counterinsurgency. US Army, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
+- Headquarters, Department of the Army (2007). FM 3-21.8 The Infantry Rifle Platoon and Squad. US Army, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
+- Headquarters, Department of the Army (2007). FM 3-20.15 Tank Platoon. US Army, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
+- Headquarters, Department of the Army (2013). FM 3-90-1 Offense and Defense, Volume 1. US Army, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
+- Headquarters, Department of the Army (2013). FM 3-90-2 Reconnaissance, Security, and Tactical Enabling Tasks, Volume 2. US Army, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Headquarters, Department of the Army (2016). ATP 3-21.8 Infantry Platoon and Squad. US Army, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
+- Headquarters, Department of the Army (2019). ATP 2-01.3 Intelligence Preparation of the Battlefield. US Army, Washington DC. https://armypubs.army.mil *(public domain)* *(checked 2026-11-15: existence)*
+- Headquarters, Department of the Army (2022). FM 3-0 Operations. US Army, Washington DC. https://armypubs.army.mil *(public domain)* *(checked 2026-11-15: existence)*
+- Headquarters, Department of the Army (2023). FM 3-90 Tactics. US Army, Washington DC. https://armypubs.army.mil *(public domain)* *(checked 2026-11-15: existence)*
+- Healy, M. (1993). Qadesh 1300 BC: Clash of the Warrior Kings (Campaign 22). Osprey, London. *(checked 2026-11-15: detail)*
+- Heinl, R. D. (1968). Victory at High Tide: The Inchon-Seoul Campaign. Lippincott, Philadelphia. *(checked 2026-11-15: detail)*
+- Helmbold, R. L. (1995). Rates of advance in land combat operations. Naval Research Logistics 42(4): 635-669. *(checked 2026-11-15: detail)*
+- Herbrich, R.; Minka, T.; Graepel, T. (2007). TrueSkill: a Bayesian skill rating system. Advances in Neural Information Processing Systems 19, MIT Press: 569-576. *(checked 2026-11-15: existence)*
+- Hermes, W. G. (1966). Truce Tent and Fighting Front (US Army in the Korean War). Office of the Chief of Military History, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Herodotus (trans. Rawlinson, G.) (1858). The History of Herodotus. John Murray, London. https://www.gutenberg.org/ebooks/2707 *(public domain)* *(checked 2026-11-15: existence)*
+- Herzog, C. (1975). The War of Atonement. Weidenfeld & Nicolson, London. *(checked 2026-11-15: detail)*
+- Herzog, C. (1982). The Arab-Israeli Wars: War and Peace in the Middle East. Random House, New York. *(checked 2026-11-15: detail)*
+- Hillier, B.; Hanson, J. (1984). The Social Logic of Space. Cambridge University Press, Cambridge. *(checked 2026-11-15: detail)*
+- Hinh, N. D. (1979). Lam Son 719 (Indochina Monographs). US Army Center of Military History, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Hodge, V. J.; Devlin, S.; Sephton, N.; Block, F.; Cowling, P. I.; Drachen, A. (2021). Win prediction in multiplayer esports: live professional match prediction. IEEE Transactions on Games 13(4): 368-379. *(checked 2026-11-15: detail)*
+- Holland, J. (2003). Fortress Malta: An Island Under Siege, 1940-1943. Orion, London. *(checked 2026-11-15: detail)*
+- Hoobler, N.; Humphreys, G.; Agrawala, M. (2004). Visualizing competitive behaviors in multi-user virtual environments. Proc. IEEE Visualization 2004: 163-170. *(checked 2026-11-15: detail)*
+- Horne, A. (1962). The Price of Glory: Verdun 1916. Macmillan, London. *(checked 2026-11-15: detail)*
+- Horne, A. (1977). A Savage War of Peace: Algeria 1954-1962. Macmillan, London. *(checked 2026-11-15: detail)*
+- Hornfischer, J. D. (2004). The Last Stand of the Tin Can Sailors. Bantam, New York. *(checked 2026-11-15: detail)*
+- Hornfischer, J. D. (2011). Neptune's Inferno: The U.S. Navy at Guadalcanal. Bantam, New York. *(checked 2026-11-15: detail)*
+- House, J. M. (1984). Toward Combined Arms Warfare: A Survey of 20th-Century Tactics, Doctrine, and Organization. Combat Studies Institute, Fort Leavenworth. *(public domain)* *(checked 2026-11-15: detail)*
+- Howard, M. (1961). The Franco-Prussian War: The German Invasion of France, 1870-1871. Rupert Hart-Davis, London. *(checked 2026-11-15: detail)*
+- Hughes, W. P. (1995). A salvo model of warships in missile combat used to evaluate their staying power. Naval Research Logistics 42(2): 267-289. *(checked 2026-11-15: detail)*
+- Hughes, W. P. (2000). Fleet Tactics and Coastal Combat (2nd ed.). Naval Institute Press, Annapolis. *(checked 2026-11-15: detail)*
+- Hughes, W. P.; Girrier, R. P. (2018). Fleet Tactics and Naval Operations (3rd ed.). Naval Institute Press, Annapolis. *(checked 2026-11-15: detail)*
+- Hullett, K.; Whitehead, J. (2010). Design patterns in FPS levels. Proc. Foundations of Digital Games (FDG 2010), ACM: 78-85. *(checked 2026-11-15: detail)*
+- Isserson, G. S. (trans. Menning, B. W.) (2013). The Evolution of Operational Art (orig. 1936-37). Combat Studies Institute Press, Fort Leavenworth. *(public domain)* *(checked 2026-11-15: detail)*
+- Johnson, D. E.; Markel, M. W.; Shannon, B. (2013). The 2008 Battle of Sadr City: Reimagining Urban Combat (RR-160-A). RAND Corporation, Santa Monica. *(checked 2026-11-15: detail)*
+- Johnson, I. R.; MacKay, N. J. (2011). Lanchester models and the Battle of Britain. Naval Research Logistics 58(3): 210-222. doi:10.1002/nav.20328 *(checked 2026-11-15: detail)*
+- Joint Chiefs of Staff (2017). JP 3-01 Countering Air and Missile Threats. US Joint Staff, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
+- Joint Chiefs of Staff (2018). JP 3-60 Joint Targeting. US Joint Staff, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Joint Chiefs of Staff (2019). JP 3-09.3 Close Air Support. US Joint Staff, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Joint Chiefs of Staff (2020). JP 5-0 Joint Planning. US Joint Staff, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Jomini, A.-H. de (trans. Mendell, G. H.; Craighill, W. P.) (1862). The Art of War. J. B. Lippincott, Philadelphia. https://www.gutenberg.org/ebooks/13549 *(public domain)* *(checked 2026-11-15: detail)*
+- Juul, J. (2005). Half-Real: Video Games between Real Rules and Fictional Worlds. MIT Press, Cambridge MA. *(checked 2026-11-15: detail)*
+- Kahalani, A. (1984). The Heights of Courage: A Tank Leader's War on the Golan. Greenwood Press, Westport. *(checked 2026-11-15: detail)*
+- Kaplan, E. L.; Meier, P. (1958). Nonparametric estimation from incomplete observations. Journal of the American Statistical Association 53(282): 457-481. *(checked 2026-11-15: detail)*
+- Katona, A.; Spick, R.; Hodge, V. J.; Demediuk, S.; Block, F.; Drachen, A.; Walker, J. A. (2019). Time to die: death prediction in Dota 2 using deep learning. Proc. IEEE Conference on Games (CoG 2019): 1-8. *(checked 2026-11-15: existence)*
+- Keaney, T. A.; Cohen, E. A. (1993). Gulf War Air Power Survey: Summary Report. US Government Printing Office, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Kendall, M. G. (1938). A new measure of rank correlation. Biometrika 30(1/2): 81-93. *(checked 2026-11-15: detail)*
+- Kennedy, H. (2007). The Great Arab Conquests: How the Spread of Islam Changed the World We Live In. Weidenfeld & Nicolson, London. *(checked 2026-11-15: detail)*
+- Kennedy, L. (1974). Pursuit: The Chase and Sinking of the Bismarck. Collins, London. *(checked 2026-11-15: detail)*
+- Ketchum, R. M. (1997). Saratoga: Turning Point of America's Revolutionary War. Henry Holt, New York. *(checked 2026-11-15: detail)*
+- Kim, J. H.; Gunn, D. V.; Schuh, E.; Phillips, B. C.; Pagulayan, R. J.; Wixon, D. (2008). Tracking real-time user experience (TRUE): a comprehensive instrumentation solution for complex systems. Proc. CHI 2008, ACM: 443-452. *(checked 2026-11-15: detail)*
+- Kirby, M. W. (2003). Operational Research in War and Peace: The British Experience from the 1930s to 1970. Imperial College Press, London. *(checked 2026-11-15: detail)*
+- Knight, I. (2002). Isandlwana 1879: The Great Zulu Victory. Osprey, Oxford. *(checked 2026-11-15: detail)*
+- Knox, E. G. (1964). The detection of space-time interactions. Journal of the Royal Statistical Society C 13(1): 25-30. *(checked 2026-11-15: detail)*
+- Koopman, B. O. (1946). Search and Screening (OEG Report 56). Operations Evaluation Group, Office of the Chief of Naval Operations, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Koster, R. (2004). A Theory of Fun for Game Design. Paraglyph Press, Scottsdale. *(checked 2026-11-15: detail)*
+- Krause, M. D. (1991). The Battle of 73 Easting, 26 February 1991: A Historical Introduction to a Simulation. US Army Center of Military History / DARPA, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Kremers, R. (2009). Level Design: Concept, Theory, and Practice. A K Peters, Wellesley. *(checked 2026-11-15: detail)*
+- Krepinevich, A.; Watts, B.; Work, R. (2003). Meeting the Anti-Access and Area-Denial Challenge. Center for Strategic and Budgetary Assessments, Washington DC. *(checked 2026-11-15: existence)*
+- Kress, M. (2012). Modeling armed conflicts. Science 336(6083): 865-869. *(checked 2026-11-15: detail)*
+- Kugler, R. (2007). Operation Anaconda in Afghanistan: A Case Study of Adaptation in Battle (Case Studies in Defense Transformation 5). Center for Technology and National Security Policy, National Defense University, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
+- Kulldorff, M. (1997). A spatial scan statistic. Communications in Statistics - Theory and Methods 26(6): 1481-1496. *(checked 2026-11-15: detail)*
+- Kuperman, A. J. (1999). The Stinger missile and U.S. intervention in Afghanistan. Political Science Quarterly 114(2): 219-263. *(checked 2026-11-15: detail)*
+- Lambeth, B. S. (1984). Moscow's Lessons from the 1982 Lebanon Air War. RAND Corporation, Santa Monica. *(checked 2026-11-15: detail)*
+- Lambeth, B. S. (2001). NATO's Air War for Kosovo: A Strategic and Operational Assessment (MR-1365-AF). RAND Corporation, Santa Monica. https://www.rand.org/pubs/monograph_reports/MR1365.html *(checked 2026-11-15: detail)*
+- Lanchester, F. W. (1916). Aircraft in Warfare: The Dawn of the Fourth Arm. Constable, London. https://archive.org/details/aircraftinwarfar00lancrich *(public domain)* *(checked 2026-11-15: detail)*
+- Lavery, B. (1998). Nelson and the Nile: The Naval War Against Bonaparte, 1798. Chatham Publishing, London. *(checked 2026-11-15: detail)*
+- Lawrence, C. A. (2015). Kursk: The Battle of Prokhorovka. Aberdeen Books, Sheridan CO. *(checked 2026-11-15: detail)*
+- Lawrence, C. A. (2017). War by Numbers: Understanding Conventional Combat. Potomac Books, Lincoln NE. *(checked 2026-11-15: detail)*
+- Lawrence, T. E. (1920). The evolution of a revolt. Army Quarterly 1(1): 55-69. *(public domain)* *(checked 2026-11-15: existence)*
+- Liddell Hart, B. H. (1954). Strategy: The Indirect Approach. Faber & Faber, London. *(checked 2026-11-15: existence)*
+- Livy (trans. Roberts, W. M.) (1905). History of Rome. J. M. Dent (Everyman's Library), London. *(public domain)* *(checked 2026-11-15: existence)*
+- Lloyd, M. (1967). Mean crowding. Journal of Animal Ecology 36(1): 1-30. *(checked 2026-11-15: detail)*
+- Lucas, T. W.; Dinges, J. A. (2004). The effect of battle circumstances on fitting Lanchester equations to the Battle of Kursk. Military Operations Research 9(2): 17-30. *(checked 2026-11-15: existence)*
+- Lucas, T. W.; Turkes, T. (2004). Fitting Lanchester equations to the battles of Kursk and Ardennes. Naval Research Logistics 51(1): 95-116. doi:10.1002/nav.10101 *(checked 2026-11-15: detail)*
+- Lucey, P.; Bialkowski, A.; Carr, P.; Morgan, S.; Matthews, I.; Sheikh, Y. (2013). Representing and discovering adversarial team behaviors using player roles. Proc. IEEE Conference on Computer Vision and Pattern Recognition (CVPR 2013): 2706-2713. *(checked 2026-11-15: detail)*
+- Lundstrom, J. B. (1984). The First Team: Pacific Naval Air Combat from Pearl Harbor to Midway. Naval Institute Press, Annapolis. *(checked 2026-11-15: detail)*
+- Lundstrom, J. B. (1994). The First Team and the Guadalcanal Campaign: Naval Fighter Combat from August to November 1942. Naval Institute Press, Annapolis. *(checked 2026-11-15: detail)*
+- Lupfer, T. T. (1981). The Dynamics of Doctrine: The Changes in German Tactical Doctrine During the First World War (Leavenworth Papers 4). Combat Studies Institute, Fort Leavenworth. *(public domain)* *(checked 2026-11-15: detail)*
+- Lynch, K. (1960). The Image of the City. MIT Press, Cambridge MA. *(checked 2026-11-15: detail)*
+- MacDonald, C. B. (1963). The Siegfried Line Campaign (US Army in World War II). Office of the Chief of Military History, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- MacDonald, C. B. (1985). A Time for Trumpets: The Untold Story of the Battle of the Bulge. William Morrow, New York. *(checked 2026-11-15: detail)*
+- MacGarrigle, G. L. (1998). Taking the Offensive: October 1966 to October 1967 (US Army in Vietnam). Center of Military History, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Mahan, A. T. (1890). The Influence of Sea Power upon History, 1660-1783. Little, Brown, Boston. https://www.gutenberg.org/ebooks/13529 *(public domain)* *(checked 2026-11-15: detail)*
+- Mahan, A. T. (1897). The Life of Nelson: The Embodiment of the Sea Power of Great Britain. Little, Brown, Boston. *(public domain)* *(checked 2026-11-15: detail)*
+- Makarov, I.; Savostyanov, D.; Litvyakov, B.; Ignatov, D. I. (2018). Predicting winning team and probabilistic ratings in Dota 2 and Counter-Strike: Global Offensive video games. Analysis of Images, Social Networks and Texts (AIST 2017), LNCS 10716, Springer: 183-196. *(checked 2026-11-15: existence)*
+- Mangel, M.; Samaniego, F. J. (1984). Abraham Wald's work on aircraft survivability. Journal of the American Statistical Association 79(386): 259-267. *(checked 2026-11-15: detail)*
+- Mann, H. B.; Whitney, D. R. (1947). On a test of whether one of two random variables is stochastically larger than the other. Annals of Mathematical Statistics 18(1): 50-60. *(checked 2026-11-15: detail)*
+- Manstein, E. von (1958). Lost Victories. Methuen, London. *(checked 2026-11-15: detail)*
+- Mao Tse-tung (trans. Griffith, S. B.) (1961). On Guerrilla Warfare (orig. 1937). Praeger, New York. *(checked 2026-11-15: existence)*
+- Marshall, S. L. A. (1956). Pork Chop Hill: The American Fighting Man in Action, Korea, Spring 1953. William Morrow, New York. *(checked 2026-11-15: detail)*
+- Martin, C.; Parker, G. (1988). The Spanish Armada. Hamish Hamilton, London. *(checked 2026-11-15: detail)*
+- Matthews, M. M. (2006). Operation AL FAJR: A Study in Army and Marine Corps Joint Operations. Combat Studies Institute Press, Fort Leavenworth. *(public domain)* *(checked 2026-11-15: detail)*
+- Matthews, M. M. (2008). We Were Caught Unprepared: The 2006 Hezbollah-Israeli War (Long War Series Occasional Paper 26). Combat Studies Institute Press, Fort Leavenworth. *(public domain)* *(checked 2026-11-15: detail)*
+- Mattingly, G. (1959). The Armada. Houghton Mifflin, Boston. *(checked 2026-11-15: detail)*
+- May, E. R. (2000). Strange Victory: Hitler's Conquest of France. Hill & Wang, New York. *(checked 2026-11-15: detail)*
+- McCloskey, J. F. (1987). The beginnings of operations research: 1934-1941. Operations Research 35(1): 143-152. *(checked 2026-11-15: detail)*
+- McCullagh, P.; Nelder, J. A. (1989). Generalized Linear Models (2nd ed.). Chapman & Hall, London. *(checked 2026-11-15: detail)*
+- McFarland, S. L.; Newton, W. P. (1991). To Command the Sky: The Battle for Air Superiority over Germany, 1942-1944. Smithsonian Institution Press, Washington DC. *(checked 2026-11-15: detail)*
+- Mearsheimer, J. J. (1989). Assessing the conventional balance: the 3:1 rule and its critics. International Security 13(4): 54-89 (Spring 1989). doi:10.2307/2538780 *(checked 2026-11-15: detail)*
+- Medler, B.; John, M.; Lane, J. (2011). Data Cracker: developing a visual game analytic tool for analyzing online gameplay. Proc. CHI 2011, ACM: 2365-2374. *(checked 2026-11-15: existence)*
+- Michaels, J. (2010). A Chance in Hell: The Men Who Triumphed over Iraq's Deadliest City and Turned the Tide of War. St. Martin's Press, New York. *(checked 2026-11-15: detail)*
+- Michel, M. L. (1997). Clashes: Air Combat over North Vietnam 1965-1972. Naval Institute Press, Annapolis. *(checked 2026-11-15: detail)*
+- Michel, M. L. (2002). The Eleven Days of Christmas: America's Last Vietnam Battle. Encounter Books, San Francisco. *(checked 2026-11-15: detail)*
+- Middlebrook, M. (1971). The First Day on the Somme. Allen Lane, London. *(checked 2026-11-15: detail)*
+- Middlebrook, M. (1973). The Nuremberg Raid, 30-31 March 1944. Allen Lane, London. *(checked 2026-11-15: detail)*
+- Middlebrook, M. (1980). The Battle of Hamburg: Allied Bomber Forces Against a German City in 1943. Allen Lane, London. *(checked 2026-11-15: detail)*
+- Middlebrook, M. (1983). The Schweinfurt-Regensburg Mission. Allen Lane, London. *(checked 2026-11-15: detail)*
+- Middlebrook, M.; Mahoney, P. (1977). Battleship: The Loss of the Prince of Wales and the Repulse. Allen Lane, London. *(checked 2026-11-15: detail)*
+- Miller, A.; Bornn, L.; Adams, R.; Goldsberry, K. (2014). Factorized point process intensities: a spatial analysis of professional basketball. Proc. 31st International Conference on Machine Learning (ICML 2014), PMLR 32: 235-243. *(checked 2026-11-15: detail)*
+- Miller, J. L.; Crowcroft, J. (2009). Avatar movement in World of Warcraft battlegrounds. Proc. 8th Workshop on Network and System Support for Games (NetGames 2009), IEEE: 1-6. doi:10.1109/NETGAMES.2009.5446226 *(checked 2026-11-15: existence)*
+- Minka, T.; Cleven, R.; Zaykov, Y. (2018). TrueSkill 2: an improved Bayesian skill rating system (MSR-TR-2018-8). Microsoft Research, Redmond. *(checked 2026-11-15: existence)*
+- Montross, L.; Canzona, N. A. (1957). The Chosin Reservoir Campaign (US Marine Operations in Korea 1950-1953, Volume III). Historical Branch, US Marine Corps, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
+- Moore, H. G.; Galloway, J. L. (1992). We Were Soldiers Once... and Young. Random House, New York. *(checked 2026-11-15: detail)*
+- Moran, P. A. P. (1950). Notes on continuous stochastic phenomena. Biometrika 37(1/2): 17-23. *(checked 2026-11-15: detail)*
+- Morillo, S. (ed.) (1996). The Battle of Hastings: Sources and Interpretations. Boydell Press, Woodbridge. *(checked 2026-11-15: detail)*
+- Morison, S. E. (1948). The Rising Sun in the Pacific, 1931-April 1942 (History of US Naval Operations in WWII, vol. 3). Little, Brown, Boston. *(checked 2026-11-15: detail)*
+- Morison, S. E. (1949). Coral Sea, Midway and Submarine Actions, May 1942-August 1942 (History of US Naval Operations in WWII, vol. 4). Little, Brown, Boston. *(checked 2026-11-15: existence)*
+- Morison, S. E. (1949). The Struggle for Guadalcanal, August 1942-February 1943 (History of US Naval Operations in WWII, vol. 5). Little, Brown, Boston. *(checked 2026-11-15: existence)*
+- Morison, S. E. (1950). Breaking the Bismarcks Barrier, 22 July 1942-1 May 1944 (History of US Naval Operations in WWII, vol. 6). Little, Brown, Boston. *(checked 2026-11-15: detail)*
+- Morison, S. E. (1953). New Guinea and the Marianas, March 1944-August 1944 (History of US Naval Operations in WWII, vol. 8). Little, Brown, Boston. *(checked 2026-11-15: detail)*
+- Morison, S. E. (1958). Leyte, June 1944-January 1945 (History of US Naval Operations in WWII, vol. 12). Little, Brown, Boston. *(checked 2026-11-15: existence)*
+- Morison, S. E. (1960). Victory in the Pacific, 1945 (History of US Naval Operations in WWII, vol. 14). Little, Brown, Boston. *(checked 2026-11-15: detail)*
+- Morse, P. M.; Kimball, G. E. (1951). Methods of Operations Research. Technology Press of MIT and John Wiley & Sons, New York, 1951. *(public domain)* *(checked 2026-11-15: detail)*
+- Mueller, K. P. (ed.) (2015). Precision and Purpose: Airpower in the Libyan Civil War (RR-676-AF). RAND Corporation, Santa Monica. *(checked 2026-11-15: detail)*
+- Murray, W. (1983). Strategy for Defeat: The Luftwaffe 1933-1945. Air University Press, Maxwell AFB. *(public domain)* *(checked 2026-11-15: detail)*
+- Murray, W.; Woods, K. M. (2014). The Iran-Iraq War: A Military and Strategic History. Cambridge University Press, Cambridge. *(checked 2026-11-15: detail)*
+- Nash, D. E. (2002). Hell's Gate: The Battle of the Cherkassy Pocket, January-February 1944. RZM Imports, Stamford, CT. *(checked 2026-11-15: detail)*
+- Naylor, S. (2005). Not a Good Day to Die: The Untold Story of Operation Anaconda. Berkley Books, New York. *(checked 2026-11-15: detail)*
+- Nelder, J. A.; Wedderburn, R. W. M. (1972). Generalized linear models. Journal of the Royal Statistical Society A 135(3): 370-384. *(checked 2026-11-15: detail)*
+- Nolan, K. W. (1983). Battle for Hue: Tet, 1968. Presidio Press, Novato. *(checked 2026-11-15: detail)*
+- Nolan, K. W. (1986). Into Laos: The Story of Dewey Canyon II/Lam Son 719, Vietnam 1971. Presidio Press, Novato. *(checked 2026-11-15: detail)*
+- Nordeen, L. O. (1990). Fighters over Israel. Orion Books, New York. *(checked 2026-11-15: detail)*
+- O'Neill, R. (1985). Australia in the Korean War 1950-53, Volume II: Combat Operations. Australian War Memorial and Australian Government Publishing Service, Canberra. *(checked 2026-11-15: existence)*
+- Oliker, O. (2001). Russia's Chechen Wars 1994-2000: Lessons from Urban Combat (MR-1289-A). RAND Corporation, Santa Monica. *(checked 2026-11-15: detail)*
+- Openshaw, S. (1984). The Modifiable Areal Unit Problem (CATMOG 38). Geo Books, Norwich. *(checked 2026-11-15: detail)*
+- Ord, J. K.; Getis, A. (1995). Local spatial autocorrelation statistics: distributional issues and an application. Geographical Analysis 27(4): 286-306. *(checked 2026-11-15: detail)*
+- Oren, M. B. (2002). Six Days of War: June 1967 and the Making of the Modern Middle East. Oxford University Press, New York. *(checked 2026-11-15: detail)*
+- Osinga, F. P. B. (2007). Science, Strategy and War: The Strategic Theory of John Boyd. Routledge, Abingdon. *(checked 2026-11-15: detail)*
+- Osipov, M. (trans. Helmbold, R. L.; Rehm, A. S.) (1995). The influence of the numerical strength of engaged forces on their casualties (orig. 1915). Naval Research Logistics 42(3): 435-490. *(checked 2026-11-15: detail)*
+- Overy, R. (2000). The Battle. Penguin, London, 2000. US edition: W. W. Norton, New York, 2001, as 'The Battle of Britain: The Myth and the Reality'. *(checked 2026-11-15: detail)*
+- Overy, R. (2013). The Bombing War: Europe 1939-1945. Allen Lane, London. *(checked 2026-11-15: detail)*
+- Paine, S. C. M. (2003). The Sino-Japanese War of 1894-1895: Perceptions, Power, and Primacy. Cambridge University Press, Cambridge. *(checked 2026-11-15: detail)*
+- Pakenham, T. (1979). The Boer War. Weidenfeld & Nicolson, London. *(checked 2026-11-15: detail)*
+- Pape, R. A. (1996). Bombing to Win: Air Power and Coercion in War. Cornell University Press, Ithaca. *(checked 2026-11-15: detail)*
+- Parshall, J. B.; Tully, A. P. (2005). Shattered Sword: The Untold Story of the Battle of Midway. Potomac Books, Washington DC. *(checked 2026-11-15: detail)*
+- PC Gamer (2013). The International 2013: Grand Finals in review. PC Gamer. https://www.pcgamer.com/the-international-2013-grand-finals-in-review *(checked 2026-11-15: detail)*
+- PC Gamer (2016). The best CS:GO plays of 2016. PC Gamer. https://www.pcgamer.com/the-best-csgo-plays-of-2016 *(checked 2026-11-15: detail)*
+- Perla, P. P. (1990). The Art of Wargaming. Naval Institute Press, Annapolis. *(checked 2026-11-15: detail)*
+- Perla, P. P.; McGrady, E. D. (2011). Why wargaming works. Naval War College Review 64(3): 111-130. *(checked 2026-11-15: detail)*
+- Playfair, I. S. O.; Flynn, F. C.; Molony, C. J. C.; Gleave, T. P. (1960). The Mediterranean and Middle East, Volume III: British Fortunes Reach Their Lowest Ebb (History of the Second World War). HMSO, London. *(checked 2026-11-15: detail)*
+- Playfair, I. S. O.; Stitt, G. M. S.; Molony, C. J. C.; Toomer, S. E. (1954). The Mediterranean and Middle East, Volume I: The Early Successes against Italy (History of the Second World War). HMSO, London. *(checked 2026-11-15: detail)*
+- Plutarch (trans. Perrin, B.) (1916). Lives, Volume III: Pericles and Fabius Maximus, Nicias and Crassus (Loeb Classical Library). Heinemann, London; Macmillan, New York. *(public domain)* *(checked 2026-11-15: existence)*
+- Pollack, K. M. (2002). Arabs at War: Military Effectiveness, 1948-1991. University of Nebraska Press, Lincoln. *(checked 2026-11-15: detail)*
+- Pollard, R.; Reep, C. (1997). Measuring the effectiveness of playing strategies at soccer. Journal of the Royal Statistical Society D 46(4): 541-550. *(checked 2026-11-15: detail)*
+- Polybius (trans. Shuckburgh, E. S.) (1889). The Histories of Polybius. Macmillan, London. *(public domain)* *(checked 2026-11-15: existence)*
+- Pope, D. (1956). The Battle of the River Plate. William Kimber, London. *(checked 2026-11-15: detail)*
+- Prados, J.; Stubbe, R. W. (1991). Valley of Decision: The Siege of Khe Sanh. Houghton Mifflin, Boston. *(checked 2026-11-15: detail)*
+- Prange, G. W. (1981). At Dawn We Slept: The Untold Story of Pearl Harbor. McGraw-Hill, New York. *(checked 2026-11-15: detail)*
+- Prior, R.; Wilson, T. (1992). Command on the Western Front: The Military Career of Sir Henry Rawlinson, 1914-1918. Blackwell, Oxford. *(checked 2026-11-15: detail)*
+- Putney, D. T. (2004). Airpower Advantage: Planning the Gulf War Air Campaign, 1989-1991. Air Force History and Museums Program, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Rabinovich, A. (1988). The Boats of Cherbourg. Seaver Books, New York. *(checked 2026-11-15: detail)*
+- Rabinovich, A. (2004). The Yom Kippur War: The Epic Encounter That Transformed the Middle East. Schocken, New York. *(checked 2026-11-15: detail)*
+- Reep, C.; Benjamin, B. (1968). Skill and chance in association football. Journal of the Royal Statistical Society A 131(4): 581-585. *(checked 2026-11-15: detail)*
+- Reiter, D.; Stam, A. C. (2002). Democracies at War. Princeton University Press, Princeton. *(checked 2026-11-15: detail)*
+- Reynolds, N. E. (2005). Basrah, Baghdad, and Beyond: The U.S. Marine Corps in the Second Iraq War. Naval Institute Press, Annapolis. *(checked 2026-11-15: detail)*
+- Riot Games (2013). Road to Worlds: Korea regionals recap. League of Legends Nexus. https://nexus.leagueoflegends.com/en-us/2013/09/road-to-worlds-korea-regionals-recap/ *(checked 2026-11-15: detail)*
+- Rioult, F.; Métivier, J.-P.; Helleu, B.; Scelles, N.; Durand, C. (2014). Mining tracks of competitive video games. AASRI Procedia 8: 82-87. *(checked 2026-11-15: detail)*
+- Ripley, B. D. (1977). Modelling spatial patterns. Journal of the Royal Statistical Society B 39(2): 172-212. *(checked 2026-11-15: detail)*
+- Roberts, M. (1958). Gustavus Adolphus: A History of Sweden, 1611-1632, Volume II. Longmans, Green, London. *(checked 2026-11-15: detail)*
+- Robinson, L. (2004). Masters of Chaos: The Secret History of the Special Forces. PublicAffairs, New York. *(checked 2026-11-15: detail)*
+- Romjue, J. L. (1984). From Active Defense to AirLand Battle: The Development of Army Doctrine 1973-1982. US Army Training and Doctrine Command Historical Office, Fort Monroe. *(public domain)* *(checked 2026-11-15: detail)*
+- Rommel, E. (1937). Infanterie greift an (Infantry Attacks). Voggenreiter, Potsdam. *(checked 2026-11-15: detail)*
+- Rosenau, W. (2001). Special Operations Forces and Elusive Enemy Ground Targets: Lessons from Vietnam and the Persian Gulf War (MR-1408-AF). RAND Corporation, Santa Monica. *(checked 2026-11-15: existence)*
+- Roskill, S. W. (1954). The War at Sea 1939-1945, vol. 1: The Defensive. HMSO, London. *(checked 2026-11-15: existence)*
+- Roskill, S. W. (1956). The War at Sea 1939-1945, vol. 2: The Period of Balance. HMSO, London. *(checked 2026-11-15: existence)*
+- Roskill, S. W. (1960). The War at Sea 1939-1945, vol. 3, part 1: The Offensive. HMSO, London. *(checked 2026-11-15: existence)*
+- Rotte, R.; Schmidt, C. M. (2003). On the production of victory: empirical determinants of battlefield success in modern war. Defence and Peace Economics 14(3): 175-192. doi:10.1080/1024269022000000868 *(checked 2026-11-15: detail)*
+- Ryan, C. (1974). A Bridge Too Far. Simon & Schuster, New York. *(checked 2026-11-15: detail)*
+- Salen, K.; Zimmerman, E. (2003). Rules of Play: Game Design Fundamentals. MIT Press, Cambridge MA. *(checked 2026-11-15: detail)*
+- Salmon, A. (2009). To the Last Round: The Epic British Stand on the Imjin River, Korea 1951. Aurum Press, London. *(checked 2026-11-15: detail)*
+- Scales, R. H. (1993). Certain Victory: The United States Army in the Gulf War. Office of the Chief of Staff, US Army, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Schell, J. (2008). The Art of Game Design: A Book of Lenses. Morgan Kaufmann, Burlington. *(checked 2026-11-15: detail)*
+- Schubert, M.; Drachen, A.; Mahlmann, T. (2016). Esports analytics through encounter detection. MIT Sloan Sports Analytics Conference 2016. *(checked 2026-11-15: existence)*
+- Sears, S. W. (1983). Landscape Turned Red: The Battle of Antietam. Ticknor & Fields, New Haven. *(checked 2026-11-15: detail)*
+- Sears, S. W. (1996). Chancellorsville. Houghton Mifflin, Boston. *(checked 2026-11-15: detail)*
+- Seif El-Nasr, M.; Drachen, A.; Canossa, A. (eds.) (2013). Game Analytics: Maximizing the Value of Player Data. Springer, London. *(checked 2026-11-15: detail)*
+- Seif El-Nasr, M.; Nguyen, T.-H. D.; Canossa, A.; Drachen, A. (2021). Game Data Science. Oxford University Press, Oxford. *(checked 2026-11-15: detail)*
+- Semenov, A.; Romov, P.; Korolev, S.; Yashkov, D.; Neklyudov, K. (2017). Performance of machine learning algorithms in predicting game outcome from drafts in Dota 2. Analysis of Images, Social Networks and Texts (AIST 2016), CCIS 661, Springer: 26-37. *(checked 2026-11-15: existence)*
+- Shaikh, S.; Rumbaugh, W. (2020). The Air and Missile War in Nagorno-Karabakh: Lessons for the Future of Strike and Defense. Center for Strategic and International Studies, Washington DC. *(checked 2026-11-15: existence)*
+- Shaw, R. L. (1985). Fighter Combat: Tactics and Maneuvering. Naval Institute Press, Annapolis. *(checked 2026-11-15: detail)*
+- Showalter, D. E. (1991). Tannenberg: Clash of Empires. Archon Books, Hamden. *(checked 2026-11-15: detail)*
+- Showalter, D. E. (1996). The Wars of Frederick the Great. Longman, London. *(checked 2026-11-15: detail)*
+- Shulimson, J.; Blasiol, L. A.; Smith, C. R.; Dawson, D. A. (1997). U.S. Marines in Vietnam: The Defining Year, 1968. History and Museums Division, US Marine Corps, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Siborne, W. (1844). History of the War in France and Belgium in 1815. T. & W. Boone, London. *(public domain)* *(checked 2026-11-15: detail)*
+- Silverman, B. W. (1986). Density Estimation for Statistics and Data Analysis. Chapman & Hall, London. *(checked 2026-11-15: detail)*
+- Sirlin, D. (2006). Playing to Win: Becoming the Champion. Lulu.com. *(checked 2026-11-15: detail)*
+- Smail, R. C. (1956). Crusading Warfare, 1097-1193. Cambridge University Press, Cambridge. *(checked 2026-11-15: detail)*
+- Smith, R. R. (1963). Triumph in the Philippines (US Army in World War II). Office of the Chief of Military History, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Spearman, W. (2018). Beyond expected goals. MIT Sloan Sports Analytics Conference 2018. *(checked 2026-11-15: detail)*
+- Special Operations Review Group (Holloway, J. L., chair) (1980). Rescue Mission Report. Joint Chiefs of Staff, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Stone, L. D. (1975). Theory of Optimal Search. Academic Press, New York. *(checked 2026-11-15: detail)*
+- Stone, L. D.; Keller, C. M.; Kratzke, T. M.; Strumpfer, J. P. (2014). Search for the wreckage of Air France flight AF 447. Statistical Science 29(1): 69-80. doi:10.1214/13-STS420 *(checked 2026-11-15: detail)*
+- Strauss, B. (2004). The Battle of Salamis. Simon & Schuster, New York. *(checked 2026-11-15: detail)*
+- Sumption, J. (1990). The Hundred Years War, Volume I: Trial by Battle. Faber & Faber, London. *(checked 2026-11-15: existence)*
+- Sun Tzu (trans. Giles, L.) (1910). The Art of War. Luzac & Co., London. https://www.gutenberg.org/ebooks/132 *(public domain)* *(checked 2026-11-15: detail)*
+- Sweetman, J. (1982). Operation Chastise: The Dams Raid, Epic or Myth. Jane's, London. *(checked 2026-11-15: detail)*
+- Tacitus (trans. Church, A. J.; Brodribb, W. J.) (1876). The Annals. Macmillan, London. *(public domain)* *(checked 2026-11-15: existence)*
+- Taki, T.; Hasegawa, J.; Fukumura, T. (1996). Development of motion analysis system for quantitative evaluation of teamwork in soccer games. Proc. IEEE International Conference on Image Processing (ICIP 1996). *(checked 2026-11-15: detail)*
+- Tapper, J. (2012). The Outpost: An Untold Story of American Valor. Little, Brown, New York. *(checked 2026-11-15: detail)*
+- Taylor, J. G. (1983). Lanchester Models of Warfare (2 vols.). Operations Research Society of America, Military Applications Section, Arlington VA. *(checked 2026-11-15: detail)*
+- Taylor, T. L. (2012). Raising the Stakes: E-Sports and the Professionalization of Computer Gaming. MIT Press, Cambridge MA. *(checked 2026-11-15: detail)*
+- Thompson, W. W. (2000). To Hanoi and Back: The United States Air Force and North Vietnam, 1966-1973. Air Force History and Museums Program, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
+- Till, G. (2018). Seapower: A Guide for the Twenty-First Century (4th ed.). Routledge, Abingdon. *(checked 2026-11-15: detail)*
+- Tobler, W. R. (1970). A computer movie simulating urban growth in the Detroit region. Economic Geography 46 (supplement): 234-240. *(checked 2026-11-15: detail)*
+- Totten, C. W. (2019). An Architectural Approach to Level Design (2nd ed.). CRC Press, Boca Raton. *(checked 2026-11-15: detail)*
+- Trask, D. F. (1981). The War with Spain in 1898. Macmillan, New York. *(checked 2026-11-15: detail)*
+- Travers, T. (2001). Gallipoli 1915. Tempus, Stroud. *(checked 2026-11-15: detail)*
+- Triandafillov, V. K. (trans. Kipp, W. A.) (1994). The Nature of the Operations of Modern Armies (orig. 1929). Frank Cass, Ilford. *(checked 2026-11-15: detail)*
+- Trotter, W. R. (1991). A Frozen Hell: The Russo-Finnish Winter War of 1939-1940. Algonquin Books, Chapel Hill. *(checked 2026-11-15: detail)*
+- Tully, A. P. (2009). Battle of Surigao Strait. Indiana University Press, Bloomington. *(checked 2026-11-15: detail)*
+- Turnbull, S. (2003). Tannenberg 1410: Disaster for the Teutonic Knights (Campaign 122). Osprey, Oxford. *(checked 2026-11-15: detail)*
+- Turner, A.; Doxa, M.; O'Sullivan, D.; Penn, A. (2001). From isovists to visibility graphs: a methodology for the analysis of architectural space. Environment and Planning B 28(1): 103-121. *(checked 2026-11-15: detail)*
+- Upcomer (2018). CSGO 2018 retrospective: the reign of Astralis. Upcomer. https://upcomer.com/csgo-2018-retrospective-astralis/ *(checked 2026-11-15: existence)*
+- US Marine Corps (1997). MCDP 1 Warfighting. Headquarters USMC, Washington DC. *(public domain)* *(checked 2026-11-15: existence)*
+- US Navy Department (1898). Official Records of the Union and Confederate Navies in the War of the Rebellion, Series I, vol. 7. Government Printing Office, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- US War Department (1888). The War of the Rebellion: Official Records of the Union and Confederate Armies, Series I vol. 21 (Fredericksburg). Government Printing Office, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- van Creveld, M. (1982). Fighting Power: German and U.S. Army Performance, 1939-1945. Greenwood Press, Westport. *(checked 2026-11-15: detail)*
+- Vegetius (trans. Clarke, J.) (1767). De Re Militari (The Military Institutions of the Romans). W. Griffin, London. *(public domain)* *(checked 2026-11-15: existence)*
+- Vego, M. N. (2007). Joint Operational Warfare: Theory and Practice. Naval War College, Newport. *(public domain)* *(checked 2026-11-15: detail)*
+- Venkus, R. E. (1992). Raid on Qaddafi. St. Martin's Press, New York. *(checked 2026-11-15: detail)*
+- Vinyals, O.; Babuschkin, I.; Czarnecki, W. M.; et al. (2019). Grandmaster level in StarCraft II using multi-agent reinforcement learning. Nature 575(7782): 350-354. doi:10.1038/s41586-019-1724-z *(checked 2026-11-15: detail)*
+- Waddington, C. H. (1973). O.R. in World War 2: Operational Research against the U-Boat. Elek Science, London. *(checked 2026-11-15: detail)*
+- Wallner, G. (ed.) (2019). Data Analytics Applications in Gaming and Entertainment. CRC Press, Boca Raton. *(checked 2026-11-15: existence)*
+- Wallner, G.; Kriglstein, S. (2013). Visualization-based analysis of gameplay data - a review of literature. Entertainment Computing 4(3): 143-155. *(checked 2026-11-15: detail)*
+- Wallner, G.; Kriglstein, S. (2014). PLATO: a visual analytics system for gameplay data. Computers & Graphics 38: 341-356. *(checked 2026-11-15: existence)*
+- Warden, J. A. (1988). The Air Campaign: Planning for Combat. National Defense University Press, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Washburn, A. R. (2002). Search and Detection (4th ed.). INFORMS / Military Applications Section, Linthicum MD. *(checked 2026-11-15: existence)*
+- Washburn, A.; Kress, M. (2009). Combat Modeling. Springer, New York. *(checked 2026-11-15: detail)*
+- Watling, J.; Reynolds, N. (2022). Operation Z: The Death Throes of an Imperial Delusion. Royal United Services Institute, London (Special Report, April 2022). *(checked 2026-11-15: existence)*
+- Watling, J.; Reynolds, N. (2022). Ukraine at War: Paving the Road from Survival to Victory. Royal United Services Institute, London. *(checked 2026-11-15: detail)*
+- Watling, J.; Reynolds, N. (2023). Meatgrinder: Russian Tactics in the Second Year of Its Invasion of Ukraine. Royal United Services Institute, London. *(checked 2026-11-15: detail)*
+- Watling, J.; Reynolds, N. (2023). Stormbreak: Fighting Through Russian Defences in Ukraine's 2023 Offensive. Royal United Services Institute, London. *(checked 2026-11-15: detail)*
+- Wawro, G. (1996). The Austro-Prussian War: Austria's War with Prussia and Italy in 1866. Cambridge University Press, Cambridge. *(checked 2026-11-15: detail)*
+- Weapons Systems Evaluation Group (1967). Project Red Baron: Air-to-Air Encounters in Southeast Asia, Volume I (WSEG Report 116). Weapons Systems Evaluation Group, Washington DC (DTIC). *(public domain)* *(checked 2026-11-15: detail)*
+- Weiss, H. K. (1966). Combat models and historical data: the U.S. Civil War. Operations Research 14(5): 759-790. doi:10.1287/opre.14.5.759 *(checked 2026-11-15: detail)*
+- Werrell, K. P. (2005). Sabres over MiG Alley: The F-86 and the Battle for Air Superiority in Korea. Naval Institute Press, Annapolis. *(checked 2026-11-15: detail)*
+- Werrell, K. P. (2005). Archie to SAM: A Short Operational History of Ground-Based Air Defense (2nd ed.). Air University Press, Maxwell AFB. *(public domain)* *(checked 2026-11-15: detail)*
+- Westermeyer, P. W. (2008). U.S. Marines in Battle: Al-Khafji, 28 January-1 February 1991. History Division, US Marine Corps, Washington DC. *(public domain)* *(checked 2026-11-15: detail)*
+- Willard, D. (1962). Lanchester as Force in History: An Analysis of Land Battles of the Years 1618-1905 (RAC-TP-74). Research Analysis Corporation, Bethesda MD. *(checked 2026-11-15: existence)*
+- Wilson, E. B. (1927). Probable inference, the law of succession, and statistical inference. Journal of the American Statistical Association 22(158): 209-212. *(checked 2026-11-15: detail)*
+- Wilson, H. W. (1896). Ironclads in Action: A Sketch of Naval Warfare from 1855 to 1895. Sampson Low, Marston, London. *(public domain)* *(checked 2026-11-15: detail)*
+- Wise, H. L. (2007). Inside the Danger Zone: The U.S. Military in the Persian Gulf, 1987-1988. Naval Institute Press, Annapolis. *(checked 2026-11-15: detail)*
+- Woodward, S.; Robinson, P. (1992). One Hundred Days: The Memoirs of the Falklands Battle Group Commander. HarperCollins, London. *(checked 2026-11-15: detail)*
+- Xenophon (trans. Dakyns, H. G.) (1897). Hellenica. Macmillan, London. https://www.gutenberg.org/ebooks/1174 *(public domain)* *(checked 2026-11-15: detail)*
+- Xenopoulos, P.; Doraiswamy, H.; Silva, C. (2020). Valuing player actions in Counter-Strike: Global Offensive. Proc. IEEE International Conference on Big Data 2020: 1283-1292. https://arxiv.org/abs/2011.01324 *(checked 2026-11-15: detail)*
+- Xenopoulos, P.; Rulff, J.; Nonato, L. G.; Barr, B.; Silva, C. (2022). ggViz: accelerating large-scale esports game analysis. Proc. ACM on Human-Computer Interaction 6 (CHI PLAY): 238. *(checked 2026-11-15: existence)*
+- Y'Blood, W. T. (1981). Red Sun Setting: The Battle of the Philippine Sea. Naval Institute Press, Annapolis. *(checked 2026-11-15: existence)*
+- Yang, P.; Harrison, B.; Roberts, D. L. (2014). Identifying patterns in combat that are predictive of success in MOBA games. Proc. 9th International Conference on Foundations of Digital Games (FDG 2014). *(checked 2026-11-15: existence)*
+- Yannakakis, G. N.; Togelius, J. (2018). Artificial Intelligence and Games. Springer, Cham. *(checked 2026-11-15: detail)*
+- Zabrodskyi, M.; Watling, J.; Danylyuk, O. V.; Reynolds, N. (2022). Preliminary Lessons in Conventional Warfighting from Russia's Invasion of Ukraine: February-July 2022. Royal United Services Institute, London. *(checked 2026-11-15: detail)*
+- Zaffiri, S. (1988). Hamburger Hill: May 11-20, 1969. Presidio Press, Novato. *(checked 2026-11-15: detail)*
+- Zaloga, S. J. (1996). Bagration 1944: The Destruction of Army Group Centre (Campaign 42). Osprey, London. *(checked 2026-11-15: detail)*
+- Zaloga, S. J.; Madej, W. V. (1985). The Polish Campaign 1939. Hippocrene Books, New York. *(checked 2026-11-15: detail)*
+- Zetterling, N.; Frankson, A. (2000). Kursk 1943: A Statistical Analysis. Frank Cass, London. *(checked 2026-11-15: detail)*
+- Zucchino, D. (2004). Thunder Run: The Armored Strike to Capture Baghdad. Atlantic Monthly Press, New York. *(checked 2026-11-15: detail)*
+- Zuehlke, M. (1999). Ortona: Canada's Epic World War II Battle. Stoddart, Toronto. *(checked 2026-11-15: detail)*
 
 <!-- kb:end -->
 

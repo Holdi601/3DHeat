@@ -45,7 +45,7 @@ table('Historical cases', CASES, ['id', 'case', 'when', 'scale', 'patterns', 'so
 table('Game and level design', design, ['id', 'title', 'patterns', 'sources'], (e) => [`\`${e.id}\``, e.title, pats(e), cites(e)]);
 table('Studies', studies, ['id', 'title', 'sources'], (e) => [`\`${e.id}\``, e.title, cites(e)]);
 out.push('### Bibliography', '');
-for (const r of [...REFERENCES].sort((a, b) => a.authors.localeCompare(b.authors) || a.year - b.year)) out.push(`- ${fullCite(r.id)}${r.pd ? ' *(public domain)*' : ''}`);
+for (const r of [...REFERENCES].sort((a, b) => a.authors.localeCompare(b.authors) || a.year - b.year)) out.push(`- ${fullCite(r.id)}${r.pd ? ' *(public domain)*' : ''}${r.verified ? ` *(checked ${r.verified}: ${r.verifiedLevel})*` : ''}`);
 
 const page = resolve(ROOT, 'docs/knowledge.md');
 const text = readFileSync(page, 'utf8');

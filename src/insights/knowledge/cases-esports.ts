@@ -41,7 +41,7 @@ export const CASES_ESPORTS: KbEntry[] = [
     summary: 'Against the dominant player of the day, Bisu won the final 3-0 with a Protoss build against Zerg that combined an early expansion with harassing air units, refining an existing idea into a style that made the matchup playable at the top level.',
     outcome: 'Bisu won the title; the style shaped the matchup for years.',
     lesson: 'A matchup that looks unbalanced can be an unsolved strategy; a new approach can move win rates more than any patch.',
-    refs: ['teamliquid-2007-revolution', 'taylor-2012'],
+    refs: ['taylor-2012'],
   }),
   k({
     id: 'dream-coil-ti3', title: 'The Dream Coil at The International 2013', when: 'Aug 2013', where: 'The International 3 grand final, Dota 2', scale: 'engagement',

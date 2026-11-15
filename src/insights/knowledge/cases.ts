@@ -515,7 +515,7 @@ export const CASES: KbEntry[] = [
     summary: 'Russian armoured columns entered the city with little infantry support and were ambushed by small teams firing anti-tank weapons from upper floors and basements, where tank guns could not elevate or depress far enough.',
     outcome: 'Initial assault columns destroyed; the city taken later at great cost.',
     lesson: 'Vehicles in streets die to fire from above and below; without infantry clearing the buildings they are targets.',
-    refs: ['grau-1997', 'fm3-06-2022'], see: ['concept.urban-terrain', 'concept.combined-arms'],
+    refs: ['grau-1997', 'fm3-06-2006'], see: ['concept.urban-terrain', 'concept.combined-arms'],
   }),
   k({
     id: 'hue', title: 'Hue', when: 'Jan-Mar 1968', where: 'Central Vietnam', scale: 'battle',

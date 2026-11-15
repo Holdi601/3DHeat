@@ -387,7 +387,7 @@ export const CONCEPTS_MORE: KbEntry[] = [
     predicts: 'Deaths of attackers concentrate in streets and open squares between defended buildings.',
     measure: 'Finding cover.open in dense maps; kill places in buildings against death places in streets (fine grid heights).',
     lesson: 'Streets watched from several buildings are kill zones; move through buildings, not along streets.',
-    refs: ['fm3-06-2022', 'fm90-10-1979'],
+    refs: ['fm3-06-2006', 'fm90-10-1979'],
     see: ['concept.urban-terrain', 'concept.mouseholing'],
   }),
   c({
@@ -412,7 +412,7 @@ export const CONCEPTS_MORE: KbEntry[] = [
     predicts: 'Long periods with few kills punctuated by costly assaults; defenders\' losses rise as isolation lasts.',
     measure: 'Kill rate over match time at a held place; exchange ratio during assaults against quiet periods.',
     lesson: 'A held place that costs attackers dearly in assault may still fall to isolation; watch the timeline, not only the exchange.',
-    refs: ['vegetius-clarke', 'fm3-06-2022'],
+    refs: ['vegetius-clarke', 'fm3-06-2006'],
   }),
   c({
     id: 'concept.guerrilla',
