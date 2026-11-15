@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "中斷的嘗試",
   "heat.filterPanel.siege.interruptedTitle": "已開始但未完成的安放與拆除，位於玩家停下的地方",
   "heat.filterPanel.siege.reinforce": "加固",
-  "heat.filterPanel.siege.reinforceTitle": "被加固的牆和艙口，位於站在那裡的防守方（推斷）"
+  "heat.filterPanel.siege.reinforceTitle": "被加固的牆和艙口，位於站在那裡的防守方（推斷）",
+  "heat.timeline.seriesSession": "工作階段 {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "間歇 · 下一工作階段 {date} UTC"
 }

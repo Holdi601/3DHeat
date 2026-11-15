@@ -161,5 +161,11 @@
   "match.recording.recorded": "Ierakstīts",
   "match.recording.briefing": "Instruktāža",
   "match.recording.debriefing": "Izvērtēšana",
-  "match.recording.comments": "Komentāri"
+  "match.recording.comments": "Komentāri",
+  "match.series.title": "Kampaņas kārta",
+  "match.series.summary": "{campaign} · sesijas: {count} · {from} – {to} UTC · {seconds} s pārtraukumi starp tām",
+  "match.series.held": "Apstrīdētās vietas katras sesijas sākumā (sarkanie, zilie)",
+  "match.series.go": "Pāriet uz sesijas {n} sākumu",
+  "match.series.row": "{n}. {date} · Sarkanie {red} / Zilie {blue} · ieņemtas pirms tam: {taken}",
+  "match.series.offer": "Šis ieraksts ir kampaņas kārtas {campaign} sesija {n}. Ielādējiet kopā ar to pārējos kārtas ierakstus, lai skatītu kārtu kā vienu sēriju."
 }

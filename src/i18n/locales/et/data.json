@@ -144,5 +144,6 @@
   "data.filePick.filesIn": "{root} ({count, plural, one {# fail} other {# faili}})",
   "data.filePick.files": "{count, plural, one {# fail} other {# faili}}",
   "data.levelLibrary.openFailed": "Tasemete teeki ei õnnestunud avada.",
-  "data.levelLibrary.requestFailed": "Tasemete teegi päring ebaõnnestus."
+  "data.levelLibrary.requestFailed": "Tasemete teegi päring ebaõnnestus.",
+  "data.builder.seriesArranged": "Kampaaniavoor {campaign}: {count} seanssi esitatud üksteise järel, aeg nende vahel lühendatud {seconds} sekundini"
 }

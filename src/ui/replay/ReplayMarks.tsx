@@ -106,6 +106,17 @@ export function ReplayMarks({ range }: { range: readonly number[] }) {
       g.fillStyle = `rgba(200, 205, 212, ${(0.35 + 0.6 * Math.sqrt(cols[i] / most)).toFixed(2)})`;
       g.fillRect(i, 0, 1, h - 3);
     }
+    // A campaign series: the cut gaps between its sessions as dark bands, each session's start a light tick.
+    if (dataset?.series)
+      for (const [k, ss] of dataset.series.sessions.entries()) {
+        if (k > 0) {
+          const a = x(dataset.series.sessions[k - 1].end);
+          g.fillStyle = 'rgba(10, 12, 16, 0.75)';
+          g.fillRect(Math.round(a), 0, Math.max(1, Math.round(x(ss.start) - a)), h);
+        }
+        g.fillStyle = '#e8c35a';
+        g.fillRect(Math.round(x(ss.start)), 0, 1, h);
+      }
     g.fillStyle = '#6fb6ff';
     for (const t of marks.own) g.fillRect(Math.round(x(t)) - 1, 0, 2, h - 1);
     g.fillStyle = '#ff5a5a';
@@ -113,7 +124,7 @@ export function ReplayMarks({ range }: { range: readonly number[] }) {
       g.fillRect(Math.round(x(t)) - 1, 0, 3, h);
     // `x` by the range and width it reads.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [marks, list, width, range[0], range[1]]);
+  }, [marks, list, width, range[0], range[1], dataset]);
 
   if (!on || !dataset) return null;
   return (

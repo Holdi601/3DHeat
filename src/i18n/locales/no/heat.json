@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Avbrutte forsøk",
   "heat.filterPanel.siege.interruptedTitle": "Plantinger og desarmeringer som ble startet, men ikke fullført, der spilleren stoppet",
   "heat.filterPanel.siege.reinforce": "Forsterkninger",
-  "heat.filterPanel.siege.reinforceTitle": "Forsterkede vegger og luker, ved forsvareren som sto der (utledet)"
+  "heat.filterPanel.siege.reinforceTitle": "Forsterkede vegger og luker, ved forsvareren som sto der (utledet)",
+  "heat.timeline.seriesSession": "økt {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "pause · neste økt {date} UTC"
 }

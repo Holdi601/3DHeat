@@ -161,5 +161,11 @@
   "match.recording.recorded": "Įrašyta",
   "match.recording.briefing": "Instruktažas",
   "match.recording.debriefing": "Aptarimas",
-  "match.recording.comments": "Komentarai"
+  "match.recording.comments": "Komentarai",
+  "match.series.title": "Kampanijos raundas",
+  "match.series.summary": "{campaign} · sesijų: {count} · {from} – {to} UTC · {seconds} s pertraukos tarp jų",
+  "match.series.held": "Ginčijamos vietos kiekvienos sesijos pradžioje (raudonieji, mėlynieji)",
+  "match.series.go": "Eiti į sesijos {n} pradžią",
+  "match.series.row": "{n}. {date} · Raudonieji {red} / Mėlynieji {blue} · užimta prieš tai: {taken}",
+  "match.series.offer": "Šis įrašas yra kampanijos raundo {campaign} sesija {n}. Įkelkite kitus raundo įrašus kartu su juo, kad raundą žiūrėtumėte kaip vieną seriją."
 }

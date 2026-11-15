@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Nutraukti bandymai",
   "heat.filterPanel.siege.interruptedTitle": "Pradėti, bet nebaigti padėjimai ir nukenksminimai, ten, kur žaidėjas sustojo",
   "heat.filterPanel.siege.reinforce": "Sustiprinimai",
-  "heat.filterPanel.siege.reinforceTitle": "Sustiprintos sienos ir liukai, prie ten stovėjusio gynėjo (nustatyta)"
+  "heat.filterPanel.siege.reinforceTitle": "Sustiprintos sienos ir liukai, prie ten stovėjusio gynėjo (nustatyta)",
+  "heat.timeline.seriesSession": "sesija {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "pertrauka · kita sesija {date} UTC"
 }

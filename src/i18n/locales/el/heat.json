@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Διακοπείσες απόπειρες",
   "heat.filterPanel.siege.interruptedTitle": "Τοποθετήσεις και εξουδετερώσεις που ξεκίνησαν αλλά δεν ολοκληρώθηκαν, εκεί όπου σταμάτησε ο παίκτης",
   "heat.filterPanel.siege.reinforce": "Ενισχύσεις",
-  "heat.filterPanel.siege.reinforceTitle": "Ενισχυμένοι τοίχοι και καταπακτές, στον αμυνόμενο που στεκόταν εκεί (συναγόμενο)"
+  "heat.filterPanel.siege.reinforceTitle": "Ενισχυμένοι τοίχοι και καταπακτές, στον αμυνόμενο που στεκόταν εκεί (συναγόμενο)",
+  "heat.timeline.seriesSession": "συνεδρία {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "διάλειμμα · επόμενη συνεδρία {date} UTC"
 }

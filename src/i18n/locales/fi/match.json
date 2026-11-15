@@ -161,5 +161,11 @@
   "match.recording.recorded": "Tallennettu",
   "match.recording.briefing": "Ennakkokäsky",
   "match.recording.debriefing": "Jälkipuinti",
-  "match.recording.comments": "Kommentit"
+  "match.recording.comments": "Kommentit",
+  "match.series.title": "Kampanjakierros",
+  "match.series.summary": "{campaign} · istuntoja: {count} · {from} – {to} UTC · {seconds} s tauot niiden välillä",
+  "match.series.held": "Kiistellyt paikat kunkin istunnon alussa (punainen, sininen)",
+  "match.series.go": "Siirry istunnon {n} alkuun",
+  "match.series.row": "{n}. {date} · Punainen {red} / Sininen {blue} · vallattu ennen: {taken}",
+  "match.series.offer": "Tämä tallenne on kampanjakierroksen {campaign} istunto {n}. Lataa kierroksen muut tallenteet sen kanssa katsoaksesi kierroksen yhtenä sarjana."
 }

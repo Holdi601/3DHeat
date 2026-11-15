@@ -161,5 +161,11 @@
   "match.recording.recorded": "Irreġistrat",
   "match.recording.briefing": "Briefing",
   "match.recording.debriefing": "Debriefing",
-  "match.recording.comments": "Kummenti"
+  "match.recording.comments": "Kummenti",
+  "match.series.title": "Rawnd tal-kampanja",
+  "match.series.summary": "{campaign} · sessjonijiet: {count} · {from} – {to} UTC · waqfiet ta' {seconds} s bejniethom",
+  "match.series.held": "Postijiet ikkontestati miżmuma fil-bidu ta' kull sessjoni (aħmar, blu)",
+  "match.series.go": "Mur għall-bidu tas-sessjoni {n}",
+  "match.series.row": "{n}. {date} · Aħmar {red} / Blu {blue} · meħuda qabel: {taken}",
+  "match.series.offer": "Din ir-reġistrazzjoni hija s-sessjoni {n} tar-rawnd tal-kampanja {campaign}. Tella' r-reġistrazzjonijiet l-oħra tar-rawnd flimkien magħha biex tara r-rawnd bħala serje waħda."
 }

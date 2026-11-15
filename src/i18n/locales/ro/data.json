@@ -144,5 +144,6 @@
   "data.filePick.filesIn": "{root} ({count, plural, one {# fișier} few {# fișiere} other {# de fișiere}})",
   "data.filePick.files": "{count, plural, one {# fișier} few {# fișiere} other {# de fișiere}}",
   "data.levelLibrary.openFailed": "Biblioteca de niveluri nu a putut fi deschisă.",
-  "data.levelLibrary.requestFailed": "Cererea către biblioteca de niveluri a eșuat."
+  "data.levelLibrary.requestFailed": "Cererea către biblioteca de niveluri a eșuat.",
+  "data.builder.seriesArranged": "Runda de campanie {campaign}: sesiuni ({count}) redate una după alta, timpul dintre ele scurtat la {seconds} s"
 }

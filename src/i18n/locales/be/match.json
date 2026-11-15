@@ -161,5 +161,11 @@
   "match.recording.recorded": "Запісана",
   "match.recording.briefing": "Брыфінг",
   "match.recording.debriefing": "Разбор",
-  "match.recording.comments": "Каментарыі"
+  "match.recording.comments": "Каментарыі",
+  "match.series.title": "Раўнд кампаніі",
+  "match.series.summary": "{campaign} · сесій: {count} · {from} – {to} UTC · перапынкі па {seconds} с паміж імі",
+  "match.series.held": "Спрэчныя месцы, якія ўтрымліваліся ў пачатку кожнай сесіі (чырвоныя, сінія)",
+  "match.series.go": "Перайсці да пачатку сесіі {n}",
+  "match.series.row": "{n}. {date} · Чырвоныя {red} / Сінія {blue} · захоплена перад гэтым: {taken}",
+  "match.series.offer": "Гэты запіс — сесія {n} раўнда кампаніі {campaign}. Загрузіце разам з ім астатнія запісы раўнда, каб глядзець раўнд як адну серыю."
 }

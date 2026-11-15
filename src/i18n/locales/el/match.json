@@ -161,5 +161,11 @@
   "match.recording.recorded": "Καταγράφηκε",
   "match.recording.briefing": "Ενημέρωση",
   "match.recording.debriefing": "Απολογισμός",
-  "match.recording.comments": "Σχόλια"
+  "match.recording.comments": "Σχόλια",
+  "match.series.title": "Γύρος εκστρατείας",
+  "match.series.summary": "{campaign} · συνεδρίες: {count} · {from} – {to} UTC · διαλείμματα {seconds} s ανάμεσά τους",
+  "match.series.held": "Αμφισβητούμενα σημεία στην κατοχή κάθε πλευράς στην αρχή κάθε συνεδρίας (κόκκινοι, μπλε)",
+  "match.series.go": "Μετάβαση στην αρχή της συνεδρίας {n}",
+  "match.series.row": "{n}. {date} · Κόκκινοι {red} / Μπλε {blue} · κατελήφθησαν πριν: {taken}",
+  "match.series.offer": "Αυτή η καταγραφή είναι η συνεδρία {n} του γύρου εκστρατείας {campaign}. Φορτώστε μαζί της τις υπόλοιπες καταγραφές του γύρου για να τον δείτε ως μία σειρά."
 }

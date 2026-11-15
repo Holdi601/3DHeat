@@ -144,5 +144,6 @@
   "data.filePick.filesIn": "{root} ({count, plural, one {# файл} few {# файла} many {# файлов} other {# файла}})",
   "data.filePick.files": "{count, plural, one {# файл} few {# файла} many {# файлов} other {# файла}}",
   "data.levelLibrary.openFailed": "Не удалось открыть библиотеку уровней.",
-  "data.levelLibrary.requestFailed": "Запрос к библиотеке уровней не удался."
+  "data.levelLibrary.requestFailed": "Запрос к библиотеке уровней не удался.",
+  "data.builder.seriesArranged": "Раунд кампании {campaign}: сессии ({count}) воспроизводятся одна за другой, время между ними сокращено до {seconds} с"
 }

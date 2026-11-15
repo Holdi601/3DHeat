@@ -161,5 +161,11 @@
   "match.recording.recorded": "Opgenomen",
   "match.recording.briefing": "Briefing",
   "match.recording.debriefing": "Debriefing",
-  "match.recording.comments": "Opmerkingen"
+  "match.recording.comments": "Opmerkingen",
+  "match.series.title": "Campagneronde",
+  "match.series.summary": "{campaign} · sessies: {count} · {from} – {to} UTC · pauzes van {seconds} s ertussen",
+  "match.series.held": "Betwiste plaatsen in handen aan het begin van elke sessie (rood, blauw)",
+  "match.series.go": "Naar het begin van sessie {n}",
+  "match.series.row": "{n}. {date} · Rood {red} / Blauw {blue} · eerder ingenomen: {taken}",
+  "match.series.offer": "Deze opname is sessie {n} van campagneronde {campaign}. Laad de andere opnames van de ronde samen met deze om de ronde als één reeks te bekijken."
 }

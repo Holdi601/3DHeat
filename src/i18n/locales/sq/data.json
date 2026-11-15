@@ -144,5 +144,6 @@
   "data.filePick.filesIn": "{root} ({count, plural, one {# skedar} other {# skedarë}})",
   "data.filePick.files": "{count, plural, one {# skedar} other {# skedarë}}",
   "data.levelLibrary.openFailed": "Biblioteka e niveleve nuk mund të hapej.",
-  "data.levelLibrary.requestFailed": "Kërkesa te biblioteka e niveleve dështoi."
+  "data.levelLibrary.requestFailed": "Kërkesa te biblioteka e niveleve dështoi.",
+  "data.builder.seriesArranged": "Raundi i fushatës {campaign}: seancat ({count}) të luajtura njëra pas tjetrës, koha mes tyre e shkurtuar në {seconds} s"
 }

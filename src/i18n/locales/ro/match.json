@@ -161,5 +161,11 @@
   "match.recording.recorded": "Înregistrat",
   "match.recording.briefing": "Briefing",
   "match.recording.debriefing": "Debriefing",
-  "match.recording.comments": "Comentarii"
+  "match.recording.comments": "Comentarii",
+  "match.series.title": "Rundă de campanie",
+  "match.series.summary": "{campaign} · sesiuni: {count} · {from} – {to} UTC · pauze de {seconds} s între ele",
+  "match.series.held": "Locuri disputate deținute la începutul fiecărei sesiuni (roșii, albaștrii)",
+  "match.series.go": "Mergi la începutul sesiunii {n}",
+  "match.series.row": "{n}. {date} · Roșii {red} / Albaștrii {blue} · cucerite înainte: {taken}",
+  "match.series.offer": "Această înregistrare este sesiunea {n} a rundei de campanie {campaign}. Încarcă împreună cu ea celelalte înregistrări ale rundei pentru a urmări runda ca o singură serie."
 }

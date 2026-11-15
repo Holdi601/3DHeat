@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Avbrutna försök",
   "heat.filterPanel.siege.interruptedTitle": "Planteringar och desarmeringar som påbörjades men inte slutfördes, där spelaren slutade",
   "heat.filterPanel.siege.reinforce": "Förstärkningar",
-  "heat.filterPanel.siege.reinforceTitle": "Förstärkta väggar och luckor, vid försvararen som stod där (härlett)"
+  "heat.filterPanel.siege.reinforceTitle": "Förstärkta väggar och luckor, vid försvararen som stod där (härlett)",
+  "heat.timeline.seriesSession": "session {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "paus · nästa session {date} UTC"
 }

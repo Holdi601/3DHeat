@@ -144,5 +144,6 @@
   "data.filePick.filesIn": "{root}（{count, plural, other {# 个文件}}）",
   "data.filePick.files": "{count, plural, other {# 个文件}}",
   "data.levelLibrary.openFailed": "无法打开关卡库。",
-  "data.levelLibrary.requestFailed": "关卡库请求失败。"
+  "data.levelLibrary.requestFailed": "关卡库请求失败。",
+  "data.builder.seriesArranged": "战役回合 {campaign}：{count} 个会话依次播放，其间的时间缩短为 {seconds} 秒"
 }

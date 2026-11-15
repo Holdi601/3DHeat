@@ -144,5 +144,6 @@
   "data.filePick.filesIn": "{root} ({count, plural, one {# file} other {# files}})",
   "data.filePick.files": "{count, plural, one {# file} other {# files}}",
   "data.levelLibrary.openFailed": "Could not open the level library.",
-  "data.levelLibrary.requestFailed": "Level library request failed."
+  "data.levelLibrary.requestFailed": "Level library request failed.",
+  "data.builder.seriesArranged": "Campaign round {campaign}: {count} sessions played one after another, the time between them cut to {seconds} s"
 }

@@ -144,5 +144,6 @@
   "data.filePick.filesIn": "{root} ({count, plural, one {# bestand} other {# bestanden}})",
   "data.filePick.files": "{count, plural, one {# bestand} other {# bestanden}}",
   "data.levelLibrary.openFailed": "Kon de levelbibliotheek niet openen.",
-  "data.levelLibrary.requestFailed": "Verzoek aan de levelbibliotheek mislukt."
+  "data.levelLibrary.requestFailed": "Verzoek aan de levelbibliotheek mislukt.",
+  "data.builder.seriesArranged": "Campagneronde {campaign}: {count} sessies na elkaar afgespeeld, de tijd ertussen ingekort tot {seconds} s"
 }

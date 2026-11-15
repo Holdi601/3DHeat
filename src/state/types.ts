@@ -405,6 +405,19 @@ export interface Dataset {
    * their starts. Absent when the files kept their own clock.
    */
   recordingsAligned?: number;
+  /**
+   * Sessions of one campaign round played one after another (`DatasetBuilder`,
+   * `alignRecordings`): files that all name the same `campaign` and each its
+   * session's real start (`sessionStart`, Unix seconds) - a DCS server's
+   * recordings of one round - in real order, the time between two cut to a
+   * break of `breakSeconds`. Each session's span on the dataset's clock and
+   * its real start; the dataset's `session` ids. Absent for other loads.
+   */
+  series?: {
+    campaign: string;
+    breakSeconds: number;
+    sessions: { session: number; start: number; end: number; realStart: number }[];
+  };
 }
 
 /**

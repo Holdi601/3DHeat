@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Pārtraukti mēģinājumi",
   "heat.filterPanel.siege.interruptedTitle": "Sāktas, bet nepabeigtas uzstādīšanas un atmīnēšanas, kur spēlētājs apstājās",
   "heat.filterPanel.siege.reinforce": "Pastiprinājumi",
-  "heat.filterPanel.siege.reinforceTitle": "Pastiprinātas sienas un lūkas, pie aizstāvja, kas tur stāvēja (secināts)"
+  "heat.filterPanel.siege.reinforceTitle": "Pastiprinātas sienas un lūkas, pie aizstāvja, kas tur stāvēja (secināts)",
+  "heat.timeline.seriesSession": "sesija {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "pārtraukums · nākamā sesija {date} UTC"
 }

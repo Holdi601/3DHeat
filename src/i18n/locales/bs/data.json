@@ -144,5 +144,6 @@
   "data.filePick.filesIn": "{root} ({count, plural, one {# datoteka} few {# datoteke} other {# datoteka}})",
   "data.filePick.files": "{count, plural, one {# datoteka} few {# datoteke} other {# datoteka}}",
   "data.levelLibrary.openFailed": "Nije moguće otvoriti biblioteku nivoa.",
-  "data.levelLibrary.requestFailed": "Zahtjev biblioteci nivoa nije uspio."
+  "data.levelLibrary.requestFailed": "Zahtjev biblioteci nivoa nije uspio.",
+  "data.builder.seriesArranged": "Krug kampanje {campaign}: sesije ({count}) reproducirane jedna za drugom, vrijeme između njih skraćeno na {seconds} s"
 }

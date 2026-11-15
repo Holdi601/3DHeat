@@ -161,5 +161,11 @@
   "match.recording.recorded": "Registrato",
   "match.recording.briefing": "Briefing",
   "match.recording.debriefing": "Debriefing",
-  "match.recording.comments": "Commenti"
+  "match.recording.comments": "Commenti",
+  "match.series.title": "Round di campagna",
+  "match.series.summary": "{campaign} · sessioni: {count} · {from} – {to} UTC · pause di {seconds} s tra di esse",
+  "match.series.held": "Luoghi contesi tenuti all'inizio di ogni sessione (rosso, blu)",
+  "match.series.go": "Vai all'inizio della sessione {n}",
+  "match.series.row": "{n}. {date} · Rosso {red} / Blu {blue} · presi prima: {taken}",
+  "match.series.offer": "Questa registrazione è la sessione {n} del round di campagna {campaign}. Carica insieme a essa le altre registrazioni del round per guardarlo come una serie."
 }

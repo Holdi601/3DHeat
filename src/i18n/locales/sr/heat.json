@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Прекинути покушаји",
   "heat.filterPanel.siege.interruptedTitle": "Започета, али незавршена постављања и деактивирања, тамо где је играч стао",
   "heat.filterPanel.siege.reinforce": "Ојачања",
-  "heat.filterPanel.siege.reinforceTitle": "Ојачани зидови и отвори, код браниоца који је ту стајао (закључено)"
+  "heat.filterPanel.siege.reinforceTitle": "Ојачани зидови и отвори, код браниоца који је ту стајао (закључено)",
+  "heat.timeline.seriesSession": "сесија {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "пауза · следећа сесија {date} UTC"
 }

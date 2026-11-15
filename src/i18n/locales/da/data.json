@@ -144,5 +144,6 @@
   "data.filePick.filesIn": "{root} ({count, plural, one {# fil} other {# filer}})",
   "data.filePick.files": "{count, plural, one {# fil} other {# filer}}",
   "data.levelLibrary.openFailed": "Kunne ikke åbne banebiblioteket.",
-  "data.levelLibrary.requestFailed": "Forespørgslen til banebiblioteket mislykkedes."
+  "data.levelLibrary.requestFailed": "Forespørgslen til banebiblioteket mislykkedes.",
+  "data.builder.seriesArranged": "Kampagnerunde {campaign}: {count} sessioner afspillet efter hinanden, tiden imellem forkortet til {seconds} s"
 }

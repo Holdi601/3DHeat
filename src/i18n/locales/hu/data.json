@@ -144,5 +144,6 @@
   "data.filePick.filesIn": "{root} ({count, plural, one {# fájl} other {# fájl}})",
   "data.filePick.files": "{count, plural, one {# fájl} other {# fájl}}",
   "data.levelLibrary.openFailed": "Nem sikerült megnyitni a pályakönyvtárat.",
-  "data.levelLibrary.requestFailed": "A pályakönyvtár-kérés meghiúsult."
+  "data.levelLibrary.requestFailed": "A pályakönyvtár-kérés meghiúsult.",
+  "data.builder.seriesArranged": "{campaign} hadjárati forduló: {count} munkamenet egymás után lejátszva, a köztük eltelt idő {seconds} mp-re rövidítve"
 }

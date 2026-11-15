@@ -45,7 +45,12 @@
  * shows no winner; and on an aircraft's rows its `sortie` (1, 2, ... from
  * take-off to take-off), how it ended (`sortieResult`: landed, landed
  * damaged, ejected, shot down, destroyed, crashed, despawned, airborne at
- * end, no takeoff) and its kills (`sortieKills`). The `acmi` footer's
+ * end, no takeoff) and its kills (`sortieKills`). A round spans many
+ * sessions (recordings): `campaign` names it, `session` and `sessionStart`
+ * place this one in it, `heldRed`/`heldBlue` count the places each side held
+ * at its start, and the places taken since the session before are `capture`
+ * rows at the start marked between missions (a chained rounds file, made by
+ * `dcs-campaign-rounds.mjs`, says them). The `acmi` footer's
  * `outcome` holds the server, its rounds, the result with its source, the
  * captures and the sorties by how they ended.
  *
@@ -239,14 +244,16 @@ async function convert(job, theatres) {
   const { rounds, source: roundsSource } = Number.isFinite(recUnix)
     ? new DcsRounds(job.rounds ?? []).forRecording(srv.server, r1.globals.Title ?? '', recUnix, recUnix + Math.max(0, r1.lastTime ?? 0))
     : { rounds: [], source: null };
+  // The round this recording (session) began in: its place in it, who held what at its start, what was taken before.
+  const startRound = Number.isFinite(recUnix) ? roundAt(rounds, recUnix) : null;
 
   // The columns: the viewer's ACMI table, then every property.
   const EVENT_TEXT = ['Shooter', 'Target', 'Weapon', 'OtherVehicle', 'OtherType', 'Airfield', 'Detail', 'Inferred'];
   // Who won (docs/data-formats.md#outcome-columns) and each aircraft's sortie.
   // A campaign round spans many sessions (recordings): `campaign` names it, `session` is this one's place in it.
-  const OUTCOME_NUM = ['round', 'session', 'sessionStart', 'won', 'matchWon', 'sortie', 'sortieKills'];
+  const OUTCOME_NUM = ['round', 'session', 'sessionStart', 'heldRed', 'heldBlue', 'won', 'matchWon', 'sortie', 'sortieKills'];
   const OUTCOME_TEXT = ['server', 'mission', 'campaign', 'roundEndReason', 'sortieResult'];
-  const OUTCOME = ['server', 'mission', 'campaign', 'round', 'session', 'sessionStart', 'won', 'matchWon', 'roundEndReason', 'sortie', 'sortieResult', 'sortieKills'];
+  const OUTCOME = ['server', 'mission', 'campaign', 'round', 'session', 'sessionStart', 'heldRed', 'heldBlue', 'won', 'matchWon', 'roundEndReason', 'sortie', 'sortieResult', 'sortieKills'];
   const FIXED_NUM = ['Time', 'X', 'Y', 'Altitude', 'Heading', 'Pitch', 'Roll', 'Latitude', 'Longitude', 'Rounds', ...OUTCOME_NUM];
   const FIXED_TEXT = ['Object', 'Coalition', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Recording', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher', ...EVENT_TEXT, ...OUTCOME_TEXT];
   const OWN_TEXT = new Set(['Type', 'Name', 'Pilot', 'Group', 'Country', 'Coalition', 'Color']);
@@ -406,7 +413,7 @@ async function convert(job, theatres) {
   const [jT, jX, jY, jA, jH, jP, jR, jLat, jLon, jU, jV] = ['Time', 'X', 'Y', 'Altitude', 'Heading', 'Pitch', 'Roll', 'Latitude', 'Longitude', 'U', 'V'].map(J);
   const [jObj, jCo, jTy, jNa, jPi, jGr, jCn, jCl, jEv, jRec, jEvo, jInfo, jAct, jLau] = ['Object', 'Coalition', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Recording', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher'].map(J);
   const [jSh, jTg, jWp, jOv, jOt, jAf, jDt, jInf, jRnd] = [...EVENT_TEXT, 'Rounds'].map(J);
-  const [jSrv, jMis, jCamp, jRound, jSess, jSessT, jWon, jMWon, jWhy, jSor, jSorR, jSorK] = OUTCOME.map(J);
+  const [jSrv, jMis, jCamp, jRound, jSess, jSessT, jHeldR, jHeldB, jWon, jMWon, jWhy, jSor, jSorR, jSorK] = OUTCOME.map(J);
   /** A row's server, round and outcome by its side and the real time of its mission time `t`; no sortie yet. */
   let lastRound = null;
   const stamp = (b, i, t, color) => {
@@ -419,6 +426,9 @@ async function convert(job, theatres) {
     b[jRound][i] = r ? r.id : NaN;
     b[jSess][i] = r ? r.session : NaN;
     b[jSessT][i] = recUnix;
+    // The contested places each side held at this session's start (a chained rounds file says): the same on every row.
+    b[jHeldR][i] = startRound && Number.isFinite(startRound.session) ? startRound.red : NaN;
+    b[jHeldB][i] = startRound && Number.isFinite(startRound.session) ? startRound.blue : NaN;
     // A campaign is the round and the match at once: who took it.
     b[jWon][i] = b[jMWon][i] = wonIn(r, color);
     b[jWhy][i] = r && r.winner ? (r.endReason ?? '') : '';
@@ -635,7 +645,6 @@ async function convert(job, theatres) {
   info(reader.lastTime);
   // The places taken between the session before and this one (a chained rounds file lists them): a capture row
   // each at the place, at the recording's start, marked as between missions.
-  const startRound = Number.isFinite(recUnix) ? roundAt(rounds, recUnix) : null;
   const between = startRound && Number.isFinite(startRound.session) ? startRound.captures : [];
   for (const c of between) {
     const k = main.next();

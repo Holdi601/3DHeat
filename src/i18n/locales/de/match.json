@@ -161,5 +161,11 @@
   "match.recording.recorded": "Aufgenommen",
   "match.recording.briefing": "Briefing",
   "match.recording.debriefing": "Debriefing",
-  "match.recording.comments": "Kommentare"
+  "match.recording.comments": "Kommentare",
+  "match.series.title": "Kampagnenrunde",
+  "match.series.summary": "{campaign} · Sitzungen: {count} · {from} – {to} UTC · Pausen von {seconds} s dazwischen",
+  "match.series.held": "Umkämpfte Orte zu Beginn jeder Sitzung (Rot, Blau)",
+  "match.series.go": "Zum Beginn von Sitzung {n}",
+  "match.series.row": "{n}. {date} · Rot {red} / Blau {blue} · davor eingenommen: {taken}",
+  "match.series.offer": "Diese Aufnahme ist Sitzung {n} der Kampagnenrunde {campaign}. Lade die anderen Aufnahmen der Runde zusammen mit ihr, um die Runde als eine Serie anzusehen."
 }

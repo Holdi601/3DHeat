@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Prekinuti pokušaji",
   "heat.filterPanel.siege.interruptedTitle": "Započeta, ali nezavršena postavljanja i deaktivacije, tamo gdje je igrač stao",
   "heat.filterPanel.siege.reinforce": "Ojačanja",
-  "heat.filterPanel.siege.reinforceTitle": "Ojačani zidovi i otvori, kod branioca koji je tamo stajao (zaključeno)"
+  "heat.filterPanel.siege.reinforceTitle": "Ojačani zidovi i otvori, kod branioca koji je tamo stajao (zaključeno)",
+  "heat.timeline.seriesSession": "sesija {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "pauza · sljedeća sesija {date} UTC"
 }

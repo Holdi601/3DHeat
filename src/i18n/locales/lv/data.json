@@ -144,5 +144,6 @@
   "data.filePick.filesIn": "{root} ({count, plural, zero {# failu} one {# fails} other {# faili}})",
   "data.filePick.files": "{count, plural, zero {# failu} one {# fails} other {# faili}}",
   "data.levelLibrary.openFailed": "Neizdevās atvērt līmeņu bibliotēku.",
-  "data.levelLibrary.requestFailed": "Līmeņu bibliotēkas pieprasījums neizdevās."
+  "data.levelLibrary.requestFailed": "Līmeņu bibliotēkas pieprasījums neizdevās.",
+  "data.builder.seriesArranged": "Kampaņas kārta {campaign}: {count} sesijas atskaņotas viena pēc otras, laiks starp tām saīsināts līdz {seconds} s"
 }

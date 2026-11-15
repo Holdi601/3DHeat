@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Kesilen girişimler",
   "heat.filterPanel.siege.interruptedTitle": "Başlanmış ama bitirilmemiş kurma ve etkisizleştirmeler, oyuncunun durduğu yerde",
   "heat.filterPanel.siege.reinforce": "Güçlendirmeler",
-  "heat.filterPanel.siege.reinforceTitle": "Güçlendirilmiş duvarlar ve kapaklar, orada duran savunucuda (çıkarım)"
+  "heat.filterPanel.siege.reinforceTitle": "Güçlendirilmiş duvarlar ve kapaklar, orada duran savunucuda (çıkarım)",
+  "heat.timeline.seriesSession": "oturum {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "ara · sonraki oturum {date} UTC"
 }

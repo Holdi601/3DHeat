@@ -73,6 +73,12 @@ export interface SourceBlock {
 /** Attribute name for the synthesised per-row file origin. */
 export const SOURCE_COLUMN = 'Source file';
 
+/** The columns that make files the sessions of one campaign round (the DCS converter's): which round, and each session's real start. */
+export const SERIES_CAMPAIGN = 'campaign';
+export const SERIES_START = 'sessionStart';
+/** Seconds of the break between two sessions of a series: the real gap, hours or days, cut to this. */
+export const SERIES_BREAK_S = 60;
+
 export type BlockAttr =
   | { name: string; kind: 'number'; data: Float32Array }
   | { name: string; kind: 'category'; data: Uint32Array; categories: string[] };
@@ -124,12 +130,17 @@ export class DatasetBuilder {
   /** Each block's first row and its one session (-1: none, or several), for `alignRecordings`. */
   private readonly blockStarts: number[] = [];
   private readonly blockSession: number[] = [];
+  /** Each block's campaign round and its session's real start, where it says (a DCS server's recordings, `seriesOf`). */
+  private readonly blockCampaign: string[] = [];
+  private readonly blockRealStart: number[] = [];
   /**
    * The blocks' shared geographic reference: undefined before the first block,
    * null once two blocks disagree or one has none, since positions projected
    * about two different points cannot share one backdrop.
    */
   private geo: GeoReference | null | undefined = undefined;
+  /** The campaign series the blocks were arranged into (`alignRecordings`), or null. */
+  private series: Dataset['series'] | null = null;
 
   constructor(expectedRows = 0) {
     this.expected = Math.max(0, Math.floor(expectedRows));
@@ -209,6 +220,23 @@ export class DatasetBuilder {
       padU32(this.session, n);
     }
     if (this.blockSession.length < this.blockStarts.length) this.blockSession.push(-1);
+    // A session of a campaign round: which round, and when the session really began (`series`).
+    const camp = block.attrs.find((a) => a.name === SERIES_CAMPAIGN && a.kind === 'category');
+    const real = block.attrs.find((a) => a.name === SERIES_START && a.kind === 'number');
+    let campaign = '';
+    if (camp && camp.kind === 'category') {
+      const ids = new Set<number>();
+      for (let i = 0; i < n && ids.size < 2; i++) ids.add(camp.data[i]);
+      campaign = ids.size === 1 ? (camp.categories[[...ids][0]] ?? '') : '';
+    }
+    let realStart = NaN;
+    if (real && real.kind === 'number') for (let i = 0; i < n && !Number.isFinite(realStart); i++) realStart = real.data[i];
+    // A float32 column keeps a Unix time to two minutes; a recording's session label ends in its start to the minute.
+    const stamp = block.sessionLabels.length === 1 ? /(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2})$/.exec(block.sessionLabels[0]) : null;
+    const exact = stamp ? Date.parse(`${stamp[1]}T${stamp[2]}:00Z`) / 1000 : NaN;
+    if (Number.isFinite(exact) && (!Number.isFinite(realStart) || Math.abs(exact - realStart) < 300)) realStart = exact;
+    this.blockCampaign.push(campaign);
+    this.blockRealStart.push(realStart);
 
     if (block.teamIds) {
       this.team ??= zeroFilledU32(base, this.capacity());
@@ -298,6 +326,22 @@ export class DatasetBuilder {
         if (v < lo[b]) lo[b] = v;
         if (v > hi[b]) hi[b] = v;
       }
+    }
+    // Sessions of one campaign round: one after another in real order, the time between cut to a short break.
+    const camp = this.blockCampaign[0];
+    if (camp && this.blockCampaign.every((c) => c === camp) && this.blockRealStart.every((t) => Number.isFinite(t))) {
+      const order = [...Array(B).keys()].filter((b) => hi[b] >= lo[b]).sort((a, b) => this.blockRealStart[a] - this.blockRealStart[b] || a - b);
+      let at = 0;
+      const sessions: NonNullable<Dataset['series']>['sessions'] = [];
+      for (const b of order) {
+        const shift = at - lo[b];
+        const end = b + 1 < B ? this.blockStarts[b + 1] : n;
+        for (let i = this.blockStarts[b]; i < end; i++) this.time[i] += shift;
+        sessions.push({ session: this.blockSession[b], start: at, end: at + (hi[b] - lo[b]), realStart: this.blockRealStart[b] });
+        at += hi[b] - lo[b] + SERIES_BREAK_S;
+      }
+      this.series = { campaign: camp, breakSeconds: SERIES_BREAK_S, sessions };
+      return order.length;
     }
     let first = Infinity;
     let last = -Infinity;
@@ -551,6 +595,7 @@ export class DatasetBuilder {
       timeSorted: true,
       ...(this.geo ? { geo: { ...this.geo } } : {}),
       ...(aligned ? { recordingsAligned: aligned } : {}),
+      ...(this.series ? { series: this.series } : {}),
     };
 
     phase('data.builder.phase.extent');
@@ -668,7 +713,8 @@ export class DatasetBuilder {
     const notes: Msg[] = [msg('data.builder.rows', { count: n })];
     if (this.sources > 1) notes.push(msg('data.builder.files', { count: this.sources }));
     if (this.rejected > 0) notes.push(msg('data.builder.rejected', { count: this.rejected }));
-    if (aligned) notes.push(msg('data.builder.recordingsAligned', { count: aligned }));
+    if (this.series) notes.push(msg('data.builder.seriesArranged', { count: aligned, campaign: this.series.campaign, seconds: this.series.breakSeconds }));
+    else if (aligned) notes.push(msg('data.builder.recordingsAligned', { count: aligned }));
     // Said here and again on the main thread, in the viewer's language (see data/msg).
     dataset.said = { name, notes, warnings };
     sayDataset(dataset);

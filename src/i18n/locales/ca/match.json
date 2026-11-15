@@ -161,5 +161,11 @@
   "match.recording.recorded": "Enregistrat",
   "match.recording.briefing": "Briefing",
   "match.recording.debriefing": "Debriefing",
-  "match.recording.comments": "Comentaris"
+  "match.recording.comments": "Comentaris",
+  "match.series.title": "Ronda de campanya",
+  "match.series.summary": "{campaign} · sessions: {count} · {from} – {to} UTC · pauses de {seconds} s entre elles",
+  "match.series.held": "Llocs disputats en mans de cada bàndol a l'inici de cada sessió (vermell, blau)",
+  "match.series.go": "Ves a l'inici de la sessió {n}",
+  "match.series.row": "{n}. {date} · Vermell {red} / Blau {blue} · presos abans: {taken}",
+  "match.series.offer": "Aquest enregistrament és la sessió {n} de la ronda de campanya {campaign}. Carrega-hi juntament els altres enregistraments de la ronda per veure-la com una sola sèrie."
 }

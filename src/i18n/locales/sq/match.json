@@ -161,5 +161,11 @@
   "match.recording.recorded": "Regjistruar",
   "match.recording.briefing": "Brifingu",
   "match.recording.debriefing": "Analiza pas misionit",
-  "match.recording.comments": "Komente"
+  "match.recording.comments": "Komente",
+  "match.series.title": "Raundi i fushatës",
+  "match.series.summary": "{campaign} · seanca: {count} · {from} – {to} UTC · pushime prej {seconds} s mes tyre",
+  "match.series.held": "Vendet e kontestuara të mbajtura në fillim të çdo seance (të kuqtë, blutë)",
+  "match.series.go": "Shko në fillim të seancës {n}",
+  "match.series.row": "{n}. {date} · Të kuqtë {red} / Blutë {blue} · marrë më parë: {taken}",
+  "match.series.offer": "Ky regjistrim është seanca {n} e raundit të fushatës {campaign}. Ngarkoni bashkë me të regjistrimet e tjera të raundit për ta parë raundin si një seri."
 }

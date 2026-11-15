@@ -144,5 +144,6 @@
   "data.filePick.filesIn": "{root}（{count, plural, other {#ファイル}}）",
   "data.filePick.files": "{count, plural, other {#ファイル}}",
   "data.levelLibrary.openFailed": "レベルライブラリを開けませんでした。",
-  "data.levelLibrary.requestFailed": "レベルライブラリへのリクエストに失敗しました。"
+  "data.levelLibrary.requestFailed": "レベルライブラリへのリクエストに失敗しました。",
+  "data.builder.seriesArranged": "キャンペーンラウンド {campaign}：{count} 件のセッションを順に再生し、間の時間を {seconds} 秒に短縮"
 }

@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Intentos interrumpidos",
   "heat.filterPanel.siege.interruptedTitle": "Colocaciones y desactivaciones iniciadas pero no terminadas, donde el jugador se detuvo",
   "heat.filterPanel.siege.reinforce": "Refuerzos",
-  "heat.filterPanel.siege.reinforceTitle": "Paredes y trampillas reforzadas, en el defensor que estaba allí (deducido)"
+  "heat.filterPanel.siege.reinforceTitle": "Paredes y trampillas reforzadas, en el defensor que estaba allí (deducido)",
+  "heat.timeline.seriesSession": "sesión {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "pausa · siguiente sesión {date} UTC"
 }

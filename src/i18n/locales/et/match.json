@@ -161,5 +161,11 @@
   "match.recording.recorded": "Salvestatud",
   "match.recording.briefing": "Brifing",
   "match.recording.debriefing": "Kokkuvõte",
-  "match.recording.comments": "Kommentaarid"
+  "match.recording.comments": "Kommentaarid",
+  "match.series.title": "Kampaaniavoor",
+  "match.series.summary": "{campaign} · seansse: {count} · {from} – {to} UTC · {seconds} s pausid nende vahel",
+  "match.series.held": "Vaidlusalused kohad iga seansi alguses (punane, sinine)",
+  "match.series.go": "Mine seansi {n} algusesse",
+  "match.series.row": "{n}. {date} · Punane {red} / Sinine {blue} · varem vallutatud: {taken}",
+  "match.series.offer": "See salvestus on kampaaniavooru {campaign} seanss {n}. Laadi vooru teised salvestused koos sellega, et vaadata voor ühe seeriana."
 }

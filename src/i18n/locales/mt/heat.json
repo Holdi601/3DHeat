@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Tentattivi interrotti",
   "heat.filterPanel.siege.interruptedTitle": "Tqegħid u diżattivazzjonijiet mibdija iżda mhux mitmuma, fejn il-plejer waqaf",
   "heat.filterPanel.siege.reinforce": "Rinforzi",
-  "heat.filterPanel.siege.reinforceTitle": "Ħitan u bokkaporti rinforzati, għand id-difensur li kien hemm (dedott)"
+  "heat.filterPanel.siege.reinforceTitle": "Ħitan u bokkaporti rinforzati, għand id-difensur li kien hemm (dedott)",
+  "heat.timeline.seriesSession": "sessjoni {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "waqfa · is-sessjoni li jmiss {date} UTC"
 }

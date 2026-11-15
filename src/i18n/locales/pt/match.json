@@ -161,5 +161,11 @@
   "match.recording.recorded": "Gravado",
   "match.recording.briefing": "Briefing",
   "match.recording.debriefing": "Debriefing",
-  "match.recording.comments": "Comentários"
+  "match.recording.comments": "Comentários",
+  "match.series.title": "Ronda de campanha",
+  "match.series.summary": "{campaign} · sessões: {count} · {from} – {to} UTC · pausas de {seconds} s entre elas",
+  "match.series.held": "Locais disputados detidos no início de cada sessão (vermelho, azul)",
+  "match.series.go": "Ir para o início da sessão {n}",
+  "match.series.row": "{n}. {date} · Vermelho {red} / Azul {blue} · tomados antes: {taken}",
+  "match.series.offer": "Esta gravação é a sessão {n} da ronda de campanha {campaign}. Carregue as outras gravações da ronda juntamente com ela para ver a ronda como uma série."
 }

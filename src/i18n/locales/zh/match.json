@@ -161,5 +161,11 @@
   "match.recording.recorded": "记录时间",
   "match.recording.briefing": "简报",
   "match.recording.debriefing": "任务讲评",
-  "match.recording.comments": "备注"
+  "match.recording.comments": "备注",
+  "match.series.title": "战役回合",
+  "match.series.summary": "{campaign} · 会话：{count} · {from} – {to} UTC · 其间间歇 {seconds} 秒",
+  "match.series.held": "每个会话开始时各方占据的争夺地点（红、蓝）",
+  "match.series.go": "转到会话 {n} 的开始",
+  "match.series.row": "{n}. {date} · 红 {red} / 蓝 {blue} · 此前夺取：{taken}",
+  "match.series.offer": "此记录是战役回合 {campaign} 的第 {n} 个会话。将该回合的其他记录与它一起加载，即可把整个回合作为一个系列观看。"
 }

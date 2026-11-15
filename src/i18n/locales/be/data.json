@@ -144,5 +144,6 @@
   "data.filePick.filesIn": "{root} ({count, plural, one {# файл} few {# файлы} many {# файлаў} other {# файла}})",
   "data.filePick.files": "{count, plural, one {# файл} few {# файлы} many {# файлаў} other {# файла}}",
   "data.levelLibrary.openFailed": "Не ўдалося адкрыць бібліятэку ўзроўняў.",
-  "data.levelLibrary.requestFailed": "Запыт да бібліятэкі ўзроўняў не ўдаўся."
+  "data.levelLibrary.requestFailed": "Запыт да бібліятэкі ўзроўняў не ўдаўся.",
+  "data.builder.seriesArranged": "Раўнд кампаніі {campaign}: сесіі ({count}) прайграюцца адна за адной, час паміж імі скарочаны да {seconds} с"
 }

@@ -144,5 +144,6 @@
   "data.filePick.filesIn": "{root} ({count, plural, one {# archivo} other {# archivos}})",
   "data.filePick.files": "{count, plural, one {# archivo} other {# archivos}}",
   "data.levelLibrary.openFailed": "No se pudo abrir la biblioteca de niveles.",
-  "data.levelLibrary.requestFailed": "Falló la solicitud a la biblioteca de niveles."
+  "data.levelLibrary.requestFailed": "Falló la solicitud a la biblioteca de niveles.",
+  "data.builder.seriesArranged": "Ronda de campaña {campaign}: {count} sesiones reproducidas una tras otra, el tiempo entre ellas reducido a {seconds} s"
 }

@@ -7,6 +7,8 @@ import { num, t } from '../i18n';
 import { ReplayMarks } from './replay/ReplayMarks';
 import { MAX_SPEED, MIN_SPEED, parseSpeed, saveSpeed, speedDigits, speedOptions } from '../state/playbackSpeed';
 import { NumberBox } from './NumberBox';
+import { realDate, seriesAt } from '../data/series';
+import type { Dataset } from '../state/types';
 
 const windowModes = (): Array<{ value: WindowMode; label: string; title: string }> => [
   {
@@ -136,7 +138,7 @@ export function Timeline() {
             dataset.epochMs
               ? `   ${new Date(dataset.epochMs + head * 1000).toISOString().slice(11, 19)}Z`
               : ''
-          }`;
+          }${seriesClock(dataset, head)}`;
       if (clock.current.textContent !== txt) clock.current.textContent = txt;
     }
   }, !!engine && !!dataset);
@@ -326,6 +328,17 @@ export function Timeline() {
       </div>
     </>
   );
+}
+
+/** A campaign series' session and real date at the playhead (`Dataset.series`), '' for other data. */
+function seriesClock(d: Dataset, head: number): string {
+  const at = seriesAt(d, head);
+  if (!at) return '';
+  return `   ${
+    at.inBreak
+      ? t('heat.timeline.seriesBreak', { date: realDate(at.real) })
+      : t('heat.timeline.seriesSession', { n: at.index + 1, of: at.of, date: realDate(at.real) })
+  }`;
 }
 
 function formatClock(seconds: number): string {

@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Iarrachtaí briste",
   "heat.filterPanel.siege.interruptedTitle": "Cuir agus díghníomhachtuithe a tosaíodh ach nár críochnaíodh, san áit ar stop an t-imreoir",
   "heat.filterPanel.siege.reinforce": "Treisithe",
-  "heat.filterPanel.siege.reinforceTitle": "Ballaí agus haistí treisithe, ag an gcosantóir a bhí ina sheasamh ann (aimsithe)"
+  "heat.filterPanel.siege.reinforceTitle": "Ballaí agus haistí treisithe, ag an gcosantóir a bhí ina sheasamh ann (aimsithe)",
+  "heat.timeline.seriesSession": "seisiún {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "sos · an chéad seisiún eile {date} UTC"
 }

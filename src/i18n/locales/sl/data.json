@@ -144,5 +144,6 @@
   "data.filePick.filesIn": "{root} ({count, plural, one {# datoteka} two {# datoteki} few {# datoteke} other {# datotek}})",
   "data.filePick.files": "{count, plural, one {# datoteka} two {# datoteki} few {# datoteke} other {# datotek}}",
   "data.levelLibrary.openFailed": "Knjižnice nivojev ni bilo mogoče odpreti.",
-  "data.levelLibrary.requestFailed": "Zahteva knjižnici nivojev ni uspela."
+  "data.levelLibrary.requestFailed": "Zahteva knjižnici nivojev ni uspela.",
+  "data.builder.seriesArranged": "Krog kampanje {campaign}: seje ({count}) predvajane ena za drugo, čas med njimi skrajšan na {seconds} s"
 }

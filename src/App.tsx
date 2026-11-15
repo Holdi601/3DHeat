@@ -32,6 +32,7 @@ import { UnitCard } from './ui/replay/UnitCard';
 import { OverlayPanel, useFigureOverlay } from './ui/replay/FigureOverlay';
 import { LeanOverlayPanel } from './ui/overlay/LeanOverlayPanel';
 import { GameOverview, MatchPicker } from './ui/match/MatchPicker';
+import { SeriesPanel } from './ui/match/SeriesPanel';
 import { matchesAreSessions } from './match/matches';
 import { useReplayStore } from './state/replayStore';
 import { usePlanStore } from './state/planStore';
@@ -492,6 +493,7 @@ export function App() {
               <LevelPanel />
               {!dataset && <SourcePanel />}
               <MatchPicker />
+              <SeriesPanel />
               <GameOverview />
               {matchView === 'replay' ? (
                 <>

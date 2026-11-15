@@ -52,7 +52,10 @@ export function matchesOf(d: Dataset): MatchSet {
   if (hit) return hit;
   let out: MatchSet;
   const column = matchColumn(d);
-  if (column) {
+  if (d.series) {
+    // The sessions of one campaign round, one after another: one match, watched whole.
+    out = { via: 'whole', entries: [{ index: 0, id: d.series.campaign, start: d.timeRange[0], end: d.timeRange[1], rows: d.count, bounds: d.bounds }] };
+  } else if (column) {
     const a = d.attrs.find((x) => x.name === column)!;
     out = { via: 'column', column, entries: groups(d, a.data as Uint32Array, a.categories!).filter((e) => e.id !== '') };
   } else if (d.sessionId && (d.sessionLabels.length > 1 || sessionsAreMatches(d))) {

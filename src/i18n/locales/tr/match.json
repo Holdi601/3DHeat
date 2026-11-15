@@ -161,5 +161,11 @@
   "match.recording.recorded": "Kaydedildi",
   "match.recording.briefing": "Brifing",
   "match.recording.debriefing": "Değerlendirme",
-  "match.recording.comments": "Yorumlar"
+  "match.recording.comments": "Yorumlar",
+  "match.series.title": "Sefer turu",
+  "match.series.summary": "{campaign} · oturumlar: {count} · {from} – {to} UTC · aralarında {seconds} sn'lik aralar",
+  "match.series.held": "Her oturumun başında tutulan çekişmeli yerler (kırmızı, mavi)",
+  "match.series.go": "{n}. oturumun başına git",
+  "match.series.row": "{n}. {date} · Kırmızı {red} / Mavi {blue} · önceden alınan: {taken}",
+  "match.series.offer": "Bu kayıt, {campaign} sefer turunun {n}. oturumu. Turu tek bir seri olarak izlemek için turun diğer kayıtlarını bununla birlikte yükleyin."
 }

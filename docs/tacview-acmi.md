@@ -45,6 +45,7 @@ A DCS multiplayer server records its missions with Tacview around the clock, and
 | `campaign` | the campaign round the recording belongs to, by server, map and number: `Example Server North 3`. One recording is one session (restart to restart); a round runs over many sessions, days or weeks |
 | `round` | that round's number: the server's own where it publishes one, else the n-th round seen of that server and map; from a rounds file (below), empty without one |
 | `session` | the recording's place among the round's sessions, 1, 2, ...; `sessionStart` its real start (Unix seconds) |
+| `heldRed`, `heldBlue` | the contested places each side held at the session's start, from a chained rounds file (below) |
 | `won`, `matchWon` | 1 when the row's side (its Color, Red or Blue) won that campaign, 0 when it lost; empty where no rounds file names a winner, and on neutral rows. A campaign is the round and the match at once, so both hold the same |
 | `roundEndReason` | `capture` for a campaign won by taking everything |
 | `won`, `matchWon` on every session of a round | the round's result, written on every recording of it once its end is known |
@@ -115,6 +116,10 @@ The last session's start can be hours before the round's end, so the confidence 
       "captures": [{ "lat": 42.36, "lon": 42.02, "from": "Blue", "to": "Red" }, { "lat": 42.4, "lon": 41.98, "from": "Blue", "to": "Red" }] }
   ] }
 ```
+
+### Watching a campaign round as a series
+
+Load the recordings of one round together - the files whose `campaign` is the same - and the viewer plays them as one series: session after session in their real order, the hours or days between two cut to a one-minute break. The timeline marks each session's start in yellow and the breaks as dark bands, and the clock says which session is playing and its real date (`session 4/12 · 2026-11-02 12:38 UTC`). Heat, the replay, filters and Insights work on the whole series as on any loaded data. The **Campaign round** section of the Match tab lists the sessions with their dates, how many contested places each side held at each start - also as a chart over the round - and how many were taken before it; a click goes to a session's start. A recording loaded alone says there which round and session it is. Recordings of different rounds loaded together are not a series: each starts at zero, as separate matches do.
 
 What the known servers publish:
 

@@ -161,5 +161,11 @@
   "match.recording.recorded": "Tekið upp",
   "match.recording.briefing": "Kynning",
   "match.recording.debriefing": "Úttekt",
-  "match.recording.comments": "Athugasemdir"
+  "match.recording.comments": "Athugasemdir",
+  "match.series.title": "Herferðarumferð",
+  "match.series.summary": "{campaign} · lotur: {count} · {from} – {to} UTC · {seconds} s hlé á milli",
+  "match.series.held": "Umdeildir staðir í höndum hvors liðs við upphaf hverrar lotu (rauðir, bláir)",
+  "match.series.go": "Fara í upphaf lotu {n}",
+  "match.series.row": "{n}. {date} · Rauðir {red} / Bláir {blue} · teknir áður: {taken}",
+  "match.series.offer": "Þessi upptaka er lota {n} í herferðarumferðinni {campaign}. Hladdu hinum upptökum umferðarinnar inn með henni til að horfa á umferðina sem eina röð."
 }

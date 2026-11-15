@@ -161,5 +161,11 @@
   "match.recording.recorded": "Nagrano",
   "match.recording.briefing": "Odprawa",
   "match.recording.debriefing": "Omówienie",
-  "match.recording.comments": "Komentarze"
+  "match.recording.comments": "Komentarze",
+  "match.series.title": "Runda kampanii",
+  "match.series.summary": "{campaign} · sesje: {count} · {from} – {to} UTC · przerwy po {seconds} s między nimi",
+  "match.series.held": "Sporne miejsca utrzymywane na początku każdej sesji (czerwoni, niebiescy)",
+  "match.series.go": "Przejdź do początku sesji {n}",
+  "match.series.row": "{n}. {date} · Czerwoni {red} / Niebiescy {blue} · zajęte wcześniej: {taken}",
+  "match.series.offer": "To nagranie jest sesją {n} rundy kampanii {campaign}. Wczytaj razem z nim pozostałe nagrania rundy, aby oglądać rundę jako jedną serię."
 }

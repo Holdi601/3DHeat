@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Katkenud katsed",
   "heat.filterPanel.siege.interruptedTitle": "Alustatud, kuid lõpetamata paigaldused ja demineerimised, kus mängija peatus",
   "heat.filterPanel.siege.reinforce": "Tugevdused",
-  "heat.filterPanel.siege.reinforceTitle": "Tugevdatud seinad ja luugid, seal seisnud kaitsja juures (tuletatud)"
+  "heat.filterPanel.siege.reinforceTitle": "Tugevdatud seinad ja luugid, seal seisnud kaitsja juures (tuletatud)",
+  "heat.timeline.seriesSession": "seanss {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "paus · järgmine seanss {date} UTC"
 }

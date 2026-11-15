@@ -144,5 +144,6 @@
   "data.filePick.filesIn": "{root} ({count, plural, one {# súbor} few {# súbory} many {# súboru} other {# súborov}})",
   "data.filePick.files": "{count, plural, one {# súbor} few {# súbory} many {# súboru} other {# súborov}}",
   "data.levelLibrary.openFailed": "Knižnicu levelov sa nepodarilo otvoriť.",
-  "data.levelLibrary.requestFailed": "Požiadavka na knižnicu levelov zlyhala."
+  "data.levelLibrary.requestFailed": "Požiadavka na knižnicu levelov zlyhala.",
+  "data.builder.seriesArranged": "Kolo kampane {campaign}: relácie ({count}) prehrané jedna po druhej, čas medzi nimi skrátený na {seconds} s"
 }

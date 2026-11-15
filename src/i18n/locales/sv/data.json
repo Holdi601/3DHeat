@@ -144,5 +144,6 @@
   "data.filePick.filesIn": "{root} ({count, plural, one {# fil} other {# filer}})",
   "data.filePick.files": "{count, plural, one {# fil} other {# filer}}",
   "data.levelLibrary.openFailed": "Kunde inte öppna nivåbiblioteket.",
-  "data.levelLibrary.requestFailed": "Begäran till nivåbiblioteket misslyckades."
+  "data.levelLibrary.requestFailed": "Begäran till nivåbiblioteket misslyckades.",
+  "data.builder.seriesArranged": "Kampanjrunda {campaign}: {count} sessioner spelade efter varandra, tiden mellan dem kortad till {seconds} s"
 }

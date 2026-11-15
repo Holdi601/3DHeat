@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Przerwane próby",
   "heat.filterPanel.siege.interruptedTitle": "Rozpoczęte, lecz nieukończone podłożenia i rozbrojenia, tam gdzie gracz przerwał",
   "heat.filterPanel.siege.reinforce": "Wzmocnienia",
-  "heat.filterPanel.siege.reinforceTitle": "Wzmocnione ściany i włazy, przy obrońcy, który tam stał (wywnioskowane)"
+  "heat.filterPanel.siege.reinforceTitle": "Wzmocnione ściany i włazy, przy obrońcy, który tam stał (wywnioskowane)",
+  "heat.timeline.seriesSession": "sesja {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "przerwa · następna sesja {date} UTC"
 }

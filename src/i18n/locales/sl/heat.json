@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Prekinjeni poskusi",
   "heat.filterPanel.siege.interruptedTitle": "Začete, a nedokončane postavitve in razorožitve, tam kjer je igralec nehal",
   "heat.filterPanel.siege.reinforce": "Ojačitve",
-  "heat.filterPanel.siege.reinforceTitle": "Ojačane stene in lopute, pri branilcu, ki je stal tam (izpeljano)"
+  "heat.filterPanel.siege.reinforceTitle": "Ojačane stene in lopute, pri branilcu, ki je stal tam (izpeljano)",
+  "heat.timeline.seriesSession": "seja {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "premor · naslednja seja {date} UTC"
 }

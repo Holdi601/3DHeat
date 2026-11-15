@@ -144,5 +144,6 @@
   "data.filePick.filesIn": "{root} ({count, plural, one {# soubor} few {# soubory} many {# souboru} other {# souborů}})",
   "data.filePick.files": "{count, plural, one {# soubor} few {# soubory} many {# souboru} other {# souborů}}",
   "data.levelLibrary.openFailed": "Knihovnu úrovní nelze otevřít.",
-  "data.levelLibrary.requestFailed": "Požadavek na knihovnu úrovní selhal."
+  "data.levelLibrary.requestFailed": "Požadavek na knihovnu úrovní selhal.",
+  "data.builder.seriesArranged": "Kolo kampaně {campaign}: relace ({count}) přehrané jedna po druhé, čas mezi nimi zkrácen na {seconds} s"
 }

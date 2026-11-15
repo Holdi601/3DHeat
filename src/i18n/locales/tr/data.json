@@ -144,5 +144,6 @@
   "data.filePick.filesIn": "{root} ({count, plural, one {# dosya} other {# dosya}})",
   "data.filePick.files": "{count, plural, one {# dosya} other {# dosya}}",
   "data.levelLibrary.openFailed": "Bölüm kitaplığı açılamadı.",
-  "data.levelLibrary.requestFailed": "Bölüm kitaplığı isteği başarısız oldu."
+  "data.levelLibrary.requestFailed": "Bölüm kitaplığı isteği başarısız oldu.",
+  "data.builder.seriesArranged": "Sefer turu {campaign}: {count} oturum art arda oynatıldı, aralarındaki süre {seconds} sn'ye kısaltıldı"
 }

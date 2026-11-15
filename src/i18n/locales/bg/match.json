@@ -161,5 +161,11 @@
   "match.recording.recorded": "Записано",
   "match.recording.briefing": "Брифинг",
   "match.recording.debriefing": "Дебрифинг",
-  "match.recording.comments": "Коментари"
+  "match.recording.comments": "Коментари",
+  "match.series.title": "Рунд от кампанията",
+  "match.series.summary": "{campaign} · сесии: {count} · {from} – {to} UTC · почивки от {seconds} s между тях",
+  "match.series.held": "Спорни места, държани в началото на всяка сесия (червени, сини)",
+  "match.series.go": "Към началото на сесия {n}",
+  "match.series.row": "{n}. {date} · Червени {red} / Сини {blue} · превзети преди това: {taken}",
+  "match.series.offer": "Този запис е сесия {n} от рунда на кампанията {campaign}. Заредете заедно с него другите записи от рунда, за да го гледате като една поредица."
 }

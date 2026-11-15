@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "中断された試み",
   "heat.filterPanel.siege.interruptedTitle": "開始したが完了しなかった設置と解除（プレイヤーがやめた地点）",
   "heat.filterPanel.siege.reinforce": "補強",
-  "heat.filterPanel.siege.reinforceTitle": "補強された壁とハッチ（そこに立っていた防衛側の位置、推定）"
+  "heat.filterPanel.siege.reinforceTitle": "補強された壁とハッチ（そこに立っていた防衛側の位置、推定）",
+  "heat.timeline.seriesSession": "セッション {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "休止 · 次のセッション {date} UTC"
 }

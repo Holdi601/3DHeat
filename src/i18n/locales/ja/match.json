@@ -161,5 +161,11 @@
   "match.recording.recorded": "記録日時",
   "match.recording.briefing": "ブリーフィング",
   "match.recording.debriefing": "デブリーフィング",
-  "match.recording.comments": "コメント"
+  "match.recording.comments": "コメント",
+  "match.series.title": "キャンペーンラウンド",
+  "match.series.summary": "{campaign} · セッション数：{count} · {from} – {to} UTC · 間に {seconds} 秒の休止",
+  "match.series.held": "各セッション開始時に各陣営が保持していた係争地（赤、青）",
+  "match.series.go": "セッション {n} の開始へ移動",
+  "match.series.row": "{n}. {date} · 赤 {red} / 青 {blue} · 直前までの奪取：{taken}",
+  "match.series.offer": "この記録はキャンペーンラウンド {campaign} のセッション {n} です。ラウンドの他の記録も一緒に読み込むと、ラウンドを一つのシリーズとして見られます。"
 }

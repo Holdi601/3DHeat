@@ -161,5 +161,11 @@
   "match.recording.recorded": "Снимено",
   "match.recording.briefing": "Брифинг",
   "match.recording.debriefing": "Дебрифинг",
-  "match.recording.comments": "Коментари"
+  "match.recording.comments": "Коментари",
+  "match.series.title": "Круг од кампањата",
+  "match.series.summary": "{campaign} · сесии: {count} · {from} – {to} UTC · паузи од {seconds} s меѓу нив",
+  "match.series.held": "Спорни места држени на почетокот на секоја сесија (црвени, сини)",
+  "match.series.go": "Оди на почетокот на сесија {n}",
+  "match.series.row": "{n}. {date} · Црвени {red} / Сини {blue} · заземени претходно: {taken}",
+  "match.series.offer": "Оваа снимка е сесија {n} од кругот на кампањата {campaign}. Вчитајте ги заедно со неа другите снимки од кругот за да го гледате кругот како една серија."
 }

@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Keskeytyneet yritykset",
   "heat.filterPanel.siege.interruptedTitle": "Aloitetut mutta keskeneräiset asetukset ja purut, siinä missä pelaaja lopetti",
   "heat.filterPanel.siege.reinforce": "Vahvistukset",
-  "heat.filterPanel.siege.reinforceTitle": "Vahvistetut seinät ja luukut, siellä seisseen puolustajan kohdalla (päätelty)"
+  "heat.filterPanel.siege.reinforceTitle": "Vahvistetut seinät ja luukut, siellä seisseen puolustajan kohdalla (päätelty)",
+  "heat.timeline.seriesSession": "istunto {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "tauko · seuraava istunto {date} UTC"
 }

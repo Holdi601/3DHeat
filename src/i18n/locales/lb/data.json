@@ -144,5 +144,6 @@
   "data.filePick.filesIn": "{root} ({count, plural, one {# Fichier} other {# Fichieren}})",
   "data.filePick.files": "{count, plural, one {# Fichier} other {# Fichieren}}",
   "data.levelLibrary.openFailed": "D’Level-Bibliothéik konnt net opgemaach ginn.",
-  "data.levelLibrary.requestFailed": "D’Ufro un d’Level-Bibliothéik ass feelgeschloen."
+  "data.levelLibrary.requestFailed": "D’Ufro un d’Level-Bibliothéik ass feelgeschloen.",
+  "data.builder.seriesArranged": "Campagnesronn {campaign}: {count} Sessiounen eng no der anerer ofgespillt, d'Zäit dertëscht op {seconds} s gekierzt"
 }

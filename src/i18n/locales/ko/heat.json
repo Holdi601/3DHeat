@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "중단된 시도",
   "heat.filterPanel.siege.interruptedTitle": "시작했지만 끝내지 못한 설치와 해제 (플레이어가 멈춘 곳)",
   "heat.filterPanel.siege.reinforce": "보강",
-  "heat.filterPanel.siege.reinforceTitle": "보강된 벽과 해치 (그곳에 서 있던 수비수 위치, 추정)"
+  "heat.filterPanel.siege.reinforceTitle": "보강된 벽과 해치 (그곳에 서 있던 수비수 위치, 추정)",
+  "heat.timeline.seriesSession": "세션 {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "휴식 · 다음 세션 {date} UTC"
 }

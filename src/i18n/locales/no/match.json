@@ -161,5 +161,11 @@
   "match.recording.recorded": "Tatt opp",
   "match.recording.briefing": "Brifing",
   "match.recording.debriefing": "Debrifing",
-  "match.recording.comments": "Kommentarer"
+  "match.recording.comments": "Kommentarer",
+  "match.series.title": "Kampanjerunde",
+  "match.series.summary": "{campaign} · økter: {count} · {from} – {to} UTC · pauser på {seconds} s mellom dem",
+  "match.series.held": "Omstridte steder holdt ved starten av hver økt (rød, blå)",
+  "match.series.go": "Gå til starten av økt {n}",
+  "match.series.row": "{n}. {date} · Rød {red} / Blå {blue} · tatt før: {taken}",
+  "match.series.offer": "Dette opptaket er økt {n} av kampanjerunden {campaign}. Last inn rundens andre opptak sammen med det for å se runden som én serie."
 }

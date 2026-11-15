@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Intents interromputs",
   "heat.filterPanel.siege.interruptedTitle": "Col·locacions i desactivacions començades però no acabades, on el jugador es va aturar",
   "heat.filterPanel.siege.reinforce": "Reforços",
-  "heat.filterPanel.siege.reinforceTitle": "Parets i trapes reforçades, al defensor que hi era (deduït)"
+  "heat.filterPanel.siege.reinforceTitle": "Parets i trapes reforçades, al defensor que hi era (deduït)",
+  "heat.timeline.seriesSession": "sessió {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "pausa · sessió següent {date} UTC"
 }

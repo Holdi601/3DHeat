@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Перапыненыя спробы",
   "heat.filterPanel.siege.interruptedTitle": "Пачатыя, але не завершаныя ўсталяванні і абясшкоджванні, там, дзе гулец спыніўся",
   "heat.filterPanel.siege.reinforce": "Умацаванні",
-  "heat.filterPanel.siege.reinforceTitle": "Умацаваныя сцены і люкі, каля абаронцы, які стаяў там (выведзена)"
+  "heat.filterPanel.siege.reinforceTitle": "Умацаваныя сцены і люкі, каля абаронцы, які стаяў там (выведзена)",
+  "heat.timeline.seriesSession": "сесія {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "перапынак · наступная сесія {date} UTC"
 }

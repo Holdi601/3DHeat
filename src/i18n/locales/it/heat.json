@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Tentativi interrotti",
   "heat.filterPanel.siege.interruptedTitle": "Piazzamenti e disinneschi iniziati ma non finiti, dove il giocatore si è fermato",
   "heat.filterPanel.siege.reinforce": "Rinforzi",
-  "heat.filterPanel.siege.reinforceTitle": "Muri e botole rinforzati, presso il difensore che era lì (dedotto)"
+  "heat.filterPanel.siege.reinforceTitle": "Muri e botole rinforzati, presso il difensore che era lì (dedotto)",
+  "heat.timeline.seriesSession": "sessione {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "pausa · sessione successiva {date} UTC"
 }

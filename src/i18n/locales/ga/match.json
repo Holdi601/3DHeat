@@ -161,5 +161,11 @@
   "match.recording.recorded": "Taifeadta",
   "match.recording.briefing": "Mionteagasc",
   "match.recording.debriefing": "Athbhreithniú",
-  "match.recording.comments": "Tuairimí"
+  "match.recording.comments": "Tuairimí",
+  "match.series.title": "Babhta feachtais",
+  "match.series.summary": "{campaign} · seisiúin: {count} · {from} – {to} UTC · sosanna {seconds} s eatarthu",
+  "match.series.held": "Áiteanna faoi chonspóid i seilbh ag tús gach seisiúin (dearg, gorm)",
+  "match.series.go": "Téigh go tús sheisiún {n}",
+  "match.series.row": "{n}. {date} · Dearg {red} / Gorm {blue} · gafa roimhe: {taken}",
+  "match.series.offer": "Is é an taifeadadh seo seisiún {n} den bhabhta feachtais {campaign}. Lódáil taifeadtaí eile an bhabhta in éineacht leis chun féachaint ar an mbabhta mar shraith amháin."
 }

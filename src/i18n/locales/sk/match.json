@@ -161,5 +161,11 @@
   "match.recording.recorded": "Zaznamenané",
   "match.recording.briefing": "Brífing",
   "match.recording.debriefing": "Debrífing",
-  "match.recording.comments": "Komentáre"
+  "match.recording.comments": "Komentáre",
+  "match.series.title": "Kolo kampane",
+  "match.series.summary": "{campaign} · relácie: {count} · {from} – {to} UTC · prestávky {seconds} s medzi nimi",
+  "match.series.held": "Sporné miesta držané na začiatku každej relácie (červení, modrí)",
+  "match.series.go": "Prejsť na začiatok relácie {n}",
+  "match.series.row": "{n}. {date} · Červení {red} / Modrí {blue} · dobyté predtým: {taken}",
+  "match.series.offer": "Tento záznam je relácia {n} kola kampane {campaign}. Načítajte s ním ostatné záznamy kola a sledujte kolo ako jednu sériu."
 }

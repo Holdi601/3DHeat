@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Прекъснати опити",
   "heat.filterPanel.siege.interruptedTitle": "Започнати, но незавършени поставяния и обезвреждания, там където играчът е спрял",
   "heat.filterPanel.siege.reinforce": "Подсилвания",
-  "heat.filterPanel.siege.reinforceTitle": "Подсилени стени и люкове, при защитника, стоял там (изведено)"
+  "heat.filterPanel.siege.reinforceTitle": "Подсилени стени и люкове, при защитника, стоял там (изведено)",
+  "heat.timeline.seriesSession": "сесия {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "почивка · следваща сесия {date} UTC"
 }

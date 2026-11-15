@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Onderbroken pogingen",
   "heat.filterPanel.siege.interruptedTitle": "Begonnen maar niet afgemaakte plant- en ontmantelpogingen, waar de speler stopte",
   "heat.filterPanel.siege.reinforce": "Versterkingen",
-  "heat.filterPanel.siege.reinforceTitle": "Versterkte muren en luiken, bij de verdediger die daar stond (afgeleid)"
+  "heat.filterPanel.siege.reinforceTitle": "Versterkte muren en luiken, bij de verdediger die daar stond (afgeleid)",
+  "heat.timeline.seriesSession": "sessie {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "pauze · volgende sessie {date} UTC"
 }

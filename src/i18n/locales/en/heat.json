@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Interrupted attempts",
   "heat.filterPanel.siege.interruptedTitle": "Plants and defuses started but not finished, where the player stopped",
   "heat.filterPanel.siege.reinforce": "Reinforcements",
-  "heat.filterPanel.siege.reinforceTitle": "Walls and hatches reinforced, at the defender who stood there (inferred)"
+  "heat.filterPanel.siege.reinforceTitle": "Walls and hatches reinforced, at the defender who stood there (inferred)",
+  "heat.timeline.seriesSession": "session {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "break · next session {date} UTC"
 }

@@ -161,5 +161,11 @@
   "match.recording.recorded": "Recorded",
   "match.recording.briefing": "Briefing",
   "match.recording.debriefing": "Debriefing",
-  "match.recording.comments": "Comments"
+  "match.recording.comments": "Comments",
+  "match.series.title": "Campaign round",
+  "match.series.summary": "{campaign} · sessions: {count} · {from} – {to} UTC · breaks of {seconds} s between them",
+  "match.series.held": "Contested places held at each session's start (red, blue)",
+  "match.series.go": "Go to the start of session {n}",
+  "match.series.row": "{n}. {date} · Red {red} / Blue {blue} · taken before: {taken}",
+  "match.series.offer": "This recording is session {n} of the campaign round {campaign}. Load the round's other recordings together with it to watch the round as one series."
 }

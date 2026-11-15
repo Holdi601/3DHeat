@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Tentativas interrompidas",
   "heat.filterPanel.siege.interruptedTitle": "Plantações e desarmes iniciados mas não concluídos, onde o jogador parou",
   "heat.filterPanel.siege.reinforce": "Reforços",
-  "heat.filterPanel.siege.reinforceTitle": "Paredes e alçapões reforçados, no defensor que lá estava (deduzido)"
+  "heat.filterPanel.siege.reinforceTitle": "Paredes e alçapões reforçados, no defensor que lá estava (deduzido)",
+  "heat.timeline.seriesSession": "sessão {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "pausa · próxima sessão {date} UTC"
 }

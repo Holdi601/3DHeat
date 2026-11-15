@@ -161,5 +161,11 @@
   "match.recording.recorded": "Inspelad",
   "match.recording.briefing": "Genomgång",
   "match.recording.debriefing": "Utvärdering",
-  "match.recording.comments": "Kommentarer"
+  "match.recording.comments": "Kommentarer",
+  "match.series.title": "Kampanjrunda",
+  "match.series.summary": "{campaign} · sessioner: {count} · {from} – {to} UTC · pauser på {seconds} s emellan",
+  "match.series.held": "Omstridda platser som hölls vid varje sessions start (röd, blå)",
+  "match.series.go": "Gå till början av session {n}",
+  "match.series.row": "{n}. {date} · Röd {red} / Blå {blue} · tagna innan: {taken}",
+  "match.series.offer": "Den här inspelningen är session {n} av kampanjrundan {campaign}. Läs in rundans andra inspelningar tillsammans med den för att se rundan som en serie."
 }

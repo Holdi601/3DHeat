@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Tentatives interrompues",
   "heat.filterPanel.siege.interruptedTitle": "Poses et désamorçages commencés mais non terminés, là où le joueur s'est arrêté",
   "heat.filterPanel.siege.reinforce": "Renforcements",
-  "heat.filterPanel.siege.reinforceTitle": "Murs et trappes renforcés, à la position du défenseur qui s'y tenait (déduit)"
+  "heat.filterPanel.siege.reinforceTitle": "Murs et trappes renforcés, à la position du défenseur qui s'y tenait (déduit)",
+  "heat.timeline.seriesSession": "session {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "pause · session suivante {date} UTC"
 }

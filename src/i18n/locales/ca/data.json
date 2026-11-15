@@ -144,5 +144,6 @@
   "data.filePick.filesIn": "{root} ({count, plural, one {# fitxer} other {# fitxers}})",
   "data.filePick.files": "{count, plural, one {# fitxer} other {# fitxers}}",
   "data.levelLibrary.openFailed": "No s'ha pogut obrir la biblioteca de nivells.",
-  "data.levelLibrary.requestFailed": "Ha fallat la sol·licitud a la biblioteca de nivells."
+  "data.levelLibrary.requestFailed": "Ha fallat la sol·licitud a la biblioteca de nivells.",
+  "data.builder.seriesArranged": "Ronda de campanya {campaign}: {count} sessions reproduïdes una darrere l'altra, el temps entre elles reduït a {seconds} s"
 }

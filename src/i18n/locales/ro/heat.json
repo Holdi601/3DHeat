@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Încercări întrerupte",
   "heat.filterPanel.siege.interruptedTitle": "Plantări și dezamorsări începute, dar neterminate, acolo unde jucătorul s-a oprit",
   "heat.filterPanel.siege.reinforce": "Ranforsări",
-  "heat.filterPanel.siege.reinforceTitle": "Pereți și trape ranforsate, la apărătorul care stătea acolo (dedus)"
+  "heat.filterPanel.siege.reinforceTitle": "Pereți și trape ranforsate, la apărătorul care stătea acolo (dedus)",
+  "heat.timeline.seriesSession": "sesiunea {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "pauză · sesiunea următoare {date} UTC"
 }

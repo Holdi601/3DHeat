@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Megszakított kísérletek",
   "heat.filterPanel.siege.interruptedTitle": "Megkezdett, de be nem fejezett telepítések és hatástalanítások, ott, ahol a játékos abbahagyta",
   "heat.filterPanel.siege.reinforce": "Megerősítések",
-  "heat.filterPanel.siege.reinforceTitle": "Megerősített falak és csapóajtók, az ott álló védőnél (kikövetkeztetett)"
+  "heat.filterPanel.siege.reinforceTitle": "Megerősített falak és csapóajtók, az ott álló védőnél (kikövetkeztetett)",
+  "heat.timeline.seriesSession": "munkamenet {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "szünet · következő munkamenet {date} UTC"
 }

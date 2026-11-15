@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Прерванные попытки",
   "heat.filterPanel.siege.interruptedTitle": "Начатые, но не завершённые установки и обезвреживания, там, где игрок остановился",
   "heat.filterPanel.siege.reinforce": "Укрепления",
-  "heat.filterPanel.siege.reinforceTitle": "Укреплённые стены и люки, у защитника, стоявшего там (выведено)"
+  "heat.filterPanel.siege.reinforceTitle": "Укреплённые стены и люки, у защитника, стоявшего там (выведено)",
+  "heat.timeline.seriesSession": "сессия {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "перерыв · следующая сессия {date} UTC"
 }

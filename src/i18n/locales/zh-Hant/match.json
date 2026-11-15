@@ -161,5 +161,11 @@
   "match.recording.recorded": "記錄時間",
   "match.recording.briefing": "簡報",
   "match.recording.debriefing": "任務講評",
-  "match.recording.comments": "備註"
+  "match.recording.comments": "備註",
+  "match.series.title": "戰役回合",
+  "match.series.summary": "{campaign} · 工作階段：{count} · {from} – {to} UTC · 其間間歇 {seconds} 秒",
+  "match.series.held": "每個工作階段開始時各方佔據的爭奪地點（紅、藍）",
+  "match.series.go": "前往工作階段 {n} 的開始",
+  "match.series.row": "{n}. {date} · 紅 {red} / 藍 {blue} · 此前奪取：{taken}",
+  "match.series.offer": "此記錄是戰役回合 {campaign} 的第 {n} 個工作階段。將該回合的其他記錄與它一起載入，即可把整個回合當作一個系列觀看。"
 }

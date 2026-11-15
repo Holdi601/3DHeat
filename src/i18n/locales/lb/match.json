@@ -161,5 +161,11 @@
   "match.recording.recorded": "Opgeholl",
   "match.recording.briefing": "Briefing",
   "match.recording.debriefing": "Debriefing",
-  "match.recording.comments": "Kommentarer"
+  "match.recording.comments": "Kommentarer",
+  "match.series.title": "Campagnesronn",
+  "match.series.summary": "{campaign} · Sessiounen: {count} · {from} – {to} UTC · Pausen vun {seconds} s dertëscht",
+  "match.series.held": "Ëmstridde Plazen am Ufank vun all Sessioun (rout, blo)",
+  "match.series.go": "Op den Ufank vun der Sessioun {n}",
+  "match.series.row": "{n}. {date} · Rout {red} / Blo {blue} · virdrun ageholl: {taken}",
+  "match.series.offer": "Dës Opnam ass d'Sessioun {n} vun der Campagnesronn {campaign}. Lued déi aner Opnamen vun der Ronn mat hir, fir d'Ronn als eng Serie ze kucken."
 }

@@ -144,5 +144,6 @@
   "data.filePick.filesIn": "{root} ({count, plural, one {# файл} other {# файла}})",
   "data.filePick.files": "{count, plural, one {# файл} other {# файла}}",
   "data.levelLibrary.openFailed": "Библиотеката с нива не можа да бъде отворена.",
-  "data.levelLibrary.requestFailed": "Заявката към библиотеката с нива се провали."
+  "data.levelLibrary.requestFailed": "Заявката към библиотеката с нива се провали.",
+  "data.builder.seriesArranged": "Рунд от кампанията {campaign}: сесии ({count}), пуснати една след друга, времето между тях съкратено до {seconds} s"
 }

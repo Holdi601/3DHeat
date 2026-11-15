@@ -161,5 +161,11 @@
   "match.recording.recorded": "Posneto",
   "match.recording.briefing": "Brifing",
   "match.recording.debriefing": "Debrifing",
-  "match.recording.comments": "Komentarji"
+  "match.recording.comments": "Komentarji",
+  "match.series.title": "Krog kampanje",
+  "match.series.summary": "{campaign} · seje: {count} · {from} – {to} UTC · premori po {seconds} s med njimi",
+  "match.series.held": "Sporna mesta, ki jih je strana držala ob začetku vsake seje (rdeči, modri)",
+  "match.series.go": "Pojdi na začetek seje {n}",
+  "match.series.row": "{n}. {date} · Rdeči {red} / Modri {blue} · zavzeto prej: {taken}",
+  "match.series.offer": "Ta posnetek je seja {n} kroga kampanje {campaign}. Naložite z njim še druge posnetke kroga, da si krog ogledate kot eno serijo."
 }

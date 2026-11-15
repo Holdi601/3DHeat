@@ -144,5 +144,6 @@
   "data.filePick.filesIn": "{root} ({count, plural, one {# датотека} other {# датотеки}})",
   "data.filePick.files": "{count, plural, one {# датотека} other {# датотеки}}",
   "data.levelLibrary.openFailed": "Библиотеката на нивоа не можеше да се отвори.",
-  "data.levelLibrary.requestFailed": "Барањето до библиотеката на нивоа не успеа."
+  "data.levelLibrary.requestFailed": "Барањето до библиотеката на нивоа не успеа.",
+  "data.builder.seriesArranged": "Круг од кампањата {campaign}: сесии ({count}) пуштени една по друга, времето меѓу нив скратено на {seconds} s"
 }

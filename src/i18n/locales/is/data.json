@@ -144,5 +144,6 @@
   "data.filePick.filesIn": "{root} ({count, plural, one {# skrá} other {# skrár}})",
   "data.filePick.files": "{count, plural, one {# skrá} other {# skrár}}",
   "data.levelLibrary.openFailed": "Ekki tókst að opna borðasafnið.",
-  "data.levelLibrary.requestFailed": "Beiðni til borðasafnsins mistókst."
+  "data.levelLibrary.requestFailed": "Beiðni til borðasafnsins mistókst.",
+  "data.builder.seriesArranged": "Herferðarumferð {campaign}: {count} lotur spilaðar hver á eftir annarri, tíminn á milli styttur í {seconds} s"
 }

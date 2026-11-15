@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Prerušené pokusy",
   "heat.filterPanel.siege.interruptedTitle": "Začaté, ale nedokončené položenia a zneškodnenia, tam kde hráč prestal",
   "heat.filterPanel.siege.reinforce": "Zosilnenia",
-  "heat.filterPanel.siege.reinforceTitle": "Zosilnené steny a poklopy, pri obrancovi, ktorý tam stál (odvodené)"
+  "heat.filterPanel.siege.reinforceTitle": "Zosilnené steny a poklopy, pri obrancovi, ktorý tam stál (odvodené)",
+  "heat.timeline.seriesSession": "relácia {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "prestávka · ďalšia relácia {date} UTC"
 }

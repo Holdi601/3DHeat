@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Abgebrochene Versuche",
   "heat.filterPanel.siege.interruptedTitle": "Begonnene, nicht beendete Platzierungen und Entschärfungen, dort wo der Spieler aufhörte",
   "heat.filterPanel.siege.reinforce": "Verstärkungen",
-  "heat.filterPanel.siege.reinforceTitle": "Verstärkte Wände und Luken, beim Verteidiger, der dort stand (erschlossen)"
+  "heat.filterPanel.siege.reinforceTitle": "Verstärkte Wände und Luken, beim Verteidiger, der dort stand (erschlossen)",
+  "heat.timeline.seriesSession": "Sitzung {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "Pause · nächste Sitzung {date} UTC"
 }

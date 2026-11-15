@@ -144,5 +144,6 @@
   "data.filePick.filesIn": "{root} ({count, plural, one {# tiedosto} other {# tiedostoa}})",
   "data.filePick.files": "{count, plural, one {# tiedosto} other {# tiedostoa}}",
   "data.levelLibrary.openFailed": "Kenttäkirjastoa ei voitu avata.",
-  "data.levelLibrary.requestFailed": "Kenttäkirjaston pyyntö epäonnistui."
+  "data.levelLibrary.requestFailed": "Kenttäkirjaston pyyntö epäonnistui.",
+  "data.builder.seriesArranged": "Kampanjakierros {campaign}: {count} istuntoa toistettuna peräkkäin, niiden väliin jäävä aika lyhennetty {seconds} s:iin"
 }

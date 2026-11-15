@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Përpjekje të ndërprera",
   "heat.filterPanel.siege.interruptedTitle": "Vendosje dhe çaktivizime të nisura, por të papërfunduara, aty ku lojtari ndaloi",
   "heat.filterPanel.siege.reinforce": "Përforcime",
-  "heat.filterPanel.siege.reinforceTitle": "Mure dhe kapakë të përforcuar, te mbrojtësi që qëndronte aty (i nxjerrë)"
+  "heat.filterPanel.siege.reinforceTitle": "Mure dhe kapakë të përforcuar, te mbrojtësi që qëndronte aty (i nxjerrë)",
+  "heat.timeline.seriesSession": "seanca {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "pushim · seanca e radhës {date} UTC"
 }

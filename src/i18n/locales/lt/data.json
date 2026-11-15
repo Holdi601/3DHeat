@@ -144,5 +144,6 @@
   "data.filePick.filesIn": "{root} ({count, plural, one {# failas} few {# failai} many {# failo} other {# failų}})",
   "data.filePick.files": "{count, plural, one {# failas} few {# failai} many {# failo} other {# failų}}",
   "data.levelLibrary.openFailed": "Nepavyko atidaryti lygių bibliotekos.",
-  "data.levelLibrary.requestFailed": "Lygių bibliotekos užklausa nepavyko."
+  "data.levelLibrary.requestFailed": "Lygių bibliotekos užklausa nepavyko.",
+  "data.builder.seriesArranged": "Kampanijos raundas {campaign}: {count} sesijos rodomos viena po kitos, laikas tarp jų sutrumpintas iki {seconds} s"
 }

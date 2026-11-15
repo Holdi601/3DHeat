@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Ofgebrache Versich",
   "heat.filterPanel.siege.interruptedTitle": "Ugefaangen, net fäerdeg Placéierungen an Entschäerfungen, do wou de Spiller opgehalen huet",
   "heat.filterPanel.siege.reinforce": "Verstäerkungen",
-  "heat.filterPanel.siege.reinforceTitle": "Verstäerkte Maueren a Lucken, beim Verteideger, deen do stoung (erschloss)"
+  "heat.filterPanel.siege.reinforceTitle": "Verstäerkte Maueren a Lucken, beim Verteideger, deen do stoung (erschloss)",
+  "heat.timeline.seriesSession": "Sessioun {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "Paus · nächst Sessioun {date} UTC"
 }

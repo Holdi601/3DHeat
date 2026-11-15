@@ -161,5 +161,11 @@
   "match.recording.recorded": "Записано",
   "match.recording.briefing": "Брифинг",
   "match.recording.debriefing": "Разбор",
-  "match.recording.comments": "Комментарии"
+  "match.recording.comments": "Комментарии",
+  "match.series.title": "Раунд кампании",
+  "match.series.summary": "{campaign} · сессий: {count} · {from} – {to} UTC · перерывы по {seconds} с между ними",
+  "match.series.held": "Спорные места, удерживаемые в начале каждой сессии (красные, синие)",
+  "match.series.go": "Перейти к началу сессии {n}",
+  "match.series.row": "{n}. {date} · Красные {red} / Синие {blue} · захвачено перед этим: {taken}",
+  "match.series.offer": "Эта запись — сессия {n} раунда кампании {campaign}. Загрузите вместе с ней остальные записи раунда, чтобы смотреть раунд как одну серию."
 }

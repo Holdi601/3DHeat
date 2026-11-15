@@ -771,5 +771,7 @@
   "heat.filterPanel.siege.interrupted": "Truflaðar tilraunir",
   "heat.filterPanel.siege.interruptedTitle": "Plantanir og aftengingar sem hófust en kláruðust ekki, þar sem leikmaðurinn hætti",
   "heat.filterPanel.siege.reinforce": "Styrkingar",
-  "heat.filterPanel.siege.reinforceTitle": "Styrktir veggir og lúgur, hjá verjandanum sem stóð þar (ályktað)"
+  "heat.filterPanel.siege.reinforceTitle": "Styrktir veggir og lúgur, hjá verjandanum sem stóð þar (ályktað)",
+  "heat.timeline.seriesSession": "lota {n}/{of} · {date} UTC",
+  "heat.timeline.seriesBreak": "hlé · næsta lota {date} UTC"
 }
