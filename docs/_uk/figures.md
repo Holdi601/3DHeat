@@ -1,12 +1,13 @@
 ---
 title: "Фігури"
-nav_order: 11
+parent: "Replay"
+nav_order: 3
 has_children: true
 lang: "uk"
 source: "figures.md"
 source_hash: "a2353c6a73bc"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Фігури

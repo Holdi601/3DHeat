@@ -1,10 +1,10 @@
 ---
 title: "렌더링 내부 구조"
-nav_order: 25
+nav_order: 22
 has_children: true
 lang: "ko"
 source: "rendering-internals.md"
-source_hash: "fdd1cf165c3e"
+source_hash: "4c9327ee5852"
 translated: false
 outdated: false
 ---

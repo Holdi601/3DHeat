@@ -1,12 +1,12 @@
 ---
 title: "레벨과 배경 지오메트리"
-nav_order: 16
+nav_order: 13
 has_children: true
 lang: "ko"
 source: "levels.md"
 source_hash: "74400d9e7af4"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # 레벨과 배경 지오메트리

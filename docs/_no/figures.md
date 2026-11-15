@@ -1,12 +1,13 @@
 ---
 title: "Figurer"
-nav_order: 11
+parent: "Replay"
+nav_order: 3
 has_children: true
 lang: "no"
 source: "figures.md"
 source_hash: "a2353c6a73bc"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Figurer

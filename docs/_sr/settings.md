@@ -1,11 +1,11 @@
 ---
 title: "Подешавања, јединице и тастери"
-nav_order: 19
+nav_order: 16
 lang: "sr"
 source: "settings.md"
 source_hash: "bd1062895abf"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Подешавања, јединице и тастери

@@ -27,7 +27,7 @@ The same panels shape [Difference](difference.md), [Team heat](team-heat.md) and
 
 ## The panels and their defaults
 
-Every control below maps to a shader parameter, so changing it costs nothing but a redraw. Sliders have a typed box beside them and a drag handle (the small grip on the right: drag up or down, further is faster, Shift for fine); where a slider's track ends before a real limit, the handle can push past it up to the *jog ceiling* given here. Values marked *on load* are recalculated for every new dataset.
+Every control is explained on its own page; the Details column links to it. Sliders have a typed box beside them and a drag handle (the small grip on the right: drag up or down, further is faster, Shift for fine); where a slider's track ends before a real limit, the handle can push past it up to the *jog ceiling* given here. Values marked *on load* are recalculated for every new dataset.
 
 ### Heat shape (open)
 

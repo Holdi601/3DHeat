@@ -1,11 +1,11 @@
 ---
 title: "Astellungen, Eenheeten a Schlësselen"
-nav_order: 19
+nav_order: 16
 lang: "lb"
 source: "settings.md"
 source_hash: "bd1062895abf"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Astellungen, Eenheeten a Schlësselen

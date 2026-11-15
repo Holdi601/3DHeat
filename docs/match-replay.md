@@ -1,6 +1,7 @@
 ---
 title: Match replay
-nav_order: 9
+parent: Replay
+nav_order: 1
 has_children: true
 ---
 

@@ -2,9 +2,10 @@
 title: "Žinių lęšis"
 parent: "Įžvalgos"
 nav_order: 1
+has_children: true
 lang: "lt"
 source: "knowledge.md"
-source_hash: "3fab5aa44ee1"
+source_hash: "7e0bb4d04bfa"
 translated: false
 outdated: false
 ---

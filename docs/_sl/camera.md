@@ -1,10 +1,10 @@
 ---
 title: "Kamera in upravljanje"
-nav_order: 17
+nav_order: 14
 has_children: true
 lang: "sl"
 source: "camera.md"
-source_hash: "200417804c2f"
+source_hash: "b578366d26ec"
 translated: false
 outdated: false
 ---

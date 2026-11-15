@@ -1,12 +1,12 @@
 ---
 title: "Bord tat-tattika"
-nav_order: 15
+nav_order: 12
 has_children: true
 lang: "mt"
 source: "tactics-board.md"
 source_hash: "09172046f5ac"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Bord tat-tattika

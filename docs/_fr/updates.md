@@ -1,11 +1,11 @@
 ---
 title: "Mises à jour"
-nav_order: 21
+nav_order: 18
 lang: "fr"
 source: "updates.md"
 source_hash: "674c07a79c56"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Mises à jour

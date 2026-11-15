@@ -1,10 +1,11 @@
 ---
 title: "Паритет са Tacview-ом"
 parent: "Реприза меча"
+grand_parent: "Replay"
 nav_order: 1
 lang: "sr"
 source: "tacview-parity.md"
-source_hash: "26627728ab3d"
+source_hash: "4275603255c2"
 translated: false
 outdated: false
 ---

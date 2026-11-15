@@ -1,11 +1,11 @@
 ---
 title: "設定、單位與按鍵"
-nav_order: 19
+nav_order: 16
 lang: "zh-Hant"
 source: "settings.md"
 source_hash: "bd1062895abf"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # 設定、單位與按鍵

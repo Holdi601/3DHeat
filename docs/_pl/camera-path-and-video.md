@@ -1,9 +1,9 @@
 ---
 title: "Ścieżka kamery i wideo"
-nav_order: 18
+nav_order: 15
 lang: "pl"
 source: "camera-path-and-video.md"
-source_hash: "1fc92e20b8d5"
+source_hash: "1863f90ba4b7"
 translated: false
 outdated: false
 ---

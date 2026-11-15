@@ -1,11 +1,11 @@
 ---
 title: "Atjauninājumi"
-nav_order: 21
+nav_order: 18
 lang: "lv"
 source: "updates.md"
 source_hash: "674c07a79c56"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Atjauninājumi

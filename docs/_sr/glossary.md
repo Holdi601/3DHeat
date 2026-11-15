@@ -1,11 +1,11 @@
 ---
 title: "Речник појмова"
-nav_order: 24
+nav_order: 21
 lang: "sr"
 source: "glossary.md"
 source_hash: "8766ecb57c96"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Речник појмова

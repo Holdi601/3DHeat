@@ -1,9 +1,9 @@
 ---
 title: "Trajectòria de càmera i vídeo"
-nav_order: 18
+nav_order: 15
 lang: "ca"
 source: "camera-path-and-video.md"
-source_hash: "1fc92e20b8d5"
+source_hash: "1863f90ba4b7"
 translated: false
 outdated: false
 ---

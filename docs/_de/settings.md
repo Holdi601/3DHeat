@@ -1,11 +1,11 @@
 ---
 title: "Einstellungen, Einheiten und Tasten"
-nav_order: 19
+nav_order: 16
 lang: "de"
 source: "settings.md"
 source_hash: "bd1062895abf"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Einstellungen, Einheiten und Tasten

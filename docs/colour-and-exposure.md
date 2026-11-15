@@ -14,15 +14,7 @@ These controls decide which amount of heat gets which colour. **Saturation point
 - Nothing is visible: lower **Saturation point**, or press **Auto-expose from the field**.
 - Only a few single dots show: turn up **Minimum heat**.
 
-After the heat has been accumulated, each pixel's value is turned into a colour in one composite pass ([`COMPOSITE_FS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/webgl2/shaders.ts)). Every control on this page acts there, so dragging any of them redraws immediately and **never restarts the accumulation**. The steps are:
-
-```
-k = |heat| / saturation point
-t = response(k)                         clamped to 0..1
-if minimum heat > 0 and k > 0.0001:  t = minimum + (1 - minimum) × t
-colour, alpha = ramp(t)                  (the negative ramp when heat < 0, Difference only)
-pixel = mix(scene, colour, alpha)
-```
+Every control on this page acts when the heat is turned into a colour, so dragging any of them redraws immediately and **never restarts the accumulation**.
 
 ## Saturation point
 
@@ -30,16 +22,9 @@ pixel = mix(scene, colour, alpha)
 
 Getting it wrong is the difference between a heatmap and a blank (or white) screen, and it cannot be derived reliably: telemetry clusters so hard - a spawn, a doorway, a chokepoint - that the ratio of peak to mean density varies by an order of magnitude between datasets and between camera angles.
 
-**The analytic estimate** ([`estimateSaturation`](https://github.com/Holdi601/3DHeat/blob/main/src/data/calibrate.ts)) assumes the rows spread over the X-Z footprint of the data: mean heat = rows × (π r² / footprint area) × 1/3 × centre intensity (1/3 being the disc average of a linear ramp), times an assumed peak-to-mean ratio of 25, clamped to 0.1-1,000,000. It only has to be within an order of magnitude of right.
-
 ## Auto-exposure
 
-**Auto-expose from the field** meters the field the shader actually produced ([`exposure.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/exposure.ts)):
-
-1. the heat target is read back from the GPU, subsampled to at most 40,000 values;
-2. empty pixels (heat ≤ 0.0001) are discarded - most of a heat field is empty, and averaging them in would under-expose everything, as a camera meter pointed at a black background would;
-3. the 98th percentile of the lit pixels is the reference;
-4. the saturation point becomes reference / 0.85, so the reference sits at 85% of the way to the saturation point and the top of the ramp is kept for the real peaks.
+**Auto-expose from the field** meters the field the shader actually produced. It ignores empty pixels, takes the 98th percentile of the lit ones and puts it at 85% of the way to the saturation point, so the top of the ramp is kept for the real peaks.
 
 The panel then reads *metered X% of the frame; 98th percentile R placed near the top of the ramp*. With the *Saturating* response, a value at 85% of the saturation point lands at about 69% of the ramp rather than 85%.
 
@@ -88,7 +73,7 @@ The bar at the top previews the ramp. Below it, one row per stop:
 
 **+ Add stop** adds a stop halfway between the last two stops, with the last stop's colour and opacity. **Reset to transparent → red → yellow → white** restores the default.
 
-Stops may be given in any order; they are sorted when the ramp is built. The ramp is baked into a 256 × 2 RGBA table (positive ramp in the first row, negative in the second) ([`buildColorLut`](https://github.com/Holdi601/3DHeat/blob/main/src/render/colors.ts)). Colours are interpolated in linear light and stored as sRGB; opacity is interpolated linearly. The **alpha** is what blends the heat over the scene, which is why the zero end of the default ramp is fully transparent.
+Stops may be given in any order; they are sorted when the ramp is built. The **alpha** is what blends the heat over the scene, which is why the zero end of the default ramp is fully transparent.
 
 ### The default ramps
 
@@ -103,3 +88,34 @@ Stops may be given in any order; they are sorted when the ramp is built. The ram
 ## While the camera moves
 
 When the camera moves, the accumulation restarts every frame. With **Draw every row each frame** on (the default) each moving frame is still exact; with it off, a moving frame shows one sampled estimate - brighter, weight-scaled clumps - which converges to the smoother true picture when you stop. That is expected; see [Accumulation](accumulation.md).
+
+## For developers
+
+### The composite pass
+
+After the heat has been accumulated, each pixel's value is turned into a colour in one composite pass ([`COMPOSITE_FS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/webgl2/shaders.ts)). The steps are:
+
+```
+k = |heat| / saturation point
+t = response(k)                         clamped to 0..1
+if minimum heat > 0 and k > 0.0001:  t = minimum + (1 - minimum) × t
+colour, alpha = ramp(t)                  (the negative ramp when heat < 0, Difference only)
+pixel = mix(scene, colour, alpha)
+```
+
+### The analytic estimate
+
+**The analytic estimate** ([`estimateSaturation`](https://github.com/Holdi601/3DHeat/blob/main/src/data/calibrate.ts)) assumes the rows spread over the X-Z footprint of the data: mean heat = rows × (π r² / footprint area) × 1/3 × centre intensity (1/3 being the disc average of a linear ramp), times an assumed peak-to-mean ratio of 25, clamped to 0.1-1,000,000. It only has to be within an order of magnitude of right.
+
+### Metering
+
+[`exposure.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/exposure.ts):
+
+1. the heat target is read back from the GPU, subsampled to at most 40,000 values;
+2. empty pixels (heat ≤ 0.0001) are discarded - most of a heat field is empty, and averaging them in would under-expose everything, as a camera meter pointed at a black background would;
+3. the 98th percentile of the lit pixels is the reference;
+4. the saturation point becomes reference / 0.85, so the reference sits at 85% of the way to the saturation point and the top of the ramp is kept for the real peaks.
+
+### The colour table
+
+The ramp is baked into a 256 × 2 RGBA table (positive ramp in the first row, negative in the second) ([`buildColorLut`](https://github.com/Holdi601/3DHeat/blob/main/src/render/colors.ts)). Colours are interpolated in linear light and stored as sRGB; opacity is interpolated linearly.

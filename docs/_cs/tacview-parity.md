@@ -1,10 +1,11 @@
 ---
 title: "Parita s Tacview"
 parent: "Přehrání zápasu"
+grand_parent: "Replay"
 nav_order: 1
 lang: "cs"
 source: "tacview-parity.md"
-source_hash: "26627728ab3d"
+source_hash: "4275603255c2"
 translated: false
 outdated: false
 ---

@@ -1,6 +1,6 @@
 ---
 title: Camera path and video
-nav_order: 18
+nav_order: 15
 ---
 
 # Camera path and video

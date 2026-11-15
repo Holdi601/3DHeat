@@ -1,11 +1,11 @@
 ---
 title: "용어집"
-nav_order: 24
+nav_order: 21
 lang: "ko"
 source: "glossary.md"
 source_hash: "8766ecb57c96"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # 용어집

@@ -1,12 +1,12 @@
 ---
 title: "Taktik-Board"
-nav_order: 15
+nav_order: 12
 has_children: true
 lang: "lb"
 source: "tactics-board.md"
 source_hash: "09172046f5ac"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Taktik-Board

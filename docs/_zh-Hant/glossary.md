@@ -1,11 +1,11 @@
 ---
 title: "詞彙表"
-nav_order: 24
+nav_order: 21
 lang: "zh-Hant"
 source: "glossary.md"
 source_hash: "8766ecb57c96"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # 詞彙表

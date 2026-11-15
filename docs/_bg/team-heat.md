@@ -6,7 +6,7 @@ lang: "bg"
 source: "team-heat.md"
 source_hash: "e30b8372464b"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Топлина по отбори

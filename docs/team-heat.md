@@ -31,11 +31,15 @@ In the **Heat colours** section:
 | **Colour separation** | 1.4 | How far a mixture is pushed away from neutral, 0-4. 0 makes everything grey; 1 is the true average; past about 2 the brightest mixtures leave the displayable range and are clamped per channel, which shifts their hue. |
 | **Opacity ramp (colour comes from the group)** | the default heat ramp | Only the ramp's **alpha** is used here: transparent where there is nothing, opaque at the top. Its colours are ignored. |
 
+A group whose label means "no group" (`0`, empty, `none`, `unknown`, `null` or `-1`) is drawn grey.
+
 All the other heat controls - shape, saturation, response, minimum heat, depth, culling - work as in [Heat](heat.md).
 
 The [Teams list](teams-list.md) shows each group's team-heat colour as its swatch in this mode. Hiding a group leaves every other group's colour where it was: hues come from the total group count, not from what is switched on, so two pictures stay comparable.
 
-## The palette
+## For developers
+
+### The palette
 
 From [`colors.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/colors.ts):
 
@@ -46,7 +50,7 @@ From [`colors.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/color
 
 The default separation is 1.4 rather than 1 because, at 1, a mixture of five evenly spread hues *is* grey: correct and unreadable. A little above 1 keeps ties honest while making a 60/40 split visible.
 
-## How it works
+### How it works
 
 The heat target has four channels in this mode. Each sprite adds its density *v* to the first channel and *v* × the group's Oklab *a* and *b* coordinates to the second and third. At composite time the pixel's mixture is the density-weighted mean: *a* = G / R, *b* = B / R, scaled by the colour separation and converted to sRGB at the palette's lightness. Dividing by the accumulated density keeps the hue independent of how much data is there, and is why every density control goes on acting on the opacity alone.
 

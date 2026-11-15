@@ -1,12 +1,12 @@
 ---
 title: "戰術板"
-nav_order: 15
+nav_order: 12
 has_children: true
 lang: "zh-Hant"
 source: "tactics-board.md"
 source_hash: "09172046f5ac"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # 戰術板

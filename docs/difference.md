@@ -88,7 +88,7 @@ The **Heat colours** section shows two ramp editors in this mode: **Positive (ad
 
 Use the *Linear* density response when the size of the difference matters: it is the only response where equal colour means equal count.
 
-## How it works
+## For developers
 
 Every row gets a sign of +1, -1 or 0 in the vertex shader ([`POINT_HEAT_VS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/webgl2/shaders.ts)); a 0 rejects the row before any fragment is drawn.
 

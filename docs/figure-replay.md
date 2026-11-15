@@ -1,6 +1,7 @@
 ---
 title: Figures in the figure overlay
 parent: Figures
+grand_parent: Replay
 nav_order: 2
 ---
 

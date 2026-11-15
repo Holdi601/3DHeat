@@ -1,6 +1,6 @@
 ---
 title: Maintaining the docs
-nav_order: 26
+nav_order: 23
 ---
 
 # Maintaining the docs

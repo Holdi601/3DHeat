@@ -1,9 +1,9 @@
 ---
 title: "Diller"
-nav_order: 20
+nav_order: 17
 lang: "tr"
 source: "languages.md"
-source_hash: "ea2f7abd47f0"
+source_hash: "3fe0a88e89d1"
 translated: false
 outdated: false
 ---

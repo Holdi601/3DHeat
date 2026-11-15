@@ -1,6 +1,7 @@
 ---
 title: Figure credits
 parent: Figures
+grand_parent: Replay
 nav_order: 1
 ---
 

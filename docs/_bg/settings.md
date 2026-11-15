@@ -1,11 +1,11 @@
 ---
 title: "Настройки, единици и клавиши"
-nav_order: 19
+nav_order: 16
 lang: "bg"
 source: "settings.md"
 source_hash: "bd1062895abf"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Настройки, единици и клавиши

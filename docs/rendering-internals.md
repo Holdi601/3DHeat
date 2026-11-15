@@ -1,6 +1,6 @@
 ---
 title: Rendering internals
-nav_order: 25
+nav_order: 22
 has_children: true
 ---
 

@@ -1,11 +1,12 @@
 ---
 title: "Muchas partidas a la vez"
-nav_order: 10
+parent: "Replay"
+nav_order: 2
 lang: "es"
 source: "many-matches.md"
 source_hash: "f2239cef5e91"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Muchas partidas a la vez

@@ -1,10 +1,11 @@
 ---
 title: "Πιστώσεις φιγούρων"
 parent: "Φιγούρες"
+grand_parent: "Replay"
 nav_order: 1
 lang: "el"
 source: "figure-credits.md"
-source_hash: "02c496900b3a"
+source_hash: "7750b7b78368"
 translated: false
 outdated: false
 ---

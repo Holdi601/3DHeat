@@ -1,6 +1,7 @@
 ---
 title: Hit analysis (Vehicles tab)
-nav_order: 12
+parent: Replay
+nav_order: 4
 ---
 
 # Hit analysis

@@ -1,6 +1,7 @@
 ---
 title: Tacview parity
 parent: Match replay
+grand_parent: Replay
 nav_order: 1
 ---
 

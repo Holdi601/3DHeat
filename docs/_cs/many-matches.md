@@ -1,11 +1,12 @@
 ---
 title: "Mnoho zápasů najednou"
-nav_order: 10
+parent: "Replay"
+nav_order: 2
 lang: "cs"
 source: "many-matches.md"
 source_hash: "f2239cef5e91"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Mnoho zápasů najednou

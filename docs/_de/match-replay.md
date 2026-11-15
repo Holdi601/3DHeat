@@ -1,12 +1,13 @@
 ---
 title: "Match-Replay"
-nav_order: 9
+parent: "Replay"
+nav_order: 1
 has_children: true
 lang: "de"
 source: "match-replay.md"
 source_hash: "9d61f24a5a04"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Match-Replay

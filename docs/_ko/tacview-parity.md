@@ -1,10 +1,11 @@
 ---
 title: "Tacview 동등성"
 parent: "경기 리플레이"
+grand_parent: "Replay"
 nav_order: 1
 lang: "ko"
 source: "tacview-parity.md"
-source_hash: "26627728ab3d"
+source_hash: "4275603255c2"
 translated: false
 outdated: false
 ---

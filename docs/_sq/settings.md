@@ -1,11 +1,11 @@
 ---
 title: "Cilësimet, njësitë dhe tastet"
-nav_order: 19
+nav_order: 16
 lang: "sq"
 source: "settings.md"
 source_hash: "bd1062895abf"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Cilësimet, njësitë dhe tastet

@@ -6,7 +6,7 @@ lang: "cs"
 source: "heat.md"
 source_hash: "0d84cc318ef8"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Teplo

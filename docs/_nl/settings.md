@@ -1,11 +1,11 @@
 ---
 title: "Instellingen, eenheden en toetsen"
-nav_order: 19
+nav_order: 16
 lang: "nl"
 source: "settings.md"
 source_hash: "bd1062895abf"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Instellingen, eenheden en toetsen

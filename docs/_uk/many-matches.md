@@ -1,11 +1,12 @@
 ---
 title: "Багато матчів одразу"
-nav_order: 10
+parent: "Replay"
+nav_order: 2
 lang: "uk"
 source: "many-matches.md"
 source_hash: "f2239cef5e91"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Багато матчів одразу

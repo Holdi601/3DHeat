@@ -1,10 +1,11 @@
 ---
 title: "Figiúirí sa forleagan figiúr"
 parent: "Figiúirí"
+grand_parent: "Replay"
 nav_order: 2
 lang: "ga"
 source: "figure-replay.md"
-source_hash: "fca4f892487c"
+source_hash: "4b13b8ad6dff"
 translated: false
 outdated: false
 ---

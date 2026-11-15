@@ -1,12 +1,12 @@
 ---
 title: "Analýza závodu"
-nav_order: 14
+nav_order: 11
 has_children: true
 lang: "cs"
 source: "race-analysis.md"
 source_hash: "63d7f4b85872"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Analýza závodu

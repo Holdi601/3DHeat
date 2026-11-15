@@ -40,7 +40,7 @@ A *group* is a team or side, for example Blue and Red ([Groups](sessions-persons
 ## What hiding a group does
 
 - In **Heat**, **Team heat** and **Lines**, the group's rows contribute nothing.
-- In **Difference**, a hidden group contributes nothing whichever side it is on, also with a split by another column (see [Difference](difference.md#how-it-works)).
+- In **Difference**, a hidden group contributes nothing whichever side it is on, also with a split by another column (see [Difference](difference.md#for-developers)).
 - In the **figure overlay**, persons whose first row is in that group are not drawn.
 - In **Team heat**, the other groups keep their colours: hues are assigned from the total group count, not from what is visible, so two pictures stay comparable.
 

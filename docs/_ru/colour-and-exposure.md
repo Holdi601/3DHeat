@@ -4,7 +4,7 @@ parent: "Режимы тепла"
 nav_order: 3
 lang: "ru"
 source: "colour-and-exposure.md"
-source_hash: "ff47cc057f0a"
+source_hash: "c4d3a34a9302"
 translated: false
 outdated: false
 ---

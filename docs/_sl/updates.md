@@ -1,11 +1,11 @@
 ---
 title: "Posodobitve"
-nav_order: 21
+nav_order: 18
 lang: "sl"
 source: "updates.md"
 source_hash: "674c07a79c56"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Posodobitve

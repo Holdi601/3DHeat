@@ -1,10 +1,10 @@
 ---
 title: "Κάμερα και έλεγχοι"
-nav_order: 17
+nav_order: 14
 has_children: true
 lang: "el"
 source: "camera.md"
-source_hash: "200417804c2f"
+source_hash: "b578366d26ec"
 translated: false
 outdated: false
 ---

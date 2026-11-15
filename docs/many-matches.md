@@ -1,6 +1,7 @@
 ---
 title: Many matches at once
-nav_order: 10
+parent: Replay
+nav_order: 2
 ---
 
 # Many matches at once

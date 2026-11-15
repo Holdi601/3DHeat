@@ -1,11 +1,11 @@
 ---
 title: "Inställningar, enheter och tangenter"
-nav_order: 19
+nav_order: 16
 lang: "sv"
 source: "settings.md"
 source_hash: "bd1062895abf"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Inställningar, enheter och tangenter

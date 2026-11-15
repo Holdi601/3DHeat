@@ -1,10 +1,11 @@
 ---
 title: "Paritet s Tacviewom"
 parent: "Reprodukcija utakmice"
+grand_parent: "Replay"
 nav_order: 1
 lang: "hr"
 source: "tacview-parity.md"
-source_hash: "26627728ab3d"
+source_hash: "4275603255c2"
 translated: false
 outdated: false
 ---

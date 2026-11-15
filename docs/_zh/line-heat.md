@@ -4,7 +4,7 @@ parent: "热度模式"
 nav_order: 7
 lang: "zh"
 source: "line-heat.md"
-source_hash: "31dcde288fa5"
+source_hash: "e3b4873ccc4e"
 translated: false
 outdated: false
 ---

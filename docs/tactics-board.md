@@ -1,6 +1,6 @@
 ---
 title: Tactics board
-nav_order: 15
+nav_order: 12
 has_children: true
 ---
 

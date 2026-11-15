@@ -1,12 +1,12 @@
 ---
 title: "Levelen an Hannergrondgeometrie"
-nav_order: 16
+nav_order: 13
 has_children: true
 lang: "lb"
 source: "levels.md"
 source_hash: "74400d9e7af4"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Levelen an Hannergrondgeometrie

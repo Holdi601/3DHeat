@@ -1,11 +1,11 @@
 ---
 title: "설정, 단위, 키"
-nav_order: 19
+nav_order: 16
 lang: "ko"
 source: "settings.md"
 source_hash: "bd1062895abf"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # 설정, 단위, 키

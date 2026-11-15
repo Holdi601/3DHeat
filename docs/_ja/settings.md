@@ -1,11 +1,11 @@
 ---
 title: "設定、単位、キー"
-nav_order: 19
+nav_order: 16
 lang: "ja"
 source: "settings.md"
 source_hash: "bd1062895abf"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # 設定、単位、キー

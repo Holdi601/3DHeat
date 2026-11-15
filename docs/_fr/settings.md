@@ -1,11 +1,11 @@
 ---
 title: "Réglages, unités et touches"
-nav_order: 19
+nav_order: 16
 lang: "fr"
 source: "settings.md"
 source_hash: "bd1062895abf"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Réglages, unités et touches

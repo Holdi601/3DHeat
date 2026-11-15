@@ -1,6 +1,6 @@
 ---
 title: Camera and controls
-nav_order: 17
+nav_order: 14
 has_children: true
 ---
 

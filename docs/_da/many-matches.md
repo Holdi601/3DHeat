@@ -1,11 +1,12 @@
 ---
 title: "Mange kampe på én gang"
-nav_order: 10
+parent: "Replay"
+nav_order: 2
 lang: "da"
 source: "many-matches.md"
 source_hash: "f2239cef5e91"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Mange kampe på én gang

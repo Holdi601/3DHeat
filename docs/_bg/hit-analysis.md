@@ -1,9 +1,10 @@
 ---
 title: "Анализ на попаденията (раздел Машини)"
-nav_order: 12
+parent: "Replay"
+nav_order: 4
 lang: "bg"
 source: "hit-analysis.md"
-source_hash: "cb2f95613008"
+source_hash: "8e9221927522"
 translated: false
 outdated: false
 ---

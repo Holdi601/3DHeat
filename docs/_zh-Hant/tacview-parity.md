@@ -1,10 +1,11 @@
 ---
 title: "Tacview 對等功能"
 parent: "對戰重播"
+grand_parent: "Replay"
 nav_order: 1
 lang: "zh-Hant"
 source: "tacview-parity.md"
-source_hash: "26627728ab3d"
+source_hash: "4275603255c2"
 translated: false
 outdated: false
 ---

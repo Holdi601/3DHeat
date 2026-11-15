@@ -1,11 +1,12 @@
 ---
 title: "Mange kamper samtidig"
-nav_order: 10
+parent: "Replay"
+nav_order: 2
 lang: "no"
 source: "many-matches.md"
 source_hash: "f2239cef5e91"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Mange kamper samtidig

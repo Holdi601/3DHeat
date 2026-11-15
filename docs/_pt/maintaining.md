@@ -1,9 +1,9 @@
 ---
 title: "Manutenção da documentação"
-nav_order: 26
+nav_order: 23
 lang: "pt"
 source: "maintaining.md"
-source_hash: "8e80e3325d40"
+source_hash: "4a4fb46273e5"
 translated: false
 outdated: false
 ---

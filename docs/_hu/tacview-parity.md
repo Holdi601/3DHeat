@@ -1,10 +1,11 @@
 ---
 title: "Tacview-egyenértékűség"
 parent: "Meccs-visszajátszás"
+grand_parent: "Replay"
 nav_order: 1
 lang: "hu"
 source: "tacview-parity.md"
-source_hash: "26627728ab3d"
+source_hash: "4275603255c2"
 translated: false
 outdated: false
 ---

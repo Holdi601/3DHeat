@@ -1,11 +1,12 @@
 ---
 title: "Viele Matches auf einmal"
-nav_order: 10
+parent: "Replay"
+nav_order: 2
 lang: "de"
 source: "many-matches.md"
 source_hash: "f2239cef5e91"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Viele Matches auf einmal

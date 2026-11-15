@@ -1,11 +1,11 @@
 ---
 title: "Поставки, единици и тастери"
-nav_order: 19
+nav_order: 16
 lang: "mk"
 source: "settings.md"
 source_hash: "bd1062895abf"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Поставки, единици и тастери

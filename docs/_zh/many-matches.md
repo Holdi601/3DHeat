@@ -1,11 +1,12 @@
 ---
 title: "同时查看多场比赛"
-nav_order: 10
+parent: "Replay"
+nav_order: 2
 lang: "zh"
 source: "many-matches.md"
 source_hash: "f2239cef5e91"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # 一次叠加多场比赛

@@ -6,7 +6,7 @@ lang: "mt"
 source: "difference.md"
 source_hash: "19f40abd7f5a"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Differenza

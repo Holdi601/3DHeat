@@ -1,10 +1,11 @@
 ---
 title: "Паритет со Tacview"
 parent: "Повторување на натпревар"
+grand_parent: "Replay"
 nav_order: 1
 lang: "mk"
 source: "tacview-parity.md"
-source_hash: "26627728ab3d"
+source_hash: "4275603255c2"
 translated: false
 outdated: false
 ---

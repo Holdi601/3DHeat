@@ -1,11 +1,12 @@
 ---
 title: "Go leor cluichí ag an am céanna"
-nav_order: 10
+parent: "Replay"
+nav_order: 2
 lang: "ga"
 source: "many-matches.md"
 source_hash: "f2239cef5e91"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Go leor cluichí ag an am céanna

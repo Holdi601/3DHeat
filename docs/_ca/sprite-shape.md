@@ -4,7 +4,7 @@ parent: "Modes de calor"
 nav_order: 2
 lang: "ca"
 source: "sprite-shape.md"
-source_hash: "f2d7c316b3c3"
+source_hash: "582987c23842"
 translated: false
 outdated: false
 ---

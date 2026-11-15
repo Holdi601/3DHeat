@@ -1,12 +1,12 @@
 ---
 title: "Poziomy i geometria tła"
-nav_order: 16
+nav_order: 13
 has_children: true
 lang: "pl"
 source: "levels.md"
 source_hash: "74400d9e7af4"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Poziomy i geometria tła

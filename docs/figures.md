@@ -1,6 +1,7 @@
 ---
 title: Figures
-nav_order: 11
+parent: Replay
+nav_order: 3
 has_children: true
 ---
 

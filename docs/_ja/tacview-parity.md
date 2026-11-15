@@ -1,10 +1,11 @@
 ---
 title: "Tacview との同等性"
 parent: "試合のリプレイ"
+grand_parent: "Replay"
 nav_order: 1
 lang: "ja"
 source: "tacview-parity.md"
-source_hash: "26627728ab3d"
+source_hash: "4275603255c2"
 translated: false
 outdated: false
 ---

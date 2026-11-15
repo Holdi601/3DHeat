@@ -84,19 +84,6 @@ Rows are walked in time order, per person ([`buildLines`](https://github.com/Hol
 
 Each segment is stored on its *end* row, so segments stay in time order, and the [timeline](timeline.md) window, the sampler, the [filters](filters.md), the group visibility and the difference sign all work on them as on points. A filter therefore applies to the row a segment ends at.
 
-The routes are built on the main thread when Lines mode is entered (or the route settings change) and freed when it is left: 5 bytes a row in memory and 8 bytes a row on the GPU (each segment's start position, quantised to 16 bits per axis within the data's bounding box, and its flags).
-
-## How a line is drawn
-
-Both backends draw each segment from its end row as **18 vertices** ([`lineHeatVs`](https://github.com/Holdi601/3DHeat/blob/main/src/render/webgl2/shaders.ts) and its WGSL twin):
-
-- The half-width at each end is the [sprite radius](sprite-shape.md#sprite-radius) at that end's distance, with the pixel clamps applied. A line narrower than 2.5 px is drawn 2.5 px wide with its heat scaled down to match, so thin lines neither vanish nor brighten.
-- The heat falls off **across** the line with the same ramp as a sprite - falloff or curve, centre and edge intensity.
-- Round caps are drawn **only** where a route begins or ends, so the joints between consecutive segments do not bead into a string of pearls.
-- The geometry is built in screen space and interpolated linearly there, so the falloff stays centred on the line however it runs into the depth. A segment crossing the near plane is cut there rather than dropped.
-
-Points heat and line heat lay down very different amounts of heat per row, so the saturation is metered again when you switch between them ([Colour and exposure](colour-and-exposure.md#auto-exposure)).
-
 ## Playback
 
 In **All** mode every route is drawn whole. In **Play** mode each person is a point moving between their samples, drawing their route behind them:
@@ -106,3 +93,20 @@ In **All** mode every route is drawn whole. In **Play** mode each person is a po
 - the heat fades over the **tail**: with the *Cumulative* history the tail is unlimited and the whole route so far stays; with *Window* it fades to nothing over the *Span* (default 30 s). With *Lifetime* the tail is also the *Span*, and in Lines mode the timeline shows the *Span* box for that history too (in place of *Fallback life* and *Fade*, which line heat does not use).
 
 While playing, each frame is drawn whole rather than accumulated, because the heads move every frame and a moving average would smear each into a streak.
+
+## For developers
+
+### Memory
+
+The routes are built on the main thread when Lines mode is entered (or the route settings change) and freed when it is left: 5 bytes a row in memory and 8 bytes a row on the GPU (each segment's start position, quantised to 16 bits per axis within the data's bounding box, and its flags).
+
+### How a line is drawn
+
+Both backends draw each segment from its end row as **18 vertices** ([`lineHeatVs`](https://github.com/Holdi601/3DHeat/blob/main/src/render/webgl2/shaders.ts) and its WGSL twin):
+
+- The half-width at each end is the [sprite radius](sprite-shape.md#sprite-radius) at that end's distance, with the pixel clamps applied. A line narrower than 2.5 px is drawn 2.5 px wide with its heat scaled down to match, so thin lines neither vanish nor brighten.
+- The heat falls off **across** the line with the same ramp as a sprite - falloff or curve, centre and edge intensity.
+- Round caps are drawn **only** where a route begins or ends, so the joints between consecutive segments do not bead into a string of pearls.
+- The geometry is built in screen space and interpolated linearly there, so the falloff stays centred on the line however it runs into the depth. A segment crossing the near plane is cut there rather than dropped.
+
+Points heat and line heat lay down very different amounts of heat per row, so the saturation is metered again when you switch between them ([Colour and exposure](colour-and-exposure.md#auto-exposure)).

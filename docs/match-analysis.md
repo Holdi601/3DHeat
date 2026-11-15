@@ -1,6 +1,6 @@
 ---
 title: Match analysis (CS2)
-nav_order: 13
+nav_order: 10
 ---
 
 # Match analysis (Counter-Strike 2)

@@ -4,7 +4,7 @@ parent: "熱度模式"
 nav_order: 4
 lang: "zh-Hant"
 source: "depth-and-culling.md"
-source_hash: "fe7117022fc0"
+source_hash: "436ac15a9b3d"
 translated: false
 outdated: false
 ---

@@ -1,11 +1,12 @@
 ---
 title: "Palju matše korraga"
-nav_order: 10
+parent: "Replay"
+nav_order: 2
 lang: "et"
 source: "many-matches.md"
 source_hash: "f2239cef5e91"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Palju matše korraga

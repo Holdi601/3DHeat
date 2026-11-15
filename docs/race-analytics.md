@@ -222,105 +222,15 @@ difference.
 
 ### 2. Corners, and each corner's share of the lap
 
-Corners come from the reference: a minimum of speed with enough prominence, or
-a stretch of curvature tighter than 300 m radius where the speed barely dips.
-Each corner owns the road half-way to the apexes either side. In it, each lap's
-**slowest point** is a real dip in its speed - slower than 6 m either side, and
-looking past the ends of the stretch, so the previous corner's exit still
-accelerating into it is never mistaken for it; a lap that never slowed is
-placed at the apex.
-
-A lap **starts a corner** where it began to slow for it: back from its slowest
-point through the braking or the lift that led to it, over short blips of full
-throttle, until it had its foot down for 10 m (a throttle picked up again in the
-last 30 m before the slowest point is still the corner's). A lap that never had
-its foot down since the corner before starts at its fastest point in between.
-
-The corner's **segment** runs from the first of all the laps to start it to the
-start of the next one, so every lap's braking for it is inside it and the
-segments tile the lap. Corners the reference never drives flat out between (less
-than 40 m) are one **complex** - "T11-T12" - driven as one. On a circuit the
-last segment runs on across the line to the first braking point.
-
-What a corner leads onto is measured on the reference: metres at full throttle
-before and after it. At least 200 m before and 120 m after: between two
-straights. Otherwise at least 200 m after, or at least 120 m after and at least
-as much as before: onto a straight. At least 200 m before only: after a
-straight. Otherwise: a link.
+How corners, segments and complexes are found: [Corner-by-corner analysis](race-corner-analysis.md#segments-braking-zone-to-braking-zone).
 
 ### 3. The time account of a corner
 
-For one lap against another, on the shared axis, `rel(s)` is how much longer
-the lap has taken to reach `s`. Over a segment:
-
-- **net** = `rel(end) - rel(start)`: the verdict. Closer than 0.03 s is level.
-- **The split**: where inside the corner the lead turned - the biggest swing
-  that the lap then gave back or won back, when both sides of it are at least
-  0.04 s; otherwise the later of the two slowest points. **To the apex** is
-  `rel(split) - rel(start)`, **after it** the rest. When the two have opposite
-  signs, the lap *traded* one for the other.
-- **After it** splits again where both laps are flat out: the **exit** before,
-  the **straight** after.
-- **The straight** splits into what the speed there explains, what the cars'
-  pull explains, and how it was driven:
-  - *Exit speed*, measured rather than modelled: the slower of the two cars
-    passes through the faster one's starting speed a little way down the
-    straight, and from there on its own trace is what it would have done from
-    that speed - with its own gearing, drag and the road's slope in it. Shifted
-    back to that point (and run on at its end speed for the metres it gains),
-    it is the time from the faster start; the difference is the exit's cost.
-    When the slower car never gets there, its own acceleration is put back as
-    power (`a·v` held) from the faster speed.
-  - *The cars' pull*: both cars from the same speed, flat out, integrating the
-    full-throttle acceleration each has shown at each speed.
-  - *How it was driven*: what is left - a lift, or speed scrubbed at full
-    throttle (a slide, a kerb, contact) - said as whichever lap it went
-    against.
-  The exit speed never explains more than the straight cost, unless a lift or
-  scrubbed speed took some back, which is then said.
-
-Every segment's net adds up to the lap time difference (the tests check it),
-and every corner's to-the-apex and after-it add up to its net.
+Net, split, exit speed and the cars' pull: [Corner-by-corner analysis](race-corner-analysis.md#the-time-account-of-a-corner).
 
 ### 4. The verdict, and the cause
 
-| Pattern | Meaning | What is said |
-|---|---|---|
-| level, with a trade of 0.1 s or more | two ways through, same time | both ways described; with a straight after it, the slow-in-fast-out way is the one to build on - win the entry back by braking harder, not later |
-| gained in, lost more out | **too fast in, slow out** | the exit's cause (below); give up some entry to get the car turned and flat sooner, with the other lap's brake and throttle points |
-| lost in, gained less out | gave more away going in than the exit won back | the entry's cause (below); keep the exit, lose less going in |
-| lost in, gained more out | **slow in, fast out paid off** (a gain) | keep it: here the exit is worth more |
-| lost mostly in, or mostly out | one cause | the cause of that half |
-| a lift on the straight | not flat out | where, and how long |
-| the car explains 60% or more | the car | which part - pull, grip, brakes - and what the driver can still do |
-
-A gain is said through what the other lap did wrong there, as that lap's to fix.
-
-**Causes on the way in**, in order: a near-stop (slower than 60% of what even
-this car's grip would allow where the other went through - a spin, contact or a
-missed corner); a lock-up; a lift where the other stayed flat; braking where the
-other only lifted; braking gently (the other braked clearly harder and this car
-had grip to spare - braking gently is also why a lap brakes early); braking
-early (in the same car, against the other's braking point; in another car,
-against the distance this car needs at the deceleration it has shown); coasting;
-understeer; then the **middle**, split by `v² = a R`:
-
-- `ln(v_other / v_mine) = ½ ln(a_other / a_mine) + ½ ln(R_other / R_mine)`, with
-  each lap's radius measured from its own path at its slowest point and its
-  lateral acceleration `v² / R`. When the radius explains half or more, it was a
-  **tighter line** ("use more of the road"); otherwise less lateral acceleration
-  on a similar radius - the car's grip when it was at its limit and the other
-  car holds more, or **grip to spare**.
-
-and last, arriving slower (decided by the corner before and the car's pull).
-
-**Causes on the way out**, in order: wheelspin; speed lost at full throttle
-(over 25 km/h: more like contact than a slide); the throttle later - counted from
-each lap's own slowest point, so a lap slowest later is not blamed for a later
-throttle; a hesitant throttle (lifts after picking it up); running wide and
-waiting for full throttle; full throttle later; oversteer; the car's drive. A
-lap slower out only because it was slower through the middle has one mistake,
-and its cause is the middle's.
+The verdict patterns and the causes on the way in and out: [Corner-by-corner analysis](race-corner-analysis.md#the-verdict-and-the-finding).
 
 ### 5. The car against the driver
 
@@ -443,109 +353,11 @@ did not make is a fault only if it cost time: the time lost from just before
 it to 40 m after it. A fault that explains 40% or more of a corner's loss
 becomes that corner's cause.
 
-| Event | Detected by | Game-independent fallback |
-|---|---|---|
-| lock | a wheel's slip ratio past the car's braking limit while braking (not on the handbrake) | slip from wheel speed against car speed |
-| wheelspin | a driven wheel's slip ratio past the car's traction limit on the throttle | the same |
-| rear stepping out | the drift angle - between where the car points and where it goes - past the surface's floor (7 degrees tarmac, 15 loose) and past 1.5 times the upper quartile of what this car runs at the limit there; or the rear slip angle past its limit and more than 0.25 past the front | only without a drift angle: yaw rate beyond lateral acceleration over speed (the "attitude velocity"), with the steering against the turn |
-| spin | the drift angle past 60 degrees | |
-| pushing wide | the front slip angle past its limit and 0.3 past the rear | steering 1.6 times what the path needed - the car's own steering per unit of curvature, per speed band, measured where it corners at 30-60% of its grip: the deficit against the Ackermann angle that loggers' understeer channels use (AiM's Kus, Milliken) |
-| ABS, TC acting; handbrake; in the air | the game's flags; the handbrake; no wheel on the ground, or none loaded, or all fully extended | |
-
-The drift angle floors follow the literature: tyre slip angle peaks at 3-10
-degrees on tarmac and a road car's body-slip stability limit is about 12
-degrees on dry asphalt, while rally and drift driving run 30-50 degrees. A car
-that runs more as a matter of course - an arcade tyre model, a gravel
-specialist - has its own higher threshold from its own laps.
-
-Each event says what the pedals were doing as it began - braking (trail
-braking too hard, a downshift too early), lifted (lift-off oversteer), on the
-throttle (power oversteer) - whether it was caught with opposite lock, which
-wheels, how far past the limit against the other lap, and for a lock or a spin
-the speed given away against what the car does at its limit there. The
-advice follows from that: a locked front cannot steer, a locked rear lets the
-car rotate, on loose ground a locked wheel ploughs; spinning wheels drive
-nothing, short-shift on loose ground; a lift mid-corner lets the rear go. In
-Trackmania a slide below about 400 km/h (300 on dirt, grass and plastic) gives
-less drive than gripping; above, a speedslide at the right angle gains.
-
-**Hits and crashes** (`impacts.ts`) are read from the lap's own samples, before
-they are resampled - a hit is over in hundredths of a second. Tyres cannot make
-the forces of a hit: a car does not lose 20 km/h in a tenth of a second, nor
-pull three times its hardest cornering in one sample. So against the lap's own
-car - its grip `G`, the 99th percentile of its horizontal acceleration - a
-sample is struck where the horizontal acceleration jumps past
-`max(1.8 G, G + 18, 30)` m/s², or where the speed falls over 0.1 s by more than
-that deceleration would take and 1.5 m/s more. In the air and settling after a
-landing nothing is judged (a landing spikes the accelerations without hitting
-anything), and speed gone with no force at all is the game rewinding or
-resetting the car. Struck samples within 0.4 s are one impact: a **crash** when
-it took 30 km/h or half the car's speed, a **hit** otherwise - a knock, a scrape
-along a wall - head-on, from behind or along a side by the direction of the
-force. Its cost runs until the car has its speed back: the metres to regain it
-at the car's own pull, 40 to 400. A hit or a crash that explains much of a
-corner's loss is that corner's story, before the cars and before anything else
-the time did. Checked on test laps: strikes on walls are found - an
-acceleration far past any tyre's, most of the speed gone within a couple of
-samples - and a rally stage's jumps and landings are not taken for hits.
-
-In the view a burst marks every hit - red for a crash, amber for a hit - on a
-post with a ring in its lap's colour, the focused lap's labelled with the speed
-it took (click to replay it), and a car flashes as it hits.
+Detection thresholds, the other-lap test, hits and crashes, and the advice texts: [Car control events](race-control-events.md).
 
 ### 6b. Many laps: the course's statistics
 
-Load a course's whole folder - dozens of laps, several cars, several
-performance classes - and the analysis judges every lap, and says over all of
-them which mistakes are made where.
-
-**Against the best of its own class.** A lap is compared corner by corner with
-the fastest complete lap of its own performance class (the reference, in the
-reference's class); that lap itself with whoever of its class was quickest
-through each corner, or of every lap when it is alone in its class. A C-class
-car's braking point against an S2 car's says nothing about the driving. The
-time map, the gaps in the lap list and the corner table follow the same
-comparison.
-
-**A mistake** of a lap in a corner (`stats.ts`) is the driving cause the
-analysis found for its loss there - braking too late, too early or too gently,
-a lock, coasting, too slow through the middle, too tight a line, pushing wide,
-late on the throttle, slower out, wheelspin, the rear stepping out, running
-wide, speed scrubbed, a lift - when the corner cost it 0.05 s or more against
-its comparison lap, and every lock, wheelspin, slide, push and spin it made
-there that the other lap did not (costing 0.03 s or more), and every hit and
-crash. One corner can hold several; each is counted once per lap and corner.
-Its time is what the corner cost where it was the cause found, an event's own
-cost otherwise. Gains, the car's share and a slower arrival decided in the
-corner before are not mistakes. The two patterns of section 4 count as the cause
-found inside them: a lap that gave more away going in than the exit won back as
-its entry's cause (braking early, a lock, coasting, a slow middle ...), one too
-fast in as braking too late where it braked later than the other, and otherwise
-as its exit's cause.
-
-**The statistics** count laps, not events: "12 of 40 laps braked too
-early into T3, in 9 different cars - about 0.21 s each", with
-the laps that did it, worst first, each a click from its replay. Over the
-course, each kind of mistake: in how many of the laps, how often, about what it
-cost, and in which corners most. Corner by corner: how many laps lost time
-there against their class's best, all the time lost, and the mistakes made.
-For every class or some.
-
-**The mistake map** paints along the track how many of the laps made a mistake
-at each metre - of every kind, or the one picked - wider and brighter where
-more did, with each corner's most common mistake on the track. **Show in the
-heatmap** hands the same to the heatmap: every lap's mistake at each point it
-covers, at that lap's own position, grouped by the kind of mistake, with the
-class, the corner and the cost to filter on.
-
-**Dozens of laps** are analysed in a second or two. Drawing them all at once
-is a tangle and slow, so once there are more than eight, only the reference,
-the lap looked at and the best of its class are drawn (all are counted);
-*Show all* draws the rest, with their lines thinned and their cars plainer.
-The charts draw at most eight laps. A folder holding several courses' laps -
-the whole lap library - offers each course to load on its own, and the laps
-of a run that never finished (FH Companion's `unfinished/`) go with their
-course, marked partial.
+Class comparison, what counts as a mistake, the statistics and the mistake map: [Course statistics](race-course-statistics.md).
 
 ### 7. The driven line
 

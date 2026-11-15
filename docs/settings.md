@@ -1,6 +1,6 @@
 ---
 title: Settings, units and keys
-nav_order: 19
+nav_order: 16
 ---
 
 # Settings, units and keys

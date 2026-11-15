@@ -1,10 +1,11 @@
 ---
 title: "Paritat amb Tacview"
 parent: "Repetició de partida"
+grand_parent: "Replay"
 nav_order: 1
 lang: "ca"
 source: "tacview-parity.md"
-source_hash: "26627728ab3d"
+source_hash: "4275603255c2"
 translated: false
 outdated: false
 ---

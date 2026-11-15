@@ -1,12 +1,12 @@
 ---
 title: "Niveaus en achtergrondgeometrie"
-nav_order: 16
+nav_order: 13
 has_children: true
 lang: "nl"
 source: "levels.md"
 source_hash: "74400d9e7af4"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Niveaus en achtergrondgeometrie

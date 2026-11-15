@@ -1,11 +1,11 @@
 ---
 title: "Ayarlar, birimler ve tuşlar"
-nav_order: 19
+nav_order: 16
 lang: "tr"
 source: "settings.md"
 source_hash: "bd1062895abf"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Ayarlar, birimler ve tuşlar

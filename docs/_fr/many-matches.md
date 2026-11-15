@@ -1,11 +1,12 @@
 ---
 title: "Beaucoup de matchs à la fois"
-nav_order: 10
+parent: "Replay"
+nav_order: 2
 lang: "fr"
 source: "many-matches.md"
 source_hash: "f2239cef5e91"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Beaucoup de matchs à la fois

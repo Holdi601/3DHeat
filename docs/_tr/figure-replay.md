@@ -1,10 +1,11 @@
 ---
 title: "Figür bindirmedeki figürler"
 parent: "Figürler"
+grand_parent: "Replay"
 nav_order: 2
 lang: "tr"
 source: "figure-replay.md"
-source_hash: "fca4f892487c"
+source_hash: "4b13b8ad6dff"
 translated: false
 outdated: false
 ---

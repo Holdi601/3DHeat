@@ -20,7 +20,7 @@ The sprite's radius in **world units** (labelled metres). Default 6, and on ever
 
 ![The same hot spot with a sprite radius of 2 m, 6 m and 20 m](assets/img/en/sprite-shape-radius.webp)
 
-Things far away look smaller, so a sprite shrinks on screen with distance. (The formula: in pixels it is `radius × P[1][1] / w × viewport height / 2`, where `w` is the point's view depth.) Under the parallel projection it is the same everywhere, which is part of why the parallel view is the right one for comparing hotspots ([Camera](camera.md#projection)).
+Things far away look smaller, so a sprite shrinks on screen with distance. Under the parallel projection it is the same everywhere, which is part of why the parallel view is the right one for comparing hotspots ([Camera](camera.md#projection)).
 
 ## Pixel clamps
 
@@ -35,11 +35,7 @@ Things far away look smaller, so a sprite shrinks on screen with distance. (The 
 
 ## Centre and edge intensity
 
-The heat a sprite adds at its exact centre (**Centre intensity**, default 1, 0-10, jog 1000) and at its rim (**Edge intensity**, default 0, -2-10, jog 1000). The ramp value *t* (1 at the centre, 0 at the rim, shaped by the falloff or the curve below) blends between them:
-
-```
-heat added = mix(edge, centre, t) × sample weight × sign × fade × visibility
-```
+The heat a sprite adds at its exact centre (**Centre intensity**, default 1, 0-10, jog 1000) and at its rim (**Edge intensity**, default 0, -2-10, jog 1000). The ramp value *t* (1 at the centre, 0 at the rim, shaped by the falloff or the curve below) blends between them (the formula is under [For developers](#for-developers)).
 
 A **negative edge intensity** makes the rim subtract, which carves a cool halo around each hot spot and sharpens clusters against each other. Visibility includes [occlusion](depth-and-culling.md) and the [slice](slice.md); fade is the [Lifetime](timeline.md#history) fade; sign is ±1 in [Difference](difference.md).
 
@@ -66,7 +62,7 @@ Shown when *Curve* is selected. A literal cross-section of a sprite: distance fr
 | Alt-click or right-click a point | Removes it. The two endpoints cannot be removed. |
 | A preset button | Replaces the curve with the preset. |
 
-The endpoints are fixed at the centre and the rim; their height is still yours. Handles are clamped horizontally to their own segment, so the curve is always a function of distance: dragging a handle far past the next point flattens against it instead of folding the curve back, which would make the result depend on which root a solver happened to find.
+The endpoints are fixed at the centre and the rim; their height is still yours.
 
 **Presets** ([`curve.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/state/curve.ts)):
 
@@ -79,8 +75,26 @@ The endpoints are fixed at the centre and the rim; their height is still yours. 
 | **Ring** | 0.15 at the centre, 1 at 62% of the radius, 0 at the rim | A hollow sprite: shows where paths pass rather than where they stop. |
 | **Shelf** | Two-stage falloff, 0.45 at 35% | Separates a dense core from its surroundings. |
 
-**How it is drawn** (you can skip this). The curve is baked into a 256-entry table whenever it changes, uploaded as a 16-bit float texture, and sampled per fragment with linear filtering and a half-texel inset so both ends stay exact. Solving a Bézier for x needs iteration, which has no place in the program's hottest shader, and a table fetch is also cheaper than the `pow()` the falloff uses. 16-bit rather than 8-bit because 8 bits shows as banding once thousands of sprites have summed; 16-bit half float is filterable in core WebGL2 where 32-bit needs an extension.
-
 ## Flatten onto ground plane
 
 **Flatten onto ground plane** (default off) ignores each row's height and draws all heat at one height - the lowest Y of the dataset - the classic 2D map heatmap. With it on, depth occlusion and *Hide behind terrain* are off (every point would sit exactly on the surface it is tested against), and the Depth section says so.
+
+## For developers
+
+### Formulas
+
+On-screen radius in pixels: `radius × P[1][1] / w × viewport height / 2`, where `P` is the projection matrix and `w` is the point's view depth.
+
+The heat a sprite adds:
+
+```
+heat added = mix(edge, centre, t) × sample weight × sign × fade × visibility
+```
+
+### The curve
+
+Handles are clamped horizontally to their own segment, so the curve is always a function of distance: dragging a handle far past the next point flattens against it instead of folding the curve back, which would make the result depend on which root a solver happened to find.
+
+### How the curve is drawn
+
+The curve is baked into a 256-entry table whenever it changes, uploaded as a 16-bit float texture, and sampled per fragment with linear filtering and a half-texel inset so both ends stay exact. Solving a Bézier for x needs iteration, which has no place in the program's hottest shader, and a table fetch is also cheaper than the `pow()` the falloff uses. 16-bit rather than 8-bit because 8 bits shows as banding once thousands of sprites have summed; 16-bit half float is filterable in core WebGL2 where 32-bit needs an extension.

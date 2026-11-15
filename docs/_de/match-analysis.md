@@ -1,9 +1,9 @@
 ---
 title: "Match-Analyse (CS2)"
-nav_order: 13
+nav_order: 10
 lang: "de"
 source: "match-analysis.md"
-source_hash: "639fcde96e18"
+source_hash: "270f28c0f42b"
 translated: false
 outdated: false
 ---

@@ -1,9 +1,9 @@
 ---
 title: "Јазици"
-nav_order: 20
+nav_order: 17
 lang: "mk"
 source: "languages.md"
-source_hash: "ea2f7abd47f0"
+source_hash: "3fe0a88e89d1"
 translated: false
 outdated: false
 ---

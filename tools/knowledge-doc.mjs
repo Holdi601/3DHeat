@@ -1,7 +1,7 @@
 /**
- * Regenerates the catalogue and bibliography of docs/knowledge.md from the
+ * Regenerates the catalogue and bibliography page docs/knowledge-catalogue.md from the
  * knowledge base (src/insights/knowledge/), between the `kb:begin` and
- * `kb:end` markers; the rest of the page is written by hand.
+ * `kb:end` markers; the text around them is written by hand.
  *
  *   node tools/knowledge-doc.mjs           rewrite the page
  *   node tools/knowledge-doc.mjs --check   exit 1 when the page is out of date
@@ -47,19 +47,19 @@ table('Studies', studies, ['id', 'title', 'sources'], (e) => [`\`${e.id}\``, e.t
 out.push('### Bibliography', '');
 for (const r of [...REFERENCES].sort((a, b) => a.authors.localeCompare(b.authors) || a.year - b.year)) out.push(`- ${fullCite(r.id)}${r.pd ? ' *(public domain)*' : ''}${r.verified ? ` *(checked ${r.verified}: ${r.verifiedLevel})*` : ''}`);
 
-const page = resolve(ROOT, 'docs/knowledge.md');
+const page = resolve(ROOT, 'docs/knowledge-catalogue.md');
 const text = readFileSync(page, 'utf8');
 const a = text.indexOf('<!-- kb:begin -->');
 const b = text.indexOf('<!-- kb:end -->');
-if (a < 0 || b < a) throw new Error('docs/knowledge.md: kb markers missing');
+if (a < 0 || b < a) throw new Error('docs/knowledge-catalogue.md: kb markers missing');
 const next = `${text.slice(0, a)}<!-- kb:begin -->\n\n${out.join('\n')}\n\n${text.slice(b)}`;
 if (process.argv.includes('--check')) {
   if (next !== text) {
-    console.log('docs/knowledge.md is out of date: node tools/knowledge-doc.mjs');
+    console.log('docs/knowledge-catalogue.md is out of date: node tools/knowledge-doc.mjs');
     process.exit(1);
   }
-  console.log('docs/knowledge.md is up to date');
+  console.log('docs/knowledge-catalogue.md is up to date');
 } else {
   writeFileSync(page, next);
-  console.log(`docs/knowledge.md: ${out.length} lines generated`);
+  console.log(`docs/knowledge-catalogue.md: ${out.length} lines generated`);
 }

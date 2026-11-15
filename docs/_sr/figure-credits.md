@@ -1,10 +1,11 @@
 ---
 title: "Заслуге за фигуре"
 parent: "Фигуре"
+grand_parent: "Replay"
 nav_order: 1
 lang: "sr"
 source: "figure-credits.md"
-source_hash: "02c496900b3a"
+source_hash: "7750b7b78368"
 translated: false
 outdated: false
 ---

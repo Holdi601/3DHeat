@@ -1,10 +1,11 @@
 ---
 title: "图形致谢"
 parent: "图形"
+grand_parent: "Replay"
 nav_order: 1
 lang: "zh"
 source: "figure-credits.md"
-source_hash: "02c496900b3a"
+source_hash: "7750b7b78368"
 translated: false
 outdated: false
 ---

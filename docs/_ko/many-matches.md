@@ -1,11 +1,12 @@
 ---
 title: "여러 경기를 한꺼번에"
-nav_order: 10
+parent: "Replay"
+nav_order: 2
 lang: "ko"
 source: "many-matches.md"
 source_hash: "f2239cef5e91"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # 여러 경기를 한꺼번에

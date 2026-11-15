@@ -1,10 +1,11 @@
 ---
 title: "Figür künyeleri"
 parent: "Figürler"
+grand_parent: "Replay"
 nav_order: 1
 lang: "tr"
 source: "figure-credits.md"
-source_hash: "02c496900b3a"
+source_hash: "7750b7b78368"
 translated: false
 outdated: false
 ---

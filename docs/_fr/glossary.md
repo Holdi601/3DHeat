@@ -1,11 +1,11 @@
 ---
 title: "Glossaire"
-nav_order: 24
+nav_order: 21
 lang: "fr"
 source: "glossary.md"
 source_hash: "8766ecb57c96"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Glossaire
