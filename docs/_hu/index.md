@@ -5,7 +5,7 @@ lang: "hu"
 source: "index.md"
 source_hash: "25c1fded750f"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # 3DHeat

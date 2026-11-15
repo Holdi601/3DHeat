@@ -6,7 +6,7 @@ lang: "nl"
 source: "race-control-events.md"
 source_hash: "9ab565885c61"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Gebeurtenissen bij wagenbeheersing

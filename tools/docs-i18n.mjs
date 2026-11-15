@@ -113,7 +113,8 @@ function writeConfig() {
   const block = [
     '# i18n:begin (written by tools/docs-i18n.mjs)',
     'collections:',
-    ...LANGS.filter((l) => l.code !== 'en').map((l) => `  ${l.code}:\n    output: true\n    permalink: /${l.code}/:name:output_ext`),
+    // Quoted: YAML 1.1 (Jekyll) reads a bare `no` as false.
+    ...LANGS.filter((l) => l.code !== 'en').map((l) => `  "${l.code}":\n    output: true\n    permalink: /${l.code}/:name:output_ext`),
     'relative_links:',
     '  enabled: true',
     '  collections: true',
