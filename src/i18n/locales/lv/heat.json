@@ -287,7 +287,7 @@
   "heat.levelPanel.dota3dNotice": "Dota 2 karte 3D, izveidota no tavas Dota 2 instalācijas ar rīku 3DHeat Dota (heat3d-dota-maps) un saglabāta bibliotēkā: poga Dota 2 karte turpmāk ielādē to. Dota 2 un tās karte pieder Valve, kas neatbalsta šo projektu.",
   "heat.levelPanel.dota3dHint": "Ja Dota 2 ir instalēta, atsevišķais rīks 3DHeat Dota (github.com/Holdi601/3DHeat-Ext-Dota) izveido karti 3D: heat3d-dota-maps level -o dota.glb vai ar Watcher python -m heat3d_watch dota-map -o dota.glb. Ielādē šo failu vienreiz ar {model}, un šī poga to turpmāk izmantos.",
   "heat.levelPanel.r6": "Siege karte: {map}",
-  "heat.levelPanel.r6Title": "{map} 3D no jūsu pašu Rainbow Six Siege instalācijas, izveidojis atsevišķais 3DHeat R6 rīks (heat3d-r6-replay map), saglabāts līmeņu bibliotēkā",
+  "heat.levelPanel.r6Title": "{map} 3D no jūsu pašu Rainbow Six Siege instalācijas, izveidojis atsevišķais 3DHeat R6 Maps rīks (heat3d-r6-maps map), saglabāts līmeņu bibliotēkā",
   "heat.levelPanel.r6Kept": "Rainbow Six Siege līmenis kartei {map} saglabāts līmeņu bibliotēkā: turpmāk tas pats ielādējas šīs kartes atkārtojumiem. Rainbow Six Siege un tā kartes pieder Ubisoft, kas neatbalsta šo projektu.",
   "heat.levelPanel.r6Loaded": "Līmenis {map} no līmeņu bibliotēkas ielādētajiem Rainbow Six Siege atkārtojumiem.",
   "heat.levelPanel.r6OtherVersion": "Bibliotēkas līmenis {map} ir no citas kartes versijas nekā atkārtojumi (karte pārveidota): sienas un grīdas var atšķirties.",

@@ -287,7 +287,7 @@
   "heat.levelPanel.dota3dNotice": "Léarscáil Dota 2 i 3T, déanta ó do shuiteáil féin de Dota 2 le huirlis 3DHeat Dota (heat3d-dota-maps) agus coinnithe sa leabharlann: lódálann an cnaipe Léarscáil Dota 2 í as seo amach. Is le Valve Dota 2 agus a léarscáil, agus ní thacaíonn Valve leis an tionscadal seo.",
   "heat.levelPanel.dota3dHint": "Le Dota 2 suiteáilte, déanann an uirlis ar leith 3DHeat Dota (github.com/Holdi601/3DHeat-Ext-Dota) an léarscáil i 3T: heat3d-dota-maps level -o dota.glb, nó tríd an Watcher python -m heat3d_watch dota-map -o dota.glb. Lódáil an comhad sin uair amháin le {model} agus úsáidfidh an cnaipe seo é ina dhiaidh sin.",
   "heat.levelPanel.r6": "Léarscáil Siege: {map}",
-  "heat.levelPanel.r6Title": "{map} i 3T ó do shuiteáil féin de Rainbow Six Siege, déanta ag an uirlis ar leith 3DHeat R6 (heat3d-r6-replay map) agus coinnithe sa leabharlann leibhéal",
+  "heat.levelPanel.r6Title": "{map} i 3T ó do shuiteáil féin de Rainbow Six Siege, déanta ag an uirlis ar leith 3DHeat R6 Maps (heat3d-r6-maps map) agus coinnithe sa leabharlann leibhéal",
   "heat.levelPanel.r6Kept": "Leibhéal Rainbow Six Siege do {map} coinnithe sa leabharlann leibhéal: as seo amach lódálann sé leis féin d'athimirt ar an léarscáil seo. Is le Ubisoft Rainbow Six Siege agus a léarscáileanna, agus ní thacaíonn siad leis an tionscadal seo.",
   "heat.levelPanel.r6Loaded": "An leibhéal {map} ón leabharlann leibhéal, don athimirt Rainbow Six Siege atá lódáilte.",
   "heat.levelPanel.r6OtherVersion": "Is ó leagan eile den léarscáil an leibhéal {map} sa leabharlann ná an athimirt (athdhéanadh an léarscáil): d'fhéadfadh ballaí agus urláir a bheith difriúil.",

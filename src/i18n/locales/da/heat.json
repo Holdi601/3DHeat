@@ -287,7 +287,7 @@
   "heat.levelPanel.dota3dNotice": "Dota 2-kortet i 3D, lavet ud fra din egen Dota 2-installation af værktøjet 3DHeat Dota (heat3d-dota-maps) og gemt i biblioteket: knappen Dota 2-kort indlæser det fremover. Dota 2 og kortet tilhører Valve, som ikke står bag dette projekt.",
   "heat.levelPanel.dota3dHint": "Med Dota 2 installeret laver det separate værktøj 3DHeat Dota (github.com/Holdi601/3DHeat-Ext-Dota) kortet i 3D: heat3d-dota-maps level -o dota.glb, eller via Watcher python -m heat3d_watch dota-map -o dota.glb. Indlæs filen én gang med {model}, så bruger denne knap den fremover.",
   "heat.levelPanel.r6": "Siege-kort: {map}",
-  "heat.levelPanel.r6Title": "{map} i 3D fra din egen Rainbow Six Siege-installation, lavet af det separate 3DHeat R6-værktøj (heat3d-r6-replay map) og gemt i banebiblioteket",
+  "heat.levelPanel.r6Title": "{map} i 3D fra din egen Rainbow Six Siege-installation, lavet af det separate 3DHeat R6 Maps-værktøj (heat3d-r6-maps map) og gemt i banebiblioteket",
   "heat.levelPanel.r6Kept": "Rainbow Six Siege-bane for {map} gemt i banebiblioteket: fremover indlæses den af sig selv til replays på dette kort. Rainbow Six Siege og dets kort tilhører Ubisoft, som ikke støtter dette projekt.",
   "heat.levelPanel.r6Loaded": "Banen {map} fra banebiblioteket til de indlæste Rainbow Six Siege-replays.",
   "heat.levelPanel.r6OtherVersion": "Banen {map} i biblioteket er fra en anden version af kortet end replayene (kortet er lavet om): vægge og gulve kan afvige.",

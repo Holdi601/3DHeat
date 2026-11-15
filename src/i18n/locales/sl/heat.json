@@ -287,7 +287,7 @@
   "heat.levelPanel.dota3dNotice": "Zemljevid Dota 2 v 3D, narejen iz vaše lastne namestitve Dota 2 z orodjem 3DHeat Dota (heat3d-dota-maps) in shranjen v knjižnici: gumb Zemljevid Dota 2 ga odslej naloži. Dota 2 in njen zemljevid pripadata podjetju Valve, ki tega projekta ne podpira.",
   "heat.levelPanel.dota3dHint": "Z nameščeno igro Dota 2 ločeno orodje 3DHeat Dota (github.com/Holdi601/3DHeat-Ext-Dota) naredi zemljevid v 3D: heat3d-dota-maps level -o dota.glb, ali prek Watcherja python -m heat3d_watch dota-map -o dota.glb. To datoteko enkrat naložite z {model} in ta gumb jo bo odslej uporabljal.",
   "heat.levelPanel.r6": "Zemljevid Siege: {map}",
-  "heat.levelPanel.r6Title": "{map} v 3D iz vaše lastne namestitve Rainbow Six Siege, izdelano z ločenim orodjem 3DHeat R6 (heat3d-r6-replay map) in shranjeno v knjižnici ravni",
+  "heat.levelPanel.r6Title": "{map} v 3D iz vaše lastne namestitve Rainbow Six Siege, izdelano z ločenim orodjem 3DHeat R6 Maps (heat3d-r6-maps map) in shranjeno v knjižnici ravni",
   "heat.levelPanel.r6Kept": "Raven Rainbow Six Siege za {map} je shranjena v knjižnici ravni: odslej se za posnetke na tem zemljevidu naloži sama. Rainbow Six Siege in njegovi zemljevidi pripadajo Ubisoftu, ki tega projekta ne podpira.",
   "heat.levelPanel.r6Loaded": "Raven {map} iz knjižnice ravni za naložene posnetke Rainbow Six Siege.",
   "heat.levelPanel.r6OtherVersion": "Raven {map} v knjižnici je iz druge različice zemljevida kot posnetki (zemljevid je bil predelan): stene in tla se lahko razlikujejo.",

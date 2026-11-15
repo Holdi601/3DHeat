@@ -3,8 +3,8 @@ import { isContainer, openContainer } from './container';
 import type { StoredLevelMeta } from './levelLibrary';
 
 /**
- * Rainbow Six Siege levels from the separate R6 tool (`heat3d-r6-replay map`,
- * github.com/Holdi601/3DHeat-Ext-R6), matched to R6 replay tables.
+ * Rainbow Six Siege levels from the separate R6 maps tool (`heat3d-r6-maps map`,
+ * github.com/Holdi601/3DHeat-Ext-R6-Maps), matched to R6 replay tables.
  *
  * The viewer only reads the tool's output: a .glb whose parts are named
  * `ground:r6 <Map> @<world id>` and `structure:r6 <Map> @<world id>` (breakable
