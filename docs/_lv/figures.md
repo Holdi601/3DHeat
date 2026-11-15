@@ -5,7 +5,7 @@ nav_order: 3
 has_children: true
 lang: "lv"
 source: "figures.md"
-source_hash: "e86483d60237"
+source_hash: "7040eba3b7ac"
 translated: true
 outdated: false
 ---
@@ -28,6 +28,7 @@ Ir aptuveni 2000 nosaukto transportlīdzekļu, lidaparātu, kuģu, ieroču un ka
 | Jūrā | kara kuģi pēc klases, lidmašīnu nesēji, zemūdenes, laivas, tirdzniecības kuģi |
 | Ieroči | raķetes, reaktīvie šāviņi, bumbas, torpēdas, signālraķetes un folija |
 | Marķieri | dūmu, uzliesmojuma un uguns granātas, uzspridzināti spridzekļi, karogi, dzemdēšanas vietas, maršruta punkti |
+| Tuvcīņa | karavīri bruņuvestēs ar triecienšauteni, mašīnpistoli, bisi, DMR, LMG, pistoli vai vairogu; droni, kameras, dzeloņstieple, vairogi, sienu pastiprinājums, barikādes, laušanas lādiņi, lamatas, logi, granātas, atmīnētājs |
 
 ## Kā figūras tiek veidotas {#how-the-figures-are-made}
 
@@ -47,6 +48,20 @@ Skatītājs apskata datu paša kolonnas:
 Tātad vieglākais veids, kā iegūt pareizās figūras, ir `vehicle` kolonna ar īstajiem nosaukumiem vai `type` kolonna ar Tacview tagiem.
 
 **Mana vienība rādās kā kaste vai karavīrs.** Pievienojiet `vehicle` kolonnu ar īstu nosaukumu vai `type` kolonnu ar Tacview tagu. Uzvediet virsū vienībai, lai redzētu, kurš nosaukums tika atrasts. Dati, kam ir šādas kolonnas, bet kas nerunā par vienību, atstāj to kā kasti. Dati bez tām tiek zīmēti kā karavīri.
+
+## Tuvcīņas figūras (Rainbow Six Siege) {#close-quarters-figures-rainbow-six-siege}
+
+Tabulas, kas uzrakstītas tāpat kā Rainbow Six Siege atkārtojumu lasītāja tabulas (kolonnas `operator`, `pawn`, `primaryClass`, `side`), saņem savas figūras:
+
+- **Spēlētāji** ir viņu operators: katram no 78 operatoriem ir sava figūra, apmēram 1,8 m gara, savā apģērbā – divas vai trīs krāsas jakai, biksēm un ekipējumam pēc viņu ierastā publiskā izskata (melna, olīvu, smilšu, pilsētas pelēka, balta, tumši zila, ar sarkanu, oranžu vai zilganzaļu ekipējumu) – un ar savām formām, par trešdaļu lielākām nekā dabā tur, kur tām jābūt redzamām no augšas: galvassega (ķiveres, sejsargs vai smaga ķivere, nagu cepures, adītas cepures, beretes, plata boonie cepure vai kažokādas cepure, kapuces, šalles, mati), seja (aizsargbrilles, gāzmaska, brilles, maska, bārda, brilles ar trim lēcām), viegla, vidēja vai smaga auguma uzbūve (smagie ir plati, ar lielām plecu plāksnēm un apkakli), garš mētelis vai uzvalks, maskēšanās tērps (ghillie), tas, ko viņi nes uz muguras (āmurs, lādiņi, droni, kanistras, degvielas tvertne, palaišanas caurule, arbalets, paneļi, traucētājs, vairogs) vai uz rokas (palaidējs, metāla roka), savs vairogs (augsts vairogs, policijas vairogs, vairogs ar gaismām) un akcenta krāsa uz pleciem. Viņi tur sava galvenā ieroča klasi. Operators, ko skatītājs nepazīst, ir vienkāršs karavīrs bruņuvestē komandas krāsā.
+- **Puse** ir redzama atsevišķi no apģērba: gredzens uz zemes zem katra operatora, **dzintara krāsā uzbrukumam, gaišā ciānā aizsardzībai**, ar komandas krāsu tā iekšpusē, un roku un galvas lentes tajā pašā krāsā. Kolonna `stance` (stāv, tup, guļ) nosaka viņu stāju. Bez tās viņi stāv.
+- **Atšķirami atkārtojuma attālumā:** kad figūras zīmē 48 pikseļus augstas no augšas un no trīs ceturtdaļu skata, katri divi vienas puses operatori atšķiras ar skaidru krāsas atšķirību vai citu formu (to pārbauda skatītāja testi).
+- **Etiķetes** nosauc spēlētāju un tajā brīdī spēlēto operatoru, ar operatora lomu kā simbolu: ✸ cietais lauzējs, ⚒ mīkstais lauzējs, ➤ ielaušanās, ✦ uzbrucējs, ✚ atbalsts, ⬟ vairogs, ◉ izlūkošana, ◇ elastīgs, ↺ flanga sargs, ⚓ enkurs, ✕ lamatu licējs, ⇄ klejotājs, ↯ pret rīkiem, ▣ pret ielaušanos.
+- **Droni** ir metams divriteņu drons, apmēram 30 cm plats. Katrs ir atsevišķs ceļš, nosaukts sava īpašnieka vārdā („Ash · drone 2“).
+- **Novietotie rīki** stāv tur, kur tos nolika, no tā brīža līdz raunda beigām, katrs kā figūra tam, ko tas dara: kamera, dzeloņstieple, izvēršams vairogs, laušanas lādiņš, cietās laušanas lādiņš, mazs lipīgais lādiņš, grīdas lamatas, claymore mīna ar savu aizķeršanās lāzeru, vienvirziena logs, bruņu panelis, granāta, gāzes kanistra, traucētājs, sensors, lāzera vārti, apgādes kaste. Viena figūra kalpo visiem rīkiem, kas dara to pašu darbu. Rīks, kura veidu dati nenorāda, ir maza ierīce ar gaismu.
+- **Atmīnētājs** stāv tur, kur to novietoja, savas 45 sekundes.
+
+Katrs drons un rīks, ielādējot failu, kļūst par atsevišķu ceļu, tāpēc spēlētāja paša figūra paliek pie viņa ķermeņa. Operatori ir vienkāršotas formas pēc viņu publiskajiem aprakstiem un attēliem (ko viņi valkā, ierīce, kas ir viņu spēja), un rīki veidoti pēc tā, ko tie dara. Tie visi ir paša skatītāja dizaini lietas reālajā izmērā (claymore mīna apmēram 22 cm plata, durvju izmēra panelis 1 m reiz 2,1 m), nevis spēles modeļi.
 
 ## Iestatījumi {#settings}
 

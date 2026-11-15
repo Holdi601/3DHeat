@@ -5,7 +5,7 @@ grand_parent: "Replay"
 nav_order: 1
 lang: "de"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
@@ -13,6 +13,8 @@ outdated: false
 # Figur-Nachweise
 
 Umrisse, Proportionen und einige Modelle sind an Werken unter diesen Lizenzen gemessen oder von ihnen abgeleitet. Ihre Urheber werden hier genannt. Werke unter CC0 brauchen keinen Nachweis und sind nicht aufgeführt. Jede verwendete Quelle steht in [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md).
+
+Die Nahkampf-Soldaten, die Operator von Rainbow Six Siege und ihre Gadgets (Drohnen, Kameras, Ladungen, Fallen und Ähnliches) sind eigene vereinfachte Entwürfe des Viewers: die Operator nach ihren öffentlichen Beschreibungen und Bildern, der Rest nach allgemeinen echten Größen. Kein Modell, keine Textur und keine Datei des Spiels und kein Werk Dritter wurde dafür verwendet.
 
 - Figurumrisse abgeleitet von: „Typenblatt-TS Boot 206“ von Ebs08, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - Figurproportionen geprüft an: „T-72B3 mod. 2011 in Mulino“ vom Verteidigungsministerium der Russischen Föderation (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

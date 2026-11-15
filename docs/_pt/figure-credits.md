@@ -5,7 +5,7 @@ grand_parent: "Replay"
 nav_order: 1
 lang: "pt"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
@@ -14,6 +14,8 @@ outdated: false
 # Créditos das figuras
 
 Os contornos, as proporções e alguns modelos são medidos ou derivados de obras sob estas licenças. Os seus autores são aqui creditados. As obras sob CC0 não precisam de crédito e não estão listadas. Todas as fontes usadas estão listadas em [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md).
+
+Os soldados de combate próximo, os operadores de Rainbow Six Siege e os seus gadgets (drones, câmaras, cargas, armadilhas e afins) são desenhos simplificados próprios do visualizador: os operadores segundo as suas descrições e ilustrações públicas, o resto segundo tamanhos reais gerais. Não foi usado para eles nenhum modelo, textura ou ficheiro do jogo nem nenhuma obra de terceiros.
 
 - Contornos de figuras derivados de: "Typenblatt-TS Boot 206" de Ebs08, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - Proporções de figuras verificadas em: "T-72B3 mod. 2011 in Mulino" do Ministério da Defesa da Federação Russa (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

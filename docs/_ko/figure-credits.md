@@ -5,7 +5,7 @@ grand_parent: "리플레이"
 nav_order: 1
 lang: "ko"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
@@ -13,6 +13,8 @@ outdated: false
 # 피규어 출처
 
 윤곽, 비율, 일부 모델은 아래 라이선스의 작품을 측정하거나 그것에서 파생한 것입니다. 작가는 여기에 표시합니다. CC0 작품은 표시가 필요 없으므로 목록에 넣지 않습니다. 사용한 모든 출처는 [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md)에 있습니다.
+
+근접 전투 병사, Rainbow Six Siege 오퍼레이터와 그 가젯(드론, 카메라, 폭약, 함정 등)은 뷰어 자체의 단순화한 디자인입니다. 오퍼레이터는 공개된 설명과 그림을 바탕으로, 나머지는 일반적인 실제 크기를 바탕으로 만들었습니다. 여기에는 게임의 모델, 텍스처, 파일도, 제3자의 작품도 쓰지 않았습니다.
 
 - 피규어 윤곽의 출처: "Typenblatt-TS Boot 206", Ebs08 작, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - 피규어 비율을 확인한 작품: "T-72B3 mod. 2011 in Mulino", 러시아 연방 국방부 (mil.ru) 작, CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

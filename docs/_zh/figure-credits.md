@@ -5,7 +5,7 @@ grand_parent: "回放"
 nav_order: 1
 lang: "zh"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
@@ -13,6 +13,8 @@ outdated: false
 # 图形致谢
 
 轮廓、比例和部分模型是根据以下授权作品测量或派生的。这些作品的作者在此署名。CC0 作品无需署名，因此不在此列出。所用的每个来源都列在 [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md) 中。
+
+近距离战斗士兵、Rainbow Six Siege 干员及其道具（无人机、摄像头、炸药、陷阱等）是查看器自己的简化设计：干员根据其公开描述和图像制作，其余根据现实中的一般尺寸制作。制作它们时没有使用游戏的任何模型、纹理或文件，也没有使用任何第三方作品。
 
 - 图形轮廓派生自："Typenblatt-TS Boot 206"，作者 Ebs08，CC BY 3.0，https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - 图形比例参考："T-72B3 mod. 2011 in Mulino"，作者俄罗斯联邦国防部（mil.ru），CC BY 4.0，https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

@@ -5,7 +5,7 @@ nav_order: 3
 has_children: true
 lang: "lt"
 source: "figures.md"
-source_hash: "e86483d60237"
+source_hash: "7040eba3b7ac"
 translated: true
 outdated: false
 ---
@@ -28,6 +28,7 @@ Yra apie 2 000 pavadintų transporto priemonių, orlaivių, laivų, ginklų ir k
 | Jūra | karo laivai pagal klasę, lėktuvnešiai, povandeniniai laivai, valtys, prekybiniai laivai |
 | Ginklai | raketos, rakečių paleidimo įrenginiai, bombos, torpedos, signalinės raketos ir dirbtinių debesų sviediniai |
 | Žymekliai | dūmų, blyksnio ir gaisro granatos, pasodinti bombos, vėliavos, atsiradimo vietos, maršruto taškai |
+| Artima kova | kariai šarvinėse liemenėse su automatu, pistoletu-kulkosvaidžiu, šautuvu su šratais, DMR, LMG, pistoletu ar skydu; dronai, kameros, spygliuota viela, skydai, sienų sutvirtinimas, barikados, pralaužimo užtaisai, spąstai, langai, granatos, išminuotuvas |
 
 ## Kaip sukuriamos figūros {#how-the-figures-are-made}
 
@@ -47,6 +48,20 @@ Peržiūros programa žiūri į paties duomenų stulpelius:
 Taigi lengviausias būdas gauti teisingas figūras – stulpelis `vehicle` su tikrais pavadinimais arba stulpelis `type` su Tacview žymomis.
 
 **Mano vienetas rodomas kaip dėžutė arba karys.** Pridėkite stulpelį `vehicle` su tikru pavadinimu arba stulpelį `type` su Tacview žyma. Užvedę pelę ant vieneto matysite, koks pavadinimas buvo suderintas. Duomenys, kuriuose yra tokie stulpeliai, bet nieko nesako apie vienetą, palieka jį dėžute; duomenys be jokių – piešiami kaip kariai.
+
+## Artimos kovos figūros (Rainbow Six Siege) {#close-quarters-figures-rainbow-six-siege}
+
+Lentelės, parašytos taip, kaip jas rašo Rainbow Six Siege pakartojimų skaitytuvas (stulpeliai `operator`, `pawn`, `primaryClass`, `side`), gauna savo figūras:
+
+- **Žaidėjai** yra jų operatorius: kiekvienas iš 78 operatorių turi savo figūrą, maždaug 1,8 m aukščio, su savais drabužiais – dviem ar trimis spalvomis striukei, kelnėms ir ekipuotei pagal įprastą jų viešą išvaizdą (juoda, alyvuogių, smėlio, miesto pilka, balta, tamsiai mėlyna, su raudona, oranžine ar žalsvai mėlyna ekipuote) – ir su savo formomis, trečdaliu didesnėmis nei tikrovėje ten, kur jos turi matytis iš viršaus: galvos apdangalas (šalmai, antveidis ar sunkus šalmas, kepuraitės su snapeliu, megztos kepurės, beretės, plati boonie skrybėlė ar kailinė kepurė, gobtuvai, šalikai, plaukai), veidas (apsauginiai akiniai, dujokaukė, akiniai, kaukė, barzda, akiniai su trimis lęšiais), lengvas, vidutinis ar sunkus kūno sudėjimas (sunkieji platūs, su didelėmis pečių plokštėmis ir apykakle), ilgas paltas ar kostiumas, maskuojamasis kostiumas (ghillie), tai, ką jie neša ant nugaros (kūjis, užtaisai, dronai, kanistrai, kuro bakas, paleidimo vamzdis, arbaletas, plokštės, slopintuvas, skydas) arba ant rankos (paleidimo įtaisas, metalinė ranka), savas skydas (aukštas skydas, riaušių skydas, skydas su šviesomis) ir akcento spalva ant pečių. Jie laiko savo pagrindinio ginklo klasę. Operatorius, kurio peržiūros programa nežino, yra paprastas karys šarvinėje liemenėje komandos spalva.
+- **Pusė** matosi atskirai nuo drabužių: žiedas ant žemės po kiekvienu operatoriumi, **gintaro spalvos atakai, blyškiai žydras gynybai**, su komandos spalva viduje, ir rankų bei galvos raiščiai ta pačia spalva. Stulpelis `stance` (stovi, tupi, guli) nustato jų pozą. Be jo jie stovi.
+- **Atskiriami pakartojimo atstumu:** kai figūros piešiamos 48 pikselių aukščio iš viršaus ir iš trijų ketvirčių kampo, kiekvieni du tos pačios pusės operatoriai aiškiai skiriasi spalva arba forma (tai tikrina peržiūros programos testai).
+- **Etiketės** nurodo žaidėją ir tuo metu žaidžiamą operatorių, o operatoriaus vaidmenį – simboliu: ✸ kietasis pralaužėjas, ⚒ minkštasis pralaužėjas, ➤ įsiveržėjas, ✦ naikintojas, ✚ palaikymas, ⬟ skydas, ◉ žvalgyba, ◇ lankstus, ↺ flango sargas, ⚓ inkaras, ✕ spąstų statytojas, ⇄ klajoklis, ↯ prieš įtaisus, ▣ prieš pralaužimą.
+- **Dronai** yra metamas dviratis dronas, maždaug 30 cm pločio. Kiekvienas yra atskiras takelis, pavadintas pagal savininką („Ash · drone 2“).
+- **Padėti įtaisai** stovi ten, kur buvo padėti, nuo tada iki raundo pabaigos, kiekvienas kaip figūra to, ką jis daro: kamera, spygliuota viela, išskleidžiamas skydas, pralaužimo užtaisas, kietojo pralaužimo užtaisas, mažas lipnus užtaisas, grindų spąstai, claymore mina su savo užkliuvimo lazeriu, vienpusis langas, šarvų plokštė, granata, dujų kanistras, slopintuvas, jutiklis, lazerio vartai, atsargų dėžė. Viena figūra tinka visiems įtaisams, kurie atlieka tą patį darbą. Įtaisas, kurio rūšies duomenys nenurodo, yra mažas prietaisas su lempute.
+- **Išminuotuvas** stovi ten, kur buvo padėtas, savo 45 sekundes.
+
+Kiekvienas dronas ir įtaisas, įkeliant failą, tampa atskiru takeliu, todėl paties žaidėjo figūra lieka prie jo kūno. Operatoriai yra supaprastintos formos pagal jų viešus aprašymus ir paveikslėlius (ką jie dėvi, prietaisas, kuris yra jų gebėjimas), o įtaisai suformuoti pagal tai, ką jie daro. Visa tai yra pačios peržiūros programos dizainai tikru daikto dydžiu (claymore mina maždaug 22 cm pločio, durų dydžio plokštė 1 m × 2,1 m), o ne žaidimo modeliai.
 
 ## Nustatymai {#settings}
 

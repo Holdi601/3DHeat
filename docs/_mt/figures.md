@@ -5,7 +5,7 @@ nav_order: 3
 has_children: true
 lang: "mt"
 source: "figures.md"
-source_hash: "e86483d60237"
+source_hash: "7040eba3b7ac"
 translated: true
 outdated: false
 ---
@@ -28,6 +28,7 @@ Hemm madwar 2,000 vettura, ajruplan, bastiment, arma u suldat b'isem, kollha mib
 | Baħar | bastimenti tal-gwerra skont il-klassi, carriers, sottomarini, dgħajjes, merkantili |
 | Armi | missili, razzi, bombi, torpedni, flares u chaff |
 | Markers | grenades tad-duħħan, tal-flash u tan-nar, bombi mħawlin, bnadar, spawns, waypoints |
+| Ġlieda mill-qrib | suldati b'plate carriers b'xkubetta tal-attakk, SMG, shotgun, DMR, LMG, pistola jew tarka; drones, kameras, wajer xewwieki, tarki, rinforz tal-ħitan, barrikati, karigi tal-ksur, nases, twieqi, granati, id-defuser |
 
 ## Kif isiru l-figuri {#how-the-figures-are-made}
 
@@ -47,6 +48,20 @@ Il-viewer iħares lejn il-kolonni tad-dejta stess:
 Allura l-aktar mod faċli biex tikseb il-figuri t-tajbin huwa kolonna `vehicle` bl-ismijiet veri, jew kolonna `type` bi tags ta' Tacview.
 
 **L-unità tiegħi tidher bħala kaxxa jew bħala suldat.** Żid kolonna `vehicle` bl-isem reali, jew kolonna `type` b'tag ta' Tacview. Ħalli l-mouse fuq l-unità biex tara liema isem intlaħaq. Dejta b'dawn il-kolonni iżda li ma tgħid xejn dwar unità tħalliha kaxxa; dejta mingħajr dawn tintwera bħala suldati.
+
+## Figuri tal-ġlieda mill-qrib (Rainbow Six Siege) {#close-quarters-figures-rainbow-six-siege}
+
+Tabelli miktuba bħal dawk tal-qarrej tar-replays ta' Rainbow Six Siege (kolonni `operator`, `pawn`, `primaryClass`, `side`) jieħdu figuri tagħhom:
+
+- **Il-plejers** huma l-operator tagħhom. Kull wieħed mit-78 operator għandu figura tiegħu, twila madwar 1.8 m, bil-ħwejjeġ tiegħu: żewġ jew tliet kuluri għall-ġakketta, il-qalziet u t-tagħmir, skont id-dehra pubblika tas-soltu tagħhom (iswed, żebbuġi, kannella ċar, griż urban, abjad, blu skur, b'tagħmir aħmar, oranġjo jew teal). U bil-forom tagħhom, terz akbar milli fil-ħajja fejn iridu jidhru minn fuq: dak li jilbsu fuq rashom (elmi, viżiera jew elmu tqil, kappelli bil-ponta, beanies, berretti, kappell boonie wiesa' jew kappell tal-pil, kapuċċi, xalpi, xagħar), il-wiċċ (goggles, maskra tal-gass, nuċċali, maskra, daqna, goggles bi tliet lentijiet), bini ħafif, medju jew tqil (dawk tqal huma wesgħin, bi pjanċi kbar fuq l-ispallejn u kullar), kowt twil jew libsa, ghillie, dak li jġorru fuq daharhom (martell, karigi, drones, kontenituri, tank tal-fjuwil, tubu ta' launcher, crossbow, pannelli, jammer, tarka) jew fuq driegħhom (launcher, driegħ tal-metall), it-tarka tagħhom (waħda għolja, tarka tar-rewwixti, waħda bid-dwal), u kulur ta' enfasi fuq l-ispallejn. Iżommu l-klassi tal-arma primarja tagħhom. Operator li l-viewer ma jafx huwa suldat sempliċi bi plate carrier fil-kulur tat-tim.
+- **In-naħa** tidher separata mill-ħwejjeġ: ċirku fl-art taħt kull operator, **ambra għall-attakk, cyan ċar għad-difiża**, bil-kulur tat-tim ġewwa fih, u faxex fuq id-driegħ u r-ras bl-istess kulur. Kolonna `stance` (wieqaf, mitgħawweġ, mimdud) tagħtihom il-pożizzjoni; mingħajrha jibqgħu weqfin.
+- **Jingħarfu mill-bogħod tar-replay:** meta jinħarġu 48 pixel għoljin minn fuq u minn tliet kwarti, kull żewġ operators fl-istess naħa jvarjaw b'differenza ċara fil-kulur jew b'forma differenti (it-testijiet tal-viewer jiċċekkjaw dan).
+- **It-tikketti** jsemmu l-plejer u l-operator li qed jilgħab f'dak il-mument, bir-rwol tal-operator bħala simbolu: ✸ ksur iebes, ⚒ ksur artab, ➤ dħul, ✦ fragger, ✚ appoġġ, ⬟ tarka, ◉ intelliġenza, ◇ flessibbli, ↺ għassa tal-ġenb, ⚓ ankra, ✕ nassab, ⇄ roamer, ↯ kontra l-gadgets, ▣ kontra l-ksur.
+- **Id-drones** huma drone b'żewġ roti li jintefa', wiesa' madwar 30 cm. Kull wieħed huwa track tiegħu, imsemmi għas-sid tiegħu (“Ash · drone 2”).
+- **Il-gadgets imqiegħda** jibqgħu fejn tqiegħdu, minn dak il-ħin sal-aħħar tar-round. Kull wieħed għandu l-figura ta' dak li jagħmel: kamera, wajer xewwieki, tarka li tinfetaħ, karga tal-ksur, karga tal-ksur iebes, karga żgħira li teħel, nassa tal-art, claymore bil-laser tal-iskattar tagħha, tieqa b'direzzjoni waħda, pannell tal-armatura, granata, kontenitur tal-gass, jammer, sensor, bieb tal-laser, kaxxa tal-provvisti. Figura waħda sservi kull gadget li jagħmel l-istess xogħol. Gadget li d-dejta ma tgħidx x'tip hu huwa apparat żgħir b'dawl.
+- **Id-defuser** jibqa' fejn tħawwel, għall-45 sekonda tiegħu.
+
+Kull drone u gadget isir track tiegħu meta jitgħabba l-fajl, għalhekk il-figura tal-plejer stess tibqa' fuq ġismu. L-operators huma forom simplifikati skont id-deskrizzjonijiet u l-arti pubbliċi tagħhom (dak li jilbsu, l-apparat li huwa l-abbiltà tagħhom), u l-gadgets għandhom forma skont dak li jagħmlu. Dawn kollha huma disinji tal-viewer stess fid-daqs reali tal-oġġett (claymore wiesa' madwar 22 cm, pannell daqs bieb ta' 1 m b'2.1 m), mhux mudelli mil-logħba.
 
 ## Settings {#settings}
 

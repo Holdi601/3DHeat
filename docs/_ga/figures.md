@@ -5,7 +5,7 @@ nav_order: 3
 has_children: true
 lang: "ga"
 source: "figures.md"
-source_hash: "e86483d60237"
+source_hash: "7040eba3b7ac"
 translated: true
 outdated: false
 ---
@@ -28,6 +28,7 @@ Tá thart ar 2,000 feithicil, aerárthach, long, arm agus saighdiúir ainmnithe 
 | Muir | long chogaidh de réir aicme, iompróirí, fo-luingeacha, bádóga, long tráchtála |
 | Armaí | diúracáin, rocaití, buamaí, torpedónna, soilsí agus lasracha |
 | Marcóirí | deataigh, lasracha tine agus tine-ghránáidí, buamaí curtha, bratacha, spawns, pointí bealaigh |
+| Gar-chomhrac | saighdiúirí in iompróirí pláta le raidhfil ionsaithe, SMG, gunna gráin, DMR, LMG, gunna láimhe nó sciath; dróin, ceamaraí, sreang dheilgneach, sciatha, treisiú balla, baracáidí, luchtanna briste, gaistí, fuinneoga, gránáidí, an dí-armálaí |
 
 ## Conas a dhéantar na figiúirí {#how-the-figures-are-made}
 
@@ -47,6 +48,20 @@ Breathnaíonn an léirsitheoir ar cholúin féin na sonraí:
 Mar sin is é an bealach is éasca na figiúirí cearta a fháil colún `vehicle` leis na hainmneacha fíora, nó colún `type` le clib Tacview.
 
 **Taispeántar m'aonad mar bhosca nó mar shaighdiúir.** Cuir colún `vehicle` leis an ainm fíor, nó colún `type` le clib Tacview. Cuir an luch ar an aonad chun a fheiceáil cén t-ainm a meaitseáladh. Fágann sonraí a bhfuil colúin den sórt sin acu ach nach ndeir faic faoi aonad é mar bhosca; tarraingítear sonraí gan ceachtar acu mar shaighdiúirí.
+
+## Figiúirí gar-chomhraic (Rainbow Six Siege) {#close-quarters-figures-rainbow-six-siege}
+
+Faigheann táblaí atá scríofa cosúil le táblaí léitheoir athsheinm Rainbow Six Siege (colúin `operator`, `pawn`, `primaryClass`, `side`) figiúirí dá gcuid féin:
+
+- **Imreoirí:** is é a n-oibritheoir iad. Tá figiúr dá chuid féin ag gach ceann de na 78 oibritheoir, thart ar 1.8 m ar airde, ina éadaí féin - dhá nó trí dhath don seaicéad, don bhríste agus don trealamh de réir a ghnáthchuma phoiblí (dubh, ológ, crón, liath uirbeach, bán, gorm cabhlaigh, le trealamh dearg, oráiste nó glasghorm) - agus lena chruthanna féin, trian níos mó ná an fíor san áit a gcaithfidh siad a bheith le feiceáil ó thuas: ceannbheart (clogaid, visor nó clogad trom, caipíní, bíní, beiréid, hata leathan boonie nó hata fionnaidh, cochaill, scaifeanna, gruaig), an aghaidh (gloiní cosanta, masc gáis, spéaclaí, masc, féasóg, gloiní cosanta trí lionsa), corp éadrom, meánach nó trom (na cinn throma leathan, le plátaí móra gualainne agus coiléar), cóta fada nó culaith, culaith ghillie, an rud a iompraíonn siad ar an droim (casúr, luchtanna, dróin, ceanastair, umar breosla, feadán lainseálaí, crosbhogha, painéil, suaiteoir, sciath) nó ar an lámh (lainseálaí, lámh mhiotail), a sciath féin (ceann ard, sciath círéibe, ceann le soilse), agus dath béime ar na guaillí. Coinníonn siad aicme a bpríomharm. Is saighdiúir simplí in iompróir pláta i ndath na foirne é oibritheoir nach n-aithníonn an léirsitheoir.
+- **An taobh:** taispeántar é ar leith ó na héadaí. Tá fáinne ar an talamh faoi gach oibritheoir, **ómra don ionsaí, cian éadrom don chosaint**, le dath na foirne istigh ann, agus bandaí láimhe agus cinn sa dath céanna. Cuireann colún `stance` (stand, crouch, prone) i staid iad; gan é, seasann siad.
+- **Aitheanta óna chéile ag fad athsheinm:** nuair a tharraingítear iad 48 picteilín ar airde ó thuas agus ó thrí cheathrú, bíonn difríocht shoiléir datha nó cruth eile idir gach dhá oibritheoir ar thaobh (seiceálann tástálacha an léirsitheora é seo).
+- **Lipéid:** ainmníonn siad an t-imreoir agus an t-oibritheoir a bhí á imirt ag an nóiméad sin, le ról an oibritheora mar shiombail: ✸ bristeoir crua, ⚒ bristeoir bog, ➤ iontráil, ✦ marfóir, ✚ tacaíocht, ⬟ sciath, ◉ faisnéis, ◇ solúbtha, ↺ faire cliatháin, ⚓ ancaire, ✕ gaisteoir, ⇄ fánaí, ↯ frith-ghiuirléid, ▣ frith-bhriseadh.
+- **Dróin:** drón dhá roth is féidir a chaitheamh, thart ar 30 cm trasna. Is rian dá chuid féin gach ceann, ainmnithe as a úinéir ("Ash · drone 2").
+- **Giuirléidí curtha síos:** seasann siad san áit ar cuireadh iad, ón am sin go deireadh an bhabhta, gach ceann mar fhigiúr an ruda a dhéanann sé: ceamara, sreang dheilgneach, sciath shocraithe, lucht briste, lucht briste crua, lucht beag greamaitheach, gaiste urláir, claymore lena léasar truip, fuinneog aontreo, painéal armúir, gránáid, ceanastar gáis, suaiteoir, braiteoir, geata léasair, bosca soláthair. Freastalaíonn figiúr amháin ar gach giuirléid a dhéanann an jab céanna. Is gléas beag le solas é giuirléid nach ndeir na sonraí a cineál.
+- **An dí-armálaí:** seasann sé san áit ar cuireadh é ar feadh a 45 soicind.
+
+Déantar rian dá chuid féin de gach drón agus de gach giuirléid nuair a lódáiltear an comhad, ionas go bhfanann figiúr an imreora ar a chorp féin. Is cruthanna simplithe iad na hoibritheoirí de réir a dtuairiscí poiblí agus a n-ealaíne (an rud a chaitheann siad, an gléas is cumas dóibh), agus faigheann na giuirléidí a gcruth ón rud a dhéanann siad. Is dearaí de chuid an léirsitheora féin iad seo go léir ag méid fíor an ruda (claymore thart ar 22 cm ar leithead, painéal ar mhéid dorais 1 m faoi 2.1 m), ní samhlacha ón gcluiche.
 
 ## Socruithe {#settings}
 

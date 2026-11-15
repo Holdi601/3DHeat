@@ -5,7 +5,7 @@ grand_parent: "Повторение"
 nav_order: 1
 lang: "bg"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
@@ -13,6 +13,8 @@ outdated: false
 # Източници на фигурите
 
 Контурите, пропорциите и някои модели са измерени или са изведени от творби под тези лицензи. Авторите им са посочени тук. Творбите под CC0 не изискват посочване и не са изброени. Всеки използван източник е изброен в [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md).
+
+Войниците за близък бой, операторите на Rainbow Six Siege и техните устройства (дронове, камери, заряди, капани и други подобни) са собствени опростени дизайни на визуализатора: операторите според публичните им описания и изображения, останалото според общите реални размери. За тях не е използван нито модел, текстура или файл от играта, нито произведение на трети страни.
 
 - Контури на фигури, изведени от: "Typenblatt-TS Boot 206" от Ebs08, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - Пропорции на фигури, проверени по: "T-72B3 mod. 2011 in Mulino" от Министерството на отбраната на Руската федерация (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

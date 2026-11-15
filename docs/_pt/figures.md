@@ -5,7 +5,7 @@ nav_order: 3
 has_children: true
 lang: "pt"
 source: "figures.md"
-source_hash: "e86483d60237"
+source_hash: "7040eba3b7ac"
 translated: true
 outdated: false
 ---
@@ -29,6 +29,7 @@ Há cerca de 2 000 veículos, aeronaves, navios, armas e soldados com nome, todo
 | Mar | navios de guerra por classe, porta-aviões, submarinos, barcos, navios mercantes |
 | Armas | mísseis, foguetes, bombas, torpedos, sinalizadores e chaff |
 | Marcadores | granadas de fumo, de flash e de incêndio, bombas colocadas, bandeiras, pontos de aparecimento, pontos de passagem |
+| Combate próximo | soldados com colete porta-placas e espingarda de assalto, pistola-metralhadora, caçadeira, DMR, LMG, pistola ou escudo; drones, câmaras, arame farpado, escudos, reforços de parede, barricadas, cargas de brecha, armadilhas, janelas, granadas, o desativador |
 
 ## Como as figuras são feitas {#how-the-figures-are-made}
 
@@ -48,6 +49,20 @@ O visualizador olha para as próprias colunas dos dados:
 Por isso, a forma mais fácil de obter as figuras certas é uma coluna `vehicle` com os nomes reais, ou uma coluna `type` com etiquetas do Tacview.
 
 **A minha unidade aparece como uma caixa ou como um soldado.** Acrescente uma coluna `vehicle` com o nome real, ou uma coluna `type` com uma etiqueta do Tacview. Passe o rato sobre a unidade para ver que nome foi reconhecido. Dados que têm essas colunas mas não dizem nada sobre uma unidade deixam-na como caixa; dados sem nenhuma das duas são desenhados como soldados.
+
+## Figuras de combate próximo (Rainbow Six Siege) {#close-quarters-figures-rainbow-six-siege}
+
+As tabelas escritas como as do leitor de replays de Rainbow Six Siege (colunas `operator`, `pawn`, `primaryClass`, `side`) recebem figuras próprias:
+
+- **Os jogadores** são o seu operador: cada um dos 78 operadores tem uma figura própria, com cerca de 1,8 m de altura, com a sua própria roupa. Duas ou três cores para o casaco, as calças e o equipamento seguem o seu aspeto público habitual (preto, oliva, areia, cinzento urbano, branco, azul-marinho, com equipamento vermelho, laranja ou azul-petróleo). Tem também formas próprias, um terço maiores do que na realidade onde têm de se ver de cima: o que usa na cabeça (capacetes, uma viseira ou um capacete pesado, bonés, gorros, boinas, um chapéu de abas largas ou de pele, capuzes, cachecóis, cabelo), a cara (óculos de proteção, uma máscara de gás, óculos, uma máscara, barba, óculos de três lentes), uma constituição leve, média ou pesada (os pesados são largos, com grandes ombreiras e uma gola), um casaco comprido ou um fato, um fato ghillie, o que leva às costas (um martelo, cargas, drones, bidões, um depósito de combustível, um tubo lançador, uma besta, painéis, um bloqueador, um escudo) ou no braço (um lançador, um braço de metal), o seu próprio escudo (um alto, um antimotim, um com luzes) e uma cor de destaque nos ombros. Segura a classe da sua arma principal. Um operador que o visualizador não conhece é um soldado simples com colete porta-placas, na cor da equipa.
+- **O lado** vê-se à parte da roupa: um anel no chão por baixo de cada operador, **âmbar para o ataque, ciano claro para a defesa**, com a cor da equipa por dentro, e braçadeiras e faixas na cabeça da mesma cor. Uma coluna `stance` (stand, crouch, prone) dá-lhes a postura; sem ela, estão de pé.
+- **Distinguíveis à distância do replay:** desenhados com 48 píxeis de altura, vistos de cima e a três quartos, quaisquer dois operadores do mesmo lado distinguem-se por uma diferença de cor clara ou por uma forma diferente (verificado pelos testes do visualizador).
+- **As etiquetas** indicam o jogador e o operador jogado nesse momento, com o papel do operador como símbolo: ✸ brecha pesada, ⚒ brecha leve, ➤ entrada, ✦ fragger, ✚ apoio, ⬟ escudo, ◉ informação, ◇ flexível, ↺ guarda de flanco, ⚓ âncora, ✕ armadilheiro, ⇄ roamer, ↯ antigadget, ▣ antibrecha.
+- **Os drones** são um drone de duas rodas que se lança, com cerca de 30 cm de largura. Cada um é uma pista própria, com o nome do seu dono ("Ash · drone 2").
+- **Os gadgets colocados** ficam onde foram postos, desde esse momento até ao fim da ronda. Cada um é a figura do que faz: uma câmara, arame farpado, um escudo implantável, uma carga de brecha, uma carga de brecha pesada, uma pequena carga adesiva, uma armadilha de chão, uma claymore com o seu laser de disparo, uma janela de sentido único, um painel blindado, uma granada, uma botija de gás, um bloqueador, um sensor, uma barreira laser, uma caixa de abastecimento. Uma só figura serve para todos os gadgets que fazem o mesmo trabalho. Um gadget cujo tipo os dados não dizem é um pequeno aparelho com uma luz.
+- **O desativador** fica onde foi plantado durante os seus 45 segundos.
+
+Cada drone e cada gadget torna-se uma pista própria quando o ficheiro é carregado. Assim, a figura do jogador fica no seu corpo. Os operadores são formas simplificadas segundo as suas descrições e ilustrações públicas (o que vestem, o aparelho que é a sua habilidade). Os gadgets têm a forma do que fazem. Tudo isto são desenhos próprios do visualizador no tamanho real da coisa (uma claymore com cerca de 22 cm de largura, um painel do tamanho de uma porta com 1 m por 2,1 m), não modelos do jogo.
 
 ## Definições {#settings}
 

@@ -5,7 +5,7 @@ grand_parent: "Replay"
 nav_order: 1
 lang: "nl"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
@@ -13,6 +13,8 @@ outdated: false
 # Naamsvermeldingen voor figuren
 
 Contouren, verhoudingen en enkele modellen zijn gemeten op of afgeleid van werken onder deze licenties. Hun auteurs worden hier vermeld. Werken onder CC0 hebben geen naamsvermelding nodig en staan niet in de lijst. Elke gebruikte bron staat in [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md).
+
+De soldaten voor nabije gevechten, de Rainbow Six Siege-operators en hun gadgets (drones, camera's, ladingen, vallen en dergelijke) zijn eigen vereenvoudigde ontwerpen van de viewer: de operators naar hun publieke beschrijvingen en afbeeldingen, de rest naar algemene echte afmetingen. Er is geen model, textuur of bestand van het spel en geen werk van derden voor gebruikt.
 
 - Figuurcontouren afgeleid van: "Typenblatt-TS Boot 206" door Ebs08, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - Figuurverhoudingen gecontroleerd op: "T-72B3 mod. 2011 in Mulino" door het Ministerie van Defensie van de Russische Federatie (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

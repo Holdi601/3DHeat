@@ -5,7 +5,7 @@ grand_parent: "Reprodukcija"
 nav_order: 1
 lang: "bs"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
@@ -13,6 +13,8 @@ outdated: false
 # Zasluge za figure
 
 Obrisi, proporcije i neki modeli izmjereni su na djelima pod ovim licencama ili su iz njih izvedeni. Njihovi autori se navode ovdje. Djela pod CC0 ne traže navođenje i nisu navedena. Svaki izvor koji je korišćen naveden je u [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md).
+
+Vojnici za blisku borbu, operateri Rainbow Six Siege i njihovi uređaji (dronovi, kamere, punjenja, zamke i slično) su sopstveni pojednostavljeni dizajni preglednika: operateri prema njihovim javnim opisima i ilustracijama, ostalo prema opštim stvarnim veličinama. Za njih nije korišten nijedan model, tekstura ili datoteka igre niti ijedno djelo treće strane.
 
 - Obrisi figura izvedeni iz: "Typenblatt-TS Boot 206", autor Ebs08, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - Proporcije figure provjerene na: "T-72B3 mod. 2011 in Mulino", Ministarstvo odbrane Ruske Federacije (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

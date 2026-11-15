@@ -5,7 +5,7 @@ grand_parent: "Endurspilun"
 nav_order: 1
 lang: "is"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
@@ -13,6 +13,8 @@ outdated: false
 # Heimildir fígúra
 
 Útlínur, hlutföll og sum líkön eru mæld á eða byggð á verkum undir þessum leyfum. Höfundar þeirra eru tilgreindir hér. Verk undir CC0 þurfa ekki tilvísun og eru ekki talin upp. Sérhver heimild sem er notuð er skráð í [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md).
+
+Návígishermennirnir, sérsveitarmenn Rainbow Six Siege og græjur þeirra (drónar, myndavélar, hleðslur, gildrur og þess háttar) eru eigin einfölduð hönnun skoðarans: sérsveitarmennirnir eftir opinberum lýsingum og myndum af þeim, hitt eftir almennum stærðum úr raunveruleikanum. Ekkert líkan, engin áferð og engin skrá úr leiknum og ekkert verk þriðja aðila var notað í þau.
 
 - Útlínur fígúra byggðar á: "Typenblatt-TS Boot 206" eftir Ebs08, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - Hlutföll fígúru athuguð á: "T-72B3 mod. 2011 in Mulino" eftir varnarmálaráðuneyti Rússlands (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

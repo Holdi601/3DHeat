@@ -5,7 +5,7 @@ nav_order: 3
 has_children: true
 lang: "fi"
 source: "figures.md"
-source_hash: "e86483d60237"
+source_hash: "7040eba3b7ac"
 translated: true
 outdated: false
 ---
@@ -28,6 +28,7 @@ Katalogissa on noin 2 000 nimettyä ajoneuvoa, lentokonetta, laivaa, asetta ja s
 | Meri | sotalaivat luokittain, lentotukialukset, sukellusveneet, veneet, kauppalaivat |
 | Aseet | ohjukset, raketit, pommit, torpedot, valaisu- ja häivytyspatruunat |
 | Merkit | savu-, välähdys- ja palokranaatit, asetetut pommit, liput, lähtöpisteet, reittipisteet |
+| Lähitaistelu | sotilaat suojaliiveissä rynnäkkökiväärin, konepistoolin, haulikon, DMR:n, LMG:n, pistoolin tai kilven kanssa; droonit, kamerat, piikkilanka, kilvet, seinien vahvistus, barrikadit, murtopanokset, ansat, ikkunat, kranaatit, purkulaite |
 
 ## Miten hahmot tehdään {#how-the-figures-are-made}
 
@@ -47,6 +48,20 @@ Katselija katsoo datan omia sarakkeita:
 Helpoin tapa saada oikeat hahmot on siis `vehicle`-sarake oikeilla nimillä tai `type`-sarake Tacview-tunnisteilla.
 
 **Yksikköni näkyy laatikkona tai sotilaana.** Lisää `vehicle`-sarake oikealla nimellä tai `type`-sarake Tacview-tunnisteella. Vie hiiri yksikön päälle nähdäksesi, mikä nimi täsmäsi. Data, jossa tällaiset sarakkeet ovat, mutta joka ei kerro yksiköstä mitään, jättää sen laatikoksi. Data, jossa ei ole kumpaakaan, piirretään sotilaina.
+
+## Lähitaisteluhahmot (Rainbow Six Siege) {#close-quarters-figures-rainbow-six-siege}
+
+Taulukot, jotka on kirjoitettu kuten Rainbow Six Siegen toistonlukijan taulukot (sarakkeet `operator`, `pawn`, `primaryClass`, `side`), saavat omat hahmonsa:
+
+- **Pelaajat** ovat operaattorinsa: Jokaisella 78 operaattorista on oma hahmonsa, noin 1,8 m pitkä, omissa vaatteissaan – kaksi tai kolme väriä takille, housuille ja varusteille heidän tavallisen julkisen ulkonäkönsä mukaan (musta, oliivi, hiekka, kaupunkiharmaa, valkoinen, laivastonsininen, punaisin, oransein tai sinivihrein varustein) – ja omilla muodoillaan, kolmanneksen todellista suurempina siellä, missä niiden pitää näkyä ylhäältä: päähine (kypärät, visiiri tai raskas kypärä, lippalakit, pipot, baretit, leveä boonie-hattu tai turkislakki, huput, huivit, hiukset), kasvot (suojalasit, kaasunaamari, silmälasit, naamio, parta, kolmilinssiset suojalasit), kevyt, keskiraskas tai raskas ruumiinrakenne (raskaat leveitä, isoin olkalevyin ja kauluksin), pitkä takki tai puku, ghillie-asu, se mitä he kantavat selässään (vasara, panoksia, drooneja, säiliöitä, polttoainesäiliö, laukaisuputki, varsijousi, paneeleita, häirintälaite, kilpi) tai käsivarressaan (laukaisin, metallikäsivarsi), oma kilpi (korkea kilpi, mellakkakilpi, kilpi valoilla) ja korostusväri olkapäillä. He pitelevät pääaseensa luokkaa. Operaattori, jota katselija ei tunne, on tavallinen sotilas suojaliivissä joukkueen värissä.
+- **Puoli** näkyy vaatteista erillään: rengas maassa jokaisen operaattorin alla, **meripihkanvärinen hyökkäykselle, vaalea syaani puolustukselle**, joukkueen väri sen sisällä, sekä käsivarsi- ja päänauhat samassa värissä. Sarake `stance` (seisoo, kyyristyy, makaa) antaa heille asennon. Ilman sitä he seisovat.
+- **Erotettavissa toistoetäisyydeltä:** Kun hahmot piirretään 48 pikselin korkuisina ylhäältä ja viistosti kolmen neljänneksen kulmasta, jokainen saman puolen operaattoripari eroaa selvästi värin tai muodon perusteella (katselijan testit tarkistavat tämän).
+- **Nimilaput** kertovat pelaajan ja sillä hetkellä pelatun operaattorin sekä operaattorin roolin symbolina: ✸ kova murtaja, ⚒ pehmeä murtaja, ➤ sisääntulija, ✦ tappaja, ✚ tuki, ⬟ kilpi, ◉ tiedustelu, ◇ joustava, ↺ sivustan vartija, ⚓ ankkuri, ✕ ansoittaja, ⇄ kiertelijä, ↯ välineiden torjunta, ▣ murtautumisen torjunta.
+- **Droonit** ovat heitettävä kaksipyöräinen drooni, halkaisijaltaan noin 30 cm. Jokainen on oma jälkensä, joka on nimetty omistajansa mukaan (”Ash · drone 2”).
+- **Asetetut välineet** seisovat siellä, mihin ne laitettiin, siitä hetkestä erän loppuun, kukin sen hahmona, mitä se tekee: kamera, piikkilanka, avattava kilpi, murtopanos, kovan murron panos, pieni tarrapanos, lattia-ansa, claymore laukaisulaserineen, yksisuuntainen ikkuna, panssarilevy, kranaatti, kaasusäiliö, häirintälaite, anturi, laserportti, tarvikelaatikko. Yksi hahmo kelpaa jokaiselle välineelle, joka tekee saman työn. Väline, jonka lajia data ei kerro, on pieni laite, jossa on valo.
+- **Purkulaite** seisoo siellä, mihin se asetettiin, 45 sekuntinsa ajan.
+
+Jokaisesta droonista ja välineestä tulee oma jälkensä, kun tiedosto ladataan, joten pelaajan oma hahmo pysyy hänen kehossaan. Operaattorit ovat yksinkertaistettuja muotoja heidän julkisten kuvaustensa ja kuviensa mukaan (mitä he pukevat päälleen, laite, joka on heidän kykynsä), ja välineet on muotoiltu sen mukaan, mitä ne tekevät. Kaikki nämä ovat katselijan omia malleja esineen todellisessa koossa (claymore noin 22 cm leveä, oven kokoinen paneeli 1 m × 2,1 m), eivät pelin malleja.
 
 ## Asetukset {#settings}
 

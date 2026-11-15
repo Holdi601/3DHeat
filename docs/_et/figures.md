@@ -5,7 +5,7 @@ nav_order: 3
 has_children: true
 lang: "et"
 source: "figures.md"
-source_hash: "e86483d60237"
+source_hash: "7040eba3b7ac"
 translated: true
 outdated: false
 ---
@@ -28,6 +28,7 @@ Kataloogis on umbes 2000 nimetatud sõidukit, lennukit, laeva, relva ja sõdurit
 | Meri | sõjalaevad klasside kaupa, lennukikandjad, allveelaevad, paadid, kaubalaevad |
 | Relvad | raketid, rakettid, pommid, torpeedod, valgus- ja sädemekuulid |
 | Märgid | suitsu-, leek- ja tulegranaadid, paigaldatud pommid, lipud, tekkekohad, teepunktid |
+| Lähivõitlus | kuulivestides sõdurid automaadi, püstolkuulipilduja, haavlipüssi, DMR-i, LMG-i, püstoli või kilbiga; droonid, kaamerad, okastraat, kilbid, seinte tugevdus, barrikaadid, murdelaengud, lõksud, aknad, granaadid, desarmeerija |
 
 ## Kuidas kujud tehakse {#how-the-figures-are-made}
 
@@ -47,6 +48,20 @@ Vaataja vaatab andmete enda veerge:
 Seega on kõige lihtsam saada õiged kujud `vehicle` veerust koos õigete nimedega või `type` veerust Tacview siltidega.
 
 **Minu üksus paistab kastina või sõdurina.** Lisa `vehicle` veerg õige nimega või `type` veerg Tacview sildiga. Üksuse kohal hoides näed, millise nime järgi see sobitati. Andmed, millel on sellised veerud, aga mis ei ütle üksuse kohta midagi, jätavad selle kastiks; andmed, millel pole kumbagi, joonistatakse sõdurina.
+
+## Lähivõitluse kujud (Rainbow Six Siege) {#close-quarters-figures-rainbow-six-siege}
+
+Tabelid, mis on kirjutatud nagu Rainbow Six Siege'i korduselugeja tabelid (veerud `operator`, `pawn`, `primaryClass`, `side`), saavad oma kujud:
+
+- **Mängijad** on nende operaator: Igal 78 operaatoril on oma kuju, umbes 1,8 m pikk, oma riietes – kaks või kolm värvi jopele, pükstele ja varustusele nende tavalise avaliku välimuse järgi (must, oliiv, liivakarva, linnahall, valge, tumesinine, punase, oranži või sinakasrohelise varustusega) – ja oma kujudega, kolmandiku võrra suuremad kui päriselt seal, kus need peavad ülevalt näha olema: peakate (kiivrid, visiir või raske kiiver, nokamütsid, kootud mütsid, baretid, lai boonie-müts või karvamüts, kapuutsid, sallid, juuksed), nägu (kaitseprillid, gaasimask, prillid, mask, habe, kolme läätsega prillid), kerge, keskmine või raske kehaehitus (rasked on laiad, suurte õlaplaatide ja kraega), pikk mantel või ülikond, ghillie-ülikond, see, mida nad kannavad seljas (haamer, laengud, droonid, kanistrid, kütusepaak, lasketoru, amb, paneelid, segaja, kilp) või käsivarrel (lasteseade, metallkäsi), oma kilp (kõrge kilp, märulikilp, tuledega kilp) ja rõhuvärv õlgadel. Nad hoiavad oma põhirelva klassi. Operaator, keda vaataja ei tunne, on tavaline sõdur kuulivestis meeskonna värvis.
+- **Pool** paistab riietest eraldi: rõngas maas iga operaatori all, **merevaigukarva rünnakule, kahvatu tsüaan kaitsele**, meeskonna värv selle sees, ning käe- ja peapaelad samas värvis. Veerg `stance` (seisab, kükitab, lamab) annab neile asendi. Ilma selleta nad seisavad.
+- **Kordusekauguselt eristatavad:** Kui neid joonistatakse 48 pikslit kõrgena ülevalt ja kolmveerandnurga alt, erineb iga kaks sama poole operaatorit selgelt värvi või kuju poolest (seda kontrollivad vaataja testid).
+- **Sildid** näitavad mängijat ja sel hetkel mängitud operaatorit ning operaatori rolli sümbolina: ✸ kõva läbimurdja, ⚒ pehme läbimurdja, ➤ sissetungija, ✦ tapja, ✚ toetaja, ⬟ kilp, ◉ luure, ◇ paindlik, ↺ tiivavaht, ⚓ ankur, ✕ lõksupanija, ⇄ hulkur, ↯ vidinatõrje, ▣ läbimurdetõrje.
+- **Droonid** on visatav kaherattaline droon, umbes 30 cm lai. Igaüks on oma rada, mis on nimetatud omaniku järgi („Ash · drone 2“).
+- **Paigutatud vidinad** seisavad seal, kuhu need pandi, sellest hetkest kuni vooru lõpuni, igaüks selle kujuna, mida ta teeb: kaamera, okastraat, lahtikäiv kilp, murdelaeng, kõva läbimurde laeng, väike kleepuv laeng, põrandalõks, claymore koos rakendulaseriga, ühesuunaline aken, soomuspaneel, granaat, gaasikanister, segaja, andur, laservärav, varustuskast. Üks kuju teenib kõiki vidinaid, mis teevad sama tööd. Vidin, mille liiki andmed ei ütle, on väike seade tulega.
+- **Desarmeerija** seisab seal, kuhu see paigaldati, oma 45 sekundit.
+
+Iga droon ja vidin saab faili laadimisel oma raja, nii et mängija enda kuju jääb tema keha juurde. Operaatorid on lihtsustatud kujud nende avalike kirjelduste ja piltide järgi (mida nad kannavad, seade, mis on nende võime), ja vidinad on kujundatud selle järgi, mida nad teevad. Kõik need on vaataja enda kujundused asja päris suuruses (claymore umbes 22 cm lai, uksesuurune paneel 1 m korda 2,1 m), mitte mängu mudelid.
 
 ## Seaded {#settings}
 

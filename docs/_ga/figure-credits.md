@@ -5,7 +5,7 @@ grand_parent: "Athsheinm"
 nav_order: 1
 lang: "ga"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
@@ -13,6 +13,8 @@ outdated: false
 # Creidiúintí figiúr
 
 Tá cuaillí, comhréireanna agus roinnt samhlacha tomhaiste ar na saothair faoi na ceadúnais seo nó eascraithe astu. Luaitear a n-údair anseo. Ní theastaíonn creidiúint ó shaothair faoi CC0 agus ní liostaítear iad. Liostaítear gach foinse a úsáideadh i [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md).
+
+Is dearaí simplithe de chuid an léirsitheora féin iad na saighdiúirí gar-chomhraic, oibritheoirí Rainbow Six Siege agus a ngiuirléidí (dróin, ceamaraí, luchtanna, gaistí agus a leithéid): na hoibritheoirí de réir a dtuairiscí poiblí agus a n-ealaíne, an chuid eile de réir ghnáthmhéideanna an fhíorshaoil. Níor úsáideadh aon samhail, uigeacht ná comhad den chluiche ná aon saothar tríú páirtí dóibh.
 
 - Cuaillí figiúr eascraithe ó: "Typenblatt-TS Boot 206" le Ebs08, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - Comhréireanna figiúr seiceáilte ar: "T-72B3 mod. 2011 in Mulino" le Ministry of Defence of the Russian Federation (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

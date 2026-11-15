@@ -5,7 +5,7 @@ grand_parent: "Розбір"
 nav_order: 1
 lang: "uk"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
@@ -13,6 +13,8 @@ outdated: false
 # Авторство фігур
 
 Контури, пропорції і деякі моделі виміряно за роботами або виведено з них, на умовах цих ліцензій. Їхніх авторів вказано тут. Роботи за CC0 не потребують зазначення і тут не перелічені. Кожне використане джерело перелічено в [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md).
+
+Солдати ближнього бою, оперативники Rainbow Six Siege та їхні гаджети (дрони, камери, заряди, пастки тощо) — це власні спрощені дизайни переглядача: оперативники — за їхніми публічними описами й артом, решта — за загальними реальними розмірами. Для них не використано жодної моделі, текстури чи файлу гри і жодної сторонньої роботи.
 
 - Контури фігур виведено з: "Typenblatt-TS Boot 206", автор Ebs08, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - Пропорції фігур перевірено на: "T-72B3 mod. 2011 in Mulino", автор Міністерство оборони Російської Федерації (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

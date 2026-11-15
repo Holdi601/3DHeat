@@ -5,10 +5,12 @@ grand_parent: "Pakartojimas"
 nav_order: 1
 lang: "lt"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
+
+Artimos kovos kariai, Rainbow Six Siege operatoriai ir jų įtaisai (dronai, kameros, užtaisai, spąstai ir panašiai) yra pačios peržiūros programos supaprastinti dizainai: operatoriai pagal jų viešus aprašymus ir paveikslėlius, visa kita pagal bendrus tikrovės dydžius. Jiems nebuvo panaudotas joks žaidimo modelis, tekstūra ar failas ir joks trečiųjų šalių kūrinys.
 
 Figūrų kontūrai, proporcijos ir kai kurie modeliai išmatuoti arba sukurti pagal kūrinius, kuriems galioja šios licencijos. Jų autoriai paminėti čia. Kūriniams pagal CC0 priskyrimas nereikalingas, todėl jie nesąrašomi. Visi naudoti šaltiniai išvardyti [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md).
 

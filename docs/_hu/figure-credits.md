@@ -5,7 +5,7 @@ grand_parent: "Visszajátszás"
 nav_order: 1
 lang: "hu"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
@@ -13,6 +13,8 @@ outdated: false
 # Figura-elismerések
 
 A körvonalak, az arányok és néhány modell olyan művek alapján készült vagy abból származik, amelyek az alábbi licencek alatt állnak. Szerzőiket itt említjük meg. A CC0 alatt álló művekhez nincs szükség elismerésre, és nincsenek felsorolva. Minden felhasznált forrás fel van sorolva itt: [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md).
+
+A közelharci katonák, a Rainbow Six Siege operátorai és eszközeik (drónok, kamerák, töltetek, csapdák és hasonlók) a nézegető saját, egyszerűsített tervei: az operátorok a nyilvános leírásaik és rajzaik alapján, a többi általános, valós méretek alapján. Ezekhez a játék egyetlen modelljét, textúráját vagy fájlját sem, és harmadik fél egyetlen művét sem használtuk.
 
 - Az alakok körvonalai ebből származnak: „Typenblatt-TS Boot 206”, szerző: Ebs08, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - Az alakok arányait ezen ellenőriztük: „T-72B3 mod. 2011 in Mulino”, szerző: Oroszország Védelmi Minisztériuma (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

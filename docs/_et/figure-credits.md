@@ -5,7 +5,7 @@ grand_parent: "Kordus"
 nav_order: 1
 lang: "et"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
@@ -13,6 +13,8 @@ outdated: false
 # Kujude tunnustused
 
 Kontuurid, proportsioonid ja mõned mudelid on mõõdetud või tuletatud teostelt nende litsentside all. Nende autorid on siin tunnustatud. Teosed CC0 all ei vaja tunnustust ja neid ei ole loetletud. Iga kasutatud allikas on loetletud failis [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md).
+
+Lähivõitluse sõdurid, Rainbow Six Siege'i operaatorid ja nende vidinad (droonid, kaamerad, laengud, lõksud ja muu selline) on vaataja enda lihtsustatud kujundused: operaatorid nende avalike kirjelduste ja piltide järgi, ülejäänu tavaliste päriselu suuruste järgi. Nende jaoks ei kasutatud ühtki mängu mudelit, tekstuuri ega faili ega ühtki kolmanda osapoole teost.
 
 - Figuuri kontuurid tuletatud teosest: "Typenblatt-TS Boot 206", autor Ebs08, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - Figuuri proportsioonid kontrollitud teose järgi: "T-72B3 mod. 2011 in Mulino", Venemaa Föderatsiooni kaitseministeerium (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

@@ -5,7 +5,7 @@ nav_order: 3
 has_children: true
 lang: "sv"
 source: "figures.md"
-source_hash: "e86483d60237"
+source_hash: "7040eba3b7ac"
 translated: true
 outdated: false
 ---
@@ -28,6 +28,7 @@ Det finns ungefär 2 000 namngivna fordon, flygplan, fartyg, vapen och soldater.
 | Sjö | krigsfartyg efter klass, hangarfartyg, ubåtar, båtar och handelsfartyg |
 | Vapen | robotar, raketer, bomber, torpeder, facklor och chaff |
 | Markörer | rök-, blixt- och brandgranater, placerade bomber, flaggor, startpunkter och vägpunkter |
+| Närstrid | soldater i skyddsvästar med automatkarbin, kulsprutepistol, hagelgevär, DMR, LMG, pistol eller sköld; drönare, kameror, taggtråd, sköldar, väggförstärkning, barrikader, sprängladdningar, fällor, fönster, granater, desarmeringsenheten |
 
 ## Så görs figurerna {#how-the-figures-are-made}
 
@@ -47,6 +48,20 @@ Visaren tittar på datans egna kolumner:
 Det enklaste sättet att få rätt figurer är därför en `vehicle`-kolumn med de riktiga namnen, eller en `type`-kolumn med Tacview-taggar.
 
 **Min enhet visas som en låda eller en soldat.** Lägg till en `vehicle`-kolumn med det riktiga namnet, eller en `type`-kolumn med en Tacview-tagg. För musen över enheten för att se vilket namn som matchades. Data som har sådana kolumner men inget om en enhet lämnar den som en låda. Data utan någon av dem ritas som soldater.
+
+## Närstridsfigurer (Rainbow Six Siege) {#close-quarters-figures-rainbow-six-siege}
+
+Tabeller som är skrivna som Rainbow Six Siege-reprisläsarens (kolumnerna `operator`, `pawn`, `primaryClass`, `side`) får egna figurer:
+
+- **Spelare** är sin operatör: var och en av de 78 operatörerna har en egen figur, ungefär 1,8 m lång, i egna kläder – två eller tre färger för jacka, byxor och utrustning efter deras vanliga offentliga utseende (svart, oliv, sandfärgad, urban grå, vit, marinblå, med röd, orange eller blågrön utrustning) – och med egna former, en tredjedel större än i verkligheten där de måste synas uppifrån: huvudbonad (hjälmar, ett visir eller en tung hjälm, kepsar, mössor, baskrar, en bred boonie-hatt eller pälsmössa, huvor, halsdukar, hår), ansiktet (skyddsglasögon, en gasmask, glasögon, en mask, ett skägg, glasögon med tre linser), en lätt, medeltung eller tung kroppsbyggnad (de tunga breda, med stora axelplattor och en krage), en lång rock eller en kostym, en ghilliedräkt, det de bär på ryggen (en hammare, laddningar, drönare, behållare, en bränsletank, ett avfyrningsrör, ett armborst, paneler, en störsändare, en sköld) eller på armen (en avfyrare, en metallarm), sin egen sköld (en hög sköld, en kravallsköld, en sköld med lampor) och en accentfärg på axlarna. De håller klassen av sitt primärvapen. En operatör som visaren inte känner till är en vanlig soldat i skyddsväst i lagets färg.
+- **Sidan** syns skild från kläderna: en ring på marken under varje operatör, **bärnstensgul för anfall, ljus cyan för försvar**, med lagets färg inuti, och arm- och huvudband i samma färg. En `stance`-kolumn (stående, hukande, liggande) ger dem en ställning. Utan den står de.
+- **Går att skilja åt på reprisavstånd:** När de ritas 48 pixlar höga uppifrån och snett från tre fjärdedelar skiljer sig varje par operatörer på en sida åt med en tydlig färgskillnad eller en annan form (kontrollerat av visarens tester).
+- **Etiketter** visar spelaren och den operatör som spelas just då, med operatörens roll som symbol: ✸ hård brytare, ⚒ mjuk brytare, ➤ inträde, ✦ fragger, ✚ stöd, ⬟ sköld, ◉ underrättelse, ◇ flex, ↺ flankvakt, ⚓ ankare, ✕ fällsättare, ⇄ strövare, ↯ anti-pryl, ▣ anti-intrång.
+- **Drönare** är en kastbar drönare på två hjul, ungefär 30 cm bred. Var och en är ett eget spår, uppkallat efter sin ägare (”Ash · drone 2”).
+- **Utplacerade prylar** står där de sattes, från då tills rundan slutar, var och en som figuren för det den gör: en kamera, taggtråd, en utfällbar sköld, en sprängladdning, en laddning för hårt intrång, en liten klisterladdning, en golvfälla, en claymore med sin snubbellaser, ett envägsfönster, en pansarpanel, en granat, en gasbehållare, en störsändare, en sensor, en lasergrind, en förrådslåda. En figur används för alla prylar som gör samma sak. En pryl vars sort data inte anger är en liten enhet med en lampa.
+- **Desarmeringsenheten** står där den planterades under sina 45 sekunder.
+
+Varje drönare och pryl blir ett eget spår när filen läses in, så att spelarens egen figur stannar på spelarens kropp. Operatörerna är förenklade former efter deras offentliga beskrivningar och bilder (det de har på sig, enheten som är deras förmåga), och prylarna är formade efter vad de gör. Alla är visarens egna designer i sakens verkliga storlek (en claymore är ungefär 22 cm bred, en panel stor som en dörr är 1 m gånger 2,1 m), inte modeller från spelet.
 
 ## Inställningar {#settings}
 

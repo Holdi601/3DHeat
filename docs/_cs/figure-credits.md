@@ -5,7 +5,7 @@ grand_parent: "Přehrání"
 nav_order: 1
 lang: "cs"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
@@ -13,6 +13,8 @@ outdated: false
 # Poděkování za figury
 
 Obrysy, proporce a některé modely jsou změřeny nebo odvozeny z děl pod těmito licencemi. Jejich autoři jsou tu uvedeni. Díla pod CC0 uvádění nevyžadují a nejsou zde vypsána. Každý použitý zdroj je uveden v [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md).
+
+Vojáci pro boj zblízka, operátoři Rainbow Six Siege a jejich gadgety (drony, kamery, nálože, pasti a podobně) jsou vlastní zjednodušené návrhy prohlížeče: operátoři podle jejich veřejných popisů a obrázků, zbytek podle obecných skutečných rozměrů. Nebyl pro ně použit žádný model, textura ani soubor hry ani žádné dílo třetích stran.
 
 - Obrysy figur odvozeny z: „Typenblatt-TS Boot 206“, autor Ebs08, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - Proporce figur ověřeny na: „T-72B3 mod. 2011 in Mulino“, Ministerstvo obrany Ruské federace (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

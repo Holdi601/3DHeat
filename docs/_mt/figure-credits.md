@@ -5,7 +5,7 @@ grand_parent: "Replay"
 nav_order: 1
 lang: "mt"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
@@ -13,6 +13,8 @@ outdated: false
 # Krediti tal-figuri
 
 Il-konturi, il-proporzjonijiet u xi mudelli huma kkejjel fuq, jew derivati minn, xogħlijiet taħt dawn il-liċenzji. L-awturi tagħhom huma kkreditati hawn. Xogħlijiet taħt CC0 ma jeħtieġux kreditu u mhumiex elenkati. Kull sors użat huwa elenkat fi [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md).
+
+Is-suldati tal-ġlieda mill-qrib, l-operators ta' Rainbow Six Siege u l-gadgets tagħhom (drones, kameras, karigi, nases u affarijiet bħal dawn) huma disinji simplifikati tal-viewer stess: l-operators skont id-deskrizzjonijiet u l-arti pubbliċi tagħhom, il-bqija skont daqsijiet ġenerali tad-dinja reali. Għalihom ma ntuża ebda mudell, texture jew fajl tal-logħba u ebda xogħol ta' partijiet terzi.
 
 - Kontorni tal-figuri derivati minn: "Typenblatt-TS Boot 206" minn Ebs08, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - Proporzjonijiet tal-figuri ikkontrollati fuq: "T-72B3 mod. 2011 in Mulino" mill-Ministeru tad-Difiża tal-Federazzjoni Russa (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

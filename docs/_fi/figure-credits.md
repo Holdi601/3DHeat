@@ -5,10 +5,12 @@ grand_parent: "Toisto"
 nav_order: 1
 lang: "fi"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
+
+Lähitaistelun sotilaat, Rainbow Six Siegen operaattorit ja heidän välineensä (droonit, kamerat, panokset, ansat ja vastaavat) ovat katselijan omia yksinkertaistettuja malleja: operaattorit heidän julkisten kuvaustensa ja kuviensa mukaan, muut yleisten todellisten kokojen mukaan. Niihin ei käytetty mitään pelin mallia, tekstuuria tai tiedostoa eikä mitään kolmannen osapuolen teosta.
 
 
 Ääriviivat, mittasuhteet ja joitakin malleja on mitattu tai johdettu teoksista näiden lisenssien alla. Tekijät mainitaan tässä. Teokset CC0-lisenssillä eivät vaadi mainintaa, eikä niitä luetella. Jokainen käytetty lähde on listattu tiedostossa [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md).

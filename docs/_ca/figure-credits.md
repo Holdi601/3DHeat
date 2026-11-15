@@ -5,7 +5,7 @@ grand_parent: "Repetició"
 nav_order: 1
 lang: "ca"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
@@ -13,6 +13,8 @@ outdated: false
 # Crèdits de les figures
 
 Els contorns, les proporcions i alguns models estan mesurats o derivats d'obres amb aquestes llicències. Els seus autors es citen aquí. Les obres amb CC0 no necessiten crèdit i no es llisten. Totes les fonts usades es llisten a [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md).
+
+Els soldats de combat a curta distància, els operadors de Rainbow Six Siege i els seus ginys (drons, càmeres, càrregues, trampes i similars) són dissenys simplificats propis del visor: els operadors segons les seves descripcions i imatges públiques, la resta segons mides reals generals. Per fer-los no s'ha usat cap model, textura ni fitxer del joc, ni cap obra de tercers.
 
 - Contorns de figura derivats de: «Typenblatt-TS Boot 206» de Ebs08, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - Proporcions de figura comprovades a: «T-72B3 mod. 2011 in Mulino» del Ministeri de Defensa de la Federació Russa (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

@@ -5,7 +5,7 @@ grand_parent: "Replay"
 nav_order: 1
 lang: "lb"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
@@ -15,6 +15,8 @@ outdated: false
 # Figur-Kreditter
 
 Ëmrëss, Proportiounen an e puer Modeller sinn op Wierker mat dëse Lizenzen gemooss oder dorausgeleet. Hir Autoren sinn hei genannt. Wierker ënner CC0 brauchen keen Kredit a sinn net opgelëscht. All Quell, déi benotzt gouf, steet op [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md).
+
+D'Noukampf-Zaldoten, d'Operatore vu Rainbow Six Siege an hir Gadgeten (Dronen, Kameraen, Ladungen, Fallen an esou weider) sinn eegen, vereinfacht Designs vun der Visualisatioun: d'Operatore no hiren ëffentleche Beschreiwungen a Biller, de Rescht no allgemenge Gréissten aus der Realitéit. Kee Modell, keng Textur a kee Fichier vum Spill an och kee Wierk vun Drëtten ass dofir benotzt ginn.
 
 - Figur-Ëmrësse ofgeleet vun: "Typenblatt-TS Boot 206" vum Ebs08, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - Figur-Proportiounen kontrolléiert op: "T-72B3 mod. 2011 in Mulino" vum Verteedegungsministère vun der Russescher Föderatioun (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

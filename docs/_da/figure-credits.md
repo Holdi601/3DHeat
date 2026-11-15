@@ -5,7 +5,7 @@ grand_parent: "Replay"
 nav_order: 1
 lang: "da"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
@@ -13,6 +13,8 @@ outdated: false
 # Figurkreditter
 
 Konturer, proportioner og nogle modeller er målt på eller afledt af værker under disse licenser. Deres ophavsmænd krediteres her. Værker under CC0 kræver ingen kreditering og er ikke listet. Alle brugte kilder står i [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md).
+
+Nærkampssoldaterne, Rainbow Six Siege-operatørerne og deres gadgets (droner, kameraer, ladninger, fælder og lignende) er fremviserens egne, forenklede designs: operatørerne efter deres offentlige beskrivelser og kunst, resten efter almindelige størrelser fra virkeligheden. Ingen model, tekstur eller fil fra spillet og intet værk fra tredjeparter er brugt til dem.
 
 - Figurkonturer afledt af: "Typenblatt-TS Boot 206" af Ebs08, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - Figurproportioner kontrolleret på: "T-72B3 mod. 2011 in Mulino" af det russiske forsvarsministerium (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

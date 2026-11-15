@@ -5,7 +5,7 @@ grand_parent: "Паўтор"
 nav_order: 1
 lang: "be"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
@@ -13,6 +13,8 @@ outdated: false
 # Аўтары фігур
 
 Контуры, прапорцыі і некаторыя мадэлі вымераны па або выведзены з твораў пад гэтымі ліцэнзіямі. Іх аўтары пералічаны тут. Творы пад CC0 не патрабуюць згадвання і не пералічаны. Кожная выкарыстаная крыніца пералічана ў [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md).
+
+Салдаты блізкага бою, аператары Rainbow Six Siege і іх гаджэты (дроны, камеры, зарады, пасткі і падобнае) — гэта ўласныя спрошчаныя дызайны праглядальніка: аператары — паводле іх публічных апісанняў і арту, астатняе — паводле агульных рэальных памераў. Для іх не выкарыстана ніводнай мадэлі, тэкстуры або файла гульні і ніводнага чужога твора.
 
 - Контуры фігур выведзены з: "Typenblatt-TS Boot 206", аўтар Ebs08, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - Прапорцыі фігур правераны па: "T-72B3 mod. 2011 in Mulino", Міністэрства абароны Расійскай Федэрацыі (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

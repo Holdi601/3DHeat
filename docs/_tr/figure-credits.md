@@ -5,7 +5,7 @@ grand_parent: "Tekrar"
 nav_order: 1
 lang: "tr"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
@@ -13,6 +13,8 @@ outdated: false
 # Figür künyeleri
 
 Dış hatlar, oranlar ve bazı modeller, bu lisanslar altındaki eserler üzerinde ölçülerek ya da onlardan türetilerek yapılmıştır. Yazarları burada belirtilir. CC0 altındaki eserler künye gerektirmez ve listelenmez. Kullanılan her kaynak [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md) dosyasında listelenir.
+
+Yakın dövüş askerleri, Rainbow Six Siege operatörleri ve ekipmanları (dronlar, kameralar, şarjlar, tuzaklar ve benzerleri) görüntüleyicinin kendi basitleştirilmiş tasarımlarıdır: operatörler kamuya açık tanımlarına ve görsellerine göre, geri kalanı genel gerçek dünya boyutlarına göre. Bunlar için oyunun hiçbir modeli, dokusu ya da dosyası ve hiçbir üçüncü taraf eseri kullanılmadı.
 
 - Figür dış hatları şundan türetildi: "Typenblatt-TS Boot 206", Ebs08, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - Figür oranları şuradan kontrol edildi: "T-72B3 mod. 2011 in Mulino", Rusya Federasyonu Savunma Bakanlığı (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

@@ -5,7 +5,7 @@ grand_parent: "Repris"
 nav_order: 1
 lang: "sv"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
@@ -13,6 +13,8 @@ outdated: false
 # Figurkrediter
 
 Konturer, proportioner och vissa modeller är uppmätta på eller härledda från verk under de här licenserna. Upphovsmännen krediteras här. Verk under CC0 kräver ingen kredit och listas inte. Varje källa som används finns i [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md).
+
+Närstridssoldaterna, Rainbow Six Siege-operatörerna och deras prylar (drönare, kameror, laddningar, fällor och liknande) är visarens egna förenklade designer: operatörerna efter deras offentliga beskrivningar och bilder, resten efter vanliga storlekar i verkligheten. Ingen modell, textur eller fil från spelet och inget verk från tredje part användes till dem.
 
 - Figurkonturer härledda från: "Typenblatt-TS Boot 206" av Ebs08, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - Figurproportioner kontrollerade mot: "T-72B3 mod. 2011 in Mulino" av Ryska federationens försvarsministerium (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

@@ -5,7 +5,7 @@ grand_parent: "リプレイ"
 nav_order: 1
 lang: "ja"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
@@ -13,6 +13,8 @@ outdated: false
 # フィギュアのクレジット
 
 輪郭、比率、一部のモデルは、以下のライセンスの作品を測定して、または元にして作られています。作者はここに記載します。CC0 の作品はクレジットが不要なので、載せていません。使ったすべての出典は [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md) に載っています。
+
+近接戦闘の兵士、Rainbow Six Siege のオペレーター、そのガジェット（ドローン、カメラ、爆薬、罠など）は、ビューアー独自の簡略化したデザインです。オペレーターは公開された説明や絵に基づき、それ以外は一般的な実物の大きさに基づいています。これらには、ゲームのモデル、テクスチャ、ファイルも、第三者の作品も使っていません。
 
 - フィギュアの輪郭の元: "Typenblatt-TS Boot 206" by Ebs08, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - フィギュアの比率の確認に使用: "T-72B3 mod. 2011 in Mulino" by the Ministry of Defence of the Russian Federation (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

@@ -5,7 +5,7 @@ grand_parent: "Αναπαραγωγή"
 nav_order: 1
 lang: "el"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
@@ -13,6 +13,8 @@ outdated: false
 # Ευχαριστίες για τις φιγούρες
 
 Τα περιγράμματα, οι αναλογίες και ορισμένα μοντέλα είναι μετρημένα σε ή προέρχονται από έργα με αυτές τις άδειες. Οι δημιουργοί τους αναφέρονται εδώ. Τα έργα υπό CC0 δεν χρειάζονται αναφορά και δεν απαριθμούνται. Κάθε πηγή που χρησιμοποιήθηκε απαριθμείται στο [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md).
+
+Οι στρατιώτες μάχης από κοντά, οι operators του Rainbow Six Siege και τα gadgets τους (drones, κάμερες, γομώσεις, παγίδες και παρόμοια) είναι δικά απλοποιημένα σχέδια του περιηγητή: οι operators με βάση τις δημόσιες περιγραφές και την τέχνη τους, τα υπόλοιπα με βάση γενικά πραγματικά μεγέθη. Για αυτά δεν χρησιμοποιήθηκε κανένα μοντέλο, καμία υφή ή κανένα αρχείο του παιχνιδιού και κανένα έργο τρίτων.
 
 - Τα περιγράμματα των φιγούρων προέρχονται από: "Typenblatt-TS Boot 206" από Ebs08, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - Οι αναλογίες των φιγούρων ελέγχθηκαν σε: "T-72B3 mod. 2011 in Mulino" από το Ministry of Defence of the Russian Federation (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

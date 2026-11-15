@@ -5,7 +5,7 @@ grand_parent: "Atskaņojums"
 nav_order: 1
 lang: "lv"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
@@ -13,6 +13,8 @@ outdated: false
 # Figūru autori
 
 Figūru kontūras, proporcijas un daži modeļi ir izmērīti vai atvasināti no darbiem ar šīm licencēm. Šeit ir norādīti to autori. Darbi ar CC0 licenci nepieprasa norādi, tāpēc tie nav uzskaitīti. Katrs izmantotais avots ir uzskaitīts [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md).
+
+Tuvcīņas karavīri, Rainbow Six Siege operatori un viņu rīki (droni, kameras, lādiņi, lamatas un tamlīdzīgi) ir paša skatītāja vienkāršoti dizaini: operatori pēc viņu publiskajiem aprakstiem un attēliem, pārējais pēc vispārējiem reālās pasaules izmēriem. Tiem netika izmantots neviens spēles modelis, tekstūra vai fails un neviens trešās puses darbs.
 
 - Figūru kontūras atvasinātas no: "Typenblatt-TS Boot 206", autors Ebs08, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - Figūru proporcijas pārbaudītas pēc: "T-72B3 mod. 2011 in Mulino", Krievijas Federācijas Aizsardzības ministrija (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

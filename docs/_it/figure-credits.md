@@ -5,7 +5,7 @@ grand_parent: "Replay"
 nav_order: 1
 lang: "it"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
@@ -13,6 +13,8 @@ outdated: false
 # Crediti delle figure
 
 I contorni, le proporzioni e alcuni modelli sono misurati su opere o derivati da opere sotto queste licenze, o si basano su di esse. I loro autori sono citati qui. Le opere sotto CC0 non richiedono attribuzione e non sono elencate. Ogni fonte usata è elencata in [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md).
+
+I soldati da combattimento ravvicinato, gli operatori di Rainbow Six Siege e i loro gadget (droni, telecamere, cariche, trappole e simili) sono progetti semplificati propri del visualizzatore: gli operatori secondo le loro descrizioni e illustrazioni pubbliche, il resto secondo dimensioni reali generali. Per loro non è stato usato nessun modello, texture o file del gioco né alcuna opera di terzi.
 
 - Contorni delle figure derivati da: "Typenblatt-TS Boot 206" di Ebs08, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - Proporzioni delle figure verificate su: "T-72B3 mod. 2011 in Mulino" del Ministero della Difesa della Federazione Russa (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

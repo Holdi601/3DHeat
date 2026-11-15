@@ -5,7 +5,7 @@ grand_parent: "Reluare"
 nav_order: 1
 lang: "ro"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
@@ -13,6 +13,8 @@ outdated: false
 # Mențiuni pentru figuri
 
 Contururile, proporțiile și unele modele sunt măsurate pe sau derivate din lucrări sub aceste licențe. Autorii lor sunt menționați aici. Lucrările sub CC0 nu cer mențiune și nu sunt listate. Fiecare sursă folosită este listată în [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md).
+
+Soldații de luptă apropiată, operatorii Rainbow Six Siege și gadgeturile lor (drone, camere, încărcături, capcane și altele asemenea) sunt design-uri simplificate proprii ale vizualizatorului: operatorii după descrierile și arta lor publică, restul după mărimi generale din lumea reală. Pentru ele nu s-a folosit niciun model, nicio textură sau niciun fișier al jocului și nicio lucrare a unei terțe părți.
 
 - Contururi de figuri derivate din: „Typenblatt-TS Boot 206" de Ebs08, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - Proporții de figuri verificate pe: „T-72B3 mod. 2011 in Mulino" de Ministerul Apărării al Federației Ruse (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

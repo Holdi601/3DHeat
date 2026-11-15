@@ -5,7 +5,7 @@ grand_parent: "Riluajtja"
 nav_order: 1
 lang: "sq"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
@@ -13,6 +13,8 @@ outdated: false
 # Kreditet e figurave
 
 Konturet, proporcionet dhe disa modele janë matur mbi ose nxjerrë nga vepra me këto licenca. Autorët e tyre përmenden këtu. Veprat me CC0 nuk kanë nevojë për kredi dhe nuk listohen. Çdo burim i përdorur listohet te [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md).
+
+Ushtarët e luftimit nga afër, operatorët e Rainbow Six Siege dhe pajisjet e tyre (dronë, kamera, ngarkesa, kurthe e të ngjashme) janë dizajne të thjeshtuara të vetë shikuesit: operatorët sipas përshkrimeve dhe artit të tyre publik, pjesa tjetër sipas madhësive të përgjithshme në botën reale. Për to nuk u përdor asnjë model, teksturë ose skedar i lojës dhe asnjë vepër e palëve të treta.
 
 - Konturet e figurës nxjerrë nga: "Typenblatt-TS Boot 206" nga Ebs08, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - Proporcionet e figurës të kontrolluara mbi: "T-72B3 mod. 2011 in Mulino" nga Ministria e Mbrojtjes e Federatës Ruse (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

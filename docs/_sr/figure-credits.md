@@ -5,7 +5,7 @@ grand_parent: "Реприза"
 nav_order: 1
 lang: "sr"
 source: "figure-credits.md"
-source_hash: "7750b7b78368"
+source_hash: "ee05bc0439df"
 translated: true
 outdated: false
 ---
@@ -13,6 +13,8 @@ outdated: false
 # Заслуге за фигуре
 
 Контуре, пропорције и неки модели су измерени на или изведени из радова под овим лиценцама. Њихови аутори су наведени овде. Радови под CC0 не траже заслугу и нису наведени. Сваки коришћени извор наведен је у [sources.md](https://github.com/Holdi601/3DHeat/blob/main/src/figures/specs/sources.md).
+
+Војници за блиску борбу, оператери Rainbow Six Siege и њихови уређаји (дронови, камере, пуњења, замке и слично) су сопствени поједностављени дизајни приказивача: оператери према њиховим јавним описима и илустрацијама, остало према општим стварним величинама. За њих није коришћен ниједан модел, текстура или датотека игре нити иједно дело треће стране.
 
 - Контуре фигура изведене из: "Typenblatt-TS Boot 206", аутор Ebs08, CC BY 3.0, https://commons.wikimedia.org/wiki/File:Typenblatt-TS_Boot_206.jpg
 - Пропорције фигура проверене на: "T-72B3 mod. 2011 in Mulino", аутор Министарство одбране Руске Федерације (mil.ru), CC BY 4.0, https://commons.wikimedia.org/wiki/File:T-72B3_mod._2011_in_Mulino.jpg

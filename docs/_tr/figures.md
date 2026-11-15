@@ -5,7 +5,7 @@ nav_order: 3
 has_children: true
 lang: "tr"
 source: "figures.md"
-source_hash: "e86483d60237"
+source_hash: "7040eba3b7ac"
 translated: true
 outdated: false
 ---
@@ -28,6 +28,7 @@ Görüntüleyicinin kendisi tarafından yapılmış, yaklaşık 2.000 adlandır�
 | Deniz | sınıfına göre savaş gemileri, uçak gemileri, denizaltılar, botlar, ticaret gemileri |
 | Silahlar | füzeler, roketler, bombalar, torpidolar, fişekler ve metal şeritler |
 | İşaretçiler | duman, parlama ve yangın bombaları, yerleştirilmiş bombalar, bayraklar, doğma noktaları, rota noktaları |
+| Yakın dövüş | plaka taşıyıcı yelekli, piyade tüfeği, hafif makineli tabanca, pompalı tüfek, DMR, hafif makineli tüfek, tabanca ya da kalkanlı askerler; dronlar, kameralar, dikenli tel, kalkanlar, duvar güçlendirme, barikatlar, kırma şarjları, tuzaklar, pencereler, el bombaları, imha kiti |
 
 ## Figürler nasıl yapılır {#how-the-figures-are-made}
 
@@ -47,6 +48,20 @@ Görüntüleyici verinin kendi sütunlarına bakar:
 Yani doğru figürleri almanın en kolay yolu, gerçek adlarla bir `vehicle` sütunu ya da Tacview etiketleriyle bir `type` sütunudur.
 
 **Birimim bir kutu ya da asker olarak görünüyor.** Gerçek adla bir `vehicle` sütunu ya da bir Tacview etiketiyle bir `type` sütunu ekleyin. Hangi adın eşleştiğini görmek için birimin üzerine gelin. Bu tür sütunları olan ama bir birim hakkında hiçbir şey söylemeyen veri, onu kutu olarak bırakır; ikisi de olmayan veri askerler olarak çizilir.
+
+## Yakın dövüş figürleri (Rainbow Six Siege) {#close-quarters-figures-rainbow-six-siege}
+
+Rainbow Six Siege tekrar okuyucusununki gibi yazılmış tablolar (`operator`, `pawn`, `primaryClass`, `side` sütunları) kendi figürlerini alır:
+
+- **Oyuncular** kendi operatörleridir. 78 operatörün her birinin kendi figürü vardır: yaklaşık 1,8 m boyunda, kendi kıyafetleriyle. Ceket, pantolon ve teçhizat için, alışılmış kamuya açık görünümlerine göre iki ya da üç renk (siyah, zeytin yeşili, haki, kent grisi, beyaz, lacivert; kırmızı, turuncu ya da camgöbeği teçhizatla). Kendi şekilleriyle de: yukarıdan görünmeleri gereken yerlerde gerçeğinden üçte bir daha büyük. Başlık (miğferler, bir vizör ya da ağır miğfer, şapkalar, bereler, kasketler, geniş bir boonie şapka ya da kürk şapka, kapüşonlar, atkılar, saç), yüz (koruyucu gözlük, gaz maskesi, gözlük, maske, sakal, üç camlı gözlük), hafif, orta ya da ağır yapı (ağır olanlar geniş, büyük omuz plakaları ve yakalı), uzun bir palto ya da takım elbise, ghillie kıyafeti, sırtlarında taşıdıkları (çekiç, şarjlar, dronlar, tüpler, yakıt tankı, fırlatıcı borusu, arbalet, paneller, karıştırıcı, kalkan) ya da kollarındaki (fırlatıcı, metal kol), kendi kalkanları (uzun bir kalkan, çevik kuvvet kalkanı, ışıklı bir kalkan) ve omuzlarda bir vurgu rengi. Ana silahlarının sınıfını tutarlar. Görüntüleyicinin tanımadığı bir operatör, takım renginde, plaka taşıyıcı yelekli sade bir askerdir.
+- **Taraf** kıyafetten ayrı görünür: her operatörün altında yerde bir halka, **saldırı için kehribar, savunma için açık camgöbeği**, içinde takımın rengi; aynı renkte kol ve baş bantları. Bir `stance` sütunu (ayakta, çömelmiş, yüzüstü) duruşlarını belirler; bu sütun yoksa ayakta dururlar.
+- **Tekrar mesafesinden ayırt edilir:** yukarıdan ve dörtte üç açıdan 48 piksel yükseklikte çizildiğinde, bir taraftaki her iki operatör belirgin bir renk farkıyla ya da farklı bir şekille ayrılır (görüntüleyicinin testleri bunu kontrol eder).
+- **Etiketler** oyuncuyu ve o anda oynanan operatörü adlandırır; operatörün rolü bir sembolle gösterilir: ✸ sert kırıcı, ⚒ yumuşak kırıcı, ➤ giriş, ✦ fragger, ✚ destek, ⬟ kalkan, ◉ istihbarat, ◇ esnek, ↺ kanat gözcüsü, ⚓ çapa, ✕ tuzakçı, ⇄ gezgin, ↯ ekipman karşıtı, ▣ kırma karşıtı.
+- **Dronlar** iki tekerlekli, atılabilen bir drondur, yaklaşık 30 cm genişliğindedir. Her biri sahibinin adını taşıyan kendi izidir (“Ash · drone 2”).
+- **Yerleştirilen ekipmanlar** konuldukları yerde, o andan raundun sonuna kadar durur. Her biri yaptığı işin figürüdür: kamera, dikenli tel, açılır kalkan, kırma şarjı, sert kırma şarjı, küçük yapışkan şarj, zemin tuzağı, tetik lazeriyle bir claymore, tek yönlü pencere, zırh paneli, el bombası, gaz tüpü, karıştırıcı, sensör, lazer kapısı, ikmal kutusu. Aynı işi yapan her ekipman için tek bir figür kullanılır. Türünü verinin söylemediği bir ekipman, ışıklı küçük bir cihazdır.
+- **İmha kiti** kurulduğu yerde 45 saniyesi boyunca durur.
+
+Dosya yüklenirken her dron ve ekipman kendi izi olur, böylece oyuncunun kendi figürü kendi bedeninde kalır. Operatörler, kamuya açık tanımlarına ve görsellerine göre basitleştirilmiş şekillerdir (ne giydikleri, yetenekleri olan cihaz); ekipmanların şekli ise yaptıkları işten gelir. Bunların hepsi görüntüleyicinin kendi tasarımlarıdır, nesnenin gerçek boyutundadır (yaklaşık 22 cm genişliğinde bir claymore, 1 m'ye 2,1 m kapı boyutunda bir panel); oyundan alınmış modeller değildir.
 
 ## Ayarlar {#settings}
 
