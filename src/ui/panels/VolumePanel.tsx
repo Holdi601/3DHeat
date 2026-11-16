@@ -9,6 +9,7 @@ import { computeStatsAsync, SELECTION_ID, type ColumnStats, type StatsResult, ty
 import { currentScope, scopeKey } from '../../volumes/scope';
 import { CompareButton, CompareWindow } from '../compare/ComparePanel';
 import { BreakdownButton } from '../breakdown/BreakdownPanel';
+import { VersusButton } from '../versus/VersusPanel';
 import { downloadBlob, exportTest, saveSink, selectRows, statsCsv, statsJson, writeRows, type ExportFormat } from '../../volumes/export';
 import { shapeHeights, volumesFromJson, volumesToJson, withHeights, type Volume, type VolumeFilter } from '../../volumes/volume';
 
@@ -209,6 +210,11 @@ export function VolumePanel() {
         />
       </div>
 
+      {dataset && visibleVolumes.length === 0 && (
+        <div className="row" style={{ marginTop: 6 }}>
+          <VersusButton />
+        </div>
+      )}
       {dataset && visibleVolumes.length > 0 && (
         <>
           <h4 style={{ margin: '10px 0 4px' }}>{t('volumes.stats.title')}</h4>
@@ -223,6 +229,7 @@ export function VolumePanel() {
           <div className="row" style={{ marginTop: 6 }}>
             <CompareButton />
             <BreakdownButton region="volume" volumeId={sel?.id ?? null} />
+            <VersusButton />
           </div>
           {progress !== null && <div className="hint">{t('volumes.stats.counting', { pct: num(progress * 100, 0) })}</div>}
           {stats && statsLayout === 'compare' && <CompareTable stats={stats} />}

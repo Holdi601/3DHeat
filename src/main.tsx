@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import { App } from './App';
 import { startLanguage } from './i18n';
+import { applyMotionVars } from './ui/motion';
 import { useStore } from './state/store';
 import { DEFAULT_SYNTH, generateSynthetic } from './data/synth';
 import { VIEW_PRESETS } from './render/camera';
@@ -94,4 +95,7 @@ if (import.meta.env.DEV) {
 // first - the browser's, or the one picked - so the first frame is in it.
 void startLanguage()
   .catch(() => undefined)
-  .then(() => createRoot(el).render(<App />));
+  .then(() => {
+    applyMotionVars();
+    createRoot(el).render(<App />);
+  });

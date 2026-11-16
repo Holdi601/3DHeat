@@ -1,0 +1,390 @@
+/* Compare groups: the setup on the left, the table or chart on the right. Shares the volume comparison's window (compare.css). */
+
+.vs-window {
+  height: min(64%, 640px);
+  animation: vs-rise var(--motion-base, 0ms) var(--motion-ease, ease-out);
+}
+
+@keyframes vs-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+:root[data-quality='low'] .vs-window {
+  box-shadow: none;
+}
+
+.vs-body {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+.vs-setup {
+  width: 300px;
+  flex: none;
+  overflow-y: auto;
+  padding: 8px 10px;
+  border-right: 1px solid var(--line-soft);
+}
+
+.vs-setup section {
+  margin-bottom: 12px;
+}
+
+.vs-setup h4 {
+  margin: 0 0 6px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+}
+
+.vs-setup .row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.vs-setup select,
+.vs-setup input[type='number'] {
+  max-width: 100%;
+}
+
+.vs-setup input[type='number'] {
+  width: 52px;
+}
+
+.vs-vols,
+.vs-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 6px 0;
+}
+
+.vs-metrics {
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.vs-vols label,
+.vs-metrics label,
+.vs-pin {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vs-metrics label.bad {
+  color: var(--bad);
+}
+
+.vs-vols i {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex: none;
+}
+
+.vs-group {
+  padding: 6px;
+  margin-bottom: 6px;
+  border: 1px solid var(--line-soft);
+  border-radius: 6px;
+}
+
+.vs-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.vs-expr,
+.vs-editor textarea,
+.vs-editor input {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 4px;
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+.vs-expr.bad,
+.vs-editor textarea.bad {
+  border-color: var(--bad);
+}
+
+.vs-err {
+  color: var(--bad);
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.vs-ok {
+  color: var(--good);
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.vs-x {
+  padding: 0 6px;
+  line-height: 1.4;
+}
+
+.vs-link {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--accent);
+  padding: 0;
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.vs-top {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.vs-editor {
+  margin-top: 6px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel-2);
+}
+
+.vs-help {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin: 4px 0;
+  line-height: 1.45;
+}
+
+.vs-cols {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin: 4px 0;
+  max-height: 110px;
+  overflow-y: auto;
+}
+
+.vs-tok {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 1px 5px;
+}
+
+.vs-out {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.vs-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.vs-spacer {
+  flex: 1;
+}
+
+.vs-ctl,
+.vs-check {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-dim);
+}
+
+.vs-note {
+  padding: 4px 10px 0;
+}
+
+.vs-chartwrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 6px 10px 10px;
+}
+
+.vs-chart {
+  width: 100%;
+}
+
+.vs-chart svg {
+  display: block;
+}
+
+.vs-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin: 2px 0 6px;
+}
+
+.vs-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 1px 6px;
+  color: var(--text);
+  cursor: pointer;
+  transition: opacity var(--motion-fast, 0ms) var(--motion-ease, ease-out);
+}
+
+.vs-chip.on {
+  border-color: var(--line);
+}
+
+.vs-chip i,
+.vs-sw {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex: none;
+}
+
+.vs-sw {
+  margin-right: 6px;
+  vertical-align: -1px;
+}
+
+.vs-multi {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+}
+
+.vs-mtitle {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-bottom: 2px;
+  text-align: center;
+}
+
+.vs-pie {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.vs-table th,
+.vs-table td {
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.vs-table tbody th {
+  text-align: left;
+}
+
+.vs-table tr.on th,
+.vs-table tr.on td {
+  background: rgba(77, 163, 255, 0.12);
+}
+
+.vs-table .vs-sub {
+  padding-left: 24px;
+  color: var(--text-dim);
+  font-weight: normal;
+}
+
+.vs-allrow th,
+.vs-allrow td {
+  font-style: italic;
+  color: var(--text-dim);
+}
+
+.vs-val {
+  display: block;
+}
+
+.vs-delta {
+  display: block;
+  font-size: 10px;
+  color: var(--text-faint);
+}
+
+.vs-delta.good {
+  color: var(--good);
+}
+
+.vs-delta.bad {
+  color: var(--bad);
+}
+
+.vs-ref,
+.vs-few {
+  margin-left: 6px;
+  font-size: 9px;
+  padding: 0 4px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  color: var(--text-dim);
+  font-weight: normal;
+}
+
+.vs-few {
+  border-color: #c98500;
+  color: #e0a43a;
+}
+
+.vs-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+}
+
+.vs-card {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 10px;
+  background: var(--panel-2);
+  animation: vs-rise var(--motion-base, 0ms) var(--motion-ease, ease-out) both;
+}
+
+.vs-card b {
+  display: block;
+  font-size: 20px;
+  margin: 2px 0 4px;
+}
+
+.vs-card .row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 11px;
+}
+
+.vs-scroll {
+  overflow: auto;
+}
+
+.vs-table thead th {
+  top: -6px;
+}
+
+.vs-tools select,
+.vs-ctl select {
+  width: auto;
+  max-width: 220px;
+}

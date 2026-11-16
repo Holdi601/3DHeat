@@ -1,3 +1,4 @@
+import { noteFrame } from '../ui/motion';
 import { valueWeight } from './valueWeight';
 import { Matrix4, Vector3 } from 'three';
 import { estimateSaturation, horizontalExtent } from '../data/calibrate';
@@ -4259,6 +4260,8 @@ export class Engine {
   ): void {
     this.fpsAccum += dtRaw;
     this.fpsFrames++;
+    // The quality switch reads the frame this measured (ui/motion.ts).
+    noteFrame(dtRaw * 1000, now);
     const live = this.live;
     live.playhead = this.playhead;
     live.frameMs = this.smoothedFrameMs;

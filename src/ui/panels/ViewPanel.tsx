@@ -1,3 +1,4 @@
+import { MotionSetting } from '../MotionSetting';
 import { MAX_PLAN_SPRITES } from '../../render/types';
 import { useCallback, useEffect, useState } from 'react';
 import {
@@ -509,6 +510,7 @@ export function PerfPanel() {
   return (
     <Section title={t('heat.viewPanel.performance')}>
       <div className="hint">{t('heat.viewPanel.perf.hint')}</div>
+      <MotionSetting />
       <Check
         label={t('heat.viewPanel.perf.exact')}
         checked={budget.exact}

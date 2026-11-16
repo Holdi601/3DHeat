@@ -67,6 +67,7 @@ import { clearLook } from './ui/replay/pair';
 import { CameraReadout, copyCameraPose } from './ui/CameraReadout';
 import { PickCard } from './ui/PickCard';
 import { BreakdownWindow } from './ui/breakdown/BreakdownPanel';
+import { VersusWindow } from './ui/versus/VersusPanel';
 import { MassPanel, MassWindow } from './ui/mass/MassPanel';
 import { useInspectStore } from './state/inspectStore';
 import { Timeline } from './ui/Timeline';
@@ -663,6 +664,7 @@ function InspectHud() {
       <UnitCard />
       <PickCard />
       <BreakdownWindow />
+      <VersusWindow />
       <MassWindow />
     </div>
   );
