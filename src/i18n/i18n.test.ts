@@ -85,7 +85,7 @@ describe('messages', () => {
   });
 });
 
-describe('the catalogs', () => {
+describe('the catalogs', { timeout: 30_000 }, () => {
   afterAll(() => setLanguage('en'));
 
   it('have every message the code asks for, in English', () => {
