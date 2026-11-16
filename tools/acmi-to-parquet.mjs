@@ -835,18 +835,23 @@ async function cli() {
     if (!jobs.length) return resolve();
     let next = 0;
     let running = 0;
-    const start = (w) => {
-      if (next >= jobs.length) {
-        void w.terminate();
-        if (--running === 0) resolve();
-        return;
-      }
-      w.postMessage(jobs[next++]);
-    };
-    for (let i = 0; i < n; i++) {
+    // A worker that dies (out of memory) fails the recording it had; a new one goes on with the rest.
+    const spawn = () => {
       const w = new Worker(SELF, { workerData: { theatres } });
+      let job = null;
       running++;
+      const start = () => {
+        if (next >= jobs.length) {
+          job = null;
+          void w.terminate();
+          if (--running === 0) resolve();
+          return;
+        }
+        job = jobs[next++];
+        w.postMessage(job);
+      };
       w.on('message', (m) => {
+        job = null;
         done++;
         if (m.ok) {
           rows += m.result.rows + m.result.sideRows;
@@ -858,14 +863,22 @@ async function cli() {
           failed.push(m.job.input);
           console.error(`[${done}/${jobs.length}] FAILED ${m.job.input}: ${m.error}`);
         }
-        start(w);
+        start();
       });
       w.on('error', (e) => {
-        console.error(`worker failed: ${e.stack || e}`);
-        if (--running === 0) resolve();
+        console.error(`worker failed${job ? ` on ${job.input}` : ''}: ${e.stack || e}`);
+        if (job) {
+          done++;
+          failed.push(job.input);
+          job = null;
+        }
+        running--;
+        if (next < jobs.length) spawn();
+        else if (running === 0) resolve();
       });
-      start(w);
-    }
+      start();
+    };
+    for (let i = 0; i < n; i++) spawn();
   });
   const s = (performance.now() - t0) / 1000;
   console.log(`done: ${done - failed.length} converted, ${failed.length} failed, ${rows} rows, ${(bytes / 1e9).toFixed(2)} GB in ${s.toFixed(0)} s; theatres ${JSON.stringify(byTheatre)}`);
