@@ -12,6 +12,8 @@ import { figureLabel } from '../../tactics/names';
 import { num, t } from '../../i18n';
 import { expandContainerFiles } from '../../data/container';
 import { NumberBox } from '../NumberBox';
+import { SortControl, SortTh } from '../sort/SortControl';
+import { useSort, useSorted } from '../sort/useSort';
 
 const DEG = 180 / Math.PI;
 
@@ -324,18 +326,32 @@ function TelemetryCompare({ plan, arrow, total }: { plan: Plan; arrow: PlanArrow
 export function ArrivalTimeline() {
   const plan = usePlanStore((s) => s.plan);
   const list = useMemo(() => arrivals(plan), [plan]);
+  const byFigure = useMemo(() => {
+    const m = new Map<string, typeof list>();
+    for (const a of list) {
+      if (!m.has(a.figure)) m.set(a.figure, []);
+      m.get(a.figure)!.push(a);
+    }
+    return [...m.values()];
+  }, [list]);
+  const sort = useSort<typeof list>(
+    'tactics.arrivals',
+    [
+      { id: 'time', label: t('ui.sort.time'), key: (r) => r[r.length - 1].atPlan, kind: 'number', dir: 'asc' },
+      { id: 'name', label: t('ui.sort.name'), key: (r) => r[r.length - 1].label },
+      { id: 'team', label: t('ui.sort.team'), key: (r) => plan.teams.find((x) => x.id === r[r.length - 1].team)?.name },
+      { id: 'order', label: t('ui.sort.order'), key: null },
+    ],
+    'time',
+  );
+  const rows = useSorted(byFigure, sort, [plan.teams]);
   if (!list.length) return null;
   const end = Math.max(...list.map((a) => a.atPlan), 0.1);
-  const byFigure = new Map<string, typeof list>();
-  for (const a of list) {
-    if (!byFigure.has(a.figure)) byFigure.set(a.figure, []);
-    byFigure.get(a.figure)!.push(a);
-  }
-  const rows = [...byFigure.values()].sort((p, q) => p[p.length - 1].atPlan - q[q.length - 1].atPlan);
   const color = (team: string) => `rgb(${(plan.teams.find((x) => x.id === team)?.color ?? [0.7, 0.7, 0.7]).map((c) => Math.round(c * 255)).join(',')})`;
   return (
     <>
       <div className="tactics-group-name">{t('tactics.timeline.title')}</div>
+      {rows.length > 1 && <SortControl sort={sort} />}
       <div className="tactics-timeline">
         {rows.map((r) => {
           const lastA = r[r.length - 1];
@@ -386,6 +402,21 @@ export function TelemetryPanel() {
   const [cellM, setCellM] = useState(1.6);
   const fileRef = useRef<HTMLInputElement>(null);
   const sides = plan.teams.slice(0, 2);
+  type State = NonNullable<typeof tele.speeds>['states'][number];
+  const states = useMemo(() => (tele.speeds ? tele.speeds.states.filter((s) => s.n > 0) : []), [tele.speeds]);
+  const speedSort = useSort<State>(
+    'tactics.speeds',
+    [
+      { id: 'order', label: t('ui.sort.order'), key: null },
+      { id: 'name', label: t('tactics.tele.state'), key: (s) => t(`tactics.mode.${s.state}`) },
+      { id: 'p50', label: 'p50', key: (s) => s.p50, kind: 'number' },
+      { id: 'p90', label: 'p90', key: (s) => s.p90, kind: 'number' },
+      { id: 'p99', label: 'p99', key: (s) => s.p99, kind: 'number' },
+      { id: 'count', label: t('ui.sort.count'), key: (s) => s.n, kind: 'number' },
+    ],
+    'order',
+  );
+  const speedRows = useSorted(states, speedSort);
   return (
     <Section title={t('tactics.tele.title')}>
       <div className="tactics-tools">
@@ -455,25 +486,23 @@ export function TelemetryPanel() {
             <table className="tactics-table">
               <thead>
                 <tr>
-                  <th>{t('tactics.tele.state')}</th>
-                  <th>p50</th>
-                  <th>p90</th>
-                  <th>p99</th>
-                  <th>n</th>
+                  <SortTh sort={speedSort} id="name">{t('tactics.tele.state')}</SortTh>
+                  <SortTh sort={speedSort} id="p50">p50</SortTh>
+                  <SortTh sort={speedSort} id="p90">p90</SortTh>
+                  <SortTh sort={speedSort} id="p99">p99</SortTh>
+                  <SortTh sort={speedSort} id="count">n</SortTh>
                 </tr>
               </thead>
               <tbody>
-                {tele.speeds.states
-                  .filter((s) => s.n > 0)
-                  .map((s) => (
-                    <tr key={s.state}>
-                      <td>{t(`tactics.mode.${s.state}`)}</td>
-                      <td>{num(s.p50 / upm, 2)}</td>
-                      <td>{num(s.p90 / upm, 2)}</td>
-                      <td>{num(s.p99 / upm, 2)}</td>
-                      <td>{num(s.n, 0)}</td>
-                    </tr>
-                  ))}
+                {speedRows.map((s) => (
+                  <tr key={s.state}>
+                    <td>{t(`tactics.mode.${s.state}`)}</td>
+                    <td>{num(s.p50 / upm, 2)}</td>
+                    <td>{num(s.p90 / upm, 2)}</td>
+                    <td>{num(s.p99 / upm, 2)}</td>
+                    <td>{num(s.n, 0)}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           )}

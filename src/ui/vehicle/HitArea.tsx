@@ -8,6 +8,8 @@ import type { VehicleView } from '../../vehicle/view';
 import type { Dataset } from '../../state/types';
 import { int, num, t } from '../../i18n';
 import { lengthText } from '../../state/unitsStore';
+import { SortControl, SortTh } from '../sort/SortControl';
+import { useSort, useSorted } from '../sort/useSort';
 
 /**
  * The hit analysis restricted to areas of the level: the volumes drawn on
@@ -23,6 +25,16 @@ export function HitArea({ dataset, view }: { dataset: Dataset; view: VehicleView
   const shown = useMemo(() => volumes.filter((v) => v.visible), [volumes]);
   const counts = useMemo(() => (set && shown.length ? countsByVolume(dataset, set, view.beforeArea, shown, s.areaBy) : new Map<string, number>()), [dataset, set, view.beforeArea, shown, s.areaBy]);
   const noPlace = useMemo(() => (set && shown.length ? placeless(dataset, set, view.beforeArea, s.areaBy) : 0), [dataset, set, view.beforeArea, shown, s.areaBy]);
+  const sort = useSort<(typeof shown)[number]>(
+    'vehicle.areas',
+    [
+      { id: 'name', label: t('ui.sort.name'), key: (v) => v.name },
+      { id: 'count', label: t('ui.sort.count'), key: (v) => counts.get(v.id) ?? 0, kind: 'number' },
+      { id: 'order', label: t('ui.sort.order'), key: null },
+    ],
+    'name',
+  );
+  const chips = useSorted(shown, sort, [counts]);
   if (!set) return null;
   const parties: { value: AreaParty; label: string; title: string }[] = [
     { value: 'victim', label: t('vehicle.area.victim'), title: t('vehicle.area.victimTitle') },
@@ -44,8 +56,9 @@ export function HitArea({ dataset, view }: { dataset: Dataset; view: VehicleView
           <div style={{ marginTop: 8 }}>
             <Segmented value={s.areaBy} options={parties} onChange={(areaBy) => s.patch({ areaBy })} />
           </div>
+          {shown.length > 1 && <SortControl sort={sort} />}
           <div className="vehicle-chips vehicle-area-chips">
-            {shown.map((v) => (
+            {chips.map((v) => (
               <span key={v.id} className={`vehicle-area-chip${v.op === 'exclude' ? ' exclude' : ''}`} title={v.op === 'exclude' ? t('vehicle.area.excludeTitle') : undefined}>
                 <i style={{ background: v.color }} />
                 {v.name} <span className="vehicle-filter-n">{int(counts.get(v.id) ?? 0)}</span>
@@ -111,6 +124,19 @@ export function HitBreakdown({ view }: { view: VehicleView }) {
     }
     return [...m.entries()].sort((a, b) => b[1].damage - a[1].damage || b[1].n - a[1].n);
   }, [hits, by]);
+  type Row = (typeof rows)[number];
+  const sort = useSort<Row>(
+    'vehicle.breakdown',
+    [
+      { id: 'name', label: t('ui.sort.name'), key: ([k]) => k },
+      { id: 'count', label: t('vehicle.breakdown.hits'), key: ([, r]) => r.n, kind: 'number' },
+      { id: 'damage', label: t('vehicle.breakdown.damage'), key: ([, r]) => (r.known ? r.damage : null), kind: 'number' },
+      { id: 'kills', label: t('vehicle.breakdown.kills'), key: ([, r]) => r.kills, kind: 'number' },
+      { id: 'order', label: t('ui.sort.order'), key: null },
+    ],
+    'damage',
+  );
+  const sorted = useSorted(rows, sort);
   const distance = useMemo(() => {
     const ds = hits.map((h) => h.distance).filter((v): v is number => v !== null && Number.isFinite(v)).sort((a, b) => a - b);
     return ds.length ? { median: ds[ds.length >> 1], max: ds[ds.length - 1], n: ds.length } : null;
@@ -129,14 +155,14 @@ export function HitBreakdown({ view }: { view: VehicleView }) {
       <table className="vehicle-breakdown">
         <thead>
           <tr>
-            <th />
-            <th>{t('vehicle.breakdown.hits')}</th>
-            {anyDamage && <th>{t('vehicle.breakdown.damage')}</th>}
-            {anyKill && <th>{t('vehicle.breakdown.kills')}</th>}
+            <SortTh sort={sort} id="name" />
+            <SortTh sort={sort} id="count">{t('vehicle.breakdown.hits')}</SortTh>
+            {anyDamage && <SortTh sort={sort} id="damage">{t('vehicle.breakdown.damage')}</SortTh>}
+            {anyKill && <SortTh sort={sort} id="kills">{t('vehicle.breakdown.kills')}</SortTh>}
           </tr>
         </thead>
         <tbody>
-          {rows.slice(0, 30).map(([k, r]) => (
+          {sorted.slice(0, 30).map(([k, r]) => (
             <tr key={k}>
               <td className="vehicle-filter-name" title={k}>
                 {k || t('vehicle.breakdown.unknown')}

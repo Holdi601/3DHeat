@@ -24,6 +24,8 @@ import { useEngine } from '../EngineContext';
 import { selectAndFollow } from '../replay/ReplayOverlay';
 import { clock } from '../replay/hooks';
 import { flyTo } from '../replay/replayView';
+import { SortControl } from '../sort/SortControl';
+import { useSort, useSorted } from '../sort/useSort';
 import { AiSettingsButton } from './AiSettings';
 import { labelOf } from './say';
 import { useAiStream } from './useAiStream';
@@ -137,6 +139,20 @@ export function Caster() {
     listRef.current?.querySelector('.ins-moment.on')?.scrollIntoView({ block: 'nearest' });
   }, [cast.current]);
 
+  // The list's order only: playing, Previous and Next keep to time.
+  const indices = useMemo(() => cast.moments.map((_, i) => i), [cast.moments]);
+  const sort = useSort<number>(
+    'insights.moments',
+    [
+      { id: 'time', label: t('ui.sort.time'), key: (i) => cast.moments[i]?.time, kind: 'number', dir: 'asc' },
+      { id: 'importance', label: t('ui.sort.importance'), key: (i) => cast.moments[i]?.weight, kind: 'number' },
+      { id: 'kind', label: t('ui.sort.kind'), key: (i) => (cast.moments[i] ? t(`insights.cast.kind.${cast.moments[i].kind}`) : null) },
+      { id: 'player', label: t('ui.sort.player'), key: (i) => { const u = cast.moments[i]?.actor ?? -1; return u >= 0 ? cast.src?.players[u]?.name : null; } },
+    ],
+    'time',
+  );
+  const order = useSorted(indices, sort, [cast.moments, cast.src]);
+
   if (!dataset) return null;
   if (!match) {
     return (
@@ -204,8 +220,9 @@ export function Caster() {
           <span className="ins-moment-kind">{t(`insights.cast.kind.${cur.kind}`)}</span> {line(cur)}
         </div>
       )}
+      {cast.moments.length > 1 && <SortControl sort={sort} />}
       <ol className="ins-list ins-moments" ref={listRef}>
-        {cast.moments.map((m, i) => (
+        {order.map((i) => [cast.moments[i], i] as const).map(([m, i]) => (
           <li key={m.id} className={`ins-moment${i === cast.current ? ' on' : ''}`}>
             <button className="ins-head" onClick={() => go(i)} title={t('insights.cast.jumpTitle')}>
               <span className="ins-bar" aria-hidden>

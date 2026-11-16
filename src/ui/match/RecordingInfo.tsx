@@ -7,10 +7,12 @@
  */
 
 import { useMemo } from 'react';
-import { lang, t } from '../../i18n';
+import { lang, t, useLang } from '../../i18n';
 import { useStore } from '../../state/store';
 import type { Dataset } from '../../state/types';
 import { Section } from '../controls';
+import { SortControl } from '../sort/SortControl';
+import { useSort, useSorted } from '../sort/useSort';
 
 /** The properties shown, in order, by their messages; the rest follow under their own names. */
 const KNOWN: [string, string][] = [
@@ -90,22 +92,38 @@ export function RecordingInfoSection() {
   const dataset = useStore((s) => s.dataset);
   const session = useStore((s) => s.team.session);
   const info = useMemo(() => (dataset ? recordingInfo(dataset, session) : null), [dataset, session]);
+  const language = useLang();
+  const rows = useMemo(() => {
+    const rows: [string, string, boolean][] = [];
+    if (!info) return rows;
+    for (const [key, msg] of KNOWN) {
+      const v = info[key]?.trim();
+      if (v) rows.push([t(`match.recording.${msg}`), TIMES.has(key) ? when(v) : v, /briefing|comments/i.test(key)]);
+    }
+    const known = new Set(KNOWN.map(([k]) => k));
+    for (const [key, v] of Object.entries(info)) {
+      if (known.has(key) || SKIP.has(key) || !String(v).trim()) continue;
+      rows.push([key, String(v), false]);
+    }
+    return rows;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [info, language]);
+  const sort = useSort<[string, string, boolean]>(
+    'match.recording',
+    [
+      { id: 'order', label: t('ui.sort.order'), key: null },
+      { id: 'name', label: t('ui.sort.name'), key: (r) => r[0] },
+    ],
+    'order',
+  );
+  const sorted = useSorted(rows, sort);
   if (!info) return null;
-  const rows: [string, string, boolean][] = [];
-  for (const [key, msg] of KNOWN) {
-    const v = info[key]?.trim();
-    if (v) rows.push([t(`match.recording.${msg}`), TIMES.has(key) ? when(v) : v, /briefing|comments/i.test(key)]);
-  }
-  const known = new Set(KNOWN.map(([k]) => k));
-  for (const [key, v] of Object.entries(info)) {
-    if (known.has(key) || SKIP.has(key) || !String(v).trim()) continue;
-    rows.push([key, String(v), false]);
-  }
   if (!rows.length) return null;
   return (
     <Section title={t('match.recording.section')} defaultOpen right={<span className="count">{info.Title ?? ''}</span>}>
+      {rows.length > 1 && <SortControl sort={sort} />}
       <dl className="recording-info">
-        {rows.map(([k, v, long]) => (
+        {sorted.map(([k, v, long]) => (
           <div key={k} className={long ? 'long' : undefined}>
             <dt>{k}</dt>
             <dd>{v}</dd>

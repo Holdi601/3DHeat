@@ -14,6 +14,8 @@ import './vehicle.css';
 import { lengthText, useUnits } from '../../state/unitsStore';
 import { useVolumeStore } from '../../volumes/store';
 import { HitArea, HitBreakdown } from './HitArea';
+import { SortControl } from '../sort/SortControl';
+import { useSort, useSorted } from '../sort/useSort';
 
 /** The values of one field over the hits, most frequent first. */
 function tally(hits: VehicleHit[], key: (h: VehicleHit) => string): [string, number][] {
@@ -280,14 +282,14 @@ export function VehiclePanel() {
       {modules.length > 0 && (
         <Section title={t('vehicle.modules.title')} defaultOpen>
           <div className="hint">{t('vehicle.modules.hint')}</div>
-          <Bars rows={modules.slice(0, 20).map(([k, n]) => [t('vehicle.modules.part', { part: k }), n])} />
+          <ModuleBars modules={modules} />
         </Section>
       )}
 
       <Section title={t('vehicle.filter.title')} defaultOpen={false}>
-        <FilterList title={t('vehicle.filter.matches')} items={matches} picked={s.matches} onToggle={(v) => s.toggle('matches', v, matches.map(([k]) => k))} onAll={() => s.patch({ matches: null })} />
-        <FilterList title={t('vehicle.filter.shooters')} items={shooters} picked={s.shooters} onToggle={(v) => s.toggle('shooters', v, shooters.map(([k]) => k))} onAll={() => s.patch({ shooters: null })} />
-        <FilterList title={t('vehicle.filter.weapons')} items={weapons} picked={s.weapons} onToggle={(v) => s.toggle('weapons', v, weapons.map(([k]) => k))} onAll={() => s.patch({ weapons: null })} />
+        <FilterList list="vehicle.filter.matches" title={t('vehicle.filter.matches')} items={matches} picked={s.matches} onToggle={(v) => s.toggle('matches', v, matches.map(([k]) => k))} onAll={() => s.patch({ matches: null })} />
+        <FilterList list="vehicle.filter.shooters" title={t('vehicle.filter.shooters')} items={shooters} picked={s.shooters} onToggle={(v) => s.toggle('shooters', v, shooters.map(([k]) => k))} onAll={() => s.patch({ shooters: null })} />
+        <FilterList list="vehicle.filter.weapons" title={t('vehicle.filter.weapons')} items={weapons} picked={s.weapons} onToggle={(v) => s.toggle('weapons', v, weapons.map(([k]) => k))} onAll={() => s.patch({ weapons: null })} />
       </Section>
     </div>
   );
@@ -311,7 +313,33 @@ function Bars({ rows, max }: { rows: ([string, number] | [string, number, string
   );
 }
 
-function FilterList({ title, items, picked, onToggle, onAll }: { title: string; items: [string, number][]; picked: string[] | null; onToggle: (v: string) => void; onAll: () => void }) {
+/** A tally's values by name or by how often, A-Z or most first. */
+function useTallySort(list: string, by: 'name' | 'count') {
+  return useSort<[string, number]>(
+    list,
+    [
+      { id: 'name', label: t('ui.sort.name'), key: ([k]) => k },
+      { id: 'count', label: t('ui.sort.count'), key: ([, n]) => n, kind: 'number' },
+    ],
+    by,
+  );
+}
+
+/** The modules destroyed, the twenty first in the sort. */
+function ModuleBars({ modules }: { modules: [string, number][] }) {
+  const sort = useTallySort('vehicle.modules', 'count');
+  const rows = useSorted(modules, sort);
+  return (
+    <>
+      {modules.length > 1 && <SortControl sort={sort} />}
+      <Bars rows={rows.slice(0, 20).map(([k, n]) => [t('vehicle.modules.part', { part: k }), n])} />
+    </>
+  );
+}
+
+function FilterList({ list, title, items, picked, onToggle, onAll }: { list: string; title: string; items: [string, number][]; picked: string[] | null; onToggle: (v: string) => void; onAll: () => void }) {
+  const sort = useTallySort(list, 'name');
+  const sorted = useSorted(items, sort);
   if (items.length < 2) return null;
   const on = picked ? new Set(picked) : null;
   return (
@@ -324,8 +352,9 @@ function FilterList({ title, items, picked, onToggle, onAll }: { title: string; 
           </button>
         )}
       </div>
+      <SortControl sort={sort} />
       <div className="vehicle-filter-items">
-        {items.slice(0, 40).map(([k, n]) => (
+        {sorted.slice(0, 40).map(([k, n]) => (
           <label key={k} className="check">
             <input type="checkbox" checked={!on || on.has(k)} onChange={() => onToggle(k)} />
             <span className="vehicle-filter-name">{k}</span> <span className="vehicle-filter-n">{int(n)}</span>

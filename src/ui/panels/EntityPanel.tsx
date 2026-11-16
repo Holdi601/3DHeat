@@ -7,6 +7,8 @@ import type { Dataset, FilterSpec } from '../../state/types';
 import { Section } from '../controls';
 import { int, t } from '../../i18n';
 import { prepareUnits, unitsReady, type Unit } from '../replay/units';
+import { SortControl } from '../sort/SortControl';
+import { useSort, useSorted } from '../sort/useSort';
 
 /** Rows rendered at once. The real datasets have tens of thousands of entities. */
 const PAGE = 200;
@@ -67,6 +69,18 @@ export function EntityPanel() {
     else if (u.kind === 'ai') a.push(u);
     return [p, a];
   }, [index]);
+  const sort = useSort<Unit>(
+    'entities',
+    [
+      { id: 'name', label: t('ui.sort.name'), key: (u) => u.name },
+      { id: 'vehicle', label: t('ui.sort.vehicle'), key: (u) => u.vehicle },
+      { id: 'team', label: t('ui.sort.team'), key: (u) => (u.team >= 0 ? String(dataset?.teamLabels[u.team] ?? '') : '') },
+      { id: 'time', label: t('ui.sort.time'), key: (u) => u.spans[0]?.[0], kind: 'number', dir: 'asc' },
+    ],
+    'name',
+  );
+  const sortedPlayers = useSorted(players, sort);
+  const sortedAi = useSorted(ai, sort);
   const many = players.length > MANY_PLAYERS && !!dataset?.time;
   // Whole seconds, so a playing timeline re-lists once a second at most.
   const now = useStore((s) => (many ? Math.floor(s.timeline.playhead) : 0));
@@ -74,7 +88,7 @@ export function EntityPanel() {
   const hit = (u: Unit) => !q || u.name.toLowerCase().includes(q) || u.vehicle.toLowerCase().includes(q);
   const shownPlayers = useMemo(() => {
     const out: Unit[] = [];
-    for (const u of players) {
+    for (const u of sortedPlayers) {
       if (!hit(u)) continue;
       // Many players: those in play now (a search lists all it finds).
       if (many && !q && !u.spans.some(([a, b]) => a <= now + 1 && b >= now)) continue;
@@ -83,19 +97,19 @@ export function EntityPanel() {
     }
     return out;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [players, q, many, now]);
+  }, [sortedPlayers, q, many, now]);
   const [aiOpen, setAiOpen] = useState(false);
   const shownAi = useMemo(() => {
     if (!aiOpen && !q) return [];
     const out: Unit[] = [];
-    for (const u of ai) {
+    for (const u of sortedAi) {
       if (!hit(u)) continue;
       out.push(u);
       if (out.length >= PAGE) break;
     }
     return out;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ai, q, aiOpen]);
+  }, [sortedAi, q, aiOpen]);
   const matchCount = shownPlayers.length + shownAi.length;
 
   if (!dataset || dataset.personLabels.length === 0) return null;
@@ -158,6 +172,7 @@ export function EntityPanel() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
+      <SortControl sort={sort} />
       {many && !q && <div className="hint">{t('heat.entityPanel.inPlay', { count: players.length })}</div>}
       {q && (
         <div className="hint">

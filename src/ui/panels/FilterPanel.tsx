@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useStore } from '../../state/store';
 import { CANON, isCanonical } from '../../data/canonical';
 import { END_REASON, endReasonKey, outcomeKind } from '../../data/outcome';
@@ -6,8 +6,10 @@ import { filterSlots } from '../../render/filterTables';
 import { MAX_FILTER_SLOTS } from '../../render/types';
 import type { AttributeColumn, FilterSpec } from '../../state/types';
 import { Section, Segmented } from '../controls';
-import { num, t } from '../../i18n';
+import { int, num, t } from '../../i18n';
 import { NumberBox } from '../NumberBox';
+import { SortControl } from '../sort/SortControl';
+import { useSort, useSorted } from '../sort/useSort';
 
 /**
  * Live filters over the retained columns.
@@ -112,7 +114,6 @@ function FilterRow({
 }) {
   const active = !!spec;
   const overflowed = slot >= MAX_FILTER_SLOTS;
-  const [query, setQuery] = useState('');
   const title = columnLabel(attr.name);
   const outcome = outcomeKind(attr);
 
@@ -212,7 +213,37 @@ function FilterRow({
     );
   }
 
+  return <CategoryRow attr={attr} spec={spec} overflowed={overflowed} title={title} onChange={onChange} />;
+}
+
+/** A category column's values to tick, sorted by name, by rows or as the data lists them. */
+function CategoryRow({
+  attr,
+  spec,
+  overflowed,
+  title,
+  onChange,
+}: {
+  attr: AttributeColumn;
+  spec: FilterSpec | undefined;
+  overflowed: boolean;
+  title: string;
+  onChange: (next: FilterSpec | null) => void;
+}) {
+  const [query, setQuery] = useState('');
   const categories = attr.categories ?? [];
+  const indices = useMemo(() => categories.map((_, i) => i), [categories]);
+  const sort = useSort<number>(
+    'filter.values',
+    [
+      { id: 'name', label: t('ui.sort.name'), key: (i) => valueLabel(attr.name, categories[i]) },
+      { id: 'count', label: t('ui.sort.rows'), key: (i) => counts?.[i], kind: 'number' },
+      { id: 'order', label: t('ui.sort.order'), key: null },
+    ],
+    'name',
+  );
+  const counts = useCategoryCounts(attr.name, sort.by === 'count' && categories.length > 1);
+  const order = useSorted(indices, sort, [counts, categories]);
   const allowed = new Set(
     spec && spec.kind === 'categories' ? spec.allowed : categories.map((_, i) => i),
   );
@@ -236,8 +267,9 @@ function FilterRow({
       {categories.length > SEARCH_FROM && (
         <input type="text" placeholder={t('heat.filterPanel.search', { count: categories.length })} value={query} onChange={(e) => setQuery(e.target.value)} />
       )}
+      {categories.length > 1 && <SortControl sort={sort} />}
       <div className="team-list" style={{ maxHeight: 150 }}>
-        {categories.map((label, i) => (shown(label) ? (
+        {order.map((i) => (shown(categories[i]) ? (
           <div className="team-row" key={i}>
             <input
               type="checkbox"
@@ -249,9 +281,10 @@ function FilterRow({
                 setAllowed(next);
               }}
             />
-            <span className="name" title={label || t('heat.filterPanel.empty')}>
-              {label ? valueLabel(attr.name, label) : <em style={{ opacity: 0.5 }}>{t('heat.filterPanel.empty')}</em>}
+            <span className="name" title={categories[i] || t('heat.filterPanel.empty')}>
+              {categories[i] ? valueLabel(attr.name, categories[i]) : <em style={{ opacity: 0.5 }}>{t('heat.filterPanel.empty')}</em>}
             </span>
+            {counts && <span className="sign">{int(counts[i])}</span>}
           </div>
         ) : null))}
       </div>
@@ -366,4 +399,50 @@ function fmt(v: number): string {
     return `${num(Number(mantissa), 2)}e${exponent}`;
   }
   return num(v, a >= 100 ? 0 : a >= 1 ? 2 : 3);
+}
+
+/** Rows counted per slice of the time-sliced count, so a frame never waits on it. */
+const COUNT_SLICE = 2_000_000;
+const countCache = new WeakMap<object, Uint32Array>();
+
+/**
+ * How many rows hold each value of a category column, counted only when the
+ * list is sorted by it: a slice of rows per task, so 86M rows take a moment
+ * without a frame of the 3D view lost. Kept per column for the dataset.
+ */
+function useCategoryCounts(column: string, wanted: boolean): Uint32Array | null {
+  const dataset = useStore((s) => s.dataset);
+  const attr = wanted ? dataset?.attrs.find((a) => a.name === column && a.kind === 'category') : undefined;
+  const [counts, setCounts] = useState<{ data: object; counts: Uint32Array } | null>(null);
+  useEffect(() => {
+    if (!attr) return;
+    const cached = countCache.get(attr.data);
+    if (cached) {
+      setCounts({ data: attr.data, counts: cached });
+      return;
+    }
+    const data = attr.data;
+    const out = new Uint32Array(attr.categories?.length ?? 0);
+    const rows = Math.min(data.length, dataset?.count ?? data.length);
+    // Category columns are u32 indices; one stored as f32 is read as numbers.
+    const ints = data instanceof Uint32Array;
+    let at = 0;
+    let timer = 0;
+    const step = () => {
+      const end = Math.min(rows, at + COUNT_SLICE);
+      for (let r = at; r < end; r++) {
+        const v = ints ? data[r] : Math.round(data[r]);
+        if (v < out.length) out[v]++;
+      }
+      at = end;
+      if (at < rows) timer = window.setTimeout(step, 0);
+      else {
+        countCache.set(data, out);
+        setCounts({ data, counts: out });
+      }
+    };
+    timer = window.setTimeout(step, 0);
+    return () => window.clearTimeout(timer);
+  }, [attr, dataset]);
+  return attr && counts && counts.data === attr.data ? counts.counts : null;
 }

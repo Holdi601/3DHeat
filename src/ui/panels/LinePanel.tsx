@@ -6,6 +6,8 @@ import { Check, Section, Segmented, Slider } from '../controls';
 import { JumpChart } from './JumpChart';
 import { int, t } from '../../i18n';
 import { lengthText, useUnits } from '../../state/unitsStore';
+import { SortControl } from '../sort/SortControl';
+import { useSort, useSorted } from '../sort/useSort';
 
 /** Values offered as chips at most; an event column is a handful, an id column is not one. */
 const MAX_VALUES = 120;
@@ -38,6 +40,15 @@ export function LinePanel() {
       .filter((v) => v.value !== '' && v.count > 0)
       .sort((a, b) => b.count - a.count);
   }, [column]);
+  const sort = useSort<{ value: string; count: number }>(
+    'lines.values',
+    [
+      { id: 'count', label: t('ui.sort.rows'), key: (v) => v.count, kind: 'number' },
+      { id: 'name', label: t('ui.sort.name'), key: (v) => v.value },
+    ],
+    'count',
+  );
+  const sorted = useSorted(values, sort);
 
   // What the routes came to, read off the engine as it builds them.
   const [stats, setStats] = useState(engine?.live.lines ?? null);
@@ -71,7 +82,7 @@ export function LinePanel() {
 
   const chips = (which: 'starts' | 'ends' | 'points') => (
     <div className="line-chips">
-      {values.slice(0, MAX_VALUES).map((v) => (
+      {sorted.slice(0, MAX_VALUES).map((v) => (
         <button
           key={v.value}
           className={`chip-toggle${lines[which].includes(v.value) ? ' on' : ''}`}
@@ -149,6 +160,7 @@ export function LinePanel() {
         <div className="hint">{t('heat.linePanel.wholeTracks')}</div>
       ) : (
         <>
+          {values.length > 1 && <SortControl sort={sort} />}
           <div className="label">
             <span>{t('heat.linePanel.starts')}</span>
           </div>

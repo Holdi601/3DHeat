@@ -4,8 +4,11 @@ import { useStore } from '../../state/store';
 import { useReplayStore } from '../../state/replayStore';
 import type { Dataset, FilterSpec } from '../../state/types';
 import { rgbToCss, teamBaseColor } from '../../render/colors';
-import { int, t } from '../../i18n';
+import { int, t, useLang } from '../../i18n';
 import { Check, Section } from '../controls';
+import { SortControl } from '../sort/SortControl';
+import { sortList } from '../sort/order';
+import { useSort } from '../sort/useSort';
 import { usePlayhead } from './hooks';
 import { personAt, sortUnits, unitsInPlay, unitsOf, vehicleOf, type Unit, type UnitKind } from './units';
 import { teamName } from './replayView';
@@ -56,13 +59,28 @@ export function UnitList() {
     const f = filters.find((x) => x.kind === 'categories' && /^(match(_?id)?|source file)$/i.test(x.column.trim()));
     return unitsInPlay(dataset, session, f && f.kind === 'categories' ? { column: f.column, allowed: f.allowed } : null);
   }, [dataset, session, filters]);
+  const sort = useSort<Unit>(
+    'replay.units',
+    [
+      { id: 'name', label: t('ui.sort.name'), key: (u) => u.name },
+      { id: 'team', label: t('ui.sort.team'), key: (u) => (dataset && u.team >= 0 ? teamName(dataset, u.team) : null) },
+      { id: 'vehicle', label: t('ui.sort.vehicle'), key: (u) => u.vehicle },
+      { id: 'time', label: t('ui.sort.time'), key: (u) => u.spans[0]?.[0], kind: 'number', dir: 'asc' },
+    ],
+    'name',
+  );
+  const language = useLang();
   const groups = useMemo(() => {
     if (!index) return null;
     const q = query.trim().toLowerCase();
     const match = (u: Unit) => (!inPlay || inPlay.has(u.key)) && (!q || u.name.toLowerCase().includes(q) || u.vehicles.some((v) => v.toLowerCase().includes(q)));
-    const by = (k: UnitKind) => sortUnits(index.units.filter((u) => u.kind === k && match(u) && (decoys || !u.decoy)));
+    // Name order first (quick, by rank); another sort refines it, so ties stay by name.
+    const { option, dir } = sort;
+    const order = (list: Unit[]) => (option.id === 'name' ? sortList(list, null, 'text', dir) : sortList(list, option.key, option.kind ?? 'text', dir, language));
+    const by = (k: UnitKind) => order(sortUnits(index.units.filter((u) => u.kind === k && match(u) && (decoys || !u.decoy))));
     return { player: by('player'), ai: by('ai'), weapon: by('weapon'), decoys: index.units.reduce((n, u) => n + (u.decoy && match(u) ? 1 : 0), 0) };
-  }, [index, query, inPlay, decoys]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [index, query, inPlay, decoys, sort.by, sort.dir, language]);
   if (!dataset || !index || !groups || index.units.length === 0) return null;
   const visible = (u: Unit) => !allowed || u.persons.some((p) => allowed.has(p));
   const live = (u: Unit) => u.spans.some(([a, b]) => a <= now && now <= b);
@@ -159,6 +177,7 @@ export function UnitList() {
   return (
     <Section title={t('replay.units.title')} defaultOpen right={<span className="count">{int(inPlay ? inPlay.size : index.units.length)}</span>}>
       <input className="unit-search" type="search" placeholder={t('replay.units.search')} value={query} onChange={(e) => setQuery(e.target.value)} />
+      {index.units.length > 1 && <SortControl sort={sort} />}
       {block('player', groups.player, true)}
       {block('ai', groups.ai, groups.player.length === 0 || !!query)}
       {block('weapon', groups.weapon, !!query)}

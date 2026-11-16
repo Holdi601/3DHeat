@@ -5,6 +5,10 @@ import { useStore } from '../../state/store';
 import { selectedVolume, useVolumeStore } from '../../volumes/store';
 import { DirectionSpot } from '../DirectionSpot';
 import { Check, Section, Segmented, Slider } from '../controls';
+import { SortControl } from '../sort/SortControl';
+import { useSort, useSorted } from '../sort/useSort';
+
+const NO_KINDS: string[] = [];
 
 /** Directional heat's settings: the source, the wedge, the field, and directions on click (render/direction.ts). */
 export function DirectionSection() {
@@ -18,6 +22,15 @@ export function DirectionSection() {
   const on = heat.wedgeOpening < 360 || heat.dirField !== 'off' || heat.dirOnClick;
   const found = counts ? Object.values(counts).reduce((a, b) => a + b, 0) : 0;
   const events = dataset ? eventColumn(dataset) : null;
+  const sort = useSort<string>(
+    'direction.kinds',
+    [
+      { id: 'name', label: t('ui.sort.name'), key: (k) => k },
+      { id: 'order', label: t('ui.sort.order'), key: null },
+    ],
+    'name',
+  );
+  const kinds = useSorted(events?.categories ?? NO_KINDS, sort);
   const setKind = (kind: string, v: string) => {
     const by = { ...heat.dirSourceBy };
     if (v === '') delete by[kind];
@@ -36,7 +49,8 @@ export function DirectionSection() {
       {events && events.categories.length <= 40 && (
         <details>
           <summary>{t('direction.byEvent', { column: events.name })}</summary>
-          {events.categories.map((kind) => (
+          {events.categories.length > 1 && <SortControl sort={sort} />}
+          {kinds.map((kind) => (
             <div className="line" key={kind}>
               <span>{kind || '—'}</span>
               <select value={heat.dirSourceBy[kind] ?? ''} onChange={(e) => setKind(kind, e.target.value)}>

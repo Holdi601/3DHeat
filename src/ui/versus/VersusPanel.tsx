@@ -35,6 +35,9 @@ import { useEngine } from '../EngineContext';
 import { columnLabel, valueLabel } from '../panels/FilterPanel';
 import { BarChart, INK, Legend, LineChart, OTHER_COLOR, PALETTE, PieChart, Scatter, svgPng, svgText, type BarMode, type Cell, type ChartData, type ChartEvents, type Ent, type Point } from './charts';
 import { MoreChart, MORE_CHARTS, type MoreKind } from './chartsMore';
+import { SortControl, SortTh } from '../sort/SortControl';
+import { useSort, useSorted, type SortOption } from '../sort/useSort';
+import { sortList } from '../sort/order';
 import './versus.css';
 
 export type ChartKind = 'table' | 'bar' | 'column' | 'line' | 'area' | 'pie' | 'donut' | 'scatter' | MoreKind;
@@ -376,6 +379,24 @@ function VersusBody() {
 
 function Setup({ ds, schema, all, visible, errors }: { ds: Dataset; schema: Schema; all: MetricDef[]; visible: { id: string; name: string; color: string }[]; errors: { groups: (ExprError | null)[]; metrics: Map<string, ExprError> } }) {
   const ui = useVersus();
+  const metricSort = useSort<MetricDef>(
+    'versus.statistics',
+    [
+      { id: 'name', label: t('ui.sort.name'), key: (m) => metricName(m) },
+      { id: 'order', label: t('ui.sort.order'), key: null },
+    ],
+    'name',
+  );
+  const metricList = useSorted(all, metricSort);
+  const pinSort = useSort<Pin>(
+    'versus.pins',
+    [
+      { id: 'name', label: t('ui.sort.name'), key: (p) => p.name },
+      { id: 'order', label: t('ui.sort.order'), key: null },
+    ],
+    'name',
+  );
+  const pinList = useSorted(ui.pins, pinSort);
   const catCols = schema.cols.filter((c) => c.type === 'cat' && c.labels && c.labels.length > 1 && c.labels.length <= 100_000);
   const numCols = ds.attrs.filter((a) => a.kind === 'number' && a.max > a.min);
   const sourceCols = [ds.attrs.some((a) => a.name === SOURCE_COLUMN) ? SOURCE_COLUMN : null, ds.sessionId ? 'match' : null].filter((x): x is string => !!x);
@@ -490,8 +511,9 @@ function Setup({ ds, schema, all, visible, errors }: { ds: Dataset; schema: Sche
 
       <section>
         <h4>{t('versus.statistics')}</h4>
+        {all.length > 1 && <SortControl sort={metricSort} />}
         <div className="vs-metrics">
-          {all.map((m) => {
+          {metricList.map((m) => {
             const on = (ui.chosen ?? []).includes(m.id);
             const err = errors.metrics.get(m.id);
             return (
@@ -567,7 +589,8 @@ function Setup({ ds, schema, all, visible, errors }: { ds: Dataset; schema: Sche
       {ui.pins.length > 0 && (
         <section>
           <h4>{t('versus.pinned')}</h4>
-          {ui.pins.map((p) => (
+          {ui.pins.length > 1 && <SortControl sort={pinSort} />}
+          {pinList.map((p) => (
             <label key={p.id} className="vs-pin">
               <input type="checkbox" checked={ui.pinsShown.includes(p.id)} onChange={(e) => ui.set({ pinsShown: e.target.checked ? [...ui.pinsShown, p.id] : ui.pinsShown.filter((x) => x !== p.id) })} />
               {p.name}
@@ -980,23 +1003,45 @@ function tableCsv(model: Model): string {
 // ---------------------------------------------------------------------------
 // Table: groups x statistics, the difference from the reference and its interval
 
+type TableRow = { g: GEnt; s: (Ent & { s: number }) | null };
+
 function Table({ model, onPick, focus }: { model: Model; onPick: (g: string, s: string | null) => void; focus: string | null }) {
   const { res } = model.view;
-  const rows: { g: GEnt; s: (Ent & { s: number }) | null }[] = [];
-  for (const g of model.gEnts) {
-    rows.push({ g, s: null });
-    if (!g.pin) for (const s of model.sEnts) if (s.s !== -1 && model.rowOf(g, s.s) >= 0) rows.push({ g, s });
-  }
+  const language = useLang();
+  // The groups sorted, and each group's split rows under it sorted the same way.
+  const sort = useSort<TableRow>(
+    'versus.table',
+    [
+      { id: 'order', label: t('ui.sort.order'), key: null },
+      { id: 'name', label: t('ui.sort.name'), key: (r) => (r.s ? r.s.label : r.g.label) },
+      ...model.metrics.flatMap((m, mi): SortOption<TableRow>[] =>
+        m.id.startsWith('__') ? [] : [{ id: `m:${m.id}`, label: m.label, key: (r) => model.cell(r.g, r.s ? r.s.s : -1, -1, mi)?.v ?? null, kind: 'number' }],
+      ),
+    ],
+    'order',
+  );
+  const rows = useMemo(() => {
+    const by = (list: TableRow[]) => sortList(list, sort.option.key, sort.option.kind ?? 'text', sort.dir, language);
+    const out: TableRow[] = [];
+    for (const top of by(model.gEnts.map((g) => ({ g, s: null })))) {
+      out.push(top);
+      const g = top.g;
+      if (!g.pin) out.push(...by(model.sEnts.filter((s) => s.s !== -1 && model.rowOf(g, s.s) >= 0).map((s) => ({ g, s }))));
+    }
+    return out;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [model, sort.by, sort.dir, language]);
   return (
     <div className="vs-scroll">
+      {model.gEnts.length > 1 && <SortControl sort={sort} />}
       <table className="cmp-table vs-table">
         <thead>
           <tr>
-            <th />
+            <SortTh sort={sort} id="name" />
             {model.metrics.map((m) => m.id.startsWith('__') ? null : (
-              <th key={m.id} title={m.expr}>
+              <SortTh sort={sort} id={`m:${m.id}`} key={m.id} title={m.expr}>
                 {m.label}
-              </th>
+              </SortTh>
             ))}
           </tr>
         </thead>

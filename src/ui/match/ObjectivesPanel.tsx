@@ -9,6 +9,8 @@ import { matchesOf, pickedMatches, pickMatches } from '../../match/matches';
 import type { GameMatch } from '../../match/wtMatch';
 import type { Dataset } from '../../state/types';
 import { Check, Section } from '../controls';
+import { SortControl } from '../sort/SortControl';
+import { useSort, useSorted } from '../sort/useSort';
 import { useEngine } from '../EngineContext';
 import { teamMemberColor } from '../../render/colors';
 import './objectives.css';
@@ -44,15 +46,28 @@ export function ObjectivesPanel() {
   const store = useObjectivesStore.getState();
   const modes = useMemo(() => (dataset ? matchModes(dataset, games) : []), [dataset, games]);
   const any = games.some((g) => g.objectives && g.objectives.length);
-  if (!dataset || (!any && !modes.some((m) => m.mode))) return null;
   // The modes loaded, how many matches each.
-  const byMode = new Map<string, { name: string; indices: number[] }>();
-  for (const m of modes) {
-    if (!m.mode) continue;
-    const e = byMode.get(m.mode);
-    if (e) e.indices.push(m.index);
-    else byMode.set(m.mode, { name: m.name, indices: [m.index] });
-  }
+  const byMode = useMemo(() => {
+    const out = new Map<string, { mode: string; name: string; indices: number[] }>();
+    for (const m of modes) {
+      if (!m.mode) continue;
+      const e = out.get(m.mode);
+      if (e) e.indices.push(m.index);
+      else out.set(m.mode, { mode: m.mode, name: m.name, indices: [m.index] });
+    }
+    return [...out.values()];
+  }, [modes]);
+  const modeSort = useSort<(typeof byMode)[number]>(
+    'objectives.modes',
+    [
+      { id: 'name', label: t('ui.sort.name'), key: (e) => e.name },
+      { id: 'count', label: t('ui.sort.count'), key: (e) => e.indices.length, kind: 'number' },
+      { id: 'order', label: t('ui.sort.order'), key: null },
+    ],
+    'name',
+  );
+  const sortedModes = useSorted(byMode, modeSort);
+  if (!dataset || (!any && !modes.some((m) => m.mode))) return null;
   const set = matchesOf(dataset);
   const picked = pickedMatches(set, filters, session);
   const pickedSet = picked === null ? null : new Set(picked);
@@ -158,11 +173,12 @@ export function ObjectivesPanel() {
       ) : (
         <div className="hint">{t('objectives.none')}</div>
       )}
-      {byMode.size > 1 && (
+      {byMode.length > 1 && (
         <div className="field">
           <div className="label">
             <span>{t('objectives.mode')}</span>
           </div>
+          <SortControl sort={modeSort} />
           <div className="chips">
             {!replay && (
               <button
@@ -173,7 +189,7 @@ export function ObjectivesPanel() {
                 {t('objectives.modeAll')} <span className="dim">{int(set.entries.length)}</span>
               </button>
             )}
-            {[...byMode.entries()].map(([m, e]) => (
+            {sortedModes.map(({ mode: m, ...e }) => (
               <button
                 key={m}
                 className={`chip${modeIsOn(m, e.indices) ? ' on' : ''}`}

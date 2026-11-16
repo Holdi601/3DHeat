@@ -7,15 +7,19 @@ import { int, t } from '../../i18n';
 import { Check, Section } from '../controls';
 import { download, eventsCsv } from './stats';
 import { useEngine } from '../EngineContext';
-import { defaultEventKinds, eventBursts, eventRows, eventText, eventWords } from './replayData';
+import { defaultEventKinds, eventBursts, eventRows, eventText, eventWords, type EventBurst } from './replayData';
 import { clock } from './hooks';
 import { partyName, sortUnits, unitsOf } from './units';
 import { flyTo } from './replayView';
 import { useObjectivesStore } from '../../state/objectivesStore';
-import { captureMarks, objectiveSources } from '../../render/objectives';
+import { captureMarks, objectiveSources, type CaptureMark } from '../../render/objectives';
+import { SortControl } from '../sort/SortControl';
+import { useSort, useSorted } from '../sort/useSort';
 
 /** The chip of the battles' captures (`objectives.ts`), apart from the data's own event kinds. */
 const CAPTURE = '@capture';
+
+const NO_CAPTURES: CaptureMark[] = [];
 
 /** Lines the list shows at most; the filters narrow the rest. */
 const MAX_ROWS = 600;
@@ -95,7 +99,41 @@ export function EventList() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataset, events, index, filters, session, effective.join('|'), unitKey]);
   const shown = listed.bursts;
-  const capturesShown = effective.includes(CAPTURE) ? captures : [];
+  const capturesShown = effective.includes(CAPTURE) ? captures : NO_CAPTURES;
+
+  const kindSort = useSort<[string, number]>(
+    'replay.eventKinds',
+    [
+      { id: 'name', label: t('ui.sort.name'), key: ([k]) => (k === CAPTURE ? t('objectives.events.chip') : eventWords(k)) },
+      { id: 'count', label: t('ui.sort.count'), key: ([, n]) => n, kind: 'number' },
+    ],
+    'name',
+  );
+  const kindChips = useSorted(counts, kindSort);
+  // Every line in time order, the sort then; the list shows the first MAX_ROWS of that.
+  const merged = useMemo(
+    () => (dataset?.time && events ? mergeByTime<EventBurst, CaptureMark>(shown, (b) => dataset.time![events.rows[b.first]], capturesShown, (c) => c.t) : []),
+    [dataset, events, shown, capturesShown],
+  );
+  const sort = useSort<EventBurst | CaptureMark>(
+    'replay.events',
+    [
+      { id: 'time', label: t('ui.sort.time'), key: null },
+      { id: 'kind', label: t('ui.sort.kind'), key: (x) => ('zone' in x ? t('objectives.events.chip') : events ? eventWords(events.labels[x.first]) : null) },
+      {
+        id: 'player',
+        label: t('ui.sort.player'),
+        key: (x) => {
+          if ('zone' in x || !events || !index) return null;
+          const p = events.persons[x.first];
+          return p >= 0 ? index.units[index.personUnit[p]]?.name : null;
+        },
+      },
+      { id: 'count', label: t('ui.sort.count'), key: (x) => ('zone' in x ? 1 : x.count), kind: 'number' },
+    ],
+    'time',
+  );
+  const lines = useSorted(merged, sort, [events, index]);
 
   if (!dataset || !events || events.rows.length === 0 || !dataset.time || !index) return null;
   // Names of the units a summary knows that have no track: what a bomb destroyed.
@@ -117,8 +155,9 @@ export function EventList() {
 
   return (
     <Section title={t('replay.events.title')} defaultOpen right={<span className="count">{int(shown.length + capturesShown.length)}</span>}>
+      {counts.length > 1 && <SortControl sort={kindSort} />}
       <div className="chips">
-        {counts.map(([k, n]) => (
+        {kindChips.map(([k, n]) => (
           <button key={k} className={`chip${effective.includes(k) ? ' on' : ''}`} onClick={() => toggleKind(k)} title={t('replay.events.kindTitle')}>
             {k === CAPTURE ? t('objectives.events.chip') : eventWords(k)} <span className="dim">{int(n)}</span>
           </button>
@@ -172,8 +211,9 @@ export function EventList() {
           {t('replay.events.csv')}
         </button>
       </div>
+      {merged.length > 1 && <SortControl sort={sort} />}
       <div className="replay-events event-list">
-        {mergeByTime(shown.slice(0, MAX_ROWS), (b) => time[events.rows[b.first]], capturesShown, (c) => c.t).map((item) => {
+        {lines.slice(0, MAX_ROWS).map((item) => {
           if ('zone' in item) {
             const c = item;
             return (
@@ -217,7 +257,7 @@ export function EventList() {
             </button>
           );
         })}
-        {shown.length > MAX_ROWS && <div className="hint">{t('replay.events.more', { count: shown.length - MAX_ROWS })}</div>}
+        {lines.length > MAX_ROWS && <div className="hint">{t('replay.events.more', { count: lines.length - MAX_ROWS })}</div>}
         {shown.length === 0 && capturesShown.length === 0 && <div className="hint">{t('replay.events.none')}</div>}
       </div>
     </Section>

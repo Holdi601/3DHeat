@@ -1,17 +1,17 @@
 import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { classOf, type Finding, type Phase } from '../../race/analysis';
+import { classOf, type Finding, type Phase, type Segment } from '../../race/analysis';
 import { carBody } from '../../race/carMatch';
 import type { BodyKind } from '../../race/carBodies';
 import type { CarPack } from '../../race/carPack';
 import { carKey } from '../../race/envelope';
 import type { CarProfile } from '../../race/profile';
-import { describeBasis, describeEvent, FAULTS, type ControlKind, type ControlSummary } from '../../race/control';
+import { describeBasis, describeEvent, FAULTS, type ControlEvent, type ControlKind, type ControlSummary } from '../../race/control';
 import { CAUSE_COLORS, rgbCss } from '../../race/geometry';
 import { carLabel, formatLapTime, unnamedCar, type LapTrace } from '../../race/lap';
 import type { LineMetrics } from '../../race/line';
 import { withUnit } from '../../race/schema';
 import { causeGroup, lapColors } from '../../race/scene';
-import { SHOW_ALL_UP_TO, useRaceStore, type RaceMap } from '../../state/raceStore';
+import { SHOW_ALL_UP_TO, useRaceStore, type CourseChoice, type RaceMap } from '../../state/raceStore';
 import { useStore } from '../../state/store';
 import { Check, Section, Segmented, Slider } from '../controls';
 import { openPicker } from '../../data/filePick';
@@ -22,6 +22,8 @@ import { lineUpAt, loadCarFile, loadDemoLaps, loadLapFiles, restoreCarFiles, sho
 import { StatsSection } from './StatsSection';
 import { lengthArg, unitPrefs, useUnits } from '../../state/unitsStore';
 import { formatIn } from '../../units/format';
+import { SortControl, SortTh } from '../sort/SortControl';
+import { useSort, useSorted, type Sort } from '../sort/useSort';
 
 export function signed(v: number, digits = 3): string {
   if (!Number.isFinite(v)) return '—';
@@ -160,6 +162,30 @@ function LapsSection() {
   const courses = useRaceStore((s) => s.courses);
   const ref = analysis?.alignment.reference;
   const classes = analysis?.classBest.size ?? 0;
+  // Against the best of its own class: what it is compared with.
+  const bestOf = (lap: LapTrace) => laps.find((l) => l.id === analysis?.classBest.get(classOf(lap))) ?? ref;
+  const sort = useSort<LapTrace>(
+    'race.laps',
+    [
+      { id: 'lap', label: t('ui.sort.lap'), key: null },
+      { id: 'time', label: t('ui.sort.time'), key: (l) => l.seconds, kind: 'number', dir: 'asc' },
+      { id: 'difference', label: t('ui.sort.difference'), key: (l) => l.seconds - (bestOf(l)?.seconds ?? NaN), kind: 'number', dir: 'asc' },
+      { id: 'vehicle', label: t('ui.sort.vehicle'), key: (l) => carLabel(l.car) },
+      { id: 'name', label: t('ui.sort.name'), key: (l) => l.label },
+    ],
+    'lap',
+  );
+  const sorted = useSorted(laps, sort, [analysis]);
+  const courseSort = useSort<CourseChoice>(
+    'race.courses',
+    [
+      { id: 'name', label: t('ui.sort.name'), key: (c) => c.name },
+      { id: 'count', label: t('ui.sort.count'), key: (c) => c.laps, kind: 'number' },
+      { id: 'order', label: t('ui.sort.order'), key: null },
+    ],
+    'name',
+  );
+  const courseList = useSorted(courses ?? [], courseSort);
 
   return (
     <Section title={t('race.ui.laps.title')} defaultOpen right={<span className="count">{laps.length || ''}</span>}>
@@ -202,7 +228,8 @@ function LapsSection() {
       {courses && (
         <div className="course-choice">
           <div className="hint">{t('race.ui.laps.courses', { count: courses.length })}</div>
-          {courses.map((c) => (
+          {courses.length > 1 && <SortControl sort={courseSort} />}
+          {courseList.map((c) => (
             <button key={c.key} onClick={c.load}>
               <span>{c.name}</span>
               <span className="mono">{t('race.ui.laps.courseLaps', { count: c.laps })}</span>
@@ -231,13 +258,12 @@ function LapsSection() {
           })}
         </div>
       )}
+      {laps.length > 1 && <SortControl sort={sort} />}
       <div className="lap-list">
-        {laps.map((lap) => {
+        {sorted.map((lap) => {
           const isRef = lap === ref;
           const aligned = analysis?.alignment.laps.find((l) => l.lap === lap);
-          // Against the best of its own class: what it is compared with.
-          const bestId = analysis?.classBest.get(classOf(lap));
-          const best = laps.find((l) => l.id === bestId) ?? ref;
+          const best = bestOf(lap);
           const isBest = classes > 1 && lap === best && !isRef;
           const gap = best ? lap.seconds - best.seconds : Number.NaN;
           return (
@@ -396,6 +422,21 @@ function FindingRow({
   );
 }
 
+/** A finding and its place in the analysis' list. */
+type Ranked = { f: Finding; i: number };
+
+/** The top findings of a kind, in the sort picked; each keeps its rank by cost. */
+function Findings({ items, sort, top, color }: { items: Ranked[]; sort: Sort<Ranked>; top: number; color: (f: Finding) => string }) {
+  const sorted = useSorted(items, sort);
+  return (
+    <>
+      {sorted.map((x) => (
+        <FindingRow key={x.i} f={x.f} index={x.i} rank={items.indexOf(x) + 1} top={top} color={color(x.f)} />
+      ))}
+    </>
+  );
+}
+
 /**
  * When the laps' own steering and suspension say the course is drawn the wrong
  * way round - a right-hand bend shown as a left-hand one - offer the fix.
@@ -431,6 +472,14 @@ function InsightsSection() {
   const [showCar, setShowCar] = useState(true);
   const [showGains, setShowGains] = useState(true);
   const colors = useMemo(() => lapColors({ laps }), [laps]);
+  const sort = useSort<Ranked>(
+    'race.findings',
+    [
+      { id: 'importance', label: t('ui.sort.importance'), key: null },
+      { id: 'corner', label: t('race.ui.corners.corner'), key: (x) => x.f.corner, kind: 'number', dir: 'asc' },
+    ],
+    'importance',
+  );
   if (!analysis || !focusId) {
     return (
       <Section title={t('race.ui.insights.title')} defaultOpen>
@@ -511,11 +560,10 @@ function InsightsSection() {
           </span>
         ))}
       </div>
+      {mine.length > 1 && <SortControl sort={sort} />}
       <div className="findings">
         {driver.length === 0 && <div className="hint">{t('race.ui.insights.nothing')}</div>}
-        {driver.slice(0, 12).map(({ f, i }, k) => (
-          <FindingRow key={i} f={f} index={i} rank={k + 1} top={top} color={lossColor(f)} />
-        ))}
+        <Findings items={driver.slice(0, 12)} sort={sort} top={top} color={lossColor} />
       </div>
       {other.length > 0 && (
         <>
@@ -526,9 +574,7 @@ function InsightsSection() {
           />
           {showCar && (
             <div className="findings">
-              {other.slice(0, 8).map(({ f, i }, k) => (
-                <FindingRow key={i} f={f} index={i} rank={k + 1} top={top} color={lossColor(f)} />
-              ))}
+              <Findings items={other.slice(0, 8)} sort={sort} top={top} color={lossColor} />
             </div>
           )}
         </>
@@ -542,9 +588,7 @@ function InsightsSection() {
           />
           {showGains && (
             <div className="findings">
-              {gains.slice(0, 10).map(({ f, i }, k) => (
-                <FindingRow key={i} f={f} index={i} rank={k + 1} top={top} color={colour(f.lapId)} />
-              ))}
+              <Findings items={gains.slice(0, 10)} sort={sort} top={top} color={(f) => colour(f.lapId)} />
             </div>
           )}
         </>
@@ -568,6 +612,21 @@ function apexLabel(apex: LineMetrics['apex']): string {
   }
 }
 
+/** `items` in `sort`'s order, each drawn by `children`. */
+function Sorted<T>({ items, sort, children }: { items: readonly T[]; sort: Sort<T>; children: (item: T) => ReactNode }) {
+  const sorted = useSorted(items, sort);
+  return <>{sorted.map((item) => children(item))}</>;
+}
+
+/** A row of the corner table. */
+interface CornerRow {
+  seg: Segment;
+  quickest: { id: string; t: number } | undefined;
+  margin: number;
+  behind: number;
+  line: LineMetrics | null;
+}
+
 /** Who was quickest through each corner, on which line - and the best of them put together. */
 function CornersSection() {
   const analysis = useRaceStore((s) => s.analysis);
@@ -575,6 +634,17 @@ function CornersSection() {
   const focusId = useRaceStore((s) => s.focusId);
   const engine = useEngine();
   const colors = useMemo(() => lapColors({ laps }), [laps]);
+  const sort = useSort<CornerRow>(
+    'race.corners',
+    [
+      { id: 'corner', label: t('race.ui.corners.corner'), key: (r) => r.seg.corner, kind: 'number', dir: 'asc' },
+      { id: 'quickest', label: t('race.ui.corners.quickest'), key: (r) => (r.quickest ? analysis?.names.get(r.quickest.id) : null) },
+      { id: 'by', label: t('race.ui.corners.by'), key: (r) => r.margin, kind: 'number' },
+      { id: 'line', label: t('race.ui.corners.line'), key: (r) => (r.line ? `${SHAPE[r.line.shape]} ${r.line.apex}` : null) },
+      { id: 'behind', label: t('ui.sort.difference'), key: (r) => r.behind, kind: 'number' },
+    ],
+    'corner',
+  );
   if (!analysis || analysis.segments.length === 0 || laps.length < 2) return null;
   const step = analysis.alignment.grid[1] - analysis.alignment.grid[0];
   const name = (id: string) => analysis.names.get(id) ?? '';
@@ -584,7 +654,7 @@ function CornersSection() {
   const ids = analysis.alignment.laps.filter((l) => !multi || classOf(l.lap) === cls).map((l) => l.lap.id);
   let best = 0;
   let complete = true;
-  const rows = analysis.segments.map((seg, k) => {
+  const rows: CornerRow[] = analysis.segments.map((seg, k) => {
     const times = ids
       .map((id) => ({ id, t: analysis.segmentTimes.get(id)!.corners[k] }))
       .filter((x) => Number.isFinite(x.t))
@@ -627,15 +697,20 @@ function CornersSection() {
       <table className="corner-table mono">
         <thead>
           <tr>
-            <th>{t('race.ui.corners.corner')}</th>
-            <th>{t('race.ui.corners.quickest')}</th>
-            <th>{t('race.ui.corners.by')}</th>
-            <th>{t('race.ui.corners.line')}</th>
-            {focusId && <th title={t('race.ui.corners.focusTitle', { name: name(focusId) })}>{narrow(focusId)}</th>}
+            <SortTh sort={sort} id="corner">{t('race.ui.corners.corner')}</SortTh>
+            <SortTh sort={sort} id="quickest">{t('race.ui.corners.quickest')}</SortTh>
+            <SortTh sort={sort} id="by">{t('race.ui.corners.by')}</SortTh>
+            <SortTh sort={sort} id="line">{t('race.ui.corners.line')}</SortTh>
+            {focusId && (
+              <SortTh sort={sort} id="behind" title={t('race.ui.corners.focusTitle', { name: name(focusId) })}>
+                {narrow(focusId)}
+              </SortTh>
+            )}
           </tr>
         </thead>
         <tbody>
-          {rows.map(({ seg, quickest, margin, behind, line }) => (
+          <Sorted items={rows} sort={sort}>
+          {({ seg, quickest, margin, behind, line }) => (
             <tr key={seg.corner} onClick={() => open(seg.corner, seg.start)} title={t('race.ui.corners.lookAt')}>
               <td>{seg.label}</td>
               <td className="who">
@@ -666,7 +741,8 @@ function CornersSection() {
               </td>
               {focusId && <td>{Number.isFinite(behind) ? `+${num(behind, 2)}` : focusId === quickest?.id ? '✓' : '—'}</td>}
             </tr>
-          ))}
+          )}
+          </Sorted>
         </tbody>
       </table>
       {complete && (
@@ -703,6 +779,9 @@ const controlRows = (): Array<[ControlKind[], string]> => [
   [['handbrake'], t('race.ui.control.rows.handbrake')],
   [['airborne'], t('race.ui.control.rows.airborne')],
 ];
+
+/** A row of the car-control table, with its counts to sort by. */
+type ControlRow = { kinds: ControlKind[]; label: string; mine: number; theirs: number };
 
 /** What kind of event it was, as its chip says. */
 function kindLabel(kind: ControlKind): string {
@@ -756,6 +835,25 @@ function ControlSection() {
   const engine = useEngine();
   const [all, setAll] = useState(false);
   const [open, setOpen] = useState<number | null>(null);
+  const sort = useSort<ControlRow>(
+    'race.control',
+    [
+      { id: 'order', label: t('ui.sort.order'), key: null },
+      { id: 'kind', label: t('ui.sort.kind'), key: (r) => r.label },
+      { id: 'mine', label: analysis?.names.get(focusId ?? '') || t('ui.sort.count'), key: (r) => r.mine, kind: 'number' },
+      { id: 'theirs', label: t('ui.sort.count'), key: (r) => r.theirs, kind: 'number' },
+    ],
+    'order',
+  );
+  const faultSort = useSort<ControlEvent>(
+    'race.faults',
+    [
+      { id: 'importance', label: t('ui.sort.importance'), key: null },
+      { id: 'distance', label: t('ui.sort.distance'), key: (e) => e.from, kind: 'number', dir: 'asc' },
+      { id: 'kind', label: t('ui.sort.kind'), key: (e) => kindLabel(e.kind) },
+    ],
+    'importance',
+  );
   if (!analysis || !focusId) return null;
   const lap = laps.find((l) => l.id === focusId);
   const events = analysis.control.get(focusId) ?? [];
@@ -784,21 +882,26 @@ function ControlSection() {
       <table className="corner-table mono control-table">
         <thead>
           <tr>
-            <th />
-            <th>{name(focusId)}</th>
-            {theirs && <th>{name(theirs.lapId)}</th>}
+            <SortTh sort={sort} id="kind" />
+            <SortTh sort={sort} id="mine">{name(focusId)}</SortTh>
+            {theirs && <SortTh sort={sort} id="theirs">{name(theirs.lapId)}</SortTh>}
           </tr>
         </thead>
         <tbody>
-          {controlRows()
-            .filter(([k]) => count(summary, k) + count(theirs, k) > 0)
-            .map(([kinds, label]) => (
+          <Sorted
+            items={controlRows()
+              .map(([kinds, label]) => ({ kinds, label, mine: count(summary, kinds), theirs: count(theirs, kinds) }))
+              .filter((r) => r.mine + r.theirs > 0)}
+            sort={sort}
+          >
+            {({ kinds, label }) => (
               <tr key={kinds[0]}>
                 <td>{label}</td>
                 <td>{cell(summary, kinds)}</td>
                 {theirs && <td>{cell(theirs, kinds)}</td>}
               </tr>
-            ))}
+            )}
+          </Sorted>
           {drift && (
             <tr>
               <td>{t('race.ui.control.mostDrift')}</td>
@@ -816,9 +919,12 @@ function ControlSection() {
               : t('race.ui.control.nothingOther', { name: name(focusId) })}
           </div>
         )}
-        {faults.slice(0, 12).map((e, k) => {
+        {faults.length > 1 && <SortControl sort={faultSort} />}
+        <Sorted items={faults.slice(0, 12)} sort={faultSort}>
+        {(e) => {
           const said = describeEvent(e, name(e.lapId), name(e.againstId), lap, step);
           const i = events.indexOf(e);
+          const k = faults.indexOf(e);
           return (
             <button
               key={i}
@@ -840,7 +946,8 @@ function ControlSection() {
               </span>
             </button>
           );
-        })}
+        }}
+        </Sorted>
       </div>
       <Check
         label={t('race.ui.control.showShared')}

@@ -9,6 +9,7 @@ import {
   mistakeCount,
   mistakeLabel,
   type CornerStat,
+  type CourseMistake,
   type Mistake,
   type MistakeCount,
   type Occurrence,
@@ -20,10 +21,14 @@ import { useEngine } from '../EngineContext';
 import { int, list, num, t } from '../../i18n';
 import { openMistakesInHeatmap, showEvent, showFinding } from './actions';
 import { secs } from './RacePanel';
+import { SortControl } from '../sort/SortControl';
+import { useSort, useSorted } from '../sort/useSort';
 
 /** From this many laps the statistics say something. */
 const FROM_LAPS = 3;
 const BAR = rgbCss(mistakeColor(0.85));
+const NO_MISTAKES: CourseMistake[] = [];
+const NO_CORNERS: CornerStat[] = [];
 
 /** Bring a corner into view. */
 function frameSegment(analysis: Analysis, segment: number, engine: Engine | null): void {
@@ -57,6 +62,26 @@ export function StatsSection() {
   const [busy, setBusy] = useState(false);
   const ids = useMemo(() => (analysis ? lapsIn(analysis, mass.classes) : new Set<string>()), [analysis, mass.classes]);
   const stats = useMemo(() => (analysis ? courseStats(analysis, ids) : null), [analysis, ids]);
+  const mistakeSort = useSort<CourseMistake>(
+    'raceStats.mistakes',
+    [
+      { id: 'count', label: t('ui.sort.count'), key: (m) => m.laps, kind: 'number' },
+      { id: 'time', label: t('ui.sort.time'), key: (m) => m.cost, kind: 'number' },
+      { id: 'name', label: t('ui.sort.name'), key: (m) => mistakeLabel(m.mistake) },
+    ],
+    'count',
+  );
+  const mistakes = useSorted(stats?.mistakes ?? NO_MISTAKES, mistakeSort);
+  const cornerSort = useSort<CornerStat>(
+    'raceStats.corners',
+    [
+      { id: 'corner', label: t('race.ui.corners.corner'), key: (c) => c.segment, kind: 'number', dir: 'asc' },
+      { id: 'time', label: t('ui.sort.time'), key: (c) => c.lost, kind: 'number' },
+      { id: 'count', label: t('ui.sort.count'), key: (c) => c.losing, kind: 'number' },
+    ],
+    'corner',
+  );
+  const corners = useSorted(stats?.corners ?? NO_CORNERS, cornerSort);
   if (!analysis || !stats || analysis.alignment.laps.length < FROM_LAPS) return null;
   const store = useRaceStore.getState();
   const classes = classesOf(analysis);
@@ -75,7 +100,7 @@ export function StatsSection() {
     store.patchView({ map: 'mistakes' });
     if (open !== null) frameSegment(analysis, open, engine);
   };
-  const listed = allMistakes ? stats.mistakes : stats.mistakes.slice(0, 8);
+  const listed = allMistakes ? mistakes : mistakes.slice(0, 8);
   return (
     <Section title={t('race.ui.stats.title')} defaultOpen right={<span className="count">{stats.laps}</span>}>
       <div className="hint">
@@ -97,6 +122,7 @@ export function StatsSection() {
       )}
       <div className="stats-heading">{t('race.ui.stats.mostWrong')}</div>
       {stats.mistakes.length === 0 && <div className="hint">{t('race.ui.stats.noMistakes')}</div>}
+      {stats.mistakes.length > 1 && <SortControl sort={mistakeSort} />}
       <div className="stat-list">
         {listed.map((m) => (
           <button
@@ -136,8 +162,9 @@ export function StatsSection() {
           ? t('race.ui.stats.cornersOf', { mistake: mistakeLabel(mass.mistake) })
           : t('race.ui.stats.corners')}
       </div>
+      {stats.corners.length > 1 && <SortControl sort={cornerSort} />}
       <div className="stat-list">
-        {stats.corners.map((c) => (
+        {corners.map((c) => (
           <CornerRow
             key={c.segment}
             c={c}
@@ -218,7 +245,16 @@ function MistakeDetail({
   onLap: (o: Occurrence) => void;
 }) {
   const [all, setAll] = useState(false);
-  const laps = all ? m.laps : m.laps.slice(0, 8);
+  const sort = useSort<Occurrence>(
+    'raceStats.laps',
+    [
+      { id: 'time', label: t('ui.sort.time'), key: (o) => o.cost, kind: 'number' },
+      { id: 'name', label: t('ui.sort.name'), key: (o) => analysis.names.get(o.lapId) },
+    ],
+    'time',
+  );
+  const sorted = useSorted(m.laps, sort);
+  const laps = all ? sorted : sorted.slice(0, 8);
   return (
     <div className="stat-detail">
       <p>
@@ -233,6 +269,7 @@ function MistakeDetail({
               each: num(m.cost / m.laps.length, 2),
             })}
       </p>
+      {m.laps.length > 1 && <SortControl sort={sort} />}
       <div className="stat-laps">
         {laps.map((o) => (
           <button key={o.lapId} className="link" onClick={() => onLap(o)} title={t('race.ui.stats.lookAtLap')}>

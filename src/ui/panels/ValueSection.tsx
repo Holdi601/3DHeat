@@ -4,6 +4,8 @@ import { int, num, t } from '../../i18n';
 import { useStore } from '../../state/store';
 import type { Dataset } from '../../state/types';
 import { Section, Segmented, Select } from '../controls';
+import { SortControl } from '../sort/SortControl';
+import { useSort, useSorted } from '../sort/useSort';
 
 /** A value column said in words: what it counts and in what. */
 export function valueColumnLabel(c: ValueColumn, money: 'usd' | 'eur' = 'usd'): string {
@@ -41,6 +43,16 @@ export function ValueSection() {
     return priced ? rough / priced : null;
   }, [dataset]);
   const options = useMemo(() => totals.map((x) => ({ value: x.col.name, label: valueColumnLabel(x.col, money) })), [totals, money]);
+  const sort = useSort<{ col: ValueColumn; total: number }>(
+    'value.totals',
+    [
+      { id: 'name', label: t('ui.sort.name'), key: (x) => valueColumnLabel(x.col, money) },
+      { id: 'value', label: t('ui.sort.value'), key: (x) => shownValue(x.total, x.col.currency, money), kind: 'number' },
+      { id: 'order', label: t('ui.sort.order'), key: null },
+    ],
+    'name',
+  );
+  const sorted = useSorted(totals, sort, [money]);
   if (!dataset) return null;
   const selected = totals.find((x) => x.col.name === heat.weightBy)?.col ?? null;
   return (
@@ -63,7 +75,8 @@ export function ValueSection() {
             />
           )}
           <div className="label">{t('value.totals')}</div>
-          {totals.map((x) => (
+          {totals.length > 1 && <SortControl sort={sort} />}
+          {sorted.map((x) => (
             <div className="value-total" key={x.col.name}>
               <span>{valueColumnLabel(x.col, money)}</span>
               <span>{int(shownValue(x.total, x.col.currency, money))}</span>

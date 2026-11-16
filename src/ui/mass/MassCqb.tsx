@@ -7,11 +7,13 @@
  * click loads the matches it came from.
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { int, num, t, useLang } from '../../i18n';
 import { askMass, drillDown, useMass } from '../../mass/client';
 import type { MassCqbRow } from '../../mass/cqb';
 import { useEngine } from '../EngineContext';
+import { SortTh } from '../sort/SortControl';
+import { useSort, useSorted } from '../sort/useSort';
 
 const pct = (v: number | null) => (v === null || !Number.isFinite(v) ? '—' : `${num(v * 100, 0)}%`);
 
@@ -34,9 +36,22 @@ export function MassCqb() {
       live = false;
     };
   }, [JSON.stringify(filter)]);
+  const kept = useMemo(() => (q.data?.rows ?? []).filter((r) => (byMap ? r.map !== '*' : r.map === '*')), [q.data, byMap]);
+  // The measure column is the summary's own order (measures grouped as written).
+  const sort = useSort<MassCqbRow>(
+    'mass.cqb',
+    [
+      { id: 'order', label: t('mass.cqb.col.measure'), key: null },
+      { id: 'map', label: t('ui.sort.map'), key: (r) => r.map },
+      { id: 'which', label: t('mass.cqb.col.which'), key: (r) => r.side || r.state },
+      { id: 'share', label: t('ui.sort.share'), key: (r) => r.share, kind: 'number' },
+      { id: 'count', label: t('ui.sort.count'), key: (r) => r.n, kind: 'number' },
+    ],
+    'order',
+  );
+  const rows = useSorted(kept, sort);
   if (!q.data) return <div className="hint">{q.error ?? t('mass.working')}</div>;
   const d = q.data;
-  const rows = d.rows.filter((r) => (byMap ? r.map !== '*' : r.map === '*'));
   return (
     <div>
       <div className="hint">{t('mass.cqb.hint', { with: int(d.withCounts), matches: int(d.matches) })}</div>
@@ -47,11 +62,11 @@ export function MassCqb() {
       <table className="cmp-table brk-table">
         <thead>
           <tr>
-            {byMap && <th>{t('mass.map')}</th>}
-            <th>{t('mass.cqb.col.measure')}</th>
-            <th>{t('mass.cqb.col.which')}</th>
-            <th>{t('mass.cqb.col.share')}</th>
-            <th>{t('mass.cqb.col.n')}</th>
+            {byMap && <SortTh sort={sort} id="map">{t('mass.map')}</SortTh>}
+            <SortTh sort={sort} id="order">{t('mass.cqb.col.measure')}</SortTh>
+            <SortTh sort={sort} id="which">{t('mass.cqb.col.which')}</SortTh>
+            <SortTh sort={sort} id="share">{t('mass.cqb.col.share')}</SortTh>
+            <SortTh sort={sort} id="count">{t('mass.cqb.col.n')}</SortTh>
           </tr>
         </thead>
         <tbody>

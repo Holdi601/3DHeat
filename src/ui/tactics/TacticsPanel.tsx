@@ -5,8 +5,11 @@ import { useStore } from '../../state/store';
 import { GAMES, gamePreset } from '../../tactics/games';
 import { figureLabel } from '../../tactics/names';
 import type { ArrowStyle } from '../../tactics/plan';
-import { num, t } from '../../i18n';
+import { num, t, useLang } from '../../i18n';
 import { useEngine } from '../EngineContext';
+import { SortControl } from '../sort/SortControl';
+import { sortList } from '../sort/order';
+import { useSort } from '../sort/useSort';
 import { fetchValorantMaps, RIOT_NOTICE, valorantLevel, type ValorantMap } from '../../tactics/valorantMaps';
 import { GizmoControls, SelectionInspector, TelemetryPanel, TimingSettings } from './TacticsInspector';
 import './tactics.css';
@@ -63,12 +66,32 @@ export function TacticsPanel() {
   };
 
   const preset = gamePreset(plan.game);
+  const sort = useSort<string>(
+    'tactics.palette',
+    [
+      { id: 'order', label: t('ui.sort.order'), key: null },
+      { id: 'name', label: t('ui.sort.name'), key: (n) => figureLabel(n) },
+    ],
+    'order',
+  );
+  const language = useLang();
+  // Each group's figures, sorted within the group.
   const groups = useMemo(() => {
     const q = search.trim().toLowerCase();
     return preset.palette
-      .map((g) => ({ group: g.group, items: g.items.filter((n) => !q || n.includes(q) || figureLabel(n).toLowerCase().includes(q)) }))
+      .map((g) => ({
+        group: g.group,
+        items: sortList(
+          g.items.filter((n) => !q || n.includes(q) || figureLabel(n).toLowerCase().includes(q)),
+          sort.option.key,
+          sort.option.kind ?? 'text',
+          sort.dir,
+          language,
+        ),
+      }))
       .filter((g) => g.items.length);
-  }, [preset, search]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [preset, search, sort.by, sort.dir, language]);
 
   const tools: { id: BoardTool; label: string }[] = [
     { id: 'select', label: t('tactics.tool.select') },
@@ -206,6 +229,7 @@ export function TacticsPanel() {
 
       <Section title={t('tactics.palette')} defaultOpen>
         <input className="tactics-search" type="search" value={search} placeholder={t('tactics.search')} onChange={(e) => setSearch(e.target.value)} />
+        <SortControl sort={sort} />
         {groups.map((g) => (
           <div key={g.group} className="tactics-group">
             <div className="tactics-group-name">{t(`tactics.group.${g.group.replace(/ /g, '-')}`)}</div>

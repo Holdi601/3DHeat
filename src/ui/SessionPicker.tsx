@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 import { useStore } from '../state/store';
 import { int, num, t } from '../i18n';
+import { SortControl } from './sort/SortControl';
+import { useRecent, useSort, useSorted } from './sort/useSort';
 
 /**
  * Which match, raid or run to play back.
@@ -35,12 +37,24 @@ export function SessionPicker() {
         label,
         rows: rows ? rows[index] : 0,
         seconds: start && end ? Math.max(0, end[index] - start[index]) : 0,
-      }))
-      // Busiest first: with hundreds of sessions the list is only usable if the
-      // ones worth watching are at the top. The label alone — an ISO timestamp —
-      // says nothing about whether anything happened in that match.
-      .sort((a, b) => b.rows - a.rows);
+      }));
   }, [dataset]);
+  const recent = useRecent('sessions');
+  // Busiest first by default: with hundreds of sessions the list is only usable
+  // if the ones worth watching are at the top. The label alone — an ISO
+  // timestamp — says nothing about whether anything happened in that match.
+  const sort = useSort<(typeof options)[number]>(
+    'sessions',
+    [
+      { id: 'rows', label: t('ui.sort.rows'), key: (o) => o.rows, kind: 'number' },
+      { id: 'name', label: t('ui.sort.name'), key: (o) => o.label },
+      { id: 'duration', label: t('ui.sort.duration'), key: (o) => o.seconds || null, kind: 'number' },
+      { id: 'recent', label: t('ui.sort.recent'), key: (o) => recent.at(o.label), kind: 'number' },
+      { id: 'order', label: t('ui.sort.order'), key: null },
+    ],
+    'rows',
+  );
+  const sorted = useSorted(options, sort, [recent.at]);
 
   if (options.length === 0) return null;
 
@@ -56,10 +70,12 @@ export function SessionPicker() {
             : t('heat.sessionPicker.allAtOnce')}
         </span>
       </div>
+      {options.length > 1 && <SortControl sort={sort} />}
       <select
         value={String(session)}
         onChange={(e) => {
           const next = Number(e.target.value);
+          if (next >= 0 && dataset) recent.touch(dataset.sessionLabels[next]);
           patchTeam({ session: next });
           // Jump the playhead to where that match starts.
           //
@@ -72,7 +88,7 @@ export function SessionPicker() {
         }}
       >
         <option value="-1">{t('heat.sessionPicker.all', { count: options.length })}</option>
-        {options.map((o) => (
+        {sorted.map((o) => (
           <option key={o.index} value={String(o.index)}>
             {o.seconds > 0
               ? t('heat.sessionPicker.optionSpan', {

@@ -31,6 +31,10 @@ import { Check, Rich, Section, Select } from '../controls';
 import { list, num, t } from '../../i18n';
 import { prepareUnits } from '../replay/units';
 import { NumberBox } from '../NumberBox';
+import { SortControl } from '../sort/SortControl';
+import { useSort, useSorted } from '../sort/useSort';
+
+const NO_COLUMNS: string[] = [];
 
 const delimiterOptions = (): Array<{ value: string; label: string }> => [
   { value: ',', label: t('heat.sourcePanel.delimiter.comma') },
@@ -208,6 +212,15 @@ export function SourcePanel() {
   // The same array while the preview is, so the selects keep their option lists.
   const columns = preview?.columns;
   const columnOptions = useMemo(() => (columns ?? []).map((c) => ({ value: c, label: c })), [columns]);
+  const columnSort = useSort<string>(
+    'source.columns',
+    [
+      { id: 'name', label: t('ui.sort.name'), key: (c) => c },
+      { id: 'order', label: t('ui.sort.order'), key: null },
+    ],
+    'name',
+  );
+  const sortedColumns = useSorted(columns ?? NO_COLUMNS, columnSort);
 
   const validation = mapping ? validateMapping(mapping, preview) : null;
   const totalRows = size?.rows ?? 0;
@@ -669,8 +682,9 @@ export function SourcePanel() {
               <span className="val">{mapping.extra.length}</span>
             </div>
             <div className="hint">{t('heat.sourcePanel.keepHint', { bytes: 4 })}</div>
+            {preview.columns.length > 1 && <SortControl sort={columnSort} />}
             <div className="team-list">
-              {preview.columns.map((c) => {
+              {sortedColumns.map((c) => {
                 const on = mapping.extra.includes(c);
                 return (
                   <div className="team-row" key={c}>

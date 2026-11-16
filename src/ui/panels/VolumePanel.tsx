@@ -5,13 +5,15 @@ import { num, t, useLang } from '../../i18n';
 import { useStore } from '../../state/store';
 import { selectedVolume, useVolumeStore, type DrawKind } from '../../volumes/store';
 import { gpuVolumeFit } from '../../volumes/gpu';
-import { computeStatsAsync, SELECTION_ID, type ColumnStats, type StatsResult, type VolumeStats } from '../../volumes/stats';
+import { computeStatsAsync, SELECTION_ID, type CategoryValue, type ColumnStats, type StatsResult, type VolumeStats } from '../../volumes/stats';
 import { currentScope, scopeKey } from '../../volumes/scope';
 import { CompareButton, CompareWindow } from '../compare/ComparePanel';
 import { BreakdownButton } from '../breakdown/BreakdownPanel';
 import { VersusButton } from '../versus/VersusPanel';
 import { downloadBlob, exportTest, saveSink, selectRows, statsCsv, statsJson, writeRows, type ExportFormat } from '../../volumes/export';
 import { shapeHeights, volumesFromJson, volumesToJson, withHeights, type Volume, type VolumeFilter } from '../../volumes/volume';
+import { SortControl, SortTh } from '../sort/SortControl';
+import { useSort, useSorted } from '../sort/useSort';
 
 const TOOLS: { kind: DrawKind; label: string; title: string }[] = [
   { kind: 'box', label: 'volumes.tool.box', title: 'volumes.tool.boxTitle' },
@@ -33,6 +35,8 @@ function duration(s: number | null): string {
   const sec = Math.floor(s % 60);
   return h > 0 ? `${h}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}` : `${m}:${String(sec).padStart(2, '0')}`;
 }
+
+const NO_TOP: CategoryValue[] = [];
 
 /** A small bar chart of counts. */
 function Bars({ values, color }: { values: number[]; color: string }) {
@@ -146,6 +150,17 @@ export function VolumePanel() {
     }
   };
 
+  const sort = useSort<Volume>(
+    'volumes',
+    [
+      { id: 'name', label: t('ui.sort.name'), key: (v) => v.name },
+      { id: 'rows', label: t('ui.sort.rows'), key: (v) => stats?.volumes.find((s) => s.id === v.id)?.rows, kind: 'number' },
+      { id: 'kind', label: t('ui.sort.kind'), key: (v) => v.shape.kind },
+      { id: 'order', label: t('ui.sort.order'), key: null },
+    ],
+    'name',
+  );
+  const sortedVolumes = useSorted(volumes, sort, [stats]);
   const shownStats = stats?.volumes.filter((s) => (statsLayout === 'compare' ? true : s.id === (sel?.id ?? (stats.volumes.length > 1 ? SELECTION_ID : stats.volumes[0]?.id)))) ?? [];
 
   return (
@@ -178,7 +193,8 @@ export function VolumePanel() {
         onChange={vs.setFilter}
       />
 
-      {volumes.map((v) => (
+      {volumes.length > 1 && <SortControl sort={sort} />}
+      {sortedVolumes.map((v) => (
         <VolumeRow key={v.id} v={v} selected={v.id === selected} dropped={dropped.has(v.id)} />
       ))}
       {sel && <VolumeEditor v={sel} />}
@@ -341,6 +357,16 @@ function Line({ label, value }: { label: string; value: string }) {
 
 function StatsView({ s }: { s: VolumeStats; stats: StatsResult }) {
   const [open, setOpen] = useState<string | null>(null);
+  const sort = useSort<ColumnStats>(
+    'volumes.columns',
+    [
+      { id: 'name', label: t('ui.sort.name'), key: (c) => c.name },
+      { id: 'kind', label: t('ui.sort.kind'), key: (c) => c.kind },
+      { id: 'order', label: t('ui.sort.order'), key: null },
+    ],
+    'name',
+  );
+  const columns = useSorted(s.columns, sort);
   return (
     <div className="overlay" style={{ position: 'static', minWidth: 0, marginTop: 6, borderLeft: `3px solid ${s.color}` }}>
       <b>{s.name}</b>
@@ -372,7 +398,8 @@ function StatsView({ s }: { s: VolumeStats; stats: StatsResult }) {
         </>
       )}
       <hr />
-      {s.columns.map((c) => (
+      {s.columns.length > 1 && <SortControl sort={sort} />}
+      {columns.map((c) => (
         <ColumnView key={c.name} c={c} open={open === c.name} toggle={() => setOpen(open === c.name ? null : c.name)} color={s.color} />
       ))}
     </div>
@@ -380,6 +407,17 @@ function StatsView({ s }: { s: VolumeStats; stats: StatsResult }) {
 }
 
 function ColumnView({ c, open, toggle, color }: { c: ColumnStats; open: boolean; toggle: () => void; color: string }) {
+  const sort = useSort<CategoryValue>(
+    'volumes.values',
+    [
+      { id: 'value', label: t('volumes.stats.value'), key: (v) => v.label },
+      { id: 'count', label: t('volumes.stats.count'), key: (v) => v.count, kind: 'number' },
+      { id: 'share', label: t('volumes.stats.share'), key: (v) => v.share, kind: 'number' },
+      { id: 'lift', label: t('volumes.stats.lift'), key: (v) => v.lift, kind: 'number' },
+    ],
+    'count',
+  );
+  const top = useSorted(c.kind === 'category' ? c.top : NO_TOP, sort);
   const head =
     c.kind === 'category'
       ? c.top[0]
@@ -398,14 +436,14 @@ function ColumnView({ c, open, toggle, color }: { c: ColumnStats; open: boolean;
         <table style={{ width: '100%', fontSize: 11 }}>
           <thead>
             <tr>
-              <th style={{ textAlign: 'left' }}>{t('volumes.stats.value')}</th>
-              <th>{t('volumes.stats.count')}</th>
-              <th>{t('volumes.stats.share')}</th>
-              <th title={t('volumes.stats.liftTitle')}>{t('volumes.stats.lift')}</th>
+              <SortTh sort={sort} id="value" style={{ textAlign: 'left' }}>{t('volumes.stats.value')}</SortTh>
+              <SortTh sort={sort} id="count">{t('volumes.stats.count')}</SortTh>
+              <SortTh sort={sort} id="share">{t('volumes.stats.share')}</SortTh>
+              <SortTh sort={sort} id="lift" title={t('volumes.stats.liftTitle')}>{t('volumes.stats.lift')}</SortTh>
             </tr>
           </thead>
           <tbody>
-            {c.top.map((v) => (
+            {top.map((v) => (
               <tr key={v.label}>
                 <td style={{ maxWidth: 110, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{v.label}</td>
                 <td style={{ textAlign: 'right' }}>{big(v.count)}</td>

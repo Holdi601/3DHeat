@@ -5,6 +5,8 @@ import type { Dataset } from '../../state/types';
 import type { Engine } from '../../render/engine';
 import { int, t } from '../../i18n';
 import { Section } from '../controls';
+import { SortControl } from '../sort/SortControl';
+import { useSort, useSorted } from '../sort/useSort';
 import { useEngine } from '../EngineContext';
 import {
   autoBookmarks,
@@ -79,6 +81,12 @@ export function goToMark(engine: Engine, d: Dataset, m: AutoBookmark): void {
 /** Lines the recording's own marks show at most. */
 const MAX_MARKS = 400;
 
+/** Who a mark is about: the unit of its row, '' for none. */
+function whoOf(d: Dataset, index: ReturnType<typeof unitsOf>, m: AutoBookmark): string {
+  const p = d.personId ? d.personId[m.row] : -1;
+  return p >= 0 ? (index.units[index.personUnit[p]]?.name ?? '') : '';
+}
+
 /**
  * Bookmarks: the viewer's own (B adds one: the moment and the camera), named,
  * kept for this recording, exported and imported as a file; and the moments
@@ -97,18 +105,38 @@ export function BookmarkPanel() {
   }, [dataset]);
   const marks = useMemo(() => (dataset ? autoBookmarks(dataset) : []), [dataset]);
   const index = useMemo(() => (dataset ? unitsOf(dataset) : null), [dataset]);
+  const nameOf = (b: Bookmark) =>
+    b.label ||
+    (b.follow ? (index?.byKey.get(b.follow.unit)?.name ?? '') : t('replay.bookmarks.freeCamera'));
+  const sort = useSort<Bookmark>(
+    'replay.bookmarks',
+    [
+      { id: 'time', label: t('ui.sort.time'), key: (b) => b.time, kind: 'number', dir: 'asc' },
+      { id: 'name', label: t('ui.sort.name'), key: nameOf },
+      { id: 'order', label: t('ui.sort.order'), key: null },
+    ],
+    'time',
+  );
+  const bookmarks = useSorted(list, sort, [index]);
+  const markSort = useSort<AutoBookmark>(
+    'replay.marks',
+    [
+      { id: 'time', label: t('ui.sort.time'), key: (m) => m.time, kind: 'number', dir: 'asc' },
+      { id: 'kind', label: t('ui.sort.kind'), key: (m) => eventWords(m.label) },
+      { id: 'player', label: t('ui.sort.player'), key: (m) => (dataset && index ? whoOf(dataset, index, m) : null) },
+    ],
+    'time',
+  );
+  const sortedMarks = useSorted(marks, markSort, [dataset, index]);
   if (!dataset || !index || !dataset.time) return null;
   const start =
     session >= 0 && dataset.sessionStart ? dataset.sessionStart[session] : dataset.timeRange[0];
   const inSession = (row: number) =>
     session < 0 || !dataset.sessionId || dataset.sessionId[row] === session;
-  const shown = marks.filter((m) => kinds.has(m.kind) && inSession(m.row));
+  const shown = sortedMarks.filter((m) => kinds.has(m.kind) && inSession(m.row));
   const counts = new Map<string, number>();
   for (const m of marks) if (inSession(m.row)) counts.set(m.kind, (counts.get(m.kind) ?? 0) + 1);
-  const who = (m: AutoBookmark) => {
-    const p = dataset.personId ? dataset.personId[m.row] : -1;
-    return p >= 0 ? (index.units[index.personUnit[p]]?.name ?? '') : '';
-  };
+  const who = (m: AutoBookmark) => whoOf(dataset, index, m);
   const store = useBookmarkStore.getState();
 
   return (
@@ -152,8 +180,9 @@ export function BookmarkPanel() {
         />
       </div>
       {list.length === 0 && <div className="hint">{t('replay.bookmarks.none')}</div>}
+      {list.length > 1 && <SortControl sort={sort} />}
       <div className="replay-events bookmark-list">
-        {list.map((b) => (
+        {bookmarks.map((b) => (
           <div key={b.id} className="bm-row">
             <button
               className="bm-go"
@@ -161,14 +190,7 @@ export function BookmarkPanel() {
               title={t('replay.bookmarks.goTitle')}
             >
               <span>{clock(b.time - start)}</span>
-              {editing === b.id ? null : (
-                <span>
-                  {b.label ||
-                    (b.follow
-                      ? (index.byKey.get(b.follow.unit)?.name ?? '')
-                      : t('replay.bookmarks.freeCamera'))}
-                </span>
-              )}
+              {editing === b.id ? null : <span>{nameOf(b)}</span>}
             </button>
             {editing === b.id ? (
               <input
@@ -227,6 +249,7 @@ export function BookmarkPanel() {
                 </button>
               ))}
           </div>
+          {shown.length > 1 && <SortControl sort={markSort} />}
           <div className="replay-events">
             {shown.slice(0, MAX_MARKS).map((m) => (
               <button

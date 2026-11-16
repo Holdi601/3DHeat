@@ -6,12 +6,14 @@
  * the movement analysis have none (the hint says how many).
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { int, num, t, useLang } from '../../i18n';
 import { askMass, drillDown, useMass } from '../../mass/client';
 import type { MassManeuverRow } from '../../mass/maneuvers';
 import { useEngine } from '../EngineContext';
 import { maneuverName } from '../insights/Maneuvers';
+import { SortTh } from '../sort/SortControl';
+import { useSort, useSorted } from '../sort/useSort';
 
 const pct = (v: number | null) => (v === null || !Number.isFinite(v) ? '—' : `${num(v * 100, 0)}%`);
 const MAX_ROWS = 300;
@@ -35,9 +37,24 @@ export function MassManeuvers() {
       live = false;
     };
   }, [JSON.stringify(filter)]);
+  const kept = useMemo(() => (q.data?.rows ?? []).filter((r) => (allMaps ? r.map === '*' : r.map !== '*')), [q.data, allMaps]);
+  const sort = useSort<MassManeuverRow>(
+    'mass.maneuvers',
+    [
+      { id: 'kind', label: t('ui.sort.kind'), key: (r) => maneuverName({ kind: r.kind }) },
+      { id: 'map', label: t('ui.sort.map'), key: (r) => r.map },
+      { id: 'mode', label: t('ui.sort.mode'), key: (r) => r.mode },
+      { id: 'side', label: t('maneuver.col.side'), key: (r) => r.side },
+      { id: 'count', label: t('ui.sort.count'), key: (r) => r.n, kind: 'number' },
+      { id: 'perMatch', label: t('maneuver.col.perMatch'), key: (r) => (r.of ? r.n / r.of : null), kind: 'number' },
+      { id: 'paid', label: t('maneuver.col.paid'), key: (r) => r.rate, kind: 'number' },
+      { id: 'kd', label: t('maneuver.col.kd'), key: (r) => (r.losses ? r.kills / r.losses : r.kills ? Infinity : null), kind: 'number' },
+    ],
+    'count',
+  );
+  const rows = useSorted(kept, sort);
   if (!q.data) return <div className="hint">{q.error ?? t('mass.working')}</div>;
   const d = q.data;
-  const rows = d.rows.filter((r) => (allMaps ? r.map === '*' : r.map !== '*'));
   return (
     <div>
       <div className="hint">{t('maneuver.massHint', { with: int(d.withSection), matches: int(d.matches) })}</div>
@@ -48,14 +65,14 @@ export function MassManeuvers() {
       <table className="cmp-table brk-table">
         <thead>
           <tr>
-            <th>{t('maneuver.col.kind')}</th>
-            {!allMaps && <th>{t('mass.map')}</th>}
-            {!allMaps && <th>{t('mass.mode')}</th>}
-            <th>{t('maneuver.col.side')}</th>
-            <th>{t('maneuver.col.made')}</th>
-            <th>{t('maneuver.col.perMatch')}</th>
-            <th>{t('maneuver.col.paid')}</th>
-            <th>{t('maneuver.col.kd')}</th>
+            <SortTh sort={sort} id="kind">{t('maneuver.col.kind')}</SortTh>
+            {!allMaps && <SortTh sort={sort} id="map">{t('mass.map')}</SortTh>}
+            {!allMaps && <SortTh sort={sort} id="mode">{t('mass.mode')}</SortTh>}
+            <SortTh sort={sort} id="side">{t('maneuver.col.side')}</SortTh>
+            <SortTh sort={sort} id="count">{t('maneuver.col.made')}</SortTh>
+            <SortTh sort={sort} id="perMatch">{t('maneuver.col.perMatch')}</SortTh>
+            <SortTh sort={sort} id="paid">{t('maneuver.col.paid')}</SortTh>
+            <SortTh sort={sort} id="kd">{t('maneuver.col.kd')}</SortTh>
           </tr>
         </thead>
         <tbody>

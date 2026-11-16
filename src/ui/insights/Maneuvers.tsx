@@ -22,6 +22,8 @@ import type { Dataset } from '../../state/types';
 import { currentScope, scopeKey } from '../../volumes/scope';
 import { Check, Segmented } from '../controls';
 import { useEngine } from '../EngineContext';
+import { SortControl, SortTh } from '../sort/SortControl';
+import { useSort, useSorted } from '../sort/useSort';
 import './maneuvers.css';
 
 const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
@@ -101,10 +103,22 @@ export function Maneuvers() {
     if (r && session >= 0 && r.matches.some((m) => m.session === session)) useManeuvers.getState().set({ session, selected: null });
   }, [session]);
 
+  const { match, list } = useMemo(() => shownMatch(st), [st.report, st.session, st.level]); // eslint-disable-line react-hooks/exhaustive-deps
+  const sort = useSort<Maneuver>(
+    'maneuvers.list',
+    [
+      { id: 'importance', label: t('ui.sort.importance'), key: (m) => m.confidence, kind: 'number' },
+      { id: 'time', label: t('ui.sort.time'), key: (m) => m.t0, kind: 'number', dir: 'asc' },
+      { id: 'kind', label: t('ui.sort.kind'), key: (m) => maneuverName(m) },
+      { id: 'team', label: t('ui.sort.team'), key: (m) => dataset?.teamLabels[m.team] ?? null },
+    ],
+    'importance',
+  );
+  const sorted = useSorted(list, sort, [dataset]);
+
   if (!dataset) return null;
   const r = st.report;
   const stale = !!r && st.key !== key;
-  const { match, list } = shownMatch(st);
   const pick = (m: Maneuver) => {
     st.set({ selected: m.id });
     if (match) goTo(m, match.start, match.session, dataset, engine);
@@ -158,8 +172,9 @@ export function Maneuvers() {
           ) : (
             <>
               <Timeline list={list} duration={match.duration} teams={dataset.teamLabels} selected={st.selected} onPick={pick} />
+              {list.length > 1 && <SortControl sort={sort} />}
               <ol className="ins-list mv-list">
-                {list.map((m) => (
+                {sorted.map((m) => (
                   <ManeuverRow key={m.id} m={m} teams={dataset.teamLabels} open={st.selected === m.id} onPick={() => pick(m)} />
                 ))}
               </ol>
@@ -277,29 +292,44 @@ function Details({ m, teams }: { m: Maneuver; teams: string[] }) {
 }
 
 /** How often each kind paid off in this match, by side. */
+type PaidRow = { kind: Maneuver['kind']; team: number; n: number; paid: number; judged: number };
+
 function PaidTable({ list, teams }: { list: Maneuver[]; teams: string[] }) {
-  const rows = new Map<string, { kind: Maneuver['kind']; team: number; n: number; paid: number; judged: number }>();
-  for (const m of list) {
-    const k = `${m.kind}|${m.team}`;
-    let r = rows.get(k);
-    if (!r) rows.set(k, (r = { kind: m.kind, team: m.team, n: 0, paid: 0, judged: 0 }));
-    r.n++;
-    if (m.outcome.paid !== null) r.judged++;
-    if (m.outcome.paid === 1) r.paid++;
-  }
+  const all = useMemo(() => {
+    const rows = new Map<string, PaidRow>();
+    for (const m of list) {
+      const k = `${m.kind}|${m.team}`;
+      let r = rows.get(k);
+      if (!r) rows.set(k, (r = { kind: m.kind, team: m.team, n: 0, paid: 0, judged: 0 }));
+      r.n++;
+      if (m.outcome.paid !== null) r.judged++;
+      if (m.outcome.paid === 1) r.paid++;
+    }
+    return [...rows.values()];
+  }, [list]);
+  const sort = useSort<PaidRow>(
+    'maneuvers.paid',
+    [
+      { id: 'kind', label: t('ui.sort.kind'), key: (r) => t(`maneuver.kind.${r.kind}`) },
+      { id: 'side', label: t('maneuver.col.side'), key: (r) => teams[r.team] ?? null },
+      { id: 'count', label: t('ui.sort.count'), key: (r) => r.n, kind: 'number' },
+      { id: 'paid', label: t('maneuver.col.paid'), key: (r) => (r.judged ? r.paid / r.judged : null), kind: 'number' },
+    ],
+    'count',
+  );
+  const rows = useSorted(all, sort, [teams]);
   return (
     <table className="mv-table">
       <thead>
         <tr>
-          <th>{t('maneuver.col.kind')}</th>
-          <th>{t('maneuver.col.side')}</th>
-          <th>{t('maneuver.col.made')}</th>
-          <th>{t('maneuver.col.paid')}</th>
+          <SortTh sort={sort} id="kind">{t('maneuver.col.kind')}</SortTh>
+          <SortTh sort={sort} id="side">{t('maneuver.col.side')}</SortTh>
+          <SortTh sort={sort} id="count">{t('maneuver.col.made')}</SortTh>
+          <SortTh sort={sort} id="paid">{t('maneuver.col.paid')}</SortTh>
         </tr>
       </thead>
       <tbody>
-        {[...rows.values()]
-          .sort((a, b) => b.n - a.n)
+        {rows
           .map((r) => (
             <tr key={`${r.kind}|${r.team}`}>
               <td>{t(`maneuver.kind.${r.kind}`)}</td>

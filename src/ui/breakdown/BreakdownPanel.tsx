@@ -39,6 +39,7 @@ import {
   type Effect,
   type FactorEffect,
   type GroupMetric,
+  type Ranked,
 } from '../../breakdown/metrics';
 import { CANON } from '../../data/canonical';
 import { num, t, useLang } from '../../i18n';
@@ -54,6 +55,8 @@ import { columnLabel, valueLabel } from '../panels/FilterPanel';
 import '../compare/compare.css';
 import './breakdown.css';
 import { NumberBox } from '../NumberBox';
+import { SortTh } from '../sort/SortControl';
+import { useSort, useSorted, type SortOption } from '../sort/useSort';
 
 type RegionKind = 'pick' | 'view' | 'volume' | 'all';
 type View = 'rank' | 'factors';
@@ -465,10 +468,31 @@ function RankView({ res, dim, metric, sided, worstFirst, highlight }: {
 }) {
   const { prep, result } = res;
   const ranked = useMemo(() => rankGroups(result, metric), [result, metric]);
+  const ordered = useMemo(() => (worstFirst ? [...ranked].reverse() : ranked), [ranked, worstFirst]);
+  // The measure's column is the ranking itself (best or worst first, as picked above).
+  const at = (r: Ranked) => (result.groups ? sumsAt(result.groups, r.index) : null);
+  const num1 = (id: string, label: string, key: (r: Ranked) => number | null | undefined): SortOption<Ranked> => ({ id, label, key, kind: 'number' });
+  const sort = useSort<Ranked>(
+    'breakdown.groups',
+    [
+      { id: 'value', label: t(`breakdown.m.${metric}`), key: null },
+      { id: 'name', label: dim ? dimLabel(dim) : t('ui.sort.name'), key: (r) => (dim && prep.dim ? groupLabel(dim, prep.dim.labels[r.index]) : null) },
+      num1('a', 'A', (r) => at(r)?.a),
+      num1('b', 'B', (r) => at(r)?.b),
+      num1('kills', t('breakdown.col.kd'), (r) => at(r)?.kills),
+      num1('kdr', t('breakdown.m.kdr'), (r) => { const s = at(r); return s ? groupValue(s, result.total, 'kdr') : null; }),
+      num1('win', t('breakdown.m.win'), (r) => { const s = at(r); return s && s.played > 0 ? groupValue(s, result.total, 'win') : null; }),
+      num1('kpm', t('breakdown.m.kpm'), (r) => { const s = at(r); return s ? groupValue(s, result.total, 'kpm') : null; }),
+      num1('earn', t('breakdown.m.earn'), (r) => at(r)?.earn),
+      num1('cost', t('breakdown.m.cost'), (r) => at(r)?.cost),
+      num1('rows', t('breakdown.col.rows'), (r) => at(r)?.rows),
+    ],
+    'value',
+  );
+  const rows = useSorted(ordered, sort, [result, dim, prep]);
   if (!dim || !prep.dim || !result.groups || ranked.length === 0) return <div className="cmp-empty">{t('breakdown.empty')}</div>;
   const g = result.groups;
   const T = result.total;
-  const rows = worstFirst ? [...ranked].reverse() : ranked;
   const showKd = T.kills + T.deaths > 0;
   // The measure ranked by is shown once, first.
   const showKdr = showKd && metric !== 'kdr';
@@ -491,17 +515,17 @@ function RankView({ res, dim, metric, sided, worstFirst, highlight }: {
       <table className="cmp-table brk-table">
         <thead>
           <tr>
-            <th>{dimLabel(dim)}</th>
-            <th>{t(`breakdown.m.${metric}`)}</th>
-            {sided && <th>A</th>}
-            {sided && <th>B</th>}
-            {showKd && <th>{t('breakdown.col.kd')}</th>}
-            {showKdr && <th>{t('breakdown.m.kdr')}</th>}
-            {showWin && <th>{t('breakdown.m.win')}</th>}
-            {showKpm && <th>{t('breakdown.m.kpm')}</th>}
-            {showEarn && <th>{t('breakdown.m.earn')}</th>}
-            {showCost && <th>{t('breakdown.m.cost')}</th>}
-            <th>{t('breakdown.col.rows')}</th>
+            <SortTh sort={sort} id="name">{dimLabel(dim)}</SortTh>
+            <SortTh sort={sort} id="value">{t(`breakdown.m.${metric}`)}</SortTh>
+            {sided && <SortTh sort={sort} id="a">A</SortTh>}
+            {sided && <SortTh sort={sort} id="b">B</SortTh>}
+            {showKd && <SortTh sort={sort} id="kills">{t('breakdown.col.kd')}</SortTh>}
+            {showKdr && <SortTh sort={sort} id="kdr">{t('breakdown.m.kdr')}</SortTh>}
+            {showWin && <SortTh sort={sort} id="win">{t('breakdown.m.win')}</SortTh>}
+            {showKpm && <SortTh sort={sort} id="kpm">{t('breakdown.m.kpm')}</SortTh>}
+            {showEarn && <SortTh sort={sort} id="earn">{t('breakdown.m.earn')}</SortTh>}
+            {showCost && <SortTh sort={sort} id="cost">{t('breakdown.m.cost')}</SortTh>}
+            <SortTh sort={sort} id="rows">{t('breakdown.col.rows')}</SortTh>
           </tr>
         </thead>
         <tbody>
@@ -559,10 +583,23 @@ function FactorView({ ds, res, effect, worstFirst, highlight }: {
   const { prep, result } = res;
   const factors = prep.factors.factors;
   const ranked = useMemo(() => rankFactors(result, effect), [result, effect]);
+  const ordered = useMemo(() => (worstFirst ? [...ranked].reverse() : ranked), [ranked, worstFirst]);
+  // The effect ranked by is its column's order (best or worst first, as picked above).
+  type Row = (typeof ranked)[number];
+  const sort = useSort<Row>(
+    'breakdown.factors',
+    [
+      { id: 'rank', label: t(`breakdown.e.${effect}`), key: null },
+      { id: 'name', label: t('breakdown.factor'), key: (r) => factorLabel(factors[r.index]) },
+      { id: 'with', label: t('breakdown.col.with'), key: (r) => result.factors.rows[r.index], kind: 'number' },
+      ...FACTOR_EFFECTS.map((k): SortOption<Row> => ({ id: `e:${k}`, label: t(`breakdown.e.${k}`), key: (r) => factorEffect(sumsAt(result.factors, r.index), result.total, k)?.est, kind: 'number' })),
+    ],
+    'rank',
+  );
+  const rows = useSorted(ordered, sort, [result, factors]);
   if (factors.length === 0) return <div className="cmp-empty">{t('breakdown.noFactors')}</div>;
   if (ranked.length === 0) return <div className="cmp-empty">{t('breakdown.empty')}</div>;
   const T = result.total;
-  const rows = worstFirst ? [...ranked].reverse() : ranked;
   const kinds = FACTOR_EFFECTS.filter((k) => ranked.length === 0 || result.factors.rows.some((_, i) => factorEffect(sumsAt(result.factors, i), T, k)));
   const best = ranked.filter((r) => r.effect.shrunk > 0).slice(0, 5);
   const worst = ranked.filter((r) => r.effect.shrunk < 0).slice(-5).reverse();
@@ -578,10 +615,10 @@ function FactorView({ ds, res, effect, worstFirst, highlight }: {
       <table className="cmp-table brk-table">
         <thead>
           <tr>
-            <th>{t('breakdown.factor')}</th>
-            <th>{t('breakdown.col.with')}</th>
+            <SortTh sort={sort} id="name">{t('breakdown.factor')}</SortTh>
+            <SortTh sort={sort} id="with">{t('breakdown.col.with')}</SortTh>
             {kinds.map((k) => (
-              <th key={k} className={k === effect ? 'brk-sorted' : undefined}>{t(`breakdown.e.${k}`)}</th>
+              <SortTh sort={sort} id={k === effect ? 'rank' : `e:${k}`} key={k} className={k === effect ? 'brk-sorted' : undefined}>{t(`breakdown.e.${k}`)}</SortTh>
             ))}
           </tr>
         </thead>

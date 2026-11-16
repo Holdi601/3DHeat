@@ -1,0 +1,44 @@
+.sort-ctl {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 2px 0 4px;
+  font-size: 11px;
+  color: var(--text-faint);
+}
+
+.sort-ctl select {
+  flex: 0 1 auto;
+  width: auto;
+  min-width: 0;
+  max-width: 60%;
+  padding: 1px 4px;
+  font-size: 11px;
+}
+
+.sort-ctl .sort-dir {
+  padding: 0 6px;
+  min-width: 22px;
+  line-height: 18px;
+  font-size: 12px;
+}
+
+.sort-th {
+  cursor: pointer;
+  user-select: none;
+}
+
+.sort-th:hover,
+.sort-th:focus-visible {
+  color: var(--text);
+}
+
+.sort-th .sort-ind {
+  margin-left: 3px;
+  font-size: 9px;
+  opacity: 0.35;
+}
+
+.sort-th.on .sort-ind {
+  opacity: 1;
+}

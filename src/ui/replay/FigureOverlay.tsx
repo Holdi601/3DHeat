@@ -3,10 +3,14 @@ import { useStore } from '../../state/store';
 import { useReplayStore } from '../../state/replayStore';
 import { useRaceStore } from '../../state/raceStore';
 import type { Dataset, FilterSpec } from '../../state/types';
-import { buildOverlay, groupsWith, isOverlay, overlayGroups, type OverlayColour } from '../../match/overlay';
+import { buildOverlay, groupsWith, isOverlay, overlayGroups, type OverlayColour, type OverlayGroup } from '../../match/overlay';
 import { useMatchStore } from '../../state/matchStore';
+import type { MatchDoc } from '../../match/matchDoc';
+import type { GameMatch } from '../../match/wtMatch';
 import { int, t } from '../../i18n';
 import { Check, Section, Segmented } from '../controls';
+import { SortControl } from '../sort/SortControl';
+import { useSort, useSorted } from '../sort/useSort';
 import { sortUnits, unitsOf } from './units';
 import { leanOverlayOf } from '../../overlay/lean/load';
 
@@ -60,6 +64,18 @@ export function useFigureOverlay(): void {
   }, [tab, mode, dataset, overlay]);
 }
 
+const NO_GROUPS: OverlayGroup[] = [];
+
+/** A round's or match's name, from the summaries loaded; else its id. */
+function groupName(id: string, games: GameMatch[], docs: MatchDoc[]): string {
+  const g = games.find((x) => id === x.match || id.startsWith(x.match));
+  if (g) return `${g.map} · ${g.started.replace('T', ' ').replace(/\+.*$/, '')}`;
+  const round = /^(.*) #(\d+)$/.exec(id);
+  const doc = docs.find((x) => x.match === (round ? round[1] : id));
+  if (doc && round) return t('replay.overlay.round', { match: doc.teams.join(' – '), round: Number(round[2]) });
+  return id;
+}
+
 /**
  * What the figure overlay lays over each other: which rounds or matches,
  * coloured by team or by round, perhaps only those one player took part in;
@@ -81,6 +97,17 @@ export function OverlayPanel() {
     const u = unitsOf(base).byKey.get(overlay.only);
     return u ? groupsWith(base, groups, u.persons) : new Set<number>();
   }, [base, groups, overlay.only]);
+  const sort = useSort<OverlayGroup>(
+    'replay.overlay',
+    [
+      { id: 'order', label: t('ui.sort.order'), key: null },
+      { id: 'name', label: t('ui.sort.name'), key: (g) => groupName(g.id, games, docs) },
+      { id: 'time', label: t('ui.sort.time'), key: (g) => g.start, kind: 'number', dir: 'asc' },
+      { id: 'rows', label: t('ui.sort.rows'), key: (g) => g.rows, kind: 'number' },
+    ],
+    'order',
+  );
+  const listed = useSorted(groups?.groups ?? NO_GROUPS, sort, [games, docs]);
   const r = useReplayStore.getState;
   // An overlay loaded straight into GPU tracks has its own panel (LeanOverlayPanel).
   if (!base || leanOverlayOf(base)) return null;
@@ -93,14 +120,7 @@ export function OverlayPanel() {
   }
   const picked = overlay.groups;
   const isOn = (i: number) => picked === null || picked.includes(i);
-  const nameOf = (id: string) => {
-    const g = games.find((x) => id === x.match || id.startsWith(x.match));
-    if (g) return `${g.map} · ${g.started.replace('T', ' ').replace(/\+.*$/, '')}`;
-    const round = /^(.*) #(\d+)$/.exec(id);
-    const doc = docs.find((x) => x.match === (round ? round[1] : id));
-    if (doc && round) return t('replay.overlay.round', { match: doc.teams.join(' – '), round: Number(round[2]) });
-    return id;
-  };
+  const nameOf = (id: string) => groupName(id, games, docs);
   return (
     <Section title={t('replay.overlay.title')} defaultOpen right={<span className="count">{int(picked?.length ?? groups.groups.length)}</span>}>
       <div className="hint">{t(groups.via === 'session' ? 'replay.overlay.hintSessions' : 'replay.overlay.hintMatches')}</div>
@@ -137,8 +157,9 @@ export function OverlayPanel() {
           {t('replay.overlay.none')}
         </button>
       </div>
+      {groups.groups.length > 1 && <SortControl sort={sort} />}
       <div className="match-list overlay-list">
-        {groups.groups.map((g) => (
+        {listed.map((g) => (
           <label key={g.index} className={`check${mine && !mine.has(g.index) ? ' dim' : ''}`} title={mine && !mine.has(g.index) ? t('replay.overlay.notIn') : undefined}>
             <input
               type="checkbox"

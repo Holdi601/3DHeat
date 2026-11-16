@@ -13,6 +13,8 @@ import { int, num, t } from '../../i18n';
 import { lengthText, useUnits } from '../../state/unitsStore';
 import { useReplayStore } from '../../state/replayStore';
 import { FigureControls } from './FigureControls';
+import { SortControl } from '../sort/SortControl';
+import { useSort, useSorted } from '../sort/useSort';
 
 export function TeamPanel() {
   useUnits();
@@ -133,6 +135,18 @@ export function TeamsList() {
   const negative = useStore((s) => s.negativeTeams);
   const setTeamSplit = useStore((s) => s.setTeamSplit);
   const split = useStore((s) => s.split);
+  const labels = dataset?.teamLabels;
+  const indices = useMemo(() => (labels ?? []).map((_, i) => i), [labels]);
+  const sort = useSort<number>(
+    'teams',
+    [
+      { id: 'name', label: t('ui.sort.name'), key: (i) => String(labels?.[i] ?? '') },
+      { id: 'size', label: t('ui.sort.size'), key: (i) => dataset?.teamSizes?.[i], kind: 'number' },
+      { id: 'order', label: t('ui.sort.order'), key: null },
+    ],
+    'name',
+  );
+  const order = useSorted(indices, sort);
 
   if (!dataset || dataset.teamLabels.length === 0) return null;
   // Under a column split the groups decide only what is drawn, so their +/−
@@ -214,8 +228,10 @@ export function TeamsList() {
           </button>
         )}
       </div>
+      {indices.length > 1 && <SortControl sort={sort} />}
       <div className="team-list">
-        {dataset.teamLabels.map((name, i) => {
+        {order.map((i) => {
+          const name = String(dataset.teamLabels[i]);
           const shown = visibility[i] !== false;
           const side = positive.includes(i) ? 'plus' : negative.includes(i) ? 'minus' : 'none';
           return (

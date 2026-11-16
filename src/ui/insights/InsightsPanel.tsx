@@ -26,9 +26,12 @@ import { valueColumnLabel } from '../panels/ValueSection';
 import { Debrief } from './Debrief';
 import { InsightLens, LensMetricsView, LensPicker } from './LensView';
 import { useEngine } from '../EngineContext';
+import { SortControl } from '../sort/SortControl';
+import { useSort, useSorted } from '../sort/useSort';
 import './insights.css';
 
 type Tab = 'findings' | 'debrief' | 'caster' | 'maneuvers';
+const NONE: Insight[] = [];
 /** Outside the panel: the sidebar is rebuilt when the replay opens, and the tab stays. */
 const useTab = create<{ tab: Tab }>(() => ({ tab: 'findings' }));
 
@@ -123,6 +126,17 @@ function InsightsBody() {
 
   const r = st.report;
   const stale = !!r && st.key !== key && st.before === null;
+  const sort = useSort<Insight>(
+    'insights.findings',
+    [
+      { id: 'importance', label: t('ui.sort.importance'), key: (ins) => ins.strength, kind: 'number' },
+      { id: 'kind', label: t('ui.sort.kind'), key: (ins) => t(`insights.det.${ins.detector}`) },
+      { id: 'vehicle', label: t('ui.sort.vehicle'), key: (ins) => (ins.subject.vehicleClass ? labelOf(CANON.vehicleClass, ins.subject.vehicleClass) : null) },
+      { id: 'time', label: t('ui.sort.time'), key: (ins) => ins.time?.from, kind: 'number', dir: 'asc' },
+    ],
+    'importance',
+  );
+  const findings = useSorted(r?.insights ?? NONE, sort);
   const pick = (ins: Insight) => pickInsight(ins, engine);
   const restore = () => {
     const s = useInsights.getState();
@@ -166,8 +180,9 @@ function InsightsBody() {
             ) : null;
           })}
           {r.insights.length === 0 && <div className="hint">{t('insights.none', { fdr: `${num(r.fdr * 100)}%` })}</div>}
+          {r.insights.length > 1 && <SortControl sort={sort} />}
           <ol className="ins-list">
-            {r.insights.map((ins) => (
+            {findings.map((ins) => (
               <InsightRow key={ins.id} ins={ins} samples={r.dataset.exposure === 'samples'} open={st.selected === ins.id} onPick={() => pick(ins)} />
             ))}
           </ol>

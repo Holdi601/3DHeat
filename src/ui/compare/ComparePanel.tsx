@@ -38,6 +38,9 @@ import { volumeBounds, type Volume } from '../../volumes/volume';
 import { Segmented } from '../controls';
 import { useEngine } from '../EngineContext';
 import { valueLabel } from '../panels/FilterPanel';
+import { SortControl, SortTh } from '../sort/SortControl';
+import { useSort, type SortOption } from '../sort/useSort';
+import { sortList } from '../sort/order';
 import { valueColumnLabel } from '../panels/ValueSection';
 import { parseValueColumn, shownValue } from '../../data/cost';
 import './compare.css';
@@ -521,12 +524,26 @@ function effectOf(m: Measure, base: Vol, v: Vol): { d: number; cliff: boolean } 
 }
 
 function CompareTable({ c }: { c: ChartCtx }) {
-  const ui = useCompareUi();
+  const language = useLang();
   const list = useMemo(() => measures(c), [c.vols, c.ds]); // eslint-disable-line react-hooks/exhaustive-deps
   const base = c.vols[0];
-  const sortVol = ui.sortBy ? c.vols.find((v) => v.id === ui.sortBy && v !== base) : undefined;
-  const rows = useMemo(() => {
-    if (!sortVol) return list;
+  // Measures in their usual order, by name, by a volume's value, or by how far a volume is from the first one.
+  const sort = useSort<Measure>(
+    'compare.measures',
+    [
+      { id: 'order', label: t('ui.sort.order'), key: null },
+      { id: 'name', label: t('ui.sort.name'), key: (m) => m.label },
+      ...c.vols.map((v): SortOption<Measure> => ({ id: `v:${v.id}`, label: v.name, key: (m) => m.get(v), kind: 'number' })),
+      ...c.vols
+        .slice(1)
+        .map((v): SortOption<Measure> => ({ id: `d:${v.id}`, label: `${v.name}: ${t('ui.sort.difference')}`, key: (m) => far?.get(m.key), kind: 'number', dir: 'asc' })),
+    ],
+    'order',
+  );
+  const sortVol = c.vols.find((v, k) => k > 0 && sort.by === `d:${v.id}`);
+  // The measures' places, furthest from the first volume first: effect size, then relative change.
+  const far = useMemo(() => {
+    if (!sortVol) return null;
     const score = (m: Measure) => {
       const e = effectOf(m, base, sortVol);
       const a = m.get(base);
@@ -534,41 +551,58 @@ function CompareTable({ c }: { c: ChartCtx }) {
       const rel = a !== null && b !== null && a !== 0 ? Math.abs((b - a) / a) : 0;
       return [e && Number.isFinite(e.d) ? Math.abs(e.d) : -1, rel] as const;
     };
-    return [...list].sort((p, q) => {
+    const ranked = [...list].sort((p, q) => {
       const [ep, rp] = score(p);
       const [eq, rq] = score(q);
       return eq - ep || rq - rp;
     });
+    return new Map(ranked.map((m, i) => [m.key, i]));
   }, [list, sortVol, base]);
+  // Sorted within each group; the groups keep their order.
+  const rows = useMemo(() => {
+    const groups = new Map<string, Measure[]>();
+    for (const m of list) {
+      const g = groups.get(m.group);
+      if (g) g.push(m);
+      else groups.set(m.group, [m]);
+    }
+    return [...groups.values()].flatMap((g) => sortList(g, sort.option.key, sort.option.kind ?? 'text', sort.dir, language));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [list, sort.by, sort.dir, far, language]);
   let lastGroup = '';
   return (
     <div className="cmp-scroll">
       <p className="cmp-hint">{t('compare.sortHint')}</p>
+      {list.length > 1 && <SortControl sort={sort} />}
       <table className="cmp-table">
         <thead>
           <tr>
-            <th className={`cmp-sortable${sortVol ? '' : ' on'}`} onClick={() => ui.set({ sortBy: null })}>
+            <SortTh sort={sort} id="order">
               {t('compare.measure')}
-            </th>
-            {c.vols.map((v, k) => (
-              <th
-                key={v.id}
-                className={k > 0 ? `cmp-sortable${sortVol?.id === v.id ? ' on' : ''}` : undefined}
-                onClick={() => (k > 0 ? ui.set({ sortBy: v.id }) : flyTo(c.engine, v.vol))}
-                title={k > 0 ? t('compare.sortHint') : t('compare.legend')}
-              >
-                <span className="cmp-vh">
-                  <Glyph i={v.i} color={v.color} />
-                  {v.name}
-                </span>
-              </th>
-            ))}
+            </SortTh>
+            {c.vols.map((v, k) =>
+              k > 0 ? (
+                <SortTh sort={sort} id={`d:${v.id}`} key={v.id} title={t('compare.sortHint')}>
+                  <span className="cmp-vh">
+                    <Glyph i={v.i} color={v.color} />
+                    {v.name}
+                  </span>
+                </SortTh>
+              ) : (
+                <th key={v.id} onClick={() => flyTo(c.engine, v.vol)} title={t('compare.legend')}>
+                  <span className="cmp-vh">
+                    <Glyph i={v.i} color={v.color} />
+                    {v.name}
+                  </span>
+                </th>
+              ),
+            )}
           </tr>
         </thead>
         <tbody>
           {rows.flatMap((m) => {
             const out: ReactNode[] = [];
-            if (!sortVol && m.group !== lastGroup) {
+            if (m.group !== lastGroup) {
               lastGroup = m.group;
               out.push(
                 <tr key={`g.${m.group}`} className="cmp-group">

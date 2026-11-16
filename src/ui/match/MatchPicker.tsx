@@ -4,7 +4,10 @@ import { matchesOf, pickedMatches, pickMatches, type MatchEntry } from '../../ma
 import { killWeapon, type GameMatch } from '../../match/wtMatch';
 import { useMatchStore } from '../../state/matchStore';
 import { useStore } from '../../state/store';
+import type { MatchDoc } from '../../match/matchDoc';
 import { Section } from '../controls';
+import { SortControl, SortTh } from '../sort/SortControl';
+import { useRecent, useSort, useSorted, type Sort } from '../sort/useSort';
 import { useEngine } from '../EngineContext';
 import { partyName, unitByUid, unitsOf, type Unit } from '../replay/units';
 import { selectAndFollow } from '../replay/ReplayOverlay';
@@ -18,6 +21,17 @@ function duration(seconds: number): string {
   const s = Math.round(seconds);
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 }
+
+/** A match's name and second line: from its summary when one is loaded, else its id. */
+function describe(e: MatchEntry, games: GameMatch[], docs: MatchDoc[]): { name: string; sub: string } {
+  const g = games.find((x) => x.match === e.id || e.id.startsWith(x.match));
+  if (g) return { name: `${g.map} · ${g.mission || g.battleClass}`, sub: g.started.replace('T', ' ').replace(/\+.*$/, '') };
+  const doc = docs.find((d) => d.match === e.id);
+  if (doc) return { name: `${doc.teams.join(` ${t('match.matches.vs')} `)}`, sub: doc.map };
+  return { name: e.id, sub: '' };
+}
+
+const NO_ENTRIES: MatchEntry[] = [];
 
 /**
  * The matches in the loaded replay: one, several or all of them played back
@@ -40,6 +54,19 @@ export function MatchPicker() {
     const biggest = set.entries.reduce((a, b) => (b.rows > a.rows ? b : a));
     pickMatches(dataset, [biggest.index]);
   }, [replay, dataset, set, picked0]);
+  const recent = useRecent('match.picker');
+  const sort = useSort<MatchEntry>(
+    'match.picker',
+    [
+      { id: 'order', label: t('ui.sort.order'), key: null },
+      { id: 'recent', label: t('ui.sort.recent'), key: (e) => recent.at(e.id), kind: 'number' },
+      { id: 'name', label: t('ui.sort.name'), key: (e) => describe(e, games, docs).name },
+      { id: 'duration', label: t('ui.sort.duration'), key: (e) => e.end - e.start, kind: 'number' },
+      { id: 'rows', label: t('ui.sort.rows'), key: (e) => e.rows, kind: 'number' },
+    ],
+    'order',
+  );
+  const entries = useSorted(set?.entries ?? NO_ENTRIES, sort, [recent.at, games, docs]);
   if (!dataset || !set) {
     return (
       <Section title={t('match.picker.title')} defaultOpen>
@@ -59,13 +86,6 @@ export function MatchPicker() {
       engine.frameAround((b.minX + b.maxX) / 2, (b.minY + b.maxY) / 2, (b.minZ + b.maxZ) / 2, Math.max(r, 1));
     }
   };
-  const describe = (e: MatchEntry) => {
-    const g = games.find((x) => x.match === e.id || e.id.startsWith(x.match));
-    if (g) return { name: `${g.map} · ${g.mission || g.battleClass}`, sub: g.started.replace('T', ' ').replace(/\+.*$/, '') };
-    const doc = docs.find((d) => d.match === e.id);
-    if (doc) return { name: `${doc.teams.join(` ${t('match.matches.vs')} `)}`, sub: doc.map };
-    return { name: e.id, sub: '' };
-  };
   return (
     <Section title={t('match.picker.title')} defaultOpen right={<span className="count">{set.entries.length > 1 ? int(set.entries.length) : ''}</span>}>
       {set.entries.length > 1 && !replay && (
@@ -74,12 +94,20 @@ export function MatchPicker() {
           <div className="match-sub">{t('match.picker.allSub')}</div>
         </div>
       )}
+      {set.entries.length > 1 && <SortControl sort={sort} />}
       <div className="match-list">
-        {set.entries.map((e) => {
-          const d = describe(e);
+        {entries.map((e) => {
+          const d = describe(e, games, docs);
           const on = isOn(e) && (picked !== null || set.entries.length === 1);
           return (
-            <div key={e.index} className={`match-row pick${on ? ' on' : ''}`} onClick={() => pick([e.index])}>
+            <div
+              key={e.index}
+              className={`match-row pick${on ? ' on' : ''}`}
+              onClick={() => {
+                recent.touch(e.id);
+                pick([e.index]);
+              }}
+            >
               {multi && set.entries.length > 1 && (
                 <input
                   type="checkbox"
@@ -182,59 +210,43 @@ function Game({ g, dataset, onKill }: { g: GameMatch; dataset: Dataset | null; o
   const victimName = (k: GameMatch['kills'][number]) =>
     (k.victimUid !== null && (uids?.get(k.victimUid)?.name ?? (g.unitNames.get(k.victimUid) ? `${g.unitNames.get(k.victimUid)} #${k.victimUid}` : null))) ||
     partyName(dataset!, k.victim, g.unitNames);
+  // One sort for every team's table, each sorted within itself.
+  const sort = useSort<GameMatch['players'][number]>(
+    'matchPicker.scoreboard',
+    [
+      { id: 'name', label: t('ui.sort.name'), key: (p) => p.name },
+      { id: 'air', label: t('match.game.air'), key: (p) => p.air, kind: 'number' },
+      { id: 'ground', label: t('match.game.ground'), key: (p) => p.ground, kind: 'number' },
+      { id: 'assists', label: t('match.scoreboard.assistsTitle'), key: (p) => p.assists, kind: 'number' },
+      { id: 'deaths', label: t('ui.sort.deaths'), key: (p) => p.deaths, kind: 'number' },
+      { id: 'score', label: t('ui.sort.score'), key: (p) => p.score, kind: 'number' },
+    ],
+    'score',
+  );
+  const killSort = useSort<GameMatch['kills'][number]>(
+    'match.game.kills',
+    [
+      { id: 'time', label: t('ui.sort.time'), key: (k) => k.time, kind: 'number', dir: 'asc' },
+      { id: 'player', label: t('ui.sort.player'), key: (k) => k.killer },
+      { id: 'weapon', label: t('ui.sort.weapon'), key: (k) => killWeapon(k) },
+    ],
+    'time',
+  );
+  const kills = useSorted(g.kills, killSort);
   return (
     <Section title={t('match.game.title', { map: g.map })} defaultOpen right={<span className="count">{duration(g.duration)}</span>}>
       <div className="match-sub">
         {[g.mission, g.battleClass.replace(/_/g, ' '), g.started.replace('T', ' ').replace(/\+.*$/, ''), g.author && t('match.game.recordedBy', { name: g.author })].filter(Boolean).join(' · ')}
       </div>
-      {g.teams.map((team) => {
-        const players = g.players.filter((p) => p.team === team).sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
-        if (!players.length) return null;
-        return (
-          <table key={team} className="score-table">
-            <thead>
-              <tr>
-                <th>{t('replay.team', { n: team })}</th>
-                <th title={t('match.game.airTitle')}>{t('match.game.air')}</th>
-                <th title={t('match.game.groundTitle')}>{t('match.game.ground')}</th>
-                <th title={t('match.scoreboard.assistsTitle')}>A</th>
-                <th title={t('match.scoreboard.deathsTitle')}>D</th>
-                <th>{t('match.game.score')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {players.map((p) => {
-                const u = unitOf(dataset, p.name);
-                return (
-                  <tr
-                    key={p.name}
-                    onClick={() => {
-                      if (u) selectAndFollow(u, u.persons[u.persons.length - 1]);
-                    }}
-                    title={t('match.game.playerTitle', { vehicles: p.vehicles.map((v) => u?.vehicle && p.vehicles.length === 1 ? u.vehicle : v).join(', ') })}
-                  >
-                    <td className="who">
-                      {p.clan ? <span className="dim">{p.clan} </span> : null}
-                      {p.name}
-                      {u && u.vehicles.some(Boolean) ? <span className="dim"> · {[...new Set(u.vehicles.filter(Boolean))].join(', ')}</span> : null}
-                    </td>
-                    <td>{int(p.air)}</td>
-                    <td>{int(p.ground)}</td>
-                    <td>{int(p.assists)}</td>
-                    <td>{int(p.deaths)}</td>
-                    <td>{int(p.score)}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        );
-      })}
+      {g.teams.map((team) => (
+        <GameTeam key={team} g={g} team={team} dataset={dataset} sort={sort} />
+      ))}
       {g.kills.length > 0 && (
         <details className="kill-list">
           <summary>{t('match.game.kills', { count: g.kills.length })}</summary>
+          {g.kills.length > 1 && <SortControl sort={killSort} />}
           <div className="replay-events">
-            {g.kills.map((k, i) => (
+            {kills.map((k, i) => (
               <button key={i} onClick={() => onKill(k.time, dataset ? victimName(k) : k.victim)} title={t('replay.jump')}>
                 <span>{clock(k.time - start)}</span>
                 <span>
@@ -249,5 +261,51 @@ function Game({ g, dataset, onKill }: { g: GameMatch; dataset: Dataset | null; o
       )}
       {!dataset && <div className="hint">{t('match.game.noData')}</div>}
     </Section>
+  );
+}
+
+function GameTeam({ g, team, dataset, sort }: { g: GameMatch; team: GameMatch['teams'][number]; dataset: Dataset | null; sort: Sort<GameMatch['players'][number]> }) {
+  // By name first, so players level on what the sort is by stay in name order.
+  const all = useMemo(() => g.players.filter((p) => p.team === team).sort((a, b) => a.name.localeCompare(b.name)), [g, team]);
+  const players = useSorted(all, sort);
+  if (!players.length) return null;
+  return (
+    <table className="score-table">
+      <thead>
+        <tr>
+          <SortTh sort={sort} id="name">{t('replay.team', { n: team })}</SortTh>
+          <SortTh sort={sort} id="air" title={t('match.game.airTitle')}>{t('match.game.air')}</SortTh>
+          <SortTh sort={sort} id="ground" title={t('match.game.groundTitle')}>{t('match.game.ground')}</SortTh>
+          <SortTh sort={sort} id="assists" title={t('match.scoreboard.assistsTitle')}>A</SortTh>
+          <SortTh sort={sort} id="deaths" title={t('match.scoreboard.deathsTitle')}>D</SortTh>
+          <SortTh sort={sort} id="score">{t('match.game.score')}</SortTh>
+        </tr>
+      </thead>
+      <tbody>
+        {players.map((p) => {
+          const u = unitOf(dataset, p.name);
+          return (
+            <tr
+              key={p.name}
+              onClick={() => {
+                if (u) selectAndFollow(u, u.persons[u.persons.length - 1]);
+              }}
+              title={t('match.game.playerTitle', { vehicles: p.vehicles.map((v) => u?.vehicle && p.vehicles.length === 1 ? u.vehicle : v).join(', ') })}
+            >
+              <td className="who">
+                {p.clan ? <span className="dim">{p.clan} </span> : null}
+                {p.name}
+                {u && u.vehicles.some(Boolean) ? <span className="dim"> · {[...new Set(u.vehicles.filter(Boolean))].join(', ')}</span> : null}
+              </td>
+              <td>{int(p.air)}</td>
+              <td>{int(p.ground)}</td>
+              <td>{int(p.assists)}</td>
+              <td>{int(p.deaths)}</td>
+              <td>{int(p.score)}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
   );
 }

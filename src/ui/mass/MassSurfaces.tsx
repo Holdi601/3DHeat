@@ -8,11 +8,13 @@
  * loads the matches it came from.
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { int, num, t, useLang } from '../../i18n';
 import { askMass, drillDown, useMass } from '../../mass/client';
 import type { SurfaceRow } from '../../mass/marks';
 import { useEngine } from '../EngineContext';
+import { SortControl, SortTh } from '../sort/SortControl';
+import { useSort, useSorted } from '../sort/useSort';
 
 type Data = { rows: SurfaceRow[]; matches: number; withMarks: number; maps: string[] };
 
@@ -36,10 +38,24 @@ export function MassSurfaces() {
       live = false;
     };
   }, [JSON.stringify(filter)]);
+  const kept = useMemo(() => (q.data?.rows ?? []).filter((r) => !map || r.map === map), [q.data, map]);
+  const sort = useSort<SurfaceRow>(
+    'mass.surfaces',
+    [
+      { id: 'map', label: t('ui.sort.map'), key: (r) => r.map },
+      { id: 'surface', label: t('mass.surfaces.col.surface'), key: (r) => r.surface },
+      { id: 'room', label: t('mass.surfaces.col.room'), key: (r) => r.room },
+      { id: 'marks', label: t('mass.surfaces.col.marks'), key: (r) => r.marks, kind: 'number' },
+      { id: 'perRound', label: t('mass.surfaces.col.perRound'), key: (r) => r.perRound, kind: 'number' },
+      { id: 'matches', label: t('ui.sort.matches'), key: (r) => r.matches, kind: 'number' },
+      { id: 'shot', label: t('mass.surfaces.col.shot'), key: (r) => r.shot, kind: 'number' },
+    ],
+    'marks',
+  );
+  const rows = useSorted(kept, sort);
   if (!q.data) return <div className="hint">{q.error ?? t('mass.working')}</div>;
   const d = q.data;
   if (!d.withMarks) return <div className="hint">{t('mass.surfaces.none')}</div>;
-  const rows = d.rows.filter((r) => !map || r.map === map);
   return (
     <div>
       <div className="hint">{t('mass.surfaces.hint', { with: int(d.withMarks), matches: int(d.matches) })}</div>
@@ -59,13 +75,13 @@ export function MassSurfaces() {
       <table className="cmp-table brk-table">
         <thead>
           <tr>
-            {!map && <th>{t('mass.map')}</th>}
-            <th>{t('mass.surfaces.col.surface')}</th>
-            <th>{t('mass.surfaces.col.room')}</th>
-            <th>{t('mass.surfaces.col.marks')}</th>
-            <th>{t('mass.surfaces.col.perRound')}</th>
-            <th>{t('mass.col.matches')}</th>
-            <th title={t('mass.surfaces.col.shotTitle')}>{t('mass.surfaces.col.shot')}</th>
+            {!map && <SortTh sort={sort} id="map">{t('mass.map')}</SortTh>}
+            <SortTh sort={sort} id="surface">{t('mass.surfaces.col.surface')}</SortTh>
+            <SortTh sort={sort} id="room">{t('mass.surfaces.col.room')}</SortTh>
+            <SortTh sort={sort} id="marks">{t('mass.surfaces.col.marks')}</SortTh>
+            <SortTh sort={sort} id="perRound">{t('mass.surfaces.col.perRound')}</SortTh>
+            <SortTh sort={sort} id="matches">{t('mass.col.matches')}</SortTh>
+            <SortTh sort={sort} id="shot" title={t('mass.surfaces.col.shotTitle')}>{t('mass.surfaces.col.shot')}</SortTh>
           </tr>
         </thead>
         <tbody>
@@ -87,9 +103,9 @@ export function MassSurfaces() {
                   <td colSpan={map ? 6 : 7}>
                     <div className="row" style={{ gap: 16, alignItems: 'flex-start', flexWrap: 'wrap' }}>
                       <MarkHeat cells={r.cells} />
-                      <Counts title={t('mass.surfaces.kinds')} list={r.kinds} />
-                      <Counts title={t('mass.surfaces.byOperator')} list={r.ops} />
-                      <Counts title={t('mass.surfaces.byClass')} list={r.cls} />
+                      <Counts id="mass.surfaces.kinds" title={t('mass.surfaces.kinds')} list={r.kinds} />
+                      <Counts id="mass.surfaces.ops" title={t('mass.surfaces.byOperator')} list={r.ops} />
+                      <Counts id="mass.surfaces.classes" title={t('mass.surfaces.byClass')} list={r.cls} />
                     </div>
                     <button onClick={() => void drillDown(engine, { drill: { matches: r.matchIds } })} title={t('mass.drillTitle')}>
                       {t('mass.surfaces.load', { count: r.matchIds.length })}
@@ -106,14 +122,24 @@ export function MassSurfaces() {
   );
 }
 
-function Counts({ title, list }: { title: string; list: [string, number][] }) {
+function Counts({ id, title, list }: { id: string; title: string; list: [string, number][] }) {
+  const sort = useSort<[string, number]>(
+    id,
+    [
+      { id: 'name', label: t('ui.sort.name'), key: (e) => e[0] },
+      { id: 'count', label: t('ui.sort.count'), key: (e) => e[1], kind: 'number' },
+    ],
+    'count',
+  );
+  const sorted = useSorted(list, sort);
   return (
     <div>
       <b>{title}</b>
+      {list.length > 1 && <SortControl sort={sort} />}
       {list.length ? (
         <table className="cmp-table">
           <tbody>
-            {list.map(([k, v]) => (
+            {sorted.map(([k, v]) => (
               <tr key={k}>
                 <td>{k}</td>
                 <td>{int(v)}</td>

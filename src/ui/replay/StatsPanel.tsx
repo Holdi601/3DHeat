@@ -14,8 +14,11 @@ import {
   statsCsv,
   telemetryCsv,
   type MatchStats,
+  type TeamStats,
   type UnitStats,
 } from './stats';
+import { SortTh } from '../sort/SortControl';
+import { useSort, useSorted } from '../sort/useSort';
 import { formatValue } from './fields';
 import { personAt, unitsOf } from './units';
 import { teamName } from './replayView';
@@ -100,6 +103,20 @@ function StatsBody() {
   const selected = useReplayStore((s) => s.selected);
   const [hz, setHz] = useState(4);
   const stats = useStats(true);
+  const teamSort = useSort<TeamStats>(
+    'replay.stats.teams',
+    [
+      { id: 'team', label: t('ui.sort.team'), key: (tm) => (dataset && tm.team >= 0 ? teamName(dataset, tm.team) : null) },
+      { id: 'count', label: t('ui.sort.count'), key: (tm) => tm.units, kind: 'number' },
+      { id: 'kills', label: t('ui.sort.kills'), key: (tm) => tm.kills, kind: 'number' },
+      { id: 'deaths', label: t('ui.sort.deaths'), key: (tm) => tm.deaths, kind: 'number' },
+      { id: 'shots', label: t('replay.stats.shotsShort'), key: (tm) => tm.shots, kind: 'number' },
+      { id: 'hits', label: t('replay.stats.hitsShort'), key: (tm) => tm.hits, kind: 'number' },
+      { id: 'order', label: t('ui.sort.order'), key: null },
+    ],
+    'kills',
+  );
+  const teams = useSorted(stats?.teams ?? NO_TEAMS, teamSort, [dataset]);
   if (!dataset) return null;
   if (!stats) return <div className="hint">{t('replay.stats.working')}</div>;
   const team = (i: number) => (i >= 0 ? teamName(dataset, i) || '—' : '—');
@@ -125,16 +142,16 @@ function StatsBody() {
       <table className="stats-mini">
         <thead>
           <tr>
-            <th>{t('replay.stats.team')}</th>
-            <th title={t('replay.stats.unitsTitle')}>#</th>
-            <th title={t('replay.stats.killsTitle')}>K</th>
-            <th title={t('replay.stats.deathsTitle')}>D</th>
-            <th title={t('replay.stats.shotsTitle')}>{t('replay.stats.shotsShort')}</th>
-            <th title={t('replay.stats.hitsTitle')}>{t('replay.stats.hitsShort')}</th>
+            <SortTh sort={teamSort} id="team">{t('replay.stats.team')}</SortTh>
+            <SortTh sort={teamSort} id="count" title={t('replay.stats.unitsTitle')}>#</SortTh>
+            <SortTh sort={teamSort} id="kills" title={t('replay.stats.killsTitle')}>K</SortTh>
+            <SortTh sort={teamSort} id="deaths" title={t('replay.stats.deathsTitle')}>D</SortTh>
+            <SortTh sort={teamSort} id="shots" title={t('replay.stats.shotsTitle')}>{t('replay.stats.shotsShort')}</SortTh>
+            <SortTh sort={teamSort} id="hits" title={t('replay.stats.hitsTitle')}>{t('replay.stats.hitsShort')}</SortTh>
           </tr>
         </thead>
         <tbody>
-          {stats.teams.map((tm) => (
+          {teams.map((tm) => (
             <tr key={tm.team}>
               <td>
                 <span
@@ -224,9 +241,11 @@ function StatsBody() {
   );
 }
 
-type SortKey = keyof Pick<
+const NO_TEAMS: TeamStats[] = [];
+
+/** The numeric columns of the full table. */
+type NumberKey = keyof Pick<
   UnitStats,
-  | 'name'
   | 'kills'
   | 'deaths'
   | 'shots'
@@ -249,37 +268,44 @@ export function StatsTable() {
   const open = useStatsView((s) => s.open);
   const dataset = useStore((s) => s.dataset);
   const units = useUnits();
-  const [sort, setSort] = useState<{ key: SortKey; down: boolean }>({ key: 'kills', down: true });
   const [ai, setAi] = useState(true);
   useLang();
   const stats = useStats(open);
-  const rows = useMemo(() => {
-    if (!stats) return [];
-    const list = stats.units.filter((u) => u.kind !== 'weapon' && (ai || u.kind === 'player'));
-    const k = sort.key;
-    return list.sort((a, b) => {
-      const x = a[k];
-      const y = b[k];
-      const c =
-        typeof x === 'string'
-          ? x.localeCompare(y as string)
-          : (Number.isFinite(x) ? (x as number) : -Infinity) -
-            (Number.isFinite(y) ? (y as number) : -Infinity);
-      return sort.down ? -c : c;
-    });
-  }, [stats, sort, ai]);
+  const listed = useMemo(
+    () => (stats ? stats.units.filter((u) => u.kind !== 'weapon' && (ai || u.kind === 'player')) : []),
+    [stats, ai],
+  );
+  const col = (key: NumberKey, label: string) => ({ id: key, label, key: (s: UnitStats) => s[key], kind: 'number' as const });
+  const sort = useSort<UnitStats>(
+    'replay.stats.table',
+    [
+      { id: 'name', label: t('replay.stats.col.unit'), key: (s) => s.name },
+      { id: 'team', label: t('replay.stats.team'), key: (s) => (dataset && s.team >= 0 ? teamName(dataset, s.team) : null) },
+      col('lives', t('replay.stats.col.lives')),
+      col('kills', t('ui.sort.kills')),
+      col('deaths', t('ui.sort.deaths')),
+      col('shots', t('replay.stats.shotsShort')),
+      col('hits', t('replay.stats.hitsShort')),
+      col('hitRatio', t('replay.stats.col.ratio')),
+      col('takeoffs', t('replay.stats.col.takeoffs')),
+      col('landings', t('replay.stats.col.landings')),
+      col('airborne', t('replay.stats.col.airborne')),
+      col('maxG', t('replay.stats.col.maxG')),
+      col('maxSpeed', t('replay.stats.col.maxSpeed')),
+      col('maxAlt', t('replay.stats.col.maxAlt')),
+      col('maxMach', t('replay.stats.col.maxMach')),
+      col('distance', t('replay.stats.col.distance')),
+    ],
+    'kills',
+  );
+  const rows = useSorted(listed, sort, [dataset]);
   if (!open || !dataset) return null;
   const close = () => useStatsView.getState().setOpen(false);
   const index = unitsOf(dataset);
-  const head = (key: SortKey, label: string, title?: string) => (
-    <th
-      className={sort.key === key ? 'on' : ''}
-      title={title}
-      onClick={() => setSort({ key, down: sort.key === key ? !sort.down : key !== 'name' })}
-    >
+  const head = (key: string, label: string, title?: string) => (
+    <SortTh sort={sort} id={key} title={title}>
       {label}
-      {sort.key === key ? (sort.down ? ' ▾' : ' ▴') : ''}
-    </th>
+    </SortTh>
   );
   const v = (x: number, kind: Parameters<typeof formatValue>[0]) =>
     Number.isFinite(x) ? formatValue(kind, x, units) : '';
@@ -329,7 +355,7 @@ export function StatsTable() {
             <thead>
               <tr>
                 {head('name', t('replay.stats.col.unit'))}
-                <th>{t('replay.stats.team')}</th>
+                {head('team', t('replay.stats.team'))}
                 {head('lives', t('replay.stats.col.lives'))}
                 {head('kills', 'K', t('replay.stats.killsTitle'))}
                 {head('deaths', 'D', t('replay.stats.deathsTitle'))}

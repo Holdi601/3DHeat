@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Check, Section, Segmented } from '../controls';
+import { SortControl } from '../sort/SortControl';
+import { useSort, useSorted } from '../sort/useSort';
 import { useStore } from '../../state/store';
 import { useReplayStore, type GridKind } from '../../state/replayStore';
 import type { Dataset } from '../../state/types';
@@ -68,6 +70,17 @@ function TimePanel() {
   const reshape = dataset ? reshapeOf(dataset) : null;
   const original = reshape?.original ?? dataset;
   const groups = useMemo(() => (original ? shiftGroups(original) : []), [original]);
+  const shiftList = useMemo(() => Object.entries(reshape?.shifts ?? {}), [reshape?.shifts]);
+  const shiftSort = useSort<[string, number]>(
+    'replay.time.shifts',
+    [
+      { id: 'name', label: t('ui.sort.name'), key: ([k]) => groups.find((g) => g.name === k)?.label ?? k },
+      { id: 'value', label: t('ui.sort.value'), key: ([, v]) => v, kind: 'number' },
+      { id: 'order', label: t('ui.sort.order'), key: null },
+    ],
+    'name',
+  );
+  const shiftRows = useSorted(shiftList, shiftSort, [groups]);
   if (!dataset || !original || !dataset.time) return null;
   const shifts = reshape?.shifts ?? {};
   const trim = reshape?.trim ?? null;
@@ -104,7 +117,8 @@ function TimePanel() {
       )}
       {Object.keys(shifts).length > 0 && (
         <div className="time-shifts">
-          {Object.entries(shifts).map(([k, v]) => (
+          {shiftList.length > 1 && <SortControl sort={shiftSort} />}
+          {shiftRows.map(([k, v]) => (
             <div key={k} className="hint">
               {t('replay.time.shifted', { name: name(k), v: (v > 0 ? '+' : '') + num(v, 1) })}{' '}
               <button
@@ -187,6 +201,17 @@ function MapPanel() {
   const placed = !!dataset && !!geoFrame(dataset);
   const slopes = useGlideslopes(dataset, geo.glideslope && placed);
   const crossings = useMemo(() => (dataset ? altitudeCrossings(dataset, session, limits) : []), [dataset, session, limits]);
+  const crossingSort = useSort<(typeof crossings)[number]>(
+    'replay.limits',
+    [
+      { id: 'time', label: t('ui.sort.time'), key: (c) => c.time, kind: 'number', dir: 'asc' },
+      { id: 'player', label: t('ui.sort.player'), key: (c) => c.unit.name },
+      { id: 'kind', label: t('ui.sort.kind'), key: (c) => t(`replay.limits.${c.kind}`) },
+      { id: 'value', label: t('ui.sort.value'), key: (c) => c.alt, kind: 'number' },
+    ],
+    'time',
+  );
+  const sortedCrossings = useSorted(crossings, crossingSort);
   if (!dataset) return null;
   const r = useReplayStore.getState;
   const toShown = (m: number | null) => (m === null ? '' : String(Math.round(toAltitude(m, units.altitude))));
@@ -239,8 +264,9 @@ function MapPanel() {
             <span className="dim">{unitSymbol('altitude', units)}</span>
           </div>
           <div className="hint">{t('replay.limits.count', { n: crossings.filter((c) => c.kind !== 'backInside').length })}</div>
+          {crossings.length > 1 && <SortControl sort={crossingSort} />}
           <div className="limit-list">
-            {crossings.slice(0, 300).map((c, i) => (
+            {sortedCrossings.slice(0, 300).map((c, i) => (
               <button
                 key={i}
                 className={`limit-row ${c.kind}`}

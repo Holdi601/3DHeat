@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   deleteLevel,
   listLevels,
@@ -38,6 +38,8 @@ import { bestR6Level, parseR6GameKey, r6GameKey, r6LevelOf, useR6Maps } from '..
 import { frostbiteGameKey, frostbiteLevelOf, frostbiteLevelsFor, parseFrostbiteGameKey, useFrostbiteMaps } from '../../data/frostbiteLevel';
 import { Check, Section, Slider } from '../controls';
 import { int, num, t } from '../../i18n';
+import { SortControl } from '../sort/SortControl';
+import { useRecent, useSort, useSorted } from '../sort/useSort';
 import type { BackdropResult } from '../../world/backdrop';
 import type { GeoPlacement } from '../../state/types';
 import { cameraOverTheatre, WorldBackdrop } from './WorldBackdrop';
@@ -343,6 +345,18 @@ export function LevelPanel() {
     };
   }, [levelVertices, lod, patchLevel]);
   const [library, setLibrary] = useState<StoredLevelMeta[]>([]);
+  const recent = useRecent('levels');
+  const librarySort = useSort<StoredLevelMeta>(
+    'levels',
+    [
+      { id: 'name', label: t('ui.sort.name'), key: (m) => m.name },
+      { id: 'recent', label: t('ui.sort.recent'), key: (m) => recent.at(m.id), kind: 'number' },
+      { id: 'date', label: t('ui.sort.date'), key: (m) => m.createdAt, kind: 'number' },
+      { id: 'size', label: t('ui.sort.size'), key: (m) => m.bytes, kind: 'number' },
+    ],
+    'name',
+  );
+  const sortedLibrary = useSorted(library, librarySort, [recent.at]);
   const [usage, setUsage] = useState<{ usage: number; quota: number } | null>(null);
 
   const refreshLibrary = () => {
@@ -1160,8 +1174,10 @@ export function LevelPanel() {
             {t('heat.levelPanel.libraryEmpty', { button: t('heat.levelPanel.saveToLibrary') })}
           </div>
         ) : (
-          <div className="team-list" style={{ maxHeight: 190 }}>
-            {library.map((m) => (
+          <>
+            {library.length > 1 && <SortControl sort={librarySort} />}
+            <div className="team-list" style={{ maxHeight: 190 }}>
+            {sortedLibrary.map((m) => (
               <div className="team-row" key={m.id}>
                 <span className="name" title={`${m.name} · ${formatBytes(m.bytes)}`}>
                   {m.name}
@@ -1175,7 +1191,10 @@ export function LevelPanel() {
                   className="del"
                   disabled={!!busy}
                   title={t('heat.levelPanel.load')}
-                  onClick={() => void loadFromLibrary(m)}
+                  onClick={() => {
+                    recent.touch(m.id);
+                    void loadFromLibrary(m);
+                  }}
                 >
                   ▸
                 </button>
@@ -1188,7 +1207,8 @@ export function LevelPanel() {
                 </button>
               </div>
             ))}
-          </div>
+            </div>
+          </>
         )}
       </div>
     </Section>
@@ -1214,6 +1234,17 @@ function PartList({
   tint: [number, number, number];
 }) {
   const [open, setOpen] = useState(false);
+  const indices = useMemo(() => names.map((_, i) => i), [names]);
+  const sort = useSort<number>(
+    'levelParts',
+    [
+      { id: 'name', label: t('ui.sort.name'), key: (i) => names[i] },
+      { id: 'kind', label: t('ui.sort.kind'), key: (i) => classes[i] },
+      { id: 'order', label: t('ui.sort.order'), key: null },
+    ],
+    'name',
+  );
+  const order = useSorted(indices, sort, [classes]);
   return (
     <div className="field">
       <button onClick={() => setOpen((v) => !v)}>
@@ -1222,17 +1253,18 @@ function PartList({
       {open && (
         <>
           <div className="hint">{t('heat.levelPanel.partsHint')}</div>
+          <SortControl sort={sort} />
           <div className="team-list" style={{ maxHeight: 220 }}>
-            {names.map((name, i) => (
-              <div className="team-row" key={`${name}-${i}`}>
+            {order.map((i) => (
+              <div className="team-row" key={i}>
                 <span
                   className="swatch"
                   style={{
                     background: classes[i] === 'structure' ? rgbToCssTint(tint) : '#8d96a5',
                   }}
                 />
-                <span className="name" title={`${name} — ${reasons[i] ?? ''}`}>
-                  {name}
+                <span className="name" title={`${names[i]} — ${reasons[i] ?? ''}`}>
+                  {names[i]}
                 </span>
                 <span className="sign">{t('heat.levelPanel.partClass', { kind: classes[i] ?? '?' })}</span>
               </div>

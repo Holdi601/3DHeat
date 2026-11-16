@@ -13,6 +13,7 @@ import {
   plantTime,
   startsHalf,
   type Aggregate,
+  type AggregatePlayer,
   type MatchDoc,
   type MatchPlayer,
   type MatchRound,
@@ -23,6 +24,8 @@ import { ALL, useMatchStore } from '../../state/matchStore';
 import { loadObjectiveFiles } from '../../state/objectivesStore';
 import { useStore } from '../../state/store';
 import { Section } from '../controls';
+import { SortControl, SortTh } from '../sort/SortControl';
+import { useRecent, useSort, useSorted, type Sort } from '../sort/useSort';
 import { RecordingInfoSection } from './RecordingInfo';
 
 /** How a round ended: its mark in the round strip, and the message that says it. */
@@ -112,6 +115,19 @@ function MatchesSection() {
   const error = useMatchStore((s) => s.error);
   const store = useMatchStore.getState();
   const input = useRef<HTMLInputElement>(null);
+  const recent = useRecent('match.list');
+  const sort = useSort<MatchDoc>(
+    'match.list',
+    [
+      { id: 'order', label: t('ui.sort.order'), key: null },
+      { id: 'recent', label: t('ui.sort.recent'), key: (d) => recent.at(d.match), kind: 'number' },
+      { id: 'name', label: t('ui.sort.name'), key: (d) => d.teams.join(' ') },
+      { id: 'map', label: t('ui.sort.map'), key: (d) => d.map },
+      { id: 'count', label: t('ui.sort.count'), key: (d) => d.rounds.length, kind: 'number' },
+    ],
+    'order',
+  );
+  const sorted = useSorted(docs, sort, [recent.at]);
   return (
     <Section title={t('match.matches.title')} defaultOpen={docs.length > 0 || games.length === 0} right={<span className="count">{docs.length + games.length || ''}</span>}>
       <div className="row wrap" style={{ gap: 6 }}>
@@ -163,9 +179,17 @@ function MatchesSection() {
           </div>
         </div>
       )}
+      {docs.length > 1 && <SortControl sort={sort} />}
       <div className="match-list">
-        {docs.map((d) => (
-          <div key={d.match} className={`match-row${open === d.match ? ' on' : ''}`} onClick={() => store.setOpen(d.match)}>
+        {sorted.map((d) => (
+          <div
+            key={d.match}
+            className={`match-row${open === d.match ? ' on' : ''}`}
+            onClick={() => {
+              recent.touch(d.match);
+              store.setOpen(d.match);
+            }}
+          >
             <div className="match-name">
               {d.teams.map((team, i) => (
                 <span key={team}>
@@ -302,6 +326,16 @@ function RoundStrip({ doc }: { doc: MatchDoc }) {
 
 function RoundDetail({ doc, r }: { doc: MatchDoc; r: MatchRound }) {
   const teamOf = (side: Side) => Object.entries(r.sides).find(([, s]) => s === side)?.[0] ?? side;
+  const sort = useSort<MatchRound['kills'][number]>(
+    'match.kills',
+    [
+      { id: 'time', label: t('ui.sort.time'), key: (k) => k.time, kind: 'number', dir: 'asc' },
+      { id: 'player', label: t('ui.sort.player'), key: (k) => k.attacker },
+      { id: 'weapon', label: t('ui.sort.weapon'), key: (k) => k.weapon },
+    ],
+    'time',
+  );
+  const kills = useSorted(r.kills, sort);
   return (
     <div className="round-detail">
       <div className="round-title">
@@ -328,9 +362,10 @@ function RoundDetail({ doc, r }: { doc: MatchDoc; r: MatchRound }) {
             : t('match.roundDetail.plantUnknown', { player: r.plant.player, time: clock(plantTime(doc, r)) })}
         </div>
       )}
+      {r.kills.length > 1 && <SortControl sort={sort} />}
       <table className="kill-feed">
         <tbody>
-          {r.kills.map((k, i) => (
+          {kills.map((k, i) => (
             <tr key={i} className={k.after ? 'after' : ''}>
               <td className="mono dim">{clock(k.time)}</td>
               <td className={`side-${k.attackerSide || 'none'}`}>{k.attacker || t('match.roundDetail.world')}</td>
@@ -413,35 +448,59 @@ function RoundDetail({ doc, r }: { doc: MatchDoc; r: MatchRound }) {
 }
 
 function Scoreboard({ doc }: { doc: MatchDoc }) {
+  // One sort for both teams' tables, each sorted within itself.
+  const sort = useSort<MatchPlayer>(
+    'match.scoreboard',
+    [
+      { id: 'name', label: t('ui.sort.name'), key: (p) => p.name },
+      { id: 'kills', label: t('ui.sort.kills'), key: (p) => p.kills, kind: 'number' },
+      { id: 'deaths', label: t('ui.sort.deaths'), key: (p) => p.deaths, kind: 'number' },
+      { id: 'assists', label: t('match.scoreboard.assistsTitle'), key: (p) => p.assists + p.flashAssists, kind: 'number' },
+      { id: 'diff', label: t('ui.sort.difference'), key: (p) => p.diff, kind: 'number' },
+      { id: 'adr', label: 'ADR', key: (p) => p.adr, kind: 'number' },
+      { id: 'kast', label: 'KAST', key: (p) => p.kast, kind: 'number' },
+      { id: 'hs', label: 'HS', key: (p) => p.headshotPct, kind: 'number' },
+      { id: 'open', label: t('match.scoreboard.open'), key: (p) => p.openingKills - p.openingDeaths, kind: 'number' },
+      { id: 'clutches', label: t('match.scoreboard.clutches'), key: (p) => p.clutchesWon, kind: 'number' },
+      { id: 'order', label: t('ui.sort.order'), key: null },
+    ],
+    'kills',
+  );
   return (
     <>
       {doc.teams.map((team) => (
-        <table key={team} className="score-table">
-          <thead>
-            <tr>
-              <th>{team}</th>
-              <th title={t('match.scoreboard.killsTitle')}>K</th>
-              <th title={t('match.scoreboard.deathsTitle')}>D</th>
-              <th title={t('match.scoreboard.assistsTitle')}>A</th>
-              <th title={t('match.scoreboard.diffTitle')}>±</th>
-              <th title={t('match.scoreboard.adrTitle')}>ADR</th>
-              <th title={t('match.scoreboard.kastTitle')}>KAST</th>
-              <th title={t('match.scoreboard.headshotsTitle')}>HS</th>
-              <th title={t('match.scoreboard.openTitle')}>{t('match.scoreboard.open')}</th>
-              <th title={t('match.scoreboard.clutchesTitle')}>{t('match.scoreboard.clutches')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {doc.players
-              .filter((p) => p.team === team)
-              .map((p) => (
-                <PlayerRow key={p.steamid} doc={doc} p={p} />
-              ))}
-          </tbody>
-        </table>
+        <TeamScore key={team} doc={doc} team={team} sort={sort} />
       ))}
       <div className="hint">{t('match.scoreboard.hint')}</div>
     </>
+  );
+}
+
+function TeamScore({ doc, team, sort }: { doc: MatchDoc; team: string; sort: Sort<MatchPlayer> }) {
+  const players = useMemo(() => doc.players.filter((p) => p.team === team), [doc, team]);
+  const rows = useSorted(players, sort);
+  return (
+    <table className="score-table">
+      <thead>
+        <tr>
+          <SortTh sort={sort} id="name">{team}</SortTh>
+          <SortTh sort={sort} id="kills" title={t('match.scoreboard.killsTitle')}>K</SortTh>
+          <SortTh sort={sort} id="deaths" title={t('match.scoreboard.deathsTitle')}>D</SortTh>
+          <SortTh sort={sort} id="assists" title={t('match.scoreboard.assistsTitle')}>A</SortTh>
+          <SortTh sort={sort} id="diff" title={t('match.scoreboard.diffTitle')}>±</SortTh>
+          <SortTh sort={sort} id="adr" title={t('match.scoreboard.adrTitle')}>ADR</SortTh>
+          <SortTh sort={sort} id="kast" title={t('match.scoreboard.kastTitle')}>KAST</SortTh>
+          <SortTh sort={sort} id="hs" title={t('match.scoreboard.headshotsTitle')}>HS</SortTh>
+          <SortTh sort={sort} id="open" title={t('match.scoreboard.openTitle')}>{t('match.scoreboard.open')}</SortTh>
+          <SortTh sort={sort} id="clutches" title={t('match.scoreboard.clutchesTitle')}>{t('match.scoreboard.clutches')}</SortTh>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((p) => (
+          <PlayerRow key={p.steamid} doc={doc} p={p} />
+        ))}
+      </tbody>
+    </table>
   );
 }
 
@@ -494,6 +553,31 @@ const BUY_COLUMNS: [string, string][] = [
 ];
 
 function Across({ agg }: { agg: Aggregate }) {
+  // The tables show the first few of the whole list in its sort: the leaders by what it is sorted by.
+  const openingSort = useSort<Aggregate['openings'][number]>(
+    'match.openings',
+    [
+      { id: 'name', label: t('ui.sort.name'), key: (o) => placeName(o.place) },
+      { id: 'count', label: t('ui.sort.count'), key: (o) => o.duels, kind: 'number' },
+      { id: 'share', label: t('ui.sort.share'), key: (o) => o.tWon / o.duels, kind: 'number' },
+    ],
+    'count',
+  );
+  const playerSort = useSort<AggregatePlayer>(
+    'match.across.players',
+    [
+      { id: 'name', label: t('ui.sort.name'), key: (p) => p.name },
+      { id: 'matches', label: t('ui.sort.matches'), key: (p) => p.matches, kind: 'number' },
+      { id: 'kd', label: t('ui.sort.difference'), key: (p) => p.kills - p.deaths, kind: 'number' },
+      { id: 'adr', label: 'ADR', key: (p) => p.adr, kind: 'number' },
+      { id: 'kast', label: 'KAST', key: (p) => p.kast, kind: 'number' },
+      { id: 'hs', label: 'HS', key: (p) => p.headshotPct, kind: 'number' },
+      { id: 'open', label: t('match.across.open'), key: (p) => p.openingKills - p.openingDeaths, kind: 'number' },
+    ],
+    'kd',
+  );
+  const openings = useSorted(agg.openings, openingSort);
+  const players = useSorted(agg.players, playerSort);
   return (
     <>
       <div className="dim">
@@ -556,13 +640,13 @@ function Across({ agg }: { agg: Aggregate }) {
       <table className="score-table compact">
         <thead>
           <tr>
-            <th>{t('match.across.openingsWhere')}</th>
-            <th>{t('match.across.duels')}</th>
-            <th>{t('match.across.sideWon', { side: 'T' })}</th>
+            <SortTh sort={openingSort} id="name">{t('match.across.openingsWhere')}</SortTh>
+            <SortTh sort={openingSort} id="count">{t('match.across.duels')}</SortTh>
+            <SortTh sort={openingSort} id="share">{t('match.across.sideWon', { side: 'T' })}</SortTh>
           </tr>
         </thead>
         <tbody>
-          {agg.openings.slice(0, 10).map((o) => (
+          {openings.slice(0, 10).map((o) => (
             <tr key={o.place}>
               <td className="who">{placeName(o.place)}</td>
               <td>{int(o.duels)}</td>
@@ -574,17 +658,17 @@ function Across({ agg }: { agg: Aggregate }) {
       <table className="score-table compact">
         <thead>
           <tr>
-            <th>{t('match.across.players')}</th>
-            <th title={t('match.across.matchesTitle')}>{t('match.across.matchesShort')}</th>
-            <th>K-D</th>
-            <th>ADR</th>
-            <th>KAST</th>
-            <th>HS</th>
-            <th title={t('match.across.openTitle')}>{t('match.across.open')}</th>
+            <SortTh sort={playerSort} id="name">{t('match.across.players')}</SortTh>
+            <SortTh sort={playerSort} id="matches" title={t('match.across.matchesTitle')}>{t('match.across.matchesShort')}</SortTh>
+            <SortTh sort={playerSort} id="kd">K-D</SortTh>
+            <SortTh sort={playerSort} id="adr">ADR</SortTh>
+            <SortTh sort={playerSort} id="kast">KAST</SortTh>
+            <SortTh sort={playerSort} id="hs">HS</SortTh>
+            <SortTh sort={playerSort} id="open" title={t('match.across.openTitle')}>{t('match.across.open')}</SortTh>
           </tr>
         </thead>
         <tbody>
-          {agg.players.slice(0, 15).map((p) => (
+          {players.slice(0, 15).map((p) => (
             <tr key={p.steamid} onClick={() => focus({ player: p.name, events: ['kill', 'death'] })} title={`${p.name} (${p.team})`}>
               <td className="who">{p.name}</td>
               <td>{int(p.matches)}</td>

@@ -4,7 +4,7 @@ import { num, t, useLang } from '../../i18n';
 import { askMass, drillDown, findInsights, openMass, useMass, type MassTab } from '../../mass/client';
 import { massReportForModel, type MassInsight, type MassReport } from '../../mass/detect';
 import type { Channel } from '../../mass/grids';
-import { MATCH_HIST, type BalanceBy, type BalanceRow, type BalanceSplit, type Bucket, type Overview, type Populations, type SideRow, type Trends } from '../../mass/store';
+import { MATCH_HIST, type BalanceBy, type BalanceRow, type BalanceSplit, type Bucket, type Overview, type Populations, type SideRow, type Trends, type TrendSeries } from '../../mass/store';
 import { GRID_KINDS } from '../../mass/types';
 import { Check, Section, Segmented } from '../controls';
 import { useEngine } from '../EngineContext';
@@ -12,6 +12,8 @@ import { NichesTab, PlacesTab, sayMass } from './MassPlaces';
 import { MassManeuvers } from './MassManeuvers';
 import { MassCqb } from './MassCqb';
 import { MassSurfaces } from './MassSurfaces';
+import { SortControl, SortTh } from '../sort/SortControl';
+import { useSort, useSorted, type SortOption } from '../sort/useSort';
 import '../compare/compare.css';
 import '../breakdown/breakdown.css';
 import './mass.css';
@@ -21,6 +23,7 @@ const pct = (v: number | null | undefined) => (v === null || v === undefined || 
 const big = (v: number) => (v >= 1e9 ? `${num(v / 1e9, 1)} G` : v >= 1e6 ? `${num(v / 1e6, 1)} M` : v >= 1e4 ? `${num(v / 1e3, 0)} k` : num(v, 0));
 const day = (sec: number | null) => (sec === null ? '—' : new Date(sec * 1000).toISOString().slice(0, 10));
 const MAX_ROWS = 300;
+const NONE: never[] = [];
 
 /** The sidebar's part: pick the matches, see what was found, open the window. */
 export function MassPanel() {
@@ -227,34 +230,11 @@ function OverviewTab() {
         </div>
       )}
       <div className="brk-lists">
-        <CountList title={t('mass.byGame')} rows={o.byGame} />
-        <CountList title={t('mass.byMap')} rows={o.byMap} onPick={(k) => useMass.getState().set({ filter: { ...filter, maps: [k] } })} />
-        {o.byMode.some((m) => m.key) && <CountList title={t('mass.byMode')} rows={o.byMode} />}
-        <div className="brk-list">
-          <div className="brk-list-title">{t('mass.events')}</div>
-          <ol>
-            {Object.entries(o.events)
-              .sort((a, b) => b[1] - a[1])
-              .map(([k, v]) => (
-                <li key={k}>
-                  {k}
-                  <span>{big(v)}</span>
-                </li>
-              ))}
-          </ol>
-        </div>
-        {o.economy.length > 0 && (
-          <div className="brk-list">
-            <div className="brk-list-title">{t('mass.economy')}</div>
-            <ol>
-              {o.economy.map((e) => (
-                <li key={e.currency}>
-                  {t('mass.econLine', { currency: e.currency.toUpperCase(), earned: big(e.earned), spent: big(e.spent), matches: e.matches })}
-                </li>
-              ))}
-            </ol>
-          </div>
-        )}
+        <CountList id="mass.games" title={t('mass.byGame')} rows={o.byGame} />
+        <CountList id="mass.maps" title={t('mass.byMap')} rows={o.byMap} onPick={(k) => useMass.getState().set({ filter: { ...filter, maps: [k] } })} />
+        {o.byMode.some((m) => m.key) && <CountList id="mass.modes" title={t('mass.byMode')} rows={o.byMode} />}
+        <EventList events={o.events} />
+        {o.economy.length > 0 && <EconomyList economy={o.economy} />}
       </div>
       {ph.data && <PhaseBars data={ph.data} />}
       <Took ms={q.ms} />
@@ -262,12 +242,25 @@ function OverviewTab() {
   );
 }
 
-function CountList({ title, rows, onPick }: { title: string; rows: { key: string; matches: number; hours: number }[]; onPick?: (k: string) => void }) {
+type CountRow = { key: string; matches: number; hours: number };
+
+function CountList({ id, title, rows, onPick }: { id: string; title: string; rows: CountRow[]; onPick?: (k: string) => void }) {
+  const sort = useSort<CountRow>(
+    id,
+    [
+      { id: 'name', label: t('ui.sort.name'), key: (r) => r.key },
+      { id: 'matches', label: t('ui.sort.matches'), key: (r) => r.matches, kind: 'number' },
+      { id: 'duration', label: t('ui.sort.duration'), key: (r) => r.hours, kind: 'number' },
+    ],
+    'matches',
+  );
+  const sorted = useSorted(rows, sort);
   return (
     <div className="brk-list">
       <div className="brk-list-title">{title}</div>
+      {rows.length > 1 && <SortControl sort={sort} />}
       <ol>
-        {rows.slice(0, 25).map((r) => (
+        {sorted.slice(0, 25).map((r) => (
           <li key={r.key} className={onPick ? 'mass-pick' : undefined} onClick={onPick ? () => onPick(r.key) : undefined}>
             {r.key || '—'}
             <span>{t('mass.countLine', { matches: r.matches, hours: fmt(r.hours, 1) })}</span>
@@ -278,12 +271,76 @@ function CountList({ title, rows, onPick }: { title: string; rows: { key: string
   );
 }
 
+function EventList({ events }: { events: Record<string, number> }) {
+  const rows = useMemo(() => Object.entries(events), [events]);
+  const sort = useSort<[string, number]>(
+    'mass.events',
+    [
+      { id: 'name', label: t('ui.sort.name'), key: (e) => e[0] },
+      { id: 'count', label: t('ui.sort.count'), key: (e) => e[1], kind: 'number' },
+    ],
+    'count',
+  );
+  const sorted = useSorted(rows, sort);
+  return (
+    <div className="brk-list">
+      <div className="brk-list-title">{t('mass.events')}</div>
+      {rows.length > 1 && <SortControl sort={sort} />}
+      <ol>
+        {sorted.map(([k, v]) => (
+          <li key={k}>
+            {k}
+            <span>{big(v)}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+function EconomyList({ economy }: { economy: Overview['economy'] }) {
+  const sort = useSort<Overview['economy'][number]>(
+    'mass.economy',
+    [
+      { id: 'name', label: t('ui.sort.name'), key: (e) => e.currency },
+      { id: 'value', label: t('ui.sort.value'), key: (e) => e.earned, kind: 'number' },
+      { id: 'matches', label: t('ui.sort.matches'), key: (e) => e.matches, kind: 'number' },
+    ],
+    'name',
+  );
+  const sorted = useSorted(economy, sort);
+  return (
+    <div className="brk-list">
+      <div className="brk-list-title">{t('mass.economy')}</div>
+      {economy.length > 1 && <SortControl sort={sort} />}
+      <ol>
+        {sorted.map((e) => (
+          <li key={e.currency}>
+            {t('mass.econLine', { currency: e.currency.toUpperCase(), earned: big(e.earned), spent: big(e.spent), matches: e.matches })}
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
 function PhaseBars({ data }: { data: Record<string, number[]> }) {
-  const kinds = Object.entries(data).filter(([, v]) => v.some((x) => x > 0));
+  const all = useMemo(() => Object.entries(data).filter(([, v]) => v.some((x) => x > 0)), [data]);
+  const sort = useSort<[string, number[]]>(
+    'mass.phases',
+    [
+      { id: 'name', label: t('ui.sort.name'), key: (e) => e[0] },
+      { id: 'count', label: t('ui.sort.count'), key: (e) => e[1].reduce((s, x) => s + x, 0), kind: 'number' },
+      { id: 'order', label: t('ui.sort.order'), key: null },
+    ],
+    'name',
+  );
+  const kinds = useSorted(all, sort);
   if (!kinds.length) return null;
   return (
     <div className="mass-phases">
       <div className="brk-list-title">{t('mass.phases')}</div>
+      {kinds.length > 1 && <SortControl sort={sort} />}
       {kinds.map(([k, v]) => {
         const max = Math.max(1, ...v);
         return (
@@ -301,8 +358,6 @@ function PhaseBars({ data }: { data: Record<string, number[]> }) {
   );
 }
 
-type SortKey = keyof BalanceRow;
-
 function BalanceTab() {
   const filter = useMass((s) => s.filter);
   const engine = useEngine();
@@ -310,22 +365,33 @@ function BalanceTab() {
   const [split, setSplit] = useState<BalanceSplit>('none');
   const [minUnits, setMin] = useState(10);
   const [players, setPlayers] = useState(true);
-  const [sort, setSort] = useState<{ k: SortKey; desc: boolean }>({ k: 'hours', desc: true });
   const q = useQuery<BalanceRow[]>(() => ({ type: 'query', filter, q: { kind: 'balance', by, split, minUnits, players } }), 'balance', [by, split, minUnits, players]);
-  const rows = useMemo(() => {
-    const r = [...(q.data ?? [])];
-    r.sort((a, b) => {
-      const x = a[sort.k] as number | string | null;
-      const y = b[sort.k] as number | string | null;
-      const c = typeof x === 'string' || typeof y === 'string' ? String(x).localeCompare(String(y)) : (Number(x ?? -Infinity) || 0) - (Number(y ?? -Infinity) || 0);
-      return sort.desc ? -c : c;
-    });
-    return r;
-  }, [q.data, sort]);
-  const th = (k: SortKey, label: string, title?: string) => (
-    <th className={sort.k === k ? 'brk-sorted' : undefined} title={title} onClick={() => setSort({ k, desc: sort.k === k ? !sort.desc : true })}>
+  const weapon = by === 'weapon';
+  const col = (id: string, label: string, key: (r: BalanceRow) => number | string | null): SortOption<BalanceRow> => ({ id, label, key, kind: id === 'name' || id === 'split' ? 'text' : 'number' });
+  const sort = useSort<BalanceRow>(
+    'mass.balance',
+    [
+      col('name', t('mass.col.name'), (r) => r.label || r.key),
+      col('split', split !== 'none' ? t(`mass.split.${split}`) : t('mass.split'), (r) => r.split),
+      col('matches', t('mass.col.matches'), (r) => r.matches),
+      col('units', weapon ? t('mass.col.shots') : t('mass.col.lives'), (r) => r.units),
+      col('hours', t('mass.col.hours'), (r) => r.hours),
+      col('kd', weapon ? t('mass.col.killsPerMiss') : t('mass.col.kd'), (r) => r.kd),
+      col('win', t('mass.col.win'), (r) => r.win),
+      col('survival', t('mass.col.survival'), (r) => r.survival),
+      col('kills', t('mass.col.kills'), (r) => r.kills),
+      col('killsPerMin', t('mass.col.kpm'), (r) => r.killsPerMin),
+      col('hits', t('mass.col.hits'), (r) => r.hits),
+      col('earnPerMin', t('mass.col.earnPerMin'), (r) => r.earnPerMin),
+      col('q', t('mass.col.q'), (r) => r.q),
+    ],
+    'hours',
+  );
+  const rows = useSorted(q.data ?? NONE, sort);
+  const th = (id: string, label: string, title?: string) => (
+    <SortTh sort={sort} id={id} title={title}>
       {label}
-    </th>
+    </SortTh>
   );
   const drill = (r: BalanceRow) => {
     const drillReq = by === 'vehicle' ? { vehicle: r.key } : by === 'class' ? { cls: r.key } : by === 'weapon' ? { weapon: r.key } : { team: r.key };
@@ -357,7 +423,7 @@ function BalanceTab() {
         <table className="cmp-table brk-table">
           <thead>
             <tr>
-              {th('label', t('mass.col.name'))}
+              {th('name', t('mass.col.name'))}
               {split !== 'none' && th('split', t(`mass.split.${split}`))}
               {th('matches', t('mass.col.matches'))}
               {th('units', by === 'weapon' ? t('mass.col.shots') : t('mass.col.lives'))}
@@ -416,6 +482,18 @@ function TrendsTab() {
   const [metric, setMetric] = useState<'usage' | 'kd' | 'win'>('usage');
   const q = useQuery<Trends>(() => ({ type: 'query', filter, q: { kind: 'trends', by, bucket } }), 'trends', [by, bucket]);
   const d = q.data;
+  const valsOf = (s: TrendSeries) => (metric === 'usage' ? s.usage : metric === 'kd' ? s.kd : s.win.map((v) => v ?? NaN));
+  // Rows by name, by their value in one bucket (its column), or as ranked (most used overall first).
+  const sort = useSort<TrendSeries>(
+    'mass.trends',
+    [
+      { id: 'name', label: t('mass.col.name'), key: (s) => s.label || s.key },
+      { id: 'order', label: t('ui.sort.order'), key: null },
+      ...(d?.buckets ?? []).map((b, i): SortOption<TrendSeries> => ({ id: `b:${b}`, label: b, key: (s) => valsOf(s)[i], kind: 'number' })),
+    ],
+    'order',
+  );
+  const series = useSorted(d?.series ?? NONE, sort, [metric, d?.buckets]);
   return (
     <div>
       <div className="row brk-controls" style={{ flexWrap: 'wrap', marginBottom: 6 }}>
@@ -428,18 +506,20 @@ function TrendsTab() {
       ) : !d.buckets.length ? (
         <div className="hint">{t('mass.noDates')}</div>
       ) : (
+        <>
+        {d.series.length > 1 && <SortControl sort={sort} />}
         <table className="cmp-table brk-table">
           <thead>
             <tr>
-              <th>{t('mass.col.name')}</th>
+              <SortTh sort={sort} id="name">{t('mass.col.name')}</SortTh>
               {d.buckets.map((b, i) => (
-                <th key={b} title={t('mass.bucketMatches', { n: d.matches[i] })}>{b}</th>
+                <SortTh sort={sort} id={`b:${b}`} key={b} title={t('mass.bucketMatches', { n: d.matches[i] })}>{b}</SortTh>
               ))}
             </tr>
           </thead>
           <tbody>
-            {d.series.map((s) => {
-              const vals = metric === 'usage' ? s.usage : metric === 'kd' ? s.kd : s.win.map((v) => v ?? NaN);
+            {series.map((s) => {
+              const vals = valsOf(s);
               const max = Math.max(1e-9, ...vals.filter(Number.isFinite));
               return (
                 <tr key={s.key} onClick={() => void drillDown(engine, { drill: by === 'vehicle' ? { vehicle: s.key } : { cls: s.key } })} title={t('mass.drillTitle')}>
@@ -454,17 +534,34 @@ function TrendsTab() {
             })}
           </tbody>
         </table>
+        </>
       )}
       <Took ms={q.ms} />
     </div>
   );
 }
 
+type TopPlayer = Populations['top'][number];
+
 function PlayersTab() {
   const filter = useMass((s) => s.filter);
   const engine = useEngine();
   const q = useQuery<Populations>(() => ({ type: 'query', filter, q: { kind: 'populations' } }), 'populations', []);
   const p = q.data;
+  const sort = useSort<TopPlayer>(
+    'mass.players',
+    [
+      { id: 'player', label: t('ui.sort.player'), key: (r) => r.name || r.id },
+      { id: 'matches', label: t('ui.sort.matches'), key: (r) => r.matches, kind: 'number' },
+      { id: 'duration', label: t('mass.col.hours'), key: (r) => r.hours, kind: 'number' },
+      { id: 'kills', label: t('ui.sort.kills'), key: (r) => r.kills, kind: 'number' },
+      { id: 'deaths', label: t('ui.sort.deaths'), key: (r) => r.deaths, kind: 'number' },
+      { id: 'win', label: t('mass.col.win'), key: (r) => r.win, kind: 'number' },
+      { id: 'vehicle', label: t('ui.sort.vehicle'), key: (r) => r.vehicle },
+    ],
+    'matches',
+  );
+  const top = useSorted(p?.top ?? NONE, sort);
   if (!p) return <div className="hint">{q.error ?? t('mass.working')}</div>;
   const max = Math.max(1, ...p.matchesHist);
   return (
@@ -491,17 +588,17 @@ function PlayersTab() {
       <table className="cmp-table brk-table">
         <thead>
           <tr>
-            <th>{t('mass.col.player')}</th>
-            <th>{t('mass.col.matches')}</th>
-            <th>{t('mass.col.hours')}</th>
-            <th>{t('mass.col.kills')}</th>
-            <th>{t('mass.col.deaths')}</th>
-            <th>{t('mass.col.win')}</th>
-            <th>{t('mass.col.vehicle')}</th>
+            <SortTh sort={sort} id="player">{t('mass.col.player')}</SortTh>
+            <SortTh sort={sort} id="matches">{t('mass.col.matches')}</SortTh>
+            <SortTh sort={sort} id="duration">{t('mass.col.hours')}</SortTh>
+            <SortTh sort={sort} id="kills">{t('mass.col.kills')}</SortTh>
+            <SortTh sort={sort} id="deaths">{t('mass.col.deaths')}</SortTh>
+            <SortTh sort={sort} id="win">{t('mass.col.win')}</SortTh>
+            <SortTh sort={sort} id="vehicle">{t('mass.col.vehicle')}</SortTh>
           </tr>
         </thead>
         <tbody>
-          {p.top.map((r) => (
+          {top.map((r) => (
             <tr key={r.id} onClick={() => void drillDown(engine, { drill: { player: r.id } })} title={t('mass.drillTitle')}>
               <td>{r.name || r.id}</td>
               <td>{r.matches}</td>
@@ -523,6 +620,20 @@ function SidesTab() {
   const filter = useMass((s) => s.filter);
   const engine = useEngine();
   const q = useQuery<SideRow[]>(() => ({ type: 'query', filter, q: { kind: 'sides' } }), 'sides', []);
+  const sort = useSort<SideRow>(
+    'mass.sides',
+    [
+      { id: 'map', label: t('ui.sort.map'), key: (r) => r.map },
+      { id: 'team', label: t('ui.sort.team'), key: (r) => r.team },
+      { id: 'matches', label: t('ui.sort.matches'), key: (r) => r.matches, kind: 'number' },
+      { id: 'win', label: t('mass.col.win'), key: (r) => r.win, kind: 'number' },
+      { id: 'kills', label: t('ui.sort.kills'), key: (r) => r.kills, kind: 'number' },
+      { id: 'deaths', label: t('ui.sort.deaths'), key: (r) => r.deaths, kind: 'number' },
+      { id: 'q', label: t('mass.col.q'), key: (r) => r.q, kind: 'number', dir: 'asc' },
+    ],
+    'map',
+  );
+  const rows = useSorted(q.data ?? NONE, sort);
   if (!q.data) return <div className="hint">{q.error ?? t('mass.working')}</div>;
   return (
     <div>
@@ -530,17 +641,17 @@ function SidesTab() {
       <table className="cmp-table brk-table">
         <thead>
           <tr>
-            <th>{t('mass.map')}</th>
-            <th>{t('mass.col.team')}</th>
-            <th>{t('mass.col.matches')}</th>
-            <th>{t('mass.col.win')}</th>
-            <th>{t('mass.col.kills')}</th>
-            <th>{t('mass.col.deaths')}</th>
-            <th>{t('mass.col.q')}</th>
+            <SortTh sort={sort} id="map">{t('mass.map')}</SortTh>
+            <SortTh sort={sort} id="team">{t('mass.col.team')}</SortTh>
+            <SortTh sort={sort} id="matches">{t('mass.col.matches')}</SortTh>
+            <SortTh sort={sort} id="win">{t('mass.col.win')}</SortTh>
+            <SortTh sort={sort} id="kills">{t('mass.col.kills')}</SortTh>
+            <SortTh sort={sort} id="deaths">{t('mass.col.deaths')}</SortTh>
+            <SortTh sort={sort} id="q">{t('mass.col.q')}</SortTh>
           </tr>
         </thead>
         <tbody>
-          {q.data.slice(0, MAX_ROWS).map((r) => (
+          {rows.slice(0, MAX_ROWS).map((r) => (
             <tr key={`${r.map}|${r.team}`} className={r.q < 0.05 ? 'mass-sig' : undefined} onClick={() => void drillDown(engine, { drill: { team: r.team }, extra: { maps: [r.map] } })} title={t('mass.drillTitle')}>
               <td>{r.map || '—'}</td>
               <td>{r.team}</td>
@@ -725,6 +836,16 @@ function InsightsTab() {
     if (report) void navigator.clipboard?.writeText(JSON.stringify(massReportForModel(report, say), null, 1));
   };
   const text = (i: MassInsight) => (i.sentence.key.startsWith('mass.') ? sayMass(i.sentence.key, i.sentence.params) : `${i.evidence.map ?? ''}: ${t(i.sentence.key, i.sentence.params)}`);
+  const sort = useSort<MassInsight>(
+    'mass.insights',
+    [
+      { id: 'importance', label: t('ui.sort.importance'), key: (i) => i.strength, kind: 'number' },
+      { id: 'kind', label: t('ui.sort.kind'), key: (i) => i.kind },
+      { id: 'map', label: t('ui.sort.map'), key: (i) => i.drill.map ?? (i.evidence.map === undefined ? null : String(i.evidence.map)) },
+    ],
+    'importance',
+  );
+  const insights = useSorted(report?.insights ?? NONE, sort);
   return (
     <div>
       <div className="row brk-controls" style={{ flexWrap: 'wrap', marginBottom: 6 }}>
@@ -744,8 +865,9 @@ function InsightsTab() {
           <div className="hint">
             {t('mass.reportLine', { n: report.insights.length, matches: report.dataset.matches, tests: report.detectors.reduce((s, d) => s + d.tests, 0), fdr: report.fdr })}
           </div>
+          {insights.length > 1 && <SortControl sort={sort} />}
           <ol className="mass-insights">
-            {report.insights.map((i) => (
+            {insights.map((i) => (
               <li key={i.id}>
                 <span className={`mass-conf mass-conf-${i.confidence.level}`}>{t(`mass.conf.${i.confidence.level}`)}</span>
                 {i.region?.hidden && <span className="mass-badge mass-badge-hidden">{t('mass.places.badge.hidden')}</span>} {text(i)}

@@ -16,6 +16,8 @@ import type { PlaceFinding, PlaceShape } from '../../mass/scan';
 import type { MassDrill, MassFilter } from '../../mass/store';
 import { Check, Segmented } from '../controls';
 import { useEngine } from '../EngineContext';
+import { SortControl, SortTh } from '../sort/SortControl';
+import { useSort, useSorted } from '../sort/useSort';
 
 const PAGE = 40;
 /** The report the view's outlines were drawn from. */
@@ -72,6 +74,22 @@ export function PlacesTab() {
     [all, map, hiddenOnly, shape, dir],
   );
   useEffect(() => setShown(PAGE), [list]);
+  const sort = useSort<PlaceFinding>(
+    'mass.places',
+    [
+      { id: 'importance', label: t('ui.sort.importance'), key: (f) => f.score, kind: 'number' },
+      { id: 'place', label: t('mass.places.col.place'), key: (f) => { const s = placeSentence(f); return sayMass(s.key, s.params); } },
+      { id: 'shape', label: t('mass.places.shape'), key: (f) => t(`mass.places.shape.${f.shape}`) },
+      { id: 'ratio', label: t('mass.places.col.ratio'), key: (f) => f.shrunk, kind: 'number' },
+      { id: 'observed', label: t('mass.places.col.obsExp'), key: (f) => f.observed, kind: 'number' },
+      { id: 'held', label: t('mass.places.col.held'), key: (f) => (f.stability.seen ? f.stability.held / f.stability.seen : null), kind: 'number' },
+      { id: 'folds', label: t('mass.places.col.folds'), key: (f) => (f.stability.folds ? f.stability.foldsAgree / f.stability.folds : null), kind: 'number' },
+      { id: 'q', label: t('mass.col.q'), key: (f) => f.q, kind: 'number', dir: 'asc' },
+      { id: 'obv', label: t('mass.places.col.obv'), key: (f) => f.obviousness, kind: 'number' },
+    ],
+    'importance',
+  );
+  const sorted = useSorted(list, sort);
   // The outlines stay in the view when the window closes (to look at them); a new report or Clear takes them away.
   useEffect(() => {
     if (report === outlinedFor) return;
@@ -156,23 +174,25 @@ export function PlacesTab() {
           {!list.length ? (
             <div className="hint">{t('mass.places.none')}</div>
           ) : (
+            <>
+            {list.length > 1 && <SortControl sort={sort} />}
             <table className="cmp-table brk-table mass-places">
               <thead>
                 <tr>
                   <th />
-                  <th>{t('mass.places.col.place')}</th>
-                  <th>{t('mass.places.shape')}</th>
-                  <th title={t('mass.places.col.ratioTitle')}>{t('mass.places.col.ratio')}</th>
-                  <th>{t('mass.places.col.obsExp')}</th>
-                  <th title={t('mass.places.col.heldTitle')}>{t('mass.places.col.held')}</th>
-                  <th title={t('mass.places.col.foldsTitle')}>{t('mass.places.col.folds')}</th>
-                  <th title={t('mass.col.qTitle')}>{t('mass.col.q')}</th>
-                  <th title={t('mass.places.col.obvTitle')}>{t('mass.places.col.obv')}</th>
+                  <SortTh sort={sort} id="place">{t('mass.places.col.place')}</SortTh>
+                  <SortTh sort={sort} id="shape">{t('mass.places.shape')}</SortTh>
+                  <SortTh sort={sort} id="ratio" title={t('mass.places.col.ratioTitle')}>{t('mass.places.col.ratio')}</SortTh>
+                  <SortTh sort={sort} id="observed">{t('mass.places.col.obsExp')}</SortTh>
+                  <SortTh sort={sort} id="held" title={t('mass.places.col.heldTitle')}>{t('mass.places.col.held')}</SortTh>
+                  <SortTh sort={sort} id="folds" title={t('mass.places.col.foldsTitle')}>{t('mass.places.col.folds')}</SortTh>
+                  <SortTh sort={sort} id="q" title={t('mass.col.qTitle')}>{t('mass.col.q')}</SortTh>
+                  <SortTh sort={sort} id="obv" title={t('mass.places.col.obvTitle')}>{t('mass.places.col.obv')}</SortTh>
                   <th />
                 </tr>
               </thead>
               <tbody>
-                {list.slice(0, shown).map((f) => {
+                {sorted.slice(0, shown).map((f) => {
                   const s = placeSentence(f);
                   return (
                     <tr key={f.id} className={f.id === pick ? 'mass-picked' : undefined} onClick={() => choose(f)} title={t('mass.places.show')}>
@@ -213,6 +233,7 @@ export function PlacesTab() {
                 })}
               </tbody>
             </table>
+            </>
           )}
           {list.length > shown && <button onClick={() => setShown(shown + PAGE)}>{t('mass.showMore', { n: list.length - shown })}</button>}
           {picked && <PlaceDetail f={picked} />}
@@ -300,25 +321,43 @@ function NicheRows({ rows, onRefine, onLoad }: { rows: NicheFinding[]; onRefine:
   const [shown, setShown] = useState(PAGE);
   useEffect(() => setShown(PAGE), [rows]);
   const val = (f: NicheFinding, v: number) => (f.type === 'share' ? pct(v) : fmt(v));
+  const sort = useSort<NicheFinding>(
+    'mass.niches',
+    [
+      { id: 'importance', label: t('ui.sort.importance'), key: (f) => f.score, kind: 'number' },
+      { id: 'group', label: t('mass.niches.col.group'), key: (f) => nicheGroup({ conds: f.conds }) },
+      { id: 'target', label: t('mass.niches.target'), key: (f) => t(`mass.niches.target.${f.target}`) },
+      { id: 'value', label: t('mass.niches.col.value'), key: (f) => f.value, kind: 'number' },
+      { id: 'base', label: t('mass.niches.col.base'), key: (f) => f.base, kind: 'number' },
+      { id: 'ratio', label: t('mass.places.col.ratio'), key: (f) => f.shrunk, kind: 'number' },
+      { id: 'n', label: t('mass.niches.col.n'), key: (f) => f.n, kind: 'number' },
+      { id: 'matches', label: t('mass.col.matches'), key: (f) => f.matches, kind: 'number' },
+      { id: 'folds', label: t('mass.places.col.folds'), key: (f) => (f.folds ? f.foldsAgree / f.folds : null), kind: 'number' },
+      { id: 'q', label: t('mass.col.q'), key: (f) => f.q, kind: 'number', dir: 'asc' },
+    ],
+    'importance',
+  );
+  const sorted = useSorted(rows, sort);
   return (
     <>
+      {rows.length > 1 && <SortControl sort={sort} />}
       <table className="cmp-table brk-table">
         <thead>
           <tr>
-            <th>{t('mass.niches.col.group')}</th>
-            <th>{t('mass.niches.target')}</th>
-            <th>{t('mass.niches.col.value')}</th>
-            <th>{t('mass.niches.col.base')}</th>
-            <th title={t('mass.places.col.ratioTitle')}>{t('mass.places.col.ratio')}</th>
-            <th>{t('mass.niches.col.n')}</th>
-            <th>{t('mass.col.matches')}</th>
-            <th title={t('mass.places.col.foldsTitle')}>{t('mass.places.col.folds')}</th>
-            <th title={t('mass.col.qTitle')}>{t('mass.col.q')}</th>
+            <SortTh sort={sort} id="group">{t('mass.niches.col.group')}</SortTh>
+            <SortTh sort={sort} id="target">{t('mass.niches.target')}</SortTh>
+            <SortTh sort={sort} id="value">{t('mass.niches.col.value')}</SortTh>
+            <SortTh sort={sort} id="base">{t('mass.niches.col.base')}</SortTh>
+            <SortTh sort={sort} id="ratio" title={t('mass.places.col.ratioTitle')}>{t('mass.places.col.ratio')}</SortTh>
+            <SortTh sort={sort} id="n">{t('mass.niches.col.n')}</SortTh>
+            <SortTh sort={sort} id="matches">{t('mass.col.matches')}</SortTh>
+            <SortTh sort={sort} id="folds" title={t('mass.places.col.foldsTitle')}>{t('mass.places.col.folds')}</SortTh>
+            <SortTh sort={sort} id="q" title={t('mass.col.qTitle')}>{t('mass.col.q')}</SortTh>
             <th />
           </tr>
         </thead>
         <tbody>
-          {rows.slice(0, shown).map((f) => (
+          {sorted.slice(0, shown).map((f) => (
             <tr key={f.id} className={f.q < 0.05 ? 'mass-sig' : undefined} onClick={() => onRefine(f)} title={sayMass(nicheSentence(f).key, nicheSentence(f).params)}>
               <td>
                 <Conds conds={f.conds} />

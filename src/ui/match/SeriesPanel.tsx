@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { int, t } from '../../i18n';
-import { realDate, seriesStanding } from '../../data/series';
+import { realDate, seriesStanding, type SeriesStanding } from '../../data/series';
 import { expandContainerFiles } from '../../data/container';
 import { useStore } from '../../state/store';
 import type { Dataset } from '../../state/types';
 import { Section } from '../controls';
+import { SortControl } from '../sort/SortControl';
+import { useSort, useSorted } from '../sort/useSort';
 import { useEngine } from '../EngineContext';
 import { startLeanLoad } from '../overlay/LeanOverlayPanel';
 import { campaignObjectives } from '../../match/campaignObjectives';
@@ -96,6 +98,16 @@ export function SeriesPanel() {
       live = false;
     };
   }, [one]);
+  const sort = useSort<SeriesStanding>(
+    'match.series',
+    [
+      { id: 'time', label: t('ui.sort.time'), key: (r) => r.start, kind: 'number', dir: 'asc' },
+      { id: 'date', label: t('ui.sort.date'), key: (r) => r.realStart, kind: 'number', dir: 'asc' },
+      { id: 'count', label: t('ui.sort.count'), key: (r) => r.taken, kind: 'number' },
+    ],
+    'time',
+  );
+  const sorted = useSorted(rows, sort);
   if (!dataset) return null;
   if (!dataset.series) {
     if (!one) return null;
@@ -156,8 +168,9 @@ export function SeriesPanel() {
           </svg>
         </>
       )}
+      {rows.length > 1 && <SortControl sort={sort} />}
       <div style={{ maxHeight: 220, overflowY: 'auto', marginTop: 6 }}>
-        {rows.map((r) => (
+        {sorted.map((r) => (
           <button
             key={r.index}
             className="link"
