@@ -103,6 +103,10 @@ Was eine Einheit trägt, kommt aus den Daten, wo sie es sagen (Waffen-, Munition
 
 Die Sichtlinie berechnet die Grafikkarte aus dem Level selbst, wenige Ansichten pro Bild und nur neu, wenn sich eine Einheit bewegt hat; nichts wird zurückgelesen, so hält die Bildrate.
 
+### Sichtkegel {#view-cone}
+
+**Sichtkegel** zeichnet, was eine Einheit sieht: einen Pyramidenstumpf von ihren Augen aus in Blickrichtung (die Sicht oder das Visier des Spielers, wo die Daten sie haben, sonst ihr Kurs), so breit wie das Sichtfeld ihres Spiels, wie die Reichweiten durch die Sichtlinie abgeschnitten, so weit wie **Sichtweite** (am Anfang belassen: die Sichtweite des Spiels, wo bekannt, sonst eine übliche für Menschen, Fahrzeuge, Schiffe und Luftfahrzeuge). Wo die Daten sagen, dass der Spieler zielt oder durch ein Visier schaut (eine Spalte `fov`, eine Zoom- oder Vergrößerungsspalte, ein Visiername, der mit den Optiken des Spiels abgeglichen wird, oder ein Merkmal `ads`/`aiming`/`scoped`), wird der Kegel auf die Sicht dieses Visiers schmaler, über eine Fünftelsekunde gleitend wie der Zoom im Spiel selbst. Die Liste zeigt das Sichtfeld jeder Einheit in Grad. Ist **Waffenreichweiten** aus, wird der Boden im Kegel eingefärbt.
+
 ## Ziele {#objectives}
 
 Kommt ein Match mit seinen Zielen, zeichnet der Abschnitt **Ziele** sie auf das Level: Eroberungszonen (mit Besitzer und Eroberungsfortschritt), Spawns, Flugplätze, Gebiete und Bombenziele, jede Ebene einzeln umschaltbar, mit Beschriftungen. Sie sind durch den Boden hindurch zu sehen. Sind mehrere Spielmodi geladen, filtert **Modus** die Matches nach Modus. Die Ziele kommen aus der Match-Datei eines Konverters neben der Aufnahme oder aus einem [`.3dheat`](container.md)-Container.

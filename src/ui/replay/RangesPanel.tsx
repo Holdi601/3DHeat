@@ -41,6 +41,20 @@ export function RangesPanel() {
               onChange={(v) => set({ units: v })}
             />
           </div>
+          <Check label={t('ranges.view')} checked={r.view} onChange={(v) => set({ view: v })} title={t('ranges.viewTitle')} />
+          {r.view && (
+            <Slider
+              label={t('ranges.viewLength')}
+              value={r.viewLength}
+              min={0}
+              max={20000}
+              step={50}
+              onChange={(v) => set({ viewLength: v })}
+              format={(v) => (v > 0 ? len(v) : t('ranges.viewLengthAuto'))}
+            />
+          )}
+          <Check label={t('ranges.weapons')} checked={r.weapons} onChange={(v) => set({ weapons: v })} />
+          {r.weapons && (
           <div className="field">
             <div className="label">
               <span>{t('ranges.classes')}</span>
@@ -52,6 +66,7 @@ export function RangesPanel() {
               </label>
             ))}
           </div>
+          )}
           <div className="field">
             <div className="label">
               <span>{t('ranges.bands')}</span>
@@ -83,6 +98,7 @@ export function RangesPanel() {
               <div className="label">
                 <span>{index.units[index.personUnit[u.person]]?.name ?? `#${u.person}`}</span>
               </div>
+              {u.fov !== null && <div className="hint">{t('ranges.fovLine', { fov: num(u.fov, 0) })}</div>}
               {u.weapons.map((w, i) => (
                 <div
                   key={w.weapon.id}

@@ -24,7 +24,8 @@ import type { RangeSettings } from './settings';
  * 8-11 forward (unit), cosine of the cone's half-angle (-2: no cone);
  * 12-15 lowest and highest target height (relative), sines of the lowest and highest elevation;
  * 16-19 band (0 least, 1 best, 2 most), view slot (-1 none), weapon class, line of sight applies (0/1);
- * 20-23 least and best range (for the rings on a cone's side), unused, unused.
+ * 20-23 least and best range (for the rings on a cone's side), tangents of half the width and height of a view frustum.
+ * A view frustum (`view.ts`) has -3 for its cone's cosine.
  */
 export const SHELL_FLOATS = 24;
 /** Segments round and rings up the sphere; rings out and segments round the cone. */
@@ -80,6 +81,8 @@ export interface RangeUnit {
   weapons: WeaponRange[];
   /** Each weapon's colour, beside `weapons` (`weaponColour`); absent: the class colours. */
   colours?: [number, number, number][];
+  /** Its view cone (`view.ts`): how far, the tangents of half its width and height, where it looks, its colour. */
+  view?: { length: number; tanH: number; tanV: number; fwd: [number, number, number]; colour: [number, number, number] };
   /** Its view slot (`viewshed.ts`), -1 for none. */
   slot: number;
 }
@@ -128,6 +131,16 @@ export function buildShells(
           writeShell(out.data, n * SHELL_FLOATS, u, w, band, r, min, opt, k, u.colours?.[wi] ?? colours[w.cls]);
           n++;
         }
+      }
+      // The view cone, a frustum with its sides, with the cones.
+      if (pass === 1 && u.view) {
+        if (out.data.length < (n + 1) * SHELL_FLOATS) {
+          const next = new Float32Array(Math.max(64, (n + 1) * 2) * SHELL_FLOATS);
+          next.set(out.data.subarray(0, n * SHELL_FLOATS));
+          out.data = next;
+        }
+        writeView(out.data, n * SHELL_FLOATS, u, u.view);
+        n++;
       }
     }
   }
@@ -207,4 +220,26 @@ export function weaponColour(team: Rgb, i: number): Rgb {
   const j = i % HUE_STEP.length;
   const hue = (((h + HUE_STEP[j]) % 360) + 360) % 360;
   return toRgb([hue, Math.max(0.55, s), Math.min(0.78, Math.max(0.38, l + LIGHT_STEP[j]))]);
+}
+/** A view frustum's instance: the outermost band, cut by line of sight, the frustum flag and its tangents. */
+function writeView(o: Float32Array, at: number, u: RangeUnit, v: NonNullable<RangeUnit['view']>): void {
+  o.fill(0, at, at + SHELL_FLOATS);
+  o[at] = u.x;
+  o[at + 1] = u.y;
+  o[at + 2] = u.z;
+  o[at + 3] = v.length;
+  o.set(v.colour, at + 4);
+  o[at + 7] = 1;
+  o.set(v.fwd, at + 8);
+  o[at + 11] = -3;
+  o[at + 12] = -1e9;
+  o[at + 13] = 1e9;
+  o[at + 14] = -1;
+  o[at + 15] = 1;
+  o[at + 16] = BAND.max;
+  o[at + 17] = u.slot;
+  o[at + 18] = -1;
+  o[at + 19] = 1;
+  o[at + 22] = v.tanH;
+  o[at + 23] = v.tanV;
 }

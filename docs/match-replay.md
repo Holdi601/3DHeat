@@ -98,6 +98,10 @@ What a unit carries comes from the data where it says (weapon, ammunition and lo
 
 The line of sight is worked out on the graphics card from the level itself, a few views a frame, only again when a unit has moved; nothing is read back, so the frame rate holds.
 
+### View cone
+
+**View cone** draws what a unit sees: a frustum from its eyes along where it looks (the player's view or sight where the data has it, else its heading), as wide as its game's field of view, cut by the line of sight like the ranges, as far as **View reach** (left at its start: the game's visual range where known, else a usual one for people, vehicles, ships and aircraft). Where the data says the player aims or looks through a sight (a `fov` column, a `zoom` or magnification column, a sight name the game's optics are matched against, or an `ads`/`aiming`/`scoped` flag), the cone narrows to that sight's view, easing over a fifth of a second as the game's own zoom does. The list shows each unit's view across in degrees. With **Weapon ranges** off, the ground shaded is what lies in the cone.
+
 ## Objectives
 
 When a match comes with its objectives, the **Objectives** section draws them on the level: capture zones (with owner and capture progress), spawns, airfields, areas and bombing targets, each layer switchable, with labels. They are seen through the ground. With several game modes loaded, **Mode** filters the matches by mode. Objectives come from a converter's match file beside the recording or inside a [`.3dheat`](container.md) container.

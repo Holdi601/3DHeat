@@ -17,9 +17,10 @@ import { buildShells, dropReach, weaponColour, type RangeUnit } from './shells';
 import type { RangeSettings } from './settings';
 import { MAX_VIEWS } from './viewshedShaders';
 import type { RangeView } from './viewshed';
+import { VIEW_ASPECT, VIEW_REACH, ViewFov, gameViewDistance } from './view';
 
 /** The units shown and their weapons, for the panel (changes when the set does, not every frame). */
-export const useRangeInfo = create<{ units: { person: number; weapons: UnitWeapon[]; colours: [number, number, number][] }[]; reading: boolean; game: string | null }>(() => ({ units: [], reading: false, game: null }));
+export const useRangeInfo = create<{ units: { person: number; weapons: UnitWeapon[]; colours: [number, number, number][]; fov: number | null }[]; reading: boolean; game: string | null }>(() => ({ units: [], reading: false, game: null }));
 
 export interface RangeTrack {
   person: number;
@@ -28,6 +29,8 @@ export interface RangeTrack {
   y: number;
   z: number;
   fwd: [number, number, number];
+  /** Where it looks, when the data says (a player's view, a sight); else its nose. */
+  look?: [number, number, number] | null;
   team: number;
 }
 
@@ -66,6 +69,7 @@ export class RangeLayer {
   private infoKey = '';
   /** The game the table is from (`catalog.ts`), worked out again once all its weapon names are read. */
   private game: GameCatalogue | null = null;
+  private readonly fov = new ViewFov();
 
   /** Reads more of the table's weapon names; true while there is more to read. */
   step(d: Dataset): boolean {
@@ -109,11 +113,11 @@ export class RangeLayer {
       const weapons: WeaponRange[] = [];
       const colours: [number, number, number][] = [];
       all.forEach((w, i) => {
-        if (!s.classes[w.weapon.cls]) return;
+        if (!s.weapons || !s.classes[w.weapon.cls]) return;
         weapons.push(w.weapon);
         colours.push(palette[i]);
       });
-      if (!weapons.length) continue;
+      if (!weapons.length && !s.view) continue;
       const dist = Math.hypot(tr.x - c.camera[0], tr.y - c.camera[1], tr.z - c.camera[2]);
       chosen.push({ tr, figure, weapons, colours, palette, all, dist });
     }
@@ -122,7 +126,7 @@ export class RangeLayer {
     chosen.length = Math.min(chosen.length, s.maxUnits);
 
     // Views: slots kept by who holds them; the rest given out in order.
-    const viewed = chosen.filter((u) => u.weapons.some((w) => w.los)).slice(0, MAX_VIEWS);
+    const viewed = chosen.filter((u) => s.view || u.weapons.some((w) => w.los)).slice(0, MAX_VIEWS);
     const keep = new Set(viewed.map((u) => u.tr.person));
     for (const [p] of this.slots) if (!keep.has(p)) this.slots.delete(p);
     const used = new Set(this.slots.values());
@@ -136,6 +140,7 @@ export class RangeLayer {
 
     const views: (RangeView | null)[] = Array.from({ length: MAX_VIEWS }, () => null);
     const units: RangeUnit[] = [];
+    const fovs = new Map<number, number>();
     for (const u of chosen) {
       const { tr } = u;
       const domain = u.figure ? (CATALOG[u.figure.replace(/@.*$/, '')]?.domain ?? 'person') : 'person';
@@ -148,28 +153,41 @@ export class RangeLayer {
       const height = Math.max(0, (tr.y - c.floorY) / c.k);
       const slot = this.slots.get(tr.person) ?? -1;
       const y = tr.y + eye;
-      units.push({ person: tr.person, x: tr.x - c.origin[0], y: y - c.origin[1], z: tr.z - c.origin[2], fwd: tr.fwd, height, speed, weapons: u.weapons, colours: u.colours, slot });
+      // The view cone: as wide as the game's view (narrower through a sight), as long as the visual range.
+      let view: RangeUnit['view'];
+      let viewLength = 0;
+      if (s.view) {
+        const across = this.fov.at(d, this.game, tr.person, tr.row, c.t);
+        fovs.set(tr.person, across);
+        viewLength = s.viewLength > 0 ? s.viewLength : (gameViewDistance(this.game) ?? VIEW_REACH[domain] ?? 400);
+        const tanH = Math.tan((across * Math.PI) / 360);
+        const team = c.colourOf(tr.person);
+        view = { length: viewLength * c.k, tanH, tanV: tanH / VIEW_ASPECT, fwd: tr.look ?? tr.fwd, colour: [team[0] * 0.6 + 0.4, team[1] * 0.6 + 0.4, team[2] * 0.6 + 0.4] };
+      }
+      units.push({ person: tr.person, x: tr.x - c.origin[0], y: y - c.origin[1], z: tr.z - c.origin[2], fwd: tr.fwd, height, speed, weapons: u.weapons, colours: u.colours, view, slot });
       if (slot >= 0) {
         const los = u.weapons.filter((w) => w.los);
         const reach = (w: WeaponRange) => (w.shape === 'drop' ? dropReach(w, height, speed) : w.max);
-        const max = Math.max(...los.map(reach));
+        const max = Math.max(viewLength, ...los.map(reach));
         const far = max * c.k * 1.05;
         views[slot] = {
           id: tr.person,
           eye: [tr.x, y, tr.z],
           far,
           tolerance: Math.max(0.5 * c.k, far * 0.003),
-          band: [Math.min(...los.map((w) => w.min)) * c.k, Math.max(...los.map((w) => Math.min(w.opt, reach(w)))) * c.k, max * c.k],
+          band: los.length ? [Math.min(...los.map((w) => w.min)) * c.k, Math.max(...los.map((w) => Math.min(w.opt, reach(w)))) * c.k, max * c.k] : [0, max * 0.5 * c.k, max * c.k],
           colour: c.colourOf(tr.person),
+          // Only the view cone: the ground shaded is what lies in it.
+          cone: !los.length && view ? { fwd: view.fwd, tanH: view.tanH } : null,
         };
       }
     }
     buildShells(units, s, c.k, RANGES.colours, this.out);
 
-    const key = chosen.map((u) => `${u.tr.person}:${u.all.length}`).join(',') + `|${this.loadouts.done}`;
+    const key = chosen.map((u) => `${u.tr.person}:${u.all.length}:${Math.round(fovs.get(u.tr.person) ?? -1)}`).join(',') + `|${this.loadouts.done}`;
     if (key !== this.infoKey) {
       this.infoKey = key;
-      useRangeInfo.setState({ units: chosen.map((u) => ({ person: u.tr.person, weapons: u.all, colours: u.palette })), reading: !this.loadouts.done, game: this.game?.name ?? null });
+      useRangeInfo.setState({ units: chosen.map((u) => ({ person: u.tr.person, weapons: u.all, colours: u.palette, fov: fovs.get(u.tr.person) ?? null })), reading: !this.loadouts.done, game: this.game?.name ?? null });
     }
     if (!this.out.count && !views.some((v) => v)) return null;
     return {

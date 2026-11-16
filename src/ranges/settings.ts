@@ -13,6 +13,11 @@ export type RangeStyle = 'glass' | 'lines' | 'both';
 export interface RangeSettings {
   on: boolean;
   units: RangeUnits;
+  /** The weapons' ranges. */
+  weapons: boolean;
+  /** The view cone (`view.ts`), and how far it reaches (metres; 0: the game's or the unit's usual visual range). */
+  view: boolean;
+  viewLength: number;
   classes: Record<WeaponClass, boolean>;
   bands: { min: boolean; opt: boolean; max: boolean };
   /** 0.05 to 1. */
@@ -29,6 +34,9 @@ export interface RangeSettings {
 export const DEFAULT_RANGES: RangeSettings = {
   on: false,
   units: 'selected',
+  weapons: true,
+  view: false,
+  viewLength: 0,
   classes: Object.fromEntries(WEAPON_CLASSES.map((c) => [c, true])) as Record<WeaponClass, boolean>,
   bands: { min: true, opt: true, max: true },
   opacity: 0.5,
@@ -48,6 +56,9 @@ export function readRanges(v: unknown): RangeSettings {
   return {
     on: a.on === true,
     units: a.units === 'team' || a.units === 'all' ? a.units : 'selected',
+    weapons: a.weapons !== false,
+    view: a.view === true,
+    viewLength: typeof a.viewLength === 'number' && a.viewLength > 0 ? Math.min(100000, a.viewLength) : 0,
     classes: Object.fromEntries(WEAPON_CLASSES.map((k) => [k, c[k] !== false])) as Record<WeaponClass, boolean>,
     bands: { min: b.min !== false, opt: b.opt !== false, max: b.max !== false },
     opacity: typeof a.opacity === 'number' && a.opacity > 0 ? Math.min(1, Math.max(0.05, a.opacity)) : d.opacity,

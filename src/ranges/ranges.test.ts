@@ -5,6 +5,7 @@ import { Loadouts } from './loadout';
 import { DEFAULT_RANGES, readRanges } from './settings';
 import { BAND, CONE_RINGS, CONE_SEGMENTS, SHELL_FLOATS, SPHERE_RINGS, SPHERE_SEGMENTS, buildShells, dropReach, shellMesh, weaponColour, type RangeUnit } from './shells';
 import { ViewshedPlan, type RangeView } from './viewshed';
+import { ViewFov, acrossOf, gameFov, magnified, upOf } from './view';
 import { FACES, MAX_VIEWS, faceOf, faceUv } from './viewshedShaders';
 
 describe('range catalogue', () => {
@@ -286,5 +287,49 @@ describe('line of sight', () => {
     expect([u[0], u[3]]).toEqual([20, 1000]);
     // A slot not in use: nothing taken, reach 0.
     expect(u[6 * 4 + 3]).toBe(0);
+  });
+});
+
+describe('view cone', () => {
+  const d = (attrs: unknown[]) => ({ count: 3, attrs } as unknown as Dataset);
+  it("takes the game's field of view, else 90 across", () => {
+    expect(gameFov(null)).toBe(90);
+    expect(gameFov(GAMES.get('cs2')!)).toBe(90);
+    expect(acrossOf(upOf(100))).toBeCloseTo(100, 6);
+  });
+
+  it('narrows through a sight: by a fov or zoom column, or an aiming flag', () => {
+    const f = new ViewFov();
+    const zoom = d([{ name: 'zoom', kind: 'number', data: Float32Array.of(1, 4, 0), min: 0, max: 4 }]);
+    expect(f.wanted(zoom, null, 0)).toBe(90);
+    expect(f.wanted(zoom, null, 1)).toBeCloseTo(magnified(90, 4), 6);
+    expect(magnified(90, 4)).toBeCloseTo(28.07, 1);
+    const fov = d([{ name: 'fov', kind: 'number', data: Float32Array.of(40, 90, 10), min: 10, max: 90 }]);
+    expect(f.wanted(fov, null, 2)).toBe(10);
+    const ads = d([{ name: 'ads', kind: 'category', data: Uint32Array.of(0, 1, 0), min: 0, max: 1, categories: ['false', 'true'] }]);
+    expect(f.wanted(ads, null, 0)).toBe(90);
+    expect(f.wanted(ads, null, 1)).toBeLessThan(90);
+  });
+
+  it('eases to a new width instead of jumping', () => {
+    const f = new ViewFov();
+    const zoom = d([{ name: 'zoom', kind: 'number', data: Float32Array.of(1, 4, 4), min: 0, max: 4 }]);
+    expect(f.at(zoom, null, 0, 0, 0)).toBe(90);
+    const mid = f.at(zoom, null, 0, 1, 0.1);
+    expect(mid).toBeGreaterThan(magnified(90, 4));
+    expect(mid).toBeLessThan(90);
+    expect(f.at(zoom, null, 0, 2, 2)).toBeCloseTo(magnified(90, 4), 1);
+  });
+
+  it('lays a frustum with its sides, cut by the line of sight', () => {
+    const out = { data: new Float32Array(0), count: 0, coneStart: 0 };
+    const unit: RangeUnit = { person: 0, x: 0, y: 0, z: 0, fwd: [0, 0, -1], height: 0, speed: 0, weapons: [], slot: 2, view: { length: 400, tanH: 1, tanV: 0.5625, fwd: [0, 0, -1], colour: [1, 1, 1] } };
+    buildShells([unit], DEFAULT_RANGES, 1, RANGES.colours, out);
+    expect(out.count).toBe(1);
+    expect(out.coneStart).toBe(0);
+    expect(Array.from(out.data.subarray(0, SHELL_FLOATS))).toEqual(expect.arrayContaining([400, -3]));
+    expect(out.data[11]).toBe(-3);
+    expect(out.data[17]).toBe(2);
+    expect([out.data[22], out.data[23]]).toEqual([1, 0.5625]);
   });
 });

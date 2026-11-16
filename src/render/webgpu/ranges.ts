@@ -215,6 +215,7 @@ export class GpuRanges {
         n = i + 1;
         g.set([v.band[0], v.band[1], v.band[2], r.opacity], 20 + MAX_VIEWS * 24 + 4 + i * 4);
         g.set([v.colour[0], v.colour[1], v.colour[2], 1], 20 + MAX_VIEWS * 24 + 4 + MAX_VIEWS * 4 + i * 4);
+        if (v.cone) g.set([v.cone.fwd[0], v.cone.fwd[1], v.cone.fwd[2], v.cone.tanH], 20 + MAX_VIEWS * 24 + 4 + MAX_VIEWS * 8 + i * 4);
       });
       g.set([o[0], o[1], o[2], n], 16);
       g.set(this.views, 20);

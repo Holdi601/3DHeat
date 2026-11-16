@@ -45,6 +45,7 @@ import { sideTable, SYMBOL_STYLE_ID } from './symbols/affiliation';
 import type { SymbolParams } from './types';
 import { TacticalLayer, axesOfTrack, cockpitClip } from './tactical';
 import { RangeLayer } from '../ranges/layer';
+import { aimOf } from '../figures/aim';
 import { figureNear, usePlanStore } from '../state/planStore';
 import { playbackAt } from '../tactics/plan';
 import { pickRef, refPoints } from '../tactics/gizmo';
@@ -3630,9 +3631,18 @@ export class Engine {
         if (rs.targetPerson !== null) selected.add(rs.targetPerson);
         if (rs.pair) for (const p of rs.pair) selected.add(p);
         const fr = this.figureReplay;
+        // Where each looks for the view cone: the data's view (a player's camera, a sight) on top of the hull's heading.
+        const view = rs.ranges.view ? (aimOf(d)?.view ?? null) : null;
+        const now = { yaw: NaN, pitch: NaN };
         const tracks = this.liveTracks.map((tr) => {
           if (rs.selected && index.units[index.personUnit[tr.person]]?.key === rs.selected) selected.add(tr.person);
-          return { person: tr.person, row: tr.row, x: tr.x, y: tr.y, z: tr.z, fwd: axesOfTrack(tr).fwd, team: d.personTeam ? d.personTeam[tr.person] : -1 };
+          let look: [number, number, number] | null = null;
+          if (view && tr.row >= 0 && Number.isFinite(view.at(tr.row, cursorAt, now).yaw)) {
+            const yaw = tr.yaw + now.yaw;
+            const pitch = (tr.pitch ?? 0) + (Number.isFinite(now.pitch) ? now.pitch : 0);
+            look = [Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch), -Math.cos(yaw) * Math.cos(pitch)];
+          }
+          return { person: tr.person, row: tr.row, x: tr.x, y: tr.y, z: tr.z, fwd: axesOfTrack(tr).fwd, look, team: d.personTeam ? d.personTeam[tr.person] : -1 };
         });
         this.rangeDraw = this.rangeLayer.build(d, tracks, {
           settings: rs.ranges,

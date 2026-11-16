@@ -22,6 +22,8 @@ export interface RangeView {
   /** The ground shaded: least, best, most range (data units), and its colour. */
   band: [number, number, number];
   colour: [number, number, number];
+  /** The ground shaded only inside this view cone (its axis, tangent of half its width), else all round. */
+  cone?: { fwd: [number, number, number]; tanH: number } | null;
 }
 
 interface Face {

@@ -223,6 +223,8 @@ precision highp sampler2DArray;
 in vec3 vRel;
 uniform vec4 uGround[${MAX_VIEWS}];
 uniform vec4 uGroundCol[${MAX_VIEWS}];
+// A view cone's axis and the tangent of half its width (0: all round); its height is 9/16 of that.
+uniform vec4 uGroundDir[${MAX_VIEWS}];
 uniform int uViewCount;
 ${VIEW_GLSL}
 layout(location = 0) out vec4 outColor;
@@ -241,6 +243,13 @@ void main() {
     float r = rs[i];
     float fw = fws[i];
     if (g.w <= 0.0 || r > g.z || r < g.x) continue;
+    vec4 dr = uGroundDir[i];
+    if (dr.w > 0.0) {
+      vec3 q = vRel - uViews[i * 6].xyz;
+      vec3 fa = normalize(abs(dr.y) < 0.9 ? cross(dr.xyz, vec3(0.0, 1.0, 0.0)) : cross(dr.xyz, vec3(1.0, 0.0, 0.0)));
+      float qz = dot(q, dr.xyz);
+      if (qz <= 0.0 || abs(dot(q, fa)) > dr.w * qz || abs(dot(q, cross(dr.xyz, fa))) > dr.w * 0.5625 * qz) continue;
+    }
     if (viewSeen(i, vRel) < 0.0) continue;
     float ring = max(max(1.0 - smoothstep(0.5, 1.5, abs(r - g.z) / fw), 1.0 - smoothstep(0.5, 1.5, abs(r - g.y) / fw)), g.x > 0.0 ? 1.0 - smoothstep(0.5, 1.5, abs(r - g.x) / fw) : 0.0);
     float a = g.w * ((r <= g.y ? 0.22 : 0.12) + ring * 0.6);
@@ -260,6 +269,7 @@ struct U {
   faces: vec4f,
   ground: array<vec4f, ${MAX_VIEWS}>,
   colour: array<vec4f, ${MAX_VIEWS}>,
+  dir: array<vec4f, ${MAX_VIEWS}>,
 };
 @group(0) @binding(0) var<uniform> u: U;
 @group(0) @binding(1) var viewDepth: texture_depth_2d_array;
@@ -294,6 +304,13 @@ fn fsGround(v: V) -> @location(0) vec4f {
     let r = rs[i];
     let fw = fws[i];
     if (i >= count || g.w <= 0.0 || r > g.z || r < g.x) { continue; }
+    let dr = u.dir[i];
+    if (dr.w > 0.0) {
+      let q = v.rel - u.views[i * 6].xyz;
+      let fa = normalize(select(cross(dr.xyz, vec3f(1.0, 0.0, 0.0)), cross(dr.xyz, vec3f(0.0, 1.0, 0.0)), abs(dr.y) < 0.9));
+      let qz = dot(q, dr.xyz);
+      if (qz <= 0.0 || abs(dot(q, fa)) > dr.w * qz || abs(dot(q, cross(dr.xyz, fa))) > dr.w * 0.5625 * qz) { continue; }
+    }
     if (viewSeen(i, v.rel) < 0.0) { continue; }
     var ring = max(ringAA(r - g.z, fw), ringAA(r - g.y, fw));
     if (g.x > 0.0) { ring = max(ring, ringAA(r - g.x, fw)); }
@@ -305,4 +322,4 @@ fn fsGround(v: V) -> @location(0) vec4f {
 }
 `;
 
-export const GROUND_UNIFORM_BYTES = 64 + 16 + MAX_VIEWS * 6 * 16 + 16 + MAX_VIEWS * 16 * 2;
+export const GROUND_UNIFORM_BYTES = 64 + 16 + MAX_VIEWS * 6 * 16 + 16 + MAX_VIEWS * 16 * 3;

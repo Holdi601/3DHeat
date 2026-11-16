@@ -52,6 +52,7 @@ export class GlRanges {
   private readonly views = new Float32Array(MAX_VIEWS * 6 * 4);
   private readonly groundBand = new Float32Array(MAX_VIEWS * 4);
   private readonly groundCol = new Float32Array(MAX_VIEWS * 4);
+  private readonly groundDir = new Float32Array(MAX_VIEWS * 4);
 
   constructor(private readonly gl: WebGL2RenderingContext) {
     const make = (vs: string, fs: string, label: string) => {
@@ -208,12 +209,15 @@ export class GlRanges {
       const v: RangeView | null = live[i] ?? null;
       this.groundBand.set(v ? [v.band[0], v.band[1], v.band[2], r.opacity] : [0, 0, 0, 0], i * 4);
       this.groundCol.set(v ? [v.colour[0], v.colour[1], v.colour[2], 1] : [0, 0, 0, 0], i * 4);
+      this.groundDir.set(v?.cone ? [v.cone.fwd[0], v.cone.fwd[1], v.cone.fwd[2], v.cone.tanH] : [0, 0, 0, 0], i * 4);
       if (v) n = i + 1;
     }
     const lb = u.loc('uGround[0]');
     if (lb) gl.uniform4fv(lb, this.groundBand);
     const lc = u.loc('uGroundCol[0]');
     if (lc) gl.uniform4fv(lc, this.groundCol);
+    const ld = u.loc('uGroundDir[0]');
+    if (ld) gl.uniform4fv(ld, this.groundDir);
     u.i1('uViewCount', n);
     gl.enable(gl.BLEND);
     gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);

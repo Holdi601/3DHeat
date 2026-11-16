@@ -48,6 +48,11 @@ void main() {
     float c = max(iC.w, -1.0);
     float s = sqrt(max(0.0, 1.0 - c * c));
     vec3 dir = c * f + s * (aPos.y * a + aPos.z * b);
+    // A view frustum: the circle round the cone's side squared off to its width and height.
+    if (iC.w < -2.5) {
+      float m = max(max(abs(aPos.y), abs(aPos.z)), 1e-6);
+      dir = normalize(f + (aPos.y / m) * iF.z * a + (aPos.z / m) * iF.w * b);
+    }
     p = iA.xyz + dir * iA.w * aPos.x;
     vT = aPos.x;
   }
@@ -98,10 +103,20 @@ void main() {
   float fwR = fwidth(r);
   float fwT = fwidth(vT * 4.0);
   vec3 n = normalize(cross(dFdx(vRel), dFdy(vRel)));
+  // Across and up a view frustum, as tangents off its axis.
+  vec3 fa = normalize(abs(vC.y) < 0.9 ? cross(vC.xyz, vec3(0.0, 1.0, 0.0)) : cross(vC.xyz, vec3(1.0, 0.0, 0.0)));
+  vec3 fb = cross(vC.xyz, fa);
+  float fz = max(cosA, 1e-4);
+  float fx = dot(dir, fa) / fz;
+  float fy = dot(dir, fb) / fz;
+  float fwX = fwidth(fx);
+  float fwY = fwidth(fy);
+  bool frustum = vC.w < -2.5;
 
   if (h < vD.x || h > vD.y) discard;
   if (dir.y < vD.z - 1e-4 || dir.y > vD.w + 1e-4) discard;
   if (vC.w > -1.5 && !side && cosA < vC.w) discard;
+  if (frustum && !side && (cosA <= 0.0 || abs(fx) > vF.z || abs(fy) > vF.w)) discard;
 
   float edge = 0.0;
   if (vD.x > -1e8) edge = max(edge, edgeAA(h - vD.x, fwH));
@@ -109,6 +124,7 @@ void main() {
   if (vD.z > -0.999) edge = max(edge, edgeAA(dir.y - vD.z, fwE));
   if (vD.w < 0.999) edge = max(edge, edgeAA(vD.w - dir.y, fwE));
   if (vC.w > -1.5 && !side) edge = max(edge, edgeAA(cosA - vC.w, fwC));
+  if (frustum && !side) edge = max(edge, max(edgeAA(vF.z - abs(fx), fwX), edgeAA(vF.w - abs(fy), fwY)));
 
   float seen = 1.0;
   if (uStyle.z > 0.5 && vE.y > -0.5) {
@@ -174,7 +190,12 @@ fn vsShell(@location(0) pos: vec4f, @location(1) iA: vec4f, @location(2) iB: vec
     let b = cross(f, a);
     let c = max(iC.w, -1.0);
     let s = sqrt(max(0.0, 1.0 - c * c));
-    let dir = c * f + s * (pos.y * a + pos.z * b);
+    var dir = c * f + s * (pos.y * a + pos.z * b);
+    // A view frustum: the circle round the cone's side squared off to its width and height.
+    if (iC.w < -2.5) {
+      let m = max(max(abs(pos.y), abs(pos.z)), 1e-6);
+      dir = normalize(f + (pos.y / m) * iF.z * a + (pos.z / m) * iF.w * b);
+    }
     p = iA.xyz + dir * iA.w * pos.x;
     t = pos.x;
   }
@@ -212,10 +233,20 @@ fn fsShell(v: V) -> @location(0) vec4f {
   let fwR = fwidth(r);
   let fwT = fwidth(v.t * 4.0);
   let n = normalize(cross(dpdx(v.rel), dpdy(v.rel)));
+  // Across and up a view frustum, as tangents off its axis.
+  let fa = normalize(select(cross(v.c.xyz, vec3f(1.0, 0.0, 0.0)), cross(v.c.xyz, vec3f(0.0, 1.0, 0.0)), abs(v.c.y) < 0.9));
+  let fb = cross(v.c.xyz, fa);
+  let fz = max(cosA, 1e-4);
+  let fx = dot(dir, fa) / fz;
+  let fy = dot(dir, fb) / fz;
+  let fwX = fwidth(fx);
+  let fwY = fwidth(fy);
+  let frustum = v.c.w < -2.5;
 
   if (h < v.d.x || h > v.d.y) { discard; }
   if (dir.y < v.d.z - 1e-4 || dir.y > v.d.w + 1e-4) { discard; }
   if (v.c.w > -1.5 && !side && cosA < v.c.w) { discard; }
+  if (frustum && !side && (cosA <= 0.0 || abs(fx) > v.f.z || abs(fy) > v.f.w)) { discard; }
 
   var edge = 0.0;
   if (v.d.x > -1e8) { edge = max(edge, edgeAA(h - v.d.x, fwH)); }
@@ -223,6 +254,7 @@ fn fsShell(v: V) -> @location(0) vec4f {
   if (v.d.z > -0.999) { edge = max(edge, edgeAA(dir.y - v.d.z, fwE)); }
   if (v.d.w < 0.999) { edge = max(edge, edgeAA(v.d.w - dir.y, fwE)); }
   if (v.c.w > -1.5 && !side) { edge = max(edge, edgeAA(cosA - v.c.w, fwC)); }
+  if (frustum && !side) { edge = max(edge, max(edgeAA(v.f.z - abs(fx), fwX), edgeAA(v.f.w - abs(fy), fwY))); }
 
   var seen = 1.0;
   if (u.style.z > 0.5 && v.e.y > -0.5) {
