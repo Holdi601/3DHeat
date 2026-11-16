@@ -287,7 +287,7 @@
   "heat.levelPanel.dota3dNotice": "De Dota 2-kaart in 3D, gemaakt uit je eigen Dota 2-installatie door de 3DHeat Dota-tool (heat3d-dota-maps) en bewaard in de niveaubibliotheek: de knop Dota 2-kaart laadt hem voortaan. Dota 2 en de kaart zijn van Valve, dat dit project niet onderschrijft.",
   "heat.levelPanel.dota3dHint": "Met Dota 2 geïnstalleerd maakt de aparte 3DHeat Dota-tool (github.com/Holdi601/3DHeat-Ext-Dota) de kaart in 3D: heat3d-dota-maps level -o dota.glb, of via de Watcher python -m heat3d_watch dota-map -o dota.glb. Laad dat bestand één keer met {model} en deze knop gebruikt het voortaan.",
   "heat.levelPanel.r6": "Siege-kaart: {map}",
-  "heat.levelPanel.r6Title": "{map} in 3D uit je eigen Rainbow Six Siege-installatie, gemaakt door de aparte 3DHeat R6 Maps-tool (heat3d-r6-maps map) en bewaard in de levelbibliotheek",
+  "heat.levelPanel.r6Title": "{map} in 3D uit je eigen Rainbow Six Siege-installatie, gemaakt door de aparte 3DHeat R6 Maps-tool (heat3d-r6-maps map) en bewaard in de levelbibliotheek; het blijft op deze computer en wordt nooit geüpload",
   "heat.levelPanel.r6Kept": "Rainbow Six Siege-level voor {map} bewaard in de levelbibliotheek: voortaan wordt het vanzelf geladen voor replays op deze kaart. Rainbow Six Siege en zijn kaarten zijn van Ubisoft, dat dit project niet steunt.",
   "heat.levelPanel.r6Loaded": "Het level {map} uit de levelbibliotheek, voor de geladen Rainbow Six Siege-replays.",
   "heat.levelPanel.r6OtherVersion": "Het level {map} in de bibliotheek is van een andere versie van de kaart dan de replays (de kaart is herwerkt): muren en vloeren kunnen afwijken.",

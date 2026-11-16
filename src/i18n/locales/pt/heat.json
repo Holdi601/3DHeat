@@ -287,7 +287,7 @@
   "heat.levelPanel.dota3dNotice": "O mapa de Dota 2 em 3D, criado a partir da sua própria instalação de Dota 2 pela ferramenta 3DHeat Dota (heat3d-dota-maps) e guardado na biblioteca de níveis: o botão Mapa de Dota 2 passa a carregá-lo. Dota 2 e o seu mapa pertencem à Valve, que não apoia este projeto.",
   "heat.levelPanel.dota3dHint": "Com o Dota 2 instalado, a ferramenta separada 3DHeat Dota (github.com/Holdi601/3DHeat-Ext-Dota) cria o mapa em 3D: heat3d-dota-maps level -o dota.glb, ou através do Watcher python -m heat3d_watch dota-map -o dota.glb. Carregue esse ficheiro uma vez com {model} e este botão passa a usá-lo.",
   "heat.levelPanel.r6": "Mapa do Siege: {map}",
-  "heat.levelPanel.r6Title": "{map} em 3D a partir da sua própria instalação de Rainbow Six Siege, feito pela ferramenta separada 3DHeat R6 Maps (heat3d-r6-maps map) e guardado na biblioteca de níveis",
+  "heat.levelPanel.r6Title": "{map} em 3D a partir da sua própria instalação de Rainbow Six Siege, feito pela ferramenta separada 3DHeat R6 Maps (heat3d-r6-maps map) e guardado na biblioteca de níveis; fica neste computador e nunca é enviado",
   "heat.levelPanel.r6Kept": "Nível de Rainbow Six Siege de {map} guardado na biblioteca de níveis: a partir de agora é carregado sozinho para replays neste mapa. Rainbow Six Siege e os seus mapas pertencem à Ubisoft, que não apoia este projeto.",
   "heat.levelPanel.r6Loaded": "O nível {map} da biblioteca de níveis, para os replays de Rainbow Six Siege carregados.",
   "heat.levelPanel.r6OtherVersion": "O nível {map} da biblioteca é de outra versão do mapa que os replays (o mapa foi refeito): paredes e pisos podem diferir.",

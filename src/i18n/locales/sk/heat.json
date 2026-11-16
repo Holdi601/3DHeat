@@ -287,7 +287,7 @@
   "heat.levelPanel.dota3dNotice": "Mapa Dota 2 v 3D, vytvorená z vašej vlastnej inštalácie Dota 2 nástrojom 3DHeat Dota (heat3d-dota-maps) a uložená v knižnici: tlačidlo Mapa Dota 2 ju odteraz načíta. Dota 2 a jej mapa patria spoločnosti Valve, ktorá tento projekt nepodporuje.",
   "heat.levelPanel.dota3dHint": "S nainštalovanou hrou Dota 2 vytvorí samostatný nástroj 3DHeat Dota (github.com/Holdi601/3DHeat-Ext-Dota) mapu v 3D: heat3d-dota-maps level -o dota.glb, alebo cez Watcher python -m heat3d_watch dota-map -o dota.glb. Načítajte ten súbor raz cez {model} a toto tlačidlo ho potom bude používať.",
   "heat.levelPanel.r6": "Mapa Siege: {map}",
-  "heat.levelPanel.r6Title": "{map} v 3D z vašej vlastnej inštalácie Rainbow Six Siege, vytvorená samostatným nástrojom 3DHeat R6 Maps (heat3d-r6-maps map) a uložená v knižnici úrovní",
+  "heat.levelPanel.r6Title": "{map} v 3D z vašej vlastnej inštalácie Rainbow Six Siege, vytvorená samostatným nástrojom 3DHeat R6 Maps (heat3d-r6-maps map) a uložená v knižnici úrovní; zostáva v tomto počítači a nikdy sa nenahráva",
   "heat.levelPanel.r6Kept": "Úroveň Rainbow Six Siege pre {map} uložená v knižnici úrovní: odteraz sa pre záznamy na tejto mape načíta sama. Rainbow Six Siege a jeho mapy patria spoločnosti Ubisoft, ktorá tento projekt nepodporuje.",
   "heat.levelPanel.r6Loaded": "Úroveň {map} z knižnice úrovní pre načítané záznamy Rainbow Six Siege.",
   "heat.levelPanel.r6OtherVersion": "Úroveň {map} v knižnici je z inej verzie mapy ako záznamy (mapa bola prepracovaná): steny a podlahy sa môžu líšiť.",

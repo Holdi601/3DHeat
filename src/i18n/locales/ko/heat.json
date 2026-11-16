@@ -287,7 +287,7 @@
   "heat.levelPanel.dota3dNotice": "3DHeat Dota 도구(heat3d-dota-maps)로 사용자의 Dota 2 설치에서 만들어 라이브러리에 보관한 3D Dota 2 맵입니다. 이제부터 Dota 2 맵 버튼이 이 맵을 불러옵니다. Dota 2와 그 맵은 Valve의 소유이며, Valve는 이 프로젝트를 보증하지 않습니다.",
   "heat.levelPanel.dota3dHint": "Dota 2가 설치되어 있으면 별도의 도구인 3DHeat Dota(github.com/Holdi601/3DHeat-Ext-Dota)가 맵을 3D로 만듭니다: heat3d-dota-maps level -o dota.glb, 또는 Watcher를 통해 python -m heat3d_watch dota-map -o dota.glb. 이 파일을 {model}(으)로 한 번 불러오면 이후 이 버튼이 이를 사용합니다.",
   "heat.levelPanel.r6": "Siege 맵: {map}",
-  "heat.levelPanel.r6Title": "직접 설치한 Rainbow Six Siege에서 만든 3D {map}. 별도 도구 3DHeat R6 Maps(heat3d-r6-maps map)로 만들어 레벨 라이브러리에 보관",
+  "heat.levelPanel.r6Title": "직접 설치한 Rainbow Six Siege에서 만든 3D {map}. 별도 도구 3DHeat R6 Maps(heat3d-r6-maps map)로 만들어 레벨 라이브러리에 보관. 이 컴퓨터에만 남으며 업로드되지 않습니다",
   "heat.levelPanel.r6Kept": "{map}의 Rainbow Six Siege 레벨을 레벨 라이브러리에 보관했습니다. 이제부터 이 맵의 리플레이를 열면 자동으로 불러옵니다. Rainbow Six Siege와 그 맵은 Ubisoft의 소유이며, Ubisoft는 이 프로젝트를 지지하지 않습니다.",
   "heat.levelPanel.r6Loaded": "불러온 Rainbow Six Siege 리플레이를 위한 레벨 라이브러리의 {map} 레벨.",
   "heat.levelPanel.r6OtherVersion": "라이브러리의 {map} 레벨은 리플레이와 다른 버전의 맵입니다(맵이 개편됨). 벽과 바닥이 다를 수 있습니다.",
