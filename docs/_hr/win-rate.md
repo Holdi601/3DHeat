@@ -6,8 +6,9 @@ lang: "hr"
 source: "win-rate.md"
 source_hash: "e7d055e284b7"
 translated: true
-outdated: false
+outdated: true
 ---
+
 
 # Postotak pobjeda: koliko često mjesto, put ili potez pobjeđuje
 

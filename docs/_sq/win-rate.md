@@ -6,8 +6,9 @@ lang: "sq"
 source: "win-rate.md"
 source_hash: "e7d055e284b7"
 translated: true
-outdated: false
+outdated: true
 ---
+
 
 # Shkalla e fitoreve: sa shpesh fiton një vend, një rrugë ose një lëvizje
 

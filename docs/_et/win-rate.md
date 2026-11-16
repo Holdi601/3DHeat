@@ -6,8 +6,9 @@ lang: "et"
 source: "win-rate.md"
 source_hash: "e7d055e284b7"
 translated: true
-outdated: false
+outdated: true
 ---
+
 
 # Võitude osakaal: kui tihti koht, marsruut või käik võidab
 

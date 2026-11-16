@@ -6,8 +6,9 @@ lang: "el"
 source: "win-rate.md"
 source_hash: "e7d055e284b7"
 translated: true
-outdated: false
+outdated: true
 ---
+
 
 # Ποσοστό νικών: πόσο συχνά κερδίζει ένα σημείο, μια διαδρομή ή μια κίνηση
 

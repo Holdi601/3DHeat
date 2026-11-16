@@ -6,8 +6,9 @@ lang: "pt"
 source: "win-rate.md"
 source_hash: "e7d055e284b7"
 translated: true
-outdated: false
+outdated: true
 ---
+
 
 # Taxa de vitória: com que frequência um lugar, um percurso ou uma jogada ganha
 

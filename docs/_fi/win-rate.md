@@ -6,8 +6,9 @@ lang: "fi"
 source: "win-rate.md"
 source_hash: "e7d055e284b7"
 translated: true
-outdated: false
+outdated: true
 ---
+
 
 # Voittojen osuus: kuinka usein paikka, reitti tai siirto voittaa
 

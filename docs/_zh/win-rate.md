@@ -6,8 +6,9 @@ lang: "zh"
 source: "win-rate.md"
 source_hash: "e7d055e284b7"
 translated: true
-outdated: false
+outdated: true
 ---
+
 
 # 胜率：一个位置、一条路线或一次战术多常获胜
 

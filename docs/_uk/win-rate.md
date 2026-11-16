@@ -6,8 +6,9 @@ lang: "uk"
 source: "win-rate.md"
 source_hash: "e7d055e284b7"
 translated: true
-outdated: false
+outdated: true
 ---
+
 
 # Частка перемог: як часто перемагає місце, маршрут чи дія
 

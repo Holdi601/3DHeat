@@ -6,8 +6,9 @@ lang: "be"
 source: "win-rate.md"
 source_hash: "e7d055e284b7"
 translated: true
-outdated: false
+outdated: true
 ---
+
 
 # Доля перамог: як часта перамагае месца, маршрут ці дзеянне
 

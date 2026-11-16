@@ -6,8 +6,9 @@ lang: "zh-Hant"
 source: "win-rate.md"
 source_hash: "e7d055e284b7"
 translated: true
-outdated: false
+outdated: true
 ---
+
 
 # 勝率：一個位置、一條路線或一次戰術多常獲勝
 

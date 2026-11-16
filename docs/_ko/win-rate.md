@@ -6,8 +6,9 @@ lang: "ko"
 source: "win-rate.md"
 source_hash: "e7d055e284b7"
 translated: true
-outdated: false
+outdated: true
 ---
+
 
 # 승률: 한 장소, 한 경로, 한 플레이가 얼마나 자주 이기는가
 

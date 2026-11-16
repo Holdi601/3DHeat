@@ -31,3 +31,33 @@
 [submodule "exporters/ext/il2-maps"]
 	path = exporters/ext/il2-maps
 	url = https://github.com/Holdi601/3DHeat-Ext-IL2.git
+[submodule "exporters/ext/dota-maps"]
+	path = exporters/ext/dota-maps
+	url = https://github.com/Holdi601/3DHeat-Ext-Dota.git
+[submodule "exporters/ext/dota-replay"]
+	path = exporters/ext/dota-replay
+	url = https://github.com/Holdi601/3DHeat-Ext-DotaReplay.git
+[submodule "exporters/ext/riot-replays"]
+	path = exporters/ext/riot-replays
+	url = https://github.com/Holdi601/3DHeat-Ext-Riot.git
+[submodule "exporters/ext/forza-maps"]
+	path = exporters/ext/forza-maps
+	url = https://github.com/Holdi601/3DHeat-Ext-Forza.git
+[submodule "exporters/ext/battlefield-maps"]
+	path = exporters/ext/battlefield-maps
+	url = https://github.com/Holdi601/3DHeat-Ext-Battlefield.git
+[submodule "exporters/ext/beamng-maps"]
+	path = exporters/ext/beamng-maps
+	url = https://github.com/Holdi601/3DHeat-Ext-BeamNG.git
+[submodule "exporters/ext/acrally-maps"]
+	path = exporters/ext/acrally-maps
+	url = https://github.com/Holdi601/3DHeat-Ext-ACRally.git
+[submodule "exporters/ext/reforger-maps"]
+	path = exporters/ext/reforger-maps
+	url = https://github.com/Holdi601/3DHeat-Ext-Reforger.git
+[submodule "exporters/ext/r6-replay"]
+	path = exporters/ext/r6-replay
+	url = https://github.com/Holdi601/3DHeat-Ext-R6.git
+[submodule "exporters/ext/r6-maps"]
+	path = exporters/ext/r6-maps
+	url = https://github.com/Holdi601/3DHeat-Ext-R6-Maps.git

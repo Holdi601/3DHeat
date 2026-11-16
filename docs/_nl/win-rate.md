@@ -6,8 +6,9 @@ lang: "nl"
 source: "win-rate.md"
 source_hash: "e7d055e284b7"
 translated: true
-outdated: false
+outdated: true
 ---
+
 
 # Winstpercentage: hoe vaak een plek, een route of een actie wint
 

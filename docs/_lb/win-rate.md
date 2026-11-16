@@ -6,8 +6,9 @@ lang: "lb"
 source: "win-rate.md"
 source_hash: "e7d055e284b7"
 translated: true
-outdated: false
+outdated: true
 ---
+
 
 # Gewannquot: wéi dacks eng Plaz, e Wee oder e Spillzuch gewënnt
 

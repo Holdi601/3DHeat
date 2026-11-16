@@ -6,8 +6,9 @@ lang: "it"
 source: "win-rate.md"
 source_hash: "e7d055e284b7"
 translated: true
-outdated: false
+outdated: true
 ---
+
 
 # Percentuale di vittorie: quanto spesso vince un punto, un percorso o una giocata
 

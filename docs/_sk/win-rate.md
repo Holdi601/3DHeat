@@ -6,8 +6,9 @@ lang: "sk"
 source: "win-rate.md"
 source_hash: "e7d055e284b7"
 translated: true
-outdated: false
+outdated: true
 ---
+
 
 # Podiel výhier: ako často vyhráva miesto, trasa alebo akcia
 

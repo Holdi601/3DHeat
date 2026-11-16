@@ -6,8 +6,9 @@ lang: "hu"
 source: "win-rate.md"
 source_hash: "e7d055e284b7"
 translated: true
-outdated: false
+outdated: true
 ---
+
 
 # Győzelmi arány: milyen gyakran nyer egy hely, egy útvonal vagy egy lépés
 

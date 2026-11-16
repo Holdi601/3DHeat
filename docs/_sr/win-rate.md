@@ -6,8 +6,9 @@ lang: "sr"
 source: "win-rate.md"
 source_hash: "e7d055e284b7"
 translated: true
-outdated: false
+outdated: true
 ---
+
 
 # Проценат победа: колико често место, пут или потез побеђује
 

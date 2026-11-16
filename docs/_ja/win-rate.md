@@ -6,8 +6,9 @@ lang: "ja"
 source: "win-rate.md"
 source_hash: "e7d055e284b7"
 translated: true
-outdated: false
+outdated: true
 ---
+
 
 # 勝率: 場所、ルート、プレーがどれだけ勝つか
 

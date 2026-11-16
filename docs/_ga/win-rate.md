@@ -6,8 +6,9 @@ lang: "ga"
 source: "win-rate.md"
 source_hash: "e7d055e284b7"
 translated: true
-outdated: false
+outdated: true
 ---
+
 
 # Ráta buaite: cé chomh minic a bhuann áit, bealach nó beart
 

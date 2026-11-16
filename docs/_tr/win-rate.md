@@ -6,8 +6,9 @@ lang: "tr"
 source: "win-rate.md"
 source_hash: "e7d055e284b7"
 translated: true
-outdated: false
+outdated: true
 ---
+
 
 # Kazanma oranı: bir yer, bir rota ya da bir hamle ne sıklıkla kazanır
 

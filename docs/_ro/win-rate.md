@@ -6,8 +6,9 @@ lang: "ro"
 source: "win-rate.md"
 source_hash: "e7d055e284b7"
 translated: true
-outdated: false
+outdated: true
 ---
+
 
 # Rata de victorie: cât de des câștigă un loc, un traseu sau o acțiune
 

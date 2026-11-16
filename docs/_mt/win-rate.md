@@ -6,8 +6,9 @@ lang: "mt"
 source: "win-rate.md"
 source_hash: "e7d055e284b7"
 translated: true
-outdated: false
+outdated: true
 ---
+
 
 # Rata ta' rebħ: kemm-il darba post, rotta jew mossa jirbħu
 

@@ -6,8 +6,9 @@ lang: "de"
 source: "win-rate.md"
 source_hash: "e7d055e284b7"
 translated: true
-outdated: false
+outdated: true
 ---
+
 
 # Siegquote: wie oft ein Ort, ein Weg oder ein Spielzug gewinnt
 

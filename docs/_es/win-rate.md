@@ -6,8 +6,9 @@ lang: "es"
 source: "win-rate.md"
 source_hash: "e7d055e284b7"
 translated: true
-outdated: false
+outdated: true
 ---
+
 
 # Tasa de victoria: con qué frecuencia gana un lugar, una ruta o una jugada
 

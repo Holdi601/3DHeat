@@ -6,8 +6,9 @@ lang: "lt"
 source: "win-rate.md"
 source_hash: "e7d055e284b7"
 translated: true
-outdated: false
+outdated: true
 ---
+
 
 # Laimėjimų dalis: kaip dažnai vieta, maršrutas ar ėjimas laimi
 

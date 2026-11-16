@@ -6,8 +6,9 @@ lang: "ca"
 source: "win-rate.md"
 source_hash: "e7d055e284b7"
 translated: true
-outdated: false
+outdated: true
 ---
+
 
 # Taxa de victòria: amb quina freqüència guanya un lloc, una ruta o una jugada
 

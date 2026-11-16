@@ -5,7 +5,7 @@ lang: "bg"
 source: "index.md"
 source_hash: "88cb04e3aeb4"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # 3DHeat
