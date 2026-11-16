@@ -41,7 +41,7 @@ Alle Spaltenmenüs listen jede Spalte der ersten Datei plus *– keine –*.
 | **Zum Filtern behalten** | Zusätzliche Spalten, die im Speicher bleiben. | Ein Kästchen pro Spalte, und für jede angehakte *Bereich* (numerisch) oder *Kategorie*. Jede kostet 4 Byte pro Zeile und einen Dekodierdurchlauf beim Laden. Nur behaltene Spalten können [gefiltert](filters.md), für eine [Differenz-Aufteilung](difference.md) genutzt oder als Ereignisspalte einer [Linien-Intensität](line-heat.md) verwendet werden. |
 | **Beispielzeilen zeigen** | Eine Tabelle der ersten 12 Beispielzeilen, alle Spalten. | Zum Prüfen der Vermutungen. |
 
-Eine angehakte Filterspalte, die nicht ausdrücklich gesetzt ist, wird als *Bereich* gelesen; eine Id-Spalte, die nach Zahl aussieht, ist oft nützlicher als *Kategorie*. Nur 4 Filter können gleichzeitig aktiv sein ([Filter](filters.md)).
+Eine angehakte Filterspalte, die nicht ausdrücklich gesetzt ist, wird als *Bereich* gelesen; eine Id-Spalte, die nach Zahl aussieht, ist oft nützlicher als *Kategorie*. Beliebig viele Filter können gleichzeitig aktiv sein ([Filter](filters.md)).
 
 ## Wie die automatische Zuordnung rät {#how-the-auto-mapping-guesses}
 

@@ -187,7 +187,9 @@ struct HeatUniforms {
   timeCfg       : vec4<f32>,
   // minRow, maxRow, blockShift, flags
   rowCfg        : vec4<u32>,
+  // x: 1 when this chunk's rows are filtered by their pass bits (passBits); y-w spare.
   filterModes   : vec4<u32>,
+  // Spare: the filters are folded into the pass bits, so any number fit.
   filterRangeA  : vec4<f32>,
   filterRangeB  : vec4<f32>,
   // x: rows per filter slot in the packed filter buffer.
@@ -260,8 +262,11 @@ ${volumeWgsl(15)}
  * moves — thresholds are uniforms, which is the case that has to stay free.
  */
 @group(0) @binding(5) var<storage, read> filterValues : array<f32>;
-// Category allow-masks as a bitset, one FILTER_MASK_CAPACITY-sized run per slot.
-@group(0) @binding(6) var<storage, read> filterMask : array<u32>;
+/**
+ * Every active filter folded into one bit a row (FILTER_PASS_WGSL), rebuilt
+ * when a filter changes: any number of filters cost this one read a row.
+ */
+@group(0) @binding(6) var<storage, read> passBits : array<u32>;
 /**
  * Baked sprite ramp, centre at u=0 and rim at u=1.
  *
@@ -326,10 +331,6 @@ const SPRITE_CORNERS = array<vec2<f32>, 3>(
   vec2<f32>(0.0, 2.0), vec2<f32>(-1.7320508, -1.0), vec2<f32>(1.7320508, -1.0)
 );
 
-// Ids one filter slot's mask holds. Enough for the person filter, whose ids are
-// people and can run to tens of thousands; an id past it was never allowed.
-const FILTER_MASK_CAPACITY : u32 = ${FILTER_MASK_CAPACITY}u;
-
 /**
  * Reverse the low 16 bits: counting turned into repeated halving.
  *
@@ -386,25 +387,9 @@ struct VsOut {
   @location(8) @interpolate(flat) dirPx : f32,
 };
 
-fn passFilter(slot : u32, row : u32) -> bool {
-  let mode = u.filterModes[slot];
-  if (mode == 0u) { return true; }
-  let v = filterValues[slot * u.filterCfg.x + row];
-  if (mode == 1u) {
-    // Ranges are packed two per vec4 to keep everything 16-byte aligned.
-    var lo : f32;
-    var hi : f32;
-    if (slot == 0u) { lo = u.filterRangeA.x; hi = u.filterRangeA.y; }
-    else if (slot == 1u) { lo = u.filterRangeA.z; hi = u.filterRangeA.w; }
-    else if (slot == 2u) { lo = u.filterRangeB.x; hi = u.filterRangeB.y; }
-    else { lo = u.filterRangeB.z; hi = u.filterRangeB.w; }
-    return v >= lo && v <= hi;
-  }
-  let category = u32(max(0.0, v));
-  if (category >= FILTER_MASK_CAPACITY) { return false; }
-  let bitIndex = slot * FILTER_MASK_CAPACITY + category;
-  let word = filterMask[bitIndex >> 5u];
-  return ((word >> (bitIndex & 31u)) & 1u) == 1u;
+fn passFilters(row : u32) -> bool {
+  if (u.filterModes.x == 0u) { return true; }
+  return ((passBits[row >> 5u] >> (row & 31u)) & 1u) == 1u;
 }
 
 @vertex
@@ -452,10 +437,7 @@ fn vsHeat(@builtin(vertex_index) vid : u32) -> VsOut {
     if (cullFar > 0.0 && dist > cullFar) { reject = true; }
   }
 
-  if (!passFilter(0u, row)) { reject = true; }
-  if (!passFilter(1u, row)) { reject = true; }
-  if (!passFilter(2u, row)) { reject = true; }
-  if (!passFilter(3u, row)) { reject = true; }
+  if (!passFilters(row)) { reject = true; }
 
   var sgn = 1.0;
   if ((flags & ${FLAG_USE_TEAM_SIGN}u) != 0u) {
@@ -936,6 +918,50 @@ function lineHeatWgsl(): string {
 }
 
 export const HEAT_WGSL = POINT_HEAT_WGSL;
+
+/**
+ * One filter's pass over a chunk's rows, into the chunk's pass bits: one
+ * invocation a word of 32 rows, ANDed into what earlier filters left (the first
+ * one writes). The rule of filterTables.ts `rowPasses`; the filter's bounds or
+ * bitset come from the table `packFilterTable` packs. Dispatched only when a
+ * filter changes.
+ */
+export const FILTER_PASS_WGSL = /* wgsl */ `
+struct Params { k : u32, first : u32, a : u32, b : u32 };
+@group(0) @binding(0) var<uniform> p : Params;
+@group(0) @binding(1) var<storage, read> col : array<f32>;
+@group(0) @binding(2) var<storage, read> table : array<u32>;
+@group(0) @binding(3) var<storage, read_write> bits : array<u32>;
+
+// Ids one filter's mask holds. Enough for the person filter, whose ids are
+// people and can run to tens of thousands.
+const FILTER_MASK_CAPACITY : u32 = ${FILTER_MASK_CAPACITY}u;
+
+fn passes(v : f32) -> bool {
+  let at = 4u + p.k * 4u;
+  let mode = table[at];
+  if (mode == 1u) { return v >= bitcast<f32>(table[at + 1u]) && v <= bitcast<f32>(table[at + 2u]); }
+  // An id past the mask was never allowed.
+  if (!(v >= 0.0)) { return false; }
+  let c = u32(v);
+  if (c >= min(table[at + 2u], FILTER_MASK_CAPACITY)) { return false; }
+  return ((table[table[at + 3u] + (c >> 5u)] >> (c & 31u)) & 1u) == 1u;
+}
+
+@compute @workgroup_size(64)
+fn main(@builtin(global_invocation_id) g : vec3<u32>) {
+  let w = g.x;
+  if (w >= arrayLength(&bits)) { return; }
+  let rows = arrayLength(&col);
+  var acc = 0u;
+  for (var b = 0u; b < 32u; b++) {
+    let row = w * 32u + b;
+    if (row >= rows) { break; }
+    if (passes(col[row])) { acc = acc | (1u << b); }
+  }
+  if (p.first == 1u) { bits[w] = acc; } else { bits[w] = bits[w] & acc; }
+}
+`;
 export const LINE_HEAT_WGSL = lineHeatWgsl();
 
 /** Fullscreen triangle, shared by the composite and decay passes. */

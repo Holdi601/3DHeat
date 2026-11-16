@@ -89,7 +89,7 @@ Eine Position-, Zeit- oder Blickspalte, die etwas anderes als eine Zahl enthält
 | Gruppe | beliebig; wörterbuchkodiert | nein | 16-Bit-ID | Bis 4.096 Gruppen, sonst wird die Gruppierung verworfen. |
 | Gierwinkel, Nickwinkel | Zahl, Grad oder Bogenmaß | nein | 32-Bit-Gleitkommazahl im Bogenmaß | |
 | Blickrichtung X, Y, Z | Zahl | nein (alle drei zusammen) | in Gier- und Nickwinkel umgerechnet | |
-| Filterspalte, *Bereich* | Zahl | nein | 32-Bit-Gleitkommazahl | Bis 4 Filter gleichzeitig aktiv. |
+| Filterspalte, *Bereich* | Zahl | nein | 32-Bit-Gleitkommazahl | Beliebig viele Filter gleichzeitig aktiv. |
 | Filterspalte, *Kategorie* | beliebig; wörterbuchkodiert | nein | 32-Bit-ID | Bis 4.096 Werte, sonst wird die Spalte nicht behalten. |
 
 Eine Parquet-Spalte vom Typ `TIMESTAMP`, die als Filterspalte behalten wird, ist ein *Bereich* aus Epochen-Millisekunden – ein Schieberegler, keine Liste.

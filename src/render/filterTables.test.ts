@@ -4,16 +4,18 @@ import {
   PERSON_FILTER_COLUMN,
   buildActiveFilters,
   filterColumnData,
-  filterSlots,
+  activeFilterFlags,
+  packFilterTable,
+  rowPasses,
   buildSplitTable,
   frameSignTables,
   packSignTables,
   sideScales,
   splitSideCounts,
 } from './filterTables';
-import { FILTER_MASK_CAPACITY, MAX_FILTER_SLOTS, type ActiveFilter } from './types';
-import { HEAT_VS, LINE_HEAT_VS } from './webgl2/shaders';
-import { HEAT_WGSL, LINE_HEAT_WGSL } from './webgpu/shaders';
+import { FILTER_MASK_CAPACITY, type ActiveFilter } from './types';
+import { FILTER_PASS_FS, HEAT_VS, LINE_HEAT_VS } from './webgl2/shaders';
+import { FILTER_PASS_WGSL, HEAT_WGSL, LINE_HEAT_WGSL } from './webgpu/shaders';
 
 /**
  * A dataset of six rows: three groups, five people, one category column and one
@@ -131,32 +133,85 @@ describe('the person filter', () => {
     expect(filterColumnData(ds, 'speed')).toBe(ds.attrs[1].data);
   });
 
-  it('takes one of the four slots, and is the one left out when they are full', () => {
+  it('applies every filter however many there are, the person filter included', () => {
     const ds = dataset();
     const columns: FilterSpec[] = [
       { kind: 'categories', column: 'build', allowed: [0] },
       { kind: 'range', column: 'speed', min: 2, max: 5 },
       { kind: 'categories', column: 'build', allowed: [1] },
       { kind: 'range', column: 'speed', min: 1, max: 3 },
+      { kind: 'categories', column: 'build', allowed: [0, 2] },
+      { kind: 'range', column: 'speed', min: 1.5, max: 6 },
     ];
     const persons: FilterSpec = { kind: 'persons', allowed: [2] };
     const filters = [...columns, { kind: 'teams', allowed: [0] } as FilterSpec, persons];
-    expect(filterSlots(ds, filters)).toEqual([0, 1, 2, 3, null, 4]);
+    expect(activeFilterFlags(ds, filters)).toEqual([true, true, true, true, true, true, false, true]);
     const active = buildActiveFilters(ds, filters);
-    expect(active).toHaveLength(MAX_FILTER_SLOTS);
-    expect(active.some((f) => f.column === PERSON_FILTER_COLUMN)).toBe(false);
-
-    // First in the list, it gets a slot and the last column filter does not.
-    expect(filterSlots(ds, [persons, ...columns])).toEqual([0, 1, 2, 3, 4]);
+    expect(active).toHaveLength(7);
+    expect(active[6].column).toBe(PERSON_FILTER_COLUMN);
   });
 
-  it('takes no slot when it restricts nothing', () => {
+  it('does not count a filter that lets everything through', () => {
     const ds = dataset(3);
-    expect(filterSlots(ds, [{ kind: 'persons', allowed: [0, 1, 2] }])).toEqual([null]);
+    expect(activeFilterFlags(ds, [{ kind: 'persons', allowed: [0, 1, 2] }])).toEqual([false]);
     const noPeople = { ...ds, personId: null } as Dataset;
-    expect(filterSlots(noPeople, [{ kind: 'persons', allowed: [0] }])).toEqual([null]);
+    expect(activeFilterFlags(noPeople, [{ kind: 'persons', allowed: [0] }])).toEqual([false]);
     // A range over the whole column is no restriction either.
-    expect(filterSlots(ds, [{ kind: 'range', column: 'speed', min: 0, max: 9 }])).toEqual([null]);
+    expect(activeFilterFlags(ds, [{ kind: 'range', column: 'speed', min: 0, max: 9 }])).toEqual([false]);
+    // Every value ticked, in any order: nothing restricted.
+    expect(activeFilterFlags(ds, [{ kind: 'categories', column: 'build', allowed: [2, 0, 1] }])).toEqual([false]);
+    // Repeats and ids the column does not have do not make up for a missing value.
+    expect(activeFilterFlags(ds, [{ kind: 'categories', column: 'build', allowed: [0, 0, 1, 7] }])).toEqual([true]);
+    expect(buildActiveFilters(ds, [{ kind: 'categories', column: 'build', allowed: [0, 1, 2] }])).toEqual([]);
+  });
+
+  it('ANDs across filters and ORs the values within one', () => {
+    const ds = dataset();
+    const filters = buildActiveFilters(ds, [
+      { kind: 'categories', column: 'build', allowed: [0, 2] }, // rows 0 2 3 5
+      { kind: 'range', column: 'speed', min: 2, max: 5 }, // rows 1 2 3 4
+      { kind: 'persons', allowed: [2, 3, 4] }, // rows 2 3 4
+    ]);
+    const data = filters.map((f) => filterColumnData(ds, f.column)!);
+    const pass = Array.from({ length: ds.count }, (_, i) => rowPasses(filters, data, i));
+    expect(pass).toEqual([false, false, true, true, false, false]);
+    // Excluding a value is leaving it out: everything but 'a'.
+    const notA = buildActiveFilters(ds, [{ kind: 'categories', column: 'build', allowed: [1, 2] }]);
+    const notAData = [filterColumnData(ds, 'build')!];
+    expect(Array.from({ length: 6 }, (_, i) => rowPasses(notA, notAData, i))).toEqual([false, true, true, false, true, true]);
+  });
+
+  it('packs any number of filters into one table for the WebGPU filter pass', () => {
+    const ds = dataset();
+    const filters = buildActiveFilters(ds, [
+      { kind: 'range', column: 'speed', min: 2, max: 5 },
+      { kind: 'categories', column: 'build', allowed: [1] },
+      { kind: 'persons', allowed: [40] },
+      ...Array.from({ length: 9 }, (_, k): FilterSpec => ({ kind: 'range', column: 'speed', min: k, max: 9 })).slice(2),
+    ]);
+    const table = packFilterTable(filters);
+    const f32 = new Float32Array(table.buffer);
+    expect(table[0]).toBe(filters.length);
+    expect(filters.length).toBeGreaterThan(4);
+    expect([table[4], f32[5], f32[6]]).toEqual([1, 2, 5]);
+    // The category filter: mode, length, bitset start; only id 1 set.
+    expect([table[8], table[10]]).toEqual([2, 3]);
+    expect(table[table[11]]).toBe(0b10);
+    // The person filter's bitset follows; id 40 is past its five people, so none set.
+    expect(table[12]).toBe(2);
+    expect(table[15]).toBe(table[11] + 1);
+    // Nothing set past the table's own bits.
+    expect(table.length).toBe(table[15] + 1);
+  });
+
+  it('reads one pass bit a row in both renderers, built from every filter', () => {
+    expect(HEAT_VS).toContain('texelFetch(uPassTex, tc, 0)');
+    expect(HEAT_VS).not.toContain('uFilterTex0');
+    for (const src of [HEAT_WGSL, LINE_HEAT_WGSL]) {
+      expect(src).toContain('passBits[row >> 5u]');
+      expect(src).toContain('if (!passFilters(row)) { reject = true; }');
+    }
+    expect(FILTER_PASS_WGSL).toContain('bits[w] = bits[w] & acc;');
   });
 
   it('holds tens of thousands of people, and nobody past the capacity', () => {
@@ -192,8 +247,8 @@ describe('the heat shaders', () => {
   });
 
   it('size the filter masks for the person filter', () => {
-    expect(HEAT_VS).toContain(`c >= ${FILTER_MASK_CAPACITY}`);
-    expect(HEAT_WGSL).toContain(`FILTER_MASK_CAPACITY : u32 = ${FILTER_MASK_CAPACITY}u`);
+    expect(FILTER_PASS_FS).toContain(`c < ${FILTER_MASK_CAPACITY}`);
+    expect(FILTER_PASS_WGSL).toContain(`FILTER_MASK_CAPACITY : u32 = ${FILTER_MASK_CAPACITY}u`);
   });
 });
 

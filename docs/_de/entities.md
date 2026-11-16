@@ -40,7 +40,7 @@ Die Auswahl zeigt nur die ausgewählten Personen, in den Heatmap-Modi (Punkte, L
 
 ## Grenzen {#limits}
 
-In der Intensität ist die Auswahl ein Filter und belegt einen der vier [Filterplätze](filters.md#rules). Sind die anderen Filter bereits alle vier Plätze belegt, sagt das Fenster *Nicht auf die Intensität angewendet: alle Filterplätze sind belegt. Die Figuren-Wiedergabe zeigt trotzdem nur diese Entitäten. Entferne einen Filter unter Filter, um einen Platz frei zu machen.* Entferne einen Filter, um einen Platz frei zu machen.
+In der Intensität ist die Auswahl ein Filter und wirkt zusammen mit allen anderen [Filtern](filters.md#rules).
 
 Die Auswahl wird bei jedem neuen Datensatz geleert. Der Tab Match setzt dieselbe Auswahl, wenn er einen Spieler in den Fokus nimmt.
 

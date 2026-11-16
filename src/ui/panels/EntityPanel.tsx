@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import { rgbToCss, teamMemberColor } from '../../render/colors';
-import { filterSlots } from '../../render/filterTables';
-import { MAX_FILTER_SLOTS } from '../../render/types';
 import { useStore } from '../../state/store';
 import type { Dataset, FilterSpec } from '../../state/types';
 import { Section } from '../controls';
@@ -24,11 +22,9 @@ const MANY_PLAYERS = 40;
  * than a frame of heat.
  *
  * The selection applies everywhere: on the CPU side in the box replay (track
- * visibility and cube building), and in the heat modes as one of the four shader
- * filter slots, over the person ids — the mask behind a slot holds 65,536 ids,
- * enough for those tens of thousands. Taking a slot means it can be crowded out
- * by column filters, and then the panel says so rather than leaving the heat to
- * quietly show everyone.
+ * visibility and cube building), and in the heat modes as a filter over the
+ * person ids like any column filter — its mask holds 65,536 ids, enough for
+ * those tens of thousands — applied alongside every other filter.
  *
  * Listed as people name them (`replay/units.ts`): the players, and when there
  * are many only those in play at the playhead; the AI folded away beneath.
@@ -114,9 +110,6 @@ export function EntityPanel() {
 
   if (!dataset || dataset.personLabels.length === 0) return null;
   const total = dataset.personLabels.length;
-  // The slot the shader gives the selection; past the last one the heat ignores it.
-  const at = filters.findIndex((f) => f.kind === 'persons');
-  const noSlot = at >= 0 && (filterSlots(dataset, filters)[at] ?? -1) >= MAX_FILTER_SLOTS;
 
   const setSelection = (next: Set<number>) => {
     const rest = filters.filter((f) => f.kind !== 'persons');
@@ -165,7 +158,6 @@ export function EntityPanel() {
       }
     >
       <div className="hint">{t('heat.entityPanel.hint')}</div>
-      {noSlot && <div className="err">{t('heat.entityPanel.noSlot')}</div>}
       <input
         type="text"
         placeholder={t('heat.entityPanel.search', { count: total })}

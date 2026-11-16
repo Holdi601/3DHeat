@@ -1,74 +1,87 @@
 import type { Dataset, FilterSpec, SplitRule, ViewMode } from '../state/types';
-import { FILTER_MASK_CAPACITY, MAX_FILTER_SLOTS, type ActiveFilter, type SplitMode } from './types';
+import { FILTER_MASK_CAPACITY, type ActiveFilter, type SplitMode } from './types';
 
 /**
  * What the heat pass is told about filters, groups and the difference split.
  *
  * Pure functions over the dataset and the store's settings, so the rules can be
- * tested without a GPU: which filter gets which of the four slots, what the
- * group sign table holds, and how the two sign tables share one upload.
+ * tested without a GPU: which filters restrict anything and so are applied, what
+ * the group sign table holds, and how the two sign tables share one upload.
  */
 
 /**
- * The column name the person filter is given in its slot.
+ * The column name the person filter is given.
  *
  * Not a column: both renderers resolve it to `Dataset.personId` when they upload
- * a slot's per-row values (see `filterColumnData`). It starts with a NUL, which
+ * a filter's per-row values (see `filterColumnData`). It starts with a NUL, which
  * no column name read from a file carries, so it cannot shadow a real column.
  */
 export const PERSON_FILTER_COLUMN = '\u0000person';
 
-/** Per-row values for a filter slot or the split: a retained column, or the person ids. */
+/** Per-row values for a filter or the split: a retained column, or the person ids. */
 export function filterColumnData(ds: Dataset, column: string): ArrayLike<number> | null {
   if (column === PERSON_FILTER_COLUMN) return ds.personId;
   return ds.attrs.find((a) => a.name === column)?.data ?? null;
 }
 
-/** Whether a filter restricts anything, and so needs a slot. */
-function needsSlot(ds: Dataset, f: FilterSpec): boolean {
+/**
+ * Whether a filter restricts anything, and so is applied at all.
+ *
+ * A filter that lets everything through is no filter: a range over the whole
+ * column, every category ticked, every person selected. Such a filter costs
+ * nothing - no per-row values on the GPU, no pass in the filter mask - and is
+ * not counted as active by the panels.
+ */
+export function filterIsActive(ds: Dataset, f: FilterSpec): boolean {
   if (f.kind === 'range') {
     const attr = ds.attrs.find((a) => a.name === f.column);
-    // A range covering the whole column filters nothing; it takes no slot, so the
-    // slot and its 4-bytes-per-row values stay free.
     return !!attr && !(f.min <= attr.min && f.max >= attr.max);
   }
   if (f.kind === 'categories') {
     const attr = ds.attrs.find((a) => a.name === f.column);
-    return !!attr?.categories && f.allowed.length !== attr.categories.length;
+    return !!attr?.categories && !coversAll(f.allowed, attr.categories.length);
   }
   if (f.kind === 'persons') {
-    // Without per-row person ids there is nothing for the shader to test; and
-    // every person selected is no restriction at all. The Entities panel and the
-    // Match tab both list each id once, so the length is the count.
-    return !!ds.personId && f.allowed.length > 0 && f.allowed.length < ds.personLabels.length;
+    // Without per-row person ids there is nothing to test, and an empty
+    // selection means no restriction (see the Entities panel).
+    return !!ds.personId && f.allowed.length > 0 && !coversAll(f.allowed, ds.personLabels.length);
   }
-  // Groups are decided by the sign table, not a slot.
+  // Groups are decided by the sign table, not per row.
   return false;
 }
 
-/**
- * The slot each filter takes, in the order given.
- *
- * `null` for a filter that needs none — a group filter, a range over the whole
- * column, a column the dataset does not have. Otherwise the slot index, which is
- * `MAX_FILTER_SLOTS` or more for a filter that did not get one and is not
- * applied. The person filter counts like any column filter. The engine and the
- * Filters and Entities panels all ask this, so what the panels call applied is
- * what the shader applies.
- */
-export function filterSlots(ds: Dataset | null, filters: FilterSpec[]): (number | null)[] {
-  let next = 0;
-  return filters.map((f) => (ds && needsSlot(ds, f) ? next++ : null));
+/** Whether `allowed` names every id in `[0, n)`; repeats and stray ids do not count. */
+function coversAll(allowed: readonly number[], n: number): boolean {
+  if (allowed.length < n) return false;
+  const seen = new Uint8Array(n);
+  let count = 0;
+  for (const i of allowed) {
+    if (i >= 0 && i < n && seen[i] === 0) {
+      seen[i] = 1;
+      count++;
+    }
+  }
+  return count === n;
 }
 
 /**
- * The store's filters as GPU slots, up to MAX_FILTER_SLOTS.
+ * Which of the filters are applied, in the order given.
  *
- * Extras are dropped rather than silently combined; the panels mark them (see
- * `filterSlots`). `cache` keeps each spec's slot description across frames,
- * keyed by the spec object, which the store replaces on every change: the person
- * filter's mask is up to 65,536 bytes and is built once per selection rather than
- * once per frame. The caller clears it when the dataset changes.
+ * There is no cap: every filter that restricts anything is applied, ANDed with
+ * the others. The engine and the Filters and Entities panels all ask this, so
+ * what the panels call active is what the renderers apply.
+ */
+export function activeFilterFlags(ds: Dataset | null, filters: FilterSpec[]): boolean[] {
+  return filters.map((f) => !!ds && filterIsActive(ds, f));
+}
+
+/**
+ * The store's filters as the renderers apply them: every active one.
+ *
+ * `cache` keeps each spec's description across frames, keyed by the spec object,
+ * which the store replaces on every change: the person filter's mask is up to
+ * 65,536 bytes and is built once per selection rather than once per frame. The
+ * caller clears it when the dataset changes.
  */
 export function buildActiveFilters(
   ds: Dataset | null,
@@ -76,22 +89,75 @@ export function buildActiveFilters(
   cache?: WeakMap<FilterSpec, ActiveFilter>,
 ): ActiveFilter[] {
   if (!ds) return [];
-  const slots = filterSlots(ds, filters);
   const out: ActiveFilter[] = [];
-  filters.forEach((f, i) => {
-    const slot = slots[i];
-    if (slot === null || slot >= MAX_FILTER_SLOTS) return;
+  for (const f of filters) {
+    if (!filterIsActive(ds, f)) continue;
     let active = cache?.get(f);
     if (!active) {
       active = describeFilter(ds, f);
       cache?.set(f, active);
     }
     out.push(active);
-  });
+  }
   return out;
 }
 
-/** One slot's description; only called for a filter `needsSlot` accepted. */
+/**
+ * Whether one row passes every filter: the rule both renderers' filter passes
+ * follow, and `splitSideCounts` too. `data[k]` is filter k's per-row values.
+ */
+export function rowPasses(filters: readonly ActiveFilter[], data: readonly ArrayLike<number>[], row: number): boolean {
+  for (let k = 0; k < filters.length; k++) {
+    const f = filters[k];
+    const v = data[k][row];
+    if (f.kind === 'range') {
+      if (!(v >= f.min && v <= f.max)) return false;
+    } else {
+      const c = Math.trunc(v);
+      if (!f.mask || !(c >= 0 && c < f.mask.length) || f.mask[c] === 0) return false;
+    }
+  }
+  return true;
+}
+
+/**
+ * The filters as one table of u32 words, for the WebGPU heat shader.
+ *
+ * Words 0-3: the filter count and three spare. Then four words a filter: mode
+ * (1 range, 2 categories), and for a range its bounds as f32 bits, for
+ * categories the mask's length in ids and the word its bitset starts at. The
+ * bitsets follow the table, one bit an id. Any number of filters fit: the
+ * buffer grows with them.
+ */
+export function packFilterTable(filters: readonly ActiveFilter[]): Uint32Array {
+  let words = 4 + filters.length * 4;
+  const starts: number[] = [];
+  for (const f of filters) {
+    starts.push(words);
+    if (f.kind === 'categories') words += Math.ceil(Math.min(f.mask?.length ?? 0, FILTER_MASK_CAPACITY) / 32);
+  }
+  const table = new Uint32Array(Math.max(4, words));
+  const asFloat = new Float32Array(table.buffer);
+  table[0] = filters.length;
+  filters.forEach((f, k) => {
+    const at = 4 + k * 4;
+    if (f.kind === 'range') {
+      table[at] = 1;
+      asFloat[at + 1] = f.min;
+      asFloat[at + 2] = f.max;
+      return;
+    }
+    const mask = f.mask;
+    const n = Math.min(mask?.length ?? 0, FILTER_MASK_CAPACITY);
+    table[at] = 2;
+    table[at + 2] = n;
+    table[at + 3] = starts[k];
+    for (let c = 0; c < n; c++) if (mask![c]) table[starts[k] + (c >> 5)] |= 1 << (c & 31);
+  });
+  return table;
+}
+
+/** One filter's description; only called for an active filter. */
 function describeFilter(ds: Dataset, f: FilterSpec): ActiveFilter {
   if (f.kind === 'range') {
     return {
@@ -345,24 +411,18 @@ export function splitSideCounts(
   if (span <= 0 || split.problem) return { positive: 0, negative: 0, exact: true };
   const stride = Math.max(1, Math.ceil(span / Math.max(1, maxRows)));
   const resolved = filters.map((f) => ({ f, data: filterColumnData(ds, f.column) }));
-  // A slot whose column is gone passes nothing, in the shader as here.
+  // A filter whose column is gone passes nothing, in the shaders as here.
   if (resolved.some((r) => !r.data)) return { positive: 0, negative: 0, exact: stride === 1 };
   const splitData = split.mode !== 0 && split.column ? filterColumnData(ds, split.column) : null;
   if (split.mode !== 0 && !splitData) return { positive: 0, negative: 0, exact: stride === 1 };
   const team = ds.teamId;
   let pos = 0;
   let neg = 0;
-  rows: for (let i = lo; i < hi; i += stride) {
+  const fs = resolved.map((r) => r.f);
+  const cols = resolved.map((r) => r.data!);
+  for (let i = lo; i < hi; i += stride) {
     if (!Number.isFinite(ds.px[i])) continue;
-    for (const { f, data } of resolved) {
-      const v = data![i];
-      if (f.kind === 'range') {
-        if (!(v >= f.min && v <= f.max)) continue rows;
-      } else {
-        const c = Math.trunc(v);
-        if (!f.mask || c < 0 || c >= f.mask.length || f.mask[c] === 0) continue rows;
-      }
-    }
+    if (!rowPasses(fs, cols, i)) continue;
     const g = team ? team[i] : 0;
     const groupSign = teamSign && g < teamSign.length ? teamSign[g] : 1;
     let sign = groupSign;

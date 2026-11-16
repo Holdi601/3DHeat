@@ -1,6 +1,6 @@
 import { MAX_PLAN_BLOCKS } from './types';
 import { describe, expect, it } from 'vitest';
-import { BLOCK_TEX_WIDTH, CHUNK_ROWS, MAX_FILTER_SLOTS, SAMPLE_BLOCK } from './types';
+import { BLOCK_TEX_WIDTH, CHUNK_ROWS, FILTER_MASK_ROWS, SAMPLE_BLOCK } from './types';
 
 /**
  * Texture dimensions against real driver limits.
@@ -71,6 +71,6 @@ describe('texture dimensions versus driver limits', () => {
   it('keeps the category mask inside the limit on both axes', () => {
     const FILTER_MASK_WIDTH = 4096;
     expect(FILTER_MASK_WIDTH).toBeLessThanOrEqual(REQUIRED);
-    expect(MAX_FILTER_SLOTS).toBeLessThanOrEqual(REQUIRED);
+    expect(FILTER_MASK_ROWS).toBeLessThanOrEqual(REQUIRED);
   });
 });

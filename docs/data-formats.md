@@ -84,7 +84,7 @@ A position, time or look column that holds something other than a number decodes
 | Group | any; dictionary-encoded | no | 16-bit id | Up to 4,096 groups, else the grouping is dropped. |
 | Yaw, pitch | number, degrees or radians | no | 32-bit float radians | |
 | Direction X, Y, Z | number | no (all three together) | converted to yaw and pitch | |
-| Filter column, *range* | number | no | 32-bit float | Up to 4 filters active at once. |
+| Filter column, *range* | number | no | 32-bit float | Any number of filters active at once. |
 | Filter column, *category* | any; dictionary-encoded | no | 32-bit id | Up to 4,096 values, else the column is not kept. |
 
 A Parquet `TIMESTAMP` column kept as a filter column is a *range* of epoch milliseconds - a slider, not a list.

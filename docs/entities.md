@@ -35,7 +35,7 @@ The selection shows only the selected persons, in the heat modes (points, lines,
 
 ## Limits
 
-In the heat the selection is a filter and uses one of the four [filter slots](filters.md#rules). When the other filters already use all four, the panel says *Not applied to the heat: all filter slots are taken. The figure replay still shows only these entities. Clear a filter under Filters to free one.* Clear a filter to free a slot.
+In the heat the selection is a filter, applied together with every other [filter](filters.md#rules).
 
 The selection is cleared on every new dataset. The Match tab sets the same selection when it focuses one player.
 

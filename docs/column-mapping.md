@@ -36,7 +36,7 @@ All column menus list every column of the first file, plus *- none -*.
 | **Keep for filtering** | Extra columns kept in memory. | A checkbox per column, and for each ticked one *range* (numeric) or *category*. Each costs 4 bytes per row and a decode pass at load. Only kept columns can be [filtered](filters.md), used for a [difference split](difference.md) or as a [line heat](line-heat.md) event column. |
 | **Show sample rows** | A table of the first 12 sampled rows, all columns. | For checking the guesses. |
 
-A ticked filter column that is not set explicitly is read as *range*; a numeric-looking id column is often more useful as *category*. Only 4 filters can be active at once ([Filters](filters.md)).
+A ticked filter column that is not set explicitly is read as *range*; a numeric-looking id column is often more useful as *category*. Any number of filters can be active at once ([Filters](filters.md)).
 
 ## How the auto-mapping guesses
 

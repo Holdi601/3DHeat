@@ -15,11 +15,11 @@ import { halfToFloat } from '../half';
 import {
   BLOCK_TEX_WIDTH,
   CHUNK_ROWS,
+  FILTER_MASK_CAPACITY,
   FILTER_MASK_ROWS,
   FILTER_MASK_WIDTH,
   GpuInitError,
   HEAT_DEPTH_LAYERS,
-  MAX_FILTER_SLOTS,
   MAX_PLAN_BLOCKS,
   SAMPLE_BLOCK,
   TILE_TABLE_WIDTH,
@@ -46,6 +46,7 @@ import {
   COMPOSITE_FS,
   CUBE_FS,
   CUBE_VS,
+  FILTER_PASS_FS,
   FULLSCREEN_VS,
   HEAT_FS,
   HEAT_VS,
@@ -90,6 +91,12 @@ const TILE_UNIT = 17;
 const DIR_UNIT = 18;
 /** The heat pass's per-row weight, when heat is weighed by value (`RenderParams.weightColumn`). */
 const WEIGHT_UNIT = 19;
+/**
+ * Units 4-7 once held four filters' values; now unit 4 holds the pass byte
+ * (`ensurePassMasks`) and the rest keep their old numbers.
+ */
+const FILTER_UNITS = 4;
+const PASS_UNIT = 4;
 /** Rows of bearings uploaded a frame at most, a whole number of texture rows: half a megabyte. */
 const DIR_SLICE_ROWS = 64 * ROW_TEX_WIDTH;
 
@@ -273,8 +280,14 @@ export class Webgl2Renderer implements Renderer {
    * 10M-row dataset — and most retained columns are never actually filtered on.
    */
   private readonly filterTextures = new Map<string, WebGLTexture>();
+  /** One filter's category mask while the pass bytes are built; see `ensurePassMasks`. */
   private filterMaskTex: WebGLTexture | null = null;
-  private filterMaskDirty = '';
+  /**
+   * Per chunk, every active filter folded into one byte a row (R8, one texel a
+   * row like the row textures), and the filter keys it was built for.
+   */
+  private readonly passMasks = new Map<number, { tex: WebGLTexture; fbo: WebGLFramebuffer; keys: string[]; bytes: number }>();
+  private filterPassProg: Prog | null = null;
   /** Bound to unused filter units; sampling an unbound unit is undefined. */
   private dummyTex: WebGLTexture | null = null;
   private dataset: Dataset | null = null;
@@ -623,7 +636,7 @@ export class Webgl2Renderer implements Renderer {
     }
     for (const t of this.filterTextures.values()) gl.deleteTexture(t);
     this.filterTextures.clear();
-    this.filterMaskDirty = '';
+    this.dropPassMasks();
     this.gpuBytesUsed = 0;
     this.residentRows = 0;
     this.droppedRows = 0;
@@ -2357,6 +2370,8 @@ export class Webgl2Renderer implements Renderer {
     const direct = extend || params.accumMode === 'reset' || alpha >= 1 || fresh;
     if (field) field.fresh = false;
     const target = field ? (direct ? field.fbo : field.scratchFbo) : direct ? this.heatFbo : this.heatScratchFbo;
+    // Before the target is bound: folding the filters draws into targets of its own.
+    this.ensurePassMasks(params);
     gl.bindFramebuffer(gl.FRAMEBUFFER, target);
     gl.viewport(0, 0, passW, passH);
     gl.disable(gl.BLEND);
@@ -2460,36 +2475,19 @@ export class Webgl2Renderer implements Renderer {
     u.f1('uDefaultLifetime', params.lifetime?.defaultLifetime ?? 0);
     u.f1('uFadeIn', params.lifetime?.fadeOut ?? 0);
 
-    const filters = params.filters.slice(0, MAX_FILTER_SLOTS);
-    for (let i = 0; i < MAX_FILTER_SLOTS; i++) {
-      u.i1(`uFilterTex${i}`, 4 + i);
-    }
-    u.i1('uFilterMaskTex', 4 + MAX_FILTER_SLOTS);
+    const filters = params.filters;
+    u.i1('uPassTex', PASS_UNIT);
     // Bound unconditionally: an unbound sampler is undefined behaviour on some
     // drivers even when the branch that reads it is never taken.
-    u.i1('uCurveTex', 5 + MAX_FILTER_SLOTS);
-    gl.activeTexture(gl.TEXTURE0 + 5 + MAX_FILTER_SLOTS);
+    u.i1('uCurveTex', 5 + FILTER_UNITS);
+    gl.activeTexture(gl.TEXTURE0 + 5 + FILTER_UNITS);
     gl.bindTexture(gl.TEXTURE_2D, this.curveTex);
-    u.i1('uSplitTex', 6 + MAX_FILTER_SLOTS);
+    u.i1('uSplitTex', 6 + FILTER_UNITS);
     u.i1('uSignWidth', this.teamSignWidth);
     u.f2('uSplitPos', params.splitPositive[0], params.splitPositive[1]);
     u.f2('uSplitNeg', params.splitNegative[0], params.splitNegative[1]);
     u.f2('uSideScale', params.splitScale[0], params.splitScale[1]);
     u.i1('uWeightTex', WEIGHT_UNIT);
-    if (filters.some((f) => f.kind === 'categories')) {
-      gl.activeTexture(gl.TEXTURE0 + 4 + MAX_FILTER_SLOTS);
-      gl.bindTexture(gl.TEXTURE_2D, this.ensureFilterMask(filters));
-    } else {
-      gl.activeTexture(gl.TEXTURE0 + 4 + MAX_FILTER_SLOTS);
-      gl.bindTexture(gl.TEXTURE_2D, this.ensureDummy());
-    }
-    const rangeBuf = new Float32Array(MAX_FILTER_SLOTS * 2);
-    for (let i = 0; i < filters.length; i++) {
-      rangeBuf[i * 2] = filters[i].min;
-      rangeBuf[i * 2 + 1] = filters[i].max;
-    }
-    const rangeLoc = u.loc('uFilterRange[0]') ?? u.loc('uFilterRange');
-    if (rangeLoc) gl.uniform2fv(rangeLoc, rangeBuf);
 
     gl.activeTexture(gl.TEXTURE1);
     gl.bindTexture(gl.TEXTURE_2D, this.blockTex);
@@ -2503,7 +2501,7 @@ export class Webgl2Renderer implements Renderer {
     u.f1('uOcclusionFloor', params.heat.occlusionFloor);
     u.f1('uOccludedExtra', params.heat.occludedExtra);
     u.f2('uNearFar', params.near, params.far);
-    const depthUnit = 7 + MAX_FILTER_SLOTS;
+    const depthUnit = 7 + FILTER_UNITS;
     u.i1('uSceneDepth', depthUnit);
     gl.activeTexture(gl.TEXTURE0 + depthUnit);
     gl.bindTexture(gl.TEXTURE_2D, this.sceneDepth);
@@ -2616,22 +2614,15 @@ export class Webgl2Renderer implements Renderer {
         u.f1('uLifeScale', chunk.lifeScale);
       }
 
-      // Filter value textures are per chunk, so they bind inside the loop. A
-      // slot whose texture could not be allocated is switched off rather than
-      // left sampling a stale or dummy texture, which would silently filter the
-      // wrong rows.
-      const modes = new Int32Array(MAX_FILTER_SLOTS);
-      for (let i = 0; i < MAX_FILTER_SLOTS; i++) {
-        const f = filters[i];
-        const tex = f ? this.filterTexture(plan.chunk, f.column, filters, params.splitColumn) : null;
-        gl.activeTexture(gl.TEXTURE0 + 4 + i);
-        gl.bindTexture(gl.TEXTURE_2D, tex ?? this.ensureDummy());
-        modes[i] = tex ? (f!.kind === 'range' ? 1 : 2) : 0;
-      }
-      const modeLoc = u.loc('uFilterMode[0]') ?? u.loc('uFilterMode');
-      if (modeLoc) gl.uniform1iv(modeLoc, modes);
+      // The chunk's pass byte, built at the top of the pass for the filters of
+      // this frame (`ensurePassMasks`); without filters, or where it could not
+      // be made, every row passes.
+      const passMask = filters.length > 0 ? this.passMasks.get(plan.chunk) : undefined;
+      gl.activeTexture(gl.TEXTURE0 + PASS_UNIT);
+      gl.bindTexture(gl.TEXTURE_2D, passMask?.tex ?? this.ensureDummy());
+      u.i1('uPassOn', passMask ? 1 : 0);
 
-      gl.activeTexture(gl.TEXTURE0 + 6 + MAX_FILTER_SLOTS);
+      gl.activeTexture(gl.TEXTURE0 + 6 + FILTER_UNITS);
       gl.bindTexture(gl.TEXTURE_2D, splitTex ?? this.ensureDummy());
       u.i1('uSplitMode', params.splitMode);
       // The weight rides the filters' per-chunk column textures too. Bound either
@@ -3025,46 +3016,161 @@ export class Webgl2Renderer implements Renderer {
   }
 
   /**
-   * Category allow-masks, `FILTER_MASK_ROWS` texture rows per filter slot.
+   * Fold every active filter into each drawn chunk's pass byte, where the
+   * filters changed since it was built.
    *
-   * Id c of slot s is the texel (c mod width, s * rows + c / width), so a slot
-   * holds `FILTER_MASK_CAPACITY` ids — enough for the person filter, whose ids
-   * are people and run to tens of thousands.
+   * One draw per filter per chunk into an R8 target laid out like the row
+   * textures, cleared to 1 and multiplied (FILTER_PASS_FS), so the heat pass
+   * reads one byte a row however many filters there are. Rebuilt in the frame a
+   * filter changes - toggles and drags show on the next frame - and only then: a
+   * steady frame compares the keys and draws nothing. A filter's column texture
+   * is needed only while its pass is drawn, so the budget can evict it later.
    */
-  private ensureFilterMask(filters: ActiveFilter[]): WebGLTexture {
+  private ensurePassMasks(params: FrameParams): void {
+    const filters = params.filters;
+    const ds = this.dataset;
+    if (filters.length === 0 || !ds) return;
+    const keys = filters.map((f) => f.key);
+    const stale: number[] = [];
+    for (const plan of params.plan) {
+      if (!this.chunks[plan.chunk] || plan.blockCount === 0) continue;
+      const have = this.passMasks.get(plan.chunk);
+      const same = have && have.keys.length === keys.length && have.keys.every((k, i) => k === keys[i]);
+      if (!same && !stale.includes(plan.chunk)) stale.push(plan.chunk);
+    }
+    if (stale.length === 0) return;
+
+    const gl = this.gl;
+    const ready = stale.filter((c) => this.passTarget(c, params));
+    if (ready.length === 0) return;
+    const failed = new Set<number>();
+
+    const prog = (this.filterPassProg ??= this.makeProg(FULLSCREEN_VS, FILTER_PASS_FS, 'filter pass'));
+    gl.disable(gl.DEPTH_TEST);
+    gl.depthMask(false);
+    gl.disable(gl.SCISSOR_TEST);
+    gl.colorMask(true, true, true, true);
+    gl.bindVertexArray(this.emptyVao);
+    gl.useProgram(prog.prog);
+    prog.u.i1('uCol', 0);
+    prog.u.i1('uMask', 1);
+    for (const c of ready) {
+      const m = this.passMasks.get(c)!;
+      gl.bindFramebuffer(gl.FRAMEBUFFER, m.fbo);
+      gl.viewport(0, 0, ROW_TEX_WIDTH, m.bytes / ROW_TEX_WIDTH);
+      gl.disable(gl.BLEND);
+      gl.clearColor(1, 1, 1, 1);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+    }
+    gl.enable(gl.BLEND);
+    gl.blendEquation(gl.FUNC_ADD);
+    gl.blendFunc(gl.ZERO, gl.SRC_COLOR);
+    // Filter outer, chunk inner: each filter's mask is uploaded once.
+    for (const f of filters) {
+      prog.u.i1('uMode', f.kind === 'range' ? 1 : 2);
+      prog.u.f2('uRange', f.min, f.max);
+      prog.u.i1('uMaskLen', f.mask ? Math.min(f.mask.length, FILTER_MASK_CAPACITY) : 0);
+      const maskTex = f.mask ? this.uploadFilterMask(f.mask) : this.ensureDummy();
+      for (const c of ready) {
+        // Kept while its pass draws; the column is not needed again until a
+        // filter changes, so the budget may take it back after.
+        const tex = this.filterTexture(c, f.column, [f], params.splitColumn);
+        const m = this.passMasks.get(c)!;
+        if (!tex) {
+          // A column that does not fit on the GPU cannot be tested: that filter
+          // is left out of this chunk, which tries again next frame.
+          failed.add(c);
+          continue;
+        }
+        // Bound after `filterTexture`, which binds whatever it uploads.
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, maskTex);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, tex);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, m.fbo);
+        gl.viewport(0, 0, ROW_TEX_WIDTH, m.bytes / ROW_TEX_WIDTH);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+      }
+    }
+    for (const c of ready) this.passMasks.get(c)!.keys = failed.has(c) ? [] : keys;
+    gl.disable(gl.BLEND);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  }
+
+  /** The chunk's pass target, made on first use; null when the budget has no room. */
+  private passTarget(chunkIndex: number, params: FrameParams): { tex: WebGLTexture; fbo: WebGLFramebuffer } | null {
+    const have = this.passMasks.get(chunkIndex);
+    if (have) return have;
+    const ds = this.dataset;
+    if (!ds) return null;
+    const rows = Math.min(CHUNK_ROWS, ds.count - chunkIndex * CHUNK_ROWS);
+    if (rows <= 0) return null;
+    const height = Math.ceil(rows / ROW_TEX_WIDTH);
+    const bytes = ROW_TEX_WIDTH * height;
+    if (this.gpuBytesUsed + bytes > this.gpuBudgetBytes) {
+      const keep = new Set(params.filters.map((f) => f.column));
+      if (params.splitColumn) keep.add(params.splitColumn);
+      if (params.weightColumn) keep.add(params.weightColumn);
+      this.evictFilterTextures(keep, bytes);
+    }
+    if (this.gpuBytesUsed + bytes > this.gpuBudgetBytes) return null;
+    const gl = this.gl;
+    const tex = createTexture(gl, {
+      width: ROW_TEX_WIDTH,
+      height,
+      internalFormat: gl.R8,
+      format: gl.RED,
+      type: gl.UNSIGNED_BYTE,
+    });
+    const fbo = gl.createFramebuffer();
+    if (!fbo) {
+      gl.deleteTexture(tex);
+      return null;
+    }
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+    const m = { tex, fbo, keys: [] as string[], bytes };
+    this.passMasks.set(chunkIndex, m);
+    this.gpuBytesUsed += bytes;
+    return m;
+  }
+
+  private dropPassMask(chunkIndex: number): void {
+    const m = this.passMasks.get(chunkIndex);
+    if (!m) return;
+    this.gl.deleteTexture(m.tex);
+    this.gl.deleteFramebuffer(m.fbo);
+    this.gpuBytesUsed -= m.bytes;
+    this.passMasks.delete(chunkIndex);
+  }
+
+  private dropPassMasks(): void {
+    for (const c of [...this.passMasks.keys()]) this.dropPassMask(c);
+  }
+
+  /**
+   * One filter's category mask, `FILTER_MASK_ROWS` rows of `FILTER_MASK_WIDTH`:
+   * id c is the texel (c mod width, c / width), so it holds
+   * `FILTER_MASK_CAPACITY` ids - enough for the person filter.
+   */
+  private uploadFilterMask(mask: Uint8Array): WebGLTexture {
     const gl = this.gl;
     if (!this.filterMaskTex) {
       this.filterMaskTex = createTexture(gl, {
         width: FILTER_MASK_WIDTH,
-        height: MAX_FILTER_SLOTS * FILTER_MASK_ROWS,
+        height: FILTER_MASK_ROWS,
         internalFormat: gl.R8,
         format: gl.RED,
         type: gl.UNSIGNED_BYTE,
       });
     }
-    // Rebuild only when the selection actually changed; this runs every frame.
-    const sig = filters.map((f) => (f.mask ? f.key : '')).join('|');
-    if (sig !== this.filterMaskDirty) {
-      this.filterMaskDirty = sig;
-      const block = new Uint8Array(FILTER_MASK_WIDTH * FILTER_MASK_ROWS);
-      gl.bindTexture(gl.TEXTURE_2D, this.filterMaskTex);
-      for (let slot = 0; slot < MAX_FILTER_SLOTS; slot++) {
-        const mask = filters[slot]?.mask;
-        block.fill(0);
-        if (mask) block.set(mask.subarray(0, Math.min(mask.length, block.length)));
-        gl.texSubImage2D(
-          gl.TEXTURE_2D,
-          0,
-          0,
-          slot * FILTER_MASK_ROWS,
-          FILTER_MASK_WIDTH,
-          FILTER_MASK_ROWS,
-          gl.RED,
-          gl.UNSIGNED_BYTE,
-          block,
-        );
-      }
-    }
+    const n = Math.min(mask.length, FILTER_MASK_CAPACITY);
+    const rows = Math.max(1, Math.ceil(n / FILTER_MASK_WIDTH));
+    const block = new Uint8Array(rows * FILTER_MASK_WIDTH);
+    block.set(mask.subarray(0, n));
+    gl.bindTexture(gl.TEXTURE_2D, this.filterMaskTex);
+    gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+    gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, FILTER_MASK_WIDTH, rows, gl.RED, gl.UNSIGNED_BYTE, block);
     return this.filterMaskTex;
   }
 
@@ -3612,6 +3718,7 @@ export class Webgl2Renderer implements Renderer {
       if (t) gl.deleteTexture(t);
     }
     this.filterTextures.clear();
+    this.dropPassMasks();
     if (this.sceneFbo) gl.deleteFramebuffer(this.sceneFbo);
     for (const b of [
       this.cubeGeom,

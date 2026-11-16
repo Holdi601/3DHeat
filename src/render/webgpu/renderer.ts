@@ -17,14 +17,12 @@ import { forcedHeatPrecision } from '../webgl2/glutil';
 import { buildEdgeList, type Level } from '../level';
 import { boxOutsideFrustum, diffWorldTiles, frustumPlanes, textureBytes } from '../worldTiles';
 import type { WorldTile } from '../../world/tileSet';
-import { filterColumnData, packSignTables } from '../filterTables';
+import { filterColumnData, packFilterTable, packSignTables } from '../filterTables';
 import {
   CHUNK_ROWS,
-  FILTER_MASK_CAPACITY,
   FILTER_MASK_WIDTH,
   GpuInitError,
   HEAT_DEPTH_LAYERS,
-  MAX_FILTER_SLOTS,
   PEEL_EPSILON_F,
   MAX_PLAN_BLOCKS,
   SAMPLE_BLOCK,
@@ -54,6 +52,7 @@ import {
   FLAG_USE_TEAM_SIGN,
   COMPOSITE_UNIFORM_BYTES,
   HEAT_UNIFORM_BYTES,
+  FILTER_PASS_WGSL,
   HEAT_WGSL,
   LINE_HEAT_WGSL,
   LINE_WGSL,
@@ -121,10 +120,9 @@ interface GpuChunk {
   timeScale: number;
   lifeScale: number;
   /**
-   * Active filter columns packed end to end, one chunk's rows apiece.
-   *
-   * Rebuilt only when the *set* of filtered columns changes; moving a threshold
-   * touches uniforms alone, which is what keeps dragging a filter free.
+   * The difference split's and the value weight's columns packed end to end,
+   * one chunk's rows apiece. Filters do not ride here: they are folded into
+   * `passBits`, so filtering never repacks this.
    */
   filterValues: GPUBuffer | null;
   filterKey: string;
@@ -135,6 +133,12 @@ interface GpuChunk {
   weightSlot: number;
   /** One bearing byte a row, four to a word (`setDirections`); made when the heat pass first wants it. */
   dirs: GPUBuffer | null;
+  /**
+   * Every active filter folded into one bit a row (`buildPassBits`), and the
+   * filter keys it holds; empty when it holds nothing usable.
+   */
+  passBits: GPUBuffer | null;
+  passKeys: string[];
 }
 
 /** The scene pass's background; the tactical display swaps exactly this for its own. */
@@ -270,7 +274,8 @@ export class WebgpuRenderer implements Renderer {
   private readonly uniforms: UniformRing;
   private readonly bindCache = new Map<string, GPUBindGroup>();
   private readonly blockBuffer: GPUBuffer;
-  private readonly filterMaskBuffer: GPUBuffer;
+  /** The filters' table (`packFilterTable`); replaced by a larger one when it outgrows it. */
+  private filterMaskBuffer: GPUBuffer;
   private readonly emptyStorage: GPUBuffer;
   private teamSignBuffer: GPUBuffer;
   /** The volumes filter's uniform block (volumes/gpu.ts), rewritten when it changes. */
@@ -284,7 +289,16 @@ export class WebgpuRenderer implements Renderer {
   /** Both sign tables, groups then categories; see `packSignTables`. */
   private readonly signScratch = new Float32Array(SIGN_TABLE_SIZE * 2);
   /** The filter keys the mask buffer was last written for. */
-  private filterMaskKey = '';
+  private filterMaskKeys: string[] = [];
+  /**
+   * Per-row values of each filtered column, per chunk (`chunk:column`), uploaded
+   * the first time the column is filtered and read only while the pass bits are
+   * built, so the budget may take them back.
+   */
+  private readonly filterColumns = new Map<string, GPUBuffer>();
+  private filterPassPipeline: GPUComputePipeline | null = null;
+  /** Per filter two 256-byte slots of `{ k, first }`, for the pass-bit dispatches. */
+  private filterPassParams: GPUBuffer | null = null;
   private readonly sampler: GPUSampler;
 
   /**
@@ -517,9 +531,8 @@ export class WebgpuRenderer implements Renderer {
     });
     this.filterMaskBuffer = device.createBuffer({
       label: 'filter masks',
-      // One bit per id per slot, `FILTER_MASK_CAPACITY` ids a slot — enough for
-      // the person filter's tens of thousands — in whole u32 words.
-      size: (MAX_FILTER_SLOTS * FILTER_MASK_CAPACITY) / 8,
+      // Grown to fit when the filters need more (`writeFilterTable`).
+      size: 4096,
       usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
     });
     this.volumeBuffer = device.createBuffer({
@@ -1161,10 +1174,13 @@ export class WebgpuRenderer implements Renderer {
       c.positions.destroy();
       c.times?.destroy();
       c.filterValues?.destroy();
+      c.passBits?.destroy();
       c.lineStarts?.destroy();
       c.dirs?.destroy();
     }
     this.chunks = [];
+    for (const b of this.filterColumns.values()) b.destroy();
+    this.filterColumns.clear();
     this.dropDirJobs();
     this.dirAngles = null;
     for (const j of this.pendingChunks) {
@@ -1176,7 +1192,7 @@ export class WebgpuRenderer implements Renderer {
     // The frame a dataset arrives on has the rest of its arrival to carry.
     this.uploadIdle = true;
     this.lines = null;
-    this.filterMaskKey = '';
+    this.filterMaskKeys = [];
     this.gpuBytesUsed = 0;
     this.residentRows = 0;
     this.droppedRows = 0;
@@ -1448,6 +1464,8 @@ export class WebgpuRenderer implements Renderer {
       timeScale,
       lifeScale,
       filterValues: null,
+      passBits: null,
+      passKeys: [],
       filterKey: '',
       filterSlots: 0,
       splitSlot: -1,
@@ -2784,10 +2802,10 @@ export class WebgpuRenderer implements Renderer {
       return;
     }
 
-    const filters = params.filters.slice(0, MAX_FILTER_SLOTS);
-    if (filters.some((f) => f.kind === 'categories')) {
-      this.writeFilterMask(filters);
-    }
+    // Every active filter, however many, folded into each chunk's pass bits.
+    const filters = params.filters;
+    this.writeFilterTable(filters);
+    this.buildPassBits(encoder, params);
 
     // Block starts differ per chunk and, like uniforms, a single buffer written
     // once per chunk would leave every chunk reading the last write. So the
@@ -2827,9 +2845,10 @@ export class WebgpuRenderer implements Renderer {
         uniformOffsets.push(-1);
         return;
       }
-      const { slots, splitSlot } = this.ensureFilterValues(
+      // The split's and the weight's columns only; the filters read pass bits.
+      const { splitSlot } = this.ensureFilterValues(
         plan.chunk,
-        filters,
+        [],
         params.splitMode === 0 ? null : params.splitColumn,
         params.weightColumn,
       );
@@ -2851,7 +2870,6 @@ export class WebgpuRenderer implements Renderer {
           plan,
           weight,
           filters,
-          slots,
           splitSlot,
           startOffsets[index],
           field ? [field.width, field.height] : null,
@@ -3229,7 +3247,6 @@ export class WebgpuRenderer implements Renderer {
     plan: FrameParams['plan'][number],
     weight: number,
     filters: ActiveFilter[],
-    filterSlots: number,
     splitSlot: number,
     blockBase: number,
     fieldSize: [number, number] | null = null,
@@ -3292,17 +3309,13 @@ export class WebgpuRenderer implements Renderer {
     i[42] = BLOCK_SHIFT;
     i[43] = flags;
 
-    for (let s = 0; s < MAX_FILTER_SLOTS; s++) {
-      const f = filters[s];
-      // A slot whose column could not be packed is switched off rather than
-      // left reading whatever sits at that offset.
-      i[44 + s] = f && s < filterSlots ? (f.kind === 'range' ? 1 : 2) : 0;
-    }
-    for (let s = 0; s < MAX_FILTER_SLOTS; s++) {
-      const f = filters[s];
-      u[48 + s * 2] = f ? f.min : 0;
-      u[49 + s * 2] = f ? f.max : 0;
-    }
+    // Filtered by the chunk's pass bits, when there are filters and the bits
+    // hold something usable (`buildPassBits`).
+    i[44] = filters.length > 0 && chunk.passBits && chunk.passKeys.length > 0 ? 1 : 0;
+    i[45] = 0;
+    i[46] = 0;
+    i[47] = 0;
+    for (let s = 48; s < 56; s++) u[s] = 0;
     // Rows per packed filter slot, then this chunk's block-start base.
     i[56] = chunk.rows;
     i[57] = blockBase;
@@ -3379,25 +3392,147 @@ export class WebgpuRenderer implements Renderer {
     return this.uniforms.push(u, HEAT_UNIFORM_BYTES);
   }
 
-  private writeFilterMask(filters: ActiveFilter[]): void {
-    // Rewritten only when a selection changed: with the person filter a slot is
-    // 65,536 bits, and this runs every frame.
-    const key = filters.map((f) => (f.mask ? f.key : '')).join('|');
-    if (key === this.filterMaskKey) return;
-    this.filterMaskKey = key;
-    const words = (MAX_FILTER_SLOTS * FILTER_MASK_CAPACITY) / 32;
-    const bits = new Uint32Array(words);
-    for (let slot = 0; slot < MAX_FILTER_SLOTS; slot++) {
-      const mask = filters[slot]?.mask;
-      if (!mask) continue;
-      for (let c = 0; c < Math.min(mask.length, FILTER_MASK_CAPACITY); c++) {
-        if (mask[c]) {
-          const bit = slot * FILTER_MASK_CAPACITY + c;
-          bits[bit >> 5] |= 1 << (bit & 31);
-        }
-      }
+  private writeFilterTable(filters: ActiveFilter[]): void {
+    // Rewritten only when a filter changed: the person filter's bitset alone is
+    // 65,536 bits, and this runs every frame. Keys compared one by one, so a
+    // long person key is never joined into a new string each frame.
+    const keys = this.filterMaskKeys;
+    if (keys.length === filters.length && filters.every((f, k) => f.key === keys[k])) return;
+    this.filterMaskKeys = filters.map((f) => f.key);
+    const table = packFilterTable(filters);
+    if (table.byteLength > this.filterMaskBuffer.size) {
+      // A cached bind group still points at the old buffer.
+      this.dropChunkBindGroups();
+      this.filterMaskBuffer.destroy();
+      this.filterMaskBuffer = this.device.createBuffer({
+        label: 'filter table',
+        size: align4(Math.max(4096, table.byteLength * 2)),
+        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+      });
     }
-    this.device.queue.writeBuffer(this.filterMaskBuffer, 0, bits as unknown as BufferSource);
+    this.device.queue.writeBuffer(this.filterMaskBuffer, 0, table as unknown as BufferSource);
+  }
+
+  /**
+   * Fold every active filter into each drawn chunk's pass bits, where the
+   * filters changed since they were built.
+   *
+   * One compute dispatch per filter per chunk (FILTER_PASS_WGSL), one
+   * invocation a word of 32 rows, each ANDed into the last. Encoded ahead of
+   * the heat pass in the same frame, so a toggle or a drag shows on the next
+   * frame; a steady frame compares the keys and dispatches nothing. Each filter
+   * reads its own column buffer, so adding or dropping a filter uploads at most
+   * that one column and repacks nothing.
+   */
+  private buildPassBits(encoder: GPUCommandEncoder, params: FrameParams): void {
+    const filters = params.filters;
+    if (filters.length === 0 || !this.dataset) return;
+    const keys = this.filterMaskKeys;
+    const stale: number[] = [];
+    for (const plan of params.plan) {
+      const chunk = this.chunks[plan.chunk];
+      if (!chunk || plan.blockCount === 0 || stale.includes(plan.chunk)) continue;
+      const have = chunk.passKeys;
+      if (have.length === keys.length && have.every((k, i) => k === keys[i])) continue;
+      stale.push(plan.chunk);
+    }
+    if (stale.length === 0) return;
+
+    const device = this.device;
+    this.filterPassPipeline ??= device.createComputePipeline({
+      label: 'filter pass',
+      layout: 'auto',
+      compute: { module: device.createShaderModule({ label: 'filter pass', code: FILTER_PASS_WGSL }), entryPoint: 'main' },
+    });
+    const slots = filters.length * 2;
+    if (!this.filterPassParams || this.filterPassParams.size < slots * 256) {
+      this.filterPassParams?.destroy();
+      this.filterPassParams = device.createBuffer({
+        label: 'filter pass params',
+        size: Math.max(16, slots * 2) * 256,
+        usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+      });
+    }
+    // Slot 2k: filter k ANDed in; slot 2k + 1: filter k written, the chunk's first.
+    const words = new Uint32Array(slots * 64);
+    for (let k = 0; k < filters.length; k++) {
+      words[k * 128] = k;
+      words[k * 128 + 64] = k;
+      words[k * 128 + 65] = 1;
+    }
+    device.queue.writeBuffer(this.filterPassParams, 0, words as unknown as BufferSource);
+
+    const layout = this.filterPassPipeline.getBindGroupLayout(0);
+    const pass = encoder.beginComputePass({ label: 'filter pass' });
+    pass.setPipeline(this.filterPassPipeline);
+    for (const c of stale) {
+      const chunk = this.chunks[c];
+      const rowWords = Math.ceil(chunk.rows / 32);
+      if (!chunk.passBits) {
+        const bytes = Math.max(4, rowWords * 4);
+        if (this.gpuBytesUsed + bytes > this.gpuBudgetBytes) this.evictFilterColumns(new Set(filters.map((f) => f.column)), bytes);
+        if (this.gpuBytesUsed + bytes > this.gpuBudgetBytes) continue;
+        chunk.passBits = device.createBuffer({ label: `chunk ${chunk.start} pass bits`, size: bytes, usage: GPUBufferUsage.STORAGE });
+        this.gpuBytesUsed += bytes;
+      }
+      let dispatched = 0;
+      filters.forEach((f, k) => {
+        const col = this.filterColumn(c, f.column, filters);
+        // A column that does not fit cannot be tested: left out of this chunk,
+        // which tries again next frame.
+        if (!col) return;
+        pass.setBindGroup(
+          0,
+          device.createBindGroup({
+            layout,
+            entries: [
+              { binding: 0, resource: { buffer: this.filterPassParams!, offset: (k * 2 + (dispatched === 0 ? 1 : 0)) * 256, size: 16 } },
+              { binding: 1, resource: { buffer: col } },
+              { binding: 2, resource: { buffer: this.filterMaskBuffer } },
+              { binding: 3, resource: { buffer: chunk.passBits! } },
+            ],
+          }),
+        );
+        pass.dispatchWorkgroups(Math.ceil(rowWords / 64));
+        dispatched++;
+      });
+      // All applied: done until a filter changes. Some: used, and retried next
+      // frame. None: the bits hold nothing, so the chunk draws unfiltered.
+      chunk.passKeys = dispatched === filters.length ? keys : dispatched > 0 ? [PARTIAL_PASS] : [];
+    }
+    pass.end();
+  }
+
+  /** One filter column's per-row values for one chunk, uploaded on first use; null when it does not fit. */
+  private filterColumn(chunkIndex: number, column: string, inUse: readonly ActiveFilter[]): GPUBuffer | null {
+    const key = `${chunkIndex}:${column}`;
+    const hit = this.filterColumns.get(key);
+    if (hit) return hit;
+    const ds = this.dataset;
+    const chunk = this.chunks[chunkIndex];
+    if (!ds || !chunk) return null;
+    const src = filterColumnData(ds, column);
+    if (!src) return null;
+    const bytes = Math.max(4, chunk.rows * 4);
+    if (this.gpuBytesUsed + bytes > this.gpuBudgetBytes) this.evictFilterColumns(new Set(inUse.map((f) => f.column)), bytes);
+    if (this.gpuBytesUsed + bytes > this.gpuBudgetBytes) return null;
+    const values = new Float32Array(chunk.rows);
+    for (let i = 0; i < chunk.rows; i++) values[i] = src[chunk.start + i];
+    const buf = this.makeBuffer(values, GPUBufferUsage.STORAGE, `filter column ${column}`);
+    this.filterColumns.set(key, buf);
+    this.gpuBytesUsed += buf.size;
+    return buf;
+  }
+
+  /** Free filter columns outside `keep` until `need` more bytes fit in the budget. */
+  private evictFilterColumns(keep: ReadonlySet<string>, need: number): void {
+    for (const [key, buf] of this.filterColumns) {
+      if (this.gpuBytesUsed + need <= this.gpuBudgetBytes) return;
+      if (keep.has(key.slice(key.indexOf(':') + 1))) continue;
+      this.gpuBytesUsed -= buf.size;
+      buf.destroy();
+      this.filterColumns.delete(key);
+    }
   }
 
   // ------------------------------------------------------------- bind groups
@@ -3445,7 +3580,7 @@ export class WebgpuRenderer implements Renderer {
     // bind group holding the old one would read a destroyed texture.
     const pipeline = lines ? this.lineHeatPipelineFor(format) : this.heatPipelineFor(format);
     return this.cachedBindGroup(
-      `${lines ? 'lineheat' : 'heat'}:${chunkIndex}:${chunk.filterKey}:${offset}:${this.depthGeneration}:${format}:${chunk.dirs ? 'd' : ''}`,
+      `${lines ? 'lineheat' : 'heat'}:${chunkIndex}:${chunk.filterKey}:${offset}:${this.depthGeneration}:${format}:${chunk.dirs ? 'd' : ''}:${chunk.passBits ? 'p' : ''}`,
       pipeline.getBindGroupLayout(0),
       () => [
         { binding: 16, resource: { buffer: chunk.dirs ?? this.emptyStorage } },
@@ -3458,7 +3593,7 @@ export class WebgpuRenderer implements Renderer {
         { binding: 3, resource: { buffer: this.blockBuffer } },
         { binding: 4, resource: { buffer: this.teamSignBuffer } },
         { binding: 5, resource: { buffer: chunk.filterValues ?? this.emptyStorage } },
-        { binding: 6, resource: { buffer: this.filterMaskBuffer } },
+        { binding: 6, resource: { buffer: chunk.passBits ?? this.emptyStorage } },
         { binding: 7, resource: this.curveView },
         { binding: 8, resource: this.sampler },
         { binding: 9, resource: this.mustDepthView() },
@@ -3951,10 +4086,13 @@ export class WebgpuRenderer implements Renderer {
       c.positions.destroy();
       c.times?.destroy();
       c.filterValues?.destroy();
+      c.passBits?.destroy();
       c.lineStarts?.destroy();
       c.dirs?.destroy();
     }
     this.chunks = [];
+    for (const b of this.filterColumns.values()) b.destroy();
+    this.filterColumns.clear();
     this.dirField?.dispose();
     this.dirField = null;
     this.setLevel(null);
@@ -3985,6 +4123,7 @@ export class WebgpuRenderer implements Renderer {
     ]) {
       b.destroy();
     }
+    this.filterPassParams?.destroy();
     this.cubeInstanceBuffer?.destroy();
     this.lineBuffer?.destroy();
     this.trailBuffer?.destroy();
@@ -4168,6 +4307,9 @@ function alphaBlend(): GPUBlendState {
     alpha: { srcFactor: 'one', dstFactor: 'one-minus-src-alpha', operation: 'add' },
   };
 }
+
+/** Pass-bit keys of a chunk some of whose filters could not be applied: never equal, so retried. */
+const PARTIAL_PASS = '\u0000partial';
 
 function align4(n: number): number {
   return (n + 3) & ~3;

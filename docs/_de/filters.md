@@ -71,7 +71,7 @@ Alle Werte zu erlauben entfernt den Filter.
 
 ## Regeln {#rules}
 
-- **Vier Filter gleichzeitig.** Die Kopfzeile zeigt `aktiv/4`. Ein fünfter Filter wird nicht angewendet, und das Panel sagt es. Eine Auswahl in [Entitäten](entities.md) (oder der Spielerfokus des Tabs Match) nutzt auch einen der vier. Ein Filter, der die ganze Spalte abdeckt, nutzt keinen.
+- **Beliebig viele Filter gleichzeitig.** Die Kopfzeile zeigt, wie viele aktiv sind. Jeder wird angewendet, auch eine Auswahl in [Entitäten](entities.md) (oder der Spielerfokus des Tabs Match). Ein Filter, der alles durchlässt - alle Werte angehakt, ein Bereich über die ganze Spalte, *Alle* bei gewonnen oder verloren -, ist kein Filter und wird nicht gezählt.
 - **Eine Kategoriespalte hat höchstens 4.096 Werte**; eine breitere wird beim Laden nicht behalten.
 - **Filter werden mit UND verknüpft** und zusammen mit der Teamsichtbarkeit, der Differenz-Aufteilung, dem Zeitfenster, der Entfernungsbeschneidung und dem [Schnitt](slice.md) angewendet.
 - **Eine Filteränderung startet die Akkumulation neu und misst die Belichtung ein paar Frames später neu**, weil Filtern die Dichte stark verändern kann ([Farbe und Belichtung](colour-and-exposure.md#auto-exposure)).
@@ -82,7 +82,7 @@ Alle Werte zu erlauben entfernt den Filter.
 
 ## Für Entwickler {#for-developers}
 
-**Slots.** Jeder aktive Filter belegt einen von vier GPU-Slots ([`MAX_FILTER_SLOTS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)), eine Textur mit 4 Byte pro Zeile. Die Slots gehen an die Filter in der Reihenfolge ihrer letzten Änderung ([`filterSlots`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts), von Shader und beiden Panels gemeinsam genutzt). Ab dem vierten zeigt ein Fehler *Nur die ersten 4 Filter werden angewendet. Entferne einen – die übrigen werden ignoriert, nicht still kombiniert*, und die Namen der zusätzlichen Filter lauten *Spalte (nicht angewendet)*. Filter laufen pro Zeile im Vertex-Shader, daher braucht eine Schwellenänderung kein erneutes Einlesen und kein erneutes Hochladen.
+**Durchlass-Bits.** Die Zahl der Filter ist nicht begrenzt. Ändert sich ein Filter, falten beide Renderer alle aktiven Filter im selben Frame auf der GPU zu einem Durchlass-Merkmal pro Zeile: WebGL2 zeichnet je Filter einen Durchgang in ein Byte pro Zeile (`FILTER_PASS_FS`, miteinander multipliziert), WebGPU startet je Filter einen Compute-Durchgang in ein Bit pro Zeile (`FILTER_PASS_WGSL`, UND-verknüpft). Der Intensitäts-Durchgang liest dann ein Merkmal pro Zeile, gleich wie viele Filter es gibt, und ein ruhiger Frame tut für Filter nichts. Jede gefilterte Spalte kommt einmal auf die GPU, 4 Byte pro Zeile, wenn sie zum ersten Mal gefiltert wird; gelesen wird sie nur beim Neuaufbau der Merkmale, daher darf das Speicherbudget sie zurücknehmen. Welche Filter aktiv sind, sagt [`activeFilterFlags`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts), gemeinsam für beide Renderer und beide Panels; die Regel pro Zeile ist `rowPasses`. Gemessen mit 10 Millionen Zeilen und zehn Filtern (RTX 5080): Umschalten, *Alle* oder *Keine* wirkt im nächsten Frame, der etwa 1 ms länger dauert als ein ruhiger.
 
 **Filter, die das Panel nicht zeigt.** Im Anwendungszustand gibt es zwei weitere Arten ([`FilterSpec`](https://github.com/Holdi601/3DHeat/blob/main/src/state/types.ts)):
 

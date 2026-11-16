@@ -66,9 +66,9 @@ Allowing every value removes the filter.
 
 ## Rules
 
-- **Four filters at once.** The header shows `active/4`. A fifth filter is not applied, and the panel says so. A selection in [Entities](entities.md) (or the Match tab's player focus) uses one of the four too. A filter that covers the whole column uses none.
+- **Any number of filters at once.** The header shows how many are active. Every one is applied, a selection in [Entities](entities.md) (or the Match tab's player focus) included. A filter that lets everything through - every value ticked, a range over the whole column, *Any* for won or lost - is no filter and is not counted.
 - **A category column has at most 4,096 values**; a wider one is not kept at load.
-- **Filters combine with AND**, and with team visibility, the difference split, the time window, the distance cull and the [slice](slice.md).
+- **Filters combine with AND** across columns; within one column the ticked values combine with OR, and unticking a value excludes it. They also combine with team visibility, the difference split, the time window, the distance cull and the [slice](slice.md).
 - **Changing a filter restarts the accumulation and re-meters the exposure** a few frames later, because filtering can change the density a lot ([Colour and exposure](colour-and-exposure.md#auto-exposure)).
 - **Clear all filters** removes every column filter. Team visibility and player selections set elsewhere are kept.
 - Column filters change the heat modes. They do not change the figures of the [figure replay](box-replay.md), which follow team visibility and the Entities selection. The Entities selection changes both.
@@ -77,9 +77,9 @@ Allowing every value removes the filter.
 
 ## For developers
 
-**Slots.** Each active filter takes one of four GPU slots ([`MAX_FILTER_SLOTS`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)), a texture of 4 bytes per row. Slots go to the filters in the order they were last changed ([`filterSlots`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts), shared by the shader and both panels). Past four, an error says *Only the first 4 filters are applied. Clear one - the rest are being ignored, not silently combined*, and the extra filters' names read *column (not applied)*. Filters run per row in the vertex shader, so changing a threshold needs no re-parse and no re-upload.
+**Pass bits.** There is no cap on filters. When a filter changes, both renderers fold every active filter into one pass flag per row on the GPU, in the same frame: WebGL2 draws one pass per filter into a byte per row (`FILTER_PASS_FS`, multiplied together), WebGPU dispatches one compute pass per filter into a bit per row (`FILTER_PASS_WGSL`, ANDed). The heat pass then reads one flag per row, however many filters there are, and a steady frame does no filter work at all. Each filtered column is put on the GPU once, 4 bytes per row, the first time it is filtered; it is only read while the flags are rebuilt, so the memory budget may take it back. Which filters are active is [`activeFilterFlags`](https://github.com/Holdi601/3DHeat/blob/main/src/render/filterTables.ts), shared by both renderers and both panels; the rule per row is `rowPasses`. Measured on 10 million rows with ten filters (RTX 5080): a toggle, *All* or *None* shows on the next frame, which takes about 1 ms longer than a steady frame.
 
 **Filters the panel does not show.** Two more kinds exist in the application state ([`FilterSpec`](https://github.com/Holdi601/3DHeat/blob/main/src/state/types.ts)):
 
 - a **groups** filter, set by the Match tab when it focuses one side. It hides the other groups in every mode, a [difference](difference.md) split by a column included.
-- a **persons** filter, set by the [Entities](entities.md) panel and by the Match tab when it focuses one player. It restricts the figure replay and the heat modes. In the heat it is a category filter over the person ids and takes one of the four slots. Its mask holds 65,536 ids ([`FILTER_MASK_CAPACITY`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)); a person past that is not drawn in the heat while it is active, even when selected. The figure replay still shows them.
+- a **persons** filter, set by the [Entities](entities.md) panel and by the Match tab when it focuses one player. It restricts the figure replay and the heat modes. In the heat it is a category filter over the person ids, applied like any other. Its mask holds 65,536 ids ([`FILTER_MASK_CAPACITY`](https://github.com/Holdi601/3DHeat/blob/main/src/render/types.ts)); a person past that is not drawn in the heat while it is active, even when selected. The figure replay still shows them.

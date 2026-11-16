@@ -39,16 +39,6 @@ export const CHUNK_ROWS = 1 << 23; // 8.4M rows -> ~67MB of position texture
 export const BLOCK_TEX_WIDTH = 4096;
 
 /**
- * Filter slots evaluated per row in the vertex shader.
- *
- * Capped deliberately. Each active slot costs one 4-byte-per-row texture, which
- * on a 40M-row dataset is 160MB of VRAM, and the whole point of filtering in the
- * shader is that changing a threshold costs nothing — no re-parse, no re-upload,
- * no rebuild of any buffer, just a uniform.
- */
-export const MAX_FILTER_SLOTS = 4;
-
-/**
  * Texels per row of the WebGL2 tile table: one RGBA32F texel per repeating
  * texture's atlas rectangle (see `ModelLevel.tileRects`), read by tile number in
  * the vertex shader. A row this wide stays within WebGL2's guaranteed 2048
@@ -56,13 +46,13 @@ export const MAX_FILTER_SLOTS = 4;
  */
 export const TILE_TABLE_WIDTH = 1024;
 
-/** Width of the category allow-mask texture; `FILTER_MASK_ROWS` rows per filter slot. */
+/** Width of the category allow-mask texture; `FILTER_MASK_ROWS` rows per filter. */
 export const FILTER_MASK_WIDTH = 4096;
 
 /**
- * Mask rows per filter slot, so one slot holds `FILTER_MASK_CAPACITY` ids.
+ * Mask rows per filter, so one filter's mask holds `FILTER_MASK_CAPACITY` ids.
  *
- * Sixteen because of the person filter: it takes a slot like any column filter,
+ * Sixteen because of the person filter: it is filtered like any column,
  * and its ids are people, of which a real export carries tens of thousands —
  * every AI actor is one. A row is `FILTER_MASK_WIDTH` ids, so 16 rows hold 65,536,
  * which is also the most a 16-bit group or position channel can tell apart. An id
@@ -485,7 +475,10 @@ export interface FrameParams {
    */
   weightColumn: string | null;
   weightScale: number;
-  /** Column filters, up to MAX_FILTER_SLOTS. Evaluated per row in the shader. */
+  /**
+   * Every active column filter, any number, ANDed. Both renderers fold them into
+   * one pass bit per row when they change, so drawing costs one read a row.
+   */
   filters: ActiveFilter[];
 
   cubes: Float32Array | null;

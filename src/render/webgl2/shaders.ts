@@ -197,36 +197,10 @@ uniform float uLifeScale;        // lifetime cap / 65534
 uniform float uDefaultLifetime;  // for rows whose person never reappears
 uniform float uFadeIn;           // fraction of a row's life spent fading out
 
-// Live filters. 0 = unused, 1 = numeric range, 2 = category allow-mask.
-uniform int       uFilterMode[4];
-uniform vec2      uFilterRange[4];
-uniform sampler2D uFilterTex0;
-uniform sampler2D uFilterTex1;
-uniform sampler2D uFilterTex2;
-uniform sampler2D uFilterTex3;
-uniform sampler2D uFilterMaskTex; // ${FILTER_MASK_ROWS} rows per slot, one texel per category
-
-/**
- * Samplers are passed as parameters rather than indexed out of an array,
- * because GLSL ES 3.00 only allows a sampler array to be indexed by a constant
- * expression — a loop counter does not qualify on every driver.
- */
-bool passFilter(sampler2D tex, int slot, ivec2 tc) {
-  int mode = uFilterMode[slot];
-  if (mode == 0) return true;
-  float v = texelFetch(tex, tc, 0).r;
-  if (mode == 1) {
-    vec2 r = uFilterRange[slot];
-    return v >= r.x && v <= r.y;
-  }
-  // Several rows per slot, so a slot holds ${FILTER_MASK_CAPACITY} ids: the person
-  // filter's ids are people, and there can be tens of thousands. An id past the
-  // mask was never allowed.
-  int c = int(v);
-  if (c < 0 || c >= ${FILTER_MASK_CAPACITY}) return false;
-  ivec2 at = ivec2(c & ${FILTER_MASK_WIDTH - 1}, slot * ${FILTER_MASK_ROWS} + (c >> ${Math.log2(FILTER_MASK_WIDTH)}));
-  return texelFetch(uFilterMaskTex, at, 0).r > 0.5;
-}
+// Every live filter, folded into one byte a row (FILTER_PASS_FS) when one
+// changes: any number of filters cost this one read a row.
+uniform sampler2D uPassTex;
+uniform int       uPassOn;
 
 out vec2  vLocal;
 out float vSign;
@@ -317,10 +291,7 @@ void main() {
 
   // Filters run before anything expensive; a rejected row costs one vertex
   // invocation and no fragments at all.
-  if (!passFilter(uFilterTex0, 0, tc)) reject = true;
-  if (!passFilter(uFilterTex1, 1, tc)) reject = true;
-  if (!passFilter(uFilterTex2, 2, tc)) reject = true;
-  if (!passFilter(uFilterTex3, 3, tc)) reject = true;
+  if (uPassOn == 1 && texelFetch(uPassTex, tc, 0).r < 0.5) reject = true;
 
   float sgn = 1.0;
   if (uSigned == 1) {
@@ -656,6 +627,38 @@ uniform usampler2D uPosTex;`,
 }
 
 export const HEAT_VS = POINT_HEAT_VS;
+
+/**
+ * One filter's pass over a chunk's rows, into the chunk's pass byte (R8, laid
+ * out like the row textures: one texel a row). Drawn once per active filter with
+ * multiplying blend over a target cleared to 1, so the result is every filter
+ * ANDed - the rule of filterTables.ts `rowPasses`. Runs only when a filter
+ * changes; the heat pass then reads one byte a row however many filters there are.
+ */
+export const FILTER_PASS_FS = `#version 300 es
+precision highp float;
+precision highp int;
+uniform sampler2D uCol;   // the filter's per-row values
+uniform sampler2D uMask;  // category allow-mask, ${FILTER_MASK_ROWS} rows of ${FILTER_MASK_WIDTH}
+uniform int  uMode;       // 1 range, 2 categories
+uniform vec2 uRange;
+uniform int  uMaskLen;    // ids the mask holds
+out vec4 outPass;
+void main() {
+  float v = texelFetch(uCol, ivec2(gl_FragCoord.xy), 0).r;
+  bool ok;
+  if (uMode == 1) {
+    ok = v >= uRange.x && v <= uRange.y;
+  } else {
+    // An id past the mask was never allowed; the mask holds up to
+    // ${FILTER_MASK_CAPACITY}, enough for the person filter's tens of thousands.
+    int c = int(v);
+    ok = v >= 0.0 && c < uMaskLen && c < ${FILTER_MASK_CAPACITY} &&
+      texelFetch(uMask, ivec2(c & ${FILTER_MASK_WIDTH - 1}, c >> ${Math.log2(FILTER_MASK_WIDTH)}), 0).r > 0.5;
+  }
+  outPass = vec4(ok ? 1.0 : 0.0);
+}
+`;
 export const LINE_HEAT_VS = lineHeatVs();
 
 export const HEAT_FS = `#version 300 es

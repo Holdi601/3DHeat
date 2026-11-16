@@ -2,8 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useStore } from '../../state/store';
 import { CANON, isCanonical } from '../../data/canonical';
 import { END_REASON, endReasonKey, outcomeKind } from '../../data/outcome';
-import { filterSlots } from '../../render/filterTables';
-import { MAX_FILTER_SLOTS } from '../../render/types';
+import { activeFilterFlags } from '../../render/filterTables';
 import type { AttributeColumn, FilterSpec } from '../../state/types';
 import { Section, Segmented } from '../controls';
 import { int, num, t } from '../../i18n';
@@ -14,10 +13,10 @@ import { useSort, useSorted } from '../sort/useSort';
 /**
  * Live filters over the retained columns.
  *
- * Every control here is a shader uniform, so dragging a range or toggling a
- * category re-filters the whole dataset on the next frame — no re-parse, no
- * re-upload, no rebuilt buffer. That is the entire reason filtering happens on
- * the GPU rather than by rebuilding a subset on the CPU.
+ * Filtering happens on the GPU, so dragging a range or toggling a category
+ * re-filters the whole dataset on the next frame — no re-parse, no rebuilt
+ * subset. Any number of filters apply at once, ANDed across columns; within a
+ * column the ticked values are ORed (see render/filterTables.ts).
  */
 /**
  * A column as a panel's props see it, without its rows. In a development build React
@@ -33,17 +32,10 @@ export function FilterPanel() {
 
   if (!dataset) return null;
 
-  // The slots as the shader hands them out, so what this calls applied is what
-  // is applied. The Entities selection takes one too, wherever it sits in the list.
-  const slots = filterSlots(dataset, filters);
-  const slotOf = (spec: FilterSpec | undefined): number => {
-    const i = spec ? filters.indexOf(spec) : -1;
-    return i < 0 ? -1 : (slots[i] ?? -1);
-  };
-  const activeCount = slots.filter((s) => s !== null).length;
-  const personSlot = slots.some(
-    (s, i) => s !== null && s < MAX_FILTER_SLOTS && filters[i].kind === 'persons',
-  );
+  // As the renderers decide it, so what this counts is what is applied: every
+  // filter that restricts anything, however many. One that lets everything
+  // through - all values ticked, a range over the whole column - is not counted.
+  const activeCount = activeFilterFlags(dataset, filters).filter(Boolean).length;
   const columnCount = filters.filter((f) => f.kind === 'range' || f.kind === 'categories').length;
 
   const filterFor = (name: string): FilterSpec | undefined =>
@@ -70,16 +62,10 @@ export function FilterPanel() {
     <Section
       title={t('heat.filterPanel.title')}
       right={
-        <span style={{ color: activeCount > MAX_FILTER_SLOTS ? 'var(--bad)' : 'var(--text-faint)' }}>
-          {activeCount}/{MAX_FILTER_SLOTS}
-        </span>
+        <span style={{ color: 'var(--text-faint)' }}>{activeCount > 0 ? int(activeCount) : ''}</span>
       }
     >
-      {activeCount > MAX_FILTER_SLOTS && (
-        <div className="err">{t('heat.filterPanel.overflow', { count: MAX_FILTER_SLOTS })}</div>
-      )}
       <div className="hint">{t('heat.filterPanel.hint')}</div>
-      {personSlot && <div className="hint">{t('heat.filterPanel.personSlot')}</div>}
       <SiegePresets attrs={dataset.attrs} filters={filters} setFilters={setFilters} />
 
       {[...dataset.attrs].sort((a, b) => listOrder(a) - listOrder(b)).map((attr) => (
@@ -87,7 +73,6 @@ export function FilterPanel() {
           key={attr.name}
           attr={{ ...attr, data: NO_ROWS }}
           spec={filterFor(attr.name)}
-          slot={slotOf(filterFor(attr.name))}
           onChange={(next) => replace(attr.name, next)}
         />
       ))}
@@ -104,16 +89,13 @@ export function FilterPanel() {
 function FilterRow({
   attr,
   spec,
-  slot,
   onChange,
 }: {
   attr: AttributeColumn;
   spec: FilterSpec | undefined;
-  slot: number;
   onChange: (next: FilterSpec | null) => void;
 }) {
   const active = !!spec;
-  const overflowed = slot >= MAX_FILTER_SLOTS;
   const title = columnLabel(attr.name);
   const outcome = outcomeKind(attr);
 
@@ -125,9 +107,7 @@ function FilterRow({
     return (
       <div className="field" data-testid={`outcome-${outcome}`}>
         <div className="label">
-          <span style={{ opacity: overflowed ? 0.45 : 1 }}>
-            {overflowed ? t('heat.filterPanel.notApplied', { column: title }) : title}
-          </span>
+          <span>{title}</span>
         </div>
         <Segmented
           value={on}
@@ -149,9 +129,7 @@ function FilterRow({
     return (
       <div className="field">
         <div className="label">
-          <span style={{ opacity: overflowed ? 0.45 : 1 }}>
-            {overflowed ? t('heat.filterPanel.notApplied', { column: title }) : title}
-          </span>
+          <span>{title}</span>
           <span className="val">
             {active ? `${fmt(min)} … ${fmt(max)}` : `${fmt(attr.min)} … ${fmt(attr.max)}`}
           </span>
@@ -213,20 +191,18 @@ function FilterRow({
     );
   }
 
-  return <CategoryRow attr={attr} spec={spec} overflowed={overflowed} title={title} onChange={onChange} />;
+  return <CategoryRow attr={attr} spec={spec} title={title} onChange={onChange} />;
 }
 
 /** A category column's values to tick, sorted by name, by rows or as the data lists them. */
 function CategoryRow({
   attr,
   spec,
-  overflowed,
   title,
   onChange,
 }: {
   attr: AttributeColumn;
   spec: FilterSpec | undefined;
-  overflowed: boolean;
   title: string;
   onChange: (next: FilterSpec | null) => void;
 }) {
@@ -257,9 +233,7 @@ function CategoryRow({
   return (
     <div className="field">
       <div className="label">
-        <span style={{ opacity: overflowed ? 0.45 : 1 }}>
-          {overflowed ? t('heat.filterPanel.notApplied', { column: title }) : title}
-        </span>
+        <span>{title}</span>
         <span className="val">
           {allowed.size}/{categories.length}
         </span>
