@@ -25,6 +25,7 @@
  * columns are ordinary category columns, so they filter on the GPU like any.
  */
 
+import { CATALOG } from '../figures/catalog';
 import { figureFor } from '../figures/match';
 import { classify, type SymbolClass } from '../figures/symbolClass';
 import type { AttributeColumn } from '../state/types';
@@ -128,7 +129,7 @@ function inferAcmiEvents(inp: CanonicalInput, ev: CategoryInput, type: CategoryI
 const BY_SYMBOL: Partial<Record<SymbolClass, VehicleClass>> = {
   fighter: 'fighter', attack: 'attack', bomber: 'bomber',
   transport: 'otherAir', tanker: 'otherAir', recon: 'otherAir', trainer: 'otherAir', uav: 'otherAir',
-  rotary: 'helicopter', 'rotary-attack': 'helicopter', 'uav-rotary': 'helicopter',
+  rotary: 'helicopter', 'rotary-attack': 'helicopter', 'uav-rotary': 'otherAir',
   'missile-aam': 'weapon', 'missile-sam': 'weapon', 'missile-agm': 'weapon', 'missile-ship': 'weapon', bomb: 'weapon', 'guided-bomb': 'weapon', rocket: 'weapon', missile: 'weapon', shell: 'weapon',
   armour: 'tank', 'anti-tank': 'tank',
   'mech-inf': 'armoured', 'motor-inf': 'armoured', 'recon-ground': 'armoured',
@@ -142,17 +143,23 @@ const BY_SYMBOL: Partial<Record<SymbolClass, VehicleClass>> = {
   flare: 'decoy', chaff: 'decoy',
 };
 
+/** Figures whose symbol class says less than their own: a rider is no armoured car, a jet ski no tank, a quad bike no scout car. */
+const BY_FIGURE_CLASS: Record<string, VehicleClass> = {
+  cavalry: 'infantry', jetski: 'ship', quad: 'truck', motorcycle: 'truck', snowmobile: 'truck',
+};
+
 /** A vehicle's class by its names (most telling first) and type texts, as the figures match it. */
 export function vehicleClassOf(names: string[], types: string[]): VehicleClass {
   const kind = names.some(Boolean) || types.some(Boolean) ? figureFor(names, types) : null;
-  return BY_SYMBOL[classify(kind, types.filter(Boolean).join('+')).cls] ?? 'other';
+  const own = kind ? BY_FIGURE_CLASS[CATALOG[kind.replace(/@.*$/, '')]?.cls ?? ''] : undefined;
+  return own ?? BY_SYMBOL[classify(kind, types.filter(Boolean).join('+')).cls] ?? 'other';
 }
 
 const NAME_COLUMN = /^(name|vehicle|vehicle.?name|unit|unit.?type|model|aircraft|plane|tank|ship|craft|loadout|kit|figure)$/i;
 const TYPE_COLUMN = /^(type|class|kind|category|icon|role|domain|vehicle.?type|vehicle.?class)$/i;
 const EVENT_COLUMN = /^(events?|event.?type|event.?name)$/i;
 const OTHER_NAME = /^(other.?vehicle|target.?vehicle|victim.?vehicle|other.?name)$/i;
-const OTHER_TYPE = /^(other.?type|target.?type|victim.?type|other.?kind)$/i;
+const OTHER_TYPE = /^(other.?type|target.?type|victim.?type|other.?kind|(other|target|victim).?vehicle.?(class|type))$/i;
 const AI_COLUMN = /^(ai|is.?ai|bot|is.?bot|actor)$/i;
 const PLAYER_FLAG = /^(is.?player|human)$/i;
 const USER_ID = /^(user.?id|steam.?id)$/i;

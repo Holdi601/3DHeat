@@ -138,6 +138,7 @@ Eine Parquet-Datei kann ihre eigenen Leseanweisungen in den Schlüssel-Wert-Meta
     "time": string,                                  die Zeitspalte
     "timeUnit": "seconds" | "milliseconds" | "microseconds" | "nanoseconds"
               | "unix_seconds" | "unix_milliseconds" | "iso8601",
+    "timeLabel": string,                             wovon an die Zeit zählt, z. B. "since round start"
     "personId": string, "teamId": string, "sessionId": string,
     "lookMode": "none" | "yawPitch" | "vector",
     "yaw": string, "pitch": string,
@@ -160,6 +161,7 @@ Eine Parquet-Datei kann ihre eigenen Leseanweisungen in den Schlüssel-Wert-Meta
 |---|---|---|
 | `columns.x` … `columns.dirZ`, `time`, `personId`, `teamId`, `sessionId` | die genannte Spalte in der Datei existiert | Setzt diese Rolle. |
 | `columns.timeUnit` | es eine der sieben Einheiten ist | Setzt die Zeiteinheit. |
+| `columns.timeLabel` | die Zeitspalte die genannte ist, ihre Einheit keine Uhrzeit ist, alle geladenen Dateien dasselbe sagen und keine Aufnahmen auf einen gemeinsamen Start verschoben wurden | Die Zeitleiste zeigt die eigene Zeit der Datei (statt der Zeit seit dem ersten Messpunkt) und dahinter die Angabe, wie geschrieben: `1:23 / 20:00 since round start`. |
 | `columns.angleUnit` | `"degrees"` oder `"radians"` | Setzt die Winkeleinheit. |
 | `columns.lookMode` | `"vector"`, wenn dirX, dirY und dirZ alle gesetzt sind; `"yawPitch"`, wenn yaw gesetzt ist; `"none"` | Setzt den Blickmodus. |
 | `columns.extra` | es ein Array ist | Ersetzt die automatische Filterliste und behält nur vorhandene Spalten, die keine Rolle belegen; jede ist *Bereich*, wenn sie in der Vorschau wie eine Zahl aussah, sonst *Kategorie*. Ohne sie bleibt die automatische Liste, abzüglich jeder Spalte, die ein Hinweis einer Rolle zugewiesen hat. |

@@ -204,8 +204,13 @@ export async function ingestParquet(
   };
   // The file's place on the earth, when its hints give one and the mapping
   // took the columns it is for (see `geoOfHints`).
-  const geo = geoOfHints(parseHints(metadata.key_value_metadata?.find((kv) => kv.key === 'heat3d')?.value), mapping);
+  const hints = parseHints(metadata.key_value_metadata?.find((kv) => kv.key === 'heat3d')?.value);
+  const geo = geoOfHints(hints, mapping);
   if (geo) block.geo = geo;
+  // What the file's time counts from, when the mapping took the column the hint is for.
+  const timeLabel = hints?.columns?.timeLabel;
+  if (typeof timeLabel === 'string' && timeLabel.trim() && mapping.time && mapping.time === hints?.columns?.time && !isAbsoluteUnit(timeUnit))
+    block.timeLabel = timeLabel.trim().slice(0, 60);
 
   return kept === n ? block : compact(block, keepMask, kept);
 }

@@ -134,7 +134,9 @@ export function Timeline() {
     if (clock.current) {
       const txt = isAll
         ? t('heat.timeline.allClock', { span: formatClock(span) })
-        : `${formatClock(head - range[0])} / ${formatClock(span)}${
+        : dataset.timeLabel
+          ? `${formatClock(head + (dataset.timeOrigin ?? 0))} / ${formatClock(range[1] + (dataset.timeOrigin ?? 0))} ${dataset.timeLabel}${seriesClock(dataset, head)}`
+          : `${formatClock(head - range[0])} / ${formatClock(span)}${
             dataset.epochMs
               ? `   ${new Date(dataset.epochMs + head * 1000).toISOString().slice(11, 19)}Z`
               : ''

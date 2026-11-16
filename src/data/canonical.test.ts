@@ -55,6 +55,24 @@ describe('event taxonomy', () => {
     expect(vehicleClassOf(['UH-1H'], ['Air+Rotorcraft'])).toBe('helicopter');
     expect(vehicleClassOf(['AIM_120C'], ['Weapon+Missile'])).toBe('weapon');
   });
+
+  it('classes prefixed model names, drones, riders and plain class words', () => {
+    // Nation and category words before the model.
+    expect(vehicleClassOf(['DEU_Tank_Tiger_I'], [])).toBe('tank');
+    expect(vehicleClassOf(['DEU_Air_Fokker_Dr1'], [])).toBe('fighter');
+    // A name shared with a jet, typed as a helicopter, is the helicopter.
+    expect(vehicleClassOf(['Venom'], ['Helicopter'])).toBe('helicopter');
+    // Drones are no helicopters, riders no armoured cars, jet skis no tanks.
+    expect(vehicleClassOf(['quadcopter'], [])).toBe('otherAir');
+    expect(vehicleClassOf([''], ['drone / UAV'])).toBe('otherAir');
+    expect(vehicleClassOf(['horse'], [])).toBe('infantry');
+    expect(vehicleClassOf(['jet ski'], [])).toBe('ship');
+    // Class words a converter writes.
+    expect(vehicleClassOf([''], ['on foot'])).toBe('infantry');
+    expect(vehicleClassOf([''], ['anti-air vehicle'])).toBe('spaa');
+    expect(vehicleClassOf([''], ['attack plane'])).toBe('attack');
+    expect(vehicleClassOf([''], ['scout helicopter'])).toBe('helicopter');
+  });
 });
 
 describe('canonical columns in a load', () => {

@@ -147,6 +147,24 @@ describe('DatasetBuilder', () => {
     expect(ds.epochMs).toBe(1_000_000_000);
   });
 
+  it("keeps the files' time label while they agree and nothing moved", () => {
+    const labelled = (t: number, label?: string) => {
+      const blk = block({ rows: 1, time: new Float64Array([t]) });
+      if (label) blk.timeLabel = label;
+      return blk;
+    };
+    const b = new DatasetBuilder();
+    b.append(labelled(12, 'since round start'));
+    b.append(labelled(30, 'since round start'));
+    const ds = b.finish('rounds');
+    expect(ds.timeLabel).toBe('since round start');
+    expect(ds.timeOrigin).toBe(12);
+    const c = new DatasetBuilder();
+    c.append(labelled(12, 'since round start'));
+    c.append(labelled(30));
+    expect(c.finish('mixed').timeLabel).toBeUndefined();
+  });
+
   it('unifies person and team dictionaries across files', () => {
     const b = new DatasetBuilder();
     b.append(

@@ -400,6 +400,11 @@ export interface Dataset {
    */
   timeOrigin?: number;
   /**
+   * What the source's time counts from ("since round start"), from its hints:
+   * the timeline shows `time + timeOrigin`, the file's own clock, with it.
+   */
+  timeLabel?: string;
+  /**
    * How many recordings the load moved to start together (`DatasetBuilder`,
    * `alignRecordings`): separate matches far apart in time, overlaid from
    * their starts. Absent when the files kept their own clock.

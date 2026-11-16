@@ -73,6 +73,39 @@ export function figureForName(label: string): string | null {
     for (const [key, name] of index!) if (key.startsWith(n) && (!best || key.length < best[0].length)) best = [key, name];
     if (best) return best[1];
   }
+  return bySuffix(label);
+}
+
+/** Words a prefixed name may end in that name no figure of their own ("Truck_Desert", "Gun_Night"). */
+const GENERIC_WORDS = new Set([
+  'vehicle', 'vehicles', 'station', 'snow', 'night', 'desert', 'forest', 'short', 'long', 'deploy', 'deployed', 'trench', 'wheeled', 'coastal',
+  'projectile', 'launcher', 'platform', 'mount', 'gasmask', 'stationary', 'towable', 'transport', 'airplane', 'plane', 'tank', 'heli', 'boat',
+  'truck', 'supply', 'beacon', 'right', 'left', 'shield', 'spawn', 'trailer',
+]);
+
+/**
+ * A name with nation or category words before the model ("DEU_Tank_Tiger_I",
+ * "GBR_Air_Spitfire", "CN_MBT_ZTZ99"): its leading words dropped in turn, each
+ * rest looked up exactly first, then by its longest known prefix (five
+ * characters or more).
+ */
+function bySuffix(label: string): string | null {
+  const words = label.split(/[_\s]+/).filter(Boolean);
+  if (words.length < 2) return null;
+  const rests: string[] = [];
+  for (let i = 1; i < words.length; i++) {
+    const n = norm(words.slice(i).join(''));
+    if (n.length >= 4 && !GENERIC_WORDS.has(n)) rests.push(n);
+  }
+  for (const n of rests) {
+    const hit = index!.get(n);
+    if (hit) return hit;
+  }
+  for (const n of rests)
+    for (let k = n.length - 1; k >= 5; k--) {
+      const p = index!.get(n.slice(0, k));
+      if (p) return p;
+    }
   return null;
 }
 
@@ -95,14 +128,19 @@ const TYPE_RULES: [RegExp, string[], FigureDomain][] = [
   [/bomb(?!er)/i, ['bomb'], 'missile'],
   [/torpedo/i, ['aam'], 'missile'],
   // Before the aircraft rule: "AntiAircraft" and "AircraftCarrier" have "Aircraft" in them.
-  [/antiaircraft|airdefen[cs]e|\bspaa\b|\baaa\b/i, ['spaa', 'sam'], 'ground'],
+  [/antiaircraft|anti.?air|airdefen[cs]e|\bspaa\b|\baaa?\b/i, ['spaa', 'sam'], 'ground'],
   [/aircraftcarrier|\bcarrier\b/i, ['carrier'], 'sea'],
   [/submarine/i, ['submarine'], 'sea'],
   [/warship|destroyer|cruiser|frigate|battleship|\bship\b/i, ['destroyer', 'battleship'], 'sea'],
   [/watercraft|boat/i, ['patrol-boat', 'rhib'], 'sea'],
+  // Drones before the helicopters: a quadcopter is no helicopter.
+  [/\bdrones?\b|\buav\b|\bucav\b|quadcopter|multicopter|\brpas?\b/i, ['drone-fixed', 'quadcopter'], 'air'],
   [/attack.?heli|gunship|\bah-/i, ['attack-helicopter', 'heli-attack'], 'heli'],
   [/scout.?heli|light.?heli/i, ['scout-helicopter', 'heli-scout'], 'heli'],
   [/rotorcraft|helicopter|\bheli/i, ['transport-helicopter', 'heli-transport'], 'heli'],
+  [/airship|zeppelin|dirigible|\bblimp\b/i, ['zeppelin', 'blimp'], 'air'],
+  [/attack.?(plane|jet|aircraft)|ground.?attack|close.?air.?support/i, ['attack'], 'air'],
+  [/(transport|cargo).?(plane|aircraft)|airlifter/i, ['transport'], 'air'],
   [/bomber/i, ['bomber', 'ww2-bomber'], 'air'],
   [/fixedwing|aircraft|fighter|assault|airplane|\bplane\b|\bjet\b/i, ['multirole-jet', 'multirole', 'fighter'], 'air'],
   // Rail vehicles, before the tank and truck rules (a "tank wagon", a "flat car"); template names join words with "_".
@@ -113,14 +151,15 @@ const TYPE_RULES: [RegExp, string[], FigureDomain][] = [
   [/flat.?(car(?![a-z])|wagon)/i, ['rail-flat-car'], 'ground'],
   [/open.?wagon|gondola|(?<![a-z])hopper/i, ['rail-open-wagon'], 'ground'],
   [/(?<![a-z])(rail|wagon)|(?<![a-z])train(?!er|ing)|boxcar|freight/i, ['rail-boxcar', 'ww2-goods-wagon'], 'ground'],
-  [/mortar|static|emplacement|\bturret\b|\bmg\b|machine.?gun|launcher/i, ['emplacement-gun'], 'ground'],
+  [/\bhorses?\b|cavalry|mounted/i, ['horse'], 'ground'],
+  [/mortar|static|stationary.?weapon|field.?gun|emplacement|\bturret\b|\bmg\b|machine.?gun|launcher/i, ['emplacement-gun'], 'ground'],
   [/tankdestroyer|tank_destroyer|\btd\b/i, ['light-tank', 'mbt'], 'ground'],
   [/lighttank|light_tank/i, ['light-tank'], 'ground'],
   [/heavytank|mediumtank|\btank\b|\bmbt\b|tracked/i, ['mbt'], 'ground'],
   [/armou?r|\bifv\b|\bapc\b/i, ['ifv', 'apc-wheeled'], 'ground'],
   [/artillery|howitzer|\bmlrs\b/i, ['sp-artillery', 'mlrs'], 'ground'],
   [/truck|wheeled|vehicle|\bcar\b|jeep/i, ['truck', 'jeep'], 'ground'],
-  [/human|infantry|soldier|pilot|parachut|person|player|\bman\b/i, ['soldier'], 'person'],
+  [/human|infantry|soldier|pilot|parachut|person|player|\bman\b|on.?foot|dismount/i, ['soldier'], 'person'],
 ];
 
 /** The domain a type string says a thing is in, or null when no rule knows it. */
@@ -149,8 +188,9 @@ function fits(figure: string, domain: FigureDomain | null): boolean {
   const d = CATALOG[figure]?.domain;
   if (!d || d === 'marker') return true;
   if (d === domain) return true;
-  // Air and helicopter types overlap in data (a "VTOL", "Aircraft" for a helicopter); ground and person do not.
-  return (d === 'air' && domain === 'heli') || (d === 'heli' && domain === 'air');
+  // Air and helicopter types overlap in data ("Aircraft" for a helicopter, a tiltrotor or drone called a
+  // helicopter); ground and person do not. A fixed-wing figure is no helicopter: "Venom" typed as one is not the jet.
+  return (d === 'air' && domain === 'heli' && /tilt|vtol|rotor|drone|uav/.test(CATALOG[figure].cls)) || (d === 'heli' && domain === 'air');
 }
 
 /**

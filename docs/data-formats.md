@@ -133,6 +133,7 @@ A Parquet file can carry its own reading instructions in its footer's key/value 
     "time": string,                                  the time column
     "timeUnit": "seconds" | "milliseconds" | "microseconds" | "nanoseconds"
               | "unix_seconds" | "unix_milliseconds" | "iso8601",
+    "timeLabel": string,                             what the time counts from, e.g. "since round start"
     "personId": string, "teamId": string, "sessionId": string,
     "lookMode": "none" | "yawPitch" | "vector",
     "yaw": string, "pitch": string,
@@ -155,6 +156,7 @@ A Parquet file can carry its own reading instructions in its footer's key/value 
 |---|---|---|
 | `columns.x` … `columns.dirZ`, `time`, `personId`, `teamId`, `sessionId` | the named column exists in the file | Sets that role. |
 | `columns.timeUnit` | it is one of the seven units | Sets the time unit. |
+| `columns.timeLabel` | the time column is the hinted one, its unit is not wall-clock time, every loaded file says the same and no recordings were moved to start together | The timeline reads the file's own time (not the time since the first sample) and says the label after it, as written: `1:23 / 20:00 since round start`. |
 | `columns.angleUnit` | `"degrees"` or `"radians"` | Sets the angle unit. |
 | `columns.lookMode` | `"vector"` with dirX, dirY and dirZ all set; `"yawPitch"` with yaw set; `"none"` | Sets the look mode. |
 | `columns.extra` | it is an array | Replaces the automatic filter list, keeping only existing columns not used by a role; each one is *range* when it looked numeric in the preview, else *category*. Without it, the automatic list is kept minus any column a hint assigned to a role. |

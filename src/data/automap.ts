@@ -66,6 +66,12 @@ export interface MappingHints {
     z?: string;
     time?: string;
     timeUnit?: TimeUnit;
+    /**
+     * What the time column counts from, said after the clock ("since round
+     * start"): the timeline then reads the file's own time, not the time since
+     * the first sample. Shown as written.
+     */
+    timeLabel?: string;
     personId?: string;
     teamId?: string;
     sessionId?: string;

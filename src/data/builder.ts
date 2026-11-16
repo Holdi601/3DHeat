@@ -68,6 +68,8 @@ export interface SourceBlock {
    * only a source that says so (an ACMI recording) sets it. See `GeoReference`.
    */
   geo?: GeoReference;
+  /** What the block's time counts from, as its file says (`MappingHints` `timeLabel`). */
+  timeLabel?: string;
 }
 
 /** Attribute name for the synthesised per-row file origin. */
@@ -139,6 +141,8 @@ export class DatasetBuilder {
    * about two different points cannot share one backdrop.
    */
   private geo: GeoReference | null | undefined = undefined;
+  /** The blocks' shared `timeLabel`: undefined before the first block, null when none or they differ. */
+  private timeLabel: string | null | undefined = undefined;
   /** The campaign series the blocks were arranged into (`alignRecordings`), or null. */
   private series: Dataset['series'] | null = null;
 
@@ -164,6 +168,8 @@ export class DatasetBuilder {
     this.rejected += block.rejected;
     if (n === 0) return;
     this.geo = mergeGeo(this.geo, block.geo ?? null);
+    // One label for the load, or none when the files differ.
+    this.timeLabel = this.timeLabel === undefined ? (block.timeLabel ?? null) : this.timeLabel === (block.timeLabel ?? null) ? this.timeLabel : null;
     const base = this.rows;
 
     appendF32(this.px, block.px, n);
@@ -595,6 +601,8 @@ export class DatasetBuilder {
       timeSorted: true,
       ...(this.geo ? { geo: { ...this.geo } } : {}),
       ...(aligned ? { recordingsAligned: aligned } : {}),
+      // The file's own clock holds only while nothing was moved and time is not wall-clock.
+      ...(this.timeLabel && !aligned && epochMs === null ? { timeLabel: this.timeLabel } : {}),
       ...(this.series ? { series: this.series } : {}),
     };
 
