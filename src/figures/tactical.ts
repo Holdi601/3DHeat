@@ -27,6 +27,7 @@ import type { Kitbag, Stance } from './infantry';
 import type { GadgetKind } from './gadgets';
 import { personRows } from '../data/flight';
 import { operatorFigureName, operatorOf, operatorSlug } from './operators';
+import { stanceFrom } from './posture';
 
 /**
  * The band colours of the two sides, fixed, beside the team's colour: attack
@@ -294,11 +295,9 @@ export function textAt(a: AttributeColumn | null, row: number): string {
   return a.categories?.[(a.data as Uint32Array)[row]] ?? '';
 }
 
+/** The stance a text says (`posture.ts` reads every game's words), standing where it says none. */
 function stanceOf(text: string): Stance {
-  const t = text.trim().toLowerCase();
-  if (/prone|lying|lie|crawl/.test(t)) return 'prone';
-  if (/crouch|kneel|duck/.test(t)) return 'crouch';
-  return 'stand';
+  return stanceFrom(text) ?? 'stand';
 }
 
 function sideOf(text: string): 'attack' | 'defense' | null {

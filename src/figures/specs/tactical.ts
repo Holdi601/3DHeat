@@ -16,7 +16,7 @@ import { buildOperator, OPERATORS, operatorFigureName, operatorSlug } from '../o
 const F: Record<string, FigureEntry> = {};
 
 for (const carry of OPERATOR_CARRIES) {
-  for (const stance of ['stand', 'crouch', 'prone'] as Stance[]) {
+  for (const stance of ['stand', 'crouch', 'prone', 'supine'] as Stance[]) {
     for (const side of [null, 'attack', 'defense'] as const) {
       const band = side ? SIDE_BAND[side] : undefined;
       F[operatorName(carry, stance, side)] = { domain: 'person', cls: 'operator', build: () => buildPerson({ carry, stance, vest: true, band }) };
@@ -28,7 +28,7 @@ for (const carry of OPERATOR_CARRIES) {
 for (const [name, { look, carries }] of Object.entries(OPERATORS)) {
   const slug = operatorSlug(name);
   for (const carry of carries) {
-    for (const stance of ['stand', 'crouch', 'prone'] as Stance[]) {
+    for (const stance of ['stand', 'crouch', 'prone', 'supine'] as Stance[]) {
       F[operatorFigureName(slug, carry, stance, look.side)] = { domain: 'person', cls: 'operator', build: () => buildOperator(look, carry, stance, SIDE_BAND[look.side]) };
     }
   }

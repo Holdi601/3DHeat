@@ -182,6 +182,7 @@ export const CATALOG: Record<string, FigureEntry> = {
   soldier: { domain: 'person', cls: 'soldier', build: () => buildPerson({ carry: 'rifle' }) },
   'soldier-crouch': { domain: 'person', cls: 'soldier', build: () => buildPerson({ carry: 'rifle', stance: 'crouch' }) },
   'soldier-prone': { domain: 'person', cls: 'soldier', build: () => buildPerson({ carry: 'rifle', stance: 'prone' }) },
+  'soldier-supine': { domain: 'person', cls: 'soldier', build: () => buildPerson({ carry: 'rifle', stance: 'supine' }) },
   sniper: { domain: 'person', cls: 'sniper', build: () => buildPerson({ carry: 'sniper' }) },
   'anti-tank': { domain: 'person', cls: 'anti-tank', build: () => buildPerson({ carry: 'launcher' }) },
   medic: { domain: 'person', cls: 'medic', build: () => buildPerson({ carry: 'medic' }) },

@@ -14,11 +14,11 @@
  * helmet: the side someone is on (attack, defence), beside the team's colour.
  */
 
-import { finish, newKit, PAINT, type Kit, type Template } from './kit';
+import { finish, into, joint, newKit, PAINT, type Kit, type Template } from './kit';
 import { blob, block, tube } from './parts';
 import type { Rgb } from '../race/geometry';
 
-export type Stance = 'stand' | 'crouch' | 'prone';
+export type Stance = 'stand' | 'crouch' | 'prone' | 'supine';
 export type Kitbag = 'rifle' | 'sniper' | 'launcher' | 'crew' | 'medic' | 'none' | 'smg' | 'shotgun' | 'dmr' | 'lmg' | 'pistol' | 'shield';
 
 export interface PersonSpec {
@@ -46,7 +46,9 @@ export interface PersonSpec {
 
 /** Where a built person's parts are, for parts put on afterwards (template frame: forward, side, up). */
 export interface PersonAnchors {
+  /** Lying down: on the belly (`prone`), or on the back (`supine` too). */
   prone: boolean;
+  supine: boolean;
   /** The head's centre. */
   head: [number, number, number];
   /** Heights of the hips, the top of the chest and the shoulders (standing and crouching). */
@@ -87,11 +89,14 @@ export function personInto(k: Kit, spec: PersonSpec = {}): PersonAnchors {
   const P = (part: 'top' | 'bottom' | 'gear', shade: number, base: number): [typeof T, Rgb] =>
     o ? [F, scale(o[part], shade / base)] : [T, grey(shade)];
 
+  if (stance === 'supine') return supineInto(k, spec, P);
   if (stance === 'prone') {
     // Lying along the forward axis, head forward, weapon ahead of the head.
     const [lb, lc] = P('bottom', 0.85, 0.85);
     block(lb, fr, v(-0.55, -0.1 * b, 0.12), 0.9 * s, 0.14 * b * s, 0.16 * s, lc);
     block(lb, fr, v(-0.55, 0.1 * b, 0.12), 0.9 * s, 0.14 * b * s, 0.16 * s, lc);
+    // From the hips up it leans (rolls about the forward axis) as the data says: `LEAN` below.
+    into(k, lean(k, [-0.12 * s, 0.14 * s, 0]));
     const [tb, tc] = o ? P('top', 1, 1) : [T, WHITE_SHADE];
     block(tb, fr, v(0.2, 0, 0.16), 0.7 * s, 0.42 * b * s, 0.24 * s, tc);
     blob(F, fr, v(0.68, 0, 0.24), v(0.12, 0.1, 0.11), PAINT.skin);
@@ -112,7 +117,7 @@ export function personInto(k: Kit, spec: PersonSpec = {}): PersonAnchors {
     // A shield lies ahead of the head, standing on its edge.
     if (carry === 'shield') block(o ? F : T, fr, v(0.98, 0.04, 0.28), 0.05 * s, 0.6 * s, 0.56 * s, SHIELD);
     if (spec.band && helmet) blob(F, fr, v(0.69, 0, 0.27), v(0.15, 0.14, 0.03), spec.band);
-    return { prone: true, head: v(0.68, 0, 0.24), hip: 0.12 * s, chest: 0.28 * s, shoulder: 0.2 * s, hands: v(0.45, 0.12, 0.2), bulk: b, s };
+    return { prone: true, supine: false, head: v(0.68, 0, 0.24), hip: 0.12 * s, chest: 0.28 * s, shoulder: 0.2 * s, hands: v(0.45, 0.12, 0.2), bulk: b, s };
   }
 
   const crouch = stance === 'crouch';
@@ -130,6 +135,8 @@ export function personInto(k: Kit, spec: PersonSpec = {}): PersonAnchors {
     }
     block(F, fr, v(crouch ? 0.38 : 0.04, side, 0.04), 0.26 * s, 0.12 * s, 0.08 * s, PAINT.dark);
   }
+  // From the hips up the body leans (rolls about the forward axis) as the data says.
+  into(k, lean(k, [0, hip * s, 0]));
   // Torso and backpack.
   const chest = hip + 0.58;
   {
@@ -210,9 +217,57 @@ export function personInto(k: Kit, spec: PersonSpec = {}): PersonAnchors {
     for (const side of [-0.25 * b, 0.25 * b]) block(F, fr, v(0.03, side * 1.02, shoulder - (o ? 0.1 : 0.08)), 0.12 * ab * s, 0.11 * ab * s, 0.07 * ab * ab * s, spec.band);
     if (helmet) block(F, fr, v(-0.01, 0, chest + 0.16), 0.31 * s, 0.29 * s, 0.035 * s, spec.band);
   }
-  return { prone: false, head: v(0.02, 0, chest + 0.14), hip: hip * s, chest: chest * s, shoulder: shoulder * s, hands, bulk: b, s };
+  return { prone: false, supine: false, head: v(0.02, 0, chest + 0.14), hip: hip * s, chest: chest * s, shoulder: shoulder * s, hands, bulk: b, s };
 }
 
 const WHITE_SHADE: Rgb = [0.95, 0.95, 0.95];
+
+/**
+ * The upper body's lean: a joint about the forward axis through `pivot`
+ * (template frame: forward, up, right). Built as a part pointing right that
+ * the instance's elevation raises, so the renderers turn it without anything
+ * of their own: an elevation of +a rolls the top to the left (`posture.ts`).
+ */
+function lean(k: Kit, pivot: [number, number, number]): number {
+  return joint(k, { kind: 'pitch', pivot, parent: -1, rest: Math.PI / 2, pitch: 0 });
+}
+
+/**
+ * Lying on the back along the forward axis, head forward and face up, one
+ * knee drawn up; the weapon across the chest. From above the face, the chest
+ * and the knee show where a prone figure shows its back.
+ */
+function supineInto(k: Kit, spec: PersonSpec, P: (part: 'top' | 'bottom' | 'gear', shade: number, base: number) => [Kit['team'], Rgb]): PersonAnchors {
+  const F = k.fixed;
+  const fr = k.fr;
+  const s = (spec.height ?? 1.8) / 1.8;
+  const v = (f: number, side: number, up: number): [number, number, number] => [f * s, side * s, up * s];
+  const b = spec.bulk ?? 1;
+  const o = spec.outfit;
+  const [lb, lc] = P('bottom', 0.85, 0.85);
+  // The left leg flat, the right one with its knee up.
+  block(lb, fr, v(-0.55, -0.1 * b, 0.1), 0.9 * s, 0.14 * b * s, 0.16 * s, lc);
+  tube(lb, fr, v(-0.15, 0.1 * b, 0.12), v(-0.42, 0.1 * b, 0.42), 0.08 * b * s, 0.07 * b * s, lc, 6);
+  tube(lb, fr, v(-0.42, 0.1 * b, 0.42), v(-0.72, 0.1 * b, 0.06), 0.07 * b * s, 0.06 * b * s, lc, 6);
+  block(F, fr, v(-1.02, -0.1 * b, 0.1), 0.08 * s, 0.12 * s, 0.24 * s, PAINT.dark);
+  into(k, lean(k, [-0.12 * s, 0.12 * s, 0]));
+  const [tb, tc] = o ? P('top', 1, 1) : [k.team, WHITE_SHADE];
+  block(tb, fr, v(0.2, 0, 0.13), 0.7 * s, 0.42 * b * s, 0.24 * s, tc);
+  if (spec.vest) {
+    const [vb, vc] = o ? P('gear', 1, 1) : spec.band ? [F, spec.band] : [k.team, grey(0.45)];
+    block(vb, fr, v(0.25, 0, 0.27), 0.5 * s, 0.44 * b * s, 0.06 * s, vc);
+  }
+  // The head with the face up; a helmet under it.
+  blob(F, fr, v(0.68, 0, 0.17), v(0.12, 0.1, 0.11), PAINT.skin);
+  if (spec.helmet ?? true) blob(o ? F : k.team, fr, v(0.67, 0, 0.1), v(0.15, 0.14, 0.09), o ? o.gear : grey(0.5));
+  // Arms along the sides, the weapon across the chest.
+  const [ab, ac] = P('top', 0.78, 0.85);
+  for (const side of [-0.26 * b, 0.26 * b]) tube(ab, fr, v(0.45, side, 0.14), v(0.05, side * 0.6, 0.3), 0.05 * b * s, 0.045 * b * s, ac, 5);
+  const carry = spec.carry ?? 'rifle';
+  if (carry === 'shield') block(o ? F : k.team, fr, v(0.15, 0, 0.32), 0.7 * s, 0.55 * s, 0.05 * s, SHIELD);
+  else if (carry !== 'none' && carry !== 'crew') tube(F, fr, v(0.0, -0.28, 0.33), v(0.5, 0.3, 0.33), 0.035 * s, 0.028 * s, PAINT.dark, 6);
+  if (spec.band) for (const side of [-0.27 * b, 0.27 * b]) block(F, fr, v(0.4, side, 0.16), 0.12 * s, 0.06 * s, 0.1 * s, spec.band);
+  return { prone: true, supine: true, head: v(0.68, 0, 0.17), hip: 0.1 * s, chest: 0.25 * s, shoulder: 0.2 * s, hands: v(0.05, 0, 0.3), bulk: b, s };
+}
 
 const scale = (c: Rgb, k: number): Rgb => [Math.min(1, c[0] * k), Math.min(1, c[1] * k), Math.min(1, c[2] * k)];

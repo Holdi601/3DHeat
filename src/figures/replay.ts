@@ -35,6 +35,8 @@ import { chaffMetres, decoyAlpha, farLook, glyphPx } from '../render/symbols/lod
 import { dartMesh } from '../render/symbols/darts';
 import { hiddenRow, tacticalColumns, tacticalFigure, tacticalKey, type TacticalColumns } from './tactical';
 import { drawPlacedGadgets } from './gadgetLayer';
+import { LEAN_MAX, leanFrom, posed, stanceFrom } from './posture';
+import { motionOn } from '../ui/motion';
 
 const NAME_COLUMN = /^(name|vehicle|vehicle.?name|unit|unit.?type|model|aircraft|plane|tank|ship|craft|loadout|kit|figure)$/i;
 const TYPE_COLUMN = /^(type|class|kind|category|icon|role|domain|vehicle.?type|vehicle.?class)$/i;
@@ -43,6 +45,11 @@ const TAS_COLUMN = /^(tas|true.?air.?speed)$/i;
 const IAS_COLUMN = /^(ias|cas|indicated.?air.?speed|calibrated.?air.?speed)$/i;
 const SPEED_COLUMN = /^(speed|air.?speed|ground.?speed|velocity|spd)\b/i;
 const ALTITUDE_COLUMN = /^(altitude|alt|height.?asl)$/i;
+const STANCE_COLUMN = /^(stance|posture|pose)$/i;
+const LEAN_COLUMN = /^(lean|leaning|peek)$/i;
+/** Seconds of data time a change of stance takes to blend over, and the lean's time constant. */
+const POSE_BLEND = 0.2;
+const LEAN_TAU = 0.08;
 
 /** A swing wing's three states: spread (slow), its usual sweep, swept (fast). */
 export type Sweep = 'spread' | 'mid' | 'swept';
@@ -136,6 +143,11 @@ export class FigureReplay {
   private roll: AttributeColumn | null = null;
   /** A close-quarters table's columns (`tactical.ts`): its rows are soldiers, drones and placed gadgets. */
   private tactical: TacticalColumns | null = null;
+  /** How people stand and lean, where the data says (`posture.ts`). */
+  private stanceCol: AttributeColumn | null = null;
+  private leanCol: AttributeColumn | null = null;
+  /** Per person: the pose drawn, the one it is blending from and since when (data seconds), and its lean now. */
+  private readonly poses = new Map<number, { kind: string; prev: string | null; since: number; lean: number; t: number }>();
   /** The data's speed: a Mach, or metres a second (`airspeed` true, `indicated` to be corrected for height). */
   private mach: AttributeColumn | null = null;
   private airspeed: { col: AttributeColumn; unit: number; indicated: boolean } | null = null;
@@ -221,6 +233,9 @@ export class FigureReplay {
     this.sweeps.clear();
     const cats = d.attrs.filter((a) => a.kind === 'category' && a.categories);
     this.tactical = tacticalColumns(d);
+    this.stanceCol = d.attrs.find((a) => STANCE_COLUMN.test(a.name.trim())) ?? null;
+    this.leanCol = d.attrs.find((a) => LEAN_COLUMN.test(a.name.trim())) ?? null;
+    this.poses.clear();
     this.names = cats.filter((a) => NAME_COLUMN.test(a.name.trim()));
     this.types = cats.filter((a) => TYPE_COLUMN.test(a.name.trim()));
     this.roll = d.attrs.find((a) => a.kind !== 'category' && /^roll$/i.test(a.name.trim())) ?? null;
@@ -327,6 +342,45 @@ export class FigureReplay {
     return k;
   }
 
+  /** A column's value at a row: a category's label or the number. */
+  private valueAt(a: AttributeColumn, row: number): string | number {
+    return a.kind === 'category' ? (a.categories?.[(a.data as Uint32Array)[row]] ?? '') : (a.data as Float32Array)[row];
+  }
+
+  /** A person figure in the stance the row says (its own variant, else the plain soldier's); others as they are. */
+  private posedKind(row: number, kind: string): string {
+    if (!this.stanceCol || row < 0 || CATALOG[kind]?.domain !== 'person') return kind;
+    const st = stanceFrom(this.valueAt(this.stanceCol, row));
+    return st ? posed(kind, st, (n) => !!CATALOG[n]) : kind;
+  }
+
+  /**
+   * A person's pose now: the lean eased towards the row's, and the pose it is
+   * still blending from with how far the blend is (1: done). A jump in time
+   * (a seek) or motion turned off (`ui/motion.ts`, also below 30 fps) skips
+   * the easing.
+   */
+  private poseNow(person: number, kind: string, lean: number, time: number): { lean: number; prev: string | null; blend: number } {
+    const smooth = motionOn();
+    let st = this.poses.get(person);
+    if (!st) {
+      st = { kind, prev: null, since: time, lean, t: time };
+      this.poses.set(person, st);
+    }
+    const dt = time - st.t;
+    const jump = !smooth || dt < 0 || dt > 1;
+    if (st.kind !== kind) {
+      st.prev = jump ? null : st.kind;
+      st.kind = kind;
+      st.since = time;
+    }
+    st.lean = jump ? lean : st.lean + (lean - st.lean) * (1 - Math.exp(-dt / LEAN_TAU));
+    st.t = time;
+    const blend = st.prev ? Math.min(1, Math.max(0, (time - st.since) / POSE_BLEND)) : 1;
+    if (blend >= 1) st.prev = null;
+    return { lean: st.lean, prev: st.prev, blend };
+  }
+
   templateOf(kind: string): Template | null {
     return this.template(kind);
   }
@@ -392,7 +446,7 @@ export class FigureReplay {
         continue;
       }
       if (!kind && o.unknown === 'soldier') kind = 'soldier';
-      if (kind) kind = this.sweptKind(d, row, kind);
+      if (kind) kind = this.posedKind(row, this.sweptKind(d, row, kind));
       const dead = !!deaths && deaths.any && row >= 0 && deadAt(deaths, d.personId![row], o.time!);
       // A wreck's colour, and the dead bit that crosses out its symbol; an instance carries the colour negated.
       const wreck = dead ? wreckColour([cubes[c + 3], cubes[c + 4], cubes[c + 5]]) : null;
@@ -481,7 +535,16 @@ export class FigureReplay {
       }
       const alpha = (look ? look.figure : 1) * fade;
       if (this.cpuPlace) placeFrame(this.tris, drawn, fr, scale, shown);
-      else if (aim && o.time !== undefined && hasJoints(drawn)) {
+      else if (hasJoints(drawn) && CATALOG[kind!]?.domain === 'person') {
+        // A person leans their upper body (a roll about the forward axis: elevation +a leans left) and blends into a new stance.
+        const target = this.leanCol && row >= 0 ? leanFrom(this.valueAt(this.leanCol, row)) : 0;
+        const pose = d.personId && row >= 0 && o.time !== undefined ? this.poseNow(d.personId[row], kind!, target, o.time) : { lean: target, prev: null, blend: 1 };
+        const roll = -pose.lean * LEAN_MAX;
+        const rf = relativeFrame(fr, o.origin);
+        this.batches.add(meshOf(drawn), rf, scale, team, alpha * pose.blend, 0, roll);
+        const was = pose.prev ? this.template(pose.prev) : null;
+        if (was && pose.blend < 1) this.batches.add(meshOf(small ? (was.coarse?.() ?? was) : was), rf, scale, team, alpha * (1 - pose.blend), 0, roll);
+      } else if (aim && o.time !== undefined && hasJoints(drawn)) {
         // Its turret turned and its gun raised as the data has them now.
         aim.at(row, o.time, aimNow);
         this.batches.add(meshOf(drawn), relativeFrame(fr, o.origin), scale, team, alpha, Number.isFinite(aimNow.yaw) ? aimNow.yaw : 0, Number.isFinite(aimNow.pitch) ? aimNow.pitch : NO_PITCH);

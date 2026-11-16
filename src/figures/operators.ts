@@ -14,7 +14,7 @@
  * and a few blocks and tubes more.
  */
 
-import { finish, newKit, PAINT, type Kit, type Template } from './kit';
+import { finish, into, newKit, PAINT, type Kit, type Template } from './kit';
 import { blob, block, ring, tube } from './parts';
 import { personInto, type Kitbag, type PersonAnchors, type Stance } from './infantry';
 import type { Rgb } from '../race/geometry';
@@ -231,13 +231,14 @@ export function buildOperator(look: OperatorLook, carry: Kitbag, stance: Stance,
   });
   const accent = ACCENTS[look.accent % ACCENTS.length];
   build(k, a, look, accent, carry);
-  // The side, apart from the clothes: a ring on the ground in its colour with the team's colour inside it, and a band round the head.
+  // The side, apart from the clothes: a band round the head (leaning with it), and a ring on the ground in its colour with the team's colour inside it.
+  const [hx, hy, hz] = a.head;
+  if (!a.supine) ring(k.fixed, k.fr, hx, hy, hz + (a.prone ? 0.02 : 0.05) * a.s, 0.155 * a.s, band, 1, 16, 0.1 * a.s);
+  into(k, -1);
   if (groundRing) {
     ring(k.fixed, k.fr, 0, 0, 0.015, 0.55 * a.s, band, 1, 28, 0.45 * a.s);
     ring(k.team, k.fr, 0, 0, 0.012, 0.45 * a.s, [0.95, 0.95, 0.95], 1, 28, 0.39 * a.s);
   }
-  const [hx, hy, hz] = a.head;
-  ring(k.fixed, k.fr, hx, hy, hz + (a.prone ? 0.02 : 0.05) * a.s, 0.155 * a.s, band, 1, 16, 0.1 * a.s);
   return finish(k, 'ground');
 }
 
@@ -255,7 +256,8 @@ function build(k: Kit, a: PersonAnchors, look: OperatorLook, accent: Rgb, carry:
   const capCol = accentHead ? accent : hairCol;
 
   // Headgear.
-  switch (look.head) {
+  // Lying on the back, the headgear is under the head and the face is up: neither is drawn.
+  switch (a.supine ? null : look.head) {
     case 'helmet':
       blob(F, fr, h(-0.03, 0, 0.06), [0.16 * s, 0.15 * s, 0.1 * s], look.wear[2]);
       if (accentHead) block(F, fr, h(-0.03, 0, 0.14), 0.22 * s, 0.05 * s, 0.03 * s, accent);
@@ -337,7 +339,7 @@ function build(k: Kit, a: PersonAnchors, look: OperatorLook, accent: Rgb, carry:
   }
 
   // Face.
-  switch (look.face) {
+  switch (a.supine ? null : look.face) {
     case 'goggles':
       block(F, fr, h(0.1, 0, 0.03), 0.04 * s, 0.2 * s, 0.06 * s, PAINT.glass);
       break;
@@ -392,7 +394,7 @@ function build(k: Kit, a: PersonAnchors, look: OperatorLook, accent: Rgb, carry:
   }
 
   // What they carry on the back: standing up behind them, or lying on their back when prone.
-  if (look.back) {
+  if (look.back && !a.supine) {
     const col = look.pattern === 'back' ? accent : backColour(look.back, look.wear[2]);
     if (a.prone) block(F, fr, [0.15 * s, 0, 0.36 * s], 0.42 * s, 0.3 * s, 0.1 * s, col);
     else backItem(k, a, look.back, col, accent);
