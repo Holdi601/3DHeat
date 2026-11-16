@@ -6,7 +6,7 @@ lang: "hu"
 source: "breakdown.md"
 source_hash: "ea7831abb45a"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Bontás: ki és mi teljesít a legjobban hol

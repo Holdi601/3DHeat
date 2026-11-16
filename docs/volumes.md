@@ -88,5 +88,6 @@ With two or more visible volumes, press **Compare...**.
 
 - Start from a finding: in [Insights](insights.md), **Volume here** adds a cylinder round the finding's place.
 - **Breakdown...** opens the [Breakdown](breakdown.md) for the selected volume: who and what does best inside it.
+- **Compare groups...** compares any groups - teams, vehicles, players, files, matches, your own filters - inside the volumes (combined or each) or the whole map, with your own statistics: [Compare groups](compare-groups.md).
 - [Directional heat](directional-heat.md) can chart the directions inside the selected volume.
 - The [Vehicles tab](hit-analysis.md#restrict-to-an-area) uses the same volumes as its area filter.

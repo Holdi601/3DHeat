@@ -4,7 +4,7 @@ parent: "Filter und Werkzeuge"
 nav_order: 7
 lang: "de"
 source: "breakdown.md"
-source_hash: "ea7831abb45a"
+source_hash: "927eb3254d4a"
 translated: true
 outdated: false
 ---
@@ -51,6 +51,8 @@ Wähle, wonach geordnet wird, und einen Maßstab:
 Abschüsse, Tode, Anwesenheit, Siege und Geld zählen jede Zeile, die die Ansicht an dem Ort zeigt, auf beiden Seiten der Teilung oder auf keiner.
 
 Verhältnisse und Raten werden bei kleinen Zählungen zum Wert des ganzen Ortes hingezogen, so dass 2 Abschüsse in 1 Leben nicht an der Spitze der Liste landen. Die Zählungen stehen daneben.
+
+Um einige gewählte Gruppen mit beliebigen Statistiken nebeneinanderzustellen, auch eigenen – Team gegen Team, ein Fahrzeug je Team, eine Datei gegen eine andere –, gibt es [Gruppen vergleichen](compare-groups.md).
 
 Du kannst nach den Gruppen, Spielern und Matches ordnen, nach jeder Kategoriespalte (einem Fahrzeug, einer Waffe, einer Seite, einer Kaufart, einem Agenten oder einer Ausrüstung), nach jeder Zahlenspalte in Bereichen (Panzerung, Wert einer Ausrüstung), nach der **Klasse** einer Waffenspalte (Gewehr, Scharfschützen, MP, Pistole ...) und danach, wie viele Stücke **Hilfsmittel** eine Listenspalte wie `inventory` enthält.
 

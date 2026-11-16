@@ -6,7 +6,7 @@ lang: "be"
 source: "breakdown.md"
 source_hash: "ea7831abb45a"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Разбіўка: хто і што найлепш працуе дзе

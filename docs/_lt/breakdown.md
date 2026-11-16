@@ -6,7 +6,7 @@ lang: "lt"
 source: "breakdown.md"
 source_hash: "ea7831abb45a"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Išskaidymas: kas ir ką geriausiai daro kur

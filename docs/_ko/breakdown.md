@@ -6,7 +6,7 @@ lang: "ko"
 source: "breakdown.md"
 source_hash: "ea7831abb45a"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # 상세 분석: 어디서 누가, 무엇이 가장 잘하는가

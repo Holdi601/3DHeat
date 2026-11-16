@@ -6,7 +6,7 @@ lang: "lt"
 source: "volumes.md"
 source_hash: "7f97bcad27e6"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Tūriai ir palyginimas

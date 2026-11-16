@@ -6,7 +6,7 @@ lang: "ru"
 source: "breakdown.md"
 source_hash: "ea7831abb45a"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Разбивка: кто и что лучше работает в каком месте

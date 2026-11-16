@@ -6,7 +6,7 @@ lang: "lv"
 source: "breakdown.md"
 source_hash: "ea7831abb45a"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Sadalījums: kas un kur labāk darbojas

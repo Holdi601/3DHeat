@@ -6,7 +6,7 @@ lang: "et"
 source: "breakdown.md"
 source_hash: "ea7831abb45a"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Jaotus: kes ja mis toimib kus kõige paremini

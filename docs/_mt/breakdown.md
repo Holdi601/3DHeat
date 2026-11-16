@@ -6,7 +6,7 @@ lang: "mt"
 source: "breakdown.md"
 source_hash: "ea7831abb45a"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Tqassim: min u xi jagħmel l-aħjar fejn

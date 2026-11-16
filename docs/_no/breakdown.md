@@ -6,7 +6,7 @@ lang: "no"
 source: "breakdown.md"
 source_hash: "ea7831abb45a"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Oppdeling: hvem og hva gjør det best hvor

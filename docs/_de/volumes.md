@@ -4,7 +4,7 @@ parent: "Filter und Werkzeuge"
 nav_order: 6
 lang: "de"
 source: "volumes.md"
-source_hash: "7f97bcad27e6"
+source_hash: "74edfbf88bf9"
 translated: true
 outdated: false
 ---
@@ -93,5 +93,6 @@ Bei zwei oder mehr sichtbaren Volumen drücke **Vergleich…**.
 
 - Fang bei einem Befund an: In [Erkenntnisse](insights.md) legt **Volumen hier** einen Zylinder um den Ort des Befunds.
 - **Aufschlüsselung…** öffnet die [Aufschlüsselung](breakdown.md) für das gewählte Volumen: wer und was darin am besten abschneidet.
+- **Gruppen vergleichen…** vergleicht beliebige Gruppen – Teams, Fahrzeuge, Spieler, Dateien, Matches, eigene Filter – in den Volumen (zusammen oder einzeln) oder auf der ganzen Karte, mit eigenen Statistiken: [Gruppen vergleichen](compare-groups.md).
 - Die [gerichtete Intensität](directional-heat.md) kann die Richtungen innerhalb des gewählten Volumens darstellen.
 - Der [Tab Fahrzeuge](hit-analysis.md#restrict-to-an-area) nutzt dieselben Volumen als Gebietsfilter.

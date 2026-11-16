@@ -6,7 +6,7 @@ lang: "ca"
 source: "breakdown.md"
 source_hash: "ea7831abb45a"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Desglossament: qui i què va millor on

@@ -6,7 +6,7 @@ lang: "uk"
 source: "breakdown.md"
 source_hash: "ea7831abb45a"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Розбивка: хто й що найкраще робить де

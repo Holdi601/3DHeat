@@ -6,7 +6,7 @@ lang: "sl"
 source: "breakdown.md"
 source_hash: "ea7831abb45a"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Razčlenitev: kdo in kaj je najboljši kje

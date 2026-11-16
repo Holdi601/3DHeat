@@ -6,7 +6,7 @@ lang: "fr"
 source: "breakdown.md"
 source_hash: "ea7831abb45a"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Détail : qui et quoi réussit le mieux, et où

@@ -6,7 +6,7 @@ lang: "tr"
 source: "breakdown.md"
 source_hash: "ea7831abb45a"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Döküm: kim ve nerede en iyi

@@ -6,7 +6,7 @@ lang: "it"
 source: "breakdown.md"
 source_hash: "ea7831abb45a"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Dettaglio: chi e cosa va meglio dove

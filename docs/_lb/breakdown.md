@@ -6,7 +6,7 @@ lang: "lb"
 source: "breakdown.md"
 source_hash: "ea7831abb45a"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Opschlësselung: wien an wat am beschte gëtt wou

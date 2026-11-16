@@ -6,7 +6,7 @@ lang: "el"
 source: "breakdown.md"
 source_hash: "ea7831abb45a"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Ανάλυση: ποιος και τι τα πάει καλύτερα πού

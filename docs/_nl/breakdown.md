@@ -6,7 +6,7 @@ lang: "nl"
 source: "breakdown.md"
 source_hash: "ea7831abb45a"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Uitsplitsing: wie en wat doet het waar het beste

@@ -6,7 +6,7 @@ lang: "da"
 source: "breakdown.md"
 source_hash: "ea7831abb45a"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Opdeling: hvem og hvad klarer sig bedst hvor

@@ -6,7 +6,7 @@ lang: "cs"
 source: "breakdown.md"
 source_hash: "ea7831abb45a"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Rozpis: kdo a co si v kterém místě vede nejlépe

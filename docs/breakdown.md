@@ -47,6 +47,8 @@ Kills, deaths, presence, wins and money count every row the view shows in the pl
 
 Ratios and rates are pulled toward the whole place's value where the counts are small, so 2 kills in 1 life does not top the list. The counts are shown beside them.
 
+To put a few chosen groups side by side with any statistics, your own included - team against team, a vehicle per team, one file against another - use [Compare groups](compare-groups.md).
+
 You can rank by the groups, players and matches, any category column (a vehicle, a weapon, a side, a buy type, an agent or kit), any number column in ranges (armour, a loadout's value), a weapon column's **class** (rifle, sniper, SMG, pistol...) and how many pieces of **utility** a list column such as `inventory` holds.
 
 **Own** ranks by the row's own value. **Opponent's** ranks by the other party's value: the victim's weapon on a kill, the killer's on a death (needs an `other` / `victim` column naming them).

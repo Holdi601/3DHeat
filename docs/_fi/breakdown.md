@@ -6,7 +6,7 @@ lang: "fi"
 source: "breakdown.md"
 source_hash: "ea7831abb45a"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Erittely: kuka ja mikä pärjää parhaiten missäkin
