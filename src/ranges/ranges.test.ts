@@ -301,7 +301,8 @@ describe('view cone', () => {
 
   it('narrows through a sight: by a fov or zoom column, or an aiming flag', () => {
     const f = new ViewFov();
-    const zoom = d([{ name: 'zoom', kind: 'number', data: Float32Array.of(1, 4, 0), min: 0, max: 4 }]);
+    const zoom = d([{ name: 'zoom', kind: 'number', data: Float32Array.of(1.19, 4, 0), min: 0, max: 4 }]);
+    // War Thunder's 1.19: a third-person camera, not a sight.
     expect(f.wanted(zoom, null, 0)).toBe(90);
     expect(f.wanted(zoom, null, 1)).toBeCloseTo(magnified(90, 4), 6);
     expect(magnified(90, 4)).toBeCloseTo(28.07, 1);

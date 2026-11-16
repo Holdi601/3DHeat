@@ -117,7 +117,9 @@ export class ViewFov {
     const f = v(this.fov);
     if (f > 1 && f < 179) return f;
     const m = v(this.mag);
-    if (m > 1.01) return magnified(this.base, m);
+    // A plain zoom value near 1 is a camera's own setting, not a sight (War Thunder writes 1.19 for a tank's
+    // third-person view, about 1.0 in the air, 2.75 and 5.4 in a gunner's sight).
+    if (m > (this.mag && /^zoom$/i.test(this.mag.name.trim()) ? 1.5 : 1.01)) return magnified(this.base, m);
     if (this.sight) {
       const name = this.sight.categories?.[(this.sight.data as Uint32Array)[row]] ?? '';
       for (const o of this.optics) if (name && o.match.test(name)) return o.fov ?? magnified(this.base, o.magnification!);
