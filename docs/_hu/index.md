@@ -67,7 +67,7 @@ npm install
 npm run dev      # http://127.0.0.1:5273
 ```
 
-Az `exporters/` mappa a külön adateszközöket tartalmazza git-almodulokként, mindegyik saját tárolóként; sima klónozás után futtassa a `git submodule update --init` parancsot. A megjelenítőnek magának nincs szüksége rájuk a futáshoz. Az `exporters/ext/` mappa az opcionális átalakítókat tartalmazza (War Thunder, World of Tanks, World of Warships, Squad-visszajátszások; DCS- és IL-2-térképek), külön tartva, hogy az egyikükkel kapcsolatos probléma a többit ne érintse.
+Az `exporters/` mappa a külön adateszközöket tartalmazza git-almodulokként, mindegyik saját tárolóként; sima klónozás után futtassa a `git submodule update --init` parancsot. A megjelenítőnek magának nincs szüksége rájuk a futáshoz. Az `exporters/ext/` mappa az opcionális átalakítókat tartalmazza (War Thunder, World of Tanks, World of Warships, Squad-visszajátszások; DCS- és IL-2-térképek), mindegyik önálló projekt.
 
 Semmilyen játékadat nem jár a csomaggal: a pályákat, térképeket és felvételeket az Ön gépén, az eszközökkel készíti, az Ön által birtokolt játékokból.
 
@@ -118,7 +118,7 @@ A kiszolgáló csak a `127.0.0.1` címen figyel, így egyik útvonal sem érhet�
 
 ## Kapcsolódó tárolók {#related-repositories}
 
-A megjelenítő adatokat olvas; ezek az eszközök készítik őket. Mindegyik saját, nyilvános tároló (MIT), saját dokumentációval. Egyikük sem tartalmaz játékadatot: a pályákat, térképeket és felvételeket az Ön gépén, az Ön által birtokolt játékokból készítik.
+A megjelenítő adatokat olvas; ezek az eszközök készítik őket. Mindegyik saját, nyilvános tároló (MIT), saját dokumentációval. Egyikük sem tartalmaz játékadatot: a pályákat, térképeket és felvételeket az Ön gépén, az Ön által birtokolt játékokból készítik. Minden játékolvasó önálló kis projekt saját licencfájllal, kiadásokkal és hibakövetővel, így külön telepíthető, frissíthető, karbantartható – vagy egy jogtulajdonos kérésére visszavonható –, anélkül hogy a megjelenítőt vagy a többi eszközt érintené.
 
 | Tároló | Mit csinál | Mire jó | Dokumentáció |
 |---|---|---|---|

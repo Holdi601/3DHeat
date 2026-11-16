@@ -65,7 +65,7 @@ npm install
 npm run dev      # http://127.0.0.1:5273
 ```
 
-Priečinok `exporters/` obsahuje samostatné nástroje na dáta ako git submoduly, každý je vlastný repozitár; po obyčajnom klone spustite `git submodule update --init`. Samotný prehliadač ich na beh nepotrebuje. `exporters/ext/` obsahuje voliteľné konvertory (War Thunder, World of Tanks, World of Warships, prehrávky Squad; mapy DCS a IL-2), oddelené, aby problém s jedným z nich nezasiahol nič iné.
+Priečinok `exporters/` obsahuje samostatné nástroje na dáta ako git submoduly, každý je vlastný repozitár; po obyčajnom klone spustite `git submodule update --init`. Samotný prehliadač ich na beh nepotrebuje. `exporters/ext/` obsahuje voliteľné konvertory (War Thunder, World of Tanks, World of Warships, prehrávky Squad; mapy DCS a IL-2), každý ako samostatný projekt.
 
 Žiadne herné dáta sa s tým nedodávajú: levely, mapy a nahrávky vytvárate na svojom počítači pomocou nástrojov, z hier, ktoré vlastníte.
 
@@ -116,7 +116,7 @@ Server sa viaže iba na `127.0.0.1`, takže k žiadnej z týchto ciest sa nedá 
 
 ## Súvisiace repozitáre {#related-repositories}
 
-Prehliadač číta dáta; tieto nástroje ich vytvárajú. Každý je vlastný verejný repozitár (MIT) s vlastnou dokumentáciou. Žiadny z nich nedodáva herné dáta: levely, mapy a nahrávky vytvárate na svojom počítači, z hier, ktoré vlastníte.
+Prehliadač číta dáta; tieto nástroje ich vytvárajú. Každý je vlastný verejný repozitár (MIT) s vlastnou dokumentáciou. Žiadny z nich nedodáva herné dáta: levely, mapy a nahrávky vytvárate na svojom počítači, z hier, ktoré vlastníte. Každá čítačka hry je samostatný malý projekt s vlastným licenčným súborom, vydaniami a evidenciou problémov, takže ju možno inštalovať, aktualizovať, udržiavať – alebo na žiadosť držiteľa práv stiahnuť – samostatne, bez vplyvu na prehliadač a ostatné nástroje.
 
 | Repozitár | Čo robí | Na čo je dobrý | Dokumentácia |
 |---|---|---|---|

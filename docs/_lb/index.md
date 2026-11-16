@@ -65,7 +65,7 @@ npm install
 npm run dev      # http://127.0.0.1:5273
 ```
 
-De `exporters/`-Dossier enthält d'separat Datenwerkzeich als git-Submodulen, all als eegent Repository; no engem reine Clone `git submodule update --init` lafen loossen. De Viewer selwer brauch se net fir ze lafen. `exporters/ext/` enthält d'optional Konverter (War Thunder, World of Tanks, World of Warships, Squad-Replayen; DCS- a IL-2-Kaarten), getrennt gehalen, sou datt e Problem mat engem vun hinnen näischt beaflosst.
+De `exporters/`-Dossier enthält d'separat Datenwerkzeich als git-Submodulen, all als eegent Repository; no engem reine Clone `git submodule update --init` lafen loossen. De Viewer selwer brauch se net fir ze lafen. `exporters/ext/` enthält d'optional Konverter (War Thunder, World of Tanks, World of Warships, Squad-Replayen; DCS- a IL-2-Kaarten), all een en eegent Projet.
 
 Kee Spillmaterial kënnt mat dervun: Levelen, Kaarten a Opnamen ginn op Ärem eegenen Rechner mat den Werkzeich gemaach, aus Spiller, déi Dir besëtzt.
 
@@ -116,7 +116,7 @@ De Server bindet nëmmen un `127.0.0.1`, sou datt keen vun deenen Weeër vum Net
 
 ## Verbonne Repositories {#related-repositories}
 
-De Viewer liest Daten; dës Werkzeich maachen s. All ass en eegent ëffentlecht Repository (MIT) mat der eegener Dokumentatioun. Keent vun hinnen liwwert Spillmaterial: Levelen, Kaarten a Opnamen ginn op Ärem eegenen Rechner gemaach, aus Spiller, déi Dir besëtzt.
+De Viewer liest Daten; dës Werkzeich maachen s. All ass en eegent ëffentlecht Repository (MIT) mat der eegener Dokumentatioun. Keent vun hinnen liwwert Spillmaterial: Levelen, Kaarten a Opnamen ginn op Ärem eegenen Rechner gemaach, aus Spiller, déi Dir besëtzt. All Spill-Lieser ass e klengt eegent Projet mat enger eegener Lizenzdatei, eegene Versiounen an engem eegenen Issue-Tracker, sou datt en eleng installéiert, aktualiséiert, ënnerhale – oder op Ufro vun engem Rechteinhaber zréckgezunn – ka ginn, ouni de Viewer oder déi aner Werkzeich ze beaflossen.
 
 | Repository | Wat et mécht | Gutt fir | Dokumentatioun |
 |---|---|---|---|

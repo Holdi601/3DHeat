@@ -67,7 +67,7 @@ npm install
 npm run dev      # http://127.0.0.1:5273
 ```
 
-De map `exporters/` bevat de aparte datatools als git-submodules, elk een eigen repository; voer na een gewone kloon `git submodule update --init` uit. De viewer zelf heeft ze niet nodig om te draaien. `exporters/ext/` bevat de optionele converters (War Thunder, World of Tanks, World of Warships, Squad-replays; DCS- en IL-2-kaarten), apart gehouden zodat een probleem met de ene niets met de andere te maken heeft.
+De map `exporters/` bevat de aparte datatools als git-submodules, elk een eigen repository; voer na een gewone kloon `git submodule update --init` uit. De viewer zelf heeft ze niet nodig om te draaien. `exporters/ext/` bevat de optionele converters (War Thunder, World of Tanks, World of Warships, Squad-replays; DCS- en IL-2-kaarten), elk een eigen project.
 
 Er komt geen spelgegeven mee: niveaus, kaarten en opnamen worden op je eigen computer gemaakt met de tools, uit spellen die je bezit.
 
@@ -118,7 +118,7 @@ De server bindt alleen aan `127.0.0.1`, dus geen van beide routes is vanuit het 
 
 ## Gerelateerde repositories {#related-repositories}
 
-De viewer leest data; deze tools maken ze. Elk is een eigen openbare repository (MIT) met eigen documentatie. Geen van hen levert spelgegevens mee: niveaus, kaarten en opnamen worden op je eigen computer gemaakt, uit spellen die je bezit.
+De viewer leest data; deze tools maken ze. Elk is een eigen openbare repository (MIT) met eigen documentatie. Geen van hen levert spelgegevens mee: niveaus, kaarten en opnamen worden op je eigen computer gemaakt, uit spellen die je bezit. Elke spellezer is een eigen klein project met een eigen licentiebestand, eigen releases en een eigen issuetracker, zodat hij los geïnstalleerd, bijgewerkt, onderhouden – of op verzoek van een rechthebbende teruggetrokken – kan worden, zonder dat de viewer of de andere tools er iets van merken.
 
 | Repository | Wat het doet | Handig voor | Documentatie |
 |---|---|---|---|

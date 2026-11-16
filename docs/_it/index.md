@@ -66,7 +66,7 @@ npm install
 npm run dev      # http://127.0.0.1:5273
 ```
 
-La cartella `exporters/` contiene gli strumenti separati per i dati come submodule git, ciascuno con il proprio repository; dopo un clone semplice esegui `git submodule update --init`. Il visualizzatore stesso non ne ha bisogno per funzionare. `exporters/ext/` contiene i convertitori facoltativi (War Thunder, World of Tanks, World of Warships, replay di Squad; mappe di DCS e IL-2), tenuti separati perché un problema con uno di essi non tocchi gli altri.
+La cartella `exporters/` contiene gli strumenti separati per i dati come submodule git, ciascuno con il proprio repository; dopo un clone semplice esegui `git submodule update --init`. Il visualizzatore stesso non ne ha bisogno per funzionare. `exporters/ext/` contiene i convertitori facoltativi (War Thunder, World of Tanks, World of Warships, replay di Squad; mappe di DCS e IL-2), ciascuno un progetto a sé.
 
 Con tutto questo non arrivano dati di gioco: livelli, mappe e registrazioni vengono creati sulla tua macchina con gli strumenti, da giochi che possiedi.
 
@@ -117,7 +117,7 @@ Il server si lega solo a `127.0.0.1`, quindi nessuna delle due rotte è raggiung
 
 ## Repository collegati {#related-repositories}
 
-Il visualizzatore legge i dati; questi strumenti li producono. Ciascuno è un repository pubblico separato (MIT) con la propria documentazione. Nessuno di essi distribuisce dati di gioco: livelli, mappe e registrazioni vengono creati sulla tua macchina, da giochi che possiedi.
+Il visualizzatore legge i dati; questi strumenti li producono. Ciascuno è un repository pubblico separato (MIT) con la propria documentazione. Nessuno di essi distribuisce dati di gioco: livelli, mappe e registrazioni vengono creati sulla tua macchina, da giochi che possiedi. Ogni lettore di gioco è un piccolo progetto a sé, con il proprio file di licenza, le proprie release e il proprio tracker delle segnalazioni, così può essere installato, aggiornato, mantenuto — o ritirato su richiesta di un titolare dei diritti — separatamente, senza toccare il visualizzatore o gli altri strumenti.
 
 | Repository | Cosa fa | Utile per | Documentazione |
 |---|---|---|---|

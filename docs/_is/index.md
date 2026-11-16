@@ -64,7 +64,7 @@ npm install
 npm run dev      # http://127.0.0.1:5273
 ```
 
-Mappan `exporters/` geymir gagnatólin sem sérstakar git-undireiningar, hver með sína eigin geymslu; eftir venjulegt klón keyrðu `git submodule update --init`. Skoðarinn sjálfur þarf þau ekki til að keyra. `exporters/ext/` geymir valfrjálsa breyta (War Thunder, World of Tanks, World of Warships, Squad-endurspilanir; DCS- og IL-2-kort), aðskilda svo að vandamál í einum þeirra hafi engin áhrif á hina.
+Mappan `exporters/` geymir gagnatólin sem sérstakar git-undireiningar, hver með sína eigin geymslu; eftir venjulegt klón keyrðu `git submodule update --init`. Skoðarinn sjálfur þarf þau ekki til að keyra. `exporters/ext/` geymir valfrjálsa breyta (War Thunder, World of Tanks, World of Warships, Squad-endurspilanir; DCS- og IL-2-kort), hver og einn sjálfstætt verkefni.
 
 Engin leikjagögn fylgja neinu af þessu: borð, kort og upptökur eru gerð á þinni eigin vél með verkfærunum, úr leikjum sem þú átt.
 
@@ -115,7 +115,7 @@ Skoðarinn er kyrrstæð vefsíða, en þróunarþjónninn (sjá `vite.config.ts
 
 ## Tengdar geymslur {#related-repositories}
 
-Skoðarinn les gögn; þessi verkfæri búa þau til. Hvert þeirra er sín eigin opinbera geymsla (MIT) með sín eigin skjöl. Engin þeirra fylgir leikjagögnum: borð, kort og upptökur eru gerð á þinni eigin vél, úr leikjum sem þú átt.
+Skoðarinn les gögn; þessi verkfæri búa þau til. Hvert þeirra er sín eigin opinbera geymsla (MIT) með sín eigin skjöl. Engin þeirra fylgir leikjagögnum: borð, kort og upptökur eru gerð á þinni eigin vél, úr leikjum sem þú átt. Hver leikjalesari er sitt eigið litla verkefni með eigin leyfisskrá, útgáfur og villuskráningu, svo hægt er að setja hann upp, uppfæra, viðhalda – eða draga til baka að beiðni rétthafa – einan og sér, án þess að það hafi áhrif á skoðarann eða hin verkfærin.
 
 | Geymsla | Hvað hún gerir | Gagnleg fyrir | Skjölun |
 |---|---|---|---|

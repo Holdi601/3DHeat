@@ -67,7 +67,7 @@ npm install
 npm run dev      # http://127.0.0.1:5273
 ```
 
-A pasta `exporters/` contém as ferramentas de dados separadas como submódulos do git, cada uma o seu próprio repositório; depois de um clone simples execute `git submodule update --init`. O visualizador em si não precisa delas para funcionar. `exporters/ext/` contém os conversores opcionais (War Thunder, World of Tanks, World of Warships, repetições do Squad; mapas do DCS e do IL-2), mantidos à parte para que um problema com um deles não afete os outros.
+A pasta `exporters/` contém as ferramentas de dados separadas como submódulos do git, cada uma o seu próprio repositório; depois de um clone simples execute `git submodule update --init`. O visualizador em si não precisa delas para funcionar. `exporters/ext/` contém os conversores opcionais (War Thunder, World of Tanks, World of Warships, repetições do Squad; mapas do DCS e do IL-2), cada um um projeto próprio.
 
 Nenhum dado de jogo vem com nada disto: os níveis, mapas e gravações são feitos na sua própria máquina com as ferramentas, a partir de jogos que possui.
 
@@ -118,7 +118,7 @@ O servidor liga-se apenas a `127.0.0.1`, pelo que nenhuma destas rotas é acess�
 
 ## Repositórios relacionados {#related-repositories}
 
-O visualizador lê dados; estas ferramentas criam-nos. Cada uma é um repositório público próprio (MIT) com a sua própria documentação. Nenhuma inclui dados de jogos: os níveis, mapas e gravações são feitos na sua própria máquina, a partir de jogos que possui.
+O visualizador lê dados; estas ferramentas criam-nos. Cada uma é um repositório público próprio (MIT) com a sua própria documentação. Nenhuma inclui dados de jogos: os níveis, mapas e gravações são feitos na sua própria máquina, a partir de jogos que possui. Cada leitor de jogo é um pequeno projeto próprio, com o seu ficheiro de licença, as suas versões e o seu registo de problemas, pelo que pode ser instalado, atualizado, mantido — ou retirado a pedido de um titular de direitos — de forma independente, sem afetar o visualizador nem as outras ferramentas.
 
 | Repositório | O que faz | Útil para | Documentação |
 |---|---|---|---|

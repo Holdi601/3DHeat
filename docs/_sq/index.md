@@ -67,7 +67,7 @@ npm install
 npm run dev      # http://127.0.0.1:5273
 ```
 
-Dosja `exporters/` mban veglat e veçanta të të dhënave si git submodules, secila depo e vet; pas një klonimi të thjeshtë ekzekuto `git submodule update --init`. Vetë shikuesi nuk ka nevojë për to për të punuar. `exporters/ext/` mban konvertuesit opsionalë (War Thunder, World of Tanks, World of Warships, riluajtjet e Squad; hartat e DCS dhe IL-2), të ndarë që një problem me njërin të mos prekë asnjërin tjetër.
+Dosja `exporters/` mban veglat e veçanta të të dhënave si git submodules, secila depo e vet; pas një klonimi të thjeshtë ekzekuto `git submodule update --init`. Vetë shikuesi nuk ka nevojë për to për të punuar. `exporters/ext/` mban konvertuesit opsionalë (War Thunder, World of Tanks, World of Warships, riluajtjet e Squad; hartat e DCS dhe IL-2), secili një projekt më vete.
 
 Asnjë e dhënë loje nuk vjen me asnjërën prej tyre: nivelet, hartat dhe regjistrimet bëhen në kompjuterin tënd me veglat, nga lojërat që zotëron.
 
@@ -118,7 +118,7 @@ Serveri lidhet vetëm me `127.0.0.1`, kështu që asnjëra prej rrugëve nuk arr
 
 ## Repot e lidhura {#related-repositories}
 
-Shikuesi lexon të dhëna; këto vegla i krijojnë. Secila është depo publike e vetë (MIT) me dokumentacionin e saj. Asnjëra nuk vjen me të dhëna loje: nivelet, hartat dhe regjistrimet bëhen në kompjuterin tënd, nga lojërat që zotëron.
+Shikuesi lexon të dhëna; këto vegla i krijojnë. Secila është depo publike e vetë (MIT) me dokumentacionin e saj. Asnjëra nuk vjen me të dhëna loje: nivelet, hartat dhe regjistrimet bëhen në kompjuterin tënd, nga lojërat që zotëron. Çdo lexues loje është një projekt i vogël më vete, me skedarin e vet të licencës, versionet dhe gjurmuesin e problemeve, ndaj mund të instalohet, përditësohet, mirëmbahet – ose tërhiqet me kërkesë të një mbajtësi të drejtash – më vete, pa prekur shikuesin apo veglat e tjera.
 
 | Depoja | Çfarë bën | E dobishme për | Dokumentacioni |
 |---|---|---|---|

@@ -66,7 +66,7 @@ npm install
 npm run dev      # http://127.0.0.1:5273
 ```
 
-Dosarul `exporters/` conține instrumentele separate de date, ca submodule git, fiecare cu propriul depozit; după un clone simplu rulează `git submodule update --init`. Vizualizatorul în sine nu are nevoie de ele ca să ruleze. `exporters/ext/` conține convertoarele opționale (reluări din War Thunder, World of Tanks, World of Warships și Squad; hărți DCS și IL-2), ținute separat, ca o problemă cu unul dintre ele să nu afecteze nimic altceva.
+Dosarul `exporters/` conține instrumentele separate de date, ca submodule git, fiecare cu propriul depozit; după un clone simplu rulează `git submodule update --init`. Vizualizatorul în sine nu are nevoie de ele ca să ruleze. `exporters/ext/` conține convertoarele opționale (reluări din War Thunder, World of Tanks, World of Warships și Squad; hărți DCS și IL-2), fiecare fiind un proiect de sine stătător.
 
 Nu vine nicio dată de joc odată cu ele: nivelurile, hărțile și înregistrările sunt făcute pe calculatorul tău, cu instrumentele, din jocuri pe care le deții.
 
@@ -117,7 +117,7 @@ Serverul se leagă doar de `127.0.0.1`, deci nicio rută nu este accesibilă din
 
 ## Depozite înrudite {#related-repositories}
 
-Vizualizatorul citește date; aceste instrumente le produc. Fiecare este un depozit public propriu (MIT), cu documentația lui. Niciunul nu livrează date de joc: nivelurile, hărțile și înregistrările sunt făcute pe calculatorul tău, din jocuri pe care le deții.
+Vizualizatorul citește date; aceste instrumente le produc. Fiecare este un depozit public propriu (MIT), cu documentația lui. Niciunul nu livrează date de joc: nivelurile, hărțile și înregistrările sunt făcute pe calculatorul tău, din jocuri pe care le deții. Fiecare cititor de joc este un mic proiect de sine stătător, cu propriul fișier de licență, propriile versiuni și propriul sistem de raportare a problemelor, astfel încât poate fi instalat, actualizat, întreținut – sau retras la cererea unui deținător de drepturi – separat, fără să afecteze vizualizatorul sau celelalte instrumente.
 
 | Depozit | Ce face | Util pentru | Documentație |
 |---|---|---|---|

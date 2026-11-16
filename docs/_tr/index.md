@@ -67,7 +67,7 @@ npm install
 npm run dev      # http://127.0.0.1:5273
 ```
 
-`exporters/` klasörü ayrı veri araçlarını git alt modülleri olarak tutar; her biri kendi deposudur. Yalnızca düz bir klon aldıysanız `git submodule update --init` çalıştırın. Görüntüleyici kendisi çalışmak için bunlara ihtiyaç duymaz. `exporters/ext/` isteğe bağlı dönüştürücüleri tutar (War Thunder, World of Tanks, World of Warships, Squad tekrarları; DCS ve IL-2 haritaları); biri ile ilgili bir sorun diğerlerini etkilemesin diye ayrı tutulurlar.
+`exporters/` klasörü ayrı veri araçlarını git alt modülleri olarak tutar; her biri kendi deposudur. Yalnızca düz bir klon aldıysanız `git submodule update --init` çalıştırın. Görüntüleyici kendisi çalışmak için bunlara ihtiyaç duymaz. `exporters/ext/` isteğe bağlı dönüştürücüleri tutar (War Thunder, World of Tanks, World of Warships, Squad tekrarları; DCS ve IL-2 haritaları); her biri kendi başına bir projedir.
 
 Hiçbir oyun verisi bunların hiçbiriyle birlikte gelmez: haritalar, harita verileri ve kayıtlar, sahip olduğunuz oyunlardan, araçlarla kendi makinenizde yapılır.
 
@@ -118,7 +118,7 @@ Sunucu yalnızca `127.0.0.1` adresine bağlanır; bu yüzden iki yol da ağdan e
 
 ## İlgili depolar {#related-repositories}
 
-Görüntüleyici veriyi okur; bu araçlar veriyi üretir. Her biri kendi belgeleriyle birlikte kendi herkese açık deposudur (MIT). Hiçbiri oyun verisi içermez: haritalar, harita verileri ve kayıtlar, sahip olduğunuz oyunlardan, kendi makinenizde yapılır.
+Görüntüleyici veriyi okur; bu araçlar veriyi üretir. Her biri kendi belgeleriyle birlikte kendi herkese açık deposudur (MIT). Hiçbiri oyun verisi içermez: haritalar, harita verileri ve kayıtlar, sahip olduğunuz oyunlardan, kendi makinenizde yapılır. Her oyun okuyucusu, kendi lisans dosyası, sürümleri ve sorun takipçisi olan küçük, bağımsız bir projedir; böylece görüntüleyiciyi ya da diğer araçları etkilemeden tek başına kurulabilir, güncellenebilir, bakımı yapılabilir ya da bir hak sahibinin isteği üzerine geri çekilebilir.
 
 | Depo | Ne yapar | Kullanım alanı | Belgeler |
 |---|---|---|---|

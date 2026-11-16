@@ -65,7 +65,7 @@ npm install
 npm run dev      # http://127.0.0.1:5273
 ```
 
-La carpeta `exporters/` contiene las herramientas de datos separadas como submódulos de git, cada una su propio repositorio; tras un clon normal ejecuta `git submodule update --init`. El propio visor no las necesita para ejecutarse. `exporters/ext/` contiene los convertidores opcionales (War Thunder, World of Tanks, World of Warships, repeticiones de Squad; mapas de DCS e IL-2), separados para que un problema con uno de ellos no afecte a nada más.
+La carpeta `exporters/` contiene las herramientas de datos separadas como submódulos de git, cada una su propio repositorio; tras un clon normal ejecuta `git submodule update --init`. El propio visor no las necesita para ejecutarse. `exporters/ext/` contiene los convertidores opcionales (War Thunder, World of Tanks, World of Warships, repeticiones de Squad; mapas de DCS e IL-2), cada uno un proyecto propio.
 
 Nada de esto trae datos de juegos: los niveles, mapas y grabaciones se generan en tu propio equipo con las herramientas, a partir de juegos que tienes.
 
@@ -116,7 +116,7 @@ El servidor se vincula solo a `127.0.0.1`, así que ninguna de las dos rutas es 
 
 ## Repositorios relacionados {#related-repositories}
 
-El visor lee datos; estas herramientas los generan. Cada una es un repositorio público propio (MIT) con su propia documentación. Ninguna trae datos de juegos: los niveles, mapas y grabaciones se generan en tu propio equipo, a partir de juegos que tienes.
+El visor lee datos; estas herramientas los generan. Cada una es un repositorio público propio (MIT) con su propia documentación. Ninguna trae datos de juegos: los niveles, mapas y grabaciones se generan en tu propio equipo, a partir de juegos que tienes. Cada lector de juego es un pequeño proyecto propio, con su archivo de licencia, sus versiones y su gestor de incidencias, así que puede instalarse, actualizarse, mantenerse —o retirarse a petición de un titular de derechos— por separado, sin afectar al visor ni a las demás herramientas.
 
 | Repositorio | Qué hace | Para qué sirve | Documentación |
 |---|---|---|---|

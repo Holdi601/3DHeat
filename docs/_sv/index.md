@@ -67,7 +67,7 @@ npm install
 npm run dev      # http://127.0.0.1:5273
 ```
 
-Mappen `exporters/` innehåller de separata datverktygen som git-submoduler, var och en som ett eget förråd; efter en vanlig klon kör du `git submodule update --init`. Visaren i sig behöver dem inte för att köras. `exporters/ext/` innehåller de valfria konverterarna (War Thunder, World of Tanks, World of Warships, Squad-repriser; DCS- och IL-2-kartor), hållna åtskilda så att ett problem med en av dem inte påverkar något annat.
+Mappen `exporters/` innehåller de separata datverktygen som git-submoduler, var och en som ett eget förråd; efter en vanlig klon kör du `git submodule update --init`. Visaren i sig behöver dem inte för att köras. `exporters/ext/` innehåller de valfria konverterarna (War Thunder, World of Tanks, World of Warships, Squad-repriser; DCS- och IL-2-kartor), vart och ett ett eget projekt.
 
 Ingen speldata följer med något av det här: banor, kartor och inspelningar görs på din egen dator med verktygen, från spel du äger.
 
@@ -118,7 +118,7 @@ Servern binder bara till `127.0.0.1`, så ingen av rutterna går att nå från n
 
 ## Relaterade förråd {#related-repositories}
 
-Visaren läser data; de här verktygen skapar den. Vart och ett är ett eget offentligt förråd (MIT) med egen dokumentation. Inget av dem levererar speldata: banor, kartor och inspelningar skapas på din egen dator, från spel du äger.
+Visaren läser data; de här verktygen skapar den. Vart och ett är ett eget offentligt förråd (MIT) med egen dokumentation. Inget av dem levererar speldata: banor, kartor och inspelningar skapas på din egen dator, från spel du äger. Varje spelläsare är ett eget litet projekt med egen licensfil, egna versioner och egen ärendelista, så att den kan installeras, uppdateras, underhållas – eller dras tillbaka på en rättighetsinnehavares begäran – för sig, utan att påverka visaren eller de andra verktygen.
 
 | Förråd | Vad det gör | Användbart för | Dokumentation |
 |---|---|---|---|

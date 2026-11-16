@@ -67,7 +67,7 @@ npm install
 npm run dev      # http://127.0.0.1:5273
 ```
 
-Mape `exporters/` satur atsevišķos datu rīkus kā git apakšmoduļus, katrs ir sava repozitorija; pēc parastas klonēšanas palaidiet `git submodule update --init`. Pats skatītājs tiem nav vajadzīgs, lai darbotos. Mape `exporters/ext/` satur papildu konvertētājus (War Thunder, World of Tanks, World of Warships, Squad atkārtojumi; DCS un IL-2 kartes), turēti atsevišķi, lai problēma ar vienu neietekmētu citus.
+Mape `exporters/` satur atsevišķos datu rīkus kā git apakšmoduļus, katrs ir sava repozitorija; pēc parastas klonēšanas palaidiet `git submodule update --init`. Pats skatītājs tiem nav vajadzīgs, lai darbotos. Mape `exporters/ext/` satur papildu konvertētājus (War Thunder, World of Tanks, World of Warships, Squad atkārtojumi; DCS un IL-2 kartes), katrs ir atsevišķs projekts.
 
 Ar šo nekādi spēļu dati nenāk: līmeņi, kartes un ieraksti tiek veidoti jūsu datorā ar rīkiem, no spēlēm, kas jums pieder.
 
@@ -118,7 +118,7 @@ Serveris piesaistās tikai pie `127.0.0.1`, tāpēc neviens no maršrutiem nav s
 
 ## Saistītās repozitorijas {#related-repositories}
 
-Skatītājs lasa datus; šie rīki tos veido. Katrs ir sava publiska repozitorija (MIT) ar savu dokumentāciju. Neviens no tiem nepiegādā spēļu datus: līmeņi, kartes un ieraksti tiek veidoti jūsu datorā, no spēlēm, kas jums pieder.
+Skatītājs lasa datus; šie rīki tos veido. Katrs ir sava publiska repozitorija (MIT) ar savu dokumentāciju. Neviens no tiem nepiegādā spēļu datus: līmeņi, kartes un ieraksti tiek veidoti jūsu datorā, no spēlēm, kas jums pieder. Katrs spēles lasītājs ir atsevišķs neliels projekts ar savu licences failu, laidieniem un problēmu sekotāju, tāpēc to var instalēt, atjaunināt, uzturēt – vai pēc tiesību īpašnieka lūguma atsaukt – atsevišķi, neietekmējot skatītāju un pārējos rīkus.
 
 | Repozitorija | Ko tā dara | Noderīga | Dokumentācija |
 |---|---|---|---|

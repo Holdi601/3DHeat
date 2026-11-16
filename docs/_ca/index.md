@@ -67,7 +67,7 @@ npm install
 npm run dev      # http://127.0.0.1:5273
 ```
 
-La carpeta `exporters/` conté les eines de dades separades com a submòduls de git, cadascuna el seu propi repositori; després d'un clonat normal executa `git submodule update --init`. El visor en si no les necessita per funcionar. `exporters/ext/` conté els convertidors opcionals (repeticions de War Thunder, World of Tanks, World of Warships i Squad; mapes de DCS i IL-2), separats perquè un problema amb un d'ells no afecti res més.
+La carpeta `exporters/` conté les eines de dades separades com a submòduls de git, cadascuna el seu propi repositori; després d'un clonat normal executa `git submodule update --init`. El visor en si no les necessita per funcionar. `exporters/ext/` conté els convertidors opcionals (repeticions de War Thunder, World of Tanks, World of Warships i Squad; mapes de DCS i IL-2), cadascun un projecte propi.
 
 No ve amb cap dada de joc: els nivells, els mapes i les gravacions es fan a la teva pròpia màquina amb les eines, a partir de jocs que tens.
 
@@ -118,7 +118,7 @@ El servidor només es lliga a `127.0.0.1`, així que cap de les dues rutes és a
 
 ## Repositoris relacionats {#related-repositories}
 
-El visor llegeix dades; aquestes eines les fan. Cadascuna és el seu propi repositori públic (MIT) amb la seva pròpia documentació. Cap d'elles no porta dades de joc: els nivells, els mapes i les gravacions es fan a la teva màquina, a partir de jocs que tens.
+El visor llegeix dades; aquestes eines les fan. Cadascuna és el seu propi repositori públic (MIT) amb la seva pròpia documentació. Cap d'elles no porta dades de joc: els nivells, els mapes i les gravacions es fan a la teva màquina, a partir de jocs que tens. Cada lector de joc és un petit projecte propi amb el seu fitxer de llicència, les seves versions i el seu gestor d'incidències, de manera que es pot instal·lar, actualitzar, mantenir —o retirar a petició d'un titular de drets— per separat, sense afectar el visor ni les altres eines.
 
 | Repositori | Què fa | Per a què serveix | Documentació |
 |---|---|---|---|

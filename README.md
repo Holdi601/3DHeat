@@ -46,7 +46,7 @@ The [demo data](https://holdi601.github.io/3DHeat/demo-data.html) page takes it 
 
 ## Related repositories
 
-The viewer reads data; these tools make it. Each is a public repository under the MIT licence, pinned under `exporters/` as a git submodule.
+The viewer reads data; these tools make it. Each is a public repository under the MIT licence, pinned under `exporters/` as a git submodule. Each game reader is its own small project with its own licence file, releases and issue tracker, so it can be installed, updated, maintained - or withdrawn on a rights holder's request - on its own, without affecting the viewer or the other tools.
 
 | Repository | What it does | Useful for | Documentation |
 |---|---|---|---|
@@ -56,7 +56,7 @@ The viewer reads data; these tools make it. Each is a public repository under th
 | [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2) | Counter-Strike 2 demos into heatmap tables and match summaries, CS2 maps into geometry | CS2 heat, replays and the Match tab | [site](https://holdi601.github.io/3DHeat-CS2/) |
 | [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher) | Records your play in the background from what games publish: telemetry, game-state integrations, logs, replays | your own statistics without doing anything by hand | [site](https://holdi601.github.io/3DHeat-Watcher/) |
 
-Optional converters, under `exporters/ext/`, kept apart so a problem with one affects nothing else:
+Optional converters, under `exporters/ext/`, each its own project:
 
 | Repository | What it does | Useful for | Documentation |
 |---|---|---|---|

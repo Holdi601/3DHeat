@@ -62,7 +62,7 @@ npm install
 npm run dev      # http://127.0.0.1:5273
 ```
 
-The `exporters/` folder holds the separate data tools as git submodules, each its own repository; after a plain clone run `git submodule update --init`. The viewer itself does not need them to run. `exporters/ext/` holds the optional converters (War Thunder, World of Tanks, World of Warships, Squad replays; DCS and IL-2 maps), kept apart so that a problem with one of them affects nothing else.
+The `exporters/` folder holds the separate data tools as git submodules, each its own repository; after a plain clone run `git submodule update --init`. The viewer itself does not need them to run. `exporters/ext/` holds the optional converters (War Thunder, World of Tanks, World of Warships, Squad replays; DCS and IL-2 maps), each its own project.
 
 No game data comes with any of it: levels, maps and recordings are made on your own machine with the tools, from games you own.
 
@@ -113,7 +113,7 @@ The server binds to `127.0.0.1` only, so neither route is reachable from the net
 
 ## Related repositories
 
-The viewer reads data; these tools make it. Each is its own public repository (MIT) with its own documentation. None of them ships game data: levels, maps and recordings are made on your own machine, from games you own.
+The viewer reads data; these tools make it. Each is its own public repository (MIT) with its own documentation. None of them ships game data: levels, maps and recordings are made on your own machine, from games you own. Each game reader is its own small project with its own licence file, releases and issue tracker, so it can be installed, updated, maintained - or withdrawn on a rights holder's request - on its own, without affecting the viewer or the other tools.
 
 | Repository | What it does | Useful for | Documentation |
 |---|---|---|---|

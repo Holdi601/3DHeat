@@ -64,7 +64,7 @@ npm install
 npm run dev      # http://127.0.0.1:5273
 ```
 
-`exporters/`-mappen indeholder de særskilte dataværktøjer som git-submoduler, hver sit eget repositorium; efter en almindelig kloning kør `git submodule update --init`. Vieweren selv har ikke brug for dem for at køre. `exporters/ext/` indeholder de valgfrie konvertere (War Thunder, World of Tanks, World of Warships, Squad-replays; DCS- og IL-2-kort), holdt adskilt, så et problem med én af dem ikke påvirker noget andet.
+`exporters/`-mappen indeholder de særskilte dataværktøjer som git-submoduler, hver sit eget repositorium; efter en almindelig kloning kør `git submodule update --init`. Vieweren selv har ikke brug for dem for at køre. `exporters/ext/` indeholder de valgfrie konvertere (War Thunder, World of Tanks, World of Warships, Squad-replays; DCS- og IL-2-kort), hver sit eget projekt.
 
 Der følger ingen spildata med: baner, kort og optagelser laves på din egen maskine med værktøjerne, ud fra spil du ejer.
 
@@ -115,7 +115,7 @@ Serveren binder kun til `127.0.0.1`, så ingen af ruterne kan nås fra netværke
 
 ## Relaterede repositorier {#related-repositories}
 
-Vieweren læser data; disse værktøjer laver dem. Hvert er sit eget offentlige repositorium (MIT) med egen dokumentation. Ingen af dem leverer spildata: baner, kort og optagelser laves på din egen maskine, ud fra spil du ejer.
+Vieweren læser data; disse værktøjer laver dem. Hvert er sit eget offentlige repositorium (MIT) med egen dokumentation. Ingen af dem leverer spildata: baner, kort og optagelser laves på din egen maskine, ud fra spil du ejer. Hver spillæser er sit eget lille projekt med egen licensfil, egne udgivelser og egen fejlliste, så den kan installeres, opdateres, vedligeholdes – eller trækkes tilbage på en rettighedshavers anmodning – for sig selv, uden at det påvirker vieweren eller de andre værktøjer.
 
 | Repositorium | Hvad det gør | Nyttigt til | Dokumentation |
 |---|---|---|---|

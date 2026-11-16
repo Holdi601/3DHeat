@@ -67,7 +67,7 @@ npm install
 npm run dev      # http://127.0.0.1:5273
 ```
 
-Le dossier `exporters/` contient les outils de données séparés, sous forme de sous-modules git, chacun ayant son propre dépôt ; après un clone simple, lancez `git submodule update --init`. La visionneuse elle-même n'en a pas besoin pour fonctionner. `exporters/ext/` contient les convertisseurs facultatifs (replays de War Thunder, World of Tanks, World of Warships, Squad ; cartes DCS et IL-2), tenus à part pour qu'un problème avec l'un d'eux ne touche aucun autre.
+Le dossier `exporters/` contient les outils de données séparés, sous forme de sous-modules git, chacun ayant son propre dépôt ; après un clone simple, lancez `git submodule update --init`. La visionneuse elle-même n'en a pas besoin pour fonctionner. `exporters/ext/` contient les convertisseurs facultatifs (replays de War Thunder, World of Tanks, World of Warships, Squad ; cartes DCS et IL-2), chacun étant un projet à part entière.
 
 Aucune donnée de jeu n'est fournie avec tout cela : les niveaux, les cartes et les enregistrements sont créés sur votre propre machine avec les outils, à partir de jeux que vous possédez.
 
@@ -118,7 +118,7 @@ Le serveur n'est lié qu'à `127.0.0.1`, donc aucune de ces routes n'est accessi
 
 ## Dépôts associés {#related-repositories}
 
-La visionneuse lit les données ; ces outils les produisent. Chacun est un dépôt public (MIT) avec sa propre documentation. Aucun ne fournit de données de jeu : les niveaux, les cartes et les enregistrements sont créés sur votre propre machine, à partir de jeux que vous possédez.
+La visionneuse lit les données ; ces outils les produisent. Chacun est un dépôt public (MIT) avec sa propre documentation. Aucun ne fournit de données de jeu : les niveaux, les cartes et les enregistrements sont créés sur votre propre machine, à partir de jeux que vous possédez. Chaque lecteur de jeu est un petit projet à part, avec son propre fichier de licence, ses versions et son suivi des tickets : il peut ainsi être installé, mis à jour, maintenu — ou retiré à la demande d'un ayant droit — indépendamment, sans toucher à la visionneuse ni aux autres outils.
 
 | Dépôt | Ce qu'il fait | Utile pour | Documentation |
 |---|---|---|---|

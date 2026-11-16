@@ -66,7 +66,7 @@ npm install
 npm run dev      # http://127.0.0.1:5273
 ```
 
-Katalog `exporters/` zawiera osobne narzędzia do danych jako submoduły git, każde jako własne repozytorium; po zwykłym sklonowaniu uruchom `git submodule update --init`. Sama przeglądarka danych ich nie potrzebuje, by działać. `exporters/ext/` zawiera opcjonalne konwertery (War Thunder, World of Tanks, World of Warships, powtórki Squad; mapy DCS i IL-2), trzymane osobno, aby problem z jednym z nich nie wpływał na pozostałe.
+Katalog `exporters/` zawiera osobne narzędzia do danych jako submoduły git, każde jako własne repozytorium; po zwykłym sklonowaniu uruchom `git submodule update --init`. Sama przeglądarka danych ich nie potrzebuje, by działać. `exporters/ext/` zawiera opcjonalne konwertery (War Thunder, World of Tanks, World of Warships, powtórki Squad; mapy DCS i IL-2), każdy jako osobny projekt.
 
 Żadne dane gry nie są dołączone: poziomy, mapy i nagrania powstają na Twoim komputerze, za pomocą narzędzi, z gier, które posiadasz.
 
@@ -117,7 +117,7 @@ Serwer wiąże się tylko z `127.0.0.1`, więc żadna z tras nie jest dostępna 
 
 ## Powiązane repozytoria {#related-repositories}
 
-Przeglądarka czyta dane; te narzędzia je tworzą. Każde z nich to osobne publiczne repozytorium (MIT) z własną dokumentacją. Żadne nie dołącza danych gry: poziomy, mapy i nagrania powstają na Twoim komputerze, z gier, które posiadasz.
+Przeglądarka czyta dane; te narzędzia je tworzą. Każde z nich to osobne publiczne repozytorium (MIT) z własną dokumentacją. Żadne nie dołącza danych gry: poziomy, mapy i nagrania powstają na Twoim komputerze, z gier, które posiadasz. Każdy czytnik gry to osobny mały projekt z własnym plikiem licencji, wydaniami i systemem zgłoszeń, więc można go instalować, aktualizować, utrzymywać – lub wycofać na prośbę posiadacza praw – niezależnie, bez wpływu na przeglądarkę i pozostałe narzędzia.
 
 | Repozytorium | Co robi | Przydatne do | Dokumentacja |
 |---|---|---|---|

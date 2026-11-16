@@ -66,7 +66,7 @@ npm install
 npm run dev      # http://127.0.0.1:5273
 ```
 
-Kansio `exporters/` sisältää erilliset datatyökalut git-alimoduuleina, joista kukin on oma tietovarastonsa. Tavallisen kloonauksen jälkeen aja `git submodule update --init`. Katselin itse ei tarvitse niitä toimiakseen. Kansio `exporters/ext/` sisältää valinnaiset muuntimet (War Thunder, World of Tanks, World of Warships, Squad-toistot; DCS- ja IL-2-kartat). Ne on pidetty erillään, jotta yhden ongelma ei vaikuta muihin.
+Kansio `exporters/` sisältää erilliset datatyökalut git-alimoduuleina, joista kukin on oma tietovarastonsa. Tavallisen kloonauksen jälkeen aja `git submodule update --init`. Katselin itse ei tarvitse niitä toimiakseen. Kansio `exporters/ext/` sisältää valinnaiset muuntimet (War Thunder, World of Tanks, World of Warships, Squad-toistot; DCS- ja IL-2-kartat). Kukin niistä on oma projektinsa.
 
 Mikään näistä ei sisällä pelidataa: kentät, kartat ja tallenteet tehdään omalla koneellasi työkaluilla, omista peleistäsi.
 
@@ -117,7 +117,7 @@ Palvelin sitoutuu vain osoitteeseen `127.0.0.1`, joten kumpaakaan reittiä ei sa
 
 ## Liittyvät tietovarastot {#related-repositories}
 
-Katselin lukee dataa; nämä työkalut tekevät sen. Jokainen on oma julkinen tietovarastonsa (MIT) omine ohjeineen. Mikään niistä ei sisällä pelidataa: kentät, kartat ja tallenteet tehdään omalla koneellasi omista peleistäsi.
+Katselin lukee dataa; nämä työkalut tekevät sen. Jokainen on oma julkinen tietovarastonsa (MIT) omine ohjeineen. Mikään niistä ei sisällä pelidataa: kentät, kartat ja tallenteet tehdään omalla koneellasi omista peleistäsi. Jokainen pelin lukija on oma pieni projektinsa, jolla on oma lisenssitiedosto, omat julkaisut ja oma vikaseuranta. Siksi sen voi asentaa, päivittää, ylläpitää – tai vetää pois oikeudenhaltijan pyynnöstä – erikseen vaikuttamatta katselimeen tai muihin työkaluihin.
 
 | Tietovarasto | Mitä se tekee | Hyödyllinen | Dokumentaatio |
 |---|---|---|---|

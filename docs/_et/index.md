@@ -66,7 +66,7 @@ npm install
 npm run dev      # http://127.0.0.1:5273
 ```
 
-Kaust `exporters/` sisaldab eraldi andmetööriistu git-alammoodulitena, igaüks oma hoidlana; pärast tavalist kloonimist käivita `git submodule update --init`. Vaatur ise ei vaja neid töötamiseks. Kaust `exporters/ext/` sisaldab valikulisi konverterid (War Thunder, World of Tanks, World of Warships, Squadi kordused; DCS- ja IL-2 kaardid), hoitud eraldi, et probleem ühega ei mõjutaks midagi muud.
+Kaust `exporters/` sisaldab eraldi andmetööriistu git-alammoodulitena, igaüks oma hoidlana; pärast tavalist kloonimist käivita `git submodule update --init`. Vaatur ise ei vaja neid töötamiseks. Kaust `exporters/ext/` sisaldab valikulisi konverterid (War Thunder, World of Tanks, World of Warships, Squadi kordused; DCS- ja IL-2 kaardid), igaüks omaette projekt.
 
 Ükski mäng ei tule ühegi nende kaasas: tasemed, kaardid ja salvestised tehakse sinu enda arvutis tööriistadega, mängudest, mis on sinu omad.
 
@@ -117,7 +117,7 @@ Server seob end ainult aadressiga `127.0.0.1`, nii et kumbagi marsruuti ei jõua
 
 ## Seotud hoidlad {#related-repositories}
 
-Vaatur loeb andmeid; need tööriistad teevad need. Igaüks on oma avalik hoidla (MIT) oma dokumentatsiooniga. Ükski neist ei anna kaasa mängu andmeid: tasemed, kaardid ja salvestised tehakse sinu enda arvutis, mängudest, mis on sinu omad.
+Vaatur loeb andmeid; need tööriistad teevad need. Igaüks on oma avalik hoidla (MIT) oma dokumentatsiooniga. Ükski neist ei anna kaasa mängu andmeid: tasemed, kaardid ja salvestised tehakse sinu enda arvutis, mängudest, mis on sinu omad. Iga mängulugeja on omaette väike projekt oma litsentsifaili, väljalasete ja veahalduriga, nii et seda saab paigaldada, uuendada, hooldada – või õiguste omaja palvel eemaldada – eraldi, ilma et see mõjutaks vaaturit või teisi tööriistu.
 
 | Hoidla | Mida ta teeb | Kasulik | Dokumentatsioon |
 |---|---|---|---|

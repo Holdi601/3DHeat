@@ -66,7 +66,7 @@ npm install
 npm run dev      # http://127.0.0.1:5273
 ```
 
-Mapa `exporters/` sadrži zasebne alate za podatke kao git submodule, svaki vlastiti repozitorij; nakon običnog kloniranja pokrenite `git submodule update --init`. Sam preglednik ih ne treba za rad. Mapa `exporters/ext/` sadrži opcionalne pretvarače (War Thunder, World of Tanks, World of Warships, Squad reprodukcije; DCS i IL-2 karte), odvojene tako da problem s jednim od njih ne utječe ni na jedan drugi.
+Mapa `exporters/` sadrži zasebne alate za podatke kao git submodule, svaki vlastiti repozitorij; nakon običnog kloniranja pokrenite `git submodule update --init`. Sam preglednik ih ne treba za rad. Mapa `exporters/ext/` sadrži opcionalne pretvarače (War Thunder, World of Tanks, World of Warships, Squad reprodukcije; DCS i IL-2 karte), svaki kao zaseban projekt.
 
 Uz sve to ne dolaze nikakvi podaci iz igara: razine, karte i snimke izrađuju se na vašem računalu alatima, iz igara koje posjedujete.
 
@@ -117,7 +117,7 @@ Poslužitelj se veže samo na `127.0.0.1`, pa do obje rute nije moguće doći s 
 
 ## Srodni repozitoriji {#related-repositories}
 
-Preglednik čita podatke; ovi alati ih stvaraju. Svaki je zaseban javni repozitorij (MIT) s vlastitom dokumentacijom. Nijedan ne isporučuje podatke iz igara: razine, karte i snimke izrađuju se na vašem računalu, iz igara koje posjedujete.
+Preglednik čita podatke; ovi alati ih stvaraju. Svaki je zaseban javni repozitorij (MIT) s vlastitom dokumentacijom. Nijedan ne isporučuje podatke iz igara: razine, karte i snimke izrađuju se na vašem računalu, iz igara koje posjedujete. Svaki čitač igre zaseban je mali projekt s vlastitom datotekom licence, izdanjima i praćenjem problema, pa se može instalirati, ažurirati, održavati – ili povući na zahtjev nositelja prava – zasebno, bez utjecaja na preglednik i ostale alate.
 
 | Repozitorij | Što radi | Korisno za | Dokumentacija |
 |---|---|---|---|

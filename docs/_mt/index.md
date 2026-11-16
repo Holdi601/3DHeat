@@ -67,7 +67,7 @@ npm install
 npm run dev      # http://127.0.0.1:5273
 ```
 
-Il-folder `exporters/` fih l-għodod separati tad-data bħala submodules ta' git, kull wieħed repożitorju tiegħu; wara clone sempliċi ħaddem `git submodule update --init`. Il-viewer innifsu ma jeħtieġhomx biex jaħdem. `exporters/ext/` fih il-konvertituri fakultattivi (War Thunder, World of Tanks, World of Warships, replays ta' Squad; mapep ta' DCS u IL-2), miżmuma separati sabiex problema ma' wieħed minnhom ma taffettwa xejn ieħor.
+Il-folder `exporters/` fih l-għodod separati tad-data bħala submodules ta' git, kull wieħed repożitorju tiegħu; wara clone sempliċi ħaddem `git submodule update --init`. Il-viewer innifsu ma jeħtieġhomx biex jaħdem. `exporters/ext/` fih il-konvertituri fakultattivi (War Thunder, World of Tanks, World of Warships, replays ta' Squad; mapep ta' DCS u IL-2), kull wieħed proġett għalih.
 
 Ebda data tal-logħob ma tiġi ma' xejn minn dan: il-livelli, il-mapep u r-reġistrazzjonijiet isiru fuq il-magna tiegħek bl-għodod, minn logħob li għandek.
 
@@ -118,7 +118,7 @@ Is-server jorbot biss ma' `127.0.0.1`, għalhekk ebda minn dawn ir-routes ma tin
 
 ## Repożitorji relatati {#related-repositories}
 
-Il-viewer jaqra d-data; dawn l-għodod joħolquha. Kull wieħed huwa repożitorju pubbliku tiegħu (MIT) bid-dokumentazzjoni tiegħu. Ebda wieħed minnhom ma jġib data tal-logħob: il-livelli, il-mapep u r-reġistrazzjonijiet isiru fuq il-magna tiegħek, minn logħob li għandek.
+Il-viewer jaqra d-data; dawn l-għodod joħolquha. Kull wieħed huwa repożitorju pubbliku tiegħu (MIT) bid-dokumentazzjoni tiegħu. Ebda wieħed minnhom ma jġib data tal-logħob: il-livelli, il-mapep u r-reġistrazzjonijiet isiru fuq il-magna tiegħek, minn logħob li għandek. Kull qarrej ta' logħba huwa proġett żgħir għalih, bil-fajl tal-liċenzja, il-ħarġiet u t-tracker tal-kwistjonijiet tiegħu, u għalhekk jista' jiġi installat, aġġornat, miżmum – jew irtirat fuq talba ta' detentur tad-drittijiet – waħdu, mingħajr ma jaffettwa l-viewer jew l-għodod l-oħra.
 
 | Repożitorju | X'jagħmel | Utli għal | Dokumentazzjoni |
 |---|---|---|---|

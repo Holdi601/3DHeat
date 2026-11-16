@@ -67,7 +67,7 @@ npm install
 npm run dev      # http://127.0.0.1:5273
 ```
 
-Mapa `exporters/` vsebuje ločena orodja za podatke kot git podmodule, vsak je svoj repozitorij; po navadnem kloniranju zaženite `git submodule update --init`. Sam pregledovalnik jih za zagon ne potrebuje. `exporters/ext/` vsebuje izbirne pretvornike (War Thunder, World of Tanks, World of Warships, posnetke Squad; zemljevide DCS in IL-2), ločene, da težava z enim ne vpliva na ostale.
+Mapa `exporters/` vsebuje ločena orodja za podatke kot git podmodule, vsak je svoj repozitorij; po navadnem kloniranju zaženite `git submodule update --init`. Sam pregledovalnik jih za zagon ne potrebuje. `exporters/ext/` vsebuje izbirne pretvornike (War Thunder, World of Tanks, World of Warships, posnetke Squad; zemljevide DCS in IL-2), vsak kot samostojen projekt.
 
 Nobenih podatkov iz iger ni priloženih: ravni, zemljevidi in posnetki nastanejo na vašem računalniku z orodji, iz iger, ki jih imate.
 
@@ -118,7 +118,7 @@ Strežnik je vezan samo na `127.0.0.1`, zato do obeh poti ne pride iz omrežja. 
 
 ## Sorodni repozitoriji {#related-repositories}
 
-Pregledovalnik bere podatke; ta orodja jih ustvarijo. Vsak je svoj javni repozitorij (MIT) z lastno dokumentacijo. Nobeno ne prinaša podatkov iz iger: ravni, zemljevidi in posnetki nastanejo na vašem računalniku iz iger, ki jih imate.
+Pregledovalnik bere podatke; ta orodja jih ustvarijo. Vsak je svoj javni repozitorij (MIT) z lastno dokumentacijo. Nobeno ne prinaša podatkov iz iger: ravni, zemljevidi in posnetki nastanejo na vašem računalniku iz iger, ki jih imate. Vsak bralnik igre je svoj majhen projekt z lastno licenčno datoteko, izdajami in sledilnikom težav, zato ga je mogoče namestiti, posodobiti, vzdrževati – ali na zahtevo imetnika pravic umakniti – posebej, brez vpliva na pregledovalnik in druga orodja.
 
 | Repozitorij | Kaj naredi | Uporabno za | Dokumentacija |
 |---|---|---|---|

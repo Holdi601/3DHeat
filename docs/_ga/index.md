@@ -67,7 +67,7 @@ npm install
 npm run dev      # http://127.0.0.1:5273
 ```
 
-Coinníonn fillteán `exporters/` na huirlisí sonraí ar leithligh mar fho-mhodúil git, gach ceann ina stóras féin; tar éis clón simplí rith `git submodule update --init`. Ní theastaíonn na huirlisí seo ón amharcóir féin chun rith. Coinníonn `exporters/ext/` na coinbhertóirí roghnacha (War Thunder, World of Tanks, World of Warships, athsheinmeanna Squad; léarscáileanna DCS agus IL-2), scartha óna chéile ionas nach gcuirfidh fadhb le ceann amháin isteach ar aon cheann eile.
+Coinníonn fillteán `exporters/` na huirlisí sonraí ar leithligh mar fho-mhodúil git, gach ceann ina stóras féin; tar éis clón simplí rith `git submodule update --init`. Ní theastaíonn na huirlisí seo ón amharcóir féin chun rith. Coinníonn `exporters/ext/` na coinbhertóirí roghnacha (War Thunder, World of Tanks, World of Warships, athsheinmeanna Squad; léarscáileanna DCS agus IL-2), gach ceann acu ina thionscadal féin.
 
 Ní thagann sonraí cluiche leis an rud ar bith: déantar leibhéil, léarscáileanna agus taifeadtaí ar do ríomhaire féin leis na huirlisí, ó chluichí atá agat.
 
@@ -118,7 +118,7 @@ Ní ceanglaíonn an freastalaí ach le `127.0.0.1`, mar sin ní fhaightear na be
 
 ## Stórais ghaolmhara {#related-repositories}
 
-Léann an t-amharcóir sonraí; déanann na huirlisí seo iad. Is stóras poiblí é gach ceann (MIT) le a dhoiciméadú féin. Níl sonraí cluiche ar bith sa chuid is mó díobh: déantar leibhéil, léarscáileanna agus taifeadtaí ar do ríomhaire féin, ó chluichí atá agat.
+Léann an t-amharcóir sonraí; déanann na huirlisí seo iad. Is stóras poiblí é gach ceann (MIT) le a dhoiciméadú féin. Níl sonraí cluiche ar bith sa chuid is mó díobh: déantar leibhéil, léarscáileanna agus taifeadtaí ar do ríomhaire féin, ó chluichí atá agat. Is tionscadal beag ann féin é gach léitheoir cluiche, lena chomhad ceadúnais, a eisiúintí agus a rianaitheoir saincheisteanna féin, ionas gur féidir é a shuiteáil, a nuashonrú, a chothabháil – nó a tharraingt siar ar iarratas ó shealbhóir cearta – ann féin, gan tionchar ar an amharcóir ná ar na huirlisí eile.
 
 | Stór | Cad a dhéanann sé | Úsáideach le haghaidh | Doiciméadú |
 |---|---|---|---|

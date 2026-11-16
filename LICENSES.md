@@ -9,8 +9,8 @@ The viewer and its tools are all free and open source under the MIT licence:
 
 The tools are separate repositories so that anyone can get their courses,
 levels and laps out of a game whether or not they use the viewer.
-Each tool's own third-party components, model licences and the obligations
-of reading game files are recorded in the `LICENSES.md` of its repository, which
+Each tool's own third-party components, model licences and what it reads from
+a game are recorded in the `LICENSES.md` of its repository, which
 travels with it.
 
 Every licence below was read off the package metadata in September 2026, not

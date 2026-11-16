@@ -67,7 +67,7 @@ npm install
 npm run dev      # http://127.0.0.1:5273
 ```
 
-Aplanke `exporters/` yra atskiri duomenų įrankiai kaip git submoduliai, kiekvienas – savo saugykla; po paprasto klonavimo paleiskite `git submodule update --init`. Pati peržiūros programa jiems nereikia, kad veiktų. Aplanke `exporters/ext/` yra pasirinktiniai konverteriai (War Thunder, World of Tanks, World of Warships, Squad pakartojimai; DCS ir IL-2 žemėlapiai), laikomi atskirai, kad problema su vienu iš jų nepaveiktų nieko kito.
+Aplanke `exporters/` yra atskiri duomenų įrankiai kaip git submoduliai, kiekvienas – savo saugykla; po paprasto klonavimo paleiskite `git submodule update --init`. Pati peržiūros programa jiems nereikia, kad veiktų. Aplanke `exporters/ext/` yra pasirinktiniai konverteriai (War Thunder, World of Tanks, World of Warships, Squad pakartojimai; DCS ir IL-2 žemėlapiai), kiekvienas yra atskiras projektas.
 
 Jokie žaidimų duomenys su šiuo įrankiu nepateikiami: lygiai, žemėlapiai ir įrašai padaromi jūsų kompiuteryje įrankiais, iš žaidimų, kuriuos turite.
 
@@ -118,7 +118,7 @@ Serveris klauso tik `127.0.0.1`, todėl nei vienas maršrutas nepasiekiamas per 
 
 ## Susiję saugyklos {#related-repositories}
 
-Peržiūros programa skaito duomenis; šie įrankiai juos sukuria. Kiekviena yra atskira viešoji saugykla (MIT) su savo dokumentacija. Nė vienas iš jų nepateikia žaidimo duomenų: lygiai, žemėlapiai ir įrašai daromi jūsų kompiuteryje, iš žaidimų, kuriuos turite.
+Peržiūros programa skaito duomenis; šie įrankiai juos sukuria. Kiekviena yra atskira viešoji saugykla (MIT) su savo dokumentacija. Nė vienas iš jų nepateikia žaidimo duomenų: lygiai, žemėlapiai ir įrašai daromi jūsų kompiuteryje, iš žaidimų, kuriuos turite. Kiekviena žaidimo skaityklė yra atskiras nedidelis projektas su savo licencijos failu, leidimais ir problemų sekimo sistema, todėl ją galima įdiegti, atnaujinti, prižiūrėti – arba teisių turėtojo prašymu pašalinti – atskirai, nepaveikiant peržiūros programos ir kitų įrankių.
 
 | Saugykla | Ką daro | Naudinga | Dokumentacija |
 |---|---|---|---|

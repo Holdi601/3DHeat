@@ -65,7 +65,7 @@ npm install
 npm run dev      # http://127.0.0.1:5273
 ```
 
-Der Ordner `exporters/` enthält die separaten Datenwerkzeuge als Git-Submodule, jedes ein eigenes Repository; nach einem einfachen Klonen führe `git submodule update --init` aus. Der Viewer selbst braucht sie zum Starten nicht. `exporters/ext/` enthält die optionalen Konverter (Replays von War Thunder, World of Tanks, World of Warships und Squad; Karten von DCS und IL-2), getrennt gehalten, damit ein Problem mit einem davon keine anderen betrifft.
+Der Ordner `exporters/` enthält die separaten Datenwerkzeuge als Git-Submodule, jedes ein eigenes Repository; nach einem einfachen Klonen führe `git submodule update --init` aus. Der Viewer selbst braucht sie zum Starten nicht. `exporters/ext/` enthält die optionalen Konverter (Replays von War Thunder, World of Tanks, World of Warships und Squad; Karten von DCS und IL-2), jeder ein eigenes Projekt.
 
 Keine Spieldaten liegen dem bei: Levels, Karten und Aufnahmen entstehen auf deinem eigenen Rechner mit den Werkzeugen, aus Spielen, die dir gehören.
 
@@ -116,7 +116,7 @@ Der Server bindet nur an `127.0.0.1`, daher sind beide Routen aus dem Netzwerk n
 
 ## Verwandte Repositories {#related-repositories}
 
-Der Viewer liest Daten; diese Werkzeuge erzeugen sie. Jedes ist ein eigenes öffentliches Repository (MIT) mit eigener Dokumentation. Keines liefert Spieldaten mit: Levels, Karten und Aufnahmen entstehen auf deinem eigenen Rechner, aus Spielen, die dir gehören.
+Der Viewer liest Daten; diese Werkzeuge erzeugen sie. Jedes ist ein eigenes öffentliches Repository (MIT) mit eigener Dokumentation. Keines liefert Spieldaten mit: Levels, Karten und Aufnahmen entstehen auf deinem eigenen Rechner, aus Spielen, die dir gehören. Jeder Spiel-Leser ist ein eigenes kleines Projekt mit eigener Lizenzdatei, eigenen Releases und eigenem Issue-Tracker. So lässt er sich für sich installieren, aktualisieren, pflegen – oder auf Wunsch eines Rechteinhabers zurückziehen –, ohne den Viewer oder die anderen Werkzeuge zu berühren.
 
 | Repository | Was es macht | Nützlich für | Dokumentation |
 |---|---|---|---|
