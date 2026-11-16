@@ -53,6 +53,7 @@ export function RangesPanel() {
               format={(v) => (v > 0 ? len(v) : t('ranges.viewLengthAuto'))}
             />
           )}
+          <Check label={t('ranges.sensors')} checked={r.sensors} onChange={(v) => set({ sensors: v })} title={t('ranges.sensorsTitle')} />
           <Check label={t('ranges.weapons')} checked={r.weapons} onChange={(v) => set({ weapons: v })} />
           {r.weapons && (
           <div className="field">
@@ -99,6 +100,12 @@ export function RangesPanel() {
                 <span>{index.units[index.personUnit[u.person]]?.name ?? `#${u.person}`}</span>
               </div>
               {u.fov !== null && <div className="hint">{t('ranges.fovLine', { fov: num(u.fov, 0) })}</div>}
+              {u.sensors.map((sn) => (
+                <div key={sn.id} className="hint" title={[sn.recorded ? t('ranges.recorded') : t(`ranges.src.${sn.src}`), sn.note, sn.source].filter(Boolean).join(' · ')}>
+                  {t('ranges.sensorLine', { name: sn.name, range: len(sn.range), az: num(Math.abs(sn.az[1] - sn.az[0]), 0), el: num(Math.abs(sn.el[1] - sn.el[0]), 0) })}
+                  {sn.recorded ? ` (${t('ranges.recorded')})` : sn.src === 'estimate' ? ' *' : ''}
+                </div>
+              ))}
               {u.weapons.map((w, i) => (
                 <div
                   key={w.weapon.id}
@@ -114,6 +121,7 @@ export function RangesPanel() {
             </div>
           ))}
           {info.units.length > 0 && <div className="hint">{t('ranges.estimateNote')}</div>}
+          {r.sensors && info.units.some((u) => u.sensors.length) && <div className="hint">{t('ranges.sensorNote')}</div>}
         </>
       )}
     </Section>

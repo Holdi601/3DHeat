@@ -83,6 +83,11 @@ export interface RangeUnit {
   colours?: [number, number, number][];
   /** Its view cone (`view.ts`): how far, the tangents of half its width and height, where it looks, its colour. */
   view?: { length: number; tanH: number; tanV: number; fwd: [number, number, number]; colour: [number, number, number] };
+  /**
+   * Its sensors' sectors (`sensors.ts`): the bands' reaches in data units (least, best, most; 0 none),
+   * all round (a dome cut at its elevations) or a frustum, and the colour.
+   */
+  sectors?: { bands: [number, number, number]; dome: boolean; el: [number, number]; fwd: [number, number, number]; tanH: number; tanV: number; colour: [number, number, number]; los: boolean }[];
   /** Its view slot (`viewshed.ts`), -1 for none. */
   slot: number;
 }
@@ -132,15 +137,32 @@ export function buildShells(
           n++;
         }
       }
-      // The view cone, a frustum with its sides, with the cones.
-      if (pass === 1 && u.view) {
+      const grow = () => {
         if (out.data.length < (n + 1) * SHELL_FLOATS) {
           const next = new Float32Array(Math.max(64, (n + 1) * 2) * SHELL_FLOATS);
           next.set(out.data.subarray(0, n * SHELL_FLOATS));
           out.data = next;
         }
-        writeView(out.data, n * SHELL_FLOATS, u, u.view);
+      };
+      // The view cone, a frustum with its sides, with the cones.
+      if (pass === 1 && u.view) {
+        grow();
+        writeView(out.data, n * SHELL_FLOATS, u, { ...u.view, band: BAND.max, min: 0, opt: 0 });
         n++;
+      }
+      // The sensors: a dome's bands with the spheres; a frustum's outermost band with its sides, with the cones.
+      for (const sec of u.sectors ?? []) {
+        for (let band = 0; band < 3; band++) {
+          const r = sec.bands[band];
+          if (!(r > 0)) continue;
+          if (band === BAND.min && !s.bands.min) continue;
+          if (band === BAND.opt && !s.bands.opt) continue;
+          if (band === BAND.max && !s.bands.max) continue;
+          if ((!sec.dome && band === BAND.max) !== (pass === 1)) continue;
+          grow();
+          writeView(out.data, n * SHELL_FLOATS, u, { length: r, tanH: sec.tanH, tanV: sec.tanV, fwd: sec.fwd, colour: sec.colour, band, min: sec.bands[0], opt: sec.bands[1], dome: sec.dome ? sec.el : undefined, los: sec.los });
+          n++;
+        }
       }
     }
   }
@@ -221,8 +243,16 @@ export function weaponColour(team: Rgb, i: number): Rgb {
   const hue = (((h + HUE_STEP[j]) % 360) + 360) % 360;
   return toRgb([hue, Math.max(0.55, s), Math.min(0.78, Math.max(0.38, l + LIGHT_STEP[j]))]);
 }
-/** A view frustum's instance: the outermost band, cut by line of sight, the frustum flag and its tangents. */
-function writeView(o: Float32Array, at: number, u: RangeUnit, v: NonNullable<RangeUnit['view']>): void {
+/**
+ * A view frustum's or a sensor sector's instance, cut by line of sight: the frustum flag and its tangents,
+ * or (`dome`) all round, cut at those elevations.
+ */
+function writeView(
+  o: Float32Array,
+  at: number,
+  u: RangeUnit,
+  v: { length: number; tanH: number; tanV: number; fwd: [number, number, number]; colour: [number, number, number]; band: number; min: number; opt: number; dome?: [number, number]; los?: boolean },
+): void {
   o.fill(0, at, at + SHELL_FLOATS);
   o[at] = u.x;
   o[at + 1] = u.y;
@@ -231,15 +261,17 @@ function writeView(o: Float32Array, at: number, u: RangeUnit, v: NonNullable<Ran
   o.set(v.colour, at + 4);
   o[at + 7] = 1;
   o.set(v.fwd, at + 8);
-  o[at + 11] = -3;
+  o[at + 11] = v.dome ? -2 : -3;
   o[at + 12] = -1e9;
   o[at + 13] = 1e9;
-  o[at + 14] = -1;
-  o[at + 15] = 1;
-  o[at + 16] = BAND.max;
-  o[at + 17] = u.slot;
+  o[at + 14] = v.dome ? Math.sin((Math.max(-90, v.dome[0]) * Math.PI) / 180) : -1;
+  o[at + 15] = v.dome ? Math.sin((Math.min(90, v.dome[1]) * Math.PI) / 180) : 1;
+  o[at + 16] = v.band;
+  o[at + 17] = v.los === false ? -1 : u.slot;
   o[at + 18] = -1;
-  o[at + 19] = 1;
+  o[at + 19] = v.los === false ? 0 : 1;
+  o[at + 20] = v.min;
+  o[at + 21] = v.opt;
   o[at + 22] = v.tanH;
   o[at + 23] = v.tanV;
 }

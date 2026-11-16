@@ -18,6 +18,8 @@ export interface RangeSettings {
   /** The view cone (`view.ts`), and how far it reaches (metres; 0: the game's or the unit's usual visual range). */
   view: boolean;
   viewLength: number;
+  /** The sensors' sectors (`sensors.ts`). */
+  sensors: boolean;
   classes: Record<WeaponClass, boolean>;
   bands: { min: boolean; opt: boolean; max: boolean };
   /** 0.05 to 1. */
@@ -37,6 +39,7 @@ export const DEFAULT_RANGES: RangeSettings = {
   weapons: true,
   view: false,
   viewLength: 0,
+  sensors: false,
   classes: Object.fromEntries(WEAPON_CLASSES.map((c) => [c, true])) as Record<WeaponClass, boolean>,
   bands: { min: true, opt: true, max: true },
   opacity: 0.5,
@@ -59,6 +62,7 @@ export function readRanges(v: unknown): RangeSettings {
     weapons: a.weapons !== false,
     view: a.view === true,
     viewLength: typeof a.viewLength === 'number' && a.viewLength > 0 ? Math.min(100000, a.viewLength) : 0,
+    sensors: a.sensors === true,
     classes: Object.fromEntries(WEAPON_CLASSES.map((k) => [k, c[k] !== false])) as Record<WeaponClass, boolean>,
     bands: { min: b.min !== false, opt: b.opt !== false, max: b.max !== false },
     opacity: typeof a.opacity === 'number' && a.opacity > 0 ? Math.min(1, Math.max(0.05, a.opacity)) : d.opacity,

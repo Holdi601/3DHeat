@@ -6,6 +6,7 @@ import { DEFAULT_RANGES, readRanges } from './settings';
 import { BAND, CONE_RINGS, CONE_SEGMENTS, SHELL_FLOATS, SPHERE_RINGS, SPHERE_SEGMENTS, buildShells, dropReach, shellMesh, weaponColour, type RangeUnit } from './shells';
 import { ViewshedPlan, type RangeView } from './viewshed';
 import { ViewFov, acrossOf, gameFov, magnified, upOf } from './view';
+import { RecordedRadars, gameSensors, sectorShape, sensorBands, sensorsFor, turned } from './sensors';
 import { FACES, MAX_VIEWS, faceOf, faceUv } from './viewshedShaders';
 
 describe('range catalogue', () => {
@@ -331,5 +332,63 @@ describe('view cone', () => {
     expect(out.data[11]).toBe(-3);
     expect(out.data[17]).toBe(2);
     expect([out.data[22], out.data[23]]).toEqual([1, 0.5625]);
+  });
+});
+describe('sensors', () => {
+  it("reads a game's sensors and finds a vehicle's by its name", () => {
+    const wt = gameSensors(GAMES.get('wt')!);
+    expect(wt.length).toBeGreaterThan(3);
+    const gepard = sensorsFor(wt, 'germ_flakpanzer_gepard', null);
+    expect(gepard.map((s) => s.kind)).toContain('radar');
+    expect(sensorsFor(wt, 'us_m1_abrams', null).filter((s) => s.kind === 'radar')).toEqual([]);
+    // How far a ship is seen is not a sensor of its own.
+    expect(gameSensors(GAMES.get('wows')!).some((s) => /detectab/i.test(`${s.name} ${s.note ?? ''}`))).toBe(false);
+  });
+
+  it("shrinks a radar's reach with the fourth root of the target's cross-section", () => {
+    const [min, opt, max] = sensorBands({ kind: 'radar', range: 100000 });
+    expect(max).toBe(100000);
+    expect(opt).toBeCloseTo(56234, 0);
+    expect(min).toBeCloseTo(31623, 0);
+    expect(sensorBands({ kind: 'irst', range: 8000 })).toEqual([0, 0, 8000]);
+  });
+
+  it('draws an all-round search as a dome and a forward one as a frustum about its middle', () => {
+    expect(sectorShape([0, 0, -1], [-180, 180], [0, 85])).toEqual({ dome: true, el: [0, 85] });
+    const f = sectorShape([0, 0, -1], [-60, 60], [-10, 30]);
+    expect(f.dome).toBe(false);
+    if (!f.dome) {
+      expect(f.tanH).toBeCloseTo(Math.tan(Math.PI / 3), 6);
+      expect(f.tanV).toBeCloseTo(Math.tan((20 * Math.PI) / 180), 6);
+      expect(f.fwd[1]).toBeCloseTo(Math.sin((10 * Math.PI) / 180), 6);
+    }
+    const right = turned([0, 0, -1], 90, 0);
+    expect(right[0]).toBeCloseTo(1, 6);
+  });
+
+  it('reads the radar a recording has on, and nothing while it is off', () => {
+    const col = (name: string, v: number[]) => ({ name, kind: 'number', data: Float32Array.from(v), min: 0, max: 1 });
+    const d = { attrs: [col('RadarMode', [1, 0]), col('RadarRange', [80000, 80000]), col('RadarAzimuth', [10, 10]), col('RadarHorizontalBeamwidth', [120, 120])] } as unknown as Dataset;
+    const r = new RecordedRadars();
+    expect(r.at(d, 0)).toMatchObject({ range: 80000, az: 10, el: 0, h: 120 });
+    expect(r.at(d, 1)).toBeNull();
+  });
+
+  it("lays a sector's bands, the frustum's outermost with its sides", () => {
+    const out = { data: new Float32Array(0), count: 0, coneStart: 0 };
+    const unit: RangeUnit = {
+      person: 0, x: 0, y: 0, z: 0, fwd: [0, 0, -1], height: 0, speed: 0, weapons: [], slot: 0,
+      sectors: [
+        { bands: [316, 562, 1000], dome: false, el: [-10, 10], fwd: [0, 0, -1], tanH: 1, tanV: 0.2, colour: [1, 1, 1], los: true },
+        { bands: [0, 0, 500], dome: true, el: [0, 85], fwd: [0, 0, -1], tanH: 0, tanV: 0, colour: [1, 1, 1], los: false },
+      ],
+    };
+    buildShells([unit], DEFAULT_RANGES, 1, RANGES.colours, out);
+    expect(out.count).toBe(4);
+    expect(out.coneStart).toBe(3);
+    const last = out.data.subarray(3 * SHELL_FLOATS, 4 * SHELL_FLOATS);
+    expect([last[3], last[11], last[20], last[21]]).toEqual([1000, -3, 316, 562]);
+    const dome = out.data.subarray(2 * SHELL_FLOATS, 3 * SHELL_FLOATS);
+    expect([dome[3], dome[11], dome[17]]).toEqual([500, -2, -1]);
   });
 });

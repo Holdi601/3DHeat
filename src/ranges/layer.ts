@@ -18,9 +18,10 @@ import type { RangeSettings } from './settings';
 import { MAX_VIEWS } from './viewshedShaders';
 import type { RangeView } from './viewshed';
 import { VIEW_ASPECT, VIEW_REACH, ViewFov, gameViewDistance } from './view';
+import { RecordedRadars, gameSensors, sectorShape, sensorBands, sensorsFor, type SensorSpec } from './sensors';
 
 /** The units shown and their weapons, for the panel (changes when the set does, not every frame). */
-export const useRangeInfo = create<{ units: { person: number; weapons: UnitWeapon[]; colours: [number, number, number][]; fov: number | null }[]; reading: boolean; game: string | null }>(() => ({ units: [], reading: false, game: null }));
+export const useRangeInfo = create<{ units: { person: number; weapons: UnitWeapon[]; colours: [number, number, number][]; fov: number | null; sensors: SensorSpec[] }[]; reading: boolean; game: string | null }>(() => ({ units: [], reading: false, game: null }));
 
 export interface RangeTrack {
   person: number;
@@ -70,6 +71,21 @@ export class RangeLayer {
   /** The game the table is from (`catalog.ts`), worked out again once all its weapon names are read. */
   private game: GameCatalogue | null = null;
   private readonly fov = new ViewFov();
+  private readonly radars = new RecordedRadars();
+  private gameSensorList: { game: GameCatalogue | null; list: SensorSpec[] } = { game: null, list: [] };
+
+  /** A unit's sensors now: the recorded radar where the recording has it on (over the specification's radar), and the specified others. */
+  private sensorsNow(d: Dataset, row: number, vehicle: string, figure: string | null): SensorSpec[] {
+    if (this.gameSensorList.game !== this.game) this.gameSensorList = { game: this.game, list: gameSensors(this.game) };
+    const spec = sensorsFor(this.gameSensorList.list, vehicle, figure);
+    const rec = this.radars.at(d, row);
+    if (!rec) return spec;
+    const radar = spec.find((s) => s.kind === 'radar');
+    const hw = Number.isFinite(rec.h) ? rec.h / 2 : radar ? (radar.az[1] - radar.az[0]) / 2 : 60;
+    const vw = Number.isFinite(rec.v) ? rec.v / 2 : radar ? (radar.el[1] - radar.el[0]) / 2 : 30;
+    const recorded: SensorSpec = { id: 'recorded-radar', kind: 'radar', name: radar?.name ?? 'Radar', match: /(?!)/, range: rec.range, az: [rec.az - hw, rec.az + hw], el: [rec.el - vw, rec.el + vw], rcsRef: radar?.rcsRef ?? null, src: 'game', recorded: true };
+    return [recorded, ...spec.filter((s) => s !== radar)];
+  }
 
   /** Reads more of the table's weapon names; true while there is more to read. */
   step(d: Dataset): boolean {
@@ -101,7 +117,7 @@ export class RangeLayer {
     const s = c.settings;
     const teams = new Set<number>();
     for (const tr of tracks) if (c.selected.has(tr.person)) teams.add(tr.team);
-    const chosen: { tr: RangeTrack; figure: string | null; weapons: WeaponRange[]; colours: [number, number, number][]; palette: [number, number, number][]; all: UnitWeapon[]; dist: number }[] = [];
+    const chosen: { tr: RangeTrack; figure: string | null; weapons: WeaponRange[]; colours: [number, number, number][]; palette: [number, number, number][]; all: UnitWeapon[]; sensors: SensorSpec[]; dist: number }[] = [];
     for (const tr of tracks) {
       const ok = s.units === 'all' || c.selected.has(tr.person) || (s.units === 'team' && tr.team >= 0 && teams.has(tr.team));
       if (!ok || tr.row < 0) continue;
@@ -117,16 +133,17 @@ export class RangeLayer {
         weapons.push(w.weapon);
         colours.push(palette[i]);
       });
-      if (!weapons.length && !s.view) continue;
+      const sensors = s.sensors ? this.sensorsNow(d, tr.row, c.vehicleOf(tr.person), figure) : [];
+      if (!weapons.length && !s.view && !sensors.length) continue;
       const dist = Math.hypot(tr.x - c.camera[0], tr.y - c.camera[1], tr.z - c.camera[2]);
-      chosen.push({ tr, figure, weapons, colours, palette, all, dist });
+      chosen.push({ tr, figure, weapons, colours, palette, all, sensors, dist });
     }
     // The ones in question first, then the nearest.
     chosen.sort((a, b) => Number(c.selected.has(b.tr.person)) - Number(c.selected.has(a.tr.person)) || a.dist - b.dist);
     chosen.length = Math.min(chosen.length, s.maxUnits);
 
     // Views: slots kept by who holds them; the rest given out in order.
-    const viewed = chosen.filter((u) => s.view || u.weapons.some((w) => w.los)).slice(0, MAX_VIEWS);
+    const viewed = chosen.filter((u) => s.view || u.sensors.length || u.weapons.some((w) => w.los)).slice(0, MAX_VIEWS);
     const keep = new Set(viewed.map((u) => u.tr.person));
     for (const [p] of this.slots) if (!keep.has(p)) this.slots.delete(p);
     const used = new Set(this.slots.values());
@@ -164,11 +181,28 @@ export class RangeLayer {
         const team = c.colourOf(tr.person);
         view = { length: viewLength * c.k, tanH, tanV: tanH / VIEW_ASPECT, fwd: tr.look ?? tr.fwd, colour: [team[0] * 0.6 + 0.4, team[1] * 0.6 + 0.4, team[2] * 0.6 + 0.4] };
       }
-      units.push({ person: tr.person, x: tr.x - c.origin[0], y: y - c.origin[1], z: tr.z - c.origin[2], fwd: tr.fwd, height, speed, weapons: u.weapons, colours: u.colours, view, slot });
+      // The sensors' sectors about the nose, each in a pale shade of the side's colour.
+      const sectors: NonNullable<RangeUnit['sectors']> = u.sensors.map((sn, i) => {
+        const shape = sectorShape(tr.fwd, sn.az, sn.el);
+        const b = sensorBands(sn);
+        const col = weaponColour(c.colourOf(tr.person), 5 + i);
+        return {
+          bands: [b[0] * c.k, b[1] * c.k, b[2] * c.k] as [number, number, number],
+          dome: shape.dome,
+          el: sn.el,
+          fwd: shape.dome ? tr.fwd : shape.fwd,
+          tanH: shape.dome ? 0 : shape.tanH,
+          tanV: shape.dome ? 0 : shape.tanV,
+          colour: [col[0] * 0.7 + 0.3, col[1] * 0.7 + 0.3, col[2] * 0.7 + 0.3] as [number, number, number],
+          // Passive warning receivers and sonar are not limited by what is in view.
+          los: !/^(rwr|esm|sonar|hydro)$/.test(sn.kind),
+        };
+      });
+      units.push({ person: tr.person, x: tr.x - c.origin[0], y: y - c.origin[1], z: tr.z - c.origin[2], fwd: tr.fwd, height, speed, weapons: u.weapons, colours: u.colours, view, sectors, slot });
       if (slot >= 0) {
         const los = u.weapons.filter((w) => w.los);
         const reach = (w: WeaponRange) => (w.shape === 'drop' ? dropReach(w, height, speed) : w.max);
-        const max = Math.max(viewLength, ...los.map(reach));
+        const max = Math.max(viewLength, ...los.map(reach), ...u.sensors.filter((sn) => !/^(rwr|esm|sonar|hydro)$/.test(sn.kind)).map((sn) => sn.range));
         const far = max * c.k * 1.05;
         views[slot] = {
           id: tr.person,
@@ -178,16 +212,16 @@ export class RangeLayer {
           band: los.length ? [Math.min(...los.map((w) => w.min)) * c.k, Math.max(...los.map((w) => Math.min(w.opt, reach(w)))) * c.k, max * c.k] : [0, max * 0.5 * c.k, max * c.k],
           colour: c.colourOf(tr.person),
           // Only the view cone: the ground shaded is what lies in it.
-          cone: !los.length && view ? { fwd: view.fwd, tanH: view.tanH } : null,
+          cone: !los.length && !u.sensors.length && view ? { fwd: view.fwd, tanH: view.tanH } : null,
         };
       }
     }
     buildShells(units, s, c.k, RANGES.colours, this.out);
 
-    const key = chosen.map((u) => `${u.tr.person}:${u.all.length}:${Math.round(fovs.get(u.tr.person) ?? -1)}`).join(',') + `|${this.loadouts.done}`;
+    const key = chosen.map((u) => `${u.tr.person}:${u.all.length}:${Math.round(fovs.get(u.tr.person) ?? -1)}:${u.sensors.map((x) => x.id).join('+')}`).join(',') + `|${this.loadouts.done}`;
     if (key !== this.infoKey) {
       this.infoKey = key;
-      useRangeInfo.setState({ units: chosen.map((u) => ({ person: u.tr.person, weapons: u.all, colours: u.palette, fov: fovs.get(u.tr.person) ?? null })), reading: !this.loadouts.done, game: this.game?.name ?? null });
+      useRangeInfo.setState({ units: chosen.map((u) => ({ person: u.tr.person, weapons: u.all, colours: u.palette, fov: fovs.get(u.tr.person) ?? null, sensors: u.sensors })), reading: !this.loadouts.done, game: this.game?.name ?? null });
     }
     if (!this.out.count && !views.some((v) => v)) return null;
     return {

@@ -122,6 +122,8 @@ async function load(page) {
         cat('player', names, (r) => r.p),
         cat('event', ['position', 'shot'], (r) => r.ev),
         cat('weapon', ['', 'ak47'], (r) => r.ev),
+        // A radar recorded as on for the rifleman (as an ACMI recording writes it): 300 m, 60 by 20 degrees about his nose.
+        ...[['RadarMode', 1], ['RadarRange', 300], ['RadarAzimuth', 0], ['RadarHorizontalBeamwidth', 60], ['RadarVerticalBeamwidth', 20]].map(([name, v]) => ({ name, kind: 'number', data: Float32Array.from(rows, (r) => (r.p ? NaN : v)), min: 0, max: v })),
       ],
       warnings: [],
       bounds: { minX: -260, minY: 0, minZ: -260, maxX: 260, maxY: 2, maxZ: 260 },
@@ -224,7 +226,7 @@ async function frameTimes(page, on) {
         last = now;
         if (!switched && gaps.length > 60) {
           switched = true;
-          if (on) rp.setRanges({ on: true, units: 'all', maxUnits: 25, los: true, ground: true, weapons: true, view: true });
+          if (on) rp.setRanges({ on: true, units: 'all', maxUnits: 25, los: true, ground: true, weapons: true, view: true, sensors: true });
         }
         if (gaps.length < 660) requestAnimationFrame(tick);
         else res();
@@ -253,7 +255,7 @@ for (const backend of backends) {
     const nolos = await frame(page, { on: true, units: 'selected', los: false, ground: false, opacity: 0.8, style: 'both' });
     const noground = await frame(page, { on: true, units: 'selected', los: true, ground: false, opacity: 0.8, style: 'both' });
     if (opt('shot')) {
-      for (const [name, r] of [['los', { los: true, ground: true }], ['nolos', { los: false, ground: false }], ['inside', { los: true, ground: true }], ['view', { weapons: false, view: true, viewLength: 400, los: true, ground: true }]]) {
+      for (const [name, r] of [['los', { los: true, ground: true }], ['nolos', { los: false, ground: false }], ['inside', { los: true, ground: true }], ['view', { weapons: false, view: true, viewLength: 400, los: true, ground: true }], ['radar', { weapons: false, view: false, sensors: true, los: true, ground: false }]]) {
         await frame(page, { on: true, units: 'selected', opacity: 0.8, style: 'both', ...r });
         if (name === 'inside') {
           // From inside the shells, at the rifleman's side, looking past the house.
@@ -282,6 +284,9 @@ for (const backend of backends) {
     const cone = await frame(page, { on: true, units: 'selected', weapons: false, view: true, viewLength: 400, los: true, ground: false, opacity: 0.8, style: 'both' });
     const ahead = diffAt(off, cone, cone.at.ahead), astern = diffAt(off, cone, cone.at.astern);
     report(`${backend} view cone ahead of him, none behind`, ahead > 300 && astern < ahead * 0.2, `ahead ${ahead}, behind ${astern}`);
+    const radar = await frame(page, { on: true, units: 'selected', weapons: false, view: false, sensors: true, los: true, ground: false, opacity: 0.8, style: 'both' });
+    const rAhead = diffAt(off, radar, radar.at.ahead), rAstern = diffAt(off, radar, radar.at.astern);
+    report(`${backend} recorded radar's sector ahead of him, none behind`, rAhead > 300 && rAstern < rAhead * 0.2, `ahead ${rAhead}, behind ${rAstern}`);
     const flicker = diffAll(los, again);
     report(`${backend} no flicker (same paused frame twice)`, flicker < 20, `${flicker} pixels differ`);
     if (argv.includes('--quick')) continue;
@@ -291,7 +296,7 @@ for (const backend of backends) {
     const t1 = stats(f1.g);
     if (f1.slow) report(`${backend} slow frames with the ranges on`, null, f1.slow);
     report(`${backend} frame times, 25 walking units, ranges off`, null, fmt(t0));
-    report(`${backend} frame times, ranges and view cones on for all 25 (4 views)`, GPU ? t1.p99 <= Math.max(t0.p99 * 1.25, 17.5) && t1.max < 50 : null, fmt(t1));
+    report(`${backend} frame times, ranges, view cones and sensors on for all 25 (4 views)`, GPU ? t1.p99 <= Math.max(t0.p99 * 1.25, 17.5) && t1.max < 50 : null, fmt(t1));
   } finally {
     await browser.close();
   }
