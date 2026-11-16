@@ -54,7 +54,7 @@ Der einfachste Weg zu den richtigen Figuren ist deshalb eine Spalte `vehicle` mi
 Tabellen, die so aufgebaut sind wie die des Rainbow-Six-Siege-Replay-Lesers (Spalten `operator`, `pawn`, `primaryClass`, `side`), bekommen eigene Figuren:
 
 - **Spieler** sind ihr Operator: Jeder der 78 Operator hat eine eigene Figur, etwa 1,8 m groß, in eigener Kleidung. Zwei oder drei Farben für Jacke, Hose und Ausrüstung folgen ihrem üblichen öffentlichen Aussehen (Schwarz, Oliv, Sandbraun, Stadtgrau, Weiß, Marineblau, mit roter, oranger oder petrolfarbener Ausrüstung). Dazu kommen eigene Formen, ein Drittel größer als in echt, wo sie von oben zu sehen sein müssen: Kopfbedeckung (Helme, ein Visier oder schwerer Helm, Kappen, Mützen, Baskenmützen, ein breiter Buschhut oder eine Pelzmütze, Kapuzen, Schals, Haare), das Gesicht (Schutzbrille, Gasmaske, Brille, Maske, Bart, Brille mit drei Linsen), ein leichter, mittlerer oder schwerer Körperbau (schwere sind breit, mit großen Schulterplatten und einem Kragen), ein langer Mantel oder ein Anzug, ein Ghillie-Anzug, was sie auf dem Rücken tragen (einen Hammer, Ladungen, Drohnen, Kanister, einen Treibstofftank, ein Werferrohr, eine Armbrust, Platten, einen Störsender, einen Schild) oder am Arm (einen Werfer, einen Metallarm), ihr eigener Schild (ein hoher, ein Einsatzschild, einer mit Lichtern) und eine Akzentfarbe auf den Schultern. Sie halten die Klasse ihrer Primärwaffe. Ein Operator, den der Viewer nicht kennt, ist ein einfacher Soldat im Plattenträger in der Farbe des Teams.
-- **Die Seite** ist getrennt von der Kleidung zu sehen: ein Ring am Boden unter jedem Operator, **Bernstein für Angriff, Hellcyan für Verteidigung**, mit der Farbe des Teams darin, und Arm- und Kopfbänder in derselben Farbe. Eine Spalte `stance` (stand, crouch, prone) gibt ihnen die Haltung. Ohne sie stehen sie.
+- **Die Seite** ist getrennt von der Kleidung zu sehen: ein Ring am Boden unter jedem Operator, **Bernstein für Angriff, Hellcyan für Verteidigung**, mit der Farbe des Teams darin, und Arm- und Kopfbänder in derselben Farbe. Spalten `stance` und `lean` geben ihnen Haltung und Neigung (siehe [Haltung und Neigung](#stance-and-lean)); ohne sie stehen sie.
 - **Auf Replay-Abstand unterscheidbar:** Gezeichnet mit 48 Pixeln Höhe, von oben und in Dreiviertelansicht, unterscheiden sich je zwei Operator einer Seite durch einen deutlichen Farbunterschied oder eine andere Form (von den Tests des Viewers geprüft).
 - **Beschriftungen** nennen den Spieler und den Operator, den er in diesem Moment spielt, mit der Rolle des Operators als Symbol: ✸ harter Breacher, ⚒ weicher Breacher, ➤ Entry, ✦ Fragger, ✚ Unterstützung, ⬟ Schild, ◉ Aufklärung, ◇ Flex, ↺ Flankenwache, ⚓ Anker, ✕ Fallensteller, ⇄ Roamer, ↯ Anti-Gadget, ▣ Anti-Breach.
 - **Drohnen** sind eine zweirädrige Wurfdrohne, etwa 30 cm breit. Jede ist eine eigene Spur, benannt nach ihrem Besitzer („Ash · drone 2“).
@@ -62,6 +62,15 @@ Tabellen, die so aufgebaut sind wie die des Rainbow-Six-Siege-Replay-Lesers (Spa
 - **Der Entschärfer** steht 45 Sekunden lang dort, wo er gelegt wurde.
 
 Jede Drohne und jedes Gadget wird beim Laden der Datei zu einer eigenen Spur. So bleibt die Figur des Spielers an seinem Körper. Die Operator sind vereinfachte Formen nach ihren öffentlichen Beschreibungen und Bildern (was sie tragen, das Gerät, das ihre Fähigkeit ist). Die Gadgets sind nach ihrer Aufgabe geformt. Alle sind eigene Entwürfe des Viewers in der echten Größe des Dings (eine Claymore etwa 22 cm breit, eine türgroße Platte 1 m mal 2,1 m), keine Modelle aus dem Spiel.
+
+## Haltung und Neigung {#stance-and-lean}
+
+Menschen werden in der Haltung und Neigung gezeichnet, die die Daten angeben, in den Daten jedes Spiels:
+
+- **Haltung**, aus einer Spalte `stance` (oder `posture`, `pose`): stehend, hockend, bäuchlings liegend oder auf dem Rücken liegend. Übliche Wörter werden verstanden (standing, upright, crouched, kneeling, crawling, lying, on back...), ebenso die Codes 0 stehend, 1 hockend, 2 bäuchlings, 3 auf dem Rücken.
+- **Neigung**, aus einer Spalte `lean` (oder `leaning`, `peek`): `left`, `right` oder `none`, oder eine Zahl von -1 (links) bis 1 (rechts) für eine teilweise Neigung; Zahlen über 1 gelten als Prozent (bis 100) oder Grad (45 eine volle Neigung).
+
+Haltung und Neigung lassen sich kombinieren: Auch eine hockende oder liegende Figur kann sich neigen. Die Neigung kippt den Oberkörper ab der Hüfte zur Seite, bis zu 25 Grad. Ein Haltungswechsel wird über eine Fünftelsekunde überblendet, die Neigung gleitet an ihren Platz; bei abgeschalteter Bewegung oder unter 30 Bildern pro Sekunde wechseln beide sofort. Ohne diese Spalten stehen Menschen aufrecht.
 
 ## Einstellungen {#settings}
 

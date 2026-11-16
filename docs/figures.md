@@ -49,7 +49,7 @@ So the easiest way to get the right figures is a `vehicle` column with the real 
 Tables written like the Rainbow Six Siege replay reader's (columns `operator`, `pawn`, `primaryClass`, `side`) get figures of their own:
 
 - **Players** are their operator: each of the 78 operators has a figure of their own, about 1.8 m tall, in their own clothes - two or three colours for jacket, trousers and gear after their usual public look (black, olive, tan, urban grey, white, navy, with red, orange or teal gear) - and with their own shapes, a third larger than life where they have to show from above: headgear (helmets, a visor or heavy helmet, caps, beanies, berets, a wide boonie or fur hat, hoods, scarves, hair), the face (goggles, a gas mask, glasses, a mask, a beard, three-lens goggles), a light, medium or heavy build (heavy ones broad, with big shoulder plates and a collar), a long coat or a suit, a ghillie, what they carry on the back (a hammer, charges, drones, canisters, a fuel tank, a launcher tube, a crossbow, panels, a jammer, a shield) or on the arm (a launcher, a metal arm), their own shield (a tall one, a riot shield, one with lights), and an accent colour on the shoulders. They hold the class of their primary weapon. An operator the viewer does not know is a plain soldier in a plate carrier in the team's colour.
-- **The side** shows apart from the clothes: a ring on the ground under each operator, **amber for attack, pale cyan for defence**, with the team's colour inside it, and arm and head bands in the same colour. A `stance` column (stand, crouch, prone) poses them; without one they stand.
+- **The side** shows apart from the clothes: a ring on the ground under each operator, **amber for attack, pale cyan for defence**, with the team's colour inside it, and arm and head bands in the same colour. A `stance` and a `lean` column pose them (see [Stance and lean](#stance-and-lean)); without them they stand.
 - **Told apart at replay distance:** rendered 48 pixels tall from above and from three-quarters, every two operators on a side differ by a clear colour difference or a different shape (checked by the viewer's tests).
 - **Labels** name the player and the operator played at that moment, with the operator's role as a symbol: ✸ hard breacher, ⚒ soft breacher, ➤ entry, ✦ fragger, ✚ support, ⬟ shield, ◉ intel, ◇ flex, ↺ flank watch, ⚓ anchor, ✕ trapper, ⇄ roamer, ↯ anti-gadget, ▣ anti-breach.
 - **Drones** are a two-wheeled throwable drone, about 30 cm across, each a track of its own named after its owner ("Ash · drone 2").
@@ -57,6 +57,15 @@ Tables written like the Rainbow Six Siege replay reader's (columns `operator`, `
 - **The defuser** stands where it was planted for its 45 seconds.
 
 Each drone and gadget becomes a track of its own when the file loads, so the player's own figure stays on their body. The operators are simplified shapes after their public descriptions and art (what they wear, the device that is their ability), and the gadgets are shaped by what they do. All of these are the viewer's own designs at the real-world size of the thing (a claymore about 22 cm wide, a door-sized panel 1 m by 2.1 m), not models from the game.
+
+## Stance and lean
+
+People are drawn in the stance and lean the data gives, in every game's data:
+
+- **Stance**, from a column `stance` (or `posture`, `pose`): standing, crouching, prone on the belly, or supine on the back. Common words are understood (standing, upright, crouched, kneeling, crawling, lying, on back...), and the codes 0 stand, 1 crouch, 2 prone, 3 supine.
+- **Lean**, from a column `lean` (or `leaning`, `peek`): `left`, `right` or `none`, or a number from -1 (left) to 1 (right) for a partial lean; numbers over 1 are read as per cent (up to 100) or degrees (45 a full lean).
+
+Stance and lean combine: a crouching or prone figure can lean too. The lean tilts the upper body sideways from the hips, up to 25 degrees. A change of stance blends over a fifth of a second and the lean eases into place; with motion turned off, or when the frame rate drops below 30, both change at once. Without these columns people stand upright.
 
 ## Settings
 
