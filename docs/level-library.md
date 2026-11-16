@@ -29,6 +29,14 @@ Processing a level - parse, classify, weld, decimate, pack textures - is slow, a
 
 With nothing stored the list says *Empty. Load a map or model, then "Save to library".*
 
+Some levels go to the library by themselves when loaded, so data on their map
+finds them later: the Dota 2 map from the Dota tool, Siege maps from the R6
+Maps tool, and Battlefield 4 and Battlefield 1 levels from the Battlefield
+tool (their part names end in ` @battlefield-4/<Level>`). For a table whose
+`map` column names such a level (`MP_Prison`), the panel shows a button for it
+and loads it by itself when no level is loaded yet; a name both games use
+(`MP_Naval`) shows both and loads neither by itself.
+
 ## What is stored
 
 | Kind | Stored | Not stored |

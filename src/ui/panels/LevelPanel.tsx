@@ -35,6 +35,7 @@ import { useStore } from '../../state/store';
 import { canResimplify, cancelResimplify, resimplifyLevel } from '../../render/levelSimplify';
 import { DOTA_GAME, dotaLevel, isDotaLevel } from '../../tactics/dotaMap';
 import { bestR6Level, parseR6GameKey, r6GameKey, r6LevelOf, useR6Maps } from '../../data/r6Level';
+import { frostbiteGameKey, frostbiteLevelOf, frostbiteLevelsFor, parseFrostbiteGameKey, useFrostbiteMaps } from '../../data/frostbiteLevel';
 import { Check, Section, Slider } from '../controls';
 import { int, num, t } from '../../i18n';
 import type { BackdropResult } from '../../world/backdrop';
@@ -125,6 +126,8 @@ function modelPayload(level: ModelLevel) {
     ...(isDotaLevel(level.partNames) ? { game: DOTA_GAME } : {}),
     // A Siege map from the R6 tool: kept under its map and version, so R6 replays find it (r6Level.ts).
     ...(r6LevelOf(level.partNames) ? { game: r6GameKey(r6LevelOf(level.partNames)!) } : {}),
+    // A Battlefield map from the Battlefield maps tool: kept under its game and map (frostbiteLevel.ts).
+    ...(frostbiteLevelOf(level.partNames) ? { game: frostbiteGameKey(frostbiteLevelOf(level.partNames)!) } : {}),
   };
 }
 
@@ -274,6 +277,13 @@ function worldLook(level: ModelLevel, credits: ModelLevel['credits']): ModelLeve
  */
 /** The last R6 level picked by itself for a set of matches, so it is not picked again after the user changes it. */
 let lastR6Auto = '';
+/** The same for the Battlefield level picked for a set of tables. */
+let lastBfAuto = '';
+
+/** `battlefield-4` as a title: `Battlefield 4`. */
+function gameTitle(game: string): string {
+  return game.replace(/^battlefield-/, 'Battlefield ');
+}
 
 export function LevelPanel() {
   useUnits();
@@ -464,6 +474,21 @@ export function LevelPanel() {
           // No room in the library: the level is loaded all the same, only not kept.
         }
       }
+      // A Battlefield map from the Battlefield maps tool goes to the library too,
+      // replacing an older copy of the same map, so tables on it are offered it.
+      const bf = frostbiteLevelOf(m.partNames);
+      let bfKept = false;
+      if (bf) {
+        try {
+          const older = (await listLevels()).filter((e) => e.game === frostbiteGameKey(bf));
+          await saveModelLevel(loaded.name, modelPayload(loaded));
+          for (const e of older) await deleteLevel(e.id);
+          refreshLibrary();
+          bfKept = true;
+        } catch {
+          // No room in the library: the level is loaded all the same, only not kept.
+        }
+      }
       const totalSource = m.sourceTriangles + m.sourceStructureTriangles;
       const totalNow = m.triangles + m.structureTriangles + m.waterTriangles;
       const structures = m.partClasses.filter((c) => c === 'structure').length;
@@ -492,6 +517,7 @@ export function LevelPanel() {
             : t('heat.levelPanel.importedAt', { lod: lodLabel(lod) }),
           ...(dota ? [t('heat.levelPanel.dota3dNotice')] : []),
           ...(r6Kept && r6 ? [t('heat.levelPanel.r6Kept', { map: r6.map })] : []),
+          ...(bfKept && bf ? [t('heat.levelPanel.bfKept', { map: bf.map, game: gameTitle(bf.game) })] : []),
         ].join(' '),
       );
     } catch (err) {
@@ -669,6 +695,22 @@ export function LevelPanel() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [r6Auto]);
 
+  // Battlefield levels for the tables just picked, by the map their `map` column names.
+  const bfWanted = useFrostbiteMaps((st) => st.wanted);
+  const bfOffers = bfWanted.flatMap((map) => frostbiteLevelsFor(library, map).map((meta) => ({ map, meta })));
+  const loadBf = async (o: (typeof bfOffers)[number]) => {
+    await loadFromLibrary(o.meta);
+  };
+  // Picked by itself only when the map name leads to one level (both games have an MP_Naval).
+  const bfAuto = bfOffers.length && frostbiteLevelsFor(library, bfOffers[0].map).length === 1 ? `${bfOffers[0].meta.id}|${bfWanted.join(',')}` : '';
+  useEffect(() => {
+    // Picked once per set of tables, and only when no level is loaded: a level the user chose stays.
+    if (!bfAuto || bfAuto === lastBfAuto || useStore.getState().level) return;
+    lastBfAuto = bfAuto;
+    void loadBf(bfOffers[0]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bfAuto]);
+
   const mdl = level?.kind === 'model' ? level : null;
   // Every structure field is optional on the level, so resolve the defaults once
   // rather than sprinkling fallbacks through the JSX.
@@ -704,6 +746,19 @@ export function LevelPanel() {
             {t('heat.levelPanel.r6', { map: o.want.map })}
           </button>
         ))}
+        {bfOffers.map((o) => {
+          const id = parseFrostbiteGameKey(o.meta.game)!;
+          return (
+            <button
+              key={o.meta.id}
+              disabled={!!busy}
+              onClick={() => void loadBf(o)}
+              title={t('heat.levelPanel.bfTitle', { map: id.map, game: gameTitle(id.game) })}
+            >
+              {t('heat.levelPanel.bf', { map: id.map, game: gameTitle(id.game) })}
+            </button>
+          );
+        })}
       </div>
 
       <WorldBackdrop busy={!!busy} toLevel={worldLevelFrom} fromModel={worldModelFrom} setError={setError} setNote={setNote} />

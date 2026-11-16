@@ -11,6 +11,7 @@ import {
 import { expandContainers } from '../../data/container';
 import { loadMatchesBeside } from '../../state/matchStore';
 import { noteR6Maps } from '../../data/r6Level';
+import { noteFrostbiteMaps } from '../../data/frostbiteLevel';
 import { loader, type LoaderProgress } from '../../data/loader';
 import type { SelectionSize, SourcePreview } from '../../data/sourcePreview';
 import { DELIMITERS } from '../../data/csv';
@@ -97,6 +98,8 @@ export function SourcePanel() {
       void loadMatchesBeside(chosen.map((f) => f.file));
       // The Siege maps they are on, for the level panel to offer the R6 tool's levels.
       void noteR6Maps(chosen.map((f) => f.file));
+      // The Battlefield maps they are on (a `map` column), for the level panel to offer those levels.
+      void noteFrostbiteMaps(chosen.map((f) => f.file));
       const { accepted, skipped: bad } = filterDataFiles(raw);
       for (const name of failed) bad.push({ name, reason: t('data.filePick.notData') });
       setSkipped(bad);

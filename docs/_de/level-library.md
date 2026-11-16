@@ -4,7 +4,7 @@ parent: "Levels und Hintergrundgeometrie"
 nav_order: 4
 lang: "de"
 source: "level-library.md"
-source_hash: "23ff3290af7e"
+source_hash: "8c99904f2d4f"
 translated: true
 outdated: false
 ---
@@ -33,6 +33,15 @@ Ein Level zu verarbeiten (Parsen, Klassifizieren, Verschweißen, Dezimieren, Tex
 | Nutzungszeile | `Benutzt X von Y.` - die Speicherschätzung des Browsers für diese Seite. |
 
 Ist nichts gespeichert, sagt die Liste *Leer. Lade eine Karte oder ein Modell und dann „In Bibliothek speichern“.*
+
+Manche Level kommen beim Laden von selbst in die Bibliothek, damit Daten auf
+ihrer Karte sie später finden: die Dota-2-Karte aus dem Dota-Werkzeug,
+Siege-Karten aus dem R6-Maps-Werkzeug und Level aus Battlefield 4 und
+Battlefield 1 aus dem Battlefield-Werkzeug (ihre Teilnamen enden auf
+` @battlefield-4/<Level>`). Für eine Tabelle, deren Spalte `map` ein solches
+Level nennt (`MP_Prison`), zeigt das Fenster einen Knopf dafür und lädt es von
+selbst, solange noch kein Level geladen ist; ein Name, den beide Spiele nutzen
+(`MP_Naval`), zeigt beide und lädt keines von selbst.
 
 ## Was gespeichert wird {#what-is-stored}
 
