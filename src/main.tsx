@@ -2,6 +2,7 @@ import { createRoot } from 'react-dom/client';
 import { App } from './App';
 import { startLanguage } from './i18n';
 import { applyMotionVars } from './ui/motion';
+import { useVersus } from './ui/versus/VersusPanel';
 import { useStore } from './state/store';
 import { DEFAULT_SYNTH, generateSynthetic } from './data/synth';
 import { VIEW_PRESETS } from './render/camera';
@@ -18,6 +19,7 @@ if (import.meta.env.DEV) {
   // through the real worker pipeline rather than a stubbed one.
   (window as unknown as Record<string, unknown>).__3dheat = {
     useStore,
+    useVersus,
     generateSynthetic,
     DEFAULT_SYNTH,
     CURVE_PRESETS,

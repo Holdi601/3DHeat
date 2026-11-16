@@ -993,7 +993,7 @@ function Table({ model, onPick, focus }: { model: Model; onPick: (g: string, s: 
         <thead>
           <tr>
             <th />
-            {model.metrics.map((m) => (
+            {model.metrics.map((m) => m.id.startsWith('__') ? null : (
               <th key={m.id} title={m.expr}>
                 {m.label}
               </th>
@@ -1019,6 +1019,7 @@ function Table({ model, onPick, focus }: { model: Model; onPick: (g: string, s: 
                   )}
                 </th>
                 {model.metrics.map((m, mi) => {
+                  if (m.id.startsWith('__')) return null;
                   const c = model.cell(g, s ? s.s : -1, -1, mi);
                   const mo = res.metrics[mi];
                   const ref = ri >= 0 ? res.ref[ri] : -1;
@@ -1098,6 +1099,8 @@ export function chartData(model: Model, cat: Axis, ser: Axis | 'none', mi: numbe
 
 function ChartControls({ model }: { model: Model }) {
   const ui = useVersus();
+  const ds = useStore((s) => s.dataset);
+  const boxColumns = ui.chart === 'box' && ds ? [...(ds.time && ds.personId ? ['speed'] : []), 'alt', ...ds.attrs.filter((a) => a.kind === 'number' && a.max > a.min).map((a) => a.name)] : [];
   const axes: { value: Axis; label: string; disabled?: boolean }[] = [
     { value: 'group', label: t('versus.axis.group') },
     { value: 'split', label: t('versus.axis.split'), disabled: !ui.split },
@@ -1201,6 +1204,20 @@ function ChartControls({ model }: { model: Model }) {
       <span key="x">{metricSel(ui.xMetric, (xMetric) => ui.set({ xMetric }), 'x')}</span>,
       <span key="y">{metricSel(ui.yMetric ?? model.metrics[1]?.id ?? null, (yMetric) => ui.set({ yMetric }), 'y')}</span>,
       <span key="s">{metricSel(ui.sizeMetric, (sizeMetric) => ui.set({ sizeMetric: sizeMetric || null }), t('versus.size'), true)}</span>,
+    );
+  if (c === 'box')
+    out.push(
+      <label key="box" className="vs-ctl">
+        {t('versus.boxColumn')}
+        <select value={ui.boxColumn ?? ''} onChange={(e) => ui.set({ boxColumn: e.target.value || null })}>
+          <option value="">{t('versus.none')}</option>
+          {boxColumns.map((name) => (
+            <option key={name} value={name}>
+              {colName(name)}
+            </option>
+          ))}
+        </select>
+      </label>,
     );
   return <>{out}</>;
 }

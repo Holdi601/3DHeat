@@ -271,3 +271,16 @@ describe('compare aggregations', () => {
     expect(mergeMetrics(back, [{ ...back[0], name: 'b' }])[0].name).toBe('b');
   });
 });
+
+describe('compare messages', () => {
+  it('name every mistake and built-in statistic in English', async () => {
+    const { readFileSync } = await import('node:fs');
+    const { join } = await import('node:path');
+    const en = JSON.parse(readFileSync(join(__dirname, '../i18n/locales/en/versus.json'), 'utf8')) as Record<string, string>;
+    const src = ['expr.ts', 'run.ts'].map((f) => readFileSync(join(__dirname, f), 'utf8')).join('\n');
+    const keys = [...src.matchAll(/new ExprError\('(\w+)'/g)].map((m) => `versus.err.${m[1]}`);
+    keys.push(...builtinMetrics(synth()).map((m) => `versus.metric.${m.builtin!.key}`));
+    expect(keys.length).toBeGreaterThan(30);
+    expect([...new Set(keys)].filter((k) => !(k in en))).toEqual([]);
+  });
+});

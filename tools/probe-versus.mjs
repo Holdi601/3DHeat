@@ -47,8 +47,7 @@ const stats = (name, d) => {
 
 stats('view alone', await measure(4000));
 
-// The module the dev server serves is the one the page runs: open the panel through its store.
-await page.evaluate(() => import('/src/ui/versus/VersusPanel.tsx').then((m) => m.useVersus.getState().set({ open: true })));
+await page.evaluate(() => window.__3dheat.useVersus.getState().set({ open: true }));
 await page.waitForSelector('.vs-window');
 await page.waitForFunction(() => /counted in/.test(document.querySelector('.vs-window .cmp-status')?.textContent ?? ''), null, { timeout: 120_000 });
 console.log('first count:', await page.textContent('.vs-window .cmp-status'));
@@ -88,8 +87,8 @@ await page.waitForFunction(() => /counted in/.test(document.querySelector('.vs-w
 console.log('settled:', await page.textContent('.vs-window .cmp-status'));
 
 // Animating: switch chart types.
-const kinds = ['bar', 'column', 'pie', 'donut', 'scatter', 'table', 'bar'];
-const anim = measure(4500);
+const kinds = ['bar', 'column', 'pie', 'donut', 'scatter', 'radar', 'kpi', 'heat', 'table', 'bar'];
+const anim = measure(6500);
 for (const k of kinds) {
   await page.selectOption('.vs-tools select[aria-label]', k);
   await page.waitForTimeout(600);
