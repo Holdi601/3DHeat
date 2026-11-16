@@ -87,6 +87,22 @@ Der Abschnitt **Taktische Anzeige** zeichnet, für keine Einheit, die gewählten
 
 ![Derselbe Luftkampf in der normalen Optik](../assets/img/de/replay-air.webp)
 
+## Kampfreichweiten {#engagement-ranges}
+
+![Die Kampfreichweiten eines Schützen in synthetischen Daten: die beste Reichweite gestrichelt, die größte durchgezogen, hinter einem Haus abgeschnitten; der Boden, den er sieht, eingefärbt](../assets/img/en/replay-ranges.webp)
+
+Der Abschnitt **Kampfreichweiten** zeichnet um die betreffenden Einheiten (die gewählten, verfolgten, Ziel- und gemessenen), ihre Seite oder alle (die der Kamera nächsten zuerst, bis zu **Höchstzahl Einheiten**), wie weit ihre Waffen reichen:
+
+- eine Schale je Waffe und Band: die **geringste Reichweite** gepunktet und grau, die **beste Reichweite** gestrichelt, die **größte Reichweite** durchgezogen. Die Schalen sind durchsichtig und werden auf das Bild addiert, so scheinen die inneren durch die äußeren, von außen wie von innen;
+- die Form folgt der Waffe: eine Kuppel, abgeschnitten an ihren Höhenrichtgrenzen und an der kleinsten und größten Zielhöhe, für Geschütze und Flugabwehrraketen; ein Kegel entlang der Nase für Bordkanonen, Raketen und Luft-Luft-Flugkörper; ein Kegel nach unten und vorn für Bomben (so weit, wie der Fall aus der aktuellen Höhe sie trägt);
+- **Durch Sichtlinie begrenzt**: jede Schale endet, wo Gelände oder Gebäude die Sicht der Einheit versperren, mit einer hellen Kante dort. Indirektes Feuer (Artillerie, Torpedos) wird nicht abgeschnitten. **Einsehbaren Boden einfärben** tönt den Boden, den die Einheit in Reichweite sieht;
+- Farben: die Waffen einer Einheit in Tönen der Farbe ihrer Seite (eine rote Seite rot, orange, pink …; eine blaue Seite blau, cyan, violett …), auch heller oder dunkler, damit sie auch für farbenfehlsichtige Augen getrennt bleiben;
+- **Waffen** schaltet Waffenarten ein und aus (Handwaffen, Maschinengewehre, Maschinenkanonen, Hauptgeschütze, Panzerabwehr, Flugabwehrraketen und MANPADS, Luft-Luft, Bomben und Raketen, Torpedos, Artillerie); **Bereiche**, **Darstellung** (Glas, Linien, beides) und **Deckkraft** bestimmen die Darstellung.
+
+Was eine Einheit trägt, kommt aus den Daten, wo sie es sagen (Waffen-, Munitions- und Ausrüstungsspalten in den Zeilen, in denen die Einheit feuert, startet oder ausrüstet; die Waffen, die eine ACMI-Aufzeichnung ihr als gestartet zuordnet), sonst aus der üblichen Bewaffnung ihres Fahrzeugs. Die Werte stammen aus dem Spiel der Daten, wo es erkannt wird (War Thunder, DCS, Counter-Strike 2, Rainbow Six Siege, Valorant, Battlefield 4, 1 und 6, Squad, Arma 3, World of Tanks, World of Warships, IL-2), sonst aus allgemeinen Werten. Jeder Wert ist gekennzeichnet: aus dem Spiel, ein gerundeter veröffentlichter Wert oder eine Schätzung (`*`); der Mauszeiger über einer Waffe in der Liste zeigt die Quelle.
+
+Die Sichtlinie berechnet die Grafikkarte aus dem Level selbst, wenige Ansichten pro Bild und nur neu, wenn sich eine Einheit bewegt hat; nichts wird zurückgelesen, so hält die Bildrate.
+
 ## Ziele {#objectives}
 
 Kommt ein Match mit seinen Zielen, zeichnet der Abschnitt **Ziele** sie auf das Level: Eroberungszonen (mit Besitzer und Eroberungsfortschritt), Spawns, Flugplätze, Gebiete und Bombenziele, jede Ebene einzeln umschaltbar, mit Beschriftungen. Sie sind durch den Boden hindurch zu sehen. Sind mehrere Spielmodi geladen, filtert **Modus** die Matches nach Modus. Die Ziele kommen aus der Match-Datei eines Konverters neben der Aufnahme oder aus einem [`.3dheat`](container.md)-Container.

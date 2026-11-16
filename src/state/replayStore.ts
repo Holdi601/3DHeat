@@ -10,6 +10,7 @@
 
 import { DEFAULT_LOOK, readLook, type TacticalLook } from '../render/tacticalLook';
 import { create } from 'zustand';
+import { DEFAULT_RANGES, readRanges, type RangeSettings } from '../ranges/settings';
 import type { UnitPrefs } from '../units/units';
 
 /**
@@ -192,6 +193,8 @@ interface Saved {
   buildings: 'solid' | 'seeThrough';
   /** The tactical display look (`render/tacticalLook.ts`): off unless asked. */
   look: TacticalLook;
+  /** Engagement ranges (`ranges/`): off unless asked. */
+  ranges: RangeSettings;
 }
 
 const KEY = 'heat3d.replay';
@@ -220,6 +223,7 @@ function saved(): Saved {
     limits: DEFAULT_LIMITS,
     buildings: 'solid',
     look: DEFAULT_LOOK,
+    ranges: DEFAULT_RANGES,
   };
   try {
     const v = JSON.parse(localStorage.getItem(KEY) ?? 'null');
@@ -248,6 +252,7 @@ function saved(): Saved {
       limits: readLimits(v.limits),
       buildings: v.buildings === 'seeThrough' ? 'seeThrough' : 'solid',
       look: readLook(v.look),
+      ranges: readRanges(v.ranges),
     };
   } catch {
     return fallback;
@@ -395,6 +400,7 @@ interface ReplayState extends Saved {
   setGeo: (p: Partial<GeoSettings>) => void;
   setLimits: (p: Partial<AltitudeLimits>) => void;
   setLook: (p: Partial<TacticalLook>) => void;
+  setRanges: (p: Partial<RangeSettings>) => void;
 }
 
 export const useReplayStore = create<ReplayState>((set, get) => {
@@ -424,6 +430,7 @@ export const useReplayStore = create<ReplayState>((set, get) => {
       limits: s.limits,
       buildings: s.buildings,
       look: s.look,
+      ranges: s.ranges,
     });
     set(p);
   };
@@ -456,6 +463,7 @@ export const useReplayStore = create<ReplayState>((set, get) => {
     setGeo: (p) => keep({ geo: { ...get().geo, ...p } }),
     setLimits: (p) => keep({ limits: { ...get().limits, ...p } }),
     setLook: (p) => keep({ look: { ...get().look, ...p } }),
+    setRanges: (p) => keep({ ranges: { ...get().ranges, ...p } }),
     setOverlay: (p) => set({ overlay: { ...get().overlay, ...p } }),
     setDropLines: (dropLines) => set({ dropLines }),
     patchSaved: keep,

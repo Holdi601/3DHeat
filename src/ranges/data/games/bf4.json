@@ -1,0 +1,604 @@
+{
+  "game": "bf4",
+  "name": "Battlefield 4",
+  "researched": "2026-11-16",
+  "weapons": [
+    {
+      "id": "bf4-ar",
+      "cls": "smallArms",
+      "name": "Assault rifle / carbine",
+      "range": [
+        0,
+        30,
+        100
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(ak-?12|m16a4|m416|aek-?971|an-?94|f2000|famas|g36c|scar-?h|l85a2|aug a3|sar-?21|type-?95|ace ?2[123]|m4a1|qbz|a-?91|mtar|aku-?12|ar-?160|ctar|kh2002|cz-?805|ak5c|scar-?h)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://primagames.com/tips/battlefield-4-understanding-base-weapon-statistics",
+      "date": "2026-11-16",
+      "note": "opt = end of max-damage range (SCAR-H: 34 dmg to 8 m, falls to 25 at 55 m per Prima; most ARs 8-30 m), max = practical end of falloff/effective range. Class value, not a per-weapon game figure."
+    },
+    {
+      "id": "bf4-scar-h",
+      "cls": "smallArms",
+      "name": "SCAR-H",
+      "range": [
+        0,
+        8,
+        55
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "scar-?h"
+      ],
+      "src": "game",
+      "source": "https://primagames.com/tips/battlefield-4-understanding-base-weapon-statistics",
+      "date": "2026-11-16",
+      "note": "opt = end of 34-damage range (8 m); max = 55 m where damage levels off at 25."
+    },
+    {
+      "id": "bf4-smg",
+      "cls": "smallArms",
+      "name": "PDW / SMG",
+      "range": [
+        0,
+        20,
+        60
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(js2|ump-?9|ump-?45|cbj-?ms|mx4|cz-?3a1|pp-?2000|mp7|p90|pdw-?r|scorpion|sr-?2|vector|ppsh|ppsh-?41)\\b"
+      ],
+      "src": "game",
+      "source": "https://pcgamer.com/battlefield-4-spring-update",
+      "date": "2026-11-16",
+      "note": "Spring update raised max-damage range of JS2, UMP-9, CBJ-MS, MX4, CZ-3A1, PP-2000 from about 8 m to 20 m (opt). max = estimate."
+    },
+    {
+      "id": "bf4-lmg",
+      "cls": "mg",
+      "name": "LMG",
+      "range": [
+        0,
+        25,
+        120
+      ],
+      "elev": [
+        -60,
+        75
+      ],
+      "match": [
+        "\\b(m249|mg4|pecheneg|lsat|u-?100|rpk-?74m|type 88 lmg|m60e4|mg4[0-9]*|qbb-?95-?1|ultimax|l86 lsw)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://primagames.com/tips/battlefield-4-understanding-base-weapon-statistics",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "bf4-dmr",
+      "cls": "smallArms",
+      "name": "DMR / battle rifle",
+      "range": [
+        0,
+        40,
+        150
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(sks|mk11|sr-?25|m39 emr|rfb|qbu-?88|scar-?h sv|ace 53 sv|m14|g3a3|m417|mk11 mod 0|ar-?160|cm6 ?lmg)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://primagames.com/tips/battlefield-4-understanding-base-weapon-statistics",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "bf4-sniper",
+      "cls": "smallArms",
+      "name": "Sniper rifle",
+      "range": [
+        0,
+        12.5,
+        100
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(cs-?lr4|m98b|jng-?90|l115|sv-?98|cs5|m40a5|scout elite|sr338|fy-?js|gol magnum|m82a3|sr-?338)\\b"
+      ],
+      "src": "game",
+      "source": "https://gameranx.com/updates/id/19238/article/battlefield-4-cs-lr4-stats-guide/",
+      "date": "2026-11-16",
+      "note": "CS-LR4: 100 dmg within 12.5 m, minimum 59 at about 80 m (opt = 12.5, max = 100 rounded). Bullets travel further; this is the damage band."
+    },
+    {
+      "id": "bf4-shotgun",
+      "cls": "smallArms",
+      "name": "Shotgun",
+      "range": [
+        0,
+        8,
+        35
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(870mcs|saiga ?12k?|spas-?12|uts-?15|dbv-?12|qbs-?09|m1014|usas-?12|hawk 12g|frag-?12)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://primagames.com/tips/battlefield-4-understanding-base-weapon-statistics",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "bf4-pistol",
+      "cls": "smallArms",
+      "name": "Pistol",
+      "range": [
+        0,
+        15,
+        50
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(m9|m1911|g17c|g18|m93r|compact 45|mp412 rex|44 magnum|qsz-?92|cz-?75|fn57|m412)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://primagames.com/tips/battlefield-4-understanding-base-weapon-statistics",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "bf4-rpg",
+      "cls": "atgm",
+      "name": "RPG-7 / SMAW / unguided launcher",
+      "range": [
+        0,
+        150,
+        400
+      ],
+      "elev": [
+        -30,
+        45
+      ],
+      "match": [
+        "\\b(rpg-?7|smaw|b-?\\.?12|nlaw|m136|at4|panzerfaust|rpg-?7v2)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://primagames.com/tips/battlefield-4-understanding-base-weapon-statistics",
+      "date": "2026-11-16",
+      "note": "Rocket travel, no lock. Class value."
+    },
+    {
+      "id": "bf4-javelin",
+      "cls": "atgm",
+      "name": "FGM-148 Javelin / designated missile",
+      "range": [
+        20,
+        400,
+        650
+      ],
+      "elev": [
+        -30,
+        60
+      ],
+      "match": [
+        "javelin|fgm-?148|ss-?mp"
+      ],
+      "src": "game",
+      "source": "https://eaassets-a.akamaihd.net/dice-commerce/battlefield4/assets/patch_notes/Patchnotes_FallPatch_EN.pdf",
+      "date": "2026-11-16",
+      "note": "Fall Patch notes: lock range for designated missiles increased to 650 m (from 500 m). max = lock range; opt = estimate."
+    },
+    {
+      "id": "bf4-stinger",
+      "cls": "sam",
+      "name": "FIM-92 Stinger",
+      "range": [
+        0,
+        250,
+        400
+      ],
+      "alt": [
+        0,
+        1500
+      ],
+      "elev": [
+        -5,
+        90
+      ],
+      "match": [
+        "stinger|fim-?92"
+      ],
+      "src": "game",
+      "source": "https://battlefield.fandom.com/wiki/SA-18_Igla",
+      "date": "2026-11-16",
+      "note": "Battlefield wiki: BF4 Stinger 400 m (Igla 550 m). max = lock range."
+    },
+    {
+      "id": "bf4-igla",
+      "cls": "sam",
+      "name": "SA-18 Igla",
+      "range": [
+        0,
+        300,
+        550
+      ],
+      "alt": [
+        0,
+        1500
+      ],
+      "elev": [
+        -5,
+        90
+      ],
+      "match": [
+        "igla|sa-?18|9k38"
+      ],
+      "src": "game",
+      "source": "https://battlefield.fandom.com/wiki/SA-18_Igla",
+      "date": "2026-11-16",
+      "note": "Battlefield wiki: Igla 550 m lock-on and tracking range. max = lock range."
+    },
+    {
+      "id": "bf4-hvm",
+      "cls": "sam",
+      "name": "HVM-II / mobile AA missile",
+      "range": [
+        0,
+        350,
+        550
+      ],
+      "alt": [
+        0,
+        1500
+      ],
+      "elev": [
+        -5,
+        90
+      ],
+      "match": [
+        "hvm-?ii|hvm|9k22|\\bsa-?19\\b|\\bpantsir"
+      ],
+      "src": "estimate",
+      "source": "https://battlefield.fandom.com/wiki/SA-18_Igla",
+      "date": "2026-11-16",
+      "note": "Vehicle AA missiles use locks of the same order as the handheld AA; exact value unconfirmed."
+    },
+    {
+      "id": "bf4-aam",
+      "cls": "aam",
+      "name": "Jet air-to-air missile (IR/radar)",
+      "range": [
+        0,
+        400,
+        800
+      ],
+      "shape": "cone",
+      "cone": 30,
+      "match": [
+        "\\b(aim-?9|aim-?120|r-?73|r-?77|pl-?9|pl-?12|aa missiles?|heat-?seeking|sidewinder|r-?60)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://eaassets-a.akamaihd.net/dice-commerce/battlefield4/assets/patch_notes/Patchnotes_FallPatch_EN.pdf",
+      "date": "2026-11-16",
+      "note": "Game lock range of order 500-800 m not confirmed by a source; class value."
+    },
+    {
+      "id": "bf4-tank-cannon",
+      "cls": "gun",
+      "name": "Tank main gun (120/125 mm)",
+      "range": [
+        0,
+        400,
+        800
+      ],
+      "elev": [
+        -8,
+        25
+      ],
+      "match": [
+        "\\b(120 ?mm (ap|he|heat|smoke|canister)|125 ?mm|120mm|main (gun|cannon)|ap shell|heat shell|tank (cannon|gun)|he shell)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://primagames.com/tips/battlefield-4-understanding-base-weapon-statistics",
+      "date": "2026-11-16",
+      "note": "Shell travel / despawn; class value."
+    },
+    {
+      "id": "bf4-coax",
+      "cls": "mg",
+      "name": "Coaxial / pintle MG",
+      "range": [
+        0,
+        200,
+        600
+      ],
+      "elev": [
+        -10,
+        60
+      ],
+      "match": [
+        "\\b(coax|coaxial|pintle|m240|pkt|m2hb|kord|nsv|lmg)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://primagames.com/tips/battlefield-4-understanding-base-weapon-statistics",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "bf4-ifv-cannon",
+      "cls": "cannon",
+      "name": "IFV / AA autocannon (25-30 mm)",
+      "range": [
+        0,
+        300,
+        900
+      ],
+      "elev": [
+        -10,
+        85
+      ],
+      "match": [
+        "\\b(25 ?mm|30 ?mm|2a42|2a38|m242|bushmaster|aa gun|tunguska|zu-?23|shilka|lav-?ad|m5 aa)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://primagames.com/tips/battlefield-4-understanding-base-weapon-statistics",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "bf4-atgm-veh",
+      "cls": "atgm",
+      "name": "Vehicle TOW / AT missile",
+      "range": [
+        0,
+        300,
+        650
+      ],
+      "elev": [
+        -15,
+        25
+      ],
+      "match": [
+        "\\b(tow|at-?5|konkurs|spike|kornet|at missile|guided missile|tv missile|tv guided)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://eaassets-a.akamaihd.net/dice-commerce/battlefield4/assets/patch_notes/Patchnotes_FallPatch_EN.pdf",
+      "date": "2026-11-16",
+      "note": "Laser/designation lock around the 650 m designated-missile range; class value."
+    },
+    {
+      "id": "bf4-heli-rocket",
+      "cls": "strike",
+      "name": "Helicopter rockets / TV missile",
+      "range": [
+        0,
+        500,
+        1000
+      ],
+      "shape": "cone",
+      "cone": 10,
+      "match": [
+        "\\b(hydra|s-?8|rocket pod|rockets?|tv missile|zuni|ffar)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://primagames.com/tips/battlefield-4-understanding-base-weapon-statistics",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "bf4-jet-gun",
+      "cls": "cannon",
+      "name": "Jet 20-30 mm gun",
+      "range": [
+        0,
+        400,
+        1000
+      ],
+      "shape": "cone",
+      "cone": 4,
+      "match": [
+        "\\b(m61a2|gsh-?30|gau-?\\d+|20 ?mm vulcan|30 ?mm cannon|jet gun)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://primagames.com/tips/battlefield-4-understanding-base-weapon-statistics",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "bf4-bomb",
+      "cls": "strike",
+      "name": "Jet bomb / air-to-ground",
+      "range": [
+        0,
+        600,
+        2000
+      ],
+      "shape": "drop",
+      "cone": 40,
+      "match": [
+        "\\b(gbu|fab|jdam|bomb|mk\\.? ?82|agm-?65|maverick)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://primagames.com/tips/battlefield-4-understanding-base-weapon-statistics",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "bf4-mortar",
+      "cls": "artillery",
+      "name": "Mortar / mobile artillery",
+      "range": [
+        50,
+        400,
+        900
+      ],
+      "los": false,
+      "elev": [
+        45,
+        85
+      ],
+      "match": [
+        "\\b(mortar|m224|mk6|artillery|mobile artillery|m1128|mk19 grenade|grenade launcher)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://primagames.com/tips/battlefield-4-understanding-base-weapon-statistics",
+      "date": "2026-11-16",
+      "note": "Class value."
+    }
+  ],
+  "vehicles": [
+    {
+      "match": "^(m1a2|t-?90|type 99|abrams|mbt)",
+      "weapons": [
+        "bf4-tank-cannon",
+        "bf4-coax",
+        "bf4-atgm-veh"
+      ]
+    },
+    {
+      "match": "^(lav-?25|bmp-?2|zbd-?09|bradley|ifv)",
+      "weapons": [
+        "bf4-ifv-cannon",
+        "bf4-atgm-veh",
+        "bf4-coax"
+      ]
+    },
+    {
+      "match": "^(lav-?ad|pantsir|tunguska|type 95 aa|aa tank|mobile aa)",
+      "weapons": [
+        "bf4-ifv-cannon",
+        "bf4-hvm"
+      ]
+    },
+    {
+      "match": "^(f/?a-?18|su-?35|j-?20|su-?25|a-?10|f-?35|jet|fighter)",
+      "weapons": [
+        "bf4-jet-gun",
+        "bf4-aam",
+        "bf4-bomb"
+      ]
+    },
+    {
+      "match": "^(ah-?1z|z-?10|ka-?60|ah-?6|attack heli|mi-?28|z-?11)",
+      "weapons": [
+        "bf4-heli-rocket",
+        "bf4-atgm-veh",
+        "bf4-jet-gun"
+      ]
+    },
+    {
+      "match": "(mortar|artillery)",
+      "weapons": [
+        "bf4-mortar"
+      ]
+    }
+  ],
+  "fov": {
+    "default": {
+      "horizontal": null,
+      "vertical": 70,
+      "source": "https://battlefield.fandom.com/wiki/Battlefield_4",
+      "note": "BF4 FOV slider is vertical, default 70 (range 60-90) on the client; ADS narrows it per optic. Slider range 60-90 is a recollection, not a fetched citation."
+    },
+    "zoom": [
+      {
+        "match": "iron ?sights?",
+        "fov": 55,
+        "magnification": 1,
+        "source": "estimate",
+        "note": "ADS with iron sights, small FOV reduction."
+      },
+      {
+        "match": "red ?dot|reflex|holo|kobra|rds|\\bpks-?0?7\\b",
+        "fov": 50,
+        "magnification": 1,
+        "source": "estimate",
+        "note": "1x optics."
+      },
+      {
+        "match": "acog|pso-?1|\\bpka-?s\\b|4x",
+        "fov": 17,
+        "magnification": 4,
+        "source": "https://battlefield.fandom.com/wiki/ACOG",
+        "note": "ACOG 4x; the wiki says ACOG is 4x, FOV value derived from magnification."
+      },
+      {
+        "match": "ballistic|8x|pso-?1 ?8|10x|12x|40x|20x",
+        "fov": 7,
+        "magnification": 8,
+        "source": "estimate",
+        "note": "Sniper scopes between 6x and 20x; value for 8x."
+      }
+    ],
+    "viewDistance": null,
+    "viewDistanceSource": ""
+  },
+  "sensors": [
+    {
+      "id": "bf4-soflam",
+      "kind": "ldp",
+      "name": "SOFLAM laser designator",
+      "match": "soflam|laser designator",
+      "range": 650,
+      "az": [
+        -90,
+        90
+      ],
+      "el": [
+        -30,
+        30
+      ],
+      "beamwidth": null,
+      "modes": [
+        "designate"
+      ],
+      "src": "game",
+      "source": "https://eaassets-a.akamaihd.net/dice-commerce/battlefield4/assets/patch_notes/Patchnotes_FallPatch_EN.pdf",
+      "date": "2026-11-16",
+      "note": "Designated-missile lock range 650 m per Fall Patch; designator range itself may be longer."
+    }
+  ],
+  "estimates": [
+    "bf4-ar",
+    "bf4-lmg",
+    "bf4-dmr",
+    "bf4-shotgun",
+    "bf4-pistol",
+    "bf4-rpg",
+    "bf4-hvm",
+    "bf4-aam",
+    "bf4-tank-cannon",
+    "bf4-coax",
+    "bf4-ifv-cannon",
+    "bf4-atgm-veh",
+    "bf4-heli-rocket",
+    "bf4-jet-gun",
+    "bf4-bomb",
+    "bf4-mortar"
+  ]
+}

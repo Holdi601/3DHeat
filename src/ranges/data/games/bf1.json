@@ -1,0 +1,391 @@
+{
+  "game": "bf1",
+  "name": "Battlefield 1",
+  "researched": "2026-11-16",
+  "weapons": [
+    {
+      "id": "bf1-smg",
+      "cls": "smallArms",
+      "name": "SMG (MP18, Hellriegel, Automatico, Thompson)",
+      "range": [
+        0,
+        15,
+        50
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(mp ?18|hellriegel|automatico|thompson|m1918|ribeyrolles|sten|mp ?28|ppsh)\\b"
+      ],
+      "src": "game",
+      "source": "https://www.pcgamer.com/battlefield-1-weapons-guide",
+      "date": "2026-11-16",
+      "note": "MP18 holds 23 dmg to 15 m and drops to 15 at 50 m per the guide; other SMGs similar class value."
+    },
+    {
+      "id": "bf1-rifle",
+      "cls": "smallArms",
+      "name": "Self-loading / medic rifle",
+      "range": [
+        0,
+        34,
+        80
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(farquhar|hill|selbstlader|cei-?rigotti|autoloading|remington|m1907|mondragon|m1907 sl|sl ?\\d)\\b"
+      ],
+      "src": "game",
+      "source": "https://mp1st.com/news/latest-bf1-patch-notes-detail-big-weapon-balance-changes-map-tweaks-more",
+      "date": "2026-11-16",
+      "note": "Patch note: Farquhar-Hill drop-off start moved from 34 m to 46.33 m. opt shown 34 (original); max estimate."
+    },
+    {
+      "id": "bf1-bolt",
+      "cls": "smallArms",
+      "name": "Bolt-action rifle",
+      "range": [
+        0,
+        40,
+        150
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(gewehr ?98|lee-?enfield|smle|mosin|carcano|arisaka|mannlicher|springfield|m1903|lebel|vetterli|ross|martini|krag)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://www.pcgamer.com/battlefield-1-weapons-guide",
+      "date": "2026-11-16",
+      "note": "Class value; scout/sniper variants shoot further."
+    },
+    {
+      "id": "bf1-lmg",
+      "cls": "mg",
+      "name": "LMG / heavy",
+      "range": [
+        0,
+        30,
+        100
+      ],
+      "elev": [
+        -60,
+        75
+      ],
+      "match": [
+        "\\b(chauchat|lewis|bar|madsen|mg ?15|lmg ?08|hotchkiss|fiat|bergmann|rsc|m1909)\\b"
+      ],
+      "src": "game",
+      "source": "https://www.pcgamer.com/battlefield-1-weapons-guide",
+      "date": "2026-11-16",
+      "note": "Chauchat: 32 max damage within roughly 30 m (guide). Class value for others."
+    },
+    {
+      "id": "bf1-shotgun",
+      "cls": "smallArms",
+      "name": "Shotgun",
+      "range": [
+        0,
+        8,
+        30
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(model 10-?a|model 1897|trench gun|sawed-?off|12g|automatic 12g|m1897|burgess)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://www.pcgamer.com/battlefield-1-weapons-guide",
+      "date": "2026-11-16",
+      "note": "12 pellets per shotgun after rebalance (guide); range estimate."
+    },
+    {
+      "id": "bf1-sniper",
+      "cls": "smallArms",
+      "name": "Scout / sniper rifle",
+      "range": [
+        0,
+        20,
+        150
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(scout|sniper|martini-?henry|sniper rifle)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://www.pcgamer.com/battlefield-1-weapons-guide",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "bf1-pistol",
+      "cls": "smallArms",
+      "name": "Pistol / revolver",
+      "range": [
+        0,
+        12,
+        50
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(c96|1911|m1911|luger|p08|mars|revolver|nagant|lebel revolver|howdah|webley|mle 1903)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://www.pcgamer.com/battlefield-1-weapons-guide",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "bf1-at-rocket",
+      "cls": "atgm",
+      "name": "AT rocket gun / rocket launcher",
+      "range": [
+        0,
+        100,
+        250
+      ],
+      "elev": [
+        -30,
+        45
+      ],
+      "match": [
+        "\\b(at rocket gun|rocket gun|tankgewehr|tank gewehr|at grenade|pick-?up truck rocket)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://www.pcgamer.com/battlefield-1-weapons-guide",
+      "date": "2026-11-16",
+      "note": "Rocket gun is a short-range class value."
+    },
+    {
+      "id": "bf1-tank-gun",
+      "cls": "gun",
+      "name": "Tank main gun (57-75 mm)",
+      "range": [
+        0,
+        300,
+        700
+      ],
+      "elev": [
+        -8,
+        25
+      ],
+      "match": [
+        "\\b(mark v|mark iv|a7v|saint-?chamond|char 2c|fiat 2000|ap shell|he shell|57 ?mm|75 ?mm|6-?pounder|tank gun)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://www.pcgamer.com/battlefield-1-weapons-guide",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "bf1-ifv-mg",
+      "cls": "mg",
+      "name": "Vehicle / stationary MG",
+      "range": [
+        0,
+        250,
+        600
+      ],
+      "elev": [
+        -10,
+        60
+      ],
+      "match": [
+        "\\b(vickers|maxim|hotchkiss|m1909|lewis (gun|vehicle)|mg ?08/15|stationary mg|fixed mg)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://www.pcgamer.com/battlefield-1-weapons-guide",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "bf1-aa-gun",
+      "cls": "cannon",
+      "name": "Stationary AA gun / AA tank",
+      "range": [
+        0,
+        400,
+        1000
+      ],
+      "elev": [
+        0,
+        85
+      ],
+      "match": [
+        "\\b(aa gun|anti-?aircraft|st chamond aa|sd.?kfz|maschinengewehr 08/15 aa|3 ?inch|75 ?mm aa|flak)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://www.pcgamer.com/battlefield-1-weapons-guide",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "bf1-artillery",
+      "cls": "artillery",
+      "name": "Artillery truck / field gun / Mark V howitzer",
+      "range": [
+        100,
+        350,
+        800
+      ],
+      "los": false,
+      "elev": [
+        20,
+        80
+      ],
+      "match": [
+        "\\b(artillery|field gun|howitzer|artillery truck|stationary artillery|mortar)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://www.pcgamer.com/battlefield-1-weapons-guide",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "bf1-plane-mg",
+      "cls": "mg",
+      "name": "Aircraft MG",
+      "range": [
+        0,
+        200,
+        600
+      ],
+      "shape": "cone",
+      "cone": 3,
+      "match": [
+        "\\b(vickers|maxim|lewis|spandau|lmg ?08|nose gun|airplane mg)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://www.pcgamer.com/battlefield-1-weapons-guide",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "bf1-bomb",
+      "cls": "strike",
+      "name": "Aircraft / bomber bomb",
+      "range": [
+        0,
+        300,
+        1200
+      ],
+      "shape": "drop",
+      "cone": 40,
+      "match": [
+        "\\b(bomb|bombs|bomber|gotha|handley|kugelbomb|dive bomb)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://www.pcgamer.com/battlefield-1-weapons-guide",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "bf1-grenade",
+      "cls": "smallArms",
+      "name": "Grenade / gas",
+      "range": [
+        0,
+        20,
+        40
+      ],
+      "elev": [
+        -30,
+        80
+      ],
+      "match": [
+        "\\b(grenade|stielhandgranate|mills bomb|gas grenade|impact grenade)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://www.pcgamer.com/battlefield-1-weapons-guide",
+      "date": "2026-11-16",
+      "note": "Thrown; class value."
+    }
+  ],
+  "vehicles": [
+    {
+      "match": "^(mark v|a7v|saint|char|fiat|tank|landship)",
+      "weapons": [
+        "bf1-tank-gun",
+        "bf1-ifv-mg"
+      ]
+    },
+    {
+      "match": "(armored train|train|dreadnought|zeppelin|ship)",
+      "weapons": [
+        "bf1-tank-gun",
+        "bf1-ifv-mg",
+        "bf1-aa-gun"
+      ]
+    },
+    {
+      "match": "(plane|fighter|bomber|attack|biplane|sopwith|albatros|se5a|gotha|bristol)",
+      "weapons": [
+        "bf1-plane-mg",
+        "bf1-bomb"
+      ]
+    },
+    {
+      "match": "(artillery|howitzer)",
+      "weapons": [
+        "bf1-artillery"
+      ]
+    }
+  ],
+  "fov": {
+    "default": {
+      "horizontal": null,
+      "vertical": 55,
+      "source": "https://battlefield.fandom.com/wiki/Battlefield_1",
+      "note": "Configurable (BF1 slider 90 horizontal in practice); estimate 55-ish vertical; not fetched."
+    },
+    "zoom": [
+      {
+        "match": "iron ?sights?",
+        "fov": 50,
+        "magnification": 1,
+        "source": "estimate",
+        "note": "ADS."
+      },
+      {
+        "match": "scope|telescopic|sniper",
+        "fov": 14,
+        "magnification": 4,
+        "source": "estimate",
+        "note": "Bolt-action scopes 3-6x range."
+      }
+    ],
+    "viewDistance": null,
+    "viewDistanceSource": ""
+  },
+  "sensors": [],
+  "estimates": [
+    "bf1-rifle (max)",
+    "bf1-bolt",
+    "bf1-shotgun",
+    "bf1-sniper",
+    "bf1-pistol",
+    "bf1-at-rocket",
+    "bf1-tank-gun",
+    "bf1-ifv-mg",
+    "bf1-aa-gun",
+    "bf1-artillery",
+    "bf1-plane-mg",
+    "bf1-bomb",
+    "bf1-grenade"
+  ]
+}

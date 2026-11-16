@@ -1,0 +1,1582 @@
+{
+  "game": "dcs",
+  "name": "DCS World",
+  "researched": "2026-11-16",
+  "weapons": [
+    {
+      "id": "dcs-sa2",
+      "cls": "sam",
+      "name": "SA-2 / S-75 (V-750)",
+      "range": [
+        7000,
+        30000,
+        43000
+      ],
+      "alt": [
+        500,
+        30000
+      ],
+      "elev": [
+        0,
+        90
+      ],
+      "note": "public; DCS ME site envelope close to these",
+      "match": [
+        "sa-?2\\b",
+        "s_?75",
+        "v-?750"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16"
+    },
+    {
+      "id": "dcs-sa3",
+      "cls": "sam",
+      "name": "SA-3 / S-125 (5V27)",
+      "range": [
+        3500,
+        15000,
+        25000
+      ],
+      "alt": [
+        20,
+        18000
+      ],
+      "elev": [
+        0,
+        90
+      ],
+      "match": [
+        "sa-?3\\b",
+        "s_?125",
+        "5v27",
+        "snr-125"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-sa6",
+      "cls": "sam",
+      "name": "SA-6 Kub (3M9)",
+      "range": [
+        4000,
+        15000,
+        24000
+      ],
+      "alt": [
+        100,
+        12000
+      ],
+      "elev": [
+        0,
+        90
+      ],
+      "match": [
+        "sa-?6\\b",
+        "\\bkub\\b",
+        "3m9\\b"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-sa8",
+      "cls": "sam",
+      "name": "SA-8 Osa (9M33)",
+      "range": [
+        1500,
+        7000,
+        10000
+      ],
+      "alt": [
+        25,
+        5000
+      ],
+      "elev": [
+        0,
+        90
+      ],
+      "match": [
+        "sa-?8\\b",
+        "osa 9a33",
+        "9m33\\b"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-sa9",
+      "cls": "sam",
+      "name": "SA-9 Strela-1 (9M31)",
+      "range": [
+        800,
+        3500,
+        4200
+      ],
+      "alt": [
+        25,
+        3500
+      ],
+      "elev": [
+        0,
+        90
+      ],
+      "match": [
+        "sa-?9\\b",
+        "strela-?1\\b",
+        "9p31"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-sa10",
+      "cls": "sam",
+      "name": "SA-10 S-300PS (5V55/48N6)",
+      "range": [
+        5000,
+        60000,
+        75000
+      ],
+      "alt": [
+        25,
+        27000
+      ],
+      "elev": [
+        0,
+        90
+      ],
+      "note": "public; DCS up to ~75 km vs high targets",
+      "match": [
+        "sa-?10\\b",
+        "s-?300",
+        "5p85",
+        "5v55",
+        "48n6"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16"
+    },
+    {
+      "id": "dcs-sa11",
+      "cls": "sam",
+      "name": "SA-11 Buk (9M38)",
+      "range": [
+        3000,
+        25000,
+        32000
+      ],
+      "alt": [
+        15,
+        22000
+      ],
+      "elev": [
+        0,
+        90
+      ],
+      "match": [
+        "sa-?11\\b",
+        "\\bbuk\\b",
+        "9a310",
+        "9m38"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-sa13",
+      "cls": "sam",
+      "name": "SA-13 Strela-10 (9M37)",
+      "range": [
+        800,
+        3500,
+        5000
+      ],
+      "alt": [
+        25,
+        3500
+      ],
+      "elev": [
+        0,
+        90
+      ],
+      "match": [
+        "sa-?13\\b",
+        "strela-?10",
+        "9m37\\b"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-sa15",
+      "cls": "sam",
+      "name": "SA-15 Tor (9M330)",
+      "range": [
+        1500,
+        8000,
+        12000
+      ],
+      "alt": [
+        10,
+        6000
+      ],
+      "elev": [
+        0,
+        90
+      ],
+      "match": [
+        "sa-?15\\b",
+        "\\btor\\b",
+        "9a331",
+        "9m330"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-sa19",
+      "cls": "sam",
+      "name": "SA-19 Tunguska (9M311)",
+      "range": [
+        2500,
+        6000,
+        8000
+      ],
+      "alt": [
+        15,
+        3500
+      ],
+      "elev": [
+        0,
+        85
+      ],
+      "match": [
+        "sa-?19\\b",
+        "tunguska",
+        "2s6",
+        "9m311"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-sa18",
+      "cls": "sam",
+      "name": "SA-18 Igla (9M39)",
+      "range": [
+        500,
+        3000,
+        5200
+      ],
+      "alt": [
+        10,
+        3500
+      ],
+      "elev": [
+        -5,
+        90
+      ],
+      "match": [
+        "sa-?18\\b",
+        "igla",
+        "9k38",
+        "9m39"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-sa7",
+      "cls": "sam",
+      "name": "SA-7 Strela-2 (9M32)",
+      "range": [
+        800,
+        3000,
+        4200
+      ],
+      "alt": [
+        50,
+        2300
+      ],
+      "elev": [
+        -5,
+        90
+      ],
+      "match": [
+        "sa-?7\\b",
+        "strela-?2",
+        "9m32\\b"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-patriot",
+      "cls": "sam",
+      "name": "MIM-104 Patriot (PAC-2)",
+      "range": [
+        3000,
+        70000,
+        100000
+      ],
+      "alt": [
+        60,
+        24000
+      ],
+      "elev": [
+        0,
+        90
+      ],
+      "note": "public; DCS PAC-2 ~100 km",
+      "match": [
+        "patriot",
+        "mim-?104",
+        "pac-?2"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16"
+    },
+    {
+      "id": "dcs-hawk",
+      "cls": "sam",
+      "name": "MIM-23 Hawk",
+      "range": [
+        2000,
+        25000,
+        40000
+      ],
+      "alt": [
+        30,
+        18000
+      ],
+      "elev": [
+        0,
+        90
+      ],
+      "match": [
+        "\\bhawk\\b",
+        "mim-?23"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-nasams",
+      "cls": "sam",
+      "name": "NASAMS (AIM-120C-7)",
+      "range": [
+        2000,
+        30000,
+        40000
+      ],
+      "alt": [
+        30,
+        16000
+      ],
+      "elev": [
+        0,
+        90
+      ],
+      "match": [
+        "nasams"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-roland",
+      "cls": "sam",
+      "name": "Roland",
+      "range": [
+        500,
+        5000,
+        6300
+      ],
+      "alt": [
+        20,
+        5500
+      ],
+      "elev": [
+        0,
+        85
+      ],
+      "match": [
+        "roland"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-rapier",
+      "cls": "sam",
+      "name": "Rapier",
+      "range": [
+        500,
+        5000,
+        6800
+      ],
+      "alt": [
+        10,
+        3000
+      ],
+      "elev": [
+        0,
+        90
+      ],
+      "match": [
+        "rapier"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-avenger",
+      "cls": "sam",
+      "name": "Avenger / Stinger",
+      "range": [
+        200,
+        3500,
+        4800
+      ],
+      "alt": [
+        10,
+        3800
+      ],
+      "elev": [
+        -5,
+        90
+      ],
+      "match": [
+        "avenger",
+        "stinger",
+        "fim-?92"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-chaparral",
+      "cls": "sam",
+      "name": "M48 Chaparral (MIM-72)",
+      "range": [
+        500,
+        5000,
+        9000
+      ],
+      "alt": [
+        15,
+        3000
+      ],
+      "elev": [
+        0,
+        90
+      ],
+      "match": [
+        "chaparral",
+        "mim-?72"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-gepard",
+      "cls": "cannon",
+      "name": "Gepard 2x35 mm",
+      "range": [
+        0,
+        2500,
+        4000
+      ],
+      "alt": [
+        -500,
+        3000
+      ],
+      "elev": [
+        -10,
+        85
+      ],
+      "src": "estimate",
+      "match": [
+        "gepard"
+      ],
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-shilka",
+      "cls": "cannon",
+      "name": "ZSU-23-4 Shilka",
+      "range": [
+        0,
+        2000,
+        2500
+      ],
+      "alt": [
+        -300,
+        2000
+      ],
+      "elev": [
+        -4,
+        85
+      ],
+      "src": "estimate",
+      "match": [
+        "zsu-?23",
+        "shilka"
+      ],
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-vulcan",
+      "cls": "cannon",
+      "name": "M163 Vulcan 20 mm",
+      "range": [
+        0,
+        1200,
+        1800
+      ],
+      "alt": [
+        -200,
+        1500
+      ],
+      "elev": [
+        -5,
+        80
+      ],
+      "src": "estimate",
+      "match": [
+        "m163"
+      ],
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-aim120",
+      "cls": "aam",
+      "name": "AIM-120B/C",
+      "range": [
+        1000,
+        30000,
+        80000
+      ],
+      "shape": "cone",
+      "cone": 60,
+      "note": "public; DCS Rmax depends on altitude/aspect",
+      "match": [
+        "aim[-_]?120"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16"
+    },
+    {
+      "id": "dcs-aim7",
+      "cls": "aam",
+      "name": "AIM-7M/MH",
+      "range": [
+        1500,
+        20000,
+        50000
+      ],
+      "shape": "cone",
+      "cone": 45,
+      "match": [
+        "aim[-_]?7"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-aim9",
+      "cls": "aam",
+      "name": "AIM-9L/M/P",
+      "range": [
+        500,
+        5000,
+        18000
+      ],
+      "shape": "cone",
+      "cone": 30,
+      "match": [
+        "aim[-_]?9[a-wyz]?\\b"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-aim9x",
+      "cls": "aam",
+      "name": "AIM-9X",
+      "range": [
+        300,
+        5000,
+        26000
+      ],
+      "shape": "cone",
+      "cone": 90,
+      "match": [
+        "aim[-_]?9x"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-aim54",
+      "cls": "aam",
+      "name": "AIM-54A/C",
+      "range": [
+        4000,
+        80000,
+        180000
+      ],
+      "shape": "cone",
+      "cone": 40,
+      "match": [
+        "aim[-_]?54"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-r27",
+      "cls": "aam",
+      "name": "R-27R/ER/T/ET",
+      "range": [
+        1000,
+        25000,
+        80000
+      ],
+      "shape": "cone",
+      "cone": 45,
+      "match": [
+        "\\br[-_]?27"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-r77",
+      "cls": "aam",
+      "name": "R-77",
+      "range": [
+        1000,
+        30000,
+        80000
+      ],
+      "shape": "cone",
+      "cone": 60,
+      "match": [
+        "\\br[-_]?77"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-r73",
+      "cls": "aam",
+      "name": "R-73",
+      "range": [
+        300,
+        5000,
+        30000
+      ],
+      "shape": "cone",
+      "cone": 90,
+      "match": [
+        "\\br[-_]?73"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-r60",
+      "cls": "aam",
+      "name": "R-60M",
+      "range": [
+        300,
+        3000,
+        8000
+      ],
+      "shape": "cone",
+      "cone": 30,
+      "match": [
+        "\\br[-_]?60"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-r24",
+      "cls": "aam",
+      "name": "R-24R/T",
+      "range": [
+        1500,
+        20000,
+        50000
+      ],
+      "shape": "cone",
+      "cone": 45,
+      "match": [
+        "\\br[-_]?24"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-r33",
+      "cls": "aam",
+      "name": "R-33",
+      "range": [
+        4000,
+        80000,
+        120000
+      ],
+      "shape": "cone",
+      "cone": 40,
+      "match": [
+        "\\br[-_]?33"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-magic",
+      "cls": "aam",
+      "name": "R.550 Magic II / Super 530",
+      "range": [
+        300,
+        4000,
+        10000
+      ],
+      "shape": "cone",
+      "cone": 30,
+      "match": [
+        "r\\.?550",
+        "magic",
+        "super[-_ ]?530"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-mica",
+      "cls": "aam",
+      "name": "MICA EM/IR",
+      "range": [
+        500,
+        25000,
+        60000
+      ],
+      "shape": "cone",
+      "cone": 60,
+      "match": [
+        "\\bmica"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-meteor",
+      "cls": "aam",
+      "name": "Meteor",
+      "range": [
+        2000,
+        60000,
+        150000
+      ],
+      "shape": "cone",
+      "cone": 60,
+      "match": [
+        "meteor"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-pl",
+      "cls": "aam",
+      "name": "PL-12 / PL-5",
+      "range": [
+        1000,
+        25000,
+        70000
+      ],
+      "shape": "cone",
+      "cone": 50,
+      "src": "estimate",
+      "match": [
+        "\\bpl[-_]?(12|5)\\b"
+      ],
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-agm65",
+      "cls": "strike",
+      "name": "AGM-65 Maverick",
+      "range": [
+        500,
+        8000,
+        22000
+      ],
+      "shape": "cone",
+      "cone": 30,
+      "match": [
+        "agm[-_]?65",
+        "maverick"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-kh29",
+      "cls": "strike",
+      "name": "Kh-29L/T",
+      "range": [
+        2000,
+        10000,
+        30000
+      ],
+      "shape": "cone",
+      "cone": 30,
+      "match": [
+        "kh[-_]?29"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-kh25",
+      "cls": "strike",
+      "name": "Kh-25ML/MP",
+      "range": [
+        1000,
+        8000,
+        20000
+      ],
+      "shape": "cone",
+      "cone": 30,
+      "match": [
+        "kh[-_]?25"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-kh31",
+      "cls": "strike",
+      "name": "Kh-31P/A",
+      "range": [
+        5000,
+        50000,
+        110000
+      ],
+      "shape": "cone",
+      "cone": 45,
+      "match": [
+        "kh[-_]?31"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-harm",
+      "cls": "strike",
+      "name": "AGM-88 HARM",
+      "range": [
+        5000,
+        50000,
+        150000
+      ],
+      "shape": "cone",
+      "cone": 45,
+      "match": [
+        "agm[-_]?88",
+        "\\bharm\\b"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-agm84",
+      "cls": "strike",
+      "name": "AGM-84 Harpoon / SLAM",
+      "range": [
+        8000,
+        60000,
+        120000
+      ],
+      "shape": "cone",
+      "cone": 45,
+      "match": [
+        "agm[-_]?84",
+        "harpoon"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-agm114",
+      "cls": "strike",
+      "name": "AGM-114 Hellfire",
+      "range": [
+        500,
+        6000,
+        8000
+      ],
+      "shape": "cone",
+      "cone": 30,
+      "match": [
+        "agm[-_]?114",
+        "hellfire"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-vikhr",
+      "cls": "atgm",
+      "name": "9K121 Vikhr / 9M120 Ataka",
+      "range": [
+        500,
+        6000,
+        8000
+      ],
+      "shape": "cone",
+      "cone": 30,
+      "match": [
+        "vikhr",
+        "9k121",
+        "9m120",
+        "ataka"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-gbu12",
+      "cls": "strike",
+      "name": "GBU-10/12/16 LGB",
+      "range": [
+        0,
+        5000,
+        14000
+      ],
+      "shape": "drop",
+      "cone": 60,
+      "match": [
+        "gbu[-_]?(10|12|16)\\b",
+        "kab[-_]?500l"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-jdam",
+      "cls": "strike",
+      "name": "GBU-31/32/38 JDAM",
+      "range": [
+        0,
+        15000,
+        28000
+      ],
+      "shape": "drop",
+      "cone": 75,
+      "match": [
+        "gbu[-_]?(31|32|38)\\b",
+        "jdam",
+        "kab[-_]?500s"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-mk8x",
+      "cls": "strike",
+      "name": "Mk-82/83/84 free-fall",
+      "range": [
+        0,
+        1000,
+        6000
+      ],
+      "shape": "drop",
+      "cone": 40,
+      "src": "estimate",
+      "match": [
+        "mk[-_]?8[234]"
+      ],
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-fab",
+      "cls": "strike",
+      "name": "FAB/OFAB/BetAB free-fall",
+      "range": [
+        0,
+        1000,
+        6000
+      ],
+      "shape": "drop",
+      "cone": 40,
+      "src": "estimate",
+      "match": [
+        "fab[-_]?\\d",
+        "ofab",
+        "betab",
+        "rbk[-_]?\\d"
+      ],
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-rockets",
+      "cls": "strike",
+      "name": "Unguided rockets (Hydra, S-5/8/13/24)",
+      "range": [
+        500,
+        2500,
+        6000
+      ],
+      "shape": "cone",
+      "cone": 10,
+      "src": "estimate",
+      "match": [
+        "hydra",
+        "\\bs-?(5|8|13|24|25)\\b",
+        "\\bb-?8\\b",
+        "rocket"
+      ],
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-m61",
+      "cls": "cannon",
+      "name": "M61A1 20 mm",
+      "range": [
+        0,
+        600,
+        1500
+      ],
+      "shape": "cone",
+      "cone": 3,
+      "src": "estimate",
+      "match": [
+        "\\bm61"
+      ],
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-gsh",
+      "cls": "cannon",
+      "name": "GSh-23 / GSh-30-1 / 2A42",
+      "range": [
+        0,
+        600,
+        1500
+      ],
+      "shape": "cone",
+      "cone": 3,
+      "src": "estimate",
+      "match": [
+        "\\bgsh",
+        "2a42"
+      ],
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-torpedo",
+      "cls": "torpedo",
+      "name": "Ship torpedo",
+      "range": [
+        500,
+        5000,
+        15000
+      ],
+      "src": "estimate",
+      "match": [
+        "torpedo",
+        "53-?65"
+      ],
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "dcs-ship-sam",
+      "cls": "sam",
+      "name": "Ship SAMs (SM-2, Osa-M, Kinzhal, Sea Sparrow)",
+      "range": [
+        2000,
+        20000,
+        90000
+      ],
+      "alt": [
+        5,
+        24000
+      ],
+      "src": "estimate",
+      "match": [
+        "rim-?(7|66|67)",
+        "\\bsm-?2\\b",
+        "osa-?m",
+        "kinzhal",
+        "sea ?sparrow",
+        "s-?300f"
+      ],
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": ""
+    }
+  ],
+  "vehicles": [
+    {
+      "match": "sa-?2\\b|s_?75",
+      "weapons": [
+        "dcs-sa2"
+      ]
+    },
+    {
+      "match": "sa-?3\\b|s_?125|snr-125",
+      "weapons": [
+        "dcs-sa3"
+      ]
+    },
+    {
+      "match": "sa-?6\\b|\\bkub\\b",
+      "weapons": [
+        "dcs-sa6"
+      ]
+    },
+    {
+      "match": "sa-?8\\b|\\bosa\\b",
+      "weapons": [
+        "dcs-sa8"
+      ]
+    },
+    {
+      "match": "sa-?10\\b|s-?300",
+      "weapons": [
+        "dcs-sa10"
+      ]
+    },
+    {
+      "match": "sa-?11\\b|\\bbuk\\b",
+      "weapons": [
+        "dcs-sa11"
+      ]
+    },
+    {
+      "match": "sa-?15\\b|\\btor\\b",
+      "weapons": [
+        "dcs-sa15"
+      ]
+    },
+    {
+      "match": "sa-?19\\b|tunguska|2s6",
+      "weapons": [
+        "dcs-sa19"
+      ]
+    },
+    {
+      "match": "patriot",
+      "weapons": [
+        "dcs-patriot"
+      ]
+    },
+    {
+      "match": "\\bhawk\\b",
+      "weapons": [
+        "dcs-hawk"
+      ]
+    },
+    {
+      "match": "nasams",
+      "weapons": [
+        "dcs-nasams"
+      ]
+    },
+    {
+      "match": "roland",
+      "weapons": [
+        "dcs-roland"
+      ]
+    },
+    {
+      "match": "rapier",
+      "weapons": [
+        "dcs-rapier"
+      ]
+    },
+    {
+      "match": "avenger|stinger",
+      "weapons": [
+        "dcs-avenger"
+      ]
+    },
+    {
+      "match": "gepard",
+      "weapons": [
+        "dcs-gepard"
+      ]
+    },
+    {
+      "match": "shilka|zsu-?23",
+      "weapons": [
+        "dcs-shilka"
+      ]
+    },
+    {
+      "match": "m163",
+      "weapons": [
+        "dcs-vulcan"
+      ]
+    }
+  ],
+  "fov": {
+    "default": {
+      "horizontal": null,
+      "vertical": 78,
+      "source": "https://forum.dcs.world/topic/315858-view-system-default-fov-now-at-78-instead-of-a-realistic-60",
+      "note": "forum report: view-system default FOV 78 (other posts mention 80/90 for Zoom Normal); axis (horizontal/vertical) not stated"
+    },
+    "zoom": [
+      {
+        "match": "zoom|cockpit",
+        "fov": 30,
+        "magnification": null,
+        "source": "https://forum.dcs.world/topic/146438-new-default-fov/page/2",
+        "note": "forum: zoom limits configurable; tightest about 30, widest about 90 (gCameraViewAngleLimits in the view lua)"
+      }
+    ],
+    "viewDistance": null,
+    "viewDistanceSource": "https://forum.dcs.world/topic/106546-discrepancy-in-visual-perception-of-range/"
+  },
+  "sensors": [
+    {
+      "id": "dcs-apg68",
+      "kind": "radar",
+      "name": "F-16C AN/APG-68",
+      "match": "f-16",
+      "range": 100000,
+      "az": [
+        -60,
+        60
+      ],
+      "el": [
+        -60,
+        60
+      ],
+      "beamwidth": null,
+      "scanRate": null,
+      "rcsRef": 5,
+      "modes": [
+        "rws",
+        "tws",
+        "stt"
+      ],
+      "src": "estimate",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": "class value; DCS range depends on RCS"
+    },
+    {
+      "id": "dcs-apg73",
+      "kind": "radar",
+      "name": "F/A-18C AN/APG-73",
+      "match": "f/?a-18",
+      "range": 100000,
+      "az": [
+        -70,
+        70
+      ],
+      "el": [
+        -60,
+        60
+      ],
+      "beamwidth": null,
+      "scanRate": null,
+      "rcsRef": 5,
+      "modes": [
+        "rws",
+        "tws",
+        "stt"
+      ],
+      "src": "estimate",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": "class value"
+    },
+    {
+      "id": "dcs-apg63",
+      "kind": "radar",
+      "name": "F-15C AN/APG-63",
+      "match": "f-15",
+      "range": 120000,
+      "az": [
+        -60,
+        60
+      ],
+      "el": [
+        -60,
+        60
+      ],
+      "beamwidth": null,
+      "scanRate": null,
+      "rcsRef": 5,
+      "modes": [
+        "rws",
+        "tws",
+        "stt"
+      ],
+      "src": "estimate",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": "class value"
+    },
+    {
+      "id": "dcs-n001",
+      "kind": "radar",
+      "name": "Su-27 N001",
+      "match": "su-27|su-33|j-11",
+      "range": 100000,
+      "az": [
+        -60,
+        60
+      ],
+      "el": [
+        -60,
+        60
+      ],
+      "beamwidth": null,
+      "scanRate": null,
+      "rcsRef": 5,
+      "modes": [
+        "search",
+        "stt"
+      ],
+      "src": "estimate",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": "class value"
+    },
+    {
+      "id": "dcs-n019",
+      "kind": "radar",
+      "name": "MiG-29 N019",
+      "match": "mig-29",
+      "range": 70000,
+      "az": [
+        -60,
+        60
+      ],
+      "el": [
+        -60,
+        60
+      ],
+      "beamwidth": null,
+      "scanRate": null,
+      "rcsRef": 5,
+      "modes": [
+        "search",
+        "stt"
+      ],
+      "src": "estimate",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": "class value"
+    },
+    {
+      "id": "dcs-sa10-radar",
+      "kind": "radar",
+      "name": "S-300PS 64N6 / 30N6",
+      "match": "sa-?10\\b|s-?300",
+      "range": 160000,
+      "az": [
+        -180,
+        180
+      ],
+      "el": [
+        0,
+        60
+      ],
+      "beamwidth": null,
+      "scanRate": null,
+      "rcsRef": 2,
+      "modes": [
+        "search",
+        "track"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": "real-world figure"
+    },
+    {
+      "id": "dcs-sa11-radar",
+      "kind": "radar",
+      "name": "Buk 9S18M1 Snow Drift",
+      "match": "sa-?11\\b|\\bbuk\\b",
+      "range": 85000,
+      "az": [
+        -180,
+        180
+      ],
+      "el": [
+        0,
+        50
+      ],
+      "beamwidth": null,
+      "scanRate": null,
+      "rcsRef": 2,
+      "modes": [
+        "search",
+        "track"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": "real-world figure"
+    },
+    {
+      "id": "dcs-patriot-radar",
+      "kind": "radar",
+      "name": "AN/MPQ-53",
+      "match": "patriot",
+      "range": 170000,
+      "az": [
+        -60,
+        60
+      ],
+      "el": [
+        0,
+        80
+      ],
+      "beamwidth": null,
+      "scanRate": null,
+      "rcsRef": null,
+      "modes": [
+        "search",
+        "track"
+      ],
+      "src": "public",
+      "source": "https://www.digitalcombatsimulator.com/en/",
+      "date": "2026-11-16",
+      "note": "real-world figure"
+    }
+  ],
+  "estimates": [
+    "dcs-gepard",
+    "dcs-shilka",
+    "dcs-vulcan",
+    "dcs-pl",
+    "dcs-mk8x",
+    "dcs-fab",
+    "dcs-rockets",
+    "dcs-m61",
+    "dcs-gsh",
+    "dcs-torpedo",
+    "dcs-ship-sam",
+    "dcs-apg68",
+    "dcs-apg73",
+    "dcs-apg63",
+    "dcs-n001",
+    "dcs-n019"
+  ]
+}

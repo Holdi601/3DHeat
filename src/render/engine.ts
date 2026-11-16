@@ -44,6 +44,7 @@ import { Domain, isEffectDomain, isWeaponDomain } from '../figures/symbolClass';
 import { sideTable, SYMBOL_STYLE_ID } from './symbols/affiliation';
 import type { SymbolParams } from './types';
 import { TacticalLayer, axesOfTrack, cockpitClip } from './tactical';
+import { RangeLayer } from '../ranges/layer';
 import { figureNear, usePlanStore } from '../state/planStore';
 import { playbackAt } from '../tactics/plan';
 import { pickRef, refPoints } from '../tactics/gizmo';
@@ -673,6 +674,9 @@ export class Engine {
   private rigNear = 0;
   /** Velocity vectors, radar cones, locks and engagement domes (`tactical.ts`). */
   private readonly tactical = new TacticalLayer();
+  /** The engagement ranges (`ranges/`) and this frame's, drawn by the renderer. */
+  private readonly rangeLayer = new RangeLayer();
+  private rangeDraw: import('./types').RangeDraw | null = null;
   /** The battles' objectives on the ground (`objectives.ts`); its labels are the page's. */
   readonly objectiveDraw = new ObjectiveLayerDraw();
   /** The objectives' lines over the heat, between frames that build them. */
@@ -3096,6 +3100,8 @@ export class Engine {
       // The volumes' outlines and handles, likewise.
       volumeSig,
       objectiveSig,
+      // The engagement ranges' choices and who they are drawn for.
+      rangeSig(),
     ].join('|');
 
     // A level arriving a slice a frame is drawn once all of it is there, and the
@@ -3612,6 +3618,38 @@ export class Engine {
           trailVertCount = aids.count;
         }
       }
+      // The engagement ranges: shells round the units in question, cut where they cannot see.
+      this.rangeDraw = null;
+      const rs = useReplayStore.getState();
+      if (rs.ranges.on && this.dataset && this.liveTracks.length && !drawEverySample) {
+        const d = this.dataset;
+        if (this.rangeLayer.step(d)) this.forceRenderFrames = Math.max(this.forceRenderFrames, 1);
+        const index = unitsOf(d);
+        const selected = new Set<number>();
+        if (rs.follow !== null) selected.add(rs.follow);
+        if (rs.targetPerson !== null) selected.add(rs.targetPerson);
+        if (rs.pair) for (const p of rs.pair) selected.add(p);
+        const fr = this.figureReplay;
+        const tracks = this.liveTracks.map((tr) => {
+          if (rs.selected && index.units[index.personUnit[tr.person]]?.key === rs.selected) selected.add(tr.person);
+          return { person: tr.person, row: tr.row, x: tr.x, y: tr.y, z: tr.z, fwd: axesOfTrack(tr).fwd, team: d.personTeam ? d.personTeam[tr.person] : -1 };
+        });
+        this.rangeDraw = this.rangeLayer.build(d, tracks, {
+          settings: rs.ranges,
+          kindOf: (row) => fr.kindOf(d, row),
+          vehicleOf: (p) => {
+            const u = index.units[index.personUnit[p]];
+            return u ? (u.vehicles[u.persons.indexOf(p)] ?? u.vehicle) : '';
+          },
+          selected,
+          colourOf: (p) => this.cursor!.personColor(p) as [number, number, number],
+          camera: this.camPos,
+          origin: this.originArr,
+          k: unitsPerMetre(d),
+          t: cursorAt,
+          floorY: d.bounds.minY,
+        });
+      } else this.rangeLayer.clearInfo();
       // The tactical display's range rings and altitude ladders.
       const look = useReplayStore.getState().look;
       if (look.on && this.dataset && this.liveTracks.length && (look.rings || look.ladders)) {
@@ -3860,9 +3898,12 @@ export class Engine {
           }
         : null,
       volumes: volumeDraw,
+      ranges: !raceBuilt && !raceTab && s.mode === 'team' && !gpuStore ? this.rangeDraw : null,
     };
 
     renderer.render(params);
+    // Views of the engagement ranges still to take: more frames until they are.
+    if (renderer.rangesPending && params.ranges) this.forceRenderFrames = Math.max(this.forceRenderFrames, 1);
     this.frameIndex++;
     // A getter on the renderer; the atlas and the tiles' edges arrive between
     // uploads, so it is read every frame rather than at them.
@@ -4334,6 +4375,16 @@ export class Engine {
  * The image footprint is recomputed each frame rather than cached, because the
  * anchors are live controls — dragging them has to move the map immediately.
  */
+/** What the engagement ranges are drawn with, for the scene's signature: empty while they are off. */
+function rangeSig(): string {
+  const r = useReplayStore.getState();
+  if (!r.ranges.on) return '';
+  // The settings change only by being replaced: written out once a change.
+  if (rangeSigOf.ranges !== r.ranges) rangeSigOf = { ranges: r.ranges, json: JSON.stringify(r.ranges) };
+  return `${rangeSigOf.json}|${r.selected}|${r.follow}|${r.targetPerson}|${r.pair}`;
+}
+let rangeSigOf: { ranges: unknown; json: string } = { ranges: null, json: '' };
+
 function buildLevelDraw(level: Level | null): LevelDraw | null {
   if (!level) return null;
   const noStructure = {

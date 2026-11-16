@@ -1,0 +1,1530 @@
+{
+  "game": "wt",
+  "name": "War Thunder",
+  "researched": "2026-11-16",
+  "weapons": [
+    {
+      "id": "wt-9m311",
+      "cls": "sam",
+      "name": "9M311 (2S6 Tunguska)",
+      "range": [
+        2500,
+        6000,
+        8000
+      ],
+      "alt": [
+        15,
+        3500
+      ],
+      "elev": [
+        0,
+        85
+      ],
+      "source": "https://wiki.warthunder.com/2S6",
+      "note": "min/max/alt real-world; wiki card confirms only missile elevation 0..85 deg and 120 shots/min. opt judged",
+      "match": [
+        "9m311",
+        "2s6"
+      ],
+      "src": "public",
+      "date": "2026-11-16"
+    },
+    {
+      "id": "wt-2a38m",
+      "cls": "cannon",
+      "name": "2A38M 30 mm (Tunguska)",
+      "range": [
+        0,
+        2000,
+        4000
+      ],
+      "alt": [
+        -500,
+        3000
+      ],
+      "elev": [
+        -9,
+        85
+      ],
+      "src": "estimate",
+      "source": "https://wiki.warthunder.com/2S6",
+      "note": "elevation -9..85 from wiki card; ranges judged (penetration listed to 2000 m)",
+      "match": [
+        "2a38"
+      ],
+      "date": "2026-11-16"
+    },
+    {
+      "id": "wt-pantsir",
+      "cls": "sam",
+      "name": "Pantsir-S1 57E6",
+      "range": [
+        1200,
+        12000,
+        20000
+      ],
+      "alt": [
+        15,
+        15000
+      ],
+      "elev": [
+        0,
+        90
+      ],
+      "note": "real-world envelope",
+      "match": [
+        "pantsir",
+        "57e6"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16"
+    },
+    {
+      "id": "wt-tor",
+      "cls": "sam",
+      "name": "Tor 9M330/9M331",
+      "range": [
+        1500,
+        8000,
+        12000
+      ],
+      "alt": [
+        10,
+        6000
+      ],
+      "elev": [
+        0,
+        90
+      ],
+      "match": [
+        "\\btor(-m1)?\\b",
+        "9m33[01]"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-adats",
+      "cls": "sam",
+      "name": "ADATS MIM-146",
+      "range": [
+        500,
+        6000,
+        10000
+      ],
+      "alt": [
+        0,
+        5000
+      ],
+      "elev": [
+        -5,
+        90
+      ],
+      "note": "dual role ATGM/SAM, real-world ~8-10 km",
+      "match": [
+        "adats",
+        "mim-?146"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16"
+    },
+    {
+      "id": "wt-roland",
+      "cls": "sam",
+      "name": "Roland 2/3",
+      "range": [
+        500,
+        5000,
+        6300
+      ],
+      "alt": [
+        20,
+        5500
+      ],
+      "elev": [
+        0,
+        85
+      ],
+      "match": [
+        "roland"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-ozelot",
+      "cls": "sam",
+      "name": "FIM-92 Stinger (Ozelot / Avenger / M1097)",
+      "range": [
+        200,
+        3500,
+        4800
+      ],
+      "alt": [
+        10,
+        3800
+      ],
+      "elev": [
+        -5,
+        90
+      ],
+      "match": [
+        "stinger",
+        "fim-?92",
+        "ozelot"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-stormer",
+      "cls": "sam",
+      "name": "Starstreak HVM (Stormer)",
+      "range": [
+        300,
+        4000,
+        7000
+      ],
+      "alt": [
+        10,
+        5000
+      ],
+      "elev": [
+        -5,
+        90
+      ],
+      "match": [
+        "starstreak",
+        "stormer",
+        "\\bhvm\\b"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-crotale",
+      "cls": "sam",
+      "name": "Crotale R440",
+      "range": [
+        500,
+        7000,
+        10000
+      ],
+      "alt": [
+        15,
+        6000
+      ],
+      "elev": [
+        0,
+        90
+      ],
+      "match": [
+        "crotale",
+        "r440"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-osa",
+      "cls": "sam",
+      "name": "9M33 (9K33 Osa)",
+      "range": [
+        1500,
+        7000,
+        10000
+      ],
+      "alt": [
+        25,
+        5000
+      ],
+      "elev": [
+        0,
+        90
+      ],
+      "match": [
+        "9m33\\b",
+        "\\bosa\\b",
+        "9k33"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-strela10",
+      "cls": "sam",
+      "name": "9M37/9M333 (Strela-10)",
+      "range": [
+        800,
+        3500,
+        5000
+      ],
+      "alt": [
+        25,
+        3500
+      ],
+      "elev": [
+        0,
+        90
+      ],
+      "match": [
+        "9m3[37]\\b",
+        "9m333",
+        "strela-?10"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-chaparral",
+      "cls": "sam",
+      "name": "MIM-72 Chaparral",
+      "range": [
+        500,
+        5000,
+        9000
+      ],
+      "alt": [
+        15,
+        3000
+      ],
+      "elev": [
+        0,
+        90
+      ],
+      "match": [
+        "chaparral",
+        "mim-?72"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-rapier",
+      "cls": "sam",
+      "name": "Rapier",
+      "range": [
+        500,
+        5000,
+        6800
+      ],
+      "alt": [
+        10,
+        3000
+      ],
+      "elev": [
+        0,
+        90
+      ],
+      "match": [
+        "rapier"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-mistral",
+      "cls": "sam",
+      "name": "Mistral / Igla MANPADS",
+      "range": [
+        500,
+        3500,
+        5500
+      ],
+      "alt": [
+        10,
+        3500
+      ],
+      "elev": [
+        -5,
+        90
+      ],
+      "match": [
+        "mistral",
+        "igla",
+        "9m3[19]\\b"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-kub",
+      "cls": "sam",
+      "name": "3M9 Kub",
+      "range": [
+        4000,
+        15000,
+        24000
+      ],
+      "alt": [
+        100,
+        8000
+      ],
+      "elev": [
+        0,
+        90
+      ],
+      "match": [
+        "3m9\\b",
+        "\\bkub\\b"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-gepard",
+      "cls": "cannon",
+      "name": "Gepard 2x35 mm",
+      "range": [
+        0,
+        2500,
+        4000
+      ],
+      "alt": [
+        -500,
+        3000
+      ],
+      "elev": [
+        -10,
+        85
+      ],
+      "src": "estimate",
+      "match": [
+        "gepard"
+      ],
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-shilka",
+      "cls": "cannon",
+      "name": "ZSU-23-4 Shilka 23 mm",
+      "range": [
+        0,
+        2000,
+        2500
+      ],
+      "alt": [
+        -300,
+        2000
+      ],
+      "elev": [
+        -4,
+        85
+      ],
+      "src": "estimate",
+      "note": "real effective range 2.5 km; WT value not found",
+      "match": [
+        "zsu-?23",
+        "shilka",
+        "2a7\\b"
+      ],
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16"
+    },
+    {
+      "id": "wt-zsu57",
+      "cls": "cannon",
+      "name": "ZSU-57-2 / S-60 57 mm",
+      "range": [
+        0,
+        3000,
+        4000
+      ],
+      "alt": [
+        -200,
+        4000
+      ],
+      "elev": [
+        -5,
+        80
+      ],
+      "src": "estimate",
+      "match": [
+        "zsu-?57",
+        "s-?60\\b"
+      ],
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-m163",
+      "cls": "cannon",
+      "name": "M163 Vulcan 20 mm",
+      "range": [
+        0,
+        1200,
+        1800
+      ],
+      "alt": [
+        -200,
+        1500
+      ],
+      "elev": [
+        -5,
+        80
+      ],
+      "src": "estimate",
+      "match": [
+        "m163",
+        "m168"
+      ],
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-bofors40",
+      "cls": "cannon",
+      "name": "Bofors/M42 40 mm",
+      "range": [
+        0,
+        2500,
+        4000
+      ],
+      "alt": [
+        -200,
+        3500
+      ],
+      "elev": [
+        -5,
+        85
+      ],
+      "src": "estimate",
+      "match": [
+        "bofors",
+        "\\bm42\\b"
+      ],
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-flak20",
+      "cls": "cannon",
+      "name": "20-37 mm flak (Flakpanzer, Wirbelwind, Ostwind)",
+      "range": [
+        0,
+        1500,
+        3000
+      ],
+      "alt": [
+        -200,
+        3000
+      ],
+      "elev": [
+        -5,
+        90
+      ],
+      "src": "estimate",
+      "match": [
+        "flak ?(3[68]|18|30|43)",
+        "flakpanzer",
+        "wirbelwind",
+        "ostwind",
+        "flakvierling"
+      ],
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-atgm-tow",
+      "cls": "atgm",
+      "name": "BGM-71 TOW",
+      "range": [
+        65,
+        3000,
+        3750
+      ],
+      "note": "real-world; WT sight range equals missile range",
+      "match": [
+        "\\btow\\b",
+        "bgm-?71"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16"
+    },
+    {
+      "id": "wt-atgm-konkurs",
+      "cls": "atgm",
+      "name": "9M113 Konkurs",
+      "range": [
+        75,
+        3000,
+        4000
+      ],
+      "match": [
+        "konkurs",
+        "9m113"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-atgm-kornet",
+      "cls": "atgm",
+      "name": "9M133 Kornet",
+      "range": [
+        100,
+        4000,
+        5500
+      ],
+      "match": [
+        "kornet",
+        "9m133"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-atgm-malyutka",
+      "cls": "atgm",
+      "name": "9M14 Malyutka",
+      "range": [
+        500,
+        2000,
+        3000
+      ],
+      "match": [
+        "malyutka",
+        "9m14\\b"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-atgm-milan",
+      "cls": "atgm",
+      "name": "MILAN",
+      "range": [
+        25,
+        1500,
+        2000
+      ],
+      "match": [
+        "milan"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-atgm-hot",
+      "cls": "atgm",
+      "name": "HOT",
+      "range": [
+        75,
+        3000,
+        4000
+      ],
+      "match": [
+        "\\bhot[-_ ]?\\d?\\b"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-atgm-spike",
+      "cls": "atgm",
+      "name": "Spike",
+      "range": [
+        200,
+        3000,
+        4000
+      ],
+      "match": [
+        "spike"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-atgm-javelin",
+      "cls": "atgm",
+      "name": "FGM-148 Javelin",
+      "range": [
+        65,
+        2000,
+        2500
+      ],
+      "match": [
+        "javelin",
+        "fgm-?148"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-atgm-swingfire",
+      "cls": "atgm",
+      "name": "Swingfire",
+      "range": [
+        150,
+        3000,
+        4000
+      ],
+      "match": [
+        "swingfire"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-atgm-gun",
+      "cls": "atgm",
+      "name": "Gun-launched ATGM (Refleks, Shillelagh, LAHAT)",
+      "range": [
+        100,
+        4000,
+        5000
+      ],
+      "elev": [
+        -6,
+        15
+      ],
+      "match": [
+        "refleks",
+        "9m119",
+        "9m117",
+        "shillelagh",
+        "lahat",
+        "mgm-?51"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-hell",
+      "cls": "atgm",
+      "name": "AGM-114 Hellfire / 9M120 Ataka / 9M127 Vikhr",
+      "range": [
+        500,
+        6000,
+        8000
+      ],
+      "shape": "cone",
+      "cone": 30,
+      "match": [
+        "hellfire",
+        "agm-?114",
+        "ataka",
+        "9m120",
+        "vikhr",
+        "9m127",
+        "shturm",
+        "9m114"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-aim9b",
+      "cls": "aam",
+      "name": "AIM-9B / R-3S / early IR",
+      "range": [
+        500,
+        2500,
+        4000
+      ],
+      "shape": "cone",
+      "cone": 20,
+      "note": "rear-aspect only; real-world/forum, game lock range not confirmed",
+      "match": [
+        "aim-?9b",
+        "\\br-?3s\\b",
+        "\\bk-?13"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16"
+    },
+    {
+      "id": "wt-aim9l",
+      "cls": "aam",
+      "name": "AIM-9L/M/P, R-13M1, Magic 2, Python 3",
+      "range": [
+        500,
+        5000,
+        18000
+      ],
+      "shape": "cone",
+      "cone": 30,
+      "match": [
+        "aim-?9[dgehjlmp]\\b",
+        "\\br-?13m",
+        "magic",
+        "python ?3",
+        "\\br-?550"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-aim9x",
+      "cls": "aam",
+      "name": "AIM-9X, R-73, ASRAAM, IRIS-T, Python 4/5",
+      "range": [
+        300,
+        5000,
+        26000
+      ],
+      "shape": "cone",
+      "cone": 90,
+      "note": "HOBS; seeker cone judged",
+      "match": [
+        "aim-?9x",
+        "\\br-?73",
+        "asraam",
+        "iris-?t",
+        "python ?[45]"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16"
+    },
+    {
+      "id": "wt-r60",
+      "cls": "aam",
+      "name": "R-60 / R-60M",
+      "range": [
+        300,
+        3000,
+        8000
+      ],
+      "shape": "cone",
+      "cone": 30,
+      "match": [
+        "\\br-?60"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-aim7",
+      "cls": "aam",
+      "name": "AIM-7 / R-24R / Skyflash (SARH)",
+      "range": [
+        1500,
+        20000,
+        50000
+      ],
+      "shape": "cone",
+      "cone": 45,
+      "note": "needs continuous radar illumination",
+      "match": [
+        "aim-?7",
+        "sparrow",
+        "skyflash",
+        "\\br-?24r",
+        "aspide"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16"
+    },
+    {
+      "id": "wt-r27",
+      "cls": "aam",
+      "name": "R-27R/ER/T/ET",
+      "range": [
+        1000,
+        25000,
+        80000
+      ],
+      "shape": "cone",
+      "cone": 45,
+      "match": [
+        "\\br-?27"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-aim120",
+      "cls": "aam",
+      "name": "AIM-120 / R-77 / MICA EM / PL-12",
+      "range": [
+        1000,
+        30000,
+        80000
+      ],
+      "shape": "cone",
+      "cone": 60,
+      "match": [
+        "aim-?120",
+        "\\br-?77",
+        "\\bmica",
+        "pl-?12"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-meteor",
+      "cls": "aam",
+      "name": "Meteor",
+      "range": [
+        2000,
+        60000,
+        150000
+      ],
+      "shape": "cone",
+      "cone": 60,
+      "match": [
+        "meteor"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-aim54",
+      "cls": "aam",
+      "name": "AIM-54 Phoenix",
+      "range": [
+        4000,
+        80000,
+        180000
+      ],
+      "shape": "cone",
+      "cone": 40,
+      "match": [
+        "aim-?54",
+        "phoenix"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-aircannon",
+      "cls": "cannon",
+      "name": "Aircraft cannon (20-30 mm)",
+      "range": [
+        0,
+        600,
+        1500
+      ],
+      "shape": "cone",
+      "cone": 3,
+      "src": "estimate",
+      "note": "opt typical engagement; WT default convergence not confirmed",
+      "match": [
+        "hispano",
+        "shvak",
+        "\\bvya",
+        "\\bns-?(23|37)",
+        "mk ?(103|108)",
+        "mg ?151",
+        "\\bm61",
+        "gsh-?\\d",
+        "\\baden",
+        "\\bdefa",
+        "type 99"
+      ],
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16"
+    },
+    {
+      "id": "wt-airmg",
+      "cls": "mg",
+      "name": "Aircraft machine gun (7.62-13 mm)",
+      "range": [
+        0,
+        300,
+        800
+      ],
+      "shape": "cone",
+      "cone": 3,
+      "src": "estimate",
+      "match": [
+        "shkas",
+        "\\bubs\\b",
+        "mg ?(17|131|81)",
+        "vickers",
+        "breda",
+        "type 97"
+      ],
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-rocket",
+      "cls": "strike",
+      "name": "Unguided rockets",
+      "range": [
+        500,
+        2500,
+        6000
+      ],
+      "shape": "cone",
+      "cone": 10,
+      "src": "estimate",
+      "match": [
+        "rocket",
+        "hvar",
+        "\\bs-?(5|8|13|24|25)\\b",
+        "\\bb-?8\\b",
+        "ffar",
+        "hydra",
+        "zuni"
+      ],
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-bomb",
+      "cls": "strike",
+      "name": "Free-fall bomb",
+      "range": [
+        0,
+        1000,
+        6000
+      ],
+      "shape": "drop",
+      "cone": 40,
+      "src": "estimate",
+      "match": [
+        "\\bbomb",
+        "\\bfab-?\\d",
+        "\\bofab",
+        "\\bsc ?\\d{2,4}",
+        "\\bsd ?\\d{2,4}",
+        "\\bmk-?8[1-4]",
+        "\\bam-?39"
+      ],
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-lgb",
+      "cls": "strike",
+      "name": "Laser/TV-guided bomb (GBU-12/16, KAB-500)",
+      "range": [
+        0,
+        5000,
+        14000
+      ],
+      "shape": "drop",
+      "cone": 60,
+      "match": [
+        "gbu-?1[026]",
+        "paveway",
+        "kab-?\\d+(l|kr)?"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-maverick",
+      "cls": "strike",
+      "name": "AGM-65 Maverick / Kh-25 / Kh-29",
+      "range": [
+        500,
+        8000,
+        22000
+      ],
+      "shape": "cone",
+      "cone": 30,
+      "match": [
+        "agm-?65",
+        "maverick",
+        "\\bkh-?(25|29|38)"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-naval-main",
+      "cls": "gun",
+      "name": "Naval heavy guns",
+      "range": [
+        1000,
+        12000,
+        25000
+      ],
+      "src": "estimate",
+      "los": false,
+      "note": "WT naval range limited by sight/visibility, not a fixed cap",
+      "match": [
+        "(15[24]|203|280|305|356|381|406|460) ?mm.*(naval|ship|turret|main)"
+      ],
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16"
+    },
+    {
+      "id": "wt-naval-aa",
+      "cls": "cannon",
+      "name": "Naval AA (25-40 mm, 76-127 mm DP)",
+      "range": [
+        0,
+        3000,
+        8000
+      ],
+      "src": "estimate",
+      "match": [
+        "pom-?pom",
+        "type 96",
+        "5 ?inch",
+        "127 ?mm.*dp"
+      ],
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": ""
+    },
+    {
+      "id": "wt-torpedo",
+      "cls": "torpedo",
+      "name": "Torpedo",
+      "range": [
+        300,
+        3000,
+        9000
+      ],
+      "src": "estimate",
+      "note": "WT game-stated max run not retrieved",
+      "match": [
+        "torpedo",
+        "type 93",
+        "53-?\\d{2}"
+      ],
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16"
+    },
+    {
+      "id": "wt-tank-gun",
+      "cls": "gun",
+      "name": "Tank gun (no cap in WT)",
+      "range": [
+        0,
+        1500,
+        4000
+      ],
+      "src": "estimate",
+      "note": "WT does not cap tank shell range; opt typical engagement. Sight/rangefinder max is vehicle dependent",
+      "match": [
+        "\\bapfsds\\b",
+        "\\bapcbc\\b",
+        "\\bheat-?fs\\b"
+      ],
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16"
+    }
+  ],
+  "vehicles": [
+    {
+      "match": "2s6|tunguska",
+      "weapons": [
+        "wt-9m311",
+        "wt-2a38m"
+      ]
+    },
+    {
+      "match": "pantsir",
+      "weapons": [
+        "wt-pantsir"
+      ]
+    },
+    {
+      "match": "\\btor\\b|9k33[01]",
+      "weapons": [
+        "wt-tor"
+      ]
+    },
+    {
+      "match": "adats",
+      "weapons": [
+        "wt-adats"
+      ]
+    },
+    {
+      "match": "roland",
+      "weapons": [
+        "wt-roland"
+      ]
+    },
+    {
+      "match": "ozelot|avenger|m1097",
+      "weapons": [
+        "wt-ozelot"
+      ]
+    },
+    {
+      "match": "stormer",
+      "weapons": [
+        "wt-stormer"
+      ]
+    },
+    {
+      "match": "gepard",
+      "weapons": [
+        "wt-gepard"
+      ]
+    },
+    {
+      "match": "zsu_?23|shilka",
+      "weapons": [
+        "wt-shilka"
+      ]
+    },
+    {
+      "match": "zsu_?57",
+      "weapons": [
+        "wt-zsu57"
+      ]
+    },
+    {
+      "match": "m163",
+      "weapons": [
+        "wt-m163"
+      ]
+    },
+    {
+      "match": "\\bosa\\b|9k33\\b",
+      "weapons": [
+        "wt-osa"
+      ]
+    },
+    {
+      "match": "strela",
+      "weapons": [
+        "wt-strela10"
+      ]
+    },
+    {
+      "match": "crotale",
+      "weapons": [
+        "wt-crotale"
+      ]
+    },
+    {
+      "match": "chaparral",
+      "weapons": [
+        "wt-chaparral"
+      ]
+    },
+    {
+      "match": "rapier",
+      "weapons": [
+        "wt-rapier"
+      ]
+    },
+    {
+      "match": "\\bkub\\b|2k12",
+      "weapons": [
+        "wt-kub"
+      ]
+    },
+    {
+      "match": "wirbelwind|ostwind|flakpanzer|flakvierling",
+      "weapons": [
+        "wt-flak20"
+      ]
+    }
+  ],
+  "fov": {
+    "default": {
+      "horizontal": null,
+      "vertical": null,
+      "source": "https://wiki.warthunder.com/",
+      "note": "WT settings expose a camera FOV slider; default value not confirmed from a source"
+    },
+    "zoom": [],
+    "viewDistance": null,
+    "viewDistanceSource": "https://wiki.warthunder.com/"
+  },
+  "sensors": [
+    {
+      "id": "wt-gepard-radar",
+      "kind": "radar",
+      "name": "Gepard search/track radars",
+      "match": "gepard",
+      "range": 15000,
+      "az": [
+        -180,
+        180
+      ],
+      "el": [
+        -5,
+        85
+      ],
+      "beamwidth": null,
+      "scanRate": null,
+      "rcsRef": null,
+      "modes": [
+        "search",
+        "track"
+      ],
+      "src": "public",
+      "source": "https://github.com/gszabi99/War-Thunder-Datamine",
+      "date": "2026-11-16",
+      "note": "real-world search ~15 km; WT value not confirmed"
+    },
+    {
+      "id": "wt-2s6-radar",
+      "kind": "radar",
+      "name": "Tunguska 1RL144 search/track",
+      "match": "2s6|tunguska",
+      "range": 18000,
+      "az": [
+        -180,
+        180
+      ],
+      "el": [
+        0,
+        85
+      ],
+      "beamwidth": null,
+      "scanRate": null,
+      "rcsRef": null,
+      "modes": [
+        "search",
+        "track"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/2S6",
+      "date": "2026-11-16",
+      "note": "real-world 18 km search, 13 km track"
+    },
+    {
+      "id": "wt-pantsir-radar",
+      "kind": "radar",
+      "name": "Pantsir 1RS2 / 1L36",
+      "match": "pantsir",
+      "range": 36000,
+      "az": [
+        -180,
+        180
+      ],
+      "el": [
+        0,
+        90
+      ],
+      "beamwidth": null,
+      "scanRate": null,
+      "rcsRef": null,
+      "modes": [
+        "search",
+        "track"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": "real-world figure"
+    },
+    {
+      "id": "wt-tor-radar",
+      "kind": "radar",
+      "name": "Tor 9S18M1 search",
+      "match": "\\btor\\b",
+      "range": 25000,
+      "az": [
+        -180,
+        180
+      ],
+      "el": [
+        0,
+        64
+      ],
+      "beamwidth": null,
+      "scanRate": null,
+      "rcsRef": null,
+      "modes": [
+        "search",
+        "track"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": "real-world figure"
+    },
+    {
+      "id": "wt-shilka-radar",
+      "kind": "radar",
+      "name": "RPK-2 Tobol",
+      "match": "zsu_?23|shilka",
+      "range": 20000,
+      "az": [
+        -180,
+        180
+      ],
+      "el": [
+        -5,
+        85
+      ],
+      "beamwidth": null,
+      "scanRate": null,
+      "rcsRef": null,
+      "modes": [
+        "search",
+        "track"
+      ],
+      "src": "public",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": "real-world search 20 km, track 18 km"
+    },
+    {
+      "id": "wt-roland-radar",
+      "kind": "radar",
+      "name": "Roland Siroco",
+      "match": "roland",
+      "range": 16000,
+      "az": [
+        -180,
+        180
+      ],
+      "el": [
+        0,
+        90
+      ],
+      "beamwidth": null,
+      "scanRate": null,
+      "rcsRef": null,
+      "modes": [
+        "search",
+        "track"
+      ],
+      "src": "estimate",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": "estimate"
+    },
+    {
+      "id": "wt-jet-radar",
+      "kind": "radar",
+      "name": "Generic fighter radar",
+      "match": "f-4|f-14|f-15|mig-2[139]|su-27|f-16|f/a-18|mirage",
+      "range": 50000,
+      "az": [
+        -60,
+        60
+      ],
+      "el": [
+        -60,
+        60
+      ],
+      "beamwidth": null,
+      "scanRate": null,
+      "rcsRef": 5,
+      "modes": [
+        "search",
+        "track",
+        "stt"
+      ],
+      "src": "estimate",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": "class value, varies strongly by type"
+    },
+    {
+      "id": "wt-rwr",
+      "kind": "rwr",
+      "name": "Radar warning receiver",
+      "match": "f-4|f-14|f-15|f-16|f/a-18|mig-2[39]|su-27|jas|mirage",
+      "range": 100000,
+      "az": [
+        -180,
+        180
+      ],
+      "el": [
+        -90,
+        90
+      ],
+      "beamwidth": null,
+      "scanRate": null,
+      "rcsRef": null,
+      "modes": [
+        "esm"
+      ],
+      "src": "estimate",
+      "source": "https://wiki.warthunder.com/",
+      "date": "2026-11-16",
+      "note": "class value"
+    }
+  ],
+  "estimates": [
+    "wt-2a38m",
+    "wt-gepard",
+    "wt-shilka",
+    "wt-zsu57",
+    "wt-m163",
+    "wt-bofors40",
+    "wt-flak20",
+    "wt-aircannon",
+    "wt-airmg",
+    "wt-rocket",
+    "wt-bomb",
+    "wt-naval-main",
+    "wt-naval-aa",
+    "wt-torpedo",
+    "wt-tank-gun",
+    "wt-roland-radar",
+    "wt-jet-radar",
+    "wt-rwr"
+  ]
+}

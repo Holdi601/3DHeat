@@ -1,0 +1,428 @@
+{
+  "game": "bf6",
+  "name": "Battlefield 6",
+  "researched": "2026-11-16",
+  "weapons": [
+    {
+      "id": "bf6-ar",
+      "cls": "smallArms",
+      "name": "Assault rifle",
+      "range": [
+        0,
+        20,
+        100
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(m433|ak-?4d|ak4d|kord|l85a3|sg 553r?|m4a1|m16a4|m27a1|rk-??6|ar ?\\d+|a-?91|scar-?h|tr-?7)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://fusa-ap5.pages.dev/battlefield6/weapons/lrweaponttk",
+      "date": "2026-11-16",
+      "note": "Community test: most ARs reach minimum damage by about 50 m; range pair is judged. Beta posts: many 33-dmg guns drop to ~27-25 from about 10 m (stepped curve)."
+    },
+    {
+      "id": "bf6-carbine",
+      "cls": "smallArms",
+      "name": "Carbine",
+      "range": [
+        0,
+        22,
+        100
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(m277|m4a1 carbine|ak-?74|sg-?553|carbine|b36a4|g3a4|dmr carbine|ak-?4d carbine)\\b"
+      ],
+      "src": "game",
+      "source": "https://github.com/orginalbusta/BF6-Ammo-Type-Analysis",
+      "date": "2026-11-16",
+      "note": "M277 keeps 25 damage at all ranges to 100 m (no falloff in test). Other carbines reach minimum damage around 20-25 m (fusa TTK guide)."
+    },
+    {
+      "id": "bf6-smg",
+      "cls": "smallArms",
+      "name": "SMG",
+      "range": [
+        0,
+        12,
+        80
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(ump-?45|mp9|mp7|pw5a3|pw7a2|ppsh|ppsh-41|scorpion|sgx|vector|sor-?556|p90|mp5)\\b"
+      ],
+      "src": "game",
+      "source": "https://github.com/orginalbusta/BF6-Ammo-Type-Analysis",
+      "date": "2026-11-16",
+      "note": "SMGs steepest falloff, some from 25 to about 12 damage at 100 m. opt/max shown 12/80 judged."
+    },
+    {
+      "id": "bf6-lmg",
+      "cls": "mg",
+      "name": "LMG",
+      "range": [
+        0,
+        25,
+        120
+      ],
+      "elev": [
+        -60,
+        75
+      ],
+      "match": [
+        "\\b(m60|m250|kts100|lmg|mg7|rpkm|m250 lmg|nvo-?228e)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://forums.ea.com/discussions/battlefield-6-general-discussion-en/damage-dropoff-from-range/12842844",
+      "date": "2026-11-16",
+      "note": "Class value; stepped decay in beta threads."
+    },
+    {
+      "id": "bf6-dmr",
+      "cls": "smallArms",
+      "name": "DMR",
+      "range": [
+        0,
+        40,
+        150
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(svk-?7\\.?62|svdm|sv-?98|mk ?14|m39 emr|dmr|svk|m417)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://forums.ea.com/discussions/battlefield-6-general-discussion-en/damage-dropoff-from-range/12842844",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "bf6-sniper",
+      "cls": "smallArms",
+      "name": "Sniper rifle",
+      "range": [
+        0,
+        40,
+        200
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(sv-?98|m2010 esr|m82|barrett|cs-?lr4|sniper|esr)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://forums.ea.com/discussions/battlefield-6-general-discussion-en/damage-dropoff-from-range/12842844",
+      "date": "2026-11-16",
+      "note": "Class value; damage falloff in bolt actions is mild."
+    },
+    {
+      "id": "bf6-shotgun",
+      "cls": "smallArms",
+      "name": "Shotgun",
+      "range": [
+        0,
+        8,
+        30
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(870|m87a1|870 mcs|dbv-12|11-87|shotgun|slug|saiga)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://forums.ea.com/discussions/battlefield-6-general-discussion-en/damage-dropoff-from-range/12842844",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "bf6-pistol",
+      "cls": "smallArms",
+      "name": "Pistol",
+      "range": [
+        0,
+        12,
+        50
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(m45a1|m9|glock|p18|gp-?45|m44|pistol|revolver|m1911)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://forums.ea.com/discussions/battlefield-6-general-discussion-en/damage-dropoff-from-range/12842844",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "bf6-rpg",
+      "cls": "atgm",
+      "name": "RPG-7 / SMAW / MBT LAW",
+      "range": [
+        0,
+        150,
+        400
+      ],
+      "elev": [
+        -30,
+        45
+      ],
+      "match": [
+        "\\b(rpg-?7|smaw|mbt ?law|nlaw|panzerfaust|m136|at4|law)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://forums.ea.com/discussions/battlefield-6-general-discussion-en/damage-dropoff-from-range/12842844",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "bf6-javelin",
+      "cls": "atgm",
+      "name": "Javelin / guided AT",
+      "range": [
+        20,
+        400,
+        600
+      ],
+      "elev": [
+        -30,
+        60
+      ],
+      "match": [
+        "javelin|fgm-?148|guided at|spike"
+      ],
+      "src": "estimate",
+      "source": "https://forums.ea.com/discussions/battlefield-6-general-discussion-en/damage-dropoff-from-range/12842844",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "bf6-stinger",
+      "cls": "sam",
+      "name": "FIM-92 Stinger / Igla",
+      "range": [
+        0,
+        300,
+        500
+      ],
+      "alt": [
+        0,
+        1500
+      ],
+      "elev": [
+        -5,
+        90
+      ],
+      "match": [
+        "stinger|fim-?92|igla|sa-?18"
+      ],
+      "src": "estimate",
+      "source": "https://forums.ea.com/discussions/battlefield-6-general-discussion-en/damage-dropoff-from-range/12842844",
+      "date": "2026-11-16",
+      "note": "Class value; lock behaviour discussed in EA forum threads, no confirmed value."
+    },
+    {
+      "id": "bf6-tank-gun",
+      "cls": "gun",
+      "name": "Tank main gun (120-125 mm)",
+      "range": [
+        0,
+        400,
+        800
+      ],
+      "elev": [
+        -8,
+        25
+      ],
+      "match": [
+        "\\b(120 ?mm|125 ?mm|main cannon|main gun|abrams|leopard|t-90|apds|heat|tank (gun|cannon))\\b"
+      ],
+      "src": "estimate",
+      "source": "https://forums.ea.com/discussions/battlefield-6-general-discussion-en/damage-dropoff-from-range/12842844",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "bf6-ifv-cannon",
+      "cls": "cannon",
+      "name": "IFV / AA autocannon",
+      "range": [
+        0,
+        300,
+        900
+      ],
+      "elev": [
+        -10,
+        85
+      ],
+      "match": [
+        "\\b(25 ?mm|30 ?mm|35 ?mm|30mm|autocannon|bushmaster|2a42|aa gun|lat-?ad|spaag)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://forums.ea.com/discussions/battlefield-6-general-discussion-en/damage-dropoff-from-range/12842844",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "bf6-jet-gun",
+      "cls": "cannon",
+      "name": "Jet gun",
+      "range": [
+        0,
+        400,
+        1000
+      ],
+      "shape": "cone",
+      "cone": 4,
+      "match": [
+        "\\b(m61|gsh|gau-?\\d+|20 ?mm|jet gun|vulcan)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://forums.ea.com/discussions/battlefield-6-general-discussion-en/damage-dropoff-from-range/12842844",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "bf6-aam",
+      "cls": "aam",
+      "name": "Jet air-to-air missile",
+      "range": [
+        0,
+        500,
+        1000
+      ],
+      "shape": "cone",
+      "cone": 30,
+      "match": [
+        "\\b(aim-?9|aim-?120|r-?73|r-?77|sidewinder|heat-?seeking|aa missile)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://forums.ea.com/discussions/battlefield-6-general-discussion-en/damage-dropoff-from-range/12842844",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "bf6-heli-missile",
+      "cls": "atgm",
+      "name": "Helicopter missile / rocket",
+      "range": [
+        0,
+        500,
+        1200
+      ],
+      "shape": "cone",
+      "cone": 20,
+      "match": [
+        "\\b(hellfire|hydra|rocket pod|rockets?|tv missile|agm-?114)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://forums.ea.com/discussions/battlefield-6-general-discussion-en/damage-dropoff-from-range/12842844",
+      "date": "2026-11-16",
+      "note": "Class value."
+    }
+  ],
+  "vehicles": [
+    {
+      "match": "^(m1a2|leopard|t-?90|abrams|mbt|tank)",
+      "weapons": [
+        "bf6-tank-gun"
+      ]
+    },
+    {
+      "match": "^(lav|bmp|bradley|ifv|spaag|lat-?ad)",
+      "weapons": [
+        "bf6-ifv-cannon",
+        "bf6-javelin"
+      ]
+    },
+    {
+      "match": "^(f/?a-?18|su-?57|f-?35|jet|fighter)",
+      "weapons": [
+        "bf6-jet-gun",
+        "bf6-aam"
+      ]
+    },
+    {
+      "match": "^(ah-?64|ka-?52|attack heli|heli)",
+      "weapons": [
+        "bf6-heli-missile",
+        "bf6-ifv-cannon"
+      ]
+    }
+  ],
+  "fov": {
+    "default": {
+      "horizontal": 90,
+      "vertical": null,
+      "source": "https://forums.ea.com/discussions/battlefield-6-general-discussion-en/damage-dropoff-from-range/12842844",
+      "note": "BF6 PC FOV slider is horizontal; 90 is the commonly stated default (range ~ 70-120). Not confirmed from the cited source."
+    },
+    "zoom": [
+      {
+        "match": "iron ?sights?",
+        "fov": 80,
+        "magnification": 1,
+        "source": "estimate",
+        "note": "ADS."
+      },
+      {
+        "match": "red ?dot|holo|reflex|1x",
+        "fov": 60,
+        "magnification": 1,
+        "source": "estimate",
+        "note": "1x optic."
+      },
+      {
+        "match": "2x|3x|4x|acog",
+        "fov": 25,
+        "magnification": 4,
+        "source": "estimate",
+        "note": "Mid-power optics 2x-4x; value for 4x."
+      },
+      {
+        "match": "6x|8x|10x|12x|sniper",
+        "fov": 8,
+        "magnification": 8,
+        "source": "estimate",
+        "note": "Long-range optics; value for 8x."
+      }
+    ],
+    "viewDistance": null,
+    "viewDistanceSource": ""
+  },
+  "sensors": [],
+  "estimates": [
+    "bf6-ar",
+    "bf6-smg (opt/max)",
+    "bf6-lmg",
+    "bf6-dmr",
+    "bf6-sniper",
+    "bf6-shotgun",
+    "bf6-pistol",
+    "bf6-rpg",
+    "bf6-javelin",
+    "bf6-stinger",
+    "bf6-tank-gun",
+    "bf6-ifv-cannon",
+    "bf6-jet-gun",
+    "bf6-aam",
+    "bf6-heli-missile"
+  ]
+}

@@ -1,0 +1,182 @@
+{
+  "game": "r6",
+  "name": "Rainbow Six Siege",
+  "researched": "2026-11-16",
+  "weapons": [
+    {
+      "id": "r6-ar",
+      "cls": "smallArms",
+      "name": "Assault rifles",
+      "range": [
+        0,
+        25,
+        35
+      ],
+      "match": [
+        "(^|\\b)(r4-?c|416-?c|ar33|g36c|552 commando|l85a2|f2|ak-?12|aug a[23]|556xi|c8-?sfw|c7e|type-?89|arx ?200|v308|spear \\.?308|para-?308|m762|ak-?74m|mk ?17 cqb|f90|commando 9|g8a1)(\\b|$)"
+      ],
+      "src": "public",
+      "source": "https://www.ubisoft.com/en-us/game/rainbow-six/siege/news-updates/2zsUnVBdSsc10rirkPl1K5/y6s3-preseason-designers-notes",
+      "date": "2026-11-16",
+      "note": "Ubisoft Y6S3 pre-season designers notes drop-off table: full damage up to the first distance, then linear to 60% of base at and beyond the second distance. opt = first distance (start of drop-off), max = second (minimum damage reached), metres as written. Class-wide curve; which weapon belongs to the class is estimated from the game's weapon types."
+    },
+    {
+      "id": "r6-smg",
+      "cls": "smallArms",
+      "name": "Submachine guns",
+      "range": [
+        0,
+        18,
+        28
+      ],
+      "match": [
+        "(^|\\b)(mp5k?|mp7|mp5sd|ump45|p90|mpx|9x19vsn|k1a|t-?5 smg|pdw9|scorpion evo|vector \\.45|fmg-?9|mx4 storm|ptr-?32|sc3000k|bearing 9|c75 auto|mp7-?c)(\\b|$)"
+      ],
+      "src": "public",
+      "source": "https://www.ubisoft.com/en-us/game/rainbow-six/siege/news-updates/2zsUnVBdSsc10rirkPl1K5/y6s3-preseason-designers-notes",
+      "date": "2026-11-16",
+      "note": "Ubisoft Y6S3 pre-season designers notes drop-off table: full damage up to the first distance, then linear to 60% of base at and beyond the second distance. opt = first distance (start of drop-off), max = second (minimum damage reached), metres as written. Class-wide curve; which weapon belongs to the class is estimated from the game's weapon types."
+    },
+    {
+      "id": "r6-lmg",
+      "cls": "mg",
+      "name": "Light machine guns",
+      "range": [
+        0,
+        30,
+        40
+      ],
+      "match": [
+        "(^|\\b)(m249|t-?95 lsw|6p41|lmg-?e|alda 5\\.56|m249 saw|lmg)(\\b|$)"
+      ],
+      "src": "public",
+      "source": "https://www.ubisoft.com/en-us/game/rainbow-six/siege/news-updates/2zsUnVBdSsc10rirkPl1K5/y6s3-preseason-designers-notes",
+      "date": "2026-11-16",
+      "note": "Ubisoft Y6S3 pre-season designers notes drop-off table: full damage up to the first distance, then linear to 65% of base at and beyond the second distance. opt = first distance (start of drop-off), max = second (minimum damage reached), metres as written. Class-wide curve; which weapon belongs to the class is estimated from the game's weapon types."
+    },
+    {
+      "id": "r6-dmr",
+      "cls": "smallArms",
+      "name": "Marksman rifles (DMR)",
+      "range": [
+        0,
+        30,
+        40
+      ],
+      "match": [
+        "(^|\\b)(417|obs\\.? ?417|camrs|mk14 ebr|sr-?25|d-?50|dmr)(\\b|$)"
+      ],
+      "src": "public",
+      "source": "https://www.ubisoft.com/en-us/game/rainbow-six/siege/news-updates/2zsUnVBdSsc10rirkPl1K5/y6s3-preseason-designers-notes",
+      "date": "2026-11-16",
+      "note": "Ubisoft Y6S3 pre-season designers notes drop-off table: full damage up to the first distance, then linear to 70% of base at and beyond the second distance. opt = first distance (start of drop-off), max = second (minimum damage reached), metres as written. Class-wide curve; which weapon belongs to the class is estimated from the game's weapon types."
+    },
+    {
+      "id": "r6-glaz",
+      "cls": "smallArms",
+      "name": "OTs-03 (Glaz)",
+      "range": [
+        0,
+        30,
+        40
+      ],
+      "match": [
+        "ots-?03"
+      ],
+      "src": "public",
+      "source": "https://www.ubisoft.com/en-us/game/rainbow-six/siege/news-updates/2zsUnVBdSsc10rirkPl1K5/y6s3-preseason-designers-notes",
+      "date": "2026-11-16",
+      "note": "Ubisoft Y6S3 pre-season designers notes drop-off table: full damage up to the first distance, then linear to 80% of base at and beyond the second distance. opt = first distance (start of drop-off), max = second (minimum damage reached), metres as written. Class-wide curve; which weapon belongs to the class is estimated from the game's weapon types."
+    },
+    {
+      "id": "r6-slug",
+      "cls": "smallArms",
+      "name": "Slug shotguns",
+      "range": [
+        0,
+        25,
+        25
+      ],
+      "match": [
+        "(^|\\b)(sg-?cqb|m590a1|m1014|super 90|supernova|spas-?1[25]|bailiff 410|sasg-?12|tcsg12|slug)(\\b|$)"
+      ],
+      "src": "public",
+      "source": "https://www.ubisoft.com/en-us/game/rainbow-six/siege/news-updates/2zsUnVBdSsc10rirkPl1K5/y6s3-preseason-designers-notes",
+      "date": "2026-11-16",
+      "note": "Ubisoft Y6S3 pre-season designers notes drop-off table: full damage up to the first distance, then linear to 70% of base at and beyond the second distance. opt = first distance (start of drop-off), max = second (minimum damage reached), metres as written. Class-wide curve; which weapon belongs to the class is estimated from the game's weapon types. Table lists the slug shotgun at <=25 m and >=25 m, so a step rather than a ramp."
+    },
+    {
+      "id": "r6-handgun",
+      "cls": "smallArms",
+      "name": "Handguns and machine pistols",
+      "range": [
+        0,
+        15,
+        25
+      ],
+      "match": [
+        "(^|\\b)(p9|lfp586|gonne-?6|d-?40|p-?10 c|pmm|p12|usp40|q-?929|5\\.7 usg|m45 meusoc|mk1 9mm|p226 mk 25|rg15|c75|44 mag semi-auto|1911 tacops|keratos|prb92|sdp 9mm|smg-?11|smg-?12)(\\b|$)"
+      ],
+      "src": "estimate",
+      "source": "https://www.ubisoft.com/en-us/game/rainbow-six/siege/news-updates/2zsUnVBdSsc10rirkPl1K5/y6s3-preseason-designers-notes",
+      "date": "2026-11-16",
+      "note": "Not in the Y6S3 table excerpt retrieved; values are a class estimate, not sourced."
+    }
+  ],
+  "vehicles": [],
+  "fov": {
+    "default": {
+      "horizontal": null,
+      "vertical": null,
+      "source": "https://www.ubisoft.com/en-ca/game/rainbow-six/siege/news-updates/3IMlDGlaRFgdvQNq3BOSFv/guide-to-ads-sensitivity-in-y5s3",
+      "note": "Ubisoft ADS guide: vertical FOV equals the FOV option on PC and 60 deg on consoles. The PC slider range (commonly 60-90) and default were not verified. Horizontal = 2*atan(tan(v/2)*aspect), at 16:9 vertical 60 -> 91.5 deg, 90 -> 126.4 deg."
+    },
+    "zoom": [
+      {
+        "match": "(red dot|holo|reflex|iron|^1x|1\\.0x)",
+        "fov": null,
+        "magnification": 1,
+        "source": "https://www.gfinityesports.com/rainbow-six-siege/rainbow-six-operation-shadow-legacy-scopes-optics-changes-guide-ps4-xbox-pc/",
+        "note": "Red dot and holographic sights remain 1.0x (Y5S3 optics change)."
+      },
+      {
+        "match": "1\\.5x",
+        "fov": null,
+        "magnification": 1.5,
+        "source": "https://www.gfinityesports.com/rainbow-six-siege/rainbow-six-operation-shadow-legacy-scopes-optics-changes-guide-ps4-xbox-pc/",
+        "note": "Y5S3 scope tiers 1.5x, 2.0x, 2.5x, 3.0x. FOV not published; scale tan(v/2)/magnification."
+      },
+      {
+        "match": "(^|\\b)2(\\.0)?x",
+        "fov": null,
+        "magnification": 2,
+        "source": "https://www.gfinityesports.com/rainbow-six-siege/rainbow-six-operation-shadow-legacy-scopes-optics-changes-guide-ps4-xbox-pc/",
+        "note": "Y5S3 tier."
+      },
+      {
+        "match": "(acog|2\\.5x)",
+        "fov": null,
+        "magnification": 2.5,
+        "source": "https://www.gfinityesports.com/rainbow-six-siege/rainbow-six-operation-shadow-legacy-scopes-optics-changes-guide-ps4-xbox-pc/",
+        "note": "ACOG lowered to 2.5x; LMGs and assault rifles use 2.5x."
+      },
+      {
+        "match": "(^|\\b)3(\\.0)?x",
+        "fov": null,
+        "magnification": 3,
+        "source": "https://www.gfinityesports.com/rainbow-six-siege/rainbow-six-operation-shadow-legacy-scopes-optics-changes-guide-ps4-xbox-pc/",
+        "note": "3.0x available to DMR weapons. 12x (task brief) was not found in any source."
+      }
+    ],
+    "viewDistance": null,
+    "viewDistanceSource": "Not published; indoor maps are geometry-limited."
+  },
+  "sensors": [],
+  "estimates": [
+    "r6-handgun",
+    "weapon-name membership of r6-ar, r6-smg, r6-lmg, r6-dmr, r6-slug",
+    "default FOV slider range",
+    "12x scope not found",
+    "no per-weapon pistol/sniper falloff found"
+  ]
+}

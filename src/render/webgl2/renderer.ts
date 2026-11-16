@@ -1,4 +1,5 @@
 import { GlZones } from './zones';
+import { GlRanges } from './ranges';
 import { VOL_CFG, VOL_INFO, VOL_M, VOL_POLY, VOLUME_BLOCK_FLOATS, type VolumeDraw } from '../../volumes/gpu';
 import { GlFigures } from './figures';
 import { GlSymbols } from './symbols';
@@ -325,6 +326,8 @@ export class Webgl2Renderer implements Renderer {
   private topTris: { buf: WebGLBuffer; vao: WebGLVertexArrayObject; capacity: number; data: Float32Array | null; count: number } | null = null;
   /** The capture zones' discs (`FrameParams.objectiveZones`), made on first use. */
   private zones: GlZones | null = null;
+  /** The engagement ranges (`FrameParams.ranges`), made on first use. */
+  private ranges: GlRanges | null = null;
   /** The see-through triangles on the ground (`FrameParams.groundTris`), the same. */
   private groundTris: { buf: WebGLBuffer; vao: WebGLVertexArrayObject; capacity: number; data: Float32Array | null; count: number } | null = null;
   private triVao: WebGLVertexArrayObject;
@@ -387,6 +390,11 @@ export class Webgl2Renderer implements Renderer {
   private levelOwnBytes = 0;
 
   /** Background geometry's GPU footprint, the world tiles included, reported alongside the row data. */
+  /** Whether the engagement ranges still have views to take (`ranges/viewshed.ts`): the engine keeps drawing frames until they are. */
+  get rangesPending(): boolean {
+    return this.ranges?.pending ?? false;
+  }
+
   get levelBytes(): number {
     return this.levelOwnBytes + this.tileBytes;
   }
@@ -1593,6 +1601,13 @@ export class Webgl2Renderer implements Renderer {
       this.post.run(params, post, this.sceneDepth, SCENE_CLEAR, this.emptyVao);
       this.readCapture();
     }
+    // The units' lines of sight, a few faces a frame, after everything that read them: the next
+    // frame's scene reads what is taken now (its views say where from), and the faces are never
+    // drawn into while this frame's shells may still be reading them.
+    if (params.ranges && !params.compositeOnly && params.level?.kind === 'model' && this.levelMesh) {
+      const meshes = [this.levelMesh, ...this.tileMeshes.values()];
+      (this.ranges ??= new GlRanges(gl)).takeViews(params.ranges, meshes, this.levelMesh);
+    }
 
     return { gpuMs: null };
   }
@@ -1685,6 +1700,12 @@ export class Webgl2Renderer implements Renderer {
     if (params.sceneTris && params.sceneTriVertCount > 0) this.drawSceneTris(params, params.sceneTris, params.sceneTriVertCount, 2);
     if (params.groundTris && params.groundTriCount) this.drawTopTris(params, params.groundTris, params.groundTriCount, true);
     if (params.objectiveZones?.ground) (this.zones ??= new GlZones(this.gl)).draw(params, params.objectiveZones, true);
+    // The engagement ranges: the ground each unit sees within reach, then the shells over everything solid.
+    if (params.ranges) {
+      const r = (this.ranges ??= new GlRanges(this.gl));
+      r.drawGround(params, params.ranges, this.frameMeshes);
+      r.drawShells(params, params.ranges);
+    }
     // The far-off glyphs: map symbols, weapons, decoys (`symbols/`), over everything in the scene.
     if (params.symbols) {
       this.symbols ??= new GlSymbols(this.gl);
@@ -3669,6 +3690,7 @@ export class Webgl2Renderer implements Renderer {
     this.pendingChunks = [];
     this.symbols?.dispose();
     this.zones?.dispose();
+    this.ranges?.dispose();
     this.symbols = null;
     this.figures?.dispose();
     this.post?.dispose();

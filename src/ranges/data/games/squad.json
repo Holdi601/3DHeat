@@ -1,0 +1,507 @@
+{
+  "game": "squad",
+  "name": "Squad",
+  "researched": "2026-11-16",
+  "weapons": [
+    {
+      "id": "squad-rifle",
+      "cls": "smallArms",
+      "name": "Assault rifle (5.56 / 5.45 / 7.62)",
+      "range": [
+        0,
+        300,
+        600
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(m4a1?|m16a4|ak-?74m?|ak-?12|aks-?74|hk-?416|qbz-?95|l85a[23]|sa80|g3|fn fal|famas|m27|ar-?15|type 95|tar-?21|ak-?105)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://squad.fandom.com/wiki/2A42",
+      "date": "2026-11-16",
+      "note": "Squad uses ballistic simulation with bullet drop; no damage falloff in the sense of BF. Values are practical effective range, estimated."
+    },
+    {
+      "id": "squad-smg",
+      "cls": "smallArms",
+      "name": "SMG / PDW",
+      "range": [
+        0,
+        50,
+        150
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(mp-?7|mp-?5|uzi|vector|pp-?19|bizon|ump|mp5|pdw|k-?10)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://squad.fandom.com/wiki/2A42",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "squad-lmg",
+      "cls": "mg",
+      "name": "LMG / SAW",
+      "range": [
+        0,
+        400,
+        800
+      ],
+      "elev": [
+        -60,
+        75
+      ],
+      "match": [
+        "\\b(m249|rpk|pkm|mg3|mg-?4|minimi|negev|m240|lmg|saw|rpk-?74m|rpk74m)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://squad.fandom.com/wiki/2A42",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "squad-dmr",
+      "cls": "smallArms",
+      "name": "DMR / marksman",
+      "range": [
+        0,
+        600,
+        1000
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(svd|svd-?s|m14|mk ?14|sr-?25|m110|dmr|scar-?h|svu|svdk)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://squad.fandom.com/wiki/2A42",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "squad-sniper",
+      "cls": "smallArms",
+      "name": "Sniper rifle",
+      "range": [
+        0,
+        800,
+        1500
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(l115|m24|m82|barrett|m40a5|sv-?98|mosin|sniper|trg|svds)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://squad.fandom.com/wiki/2A42",
+      "date": "2026-11-16",
+      "note": "Class value; scoped zeroed beyond 1000 m in game."
+    },
+    {
+      "id": "squad-shotgun",
+      "cls": "smallArms",
+      "name": "Shotgun",
+      "range": [
+        0,
+        15,
+        40
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(870|m1014|saiga|shotgun|benelli|ksg)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://squad.fandom.com/wiki/2A42",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "squad-pistol",
+      "cls": "smallArms",
+      "name": "Pistol",
+      "range": [
+        0,
+        20,
+        60
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(m9|m1911|glock|makarov|pm|mp-?443|pistol|beretta|sig)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://squad.fandom.com/wiki/2A42",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "squad-rpg",
+      "cls": "atgm",
+      "name": "RPG-7 / LAW / SMAW unguided",
+      "range": [
+        0,
+        150,
+        400
+      ],
+      "elev": [
+        -30,
+        45
+      ],
+      "match": [
+        "\\b(rpg-?7|rpg-?26|law|m72|smaw|panzerfaust|at4|carl gustav|m3 mAAWS|nlaw|pf-?98)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://squad.fandom.com/wiki/2A42",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "squad-javelin",
+      "cls": "atgm",
+      "name": "FGM-148 Javelin",
+      "range": [
+        65,
+        2000,
+        2500
+      ],
+      "elev": [
+        -30,
+        60
+      ],
+      "match": [
+        "javelin|fgm-?148"
+      ],
+      "src": "public",
+      "source": "https://en.wikipedia.org/wiki/FGM-148_Javelin",
+      "date": "2026-11-16",
+      "note": "Real-world range; in-game value not retrieved."
+    },
+    {
+      "id": "squad-tow",
+      "cls": "atgm",
+      "name": "BGM-71 TOW",
+      "range": [
+        65,
+        3000,
+        3750
+      ],
+      "elev": [
+        -20,
+        30
+      ],
+      "match": [
+        "\\btow\\b|bgm-?71"
+      ],
+      "src": "public",
+      "source": "https://squad.fandom.com/wiki/BGM-71_TOW",
+      "date": "2026-11-16",
+      "note": "Real-world max 3,750 m (TOW-2A). Squad wiki page does not give range; in-game value not retrieved."
+    },
+    {
+      "id": "squad-kornet",
+      "cls": "atgm",
+      "name": "9M133 Kornet",
+      "range": [
+        100,
+        4000,
+        5500
+      ],
+      "elev": [
+        -20,
+        30
+      ],
+      "match": [
+        "kornet|9m133"
+      ],
+      "src": "public",
+      "source": "https://squad.fandom.com/wiki/9M133_Kornet",
+      "date": "2026-11-16",
+      "note": "Squad wiki: sight zoom weaker than TOW, three zoom levels; no range given. Real-world 5,500 m."
+    },
+    {
+      "id": "squad-konkurs",
+      "cls": "atgm",
+      "name": "9M113 Konkurs / Bastion",
+      "range": [
+        75,
+        3000,
+        4000
+      ],
+      "elev": [
+        -20,
+        30
+      ],
+      "match": [
+        "konkurs|9m113|bastion|9m117|at-?5\\b"
+      ],
+      "src": "public",
+      "source": "https://squad.fandom.com/wiki/9M117_Bastion",
+      "date": "2026-11-16",
+      "note": "Real-world range; in-game value not retrieved."
+    },
+    {
+      "id": "squad-30mm",
+      "cls": "cannon",
+      "name": "BMP-2 30 mm 2A42",
+      "range": [
+        0,
+        1000,
+        3000
+      ],
+      "elev": [
+        -5,
+        74
+      ],
+      "match": [
+        "2a42|30 ?mm|bmp-?2|autocannon"
+      ],
+      "src": "game",
+      "source": "https://squad.fandom.com/wiki/2A42",
+      "date": "2026-11-16",
+      "note": "Squad wiki 2A42 page lists a max range of 3,000 m (4,000 m on the 3UBR8 APDS-T row); table ambiguous, tentative."
+    },
+    {
+      "id": "squad-25mm",
+      "cls": "cannon",
+      "name": "25 mm Bushmaster / 20-35 mm IFV cannon",
+      "range": [
+        0,
+        800,
+        2000
+      ],
+      "elev": [
+        -10,
+        60
+      ],
+      "match": [
+        "25 ?mm|m242|bushmaster|35 ?mm|20 ?mm|rarden|30 ?mm"
+      ],
+      "src": "estimate",
+      "source": "https://squad.fandom.com/wiki/2A42",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "squad-tank-gun",
+      "cls": "gun",
+      "name": "Tank main gun (120/125 mm)",
+      "range": [
+        0,
+        800,
+        2000
+      ],
+      "elev": [
+        -8,
+        25
+      ],
+      "match": [
+        "\\b(120 ?mm|125 ?mm|main gun|abrams|challenger|t-?72|t-?90|leopard|m256|2a46|apds|heat|sabot)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://squad.fandom.com/wiki/2A42",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "squad-hmg",
+      "cls": "mg",
+      "name": "HMG / coax / commander MG",
+      "range": [
+        0,
+        800,
+        1500
+      ],
+      "elev": [
+        -10,
+        70
+      ],
+      "match": [
+        "\\b(m2|m2hb|kord|nsv|dshk|pkt|coax|m240|m60|hmg|.50 ?cal|12\\.7|7\\.62)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://squad.fandom.com/wiki/2A42",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "squad-mortar",
+      "cls": "artillery",
+      "name": "Mortar emplacement (60-82 mm)",
+      "range": [
+        100,
+        500,
+        1000
+      ],
+      "los": false,
+      "elev": [
+        45,
+        85
+      ],
+      "match": [
+        "\\b(mortar|l16a2|m252|2b14|podnos|81 ?mm|60 ?mm|82 ?mm)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://squad.fandom.com/wiki/L16A2",
+      "date": "2026-11-16",
+      "note": "Squad wiki L16A2 page gives ammo types, no range; 1,000 m is a judged class value."
+    },
+    {
+      "id": "squad-hellcannon",
+      "cls": "artillery",
+      "name": "Heavy rocket / Hell cannon",
+      "range": [
+        200,
+        600,
+        1500
+      ],
+      "los": false,
+      "elev": [
+        20,
+        80
+      ],
+      "match": [
+        "\\b(hell ?cannon|heavy rocket|bm-?21|mlrs|himars|rocket artillery|bm21)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://squad.fandom.com/wiki/2A42",
+      "date": "2026-11-16",
+      "note": "Class value; Hell cannon range not found."
+    },
+    {
+      "id": "squad-heli-rocket",
+      "cls": "strike",
+      "name": "Helicopter rocket pod",
+      "range": [
+        0,
+        800,
+        1500
+      ],
+      "shape": "cone",
+      "cone": 10,
+      "match": [
+        "\\b(rocket pod|s-?8|hydra|rocket|ffar)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://squad.fandom.com/wiki/2A42",
+      "date": "2026-11-16",
+      "note": "Class value."
+    }
+  ],
+  "vehicles": [
+    {
+      "match": "(abrams|challenger|leopard|t-?72|t-?90|mbt)",
+      "weapons": [
+        "squad-tank-gun",
+        "squad-hmg"
+      ]
+    },
+    {
+      "match": "(bmp|bradley|bmd|lav|warrior|ifv)",
+      "weapons": [
+        "squad-30mm",
+        "squad-25mm",
+        "squad-konkurs"
+      ]
+    },
+    {
+      "match": "(mortar)",
+      "weapons": [
+        "squad-mortar"
+      ]
+    },
+    {
+      "match": "(tow|kornet|emplacement)",
+      "weapons": [
+        "squad-tow",
+        "squad-kornet"
+      ]
+    },
+    {
+      "match": "(heli|ka-?29|mi-?\\d|uh-?60|ah-?64|merlin)",
+      "weapons": [
+        "squad-heli-rocket",
+        "squad-hmg"
+      ]
+    }
+  ],
+  "fov": {
+    "default": {
+      "horizontal": null,
+      "vertical": null,
+      "source": "https://squad.fandom.com/wiki/Weapons",
+      "note": "Squad FOV is a client setting (slider 70-110 roughly, 90 common); not fetched, no default confirmed. ADS FOV tied to optic magnification."
+    },
+    "zoom": [
+      {
+        "match": "iron ?sights?",
+        "fov": 50,
+        "magnification": 1,
+        "source": "estimate",
+        "note": "Iron sights; ADS."
+      },
+      {
+        "match": "red ?dot|holo|reflex|eotech|1x",
+        "fov": 50,
+        "magnification": 1,
+        "source": "estimate",
+        "note": "1x optics."
+      },
+      {
+        "match": "\\b3x|\\bmagnifier\\b",
+        "fov": 15,
+        "magnification": 3,
+        "source": "estimate",
+        "note": "Magnifier / 3x."
+      },
+      {
+        "match": "\\b4x|acog|pso-?1|susat",
+        "fov": 7,
+        "magnification": 4,
+        "source": "https://www.opticsplanet.com/i/pdf/opplanet-trijicon-acog-series-manual-pdf.pdf",
+        "note": "Real 4x ACOG FOV is about 7 deg (spec listing); Squad models real optics, magnifications match."
+      },
+      {
+        "match": "\\b6x|\\b8x|\\b10x|\\b12x|sniper|l115",
+        "fov": 2.5,
+        "magnification": 10,
+        "source": "estimate",
+        "note": "Variable sniper optics."
+      }
+    ],
+    "viewDistance": null,
+    "viewDistanceSource": ""
+  },
+  "sensors": [],
+  "estimates": [
+    "squad-rifle",
+    "squad-smg",
+    "squad-lmg",
+    "squad-dmr",
+    "squad-sniper",
+    "squad-shotgun",
+    "squad-pistol",
+    "squad-rpg",
+    "squad-25mm",
+    "squad-tank-gun",
+    "squad-hmg",
+    "squad-mortar",
+    "squad-hellcannon",
+    "squad-heli-rocket"
+  ]
+}

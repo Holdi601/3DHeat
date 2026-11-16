@@ -1,0 +1,354 @@
+{
+  "game": "valorant",
+  "name": "Valorant",
+  "researched": "2026-11-16",
+  "weapons": [
+    {
+      "id": "valorant-classic",
+      "cls": "smallArms",
+      "name": "Classic",
+      "range": [
+        0,
+        30,
+        50
+      ],
+      "match": [
+        "^(classic)$"
+      ],
+      "src": "public",
+      "source": "https://dignitas.gg/articles/the-arms-of-war-a-guide-to-all-weapons-in-valorant",
+      "date": "2026-11-16",
+      "note": "opt = \"within 30 m\" bracket; max = 50 m practical cap (estimate). Metres. Source: Dignitas guide; patch/date not verified so values may have changed."
+    },
+    {
+      "id": "valorant-shorty",
+      "cls": "smallArms",
+      "name": "Shorty",
+      "range": [
+        0,
+        9,
+        15
+      ],
+      "match": [
+        "^(shorty)$"
+      ],
+      "src": "public",
+      "source": "https://dignitas.gg/articles/the-arms-of-war-a-guide-to-all-weapons-in-valorant",
+      "date": "2026-11-16",
+      "note": "opt = \"within 9 m\" (12 pellets); max 15 m is an estimate. Metres. Source: Dignitas guide; patch/date not verified so values may have changed."
+    },
+    {
+      "id": "valorant-frenzy",
+      "cls": "smallArms",
+      "name": "Frenzy",
+      "range": [
+        0,
+        20,
+        50
+      ],
+      "match": [
+        "^(frenzy)$"
+      ],
+      "src": "public",
+      "source": "https://dignitas.gg/articles/the-arms-of-war-a-guide-to-all-weapons-in-valorant",
+      "date": "2026-11-16",
+      "note": "opt = \"within 20\"; max 50 m practical (estimate). Metres. Source: Dignitas guide; patch/date not verified so values may have changed."
+    },
+    {
+      "id": "valorant-ghost",
+      "cls": "smallArms",
+      "name": "Ghost",
+      "range": [
+        0,
+        30,
+        50
+      ],
+      "match": [
+        "^(ghost)$"
+      ],
+      "src": "public",
+      "source": "https://dignitas.gg/articles/the-arms-of-war-a-guide-to-all-weapons-in-valorant",
+      "date": "2026-11-16",
+      "note": "opt = within 30 m (33/26/105 body/leg/head); beyond 30 m to 50 m lower. Metres. Source: Dignitas guide; patch/date not verified so values may have changed."
+    },
+    {
+      "id": "valorant-sheriff",
+      "cls": "smallArms",
+      "name": "Sheriff",
+      "range": [
+        0,
+        30,
+        50
+      ],
+      "match": [
+        "^(sheriff)$"
+      ],
+      "src": "public",
+      "source": "https://dignitas.gg/articles/the-arms-of-war-a-guide-to-all-weapons-in-valorant",
+      "date": "2026-11-16",
+      "note": "opt = within 30 m (55/47/160); beyond reduced. Metres. Source: Dignitas guide; patch/date not verified so values may have changed."
+    },
+    {
+      "id": "valorant-bucky",
+      "cls": "smallArms",
+      "name": "Bucky",
+      "range": [
+        0,
+        8,
+        25
+      ],
+      "match": [
+        "^(bucky)$"
+      ],
+      "src": "public",
+      "source": "https://dignitas.gg/articles/the-arms-of-war-a-guide-to-all-weapons-in-valorant",
+      "date": "2026-11-16",
+      "note": "opt = within 8 m (15 pellets); max 25 m is an estimate. Metres. Source: Dignitas guide; patch/date not verified so values may have changed."
+    },
+    {
+      "id": "valorant-judge",
+      "cls": "smallArms",
+      "name": "Judge",
+      "range": [
+        0,
+        10,
+        25
+      ],
+      "match": [
+        "^(judge)$"
+      ],
+      "src": "public",
+      "source": "https://dignitas.gg/articles/the-arms-of-war-a-guide-to-all-weapons-in-valorant",
+      "date": "2026-11-16",
+      "note": "opt = within 10 m (12 pellets); max 25 m is an estimate. Metres. Source: Dignitas guide; patch/date not verified so values may have changed."
+    },
+    {
+      "id": "valorant-stinger",
+      "cls": "smallArms",
+      "name": "Stinger",
+      "range": [
+        0,
+        20,
+        50
+      ],
+      "match": [
+        "^(stinger)$"
+      ],
+      "src": "public",
+      "source": "https://dignitas.gg/articles/the-arms-of-war-a-guide-to-all-weapons-in-valorant",
+      "date": "2026-11-16",
+      "note": "opt = within 20; max 50 m practical (estimate). Metres. Source: Dignitas guide; patch/date not verified so values may have changed."
+    },
+    {
+      "id": "valorant-spectre",
+      "cls": "smallArms",
+      "name": "Spectre",
+      "range": [
+        0,
+        20,
+        50
+      ],
+      "match": [
+        "^(spectre)$"
+      ],
+      "src": "public",
+      "source": "https://dignitas.gg/articles/the-arms-of-war-a-guide-to-all-weapons-in-valorant",
+      "date": "2026-11-16",
+      "note": "opt = within 20; max 50 m practical (estimate). Metres. Source: Dignitas guide; patch/date not verified so values may have changed."
+    },
+    {
+      "id": "valorant-bulldog",
+      "cls": "smallArms",
+      "name": "Bulldog",
+      "range": [
+        0,
+        50,
+        50
+      ],
+      "match": [
+        "^(bulldog)$"
+      ],
+      "src": "public",
+      "source": "https://dignitas.gg/articles/the-arms-of-war-a-guide-to-all-weapons-in-valorant",
+      "date": "2026-11-16",
+      "note": "\"from any distance\": no falloff; 50 m practical cap (estimate). Metres. Source: Dignitas guide; patch/date not verified so values may have changed."
+    },
+    {
+      "id": "valorant-guardian",
+      "cls": "smallArms",
+      "name": "Guardian",
+      "range": [
+        0,
+        50,
+        50
+      ],
+      "match": [
+        "^(guardian)$"
+      ],
+      "src": "public",
+      "source": "https://dignitas.gg/articles/the-arms-of-war-a-guide-to-all-weapons-in-valorant",
+      "date": "2026-11-16",
+      "note": "no falloff; 50 m practical cap (estimate). Metres. Source: Dignitas guide; patch/date not verified so values may have changed."
+    },
+    {
+      "id": "valorant-phantom",
+      "cls": "smallArms",
+      "name": "Phantom",
+      "range": [
+        0,
+        15,
+        50
+      ],
+      "match": [
+        "^(phantom)$"
+      ],
+      "src": "public",
+      "source": "https://www.pcgamer.com/valorant-guns-damage-recoil-guide",
+      "date": "2026-11-16",
+      "note": "156/39/33 head/body/leg at 0-15 m, 140/35/30 at 16-30 m, 124/31/26 at 31-50 m (PC Gamer, read via search summary; Dignitas agrees on within 15 m and 124/31/26 beyond 30 m). opt = first bracket end (15 m), max = last bracket end (50 m). Metres."
+    },
+    {
+      "id": "valorant-vandal",
+      "cls": "smallArms",
+      "name": "Vandal",
+      "range": [
+        0,
+        50,
+        50
+      ],
+      "match": [
+        "^(vandal)$"
+      ],
+      "src": "public",
+      "source": "https://dignitas.gg/articles/the-arms-of-war-a-guide-to-all-weapons-in-valorant",
+      "date": "2026-11-16",
+      "note": "no falloff \"irrespective of the distance\"; 50 m practical cap. Metres. Source: Dignitas guide; patch/date not verified so values may have changed."
+    },
+    {
+      "id": "valorant-marshal",
+      "cls": "smallArms",
+      "name": "Marshal",
+      "range": [
+        0,
+        50,
+        100
+      ],
+      "match": [
+        "^(marshal)$"
+      ],
+      "src": "estimate",
+      "source": "https://dignitas.gg/articles/the-arms-of-war-a-guide-to-all-weapons-in-valorant",
+      "date": "2026-11-16",
+      "note": "range brackets not stated; no falloff assumed. 100 m cap is an estimate. Metres. Source: Dignitas guide; patch/date not verified so values may have changed."
+    },
+    {
+      "id": "valorant-operator",
+      "cls": "smallArms",
+      "name": "Operator",
+      "range": [
+        0,
+        50,
+        100
+      ],
+      "match": [
+        "^(operator)$"
+      ],
+      "src": "estimate",
+      "source": "https://dignitas.gg/articles/the-arms-of-war-a-guide-to-all-weapons-in-valorant",
+      "date": "2026-11-16",
+      "note": "range brackets not stated (search summary: 0-50 m 255/150/127, no falloff). 100 m cap is an estimate. Metres. Source: Dignitas guide; patch/date not verified so values may have changed."
+    },
+    {
+      "id": "valorant-ares",
+      "cls": "mg",
+      "name": "Ares",
+      "range": [
+        0,
+        30,
+        50
+      ],
+      "match": [
+        "^(ares)$"
+      ],
+      "src": "public",
+      "source": "https://dignitas.gg/articles/the-arms-of-war-a-guide-to-all-weapons-in-valorant",
+      "date": "2026-11-16",
+      "note": "opt = within 30 m (30/25/72); lower beyond. Metres. Source: Dignitas guide; patch/date not verified so values may have changed."
+    },
+    {
+      "id": "valorant-odin",
+      "cls": "mg",
+      "name": "Odin",
+      "range": [
+        0,
+        30,
+        50
+      ],
+      "match": [
+        "^(odin)$"
+      ],
+      "src": "public",
+      "source": "https://dignitas.gg/articles/the-arms-of-war-a-guide-to-all-weapons-in-valorant",
+      "date": "2026-11-16",
+      "note": "opt = within 30 m (38/32/95); lower beyond. Metres. Source: Dignitas guide; patch/date not verified so values may have changed."
+    }
+  ],
+  "vehicles": [],
+  "fov": {
+    "default": {
+      "horizontal": 103,
+      "vertical": 70.6,
+      "source": "task brief (fixed 103 horizontal); no official page verified",
+      "note": "Valorant uses a fixed 103 deg horizontal FOV; vertical derived at 16:9: 2*atan(tan(51.5 deg)*9/16) = 70.6 deg. Not verified from an official page (playvalorant.com spec URL returned 404)."
+    },
+    "zoom": [
+      {
+        "match": "^(stinger|spectre)$",
+        "fov": null,
+        "magnification": 1.15,
+        "source": "https://dignitas.gg/articles/the-arms-of-war-a-guide-to-all-weapons-in-valorant",
+        "note": "ADS zoom 1.15x. FOV not published; scale tan(51.5 deg)/1.15 horizontal."
+      },
+      {
+        "match": "^(bulldog|phantom|vandal|ares|odin)$",
+        "fov": null,
+        "magnification": 1.25,
+        "source": "https://dignitas.gg/articles/the-arms-of-war-a-guide-to-all-weapons-in-valorant",
+        "note": "ADS zoom 1.25x."
+      },
+      {
+        "match": "^guardian$",
+        "fov": null,
+        "magnification": 1.5,
+        "source": "https://dignitas.gg/articles/the-arms-of-war-a-guide-to-all-weapons-in-valorant",
+        "note": "ADS zoom 1.5x."
+      },
+      {
+        "match": "^(marshal|operator)$",
+        "fov": null,
+        "magnification": 2.5,
+        "source": "https://dignitas.gg/articles/the-arms-of-war-a-guide-to-all-weapons-in-valorant",
+        "note": "First scope level 2.5x."
+      },
+      {
+        "match": "^operator$",
+        "fov": null,
+        "magnification": 5,
+        "source": "https://dignitas.gg/articles/the-arms-of-war-a-guide-to-all-weapons-in-valorant",
+        "note": "Operator second scope level 5x."
+      }
+    ],
+    "viewDistance": null,
+    "viewDistanceSource": ""
+  },
+  "sensors": [],
+  "estimates": [
+    "valorant-marshal",
+    "valorant-operator",
+    "valorant-shorty",
+    "valorant-bucky",
+    "valorant-judge",
+    "50 m practical caps on others",
+    "default FOV 103 unverified"
+  ]
+}

@@ -82,6 +82,22 @@ The **Tactical display** section draws, for no unit, the selected ones, all, or 
 
 ![The same air fight in the normal look](assets/img/en/replay-air.webp)
 
+## Engagement ranges
+
+![A rifleman's ranges on synthetic data: the best range dashed, the most range solid, cut behind a house; the ground he sees shaded](assets/img/en/replay-ranges.webp)
+
+The **Engagement ranges** section draws, around the units in question (the selected, followed, target and measured ones), their side, or all of them (nearest the camera first, up to **Most units**), how far their weapons reach:
+
+- one shell per weapon and band: the **least range** dotted and grey, the **best range** dashed, the **most range** solid. Shells are see-through and added onto the picture, so the inner ones show through the outer ones, from outside and from inside;
+- shapes follow the weapon: a dome cut at its elevation limits and lowest and highest target height for guns and surface-to-air missiles, a cone along the nose for aircraft guns, rockets and air-to-air missiles, a cone down and ahead for bombs (as far as the fall from the current height carries them);
+- **Cut by line of sight**: each shell ends where terrain or buildings block the unit's view, with a bright edge there. Indirect fire (artillery, torpedoes) is not cut. **Shade the ground it sees** tints the ground the unit sees within reach;
+- colours: each unit's weapons in shades of its side's colour (a red side red, orange, pink...; a blue side blue, cyan, violet...), also lighter or darker, so they stay apart for colour-blind eyes;
+- **Weapons** turns kinds of weapon on and off (small arms, machine guns, cannon, main guns, anti-tank, SAM and MANPADS, air-to-air, bombs and rockets, torpedoes, artillery); **Bands**, **Look** (glass, lines, both) and **Opacity** set how they are drawn.
+
+What a unit carries comes from the data where it says (weapon, ammunition and loadout columns on the rows where the unit fires, launches or equips; the weapons an ACMI recording says it launched), and otherwise from its vehicle's usual armament. The figures come from the game the data is from where it is known (War Thunder, DCS, Counter-Strike 2, Rainbow Six Siege, Valorant, Battlefield 4, 1 and 6, Squad, Arma 3, World of Tanks, World of Warships, IL-2), else from general figures. Each figure is marked: the game's own, a rounded published figure, or an estimate (`*`); hover a weapon in the list for its source.
+
+The line of sight is worked out on the graphics card from the level itself, a few views a frame, only again when a unit has moved; nothing is read back, so the frame rate holds.
+
 ## Objectives
 
 When a match comes with its objectives, the **Objectives** section draws them on the level: capture zones (with owner and capture progress), spawns, airfields, areas and bombing targets, each layer switchable, with labels. They are seen through the ground. With several game modes loaded, **Mode** filters the matches by mode. Objectives come from a converter's match file beside the recording or inside a [`.3dheat`](container.md) container.

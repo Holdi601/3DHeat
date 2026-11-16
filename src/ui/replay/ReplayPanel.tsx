@@ -12,6 +12,7 @@ import { lookTargets } from './pair';
 import { EventList } from './EventList';
 import { BookmarkPanel } from './BookmarkPanel';
 import { DisplayPanel } from './DisplayPanel';
+import { RangesPanel } from './RangesPanel';
 import { TacticalLookPanel } from './TacticalLookPanel';
 import { StatsPanel } from './StatsPanel';
 import { ToolsPanels } from './ToolsPanel';
@@ -38,6 +39,7 @@ export function ReplayPanel() {
       <BookmarkPanel />
       <TacticalLookPanel />
       <DisplayPanel />
+      <RangesPanel />
       <StatsPanel />
       <ToolsPanels />
       <LabelPanel />

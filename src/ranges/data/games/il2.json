@@ -1,0 +1,22 @@
+{
+  "game": "il2",
+  "name": "IL-2 Sturmovik: Great Battles",
+  "researched": "2026-11-16",
+  "weapons": [
+    { "id": "il2-mg151-20", "cls": "cannon", "name": "MG 151/20", "range": [0, 300, 800], "shape": "cone", "cone": 3, "match": ["mg ?151"], "src": "public", "source": "https://forum.il2sturmovik.com/topic/90229-which-range-was-the-default-gun-convergence-distance-for-the-fw190-a8-with-standard-armament", "date": "2026-11-16", "note": "Forum: stated max effective range 800 m; historical Fw 190 A-8 convergence 550 m. Game default convergence NOT confirmed (one forum post mentions 300 m horizontal). A 2002 article says practical range is about 350 m, so optimal is an estimate." },
+    { "id": "il2-guns-ww2", "cls": "cannon", "name": "Aircraft cannons (MK 108, ShVAK, VYa-23, Hispano)", "range": [0, 300, 700], "shape": "cone", "cone": 3, "match": ["mk ?108|shvak|\\bvya|hispano"], "src": "estimate", "source": "https://forum.il2sturmovik.com/topic/1076-shvak-vs-mg-15120/", "date": "2026-11-16", "note": "No per-gun range figures found. Forum muzzle velocities: Hispano ~880, MG 151/20 ~850, ShVAK 750-780, MK 108 ~490-540 m/s; the MK 108 is short ranged." },
+    { "id": "il2-flak-light", "cls": "cannon", "name": "Light flak 20/37/40 mm", "range": [0, 1000, 2000], "alt": [0, 2000], "elev": [-5, 90], "match": ["flak ?(30|38|36|37)|37 ?mm|40 ?mm|61-k|25 ?mm"], "src": "estimate", "source": "https://forum.il2sturmovik.com/topic/74938-aaa-mod/page/4", "date": "2026-11-16", "note": "A forum quote gives 1000-1200 yards effective for 37/40 mm; ceilings are a class judgement." },
+    { "id": "il2-flak-88", "cls": "gun", "name": "Heavy flak 88 mm", "range": [0, 5000, 8000], "alt": [0, 8000], "elev": [0, 90], "match": ["88 ?mm|flak ?(18|36|37)|52-k|85 ?mm"], "src": "estimate", "source": "https://forum.il2sturmovik.com/topic/74938-aaa-mod/page/4", "date": "2026-11-16", "note": "Forum: 8000 m effective for standard 88s. Single poster, unverified." }
+  ],
+  "vehicles": [
+    { "match": "^(bf ?109|fw ?190)", "weapons": ["il2-mg151-20"] }
+  ],
+  "fov": {
+    "default": { "horizontal": null, "vertical": null, "source": "", "note": "Not found in any source; field of view and zoom are user settings." },
+    "zoom": [],
+    "viewDistance": null,
+    "viewDistanceSource": ""
+  },
+  "sensors": [],
+  "estimates": ["il2-guns-ww2", "il2-flak-light", "il2-flak-88"]
+}

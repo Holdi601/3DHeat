@@ -1,0 +1,26 @@
+{
+  "game": "wot",
+  "name": "World of Tanks",
+  "researched": "2026-11-16",
+  "weapons": [
+    { "id": "wot-gun", "cls": "gun", "name": "Tank gun shell (direct fire)", "range": [0, 400, 720], "elev": [-15, 25], "match": ["\\b(ap|apcr|hesh|heat|he|hepl)\\b|tank gun|main gun"], "src": "estimate", "source": "https://wargaming.net/support/en/products/wot/article/10222", "date": "2026-11-16", "note": "The 720 m shell travel limit was supplied by the project owner and NOT confirmed by any page found (one third-party guide says 744 m). The official support page only confirms the 445 m spotting cap and the 565 m draw distance. Accuracy is quoted as dispersion at 100 m, not as a range." },
+    { "id": "wot-spg", "cls": "artillery", "name": "SPG shell (indirect fire)", "range": [0, 500, 1000], "los": false, "elev": [-5, 75], "match": ["\\bspg\\b|artillery"], "src": "estimate", "source": "https://worldoftanks.com/en/news/history/The_Chieftains_Guide_Artillery/", "date": "2026-11-16", "note": "Per-shell maximum range is shown in game by coloured indicators (update 1.13 notes); no single fixed number found. Value is a class estimate." }
+  ],
+  "vehicles": [
+    { "match": "^[a-z]+:[A-Za-z0-9]+_(Su-?14|Su-?26|Su-?5|Object_261|GW_?Tiger|GW_?E_?100|G_?Panther|Hummel|Grille|Bat_Chat_155|M12|M40M43|T92|M44|M37|M53_M55)", "weapons": ["wot-spg"] }
+  ],
+  "fov": {
+    "default": { "horizontal": null, "vertical": null, "source": "", "note": "No page found stating the default FOV; its default was not verified." },
+    "zoom": [
+      { "match": "x ?8|8x", "fov": 0, "magnification": 8, "source": "https://worldoftanks.eu/en/content/guide/newcomers-guide/game_controls/", "note": "Newcomer's guide: highest zoom is x8 by default. FOV value not stated (0 = unknown)." },
+      { "match": "x ?25|25x", "fov": 0, "magnification": 25, "source": "https://worldoftanks.eu/en/content/guide/newcomers-guide/game_controls/", "note": "Zoom can be raised up to x25 in game settings. FOV value not stated (0 = unknown)." }
+    ],
+    "viewDistance": 565,
+    "viewDistanceSource": "https://wargaming.net/support/en/products/wot/article/10222 (565 m fixed draw distance; the 9.12 notes and community wiki say a 564 m radius circle)"
+  },
+  "sensors": [
+    { "id": "wot-spot-cap", "kind": "spotting", "name": "Spotting range cap (all vehicles)", "match": "^.*$", "range": 445, "az": [-180, 180], "el": [-90, 90], "beamwidth": null, "modes": ["visual"], "src": "game", "source": "https://wargaming.net/support/en/products/wot/article/10222", "date": "2026-11-16", "note": "The maximum spotting range of all vehicles cannot exceed 445 m. Per-tank view range depends on turret, crew skills and equipment; no class table found, so none invented." },
+    { "id": "wot-draw", "kind": "spotting", "name": "Draw distance", "match": "^.*$", "range": 565, "az": [-180, 180], "el": [-90, 90], "beamwidth": null, "modes": ["render"], "src": "game", "source": "https://wargaming.net/support/en/products/wot/article/10222", "date": "2026-11-16", "note": "Other vehicles are drawn out to a fixed 565 m (564 m radius circle per the 9.12 notes)." }
+  ],
+  "estimates": ["wot-gun", "wot-spg"]
+}

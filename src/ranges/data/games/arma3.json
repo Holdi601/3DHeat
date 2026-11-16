@@ -1,0 +1,622 @@
+{
+  "game": "arma3",
+  "name": "Arma 3",
+  "researched": "2026-11-16",
+  "weapons": [
+    {
+      "id": "arma3-rifle",
+      "cls": "smallArms",
+      "name": "Assault rifle (6.5 mm / 5.56 / 7.62)",
+      "range": [
+        0,
+        300,
+        600
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(mx|mxc|mxm|katiba|type 115|trg-?2[12]|mk20|sdar|cmr|ak-?12|ak-?74|spar|spar-?01|spar-?02|spar-?03|ar-?15|rpk-?12)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://community.bistudio.com/wiki/Arma_3_Targeting",
+      "date": "2026-11-16",
+      "note": "Zeroing steps typically 100-400 m (CfgWeapons discreteDistance); effective range is judged; CfgAmmo values for bullets not retrieved."
+    },
+    {
+      "id": "arma3-smg",
+      "cls": "smallArms",
+      "name": "SMG / PDW",
+      "range": [
+        0,
+        50,
+        150
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(sting|pdw2000|vermin|smg_0[1-5]|smg-?0[1-5]|protector|scorpion)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://community.bistudio.com/wiki/Arma_3_Targeting",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "arma3-lmg",
+      "cls": "mg",
+      "name": "LMG",
+      "range": [
+        0,
+        400,
+        800
+      ],
+      "elev": [
+        -60,
+        75
+      ],
+      "match": [
+        "\\b(mk200|zafir|spmg|lmg_|lmg-?zafir|spar lmg|rpk|negev)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://community.bistudio.com/wiki/Arma_3_Targeting",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "arma3-dmr",
+      "cls": "smallArms",
+      "name": "DMR / marksman",
+      "range": [
+        0,
+        500,
+        900
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(mk1|mar-?10|mk14|ebr|rahim|lrr|dmr_?0[1-6]|dmr-?0[1-6]|cyrus|mar-?10|sniper rifle)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://community.bistudio.com/wiki/Arma_3_Targeting",
+      "date": "2026-11-16",
+      "note": "Class value; Rahim, EBR, Mk14, Mk-I EMR zeroing reaching 800-1000 m."
+    },
+    {
+      "id": "arma3-sniper",
+      "cls": "smallArms",
+      "name": "Anti-materiel / sniper",
+      "range": [
+        0,
+        800,
+        1500
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(gm6 lynx|lrr|m320|gm6|lynx|lrr|cyrus|blackout|l115|gm6 magnetic)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://community.bistudio.com/wiki/Arma_3_Targeting",
+      "date": "2026-11-16",
+      "note": "Class value; GM6 Lynx and LRR (.408) effective 1000-1500 m."
+    },
+    {
+      "id": "arma3-shotgun",
+      "cls": "smallArms",
+      "name": "Shotgun",
+      "range": [
+        0,
+        15,
+        40
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(shotgun|m1014|kozlice|sawed-?off)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://community.bistudio.com/wiki/Arma_3_Targeting",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "arma3-pistol",
+      "cls": "smallArms",
+      "name": "Pistol",
+      "range": [
+        0,
+        25,
+        60
+      ],
+      "elev": [
+        -75,
+        85
+      ],
+      "match": [
+        "\\b(4-?five|zubr|acp-?c2|p07|rook-?40|pistol|hgun|hgun_p07)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://community.bistudio.com/wiki/Arma_3_Targeting",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "arma3-rpg",
+      "cls": "atgm",
+      "name": "RPG-42 Alamut / PCML / MAAWS",
+      "range": [
+        0,
+        200,
+        500
+      ],
+      "elev": [
+        -30,
+        45
+      ],
+      "match": [
+        "\\b(rpg-?7|rpg-?42|alamut|maaws|rpg-?32|rpg32|nlaw|pcml|mrad|law)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://community.bistudio.com/wiki/Arma_3_Targeting",
+      "date": "2026-11-16",
+      "note": "Unguided class value."
+    },
+    {
+      "id": "arma3-titan-at",
+      "cls": "atgm",
+      "name": "Titan MPRL AT (Compact / Standard)",
+      "range": [
+        100,
+        2000,
+        3500
+      ],
+      "elev": [
+        -30,
+        60
+      ],
+      "match": [
+        "titan.*(at|launcher)|mprl|titan compact at|vorona|titan_at"
+      ],
+      "src": "public",
+      "source": "https://community.bistudio.com/wiki/Arma_3_Sensors",
+      "date": "2026-11-16",
+      "note": "Value derived from AA twin row of the BI sensor table (100-3500 m for Titan AA); AT row not retrieved. Marked public, treat as estimate."
+    },
+    {
+      "id": "arma3-titan-aa",
+      "cls": "sam",
+      "name": "Titan MPRL AA (Compact)",
+      "range": [
+        100,
+        2500,
+        3500
+      ],
+      "alt": [
+        20,
+        3000
+      ],
+      "elev": [
+        -5,
+        90
+      ],
+      "match": [
+        "titan.*aa|titan compact aa|titan_aa|m_titan_aa|9m337|igla"
+      ],
+      "src": "game",
+      "source": "https://community.bistudio.com/wiki/Arma_3_Sensors",
+      "date": "2026-11-16",
+      "note": "BI wiki sensor table: Titan AA IR 4 deg, 100-3500 m; max = sensor range. Observed lock ~4 km jets / 3.5 km Buzzards / 2.2 km drones in a bug report (not config)."
+    },
+    {
+      "id": "arma3-titan-aa-long",
+      "cls": "sam",
+      "name": "Titan AA Long",
+      "range": [
+        100,
+        3000,
+        4500
+      ],
+      "alt": [
+        20,
+        4000
+      ],
+      "elev": [
+        -5,
+        90
+      ],
+      "match": [
+        "titan aa long|titan_aa_long|titan.*long"
+      ],
+      "src": "game",
+      "source": "https://community.bistudio.com/wiki/Arma_3_Sensors",
+      "date": "2026-11-16",
+      "note": "BI wiki sensor table: Titan AA Long IR 30 deg, 100-4500 m."
+    },
+    {
+      "id": "arma3-spartan",
+      "cls": "sam",
+      "name": "Mk49 Spartan (Cheetah, Tigris)",
+      "range": [
+        0,
+        3000,
+        5000
+      ],
+      "alt": [
+        20,
+        5000
+      ],
+      "elev": [
+        -5,
+        90
+      ],
+      "match": [
+        "spartan|mk49|cheetah|tigris|m_?spartan|aa missile ?tank"
+      ],
+      "src": "game",
+      "source": "https://armedassault.fandom.com/wiki/Mk49_Spartan",
+      "date": "2026-11-16",
+      "note": "Armed Assault wiki: Spartan missile sensor max range 5 km, launcher only locks targets within 4 km. opt = 3000 estimated; max = sensor range 5000 (4000 lock)."
+    },
+    {
+      "id": "arma3-aam-jet",
+      "cls": "aam",
+      "name": "Jet air-to-air missile (Sidewinder / R-73 / Sahr / DAR)",
+      "range": [
+        500,
+        5000,
+        12000
+      ],
+      "shape": "cone",
+      "cone": 30,
+      "match": [
+        "\\b(aim-?9|aim-?120|r-?73|r-?77|sahr|dar|asraam|sidewinder|aa missile|missile_air)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://community.bistudio.com/wiki/Arma_3_Targeting",
+      "date": "2026-11-16",
+      "note": "Class value; BI wiki config gives per-ammo maxRange not retrieved."
+    },
+    {
+      "id": "arma3-maverick",
+      "cls": "atgm",
+      "name": "AGM-65 / Macer / Scalpel",
+      "range": [
+        500,
+        4000,
+        8000
+      ],
+      "shape": "cone",
+      "cone": 30,
+      "match": [
+        "\\b(scalpel|macer|agm|dagr|bomb ?(laser|gbu)|missile_agm|agm_?1?)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://community.bistudio.com/wiki/Arma_3_Targeting",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "arma3-bomb",
+      "cls": "strike",
+      "name": "Guided / free-fall bomb",
+      "range": [
+        0,
+        3000,
+        8000
+      ],
+      "shape": "drop",
+      "cone": 60,
+      "match": [
+        "\\b(gbu|bomb|dagr|cluster bomb|sdb|bomb_\\w+|bombcluster)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://community.bistudio.com/wiki/Arma_3_Targeting",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "arma3-tank-gun",
+      "cls": "gun",
+      "name": "Tank main gun (120/125 mm)",
+      "range": [
+        0,
+        1500,
+        3500
+      ],
+      "elev": [
+        -8,
+        25
+      ],
+      "match": [
+        "\\b(120 ?mm|125 ?mm|cannon_120mm|cannon_125mm|apds|heat|apfsds|tank)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://community.bistudio.com/wiki/Arma_3_Targeting",
+      "date": "2026-11-16",
+      "note": "Class value; AI weaponRange rather than max range."
+    },
+    {
+      "id": "arma3-ifv-cannon",
+      "cls": "cannon",
+      "name": "IFV / AA cannon (30-40 mm)",
+      "range": [
+        0,
+        1200,
+        2500
+      ],
+      "elev": [
+        -10,
+        80
+      ],
+      "match": [
+        "\\b(40 ?mm|30 ?mm|35 ?mm|autocannon|gatling_30mm|cannon_?30|cannon_?40)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://community.bistudio.com/wiki/Arma_3_Targeting",
+      "date": "2026-11-16",
+      "note": "Class value."
+    },
+    {
+      "id": "arma3-hmg",
+      "cls": "mg",
+      "name": "HMG / GMG / vehicle MG",
+      "range": [
+        0,
+        700,
+        1500
+      ],
+      "elev": [
+        -10,
+        70
+      ],
+      "match": [
+        "\\b(m2|hmg|gmg|rhm|rhs|gmg_40|hmg_01|mg_[0-9]+|lmg_?m2|m134|minigun)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://community.bistudio.com/wiki/Arma_3_Targeting",
+      "date": "2026-11-16",
+      "note": "Class value; GMG 2,000 m not verified."
+    },
+    {
+      "id": "arma3-mortar",
+      "cls": "artillery",
+      "name": "Mk6 mortar / Sholef / Zubr / Scorcher / Sandstorm",
+      "range": [
+        100,
+        2000,
+        4000
+      ],
+      "los": false,
+      "elev": [
+        45,
+        85
+      ],
+      "match": [
+        "\\b(mk6|mortar|sholef|scorcher|sandstorm|howitzer|mlrs|rocket artillery)\\b"
+      ],
+      "src": "estimate",
+      "source": "https://community.bistudio.com/wiki/Arma_3_Targeting",
+      "date": "2026-11-16",
+      "note": "Artillery computer ranges vary; Mk6 about 4 km; others longer. Estimate."
+    }
+  ],
+  "vehicles": [
+    {
+      "match": "(slammer|t-?100|varsuk|mbt|kuma)",
+      "weapons": [
+        "arma3-tank-gun",
+        "arma3-hmg",
+        "arma3-titan-at"
+      ]
+    },
+    {
+      "match": "(marshall|panther|gorgon|mora|ifv|apc|bobcat|rhino)",
+      "weapons": [
+        "arma3-ifv-cannon",
+        "arma3-hmg"
+      ]
+    },
+    {
+      "match": "(cheetah|tigris|spartan|aa tank|zsu)",
+      "weapons": [
+        "arma3-spartan",
+        "arma3-ifv-cannon"
+      ]
+    },
+    {
+      "match": "(wipeout|black wasp|buzzard|gryphon|neophron|shikra|cas|jet)",
+      "weapons": [
+        "arma3-aam-jet",
+        "arma3-maverick",
+        "arma3-bomb",
+        "arma3-ifv-cannon"
+      ]
+    },
+    {
+      "match": "(sholef|scorcher|sandstorm|mortar|artillery)",
+      "weapons": [
+        "arma3-mortar"
+      ]
+    }
+  ],
+  "fov": {
+    "default": {
+      "horizontal": null,
+      "vertical": null,
+      "source": "https://community.bistudio.com/wiki/Arma_3_Sensors",
+      "note": "Arma 3 FOV is a client option (default about 0.75 render FOV; 70-90 deg horizontal typical). Not retrieved/confirmed."
+    },
+    "zoom": [
+      {
+        "match": "iron ?sights?|aco|mrd|holo|rco_?1x|rds|\\bred ?dot",
+        "fov": 60,
+        "magnification": 1,
+        "source": "estimate",
+        "note": "1x optics."
+      },
+      {
+        "match": "rco|arco|dms|ako|\\b6x|mk-?i|ebr",
+        "fov": 16,
+        "magnification": 6,
+        "source": "estimate",
+        "note": "Mid-power magnified optics: RCO 6x (6.5 mm), ARCO 5x."
+      },
+      {
+        "match": "lrps|nightstalker|dms.?scope|sniper|hamr|12x|20x|40x",
+        "fov": 4,
+        "magnification": 12,
+        "source": "estimate",
+        "note": "Variable sniper scopes (LRPS up to 12x). Value approximate."
+      }
+    ],
+    "viewDistance": null,
+    "viewDistanceSource": ""
+  },
+  "sensors": [
+    {
+      "id": "arma3-titan-aa-ir",
+      "kind": "irst",
+      "name": "Titan AA seeker",
+      "match": "titan.*aa",
+      "range": 3500,
+      "az": [
+        -2,
+        2
+      ],
+      "el": [
+        -2,
+        2
+      ],
+      "beamwidth": 4,
+      "modes": [
+        "IR"
+      ],
+      "src": "game",
+      "source": "https://community.bistudio.com/wiki/Arma_3_Sensors",
+      "date": "2026-11-16",
+      "note": "BI wiki: IR 4 deg, 100-3500 m."
+    },
+    {
+      "id": "arma3-titan-aa-long-ir",
+      "kind": "irst",
+      "name": "Titan AA Long seeker",
+      "match": "titan.*long",
+      "range": 4500,
+      "az": [
+        -15,
+        15
+      ],
+      "el": [
+        -15,
+        15
+      ],
+      "beamwidth": 30,
+      "modes": [
+        "IR"
+      ],
+      "src": "game",
+      "source": "https://community.bistudio.com/wiki/Arma_3_Sensors",
+      "date": "2026-11-16",
+      "note": "BI wiki: IR 30 deg, 100-4500 m."
+    },
+    {
+      "id": "arma3-spartan-ir",
+      "kind": "irst",
+      "name": "Mk49 Spartan seeker",
+      "match": "spartan|cheetah|tigris",
+      "range": 5000,
+      "az": [
+        -30,
+        30
+      ],
+      "el": [
+        -30,
+        30
+      ],
+      "beamwidth": null,
+      "modes": [
+        "IR"
+      ],
+      "src": "game",
+      "source": "https://armedassault.fandom.com/wiki/Mk49_Spartan",
+      "date": "2026-11-16",
+      "note": "Missile sensor max 5 km; launcher locks within 4 km."
+    },
+    {
+      "id": "arma3-radar-generic",
+      "kind": "radar",
+      "name": "Vehicle active radar (generic)",
+      "match": "radar|cheetah|tigris|jet|helicopter|gorgon|marshall",
+      "range": 12000,
+      "az": [
+        -180,
+        180
+      ],
+      "el": [
+        -90,
+        90
+      ],
+      "beamwidth": null,
+      "modes": [
+        "active",
+        "passive"
+      ],
+      "src": "estimate",
+      "source": "https://community.bistudio.com/wiki/Arma_3_Sensors",
+      "date": "2026-11-16",
+      "note": "ActiveRadarSensorComponent ranges are per-target-type in config (AirTarget maxRange example 5000 m; RWR 12000/16000 in sensor table). A single value is not given; estimate."
+    },
+    {
+      "id": "arma3-rwr",
+      "kind": "rwr",
+      "name": "Radar warning receiver",
+      "match": "jet|helicopter|plane|rwr",
+      "range": 16000,
+      "az": [
+        -180,
+        180
+      ],
+      "el": [
+        -90,
+        90
+      ],
+      "beamwidth": null,
+      "modes": [
+        "passive"
+      ],
+      "src": "public",
+      "source": "https://community.bistudio.com/wiki/Arma_3_Sensors",
+      "date": "2026-11-16",
+      "note": "Sensor table lists RWR 360 deg with 16000 and 12000 values (column mapping unconfirmed). Passive radar detects active radars at twice their active range (bug report)."
+    }
+  ],
+  "estimates": [
+    "arma3-rifle",
+    "arma3-smg",
+    "arma3-lmg",
+    "arma3-dmr",
+    "arma3-sniper",
+    "arma3-shotgun",
+    "arma3-pistol",
+    "arma3-rpg",
+    "arma3-titan-at",
+    "arma3-aam-jet",
+    "arma3-maverick",
+    "arma3-bomb",
+    "arma3-tank-gun",
+    "arma3-ifv-cannon",
+    "arma3-hmg",
+    "arma3-mortar",
+    "arma3-radar-generic"
+  ]
+}

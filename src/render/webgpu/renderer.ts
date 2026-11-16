@@ -1,4 +1,5 @@
 import { GpuZones } from './zones';
+import { GpuRanges } from './ranges';
 import { GpuPost } from './post';
 import { GpuDirField } from './dirField';
 import { VOLUME_BLOCK_BYTES, VOLUME_BLOCK_FLOATS } from '../../volumes/gpu';
@@ -192,6 +193,11 @@ export class WebgpuRenderer implements Renderer {
   private levelOwnBytes = 0;
 
   /** Background geometry's GPU footprint, the world tiles included. */
+  /** Whether the engagement ranges still have views to take (`ranges/viewshed.ts`): the engine keeps drawing frames until they are. */
+  get rangesPending(): boolean {
+    return this.ranges?.pending ?? false;
+  }
+
   get levelBytes(): number {
     return this.levelOwnBytes + this.tileBytes;
   }
@@ -332,6 +338,8 @@ export class WebgpuRenderer implements Renderer {
   private topTriCount = 0;
   /** The capture zones' discs (`FrameParams.objectiveZones`), made on first use. */
   private zones: GpuZones | null = null;
+  /** The engagement ranges (`FrameParams.ranges`), made on first use. */
+  private ranges: GpuRanges | null = null;
   /** The see-through triangles on the ground (`FrameParams.groundTris`) and which array they last were. */
   private groundTriBuffer: GPUBuffer | null = null;
   private groundTriData: Float32Array | null = null;
@@ -2159,6 +2167,12 @@ export class WebgpuRenderer implements Renderer {
     const model = params.level?.kind === 'model' ? params.level : null;
     const slots = model ? this.pushMeshUniforms(params, model) : null;
     const mapOffset = params.level?.kind === 'image' ? this.pushMapUniform(params, params.level) : 0;
+    // The units' lines of sight, a few faces a frame, in passes of their own before the scene that reads them.
+    if (params.ranges) {
+      this.ranges ??= new GpuRanges(this.device, SCENE_FORMAT, DEPTH_FORMAT);
+      if (model && this.levelMesh && this.meshReady(this.levelMesh)) this.ranges.takeViews(encoder, params.ranges, [this.levelMesh, ...this.tileMeshes.values()], this.levelMesh);
+      this.ranges.prepare(params, params.ranges);
+    }
 
     const pass = encoder.beginRenderPass({
       label: 'scene',
@@ -2272,6 +2286,11 @@ export class WebgpuRenderer implements Renderer {
       this.zones ??= new GpuZones(this.device, SCENE_FORMAT, DEPTH_FORMAT, this.canvasFormat);
       this.zones.prepare(params, params.objectiveZones, true);
       this.zones.draw(pass, params.objectiveZones, true);
+    }
+    // The engagement ranges: the ground each unit sees within reach, then the shells over everything solid.
+    if (params.ranges && this.ranges) {
+      this.ranges.drawGround(pass, params.ranges, this.frameMeshes);
+      this.ranges.drawShells(pass, params.ranges);
     }
 
     // The far-off glyphs: map symbols, weapons, decoys (`symbols/`), over everything in the scene.
@@ -4077,6 +4096,7 @@ export class WebgpuRenderer implements Renderer {
 
   dispose(): void {
     this.zones?.dispose();
+    this.ranges?.dispose();
     for (const j of this.pendingChunks) {
       j.positions?.destroy();
       j.times?.destroy();

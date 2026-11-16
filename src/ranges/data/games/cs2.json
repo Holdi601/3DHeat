@@ -1,0 +1,802 @@
+{
+  "game": "cs2",
+  "name": "Counter-Strike 2",
+  "researched": "2026-11-16",
+  "weapons": [
+    {
+      "id": "cs2-ak47",
+      "cls": "smallArms",
+      "name": "AK-47",
+      "range": [
+        0,
+        66.2,
+        208.1
+      ],
+      "match": [
+        "^(weapon_)?(ak-?47)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=8192 u, m_flRangeModifier=0.98, m_nDamage=36. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.98) = 2608 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 17155 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-m4a1",
+      "cls": "smallArms",
+      "name": "M4A4",
+      "range": [
+        0,
+        43.9,
+        208.1
+      ],
+      "match": [
+        "^(weapon_)?(m4a1|m4a4)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=8192 u, m_flRangeModifier=0.97, m_nDamage=33. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.97) = 1730 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 11378 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-m4a1_silencer",
+      "cls": "smallArms",
+      "name": "M4A1-S",
+      "range": [
+        0,
+        21.6,
+        208.1
+      ],
+      "match": [
+        "^(weapon_)?(m4a1[_-]?(silencer|s))$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=8192 u, m_flRangeModifier=0.94, m_nDamage=38. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.94) = 851 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 5601 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-galilar",
+      "cls": "smallArms",
+      "name": "Galil AR",
+      "range": [
+        0,
+        66.2,
+        208.1
+      ],
+      "match": [
+        "^(weapon_)?(galilar|galil( ?ar)?)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=8192 u, m_flRangeModifier=0.98, m_nDamage=30. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.98) = 2608 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 17155 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-famas",
+      "cls": "smallArms",
+      "name": "FAMAS",
+      "range": [
+        0,
+        32.8,
+        208.1
+      ],
+      "match": [
+        "^(weapon_)?(famas)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=8192 u, m_flRangeModifier=0.96, m_nDamage=30. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.96) = 1290 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 8490 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-aug",
+      "cls": "smallArms",
+      "name": "AUG",
+      "range": [
+        0,
+        66.2,
+        208.1
+      ],
+      "match": [
+        "^(weapon_)?(aug)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=8192 u, m_flRangeModifier=0.98, m_nDamage=28. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.98) = 2608 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 17155 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-sg556",
+      "cls": "smallArms",
+      "name": "SG 553",
+      "range": [
+        0,
+        66.2,
+        208.1
+      ],
+      "match": [
+        "^(weapon_)?(sg ?55[36])$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=8192 u, m_flRangeModifier=0.98, m_nDamage=30. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.98) = 2608 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 17155 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-awp",
+      "cls": "smallArms",
+      "name": "AWP",
+      "range": [
+        0,
+        133.1,
+        208.1
+      ],
+      "match": [
+        "^(weapon_)?(awp)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=8192 u, m_flRangeModifier=0.99, m_nDamage=115. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.99) = 5242 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 34484 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-ssg08",
+      "cls": "smallArms",
+      "name": "SSG 08",
+      "range": [
+        0,
+        66.2,
+        208.1
+      ],
+      "match": [
+        "^(weapon_)?(ssg ?08)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=8192 u, m_flRangeModifier=0.98, m_nDamage=88. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.98) = 2608 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 17155 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-scar20",
+      "cls": "smallArms",
+      "name": "SCAR-20",
+      "range": [
+        0,
+        66.2,
+        208.1
+      ],
+      "match": [
+        "^(weapon_)?(scar-?20)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=8192 u, m_flRangeModifier=0.98, m_nDamage=80. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.98) = 2608 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 17155 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-g3sg1",
+      "cls": "smallArms",
+      "name": "G3SG1",
+      "range": [
+        0,
+        66.2,
+        208.1
+      ],
+      "match": [
+        "^(weapon_)?(g3sg1)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=8192 u, m_flRangeModifier=0.98, m_nDamage=80. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.98) = 2608 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 17155 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-mac10",
+      "cls": "smallArms",
+      "name": "MAC-10",
+      "range": [
+        0,
+        6,
+        91.4
+      ],
+      "match": [
+        "^(weapon_)?(mac-?10)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=3600 u, m_flRangeModifier=0.8, m_nDamage=29. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.8) = 236 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 1553 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-mp9",
+      "cls": "smallArms",
+      "name": "MP9",
+      "range": [
+        0,
+        9.6,
+        91.4
+      ],
+      "match": [
+        "^(weapon_)?(mp9)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=3600 u, m_flRangeModifier=0.87, m_nDamage=26. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.87) = 378 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 2489 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-mp7",
+      "cls": "smallArms",
+      "name": "MP7",
+      "range": [
+        0,
+        9.6,
+        91.4
+      ],
+      "match": [
+        "^(weapon_)?(mp7)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=3600 u, m_flRangeModifier=0.87, m_nDamage=30. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.87) = 378 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 2489 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-mp5sd",
+      "cls": "smallArms",
+      "name": "MP5-SD",
+      "range": [
+        0,
+        9.6,
+        91.4
+      ],
+      "match": [
+        "^(weapon_)?(mp5-?sd|mp5)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=3600 u, m_flRangeModifier=0.87, m_nDamage=28. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.87) = 378 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 2489 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-ump45",
+      "cls": "smallArms",
+      "name": "UMP-45",
+      "range": [
+        0,
+        4.7,
+        94
+      ],
+      "match": [
+        "^(weapon_)?(ump-?45)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=3700 u, m_flRangeModifier=0.75, m_nDamage=35. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.75) = 183 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 1205 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-p90",
+      "cls": "smallArms",
+      "name": "P90",
+      "range": [
+        0,
+        8.9,
+        94
+      ],
+      "match": [
+        "^(weapon_)?(p90)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=3700 u, m_flRangeModifier=0.86, m_nDamage=26. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.86) = 349 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 2298 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-bizon",
+      "cls": "smallArms",
+      "name": "PP-Bizon",
+      "range": [
+        0,
+        6,
+        91.4
+      ],
+      "match": [
+        "^(weapon_)?(bizon|pp-?bizon)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=3600 u, m_flRangeModifier=0.8, m_nDamage=27. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.8) = 236 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 1553 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-nova",
+      "cls": "smallArms",
+      "name": "Nova",
+      "range": [
+        0,
+        3.8,
+        76.2
+      ],
+      "match": [
+        "^(weapon_)?(nova)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=3000 u, m_flRangeModifier=0.7, m_nDamage=26. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.7) = 148 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 972 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-xm1014",
+      "cls": "smallArms",
+      "name": "XM1014",
+      "range": [
+        0,
+        3.8,
+        76.2
+      ],
+      "match": [
+        "^(weapon_)?(xm1014)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=3000 u, m_flRangeModifier=0.7, m_nDamage=20. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.7) = 148 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 972 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-sawedoff",
+      "cls": "smallArms",
+      "name": "Sawed-Off",
+      "range": [
+        0,
+        1.7,
+        35.6
+      ],
+      "match": [
+        "^(weapon_)?(sawed-?off)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=1400 u, m_flRangeModifier=0.45, m_nDamage=32. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.45) = 66 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 434 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-mag7",
+      "cls": "smallArms",
+      "name": "MAG-7",
+      "range": [
+        0,
+        1.7,
+        35.6
+      ],
+      "match": [
+        "^(weapon_)?(mag-?7)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=1400 u, m_flRangeModifier=0.45, m_nDamage=30. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.45) = 66 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 434 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-negev",
+      "cls": "mg",
+      "name": "Negev",
+      "range": [
+        0,
+        43.9,
+        208.1
+      ],
+      "match": [
+        "^(weapon_)?(negev)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=8192 u, m_flRangeModifier=0.97, m_nDamage=35. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.97) = 1730 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 11378 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-m249",
+      "cls": "mg",
+      "name": "M249",
+      "range": [
+        0,
+        43.9,
+        208.1
+      ],
+      "match": [
+        "^(weapon_)?(m249)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=8192 u, m_flRangeModifier=0.97, m_nDamage=32. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.97) = 1730 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 11378 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-glock",
+      "cls": "smallArms",
+      "name": "Glock-18",
+      "range": [
+        0,
+        8.2,
+        104
+      ],
+      "match": [
+        "^(weapon_)?(glock(-?18)?)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=4096 u, m_flRangeModifier=0.85, m_nDamage=30. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.85) = 324 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 2133 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-hkp2000",
+      "cls": "smallArms",
+      "name": "P2000",
+      "range": [
+        0,
+        14.2,
+        104
+      ],
+      "match": [
+        "^(weapon_)?(hkp2000|p2000)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=4096 u, m_flRangeModifier=0.91, m_nDamage=35. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.91) = 559 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 3675 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-usp_silencer",
+      "cls": "smallArms",
+      "name": "USP-S",
+      "range": [
+        0,
+        14.2,
+        104
+      ],
+      "match": [
+        "^(weapon_)?(usp[_-]?(silencer|s)?|usp)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=4096 u, m_flRangeModifier=0.91, m_nDamage=35. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.91) = 559 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 3675 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-p250",
+      "cls": "smallArms",
+      "name": "P250",
+      "range": [
+        0,
+        12.7,
+        104
+      ],
+      "match": [
+        "^(weapon_)?(p250)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=4096 u, m_flRangeModifier=0.9, m_nDamage=38. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.9) = 500 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 3289 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-elite",
+      "cls": "smallArms",
+      "name": "Dual Berettas",
+      "range": [
+        0,
+        5.7,
+        104
+      ],
+      "match": [
+        "^(weapon_)?(elite|dual berettas)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=4096 u, m_flRangeModifier=0.79, m_nDamage=38. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.79) = 223 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 1470 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-fiveseven",
+      "cls": "smallArms",
+      "name": "Five-SeveN",
+      "range": [
+        0,
+        6.4,
+        104
+      ],
+      "match": [
+        "^(weapon_)?(fiveseven|five-?seven)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=4096 u, m_flRangeModifier=0.81, m_nDamage=32. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.81) = 250 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 1645 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-tec9",
+      "cls": "smallArms",
+      "name": "Tec-9",
+      "range": [
+        0,
+        5.7,
+        104
+      ],
+      "match": [
+        "^(weapon_)?(tec-?9)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=4096 u, m_flRangeModifier=0.79, m_nDamage=33. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.79) = 223 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 1470 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-cz75a",
+      "cls": "smallArms",
+      "name": "CZ75-Auto",
+      "range": [
+        0,
+        8.2,
+        104
+      ],
+      "match": [
+        "^(weapon_)?(cz-?75(a|-?auto)?)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=4096 u, m_flRangeModifier=0.85, m_nDamage=31. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.85) = 324 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 2133 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-deagle",
+      "cls": "smallArms",
+      "name": "Desert Eagle",
+      "range": [
+        0,
+        8.2,
+        104
+      ],
+      "match": [
+        "^(weapon_)?(deagle|desert eagle)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=4096 u, m_flRangeModifier=0.85, m_nDamage=53. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.85) = 324 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 2133 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-revolver",
+      "cls": "smallArms",
+      "name": "R8 Revolver",
+      "range": [
+        0,
+        21.6,
+        104
+      ],
+      "match": [
+        "^(weapon_)?(revolver|r8( revolver)?)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=4096 u, m_flRangeModifier=0.94, m_nDamage=86. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.94) = 851 u. max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 5601 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-taser",
+      "cls": "smallArms",
+      "name": "Zeus x27",
+      "range": [
+        0,
+        3,
+        3
+      ],
+      "match": [
+        "^(weapon_)?(taser|zeus( x27)?)$"
+      ],
+      "src": "game",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Valve weapons.vdata: m_flRange=120 u, m_flRangeModifier=0.99, m_nDamage=500. Damage(d)=base*mod^(d/500 u). opt = d where damage = 90% of base: 500*ln(0.9)/ln(0.99) = 5242 u (beyond range, capped at range). max = m_flRange attribute (bullets do no damage beyond it); the 50% distance would be 34484 u. 1 u = 1 in = 0.0254 m."
+    },
+    {
+      "id": "cs2-knife",
+      "cls": "smallArms",
+      "name": "Knife",
+      "range": [
+        0,
+        1,
+        1.5
+      ],
+      "match": [
+        "^(weapon_)?(knife|knife_[a-z0-9_]+|bayonet|knife_t)$",
+        "^(knife|bayonet|karambit|butterfly knife|[a-z0-9 -]+ knife)$"
+      ],
+      "src": "estimate",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "Melee reach about 1.5 m (estimate); weapons.vdata lists m_flRange=4096 for knives but melee uses a short trace whose length was not found. 1 u = 0.0254 m."
+    },
+    {
+      "id": "cs2-hegrenade",
+      "cls": "strike",
+      "name": "HE Grenade",
+      "los": true,
+      "range": [
+        0,
+        15,
+        35
+      ],
+      "match": [
+        "^(weapon_)?(hegrenade|he grenade|hegrenade_projectile)$"
+      ],
+      "src": "estimate",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "range = throw distance, estimate (about 30-35 m max depending on throw strength). weapons.vdata m_flRange=350 u (8.9 m) with m_nDamage=99 for hegrenade is the blast radius; 1 u = 0.0254 m."
+    },
+    {
+      "id": "cs2-molotov",
+      "cls": "strike",
+      "name": "Molotov / Incendiary",
+      "los": true,
+      "range": [
+        0,
+        15,
+        35
+      ],
+      "match": [
+        "^(weapon_)?(molotov|incgrenade|molotov_projectile|inferno)$"
+      ],
+      "src": "estimate",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "throw distance estimate; fire area is small. 1 u = 0.0254 m."
+    },
+    {
+      "id": "cs2-flashbang",
+      "cls": "strike",
+      "name": "Flashbang",
+      "los": true,
+      "range": [
+        0,
+        15,
+        35
+      ],
+      "match": [
+        "^(weapon_)?(flashbang|flashbang_projectile)$"
+      ],
+      "src": "estimate",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "throw distance estimate."
+    },
+    {
+      "id": "cs2-smokegrenade",
+      "cls": "strike",
+      "name": "Smoke Grenade",
+      "los": true,
+      "range": [
+        0,
+        20,
+        40
+      ],
+      "match": [
+        "^(weapon_)?(smokegrenade|smokegrenade_projectile)$"
+      ],
+      "src": "estimate",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "throw distance estimate."
+    },
+    {
+      "id": "cs2-decoy",
+      "cls": "strike",
+      "name": "Decoy Grenade",
+      "los": true,
+      "range": [
+        0,
+        15,
+        35
+      ],
+      "match": [
+        "^(weapon_)?(decoy|decoy_projectile)$"
+      ],
+      "src": "estimate",
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "date": "2026-11-16",
+      "note": "throw distance estimate."
+    }
+  ],
+  "vehicles": [],
+  "fov": {
+    "default": {
+      "horizontal": 90,
+      "vertical": 73.74,
+      "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+      "note": "CS2 fov 90 is the horizontal angle at 4:3 (weapons.vdata m_nZoomFOV1 = 90 for unscoped weapons). Vertical = 2*atan(tan(45 deg)*3/4) = 73.74 deg. At 16:9 horizontal = 2*atan(tan(36.87 deg)*16/9) = 106.26 deg (derived)."
+    },
+    "zoom": [
+      {
+        "match": "^(weapon_)?(awp)$",
+        "fov": 40,
+        "magnification": 2.75,
+        "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+        "note": "AWP scope level 1: weapons.vdata m_nZoomFOV1=40 (same convention as default 90). magnification = tan(45 deg)/tan(f/2)."
+      },
+      {
+        "match": "^(weapon_)?(awp)$",
+        "fov": 10,
+        "magnification": 11.43,
+        "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+        "note": "AWP scope level 2: weapons.vdata m_nZoomFOV2=10 (same convention as default 90). magnification = tan(45 deg)/tan(f/2)."
+      },
+      {
+        "match": "^(weapon_)?(ssg08)$",
+        "fov": 40,
+        "magnification": 2.75,
+        "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+        "note": "SSG 08 scope level 1: weapons.vdata m_nZoomFOV1=40 (same convention as default 90). magnification = tan(45 deg)/tan(f/2)."
+      },
+      {
+        "match": "^(weapon_)?(ssg08)$",
+        "fov": 15,
+        "magnification": 7.6,
+        "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+        "note": "SSG 08 scope level 2: weapons.vdata m_nZoomFOV2=15 (same convention as default 90). magnification = tan(45 deg)/tan(f/2)."
+      },
+      {
+        "match": "^(weapon_)?(scar20)$",
+        "fov": 40,
+        "magnification": 2.75,
+        "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+        "note": "SCAR-20 scope level 1: weapons.vdata m_nZoomFOV1=40 (same convention as default 90). magnification = tan(45 deg)/tan(f/2)."
+      },
+      {
+        "match": "^(weapon_)?(scar20)$",
+        "fov": 15,
+        "magnification": 7.6,
+        "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+        "note": "SCAR-20 scope level 2: weapons.vdata m_nZoomFOV2=15 (same convention as default 90). magnification = tan(45 deg)/tan(f/2)."
+      },
+      {
+        "match": "^(weapon_)?(g3sg1)$",
+        "fov": 40,
+        "magnification": 2.75,
+        "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+        "note": "G3SG1 scope level 1: weapons.vdata m_nZoomFOV1=40 (same convention as default 90). magnification = tan(45 deg)/tan(f/2)."
+      },
+      {
+        "match": "^(weapon_)?(g3sg1)$",
+        "fov": 15,
+        "magnification": 7.6,
+        "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+        "note": "G3SG1 scope level 2: weapons.vdata m_nZoomFOV2=15 (same convention as default 90). magnification = tan(45 deg)/tan(f/2)."
+      },
+      {
+        "match": "^(weapon_)?(aug)$",
+        "fov": 45,
+        "magnification": 2.41,
+        "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+        "note": "AUG scope level 1: weapons.vdata m_nZoomFOV1=45 (same convention as default 90). magnification = tan(45 deg)/tan(f/2)."
+      },
+      {
+        "match": "^(weapon_)?(sg556|sg ?553)$",
+        "fov": 45,
+        "magnification": 2.41,
+        "source": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata",
+        "note": "SG 553 scope level 1: weapons.vdata m_nZoomFOV1=45 (same convention as default 90). magnification = tan(45 deg)/tan(f/2)."
+      }
+    ],
+    "viewDistance": null,
+    "viewDistanceSource": "No fixed view limit; visibility is map geometry and smokes. m_flRange is the damage limit (8192 u = 208 m for rifles)."
+  },
+  "sensors": [],
+  "estimates": [
+    "cs2-knife",
+    "cs2-hegrenade",
+    "cs2-molotov",
+    "cs2-flashbang",
+    "cs2-smokegrenade",
+    "cs2-decoy"
+  ]
+}

@@ -577,6 +577,8 @@ export interface FrameParams {
   objectiveZones?: { verts: Float32Array; count: number; state: Float32Array; ground: boolean; xray: number } | null;
   /** Directional heat: wedge sprites and the direction field. Null or absent draws neither. */
   direction?: DirectionDraw | null;
+  /** Engagement ranges (`ranges/`): the shells and the units' lines of sight. Null or absent: none. */
+  ranges?: RangeDraw | null;
 
   /** Appearance of the background map or level mesh. Null draws neither. */
   level: LevelDraw | null;
@@ -602,6 +604,31 @@ export interface FrameParams {
 }
 
 /** The tactical display look, as the renderers draw it (`post/tacticalPost.ts` packs it). */
+/**
+ * The engagement ranges of a frame (`ranges/`): shells as instances of one
+ * mesh (`ranges/shells.ts`), and up to `MAX_VIEWS` units' views - their slot
+ * fixed while they are shown - whose faces the backend takes from the level a
+ * few a frame (`ranges/viewshed.ts`).
+ */
+export interface RangeDraw {
+  shells: Float32Array;
+  count: number;
+  /** Shells from here on have a cone's side as well. */
+  coneStart: number;
+  opacity: number;
+  faces: boolean;
+  lines: boolean;
+  /** Cut the shells by the views. */
+  los: boolean;
+  /** Shade the ground each view sees within reach. */
+  ground: boolean;
+  views: (import('../ranges/viewshed').RangeView | null)[];
+  /** Faces taken a frame at most. */
+  facesPerFrame: number;
+  /** How far behind the level a point may lie and still count as seen, data units. */
+  bias: number;
+}
+
 export interface PostDraw {
   /** 0 low (one pass, no glow), 1 medium (quarter-res glow), 2 high (half-res glow, team-coloured edges, chroma). */
   quality: 0 | 1 | 2;
@@ -850,6 +877,8 @@ export interface Renderer {
   setWorldTiles(tiles: WorldTile[]): void;
   /** GPU bytes held by the level and the world tiles, beside `gpuBytesUsed` for the rows. */
   readonly levelBytes: number;
+  /** Whether the engagement ranges still have views to take; absent: never. */
+  readonly rangesPending?: boolean;
   render(params: FrameParams): FrameResult;
   dispose(): void;
   /** GPU memory ceiling for row data, in bytes. */

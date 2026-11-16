@@ -1,0 +1,39 @@
+{
+  "game": "wows",
+  "name": "World of Warships",
+  "researched": "2026-11-16",
+  "weapons": [
+    { "id": "wows-mb-yamato", "cls": "gun", "name": "Yamato main battery", "range": [0, 15000, 26630], "elev": [-5, 45], "los": false, "match": ["yamato"], "src": "game", "source": "https://wiki.worldofwarships.com/Ship:Yamato", "date": "2026-11-16", "note": "Firing range 26.63 km, secondary 7.3 km. Optimal is an estimate." },
+    { "id": "wows-mb-montana", "cls": "gun", "name": "Montana main battery", "range": [0, 14000, 23650], "elev": [-5, 45], "los": false, "match": ["montana"], "src": "game", "source": "https://wiki.worldofwarships.com/Ship:Montana", "date": "2026-11-16", "note": "Firing range 23.65 km, secondary 7.3 km. Optimal is an estimate." },
+    { "id": "wows-mb-desmoines", "cls": "gun", "name": "Des Moines main battery", "range": [0, 9000, 15830], "elev": [-5, 45], "los": false, "match": ["des ?moines"], "src": "game", "source": "https://wiki.worldofwarships.com/Ship:Des_Moines", "date": "2026-11-16", "note": "Firing range 15.83 km. Optimal is an estimate." },
+    { "id": "wows-mb-shimakaze", "cls": "gun", "name": "Shimakaze main battery", "range": [0, 7000, 11370], "elev": [-5, 45], "los": false, "match": ["shimakaze"], "src": "game", "source": "https://wiki.worldofwarships.com/Ship:Shimakaze", "date": "2026-11-16", "note": "Firing range 11.37 km. Optimal is an estimate." },
+    { "id": "wows-secondary", "cls": "gun", "name": "Secondary battery (battleship)", "range": [0, 5000, 7300], "elev": [-5, 45], "los": false, "match": ["secondar"], "src": "game", "source": "https://wiki.worldofwarships.com/Ship:Yamato", "date": "2026-11-16", "note": "7.3 km on both Yamato and Montana; other ships differ." },
+    { "id": "wows-tp-type93", "cls": "torpedo", "name": "Type 93 torpedo (20 km)", "range": [0, 10000, 20000], "los": false, "match": ["type ?93(?! ?mod)"], "src": "game", "source": "https://wiki.worldofwarships.com/Ship:Shimakaze", "date": "2026-11-16", "note": "Shimakaze page: Type 93 20.0 km; Type 93 mod. 3 12.0 km; Type F3 8.0 km." },
+    { "id": "wows-tp-type93m3", "cls": "torpedo", "name": "Type 93 mod. 3 torpedo", "range": [0, 6000, 12000], "los": false, "match": ["type ?93 ?mod\\.? ?3"], "src": "game", "source": "https://wiki.worldofwarships.com/Ship:Shimakaze", "date": "2026-11-16", "note": "12.0 km." },
+    { "id": "wows-tp-f3", "cls": "torpedo", "name": "Type F3 torpedo", "range": [0, 4000, 8000], "los": false, "match": ["type ?f3"], "src": "game", "source": "https://wiki.worldofwarships.com/Ship:Shimakaze", "date": "2026-11-16", "note": "8.0 km." },
+    { "id": "wows-aa-short", "cls": "sam", "name": "AA short-range aura", "range": [100, 1500, 2500], "alt": [-50, 5000], "elev": [-5, 90], "match": ["aa.*short|short.*aura"], "src": "game", "source": "https://wiki.worldofwarships.com/Ship:Anti-Aircraft_Fire", "date": "2026-11-16", "note": "Wiki: depth greater than 1.5 km minimum (guns up to 30 mm), starting at 100 m. Named ships: Yamato 2.5 km, Montana 2.0 km, Shimakaze 2.5 km, Des Moines 2.0 km. Altitude band is an estimate." },
+    { "id": "wows-aa-mid", "cls": "sam", "name": "AA medium-range aura", "range": [100, 2500, 4000], "alt": [-50, 5000], "elev": [-5, 90], "match": ["aa.*(mid|medium)|(mid|medium).*aura"], "src": "game", "source": "https://wiki.worldofwarships.com/Ship:Anti-Aircraft_Fire", "date": "2026-11-16", "note": "Wiki: depth greater than 2.5 km minimum (guns 30.1-85 mm). Montana 3.5 km, Des Moines 4.0 km, Prinz Eugen 3.5 km. Altitude band is an estimate." },
+    { "id": "wows-aa-long", "cls": "sam", "name": "AA long-range aura and flak", "range": [100, 4000, 5800], "alt": [-50, 5000], "elev": [-5, 90], "match": ["aa.*long|long.*aura|flak"], "src": "game", "source": "https://wiki.worldofwarships.com/Ship:Anti-Aircraft_Fire", "date": "2026-11-16", "note": "Wiki: depth greater than 4 km minimum (guns over 85 mm). Yamato 5.8 km, Des Moines 5.8 km, Montana 6.0 km, Prinz Eugen 5.2 km. Flak bursts act from 3.5 km out to the long aura edge. Altitude band is an estimate." }
+  ],
+  "vehicles": [
+    { "match": "yamato", "weapons": ["wows-mb-yamato", "wows-secondary", "wows-aa-short", "wows-aa-long"] },
+    { "match": "montana", "weapons": ["wows-mb-montana", "wows-secondary", "wows-aa-short", "wows-aa-mid", "wows-aa-long"] },
+    { "match": "des ?moines", "weapons": ["wows-mb-desmoines", "wows-aa-short", "wows-aa-mid", "wows-aa-long"] },
+    { "match": "shimakaze", "weapons": ["wows-mb-shimakaze", "wows-tp-type93", "wows-tp-type93m3", "wows-tp-f3", "wows-aa-short", "wows-aa-long"] }
+  ],
+  "fov": {
+    "default": { "horizontal": null, "vertical": null, "source": "", "note": "Not researched; no source found for default camera FOV or binocular zoom levels." },
+    "zoom": [],
+    "viewDistance": null,
+    "viewDistanceSource": ""
+  },
+  "sensors": [
+    { "id": "wows-det-yamato", "kind": "spotting", "name": "Yamato surface detectability", "match": "yamato", "range": 17460, "az": [-180, 180], "el": [0, 0], "beamwidth": null, "modes": ["surface"], "src": "game", "source": "https://wiki.worldofwarships.com/Ship:Yamato", "date": "2026-11-16", "note": "Air detectability 10.0 km." },
+    { "id": "wows-det-montana", "kind": "spotting", "name": "Montana surface detectability", "match": "montana", "range": 17290, "az": [-180, 180], "el": [0, 0], "beamwidth": null, "modes": ["surface"], "src": "game", "source": "https://wiki.worldofwarships.com/Ship:Montana", "date": "2026-11-16", "note": "Air detectability 10.0 km." },
+    { "id": "wows-det-desmoines", "kind": "spotting", "name": "Des Moines surface detectability", "match": "des ?moines", "range": 13440, "az": [-180, 180], "el": [0, 0], "beamwidth": null, "modes": ["surface"], "src": "game", "source": "https://wiki.worldofwarships.com/Ship:Des_Moines", "date": "2026-11-16", "note": "Air detectability 7.9 km." },
+    { "id": "wows-det-shimakaze", "kind": "spotting", "name": "Shimakaze surface detectability", "match": "shimakaze", "range": 6900, "az": [-180, 180], "el": [0, 0], "beamwidth": null, "modes": ["surface"], "src": "game", "source": "https://wiki.worldofwarships.com/Ship:Shimakaze", "date": "2026-11-16", "note": "Air detectability 3.38 km." },
+    { "id": "wows-radar-desmoines", "kind": "radar", "name": "Surveillance Radar (Des Moines)", "match": "surveillance ?radar", "range": 10000, "az": [-180, 180], "el": [0, 0], "beamwidth": null, "modes": ["surface"], "src": "game", "source": "https://wiki.worldofwarships.com/Ship:Des_Moines", "date": "2026-11-16", "note": "10 km on Des Moines; other ships differ (not researched)." },
+    { "id": "wows-spotter", "kind": "spotting", "name": "Spotting aircraft", "match": "spotting ?aircraft", "range": 0, "az": [-180, 180], "el": [0, 0], "beamwidth": null, "modes": [], "src": "game", "source": "https://wiki.worldofwarships.com/Ship:Consumables/expanded", "date": "2026-11-16", "note": "Gives +20% firing range for 100 s on most ships; it is not a detection range, so range 0 means n/a." }
+  ],
+  "estimates": []
+}
