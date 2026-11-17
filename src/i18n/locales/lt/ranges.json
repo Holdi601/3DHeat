@@ -53,6 +53,7 @@
   "ranges.src.game": "paties žaidimo reikšmė",
   "ranges.src.public": "suapvalinta paskelbta reikšmė",
   "ranges.src.estimate": "įvertis",
+  "ranges.src.local": "iš jūsų įdiegimo",
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Mažiausias – geriausias – didžiausias nuotolis. * įvertis, ne žaidimo ar leidinio reikšmė. Užveskite žymeklį ant ginklo, kad pamatytumėte šaltinį.",
   "ranges.game": "Reikšmės žaidimui {game}, kur žinomos, kitaip bendros.",

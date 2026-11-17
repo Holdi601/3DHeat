@@ -53,6 +53,7 @@
   "ranges.src.game": "spillets eget tall",
   "ranges.src.public": "avrundet publisert tall",
   "ranges.src.estimate": "anslag",
+  "ranges.src.local": "fra din installasjon",
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Minste – beste – største rekkevidde. * et anslag, ikke et tall fra spillet eller en publikasjon. Hold musepekeren over et våpen for å se kilden.",
   "ranges.game": "Tall for {game} der de er kjent, ellers generelle.",

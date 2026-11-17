@@ -53,6 +53,7 @@
   "ranges.src.game": "게임 자체의 수치",
   "ranges.src.public": "공개된 수치(반올림)",
   "ranges.src.estimate": "추정",
+  "ranges.src.local": "설치된 게임에서",
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "최소 – 최적 – 최대 사거리. * 추정치이며 게임이나 공개 자료의 수치가 아닙니다. 무기에 마우스를 올리면 출처가 표시됩니다.",
   "ranges.game": "알려진 경우 {game}의 수치, 아니면 일반 수치.",

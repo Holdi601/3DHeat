@@ -53,6 +53,7 @@
   "ranges.src.game": "valoare din joc",
   "ranges.src.public": "valoare publicată rotunjită",
   "ranges.src.estimate": "estimare",
+  "ranges.src.local": "din instalarea ta",
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Raza minimă – optimă – maximă. * o estimare, nu o valoare din joc sau dintr-o publicație. Treceți cursorul peste o armă pentru sursă.",
   "ranges.game": "Valori pentru {game} unde sunt cunoscute, altfel generale.",

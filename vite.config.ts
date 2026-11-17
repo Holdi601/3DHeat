@@ -241,6 +241,54 @@ function figurePack(): Plugin {
   return { name: 'heat3d-figure-pack', configureServer: handler, configurePreviewServer: handler };
 }
 
+/** Where the page asks for a game's local range catalogue (src/ranges/local.ts). */
+const LOCAL_RANGES_ROUTE = '/__heat3d/ranges';
+
+/**
+ * A game's range catalogue built from the user's own installation by its
+ * reader (`heat3d-wt-ranges`, `heat3d-dcs-maps ranges`): `/<game>` answers
+ * the file named by the `ranges` entry of the git-ignored
+ * `tools/local-data.json` (`{ "wt": "<path>", "dcs": "<path>" }`), with an
+ * ETag so an unchanged file costs a bodiless 304; without one, 404, and the
+ * viewer keeps its public catalogue.
+ */
+function localRanges(): Plugin {
+  const where = (game: string): string | null => {
+    try {
+      const local = fileURLToPath(new URL('./tools/local-data.json', import.meta.url));
+      const r = existsSync(local) ? (JSON.parse(readFileSync(local, 'utf8')) as { ranges?: Record<string, unknown> }).ranges : undefined;
+      const p = r?.[game];
+      return typeof p === 'string' ? p : null;
+    } catch {
+      return null;
+    }
+  };
+  const handler = (server: ViteDevServer | { middlewares: ViteDevServer['middlewares'] }) => {
+    server.middlewares.use(LOCAL_RANGES_ROUTE, (req, res) => {
+      const game = /^\/([a-z0-9]+)$/i.exec(new URL(req.url ?? '/', 'http://ranges').pathname)?.[1];
+      const p = game ? where(game) : null;
+      if (!p || !existsSync(p)) {
+        res.statusCode = 404;
+        res.end();
+        return;
+      }
+      const st = statSync(p);
+      const tag = `"${st.size.toString(36)}-${Math.round(st.mtimeMs).toString(36)}"`;
+      res.setHeader('ETag', tag);
+      res.setHeader('Cache-Control', 'no-cache');
+      if (req.headers['if-none-match'] === tag) {
+        res.statusCode = 304;
+        res.end();
+        return;
+      }
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Content-Length', st.size);
+      createReadStream(p).pipe(res);
+    });
+  };
+  return { name: 'heat3d-local-ranges', configureServer: handler, configurePreviewServer: handler };
+}
+
 /** Where the page asks for a campaign round's recordings on this machine (src/ui/match/SeriesPanel.tsx). */
 const CAMPAIGN_ROUTE = '/__heat3d/campaign';
 
@@ -395,7 +443,7 @@ function selfUpdate(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [react(), hostMemory(), selfUpdate(), figurePack(), campaignFiles()],
+  plugins: [react(), hostMemory(), selfUpdate(), figurePack(), localRanges(), campaignFiles()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

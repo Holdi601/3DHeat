@@ -53,6 +53,7 @@
   "ranges.src.game": "valore del gioco stesso",
   "ranges.src.public": "valore pubblicato arrotondato",
   "ranges.src.estimate": "stima",
+  "ranges.src.local": "dalla tua installazione",
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Gittata minima – ottimale – massima. * una stima, non un valore del gioco né di una pubblicazione. Passa il puntatore su un'arma per vedere la fonte.",
   "ranges.game": "Valori per {game} dove noti, altrimenti generali.",

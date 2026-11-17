@@ -53,6 +53,7 @@
   "ranges.src.game": "mängu enda väärtus",
   "ranges.src.public": "ümardatud avaldatud väärtus",
   "ranges.src.estimate": "hinnang",
+  "ranges.src.local": "sinu enda paigaldusest",
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Väikseim – parim – suurim ulatus. * hinnang, mitte mängu ega väljaande väärtus. Allika nägemiseks liiguta kursor relvale.",
   "ranges.game": "Väärtused mängule {game}, kus need on teada, muidu üldised.",

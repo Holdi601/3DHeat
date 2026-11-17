@@ -53,6 +53,7 @@
   "ranges.src.game": "the game's own figure",
   "ranges.src.public": "rounded published figure",
   "ranges.src.estimate": "estimate",
+  "ranges.src.local": "from your installation",
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Least – best – most range. * an estimate, not a figure from the game or a publication. Hover a weapon for its source.",
   "ranges.game": "Figures for {game} where known, else general ones.",

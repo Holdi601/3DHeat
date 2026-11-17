@@ -53,6 +53,7 @@
   "ranges.src.game": "shifra e vetë lojës",
   "ranges.src.public": "shifër e botuar e rrumbullakuar",
   "ranges.src.estimate": "vlerësim",
+  "ranges.src.local": "nga instalimi juaj",
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Rrezja më e vogël – më e mira – më e madhja. * një vlerësim, jo shifër nga loja apo nga një botim. Vendose kursorin mbi një armë për burimin.",
   "ranges.game": "Shifra për {game} aty ku njihen, përndryshe të përgjithshme.",

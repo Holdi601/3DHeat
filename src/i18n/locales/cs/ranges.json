@@ -53,6 +53,7 @@
   "ranges.src.game": "hodnota přímo ze hry",
   "ranges.src.public": "zaokrouhlená zveřejněná hodnota",
   "ranges.src.estimate": "odhad",
+  "ranges.src.local": "z vaší instalace",
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Nejmenší – nejlepší – největší dosah. * odhad, ne hodnota ze hry ani z publikace. Najetím na zbraň zobrazíte zdroj.",
   "ranges.game": "Hodnoty pro {game}, pokud jsou známy, jinak obecné.",

@@ -53,6 +53,7 @@
   "ranges.src.game": "oyunun kendi değeri",
   "ranges.src.public": "yuvarlanmış yayımlanmış değer",
   "ranges.src.estimate": "tahmin",
+  "ranges.src.local": "kendi kurulumunuzdan",
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "En kısa – en iyi – en uzun menzil. * bir tahmin, oyundan veya bir yayından alınmış değer değil. Kaynağı görmek için silahın üzerine gelin.",
   "ranges.game": "{game} için bilinen değerler, yoksa genel olanlar.",

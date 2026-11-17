@@ -53,6 +53,7 @@
   "ranges.src.game": "paša spēles vērtība",
   "ranges.src.public": "noapaļota publicēta vērtība",
   "ranges.src.estimate": "novērtējums",
+  "ranges.src.local": "no tavas instalācijas",
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Mazākais – labākais – lielākais darbības rādiuss. * novērtējums, nevis vērtība no spēles vai publikācijas. Virziet kursoru uz ieroci, lai redzētu avotu.",
   "ranges.game": "Vērtības spēlei {game}, kur zināmas, citādi vispārīgas.",

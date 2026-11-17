@@ -18,7 +18,14 @@ import type { RangeSettings } from './settings';
 import { MAX_VIEWS } from './viewshedShaders';
 import type { RangeView } from './viewshed';
 import { VIEW_ASPECT, VIEW_REACH, ViewFov, gameViewDistance } from './view';
-import { RecordedRadars, gameSensors, sectorShape, sensorBands, sensorsFor, type SensorSpec } from './sensors';
+import { PASSIVE_SENSOR, RecordedRadars, gameSensors, sectorShape, sensorBands, sensorsFor, type SensorSpec } from './sensors';
+import { localRangesReady, localSight } from './local';
+
+/** Counts the local catalogues' arrivals (`local.ts`): the units' weapons and sensors are worked out again. */
+let localStamp = 0;
+void localRangesReady.then((games) => {
+  if (games.length) localStamp++;
+});
 
 /** The units shown and their weapons, for the panel (changes when the set does, not every frame). */
 export const useRangeInfo = create<{ units: { person: number; weapons: UnitWeapon[]; colours: [number, number, number][]; fov: number | null; sensors: SensorSpec[] }[]; reading: boolean; game: string | null }>(() => ({ units: [], reading: false, game: null }));
@@ -32,6 +39,9 @@ export interface RangeTrack {
   fwd: [number, number, number];
   /** Where it looks, when the data says (a player's view, a sight); else its nose. */
   look?: [number, number, number] | null;
+  /** Where its turret points (the hull's pitch) and its gun, when the data says; turret- and gun-mounted sensors follow them. */
+  turret?: [number, number, number] | null;
+  gun?: [number, number, number] | null;
   team: number;
 }
 
@@ -73,11 +83,13 @@ export class RangeLayer {
   private readonly fov = new ViewFov();
   private readonly radars = new RecordedRadars();
   private gameSensorList: { game: GameCatalogue | null; list: SensorSpec[] } = { game: null, list: [] };
+  /** The local catalogues' arrival this layer has taken in (`local.ts`). */
+  private localSeen = -1;
 
   /** A unit's sensors now: the recorded radar where the recording has it on (over the specification's radar), and the specified others. */
   private sensorsNow(d: Dataset, row: number, vehicle: string, figure: string | null): SensorSpec[] {
     if (this.gameSensorList.game !== this.game) this.gameSensorList = { game: this.game, list: gameSensors(this.game) };
-    const spec = sensorsFor(this.gameSensorList.list, vehicle, figure);
+    const spec = sensorsFor(this.gameSensorList.list, vehicle, figure, this.game);
     const rec = this.radars.at(d, row);
     if (!rec) return spec;
     const radar = spec.find((s) => s.kind === 'radar');
@@ -109,8 +121,10 @@ export class RangeLayer {
       this.slots.clear();
       this.last.clear();
     }
-    if (this.loadouts.version !== this.version) {
+    if (this.loadouts.version !== this.version || this.localSeen !== localStamp) {
       this.version = this.loadouts.version;
+      this.localSeen = localStamp;
+      this.gameSensorList = { game: null, list: [] };
       this.weapons.clear();
       this.game = detectRangeGame(d.name ?? '', d.attrs.map((a) => a.name), this.loadouts.all());
     }
@@ -174,7 +188,7 @@ export class RangeLayer {
       let view: RangeUnit['view'];
       let viewLength = 0;
       if (s.view) {
-        const across = this.fov.at(d, this.game, tr.person, tr.row, c.t);
+        const across = this.fov.at(d, this.game, tr.person, tr.row, c.t, localSight(this.game, c.vehicleOf(tr.person), u.figure));
         fovs.set(tr.person, across);
         viewLength = s.viewLength > 0 ? s.viewLength : (gameViewDistance(this.game) ?? VIEW_REACH[domain] ?? 400);
         const tanH = Math.tan((across * Math.PI) / 360);
@@ -183,26 +197,28 @@ export class RangeLayer {
       }
       // The sensors' sectors about the nose, each in a pale shade of the side's colour.
       const sectors: NonNullable<RangeUnit['sectors']> = u.sensors.map((sn, i) => {
-        const shape = sectorShape(tr.fwd, sn.az, sn.el);
+        // A turret's or a gun's sensor (a sight's rangefinder, a turret radar) turns with it where the data says.
+        const base = (sn.mount === 'gun' ? (tr.gun ?? tr.turret) : sn.mount === 'turret' ? (tr.turret ?? tr.gun) : null) ?? tr.fwd;
+        const shape = sectorShape(base, sn.az, sn.el);
         const b = sensorBands(sn);
         const col = weaponColour(c.colourOf(tr.person), 5 + i);
         return {
           bands: [b[0] * c.k, b[1] * c.k, b[2] * c.k] as [number, number, number],
           dome: shape.dome,
           el: sn.el,
-          fwd: shape.dome ? tr.fwd : shape.fwd,
+          fwd: shape.dome ? base : shape.fwd,
           tanH: shape.dome ? 0 : shape.tanH,
           tanV: shape.dome ? 0 : shape.tanV,
           colour: [col[0] * 0.7 + 0.3, col[1] * 0.7 + 0.3, col[2] * 0.7 + 0.3] as [number, number, number],
           // Passive warning receivers and sonar are not limited by what is in view.
-          los: !/^(rwr|esm|sonar|hydro)$/.test(sn.kind),
+          los: !PASSIVE_SENSOR.test(sn.kind),
         };
       });
       units.push({ person: tr.person, x: tr.x - c.origin[0], y: y - c.origin[1], z: tr.z - c.origin[2], fwd: tr.fwd, height, speed, weapons: u.weapons, colours: u.colours, view, sectors, slot });
       if (slot >= 0) {
         const los = u.weapons.filter((w) => w.los);
         const reach = (w: WeaponRange) => (w.shape === 'drop' ? dropReach(w, height, speed) : w.max);
-        const max = Math.max(viewLength, ...los.map(reach), ...u.sensors.filter((sn) => !/^(rwr|esm|sonar|hydro)$/.test(sn.kind)).map((sn) => sn.range));
+        const max = Math.max(viewLength, ...los.map(reach), ...u.sensors.filter((sn) => !PASSIVE_SENSOR.test(sn.kind)).map((sn) => sn.range));
         const far = max * c.k * 1.05;
         views[slot] = {
           id: tr.person,

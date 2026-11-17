@@ -3633,6 +3633,8 @@ export class Engine {
         const fr = this.figureReplay;
         // Where each looks for the view cone: the data's view (a player's camera, a sight) on top of the hull's heading.
         const view = rs.ranges.view ? (aimOf(d)?.view ?? null) : null;
+        // Where turrets and guns point, for the sensors and sights that turn with them.
+        const turret = rs.ranges.sensors ? aimOf(d) : null;
         const now = { yaw: NaN, pitch: NaN };
         const tracks = this.liveTracks.map((tr) => {
           if (rs.selected && index.units[index.personUnit[tr.person]]?.key === rs.selected) selected.add(tr.person);
@@ -3642,7 +3644,16 @@ export class Engine {
             const pitch = (tr.pitch ?? 0) + (Number.isFinite(now.pitch) ? now.pitch : 0);
             look = [Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch), -Math.cos(yaw) * Math.cos(pitch)];
           }
-          return { person: tr.person, row: tr.row, x: tr.x, y: tr.y, z: tr.z, fwd: axesOfTrack(tr).fwd, look, team: d.personTeam ? d.personTeam[tr.person] : -1 };
+          let tur: [number, number, number] | null = null;
+          let gun: [number, number, number] | null = null;
+          if (turret && tr.row >= 0 && Number.isFinite(turret.at(tr.row, cursorAt, now).yaw)) {
+            const yaw = tr.yaw + now.yaw;
+            const hp = tr.pitch ?? 0;
+            const gp = hp + (Number.isFinite(now.pitch) ? now.pitch : 0);
+            tur = [Math.sin(yaw) * Math.cos(hp), Math.sin(hp), -Math.cos(yaw) * Math.cos(hp)];
+            gun = [Math.sin(yaw) * Math.cos(gp), Math.sin(gp), -Math.cos(yaw) * Math.cos(gp)];
+          }
+          return { person: tr.person, row: tr.row, x: tr.x, y: tr.y, z: tr.z, fwd: axesOfTrack(tr).fwd, look, turret: tur, gun, team: d.personTeam ? d.personTeam[tr.person] : -1 };
         });
         this.rangeDraw = this.rangeLayer.build(d, tracks, {
           settings: rs.ranges,

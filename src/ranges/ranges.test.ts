@@ -8,6 +8,7 @@ import { ViewshedPlan, type RangeView } from './viewshed';
 import { ViewFov, acrossOf, gameFov, magnified, upOf } from './view';
 import { RecordedRadars, gameSensors, sectorShape, sensorBands, sensorsFor, turned } from './sensors';
 import { FACES, MAX_VIEWS, faceOf, faceUv } from './viewshedShaders';
+import { installLocal, localSight, readLocal } from './local';
 
 describe('range catalogue', () => {
   it('reads every entry, with unique ids and known armament', () => {
@@ -391,5 +392,60 @@ describe('sensors', () => {
     expect([last[3], last[11], last[20], last[21]]).toEqual([1000, -3, 316, 562]);
     const dome = out.data.subarray(2 * SHELL_FLOATS, 3 * SHELL_FLOATS);
     expect([dome[3], dome[11], dome[17]]).toEqual([500, -2, -1]);
+  });
+});
+describe('local catalogue (from the user installation)', () => {
+  const raw = {
+    version: 1,
+    game: 'zz',
+    name: 'Test game',
+    weapons: [
+      { id: 'local-zz-gun', cls: 'gun', name: '105 mm test gun', range: [0, 2000, 7000], shape: 'sphere', labels: ['test_gun_105', '105mm_test_shell'] },
+      { id: 'local-zz-bad', cls: 'nope', name: 'broken', range: [0, 1, 2] },
+    ],
+    sensors: {
+      'local-zz-radar': { kind: 'radar', name: 'Test radar', range: 20000, az: [-60, 60], el: [-10, 70], rcsRef: 5, mount: 'turret' },
+      'local-zz-norange': { kind: 'radar', name: 'Unknown' },
+    },
+    units: [
+      {
+        names: ['zz_tank', 'Test Tank'],
+        weapons: ['local-zz-gun', 'local-zz-missing'],
+        sensors: ['local-zz-radar', 'local-zz-norange'],
+        optics: [{ who: 'gunner', fov: [5, 25], thermal: { gen: 2 }, nv: false, mount: 'gun' }],
+      },
+    ],
+  };
+
+  it('reads weapons, sensors and units, skipping what it cannot use', () => {
+    const byId = new Map(RANGES.byId);
+    const l = readLocal(raw, byId)!;
+    expect(l.weapons.map((w) => w.id)).toEqual(['local-zz-gun']);
+    expect(l.weapons[0].src).toBe('local');
+    expect(byId.has('local-zz-gun')).toBe(true);
+    expect(l.labels.get('105mm_test_shell')?.id).toBe('local-zz-gun');
+    const u = l.units.get('test tank')!;
+    expect(u).toBe(l.units.get('zz_tank'));
+    expect(u.weapons.map((w) => w.id)).toEqual(['local-zz-gun']);
+    expect(u.sensors.map((s) => [s.id, s.mount, s.src])).toEqual([['local-zz-radar', 'turret', 'local']]);
+    expect(u.optics[0].fov).toEqual([25, 5]);
+    expect(readLocal({ game: 'zz' })).toBeNull();
+  });
+
+  it('wins over the public catalogue for the units and labels it lists, the rest unchanged', () => {
+    const games = new Map(GAMES);
+    const cat = { ...RANGES, byId: new Map(RANGES.byId) };
+    expect(installLocal(raw, games, cat)).toBe('zz');
+    const g = games.get('zz')!;
+    expect(weaponOfLabel('105MM_TEST_SHELL', cat, g)?.id).toBe('local-zz-gun');
+    expect(defaultArmament(null, cat, g, 'Test Tank').map((w) => w.id)).toEqual(['local-zz-gun']);
+    expect(sensorsFor(gameSensors(g), 'zz_tank', null, g).map((s) => s.id)).toEqual(['local-zz-radar']);
+    expect(sensorsFor(gameSensors(g), 'other', null, g)).toEqual([]);
+    expect(localSight(g, 'zz_tank', null)).toEqual([25, 5]);
+    expect(localSight(g, 'other', null)).toBeNull();
+    // A magnified view stays within the unit's own sight.
+    const v = new ViewFov();
+    const d = { name: 't', count: 1, attrs: [{ name: 'zoom', kind: 'number', data: new Float32Array([40]) }] } as unknown as Dataset;
+    expect(v.wanted(d, g, 0, [25, 5])).toBeCloseTo(5);
   });
 });

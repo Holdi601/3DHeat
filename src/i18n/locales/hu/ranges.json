@@ -53,6 +53,7 @@
   "ranges.src.game": "magának a játéknak az értéke",
   "ranges.src.public": "kerekített közzétett érték",
   "ranges.src.estimate": "becslés",
+  "ranges.src.local": "a saját telepítésedből",
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Legkisebb – legjobb – legnagyobb hatótávolság. * becslés, nem a játékból vagy kiadványból származó érték. A forráshoz vidd az egeret a fegyver fölé.",
   "ranges.game": "Értékek ehhez: {game}, ahol ismertek, egyébként általánosak.",

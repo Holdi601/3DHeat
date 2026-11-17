@@ -53,6 +53,7 @@
   "ranges.src.game": "spelets egen siffra",
   "ranges.src.public": "avrundad publicerad siffra",
   "ranges.src.estimate": "uppskattning",
+  "ranges.src.local": "från din installation",
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Kortaste – bästa – längsta räckvidd. * en uppskattning, inte en siffra från spelet eller en publikation. Håll muspekaren över ett vapen för källan.",
   "ranges.game": "Siffror för {game} där de är kända, annars allmänna.",

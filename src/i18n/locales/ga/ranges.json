@@ -53,6 +53,7 @@
   "ranges.src.game": "figiúr an chluiche féin",
   "ranges.src.public": "figiúr foilsithe cruinnithe",
   "ranges.src.estimate": "meastachán",
+  "ranges.src.local": "ó do shuiteáil féin",
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "An raon is giorra – is fearr – is faide. * meastachán, ní figiúr ón gcluiche ná ó fhoilseachán. Cuir an cúrsóir ar arm chun a fhoinse a fheiceáil.",
   "ranges.game": "Figiúirí do {game} nuair is eol iad, ginearálta ar shlí eile.",

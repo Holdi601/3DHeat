@@ -53,6 +53,7 @@
   "ranges.src.game": "valor do próprio jogo",
   "ranges.src.public": "valor publicado arredondado",
   "ranges.src.estimate": "estimativa",
+  "ranges.src.local": "da tua instalação",
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Alcance mínimo – ideal – máximo. * uma estimativa, não um valor do jogo nem de uma publicação. Passe o cursor sobre uma arma para ver a fonte.",
   "ranges.game": "Valores para {game} onde conhecidos; caso contrário, gerais.",

@@ -53,6 +53,7 @@
   "ranges.src.game": "wartość z samej gry",
   "ranges.src.public": "zaokrąglona wartość opublikowana",
   "ranges.src.estimate": "szacunek",
+  "ranges.src.local": "z twojej instalacji",
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Najmniejszy – najlepszy – największy zasięg. * szacunek, nie wartość z gry ani z publikacji. Najedź na broń, aby zobaczyć źródło.",
   "ranges.game": "Wartości dla {game}, gdy są znane, w innym razie ogólne.",

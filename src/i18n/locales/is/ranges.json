@@ -53,6 +53,7 @@
   "ranges.src.game": "tala úr leiknum sjálfum",
   "ranges.src.public": "námunduð birt tala",
   "ranges.src.estimate": "áætlun",
+  "ranges.src.local": "úr þinni uppsetningu",
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Minnsta – besta – mesta drægi. * áætlun, ekki tala úr leiknum eða riti. Færðu bendilinn yfir vopn til að sjá heimildina.",
   "ranges.game": "Tölur fyrir {game} þar sem þær eru þekktar, annars almennar.",

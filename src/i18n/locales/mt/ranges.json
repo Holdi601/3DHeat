@@ -53,6 +53,7 @@
   "ranges.src.game": "il-figura tal-logħba nnifisha",
   "ranges.src.public": "figura ppubblikata mħawda",
   "ranges.src.estimate": "stima",
+  "ranges.src.local": "mill-installazzjoni tiegħek",
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "L-iqsar – l-aħjar – l-itwal firxa. * stima, mhux figura mill-logħba jew minn pubblikazzjoni. Poġġi l-kursur fuq arma biex tara s-sors.",
   "ranges.game": "Figuri għal {game} fejn magħrufa, inkella ġenerali.",

@@ -53,6 +53,7 @@
   "ranges.src.game": "cifra del propio juego",
   "ranges.src.public": "cifra publicada redondeada",
   "ranges.src.estimate": "estimación",
+  "ranges.src.local": "de tu instalación",
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Alcance mínimo – óptimo – máximo. * una estimación, no una cifra del juego ni de una publicación. Pasa el cursor sobre un arma para ver su fuente.",
   "ranges.game": "Cifras para {game} donde se conocen; si no, generales.",

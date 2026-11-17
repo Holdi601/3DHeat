@@ -53,6 +53,7 @@
   "ranges.src.game": "游戏自身的数据",
   "ranges.src.public": "已公布数据（取整）",
   "ranges.src.estimate": "估计",
+  "ranges.src.local": "来自您的安装",
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "最小 – 最佳 – 最大射程。* 估计值，并非游戏或出版物中的数据。将鼠标悬停在武器上可查看来源。",
   "ranges.game": "已知时使用 {game} 的数据，否则使用通用数据。",

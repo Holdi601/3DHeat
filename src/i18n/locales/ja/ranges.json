@@ -53,6 +53,7 @@
   "ranges.src.game": "ゲーム自体の値",
   "ranges.src.public": "公表値（概数）",
   "ranges.src.estimate": "推定",
+  "ranges.src.local": "お使いのインストールから",
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "最小 – 最適 – 最大射程。* 推定値であり、ゲームや公表資料の値ではありません。兵装にカーソルを合わせると出典が表示されます。",
   "ranges.game": "{game} の値（判明している場合）。それ以外は一般的な値。",

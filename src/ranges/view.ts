@@ -109,8 +109,11 @@ export class ViewFov {
     return this.base;
   }
 
-  /** The view across a row's data asks for, degrees. */
-  wanted(d: Dataset, game: GameCatalogue | null, row: number): number {
+  /**
+   * The view across a row's data asks for, degrees; `sight` (degrees across, widest and narrowest: the unit's own
+   * gunner sight from the user's installation, `local.ts`) bounds a magnified view to what that sight can do.
+   */
+  wanted(d: Dataset, game: GameCatalogue | null, row: number, sight: readonly [number, number] | null = null): number {
     if (d !== this.d || game !== this.game) this.attach(d, game);
     if (row < 0) return this.base;
     const v = (c: AttributeColumn | null) => (c ? (c.data as Float32Array)[row] : NaN);
@@ -119,7 +122,10 @@ export class ViewFov {
     const m = v(this.mag);
     // A plain zoom value near 1 is a camera's own setting, not a sight (War Thunder writes 1.19 for a tank's
     // third-person view, about 1.0 in the air, 2.75 and 5.4 in a gunner's sight).
-    if (m > (this.mag && /^zoom$/i.test(this.mag.name.trim()) ? 1.5 : 1.01)) return magnified(this.base, m);
+    if (m > (this.mag && /^zoom$/i.test(this.mag.name.trim()) ? 1.5 : 1.01)) {
+      const f = magnified(this.base, m);
+      return sight ? Math.min(sight[0], Math.max(sight[1], f)) : f;
+    }
     if (this.sight) {
       const name = this.sight.categories?.[(this.sight.data as Uint32Array)[row]] ?? '';
       for (const o of this.optics) if (name && o.match.test(name)) return o.fov ?? magnified(this.base, o.magnification!);
@@ -136,8 +142,8 @@ export class ViewFov {
   }
 
   /** The view across drawn for a person now: eased towards what the row asks for (a fifth of a second). */
-  at(d: Dataset, game: GameCatalogue | null, person: number, row: number, t: number): number {
-    const want = this.wanted(d, game, row);
+  at(d: Dataset, game: GameCatalogue | null, person: number, row: number, t: number, sight: readonly [number, number] | null = null): number {
+    const want = this.wanted(d, game, row, sight);
     const last = this.eased.get(person);
     let fov = want;
     if (last && Number.isFinite(t) && t >= last.t && t - last.t < 2) fov = want + (last.fov - want) * Math.exp(-(t - last.t) / 0.2);

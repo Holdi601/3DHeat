@@ -10,6 +10,7 @@
  */
 
 import { CATALOG, type FigureDomain } from '../figures/catalog';
+import type { LocalCatalogue, LocalUnit } from './local';
 
 /** The kinds of weapon a viewer turns on and off. */
 export const WEAPON_CLASSES = ['smallArms', 'mg', 'cannon', 'gun', 'atgm', 'sam', 'aam', 'strike', 'torpedo', 'artillery'] as const;
@@ -35,8 +36,8 @@ export interface WeaponRange {
   alt: [number, number];
   /** Whether the line of sight limits it (false: indirect fire). */
   los: boolean;
-  /** game: the game's own value (stat card, official wiki, game files); public: a published real-world figure; estimate. */
-  src: 'game' | 'public' | 'estimate';
+  /** game: the game's own value (stat card, official wiki); public: a published real-world figure; estimate; local: read from the user's own installation (`local.ts`). */
+  src: 'game' | 'public' | 'estimate' | 'local';
   /** Where the figure comes from (a URL), when it was looked up, and what min/best/most mean there. */
   source?: string;
   date?: string;
@@ -90,7 +91,7 @@ export function readWeapon(r: Raw): WeaponRange | null {
     elev: pair(r.elev, [-90, 90]),
     alt: pair(r.alt, [-1e9, 1e9]),
     los: r.los !== false,
-    src: r.src === 'game' || r.src === 'public' ? r.src : 'estimate',
+    src: r.src === 'game' || r.src === 'public' || r.src === 'local' ? r.src : 'estimate',
     ...(typeof r.source === 'string' && r.source ? { source: r.source } : {}),
     ...(typeof r.date === 'string' ? { date: r.date } : {}),
     ...(typeof r.note === 'string' && r.note ? { note: r.note } : {}),
@@ -128,6 +129,8 @@ export interface GameCatalogue {
   sensors: unknown[];
   /** Ids still estimated, for follow-up. */
   estimates: string[];
+  /** The catalogue built from the user's own installation, when the local server has one (`local.ts`); its values win. */
+  local: LocalCatalogue | null;
 }
 
 /** A game file's contents, checked; its weapons join `byId`. */
@@ -158,6 +161,7 @@ export function readGame(raw: unknown, byId: Map<string, WeaponRange>): GameCata
     fov: g.fov ?? null,
     sensors: Array.isArray(g.sensors) ? g.sensors : [],
     estimates: Array.isArray(g.estimates) ? g.estimates.filter((x): x is string => typeof x === 'string') : [],
+    local: null,
   };
 }
 
@@ -199,6 +203,8 @@ export function weaponOfLabel(label: string, cat: RangeCatalogue = RANGES, game:
   const s = label.trim();
   if (!s) return null;
   if (game) {
+    const own = game.local?.labels.get(s.toLowerCase());
+    if (own) return own;
     const [w] = longest(game.weapons, s);
     if (w) return w;
   }
@@ -238,6 +244,11 @@ export function detectRangeGame(name: string, columns: readonly string[], labels
   return best;
 }
 
+/** A unit of the local catalogue by its vehicle's name as the data writes it, else its figure's; null for none. */
+export function localUnit(local: LocalCatalogue, vehicle: string, figure: string | null): LocalUnit | null {
+  return local.units.get(vehicle.trim().toLowerCase()) ?? (figure ? local.units.get(figure.replace(/@.*$/, '').toLowerCase()) : undefined) ?? null;
+}
+
 /** The person figures' carried weapon, from the words of a figure name (close-quarters operators). */
 const CARRY: [RegExp, string][] = [
   [/sniper|marksman-rifle|bolt/, 'sniper'],
@@ -260,6 +271,8 @@ const DOMAIN_DEFAULT: Partial<Record<FigureDomain, string[]>> = { person: ['rifl
  */
 export function defaultArmament(figure: string | null, cat: RangeCatalogue = RANGES, game: GameCatalogue | null = null, vehicle = ''): WeaponRange[] {
   if (game) {
+    const own = game.local && localUnit(game.local, vehicle, figure);
+    if (own && own.weapons.length) return own.weapons;
     for (const v of game.vehicles) if ((vehicle && v.match.test(vehicle)) || (figure && v.match.test(figure))) return v.weapons.map((id) => cat.byId.get(id)!);
   }
   if (!figure) return [];

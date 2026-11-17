@@ -18,9 +18,15 @@
  */
 
 import type { Dataset } from '../state/types';
-import type { GameCatalogue } from './catalog';
+import { localUnit, type GameCatalogue } from './catalog';
 
-export type SensorKind = 'radar' | 'irst' | 'rwr' | 'lrf' | 'ldp' | 'tgp' | 'sonar' | 'esm' | 'spotting' | 'camera' | 'drone' | 'hydro';
+export type SensorKind = 'radar' | 'irst' | 'rwr' | 'mlws' | 'lws' | 'lrf' | 'ldp' | 'tgp' | 'sonar' | 'esm' | 'spotting' | 'camera' | 'drone' | 'hydro';
+
+/** Passive warners and listeners: not limited by what is in view. */
+export const PASSIVE_SENSOR = /^(rwr|mlws|lws|esm|sonar|hydro)$/;
+
+/** What a sensor turns with: the hull (its nose), the turret, or the gun (and its sight). */
+export type SensorMount = 'hull' | 'turret' | 'gun';
 
 export interface SensorSpec {
   id: string;
@@ -34,50 +40,65 @@ export interface SensorSpec {
   el: [number, number];
   /** Reference target radar cross-section for `range`, square metres; null unknown. */
   rcsRef: number | null;
-  src: 'game' | 'public' | 'estimate';
+  src: 'game' | 'public' | 'estimate' | 'local';
   source?: string;
   note?: string;
   /** Recorded in the data (ACMI radar), not a specification. */
   recorded?: boolean;
+  /** What it turns with; absent: the hull. */
+  mount?: SensorMount;
 }
 
 const num = (v: unknown, d: number) => (typeof v === 'number' && Number.isFinite(v) ? v : d);
 const pair = (v: unknown, d: [number, number]): [number, number] => (Array.isArray(v) && v.length === 2 ? [num(v[0], d[0]), num(v[1], d[1])] : d);
 
+/** One sensor entry, checked: null without a reach or an id, or when it is how far the unit itself is seen (detectability). */
+export function readSensor(raw: Record<string, unknown>, match: RegExp): SensorSpec | null {
+  const range = num(raw.range, 0);
+  if (!(range > 0) || typeof raw.id !== 'string') return null;
+  if (/detectab/i.test(`${raw.name ?? ''} ${raw.note ?? ''}`)) return null;
+  const el = pair(raw.el, [-90, 90]);
+  return {
+    id: raw.id,
+    kind: (typeof raw.kind === 'string' ? raw.kind : 'radar') as SensorKind,
+    name: typeof raw.name === 'string' ? raw.name : raw.id,
+    match,
+    range,
+    az: pair(raw.az, [-180, 180]),
+    // A sensor given no height (a ship's surface search): a thin band round the horizon.
+    el: el[0] === el[1] ? [el[0] - 2, el[1] + 2] : el,
+    rcsRef: typeof raw.rcsRef === 'number' && raw.rcsRef > 0 ? raw.rcsRef : null,
+    src: raw.src === 'game' || raw.src === 'public' || raw.src === 'local' ? raw.src : 'estimate',
+    ...(typeof raw.source === 'string' && raw.source ? { source: raw.source } : {}),
+    ...(typeof raw.note === 'string' && raw.note ? { note: raw.note } : {}),
+    ...(raw.mount === 'turret' || raw.mount === 'gun' ? { mount: raw.mount } : {}),
+  };
+}
+
 /** A game's sensors, checked: those with a reach, not how far the unit itself is seen (detectability). */
 export function gameSensors(game: GameCatalogue | null): SensorSpec[] {
   const out: SensorSpec[] = [];
   for (const raw of (game?.sensors ?? []) as Record<string, unknown>[]) {
-    const range = num(raw.range, 0);
-    if (!(range > 0) || typeof raw.id !== 'string' || typeof raw.match !== 'string') continue;
-    if (/detectab/i.test(`${raw.name ?? ''} ${raw.note ?? ''}`)) continue;
+    if (typeof raw.match !== 'string') continue;
     let match: RegExp;
     try {
       match = new RegExp(raw.match, 'i');
     } catch {
       continue;
     }
-    const el = pair(raw.el, [-90, 90]);
-    out.push({
-      id: raw.id,
-      kind: (typeof raw.kind === 'string' ? raw.kind : 'radar') as SensorKind,
-      name: typeof raw.name === 'string' ? raw.name : raw.id,
-      match,
-      range,
-      az: pair(raw.az, [-180, 180]),
-      // A sensor given no height (a ship's surface search): a thin band round the horizon.
-      el: el[0] === el[1] ? [el[0] - 2, el[1] + 2] : el,
-      rcsRef: typeof raw.rcsRef === 'number' && raw.rcsRef > 0 ? raw.rcsRef : null,
-      src: raw.src === 'game' || raw.src === 'public' ? raw.src : 'estimate',
-      ...(typeof raw.source === 'string' && raw.source ? { source: raw.source } : {}),
-      ...(typeof raw.note === 'string' && raw.note ? { note: raw.note } : {}),
-    });
+    const s = readSensor(raw, match);
+    if (s) out.push(s);
   }
   return out;
 }
 
-/** A unit's sensors by its vehicle's or figure's name. */
-export function sensorsFor(list: readonly SensorSpec[], vehicle: string, figure: string | null): SensorSpec[] {
+/**
+ * A unit's sensors: those the user's own installation lists for its vehicle (`local.ts`), when it lists any;
+ * else the game catalogue's by its vehicle's or figure's name.
+ */
+export function sensorsFor(list: readonly SensorSpec[], vehicle: string, figure: string | null, game: GameCatalogue | null = null): SensorSpec[] {
+  const own = game?.local ? localUnit(game.local, vehicle, figure) : null;
+  if (own && own.sensors.length) return own.sensors;
   return list.filter((s) => (vehicle && s.match.test(vehicle)) || (figure && s.match.test(figure)));
 }
 

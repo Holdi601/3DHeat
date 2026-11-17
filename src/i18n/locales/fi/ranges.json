@@ -53,6 +53,7 @@
   "ranges.src.game": "pelin oma arvo",
   "ranges.src.public": "pyöristetty julkaistu arvo",
   "ranges.src.estimate": "arvio",
+  "ranges.src.local": "omasta asennuksestasi",
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Pienin – paras – suurin kantama. * arvio, ei pelin tai julkaisun arvo. Vie osoitin aseen päälle nähdäksesi lähteen.",
   "ranges.game": "Arvot pelille {game}, jos tiedossa, muuten yleiset.",

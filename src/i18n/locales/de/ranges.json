@@ -53,6 +53,7 @@
   "ranges.src.game": "Wert aus dem Spiel selbst",
   "ranges.src.public": "gerundeter veröffentlichter Wert",
   "ranges.src.estimate": "Schätzung",
+  "ranges.src.local": "aus deiner Installation",
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Geringste – beste – größte Reichweite. * eine Schätzung, kein Wert aus dem Spiel oder einer Veröffentlichung. Fahre über eine Waffe, um die Quelle zu sehen.",
   "ranges.game": "Werte für {game}, wo bekannt, sonst allgemeine.",

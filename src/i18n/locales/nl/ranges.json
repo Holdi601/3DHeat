@@ -53,6 +53,7 @@
   "ranges.src.game": "waarde uit het spel zelf",
   "ranges.src.public": "afgeronde gepubliceerde waarde",
   "ranges.src.estimate": "schatting",
+  "ranges.src.local": "uit je eigen installatie",
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Minimaal – beste – maximaal bereik. * een schatting, geen waarde uit het spel of een publicatie. Wijs een wapen aan voor de bron.",
   "ranges.game": "Waarden voor {game} waar bekend, anders algemene.",

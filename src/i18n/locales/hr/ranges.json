@@ -53,6 +53,7 @@
   "ranges.src.game": "vrijednost iz same igre",
   "ranges.src.public": "zaokružena objavljena vrijednost",
   "ranges.src.estimate": "procjena",
+  "ranges.src.local": "iz vaše instalacije",
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Najmanji – najbolji – najveći domet. * procjena, a ne vrijednost iz igre ili publikacije. Zadržite pokazivač na oružju za izvor.",
   "ranges.game": "Vrijednosti za {game} gdje su poznate, inače opće.",

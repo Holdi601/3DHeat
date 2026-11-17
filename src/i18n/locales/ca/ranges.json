@@ -53,6 +53,7 @@
   "ranges.src.game": "xifra del propi joc",
   "ranges.src.public": "xifra publicada arrodonida",
   "ranges.src.estimate": "estimació",
+  "ranges.src.local": "de la teva instal·lació",
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Abast mínim – òptim – màxim. * una estimació, no una xifra del joc ni d'una publicació. Passa el cursor per sobre d'una arma per veure'n la font.",
   "ranges.game": "Xifres per a {game} quan es coneixen; si no, generals.",

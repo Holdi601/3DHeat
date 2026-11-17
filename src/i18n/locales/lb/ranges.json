@@ -53,6 +53,7 @@
   "ranges.src.game": "Zuel vum Spill selwer",
   "ranges.src.public": "ofgerënnt verëffentlecht Zuel",
   "ranges.src.estimate": "Schätzung",
+  "ranges.src.local": "aus denger Installatioun",
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Klengst – bescht – gréisst Reechwäit. * eng Schätzung, keng Zuel aus dem Spill oder enger Verëffentlechung. Fuer mam Mauszeiger iwwer eng Waff fir d'Quell ze gesinn.",
   "ranges.game": "Zuelen fir {game}, wou bekannt, soss allgemeng.",
