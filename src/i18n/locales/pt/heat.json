@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Reforços",
   "heat.filterPanel.siege.reinforceTitle": "Paredes e alçapões reforçados, no defensor que lá estava (deduzido)",
   "heat.timeline.seriesSession": "sessão {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "pausa · próxima sessão {date} UTC"
+  "heat.timeline.seriesBreak": "pausa · próxima sessão {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Ronda: ganha contra perdida",
+  "heat.splitPanel.wonVsLostMatch": "Partida: ganha contra perdida",
+  "heat.splitPanel.wonVsLostTitle": "{column}: linhas do lado vencedor em +, do perdedor em −, como diferença",
+  "heat.heatPanel.palette": "Cores das equipas",
+  "heat.heatPanel.paletteAuto": "Auto",
+  "heat.heatPanel.paletteSoft": "Suave",
+  "heat.heatPanel.paletteStrong": "Forte",
+  "heat.heatPanel.paletteStrongAlt": "Forte, alt.",
+  "heat.heatPanel.paletteHint": "As cores das equipas em todo o lado: calor, figuras, rótulos, envolventes de alcance, legendas e gráficos. Suave é o aspeto pastel calmo; forte dá a cada equipa um tom claramente diferente, também com daltonismo. Auto: suave com duas equipas, forte a partir de três."
 }

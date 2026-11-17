@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Умацаванні",
   "heat.filterPanel.siege.reinforceTitle": "Умацаваныя сцены і люкі, каля абаронцы, які стаяў там (выведзена)",
   "heat.timeline.seriesSession": "сесія {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "перапынак · наступная сесія {date} UTC"
+  "heat.timeline.seriesBreak": "перапынак · наступная сесія {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Раўнд: выйграныя супраць прайграных",
+  "heat.splitPanel.wonVsLostMatch": "Матч: выйграныя супраць прайграных",
+  "heat.splitPanel.wonVsLostTitle": "{column}: радкі пераможнага боку на +, пераможанага на −, як розніца",
+  "heat.heatPanel.palette": "Колеры каманд",
+  "heat.heatPanel.paletteAuto": "Аўта",
+  "heat.heatPanel.paletteSoft": "Мяккая",
+  "heat.heatPanel.paletteStrong": "Яркая",
+  "heat.heatPanel.paletteStrongAlt": "Яркая, альт.",
+  "heat.heatPanel.paletteHint": "Колеры каманд усюды: цеплавая карта, фігуры, подпісы, абалонкі далёкасці, легенды і графікі. Мяккая — спакойны пастэльны выгляд; яркая дае кожнай камандзе выразна іншы адценне, і пры дальтанізме. Аўта: мяккая для дзвюх каманд, яркая ад трох."
 }

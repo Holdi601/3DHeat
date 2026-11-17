@@ -239,3 +239,13 @@ describe('factor columns', () => {
     expect(m.extra).not.toContain('helmet');
   });
 });
+
+describe('a winner column', () => {
+  it('is kept for the outcome and never guessed as the group', () => {
+    const columns = ['x', 'y', 'z', 'winning_faction', 'faction'];
+    const rows = Array.from({ length: 50 }, (_, i) => [String(i), String(i * 2), '0', i % 2 ? 'Red' : 'Blue', i % 3 ? 'Red' : 'Blue']);
+    const m = autoMap({ columns, rows, numeric: [true, true, true, false, false] });
+    expect(m.teamId).toBe('faction');
+    expect(m.extra).toContain('winning_faction');
+  });
+});

@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Forsterkninger",
   "heat.filterPanel.siege.reinforceTitle": "Forsterkede vegger og luker, ved forsvareren som sto der (utledet)",
   "heat.timeline.seriesSession": "økt {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "pause · neste økt {date} UTC"
+  "heat.timeline.seriesBreak": "pause · neste økt {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Runde: vunnet mot tapt",
+  "heat.splitPanel.wonVsLostMatch": "Kamp: vunnet mot tapt",
+  "heat.splitPanel.wonVsLostTitle": "{column}: radene til vinnersiden på +, tapersiden på −, som differanse",
+  "heat.heatPanel.palette": "Lagfarger",
+  "heat.heatPanel.paletteAuto": "Auto",
+  "heat.heatPanel.paletteSoft": "Myk",
+  "heat.heatPanel.paletteStrong": "Sterk",
+  "heat.heatPanel.paletteStrongAlt": "Sterk, alt.",
+  "heat.heatPanel.paletteHint": "Lagenes farger overalt: varmekart, figurer, etiketter, rekkeviddeskall, forklaringer og diagrammer. Myk er det rolige pastellutseendet; sterk gir hvert lag en tydelig annen fargetone, også ved fargeblindhet. Auto: myk for to lag, sterk fra tre."
 }

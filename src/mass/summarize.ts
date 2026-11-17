@@ -13,6 +13,7 @@ import { parquetMetadataAsync, parquetRead, parquetReadObjects, type AsyncBuffer
 import { decompress as zstd } from 'fzstd';
 import { EVENT_KINDS, VEHICLE_CLASSES, eventKindOf, vehicleClassOf } from '../data/canonical';
 import { parseValueColumn } from '../data/costs/columns';
+import { ROUND_WON, WINNER, sideKey } from '../data/outcome';
 import { leanSpec } from '../overlay/lean/spec';
 import type { Columns, LeanSpec } from '../overlay/lean/scan';
 import {
@@ -207,6 +208,8 @@ export interface SummaryColumns {
   otherType: string | null;
   actorRef: string | null;
   won: string | null;
+  /** Who won by name (`winner`, `winning_team`: `data/outcome.ts`), where there is no `won`: each row's from its team. */
+  winner: string | null;
   tier: string | null;
   mission: string | null;
   floor: string | null;
@@ -246,7 +249,8 @@ export function summaryColumns(columns: string[], numeric: (c: string) => boolea
     otherName: one(OTHER_NAME, false),
     otherType: one(OTHER_TYPE, false),
     actorRef: one(ACTOR_REF, false),
-    won: one(WON, true),
+    won: one(WON, true) ?? one(ROUND_WON, true),
+    winner: free.find((c) => WINNER.test(c.trim()) && !/^(match|game)/i.test(c.trim())) ?? null,
     tier: one(TIER),
     mission: one(MISSION, false),
     floor: one(FLOOR, true),
@@ -339,7 +343,7 @@ export class SummaryBuilder {
 
   /** Every column the builder reads. */
   static columnsOf(spec: LeanSpec, c: SummaryColumns): string[] {
-    const list = [spec.time, spec.x, spec.y, spec.z, spec.track, spec.team, spec.event, ...c.names, c.label, ...c.types, c.ai, c.flag, c.uid, c.pname, c.group, c.weapon, c.otherName, c.otherType, c.actorRef, c.won, c.tier, c.floor, c.place, c.buy, ...c.values.map((v) => v.name), ...c.cqb, ...(c.marks ?? []), c.behaviour.round, c.behaviour.equip, c.behaviour.clock];
+    const list = [spec.time, spec.x, spec.y, spec.z, spec.track, spec.team, spec.event, ...c.names, c.label, ...c.types, c.ai, c.flag, c.uid, c.pname, c.group, c.weapon, c.otherName, c.otherType, c.actorRef, c.won, c.winner, c.tier, c.floor, c.place, c.buy, ...c.values.map((v) => v.name), ...c.cqb, ...(c.marks ?? []), c.behaviour.round, c.behaviour.equip, c.behaviour.clock];
     return [...new Set(list.filter((x): x is string => !!x))];
   }
 
@@ -642,7 +646,16 @@ export class SummaryBuilder {
     const xc = c[s.x];
     const yc = s.y ? c[s.y] : undefined;
     const zc = s.z ? c[s.z] : undefined;
-    const won = sc.won ? c[sc.won] : undefined;
+    // The row's side won, from `won`, or where there is none from a winner column and the row's team.
+    const winnerCol = !sc.won && sc.winner && team ? c[sc.winner] : undefined;
+    const won = sc.won
+      ? c[sc.won]
+      : winnerCol && team
+        ? Array.from({ length: n }, (_, i) => {
+            const w = text(winnerCol[i]).trim();
+            return !w || /^(none|null|nan|draw|tie|-1?)$/i.test(w) ? NaN : sideKey(w) === sideKey(text(team[i])) ? 1 : 0;
+          })
+        : undefined;
     const actorRef = sc.actorRef ? c[sc.actorRef] : undefined;
     const weapon = sc.weapon ? c[sc.weapon] : undefined;
     const vals = sc.values.map((v) => c[v.name]);
@@ -960,7 +973,7 @@ export class SummaryBuilder {
 
   /** The rounds and every unit's round with its result (`OutcomeSection`); null without a result column. */
   private outcomeSection(slotOut: (s: number) => number): OutcomeSection | null {
-    if (!this.cols.won || !this.roundNo.length) return null;
+    if (!(this.cols.won || this.cols.winner) || !this.roundNo.length) return null;
     const r: number[] = [];
     for (let ri = 0; ri < this.roundNo.length; ri++) {
       let winner = -1;
@@ -1031,7 +1044,7 @@ export class SummaryBuilder {
         teamWon[s].n += u.wonN;
       }
     }
-    if (this.cols.won)
+    if (this.cols.won || this.cols.winner)
       teams.forEach((tm, i) => {
         let w = 0, n = 0;
         for (let ri = 0; ri < this.roundNo.length; ri++) {

@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "加固",
   "heat.filterPanel.siege.reinforceTitle": "被加固的墙和舱口，位于站在那里的防守方（推断）",
   "heat.timeline.seriesSession": "会话 {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "间歇 · 下一会话 {date} UTC"
+  "heat.timeline.seriesBreak": "间歇 · 下一会话 {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "回合：胜对负",
+  "heat.splitPanel.wonVsLostMatch": "比赛：胜对负",
+  "heat.splitPanel.wonVsLostTitle": "{column}：获胜方的行在 +，失败方在 −，显示差值",
+  "heat.heatPanel.palette": "队伍颜色",
+  "heat.heatPanel.paletteAuto": "自动",
+  "heat.heatPanel.paletteSoft": "柔和",
+  "heat.heatPanel.paletteStrong": "鲜明",
+  "heat.heatPanel.paletteStrongAlt": "鲜明（备选）",
+  "heat.heatPanel.paletteHint": "队伍颜色处处一致：热力、人物、标签、射程外壳、图例和图表。柔和是平静的粉彩风格；鲜明为每支队伍提供明显不同的色相，色盲也能区分。自动：两队用柔和，三队起用鲜明。"
 }

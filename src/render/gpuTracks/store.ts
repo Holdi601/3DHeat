@@ -807,3 +807,15 @@ export function decodeKey(s: GpuTrackStore, b: number, j: number, out: number[])
   out[2] = f[o + 2] + (c & 0xffff) * step;
   out[3] = f[o + 4] + (c >>> 16) * f[o + 5];
 }
+
+/**
+ * Drop a dataset's built tracks, so the next frame builds them afresh: their
+ * colours are baked in, and another team palette (`render/colors.ts`) needs new
+ * ones. Tracks another loader registered are kept (they carry their own).
+ */
+export function forgetGpuTrackStore(d: Dataset): void {
+  if (registered.has(d)) return;
+  cache.delete(d);
+  slicedCache.delete(d);
+  slicedJobs.delete(d);
+}

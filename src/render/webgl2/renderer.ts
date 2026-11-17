@@ -10,7 +10,7 @@ import { ATLAS_MIP_LEVELS } from '../../data/atlas';
 import { packLineStarts, type LineData } from '../../data/lines';
 import { CURVE_LUT_SIZE } from '../../state/curve';
 import type { Bounds, Dataset } from '../../state/types';
-import { LUT_HEIGHT, LUT_WIDTH } from '../colors';
+import { LUT_HEIGHT, LUT_WIDTH, teamPaletteIndex } from '../colors';
 import { filterColumnData, packSignTables } from '../filterTables';
 import { halfToFloat } from '../half';
 import {
@@ -2473,6 +2473,7 @@ export class Webgl2Renderer implements Renderer {
     u.f1('uTeamCount', Math.max(1, params.heat.teamCount));
     u.f1('uTeamNeutral', params.heat.teamNeutral);
     u.f1('uTeamSlices', Math.max(1, params.heat.teamSlices));
+    u.f1('uTeamPalette', teamPaletteIndex());
     u.f1('uCenter', params.heat.centerIntensity);
     u.f1('uEdge', params.heat.edgeIntensity);
     u.f1('uFalloff', Math.max(0.01, params.heat.falloff));

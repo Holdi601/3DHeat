@@ -22,6 +22,7 @@ import { currencyUnit } from '../../data/cost';
 import { int, num, t, useLang } from '../../i18n';
 import { PERSON_FILTER_COLUMN } from '../../render/filterTables';
 import { useStore } from '../../state/store';
+import { teamCss } from '../../render/colors';
 import type { Dataset, FilterSpec } from '../../state/types';
 import { K, type Result } from '../../versus/engine';
 import { bindMetric, ExprError, simpleForm, type Schema, type Simple } from '../../versus/expr';
@@ -773,7 +774,17 @@ function buildModel(view: View, ui: VersusUi): Model {
     if (!p) continue;
     p.rows.forEach((row, i) => gEnts.push({ key: `p${p.id}:${i}`, label: `${p.name} · ${row.label}`, v: -1, g: -1, color: '', pin: { values: row.values } }));
   }
-  gEnts.forEach((e, i) => (e.color = e.g === G - 1 ? OTHER_COLOR : i < PALETTE.length ? PALETTE[i] : OTHER_COLOR));
+  // A group or split value that is one team takes that team's colour, as in the 3D view (render/colors.ts).
+  const teamLabels = useStore.getState().dataset?.teamLabels ?? [];
+  const teamOf = (label: string) => teamLabels.findIndex((l) => String(l) === label);
+  const groupTeam = (g: number) => {
+    const m = g >= 0 && g < G - 1 ? /^team\s*==\s*"((?:[^"\\]|\\.)*)"$/.exec(ui.groups[g]?.filter.trim() ?? '') : null;
+    return m ? teamOf(m[1].replace(/\\"/g, '"')) : -1;
+  };
+  gEnts.forEach((e, i) => {
+    const team = groupTeam(e.g);
+    e.color = e.g === G - 1 ? OTHER_COLOR : team >= 0 ? teamCss(team) : i < PALETTE.length ? PALETTE[i] : OTHER_COLOR;
+  });
   const sSeen: (Ent & { s: number })[] = [];
   const seen = new Set<number>();
   for (const r of res.rows)
@@ -781,7 +792,11 @@ function buildModel(view: View, ui: VersusUi): Model {
       seen.add(r.s);
       sSeen.push({ key: `s${r.s}`, label: r.split === '\u0000other' ? t('versus.other') : (r.split ?? ''), s: r.s, color: '' });
     }
-  sSeen.forEach((e, i) => (e.color = e.s === -2 ? OTHER_COLOR : i < PALETTE.length ? PALETTE[i] : OTHER_COLOR));
+  const splitTeams = ui.split?.column === 'team';
+  sSeen.forEach((e, i) => {
+    const team = splitTeams ? teamOf(e.label) : -1;
+    e.color = e.s === -2 ? OTHER_COLOR : team >= 0 ? teamCss(team) : i < PALETTE.length ? PALETTE[i] : OTHER_COLOR;
+  });
   const sEnts = sSeen.length ? sSeen : [{ key: 's-1', label: t('versus.total'), s: -1, color: PALETTE[0] }];
   const timeDim = ui.dim?.kind === 'matchTime' || ui.dim?.kind === 'time';
   const dEnts = (res.dims ?? []).map((l, d) => ({ key: `d${d}`, label: l === '\u0000other' ? t('versus.other') : timeDim ? fmtDur(Number(l)) : l, d, color: PALETTE[d % PALETTE.length] }));
@@ -823,7 +838,8 @@ function filtersFor(ds: Dataset, prep: Prepared, g: number, extra: Simple): Filt
 
 function Output({ view, ds, showTip, chartRef }: { view: View; ds: Dataset; showTip: (e: React.MouseEvent | null, lines?: string[]) => void; chartRef: React.RefObject<HTMLDivElement | null> }) {
   const ui = useVersus();
-  const model = useMemo(() => buildModel(view, ui), [view, ui.showAll, ui.pins, ui.pinsShown, ui.dim]); // eslint-disable-line react-hooks/exhaustive-deps
+  const teamPalette = useStore((s) => s.heat.teamPaletteActive);
+  const model = useMemo(() => buildModel(view, ui), [view, ui.showAll, ui.pins, ui.pinsShown, ui.dim, teamPalette]); // eslint-disable-line react-hooks/exhaustive-deps
   const [note, setNote] = useState<string | null>(null);
   const prevFilters = useRef<FilterSpec[] | null>(null);
   const mIndex = (id: string | null) => {

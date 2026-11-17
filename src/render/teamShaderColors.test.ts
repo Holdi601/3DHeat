@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { TEAM_CHROMA, TEAM_LIGHTNESS, oklabToRgb } from './colors';
+import { TEAM_CHROMA, TEAM_LIGHTNESS, oklabToRgb, teamPaletteLab } from './colors';
 import { COMPOSITE_FS, HEAT_VS } from './webgl2/shaders';
 import { COMPOSITE_WGSL, HEAT_WGSL } from './webgpu/shaders';
 
@@ -104,9 +104,24 @@ describe('the shader copies of the palette constants', () => {
     }
   });
 
-  it('and the same lightness', () => {
-    for (const source of [COMPOSITE_WGSL, COMPOSITE_FS]) {
+  it('and the same lightness, past the palette', () => {
+    // The heat pass writes each group's lightness beside its (a, b); the circle's
+    // groups take TEAM_LIGHTNESS, and the composite reads the weighted mean back.
+    for (const source of [HEAT_WGSL, HEAT_VS]) {
       expect(literals(source)).toContain(TEAM_LIGHTNESS);
+    }
+    for (const source of [COMPOSITE_WGSL, COMPOSITE_FS]) {
+      expect(source).toMatch(/oklabToSrgb\(clamp\(abs\(hv\.a\) \/ w/);
+    }
+  });
+
+  it('carry every team palette, in Oklab, in palette order', () => {
+    // The table the heat pass indexes: a palette colour drawn alone must come out
+    // as itself, so the shader's numbers are the CPU's (teamPaletteLab).
+    const { lab } = teamPaletteLab();
+    for (const source of [HEAT_WGSL, HEAT_VS]) {
+      const nums = literals(source);
+      for (const c of lab) for (const v of c) expect(nums.some((x) => Math.abs(x - v) < 1e-5)).toBe(true);
     }
   });
 

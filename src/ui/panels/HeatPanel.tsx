@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { estimateSaturation } from '../../data/calibrate';
-import { isUnassignedLabel, rgbToCss, teamHeatColor, teamNeutralColor } from '../../render/colors';
+import { isUnassignedLabel, rgbToCss, teamHeatColor, teamNeutralColor, teamPaletteColor, TEAM_PALETTE_PREFS, TEAM_PALETTES, type TeamPalettePref } from '../../render/colors';
 import { heatModeFor } from '../../data/lines';
 import { useStore } from '../../state/store';
 import { DEFAULT_NEGATIVE_RAMP, DEFAULT_POSITIVE_RAMP } from '../../state/types';
@@ -47,7 +47,8 @@ export function HeatPanel() {
         isUnassignedLabel(String(label)) ? teamNeutralColor() : teamHeatColor(index, labels.length),
       ),
     }));
-  }, [dataset]);
+    // The palette too: the swatches are its colours.
+  }, [dataset, heat.teamPaletteActive]);
 
   // The message, not its text, so it is said again in a language picked later.
   const [exposure, setExposure] = useState<{ key: string; values?: Record<string, string> } | null>(null);
@@ -272,6 +273,7 @@ export function HeatPanel() {
               hint={t('heat.heatPanel.separationHint')}
               onChange={(teamBoost) => patchHeat({ teamBoost })}
             />
+            <TeamPalettePicker />
           </>
         )}
         <div className="field">
@@ -409,5 +411,41 @@ export function HeatPanel() {
         </div>
       </Section>
     </>
+  );
+}
+
+/**
+ * Which team palette colours the groups: heat, figures, labels, range shells,
+ * legends and charts alike (render/colors.ts TEAM_PALETTES). Auto is soft for
+ * two teams and strong from three; the swatches are the palette in use.
+ */
+export function TeamPalettePicker() {
+  const pref = useStore((s) => s.heat.teamPalette);
+  const active = useStore((s) => s.heat.teamPaletteActive);
+  const patchHeat = useStore((s) => s.patchHeat);
+  const word: Record<TeamPalettePref, string> = {
+    auto: 'heat.heatPanel.paletteAuto',
+    soft: 'heat.heatPanel.paletteSoft',
+    strong: 'heat.heatPanel.paletteStrong',
+    strongAlt: 'heat.heatPanel.paletteStrongAlt',
+  };
+  const shown = Math.max(6, TEAM_PALETTES[active].length);
+  return (
+    <div className="field" data-testid="team-palette">
+      <div className="label">
+        <span>{t('heat.heatPanel.palette')}</span>
+      </div>
+      <Segmented
+        value={pref}
+        onChange={(teamPalette: TeamPalettePref) => patchHeat({ teamPalette })}
+        options={TEAM_PALETTE_PREFS.map((id) => ({ value: id, label: t(word[id]) }))}
+      />
+      <div className="swatches" title={t(word[active])}>
+        {Array.from({ length: shown }, (_, i) => (
+          <span key={i} className="swatch" style={{ background: rgbToCss(teamPaletteColor(i, active)) }} />
+        ))}
+      </div>
+      <div className="hint">{t('heat.heatPanel.paletteHint')}</div>
+    </div>
   );
 }

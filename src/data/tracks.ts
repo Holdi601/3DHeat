@@ -89,7 +89,12 @@ export class TrackCursor {
     this.disabledCol = flag('Disabled');
 
     this.colors = new Float32Array(this.persons * 3);
-    const { personTeam, personSlot, teamSizes } = dataset;
+    this.recolor();
+  }
+
+  /** Every person's colour afresh from the team palette (`render/colors.ts`), as when another palette is picked. */
+  recolor(): void {
+    const { personTeam, personSlot, teamSizes } = this.dataset;
     for (let p = 0; p < this.persons; p++) {
       const team = personTeam ? personTeam[p] : 0;
       const slot = personSlot ? personSlot[p] : p;

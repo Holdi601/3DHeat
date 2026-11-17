@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Verstäerkungen",
   "heat.filterPanel.siege.reinforceTitle": "Verstäerkte Maueren a Lucken, beim Verteideger, deen do stoung (erschloss)",
   "heat.timeline.seriesSession": "Sessioun {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "Paus · nächst Sessioun {date} UTC"
+  "heat.timeline.seriesBreak": "Paus · nächst Sessioun {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Ronn: gewonnen géint verluer",
+  "heat.splitPanel.wonVsLostMatch": "Match: gewonnen géint verluer",
+  "heat.splitPanel.wonVsLostTitle": "{column}: Reie vun der Gewënnersäit op +, vun der Verluerersäit op −, als Differenz",
+  "heat.heatPanel.palette": "Teamfaarwen",
+  "heat.heatPanel.paletteAuto": "Auto",
+  "heat.heatPanel.paletteSoft": "Mëll",
+  "heat.heatPanel.paletteStrong": "Kräfteg",
+  "heat.heatPanel.paletteStrongAlt": "Kräfteg, alt.",
+  "heat.heatPanel.paletteHint": "D’Faarwe vun den Teams iwwerall: Heatmap, Figuren, Beschrëftungen, Reechwäithüllen, Legenden an Diagrammer. Mëll ass de roueg Pastell-Look; kräfteg gëtt all Team e kloer aneren Toun, och bei Faarweblannheet. Auto: mëll bei zwee Teams, kräfteg vun dräi un."
 }

@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Güçlendirmeler",
   "heat.filterPanel.siege.reinforceTitle": "Güçlendirilmiş duvarlar ve kapaklar, orada duran savunucuda (çıkarım)",
   "heat.timeline.seriesSession": "oturum {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "ara · sonraki oturum {date} UTC"
+  "heat.timeline.seriesBreak": "ara · sonraki oturum {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Raunt: kazanılan ve kaybedilen",
+  "heat.splitPanel.wonVsLostMatch": "Maç: kazanılan ve kaybedilen",
+  "heat.splitPanel.wonVsLostTitle": "{column}: kazanan tarafın satırları +, kaybedeninki − tarafında, fark olarak",
+  "heat.heatPanel.palette": "Takım renkleri",
+  "heat.heatPanel.paletteAuto": "Otomatik",
+  "heat.heatPanel.paletteSoft": "Yumuşak",
+  "heat.heatPanel.paletteStrong": "Güçlü",
+  "heat.heatPanel.paletteStrongAlt": "Güçlü, alt.",
+  "heat.heatPanel.paletteHint": "Takımların renkleri her yerde: ısı haritası, figürler, etiketler, menzil kabukları, açıklamalar ve grafikler. Yumuşak sakin pastel görünümdür; güçlü her takıma belirgin biçimde farklı bir ton verir, renk körlüğünde de. Otomatik: iki takımda yumuşak, üçten itibaren güçlü."
 }

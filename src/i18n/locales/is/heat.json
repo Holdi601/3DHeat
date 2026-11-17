@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Styrkingar",
   "heat.filterPanel.siege.reinforceTitle": "Styrktir veggir og lúgur, hjá verjandanum sem stóð þar (ályktað)",
   "heat.timeline.seriesSession": "lota {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "hlé · næsta lota {date} UTC"
+  "heat.timeline.seriesBreak": "hlé · næsta lota {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Lota: unnið gegn tapað",
+  "heat.splitPanel.wonVsLostMatch": "Leikur: unnið gegn tapað",
+  "heat.splitPanel.wonVsLostTitle": "{column}: raðir sigurliðsins á +, tapliðsins á −, sem mismunur",
+  "heat.heatPanel.palette": "Liðslitir",
+  "heat.heatPanel.paletteAuto": "Sjálfvirkt",
+  "heat.heatPanel.paletteSoft": "Mjúk",
+  "heat.heatPanel.paletteStrong": "Sterk",
+  "heat.heatPanel.paletteStrongAlt": "Sterk, önnur",
+  "heat.heatPanel.paletteHint": "Litir liðanna alls staðar: hitakort, fígúrur, merkingar, drægnihjúpar, skýringar og gröf. Mjúk er rólega pastelútlitið; sterk gefur hverju liði greinilega annan blæ, líka við litblindu. Sjálfvirkt: mjúk fyrir tvö lið, sterk frá þremur."
 }

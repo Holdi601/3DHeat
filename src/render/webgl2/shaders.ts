@@ -1,5 +1,5 @@
 import { CURVE_U0, CURVE_U1 } from '../../state/curve';
-import { TEAM_CHROMA, TEAM_LIGHTNESS } from '../colors';
+import { TEAM_CHROMA, TEAM_LIGHTNESS, teamPaletteLab } from '../colors';
 import {
   BLOCK_TEX_WIDTH,
   FILTER_MASK_CAPACITY,
@@ -13,6 +13,22 @@ import { VOLUME_GLSL } from '../../volumes/gpu';
 import { SEE_THROUGH_BELOW } from '../figureShaders';
 import { WEDGE_DISC_PX, WEDGE_FULL_PX, WEDGE_TIGHT_MAX } from '../direction';
 
+
+/**
+ * The team palettes (render/colors.ts TEAM_PALETTES) in Oklab, end to end,
+ * with where each starts and how long it is; the heat pass indexes them by
+ * uTeamPalette.
+ */
+const TEAM_PALETTE_GLSL = (() => {
+  const { lab, starts, lengths } = teamPaletteLab();
+  const f = (v: number) => v.toFixed(6);
+  return [
+    `const int TEAM_PAL_COUNT = ${starts.length};`,
+    `const vec3 TEAM_PAL[${lab.length}] = vec3[${lab.length}](${lab.map((c) => `vec3(${c.map(f).join(', ')})`).join(', ')});`,
+    `const int TEAM_PAL_START[${starts.length}] = int[${starts.length}](${starts.join(', ')});`,
+    `const int TEAM_PAL_LEN[${lengths.length}] = int[${lengths.length}](${lengths.join(', ')});`,
+  ].join('\n');
+})();
 /**
  * GLSL ES 3.00 sources for the WebGL2 backend.
  *
@@ -106,6 +122,9 @@ uniform float uTeamNeutral;
 // Slice permutation, coprime with the count. Consecutive ids are consecutive
 // places, so the identity gave neighbouring teams near-identical hues.
 uniform float uTeamSlices;
+// Which team palette (render/colors.ts TEAM_PALETTES), by its index.
+uniform float uTeamPalette;
+${TEAM_PALETTE_GLSL}
 
 /**
  * Reverse the low 16 bits: counting turned into repeated halving.
@@ -224,7 +243,7 @@ out float vOccludeAt;
  * already at eight samplers, which is the floor the spec guarantees a vertex
  * stage. Flat across the sprite, so the interpolation costs nothing.
  */
-out vec2  vTeamAB;
+out vec3  vTeamAB;
 /**
  * The row's direction on screen: xy a unit vector in pixels, z how far the
  * sprite is a wedge rather than a disc (0 for a disc, small sprites included,
@@ -345,8 +364,15 @@ void main() {
   // only when n is even, group n/2 exactly opposite it — so a five-group map and a
   // six-group map would disagree about what "opposite" means. Centres are evenly
   // spaced at every count.
-  vTeamAB = vec2(0.0);
-  if (uTeamColors == 1 && float(q.w) != uTeamNeutral) {
+  //
+  // While the groups fit in the team palette (render/colors.ts TEAM_PALETTES)
+  // each takes its own colour, lightness and all, in z.
+  vTeamAB = vec3(0.0, 0.0, ${TEAM_LIGHTNESS});
+  int palette = clamp(int(uTeamPalette), 0, TEAM_PAL_COUNT - 1);
+  if (uTeamColors == 1 && float(q.w) != uTeamNeutral && int(max(1.0, uTeamCount)) <= TEAM_PAL_LEN[palette]) {
+    vec3 c = TEAM_PAL[TEAM_PAL_START[palette] + int(q.w % uint(max(1.0, uTeamCount)))];
+    vTeamAB = vec3(c.y, c.z, c.x);
+  } else if (uTeamColors == 1 && float(q.w) != uTeamNeutral) {
     uint groups = uint(max(1.0, uTeamCount));
     uint n = uint(max(1.0, uTeamSlices));
     uint slice = q.w % groups;
@@ -356,7 +382,7 @@ void main() {
       slice = (reverse16(q.w) * n) >> 16;
     }
     float hue = (float(slice) + 0.5) / float(n) * 6.28318530718;
-    vTeamAB = vec2(cos(hue), sin(hue)) * ${TEAM_CHROMA};
+    vTeamAB = vec3(vec2(cos(hue), sin(hue)) * ${TEAM_CHROMA}, ${TEAM_LIGHTNESS});
   }
 
   float fade = 1.0;
@@ -512,7 +538,7 @@ uniform usampler2D uPosTex;`,
   );
   s = swapOnce(s, 'int sprite = vid / 3;\n  int corner = vid - sprite * 3;', 'int sprite = vid / 18;\n  int corner = vid - sprite * 18;', 'vertex split');
   // The half-width at each end; see the WGSL copy and LINE_HEAT_FS.
-  s = swapOnce(s, 'out vec2  vTeamAB;', 'out vec2  vTeamAB;\nout float vWidth;', 'varyings');
+  s = swapOnce(s, 'out vec3  vTeamAB;', 'out vec3  vTeamAB;\nout float vWidth;', 'varyings');
   const from = s.indexOf('  vec4 clip = uViewProj * vec4(p, 1.0);');
   const to = s.lastIndexOf('}');
   if (from < 0 || to < from) throw new Error('line heat shader: splat tail not found');
@@ -672,7 +698,7 @@ in float vSign;
 in float vFade;
 in float vVisible;
 in float vOccludeAt;
-in vec2  vTeamAB;
+in vec3  vTeamAB;
 flat in vec4 vDir;
 flat in float vDirPx;
 uniform vec2  uWedge;
@@ -841,7 +867,8 @@ ${Array.from(
     outHeat = vec4(a, vSign > 0.0 ? a : 0.0, a * a / max(uWeight, 1e-20), 0.0);
     return;
   }
-  outHeat = vec4(v, v * vTeamAB.x, v * vTeamAB.y, 0.0);
+  // And the group's lightness, weighted the same way, in A.
+  outHeat = vec4(v, v * vTeamAB.x, v * vTeamAB.y, v * vTeamAB.z);
 }
 `;
 
@@ -1025,7 +1052,8 @@ void main() {
     // The frame gain cancels in the ratio, so neither side carries it.
     float w = max(abs(hv.r), 1e-6);
     vec2 ab = vec2(hv.g, hv.b) / w * max(0.0, uTeamBoost);
-    rgb = oklabToSrgb(${TEAM_LIGHTNESS}, ab.x, ab.y);
+    // The groups' mean lightness from A: a palette colour keeps its own.
+    rgb = oklabToSrgb(clamp(abs(hv.a) / w, 0.0, 1.0), ab.x, ab.y);
   }
   // Alpha still comes from the LUT even in team mode, which is the point of
   // separating the two axes: transparent where there is nothing, opaque at the top
@@ -1601,7 +1629,7 @@ void main() { outColor = vColor; }
  */
 export const LINE_HEAT_FS = (() => {
   let s = HEAT_FS;
-  s = swapOnce(s, 'in vec2  vTeamAB;', 'in vec2  vTeamAB;\nin float vWidth;', 'varyings');
+  s = swapOnce(s, 'in vec3  vTeamAB;', 'in vec3  vTeamAB;\nin float vWidth;', 'varyings');
   s = swapOnce(s, 'float d = length(vLocal);', 'float d = length(vec2(vLocal.x, vLocal.y / max(vWidth, 1e-6)));', 'fragment distance');
   return s;
 })();

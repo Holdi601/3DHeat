@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Förstärkningar",
   "heat.filterPanel.siege.reinforceTitle": "Förstärkta väggar och luckor, vid försvararen som stod där (härlett)",
   "heat.timeline.seriesSession": "session {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "paus · nästa session {date} UTC"
+  "heat.timeline.seriesBreak": "paus · nästa session {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Runda: vunna mot förlorade",
+  "heat.splitPanel.wonVsLostMatch": "Match: vunna mot förlorade",
+  "heat.splitPanel.wonVsLostTitle": "{column}: vinnande sidans rader på +, förlorande sidans på −, som skillnad",
+  "heat.heatPanel.palette": "Lagfärger",
+  "heat.heatPanel.paletteAuto": "Auto",
+  "heat.heatPanel.paletteSoft": "Mjuk",
+  "heat.heatPanel.paletteStrong": "Stark",
+  "heat.heatPanel.paletteStrongAlt": "Stark, alt.",
+  "heat.heatPanel.paletteHint": "Lagens färger överallt: värmekarta, figurer, etiketter, räckviddsskal, förklaringar och diagram. Mjuk är det lugna pastellutseendet; stark ger varje lag en tydligt annan nyans, även vid färgblindhet. Auto: mjuk för två lag, stark från tre."
 }

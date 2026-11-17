@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Përforcime",
   "heat.filterPanel.siege.reinforceTitle": "Mure dhe kapakë të përforcuar, te mbrojtësi që qëndronte aty (i nxjerrë)",
   "heat.timeline.seriesSession": "seanca {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "pushim · seanca e radhës {date} UTC"
+  "heat.timeline.seriesBreak": "pushim · seanca e radhës {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Raundi: fituar kundrejt humbur",
+  "heat.splitPanel.wonVsLostMatch": "Ndeshja: fituar kundrejt humbur",
+  "heat.splitPanel.wonVsLostTitle": "{column}: rreshtat e palës fituese në +, të humbëses në −, si diferencë",
+  "heat.heatPanel.palette": "Ngjyrat e ekipeve",
+  "heat.heatPanel.paletteAuto": "Auto",
+  "heat.heatPanel.paletteSoft": "E butë",
+  "heat.heatPanel.paletteStrong": "E fortë",
+  "heat.heatPanel.paletteStrongAlt": "E fortë, alt.",
+  "heat.heatPanel.paletteHint": "Ngjyrat e ekipeve kudo: harta e nxehtësisë, figurat, etiketat, mbështjellësit e rrezes, legjendat dhe grafikët. E buta është pamja e qetë pastel; e forta i jep çdo ekipi një nuancë qartë të ndryshme, edhe për daltonikët. Auto: e butë për dy ekipe, e fortë nga tre."
 }

@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Versterkingen",
   "heat.filterPanel.siege.reinforceTitle": "Versterkte muren en luiken, bij de verdediger die daar stond (afgeleid)",
   "heat.timeline.seriesSession": "sessie {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "pauze · volgende sessie {date} UTC"
+  "heat.timeline.seriesBreak": "pauze · volgende sessie {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Ronde: gewonnen tegen verloren",
+  "heat.splitPanel.wonVsLostMatch": "Wedstrijd: gewonnen tegen verloren",
+  "heat.splitPanel.wonVsLostTitle": "{column}: rijen van de winnende kant op +, van de verliezende op −, als verschil",
+  "heat.heatPanel.palette": "Teamkleuren",
+  "heat.heatPanel.paletteAuto": "Auto",
+  "heat.heatPanel.paletteSoft": "Zacht",
+  "heat.heatPanel.paletteStrong": "Sterk",
+  "heat.heatPanel.paletteStrongAlt": "Sterk, alt.",
+  "heat.heatPanel.paletteHint": "De kleuren van de teams overal: heatmap, figuren, labels, bereikschillen, legenda’s en grafieken. Zacht is de rustige pastellook; sterk geeft elk team een duidelijk andere tint, ook bij kleurenblindheid. Auto: zacht bij twee teams, sterk vanaf drie."
 }

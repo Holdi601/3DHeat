@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Sustiprinimai",
   "heat.filterPanel.siege.reinforceTitle": "Sustiprintos sienos ir liukai, prie ten stovėjusio gynėjo (nustatyta)",
   "heat.timeline.seriesSession": "sesija {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "pertrauka · kita sesija {date} UTC"
+  "heat.timeline.seriesBreak": "pertrauka · kita sesija {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Raundas: laimėti prieš pralaimėtus",
+  "heat.splitPanel.wonVsLostMatch": "Mačas: laimėti prieš pralaimėtus",
+  "heat.splitPanel.wonVsLostTitle": "{column}: laimėjusios pusės eilutės +, pralaimėjusios −, kaip skirtumas",
+  "heat.heatPanel.palette": "Komandų spalvos",
+  "heat.heatPanel.paletteAuto": "Auto",
+  "heat.heatPanel.paletteSoft": "Švelni",
+  "heat.heatPanel.paletteStrong": "Ryški",
+  "heat.heatPanel.paletteStrongAlt": "Ryški, alt.",
+  "heat.heatPanel.paletteHint": "Komandų spalvos visur: šilumos žemėlapis, figūros, etiketės, nuotolio apvalkalai, legendos ir diagramos. Švelni – ramus pastelinis vaizdas; ryški kiekvienai komandai suteikia aiškiai kitokį atspalvį, ir esant daltonizmui. Auto: švelni dviem komandoms, ryški nuo trijų."
 }

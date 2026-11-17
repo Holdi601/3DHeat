@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Reforços",
   "heat.filterPanel.siege.reinforceTitle": "Parets i trapes reforçades, al defensor que hi era (deduït)",
   "heat.timeline.seriesSession": "sessió {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "pausa · sessió següent {date} UTC"
+  "heat.timeline.seriesBreak": "pausa · sessió següent {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Ronda: guanyades contra perdudes",
+  "heat.splitPanel.wonVsLostMatch": "Partida: guanyades contra perdudes",
+  "heat.splitPanel.wonVsLostTitle": "{column}: files del bàndol guanyador a +, del perdedor a −, com a diferència",
+  "heat.heatPanel.palette": "Colors dels equips",
+  "heat.heatPanel.paletteAuto": "Auto",
+  "heat.heatPanel.paletteSoft": "Suau",
+  "heat.heatPanel.paletteStrong": "Intensa",
+  "heat.heatPanel.paletteStrongAlt": "Intensa, alt.",
+  "heat.heatPanel.paletteHint": "Els colors dels equips arreu: calor, figures, etiquetes, embolcalls d’abast, llegendes i gràfics. Suau és l’aspecte pastel tranquil; intensa dona a cada equip un to clarament diferent, també amb daltonisme. Auto: suau amb dos equips, intensa a partir de tres."
 }

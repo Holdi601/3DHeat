@@ -12,7 +12,7 @@ import { ATLAS_MIP_LEVELS } from '../../data/atlas';
 import { packLineStarts, type LineData } from '../../data/lines';
 import { CURVE_LUT_SIZE } from '../../state/curve';
 import type { Bounds, Dataset } from '../../state/types';
-import { LUT_HEIGHT, LUT_WIDTH } from '../colors';
+import { LUT_HEIGHT, LUT_WIDTH, teamPaletteIndex } from '../colors';
 import { floatToHalf, halfToFloat } from '../half';
 import { forcedHeatPrecision } from '../webgl2/glutil';
 import { buildEdgeList, type Level } from '../level';
@@ -3408,6 +3408,8 @@ export class WebgpuRenderer implements Renderer {
     // Heat weighed by value: the weight's slot in the packed filter values (-1 off) and its scale.
     u[101] = params.weightColumn && chunk.weightSlot >= 0 ? chunk.weightSlot : -1;
     u[102] = params.weightScale;
+    // Which team palette the heat colours its groups from (render/colors.ts).
+    u[103] = teamPaletteIndex();
     return this.uniforms.push(u, HEAT_UNIFORM_BYTES);
   }
 

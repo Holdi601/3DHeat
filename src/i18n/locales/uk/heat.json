@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Укріплення",
   "heat.filterPanel.siege.reinforceTitle": "Укріплені стіни та люки, біля захисника, що стояв там (виведено)",
   "heat.timeline.seriesSession": "сесія {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "перерва · наступна сесія {date} UTC"
+  "heat.timeline.seriesBreak": "перерва · наступна сесія {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Раунд: виграні проти програних",
+  "heat.splitPanel.wonVsLostMatch": "Матч: виграні проти програних",
+  "heat.splitPanel.wonVsLostTitle": "{column}: рядки сторони-переможця на +, переможеної на −, як різниця",
+  "heat.heatPanel.palette": "Кольори команд",
+  "heat.heatPanel.paletteAuto": "Авто",
+  "heat.heatPanel.paletteSoft": "М’яка",
+  "heat.heatPanel.paletteStrong": "Яскрава",
+  "heat.heatPanel.paletteStrongAlt": "Яскрава, альт.",
+  "heat.heatPanel.paletteHint": "Кольори команд усюди: теплова карта, фігури, підписи, оболонки дальності, легенди й графіки. М’яка — спокійний пастельний вигляд; яскрава дає кожній команді явно інший відтінок, і при дальтонізмі. Авто: м’яка для двох команд, яскрава від трьох."
 }

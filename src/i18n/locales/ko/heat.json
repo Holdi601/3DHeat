@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "보강",
   "heat.filterPanel.siege.reinforceTitle": "보강된 벽과 해치 (그곳에 서 있던 수비수 위치, 추정)",
   "heat.timeline.seriesSession": "세션 {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "휴식 · 다음 세션 {date} UTC"
+  "heat.timeline.seriesBreak": "휴식 · 다음 세션 {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "라운드: 승리 대 패배",
+  "heat.splitPanel.wonVsLostMatch": "경기: 승리 대 패배",
+  "heat.splitPanel.wonVsLostTitle": "{column}: 이긴 쪽의 행을 +, 진 쪽을 −로 하여 차이로 표시",
+  "heat.heatPanel.palette": "팀 색상",
+  "heat.heatPanel.paletteAuto": "자동",
+  "heat.heatPanel.paletteSoft": "부드럽게",
+  "heat.heatPanel.paletteStrong": "선명하게",
+  "heat.heatPanel.paletteStrongAlt": "선명하게(대체)",
+  "heat.heatPanel.paletteHint": "팀 색상은 어디서나 같습니다: 히트, 피규어, 라벨, 사거리 껍질, 범례, 차트. 부드럽게는 차분한 파스텔 톤, 선명하게는 색각 이상이 있어도 팀마다 뚜렷이 다른 색조를 줍니다. 자동: 2팀이면 부드럽게, 3팀부터 선명하게."
 }

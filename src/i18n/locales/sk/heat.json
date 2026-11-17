@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Zosilnenia",
   "heat.filterPanel.siege.reinforceTitle": "Zosilnené steny a poklopy, pri obrancovi, ktorý tam stál (odvodené)",
   "heat.timeline.seriesSession": "relácia {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "prestávka · ďalšia relácia {date} UTC"
+  "heat.timeline.seriesBreak": "prestávka · ďalšia relácia {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Kolo: vyhrané proti prehraté",
+  "heat.splitPanel.wonVsLostMatch": "Zápas: vyhrané proti prehraté",
+  "heat.splitPanel.wonVsLostTitle": "{column}: riadky víťaznej strany na +, porazenej na −, ako rozdiel",
+  "heat.heatPanel.palette": "Farby tímov",
+  "heat.heatPanel.paletteAuto": "Auto",
+  "heat.heatPanel.paletteSoft": "Jemná",
+  "heat.heatPanel.paletteStrong": "Výrazná",
+  "heat.heatPanel.paletteStrongAlt": "Výrazná, alt.",
+  "heat.heatPanel.paletteHint": "Farby tímov všade: teplotná mapa, figúry, popisy, obálky dosahu, legendy a grafy. Jemná je pokojný pastelový vzhľad; výrazná dá každému tímu zreteľne iný odtieň, aj pri farbosleposti. Auto: jemná pre dva tímy, výrazná od troch."
 }

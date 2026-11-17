@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Tugevdused",
   "heat.filterPanel.siege.reinforceTitle": "Tugevdatud seinad ja luugid, seal seisnud kaitsja juures (tuletatud)",
   "heat.timeline.seriesSession": "seanss {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "paus · järgmine seanss {date} UTC"
+  "heat.timeline.seriesBreak": "paus · järgmine seanss {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Voor: võidetud vs kaotatud",
+  "heat.splitPanel.wonVsLostMatch": "Mäng: võidetud vs kaotatud",
+  "heat.splitPanel.wonVsLostTitle": "{column}: võitnud poole read +, kaotanud poole −, vahena",
+  "heat.heatPanel.palette": "Võistkondade värvid",
+  "heat.heatPanel.paletteAuto": "Auto",
+  "heat.heatPanel.paletteSoft": "Pehme",
+  "heat.heatPanel.paletteStrong": "Tugev",
+  "heat.heatPanel.paletteStrongAlt": "Tugev, alt.",
+  "heat.heatPanel.paletteHint": "Võistkondade värvid kõikjal: soojuskaart, kujud, sildid, ulatuskestad, legendid ja graafikud. Pehme on rahulik pastelne välimus; tugev annab igale võistkonnale selgelt erineva tooni, ka värvipimedale. Auto: pehme kahe võistkonna puhul, tugev alates kolmest."
 }

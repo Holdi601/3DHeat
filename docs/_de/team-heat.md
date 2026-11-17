@@ -46,6 +46,19 @@ Die [Teamliste](teams-list.md) zeigt in diesem Modus die Team-Intensitäts-Farbe
 
 ### Die Palette {#the-palette}
 
+**Teamfarben** (unter den Farbfeldern und in der [Teamliste](teams-list.md)) wählt die Palette, und sie gilt überall, wo ein Team eine Farbe hat: Team-Intensität, Figuren, Beschriftungen, Reichweitenhüllen, Legenden und die Versus-Diagramme. Die Wahl wird gemerkt.
+
+| Wahl | Was sie ist |
+|---|---|
+| **Auto** (Standard) | **Sanft** bei bis zu zwei Teams, **Kräftig** ab drei (Gruppen, die kein Team nennen, zählen nicht). |
+| **Sanft** | Der ursprüngliche Look, unten beschrieben: ein gleichmäßiger Farbkreis bei einer Pastell-Helligkeit. Ruhig bei zwei Seiten; ab drei liegen die Farbtöne eng beieinander. |
+| **Kräftig** | Klar verschiedene Farbtöne in fester Reihenfolge: Blau und Rot für zwei Seiten, dann Petrol, Pflaume, Indigo, Braun, Rosa, Gold, Oliv. Auch die Helligkeit variiert, sodass die ersten sechs bei Farbenblindheit unterscheidbar bleiben (geprüft mit Protanopie- und Deuteranopie-Simulation). Ab zehn Gruppen nutzt die Intensität den Farbkreis unten. |
+| **Kräftig, alt.** | Dieselbe Idee ab Orange und Blau, dann Karmin, Petrol, Violett, Moos, Flieder. |
+
+Mit einer kräftigen Palette behält jede Gruppe neben ihrem Farbton auch ihre Helligkeit: der vierte Kanal des Intensitätsziels trägt sie, sodass ein Ort, den ein Team allein hält, genau in dessen Farbe erscheint und eine Mischung die mittlere Helligkeit annimmt.
+
+Die sanfte Palette:
+
 Aus [`colors.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/colors.ts):
 
 - Die Farben liegen auf der **Oklab**-Farbebene mit fester Helligkeit (0,7) und Buntheit (0,115). So ist jede Gruppe gleich hell, und eine rote Gruppe wirkt nicht heißer als eine blaue.

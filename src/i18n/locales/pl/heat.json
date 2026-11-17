@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Wzmocnienia",
   "heat.filterPanel.siege.reinforceTitle": "Wzmocnione ściany i włazy, przy obrońcy, który tam stał (wywnioskowane)",
   "heat.timeline.seriesSession": "sesja {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "przerwa · następna sesja {date} UTC"
+  "heat.timeline.seriesBreak": "przerwa · następna sesja {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Runda: wygrane kontra przegrane",
+  "heat.splitPanel.wonVsLostMatch": "Mecz: wygrane kontra przegrane",
+  "heat.splitPanel.wonVsLostTitle": "{column}: wiersze strony zwycięskiej na +, przegranej na −, jako różnica",
+  "heat.heatPanel.palette": "Kolory drużyn",
+  "heat.heatPanel.paletteAuto": "Auto",
+  "heat.heatPanel.paletteSoft": "Łagodna",
+  "heat.heatPanel.paletteStrong": "Wyrazista",
+  "heat.heatPanel.paletteStrongAlt": "Wyrazista, alt.",
+  "heat.heatPanel.paletteHint": "Kolory drużyn wszędzie: mapa ciepła, figury, etykiety, powłoki zasięgu, legendy i wykresy. Łagodna to spokojny pastelowy wygląd; wyrazista daje każdej drużynie wyraźnie inny odcień, także przy daltonizmie. Auto: łagodna dla dwóch drużyn, wyrazista od trzech."
 }

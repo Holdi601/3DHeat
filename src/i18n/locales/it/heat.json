@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Rinforzi",
   "heat.filterPanel.siege.reinforceTitle": "Muri e botole rinforzati, presso il difensore che era lì (dedotto)",
   "heat.timeline.seriesSession": "sessione {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "pausa · sessione successiva {date} UTC"
+  "heat.timeline.seriesBreak": "pausa · sessione successiva {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Round: vinto contro perso",
+  "heat.splitPanel.wonVsLostMatch": "Partita: vinta contro persa",
+  "heat.splitPanel.wonVsLostTitle": "{column}: righe della parte vincente su +, della perdente su −, come differenza",
+  "heat.heatPanel.palette": "Colori delle squadre",
+  "heat.heatPanel.paletteAuto": "Auto",
+  "heat.heatPanel.paletteSoft": "Tenue",
+  "heat.heatPanel.paletteStrong": "Decisa",
+  "heat.heatPanel.paletteStrongAlt": "Decisa, alt.",
+  "heat.heatPanel.paletteHint": "I colori delle squadre ovunque: calore, figure, etichette, gusci di portata, legende e grafici. Tenue è l’aspetto pastello calmo; decisa dà a ogni squadra una tinta nettamente diversa, anche per i daltonici. Auto: tenue con due squadre, decisa da tre."
 }

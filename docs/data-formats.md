@@ -120,6 +120,16 @@ The end reasons, shared by every game so one filter works on all (a game's own w
 
 Name them in the `heat3d` hints' `extra` list too, as any other column. The column names `win`, `round_won`, `match_won`, `end_reason` and `win_reason` are read as the same columns.
 
+### Who won, said another way
+
+Not every source writes `won` per row. The viewer works it out on load, for any file, CSV or Parquet, from one file or many:
+
+- **A winner column.** A column called `winner`, `winning_team`, `winning_side`, `winning_faction`, `round_winner` or `victor` names the side that won the round (`match_winner`, `game_winner` or `match_winning_team`: the match). Where the file has no `won` (no `matchWon`), each row gets one from it: 1 where the winner is the row's [group](glossary.md), 0 where it is another, empty where there is no winner (empty, `draw`, `tie`). Names are compared loosely: `Team 1`, `team_1` and `1` are one side, so are `Terrorists` and `T`, `CT` and `Counter-Terrorists`, `BLUFOR` and `blue`. A winner that names no group but a player (a free-for-all) gives that player's rows 1. The winner column is never guessed as the group, though `winning_faction` sounds like one.
+- **`won` as words.** `true`/`false`, `yes`/`no`, `won`/`lost` are read as 1 and 0.
+- **Rows left empty.** An event row a converter wrote without `won` (a kill, a plant) takes its side's outcome in the same match and, for `won`, the same `round`, where that side's other rows agree.
+
+The derived columns are called `won` and `matchWon` and behave exactly like ones the file wrote: the **Round result** and **Match result** filters, the win-rate map, **Won vs lost** in the [difference split](difference.md), the breakdown, the [Versus panel](compare-groups.md), the replay's event list and the [mass analysis](mass-analysis.md) all read them.
+
 ## The `heat3d` hints
 
 A Parquet file can carry its own reading instructions in its footer's key/value metadata, under the key **`heat3d`**, as a JSON object ([`MappingHints`](https://github.com/Holdi601/3DHeat/blob/main/src/data/automap.ts)). The viewer applies them over its own guesses when the file is the first of a selection; every entry is optional and every result is still shown and editable in the [Column mapping](column-mapping.md#the-heat3d-hints-in-a-parquet-footer) panel. Anything that does not parse as a JSON object is ignored.

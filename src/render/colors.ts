@@ -61,27 +61,181 @@ export function stopToCss(stop: ColorStop): string {
 }
 
 /**
- * One hue family per team, one shade per member, so a glance tells you which
- * side someone is on before you can read a label.
+ * The team palettes, team `i` the `i`-th colour.
+ *
+ *   soft       the viewer's original look: the heat divides an even hue circle
+ *              at one pastel lightness (`teamHeatColor` below), the figures and
+ *              legends draw ten hand-picked hues (`TEAM_HUES`). Calm with two
+ *              sides; with three or more the pastel hues sit close together.
+ *   strong     categorical, distinct hues: blue and red for two sides (the
+ *              viewer's pair since the start), then teal, plum, indigo, brown,
+ *              pink, gold, olive
+ *   strongAlt  the same idea from orange and blue: then crimson, teal,
+ *              violet, moss, lilac
+ *
+ * The strong palettes are validated with the dataviz palette check
+ * (`validate_palette.js`) against the viewer's scene (#16171a, dark) and a
+ * light surface: every colour inside the lightness band and above the chroma
+ * floor, neighbours apart by at least 8 (OKLab x100) under protan and deutan
+ * simulation, by at least 15 to normal vision. Any two of the first six of
+ * either stay at least 8 apart under simulation too, so the common counts
+ * never pair two colours a colour-blind viewer cannot tell apart; lightness
+ * varies along the list for that reason. Legends, lists and labels always name
+ * the team as well, so the colour is never the only cue.
+ *
+ * Past a strong palette's length (hundreds of landing places), the heat goes
+ * back to the even hue circle (`teamSlice`) and the figures repeat the palette.
+ *
+ * Which one is used: the viewer's pick (`TeamPalettePref`), or by default
+ * (`auto`) soft for up to two teams and strong from three on.
+ */
+export const TEAM_PALETTES: Record<'soft' | 'strong' | 'strongAlt', readonly string[]> = {
+  soft: [],
+  strong: ['#2e8cea', '#ea472e', '#0dad88', '#992d94', '#544dc8', '#9b4805', '#db5eb7', '#bf890f', '#517c09'],
+  strongAlt: ['#d07a12', '#2a86c9', '#ba2b68', '#0dad88', '#763fba', '#4a710a', '#a774f3'],
+};
+export type TeamPaletteId = keyof typeof TEAM_PALETTES;
+export const TEAM_PALETTE_IDS = Object.keys(TEAM_PALETTES) as TeamPaletteId[];
+/** What the viewer picked: a palette, or `auto` (soft for two teams, strong from three). */
+export type TeamPalettePref = 'auto' | TeamPaletteId;
+export const TEAM_PALETTE_PREFS: TeamPalettePref[] = ['auto', ...TEAM_PALETTE_IDS];
+
+const PALETTE_KEY = 'heat3d.teamPalette';
+
+/** The pick remembered from the last visit; `auto` when there is none. */
+export function savedTeamPalettePref(): TeamPalettePref {
+  try {
+    const v = typeof localStorage !== 'undefined' ? localStorage.getItem(PALETTE_KEY) : null;
+    return v && (v === 'auto' || v in TEAM_PALETTES) ? (v as TeamPalettePref) : 'auto';
+  } catch {
+    return 'auto';
+  }
+}
+
+/** Remember a pick for the next visit. */
+export function saveTeamPalettePref(pref: TeamPalettePref): void {
+  try {
+    localStorage.setItem(PALETTE_KEY, pref);
+  } catch {
+    // Private windows: the choice lasts the visit.
+  }
+}
+
+/**
+ * The palette a pick means for `teams` groups: itself, or for `auto` soft up
+ * to two and strong from three on (groups that name no team, `isUnassignedLabel`,
+ * left out of the count).
+ */
+export function resolveTeamPalette(pref: TeamPalettePref, teamLabels: readonly unknown[]): TeamPaletteId {
+  if (pref !== 'auto') return pref;
+  let n = 0;
+  for (const l of teamLabels) if (!isUnassignedLabel(String(l))) n++;
+  return n >= 3 ? 'strong' : 'soft';
+}
+
+let activePalette: TeamPaletteId = resolveTeamPalette(savedTeamPalettePref(), []);
+
+/** The team palette in use. */
+export function teamPaletteId(): TeamPaletteId {
+  return activePalette;
+}
+
+/** Use another team palette (the store does, from the pick and the data: `resolveTeamPalette`). */
+export function setTeamPaletteId(id: TeamPaletteId): void {
+  if (id in TEAM_PALETTES) activePalette = id;
+}
+
+/** The index of a palette, as the heat shaders are told it. */
+export function teamPaletteIndex(id: TeamPaletteId = activePalette): number {
+  return Math.max(0, TEAM_PALETTE_IDS.indexOf(id));
+}
+
+function hexToRgb(hex: string): [number, number, number] {
+  const v = parseInt(hex.slice(1), 16);
+  return [((v >> 16) & 255) / 255, ((v >> 8) & 255) / 255, (v & 255) / 255];
+}
+
+/** The soft palette's hue for team `i`, from `TEAM_HUES`. */
+function softHue(teamIndex: number): number {
+  return TEAM_HUES[((Math.floor(teamIndex) % TEAM_HUES.length) + TEAM_HUES.length) % TEAM_HUES.length];
+}
+
+/** The palette's colour for team `i` (sRGB 0..1), the list repeating past its end. */
+export function teamPaletteColor(teamIndex: number, id: TeamPaletteId = activePalette): [number, number, number] {
+  const p = TEAM_PALETTES[id];
+  if (p.length === 0) return hslToRgb(softHue(teamIndex) / 360, 0.82, 0.55);
+  return hexToRgb(p[((Math.floor(teamIndex) % p.length) + p.length) % p.length]);
+}
+
+/** Every palette's colours in Oklab (L, a, b), end to end, with where each starts and how long it is: what the heat shaders index. */
+export function teamPaletteLab(): { lab: [number, number, number][]; starts: number[]; lengths: number[] } {
+  const lab: [number, number, number][] = [];
+  const starts: number[] = [];
+  const lengths: number[] = [];
+  for (const id of TEAM_PALETTE_IDS) {
+    starts.push(lab.length);
+    lengths.push(TEAM_PALETTES[id].length);
+    for (const h of TEAM_PALETTES[id]) lab.push(srgbToOklab(hexToRgb(h)));
+  }
+  return { lab, starts, lengths };
+}
+
+/** sRGB 0..1 to Oklab. */
+export function srgbToOklab([r8, g8, b8]: [number, number, number]): [number, number, number] {
+  const r = srgbToLinear(r8);
+  const g = srgbToLinear(g8);
+  const b = srgbToLinear(b8);
+  const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
+  const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
+  const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+  return [
+    0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s,
+    1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s,
+    0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s,
+  ];
+}
+
+/**
+ * One colour per team, one shade per member, so a glance tells you which side
+ * someone is on before you can read a label. Soft: a shade ramp of the team's
+ * hue (HSL, as it always was). Strong: the team's palette colour, its members
+ * spread lighter and darker around it (Oklab lightness, the hue kept).
  */
 export function teamMemberColor(
   teamIndex: number,
   memberIndex: number,
   memberCount: number,
 ): [number, number, number] {
-  const hue = TEAM_HUES[((teamIndex % TEAM_HUES.length) + TEAM_HUES.length) % TEAM_HUES.length];
   const n = Math.max(1, memberCount);
-  // Spread members across lightness and a little saturation; keep everything
-  // bright enough to read against the dark default background.
-  const f = n === 1 ? 0.5 : memberIndex / (n - 1);
-  const light = 0.42 + 0.34 * f;
-  const sat = 0.9 - 0.25 * f;
-  return hslToRgb(hue / 360, sat, light);
+  if (TEAM_PALETTES[activePalette].length === 0) {
+    // Spread members across lightness and a little saturation; keep everything
+    // bright enough to read against the dark default background.
+    const f = n === 1 ? 0.5 : memberIndex / (n - 1);
+    return hslToRgb(softHue(teamIndex) / 360, 0.9 - 0.25 * f, 0.42 + 0.34 * f);
+  }
+  const base = teamPaletteColor(teamIndex);
+  if (n === 1) return base;
+  const f = memberIndex / (n - 1) - 0.5;
+  const [L, a, b] = srgbToOklab(base);
+  // +-0.09 around the team's own lightness: every member stays nearer its
+  // team's colour than any other team's, and the darkest still reads on the scene.
+  const l = Math.min(0.86, Math.max(0.42, L + 0.18 * f));
+  // Less chroma where the shade leaves the gamut, rather than a hue shift.
+  for (let k = 1; k > 0.3; k -= 0.05) {
+    const c = oklabToLinearRgbRaw(l, a * k, b * k);
+    if (c.every((v) => v >= 0 && v <= 1)) return [toSrgb(c[0]), toSrgb(c[1]), toSrgb(c[2])];
+  }
+  return oklabToRgb(l, a * 0.3, b * 0.3);
 }
 
+/** A team's colour in the palette, for cubes, legends, labels and charts. */
 export function teamBaseColor(teamIndex: number): [number, number, number] {
-  const hue = TEAM_HUES[((teamIndex % TEAM_HUES.length) + TEAM_HUES.length) % TEAM_HUES.length];
-  return hslToRgb(hue / 360, 0.82, 0.55);
+  return teamPaletteColor(teamIndex);
+}
+
+/** A team's colour as CSS. */
+export function teamCss(teamIndex: number): string {
+  return rgbToCss(teamPaletteColor(teamIndex));
 }
 
 /**
@@ -240,9 +394,22 @@ export function teamHeatColorLinear(
   teamIndex: number,
   teamCount: number,
 ): [number, number, number] {
-  const slices = teamHueCount(teamCount);
-  const slice = teamSlice(teamIndex, teamCount);
-  return oklchToLinearRgb((slice + 0.5) / slices, TEAM_CHROMA, TEAM_LIGHTNESS);
+  const [L, a, b] = teamHeatLab(teamIndex, teamCount);
+  return oklabToLinearRgb(L, a, b);
+}
+
+/**
+ * Where team `i` of `n` sits in Oklab (L, a, b), as the heat shaders place it:
+ * the palette's colour while the teams fit in it (`TEAM_PALETTES`), the even
+ * hue circle at `TEAM_LIGHTNESS` past that. The GPU sums L as it sums a and b,
+ * so a place one team holds alone is drawn in exactly that team's colour.
+ */
+export function teamHeatLab(teamIndex: number, teamCount: number): [number, number, number] {
+  const n = Math.max(1, Math.floor(teamCount));
+  // Soft has no list: every count is the circle, as it always was.
+  if (n <= TEAM_PALETTES[activePalette].length) return srgbToOklab(teamPaletteColor(((Math.floor(teamIndex) % n) + n) % n));
+  const h = ((teamSlice(teamIndex, n) + 0.5) / teamHueCount(n)) * Math.PI * 2;
+  return [TEAM_LIGHTNESS, Math.cos(h) * TEAM_CHROMA, Math.sin(h) * TEAM_CHROMA];
 }
 
 /**
@@ -342,12 +509,11 @@ export function teamHeatColors(teamCount: number): Float32Array {
   // which saves a buffer binding — so it exists as the CPU statement of the same
   // rule, and a version that skipped the stride would be a second, disagreeing
   // definition waiting for someone to use it.
-  const slices = teamHueCount(n);
   const out = new Float32Array(n * 2);
   for (let i = 0; i < n; i++) {
-    const h = ((teamSlice(i, n) + 0.5) / slices) * Math.PI * 2;
-    out[i * 2] = Math.cos(h) * TEAM_CHROMA;
-    out[i * 2 + 1] = Math.sin(h) * TEAM_CHROMA;
+    const [, a, b] = teamHeatLab(i, n);
+    out[i * 2] = a;
+    out[i * 2 + 1] = b;
   }
   return out;
 }
@@ -382,17 +548,34 @@ export function mixTeamColor(
   sumB: number,
   weight: number,
   boost = 1,
+  sumL?: number,
 ): [number, number, number] {
   if (!(weight > 0)) return [0, 0, 0];
   const a = (sumA / weight) * boost;
   const b = (sumB / weight) * boost;
-  return oklabToRgb(TEAM_LIGHTNESS, a, b);
+  // The mean lightness of the teams present: the composite reads it from the fourth sum.
+  return oklabToRgb(sumL === undefined ? TEAM_LIGHTNESS : sumL / weight, a, b);
 }
 
 /** Oklab (L, a, b) to sRGB 0..1. */
 export function oklabToRgb(L: number, a: number, b: number): [number, number, number] {
   const [r, g, bl] = oklabToLinearRgb(L, a, b);
   return [toSrgb(r), toSrgb(g), toSrgb(bl)];
+}
+
+/** Oklab to linear sRGB, unclamped: outside 0..1 where the colour is outside the gamut. */
+function oklabToLinearRgbRaw(L: number, a: number, b: number): [number, number, number] {
+  const l_ = L + 0.3963377774 * a + 0.2158037573 * b;
+  const m_ = L - 0.1055613458 * a - 0.0638541728 * b;
+  const s_ = L - 0.0894841775 * a - 1.291485548 * b;
+  const l = l_ * l_ * l_;
+  const m = m_ * m_ * m_;
+  const s = s_ * s_ * s_;
+  return [
+    4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
+    -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
+    -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s,
+  ];
 }
 
 export function oklabToLinearRgb(L: number, a: number, b: number): [number, number, number] {

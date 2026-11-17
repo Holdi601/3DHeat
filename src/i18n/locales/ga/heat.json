@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Treisithe",
   "heat.filterPanel.siege.reinforceTitle": "Ballaí agus haistí treisithe, ag an gcosantóir a bhí ina sheasamh ann (aimsithe)",
   "heat.timeline.seriesSession": "seisiún {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "sos · an chéad seisiún eile {date} UTC"
+  "heat.timeline.seriesBreak": "sos · an chéad seisiún eile {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Babhta: buaite i gcoinne caillte",
+  "heat.splitPanel.wonVsLostMatch": "Cluiche: buaite i gcoinne caillte",
+  "heat.splitPanel.wonVsLostTitle": "{column}: sraitheanna an taoibh a bhuaigh ar +, an taoibh a chaill ar −, mar dhifríocht",
+  "heat.heatPanel.palette": "Dathanna foirne",
+  "heat.heatPanel.paletteAuto": "Uath",
+  "heat.heatPanel.paletteSoft": "Bog",
+  "heat.heatPanel.paletteStrong": "Láidir",
+  "heat.heatPanel.paletteStrongAlt": "Láidir, mal.",
+  "heat.heatPanel.paletteHint": "Dathanna na bhfoirne i ngach áit: teas, figiúirí, lipéid, blaoscanna raoin, eochracha agus cairteacha. Is é bog an cuma phastail shocair; tugann láidir lí atá soiléir difriúil do gach foireann, le dath-dhaille freisin. Uath: bog do dhá fhoireann, láidir ó thrí ar aghaidh."
 }

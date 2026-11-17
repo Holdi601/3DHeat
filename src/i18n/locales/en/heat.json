@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Reinforcements",
   "heat.filterPanel.siege.reinforceTitle": "Walls and hatches reinforced, at the defender who stood there (inferred)",
   "heat.timeline.seriesSession": "session {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "break · next session {date} UTC"
+  "heat.timeline.seriesBreak": "break · next session {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Round: won vs lost",
+  "heat.splitPanel.wonVsLostMatch": "Match: won vs lost",
+  "heat.splitPanel.wonVsLostTitle": "{column}: the winning side's rows on +, the losing side's on −, as a difference",
+  "heat.heatPanel.palette": "Team colours",
+  "heat.heatPanel.paletteAuto": "Auto",
+  "heat.heatPanel.paletteSoft": "Soft",
+  "heat.heatPanel.paletteStrong": "Strong",
+  "heat.heatPanel.paletteStrongAlt": "Strong, alt.",
+  "heat.heatPanel.paletteHint": "The teams' colours everywhere: heat, figures, labels, range shells, legends and charts. Soft is the calm pastel look; strong gives each team a clearly different hue, also for colour-blind eyes. Auto: soft for two teams, strong from three."
 }

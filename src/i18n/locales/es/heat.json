@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Refuerzos",
   "heat.filterPanel.siege.reinforceTitle": "Paredes y trampillas reforzadas, en el defensor que estaba allí (deducido)",
   "heat.timeline.seriesSession": "sesión {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "pausa · siguiente sesión {date} UTC"
+  "heat.timeline.seriesBreak": "pausa · siguiente sesión {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Ronda: ganada frente a perdida",
+  "heat.splitPanel.wonVsLostMatch": "Partida: ganada frente a perdida",
+  "heat.splitPanel.wonVsLostTitle": "{column}: filas del bando ganador en +, del perdedor en −, como diferencia",
+  "heat.heatPanel.palette": "Colores de equipo",
+  "heat.heatPanel.paletteAuto": "Auto",
+  "heat.heatPanel.paletteSoft": "Suave",
+  "heat.heatPanel.paletteStrong": "Intensa",
+  "heat.heatPanel.paletteStrongAlt": "Intensa, alt.",
+  "heat.heatPanel.paletteHint": "Los colores de los equipos en todas partes: calor, figuras, etiquetas, envolventes de alcance, leyendas y gráficos. Suave es el aspecto pastel tranquilo; intensa da a cada equipo un tono claramente distinto, también con daltonismo. Auto: suave con dos equipos, intensa desde tres."
 }

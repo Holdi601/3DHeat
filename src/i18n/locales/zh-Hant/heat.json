@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "加固",
   "heat.filterPanel.siege.reinforceTitle": "被加固的牆和艙口，位於站在那裡的防守方（推斷）",
   "heat.timeline.seriesSession": "工作階段 {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "間歇 · 下一工作階段 {date} UTC"
+  "heat.timeline.seriesBreak": "間歇 · 下一工作階段 {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "回合：勝對負",
+  "heat.splitPanel.wonVsLostMatch": "比賽：勝對負",
+  "heat.splitPanel.wonVsLostTitle": "{column}：獲勝方的列在 +，失敗方在 −，顯示差值",
+  "heat.heatPanel.palette": "隊伍顏色",
+  "heat.heatPanel.paletteAuto": "自動",
+  "heat.heatPanel.paletteSoft": "柔和",
+  "heat.heatPanel.paletteStrong": "鮮明",
+  "heat.heatPanel.paletteStrongAlt": "鮮明（備選）",
+  "heat.heatPanel.paletteHint": "隊伍顏色處處一致：熱力、人物、標籤、射程外殼、圖例和圖表。柔和是平靜的粉彩風格；鮮明為每支隊伍提供明顯不同的色相，色盲也能區分。自動：兩隊用柔和，三隊起用鮮明。"
 }

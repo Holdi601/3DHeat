@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Vahvistukset",
   "heat.filterPanel.siege.reinforceTitle": "Vahvistetut seinät ja luukut, siellä seisseen puolustajan kohdalla (päätelty)",
   "heat.timeline.seriesSession": "istunto {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "tauko · seuraava istunto {date} UTC"
+  "heat.timeline.seriesBreak": "tauko · seuraava istunto {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Kierros: voitetut vastaan hävityt",
+  "heat.splitPanel.wonVsLostMatch": "Ottelu: voitetut vastaan hävityt",
+  "heat.splitPanel.wonVsLostTitle": "{column}: voittaneen puolen rivit +:lla, hävinneen −:lla, erotuksena",
+  "heat.heatPanel.palette": "Joukkueiden värit",
+  "heat.heatPanel.paletteAuto": "Auto",
+  "heat.heatPanel.paletteSoft": "Pehmeä",
+  "heat.heatPanel.paletteStrong": "Voimakas",
+  "heat.heatPanel.paletteStrongAlt": "Voimakas, vaiht.",
+  "heat.heatPanel.paletteHint": "Joukkueiden värit kaikkialla: lämpökartta, hahmot, nimilaput, kantamakuoret, selitteet ja kaaviot. Pehmeä on rauhallinen pastellisävy; voimakas antaa jokaiselle joukkueelle selvästi eri sävyn, myös värisokealle. Auto: pehmeä kahdelle joukkueelle, voimakas kolmesta alkaen."
 }

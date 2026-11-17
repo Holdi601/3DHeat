@@ -125,6 +125,16 @@ Die Gründe für das Ende, gemeinsam für alle Spiele, damit ein Filter für all
 
 Nenne sie auch in der Liste `extra` der `heat3d`-Hinweise, wie jede andere Spalte. Die Spaltennamen `win`, `round_won`, `match_won`, `end_reason` und `win_reason` werden als dieselben Spalten gelesen.
 
+### Wer gewonnen hat, anders gesagt {#who-won-said-another-way}
+
+Nicht jede Quelle schreibt `won` je Zeile. Der Viewer leitet es beim Laden her, für jede Datei, CSV oder Parquet, aus einer Datei oder vielen:
+
+- **Eine Siegerspalte.** Eine Spalte namens `winner`, `winning_team`, `winning_side`, `winning_faction`, `round_winner` oder `victor` nennt die Seite, die die Runde gewonnen hat (`match_winner`, `game_winner` oder `match_winning_team`: das Match). Wo die Datei kein `won` (kein `matchWon`) hat, bekommt jede Zeile eines daraus: 1, wo der Sieger die [Gruppe](glossary.md) der Zeile ist, 0, wo es eine andere ist, leer, wo es keinen Sieger gibt (leer, `draw`, `tie`). Namen werden locker verglichen: `Team 1`, `team_1` und `1` sind eine Seite, ebenso `Terrorists` und `T`, `CT` und `Counter-Terrorists`, `BLUFOR` und `blue`. Ein Sieger, der keine Gruppe, sondern einen Spieler nennt (Jeder gegen jeden), gibt dessen Zeilen 1. Die Siegerspalte wird nie als Gruppe erraten, auch wenn `winning_faction` danach klingt.
+- **`won` als Wörter.** `true`/`false`, `yes`/`no`, `won`/`lost` werden als 1 und 0 gelesen.
+- **Leer gelassene Zeilen.** Eine Ereigniszeile, die ein Konverter ohne `won` geschrieben hat (ein Abschuss, ein Legen), übernimmt das Ergebnis ihrer Seite im selben Match und, für `won`, in derselben `round`, wo die übrigen Zeilen dieser Seite übereinstimmen.
+
+Die hergeleiteten Spalten heißen `won` und `matchWon` und verhalten sich genau wie solche, die die Datei geschrieben hat: die Filter **Rundenergebnis** und **Matchergebnis**, die Siegquoten-Karte, **Gewonnen gegen verloren** in der [Differenz-Aufteilung](difference.md), die Aufschlüsselung, das [Versus-Feld](compare-groups.md), die Ereignisliste der Wiedergabe und die [Massenanalyse](mass-analysis.md) lesen sie alle.
+
 ## Die `heat3d`-Hinweise {#the-heat3d-hints}
 
 Eine Parquet-Datei kann ihre eigenen Leseanweisungen in den Schlüssel-Wert-Metadaten ihres Footers tragen, unter dem Schlüssel **`heat3d`**, als JSON-Objekt ([`MappingHints`](https://github.com/Holdi601/3DHeat/blob/main/src/data/automap.ts)). Der Viewer wendet sie über seine eigenen Vermutungen an, wenn die Datei die erste einer Auswahl ist; jeder Eintrag ist optional, und jedes Ergebnis wird weiterhin angezeigt und im Feld [Spaltenzuordnung](column-mapping.md#the-heat3d-hints-in-a-parquet-footer) bearbeitbar. Alles, was sich nicht als JSON-Objekt lesen lässt, wird ignoriert.

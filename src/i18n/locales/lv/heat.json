@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Pastiprinājumi",
   "heat.filterPanel.siege.reinforceTitle": "Pastiprinātas sienas un lūkas, pie aizstāvja, kas tur stāvēja (secināts)",
   "heat.timeline.seriesSession": "sesija {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "pārtraukums · nākamā sesija {date} UTC"
+  "heat.timeline.seriesBreak": "pārtraukums · nākamā sesija {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Raunds: uzvarēti pret zaudētiem",
+  "heat.splitPanel.wonVsLostMatch": "Mačs: uzvarēti pret zaudētiem",
+  "heat.splitPanel.wonVsLostTitle": "{column}: uzvarētājas puses rindas uz +, zaudētājas uz −, kā starpība",
+  "heat.heatPanel.palette": "Komandu krāsas",
+  "heat.heatPanel.paletteAuto": "Auto",
+  "heat.heatPanel.paletteSoft": "Maiga",
+  "heat.heatPanel.paletteStrong": "Spilgta",
+  "heat.heatPanel.paletteStrongAlt": "Spilgta, alt.",
+  "heat.heatPanel.paletteHint": "Komandu krāsas visur: siltumkarte, figūras, uzraksti, darbības rādiusa čaulas, leģendas un diagrammas. Maiga ir mierīgais pasteļtoņu izskats; spilgta katrai komandai dod skaidri atšķirīgu toni, arī krāsu aklumā. Auto: maiga divām komandām, spilgta no trim."
 }

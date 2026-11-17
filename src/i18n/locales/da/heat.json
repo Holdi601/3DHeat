@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Forstærkninger",
   "heat.filterPanel.siege.reinforceTitle": "Forstærkede vægge og luger, ved forsvareren der stod der (udledt)",
   "heat.timeline.seriesSession": "session {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "pause · næste session {date} UTC"
+  "heat.timeline.seriesBreak": "pause · næste session {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Runde: vundet mod tabt",
+  "heat.splitPanel.wonVsLostMatch": "Kamp: vundet mod tabt",
+  "heat.splitPanel.wonVsLostTitle": "{column}: vindersidens rækker på +, tabersidens på −, som forskel",
+  "heat.heatPanel.palette": "Holdfarver",
+  "heat.heatPanel.paletteAuto": "Auto",
+  "heat.heatPanel.paletteSoft": "Blød",
+  "heat.heatPanel.paletteStrong": "Stærk",
+  "heat.heatPanel.paletteStrongAlt": "Stærk, alt.",
+  "heat.heatPanel.paletteHint": "Holdenes farver overalt: varmekort, figurer, etiketter, rækkeviddeskaller, forklaringer og diagrammer. Blød er det rolige pastel-look; stærk giver hvert hold en tydeligt anden farvetone, også ved farveblindhed. Auto: blød ved to hold, stærk fra tre."
 }

@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Ojačanja",
   "heat.filterPanel.siege.reinforceTitle": "Ojačani zidovi i otvori, kod branioca koji je tamo stajao (zaključeno)",
   "heat.timeline.seriesSession": "sesija {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "pauza · sljedeća sesija {date} UTC"
+  "heat.timeline.seriesBreak": "pauza · sljedeća sesija {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Runda: dobijeno protiv izgubljeno",
+  "heat.splitPanel.wonVsLostMatch": "Meč: dobijeno protiv izgubljeno",
+  "heat.splitPanel.wonVsLostTitle": "{column}: redovi pobjedničke strane na +, poražene na −, kao razlika",
+  "heat.heatPanel.palette": "Boje timova",
+  "heat.heatPanel.paletteAuto": "Auto",
+  "heat.heatPanel.paletteSoft": "Blaga",
+  "heat.heatPanel.paletteStrong": "Jaka",
+  "heat.heatPanel.paletteStrongAlt": "Jaka, alt.",
+  "heat.heatPanel.paletteHint": "Boje timova svugdje: toplotna karta, figure, oznake, ovojnice dometa, legende i grafikoni. Blaga je mirni pastelni izgled; jaka svakom timu daje jasno drugačiji ton, i kod daltonizma. Auto: blaga za dva tima, jaka od tri."
 }

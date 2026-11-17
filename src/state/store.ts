@@ -1,3 +1,5 @@
+import { resolveTeamPalette, saveTeamPalettePref, savedTeamPalettePref, setTeamPaletteId, teamPaletteId, type TeamPaletteId, type TeamPalettePref } from '../render/colors';
+import { deriveOutcome } from '../data/outcome';
 import { create } from 'zustand';
 import { calibrate, cameraForExtent } from '../data/calibrate';
 import { clampBudgets, detectBudgets, type Budgets } from '../data/memory';
@@ -178,6 +180,14 @@ export interface HeatSettings {
    * generous rather than safe.
    */
   teamBoost: number;
+  /**
+   * The team colours picked (render/colors.ts TEAM_PALETTES): soft, strong,
+   * strong alternative, or `auto` - soft for two teams, strong from three.
+   * Heat, figures, labels, range shells, legends and charts alike; remembered.
+   */
+  teamPalette: TeamPalettePref;
+  /** The palette that pick means for the loaded data (`resolveTeamPalette`). */
+  teamPaletteActive: TeamPaletteId;
   scheme: HeatColorScheme;
   /** Where each row's direction comes from, for wedges and the direction field (render/direction.ts). */
   dirSource: DirSource;
@@ -419,6 +429,13 @@ export interface AxisMirror {
 const STREAM_NEAR_CAP = 10;
 
 const MIRROR_KEY = 'heat3d.mirror';
+/** The team palette a pick means for a dataset, made the one in use (render/colors.ts). */
+function paletteFor(pref: TeamPalettePref, d: Dataset): TeamPaletteId {
+  const active = resolveTeamPalette(pref, d.teamLabels);
+  setTeamPaletteId(active);
+  return active;
+}
+
 const FAR_KEY = 'heat3d.far';
 
 type FarSettings = Pick<TeamSettings, 'farMode' | 'symbolStyle' | 'symbolPx' | 'mySide' | 'symbolOthers' | 'symbolTicks' | 'weaponMarks' | 'hitMarks' | 'hitMarkSeconds' | 'hitMarkFloat' | 'aimLines'>;
@@ -717,6 +734,8 @@ export const useStore = create<AppState>((set) => ({
     // because a mixture of five hues spread evenly round the circle *is* grey. A
     // little above 1 keeps ties honest while making a 60/40 split visible.
     teamBoost: 1.4,
+    teamPalette: savedTeamPalettePref(),
+    teamPaletteActive: teamPaletteId(),
     scheme: {
       positive: DEFAULT_POSITIVE_RAMP.map((s) => ({ ...s })),
       negative: DEFAULT_NEGATIVE_RAMP.map((s) => ({ ...s })),
@@ -830,6 +849,10 @@ export const useStore = create<AppState>((set) => ({
   showAxes: true,
 
   setDataset: (d) => {
+    // Who won, wherever the source says it some other way than a 0/1 per row
+    // (a winner column, words, empty event rows): the outcome filters, the
+    // win-rate map and the won-vs-lost split then read it like any `won`.
+    if (d) deriveOutcome(d);
     // The jump limit is measured off the frame and filled in when it is known,
     // unless it was set by hand meanwhile; see `suggestMaxJumpAsync`.
     if (d) {
@@ -864,7 +887,7 @@ export const useStore = create<AppState>((set) => ({
         positiveTeams: all.slice(0, half),
         negativeTeams: all.slice(half),
         split,
-        heat: { ...s.heat, radius: cal.radius, saturation: cal.saturation },
+        heat: { ...s.heat, radius: cal.radius, saturation: cal.saturation, teamPaletteActive: paletteFor(s.heat.teamPalette, d) },
         team: {
           ...s.team,
           cubeSize: cal.cubeSize,
@@ -934,7 +957,15 @@ export const useStore = create<AppState>((set) => ({
     set((s) => (s.level ? { level: { ...s.level, ...p } as Level } : {})),
   setLoad: (p) => set((s) => ({ load: { ...s.load, ...p } })),
   setMode: (mode) => set({ mode }),
-  patchHeat: (p) => set((s) => ({ heat: { ...s.heat, ...p } })),
+  patchHeat: (p) => {
+    if (p.teamPalette) {
+      saveTeamPalettePref(p.teamPalette);
+      const active = resolveTeamPalette(p.teamPalette, useStore.getState().dataset?.teamLabels ?? []);
+      setTeamPaletteId(active);
+      p = { ...p, teamPaletteActive: active };
+    }
+    set((s) => ({ heat: { ...s.heat, ...p } }));
+  },
   patchSlice: (p) => set((s) => ({ slice: { ...s.slice, ...p } })),
   patchPath: (p) => set((s) => ({ path: { ...s.path, ...p } })),
   patchTeam: (p) =>

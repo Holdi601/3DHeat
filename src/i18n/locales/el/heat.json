@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Ενισχύσεις",
   "heat.filterPanel.siege.reinforceTitle": "Ενισχυμένοι τοίχοι και καταπακτές, στον αμυνόμενο που στεκόταν εκεί (συναγόμενο)",
   "heat.timeline.seriesSession": "συνεδρία {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "διάλειμμα · επόμενη συνεδρία {date} UTC"
+  "heat.timeline.seriesBreak": "διάλειμμα · επόμενη συνεδρία {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Γύρος: νίκες έναντι ηττών",
+  "heat.splitPanel.wonVsLostMatch": "Αγώνας: νίκες έναντι ηττών",
+  "heat.splitPanel.wonVsLostTitle": "{column}: οι γραμμές της νικήτριας πλευράς στο +, της ηττημένης στο −, ως διαφορά",
+  "heat.heatPanel.palette": "Χρώματα ομάδων",
+  "heat.heatPanel.paletteAuto": "Αυτόματη",
+  "heat.heatPanel.paletteSoft": "Απαλή",
+  "heat.heatPanel.paletteStrong": "Έντονη",
+  "heat.heatPanel.paletteStrongAlt": "Έντονη, εναλλ.",
+  "heat.heatPanel.paletteHint": "Τα χρώματα των ομάδων παντού: θερμικός χάρτης, φιγούρες, ετικέτες, κελύφη εμβέλειας, υπομνήματα και διαγράμματα. Η απαλή είναι η ήρεμη παστέλ εμφάνιση· η έντονη δίνει σε κάθε ομάδα σαφώς διαφορετική απόχρωση, και με αχρωματοψία. Αυτόματη: απαλή για δύο ομάδες, έντονη από τρεις."
 }

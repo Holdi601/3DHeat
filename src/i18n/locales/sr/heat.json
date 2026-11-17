@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Ојачања",
   "heat.filterPanel.siege.reinforceTitle": "Ојачани зидови и отвори, код браниоца који је ту стајао (закључено)",
   "heat.timeline.seriesSession": "сесија {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "пауза · следећа сесија {date} UTC"
+  "heat.timeline.seriesBreak": "пауза · следећа сесија {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Рунда: добијено против изгубљено",
+  "heat.splitPanel.wonVsLostMatch": "Меч: добијено против изгубљено",
+  "heat.splitPanel.wonVsLostTitle": "{column}: редови победничке стране на +, поражене на −, као разлика",
+  "heat.heatPanel.palette": "Боје тимова",
+  "heat.heatPanel.paletteAuto": "Аутоматски",
+  "heat.heatPanel.paletteSoft": "Блага",
+  "heat.heatPanel.paletteStrong": "Јака",
+  "heat.heatPanel.paletteStrongAlt": "Јака, алт.",
+  "heat.heatPanel.paletteHint": "Боје тимова свуда: топлотна мапа, фигуре, ознаке, омотачи домета, легенде и графикони. Блага је мирни пастелни изглед; јака сваком тиму даје јасно другачији тон, и код далтонизма. Аутоматски: блага за два тима, јака од три."
 }

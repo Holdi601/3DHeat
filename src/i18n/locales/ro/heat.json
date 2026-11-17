@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Ranforsări",
   "heat.filterPanel.siege.reinforceTitle": "Pereți și trape ranforsate, la apărătorul care stătea acolo (dedus)",
   "heat.timeline.seriesSession": "sesiunea {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "pauză · sesiunea următoare {date} UTC"
+  "heat.timeline.seriesBreak": "pauză · sesiunea următoare {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Rundă: câștigate vs pierdute",
+  "heat.splitPanel.wonVsLostMatch": "Meci: câștigate vs pierdute",
+  "heat.splitPanel.wonVsLostTitle": "{column}: rândurile taberei câștigătoare pe +, ale celei învinse pe −, ca diferență",
+  "heat.heatPanel.palette": "Culorile echipelor",
+  "heat.heatPanel.paletteAuto": "Auto",
+  "heat.heatPanel.paletteSoft": "Blândă",
+  "heat.heatPanel.paletteStrong": "Puternică",
+  "heat.heatPanel.paletteStrongAlt": "Puternică, alt.",
+  "heat.heatPanel.paletteHint": "Culorile echipelor peste tot: hartă termică, figuri, etichete, învelișuri de rază, legende și grafice. Blândă este aspectul pastel calm; puternică dă fiecărei echipe o nuanță clar diferită, și pentru daltoniști. Auto: blândă pentru două echipe, puternică de la trei."
 }

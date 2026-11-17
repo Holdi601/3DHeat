@@ -1,11 +1,22 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
   TEAM_MAX_HUES,
   isUnassignedLabel,
   mixTeamColor,
   reverse16,
+  teamBaseColor,
   teamHeatColor,
   teamHeatColors,
+  teamHeatLab,
+  teamMemberColor,
+  teamPaletteId,
+  teamPaletteIndex,
+  teamPaletteLab,
+  setTeamPaletteId,
+  resolveTeamPalette,
+  rgbToCss,
+  TEAM_PALETTE_IDS,
+  TEAM_PALETTES,
   teamHueCount,
   teamSlice,
 } from './colors';
@@ -141,6 +152,88 @@ function hueGap(a: number, b: number): number {
   return Math.min(d, 1 - d);
 }
 
+/** Past the team palette's length the heat divides the hue circle; these counts are all past it. */
+const CIRCLE = [10, 12, TEAM_MAX_HUES];
+
+describe('which palette', () => {
+  it('is soft for two teams and strong from three, unless one is picked', () => {
+    expect(resolveTeamPalette('auto', ['A', 'B'])).toBe('soft');
+    // A group that names no team does not count.
+    expect(resolveTeamPalette('auto', ['0', 'A', 'B'])).toBe('soft');
+    expect(resolveTeamPalette('auto', ['A', 'B', 'C'])).toBe('strong');
+    expect(resolveTeamPalette('soft', ['A', 'B', 'C'])).toBe('soft');
+    expect(resolveTeamPalette('strongAlt', ['A'])).toBe('strongAlt');
+  });
+
+  it('soft keeps the original look: the even circle for the heat, the hand-picked hues for figures', () => {
+    setTeamPaletteId('soft');
+    expect(oklabOf(teamHeatColor(0, 3)).L).toBeCloseTo(0.7, 3);
+    expect(hueOf(teamHeatColor(0, 2))).toBeCloseTo(0.25, 5);
+    // HSL 210 degrees, the original first team.
+    expect(rgbToCss(teamBaseColor(0))).toBe('rgb(46, 140, 234)');
+  });
+});
+
+describe('teamHeatColor — the strong palettes', () => {
+  beforeAll(() => setTeamPaletteId('strong'));
+  afterAll(() => setTeamPaletteId('soft'));
+
+  it('draws the palette, in order, while the teams fit in it', () => {
+    // The same colour the figures, labels and legends use (teamBaseColor), so a
+    // team is one colour everywhere.
+    for (const n of [2, 3, 5, TEAM_PALETTES.strong.length]) {
+      for (let i = 0; i < n; i++) {
+        const want = teamBaseColor(i);
+        teamHeatColor(i, n).forEach((v, k) => expect(v, `n=${n} team ${i}`).toBeCloseTo(want[k], 5));
+      }
+    }
+  });
+
+  it('keeps the classic blue and red pair for two sides', () => {
+    expect(TEAM_PALETTES.strong.slice(0, 2)).toEqual(['#2e8cea', '#ea472e']);
+  });
+
+  it('keeps the first six of each palette apart, lightness included', () => {
+    // The common team counts never pair two near colours: the closest pair of
+    // the first six is still a plain difference in Oklab (x100).
+    for (const id of ['strong', 'strongAlt'] as const) {
+      const lab = teamPaletteLab().lab.slice(teamPaletteLab().starts[TEAM_PALETTE_IDS.indexOf(id)]).slice(0, 6);
+      let min = Infinity;
+      for (let i = 0; i < lab.length; i++)
+        for (let j = i + 1; j < lab.length; j++) min = Math.min(min, 100 * Math.hypot(lab[i][0] - lab[j][0], lab[i][1] - lab[j][1], lab[i][2] - lab[j][2]));
+      expect(min, id).toBeGreaterThan(15);
+      const ls = lab.map((c) => c[0]);
+      expect(Math.max(...ls) - Math.min(...ls), id).toBeGreaterThan(0.1);
+    }
+  });
+
+  it('switches with the palette picked, and back', () => {
+    const before = teamHeatColor(0, 2);
+    setTeamPaletteId('strongAlt');
+    try {
+      expect(teamPaletteId()).toBe('strongAlt');
+      expect(teamPaletteIndex()).toBe(2);
+      expect(teamHeatColor(0, 2)).not.toEqual(before);
+      teamHeatColor(0, 2).forEach((v, k) => expect(v).toBeCloseTo(teamBaseColor(0)[k], 5));
+    } finally {
+      setTeamPaletteId('strong');
+    }
+    expect(teamHeatColor(0, 2)).toEqual(before);
+  });
+
+  it('shades a team\'s members around its colour, never toward another team', () => {
+    for (let t = 0; t < 4; t++) {
+      const base = teamHeatLab(t, 4);
+      for (let m = 0; m < 5; m++) {
+        const c = teamMemberColor(t, m, 5);
+        const lab = oklabOf(c);
+        // Same hue family: the member's hue is its team's.
+        expect(hueGap(lab.h, (Math.atan2(base[2], base[1]) / (Math.PI * 2) + 1) % 1), `team ${t} member ${m}`).toBeLessThan(0.04);
+      }
+    }
+  });
+});
+
 describe('teamHeatColor — dividing the circle', () => {
   it('spaces teams evenly around the hue circle', () => {
     /**
@@ -153,7 +246,7 @@ describe('teamHeatColor — dividing the circle', () => {
      */
     // Only up to the cap: past it the divisor stops growing, so several groups
     // share a hue and the sorted gaps include zeros by design.
-    for (const n of [2, 3, 4, 5, 8, TEAM_MAX_HUES]) {
+    for (const n of CIRCLE) {
       const hues = Array.from({ length: n }, (_, i) => hueOf(teamHeatColor(i, n))).sort(
         (a, b) => a - b,
       );
@@ -168,16 +261,14 @@ describe('teamHeatColor — dividing the circle', () => {
     // Edges would put team 0 at hue 0 for every count, and with an even count put
     // one team exactly opposite it — so "opposite" would mean different pairs at
     // five teams and at six. Centres keep the arrangement consistent.
-    expect(hueOf(teamHeatColor(0, 4))).toBeCloseTo(0.125, 5);
-    expect(hueOf(teamHeatColor(0, 6))).toBeCloseTo(1 / 12, 5);
-    expect(hueOf(teamHeatColor(0, 2))).toBeCloseTo(0.25, 5);
+    expect(hueOf(teamHeatColor(0, 10))).toBeCloseTo(0.05, 5);
+    expect(hueOf(teamHeatColor(0, 12))).toBeCloseTo(1 / 24, 5);
+    expect(hueOf(teamHeatColor(0, 16))).toBeCloseTo(1 / 32, 5);
   });
 
-  it('puts two teams on opposite sides of the circle', () => {
-    // The user-visible promise: with two teams the colours are as far apart as
-    // colours get.
-    const a = hueOf(teamHeatColor(0, 2));
-    const b = hueOf(teamHeatColor(1, 2));
+  it('puts a team and the one half the circle on opposite sides', () => {
+    const a = hueOf(teamHeatColor(0, 10));
+    const b = hueOf(teamHeatColor(5, 10));
     expect(hueGap(a, b)).toBeCloseTo(0.5, 5);
   });
 
@@ -189,7 +280,7 @@ describe('teamHeatColor — dividing the circle', () => {
     // HSL "lightness" is the midpoint of the extreme channels and not a
     // brightness at all. Blue against yellow is the worst pair and the one this
     // guards.
-    for (const n of [2, 3, 8, 16]) {
+    for (const n of CIRCLE) {
       const lumas = Array.from({ length: n }, (_, i) => luma(teamHeatColor(i, n)));
       expect(Math.max(...lumas) / Math.min(...lumas)).toBeLessThan(1.35);
     }
@@ -200,7 +291,7 @@ describe('teamHeatColor — dividing the circle', () => {
     // team whose colour is nearer grey than its neighbours' looks like a team
     // with less data. Constant by construction in Oklch, so this is really a
     // check that the transform is right and nothing is being clamped.
-    const measured = Array.from({ length: 8 }, (_, i) => oklabOf(teamHeatColor(i, 8)));
+    const measured = Array.from({ length: 10 }, (_, i) => oklabOf(teamHeatColor(i, 10)));
     const chromas = measured.map((m) => m.C);
     const lights = measured.map((m) => m.L);
     expect(Math.min(...chromas)).toBeGreaterThan(0.09);
@@ -213,7 +304,7 @@ describe('teamHeatColor — dividing the circle', () => {
     // clamping, because clamping is per-hue and would quietly restore the
     // inequality the Oklch circle exists to remove. If either is raised too far
     // this fails rather than silently desaturating a few teams.
-    for (const n of [2, 3, 5, 7, 12, 24]) {
+    for (const n of [10, 12, 24]) {
       for (let i = 0; i < n; i++) {
         for (const v of teamHeatColor(i, n)) {
           expect(v).toBeGreaterThan(0.001);
@@ -247,9 +338,9 @@ describe('teamHeatColor — dividing the circle', () => {
   it('packs opposed teams as exact negatives', () => {
     // The property the whole mixing scheme rests on: opposites cancel, so a dead
     // heat between two teams lands on the neutral axis rather than near it.
-    const packed = teamHeatColors(2);
-    expect(packed[0]).toBeCloseTo(-packed[2], 12);
-    expect(packed[1]).toBeCloseTo(-packed[3], 12);
+    const packed = teamHeatColors(10);
+    expect(packed[0]).toBeCloseTo(-packed[10], 12);
+    expect(packed[1]).toBeCloseTo(-packed[11], 12);
   });
 });
 
@@ -261,9 +352,11 @@ describe('mixTeamColor — what an overlap looks like', () => {
   };
   const [a0, b0] = ab(0, 3);
   const [a1, b1] = ab(1, 3);
+  const L0 = teamHeatLab(0, 3)[0];
 
   it('is the team colour where only one team is present', () => {
-    const mixed = mixTeamColor(a0 * 7, b0 * 7, 7);
+    // Its lightness too: the fourth sum carries it.
+    const mixed = mixTeamColor(a0 * 7, b0 * 7, 7, 1, L0 * 7);
     const want = teamHeatColor(0, 3);
     for (let i = 0; i < 3; i++) expect(mixed[i]).toBeCloseTo(want[i], 5);
   });
@@ -272,8 +365,8 @@ describe('mixTeamColor — what an overlap looks like', () => {
     // The reason hue is read from a *normalised* sum. Otherwise a busy spot and a
     // quiet spot belonging to the same team would be different colours, and the
     // colour would drift as the accumulation filled in.
-    const light = mixTeamColor(a0, b0, 1);
-    const heavy = mixTeamColor(a0 * 900, b0 * 900, 900);
+    const light = mixTeamColor(a0, b0, 1, 1, L0);
+    const heavy = mixTeamColor(a0 * 900, b0 * 900, 900, 1, L0 * 900);
     for (let i = 0; i < 3; i++) expect(heavy[i]).toBeCloseTo(light[i], 6);
   });
 
@@ -299,7 +392,7 @@ describe('mixTeamColor — what an overlap looks like', () => {
     // the pairs cancel on the colour plane rather than after a curve — the two
     // earlier attempts at this mixed in sRGB and in linear RGB and left a cast of
     // 0.044 and 0.096 respectively.
-    const [p, q] = [ab(0, 2), ab(1, 2)];
+    const [p, q] = [ab(0, 10), ab(5, 10)];
     for (const boost of [1, 2, 6]) {
       const mixed = mixTeamColor(p[0] + q[0], p[1] + q[1], 2, boost);
       expect(Math.max(...mixed) - Math.min(...mixed)).toBeLessThan(1e-6);

@@ -1,9 +1,25 @@
 import { CURVE_U0, CURVE_U1 } from '../../state/curve';
-import { TEAM_CHROMA, TEAM_LIGHTNESS } from '../colors';
+import { TEAM_CHROMA, TEAM_LIGHTNESS, teamPaletteLab } from '../colors';
 import { FILTER_MASK_CAPACITY } from '../types';
 import { volumeWgsl } from '../../volumes/gpu';
 import { SEE_THROUGH_BELOW } from '../figureShaders';
 import { WEDGE_DISC_PX, WEDGE_FULL_PX, WEDGE_TIGHT_MAX } from '../direction';
+
+/**
+ * The team palettes (render/colors.ts TEAM_PALETTES) in Oklab, end to end,
+ * with where each starts and how long it is; the heat pass indexes them by the
+ * palette in dirCfg2.w.
+ */
+const TEAM_PALETTE_WGSL = (() => {
+  const { lab, starts, lengths } = teamPaletteLab();
+  const f = (v: number) => v.toFixed(6);
+  return [
+    `const TEAM_PAL_COUNT : u32 = ${starts.length}u;`,
+    `var<private> TEAM_PAL : array<vec3<f32>, ${lab.length}> = array<vec3<f32>, ${lab.length}>(${lab.map((c) => `vec3<f32>(${c.map(f).join(', ')})`).join(', ')});`,
+    `var<private> TEAM_PAL_START : array<u32, ${starts.length}> = array<u32, ${starts.length}>(${starts.map((v) => `${v}u`).join(', ')});`,
+    `var<private> TEAM_PAL_LEN : array<u32, ${lengths.length}> = array<u32, ${lengths.length}>(${lengths.map((v) => `${v}u`).join(', ')});`,
+  ].join('\n');
+})();
 
 /**
  * WGSL sources for the WebGPU backend.
@@ -237,6 +253,7 @@ struct HeatUniforms {
 };
 
 @group(0) @binding(0) var<uniform> u : HeatUniforms;
+${TEAM_PALETTE_WGSL}
 // One bearing byte a row, four to a word; 255 is "no direction".
 @group(0) @binding(16) var<storage, read> dirs : array<u32>;
 // The user's volumes, as a filter: see volumes/gpu.ts. A uniform block of its
@@ -377,7 +394,7 @@ struct VsOut {
    * sprite — all six of its vertices produce the same value — so the interpolation
    * is free.
    */
-  @location(5) teamAB : vec2<f32>,
+  @location(5) teamAB : vec3<f32>,
   /**
    * The row's direction on screen: xy a unit vector in pixels, z how far the
    * sprite is a wedge rather than a disc, w 1 when the row has a direction.
@@ -500,8 +517,15 @@ fn vsHeat(@builtin(vertex_index) vid : u32) -> VsOut {
   //
   // Indexed by the raw group id over the total group count, so hiding a group
   // leaves every other group's colour exactly where it was.
-  var teamAB = vec2<f32>(0.0, 0.0);
-  if ((flags & ${FLAG_TEAM_COLORS}u) != 0u && f32(team) != u.teamCfg.x) {
+  //
+  // While the groups fit in the team palette (render/colors.ts TEAM_PALETTES,
+  // which one in dirCfg2.w) each takes its own colour, lightness and all, in z.
+  var teamAB = vec3<f32>(0.0, 0.0, ${TEAM_LIGHTNESS});
+  let palette = min(u32(max(0.0, u.dirCfg2.w)), TEAM_PAL_COUNT - 1u);
+  if ((flags & ${FLAG_TEAM_COLORS}u) != 0u && f32(team) != u.teamCfg.x && max(1u, u32(u.aabbSize.w)) <= TEAM_PAL_LEN[palette]) {
+    let c = TEAM_PAL[TEAM_PAL_START[palette] + team % max(1u, u32(u.aabbSize.w))];
+    teamAB = vec3<f32>(c.y, c.z, c.x);
+  } else if ((flags & ${FLAG_TEAM_COLORS}u) != 0u && f32(team) != u.teamCfg.x) {
     let groups = max(1u, u32(u.aabbSize.w));
     let n = max(1u, u32(u.teamCfg.y));
     var slice = team % groups;
@@ -514,7 +538,7 @@ fn vsHeat(@builtin(vertex_index) vid : u32) -> VsOut {
       slice = (reverse16(team) * n) >> 16u;
     }
     let hue = (f32(slice) + 0.5) / f32(n) * 6.28318530718;
-    teamAB = vec2<f32>(cos(hue), sin(hue)) * ${TEAM_CHROMA};
+    teamAB = vec3<f32>(vec2<f32>(cos(hue), sin(hue)) * ${TEAM_CHROMA}, ${TEAM_LIGHTNESS});
   }
   out.teamAB = teamAB;
 
@@ -726,7 +750,8 @@ fn fsHeat(in : VsOut) -> @location(0) vec4<f32> {
     let a = abs(v);
     return vec4<f32>(a, select(0.0, a, in.sign > 0.0), a * a / max(u.shape2.y, 1e-20), 0.0);
   }
-  return vec4<f32>(v, v * in.teamAB.x, v * in.teamAB.y, 0.0);
+  // And the group's lightness, weighted the same way, in A.
+  return vec4<f32>(v, v * in.teamAB.x, v * in.teamAB.y, v * in.teamAB.z);
 }
 `;
 
@@ -772,7 +797,7 @@ function lineHeatWgsl(): string {
   // rather than one interpolated ratio: the body is a trapezoid wherever its
   // ends are at different depths, and only the pixel offset and the width are
   // affine across it.
-  s = swapOnce(s, '  @location(5) teamAB : vec2<f32>,\n', '  @location(5) teamAB : vec2<f32>,\n  @location(6) width : f32,\n', 'varyings');
+  s = swapOnce(s, '  @location(5) teamAB : vec3<f32>,\n', '  @location(5) teamAB : vec3<f32>,\n  @location(6) width : f32,\n', 'varyings');
   s = swapOnce(s, '  let d = length(in.local);', '  let d = length(vec2<f32>(in.local.x, in.local.y / max(in.width, 1e-6)));', 'fragment distance');
   const tailFrom = s.indexOf('  var clip = u.viewProj * vec4<f32>(p, 1.0);');
   const tailTo = s.indexOf('@fragment');
@@ -1167,7 +1192,8 @@ fn fsComposite(in : FsOut) -> @location(0) vec4<f32> {
     // The frame gain cancels in the ratio, so it is left out of both sides.
     let w = max(abs(hv.r), 1e-6);
     let ab = vec2<f32>(hv.g, hv.b) / w * max(0.0, u.cfg4.z);
-    rgb = oklabToSrgb(${TEAM_LIGHTNESS}, ab.x, ab.y);
+    // The groups' mean lightness from A: a palette colour keeps its own.
+    rgb = oklabToSrgb(clamp(abs(hv.a) / w, 0.0, 1.0), ab.x, ab.y);
   }
   // Alpha still comes from the LUT even in team mode, which is the whole reason
   // the two axes were separated: transparent where there is nothing, opaque at

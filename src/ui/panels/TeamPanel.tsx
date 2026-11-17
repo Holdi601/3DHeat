@@ -8,6 +8,7 @@ import {
 } from '../../render/colors';
 import { heatModeFor } from '../../data/lines';
 import { useStore } from '../../state/store';
+import { TeamPalettePicker } from './HeatPanel';
 import { Check, Rich, Section, Slider } from '../controls';
 import { int, num, t } from '../../i18n';
 import { lengthText, useUnits } from '../../state/unitsStore';
@@ -135,6 +136,8 @@ export function TeamsList() {
   const negative = useStore((s) => s.negativeTeams);
   const setTeamSplit = useStore((s) => s.setTeamSplit);
   const split = useStore((s) => s.split);
+  // Read so the list is drawn again in another palette.
+  useStore((s) => s.heat.teamPaletteActive);
   const labels = dataset?.teamLabels;
   const indices = useMemo(() => (labels ?? []).map((_, i) => i), [labels]);
   const sort = useSort<number>(
@@ -157,18 +160,10 @@ export function TeamsList() {
   const teams = mode === 'heat-teams';
 
   /**
-   * Which palette the swatches show.
-   *
-   * Two exist and they are for different jobs. `teamBaseColor` draws from a fixed
-   * hand-picked set of nine, which is more readable at small counts and — the
-   * reason it is the default — does not change every group's colour when a tenth
-   * group appears. `teamHeatColor` divides the circle by the group count, which it
-   * must, because the whole premise of teams mode is that a mixture of two groups
-   * is the colour between them.
-   *
-   * In teams mode the list has to show the second, or it is a legend that
-   * disagrees with the picture beside it — which is worse than no legend, since it
-   * looks authoritative.
+   * Which colour the swatches show: the team palette's (render/colors.ts
+   * TEAM_PALETTES) everywhere, and in teams mode exactly what the heat draws -
+   * the palette while the groups fit in it, the hue circle past that - or it
+   * is a legend that disagrees with the picture beside it.
    */
   const swatchFor = (i: number) => {
     if (!teams) return teamBaseColor(i);
@@ -272,6 +267,8 @@ export function TeamsList() {
           );
         })}
       </div>
+      {/* In teams mode the heat panel offers it beside the legend. */}
+      {!teams && <TeamPalettePicker />}
     </Section>
   );
 }

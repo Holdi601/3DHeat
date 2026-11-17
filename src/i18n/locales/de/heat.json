@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Verstärkungen",
   "heat.filterPanel.siege.reinforceTitle": "Verstärkte Wände und Luken, beim Verteidiger, der dort stand (erschlossen)",
   "heat.timeline.seriesSession": "Sitzung {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "Pause · nächste Sitzung {date} UTC"
+  "heat.timeline.seriesBreak": "Pause · nächste Sitzung {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Runde: gewonnen gegen verloren",
+  "heat.splitPanel.wonVsLostMatch": "Match: gewonnen gegen verloren",
+  "heat.splitPanel.wonVsLostTitle": "{column}: Zeilen der Siegerseite auf +, der Verliererseite auf −, als Differenz",
+  "heat.heatPanel.palette": "Teamfarben",
+  "heat.heatPanel.paletteAuto": "Auto",
+  "heat.heatPanel.paletteSoft": "Sanft",
+  "heat.heatPanel.paletteStrong": "Kräftig",
+  "heat.heatPanel.paletteStrongAlt": "Kräftig, alt.",
+  "heat.heatPanel.paletteHint": "Die Farben der Teams überall: Heatmap, Figuren, Beschriftungen, Reichweitenhüllen, Legenden und Diagramme. Sanft ist der ruhige Pastell-Look; kräftig gibt jedem Team einen klar anderen Farbton, auch bei Farbenblindheit. Auto: sanft bei zwei Teams, kräftig ab drei."
 }

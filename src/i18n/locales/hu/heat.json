@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Megerősítések",
   "heat.filterPanel.siege.reinforceTitle": "Megerősített falak és csapóajtók, az ott álló védőnél (kikövetkeztetett)",
   "heat.timeline.seriesSession": "munkamenet {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "szünet · következő munkamenet {date} UTC"
+  "heat.timeline.seriesBreak": "szünet · következő munkamenet {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Kör: nyert kontra vesztett",
+  "heat.splitPanel.wonVsLostMatch": "Meccs: nyert kontra vesztett",
+  "heat.splitPanel.wonVsLostTitle": "{column}: a győztes oldal sorai a +, a vesztesé a − oldalon, különbségként",
+  "heat.heatPanel.palette": "Csapatszínek",
+  "heat.heatPanel.paletteAuto": "Auto",
+  "heat.heatPanel.paletteSoft": "Lágy",
+  "heat.heatPanel.paletteStrong": "Erős",
+  "heat.heatPanel.paletteStrongAlt": "Erős, alt.",
+  "heat.heatPanel.paletteHint": "A csapatok színei mindenhol: hőtérkép, figurák, feliratok, hatótáv-burkok, jelmagyarázatok és diagramok. A lágy a nyugodt pasztell megjelenés; az erős minden csapatnak jól eltérő árnyalatot ad, színtévesztőknek is. Auto: két csapatnál lágy, háromtól erős."
 }

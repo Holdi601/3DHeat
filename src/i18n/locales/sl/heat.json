@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Ojačitve",
   "heat.filterPanel.siege.reinforceTitle": "Ojačane stene in lopute, pri branilcu, ki je stal tam (izpeljano)",
   "heat.timeline.seriesSession": "seja {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "premor · naslednja seja {date} UTC"
+  "heat.timeline.seriesBreak": "premor · naslednja seja {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Krog: dobljeno proti izgubljeno",
+  "heat.splitPanel.wonVsLostMatch": "Tekma: dobljeno proti izgubljeno",
+  "heat.splitPanel.wonVsLostTitle": "{column}: vrstice zmagovalne strani na +, poražene na −, kot razlika",
+  "heat.heatPanel.palette": "Barve ekip",
+  "heat.heatPanel.paletteAuto": "Samodejno",
+  "heat.heatPanel.paletteSoft": "Mehka",
+  "heat.heatPanel.paletteStrong": "Močna",
+  "heat.heatPanel.paletteStrongAlt": "Močna, alt.",
+  "heat.heatPanel.paletteHint": "Barve ekip povsod: toplotni prikaz, figure, oznake, ovojnice dosega, legende in grafi. Mehka je miren pastelni videz; močna da vsaki ekipi jasno drugačen odtenek, tudi pri barvni slepoti. Samodejno: mehka za dve ekipi, močna od treh."
 }

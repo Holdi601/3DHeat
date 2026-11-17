@@ -20,7 +20,7 @@ import { WeaponLayer } from './weapons';
 import { FireLayer, type FirePose, type FireView } from '../figures/fires';
 import { FireBody, firesOf } from '../data/fires';
 import { HitMarkLayer, hitMarksStep, stepStats, type MarkPose, type MarkView } from '../figures/hitmarks';
-import { gpuTrackStoreSliced, keyTime, registeredGpuTrackStore, rowOfKey, trackFloats, TRACK_U32, type GpuTrackStore } from './gpuTracks/store';
+import { forgetGpuTrackStore, gpuTrackStoreSliced, keyTime, registeredGpuTrackStore, rowOfKey, trackFloats, TRACK_U32, type GpuTrackStore } from './gpuTracks/store';
 import { emptyPose, evaluateTrack, heldFor } from './gpuTracks/evaluate';
 import { levelIndexSets, onlyIndicesChanged, type LevelIndexUploader } from './levelIndices';
 import { isShown, rayNearTrack, trackVisibility, withHidden } from './gpuTracks/visibility';
@@ -609,6 +609,8 @@ export class Engine {
   private readonly followSample = emptySample();
   /** The GPU tracks the last frame placed its units from, for the follow camera. */
   private lastGpuStore: GpuTrackStore | null = null;
+  /** The team palette the units were coloured with (`render/colors.ts`). */
+  private paletteShown: string | null = null;
   /** Weapons, shots, hits and kills in box replay (render/weapons.ts). */
   private readonly weapons = new WeaponLayer();
   private readonly weaponTris = new VertexBuffer();
@@ -2448,6 +2450,18 @@ export class Engine {
       this.live.droppedRows = 0;
       this.invalidate(2);
       return;
+    }
+
+    // Another team palette: the colours baked into the units and the GPU
+    // tracks are made afresh; the heat reads it as a uniform every frame.
+    if (s.heat.teamPaletteActive !== this.paletteShown) {
+      const changed = this.paletteShown !== null;
+      this.paletteShown = s.heat.teamPaletteActive;
+      if (changed && this.dataset && s.dataset === this.dataset) {
+        this.cursor?.recolor();
+        forgetGpuTrackStore(this.dataset);
+        this.invalidate(2);
+      }
     }
 
     if (s.dataset !== this.dataset) {

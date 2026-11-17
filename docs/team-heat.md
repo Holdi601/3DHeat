@@ -41,6 +41,19 @@ The [Teams list](teams-list.md) shows each group's team-heat colour as its swatc
 
 ### The palette
 
+**Team colours** (under the swatches, and in the [Teams list](teams-list.md)) picks the palette, and it applies everywhere a team has a colour: team heat, figures, labels, range shells, legends and the Versus charts. It is remembered.
+
+| Choice | What it is |
+|---|---|
+| **Auto** (default) | **Soft** for up to two teams, **Strong** from three (groups that name no team do not count). |
+| **Soft** | The original look, described below: an even hue circle at one pastel lightness. Calm with two sides; with three or more the hues sit close together. |
+| **Strong** | Distinct hues in a fixed order: blue and red for two sides, then teal, plum, indigo, brown, pink, gold, olive. Lightness varies too, so the first six stay apart for colour-blind eyes (checked under protanopia and deuteranopia simulation). Past nine groups the heat uses the circle below. |
+| **Strong, alt.** | The same idea from orange and blue, then crimson, teal, violet, moss, lilac. |
+
+With a strong palette each group keeps its own lightness as well as its hue: the heat target's fourth channel carries it, so a place one team holds is drawn in exactly that team's colour and a mixture takes the mean lightness.
+
+The soft palette:
+
 From [`colors.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/colors.ts):
 
 - Colours live on the **Oklab** colour plane at a fixed lightness (0.7) and chroma (0.115), so every group is equally bright and a red group does not read as hotter than a blue one.

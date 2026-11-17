@@ -2,7 +2,9 @@ import { useMemo } from 'react';
 import { useStore } from '../../state/store';
 import { useReplayStore } from '../../state/replayStore';
 import { useMatchStore } from '../../state/matchStore';
-import type { AttributeColumn, Dataset } from '../../state/types';
+import type { AttributeColumn, Dataset, FilterSpec } from '../../state/types';
+import { outcomeKind } from '../../data/outcome';
+import { filterIsActive } from '../../render/filterTables';
 import { int, t } from '../../i18n';
 import { Check, Section } from '../controls';
 import { download, eventsCsv } from './stats';
@@ -40,6 +42,25 @@ export { eventWords };
  * the camera to where it happened. Filtered by kind and by unit, and to the
  * matches and round being played.
  */
+/** Row tests for the filters on outcome columns (`data/outcome.ts`) that restrict anything. */
+export function outcomeTests(d: Dataset, filters: readonly FilterSpec[]): ((row: number) => boolean)[] {
+  const out: ((row: number) => boolean)[] = [];
+  for (const f of filters) {
+    if (f.kind !== 'range' && f.kind !== 'categories') continue;
+    const a = d.attrs.find((x) => x.name === f.column);
+    if (!a || !outcomeKind(a) || !filterIsActive(d, f)) continue;
+    if (f.kind === 'range' && a.kind !== 'category') {
+      const v = a.data as Float32Array;
+      out.push((r) => v[r] >= f.min && v[r] <= f.max);
+    } else if (f.kind === 'categories' && a.kind === 'category') {
+      const ok = new Set(f.allowed);
+      const v = a.data as Uint32Array;
+      out.push((r) => ok.has(v[r]));
+    }
+  }
+  return out;
+}
+
 export function EventList() {
   const engine = useEngine();
   const dataset = useStore((s) => s.dataset);
@@ -79,6 +100,9 @@ export function EventList() {
     const matchFilter = filters.find((f) => f.kind === 'categories' && f.column.trim().toLowerCase() === 'match');
     const matchCol = matchFilter && matchFilter.kind === 'categories' ? dataset.attrs.find((a) => a.name === matchFilter.column) : undefined;
     const allowedMatch = matchFilter && matchFilter.kind === 'categories' ? new Set(matchFilter.allowed) : null;
+    // The outcome filters (round and match won or lost, how it ended) narrow
+    // the events as they narrow the heat: an event row is its side's.
+    const outcome = outcomeTests(dataset, filters);
     const kindSet = new Set(effective);
     const out: number[] = [];
     for (let i = 0; i < events.rows.length; i++) {
@@ -86,6 +110,7 @@ export function EventList() {
       if (!kindSet.has(events.labels[i])) continue;
       if (session >= 0 && dataset.sessionId && dataset.sessionId[row] !== session) continue;
       if (allowedMatch && matchCol && !allowedMatch.has((matchCol.data as Uint32Array)[row])) continue;
+      if (outcome.length && !outcome.every((ok) => ok(row))) continue;
       if (unitKey) {
         const p = events.persons[i];
         if (p < 0 || index.units[index.personUnit[p]]?.key !== unitKey) continue;

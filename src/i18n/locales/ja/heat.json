@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "補強",
   "heat.filterPanel.siege.reinforceTitle": "補強された壁とハッチ（そこに立っていた防衛側の位置、推定）",
   "heat.timeline.seriesSession": "セッション {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "休止 · 次のセッション {date} UTC"
+  "heat.timeline.seriesBreak": "休止 · 次のセッション {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "ラウンド: 勝ち対負け",
+  "heat.splitPanel.wonVsLostMatch": "試合: 勝ち対負け",
+  "heat.splitPanel.wonVsLostTitle": "{column}: 勝った側の行を＋、負けた側を−として差分表示",
+  "heat.heatPanel.palette": "チームカラー",
+  "heat.heatPanel.paletteAuto": "自動",
+  "heat.heatPanel.paletteSoft": "ソフト",
+  "heat.heatPanel.paletteStrong": "ストロング",
+  "heat.heatPanel.paletteStrongAlt": "ストロング（別案）",
+  "heat.heatPanel.paletteHint": "チームの色はどこでも共通: ヒート、フィギュア、ラベル、射程シェル、凡例、グラフ。ソフトは落ち着いたパステル調、ストロングは色覚多様性にも配慮してチームごとに明確に異なる色相を使います。自動: 2チームならソフト、3チーム以上ならストロング。"
 }

@@ -1,3 +1,4 @@
+import { WINNER } from './outcome';
 import {
   DEFAULT_AXIS_MAPPING,
   emptyColumnMapping,
@@ -148,6 +149,7 @@ const ROLE_COLUMNS = ['x', 'y', 'z', 'time', 'personId', 'teamId', 'sessionId', 
 
 const FACTOR_COLUMN = /^(state|active)_./i;
 const RESULT_COLUMN = /^(won|win|is.?win(ner)?|victory|round.?won|match.?won|round|round.?num(ber)?|round.?index|round.?no|round.?end.?reason|end.?reason|match.?end.?reason|round.?win.?reason|win.?reason)$/i;
+
 const LIST_FACTOR_COLUMN = /^(inventory|loadout|perks|buffs|debuffs|abilities|attachments|modules|modifications|upgrades)$/i;
 
 /**
@@ -159,7 +161,9 @@ const LIST_FACTOR_COLUMN = /^(inventory|loadout|perks|buffs|debuffs|abilities|at
  */
 export function factorColumns(columns: readonly string[], constant: readonly string[] = []): string[] {
   const skip = new Set(constant);
-  return columns.filter((c) => !skip.has(c) && (FACTOR_COLUMN.test(c) || RESULT_COLUMN.test(c.trim()) || LIST_FACTOR_COLUMN.test(c.trim())));
+  return columns.filter(
+    (c) => !skip.has(c) && (FACTOR_COLUMN.test(c) || RESULT_COLUMN.test(c.trim()) || WINNER.test(c.trim()) || LIST_FACTOR_COLUMN.test(c.trim())),
+  );
 }
 
 /** Lay a file's hints over a guessed mapping. Names that are not columns of the file are ignored. */
@@ -523,7 +527,8 @@ export function autoMap(input: AutoMapInput): ColumnMapping {
     used.add(person);
   }
 
-  const banned = new Set([...used, ...noise]);
+  // Who won is not who someone is: `winning_faction` would pass for a group.
+  const banned = new Set([...used, ...noise, ...columns.filter((c) => WINNER.test(c.trim()))]);
   let team =
     firstMatch(columns, TEAM_NAMES, banned) ?? firstMatch(columns, TEAM_FALLBACK_NAMES, banned);
   // A column called `team_id` that takes a different value on nearly every

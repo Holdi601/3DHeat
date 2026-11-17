@@ -777,5 +777,14 @@
   "heat.filterPanel.siege.reinforce": "Укрепления",
   "heat.filterPanel.siege.reinforceTitle": "Укреплённые стены и люки, у защитника, стоявшего там (выведено)",
   "heat.timeline.seriesSession": "сессия {n}/{of} · {date} UTC",
-  "heat.timeline.seriesBreak": "перерыв · следующая сессия {date} UTC"
+  "heat.timeline.seriesBreak": "перерыв · следующая сессия {date} UTC",
+  "heat.splitPanel.wonVsLostRound": "Раунд: выигранные против проигранных",
+  "heat.splitPanel.wonVsLostMatch": "Матч: выигранные против проигранных",
+  "heat.splitPanel.wonVsLostTitle": "{column}: строки победившей стороны на +, проигравшей на −, как разница",
+  "heat.heatPanel.palette": "Цвета команд",
+  "heat.heatPanel.paletteAuto": "Авто",
+  "heat.heatPanel.paletteSoft": "Мягкая",
+  "heat.heatPanel.paletteStrong": "Яркая",
+  "heat.heatPanel.paletteStrongAlt": "Яркая, альт.",
+  "heat.heatPanel.paletteHint": "Цвета команд везде: тепловая карта, фигуры, подписи, оболочки дальности, легенды и графики. Мягкая — спокойный пастельный вид; яркая даёт каждой команде явно другой оттенок, и при дальтонизме. Авто: мягкая для двух команд, яркая от трёх."
 }

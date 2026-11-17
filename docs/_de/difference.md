@@ -91,6 +91,8 @@ Ein Wert in beiden Bereichen zählt als +. Die Bereiche müssen die Spalte nicht
 
 **Differenz** / **Anteil von +** oben im Feld wählt, was gezeichnet wird. *Anteil von +* färbt jeden Ort nach dem Anteil der +-Seite an den Zeilen beider Seiten dort, verglichen mit diesem Anteil über alles Angezeigte: warm darüber, kalt darunter, nichts, wo er gleich ist, und nichts, wo ein Ort zu wenige Zeilen hat. Mit den gewonnenen Runden auf + und den verlorenen auf − ist es eine Siegquoten-Karte. **Rundensiegquote** und **Matchsiegquote** richten das mit einem Druck ein, wo die Daten [Ergebnisspalten](data-formats.md#outcome-columns) haben. Siehe [Siegquote](win-rate.md).
 
+**Runde: gewonnen gegen verloren** und **Match: gewonnen gegen verloren** richten dieselben Seiten als einfache Differenz ein: die Zeilen der Siegerseite auf **+**, die der Verliererseite auf **−**, sodass die Karte zeigt, wo Sieger mehr waren als Verlierer, statt eines Anteils. Die Ergebnisfilter (**Rundenergebnis**, **Matchergebnis**) grenzen jede andere Ansicht genauso ein, Ereignisse eingeschlossen.
+
 ## Farben {#colours}
 
 Der Abschnitt **Heatmap-Farben** zeigt in diesem Modus zwei Verlaufs-Editoren: **Positiv (additive Teams)** und **Negativ (subtraktive Teams)**, jeder mit eigenem Zurücksetzen-Knopf (*Auf durchsichtig → rot → gelb → weiß zurücksetzen*, *Auf durchsichtig → grün → blau → lila zurücksetzen*). Die Zusammensetzung nimmt den Absolutwert der Nettointensität durch [Sättigungspunkt und Antwort](colour-and-exposure.md), und wählt den negativen Verlauf, wo die Netto unter null liegt. Siehe [Farbe und Belichtung](colour-and-exposure.md#the-ramp-editor).
