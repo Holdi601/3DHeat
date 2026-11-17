@@ -11,18 +11,39 @@ No game data comes with it. Levels, maps and recordings are made on your own mac
 ## Quick start
 
 1. Install [Node.js](https://nodejs.org/) (LTS) and use a Chromium browser (Chrome or Edge) with hardware acceleration on; see [browser and GPU requirements](https://holdi601.github.io/3DHeat/#browser-and-gpu-requirements).
-2. Get the viewer and start it - the server keeps running in its window:
+2. Get the viewer and start it - the server keeps running in its window. On Windows, **Code -> Download ZIP** above, unpack it and double-click `start.bat`: it finds or offers to install Node.js, installs the dependencies, offers updates when there are any, and opens the browser at <http://127.0.0.1:5273>. Or, with Git:
    ```bash
-   git clone --recursive https://github.com/Holdi601/3DHeat.git
+   git clone https://github.com/Holdi601/3DHeat.git
    cd 3DHeat
    npm install
    npm run dev                  # open http://127.0.0.1:5273
    ```
-   On Windows, `start.bat` does this: it finds or installs Node.js, installs the dependencies, offers updates when there are any, and opens the browser.
 3. Make some made-up demo data: `node tools/demo-data.mjs` (in a second window). It lands in `tools/.shots/demo/`.
 4. In the viewer: **Background / level → 3D model…** and pick `demo-valley.glb`, then **Source → Files…** and pick `tanks.parquet` from the same folder (or drop it on the Source panel).
 
 The [demo data](https://holdi601.github.io/3DHeat/demo-data.html) page takes it from there.
+
+## Getting started with your own games
+
+The viewer only reads files; a small tool per game makes them from your own install, replays or recordings. Each tool's README starts with a **Quick start for new users**: what it needs, the one install line (Python 3.10 or later; no Git for the `pip` ones), the command and where its output goes. Then load the output in the viewer: a level (`.glb`) with **Background / level -> 3D model...**, a table or match (`.3dheat`, `.parquet`, `.csv`) with **Source -> Files...** (and the **Match** tab's **Load match files...** for scoreboards and rounds).
+
+| Game | Tool | Makes |
+|---|---|---|
+| Battlefield 6, 4, 1 | [3DHeat-Ext-Battlefield](https://github.com/Holdi601/3DHeat-Ext-Battlefield#quick-start-for-new-users) | levels |
+| Counter-Strike 2 | [3DHeat-CS2](https://github.com/Holdi601/3DHeat-CS2#quick-start-for-new-users) | matches from demos, maps |
+| War Thunder | [3DHeat-Ext-WarThunder](https://github.com/Holdi601/3DHeat-Ext-WarThunder#quick-start-for-new-users) | matches from replays, levels |
+| World of Tanks / World of Warships | [3DHeat-Ext-WoT](https://github.com/Holdi601/3DHeat-Ext-WoT#quick-start-for-new-users), [3DHeat-Ext-WoWs](https://github.com/Holdi601/3DHeat-Ext-WoWs#quick-start-for-new-users) | matches from replays |
+| Rainbow Six Siege | [3DHeat-Ext-R6](https://github.com/Holdi601/3DHeat-Ext-R6#quick-start-for-new-users), [3DHeat-Ext-R6-Maps](https://github.com/Holdi601/3DHeat-Ext-R6-Maps#quick-start-for-new-users) | matches from replays, maps |
+| Dota 2 | [3DHeat-Ext-DotaReplay](https://github.com/Holdi601/3DHeat-Ext-DotaReplay#quick-start-for-new-users), [3DHeat-Ext-Dota](https://github.com/Holdi601/3DHeat-Ext-Dota#quick-start-for-new-users) | matches from replays, the map |
+| Squad | [3DHeat-Ext-Squad](https://github.com/Holdi601/3DHeat-Ext-Squad#quick-start-for-new-users) | matches from server demos |
+| League of Legends, VALORANT | [3DHeat-Ext-Riot](https://github.com/Holdi601/3DHeat-Ext-Riot#quick-start-for-new-users) | match numbers from replays |
+| DCS World, IL-2 Great Battles | [3DHeat-Ext-DCS](https://github.com/Holdi601/3DHeat-Ext-DCS#quick-start-for-new-users), [3DHeat-Ext-IL2](https://github.com/Holdi601/3DHeat-Ext-IL2#quick-start-for-new-users) | terrains |
+| Arma Reforger | [3DHeat-Ext-Reforger](https://github.com/Holdi601/3DHeat-Ext-Reforger#quick-start-for-new-users) | worlds |
+| Forza, BeamNG.drive, Assetto Corsa Rally | [3DHeat-GameCapture](https://github.com/Holdi601/3DHeat-GameCapture#quick-start-for-new-users) records laps; [3DHeat-Ext-Forza](https://github.com/Holdi601/3DHeat-Ext-Forza#quick-start-for-new-users), [3DHeat-Ext-BeamNG](https://github.com/Holdi601/3DHeat-Ext-BeamNG#quick-start-for-new-users), [3DHeat-Ext-ACRally](https://github.com/Holdi601/3DHeat-Ext-ACRally#quick-start-for-new-users) build the course round them | laps, courses |
+| Many games, in the background | [3DHeat-Watcher](https://github.com/Holdi601/3DHeat-Watcher#quick-start-for-new-users) | sessions from telemetry, logs and replays |
+| Unreal and other engines | [3DHeat-UnrealExporter](https://github.com/Holdi601/3DHeat-UnrealExporter#quick-start-for-new-users), [3DHeat-GameFiles](https://github.com/Holdi601/3DHeat-GameFiles#quick-start-for-new-users) | levels |
+
+Every tool says when a newer release is out and offers to update itself.
 
 ## Features
 
