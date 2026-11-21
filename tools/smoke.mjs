@@ -297,6 +297,44 @@ await step('the start screen leads with Open files, and no developer tool shows'
   return `"${label}", developer tools hidden`;
 });
 
+await step('the top row of the side panel fits, nothing clipped, at 1024 and 800 px', async () => {
+  // The search was once cut off at the side panel's width. The row answers to
+  // its own width (shell.css, "brand"); the narrower panels are forced through
+  // --sidebar-w so every stage of it (words, key, overflow menu, mark) is seen.
+  const overflows = () =>
+    page.evaluate(() => {
+      const row = document.querySelector('.sidebar > .brand');
+      if (!row) return ['no top row'];
+      const box = row.getBoundingClientRect();
+      const bad = [];
+      if (row.scrollWidth > row.clientWidth + 1) bad.push(`the row scrolls (${row.scrollWidth} > ${row.clientWidth})`);
+      if (document.documentElement.scrollWidth > innerWidth + 1) bad.push('the page scrolls sideways');
+      for (const el of [row, ...row.querySelectorAll('*')]) {
+        const r = el.getBoundingClientRect();
+        if (!r.width || !r.height) continue;
+        const name = `${el.tagName.toLowerCase()}${el.className && typeof el.className === 'string' ? '.' + el.className.trim().split(/\s+/).join('.') : ''}`;
+        if (r.left < box.left - 0.5 || r.right > box.right + 0.5 || r.left < -0.5 || r.right > innerWidth + 0.5) bad.push(`${name} outside (${Math.round(r.left)}..${Math.round(r.right)})`);
+        if (el !== row && getComputedStyle(el).overflow !== 'visible' && el.scrollWidth > el.clientWidth + 1) bad.push(`${name} cut (${el.scrollWidth} > ${el.clientWidth})`);
+      }
+      return bad;
+    });
+  const failures = [];
+  for (const width of [1024, 800]) {
+    await page.setViewportSize({ width, height: 800 });
+    for (const panel of [null, 420, 290, 250, 200]) {
+      await page.evaluate((w) => (w ? document.documentElement.style.setProperty('--sidebar-w', `${w}px`) : document.documentElement.style.removeProperty('--sidebar-w')), panel);
+      await page.waitForTimeout(150);
+      for (const b of await overflows()) failures.push(`${width}px${panel ? `, panel ${panel}px` : ''}: ${b}`);
+    }
+  }
+  const search = await page.locator('.sidebar > .brand .search-btn').isVisible();
+  await page.evaluate(() => document.documentElement.style.removeProperty('--sidebar-w'));
+  await page.setViewportSize({ width: 1280, height: 800 });
+  if (failures.length) throw new Error(failures.slice(0, 4).join('; '));
+  if (!search) throw new Error('the search button is gone');
+  return 'every stage fits';
+});
+
 // ------------------------------------------------------------- synthetic data
 
 await step('synthetic dataset loads', async () => {

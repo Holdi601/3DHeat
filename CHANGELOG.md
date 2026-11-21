@@ -25,6 +25,7 @@ What changed for people who use the viewer, newest first. The format follows [Ke
 - Recordings far apart in time start together.
 
 ### Fixed
+- The search at the top of the side panel is no longer cut off: the top row fits its width, the search drops its words, then its key, and on a narrow panel session and help fold into a "More" menu.
 - Figures in the many-match overlay are drawn at the detail of the size they appear at, no longer as slabs.
 - Value totals are spaced and grouped.
 - A thrown object's flight is no longer counted as its thrower's position.

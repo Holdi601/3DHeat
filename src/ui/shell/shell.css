@@ -4,11 +4,32 @@
 
 .sidebar > .brand {
   flex: none;
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 12px 12px 10px 16px;
+  border-bottom: 1px solid var(--line-soft);
+  /* The row answers to its own width, not the window's: the side panel keeps its width on any window. */
+  container: shell-header / inline-size;
+}
+
+/*
+ * The logo slot. A wide row shows `.shell-brand-full` (the name, or a
+ * horizontal lockup up to about 115px wide), a narrow one `.shell-brand-mark`
+ * (the square mark) instead.
+ */
+.shell-brand {
+  flex: none;
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 12px 12px 10px 16px;
-  border-bottom: 1px solid var(--line-soft);
+}
+
+.shell-brand-mark {
+  display: none;
 }
 
 .brand-mark {
@@ -33,9 +54,11 @@
 
 .search-btn {
   flex: 1;
-  min-width: 0;
+  /* Never narrower than its icon: the row's breakpoints below keep that much room. */
+  min-width: 30px;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   padding: 5px 6px 5px 8px;
   color: var(--text-faint);
@@ -55,8 +78,38 @@
   flex: 1;
   min-width: 0;
   text-align: left;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/*
+ * The search answers to the room it is given (it takes what the row leaves):
+ * the words go first, then the key, leaving the icon alone - still the
+ * Ctrl+K button, its name in the title and aria-label.
+ */
+.sidebar > .brand > .search-btn {
+  container: shell-search / inline-size;
+}
+
+.search-btn > kbd {
+  margin-left: auto;
+}
+
+@container shell-search (max-width: 119px) {
+  .search-btn .search-text {
+    display: none;
+  }
+}
+
+@container shell-search (max-width: 63px) {
+  .search-btn > kbd {
+    display: none;
+  }
+
+  .search-btn > .icon-svg {
+    margin: 0 auto;
+  }
 }
 
 kbd {
@@ -100,6 +153,120 @@ button.icon-btn.on {
   height: 28px;
   padding: 0;
   border-radius: var(--r-md);
+}
+
+/* The overflow menu: session and help, when the row has no room for them. */
+.shell-overflow {
+  display: none;
+}
+
+.shell-overflow > button {
+  position: relative;
+}
+
+.shell-overflow-dot {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  width: 7px;
+  height: 7px;
+  border-radius: var(--r-pill);
+  background: var(--warm);
+  box-shadow: 0 0 0 2px var(--panel);
+}
+
+.shell-overflow-dot.joined {
+  background: var(--good);
+}
+
+.shell-overflow-dot.connecting,
+.shell-overflow-dot.reconnecting,
+.shell-overflow-dot.waiting {
+  background: var(--warn);
+}
+
+.shell-overflow-dot.closed {
+  background: var(--bad);
+}
+
+/* Under the row, inside the side panel (which clips sideways). */
+.shell-overflow-menu {
+  position: absolute;
+  top: calc(100% - 4px);
+  right: 12px;
+  z-index: var(--z-popover);
+  width: max-content;
+  max-width: calc(100% - 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px;
+  background: var(--panel);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-3);
+  animation: pop-in var(--motion-fast) var(--motion-ease);
+}
+
+.shell-overflow-menu > button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  text-align: left;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  color: var(--text-dim);
+  background: transparent;
+  border-color: transparent;
+}
+
+.shell-overflow-menu > button:hover:not(:disabled),
+.shell-overflow-menu > button.on {
+  color: var(--text);
+}
+
+.shell-overflow-menu > button > span:first-of-type {
+  flex: 1;
+  min-width: 0;
+}
+
+.shell-overflow-count {
+  min-width: 15px;
+  padding: 0 3px;
+  border-radius: var(--r-pill);
+  background: var(--warm);
+  color: #fff;
+  font-size: var(--fs-xs);
+  line-height: 15px;
+  text-align: center;
+}
+
+/*
+ * The row's own breakpoints, on its content width (297px in the 336px side
+ * panel, where the search shows its icon and key). Under 260px session and
+ * help fold into the overflow menu; under 220px the name gives way to the
+ * mark. Narrower still (no real panel is), the row wraps rather than clip.
+ */
+@container shell-header (max-width: 259px) {
+  .sidebar > .brand > .session-btn,
+  .sidebar > .brand > .help-button {
+    display: none;
+  }
+
+  .shell-overflow {
+    display: block;
+  }
+}
+
+@container shell-header (max-width: 219px) {
+  .shell-brand-full {
+    display: none;
+  }
+
+  .shell-brand-mark {
+    display: block;
+  }
 }
 
 /* -------------------------------------------------------------- workspaces */

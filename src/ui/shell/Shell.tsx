@@ -1,5 +1,5 @@
 /**
- * The side panel's frame: the brand row (search, help, settings), the
+ * The side panel's frame: the brand row (search, session, help, settings), the
  * workspace bar, and on the long workspaces the task bar that shows one group
  * of sections at a time - Load, Explore, Compare, Present - with the rarely
  * used ones folded under "More" in each group. Every section stays in the
@@ -7,8 +7,10 @@
  * the command palette can reach all of them.
  */
 
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { t, useLang } from '../../i18n';
+import { useSessionStore } from '../../session/store';
+import { useHelpStore } from '../../state/helpStore';
 import { useRaceStore } from '../../state/raceStore';
 import { HelpButton } from '../help/HelpPanel';
 import { LanguagePicker } from '../LanguagePicker';
@@ -51,14 +53,23 @@ export function workspaceLabel(w: Workspace): string {
   return t(WORKSPACE_LABEL[w]);
 }
 
-/** The top of the side panel: the name, the command search, help and settings. */
+/**
+ * The top of the side panel: the name, the command search, session, help and
+ * settings. It fits any width by CSS alone (shell.css, "brand"): the search
+ * drops its words, then its key, and on a narrow row session and help fold
+ * into the overflow menu and the name shrinks to its mark. Both forms are
+ * always in the page; only CSS picks one, so nothing re-renders on a resize.
+ */
 export function Brand() {
   useLang();
   const setPalette = useShell((s) => s.setPalette);
   return (
     <div className="brand">
-      <div className="brand-mark" aria-hidden="true" />
-      <h1>3DHeat</h1>
+      {/* The logo slot: `.shell-brand-full` shows on a wide row, `.shell-brand-mark` on a narrow one. */}
+      <div className="shell-brand">
+        <div className="brand-mark" aria-hidden="true" />
+        <h1 className="shell-brand-full">3DHeat</h1>
+      </div>
       <button type="button" className="search-btn" data-usage="panel:palette" onClick={() => setPalette(true)} title={t('shell.palette.title')} aria-label={t('shell.palette.title')}>
         <Icon name="search" size={14} />
         <span className="search-text">{t('shell.palette.button')}</span>
@@ -66,7 +77,81 @@ export function Brand() {
       </button>
       <SessionButton />
       <HelpButton />
+      <HeaderOverflow />
       <SettingsMenu />
+    </div>
+  );
+}
+
+/** Session and help, folded behind "More" when the top row has no room for them (shown by CSS only then). */
+function HeaderOverflow() {
+  useLang();
+  const [open, setOpen] = useState(false);
+  const state = useSessionStore((s) => s.state);
+  const panel = useSessionStore((s) => s.panel);
+  const asks = useSessionStore((s) => s.waiting.length + s.looks.length);
+  const help = useHelpStore((s) => s.on);
+  const box = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const close = (e: PointerEvent) => {
+      if (box.current && !box.current.contains(e.target as Node)) setOpen(false);
+    };
+    const key = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    window.addEventListener('pointerdown', close);
+    window.addEventListener('keydown', key);
+    return () => {
+      window.removeEventListener('pointerdown', close);
+      window.removeEventListener('keydown', key);
+    };
+  }, [open]);
+  return (
+    <div className="shell-overflow" ref={box}>
+      <button
+        type="button"
+        className={`ghost icon-btn${open ? ' on' : ''}`}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        data-usage="panel:overflow"
+        aria-label={t('shell.more.more')}
+        title={t('shell.more.more')}
+        onClick={() => setOpen(!open)}
+      >
+        <Icon name="more" />
+        {(state !== 'off' || asks > 0) && <span className={`shell-overflow-dot ${state}`} aria-hidden="true" />}
+      </button>
+      {open && (
+        <div className="shell-overflow-menu" role="menu">
+          <button
+            type="button"
+            role="menuitem"
+            className={panel ? 'on' : ''}
+            onClick={() => {
+              useSessionStore.getState().setPanel(!panel);
+              setOpen(false);
+            }}
+          >
+            <Icon name="people" size={14} />
+            <span>{`${t('session.title')}: ${t(`session.state.${state}`)}`}</span>
+            {asks > 0 && <span className="shell-overflow-count">{asks}</span>}
+          </button>
+          <button
+            type="button"
+            role="menuitemcheckbox"
+            aria-checked={help}
+            className={help ? 'on' : ''}
+            onClick={() => {
+              useHelpStore.getState().toggle();
+              setOpen(false);
+            }}
+          >
+            <Icon name="help" size={14} />
+            <span>{t('help.toggle')}</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
