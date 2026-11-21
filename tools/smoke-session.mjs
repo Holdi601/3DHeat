@@ -15,7 +15,7 @@
  *
  * Needs the dev server (APP, default http://127.0.0.1:5275/) and the server
  * binary (HEAT3D_SERVE_BIN, default the release build in
- * E:/cargo-targets/3dheat-session). Software GL: a correctness test, not a
+ * E:/cargo-targets/3dheat, the native workspace's). Software GL: a correctness test, not a
  * performance one (that is tools/probe-session-perf.mjs).
  */
 import { chromium } from 'playwright';
@@ -28,8 +28,8 @@ import { join as joinPath } from 'node:path';
 
 const N = Math.max(2, Math.min(20, Number(process.argv[2] ?? process.env.CLIENTS ?? 6)));
 const APP = process.env.APP ?? 'http://127.0.0.1:5275/';
-const BIN = process.env.HEAT3D_SERVE_BIN ?? ['E:/cargo-targets/3dheat-session/release/3dheat.exe', 'E:/cargo-targets/3dheat-session/debug/3dheat.exe'].find(existsSync);
-if (!BIN) throw new Error('no 3dheat binary: build native/crates/session or set HEAT3D_SERVE_BIN');
+const BIN = process.env.HEAT3D_SERVE_BIN ?? ['E:/cargo-targets/3dheat/release/3dheat.exe', 'E:/cargo-targets/3dheat/debug/3dheat.exe'].find(existsSync);
+if (!BIN) throw new Error('no 3dheat binary: cargo build -p heat3d-server in native/, or set HEAT3D_SERVE_BIN');
 const PORT = 7900 + Math.floor(Math.random() * 90);
 const SERVER = `http://127.0.0.1:${PORT}`;
 const TOKEN = randomBytes(32).toString('hex');

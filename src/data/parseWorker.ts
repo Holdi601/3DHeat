@@ -4,6 +4,7 @@ import type { IngestProgress } from './ingest';
 import { parseHere } from './ingestFiles';
 import { errorMsg, type Msg } from './msg';
 import type { ColumnMapping } from '../state/types';
+import { nativeParseFile, type NativeLoad } from './native/readers';
 
 /**
  * One parser thread: reads one file at a time into a block for the ingest
@@ -20,6 +21,8 @@ export interface ParseRequest {
   mapping: ColumnMapping;
   columns: string[];
   stride: number;
+  /** In the native app: the core, and this file's name there (`data/native`). */
+  native?: NativeLoad;
 }
 
 export type ParseResponse =
@@ -30,11 +33,12 @@ export type ParseResponse =
 const ctx = self as unknown as DedicatedWorkerGlobalScope;
 
 ctx.onmessage = async (ev: MessageEvent<ParseRequest>) => {
-  const { id, file, mapping, columns, stride } = ev.data;
+  const { id, file, mapping, columns, stride, native } = ev.data;
+  const parse = native ? nativeParseFile(native, [file], parseHere) : parseHere;
   const post = (r: ParseResponse, transfer?: Transferable[]) =>
     transfer ? ctx.postMessage(r, transfer) : ctx.postMessage(r);
   try {
-    const block = await parseHere(file, mapping, columns, stride, (progress) =>
+    const block = await parse(file, mapping, columns, stride, (progress) =>
       post({ id, kind: 'progress', progress }),
     );
     post({ id, kind: 'block', block }, blockBuffers(block));

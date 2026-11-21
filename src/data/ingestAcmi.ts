@@ -31,9 +31,16 @@ export async function previewAcmi(file: File): Promise<TablePreview> {
 }
 
 /** A recording as a block, by the mapping the user confirmed (the recording's own, unless changed). */
-export async function ingestAcmi(file: File, mapping: ColumnMapping, onProgress: (p: IngestProgress) => void, stride = 1): Promise<SourceBlock> {
+export async function ingestAcmi(
+  file: File,
+  mapping: ColumnMapping,
+  onProgress: (p: IngestProgress) => void,
+  stride = 1,
+  /** Where the recording is parsed, when not here: the native app's core (`data/native`). */
+  parse?: () => Promise<AcmiTable>,
+): Promise<SourceBlock> {
   onProgress(progress(msg('data.ingestParquet.reading', { file: file.name }), 0, 0));
-  const t = await acmiTableOf(file);
+  const t = parse ? await parse() : await acmiTableOf(file);
   return tableToBlock(t, file, mapping, onProgress, stride, {
     // The recording's place on the earth, as long as the positions are the
     // projected ones: a load that maps the game's own U and V, or any other

@@ -1,0 +1,6 @@
+# TypeScript types of the protocol, for the viewer: `npm run proto` in native/.
+version: v2
+plugins:
+  - local: protoc-gen-es
+    out: ../src/data/native/gen
+    opt: target=ts,import_extension=none

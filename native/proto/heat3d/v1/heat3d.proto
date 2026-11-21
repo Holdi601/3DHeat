@@ -1,0 +1,434 @@
+// The 3DHeat protocol: how a viewer talks to a 3DHeat core.
+//
+// One schema for every transport. Today the native app's own window talks to its
+// Rust core over Tauri IPC (a custom protocol carrying these messages); later a
+// browser client talks to a host the same way over WSS. Types are generated from
+// this file on both sides (prost in Rust, protobuf-es in TypeScript), never
+// written by hand.
+//
+// Framing: a frame is a little-endian u32 length, an `Envelope` of that length,
+// zero padding to the next multiple of 8, then the envelope's raw payload. Bulk
+// data (columns, chunks) never goes through protobuf fields: an envelope names its
+// payload's buffers (`Buffer`), which are byte ranges of the payload, 8-byte
+// aligned, little-endian.
+//
+// Compatibility: fields are only ever added. A reader ignores fields and `oneof`
+// cases it does not know, and answers a request it does not know with an `Error`
+// of code UNSUPPORTED. `protocol` is the major version; it changes only when a
+// change cannot be made by adding.
+
+syntax = "proto3";
+
+package heat3d.v1;
+
+message Envelope {
+  // The protocol major version the sender speaks: PROTOCOL_VERSION.
+  uint32 protocol = 1;
+  // Chosen by the sender of a request, unique among its requests in flight.
+  uint64 id = 2;
+  // On a reply or a progress report: the id of the request it answers.
+  uint64 reply_to = 3;
+  // The session the message belongs to. Empty between a window and its own core;
+  // Stage 2b's multiplayer sessions set it.
+  string session = 4;
+
+  oneof body {
+    Hello hello = 10;
+    HelloReply hello_reply = 11;
+    Error error = 12;
+    Progress progress = 13;
+    Cancel cancel = 14;
+
+    OpenDataset open_dataset = 20;
+    DatasetInfo dataset_info = 21;
+    CloseDataset close_dataset = 22;
+    Closed closed = 23;
+
+    ReadColumns read_columns = 30;
+    Columns columns = 31;
+    ReadTable read_table = 32;
+    Table table = 33;
+    ScanCsv scan_csv = 34;
+    CsvColumns csv_columns = 35;
+
+    BuildChunks build_chunks = 40;
+    ChunkSet chunk_set = 41;
+    ReadChunk read_chunk = 42;
+    ChunkData chunk_data = 43;
+
+    Query query = 50;
+    QueryReply query_reply = 51;
+
+    Echo echo = 60;
+  }
+
+  // Field numbers 100-199 of the body are kept for Stage 2b: sessions, members
+  // and roles, presence, follow, "look here" and the shared layers' op-log.
+  reserved 100 to 199;
+}
+
+enum ProtocolVersion {
+  PROTOCOL_VERSION_UNSPECIFIED = 0;
+  PROTOCOL_VERSION_CURRENT = 1;
+}
+
+message Hello {
+  // Who is asking: "3dheat-web 0.1.0", say.
+  string client = 1;
+}
+
+message HelloReply {
+  string core = 1;
+  string core_version = 2;
+  // Threads the core reads with, and the machine's memory in bytes.
+  uint32 threads = 3;
+  uint64 memory_bytes = 4;
+  // What the core reads: "parquet", "csv", "acmi", "3dheat".
+  repeated string formats = 5;
+  // Requests answered since the core started, by kind ("read_columns": 12).
+  map<string, uint64> served = 6;
+}
+
+enum ErrorCode {
+  ERROR_CODE_UNSPECIFIED = 0;
+  // The request is valid, but this core does not do it (an unknown request, a
+  // Parquet type it does not decode): the client reads the file itself.
+  ERROR_CODE_UNSUPPORTED = 1;
+  ERROR_CODE_NOT_FOUND = 2;
+  ERROR_CODE_INVALID = 3;
+  ERROR_CODE_IO = 4;
+  ERROR_CODE_CANCELLED = 5;
+  ERROR_CODE_INTERNAL = 6;
+  ERROR_CODE_NO_MEMORY = 7;
+}
+
+message Error {
+  ErrorCode code = 1;
+  string message = 2;
+}
+
+message Progress {
+  // A message key of the web app (`data.ingest.parsing`), so the viewer says it in its language.
+  string key = 1;
+  map<string, string> params = 2;
+  // 0..1, or negative when unknown.
+  double fraction = 3;
+  uint64 rows = 4;
+}
+
+message Cancel {
+  uint64 request = 1;
+}
+
+message Echo {
+  // Asks for a reply of this many payload bytes: for measuring the transport.
+  uint64 payload_bytes = 1;
+}
+
+// ---------------------------------------------------------------- files
+
+// A file the core can read.
+message FileRef {
+  oneof source {
+    // A path on the core's machine.
+    string path = 1;
+    // A file the viewer's window handed to the core (a picked or dropped file),
+    // by the token the core gave it.
+    string token = 2;
+  }
+  // A member of a `.3dheat` container, by its name in the container: the file is then the container.
+  string member = 3;
+}
+
+enum Format {
+  FORMAT_UNSPECIFIED = 0;
+  FORMAT_PARQUET = 1;
+  FORMAT_CSV = 2;
+  FORMAT_ACMI = 3;
+  FORMAT_CONTAINER = 4;
+}
+
+message OpenDataset {
+  repeated FileRef files = 1;
+}
+
+message DatasetInfo {
+  // Names the dataset in the requests that follow, until it is closed.
+  uint64 handle = 1;
+  repeated FileInfo files = 2;
+}
+
+message FileInfo {
+  string name = 1;
+  Format format = 2;
+  uint64 bytes = 3;
+  // Exact for Parquet (the footer) and a read ACMI; an estimate otherwise.
+  uint64 rows = 4;
+  bool rows_exact = 5;
+  repeated ColumnInfo columns = 6;
+  uint32 row_groups = 7;
+  // The Parquet footer's `heat3d` entry, as written (the file's reading instructions).
+  string hints_json = 8;
+  // For a container: its manifest, as written, and its members.
+  string manifest_json = 9;
+  repeated ContainerMember members = 10;
+}
+
+message ColumnInfo {
+  string name = 1;
+  // Parquet physical type ("DOUBLE", "INT64", "BYTE_ARRAY", ...).
+  string physical = 2;
+  // Logical or converted type ("TIMESTAMP", "STRING", "DATE", ...), empty when none.
+  string logical = 3;
+  // Stored as text (or bytes) rather than as a number.
+  bool text = 4;
+  // A point in time: TIMESTAMP or DATE.
+  bool timestamp = 5;
+}
+
+message ContainerMember {
+  string name = 1;
+  string role = 2;
+  // 0 stored, 8 deflate.
+  uint32 method = 3;
+  uint64 compressed_bytes = 4;
+  uint64 bytes = 5;
+  // Where the member's data starts in the container.
+  uint64 data_offset = 6;
+}
+
+message CloseDataset {
+  uint64 handle = 1;
+}
+
+message Closed {}
+
+// ---------------------------------------------------------------- columns
+
+enum ColumnKind {
+  COLUMN_KIND_UNSPECIFIED = 0;
+  // float32 per row; NaN where null or unreadable.
+  COLUMN_KIND_F32 = 1;
+  // float64 per row, for absolute times.
+  COLUMN_KIND_F64 = 2;
+  // Text: u32 ids per row into `labels`, interned in order of first appearance.
+  COLUMN_KIND_DICT = 3;
+}
+
+message ColumnSpec {
+  string name = 1;
+  ColumnKind kind = 2;
+}
+
+// The load plan's pre-filter (`src/data/rowFilter.ts`).
+message RowFilterClause {
+  string column = 1;
+  oneof test {
+    SetTest set = 2;
+    RangeTest range = 3;
+  }
+}
+
+message SetTest {
+  repeated string values = 1;
+}
+
+message RangeTest {
+  optional double min = 1;
+  optional double max = 2;
+}
+
+// Reads columns of one Parquet file (or a container's table), the row filter
+// applied first. Rows come back in file order: the k-th kept row is at index k
+// of every column.
+message ReadColumns {
+  FileRef file = 1;
+  repeated ColumnSpec columns = 2;
+  repeated RowFilterClause filter = 3;
+  // Also send, per kept row, its row in the file (u32): for columns read later.
+  bool kept_rows = 4;
+}
+
+message Columns {
+  uint64 rows_total = 1;
+  uint64 rows = 2;
+  FilterStats filtered = 3;
+  repeated ColumnData columns = 4;
+  // When asked for: the file row of each kept row, u32.
+  Buffer kept_rows = 5;
+  Timing timing = 6;
+}
+
+message FilterStats {
+  uint64 rows = 1;
+  uint64 kept = 2;
+  uint64 rows_skipped = 3;
+  uint64 groups = 4;
+  uint64 groups_skipped = 5;
+}
+
+message ColumnData {
+  string name = 1;
+  ColumnKind kind = 2;
+  Buffer values = 3;
+  repeated string labels = 4;
+}
+
+// A byte range of the frame's payload.
+message Buffer {
+  uint64 offset = 1;
+  uint64 length = 2;
+}
+
+message Timing {
+  double read_ms = 1;
+  double filter_ms = 2;
+  double sort_ms = 3;
+  double pack_ms = 4;
+  double total_ms = 5;
+  uint32 threads = 6;
+}
+
+// A whole table, read and parsed by the core: an ACMI recording.
+message ReadTable {
+  FileRef file = 1;
+}
+
+message Table {
+  uint64 rows = 1;
+  // Numbers as F64, text as DICT.
+  repeated ColumnData columns = 2;
+  // The format's own facts about the table, as JSON (ACMI: title, referenceTime,
+  // reference, flatWorld, globals, completeness).
+  string info_json = 3;
+}
+
+// A delimited file scanned by a plan the viewer made from its mapping
+// (`ingestCsv`): which columns become which slots, the row filter, the stride.
+message ScanCsv {
+  FileRef file = 1;
+  uint32 delimiter = 2;
+  // Per number slot, its column in the file; -1 for none.
+  repeated int32 number_columns = 3;
+  // The number slot read at double width (the time), or -1.
+  int32 wide_slot = 4;
+  repeated int32 text_columns = 5;
+  // Number slots holding x, y and z (-1 when unmapped): a row whose mapped axis
+  // does not parse is rejected.
+  repeated int32 axis_slots = 6;
+  repeated CsvTest number_tests = 7;
+  repeated CsvTest text_tests = 8;
+  uint32 stride = 9;
+}
+
+message CsvTest {
+  uint32 slot = 1;
+  RowFilterClause clause = 2;
+}
+
+message CsvColumns {
+  uint64 rows = 1;
+  uint64 rejected = 2;
+  // Set when the plan filtered.
+  FilterStats filtered = 3;
+  // F32 per number slot (the wide slot as F64), DICT per text slot.
+  repeated ColumnData numbers = 4;
+  repeated ColumnData texts = 5;
+  Timing timing = 6;
+}
+
+// ---------------------------------------------------------------- chunks
+
+// The engine's GPU layout, built by the core: rows sorted by time, cut into
+// chunks of 2^23 rows, each quantised against its own box. Per chunk:
+//   positions: two u32 per row, x | y << 16 and z | group << 16 (u16 each);
+//   times:     one u32 per row, time | lifetime << 16, lifetime 65535 for none.
+// As `WebgpuRenderer.flushDataUpload` packs them (src/render/webgpu/renderer.ts).
+message BuildChunks {
+  repeated FileRef files = 1;
+  // Source columns for the roles; empty for none.
+  string x = 2;
+  string y = 3;
+  string z = 4;
+  string time = 5;
+  string person = 6;
+  string group = 7;
+  // Seconds per time unit of the source (1 for seconds, 0.001 for milliseconds).
+  double time_scale = 8;
+  repeated RowFilterClause filter = 9;
+  uint32 stride = 10;
+  // Rows per chunk; 0 for the engine's 2^23.
+  uint32 chunk_rows = 11;
+}
+
+message ChunkSet {
+  uint64 handle = 1;
+  uint64 rows = 2;
+  uint64 rows_read = 3;
+  double time_min = 4;
+  double time_max = 5;
+  float max_lifetime_gap = 6;
+  repeated ChunkInfo chunks = 7;
+  Timing timing = 8;
+  // Peak resident memory of the core so far, bytes.
+  uint64 peak_memory_bytes = 9;
+  repeated string group_labels = 10;
+}
+
+message ChunkInfo {
+  uint32 index = 1;
+  uint64 start = 2;
+  uint32 rows = 3;
+  repeated float aabb_min = 4;
+  repeated float aabb_size = 5;
+  float time_min = 6;
+  float time_scale = 7;
+  float life_scale = 8;
+}
+
+enum ChunkPart {
+  CHUNK_PART_UNSPECIFIED = 0;
+  CHUNK_PART_POSITIONS = 1;
+  CHUNK_PART_TIMES = 2;
+}
+
+message ReadChunk {
+  uint64 handle = 1;
+  uint32 index = 2;
+  ChunkPart part = 3;
+}
+
+message ChunkData {
+  uint32 index = 1;
+  ChunkPart part = 2;
+  Buffer data = 3;
+}
+
+// ---------------------------------------------------------------- queries
+
+message Query {
+  oneof kind {
+    CountRows count = 1;
+  }
+}
+
+// Rows the filter keeps across files, read from the filter's columns alone.
+message CountRows {
+  repeated FileRef files = 1;
+  repeated RowFilterClause filter = 2;
+}
+
+message QueryReply {
+  oneof kind {
+    RowCount count = 1;
+  }
+}
+
+message RowCount {
+  uint64 matched = 1;
+  uint64 scanned_rows = 2;
+  uint32 scanned_files = 3;
+  uint64 rows_skipped = 4;
+  uint64 groups = 5;
+  uint64 groups_skipped = 6;
+}

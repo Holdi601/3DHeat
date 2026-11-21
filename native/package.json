@@ -1,0 +1,19 @@
+{
+  "name": "3dheat-native",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "description": "Build tools of the 3DHeat native app: the Tauri CLI and the protocol code generators",
+  "scripts": {
+    "icons": "node tools/icons.mjs",
+    "proto": "buf generate --path proto/heat3d/v1",
+    "dev": "tauri dev",
+    "build": "tauri build",
+    "tauri": "tauri"
+  },
+  "devDependencies": {
+    "@bufbuild/buf": "1.75.0",
+    "@bufbuild/protoc-gen-es": "2.17.0",
+    "@tauri-apps/cli": "2.12.6"
+  }
+}

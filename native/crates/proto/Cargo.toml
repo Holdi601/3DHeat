@@ -1,0 +1,13 @@
+[package]
+name = "heat3d-proto"
+description = "3DHeat protocol types, generated from proto/heat3d/v1"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+prost.workspace = true
+
+[build-dependencies]
+prost-build.workspace = true
+protox.workspace = true

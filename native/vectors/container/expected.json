@@ -1,0 +1,153 @@
+{
+ "written.3dheat": {
+  "formatVersion": "1.0",
+  "roles": {
+   "table": "match.parquet",
+   "match": "match.match.json",
+   "events": "match.events.parquet"
+  },
+  "tables": [
+   "match.parquet"
+  ],
+  "members": [
+   {
+    "name": "manifest.json",
+    "method": 8,
+    "compressed": 469,
+    "size": 1126,
+    "dataOffset": 43,
+    "sha256": "12659301b8fef4d1f50782b74dac284e62edb72b520ce11aac4812a67c6fb0b4"
+   },
+   {
+    "name": "match.parquet",
+    "method": 0,
+    "compressed": 5852,
+    "size": 5852,
+    "dataOffset": 555,
+    "sha256": "45b61cb4f39a603e3c1b103651461c4453f93cd0a7a24dcd50d24b67285c419d"
+   },
+   {
+    "name": "match.match.json",
+    "method": 8,
+    "compressed": 53,
+    "size": 64,
+    "dataOffset": 6453,
+    "sha256": "bab4e2edbb7fb59eb0547fcc7856410fb4c3ce8b7da9cf72ad0bac3d9bee8539"
+   },
+   {
+    "name": "match.events.parquet",
+    "method": 0,
+    "compressed": 995,
+    "size": 995,
+    "dataOffset": 6556,
+    "sha256": "5087912bbda9f572e09a7f5457048f268c35616caca372e6069e1c58fc2756ad"
+   }
+  ]
+ },
+ "two-tables.3dheat": {
+  "formatVersion": "1.7",
+  "roles": {
+   "table": "tables/a.parquet",
+   "notes": "notes.txt"
+  },
+  "tables": [
+   "tables/a.parquet",
+   "tables/b.parquet"
+  ],
+  "members": [
+   {
+    "name": "tables/a.parquet",
+    "method": 0,
+    "compressed": 2141,
+    "size": 2141,
+    "dataOffset": 46,
+    "sha256": "1040d8e6b48a8f2d9ce536e741d95bfddad7354a06c3c19848cfb169d42ea5a9"
+   },
+   {
+    "name": "notes.txt",
+    "method": 8,
+    "compressed": 26,
+    "size": 680,
+    "dataOffset": 2226,
+    "sha256": "e094ce1550706db47c1d9c24af926237285e1cd5f6f80b38458fdaa1b752a05b"
+   },
+   {
+    "name": "tables/b.parquet",
+    "method": 0,
+    "compressed": 1115,
+    "size": 1115,
+    "dataOffset": 2298,
+    "sha256": "03ed4e17a9a125fe833ed9e00c36304864d18e5d02354e1a31507be8390459d1"
+   },
+   {
+    "name": "future.bin",
+    "method": 0,
+    "compressed": 5,
+    "size": 5,
+    "dataOffset": 3453,
+    "sha256": "74f81fe167d99b4cb41d6d0ccda82278caee9f3e2f25d5e5a3936ff3dcec60d0"
+   },
+   {
+    "name": "manifest.json",
+    "method": 8,
+    "compressed": 170,
+    "size": 393,
+    "dataOffset": 3501,
+    "sha256": "5ae27ac3729c231009291b69628120bbaf4c1f7ae7e2b92732b1fbb0762623af"
+   }
+  ]
+ },
+ "zip64.3dheat": {
+  "formatVersion": "1.7",
+  "roles": {
+   "table": "tables/a.parquet",
+   "notes": "notes.txt"
+  },
+  "tables": [
+   "tables/a.parquet",
+   "tables/b.parquet"
+  ],
+  "members": [
+   {
+    "name": "tables/a.parquet",
+    "method": 0,
+    "compressed": 2141,
+    "size": 2141,
+    "dataOffset": 46,
+    "sha256": "1040d8e6b48a8f2d9ce536e741d95bfddad7354a06c3c19848cfb169d42ea5a9"
+   },
+   {
+    "name": "notes.txt",
+    "method": 8,
+    "compressed": 26,
+    "size": 680,
+    "dataOffset": 2226,
+    "sha256": "e094ce1550706db47c1d9c24af926237285e1cd5f6f80b38458fdaa1b752a05b"
+   },
+   {
+    "name": "tables/b.parquet",
+    "method": 0,
+    "compressed": 1115,
+    "size": 1115,
+    "dataOffset": 2298,
+    "sha256": "03ed4e17a9a125fe833ed9e00c36304864d18e5d02354e1a31507be8390459d1"
+   },
+   {
+    "name": "future.bin",
+    "method": 0,
+    "compressed": 5,
+    "size": 5,
+    "dataOffset": 3453,
+    "sha256": "74f81fe167d99b4cb41d6d0ccda82278caee9f3e2f25d5e5a3936ff3dcec60d0"
+   },
+   {
+    "name": "manifest.json",
+    "method": 8,
+    "compressed": 170,
+    "size": 393,
+    "dataOffset": 3501,
+    "sha256": "5ae27ac3729c231009291b69628120bbaf4c1f7ae7e2b92732b1fbb0762623af"
+   }
+  ]
+ }
+}

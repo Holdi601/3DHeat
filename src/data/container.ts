@@ -243,7 +243,18 @@ export async function openContainer(file: File): Promise<Container> {
     },
   };
   for (const t of tables) owners.set(t, c);
+  tables.forEach((t, i) => memberNames.set(t, tableEntries[i].name));
   return c;
+}
+
+/** Tables handed out, to their name in the container: the native core reads a table by it. */
+const memberNames = new WeakMap<File, string>();
+
+/** A table's container and its name there, if it came out of one. */
+export function memberOf(table: File): { container: File; name: string } | null {
+  const c = owners.get(table);
+  const name = memberNames.get(table);
+  return c && name ? { container: c.file, name } : null;
 }
 
 /** The container a table came out of, if it did. */

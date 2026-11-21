@@ -74,6 +74,9 @@ pub struct ServeConfig {
     pub publish: Vec<PathBuf>,
     /// An upload the host publishes, at most, bytes.
     pub max_upload: u64,
+    /// More services under paths of their own, behind the same guard and headers:
+    /// `3dheat serve` mounts the native core's data API at `/v1` (crates/server).
+    pub mount: Vec<(String, Router)>,
 }
 
 impl ServeConfig {
@@ -90,6 +93,7 @@ impl ServeConfig {
             state_dir,
             publish: Vec::new(),
             max_upload: 8 * 1024 * 1024 * 1024,
+            mount: Vec::new(),
         }
     }
 }
@@ -394,6 +398,9 @@ fn router(app: Arc<App>) -> Router {
             "/api/publish",
             post(publish).layer(DefaultBodyLimit::disable()),
         );
+    for (path, service) in &app.cfg.mount {
+        r = r.nest_service(path, service.clone());
+    }
     r = match &app.cfg.web_root {
         Some(root) => r.fallback_service(
             ServeDir::new(root)

@@ -1,0 +1,56 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "3DHeat",
+  "mainBinaryName": "3dheat-app",
+  "version": "../../../package.json",
+  "identifier": "io.github.holdi601.heat3d",
+  "build": {
+    "frontendDist": "../../../dist",
+    "devUrl": "http://127.0.0.1:5273",
+    "beforeDevCommand": {
+      "script": "npm run dev -- --port 5273 --strictPort --host 127.0.0.1",
+      "cwd": "../../.."
+    },
+    "beforeBuildCommand": {
+      "script": "npm run build",
+      "cwd": "../../.."
+    }
+  },
+  "app": {
+    "withGlobalTauri": false,
+    "windows": [],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": [
+      "nsis",
+      "msi",
+      "appimage",
+      "deb"
+    ],
+    "category": "Utility",
+    "shortDescription": "Realtime 3D telemetry heatmap viewer",
+    "license": "MIT",
+    "resources": {
+      "../../../dist/": "web/"
+    },
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.ico",
+      "icons/icon.png"
+    ],
+    "windows": {
+      "nsis": {
+        "installMode": "currentUser"
+      },
+      "webviewInstallMode": {
+        "type": "downloadBootstrapper"
+      }
+    }
+  }
+}

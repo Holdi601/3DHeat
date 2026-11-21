@@ -1,0 +1,38 @@
+[package]
+name = "heat3d-app"
+description = "3DHeat, the native app: the viewer in its own window, with the native core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+# Named apart from the headless `3dheat` (crates/server): one folder holds both, and Windows
+# does not tell 3DHeat.exe from 3dheat.exe.
+name = "3dheat-app"
+path = "src/main.rs"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+heat3d-core.workspace = true
+heat3d-server.workspace = true
+tauri = { version = "2", features = [] }
+serde.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true
+getrandom = "0.3"
+tokio = { version = "1", features = ["rt-multi-thread"] }
+
+[target.'cfg(windows)'.dependencies]
+webview2-com = "0.39"
+windows = { version = "0.62", features = ["Win32_Foundation", "Win32_System_Com"] }
+windows-core = "0.62"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+wayland-client = "0.31"
+wayland-backend = { version = "0.3", features = ["client_system"] }
+
+[features]
+# Tauri's custom-protocol build: the window loads the bundled viewer, not the dev server.
+custom-protocol = ["tauri/custom-protocol"]

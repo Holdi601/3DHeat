@@ -3,7 +3,7 @@ import { CsvScanner, type FieldSink } from './csv';
 import { Dictionary, GrowableF32, GrowableF64, GrowableU32 } from './growable';
 import { msg, MsgError, say, type Msg } from './msg';
 import type { ColumnMapping, TimeUnit } from '../state/types';
-import { activeClauses, compileClause, emptySourceBlock, type ValueTest } from './rowFilter';
+import { activeClauses, compileClause, emptySourceBlock, type RowFilterClause, type ValueTest } from './rowFilter';
 
 export interface IngestProgress {
   /** What is being done, in English: `msg` is what the main thread says. */
@@ -66,6 +66,39 @@ interface Slots {
 }
 
 /**
+ * What `ingestCsv` reads a file by: which file column feeds which slot, the
+ * filter's tests on slots, the stride. Handed to a scanner elsewhere (the native
+ * app's core, `data/native`) instead of scanning here.
+ */
+export interface CsvScanPlan {
+  delimiter: number;
+  /** Per number slot, its column in the file. */
+  numberColumns: number[];
+  /** The number slot read at double width (the time), or -1. */
+  wideSlot: number;
+  /** Per text slot, its column in the file. */
+  textColumns: number[];
+  /** Number slots of x, y and z, -1 when unmapped. */
+  axisSlots: [number, number, number];
+  numberTests: Array<{ slot: number; clause: RowFilterClause }>;
+  textTests: Array<{ slot: number; clause: RowFilterClause }>;
+  stride: number;
+}
+
+/** What a scan by a plan collected, slot for slot. */
+export interface CsvScanResult {
+  rows: number;
+  rejected: number;
+  filtered: NonNullable<SourceBlock['filtered']> | null;
+  /** Per number slot (the wide slot as float64). */
+  numbers: Array<Float32Array | Float64Array>;
+  /** Per text slot: its labels in order of first appearance, and its ids. */
+  texts: Array<{ labels: string[]; ids: Uint32Array }>;
+}
+
+export type CsvScanFn = (plan: CsvScanPlan, onProgress: ProgressFn) => Promise<CsvScanResult>;
+
+/**
  * Parse a mapped delimited file into a SourceBlock.
  *
  * Only mapped columns are materialised, straight into typed arrays. A general
@@ -80,6 +113,8 @@ export async function ingestCsv(
   onProgress: ProgressFn,
   /** Keep one row in `stride`, for datasets that exceed the memory budget. */
   stride = 1,
+  /** Where the file is scanned, when not here (`CsvScanPlan`). */
+  scan?: CsvScanFn,
 ): Promise<SourceBlock> {
   assertAxes(mapping);
   const delimiterByte = (mapping.delimiter || ',').charCodeAt(0);
@@ -99,6 +134,9 @@ export async function ingestCsv(
   let wide: { slot: number; data: GrowableF64 } | null = null;
   const textSlots: Array<{ dict: Dictionary; out: GrowableU32 }> = [];
   const sinkOf: Array<FieldSink[] | null> = columns.map(() => null);
+  // The same, the other way round, for a scanner elsewhere: each slot's column.
+  const numberColumns: number[] = [];
+  const textColumns: number[] = [];
 
   const attach = (colIndex: number, sink: FieldSink): void => {
     const list = sinkOf[colIndex];
@@ -109,6 +147,7 @@ export async function ingestCsv(
     if (colIndex < 0) return -1;
     const slot = numberSlots.length;
     numberSlots.push(new GrowableF32());
+    numberColumns.push(colIndex);
     attach(colIndex, { kind: 'number', index: slot });
     return slot;
   };
@@ -125,6 +164,7 @@ export async function ingestCsv(
     if (colIndex < 0) return -1;
     const slot = numberSlots.length;
     numberSlots.push(new GrowableF32(1));
+    numberColumns.push(colIndex);
     wide = { slot, data: new GrowableF64() };
     attach(colIndex, { kind: 'number', index: slot });
     return slot;
@@ -133,6 +173,7 @@ export async function ingestCsv(
     if (colIndex < 0) return -1;
     const slot = textSlots.length;
     textSlots.push({ dict: new Dictionary(), out: new GrowableU32() });
+    textColumns.push(colIndex);
     attach(colIndex, { kind: 'dict', index: slot });
     return slot;
   };
@@ -170,8 +211,8 @@ export async function ingestCsv(
   // The row filter's columns, read only to decide (`rowFilter.ts`): their slots
   // are flagged so a passing row never pushes them into a column of its own.
   const clauses = activeClauses(mapping.rowFilter);
-  const numberTests: Array<{ slot: number; test: ValueTest }> = [];
-  const textTests: Array<{ slot: number; test: ValueTest; seen: Int8Array[] }> = [];
+  const numberTests: Array<{ slot: number; test: ValueTest; clause: RowFilterClause }> = [];
+  const textTests: Array<{ slot: number; test: ValueTest; seen: Int8Array[]; clause: RowFilterClause }> = [];
   let nonePass = false;
   for (const c of clauses) {
     const ci = indexOf(c.column);
@@ -180,8 +221,8 @@ export async function ingestCsv(
       if (!test(null)) nonePass = true;
       continue;
     }
-    if (c.kind === 'range') numberTests.push({ slot: addNumber(ci), test });
-    else textTests.push({ slot: addText(ci), test, seen: [new Int8Array(256)] });
+    if (c.kind === 'range') numberTests.push({ slot: addNumber(ci), test, clause: c });
+    else textTests.push({ slot: addText(ci), test, seen: [new Int8Array(256)], clause: c });
   }
   if (nonePass) return emptySourceBlock({ rows: 0, kept: 0, rowsSkipped: 0, groups: 0, groupsSkipped: 0 });
   const numberOnly = new Uint8Array(numberSlots.length);
@@ -211,78 +252,120 @@ export async function ingestCsv(
   const rowNumbers = new Float64Array(Math.max(1, numberSlots.length));
   const rowTexts = new Int32Array(Math.max(1, textSlots.length));
 
-  const scanner = new CsvScanner(
-    delimiterByte,
-    sinkOf,
-    {
-      number: (i, v) => {
-        rowNumbers[i] = v;
+  let scannedFiltered: NonNullable<SourceBlock['filtered']> | null = null;
+  if (scan) {
+    const r = await scan(
+      {
+        delimiter: delimiterByte,
+        numberColumns,
+        wideSlot: wide ? (wide as { slot: number }).slot : -1,
+        textColumns,
+        axisSlots: [slots.x, slots.y, slots.z],
+        numberTests: numberTests.map((t) => ({ slot: t.slot, clause: t.clause })),
+        textTests: textTests.map((t) => ({ slot: t.slot, clause: t.clause })),
+        stride: step,
       },
-      text: (i, v) => {
-        rowTexts[i] = textSlots[i].dict.intern(v);
-      },
-      endRow: () => {
-        if (filtering) {
-          filteredRows++;
-          for (let i = 0; i < numberTests.length; i++) {
-            if (!numberTests[i].test(rowNumbers[numberTests[i].slot])) {
-              filteredOut++;
-              return;
+      onProgress,
+    );
+    rows = r.rows;
+    rejected = r.rejected;
+    scannedFiltered = r.filtered;
+    const wideSlot = wide ? (wide as { slot: number; data: GrowableF64 }).slot : -1;
+    r.numbers.forEach((v, i) => {
+      if (numberOnly[i]) return;
+      if (i === wideSlot) {
+        const g = new GrowableF64(Math.max(1, v.length));
+        g.pushAll(v, v.length);
+        wide!.data = g;
+      } else {
+        const g = new GrowableF32(Math.max(1, v.length));
+        g.pushAll(v, v.length);
+        numberSlots[i] = g;
+      }
+    });
+    r.texts.forEach((t, i) => {
+      const d = new Dictionary();
+      for (const l of t.labels) d.intern(l);
+      const g = new GrowableU32(Math.max(1, t.ids.length));
+      if (!textOnly[i]) g.pushAll(t.ids, t.ids.length);
+      textSlots[i] = { dict: d, out: g };
+    });
+  } else {
+    const scanner = new CsvScanner(
+      delimiterByte,
+      sinkOf,
+      {
+        number: (i, v) => {
+          rowNumbers[i] = v;
+        },
+        text: (i, v) => {
+          rowTexts[i] = textSlots[i].dict.intern(v);
+        },
+        endRow: () => {
+          if (filtering) {
+            filteredRows++;
+            for (let i = 0; i < numberTests.length; i++) {
+              if (!numberTests[i].test(rowNumbers[numberTests[i].slot])) {
+                filteredOut++;
+                return;
+              }
+            }
+            for (let i = 0; i < textTests.length; i++) {
+              if (!passesText(textTests[i], rowTexts[textTests[i].slot])) {
+                filteredOut++;
+                return;
+              }
             }
           }
-          for (let i = 0; i < textTests.length; i++) {
-            if (!passesText(textTests[i], rowTexts[textTests[i].slot])) {
-              filteredOut++;
-              return;
-            }
+          // Decimation happens here so skipped rows cost only the scan, never an
+          // array push or a dictionary insert.
+          if (step > 1 && seen++ % step !== 0) return;
+          // Reject rows whose position didn't parse instead of writing them as
+          // zero: a NaN-turned-zero position paints a bright false hotspot at the
+          // world origin, which looks like real data. Only the mapped axes are
+          // checked — an unmapped one is legitimately absent, not broken.
+          if (
+            (slots.x >= 0 && !Number.isFinite(rowNumbers[slots.x])) ||
+            (slots.y >= 0 && !Number.isFinite(rowNumbers[slots.y])) ||
+            (slots.z >= 0 && !Number.isFinite(rowNumbers[slots.z]))
+          ) {
+            rejected++;
+            return;
           }
-        }
-        // Decimation happens here so skipped rows cost only the scan, never an
-        // array push or a dictionary insert.
-        if (step > 1 && seen++ % step !== 0) return;
-        // Reject rows whose position didn't parse instead of writing them as
-        // zero: a NaN-turned-zero position paints a bright false hotspot at the
-        // world origin, which looks like real data. Only the mapped axes are
-        // checked — an unmapped one is legitimately absent, not broken.
-        if (
-          (slots.x >= 0 && !Number.isFinite(rowNumbers[slots.x])) ||
-          (slots.y >= 0 && !Number.isFinite(rowNumbers[slots.y])) ||
-          (slots.z >= 0 && !Number.isFinite(rowNumbers[slots.z]))
-        ) {
-          rejected++;
-          return;
-        }
-        const wideSlot = wide ? wide.slot : -1;
-        for (let i = 0; i < numberSlots.length; i++) {
-          if (numberOnly[i]) continue;
-          if (i === wideSlot) wide!.data.push(rowNumbers[i]);
-          else numberSlots[i].push(rowNumbers[i]);
-        }
-        for (let i = 0; i < textSlots.length; i++) if (!textOnly[i]) textSlots[i].out.push(rowTexts[i]);
-        rows++;
+          const wideSlot = wide ? wide.slot : -1;
+          for (let i = 0; i < numberSlots.length; i++) {
+            if (numberOnly[i]) continue;
+            if (i === wideSlot) wide!.data.push(rowNumbers[i]);
+            else numberSlots[i].push(rowNumbers[i]);
+          }
+          for (let i = 0; i < textSlots.length; i++) if (!textOnly[i]) textSlots[i].out.push(rowTexts[i]);
+          rows++;
+        },
       },
-    },
-    true,
-  );
+      true,
+    );
 
-  const reader = file.stream().getReader();
-  let bytesRead = 0;
-  let lastReport = 0;
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    scanner.push(value);
-    bytesRead += value.byteLength;
-    if (bytesRead - lastReport > 8 << 20) {
-      lastReport = bytesRead;
-      onProgress(progress(msg('data.ingest.parsing', { file: file.name }), bytesRead / file.size, rows));
+    const reader = file.stream().getReader();
+    let bytesRead = 0;
+    let lastReport = 0;
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      scanner.push(value);
+      bytesRead += value.byteLength;
+      if (bytesRead - lastReport > 8 << 20) {
+        lastReport = bytesRead;
+        onProgress(progress(msg('data.ingest.parsing', { file: file.name }), bytesRead / file.size, rows));
+      }
     }
+    scanner.end();
   }
-  scanner.end();
 
-  const filtered = filtering
-    ? { rows: filteredRows, kept: filteredRows - filteredOut, rowsSkipped: 0, groups: 0, groupsSkipped: 0 }
-    : undefined;
+  const filtered = scan
+    ? (scannedFiltered ?? undefined)
+    : filtering
+      ? { rows: filteredRows, kept: filteredRows - filteredOut, rowsSkipped: 0, groups: 0, groupsSkipped: 0 }
+      : undefined;
   if (rows === 0 && filtered && filtered.kept === 0) return emptySourceBlock(filtered);
   if (rows === 0) {
     throw new MsgError(

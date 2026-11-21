@@ -6,6 +6,10 @@ import type { SelectionSize, SourcePreview } from './sourcePreview';
 import type { SynthOptions } from './synth';
 import type { ColumnProfile } from './columnProfile';
 import type { MatchCount, RowFilterClause } from './rowFilter';
+import type { DataSource } from './dataSource';
+import { coreEndpoint, inNativeApp } from './native/core';
+import { nativeRefs } from './native/files';
+import type { NativeLoad } from './native/readers';
 
 /** How a load may parse: files at once, and the RAM budget they share. */
 export interface ParseBudget {
@@ -45,7 +49,8 @@ type UnidentifiedRequest = WorkerRequest extends infer R
 /** Shortest gap between two progress reports of one job, in milliseconds. */
 const PROGRESS_MS = 100;
 
-export class Loader {
+export class Loader implements DataSource {
+  readonly kind: DataSource['kind'] = 'local';
   private worker: Worker | null = null;
   private nextId = 1;
   private readonly pending = new Map<
@@ -148,7 +153,7 @@ export class Loader {
     }, PROGRESS_MS - (now - slot.at));
   }
 
-  private send<T>(req: UnidentifiedRequest, onProgress?: (p: LoaderProgress) => void): Promise<T> {
+  protected send<T>(req: UnidentifiedRequest, onProgress?: (p: LoaderProgress) => void): Promise<T> {
     const id = this.nextId++;
     const worker = this.ensure();
     return new Promise<T>((resolve, reject) => {
@@ -196,10 +201,19 @@ export class Loader {
   ): Promise<Dataset> {
     const chosen = useStore.getState().budgets;
     const { threads, ram } = budget ?? { threads: chosen.cpu, ram: chosen.ram };
-    return this.send<Dataset>(
-      { kind: 'ingest', files, mapping, columns, name, stride, expectedRows, threads, ramBudget: ram },
-      onProgress,
-    );
+    const send = (native?: NativeLoad) =>
+      this.send<Dataset>(
+        { kind: 'ingest', files, mapping, columns, name, stride, expectedRows, threads, ramBudget: ram, ...(native ? { native } : {}) },
+        onProgress,
+      );
+    // Sent at once without a core, as it always was.
+    const core = this.withCore(files);
+    return core ? core.then(send) : send();
+  }
+
+  /** The core a load is read with, if any: none in a browser. */
+  protected withCore(_files: File[]): Promise<NativeLoad | undefined> | null {
+    return null;
   }
 
   synth(opts: SynthOptions, onProgress?: (p: LoaderProgress) => void): Promise<Dataset> {
@@ -221,4 +235,22 @@ export class Loader {
   }
 }
 
-export const loader = new Loader();
+/**
+ * The native app's data source: the same worker and readers, with the app's
+ * core reading every file it can be given by name (`data/native`). Files it
+ * cannot be given - made in the page, or on a system that does not hand over
+ * paths - are read in the worker as in a browser.
+ */
+export class NativeDataSource extends Loader {
+  override readonly kind: DataSource['kind'] = 'native';
+
+  protected override withCore(files: File[]): Promise<NativeLoad | undefined> {
+    return Promise.all([nativeRefs(files), coreEndpoint()]).then(([refs, core]) => (refs.some((r) => r) ? { core, refs } : undefined));
+  }
+}
+
+/** Where the viewer's data comes from: this page's worker, or in the native app its core. */
+export const loader: DataSource = inNativeApp() ? new NativeDataSource() : new Loader();
+
+// What the app's smoke run drives (`data/native/devHook.ts`): the app only.
+if (inNativeApp()) void import('./native/devHook').then((m) => m.installNativeHook());

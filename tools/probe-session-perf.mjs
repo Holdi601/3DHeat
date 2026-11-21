@@ -11,7 +11,7 @@
  *   node tools/probe-session-perf.mjs [members=9] [seconds=12]
  *
  * Needs the dev server (APP, default http://127.0.0.1:5275/) and the server
- * and loadgen builds (cargo build --release --examples in native/crates/session).
+ * and loadgen builds (cargo build --release -p heat3d-server -p heat3d-session --examples in native/).
  */
 import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
@@ -23,7 +23,7 @@ import { join } from 'node:path';
 const MEMBERS = Number(process.argv[2] ?? 9);
 const SECONDS = Number(process.argv[3] ?? 12);
 const APP = process.env.APP ?? 'http://127.0.0.1:5275/';
-const TARGET = process.env.CARGO_TARGET ?? 'E:/cargo-targets/3dheat-session/release';
+const TARGET = process.env.CARGO_TARGET ?? 'E:/cargo-targets/3dheat/release';
 const PORT = 7990 + Math.floor(Math.random() * 9);
 const SERVER = `http://127.0.0.1:${PORT}`;
 const TOKEN = randomBytes(32).toString('hex');

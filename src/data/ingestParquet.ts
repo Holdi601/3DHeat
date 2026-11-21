@@ -15,9 +15,28 @@ import { msg, MsgError } from './msg';
 import { geoOfHints, parseHints } from './automap';
 import { splitObjectTracks } from './objectTracks';
 import { asyncBufferFromFile, readParquetColumns, type ColumnRequest } from './parquet';
-import { activeClauses, emptySourceBlock, readSelectedColumns, selectRows, type RowSelection } from './rowFilter';
+import { activeClauses, emptySourceBlock, readSelectedColumns, selectRows, type RowFilterClause, type RowSelection } from './rowFilter';
 import { describeKept } from './columnSource';
 import type { ColumnMapping, TimeUnit } from '../state/types';
+
+/**
+ * Reads a file's columns somewhere else than here: the native app's core
+ * (`data/native`), which reads with every core of the machine. What it fills
+ * in is what `selectRows` and the column readers would have; everything around
+ * the read - the footer, the roles, the remap, the time - stays here, so both
+ * paths build the same block.
+ */
+export interface ParquetColumnReader {
+  /** Rows the filter keeps, and what it took. */
+  count(clauses: RowFilterClause[]): Promise<{ count: number; filtered: NonNullable<SourceBlock['filtered']> }>;
+  /** Fills `requests` with the kept rows, in file order; the file row of each when `keptRows`. */
+  read(
+    requests: ColumnRequest[],
+    clauses: RowFilterClause[],
+    keptRows: boolean,
+    onProgress: (fraction: number) => void,
+  ): Promise<{ filtered: NonNullable<SourceBlock['filtered']> | null; keptRows: Uint32Array | null }>;
+}
 
 /**
  * Parquet -> SourceBlock.
@@ -37,6 +56,8 @@ export async function ingestParquet(
    * subsample gives the same distribution with more noise.
    */
   stride = 1,
+  /** Where the columns are read, when not here (`ParquetColumnReader`). */
+  reader?: ParquetColumnReader,
 ): Promise<SourceBlock> {
   assertAxes(mapping);
 
@@ -51,7 +72,12 @@ export async function ingestParquet(
   // so every array below is allocated at the kept count rather than the file's.
   const clauses = activeClauses(mapping.rowFilter);
   let sel: RowSelection | null = null;
-  if (clauses.length > 0) {
+  let counted: Awaited<ReturnType<ParquetColumnReader['count']>> | null = null;
+  if (clauses.length > 0 && reader) {
+    onProgress(progress(msg('data.ingestParquet.selecting', { file: file.name }), 0, 0));
+    counted = await reader.count(clauses);
+    if (counted.count === 0) return emptySourceBlock(counted.filtered);
+  } else if (clauses.length > 0) {
     const selecting = msg('data.ingestParquet.selecting', { file: file.name });
     onProgress(progress(selecting, 0, 0));
     const wanted = [
@@ -61,7 +87,7 @@ export async function ingestParquet(
     sel = await selectRows(buf, metadata, clauses, wanted, (f) => onProgress(progress(selecting, f * 0.3, 0)));
     if (sel.count === 0) return emptySourceBlock(filterStats(total, sel));
   }
-  const n = sel ? sel.count : total;
+  const n = sel ? sel.count : counted ? counted.count : total;
   /** `role` names the mapping in the message: x, y, z, yaw, pitch, dirX, dirY, dirZ, time, person, team, session or filter. */
   const require = (name: string | null, role: string): string | null => {
     if (!name) return null;
@@ -161,7 +187,13 @@ export async function ingestParquet(
 
   const reading = msg('data.ingestParquet.reading', { file: file.name });
   onProgress(progress(reading, 0, 0));
-  if (sel) {
+  const onDemand = mapping.onDemand ?? [];
+  let elsewhere: Awaited<ReturnType<ParquetColumnReader['read']>> | null = null;
+  if (reader) {
+    elsewhere = await reader.read(requests, clauses, clauses.length > 0 && onDemand.length > 0, (f) =>
+      onProgress(progress(reading, f, Math.round(f * n))),
+    );
+  } else if (sel) {
     await readSelectedColumns(sel, requests, (f) => onProgress(progress(reading, 0.3 + f * 0.7, Math.round(f * n))));
   } else {
     await readParquetColumns(buf, metadata, requests, n, (f) =>
@@ -225,10 +257,10 @@ export async function ingestParquet(
     rejected: n - kept,
   };
   if (sel) block.filtered = filterStats(total, sel);
+  else if (elsewhere?.filtered) block.filtered = elsewhere.filtered;
   // Which file rows were kept, for reading the columns left in the file later (`columnSource.ts`).
-  const onDemand = mapping.onDemand ?? [];
   if (onDemand.length) {
-    block.rowsOf = describeKept(n, step, keepMask, kept, sel ? selectedRows(sel) : null);
+    block.rowsOf = describeKept(n, step, keepMask, kept, sel ? selectedRows(sel) : (elsewhere?.keptRows ?? null));
     block.onDemandHere = onDemand.filter((c) => available.has(c));
   }
   // The file's place on the earth, when its hints give one and the mapping

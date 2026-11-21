@@ -1,14 +1,17 @@
-//! `3dheat serve`: hosts a multiplayer session from the web build, headless.
-//! Open the host address it prints in a browser to be the host; others
-//! open the join address. See docs/multiplayer.md.
-
-#![forbid(unsafe_code)]
+//! `3dheat serve`: hosts a multiplayer session from the web build, with the
+//! native core's data API at `/v1`. Open the host address it prints in a browser
+//! to be the host; others open the join address. See docs/multiplayer.md and
+//! docs/native-app.md. Headless (`3dheat`) or from the app (`3dheat-app serve`,
+//! `3dheat-app --host ...` beside the window).
 
 use heat3d_session::auth::Cost;
 use heat3d_session::server::{start, ServeConfig};
 use heat3d_session::tls::{local_ips, TlsMode};
 use std::net::{IpAddr, SocketAddr};
 use std::path::PathBuf;
+use std::sync::Arc;
+
+use heat3d_core::service::Core;
 
 const USAGE: &str = "\
 3dheat serve - host a 3DHeat multiplayer session
@@ -36,6 +39,8 @@ OPTIONS:
                            (Stage 3): use only with a strong password and invite links.
 ";
 
+pub const HELP: &str = USAGE;
+
 fn fail(msg: &str) -> ! {
     eprintln!("3dheat: {msg}\n\n{USAGE}");
     std::process::exit(2);
@@ -61,24 +66,16 @@ fn web_root() -> Option<PathBuf> {
     near.join("index.html").is_file().then_some(near)
 }
 
-#[tokio::main]
-async fn main() {
-    let mut args = std::env::args().skip(1);
-    match args.next().as_deref() {
-        Some("serve") => {}
-        Some("-h") | Some("--help") | None => {
-            println!("{USAGE}");
-            return;
-        }
-        Some(other) => fail(&format!("unknown command `{other}`")),
-    }
+/// Runs `serve` with `rest` (the options after it) until stopped. The data API
+/// answers from `core`, which the app shares with its window. `default_web` is
+/// the viewer to serve when `--web` is not given (the app's bundled one).
+pub async fn serve(rest: Vec<String>, core: Arc<Core>, default_web: Option<PathBuf>) {
     let mut port = 7878u16;
     let mut bind: Option<IpAddr> = None;
     let mut web: Option<PathBuf> = None;
     let mut plain = false;
     let (mut cert, mut key) = (None, None);
     let mut cfg = ServeConfig::new("0.0.0.0:7878".parse().unwrap(), state_dir());
-    let rest: Vec<String> = args.collect();
     let mut i = 0;
     let val = |i: &mut usize, name: &str| -> String {
         *i += 1;
@@ -163,7 +160,10 @@ async fn main() {
         }
     });
     cfg.bind = SocketAddr::new(ip, port);
-    cfg.web_root = web.or_else(web_root);
+    cfg.web_root = web.or(default_web).or_else(web_root);
+    // The native core's data API beside the session: a browser of the session reads
+    // the host's data through it (only what the host shared; paths are the host's own).
+    cfg.mount.push(("/v1".into(), crate::data_router(core, None, false)));
     if cfg.web_root.is_none() {
         eprintln!("3dheat: no web build found (run `npm run build`, then pass --web dist); serving the session only");
     }

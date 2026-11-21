@@ -14,6 +14,7 @@ import type { ColumnMapping, Dataset } from '../state/types';
 import { profileParquet, type ColumnProfile } from './columnProfile';
 import { countMatches, type MatchCount, type RowFilterClause } from './rowFilter';
 import { sourceBuffers } from './columnSource';
+import { nativeParseFile, type NativeLoad } from './native/readers';
 
 /**
  * Ingest runs here rather than on the main thread because parsing is measured in
@@ -48,6 +49,8 @@ export type WorkerRequest =
       threads?: number;
       /** The RAM budget in bytes, which the files in flight share with the builder. */
       ramBudget?: number;
+      /** In the native app: its core, which reads the files it has a name for (`data/native`). */
+      native?: NativeLoad;
     }
   | { id: number; kind: 'synth'; opts: SynthOptions };
 
@@ -129,7 +132,8 @@ async function ingestAll(
       expectedRows: req.expectedRows,
       threads,
       ramBudget: req.ramBudget,
-      parseFile: pool?.parse,
+      // In the native app each parser thread has the core read its file and does the rest itself.
+      parseFile: pool ? pool.withCore(req.native, req.files).parse : req.native ? nativeParseFile(req.native, req.files, parseHere) : undefined,
       onProgress: (p) =>
         post({ id: req.id, kind: 'progress', label: p.msg, fraction: p.fraction, rows: p.rows }),
     });
@@ -196,6 +200,13 @@ class ParsePool {
   private nextId = 1;
   private unavailable = false;
   private closed = false;
+  private core: { load: NativeLoad; files: File[] } | null = null;
+
+  /** The native core for this load's files, when there is one. */
+  withCore(load: NativeLoad | undefined, files: File[]): this {
+    this.core = load ? { load, files } : null;
+    return this;
+  }
 
   readonly parse: ParseFileFn = (file, mapping, columns, stride, onProgress) => {
     if (this.unavailable) return parseHere(file, mapping, columns, stride, onProgress);
@@ -239,7 +250,9 @@ class ParsePool {
           reject(new ParserCrash(msg('data.loader.crashed')));
         }
       };
-      const request: ParseRequest = { id, file, mapping, columns, stride };
+      const ref = this.core ? (this.core.load.refs[this.core.files.indexOf(file)] ?? null) : null;
+      const native = ref && this.core ? { core: this.core.load.core, refs: [ref] } : undefined;
+      const request: ParseRequest = { id, file, mapping, columns, stride, ...(native ? { native } : {}) };
       worker.postMessage(request);
     });
   };

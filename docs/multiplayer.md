@@ -11,7 +11,7 @@ A session has a **host**: the session server runs on the host's machine and deci
 
 ## Host from the browser version: `3dheat serve`
 
-The session server is one program, `3dheat` (from `native/crates/session`, built with `cargo build --release`). It serves the viewer itself, so the others need nothing but a browser.
+The session server is one program, `3dheat` (built in `native/` with `cargo build --release -p heat3d-server`; the desktop app's `3dheat-app serve` is the same). It also answers the native core's data API at `/v1` ([The native app](native-app.md)). It serves the viewer itself, so the others need nothing but a browser.
 
 1. Build the viewer once: `npm run build` (makes `dist/`).
 2. Start the server next to it:

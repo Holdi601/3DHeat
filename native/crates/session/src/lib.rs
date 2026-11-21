@@ -9,9 +9,9 @@
 
 #![forbid(unsafe_code)]
 
+/// The session messages, generated with the rest of the protocol in `heat3d-proto`.
 pub mod proto {
-    #![allow(clippy::all)]
-    include!(concat!(env!("OUT_DIR"), "/heat3d.session.v1.rs"));
+    pub use heat3d_proto::session::v1::*;
 }
 
 pub mod auth;
