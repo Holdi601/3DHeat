@@ -71,6 +71,29 @@ async function orbitTiming(seconds = 3) {
     return { p50: q(0.5), p99: q(0.99), max: times[times.length - 1], frames: times.length };
   }, seconds);
 }
+/** Frame intervals, ms, while something else moves the camera (the caster), with the replay playing. */
+async function orbitTimingFree(seconds = 2) {
+  return page.evaluate(async (seconds) => {
+    globalThis.__3dheat.useStore.getState().setPlaying(true);
+    const times = [];
+    const t0 = performance.now();
+    let last = t0;
+    await new Promise((resolve) => {
+      const tick = (now) => {
+        times.push(now - last);
+        last = now;
+        if (now - t0 < seconds * 1000) requestAnimationFrame(tick);
+        else resolve();
+      };
+      requestAnimationFrame(tick);
+    });
+    globalThis.__3dheat.useStore.getState().setPlaying(false);
+    times.shift();
+    times.sort((a, b) => a - b);
+    const q = (p) => times[Math.min(times.length - 1, Math.floor(times.length * p))];
+    return { p50: q(0.5), p99: q(0.99), max: times[times.length - 1], frames: times.length };
+  }, seconds);
+}
 const timingText = (t) => `frames p50 ${t.p50.toFixed(1)} / p99 ${t.p99.toFixed(1)} / max ${t.max.toFixed(1)} ms over ${t.frames}${GPU ? '' : ' (software, not judged)'}`;
 const judge = (t) => {
   if (GPU) expect(t.p99 < 34 && t.max < 70, `frame drops: ${timingText(t)}`);
@@ -453,6 +476,75 @@ await step('volume intersections: a line where the volume cuts the level, both b
   const t = await orbitTiming(2);
   judge(t);
   return `${notes.join('; ')}; ${timingText(t)}`;
+});
+
+// ------------------------------------------------------------- caster cinema
+
+await step('caster cinema: a moment is reached without a cut, subtitled, and a camera move takes over', async () => {
+  await page.evaluate(async (u) => {
+    await globalThis.__3dheat.loadUrls([u]);
+    const s = globalThis.__3dheat.useStore.getState();
+    s.setMode('team');
+    s.patchTimeline({ mode: 'play' });
+    s.setPlaying(false);
+  }, `${DEMO}/tanks.parquet`);
+  await wait(2000);
+  // Insights, Caster tab, on one match.
+  const head = page.locator('.section > header').filter({ hasText: /Insights\s*$/ }).first();
+  if (!(await page.locator('.ins').count())) await head.click();
+  await page.getByRole('button', { name: 'Caster' }).first().click();
+  await wait(500);
+  const pick = page.locator('.ins-cast select');
+  if (await pick.count()) {
+    const v = await pick.locator('option').nth(1).getAttribute('value');
+    await pick.selectOption(v);
+    await wait(800);
+  }
+  await page.waitForSelector('.ins-moment .ins-head', { timeout: 20_000 });
+  await mod('/src/ui/insights/cinemaStore.ts', (m) => m.useCinema.getState().set({ on: true, subtitles: true }));
+  // Record the camera every frame from the click on.
+  await page.evaluate(() => {
+    const eng = globalThis.__3dheat_engine;
+    const out = (globalThis.__camTrace = []);
+    const tick = () => {
+      const p = eng.cameraPose().position;
+      out.push([performance.now(), p.x, p.y, p.z]);
+      if (out.length < 400) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  });
+  await page.locator('.ins-moment .ins-head').nth(2).click();
+  await page.waitForSelector('.cast-subtitle', { timeout: 10_000 });
+  await wait(3500);
+  const trace = await page.evaluate(() => globalThis.__camTrace);
+  // From the first frame that moved: the largest step, against the whole move, and how sharply the speed changed.
+  const steps = [];
+  for (let i = 1; i < trace.length; i++) steps.push(Math.hypot(trace[i][1] - trace[i - 1][1], trace[i][2] - trace[i - 1][2], trace[i][3] - trace[i - 1][3]));
+  const total = Math.hypot(trace[trace.length - 1][1] - trace[0][1], trace[trace.length - 1][2] - trace[0][2], trace[trace.length - 1][3] - trace[0][3]);
+  const maxStep = Math.max(...steps);
+  expect(total > 1, 'the camera did not move to the moment');
+  expect(maxStep < total * 0.12, `a cut: one frame moved ${maxStep.toFixed(1)} of ${total.toFixed(1)}`);
+  const sub = await page.evaluate(() => document.querySelector('.cast-sub-line')?.textContent ?? '');
+  expect(sub.length > 10, 'no subtitle line');
+  const rings = await page.evaluate(() => [...document.querySelectorAll('.cast-ring')].filter((e) => e.style.display !== 'none').length);
+  if (process.env.ANALYSIS_SHOTS) await page.screenshot({ path: `${process.env.ANALYSIS_SHOTS}/caster.png` });
+  // The viewer moves the camera: the caster lets go and offers to resume.
+  await page.evaluate(() => {
+    const eng = globalThis.__3dheat_engine;
+    const p = eng.cameraPose();
+    eng.setCameraPose({ x: p.position.x + 50, y: p.position.y + 20, z: p.position.z }, p.forward);
+  });
+  await wait(400);
+  const held = await mod('/src/ui/insights/cinemaStore.ts', (m) => m.useCinema.getState().held);
+  expect(held, 'a camera move did not take over');
+  await page.getByRole('button', { name: 'Resume caster camera' }).first().click();
+  await wait(300);
+  const resumed = await mod('/src/ui/insights/cinemaStore.ts', (m) => !m.useCinema.getState().held);
+  expect(resumed, 'resume did not give the camera back');
+  const t = await orbitTimingFree(2);
+  judge(t);
+  await mod('/src/ui/insights/cinemaStore.ts', (m) => m.stopCinema());
+  return `moved ${total.toFixed(0)} units, largest frame step ${((maxStep / total) * 100).toFixed(1)}%; subtitle "${sub.slice(0, 60)}..."; ${rings} rings; ${timingText(t)}`;
 });
 
 // The stages that follow add their steps above this line.

@@ -270,3 +270,100 @@
 .ins-dropped {
   font-style: italic;
 }
+
+/* The caster on screen (CasterCinema.tsx): the subtitle bar and the rings round the subjects. */
+.cast-subtitle {
+  position: absolute;
+  z-index: var(--z-hud);
+  left: 50%;
+  bottom: 70px;
+  transform: translateX(-50%);
+  max-width: min(760px, calc(100% - 32px));
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: rgba(10, 12, 16, 0.82);
+  border: 1px solid var(--line);
+  color: #f2f4f8;
+  text-align: center;
+  pointer-events: auto;
+  animation: cast-sub-in 0.35s ease-out;
+}
+@keyframes cast-sub-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cast-subtitle {
+    animation: none;
+  }
+}
+.cast-sub-kind {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #ffcf6e;
+  margin-bottom: 2px;
+}
+.cast-chip {
+  margin-left: 8px;
+  color: #b8c4d6;
+  text-transform: none;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+.cast-sub-line {
+  font-size: 15px;
+  line-height: 1.35;
+}
+.cast-sub-actions {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  display: flex;
+  gap: 6px;
+}
+.cast-rings {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: calc(var(--z-units) + 1);
+}
+.cast-ring {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+}
+.cast-ring::before {
+  content: '';
+  position: absolute;
+  left: -16px;
+  top: -16px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #ffcf6e;
+  box-shadow: 0 0 8px rgba(255, 207, 110, 0.6);
+}
+.cast-ring.other::before {
+  border-color: #ff6b6b;
+  box-shadow: 0 0 8px rgba(255, 107, 107, 0.6);
+}
+.cast-ring span {
+  position: absolute;
+  left: 18px;
+  top: -24px;
+  white-space: nowrap;
+  font-size: 11px;
+  padding: 0 4px;
+  border-radius: 3px;
+  background: rgba(10, 12, 16, 0.75);
+  color: #ffcf6e;
+}
+.cast-ring.other span {
+  color: #ff8f8f;
+}

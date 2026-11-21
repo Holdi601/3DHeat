@@ -154,5 +154,15 @@
   "analysis.contours.toggle": "Lines on the level",
   "analysis.contours.title": "Draw a line in each volume's colour where it cuts the ground, the walls and every other surface of the level",
   "analysis.contours.width": "Line width",
-  "analysis.contours.px": "{v} px"
+  "analysis.contours.px": "{v} px",
+  "analysis.cinema.on": "Caster camera",
+  "analysis.cinema.onTitle": "The caster moves the camera to each moment itself, without cuts, and circles the fight while it plays",
+  "analysis.cinema.subtitles": "Subtitles",
+  "analysis.cinema.subtitlesTitle": "Each moment's line and its numbers over the view, the player and the other party ringed",
+  "analysis.cinema.resume": "Resume caster camera",
+  "analysis.cinema.resumeTitle": "You moved the camera, so the caster let go: give it back",
+  "analysis.cinema.closeTitle": "Stop the caster's camera and subtitles",
+  "analysis.cinema.at": "at {time}",
+  "analysis.cinema.round": "round {n}",
+  "analysis.cinema.distance": "{m} m"
 }

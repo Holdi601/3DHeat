@@ -38,6 +38,7 @@ import { withPlaceLines } from '../mass/placeLines';
 import { withManeuverLines } from '../insights/maneuver/lines';
 import { withInsightLines } from '../insights/highlight';
 import { engagedTracks } from '../ui/replay/engagements';
+import { castTracks } from '../ui/insights/cinemaStore';
 import { DirectionController } from './directionController';
 import { dropLinesOn, unitsPerMetre } from '../ui/replay/replayData';
 import { FollowRig, type RigMode } from './followRig';
@@ -1928,6 +1929,8 @@ export class Engine {
     if (r.targetPerson !== null) want.add(r.targetPerson);
     // Both sides of the exchanges whose engagement lines are drawn (ui/replay/engagements.ts).
     for (const p of engagedTracks) want.add(p);
+    // The subjects the caster's camera frames (ui/insights/CasterCinema.tsx).
+    for (const p of castTracks) want.add(p);
     const tracks: typeof this.liveTracks = [];
     const pose = this.gpuPose;
     for (const p of want) {

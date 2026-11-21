@@ -68,6 +68,7 @@ import { clearLook } from './ui/replay/pair';
 import { CameraReadout, copyCameraPose } from './ui/CameraReadout';
 import { PickCard } from './ui/PickCard';
 import { HeatLabels } from './ui/heatInspect/HeatLabels';
+import { CasterCinema } from './ui/insights/CasterCinema';
 import { BreakdownWindow } from './ui/breakdown/BreakdownPanel';
 import { VersusWindow } from './ui/versus/VersusPanel';
 import { MassPanel, MassWindow } from './ui/mass/MassPanel';
@@ -585,6 +586,7 @@ export function App() {
               <ObjectiveLabels />
               <HeatLabels />
               <ReplayOverlay />
+              <CasterCinema />
               <ReplayExtras />
               <HitMarkTip />
               <StatsOverlay />

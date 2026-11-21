@@ -36,6 +36,7 @@ if (import.meta.env.DEV) {
       'state/replayStore': () => import('./state/replayStore'),
       'ui/replay/engagements': () => import('./ui/replay/engagements'),
       'render/volumeContours': () => import('./render/volumeContours'),
+      'ui/insights/cinemaStore': () => import('./ui/insights/cinemaStore'),
     } as Record<string, () => Promise<unknown>>,
     generateSynthetic,
     DEFAULT_SYNTH,

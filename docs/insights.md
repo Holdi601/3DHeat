@@ -145,8 +145,19 @@ Where the data says who won each round, every moment says it: *"Anna takes down 
 
 ![The caster's moments for one round of the shooter demo](assets/img/en/caster.webp)
 
-- Click a moment: the view switches to the replay, jumps to just before it and flies there. The camera stays where it went: your jump is not undone by following a player or by the tactical display's **Director** (which waits until you press **Resume director**).
-- **Play the moments** plays each one to its end and moves on, and there the camera follows each moment's player; **Previous** / **Next** step through them.
+- Click a moment: the view switches to the replay and jumps to just before it. With **Caster camera** on (the default) the caster films it (below); off, the camera flies there and stays where it went: your jump is not undone by following a player or by the tactical display's **Director** (which waits until you press **Resume director**).
+- **Play the moments** plays each one to its end and moves on; **Previous** / **Next** step through them. Without the caster camera the camera follows each moment's player.
+
+### Caster camera and subtitles
+
+With **Caster camera** on, the caster moves the camera itself:
+
+- **No cuts.** The camera's position and the point it looks at each follow their target on a critically damped spring: a moment across the map is a dolly that accelerates, glides and settles (longer moves take longer, up to about 1.6 s of spring time), a moment nearby a short drift. It keeps its heading towards the subject, so a move does not swing round.
+- **Framing.** The target frames the moment's player and the other party where they are now, from 24° above, at a distance that holds both (1.7 times their spread, at least 60 m); while the replay plays it circles them at 6° a second.
+- **Subtitles** (on by default): a bar at the bottom of the view with the moment's kind, its time (and round, and distance where it has one) and the caster's line; the player is ringed in amber and the other party in red, with their names.
+- **You take over** by moving the camera or following a unit: the caster lets go at once and the bar and the panel offer **Resume caster camera**, which flies back to the moment. **×** on the bar stops the caster's camera and subtitles; **Stop** in the panel does too.
+
+The settings are remembered in this browser ([`cinema.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/insights/cast/cinema.ts), [`CasterCinema.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/insights/CasterCinema.tsx)).
 - With an external AI on, **Commentary by AI** writes a commentary from the moment list (kinds, times, names or pseudonyms, teams, classes, distances).
 
 It needs persons and kill/death (or capture) events; an `other`/`victim` column makes trades and long shots possible.

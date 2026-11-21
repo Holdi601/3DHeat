@@ -29,6 +29,7 @@ import { useSort, useSorted } from '../sort/useSort';
 import { AiSettingsButton } from './AiSettings';
 import { labelOf } from './say';
 import { useAiStream } from './useAiStream';
+import { startCinema, stopCinema, useCinema } from './cinemaStore';
 
 interface CastState {
   key: string | null;
@@ -95,12 +96,42 @@ export function goToMoment(m: Moment, src: CastSource, d: Dataset, engine: Engin
   }
   st.seek(m.from);
   clearTimeout(followTimer);
+  // The caster's own camera: a move without a cut, subtitles and the subjects ringed (CasterCinema.tsx).
+  if (useCinema.getState().on) {
+    startCinema(m, src);
+    return;
+  }
   if (engine) flyTo(engine, d, { x: m.x, y: m.y, z: m.z }, 120);
   if (follow && m.actor >= 0) {
     const at = trackAt(src, m.actor, m.time);
     // After the flight: following straight away would cut it short.
     if (at) followTimer = window.setTimeout(() => selectAndFollow(src.units.units[at.unit], at.track), engine ? 650 : 0);
   }
+}
+
+/** The caster's camera and subtitles: on or off, and back to it after taking the camera over. */
+function CinemaControls() {
+  const on = useCinema((s) => s.on);
+  const subtitles = useCinema((s) => s.subtitles);
+  const held = useCinema((s) => s.held);
+  const moment = useCinema((s) => s.moment);
+  return (
+    <div className="row wrap" style={{ gap: 8, alignItems: 'center' }}>
+      <label title={t('analysis.cinema.onTitle')}>
+        <input type="checkbox" checked={on} onChange={(e) => useCinema.getState().set({ on: e.target.checked })} /> {t('analysis.cinema.on')}
+      </label>
+      {on && (
+        <label title={t('analysis.cinema.subtitlesTitle')}>
+          <input type="checkbox" checked={subtitles} onChange={(e) => useCinema.getState().set({ subtitles: e.target.checked })} /> {t('analysis.cinema.subtitles')}
+        </label>
+      )}
+      {on && held && moment && (
+        <button onClick={() => useCinema.getState().set({ held: false, shot: useCinema.getState().shot + 1 })} title={t('analysis.cinema.resumeTitle')}>
+          {t('analysis.cinema.resume')}
+        </button>
+      )}
+    </div>
+  );
 }
 
 export function Caster() {
@@ -217,6 +248,7 @@ export function Caster() {
             onClick={() => {
               cast.set({ playing: false });
               useStore.getState().setPlaying(false);
+              stopCinema();
             }}
           >
             {t('insights.cast.stop')}
@@ -231,6 +263,7 @@ export function Caster() {
           {t('insights.cast.next')}
         </button>
       </div>
+      <CinemaControls />
       {cur && (
         <div className="ins-cast-now" aria-live="polite">
           <span className="ins-moment-kind">{t(`insights.cast.kind.${cur.kind}`)}</span> {line(cur)}
