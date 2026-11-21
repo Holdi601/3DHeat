@@ -85,7 +85,7 @@ jobs:
         run: |
           cargo install cargo-audit --locked
           cargo audit --deny warnings
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
       - name: npm audit (what ships)
