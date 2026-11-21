@@ -7,6 +7,7 @@ import { personRegions, regionOf, REGIONS, NO_REGION } from './regions';
 import { VehicleScene, figureOfVehicle, heatOf, onFigure, templateOfFigure } from './scene';
 import { drawSide, sheetScale, SIDES } from './sheet';
 import type { Vec3 } from '../race/geometry';
+import { atRest } from './plates';
 
 /** A dataset of rows given as objects: text columns become categories, numbers numbers (NaN where a row has none). */
 function dataset(rows: Record<string, string | number>[]): Dataset {
@@ -367,5 +368,23 @@ describe('what each hit did', () => {
     expect(scene.pick(project, [690, 300])).toBe(a);
     expect(scene.pick(project, [310, 305])).toBe(b);
     expect(scene.pick(project, [500, 300])).toBeNull();
+  });
+});
+
+describe('plates in the turret pose at the hit', () => {
+  const turret: Vec3 = [0, 2, 0];
+  const gun: Vec3 = [1, 2.5, 0];
+  it('turns a point on the main turret back by its yaw, a gun point also down by the elevation', () => {
+    // The turret turned 90 degrees: a point 2 m ahead of the pivot at rest is now 2 m to the side.
+    const p = atRest([0, 2, 2], 'turret', Math.PI / 2, 0, turret, gun);
+    expect(p[0]).toBeCloseTo(2, 6);
+    expect(p[2]).toBeCloseTo(0, 6);
+    const q = atRest([1 + Math.SQRT1_2, 2.5 + Math.SQRT1_2, 0], 'gun', 0, Math.PI / 4, turret, gun);
+    expect(q[0]).toBeCloseTo(2, 6);
+    expect(q[1]).toBeCloseTo(2.5, 6);
+  });
+  it('leaves a plate the hull carries, and a numbered mount whose yaw the rows do not hold', () => {
+    expect(atRest([0, 2, 2], 'hull', Math.PI / 2, 0, turret, gun)).toEqual([0, 2, 2]);
+    expect(atRest([0, 2, 2], 'turret.3', Math.PI / 2, 0, turret, gun)).toEqual([0, 2, 2]);
   });
 });

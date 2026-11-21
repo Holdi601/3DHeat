@@ -58,6 +58,8 @@ if (import.meta.env.DEV) {
       'ui/replay/units': () => import('./ui/replay/units'),
       'figures/catalog': () => import('./figures/catalog'),
       'figures/unitcatalog': () => import('./figures/unitcatalog'),
+      'figures/hitmarks': () => import('./figures/hitmarks'),
+      'vehicle/hits': () => import('./vehicle/hits'),
       'mass/client': () => import('./mass/client'),
       'mass/outcomeClient': () => import('./mass/outcomeClient'),
     } as Record<string, () => Promise<unknown>>,

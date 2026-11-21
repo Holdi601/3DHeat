@@ -8,6 +8,7 @@
 
 import { VertexBuffer, type Rgb } from '../race/geometry';
 import { CATALOG } from '../figures/catalog';
+import { packFigurePending } from '../figures/figurepack';
 import { place, poseFrame, TemplateCache, type Template } from '../figures/kit';
 import { InstanceBatches, meshOf, NO_PITCH, type FigureBatch } from '../figures/instances';
 import { directionOf } from './keyframes';
@@ -69,10 +70,16 @@ export interface BoardFrame {
 }
 
 const templates = new TemplateCache();
+/** Kinds built before their pack model's data was here: built as the figure they stand in for, again once it is. */
+const interim = new Set<string>();
 
 export function templateOf(kind: string): Template | null {
   const e = CATALOG[kind];
   if (!e) return null;
+  if (interim.has(kind) && !packFigurePending(kind)) {
+    interim.delete(kind);
+    templates.drop(kind);
+  } else if (!interim.has(kind) && packFigurePending(kind)) interim.add(kind);
   return templates.get(kind, e.build);
 }
 
@@ -252,6 +259,26 @@ export class BoardScene {
     // The tasks' badges and the cones of the sectors running now, sized on screen.
     if (cam && plan.tasks?.length) taskInstances(plan, view.step, view.moment ?? 0, poses, cam, origin, out, (f) => (templateOf(f.kind)?.max[1] ?? 1) * scale, view.task ?? null);
     return out.list;
+  }
+
+  private spinsFor: Plan | null = null;
+  /** The plan's kinds and the templates they were drawn as when `spins` was found: a model arriving later is new. */
+  private spinKinds: [string, Template | null][] = [];
+  private spins = false;
+
+  /**
+   * Whether a figure on the board has a propeller or rotor: they turn by the clock, so the board is drawn every
+   * frame while one is there, not only when it changes. Kept per plan while its kinds' templates stay the same (a
+   * pack model takes its stand-in figure's place once loaded).
+   */
+  spinning(plan: Plan): boolean {
+    if (plan === this.spinsFor && this.spinKinds.every(([k, t]) => templateOf(k) === t)) return this.spins;
+    const kinds = new Map<string, Template | null>();
+    for (const f of plan.figures) if (!kinds.has(f.kind)) kinds.set(f.kind, templateOf(f.kind));
+    this.spinKinds = [...kinds];
+    this.spins = this.spinKinds.some(([, t]) => !!t?.joints?.some((j) => j.kind === 'spin'));
+    this.spinsFor = plan;
+    return this.spins;
   }
 }
 

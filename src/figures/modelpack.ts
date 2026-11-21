@@ -199,11 +199,13 @@ export function figureFromModelGlb(bytes: Uint8Array, scale = 1): ModelFigure {
       parts.push({ name, pivot, joint: 'pitch', ...(parent !== undefined ? { parent } : {}) });
     } else if (base === 'rotor' && pivot && vec3(x.axis)) {
       // A propeller or rotor spins on its own (a joint of its own kind): seen turning, not strobing at 60 frames a
-      // second - a main rotor 3 turns a second, a tail rotor or propeller 6, the faint disc showing the speed.
+      // second - a main rotor 3 turns a second, a tail rotor or propeller 4, the faint disc showing the speed. A
+      // frame's turn stays within two fifths of the angle between two blades up to six blades (24 of 60 degrees; at 6
+      // turns a second a five-blade propeller moved half its blade spacing a frame and read as standing or reversing).
       const axis = vec3(x.axis)!;
       const main = Math.abs(axis[1]) > 0.9;
       jointIndex.set(name, jointIndex.size);
-      parts.push({ name, pivot, joint: 'spin', axis, rate: 2 * Math.PI * (main ? 3 : 6) });
+      parts.push({ name, pivot, joint: 'spin', axis, rate: 2 * Math.PI * (main ? 3 : 4) });
       if (!prop && axis[0] > 0.9 && typeof x.diameter === 'number') prop = { at: pivot, diameter: x.diameter };
     } else parts.push({ name, pivot: [0, 0, 0] });
     order.push(name);

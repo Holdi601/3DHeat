@@ -299,18 +299,20 @@ export function paintPlates(list: Plate[], counts: PlateCount[], ramp: (t: numbe
 /**
  * A point struck on a turned turret (its gun raised) back where the model holds it at rest: turned back about the
  * turret's vertical by the yaw, then lowered about the trunnion by the elevation (radians, right and up positive) -
- * so a hit on the turret lies on its plate whichever way the turret faced. `part` is the plate's (`turret`, `gun`).
+ * so a hit on the turret lies on its plate whichever way the turret faced. `part` is the plate's: the main turret's
+ * (`turret`, `gun`) turn back, any other (the hull's, a ship's numbered mounts', whose yaw the rows do not carry) stays.
+ * Which part a plate rides is the pack's to say (War Thunder: the damage model's own node tree - many plates named
+ * for the turret hang from the hull and do not turn).
  */
 export function atRest(p: Vec3, part: string, yaw: number, pitch: number, turret: Vec3 | null, gun: Vec3 | null): Vec3 {
   let [x, y, z] = p;
-  const base = part.split('.')[0];
-  if ((base === 'turret' || base === 'gun') && turret && Number.isFinite(yaw)) {
+  if ((part === 'turret' || part === 'gun') && turret && Number.isFinite(yaw)) {
     const c = Math.cos(-yaw), s = Math.sin(-yaw);
     const dx = x - turret[0], dz = z - turret[2];
     x = turret[0] + dx * c - dz * s;
     z = turret[2] + dx * s + dz * c;
   }
-  if (base === 'gun' && gun && Number.isFinite(pitch)) {
+  if (part === 'gun' && gun && Number.isFinite(pitch)) {
     const c = Math.cos(-pitch), s = Math.sin(-pitch);
     const dx = x - gun[0], dy = y - gun[1];
     x = gun[0] + dx * c - dy * s;

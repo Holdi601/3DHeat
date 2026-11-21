@@ -15,6 +15,7 @@ import { BoardScene, templateOf } from '../tactics/scene';
 import { hasDirectionTracks } from '../tactics/keyframes';
 import { VehicleStage } from '../vehicle/stage';
 import { FigureReplay } from '../figures/replay';
+import { packFiguresVersion } from '../figures/figurepack';
 import { EffectLayer } from '../figures/effects';
 import { emptySample, MotionModel, MotionRefiner } from '../figures/motion';
 import { WeaponLayer } from './weapons';
@@ -1407,9 +1408,12 @@ export class Engine {
       // Time-bound notes come and go while it plays: a tenth of a second is fine enough.
       board.playing && board.plan.notes.some((n) => n.show === 'timed') ? Math.floor(time * 10) : '',
       c ? `${c.x.toFixed(3)},${c.y.toFixed(3)},${c.z.toFixed(3)}` : '',
+      // A pack model's data arriving: its figure takes the stand-in's place.
+      packFiguresVersion(),
     ].join('/');
-    // While it plays the figures move every frame, so the frame is never one to skip.
-    if (this.boardFrame && key === this.boardKey) return [this.boardFrame, board.playing];
+    // While it plays the figures move every frame, so the frame is never one to skip; nor while a propeller or
+    // rotor turns on the board.
+    if (this.boardFrame && key === this.boardKey) return [this.boardFrame, board.playing || this.boardScene.spinning(board.plan)];
     this.boardKey = key;
     this.boardFrame = this.boardScene.build(board.plan, view);
     return [this.boardFrame, true];
