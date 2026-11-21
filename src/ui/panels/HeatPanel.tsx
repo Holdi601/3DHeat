@@ -12,6 +12,7 @@ import { useEngine } from '../EngineContext';
 import { RampEditor } from '../RampEditor';
 import { int, num, t } from '../../i18n';
 import { lengthText, useUnits } from '../../state/unitsStore';
+import { useInspectStore } from '../../state/inspectStore';
 
 /** A distance in metres, as the sliders show it. */
 const metres = (v: number) => lengthText(v);
@@ -23,6 +24,8 @@ export function HeatPanel() {
   const dataset = useStore((s) => s.dataset);
   const heat = useStore((s) => s.heat);
   const patchHeat = useStore((s) => s.patchHeat);
+  const heatLabels = useInspectStore((s) => s.heatLabels);
+  const heatLabelCount = useInspectStore((s) => s.heatLabelCount);
   const setRamp = useStore((s) => s.setRamp);
   const setCurve = useStore((s) => s.setCurve);
   const difference = mode === 'heat-difference';
@@ -234,6 +237,23 @@ export function HeatPanel() {
           onChange={(groundProjected) => patchHeat({ groundProjected })}
           title={t('heat.heatPanel.flattenTitle')}
         />
+        <Check
+          label={t('analysis.labels.toggle')}
+          checked={heatLabels}
+          onChange={(v) => useInspectStore.getState().patch({ heatLabels: v })}
+          title={t('analysis.labels.toggleTitle')}
+        />
+        {heatLabels && (
+          <Slider
+            label={t('analysis.labels.count')}
+            value={heatLabelCount}
+            min={1}
+            max={20}
+            step={1}
+            format={(v) => int(v)}
+            onChange={(v) => useInspectStore.getState().patch({ heatLabelCount: Math.round(v) })}
+          />
+        )}
       </Section>
 
       <DirectionSection />

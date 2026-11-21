@@ -17,6 +17,7 @@ import { rowLookDirection, type Vec3 } from './pose';
 import { raycastTiles, type TileHit } from './tilePick';
 import type { WorldTile } from '../world/tileSet';
 import { t } from '../i18n';
+import { heatStackAlongRay, type RowWeight, type SpriteKernel } from './heatStack';
 
 /**
  * Pick radius around a click, in CSS pixels: "a few pixels", wide enough to hit
@@ -55,13 +56,15 @@ export interface PickContext {
   level: Level | null;
   /** Whether the view draws the level at a point: the slice and the distance cull. */
   accept: ((x: number, y: number, z: number) => boolean) | null;
+  /** How a heat sprite weighs, when heat sprites are drawn: the stack under the click is read with it. */
+  heat?: { kernel: SpriteKernel; weight: RowWeight | null } | null;
 }
 
 /**
  * Runs a slice generator a few milliseconds at a time, handing the thread back
  * between slices. Resolves null when `cancelled` turns true first.
  */
-function runSliced<T>(
+export function runSliced<T>(
   gen: Generator<unknown, T, void>,
   cancelled: () => boolean,
   onYield?: (v: unknown) => void,
@@ -173,6 +176,7 @@ export class Inspector {
     this.pickId++;
     this.marker = null;
     useInspectStore.getState().setPick(null);
+    useInspectStore.getState().setStack(null);
   }
 
   /** How the level's index stands: absent, being built (0..1), or ready. */
@@ -184,6 +188,10 @@ export class Inspector {
     const id = ++this.pickId;
     const stale = () => id !== this.pickId;
     const store = useInspectStore.getState();
+    store.setStack(null);
+    // The heat under the click, read beside the pick: the card shows the pick
+    // at once and the stack when its scan is done.
+    void this.readStack(id, ctx, stale);
 
     // ---- a drawn sample, which wins over the surface behind it
     const ds = ctx.dataset;
@@ -271,6 +279,26 @@ export class Inspector {
     // Nothing under the pointer: the click closes the card, as a click on empty
     // space closes any popup.
     if (!stale()) this.clear();
+  }
+
+  /** The rows whose sprites cover the click, and what they add up to (render/heatStack.ts). */
+  private async readStack(id: number, ctx: PickContext, stale: () => boolean): Promise<void> {
+    const ds = ctx.dataset;
+    if (!ds || !ctx.drawn || !ctx.heat || ctx.cubes || ctx.drawn.rowHi <= ctx.drawn.rowLo) return;
+    const store = useInspectStore.getState();
+    store.setStack({ pickId: id, progress: 0, stack: null });
+    const stack = await runSliced(
+      heatStackAlongRay(ds, ctx.drawn, ctx.ray, ctx.worldPerPixel, ctx.heat.kernel, ctx.heat.weight),
+      stale,
+      (v) => {
+        const cur = useInspectStore.getState().stack;
+        if (!stale() && cur?.pickId === id && !cur.stack && typeof v === 'number' && v - cur.progress > 0.05) {
+          useInspectStore.getState().setStack({ ...cur, progress: v });
+        }
+      },
+    );
+    if (stale() || !stack) return;
+    useInspectStore.getState().setStack({ pickId: id, progress: 1, stack });
   }
 
   private publishSurface(id: number, ctx: PickContext, point: Vec3, surface: PickedSurface): void {

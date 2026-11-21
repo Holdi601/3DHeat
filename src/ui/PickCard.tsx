@@ -11,6 +11,7 @@ import { formatLength } from '../render/measure';
 import { useUnits } from '../state/unitsStore';
 import { DirectionSpot } from './DirectionSpot';
 import { BreakdownButton } from './breakdown/BreakdownPanel';
+import { HeatHere } from './heatInspect/HeatHere';
 
 /**
  * Eye height for "stand here" on a surface, in world units (metres): standing
@@ -156,6 +157,7 @@ export function PickCard() {
             <span>{t('heat.inspect.distance')}</span>
             <b>{formatLength(pick.distance)}</b>
           </div>
+          <HeatHere pick={pick} />
         </div>
         <DirectionSpot />
         <div className="pick-actions">

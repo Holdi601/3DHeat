@@ -579,6 +579,26 @@ export function rowDrawn(
   return true;
 }
 
+/**
+ * The side a drawn row adds to: +1, -1 (difference, a two-sided split), or 0
+ * for a row the group or split tables drop. 1 when the frame uses no sign.
+ * The same tables `rowDrawn` applies, read for their value rather than as a
+ * yes or no (render/heatStack.ts).
+ */
+export function rowSign(ds: Dataset, i: number, d: DrawnRows, split: ArrayLike<number> | null): number {
+  if (!d.useSign) return 1;
+  const g = ds.teamId ? ds.teamId[i] : 0;
+  const groupSign = d.teamSign && g < d.teamSign.length ? d.teamSign[g] : 1;
+  if (d.splitMode === 0) return groupSign;
+  if (groupSign === 0 || !split) return 0;
+  const v = split[i];
+  if (d.splitMode === 1) {
+    const cat = Math.round(v);
+    return d.splitSign && cat >= 0 && cat < d.splitSign.length ? d.splitSign[cat] : 0;
+  }
+  return v >= d.splitPositive[0] && v <= d.splitPositive[1] ? 1 : v >= d.splitNegative[0] && v <= d.splitNegative[1] ? -1 : 0;
+}
+
 /** A column-major view-projection (OpenGL clip space) and the canvas it maps onto. */
 export interface ScreenSpace {
   viewProj: Float32Array;

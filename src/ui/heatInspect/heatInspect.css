@@ -1,0 +1,55 @@
+/* Heat labels over the view (HeatLabels.tsx) and the pick card's heat (HeatHere.tsx). */
+.heat-labels {
+  position: absolute;
+  z-index: calc(var(--z-units) + 1);
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.heat-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  font-size: calc(11px * var(--label-scale, 1));
+  line-height: calc(16px * var(--label-scale, 1));
+  padding: 0 5px;
+  border-radius: 3px;
+  background: rgba(12, 14, 18, 0.78);
+  font-variant-numeric: tabular-nums;
+}
+.heat-label.hot {
+  border: 1px solid rgb(255, 170, 40);
+  color: rgb(255, 214, 120);
+}
+.heat-label.cold {
+  border: 1px solid rgb(120, 140, 255);
+  color: rgb(170, 190, 255);
+}
+.heat-label.top {
+  font-weight: 600;
+}
+.heat-here {
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid var(--line);
+}
+.heat-here small {
+  opacity: 0.75;
+  font-weight: normal;
+}
+.heat-stack-nav {
+  gap: 4px;
+  align-items: center;
+  margin-top: 4px;
+}
+.heat-stack-nav button {
+  min-width: 22px;
+}
+.heat-stack-at {
+  flex: 1;
+  text-align: center;
+}
+.heat-rel {
+  margin: 2px 0;
+}

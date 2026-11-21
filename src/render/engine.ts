@@ -76,6 +76,8 @@ import { deadAt, deathsOf } from '../data/deaths';
 import { BudgetController, candidateRange, HeatLevel, nextExactCap, nextHeatCap, planFrame } from './sampling';
 import { Inspector, type PickContext } from './inspector';
 import type { DrawnRows } from './pick';
+import type { HeatReading, RowWeight, SpriteKernel } from './heatStack';
+import { HeatFieldService } from './heatField';
 import { lookAtDistance, lookAtPitch, type Vec3 } from './pose';
 import { useInspectStore } from '../state/inspectStore';
 import { effectiveGpuBudget } from './budget';
@@ -568,6 +570,8 @@ export class Engine {
   measureEnabled = false;
   /** Click-to-inspect: the pick card's answers and the marker it draws. */
   readonly inspector = new Inspector();
+  /** The drawn rows binned into places, for the heat labels and a pick's relative heat (render/heatField.ts). */
+  readonly heatField = new HeatFieldService(() => this.heatReading());
   /** Which heat rows the last frame drew, for answering a click on one. */
   private drawn: DrawnRows | null = null;
   /** Directional heat: the rows' bearings, the wedge and field settings, a clicked spot's directions. */
@@ -1392,6 +1396,48 @@ export class Engine {
 
   start(): void {
     if (this.raf || !this.renderer) return;
+  /**
+   * How a sprite weighs, for heat read on the CPU (render/heatStack.ts): the
+   * heat shape settings and the value weight. Null where no heat sprites are
+   * drawn - box replay, line heat, the race and vehicle tabs.
+   */
+  heatKernel(): { kernel: SpriteKernel; weight: RowWeight | null } | null {
+    const s = snapshot();
+    if (s.mode === 'team' || heatModeFor(s.mode, s.lines) === 'heat-lines' || !this.dataset) return null;
+    const h = s.heat;
+    const kernel: SpriteKernel = {
+      radius: h.radius,
+      minPx: h.minPixelRadius,
+      maxPx: h.maxPixelRadius,
+      zoomInvariant: h.zoomInvariant,
+      center: h.centerIntensity,
+      edge: h.edgeIntensity,
+      falloff: h.falloff,
+      smooth: h.smoothRamp,
+      curve: h.useCurve ? h.curve : null,
+    };
+    const vw = valueWeight(this.dataset, h.weightBy);
+    const col = vw ? this.dataset.attrs.find((a) => a.name === vw.column) : null;
+    return { kernel, weight: vw && col ? { data: col.data, scale: vw.scale } : null };
+  }
+
+  /**
+   * What the heat pass drew last frame, copied, with the view it was drawn
+   * in: what the heat labels and a pick's relative heat bin (ui/heatInspect).
+   */
+  heatReading(): HeatReading | null {
+    const k = this.heatKernel();
+    if (!k || !this.drawn || !this.dataset) return null;
+    const d = this.drawn;
+    return {
+      dataset: this.dataset,
+      drawn: { ...d, teamSign: d.teamSign ? d.teamSign.slice() : null, splitSign: d.splitSign ? d.splitSign.slice() : null },
+      kernel: k.kernel,
+      weight: k.weight,
+      mode: snapshot().mode,
+    };
+  }
+
     this.lastNow = performance.now();
     const tick = (now: number) => {
       if (this.disposed) return;
@@ -2432,6 +2478,7 @@ export class Engine {
       accept,
     });
     this.invalidate(2);
+      heat: this.heatKernel(),
   }
 
   /**

@@ -4,6 +4,7 @@ import { startLanguage } from './i18n';
 import { applyMotionVars } from './ui/motion';
 import { useVersus } from './ui/versus/VersusPanel';
 import { useStore } from './state/store';
+import { useInspectStore } from './state/inspectStore';
 import { DEFAULT_SYNTH, generateSynthetic } from './data/synth';
 import { VIEW_PRESETS } from './render/camera';
 import { mixTeamColor, teamHeatColor } from './render/colors';
@@ -19,6 +20,7 @@ if (import.meta.env.DEV) {
   // through the real worker pipeline rather than a stubbed one.
   (window as unknown as Record<string, unknown>).__3dheat = {
     useStore,
+    useInspectStore,
     useVersus,
     generateSynthetic,
     DEFAULT_SYNTH,
