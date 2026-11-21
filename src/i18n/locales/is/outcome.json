@@ -70,6 +70,7 @@
   "outcome.exampleWon": "won",
   "outcome.exampleLost": "lost",
   "outcome.exampleTitle": "Load this match and go to the moment",
+  "outcome.noFiles": "These matches' files are not open (an index was opened alone): open their folder to load them.",
   "outcome.toDoc": "To document",
   "outcome.toDocTitle": "Send this pattern to the open analysis document, as a chart of the two win rates",
   "outcome.sign": "Chart sign",

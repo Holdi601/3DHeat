@@ -187,7 +187,7 @@ function FindingRow({ f, engine, rounds }: { f: OutcomeFinding; engine: Engine |
         >
           {t('outcome.show')}
         </button>
-        <button title={t('outcome.compareTitle', { n: COMPARE_MATCHES })} onClick={() => void compareFinding(engine, f)}>
+        <button title={t('outcome.compareTitle', { n: COMPARE_MATCHES })} onClick={() => void compareFinding(engine, f).then((n) => n || toast(t('outcome.noFiles')))}>
           {t('outcome.compare')}
         </button>
         <button title={t('outcome.toDocTitle')} onClick={() => toDocument(f, sentence)}>
