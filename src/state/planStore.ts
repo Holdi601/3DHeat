@@ -9,7 +9,9 @@
  */
 
 import { create } from 'zustand';
-import { BASE_LAYER, editable, shown, emptyPlan, keyAt, layerOf, newId, onBoard, playbackAt, readPlan, type ArrowStyle, type Plan, type PlanFigure, type Vec3 } from '../tactics/plan';
+import { BASE_LAYER, editable, shown, emptyPlan, keyAt, layerOf, newId, onBoard, playbackAt, posesAt, readPlan, type ArrowStyle, type Plan, type PlanFigure, type TrackChannel, type Vec3 } from '../tactics/plan';
+import { aimAt, withKey } from '../tactics/keyframes';
+import { templateOf } from '../tactics/scene';
 import { applyOps, diffPlans, isOpBatch, type OpBatch } from '../tactics/ops';
 import { loadAuthor, loadLocal, saveAuthor, saveLocal } from '../tactics/autosave';
 import { gamePreset } from '../tactics/games';
@@ -97,6 +99,16 @@ export interface PlanState {
   rev: number;
   /** The browser copy: when it was last written or read back, and whether it failed for want of room. */
   autosave: { at: string | null; restored: boolean; full: boolean };
+  /** A moment of playback shown while paused (the time slider), seconds from the plan's start; null shows the step's start. */
+  scrub: number | null;
+  /** The next click on the board points the selected figure's turret (and gun), eyes or sensor there, keyed at the moment shown. */
+  aiming: 'turret' | 'view' | 'sensor' | null;
+  setScrub: (t: number | null) => void;
+  /** A keyframe of a figure's channel at `t` (the moment shown when absent); null removes it. */
+  setTrackKey: (figure: string, channel: TrackChannel, v: number | null, t?: number) => void;
+  /** When a route is to be at one of its points, seconds from its step's start; null: by its modes. */
+  setArrival: (arrow: string, point: number, seconds: number | null) => void;
+  startAim: (what: 'turret' | 'view' | 'sensor' | null) => void;
 
   setGame: (game: string) => void;
   setTool: (tool: BoardTool) => void;
@@ -239,6 +251,39 @@ export const usePlanStore = create<PlanState>((set, get) => ({
   log: [],
   rev: 0,
   autosave: { at: restored?.at ?? null, restored: !!restored, full: false },
+  scrub: null,
+  aiming: null,
+  setScrub: (t) => {
+    const s = get();
+    if (t === null) {
+      set({ scrub: null });
+      return;
+    }
+    const at = playbackAt(s.plan, t);
+    set({ scrub: Math.max(0, Math.min(at.total, t)), step: at.step, playing: false, draft: null });
+  },
+  setTrackKey: (id, channel, v, t) => {
+    const s = get();
+    const plan = clone(s.plan);
+    const f = plan.figures.find((x) => x.id === id);
+    if (!f) return;
+    const tracks = withKey(f.tracks, channel, t ?? momentOf(s).time, v);
+    if (tracks) f.tracks = tracks;
+    else delete f.tracks;
+    set(edit(s, plan));
+  },
+  setArrival: (id, point, seconds) => {
+    const s = get();
+    const plan = clone(s.plan);
+    const a = plan.arrows.find((x) => x.id === id);
+    if (!a || point < 1 || point >= a.points.length) return;
+    const at = Array.from({ length: a.points.length }, (_, i) => a.at?.[i] ?? null);
+    at[point] = seconds !== null && Number.isFinite(seconds) && seconds >= 0 ? seconds : null;
+    if (at.some((x) => x !== null)) a.at = at;
+    else delete a.at;
+    set(edit(s, plan));
+  },
+  startAim: (aiming) => set({ aiming: aiming && get().selected ? aiming : null, draft: null }),
   arrowStyle: 'move',
   yaw: 0,
   step: 0,
@@ -276,7 +321,7 @@ export const usePlanStore = create<PlanState>((set, get) => ({
   setKind: (kind) => set({ kind, tool: 'place', draft: null }),
   setTeam: (team) => set({ team }),
   setArrowStyle: (arrowStyle) => set({ arrowStyle, tool: 'waypoints', draft: null }),
-  setStep: (step) => set({ step: Math.max(0, Math.min(get().plan.steps.length - 1, step)), draft: null, playing: false }),
+  setStep: (step) => set({ step: Math.max(0, Math.min(get().plan.steps.length - 1, step)), draft: null, playing: false, scrub: null }),
   addStep: () => {
     const s = get();
     const plan = clone(s.plan);
@@ -345,6 +390,25 @@ export const usePlanStore = create<PlanState>((set, get) => ({
     // Placing and drawing start from figures only.
     const hit = s.tool === 'select' || s.tool === 'erase' ? ref : ref && s.plan.figures.some((f) => f.id === ref) ? ref : null;
     const step = s.step;
+    // Aiming: the selected figure's turret and gun, eyes or sensor at the clicked point, at the moment shown.
+    if (s.aiming) {
+      const f = s.plan.figures.find((x) => x.id === s.selected);
+      const m = momentOf(s);
+      const pose = f && posesAt(s.plan, m.step, m.u).get(f.id);
+      if (f && pose) {
+        const t = templateOf(f.kind);
+        const eye = { x: pose.x, y: pose.y + (t ? t.max[1] * 0.8 * Math.max(0.05, s.plan.figureScale) : 1.6), z: pose.z };
+        const aim = aimAt(eye, pose.yaw, at);
+        const plan = clone(s.plan);
+        const g = plan.figures.find((x) => x.id === f.id)!;
+        const [ych, pch]: [TrackChannel, TrackChannel] = s.aiming === 'turret' ? ['turret', 'gun'] : s.aiming === 'view' ? ['viewYaw', 'viewPitch'] : ['sensorYaw', 'sensorPitch'];
+        g.tracks = withKey(withKey(g.tracks, ych, m.time, aim.yaw), pch, m.time, aim.pitch);
+        set({ ...edit(s, plan), aiming: null });
+      } else set({ aiming: null });
+      return;
+    }
+    // Drawing works on the step's start: a moment shown from the time slider gives way to it.
+    if (s.scrub !== null && s.tool !== 'select' && s.tool !== 'measure') set({ scrub: null });
     // Nothing new goes on a locked layer.
     if ((s.tool === 'place' || s.tool === 'waypoints' || s.tool === 'throw' || s.tool === 'area' || s.tool === 'note' || s.tool === 'draw') && !canDraw(s)) return;
     switch (s.tool) {
@@ -720,9 +784,9 @@ export const usePlanStore = create<PlanState>((set, get) => ({
   play: (on) => {
     const s = get();
     if (on) {
-      // From the start of the shown step.
-      const before = stepStart(s.plan, s.step);
-      set({ playing: true, playTime: before, draft: null });
+      // From the moment on the time slider, else from the start of the shown step.
+      const before = s.scrub ?? stepStart(s.plan, s.step);
+      set({ playing: true, playTime: before, draft: null, scrub: null });
     } else set({ playing: false });
   },
   setPlayTime: (t) => {
@@ -850,6 +914,20 @@ export const usePlanStore = create<PlanState>((set, get) => ({
     });
   },
 }));
+
+/**
+ * The moment the board shows: while playing, the playback time (`engineTime`
+ * when the engine's clock is newer than the store's); paused on the time
+ * slider, that moment; else the start of the shown step.
+ */
+export function momentOf(s: Pick<PlanState, 'plan' | 'playing' | 'playTime' | 'scrub' | 'step'>, engineTime?: number | null): { step: number; u: number; time: number } {
+  const t = s.playing ? (engineTime ?? s.playTime) : s.scrub;
+  if (t !== null && t !== undefined) {
+    const at = playbackAt(s.plan, t);
+    return { step: at.step, u: at.u, time: Math.min(t, at.total) };
+  }
+  return { step: s.step, u: 0, time: stepStart(s.plan, s.step) };
+}
 
 /** Shows or hides, locks or unlocks a layer; what can no longer be changed leaves the selection. */
 function layerFlag(id: string, flag: 'visible' | 'locked', on: boolean): void {

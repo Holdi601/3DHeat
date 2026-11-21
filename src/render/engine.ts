@@ -12,6 +12,7 @@ import { HEAT_RESPONSE_CODE, snapshot, useStore, type HeatSettings } from '../st
 import { raceClock, raceHover, replayLength, useRaceStore, type RaceState } from '../state/raceStore';
 import { RaceScene } from '../race/scene';
 import { BoardScene, templateOf } from '../tactics/scene';
+import { hasDirectionTracks } from '../tactics/keyframes';
 import { VehicleStage } from '../vehicle/stage';
 import { FigureReplay } from '../figures/replay';
 import { EffectLayer } from '../figures/effects';
@@ -47,7 +48,7 @@ import type { SymbolParams } from './types';
 import { TacticalLayer, axesOfTrack, cockpitClip } from './tactical';
 import { RangeLayer } from '../ranges/layer';
 import { aimOf } from '../figures/aim';
-import { figureNear, usePlanStore } from '../state/planStore';
+import { figureNear, momentOf, usePlanStore } from '../state/planStore';
 import { editable, playbackAt } from '../tactics/plan';
 import { pickRef, refPoints } from '../tactics/gizmo';
 import { setTerrain } from '../tactics/timing';
@@ -1256,13 +1257,14 @@ export class Engine {
     const heat = useTelemetry.getState().heat;
     const wantsCursor = board.tool !== 'select' || board.moving;
     this.boardCursor = wantsCursor && this.cursorPx ? this.worldAt(this.cursorPx.x, this.cursorPx.y) : null;
-    const time = this.boardPlayTime ?? board.playTime;
-    const at = board.playing ? playbackAt(board.plan, time) : { step: board.step, u: 0 };
+    // The moment shown: playback's, the time slider's, or the step's start.
+    const at = momentOf(board, this.boardPlayTime);
+    const time = at.time;
     const c = this.boardCursor;
     // The figures are GPU instances, placed every frame (`boardFigures`); the
     // rest is rebuilt only when it changes - with the moment shown only while
-    // something drawn follows a figure (a selection ring).
-    const followsTime = board.selection.length > 0;
+    // something drawn follows a figure (a selection ring, where it looks).
+    const followsTime = board.selection.length > 0 || hasDirectionTracks(board.plan.figures);
     const view = {
       step: at.step,
       u: at.u,
@@ -1277,7 +1279,7 @@ export class Engine {
       instanced: true,
       activeLayer: board.activeLayer,
       routesActiveOnly: board.routesActiveOnly,
-      time: board.playing ? time : null,
+      time: board.playing || board.scrub !== null ? time : null,
     };
     this.boardView = { plan: board.plan, view };
     const key = [

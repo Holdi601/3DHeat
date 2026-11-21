@@ -6,8 +6,8 @@
  * a plan plays in real time.
  */
 
-import { routesIn, type Plan, type PlanArrow, type PlanFigure, type Vec3 } from './plan';
-import { DEFAULT_MODE, modeSpeed, moveClassOf, speedTable, defaultUnitsPerMetre, type Mode, type SlopeModel } from './speeds';
+import { keyAt, onBoard, routesIn, shown, type Plan, type PlanArrow, type PlanFigure, type Vec3 } from './plan';
+import { DEFAULT_MODE, MODES, modeSpeed, moveClassOf, speedTable, defaultUnitsPerMetre, type Mode, type SlopeModel } from './speeds';
 
 /** The floor near a point: the level's surface height below `y` (within `reach`), or null. */
 export type HeightAt = (x: number, y: number, z: number, reach: number) => number | null;
@@ -46,6 +46,10 @@ export interface RouteTiming {
   /** Seconds each point is left: arrive plus its pause. */
   depart: number[];
   total: number;
+  /** The route at the figure's top speed all the way, with its pauses: no plan can have it there sooner. */
+  minTotal: number;
+  /** Waypoints whose wanted arrival time (`at`) cannot be met at the figure's top speed: when it was wanted, and the earliest it gets there. */
+  late: { point: number; want: number; got: number }[];
 }
 
 export interface RouteOptions {
@@ -58,13 +62,17 @@ export interface RouteOptions {
   ground: boolean;
   unitsPerMetre: number;
   heightAt?: HeightAt | null;
+  /** The figure's top speed, plan units a second: no segment is faster, whatever arrival time is wanted. */
+  maxSpeed?: number | null;
+  /** When to be at each point, seconds from the route's start (null: by the segment's mode). */
+  at?: (number | null)[];
 }
 
 /** Times a polyline. Pure: everything it needs comes in. */
 export function timeRoute(points: Vec3[], o: RouteOptions): RouteTiming {
   const segs: SegmentTime[] = [];
-  const arrive = [0];
-  const depart = [Math.max(0, o.pauses[0] ?? 0)];
+  /** Each segment's time at the top speed. */
+  const least: number[] = [];
   for (let i = 0; i + 1 < points.length; i++) {
     const a = points[i];
     const b = points[i + 1];
@@ -100,12 +108,51 @@ export function timeRoute(points: Vec3[], o: RouteOptions): RouteTiming {
         pz = z;
       }
     }
+    // At the top speed the same piece takes the share of the time its mode's speed is of the top.
+    const top = o.maxSpeed && o.maxSpeed > 0 ? o.maxSpeed : v;
     segs.push({ length, seconds, mode, speed: seconds > 0 ? length / seconds : 0 });
-    const at = depart[i] + seconds;
-    arrive.push(at);
-    depart.push(at + (i + 2 < points.length ? Math.max(0, o.pauses[i + 1] ?? 0) : 0));
+    least.push(v > 0 && top > 0 ? seconds * Math.min(1, v / top) : seconds);
   }
-  return { segs, arrive, depart, total: arrive[arrive.length - 1] };
+  // Wanted arrival times: each stretch from the last point with one to the
+  // next is spread (faster or slower than its modes) to arrive then, never
+  // faster than the top speed - a time that needs more is late, and arrives
+  // as early as it can.
+  const pause = (i: number) => Math.max(0, o.pauses[i] ?? 0);
+  const late: RouteTiming['late'] = [];
+  let from = 0;
+  let leave = pause(0);
+  for (let j = 1; j < points.length; j++) {
+    const want = o.at?.[j];
+    if (want === null || want === undefined || !Number.isFinite(want)) continue;
+    let natural = 0;
+    let fastest = 0;
+    let waits = 0;
+    for (let i = from; i < j; i++) {
+      natural += segs[i].seconds;
+      fastest += least[i];
+      if (i > from) waits += pause(i);
+    }
+    const moving = want - leave - waits;
+    const k = natural > 0 ? Math.max(moving, fastest) / natural : 1;
+    if (moving < fastest - 1e-6) late.push({ point: j, want, got: leave + waits + fastest });
+    for (let i = from; i < j; i++) {
+      const sg = segs[i];
+      sg.seconds = natural > 0 ? (moving >= fastest ? sg.seconds * k : least[i]) : sg.seconds;
+      sg.speed = sg.seconds > 0 ? sg.length / sg.seconds : 0;
+    }
+    leave = leave + waits + Math.max(moving, fastest) + (j + 1 < points.length ? pause(j) : 0);
+    from = j;
+  }
+  const arrive = [0];
+  const depart = [pause(0)];
+  for (let i = 0; i < segs.length; i++) {
+    const t = depart[i] + segs[i].seconds;
+    arrive.push(t);
+    depart.push(t + (i + 2 < points.length ? pause(i + 1) : 0));
+  }
+  let minTotal = pause(0);
+  for (let i = 0; i < least.length; i++) minTotal += least[i] + (i + 2 < points.length ? pause(i + 1) : 0);
+  return { segs, arrive, depart, total: arrive[arrive.length - 1], minTotal, late };
 }
 
 /** Where along a timed route a figure is `t` seconds after it set off: the point and heading (box yaw). */
@@ -156,7 +203,24 @@ export function timeArrow(plan: Plan, arrow: PlanArrow, figure: PlanFigure, heig
     ground: cls === 'infantry' || cls === 'ground',
     unitsPerMetre: upm,
     heightAt,
+    maxSpeed: (topSpeed(plan, figure) ?? 0) * upm,
+    at: arrow.at,
   });
+}
+
+/**
+ * A figure's top speed, metres a second: the fastest of its class's modes for
+ * it - its own speeds where set, else its profile's or its class's in the
+ * game's table (`speeds.ts`; a game's table falls back to class defaults).
+ * Null for what does not move by itself.
+ */
+export function topSpeed(plan: Plan, figure: PlanFigure): number | null {
+  const cls = moveClassOf(figure.kind);
+  if (!cls) return null;
+  const table = speedTable(plan.game);
+  let best = 0;
+  for (const m of MODES[cls]) best = Math.max(best, modeSpeed(table, figure.kind, m, figure.profile, figure.speeds) ?? 0);
+  return best > 0 ? best : null;
 }
 
 /** Every route's timing in a plan, by arrow id; cached per plan and level. */
@@ -176,22 +240,77 @@ export function planTimings(plan: Plan): Map<string, RouteTiming> {
   return byArrow;
 }
 
-/** How long a step plays: its set seconds, or longer when a route in it takes longer. */
+/**
+ * How long a step plays: its set seconds, or longer where a figure could not
+ * do what the step asks of it in them - never faster than its top speed. In
+ * real time a route takes as long as its modes (and wanted times) make it;
+ * with set seconds a route is spread over the step, so the step lasts at
+ * least as long as the route takes at the top speed. A figure moved to a new
+ * place in the next step without a route slides there, no faster than its
+ * top speed either.
+ */
 export function stepDuration(plan: Plan, step: number): number {
-  const hit = durations.get(plan);
-  if (hit && hit.stamp === terrainStamp) return hit.byStep[step] ?? Math.max(0.1, plan.steps[step]?.seconds ?? 4);
-  const timings = planTimings(plan);
-  const longest = plan.steps.map(() => 0);
-  // The routes that play: shown layers', the upper one's where two route a figure.
-  if (plan.realTime !== false) plan.steps.forEach((_, i) => {
-    for (const a of routesIn(plan, i).values()) longest[i] = Math.max(longest[i], timings.get(a.id)?.total ?? 0);
-  });
-  const byStep = plan.steps.map((s, i) => Math.max(Math.max(0.1, s.seconds ?? 4), longest[i]));
-  durations.set(plan, { stamp: terrainStamp, byStep });
-  return byStep[step] ?? Math.max(0.1, plan.steps[step]?.seconds ?? 4);
+  return stepLimits(plan).byStep[step] ?? Math.max(0.1, plan.steps[step]?.seconds ?? 4);
 }
-/** Each step's length, per plan and level: playback asks for them every frame. */
-const durations = new WeakMap<Plan, { stamp: number; byStep: number[] }>();
+
+/** A step lengthened past its set seconds, and who made it so. */
+export interface SpeedCheck {
+  step: number;
+  figure: string;
+  /** 'late': a wanted arrival time cannot be met; 'slide': a move without a route needs longer than the step; 'squeezed': a route needs longer than the step's set seconds. */
+  kind: 'late' | 'slide' | 'squeezed';
+  /** Seconds it needs, and the seconds it was given (the wanted time, or the step's set seconds). */
+  needs: number;
+  given: number;
+  /** The route and its waypoint, for a late arrival. */
+  arrow?: string;
+  point?: number;
+}
+
+/** Each step's length and every place the top speeds held a plan back, per plan and level. */
+function stepLimits(plan: Plan): { byStep: number[]; checks: SpeedCheck[] } {
+  const hit = durations.get(plan);
+  if (hit && hit.stamp === terrainStamp) return hit;
+  const timings = planTimings(plan);
+  const upm = unitsPerMetre(plan);
+  const checks: SpeedCheck[] = [];
+  const byStep = plan.steps.map((s, i) => {
+    const set = Math.max(0.1, s.seconds ?? 4);
+    let need = 0;
+    // The routes that play: shown layers', the upper one's where two route a figure.
+    const routes = routesIn(plan, i);
+    for (const a of routes.values()) {
+      const t = timings.get(a.id);
+      if (!t || !a.figure) continue;
+      for (const l of t.late) checks.push({ step: i, figure: a.figure, kind: 'late', needs: l.got, given: l.want, arrow: a.id, point: l.point });
+      const route = plan.realTime === false ? t.minTotal : t.total;
+      if (plan.realTime === false && route > set + 1e-6) checks.push({ step: i, figure: a.figure, kind: 'squeezed', needs: route, given: set });
+      need = Math.max(need, route);
+    }
+    for (const f of plan.figures) {
+      const next = f.keys[i + 1];
+      if (!next || routes.has(f.id) || !onBoard(f, i) || !onBoard(f, i + 1) || !shown(plan, f)) continue;
+      const here = keyAt(f, i);
+      const top = topSpeed(plan, f);
+      if (!here || !top) continue;
+      const slide = Math.hypot(next.x - here.x, next.y - here.y, next.z - here.z) / (top * upm);
+      if (slide > set + 1e-6) checks.push({ step: i, figure: f.id, kind: 'slide', needs: slide, given: set });
+      need = Math.max(need, slide);
+    }
+    return Math.max(set, need);
+  });
+  const out = { stamp: terrainStamp, byStep, checks };
+  durations.set(plan, out);
+  return out;
+}
+
+/** Everywhere the figures' top speeds held the plan back: late arrivals, and steps lengthened for a figure. */
+export function speedChecks(plan: Plan): SpeedCheck[] {
+  return stepLimits(plan).checks;
+}
+
+/** Each step's length and its checks, per plan and level: playback asks for the lengths every frame. */
+const durations = new WeakMap<Plan, { stamp: number; byStep: number[]; checks: SpeedCheck[] }>();
 
 /** Seconds from the plan's start to the start of a step. */
 export function stepStart(plan: Plan, step: number): number {

@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Section } from '../controls';
-import { usePlanStore } from '../../state/planStore';
+import { momentOf, usePlanStore } from '../../state/planStore';
 import { useStore } from '../../state/store';
-import { keyAt, routeOf, type Plan, type PlanArrow, type PlanFigure, type Vec3 } from '../../tactics/plan';
+import { keyAt, posesAt, routeOf, type Plan, type PlanArrow, type PlanFigure, type TrackChannel, type Vec3 } from '../../tactics/plan';
 import { pivotOf, refKind } from '../../tactics/gizmo';
 import { MODES, modeSpeed, moveClassOf, profileFor, speedTable, type Mode } from '../../tactics/speeds';
-import { arrivals, clock, planTimings, routeModes, stepStart, unitsPerMetre } from '../../tactics/timing';
+import { arrivals, clock, planTimings, routeModes, speedChecks, stepStart, topSpeed, unitsPerMetre } from '../../tactics/timing';
+import { channelAt, KEY_EPS, keyTimes } from '../../tactics/keyframes';
+import { templateOf } from '../../tactics/scene';
+import { hasJoints } from '../../figures/instances';
 import { useTelemetry } from '../../tactics/telemetryClient';
 import type { Region, TravelStats } from '../../tactics/telemetry';
 import { figureLabel } from '../../tactics/names';
@@ -122,6 +125,7 @@ export function SelectionInspector() {
         </div>
       )}
       {figure && moveClassOf(figure.kind) && <FigureSpeeds plan={plan} figure={figure} />}
+      {figure && moveClassOf(figure.kind) && <Keyframes plan={plan} figure={figure} />}
       {arrow && routeFigure && <RouteTable plan={plan} arrow={arrow} figure={routeFigure} />}
       <div className="tactics-tools">
         {figure && (
@@ -144,6 +148,7 @@ function FigureSpeeds({ plan, figure }: { plan: Plan; figure: PlanFigure }) {
   const cls = moveClassOf(figure.kind)!;
   const profiles = (table.profiles ?? []).filter((p) => p.class === cls);
   const active = profileFor(table, figure.kind, figure.profile);
+  const top = topSpeed(plan, figure);
   return (
     <>
       {profiles.length > 0 && (
@@ -191,6 +196,129 @@ function FigureSpeeds({ plan, figure }: { plan: Plan; figure: PlanFigure }) {
         </tbody>
       </table>
       <div className="hint">{t(`tactics.speed.source.${(active ?? table.classes[cls])?.approx ? 'approx' : 'official'}`)}</div>
+      {top !== null && <div className="hint">{t('tactics.speed.top', { v: num(top, 2), kmh: num(top * 3.6, 0) })}</div>}
+    </>
+  );
+}
+
+const CHANNELS: { id: TrackChannel; joint?: boolean }[] = [
+  { id: 'turret', joint: true },
+  { id: 'gun', joint: true },
+  { id: 'viewYaw' },
+  { id: 'viewPitch' },
+  { id: 'sensorYaw' },
+  { id: 'sensorPitch' },
+];
+
+/**
+ * A figure's keyframes at the moment shown (the time slider under the view):
+ * each channel's value there, a field to key it, and the key there to take
+ * out; pointing the turret, the eyes or the sensor at the next click; and
+ * every time it has a key at, to jump to.
+ */
+function Keyframes({ plan, figure }: { plan: Plan; figure: PlanFigure }) {
+  const store = usePlanStore.getState;
+  const scrub = usePlanStore((s) => s.scrub);
+  const step = usePlanStore((s) => s.step);
+  const aiming = usePlanStore((s) => s.aiming);
+  const m = momentOf({ plan, playing: false, playTime: 0, scrub, step });
+  const pose = posesAt(plan, m.step, m.u).get(figure.id);
+  const tpl = templateOf(figure.kind);
+  const jointed = !!tpl && hasJoints(tpl);
+  const value = (ch: TrackChannel): number | undefined => channelAt(figure.tracks, ch, m.time);
+  const keyHere = (ch: TrackChannel) => figure.tracks?.[ch]?.some((k) => Math.abs(k.t - m.time) <= KEY_EPS) ?? false;
+  const times = keyTimes(figure);
+  return (
+    <>
+      <div className="tactics-group-name">{t('tactics.keys.title', { at: clock(m.time), s: num(m.time, 1) })}</div>
+      <table className="tactics-table">
+        <tbody>
+          {CHANNELS.filter((c) => !c.joint || jointed).map((c) => {
+            const v = value(c.id);
+            return (
+              <tr key={c.id}>
+                <td>{t(`tactics.keys.${c.id}`)}</td>
+                <td>
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    placeholder="-"
+                    defaultValue={v === undefined ? '' : (v * DEG).toFixed(1)}
+                    key={`${figure.id}${c.id}${m.time}${v ?? ''}`}
+                    onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
+                    onBlur={(e) => {
+                      const x = Number(e.target.value.replace(',', '.'));
+                      if (e.target.value.trim() !== '' && Number.isFinite(x) && (v === undefined || Math.abs(x / DEG - v) > 1e-4)) store().setTrackKey(figure.id, c.id, x / DEG, m.time);
+                    }}
+                    style={{ width: '4.5em' }}
+                    aria-label={t(`tactics.keys.${c.id}`)}
+                  />
+                  °
+                </td>
+                <td>
+                  {keyHere(c.id) && (
+                    <button onClick={() => store().setTrackKey(figure.id, c.id, null, m.time)} title={t('tactics.keys.remove')}>
+                      ×
+                    </button>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      <div className="tactics-tools">
+        {jointed && (
+          <button className={aiming === 'turret' ? 'on' : ''} onClick={() => store().startAim(aiming === 'turret' ? null : 'turret')}>
+            {t('tactics.keys.aimTurret')}
+          </button>
+        )}
+        <button className={aiming === 'view' ? 'on' : ''} onClick={() => store().startAim(aiming === 'view' ? null : 'view')}>
+          {t('tactics.keys.aimView')}
+        </button>
+        <button className={aiming === 'sensor' ? 'on' : ''} onClick={() => store().startAim(aiming === 'sensor' ? null : 'sensor')}>
+          {t('tactics.keys.aimSensor')}
+        </button>
+      </div>
+      {aiming && <div className="hint">{t('tactics.keys.aiming')}</div>}
+      {times.length > 0 && (
+        <div className="tactics-tools" aria-label={t('tactics.keys.times')}>
+          {times.map((x) => (
+            <button key={x} className={Math.abs(x - m.time) <= KEY_EPS ? 'on' : ''} onClick={() => store().setScrub(x)}>
+              {clock(x)}
+              {x % 1 ? `.${Math.round((x % 1) * 10)}` : ''}
+            </button>
+          ))}
+        </div>
+      )}
+      <div className="hint">{pose ? t('tactics.keys.hint') : t('tactics.keys.offBoard')}</div>
+    </>
+  );
+}
+
+/** Where the figures' top speeds held the plan back: late arrivals, steps made longer. */
+export function SpeedChecks() {
+  const plan = usePlanStore((s) => s.plan);
+  const checks = useMemo(() => speedChecks(plan), [plan]);
+  if (!checks.length) return <div className="hint">{t('tactics.checks.none')}</div>;
+  const name = (id: string) => plan.figures.find((f) => f.id === id)?.label ?? id;
+  return (
+    <>
+      <div className="tactics-group-name">{t('tactics.checks.title', { n: checks.length })}</div>
+      <ul className="tactics-checks">
+        {checks.slice(0, 50).map((c, i) => (
+          <li key={i}>
+            <button
+              onClick={() => {
+                usePlanStore.getState().setStep(c.step);
+                usePlanStore.getState().select(c.figure);
+              }}
+            >
+              {t(`tactics.checks.${c.kind}`, { step: c.step + 1, who: name(c.figure), needs: num(c.needs, 1), given: num(c.given, 1), point: c.point ?? 0 })}
+            </button>
+          </li>
+        ))}
+      </ul>
     </>
   );
 }
@@ -226,12 +354,13 @@ function RouteTable({ plan, arrow, figure }: { plan: Plan; arrow: PlanArrow; fig
             <th>m</th>
             <th>s</th>
             <th>{t('tactics.route.pause')}</th>
+            <th title={t('tactics.route.wantHint')}>{t('tactics.route.want')}</th>
             <th>{t('tactics.route.at')}</th>
           </tr>
         </thead>
         <tbody>
           {timing.segs.map((sg, i) => (
-            <tr key={i}>
+            <tr key={i} className={timing.late.some((l) => l.point === i + 1) ? 'late' : ''} title={`${num(sg.speed / upm, 2)} m/s`}>
               <td>
                 {i + 1}→{i + 2}
               </td>
@@ -258,11 +387,28 @@ function RouteTable({ plan, arrow, figure }: { plan: Plan; arrow: PlanArrow; fig
                   />
                 ) : null}
               </td>
+              <td>
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  placeholder="-"
+                  defaultValue={arrow.at?.[i + 1] ?? ''}
+                  key={`${arrow.id}w${i}${arrow.at?.[i + 1] ?? ''}`}
+                  onBlur={(e) => store().setArrival(arrow.id, i + 1, e.target.value.trim() === '' ? null : Number(e.target.value.replace(',', '.')))}
+                  style={{ width: '3.5em' }}
+                  aria-label={t('tactics.route.want')}
+                />
+              </td>
               <td>{clock(t0 + timing.arrive[i + 1])}</td>
             </tr>
           ))}
         </tbody>
       </table>
+      {timing.late.map((l) => (
+        <div key={l.point} className="hint late">
+          {t('tactics.route.late', { point: l.point + 1, want: num(l.want, 1), got: num(l.got, 1) })}
+        </div>
+      ))}
       <TelemetryCompare plan={plan} arrow={arrow} total={timing.total} />
     </>
   );
@@ -389,6 +535,7 @@ export function TimingSettings() {
         <NumField label={t('tactics.timing.unitsPerMetre')} value={upm} digits={3} onCommit={(v) => store().setUnitsPerMetre(v)} />
       </div>
       <div className="hint">{t('tactics.timing.hint')}</div>
+      <SpeedChecks />
       <ArrivalTimeline />
     </>
   );

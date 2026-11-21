@@ -1,12 +1,13 @@
 import { useMemo, useRef, useState } from 'react';
 import { Section, Select, Slider } from '../controls';
-import { BOARD_TOOLS, movableSelection, usePlanStore, type BoardTool } from '../../state/planStore';
+import { BOARD_TOOLS, momentOf, movableSelection, usePlanStore, type BoardTool } from '../../state/planStore';
 import { toolKeys } from './boardKeys';
 import { LayersPanel } from './LayersPanel';
 import { useStore } from '../../state/store';
 import { GAMES, gamePreset } from '../../tactics/games';
 import { figureLabel } from '../../tactics/names';
-import type { ArrowStyle } from '../../tactics/plan';
+import { playbackAt, type ArrowStyle } from '../../tactics/plan';
+import { clock } from '../../tactics/timing';
 import { num, t, useLang } from '../../i18n';
 import { useEngine } from '../EngineContext';
 import { SortControl } from '../sort/SortControl';
@@ -311,12 +312,28 @@ export function BoardBar() {
   const plan = usePlanStore((s) => s.plan);
   const step = usePlanStore((s) => s.step);
   const playing = usePlanStore((s) => s.playing);
+  const moment = usePlanStore((s) => momentOf(s).time);
+  const total = playbackAt(plan, Infinity).total;
   const store = usePlanStore.getState;
   return (
     <div className="board-bar">
       <button className="play" onClick={() => store().play(!playing)} title="K">
         {playing ? '❚❚' : '▶'}
       </button>
+      <input
+        className="board-time"
+        type="range"
+        min={0}
+        max={Math.max(0.1, total)}
+        step={0.1}
+        value={Math.min(moment, total)}
+        onChange={(e) => store().setScrub(Number(e.target.value))}
+        aria-label={t('tactics.time')}
+        title={t('tactics.timeHint')}
+      />
+      <span className="board-clock">
+        {clock(moment)} / {clock(total)}
+      </span>
       <span className="board-steps" role="tablist" aria-label={t('tactics.steps')}>
         {plan.steps.map((_, i) => (
           <button key={i} role="tab" aria-selected={step === i} className={step === i ? 'on' : ''} onClick={() => store().setStep(i)}>

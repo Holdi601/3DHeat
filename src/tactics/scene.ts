@@ -10,6 +10,7 @@ import { VertexBuffer, type Rgb } from '../race/geometry';
 import { CATALOG } from '../figures/catalog';
 import { place, poseFrame, TemplateCache, type Template } from '../figures/kit';
 import { InstanceBatches, meshOf, NO_PITCH, type FigureBatch } from '../figures/instances';
+import { directionOf } from './keyframes';
 import { BASE_LAYER, keyAt, layerOf, onBoard, posesAt, shown, throwArc, type Plan, type PlanArrow, type PlanNote, type Vec3 } from './plan';
 import { gamePreset } from './games';
 import type { ArrivalGrid } from './telemetry';
@@ -111,6 +112,10 @@ export class BoardScene {
       if (!p || !t) continue;
       const col = color(f.team);
       if (sel.has(f.id)) ring(lines, p, Math.max(t.max[0] - t.min[0], t.max[2] - t.min[2]) * 0.65 * scale + 0.3, white);
+      // Where it looks and where its sensor points, from its keyframes: a fan of lines from eye height.
+      const eye = { x: p.x, y: p.y + t.max[1] * 0.8 * scale, z: p.z };
+      if (p.view) fan(lines, eye, p.yaw, p.view, width * 30, 0.2, VIEW_COLOR);
+      if (p.sensor) fan(lines, eye, p.yaw, p.sensor, width * 45, 0.35, SENSOR_COLOR);
       if (view.instanced) continue;
       place(tris, t, { x: p.x, y: p.y, z: p.z, yaw: figureHeading(p.yaw), pitch: p.pitch, roll: p.roll, scale }, col);
       // Where the figure goes next, as a ghost, while editing.
@@ -233,6 +238,26 @@ function ring(lines: VertexBuffer, p: Vec3, r: number, col: Rgb): void {
     const a1 = ((i + 1) / n) * Math.PI * 2;
     lines.line([p.x + Math.cos(a0) * r, p.y + 0.08, p.z + Math.sin(a0) * r], [p.x + Math.cos(a1) * r, p.y + 0.08, p.z + Math.sin(a1) * r], col, 1);
   }
+}
+
+const VIEW_COLOR: Rgb = [1, 0.9, 0.35];
+const SENSOR_COLOR: Rgb = [0.35, 0.95, 1];
+
+/** A direction off a heading as a fan: the line itself and two at `half` radians either side, `length` long, joined at the ends. */
+function fan(lines: VertexBuffer, from: Vec3, yaw: number, dir: { yaw: number; pitch: number }, length: number, half: number, col: Rgb): void {
+  const tip = (dy: number) => {
+    const d = directionOf(yaw, { yaw: dir.yaw + dy, pitch: dir.pitch });
+    return [from.x + d.x * length, from.y + d.y * length, from.z + d.z * length] as [number, number, number];
+  };
+  const o: [number, number, number] = [from.x, from.y, from.z];
+  const c = tip(0);
+  const l = tip(-half);
+  const r = tip(half);
+  lines.line(o, c, col, 0.9);
+  lines.line(o, l, col, 0.5);
+  lines.line(o, r, col, 0.5);
+  lines.line(l, c, col, 0.5);
+  lines.line(c, r, col, 0.5);
 }
 
 /** A route's end: two rings and a cross through them, in its colour. */

@@ -1,8 +1,8 @@
 import { useMemo, useRef } from 'react';
-import { usePlanStore } from '../../state/planStore';
+import { momentOf, usePlanStore } from '../../state/planStore';
 import { useAnimationFrame, useEngine } from '../EngineContext';
 import { CATALOG } from '../../figures/catalog';
-import { playbackAt, posesAt, shown as shownOn, type PlanNote } from '../../tactics/plan';
+import { posesAt, shown as shownOn, type PlanNote } from '../../tactics/plan';
 import { noteShown, templateOf } from '../../tactics/scene';
 import { useStore } from '../../state/store';
 import { RIOT_NOTICE } from '../../tactics/valorantMaps';
@@ -43,8 +43,8 @@ export function BoardLabels() {
     if (!engine) return;
     const s = usePlanStore.getState();
     // The engine's playback clock: the store's is written only a few times a second.
-    const time = s.playing ? (engine.boardPlayTime ?? s.playTime) : null;
-    const at = time !== null ? playbackAt(s.plan, time) : { step: s.step, u: 0 };
+    const at = momentOf(s, engine.boardPlayTime);
+    const time = s.playing || s.scrub !== null ? at.time : null;
     const poses = posesAt(s.plan, at.step, at.u);
     const scale = Math.max(0.05, s.plan.figureScale);
     // Every place first, then every write: a read of the layout between writes would lay the page out each time.

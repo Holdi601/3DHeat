@@ -55,7 +55,8 @@ export function boardKeyDown(ev: KeyboardEvent): boolean {
     return true;
   }
   if (ev.code === 'Escape') {
-    if (board.dragBase) board.cancelDrag();
+    if (board.aiming) board.startAim(null);
+    else if (board.dragBase) board.cancelDrag();
     else if (drawing) {
       // Esc ends a route that has a way to go, and drops one that has only its start.
       const pts = board.draft?.points.length ?? board.measure?.points.length ?? 0;

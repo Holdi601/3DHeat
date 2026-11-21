@@ -135,6 +135,26 @@ await step('Delete asks, then removes the selection', async () => {
   expect((await plan()).figures === 0, 'figures left after Delete');
 });
 
+await step('a tank keyed by aiming its turret, and the time slider moves the moment shown', async () => {
+  await page.evaluate(() => window.__3dheat_plan.getState().setKind('mbt'));
+  await canvas.focus();
+  await page.keyboard.press('Digit2');
+  await click(cx - 100, cy - 100);
+  await page.keyboard.press('Digit1');
+  await page.getByRole('button', { name: 'Aim turret at…' }).click();
+  await click(cx + 150, cy - 100);
+  const keys = await page.evaluate(() => {
+    const s = window.__3dheat_plan.getState();
+    return s.plan.figures.find((f) => f.kind === 'mbt')?.tracks ?? null;
+  });
+  expect(keys && keys.turret?.length === 1 && keys.gun?.length === 1, `tracks ${JSON.stringify(keys)}`);
+  const slider = page.locator('input.board-time');
+  await slider.fill('2');
+  const scrub = await page.evaluate(() => window.__3dheat_plan.getState().scrub);
+  expect(Math.abs(scrub - 2) < 0.11, `scrub ${scrub}`);
+  await page.keyboard.press('Escape');
+});
+
 await step('a new layer takes what is placed next; hidden, it leaves the selection out', async () => {
   await page.getByRole('button', { name: 'New layer' }).click();
   await canvas.focus();
@@ -142,20 +162,22 @@ await step('a new layer takes what is placed next; hidden, it leaves the selecti
   await click(cx + 60, cy + 60);
   const s = await page.evaluate(() => {
     const st = window.__3dheat_plan.getState();
-    return { active: st.activeLayer, layer: st.plan.figures[st.plan.figures.length - 1].layer, layers: st.plan.layers.length };
+    const f = st.plan.figures[st.plan.figures.length - 1];
+    return { active: st.activeLayer, layer: f.layer, id: f.id, layers: st.plan.layers.length };
   });
   expect(s.layers === 2 && s.layer === s.active, `figure on ${s.layer}, active ${s.active}`);
   await page.locator('.tactics-layer.on input[type=checkbox]').first().uncheck();
   await canvas.focus();
   await page.keyboard.press('Control+KeyA');
   const sel = await plan();
-  expect(sel.selection.length === 0, `hidden figure selected: ${sel.selection}`);
+  expect(!sel.selection.includes(s.id), `hidden figure selected: ${sel.selection}`);
 });
 
 await step('the board is kept in the browser and comes back after a reload', async () => {
   await page.waitForTimeout(1500);
   const kept = await page.evaluate(() => JSON.parse(localStorage.getItem('heat3d.tactics.autosave') ?? 'null')?.plan?.figures?.length ?? -1);
-  expect(kept === 1, `kept ${kept} figures`);
+  const now = await page.evaluate(() => window.__3dheat_plan.getState().plan.figures.length);
+  expect(kept === now && now > 0, `kept ${kept} figures of ${now}`);
   await page.reload();
   await page.waitForFunction(() => !!window.__3dheat_plan, null, { timeout: 60_000 });
   const back = await page.evaluate(() => window.__3dheat_plan.getState().plan.layers.length);
@@ -183,7 +205,7 @@ const frameTimes = async (ms = 5000) => {
   );
   const s = [...t].sort((a, b) => a - b);
   const q = (p) => s[Math.min(s.length - 1, Math.floor(p * s.length))];
-  return { n: s.length, p50: q(0.5), p99: q(0.99), max: s[s.length - 1] };
+  return { n: s.length, p50: q(0.5), p99: q(0.99), max: s[s.length - 1], over25: s.filter((x) => x > 25).length };
 };
 const N = Number(process.env.TACTICS_N ?? 400);
 
@@ -222,7 +244,7 @@ if (GPU) {
       for (const [k, v] of [...self].sort((a, b) => b[1] - a[1]).slice(0, 15)) console.log(`     ${v.toFixed(0).padStart(6)} ms  ${k}`);
     }
     const r = await frameTimes(5000);
-    console.log(`     playing: ${r.n} frames, p50 ${r.p50.toFixed(1)} ms, p99 ${r.p99.toFixed(1)} ms, max ${r.max.toFixed(1)} ms`);
+    console.log(`     playing: ${r.n} frames, p50 ${r.p50.toFixed(1)} ms, p99 ${r.p99.toFixed(1)} ms, max ${r.max.toFixed(1)} ms, ${r.over25} over 25 ms`);
     // No worse than the empty board's frames, give or take a frame's jitter.
     expect(r.p99 < Math.max(idle.p99 * 1.25, idle.p99 + 4), `p99 ${r.p99.toFixed(1)} ms against ${idle.p99.toFixed(1)} ms empty`);
   });

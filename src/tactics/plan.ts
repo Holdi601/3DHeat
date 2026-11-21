@@ -13,7 +13,8 @@
  */
 
 import type { Mode } from './speeds';
-import { planTimings, poseOnRoute, stepDuration } from './timing';
+import { planTimings, poseOnRoute, stepDuration, stepStart } from './timing';
+import { channelAt } from './keyframes';
 
 export type Vec3 = { x: number; y: number; z: number };
 
@@ -284,31 +285,48 @@ export function posesAt(plan: Plan, step: number, u: number): Map<string, BoardP
   if (hit && hit.step === step && hit.u === u) return hit.poses;
   const out = new Map<string, BoardPose>();
   const routes = routesIn(plan, step);
+  const length = stepDuration(plan, step);
+  // The moment, in seconds from the plan's start: what the keyframes are read at.
+  const time = stepStart(plan, step) + u * length;
   for (const f of plan.figures) {
     if (!onBoard(f, step) || !shown(plan, f)) continue;
     const here = keyAt(f, step);
     if (!here) continue;
+    let pose: BoardPose = here;
     const route = routes.get(f.id);
+    const next = f.keys[step + 1];
     if (route && route.points.length >= 2 && u > 0) {
       const timing = plan.realTime === false ? undefined : planTimings(plan).get(route.id);
       if (timing && timing.total > 0) {
-        const r = poseOnRoute(route.points, timing, u * stepDuration(plan, step));
-        out.set(f.id, { ...r.p, yaw: r.yaw, pitch: here.pitch, roll: here.roll });
-        continue;
+        const r = poseOnRoute(route.points, timing, u * length);
+        pose = { ...r.p, yaw: r.yaw, pitch: here.pitch, roll: here.roll };
+      } else {
+        const a = along(route.points, u);
+        pose = { ...a.p, yaw: a.yaw };
       }
-      const a = along(route.points, u);
-      out.set(f.id, { ...a.p, yaw: a.yaw });
-      continue;
-    }
-    const next = f.keys[step + 1];
-    if (next && u > 0) {
+    } else if (next && u > 0) {
       const dx = next.x - here.x;
       const dz = next.z - here.z;
       const yaw = Math.hypot(dx, dz) > 1e-3 ? Math.atan2(dx, -dz) : here.yaw;
-      out.set(f.id, { x: here.x + dx * u, y: here.y + (next.y - here.y) * u, z: here.z + dz * u, yaw: u >= 1 ? next.yaw : yaw });
-      continue;
+      pose = { x: here.x + dx * u, y: here.y + (next.y - here.y) * u, z: here.z + dz * u, yaw: u >= 1 ? next.yaw : yaw };
     }
-    out.set(f.id, here);
+    if (f.tracks) {
+      const tr = f.tracks;
+      const turret = channelAt(tr, 'turret', time);
+      const gun = channelAt(tr, 'gun', time);
+      const vy = channelAt(tr, 'viewYaw', time);
+      const vp = channelAt(tr, 'viewPitch', time);
+      const sy = channelAt(tr, 'sensorYaw', time);
+      const sp = channelAt(tr, 'sensorPitch', time);
+      pose = {
+        ...pose,
+        ...(turret !== undefined ? { turret } : {}),
+        ...(gun !== undefined ? { gun } : {}),
+        ...(vy !== undefined || vp !== undefined ? { view: { yaw: vy ?? 0, pitch: vp ?? 0 } } : {}),
+        ...(sy !== undefined || sp !== undefined ? { sensor: { yaw: sy ?? 0, pitch: sp ?? 0 } } : {}),
+      };
+    }
+    out.set(f.id, pose);
   }
   lastPoses.set(plan, { step, u, poses: out });
   return out;

@@ -88,6 +88,31 @@ The speeds come from per-game tables with their sources (see [Movement speeds](t
 
 Each waypoint shows the time from the last one and the time since the plan's start ("+3.9 s · 0:12"). The selected figure's route lists every segment with its mode, length and time, the wait and the arrival. **Arrivals** under **Timing** puts every routed figure on one time line, first arrival on top. With **Play in real time** (on by default) a step lasts until its slowest route arrives and each figure moves at its own speed; **Seconds** is then the step's least length. **Level units per metre** says what the level is in: 39.37 for CS2 maps (game units), 1 for metre maps.
 
+### Top speed and wanted arrival times
+
+No figure ever moves faster than its **top speed**: the fastest of its class's modes for it in the game's table - its **Own (m/s)** speeds where set, else its **Moves as** profile's, else the class's (the **Other** game's class values where a game has none). The **Selected** section shows it under the speeds.
+
+- **Be there (s)** on a waypoint of the route table is when the figure is to be at it, in seconds from the step's start. The way from the last waypoint with a time (or the route's start) to it is spread to arrive then - slower than its modes, or faster up to the top speed. A time that would need more is not met: the figure arrives as early as its top speed allows, the row turns orange and says when that is.
+- A figure moved to a new place in the next step without a route slides there no faster than its top speed: where that takes longer than the step's **Seconds**, the step lasts as long as it needs.
+- With **Play in real time** off, a route is spread over its step's set seconds, but the step lasts at least as long as the route takes at top speed.
+
+**Speed limits** under **Timing** lists every place the top speeds held the plan back - a wanted time not met, a step made longer - with the step, the figure and the seconds needed and given; a click on one shows its step and selects the figure.
+
+## Keyframes
+
+Below the view, beside **▶**, the **time slider** shows any moment of the plan: drag it to see every figure where it is then (the clock beside it says the moment and the plan's length), and **▶** plays on from there. Choosing a step, or starting to draw, goes back to the step's start.
+
+With a figure selected, **Keyframes at ...** in the **Selected** section sets what it does at the moment shown:
+
+| Channel | What it is |
+|---|---|
+| **Turret** | The turret's turn from the hull's forward, right positive (figures with a turret). |
+| **Gun elevation** | The gun's elevation, up positive (figures with a gun that elevates). |
+| **Looks (yaw)**, **Looks (pitch)** | Which way the figure looks, from its forward: drawn as a yellow fan from eye height. |
+| **Sensor (yaw)**, **Sensor (pitch)** | Where its sensor (radar, camera, sight) points: drawn as a cyan fan. |
+
+Type a value in degrees to key it at the moment shown; **×** takes the key there out. **Aim turret at…**, **Look at…** and **Point sensor at…** key both angles at once from the next click on the level (`Esc` stops). The times the figure has keys at are listed as buttons that jump there. Between two keys a value turns the short way round; before the first key and after the last it holds. Played back, turrets turn and guns rise on the figures themselves, and the fans follow.
+
 ## Compare with match data
 
 **Load match files…** reads CS2 match tables of the map (the CS2 tool's Parquet files, as many as wanted; only the columns needed, in the background); **Use loaded data** takes the data loaded in the viewer. Then:
@@ -98,7 +123,7 @@ Each waypoint shows the time from the last one and the time since the plan's sta
 
 ## Steps
 
-The bar below the view holds the steps. A plan starts with one; **+** adds one, and each figure starts it where its route in the last step ended; **−** removes the one shown. **Seconds** is how long the shown step takes when played. **▶** (K) plays from the shown step to the end: figures with a route walk it, figures moved to a new place in the next step slide there, the rest stand. While a step is shown, each figure's place in the next step is drawn as a faint ghost, and the last step's arrows faintly under this one's.
+The bar below the view holds playback, the time slider (see [Keyframes](#keyframes)) and the steps. A plan starts with one; **+** adds one, and each figure starts it where its route in the last step ended; **−** removes the one shown. **Seconds** is how long the shown step takes when played. **▶** (K) plays from the shown step to the end: figures with a route walk it, figures moved to a new place in the next step slide there, the rest stand. While a step is shown, each figure's place in the next step is drawn as a faint ghost, and the last step's arrows faintly under this one's.
 
 ## Layers
 
@@ -129,7 +154,7 @@ Every change to the board is also recorded as a list of operations - add, change
 
 ## Figures
 
-Every figure is built by the viewer itself: simple shapes to a type's published size, with the features that tell it from its neighbours - a tank's road wheels and turret, the guns, missiles and radars of an air-defence vehicle, an aircraft's wing plan, tail and engines, a helicopter's rotors and stub wings. Nothing is taken from a game. A design a game invented is shown as the generic figure of its class. See [Figures](figures.md#which-figure-a-unit-gets) for how data finds its figure.
+Every figure is built by the viewer itself: simple shapes to a type's published size, with the features that tell it from its neighbours - a tank's road wheels and turret, the guns, missiles and radars of an air-defence vehicle, an aircraft's wing plan, tail and engines, a helicopter's rotors and stub wings. Nothing is taken from a game. A design a game invented is shown as the generic figure of its class. The board's figures are drawn by the graphics card as instances, so thousands of them play smoothly; at most 250 figure names are written over the view at once. See [Figures](figures.md#which-figure-a-unit-gets) for how data finds its figure.
 
 ## Riot's notice
 

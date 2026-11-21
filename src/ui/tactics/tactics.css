@@ -280,3 +280,26 @@
   white-space: pre-wrap;
   max-width: 24em;
 }
+.board-time {
+  flex: 1;
+  min-width: 120px;
+  max-width: 420px;
+}
+.board-clock {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.8;
+}
+.tactics-table tr.late td,
+.hint.late {
+  color: var(--warm, #ff8a5c);
+}
+.tactics-checks {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.tactics-checks button {
+  text-align: left;
+  width: 100%;
+  white-space: normal;
+}
