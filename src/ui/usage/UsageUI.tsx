@@ -13,7 +13,7 @@ import indexData from 'virtual:command-index';
 import { idbAll, idbClear } from '../../usage/db';
 import { extraFeatures } from '../../usage/extras';
 import { feedbackForm, useFeedback, type FeedbackKind } from '../../usage/feedbackStore';
-import { flush, record, USAGE_ROUTE, useUsage } from '../../usage/recorder';
+import { flush, record, USAGE_ROUTE, usageAuth, useUsage } from '../../usage/recorder';
 import { buildReport, toFix, type IndexEntry, type Report } from '../../usage/report';
 import { where } from '../../usage/hooks';
 import { FEEDBACK } from '../../usage/schema';
@@ -147,7 +147,7 @@ function UsagePage({ onClose }: { onClose: () => void }) {
   const deleteAll = async () => {
     if (!(await confirmDialog(t('usage.delete.confirm'), t('usage.delete')))) return;
     await idbClear().catch(() => undefined);
-    if (local) await fetch(USAGE_ROUTE, { method: 'DELETE', headers: { 'X-Heat3d-Usage': '1' } }).catch(() => undefined);
+    if (local) await fetch(USAGE_ROUTE, { method: 'DELETE', headers: { 'X-Heat3d-Usage': '1', ...usageAuth() } }).catch(() => undefined);
     toast(t('usage.deleted'), 'good');
     setReport(null);
     setGen((g) => g + 1);

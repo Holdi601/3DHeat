@@ -22,6 +22,16 @@ import { checkEvent, LIMITS, USAGE_VERSION, type UsageEvent } from './schema';
 import { idbAdd } from './db';
 
 export const USAGE_ROUTE = '/__heat3d/usage';
+
+/**
+ * The host's token, when this page hosts a session of `3dheat serve`: that
+ * server answers the usage route for the host's own browser only, known by
+ * its token (members get 403). Empty elsewhere (the dev server needs none).
+ */
+export function usageAuth(): Record<string, string> {
+  const t = (globalThis as unknown as { __heat3dSession?: { client?: { hostToken?: () => string } } }).__heat3dSession?.client?.hostToken?.() ?? '';
+  return t ? { Authorization: `Bearer ${t}` } : {};
+}
 const CHOICE_KEY = 'heat3d.usage';
 
 export type Choice = 'on' | 'off' | null;
@@ -167,10 +177,12 @@ export async function flush(leaving = false): Promise<void> {
   const local = useUsage.getState().local;
   if (local) {
     for (const body of batches(events)) {
-      if (leaving && typeof navigator !== 'undefined' && navigator.sendBeacon) {
+      const auth = usageAuth();
+      // A beacon carries no token: with one, a keepalive fetch instead.
+      if (leaving && !auth.Authorization && typeof navigator !== 'undefined' && navigator.sendBeacon) {
         navigator.sendBeacon(USAGE_ROUTE, new Blob([body], { type: 'application/json' }));
       } else {
-        void fetch(USAGE_ROUTE, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: body.length < 60_000 }).catch(() => undefined);
+        void fetch(USAGE_ROUTE, { method: 'POST', headers: { 'Content-Type': 'application/json', ...auth }, body, keepalive: body.length < 60_000 }).catch(() => undefined);
       }
     }
   }
@@ -184,7 +196,7 @@ export async function flush(leaving = false): Promise<void> {
 export async function probeLocal(): Promise<boolean> {
   if (typeof location === 'undefined' || !/^(127\.\d+\.\d+\.\d+|localhost|\[::1\])$/.test(location.hostname)) return false;
   try {
-    const r = await fetch(USAGE_ROUTE, { cache: 'no-store' });
+    const r = await fetch(USAGE_ROUTE, { cache: 'no-store', headers: usageAuth() });
     if (r.status !== 200 || !/json/.test(r.headers.get('content-type') ?? '')) return false;
     const j = (await r.json()) as { enabled?: unknown };
     const local = j.enabled === true;

@@ -342,6 +342,8 @@ class SessionClient {
         this.retries = 0;
         const role = ROLE_NAME[w.role] ?? 'viewer';
         st.patch({ state: 'joined', me: w.you, role, error: null, seq: Number(w.seq) });
+        // The host of `3dheat serve`: its server keeps the usage statistics for the host's browser (by its token).
+        if (role === 'host') void import('../usage/recorder').then((u) => u.probeLocal()).catch(() => undefined);
         // The batches not yet numbered go again (the server applies each once).
         if (this.sync) for (const x of this.sync.unconfirmed()) if (!this.queue.includes(x)) this.queue.push(x);
         this.drain();

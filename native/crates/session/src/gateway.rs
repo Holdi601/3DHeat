@@ -119,6 +119,10 @@ pub struct GatewayConfig {
     pub hsts: bool,
     /// Paths of services the core mounts (the data API): forwarded for members only.
     pub mounts: Vec<String>,
+    /// Paths of services for the host's own browser only (its local usage
+    /// statistics): forwarded with the host's token only, marked as the host's.
+    #[serde(default)]
+    pub host_mounts: Vec<String>,
     pub limits: NetLimits,
 }
 
@@ -673,6 +677,11 @@ fn router(gw: Arc<Gateway>) -> Router {
             .route(m, any(mounted))
             .route(&format!("{m}/{{*rest}}"), any(mounted));
     }
+    for m in &gw.cfg.host_mounts {
+        r = r
+            .route(m, any(host_mounted))
+            .route(&format!("{m}/{{*rest}}"), any(host_mounted));
+    }
     r = r.fallback(static_file);
     secured(r, gw.cfg.hsts)
         .layer(middleware::from_fn_with_state(gw.clone(), guard))
@@ -1171,6 +1180,28 @@ async fn mounted(State(gw): State<Arc<Gateway>>, req: Request) -> Response {
     gw.host
         .http(to_core(Method::POST, pq, &parts.headers, body))
         .await
+}
+
+/// The header by which the core knows a request is the host's own. Only the
+/// gateway sets it, and only after checking the host's token: no client
+/// header reaches the core but the few `to_core` copies, and this is not one.
+pub const HOST_MARK: &str = "x-heat3d-host";
+
+/// A service for the host's own browser (its usage statistics): with the
+/// host's token, forwarded marked as the host's; anyone else, a member
+/// included, gets 403 and the core never sees the request.
+async fn host_mounted(State(gw): State<Arc<Gateway>>, req: Request) -> Response {
+    let (parts, body) = req.into_parts();
+    if !host_only(&gw, &parts.headers) {
+        return StatusCode::FORBIDDEN.into_response();
+    }
+    let pq = parts.uri.path_and_query().map(|p| p.as_str()).unwrap_or("/");
+    let mut r = to_core(parts.method, pq, &parts.headers, body);
+    if let Some(v) = parts.headers.get("x-heat3d-usage") {
+        r.headers_mut().insert(HeaderName::from_static("x-heat3d-usage"), v.clone());
+    }
+    r.headers_mut().insert(HeaderName::from_static(HOST_MARK), HeaderValue::from_static("1"));
+    gw.host.http(r).await
 }
 
 /// The web build, from the core: GET and HEAD only, no body.

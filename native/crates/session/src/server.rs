@@ -86,6 +86,10 @@ pub struct ServeConfig {
     /// core's data API at `/v1`, crates/server). Members reach them with their
     /// token, by POST, with a member's rights only.
     pub mount: Vec<(String, Router)>,
+    /// Services for the host's own browser only (`3dheat serve` mounts its local
+    /// usage statistics at `/__heat3d/usage`): the gateway forwards them with the
+    /// host's token only; they see such a request as from this machine.
+    pub host_mount: Vec<(String, Router)>,
     /// The network's limits.
     pub limits: NetLimits,
     /// The gateway as a locked-down process of its own; None: in this process.
@@ -107,6 +111,7 @@ impl ServeConfig {
             publish: Vec::new(),
             max_upload: 8 * 1024 * 1024 * 1024,
             mount: Vec::new(),
+            host_mount: Vec::new(),
             limits: NetLimits::default(),
             gateway: None,
         }
@@ -262,7 +267,7 @@ pub async fn start(cfg: ServeConfig) -> Result<Running, String> {
         uploaded: std::sync::atomic::AtomicU64::new(0),
     });
     let audit = Arc::new(AuditLog::new(&cfg.state_dir));
-    let core = core_router(store, cfg.web_root.clone(), &cfg.mount);
+    let core = core_router(store, cfg.web_root.clone(), &cfg.mount, &cfg.host_mount);
     let gcfg = GatewayConfig {
         expose: cfg.expose,
         allow_origins: cfg.allow_origins.clone(),
@@ -274,6 +279,7 @@ pub async fn start(cfg: ServeConfig) -> Result<Running, String> {
         tls_key_pem: material.as_ref().map(|m| String::from_utf8_lossy(&m.key_pem).to_string()),
         hsts: matches!(cfg.tls, TlsMode::Files { .. }),
         mounts: cfg.mount.iter().map(|(p, _)| p.clone()).collect(),
+        host_mounts: cfg.host_mount.iter().map(|(p, _)| p.clone()).collect(),
         limits: cfg.limits.clone(),
     };
 
@@ -466,13 +472,16 @@ async fn serve_core(io: tokio::io::DuplexStream, core: Router) {
 /// What the core serves the gateway: the web build, published files by
 /// hash, uploads, and the mounted services, which see every request as a
 /// remote one (no address of this machine: never files by path).
-fn core_router(store: Arc<Store>, web_root: Option<PathBuf>, mounts: &[(String, Router)]) -> Router {
+fn core_router(store: Arc<Store>, web_root: Option<PathBuf>, mounts: &[(String, Router)], host_mounts: &[(String, Router)]) -> Router {
     let mut r = Router::new()
         .route("/a/{hash}", get(asset))
         .route("/api/publish", post(publish).layer(axum::extract::DefaultBodyLimit::disable()))
         .with_state(store);
     for (path, service) in mounts {
         r = r.nest_service(path, service.clone());
+    }
+    for (path, service) in host_mounts {
+        r = r.nest_service(path, service.clone().layer(middleware::from_fn(host_marked)));
     }
     r = match web_root {
         Some(root) => r.fallback_service(
@@ -483,6 +492,17 @@ fn core_router(store: Arc<Store>, web_root: Option<PathBuf>, mounts: &[(String, 
         None => r.fallback(|| async { (StatusCode::NOT_FOUND, "No web build: run `npm run build` and pass --web dist") }),
     };
     r.layer(middleware::from_fn(remote_only))
+}
+
+/// A service for the host's own browser: only what the gateway marked as the
+/// host's (after checking the host's token) is seen as from this machine;
+/// anything else is refused.
+async fn host_marked(mut req: Request, next: Next) -> Response {
+    if req.headers().get(gateway::HOST_MARK).and_then(|v| v.to_str().ok()) != Some("1") {
+        return StatusCode::FORBIDDEN.into_response();
+    }
+    req.extensions_mut().insert(ConnectInfo(SocketAddr::from(([127, 0, 0, 1], 0))));
+    next.run(req).await
 }
 
 /// Every request the core serves is a stranger's, whatever it says.
@@ -597,7 +617,7 @@ pub fn test_gateway(web_root: PathBuf, state_dir: PathBuf, host_token: String, p
         uploading: tokio::sync::Semaphore::new(2),
         uploaded: std::sync::atomic::AtomicU64::new(0),
     });
-    let core = core_router(store, Some(web_root), &[]);
+    let core = core_router(store, Some(web_root), &[], &[]);
     let mut session = Config::default();
     session.cost = auth::Cost::TEST;
     let gcfg = GatewayConfig {
@@ -611,6 +631,7 @@ pub fn test_gateway(web_root: PathBuf, state_dir: PathBuf, host_token: String, p
         tls_key_pem: None,
         hsts: false,
         mounts: vec![],
+        host_mounts: vec![],
         limits: NetLimits { requests_burst: 1e12, requests_per_sec: 1e12, ..NetLimits::default() },
     };
     Gateway::new(gcfg, HostLink::Local { router: core, audit: Arc::new(|_| {}) })

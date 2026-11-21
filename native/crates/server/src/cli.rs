@@ -249,6 +249,12 @@ pub async fn serve(rest: Vec<String>, core: Arc<Core>, default_web: Option<PathB
     // host's data through it, with the member's token (the gateway checks it) and a
     // member's rights only: never files by path. The owner's key is one nobody is told.
     cfg.mount.push(("/v1".into(), crate::data_router(core, Some(heat3d_session::auth::token()), false)));
+    // The local usage statistics (off unless switched on, docs/usage-statistics.md):
+    // the host's own browser only, by its token; members never reach them.
+    cfg.host_mount.push((
+        "/__heat3d/usage".into(),
+        crate::usage::usage_router(crate::usage::UsageConfig::find(None, cfg.web_root.as_deref())),
+    ));
     if no_sandbox && cfg.expose {
         fail("--no-sandbox and --expose-internet do not go together");
     }

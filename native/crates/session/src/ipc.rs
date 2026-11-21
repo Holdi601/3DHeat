@@ -66,6 +66,9 @@ struct Inner {
     control: mpsc::UnboundedSender<Bytes>,
     closed: Notify,
     dead: AtomicBool,
+    /// Set when the channel ends: the writer stops then too (it holds the
+    /// channel's own sender, so it would otherwise wait for ever).
+    ended: watch::Sender<bool>,
 }
 
 /// One end of the channel.
@@ -99,6 +102,7 @@ impl Mux {
             control: ctl_tx,
             closed: Notify::new(),
             dead: AtomicBool::new(false),
+            ended: watch::channel(false).0,
         });
         tokio::spawn(writer(write, out_rx, inner.clone()));
         tokio::spawn(reader(read, inner.clone()));
@@ -184,6 +188,7 @@ fn kill(inner: &Inner) {
         s.credit.1.notify_waiters();
     }
     inner.closed.notify_waiters();
+    inner.ended.send_replace(true);
 }
 
 /// A new stream's slot and its two pumps; the application's end of it.
@@ -337,7 +342,13 @@ async fn pump_in(
 async fn writer<W: AsyncWrite + Unpin>(w: W, mut rx: mpsc::Receiver<Frame>, inner: Arc<Inner>) {
     let mut w = tokio::io::BufWriter::with_capacity(256 * 1024, w);
     let mut head = BytesMut::with_capacity(9);
-    while let Some(f) = rx.recv().await {
+    let mut ended = inner.ended.subscribe();
+    loop {
+        let f = tokio::select! {
+            f = rx.recv() => f,
+            _ = ended.wait_for(|e| *e) => None,
+        };
+        let Some(f) = f else { break };
         head.clear();
         head.put_u32_le((5 + f.payload.len()) as u32);
         head.put_u8(f.kind);
@@ -540,6 +551,27 @@ mod tests {
         for t in tasks {
             t.await.unwrap();
         }
+    }
+
+    #[tokio::test]
+    async fn everything_ends_with_the_channel() {
+        let (a_r, b_w) = tokio::io::duplex(1 << 16);
+        let (b_r, a_w) = tokio::io::duplex(1 << 16);
+        let (a, _ai) = Mux::new(a_r, a_w, true);
+        let weak = std::sync::Arc::downgrade(&a.inner);
+        let s = a.open(b"x").await.unwrap();
+        // The other side goes away.
+        drop((b_r, b_w));
+        tokio::time::timeout(std::time::Duration::from_secs(2), a.closed()).await.unwrap();
+        drop((s, a));
+        // Its tasks end and let go of it.
+        for _ in 0..100 {
+            if weak.upgrade().is_none() {
+                return;
+            }
+            tokio::time::sleep(std::time::Duration::from_millis(10)).await;
+        }
+        panic!("the channel's tasks still hold it");
     }
 
     #[test]

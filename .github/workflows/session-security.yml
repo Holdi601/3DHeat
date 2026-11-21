@@ -33,12 +33,9 @@ jobs:
       - name: Fuzz every target for a minute
         working-directory: native/crates/session/fuzz
         run: |
-          for t in client_msg client_structured doc_json asset_paths; do
+          for t in client_msg client_structured doc_json asset_paths ipc_frames; do
             cargo +nightly fuzz run "$t" -- -max_total_time=60 -rss_limit_mb=2048 -timeout=10
           done
-          # The channel's harness keeps one Tokio runtime across inputs; LeakSanitizer
-          # reports a few bytes of it at exit (an open item in the pentest report).
-          cargo +nightly fuzz run ipc_frames -- -max_total_time=60 -rss_limit_mb=2048 -timeout=10 -detect_leaks=0
       - name: Markdown sanitizer fuzz (two minutes)
         run: |
           npm ci

@@ -2,12 +2,11 @@
 //! for the native servers, by the same rules as the dev server's route
 //! (vite.config.ts) and the schema the page keeps (src/usage/schema.ts).
 //!
-//! Not mounted yet. `3dheat serve` serves every request through the sandboxed
-//! gateway, which hands the core each request as a stranger's (192.0.2.1), so
-//! the loopback check below would refuse the host too; mounting it there needs
-//! the gateway to say a request is the host's own. Until then a browser of
-//! `3dheat serve` gets no JSON from this path and keeps its statistics in the
-//! browser alone.
+//! `3dheat serve` mounts it as a host-only service (`ServeConfig::host_mount`):
+//! the gateway forwards a request here only with the host's token, marked as
+//! the host's, and the core then sees it as from this machine; any other
+//! request (a member's included) gets 403 from the gateway and never reaches
+//! this route. The page sends the host's token with its usage requests.
 //!
 //! Off unless switched on: a usage folder given, `HEAT3D_USAGE=1` (with
 //! `HEAT3D_USAGE_DIR`), or `"usageStats": true` in the `tools/local-data.json`
