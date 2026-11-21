@@ -27,8 +27,6 @@
   "app.hint.noTime": "Datele nu au coloană de timp – linia de timp este dezactivată și toate punctele sunt afișate deodată.",
   "app.hint.flat": "Plat pe {axes} – desenat ca un plan în scena 3D.",
   "app.fatal": "Motorul de randare nu poate fi inițializat.",
-  "app.empty.heat.title": "Niciun set de date încărcat",
-  "app.empty.heat.hint": "Generați unul sintetic din bara laterală pentru a începe.",
   "app.empty.race.title": "Niciun tur încărcat",
   "app.empty.race.hint": "Trageți aici două sau mai multe fișiere cu tururi sau încărcați tururile demonstrative din bara laterală.",
   "app.tab.plan": "Tactică",

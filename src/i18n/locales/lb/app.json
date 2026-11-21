@@ -27,8 +27,6 @@
   "app.hint.noTime": "Keng Zäitkolonn an dësen Donnéeën — d’Zäitlinn ass ausgeschalt an all Datepunkt gëtt gläichzäiteg gewisen.",
   "app.hint.flat": "Flaach op {axes} — als Fläch an der 3D-Zeen gezeechent.",
   "app.fatal": "De Renderer kann net initialiséiert ginn.",
-  "app.empty.heat.title": "Keen Datesaz gelueden",
-  "app.empty.heat.hint": "Generéiert an der Säiteleescht ee syntheteschen, fir unzefänken.",
   "app.empty.race.title": "Keng Ronne gelueden",
   "app.empty.race.hint": "Zitt zwee oder méi Ronne-Fichieren heihinner oder luet d’Demo-Ronnen aus der Säiteleescht.",
   "app.tab.plan": "Taktik",

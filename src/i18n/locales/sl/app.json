@@ -27,8 +27,6 @@
   "app.hint.noTime": "Ti podatki nimajo stolpca s časom – časovnica je onemogočena in vse podatkovne točke so prikazane hkrati.",
   "app.hint.flat": "Ploščato na oseh {axes} – v 3D-prizoru narisano kot ravnina.",
   "app.fatal": "Izrisovalnika ni mogoče inicializirati.",
-  "app.empty.heat.title": "Ni naloženega nabora podatkov",
-  "app.empty.heat.hint": "Za začetek v stranski vrstici ustvarite sintetičnega.",
   "app.empty.race.title": "Ni naloženih krogov",
   "app.empty.race.hint": "Sem spustite dve ali več datotek s krogi ali pa v stranski vrstici naložite demo kroge.",
   "app.tab.plan": "Taktika",

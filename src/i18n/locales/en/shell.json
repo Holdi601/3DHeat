@@ -126,5 +126,22 @@
   "shell.taskTitle.vehicle.load": "Data files",
   "shell.taskTitle.vehicle.explore": "The vehicle, how its hits look and which are shown",
   "shell.taskTitle.vehicle.analyse": "Penetration, hit areas, sides, body parts and modules",
-  "shell.taskTitle.vehicle.present": "The camera"
+  "shell.taskTitle.vehicle.present": "The camera",
+  "shell.dev.setting": "Developer tools",
+  "shell.dev.settingHint": "Test data, the frame readout and render internals, for checking performance and debugging the viewer. Not needed to analyse anything; off by default. ?dev in the address turns them on for one page.",
+  "shell.dev.title": "Developer tools",
+  "shell.dev.hint": "For checking performance and debugging the viewer, not for analysis. With them on, the frame readout shows over the view and the Performance panel, Sprite pixel clamps and Memory in use show their internals. Turn them off in the settings (the gear).",
+  "shell.dev.perfData": "Test data (performance check)",
+  "shell.dev.perfDataHint": "Made-up movement shaped like a battle royale: teams start apart, then are squeezed together. A realistic density to check whether a row count, sprite radius and budget hold the frame rate before a large real load. Replaces the loaded data.",
+  "shell.dev.rowsMillions": "Rows (millions)",
+  "shell.dev.teams": "Teams",
+  "shell.dev.perTeam": "Per team",
+  "shell.dev.halfExtent": "Map half-extent (m)",
+  "shell.dev.memory": "≈ {ram} GB of RAM, {gpu} GB on the GPU after quantisation.",
+  "shell.dev.generate": "Generate test data",
+  "shell.dev.generating": "Generating test data",
+  "shell.dev.busy": "{label}…",
+  "shell.dev.cmdShow": "Show developer tools",
+  "shell.dev.cmdHide": "Hide developer tools",
+  "shell.dev.cmdWords": "developer debug test data performance diagnostics"
 }

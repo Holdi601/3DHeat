@@ -27,8 +27,6 @@
   "app.hint.noTime": "이 데이터에는 시간 열이 없습니다 — 타임라인이 비활성화되고 모든 데이터 포인트가 한꺼번에 표시됩니다.",
   "app.hint.flat": "{axes} 방향으로 평평함 — 3D 장면에 평면으로 그립니다.",
   "app.fatal": "렌더러를 초기화할 수 없습니다.",
-  "app.empty.heat.title": "불러온 데이터셋 없음",
-  "app.empty.heat.hint": "사이드바에서 합성 데이터셋을 생성해 시작하세요.",
   "app.empty.race.title": "불러온 랩 없음",
   "app.empty.race.hint": "랩 파일을 두 개 이상 여기에 끌어다 놓거나, 사이드바에서 데모 랩을 불러오세요.",
   "app.tab.plan": "전술",

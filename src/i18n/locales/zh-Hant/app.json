@@ -27,8 +27,6 @@
   "app.hint.noTime": "此資料沒有時間欄位——時間軸已停用，所有資料點會同時顯示。",
   "app.hint.flat": "在 {axes} 上是平的——在 3D 場景中以平面繪製。",
   "app.fatal": "無法初始化渲染器。",
-  "app.empty.heat.title": "尚未載入資料集",
-  "app.empty.heat.hint": "從側邊欄產生一個合成資料集即可開始。",
   "app.empty.race.title": "尚未載入任何圈",
   "app.empty.race.hint": "將兩個以上的單圈檔案拖放到這裡，或從側邊欄載入示範圈。",
   "app.tab.plan": "戰術",

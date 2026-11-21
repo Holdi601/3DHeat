@@ -27,8 +27,6 @@
   "app.hint.noTime": "Ingen tidskolonne i disse data — tidslinjen er slået fra, og alle datapunkter vises på én gang.",
   "app.hint.flat": "Flad på {axes} — tegnet som et plan i 3D-scenen.",
   "app.fatal": "Kan ikke initialisere rendereren.",
-  "app.empty.heat.title": "Intet datasæt indlæst",
-  "app.empty.heat.hint": "Generér et syntetisk datasæt fra sidepanelet for at komme i gang.",
   "app.empty.race.title": "Ingen omgange indlæst",
   "app.empty.race.hint": "Slip to eller flere omgangsfiler her, eller indlæs demo-omgangene fra sidepanelet.",
   "app.tab.plan": "Taktik",

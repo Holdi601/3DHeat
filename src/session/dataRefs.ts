@@ -10,6 +10,7 @@
  */
 
 import { create } from 'zustand';
+import type { PickedFile } from '../data/filePick';
 
 export interface DataRef {
   name: string;
@@ -64,9 +65,22 @@ export function compareData(want: DataRef[]): { have: DataRef[]; missing: DataRe
   return { have, missing };
 }
 
-/** Files for the data panel to take as picked (the host's data, a packed session file's). */
-export const useDataHandoff = create<{ files: File[] | null; nonce: number }>(() => ({ files: null, nonce: 0 }));
+/**
+ * Files for the data panel to take as picked (the host's data, a packed
+ * session file's, the start screen's picker or a drop on the view). `picked`
+ * keeps the paths under a picked or dropped folder, which say what the files are.
+ */
+export const useDataHandoff = create<{ files: File[] | null; picked: PickedFile[] | null; nonce: number }>(() => ({
+  files: null,
+  picked: null,
+  nonce: 0,
+}));
 
 export function handData(files: File[]): void {
-  useDataHandoff.setState((s) => ({ files, nonce: s.nonce + 1 }));
+  useDataHandoff.setState((s) => ({ files, picked: null, nonce: s.nonce + 1 }));
+}
+
+/** Files picked or dropped outside the data panel, with their paths, for it to take. */
+export function handPicked(picked: PickedFile[]): void {
+  useDataHandoff.setState((s) => ({ files: picked.map((p) => p.file), picked, nonce: s.nonce + 1 }));
 }

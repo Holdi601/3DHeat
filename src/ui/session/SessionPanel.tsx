@@ -554,6 +554,14 @@ export function SessionFiles() {
     window.addEventListener('heat3d:open-session', onOpen);
     return () => window.removeEventListener('heat3d:open-session', onOpen);
   }, []);
+  // The start screen's and the Source panel's "last session" link: the autosave, with its report here.
+  useEffect(() => {
+    const onRestore = () => {
+      if (auto && mayOpen) void openSession(engine, auto, []).then(setReport);
+    };
+    window.addEventListener('heat3d:restore-session', onRestore);
+    return () => window.removeEventListener('heat3d:restore-session', onRestore);
+  }, [auto, mayOpen, engine]);
   return (
     <section className="session-sec">
       <h3>{t('session.file.title')}</h3>

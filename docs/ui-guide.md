@@ -8,11 +8,23 @@ nav_order: 0
 
 How the viewer is laid out, and the quick ways to reach anything: the command palette, the key sheet, the task bar and the quick bar.
 
+## First start: open your data
+
+With nothing loaded, the Heatmap and Match views show the start screen:
+
+![The start screen: Open your data, with Open files…, Open folder… and Open session…](assets/img/en/start-screen.webp)
+
+1. Press **Open files…** (or **Open folder…** for a folder of matches), or drop files or a folder anywhere on the view. Parquet and CSV tables, replays converted with the 3DHeat tools (`.3dheat`), Tacview `.acmi` and GPS tracks open; the full list is in [Data formats](data-formats.md#files).
+2. The files go to the **Source** panel, the first in the side panel: check the **Column mapping** (usually filled in already) and the **Memory estimate**, then press **Load**. See [Loading files](loading-files.md).
+3. To put a level under the data, open **Background / level**. The start screen says how many levels are ready, in your library and in the levels folder the map tools write into.
+
+**Open session…** opens a saved `.3dheat-session` (views, notes, the board, and the data it was made on by name); **Take up the last session** appears when this browser kept one. No data yet? The [demo data](demo-data.md) makes some, and the small link **No data yet? Try a generated sample** loads a made-up match for a first look.
+
 ## Layout
 
 | Part | Where | What it holds |
 |---|---|---|
-| Header | Top of the side panel | The name, **Search…** (the command palette), **?** (help) and the gear (settings: theme, animations, units, language) |
+| Header | Top of the side panel | The name, **Search…** (the command palette), **?** (help) and the gear (settings: theme, animations, units, language, developer tools) |
 | Workspaces | Under the header | **Heatmap**, **Race analysis**, **Match**, **Tactics**, **Vehicles**. `Ctrl+Shift+1` … `5` |
 | Task bar | Every workspace | **All** and the workspace's task groups (below): shows one group of panels at a time |
 | Side panel | Left | The panels of the workspace, each a section that opens and closes. `Ctrl+B` hides it |
@@ -25,7 +37,7 @@ On every workspace the panels are grouped by what you are doing. Heatmap and Mat
 
 | Group | Panels |
 |---|---|
-| **Load** | Background / level, Source, Dataset, matches and series (Match). Under **More**: Many matches at once |
+| **Load** | Source (what is loaded, **Open files…**, **Open folder…**, **Open session…**), Background / level, matches and series (Match). Under **More**: Many matches at once, and the developer tools when they are on |
 | **Explore** | The heat or the figures, lines, teams, entities, filters, slice, the match's units, objectives and scoreboards |
 | **Compare** | Difference split, volumes, insights, mass analysis, the ruler |
 | **Present** | Saved views, camera path and video, Camera & scene. Under **More**: Performance |
@@ -40,7 +52,7 @@ The other workspaces:
 
 **All** shows every group, each under its name. A group only hides the others' panels; nothing is reset, and a filter or setting in a hidden panel keeps working. The task picked is kept per workspace.
 
-Panels used now and then sit under **More** at the end of their group (and in **Heat shape**'s neighbours: *Sprite pixel clamps* and *Distance culling*). **More** opens by itself while a panel inside it is open.
+Panels used now and then sit under **More** at the end of their group (and in **Heat shape**'s neighbours: *Distance culling*). **More** opens by itself while a panel inside it is open.
 
 The viewer remembers, in this browser: which sections are open, the group picked on each workspace, which **More** folds are open, and whether the side panel is hidden. A panel that has something to show (a loaded file's mapping, a volume just drawn) opens by itself whatever was remembered.
 
@@ -94,3 +106,13 @@ While a unit is followed, the bar shows its name and **Stop following** (`Esc`).
 - Every control is reachable with `Tab`, shows a ring in the accent colour when it has the keyboard focus, and section headers open and close with `Enter` or `Space`. Text meets WCAG AA contrast in both themes.
 
 Colours, spaces, radii, type sizes, shadows and durations are design tokens on the page root ([`app.css`](https://github.com/Holdi601/3DHeat/blob/main/src/app.css)); the light theme redefines the colours only.
+
+## Developer tools
+
+Off by default, and not needed to analyse anything: they are for checking performance and debugging the viewer. **Developer tools** in the settings (the gear) turns them on and keeps the choice in this browser; `?dev` in the address turns them on for one page. With them on:
+
+- **Developer tools → Test data (performance check)** under **More** in the Heatmap's **Load** group: made-up data of any size ([Test data](synthetic-generator.md));
+- the full [stats overlay](performance-and-stats.md#the-stats-overlay) at the top right of the view (without them only the amber **Not resident** line shows there, when rows did not fit on the graphics card);
+- **Sprites / frame** and **Progressive refinement** in the Performance panel, **Sprite pixel clamps** beside Heat shape, and the heap and per-column bytes in **Memory in use**.
+
+The command palette offers *Show developer tools* and *Hide developer tools*, and lists their panels only while they are on.

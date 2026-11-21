@@ -2,11 +2,11 @@ import { createRoot } from 'react-dom/client';
 import { App } from './App';
 import { startLanguage } from './i18n';
 import { applyMotionVars } from './ui/motion';
-import { applyTheme } from './ui/shell/shellStore';
+import { applyTheme, useShell } from './ui/shell/shellStore';
 import { useVersus } from './ui/versus/VersusPanel';
 import { useStore } from './state/store';
 import { useInspectStore } from './state/inspectStore';
-import { DEFAULT_SYNTH, generateSynthetic } from './data/synth';
+import { DEFAULT_SYNTH, generateSynthetic, type SynthOptions } from './data/synth';
 import { VIEW_PRESETS } from './render/camera';
 import { mixTeamColor, teamHeatColor } from './render/colors';
 import { CURVE_PRESETS, evalCurve } from './state/curve';
@@ -75,6 +75,19 @@ if (import.meta.env.DEV) {
     mixTeamColor,
     load: (rows: number) =>
       useStore.getState().setDataset(generateSynthetic({ ...DEFAULT_SYNTH, rows })),
+    /**
+     * Test data through the ingest worker, as the developer tools' generator
+     * makes it - the stable way for a test or a docs picture to get it, without
+     * driving the developer tools' UI. Resolves to the row count.
+     */
+    async generate(rows: number, opts: Partial<Omit<SynthOptions, 'rows'>> = {}) {
+      const { generatePerfData } = await import('./data/perfData');
+      return (await generatePerfData({ ...opts, rows }))?.count ?? 0;
+    },
+    /** The developer tools on or off for this page (the setting, kept in this browser like the gear's). */
+    devTools(on: boolean) {
+      useShell.getState().setDevTools(on);
+    },
 
     /** Fetch files the dev server is serving and ingest them for real. */
     async loadUrls(urls: string[], stride = 1) {

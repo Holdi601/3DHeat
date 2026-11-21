@@ -6,7 +6,7 @@ nav_order: 2
 
 # Sprite shape
 
-Each row is drawn as a round sprite that always faces the camera. Its size and the profile from its centre to its rim - the **ramp** - decide whether a hotspot reads as a tight dot, a soft cloud, a disc or a ring. These controls are in the **Heat shape** and **Sprite pixel clamps** sections of the sidebar, and apply to [Heat](heat.md), [Difference](difference.md), [Team heat](team-heat.md) and, as the half-width of a line, [Line heat](line-heat.md).
+Each row is drawn as a round sprite that always faces the camera. Its size and the profile from its centre to its rim - the **ramp** - decide whether a hotspot reads as a tight dot, a soft cloud, a disc or a ring. These controls are in the **Heat shape** section of the sidebar (and **Sprite pixel clamps**, a [developer tool](synthetic-generator.md)), and apply to [Heat](heat.md), [Difference](difference.md), [Team heat](team-heat.md) and, as the half-width of a line, [Line heat](line-heat.md).
 
 Changing any of them restarts the accumulation (the field has to be redrawn with the new shape).
 
@@ -24,7 +24,7 @@ Things far away look smaller, so a sprite shrinks on screen with distance. Under
 
 ## Pixel clamps
 
-**Sprite pixel clamps** (closed by default) bound the on-screen radius after the conversion above.
+**Sprite pixel clamps** bound the on-screen radius after the conversion above. The section is a renderer internal, shown under **More** in the heat panels only with the [developer tools](synthetic-generator.md) on; the clamps work with their defaults either way.
 
 | Control | Default | Range (jog) | Why |
 |---|---|---|---|

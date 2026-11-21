@@ -12,7 +12,7 @@ The viewer draws millions of dots as glowing blobs and adds them up. This sectio
 data -> time window -> GPU filters -> sampling plan -> splat -> accumulate -> colour -> screen
 ```
 
-To see how your own computer is doing, look at the stats box in the top right of the view: [Performance panel and stats overlay](performance-and-stats.md). New words (GPU, row, sprite, heatmap) are in the [glossary](glossary.md).
+To see how your own computer is doing, turn on **Developer tools** in the settings (the gear) and look at the stats box in the top right of the view: [Performance panel and stats overlay](performance-and-stats.md). New words (GPU, row, sprite, heatmap) are in the [glossary](glossary.md).
 
 ## The core problem
 

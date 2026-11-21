@@ -33,7 +33,7 @@ What the viewer keeps in your browser (`localStorage`) between visits. Nothing o
 | `heat3d.replay` | replay labels, tactical display, 2D map, charts, head-up display, look, buildings, follow camera | `src/state/replayStore.ts` |
 | `heat3d.savedViews` |  | `src/state/savedViews.ts` |
 | `heat3d.sections` | which side panel sections are open | `src/ui/shell/sections.ts` |
-| `heat3d.shell` | the theme, the side panel hidden or shown, the task group per workspace, the More folds | `src/ui/shell/shellStore.ts` |
+| `heat3d.shell` | the theme, the side panel hidden or shown, the task group per workspace, the More folds, developer tools on or off | `src/ui/shell/shellStore.ts` |
 | `heat3d.speed` | the playback speed | `src/state/playbackSpeed.ts` |
 | `heat3d.tactics.author` |  | `src/tactics/autosave.ts` |
 | `heat3d.tactics.autosave` |  | `src/tactics/autosave.ts` |

@@ -70,5 +70,5 @@ One hue family per group and one shade per member, so a glance tells you which s
 ## Notes
 
 - The figure overlay rebuilds its figures only when something changes; an idle frame redraws the last ones.
-- The *Cubes* line of the [stats overlay](performance-and-stats.md) counts the boxes on screen.
+- The *Cubes* line of the [stats overlay](performance-and-stats.md) (developer tools) counts the boxes on screen.
 - The figure overlay draws in the same scene as the level, so [depth of field](camera.md#depth-of-field) blurs the boxes but never the heat.

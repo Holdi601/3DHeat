@@ -27,8 +27,6 @@
   "app.hint.noTime": "Estes dados não têm coluna de tempo: a linha temporal está desativada e todos os pontos de dados são mostrados de uma vez.",
   "app.hint.flat": "Plano em {axes}: desenhado como um plano na cena 3D.",
   "app.fatal": "Não é possível inicializar o renderizador.",
-  "app.empty.heat.title": "Nenhum conjunto de dados carregado",
-  "app.empty.heat.hint": "Gere um sintético a partir da barra lateral para começar.",
   "app.empty.race.title": "Nenhuma volta carregada",
   "app.empty.race.hint": "Largue aqui dois ou mais ficheiros de volta, ou carregue as voltas de demonstração a partir da barra lateral.",
   "app.tab.plan": "Tática",

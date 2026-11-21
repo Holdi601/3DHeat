@@ -30,7 +30,7 @@ import { useMotion, type MotionSetting } from '../motion';
 import indexData from 'virtual:command-index';
 import { WORKSPACES, type Workspace } from './keys';
 import { comboText, shortcut } from './shortcuts';
-import { taskOf, useShell, WORKSPACE_TASKS, type Task, type Theme } from './shellStore';
+import { DEV_ONLY_KEYS, devToolsOn, taskOf, useShell, WORKSPACE_TASKS, type Task, type Theme } from './shellStore';
 import { toast } from './kit';
 import { addChartTo } from '../signs/addChart';
 import { useSignStore } from '../../volumes/signs/store';
@@ -361,6 +361,7 @@ export function buildCommands(engine: Engine | null): Command[] {
   action('help', t('shell.cmd.help'), () => useHelpStore.getState().toggle(), keysOf('help'));
   action('fullscreen', t('heat.viewPanel.camera.fullscreen'), () => toggleLockedFullscreen());
   action('settings', t('shell.settings.title'), () => useShell.getState().setSettings(true));
+  action('devTools', devToolsOn() ? t('shell.dev.cmdHide') : t('shell.dev.cmdShow'), () => useShell.getState().setDevTools(!devToolsOn()), undefined, t('shell.dev.cmdWords'));
   action('raceStart', t('shell.key.raceStart'), () => raceClock.set(0), keysOf('raceStart'));
   for (const th of ['dark', 'light', 'system'] as Theme[])
     action(`theme.${th}`, t('shell.cmd.theme', { theme: t(`shell.theme.${th}`) }), () => useShell.getState().setTheme(th));
@@ -484,7 +485,10 @@ export function buildCommands(engine: Engine | null): Command[] {
       run: () => void reveal({ tab: e.tab, mode: fromPage ? undefined : e.mode, path: e.path, label: e.label }),
     });
   };
+  // The developer tools' sections and controls only while they are on.
+  const dev = devToolsOn();
+  const shown = (e: IndexEntry) => dev || !(e.path.some((p) => DEV_ONLY_KEYS.has(p)) || (e.label && DEV_ONLY_KEYS.has(e.label)));
   for (const e of pageEntries(tab)) add(e, true);
-  for (const e of INDEX) add(e, false);
+  for (const e of INDEX) if (shown(e)) add(e, false);
   return out;
 }

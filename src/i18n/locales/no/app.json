@@ -27,8 +27,6 @@
   "app.hint.noTime": "Ingen tidskolonne i disse dataene — tidslinjen er deaktivert, og alle datapunkter vises samtidig.",
   "app.hint.flat": "Flat langs {axes} — tegnes som et plan i 3D-scenen.",
   "app.fatal": "Kan ikke initialisere rendereren.",
-  "app.empty.heat.title": "Ingen datasett lastet inn",
-  "app.empty.heat.hint": "Generer et syntetisk datasett fra sidepanelet for å komme i gang.",
   "app.empty.race.title": "Ingen runder lastet inn",
   "app.empty.race.hint": "Slipp to eller flere rundefiler her, eller last inn demorundene fra sidepanelet.",
   "app.tab.plan": "Taktikk",

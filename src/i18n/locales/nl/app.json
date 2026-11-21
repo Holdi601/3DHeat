@@ -27,8 +27,6 @@
   "app.hint.noTime": "Geen tijdkolom in deze data – de tijdlijn is uitgeschakeld en alle datapunten worden tegelijk getoond.",
   "app.hint.flat": "Vlak op {axes} – als vlak in de 3D-scène getekend.",
   "app.fatal": "Kan de renderer niet initialiseren.",
-  "app.empty.heat.title": "Geen dataset geladen",
-  "app.empty.heat.hint": "Genereer om te beginnen een synthetische dataset in de zijbalk.",
   "app.empty.race.title": "Geen rondes geladen",
   "app.empty.race.hint": "Sleep hier twee of meer rondebestanden naartoe, of laad de demorondes vanuit de zijbalk.",
   "app.tab.plan": "Tactiek",

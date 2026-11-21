@@ -1508,6 +1508,43 @@ button.link:disabled {
   color: var(--text-dim);
 }
 
+/*
+ * The start screen (ui/panels/OpenData.tsx): the empty view's message with its
+ * actions. The view under it still takes the pointer; only the controls do here.
+ */
+.empty-state.start {
+  padding: 0 24px;
+}
+
+.empty-state.start h2 {
+  font-size: 18px;
+  color: var(--text);
+}
+
+.empty-state.start button,
+.empty-state.start a {
+  pointer-events: auto;
+}
+
+.empty-state .start-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 6px 0 2px;
+}
+
+.empty-state .start-formats {
+  max-width: 460px;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.empty-state .start-sample {
+  margin-top: 10px;
+  font-size: 11px;
+}
+
 .fatal {
   position: absolute;
   inset: 24px;

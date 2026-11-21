@@ -27,8 +27,6 @@
   "app.hint.noTime": "Te dane nie mają kolumny czasu – oś czasu jest wyłączona, a wszystkie punkty danych są pokazane naraz.",
   "app.hint.flat": "Dane leżą w płaszczyźnie {axes} – rysowane jako płaszczyzna w scenie 3D.",
   "app.fatal": "Nie można zainicjować renderera.",
-  "app.empty.heat.title": "Nie wczytano zbioru danych",
-  "app.empty.heat.hint": "Na początek wygeneruj syntetyczny zbiór na pasku bocznym.",
   "app.empty.race.title": "Nie wczytano okrążeń",
   "app.empty.race.hint": "Upuść tutaj dwa lub więcej plików okrążeń albo wczytaj okrążenia demonstracyjne z paska bocznego.",
   "app.tab.plan": "Taktyka",

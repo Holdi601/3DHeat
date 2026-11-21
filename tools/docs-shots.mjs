@@ -201,8 +201,9 @@ function save(name, webp) {
 }
 /** Grab the window, a box or one element as PNG bytes (no waiting). */
 async function grab(clip) {
-  if (typeof clip === 'string') return page.locator(clip).first().screenshot();
-  return page.screenshot(clip ? { clip } : {});
+  // A generous timeout: a busy machine under software rendering can take seconds a frame.
+  if (typeof clip === 'string') return page.locator(clip).first().screenshot({ timeout: 120_000 });
+  return page.screenshot(clip ? { clip, timeout: 120_000 } : { timeout: 120_000 });
 }
 /** Take the picture: the whole window, or a box around one element. */
 async function shot(name, clip, quality) {
@@ -457,7 +458,6 @@ const SHOTS = {
     await wait(8000);
     await page.locator('.section.open', { has: page.locator('header', { hasText: L('lean.title') }) }).getByText(L('lean.byMatch'), { exact: true }).first().click().catch(() => {});
     await store(() => globalThis.__3dheat.useStore.getState().seek(300));
-    await collapse('heat.datasetPanel.title');
     await section('lean.title');
     await camera({ x: -1600, y: valleyH(-1600, 1050) + 330, z: 1050 }, at(-1200, 600, 0));
     await shot('many-matches');
@@ -625,27 +625,31 @@ const SHOTS = {
       await wait(5000);
     };
     const src = page.locator('.section.open', { has: page.locator('header', { hasText: L('heat.sourcePanel.title') }) });
+    // The start screen: what a first look shows, nothing loaded (and no levels folder: the server runs without one).
     await boot();
+    await shot('start-screen');
     await collapseAll();
     await section('heat.sourcePanel.title');
-    await pick(tanks, 'heat.sourcePanel.files');
+    await pick(tanks, 'heat.sourcePanel.openFiles');
     const box = async (loc) => (await loc.first().boundingBox());
     const r1 = await box(src.getByText(/^10 files$/));
     const r2 = await box(src.getByText(L('heat.sourcePanel.memory'), { exact: true }));
     const r3 = await box(src.getByRole('button', { name: /^Load 10 files$/ }));
+    // From the open buttons down: the Source panel is the first in the side panel now.
+    const r0 = await box(src.getByRole('button', { name: L('heat.sourcePanel.openFiles') }));
     await marks([
       { rect: [r1.x - 4, r1.y + 22, 300, 22], n: 1, at: [292, r1.y - 6] },
       { rect: [r2.x - 4, r2.y - 3, 310, 22], n: 2, at: [292, r2.y - 22] },
       { rect: [r3.x - 2, r3.y - 2, r3.width + 4, r3.height + 4], n: 3, at: [292, r3.y - 24] },
     ]);
-    await shot('loading-files-source', { x: 0, y: 225, width: 322, height: 430 });
+    await shot('loading-files-source', { x: 0, y: Math.round(r0.y - 10), width: 322, height: Math.round(r3.y + r3.height + 20 - (r0.y - 10)) });
     await clearMarks();
 
     // the mapping of one file, every box filled
     await collapseAll();
     await sideTop();
     await section('heat.sourcePanel.title');
-    await pick([join(REPO, 'tools', '.shots', 'demo', 'shooter.parquet')], 'heat.sourcePanel.oneFile');
+    await pick([join(REPO, 'tools', '.shots', 'demo', 'shooter.parquet')], 'heat.sourcePanel.openFiles');
     await size(1500);
     await page.locator('aside.sidebar').evaluate((e) => (e.scrollTop = 560));
     await wait(500);
@@ -666,10 +670,11 @@ const SHOTS = {
     await collapseAll();
     await store(() => {
       const s = globalThis.__3dheat.useStore.getState();
-      s.setBudgets({ ...s.budgets, ram: 6e6 });
+      // The ceiling at the detected figure: what this machine has free right now stays out of the picture.
+      s.setBudgets({ ...s.budgets, ram: 6e6, ramCeiling: s.budgets.ramMax });
     });
     await section('heat.sourcePanel.title');
-    await pick(Array.from({ length: 24 }, () => tanks).flat(), 'heat.sourcePanel.files');
+    await pick(Array.from({ length: 24 }, () => tanks).flat(), 'heat.sourcePanel.openFiles');
     await src.locator('input').filter({ hasNot: page.locator('[type=file]') }).first().fill('1');
     await wait(1500);
     await shot('memory-and-budgets-wont-fit', { x: 0, y: 225, width: 322, height: 600 });
@@ -688,20 +693,30 @@ const SHOTS = {
     await wait(500);
     await shot('sessions-persons-groups-picker', { x: 0, y: 170, width: 322, height: 250 });
 
-    // the generator: one million rows, eight teams
+    // the test data (a developer tool): one million rows, eight teams, made
+    // through the test hook rather than by driving the developer tools' UI
     await boot();
     await collapseAll();
-    await section('heat.datasetPanel.title');
-    await page.locator('aside.sidebar input[type="text"]').first().fill('1');
-    await click('heat.datasetPanel.generate', {}, { wait: 500 });
-    await page.waitForFunction(() => globalThis.__3dheat.useStore.getState().dataset, null, { timeout: 120000 });
+    await store(() => globalThis.__3dheat.devTools(true));
+    await store(() => globalThis.__3dheat.generate(1_000_000));
     await wait(3000);
     await mode('heat-teams');
     await collapse('heat.teamsList.title');
+    await collapse('heat.sourcePanel.title');
     await heat({ radius: 60, minHeat: 0 });
     await camera({ x: -1300, y: 1500, z: 1300 }, { x: 0, y: 0, z: 0 });
-    await section('heat.datasetPanel.title');
+    await section('shell.dev.title');
+    await section('shell.dev.perfData');
+    // The rows box says what was made, and the panel is seen from its own header down.
+    const rowsBox = page.locator('.section.open', { has: page.locator('header', { hasText: L('shell.dev.perfData') }) }).locator('input').first();
+    await rowsBox.fill('1');
+    await rowsBox.evaluate((e) => e.blur());
+    await page.locator('.section > header', { hasText: L('shell.dev.title') }).first().evaluate((h) => {
+      h.scrollIntoView({ block: 'start' });
+      h.closest('aside').scrollTop -= 48;
+    });
     await shot('synthetic-generator-team-heat');
+    await store(() => globalThis.__3dheat.devTools(false));
   },
 
   // The tool panels of the Heatmap sidebar.

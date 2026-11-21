@@ -8,8 +8,8 @@ nav_order: 1
 
 This page shows how to give 3DHeat your files and what it does with them. Drop a folder, and it picks the files that hold positions and merges them into one picture.
 
-1. Open **Source** at the top of the Heatmap sidebar.
-2. Drop files or a folder on the drop zone, or press **Files…** or **Folder…**.
+1. With nothing loaded, press **Open files…** or **Open folder…** in the middle of the view - or drop files or a folder anywhere on the view. (The same buttons are at the top of **Source**, the first panel of the Heatmap sidebar.)
+2. The files go to the **Source** panel.
 3. Read the selection line and the **Memory estimate** (see the picture below).
 4. Press **Load**.
 
@@ -21,12 +21,15 @@ Files are loaded in the **Source** panel at the top of the Heatmap tab's sidebar
 
 ## Choosing files
 
+With nothing loaded, the view shows the start screen: **Open files…** (the main button), **Open folder…** and **Open session…**, the kinds of file that open, the last session kept in this browser when there is one, and how many levels are ready to put under the data. Files dropped anywhere on the Heatmap view go to the Source panel the same way. The side panel comes up on the **Load** group, so the mapping and **Load** are in sight.
+
 | Control | What it does |
 |---|---|
-| **Drop files or a folder here** (the drop zone) | Drop any mix of files and folders. Folders are walked recursively. Clicking the drop zone opens the same picker as **Files…**. |
-| **One file…** | A file picker for a single file. |
-| **Files…** | A file picker that accepts several files. |
-| **Folder…** | A folder picker (the browser's `webkitdirectory` picker); every file in the folder tree is offered. |
+| **Open files…** | A file picker that accepts one file or several. |
+| **Open folder…** | A folder picker (the browser's `webkitdirectory` picker); every file in the folder tree is offered. |
+| **Open session…** | Opens a saved `.3dheat-session` file in the session panel: its views, notes, marks and board, and the data it was made on by name ([Saving and opening a session](multiplayer.md#saving-and-opening-a-session)). |
+| **Take up the last session (time)** | Shown when this browser kept a session: restores it, and says which data files to open again. |
+| **Drop files or a folder here** (the drop zone) | Drop any mix of files and folders. Folders are walked recursively. Clicking the drop zone opens the same picker as **Open files…**. |
 
 The pickers accept the file types in the [list of loadable files](data-formats.md#files). In short: `.parquet`/`.pq` are read as Parquet, `.csv`/`.tsv`/`.txt` as delimited text, `.acmi` (Tacview), OCAP `.json`/`.json.gz` and the GPS formats (GPX, KML, KMZ, NMEA, IGC, FIT) go through their own readers, and `.3dheat` match containers load as the tables they hold ([One file a match](container.md)). A container that cannot be read is skipped as *not a csv/parquet file*.
 
@@ -94,4 +97,4 @@ The new dataset replaces any previous one. On every load ([`setDataset`](https:/
 - the playhead is parked at the start and playback stops;
 - the camera frames the whole dataset from the default direction (looking along -Z, pitched down about 36°).
 
-The **Dataset** panel then shows the dataset's name (the selection, the row and file counts, and the stride when one was used), `N teams · N persons · Ns span`, and every warning the load produced, in amber, for as long as the dataset is loaded. **Unload** in that panel removes the dataset.
+The top of the **Source** panel then shows what is loaded: the dataset's name (the selection, the row and file counts, and the stride when one was used), `N teams · N persons · Ns span`, and every warning the load produced, in amber, for as long as the dataset is loaded. **Unload** there removes the dataset.

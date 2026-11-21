@@ -161,6 +161,8 @@ export function SettingsMenu() {
   const setOpen = useShell((s) => s.setSettings);
   const theme = useShell((s) => s.theme);
   const setTheme = useShell((s) => s.setTheme);
+  const devTools = useShell((s) => s.devTools);
+  const setDevTools = useShell((s) => s.setDevTools);
   const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!open) return;
@@ -210,6 +212,13 @@ export function SettingsMenu() {
           <div className="settings-row">
             <span>{t('common.language')}</span>
             <LanguagePicker />
+          </div>
+          {/* Last and off by default: test data, the frame readout and render internals (ui/panels/DevToolsPanel.tsx). */}
+          <div className="settings-row">
+            <label className="check" title={t('shell.dev.settingHint')}>
+              <input type="checkbox" checked={devTools} onChange={(e) => setDevTools(e.target.checked)} data-testid="dev-tools-setting" />
+              {t('shell.dev.setting')}
+            </label>
           </div>
         </div>
       )}

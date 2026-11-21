@@ -27,8 +27,6 @@
   "app.hint.noTime": "Šajos datos nav laika kolonnas — laika josla ir atspējota, un visi datu punkti tiek rādīti vienlaikus.",
   "app.hint.flat": "Plakans pa {axes} — 3D ainā attēlots kā plakne.",
   "app.fatal": "Nevar inicializēt renderētāju.",
-  "app.empty.heat.title": "Nav ielādēta datu kopa",
-  "app.empty.heat.hint": "Lai sāktu, ģenerē sintētisku datu kopu sānjoslā.",
   "app.empty.race.title": "Nav ielādētu apļu",
   "app.empty.race.hint": "Ievelc šeit divus vai vairāk apļu failus vai ielādē demonstrācijas apļus no sānjoslas.",
   "app.tab.plan": "Taktika",

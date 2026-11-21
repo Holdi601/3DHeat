@@ -45,7 +45,8 @@ import { EngineContext } from './ui/EngineContext';
 import { applyBuildings } from './ui/replay/buildings';
 import { SessionPicker } from './ui/SessionPicker';
 import { SoftwareRenderingWarning } from './ui/SoftwareRenderingWarning';
-import { DatasetPanel } from './ui/panels/DatasetPanel';
+import { DevToolsPanel } from './ui/panels/DevToolsPanel';
+import { dropData, StartScreen } from './ui/panels/OpenData';
 import { EntityPanel } from './ui/panels/EntityPanel';
 import { FilterPanel } from './ui/panels/FilterPanel';
 import { HeatPanel } from './ui/panels/HeatPanel';
@@ -538,13 +539,18 @@ export function App() {
           </div>
 
           <TaskBar tab="heat" />
-          {/* Grouped by task (ui/shell/Shell.tsx); the level first: it is loaded before the data. */}
+          {/*
+            Grouped by task (ui/shell/Shell.tsx). The data first: it is what a
+            first session comes with, and a level from the levels folder follows
+            it by itself. The developer tools (test data) last, under More, and
+            only when turned on (DevToolsPanel).
+          */}
           <TaskGroup task="load">
-            <LevelPanel />
             <SourcePanel />
-            <DatasetPanel />
+            <LevelPanel />
             <More id="heat.load">
               <LeanOverlayPanel />
+              <DevToolsPanel />
             </More>
           </TaskGroup>
           <TaskGroup task="explore">
@@ -585,11 +591,25 @@ export function App() {
         <div
           className="stage"
           onDragOver={(e) => {
-            if (raceTab || matchTab || vehicleTab) e.preventDefault();
+            if (!planTab) e.preventDefault();
           }}
           onDrop={(e) => {
+            if (planTab) return;
+            if (!raceTab && !matchTab && !vehicleTab) {
+              // The heatmap: to the Source panel, as if picked there (ui/panels/OpenData.tsx).
+              e.preventDefault();
+              void dropData(e.dataTransfer);
+              return;
+            }
             if (matchTab || vehicleTab) {
               e.preventDefault();
+              // Nothing loaded on Match: the tables go to the Source panel as on the start screen,
+              // which reads the match documents beside them too.
+              if (matchTab && !useStore.getState().dataset) {
+                void loadObjectiveFiles(Array.from(e.dataTransfer.files));
+                void dropData(e.dataTransfer);
+                return;
+              }
               const files = Array.from(e.dataTransfer.files);
               void useMatchStore.getState().load(files);
               // The battles' capture zones over time, dropped with them.
@@ -643,12 +663,8 @@ export function App() {
               <SpeedOverlay />
               <InspectHud />
               <NotesLayer />
-              {!dataset && (
-                <div className="empty-state">
-                  <h2>{t('app.empty.heat.title')}</h2>
-                  <div>{t('app.empty.heat.hint')}</div>
-                </div>
-              )}
+              {/* Nothing loaded: open real data (ui/panels/OpenData.tsx). */}
+              {!dataset && <StartScreen />}
                 </>
               )}
               <HelpPanel />
@@ -679,9 +695,11 @@ export function App() {
  */
 function InspectHud() {
   const showCamera = useInspectStore((s) => s.showCamera);
+  // Not over the start screen: coordinates of nothing are noise on a first look.
+  const something = useStore((s) => !!s.dataset || !!s.level);
   return (
     <div className="inspect-hud">
-      {showCamera && <CameraReadout />}
+      {showCamera && something && <CameraReadout />}
       <UnitCard />
       <PickCard />
       <BreakdownWindow />

@@ -27,8 +27,6 @@
   "app.hint.noTime": "Pas de colonne de temps dans ces données — la chronologie est désactivée et tous les points de données sont affichés à la fois.",
   "app.hint.flat": "Plat sur {axes} — dessiné comme un plan dans la scène 3D.",
   "app.fatal": "Impossible d’initialiser le moteur de rendu.",
-  "app.empty.heat.title": "Aucun jeu de données chargé",
-  "app.empty.heat.hint": "Générez-en un synthétique depuis la barre latérale pour commencer.",
   "app.empty.race.title": "Aucun tour chargé",
   "app.empty.race.hint": "Déposez ici deux fichiers de tour ou plus, ou chargez les tours de démo depuis la barre latérale.",
   "app.tab.plan": "Tactique",

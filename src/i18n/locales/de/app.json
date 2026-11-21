@@ -27,8 +27,6 @@
   "app.hint.noTime": "Diese Daten haben keine Zeitspalte – die Zeitleiste ist deaktiviert und alle Datenpunkte werden gleichzeitig gezeigt.",
   "app.hint.flat": "Flach auf {axes} – als Ebene in der 3D-Szene gezeichnet.",
   "app.fatal": "Der Renderer kann nicht initialisiert werden.",
-  "app.empty.heat.title": "Kein Datensatz geladen",
-  "app.empty.heat.hint": "Erzeuge zum Start einen synthetischen in der Seitenleiste.",
   "app.empty.race.title": "Keine Runden geladen",
   "app.empty.race.hint": "Zieh zwei oder mehr Rundendateien hierher oder lade die Demo-Runden aus der Seitenleiste.",
   "app.tab.plan": "Taktik",

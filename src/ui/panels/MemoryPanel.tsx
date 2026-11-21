@@ -7,6 +7,7 @@ import { useStore } from '../../state/store';
 import { useAnimationFrame, useEngine } from '../EngineContext';
 import { num, t } from '../../i18n';
 import { Section } from '../controls';
+import { useDevTools } from '../shell/shellStore';
 
 /**
  * What is resident right now: the dataset's columns in RAM, the rows on the
@@ -56,11 +57,14 @@ export function MemoryPanel() {
   const ram = columns.reduce((a, c) => a + c.bytes, 0);
   const [heap, setHeap] = useState<Heap | null>(() => quickHeap());
   const [showAll, setShowAll] = useState(false);
+  const dev = useDevTools();
 
+  // Only while the heap is shown: a render every two seconds for nothing otherwise.
   useEffect(() => {
+    if (!dev) return;
     const h = setInterval(() => setHeap((prev) => (prev?.source === 'uasm' ? prev : quickHeap())), 2000);
     return () => clearInterval(h);
-  }, []);
+  }, [dev]);
 
   // GPU figures straight into the DOM: they change while chunks upload, and a
   // React render per frame for three numbers is work the frame does not need.
@@ -97,6 +101,11 @@ export function MemoryPanel() {
           })}
         </div>
         <div className="hint" ref={gpuLine} />
+        {/* The tab's heap and every column's bytes are for debugging the viewer:
+            with the developer tools only. The totals above, the columns on
+            demand and the room to spare are what a user acts on. */}
+        {dev && (
+          <div data-dev-tool="memory">
         {heap && (
           <div className="hint">
             {heap.limit
@@ -122,6 +131,8 @@ export function MemoryPanel() {
           <button onClick={() => setShowAll((v) => !v)}>
             {showAll ? t('heat.memoryPanel.fewer') : t('heat.memoryPanel.all', { count: columns.length })}
           </button>
+        )}
+          </div>
         )}
         {Object.keys(onDemand.entries).length > 0 && <OnDemandList entries={Object.values(onDemand.entries)} mapBytes={onDemand.mapBytes} evicted={onDemand.evicted} />}
         {roomy && (

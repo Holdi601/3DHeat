@@ -39,6 +39,8 @@ import { MemoryPanel } from './MemoryPanel';
 import { recallChoice, rememberChoice, sourceKey } from '../../data/columnProfile';
 import { activeClauses } from '../../data/rowFilter';
 import { noteDataFiles, useDataHandoff } from '../../session/dataRefs';
+import { DatasetSummary } from './DatasetPanel';
+import { DATA_EXTENSIONS, openSessionFile, RecentSession } from './OpenData';
 
 const NO_COLUMNS: string[] = [];
 
@@ -182,7 +184,7 @@ export function SourcePanel() {
   useEffect(
     () =>
       useDataHandoff.subscribe((s, prev) => {
-        if (s.nonce !== prev.nonce && s.files?.length) void accept(s.files.map((file) => ({ file, relativePath: file.name })));
+        if (s.nonce !== prev.nonce && s.files?.length) void accept(s.picked ?? s.files.map((file) => ({ file, relativePath: file.name })));
       }),
     [accept],
   );
@@ -292,6 +294,19 @@ export function SourcePanel() {
   return (
     <>
       <Section title={t('heat.sourcePanel.title')} defaultOpen>
+        {/* What is loaded first, then the ways to open data: real data is the first step. */}
+        <DatasetSummary />
+        <div className="row wrap">
+          {/* Not the primary button: over an empty view the start screen's Open files is, and after a pick Load is. */}
+          <button onClick={() => void pick(false, true)}>
+            {t('heat.sourcePanel.openFiles')}
+          </button>
+          <button onClick={() => void pick(true, true)}>{t('heat.sourcePanel.openFolder')}</button>
+          <button onClick={() => openSessionFile()} title={t('heat.sourcePanel.openSessionTitle')}>
+            {t('heat.sourcePanel.openSession')}
+          </button>
+        </div>
+        <RecentSession />
         <div
           ref={dropRef}
           className={`dropzone${hot ? ' hot' : ''}`}
@@ -309,13 +324,7 @@ export function SourcePanel() {
         >
           {t('heat.sourcePanel.drop')}
           <br />
-          <span style={{ opacity: 0.7 }}>.parquet · .csv · .tsv · .acmi · .json · .gpx · .kml · .kmz · .nmea · .igc · .fit</span>
-        </div>
-
-        <div className="row wrap">
-          <button onClick={() => void pick(false, false)}>{t('heat.sourcePanel.oneFile')}</button>
-          <button onClick={() => void pick(false, true)}>{t('heat.sourcePanel.files')}</button>
-          <button onClick={() => void pick(true, true)}>{t('heat.sourcePanel.folder')}</button>
+          <span style={{ opacity: 0.7 }}>{DATA_EXTENSIONS}</span>
         </div>
 
         {picked.length > 0 && (

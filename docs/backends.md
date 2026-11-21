@@ -6,7 +6,7 @@ nav_order: 1
 
 # The two backends
 
-A browser can let a page use the graphics card in two ways, WebGPU (newer) and WebGL2. The viewer can use both and picks the best one itself, so you normally do nothing. See which one you are on: **Backend** in the stats overlay (top right of the view).
+A browser can let a page use the graphics card in two ways, WebGPU (newer) and WebGL2. The viewer can use both and picks the best one itself, so you normally do nothing. See which one you are on: turn on **Developer tools** in the settings (the gear), and read **Backend** in the stats overlay at the top right of the view.
 
 ![The stats overlay: Backend, FPS, Frame, Rows in window, Sprites / frame, Budget, Heat res, Coverage](assets/img/en/performance-stats-overlay.webp)
 

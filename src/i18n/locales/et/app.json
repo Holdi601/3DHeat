@@ -27,8 +27,6 @@
   "app.hint.noTime": "Neis andmetes pole ajaveergu — ajatelg on välja lülitatud ja kõik andmepunktid kuvatakse korraga.",
   "app.hint.flat": "Lame teljel {axes} — kuvatakse 3D-stseenis tasandina.",
   "app.fatal": "Renderdajat ei saa lähtestada.",
-  "app.empty.heat.title": "Andmestikku pole laaditud",
-  "app.empty.heat.hint": "Alustamiseks genereeri külgribalt sünteetiline andmestik.",
   "app.empty.race.title": "Ühtegi ringi pole laaditud",
   "app.empty.race.hint": "Lohista siia kaks või enam ringifaili või laadi külgribalt demoringid.",
   "app.tab.plan": "Taktika",

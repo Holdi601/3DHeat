@@ -27,8 +27,6 @@
   "app.hint.noTime": "Questi dati non hanno una colonna di tempo — la timeline è disattivata e tutti i punti dati vengono mostrati insieme.",
   "app.hint.flat": "Piatto su {axes} — disegnato come un piano nella scena 3D.",
   "app.fatal": "Impossibile inizializzare il renderer.",
-  "app.empty.heat.title": "Nessun dataset caricato",
-  "app.empty.heat.hint": "Generane uno sintetico dalla barra laterale per iniziare.",
   "app.empty.race.title": "Nessun giro caricato",
   "app.empty.race.hint": "Trascina qui due o più file di giro, oppure carica i giri demo dalla barra laterale.",
   "app.tab.plan": "Tattica",

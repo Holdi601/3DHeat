@@ -6,9 +6,9 @@ nav_order: 5
 
 # GPU memory residency
 
-The graphics card has only so much memory. If your data does not fit, the viewer shows what fits and says so: the stats overlay gets an amber **Not resident** line with the number of rows that were left out. A shortened dataset that looked complete would be the worst mistake an analysis tool can make, so this line is never hidden.
+The graphics card has only so much memory. If your data does not fit, the viewer shows what fits and says so: an amber **Not resident** line appears at the top right of the view with the number of rows that were left out. A shortened dataset that looked complete would be the worst mistake an analysis tool can make, so this line is never hidden.
 
-![The stats overlay with the amber Not resident line](assets/img/en/gpu-memory-not-resident.webp)
+![The amber Not resident line at the top right of the view](assets/img/en/gpu-memory-not-resident.webp)
 
 To fit more, raise the GPU budget under **Resource budgets** and load again ([Memory and budgets](memory-and-budgets.md#raising-the-gpu-budget)), narrow the data first, or use a card with more memory.
 
@@ -42,6 +42,6 @@ WebGL accepts allocations it cannot service and then either loses the context or
 - the first chunk that does not fit is uploaded **partially** - as many whole texture rows as the remaining budget holds - rather than not at all, so a budget that cannot hold a whole chunk still shows as much as it can, and since rows are time-ordered the part shown is a coherent stretch of time;
 - everything after is **not resident**.
 
-The shortfall is not hidden: the stats overlay shows a **Not resident** line with the number of rows that did not fit, in amber, whenever it is above zero. A truncated dataset that looks complete is the worst failure an analysis tool can have. The [fit check](memory-and-budgets.md#the-fit-check) before loading is meant to prevent this case.
+The shortfall is not hidden: the top right of the view shows a **Not resident** line with the number of rows that did not fit, in amber, whenever it is above zero. A truncated dataset that looks complete is the worst failure an analysis tool can have. The [fit check](memory-and-budgets.md#the-fit-check) before loading is meant to prevent this case.
 
 The budget the renderer uses is the GPU budget from **Resource budgets**, the same figure the fit check uses - above the detected figure too, up to the slider's ceiling (see [Raising the GPU budget](memory-and-budgets.md#raising-the-gpu-budget)). It is applied when a dataset is uploaded; changing it afterwards takes effect on the next load.

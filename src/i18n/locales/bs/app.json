@@ -27,8 +27,6 @@
   "app.hint.noTime": "U ovim podacima nema kolone vremena – vremenska linija je isključena i sve tačke podataka prikazuju se odjednom.",
   "app.hint.flat": "Ravno po {axes} – iscrtano kao ravan u 3D sceni.",
   "app.fatal": "Nije moguće inicijalizirati renderer.",
-  "app.empty.heat.title": "Nije učitan skup podataka",
-  "app.empty.heat.hint": "Za početak generišite sintetički skup na bočnoj traci.",
   "app.empty.race.title": "Nema učitanih krugova",
   "app.empty.race.hint": "Prevucite ovdje dvije ili više datoteka krugova ili učitajte demo krugove s bočne trake.",
   "app.tab.plan": "Taktika",

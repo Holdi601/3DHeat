@@ -39,10 +39,12 @@ interface Kept {
   task: Record<string, Task>;
   /** "More" disclosures opened, by id. */
   more: Record<string, boolean>;
+  /** The developer tools (test data, the frame readout, render internals) shown: off for everyone by default. */
+  devTools: boolean;
 }
 
 function load(): Kept {
-  const base: Kept = { theme: 'dark', sidebarHidden: false, task: {}, more: {} };
+  const base: Kept = { theme: 'dark', sidebarHidden: false, task: {}, more: {}, devTools: false };
   try {
     const raw = JSON.parse(localStorage.getItem(KEY) ?? 'null') as Partial<Kept> | null;
     if (!raw || typeof raw !== 'object') return base;
@@ -51,6 +53,7 @@ function load(): Kept {
       sidebarHidden: raw.sidebarHidden === true,
       task: raw.task && typeof raw.task === 'object' ? raw.task : {},
       more: raw.more && typeof raw.more === 'object' ? raw.more : {},
+      devTools: raw.devTools === true,
     };
   } catch {
     return base;
@@ -65,6 +68,7 @@ interface ShellState extends Kept {
   setSidebarHidden: (v: boolean) => void;
   setTask: (tab: string, task: Task) => void;
   setMore: (id: string, open: boolean) => void;
+  setDevTools: (v: boolean) => void;
   setPalette: (v: boolean) => void;
   setSheet: (v: boolean) => void;
   setSettings: (v: boolean) => void;
@@ -72,9 +76,9 @@ interface ShellState extends Kept {
 
 export const useShell = create<ShellState>((set, get) => {
   const keep = () => {
-    const { theme, sidebarHidden, task, more } = get();
+    const { theme, sidebarHidden, task, more, devTools } = get();
     try {
-      localStorage.setItem(KEY, JSON.stringify({ theme, sidebarHidden, task, more }));
+      localStorage.setItem(KEY, JSON.stringify({ theme, sidebarHidden, task, more, devTools }));
     } catch {
       // Blocked storage: the choices last as long as the page.
     }
@@ -88,12 +92,46 @@ export const useShell = create<ShellState>((set, get) => {
     setSidebarHidden: (sidebarHidden) => (set({ sidebarHidden }), keep()),
     setTask: (tab, t) => (set({ task: { ...get().task, [tab]: t } }), keep()),
     setMore: (id, open) => (set({ more: { ...get().more, [id]: open } }), keep()),
+    setDevTools: (devTools) => (set({ devTools }), keep()),
     // One overlay at a time: the palette, the key sheet and the settings close each other.
     setPalette: (palette) => set(palette ? { palette, sheet: false, settings: false } : { palette }),
     setSheet: (sheet) => set(sheet ? { sheet, palette: false, settings: false } : { sheet }),
     setSettings: (settings) => set(settings ? { settings, palette: false, sheet: false } : { settings }),
   };
 });
+
+/**
+ * `?dev` in the address: the developer tools for this page only, whatever the
+ * setting says - for a test run or a quick look, without changing what this
+ * browser keeps.
+ */
+const DEV_URL = typeof location !== 'undefined' && new URLSearchParams(location.search).has('dev');
+
+/** Whether the developer tools show: the setting, or `?dev` in the address. */
+export function devToolsOn(s: { devTools: boolean } = useShell.getState()): boolean {
+  return DEV_URL || s.devTools;
+}
+
+/**
+ * Sections and controls that are on the page only with the developer tools,
+ * by their title or label key: the command palette leaves them out without
+ * (its index is read from the source, which has them on every branch).
+ */
+export const DEV_ONLY_KEYS = new Set([
+  'shell.dev.title',
+  'shell.dev.perfData',
+  'heat.heatPanel.clamps',
+  'heat.viewPanel.perf.sprites',
+  'heat.viewPanel.perf.startingSprites',
+  'heat.viewPanel.perf.progressive',
+  'heat.memoryPanel.measure',
+  'heat.memoryPanel.fewer',
+]);
+
+/** The same, for a component: it renders again when the setting changes. */
+export function useDevTools(): boolean {
+  return useShell((s) => devToolsOn(s));
+}
 
 /** The theme as drawn: the system's when asked to follow it. */
 export function resolvedTheme(theme: Theme, systemDark: boolean): 'dark' | 'light' {

@@ -15,9 +15,9 @@ When there are too many dots to draw in one frame, the viewer draws an even samp
 | **Draw every row each frame** | on | |
 | **Adaptive budget** | on | |
 | **Target FPS** | 60 | 20-240 (1000) |
-| **Starting sprites / frame** (adaptive) or **Sprites / frame** | 4.00M | 65,536-268,435,456, logarithmic (268,435,456) |
+| **Starting sprites / frame** (adaptive) or **Sprites / frame** (developer tools) | 4.00M | 65,536-268,435,456, logarithmic (268,435,456) |
 | **Heat resolution** | 100% | 25-100%, multiplied by the adaptive stage-two scale |
-| **Progressive refinement** | on | Off: every frame is a fresh single-frame estimate (useful to see the raw sample). |
+| **Progressive refinement** (developer tools) | on | Off: every frame is a fresh single-frame estimate (useful to see the raw sample). |
 
 See also [Performance panel and stats overlay](performance-and-stats.md).
 

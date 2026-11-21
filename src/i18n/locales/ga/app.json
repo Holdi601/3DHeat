@@ -27,8 +27,6 @@
   "app.hint.noTime": "Níl colún ama sna sonraí seo — tá an amlíne díchumasaithe agus taispeántar gach pointe sonraí in éineacht.",
   "app.hint.flat": "Cothrom ar {axes} — tarraingthe mar phlána sa radharc 3T.",
   "app.fatal": "Ní féidir an rindreálaí a thúsú.",
-  "app.empty.heat.title": "Níl aon tacar sonraí lódáilte",
-  "app.empty.heat.hint": "Gin ceann sintéiseach ón mbarra taoibh chun tosú.",
   "app.empty.race.title": "Níl aon chuaird lódáilte",
   "app.empty.race.hint": "Scaoil dhá chomhad cuairte nó níos mó anseo, nó lódáil na cuairteanna samplacha ón mbarra taoibh.",
   "app.tab.plan": "Beartaíocht",

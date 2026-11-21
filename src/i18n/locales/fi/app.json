@@ -27,8 +27,6 @@
   "app.hint.noTime": "Datassa ei ole aikasaraketta — aikajana on poissa käytöstä ja kaikki datapisteet näytetään kerralla.",
   "app.hint.flat": "Litteä akseleilla {axes} — piirretään tasona 3D-näkymään.",
   "app.fatal": "Renderöijää ei voi alustaa.",
-  "app.empty.heat.title": "Aineistoa ei ole ladattu",
-  "app.empty.heat.hint": "Aloita luomalla synteettinen aineisto sivupalkista.",
   "app.empty.race.title": "Kierroksia ei ole ladattu",
   "app.empty.race.hint": "Pudota tähän kaksi tai useampia kierrostiedostoja tai lataa esimerkkikierrokset sivupalkista.",
   "app.tab.plan": "Taktiikka",

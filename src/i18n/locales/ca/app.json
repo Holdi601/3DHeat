@@ -27,8 +27,6 @@
   "app.hint.noTime": "Aquestes dades no tenen columna de temps: la línia de temps està desactivada i es mostren tots els punts de dades alhora.",
   "app.hint.flat": "Pla en {axes}: es dibuixa com un pla a l'escena 3D.",
   "app.fatal": "No es pot inicialitzar el renderitzador.",
-  "app.empty.heat.title": "No hi ha cap conjunt de dades carregat",
-  "app.empty.heat.hint": "Genera'n un de sintètic des de la barra lateral per començar.",
   "app.empty.race.title": "No hi ha cap volta carregada",
   "app.empty.race.hint": "Deixa anar aquí dos o més fitxers de volta, o carrega les voltes de demostració des de la barra lateral.",
   "app.tab.plan": "Tàctica",

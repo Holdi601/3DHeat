@@ -27,8 +27,6 @@
   "app.hint.noTime": "Bu veride zaman sütunu yok — zaman çizelgesi devre dışı ve tüm veri noktaları aynı anda gösteriliyor.",
   "app.hint.flat": "{axes} boyunca düz — 3B sahnede bir düzlem olarak çiziliyor.",
   "app.fatal": "Render motoru başlatılamıyor.",
-  "app.empty.heat.title": "Yüklü veri kümesi yok",
-  "app.empty.heat.hint": "Başlamak için kenar çubuğundan sentetik bir veri kümesi oluşturun.",
   "app.empty.race.title": "Yüklü tur yok",
   "app.empty.race.hint": "İki veya daha fazla tur dosyasını buraya bırakın ya da kenar çubuğundan demo turları yükleyin.",
   "app.tab.plan": "Taktik",

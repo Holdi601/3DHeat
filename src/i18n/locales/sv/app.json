@@ -27,8 +27,6 @@
   "app.hint.noTime": "Ingen tidskolumn i dessa data — tidslinjen är avstängd och alla datapunkter visas på en gång.",
   "app.hint.flat": "Platt i {axes} — ritas som ett plan i 3D-scenen.",
   "app.fatal": "Det går inte att initiera renderaren.",
-  "app.empty.heat.title": "Ingen datamängd inläst",
-  "app.empty.heat.hint": "Generera en syntetisk i sidopanelen för att börja.",
   "app.empty.race.title": "Inga varv inlästa",
   "app.empty.race.hint": "Släpp två eller fler varvfiler här, eller läs in demovarven från sidopanelen.",
   "app.tab.plan": "Taktik",

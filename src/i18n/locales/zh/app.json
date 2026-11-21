@@ -27,8 +27,6 @@
   "app.hint.noTime": "此数据中没有时间列——时间轴已禁用，所有数据点同时显示。",
   "app.hint.flat": "在 {axes} 方向上是平的——在 3D 场景中绘制为平面。",
   "app.fatal": "无法初始化渲染器。",
-  "app.empty.heat.title": "未加载数据集",
-  "app.empty.heat.hint": "从侧边栏生成一个合成数据集即可开始。",
   "app.empty.race.title": "未加载任何圈",
   "app.empty.race.hint": "将两个或更多圈文件拖放到这里，或从侧边栏加载演示圈。",
   "app.tab.plan": "战术",

@@ -27,8 +27,6 @@
   "app.hint.noTime": "Enginn tímadálkur í þessum gögnum — tímalínan er óvirk og allir gagnapunktar eru sýndir í einu.",
   "app.hint.flat": "Flatt á {axes} — teiknað sem flötur í þrívíddarsenunni.",
   "app.fatal": "Ekki tókst að frumstilla teiknivélina.",
-  "app.empty.heat.title": "Ekkert gagnasafn hlaðið",
-  "app.empty.heat.hint": "Búðu til gervigagnasafn í hliðarstikunni til að byrja.",
   "app.empty.race.title": "Engir hringir hlaðnir",
   "app.empty.race.hint": "Slepptu tveimur eða fleiri hringjaskrám hér, eða hladdu sýnishringjunum úr hliðarstikunni.",
   "app.tab.plan": "Leikfræði",

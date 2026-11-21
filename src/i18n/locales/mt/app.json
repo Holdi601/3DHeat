@@ -27,8 +27,6 @@
   "app.hint.noTime": "M'hemmx kolonna tal-ħin f'din id-dejta — it-timeline hija diżattivata u kull punt tad-dejta jintwera f'daqqa.",
   "app.hint.flat": "Ċatt fuq {axes} — imfassal bħala pjan fix-xena 3D.",
   "app.fatal": "Ir-renderer ma jistax jiġi inizjalizzat.",
-  "app.empty.heat.title": "Ebda dataset mgħobbi",
-  "app.empty.heat.hint": "Ġenera wieħed sintetiku mis-sidebar biex tibda.",
   "app.empty.race.title": "Ebda dawra mgħobbija",
   "app.empty.race.hint": "Itfa' żewġ fajls ta' dawriet jew aktar hawn, jew għabbi d-dawriet tad-demo mis-sidebar.",
   "app.tab.plan": "Tattika",

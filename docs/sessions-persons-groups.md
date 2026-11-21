@@ -37,7 +37,7 @@ At load ([`computeLifetimes`](https://github.com/Holdi601/3DHeat/blob/main/src/d
 - are of the same kind (every retained category column has the same value), and
 - are farther apart than 1% of the diagonal of the data's extent.
 
-Shared names are drawn as single samples - no interpolation, no trail, no line-heat route. Everything else about them (their heat) is unaffected. The Dataset panel lists how many names were marked, with up to three examples, and the box replay panel repeats the count.
+Shared names are drawn as single samples - no interpolation, no trail, no line-heat route. Everything else about them (their heat) is unaffected. The loaded data's summary at the top of the Source panel lists how many names were marked, with up to three examples, and the box replay panel repeats the count.
 
 ## Session
 
@@ -73,7 +73,7 @@ What the selection changes:
 
 ### Too many sessions
 
-Up to **100,000** sessions are listed. Beyond that the column is really an id (a folder with millions of sessions of a handful of rows each), and sending that many labels from the worker to the page is what runs a tab out of memory. The load then keeps the session **ids** - so boundaries are still enforced everywhere - but drops the labels and the picker, and the Dataset panel says so.
+Up to **100,000** sessions are listed. Beyond that the column is really an id (a folder with millions of sessions of a handful of rows each), and sending that many labels from the worker to the page is what runs a tab out of memory. The load then keeps the session **ids** - so boundaries are still enforced everywhere - but drops the labels and the picker, and the summary at the top of the Source panel says so.
 
 ## Group
 
@@ -108,14 +108,13 @@ On every load ([`calibrate`](https://github.com/Holdi601/3DHeat/blob/main/src/da
 | Far plane | extent × 12 | same |
 | Near plane | 5 cm (0.05 × units per metre) | 0.05 |
 
-## The Dataset panel
+## The loaded data's summary
 
-Below the Source panel. With a dataset loaded it shows:
+At the top of the Source panel, while a dataset is loaded (**Loaded**, with the row count beside it):
 
 - the dataset's **name** - the selection, the row count, the file count, the stride when one was used;
 - **`N teams · N persons · Ns span`**;
 - every **warning** the load produced, in amber, for as long as the dataset is loaded: groups or a filter column dropped for too many values, sessions not listed, shared names, rows missing, files skipped;
-- the [synthetic generator](synthetic-generator.md);
 - **Unload**, which removes the dataset.
 
-The row count is shown on the panel's header.
+Made-up test data comes from the [developer tools](synthetic-generator.md), not from here.

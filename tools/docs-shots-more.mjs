@@ -264,7 +264,9 @@ export default (ctx) => {
           document.head.appendChild(n);
         });
       // All ten matches in the heatmap; sprites capped so the picture is still accumulating.
+      // The full readout is a developer tool: on through the test hook for this picture.
       await boot();
+      await store(() => globalThis.__3dheat.devTools(true));
       await loadLevel('demo-valley.glb');
       await loadData('tanks.parquet');
       await store(() => globalThis.__3dheat.useStore.getState().patchBudget({ exact: false, adaptive: false, splatsPerFrame: 16000, progressive: true }));
@@ -280,7 +282,8 @@ export default (ctx) => {
       }
       await webp('performance-stats-overlay', await box.screenshot());
 
-      // Not resident: a budget far below the data.
+      // Not resident: a budget far below the data. As everyone sees it: the one line, no developer tools.
+      await store(() => globalThis.__3dheat.devTools(false));
       await boot();
       await loadLevel('demo-valley.glb');
       await store(() => globalThis.__3dheat.useStore.getState().patchBudget({ gpuBudgetBytes: 400_000 }));

@@ -6,7 +6,7 @@ nav_order: 2
 
 # Accumulation
 
-When the viewer cannot draw every dot in one frame, it draws a part of them, then another part, and adds the pictures up while you hold still. The picture gets clearer, like a photo developing. Moving the camera starts over. The **Coverage** line of the stats overlay shows how far along it is.
+When the viewer cannot draw every dot in one frame, it draws a part of them, then another part, and adds the pictures up while you hold still. The picture gets clearer, like a photo developing. Moving the camera starts over. The **Coverage** line of the stats overlay (shown with the [developer tools](synthetic-generator.md) on) shows how far along it is.
 
 ![The stats overlay: Coverage shows a percentage while the picture develops and *exact* when it is complete](assets/img/en/performance-stats-overlay.webp)
 

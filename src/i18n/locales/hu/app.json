@@ -27,8 +27,6 @@
   "app.hint.noTime": "Ezekben az adatokban nincs időoszlop — az idővonal ki van kapcsolva, és minden adatpont egyszerre látszik.",
   "app.hint.flat": "Az adatok a(z) {axes} síkban fekszenek — a 3D-s jelenetben síkként jelennek meg.",
   "app.fatal": "A renderelő nem inicializálható.",
-  "app.empty.heat.title": "Nincs betöltött adatkészlet",
-  "app.empty.heat.hint": "Kezdésként generálj egy szintetikusat az oldalsávon.",
   "app.empty.race.title": "Nincsenek betöltött körök",
   "app.empty.race.hint": "Húzz ide két vagy több körfájlt, vagy töltsd be a demóköröket az oldalsávról.",
   "app.tab.plan": "Taktika",

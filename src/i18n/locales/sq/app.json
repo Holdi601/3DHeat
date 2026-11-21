@@ -27,8 +27,6 @@
   "app.hint.noTime": "Këto të dhëna nuk kanë kolonë kohe — kronologjia është çaktivizuar dhe të gjitha pikat e të dhënave shfaqen njëherësh.",
   "app.hint.flat": "E sheshtë në {axes} — vizatohet si plan në skenën 3D.",
   "app.fatal": "Renderuesi nuk mund të inicializohet.",
-  "app.empty.heat.title": "Asnjë grup të dhënash i ngarkuar",
-  "app.empty.heat.hint": "Për të filluar, krijo një grup sintetik nga shiriti anësor.",
   "app.empty.race.title": "Asnjë xhiro e ngarkuar",
   "app.empty.race.hint": "Lësho këtu dy ose më shumë skedarë xhiroje, ose ngarko xhirot demo nga shiriti anësor.",
   "app.tab.plan": "Taktika",

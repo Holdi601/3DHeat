@@ -203,7 +203,8 @@ function LapsSection() {
         >
           {t('race.ui.laps.folder')}
         </button>
-        <button onClick={() => loadDemoLaps()} title={t('race.ui.laps.demoTitle')}>
+        {/* A look around without laps of one's own: a small link, not one of the ways to load. */}
+        <button className="link" onClick={() => loadDemoLaps()} title={t('race.ui.laps.demoTitle')}>
           {t('race.ui.laps.demo')}
         </button>
         {laps.length > 0 && (

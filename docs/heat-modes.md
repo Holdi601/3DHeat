@@ -39,7 +39,7 @@ Keys 1-4 are checked against the data the same way: a key for a greyed-out mode 
 | Panel | Heat | Difference | Team heat | Figure overlay | Lines |
 |---|---|---|---|---|---|
 | Routes ([line heat](line-heat.md)) | | | | | yes |
-| Heat shape (with **Follow the view** and **Same density at any zoom**), Heat colours, Sprite pixel clamps, Depth, Distance culling | yes | yes | yes | | yes |
+| Heat shape (with **Follow the view** and **Same density at any zoom**), Heat colours, Sprite pixel clamps (developer tools), Depth, Distance culling | yes | yes | yes | | yes |
 | Direction ([directional heat](directional-heat.md)), Value ([value weighting](value-weighting.md)) | yes | yes | yes | | yes |
 | Team viewer ([figure overlay](box-replay.md)) | | | | yes | |
 | Difference split ([difference](difference.md)) | | yes | | | |

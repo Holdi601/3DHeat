@@ -93,7 +93,7 @@ const EN_FALLBACK = {
   "settings.m.heat3d.language": "the language picked",
   "settings.m.heat3d.units": "the units preset and single units",
   "settings.m.heat3d.help": "help mode on or off",
-  "settings.m.heat3d.shell": "the theme, the side panel hidden or shown, the task group per workspace, the More folds",
+  "settings.m.heat3d.shell": "the theme, the side panel hidden or shown, the task group per workspace, the More folds, developer tools on or off",
   "settings.m.heat3d.sections": "which side panel sections are open",
   "settings.m.heat3d.palette.recent": "the last commands run from the command palette",
   "settings.m.heat3d.far": "figures at a distance, symbols, hit marks, aim lines",

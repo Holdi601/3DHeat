@@ -673,7 +673,9 @@ function catalogFolder(): Plugin {
       const root = levelsRoot();
       const url = new URL(req.url ?? '/', 'http://x');
       if (!root || !existsSync(root)) {
-        res.statusCode = 404;
+        // No levels folder is not an error: the index says so with no content
+        // (the start screen asks for it on every first look), a file is not found.
+        res.statusCode = url.pathname === '/file' ? 404 : 204;
         res.end();
         return;
       }

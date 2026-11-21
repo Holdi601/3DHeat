@@ -271,10 +271,38 @@ await step('empty state is shown with no dataset', async () => {
   return 'prompts for a dataset';
 });
 
+await step('the start screen leads with Open files, and no developer tool shows', async () => {
+  // A first session comes with replays or tables: opening them is the one
+  // primary action. The test data generator, the frame readout and the render
+  // internals are developer tools, off until the setting or ?dev turns them on.
+  const primary = page.locator('.empty-state button.primary');
+  if ((await primary.count()) !== 1) throw new Error(`${await primary.count()} primary buttons on the start screen`);
+  const label = (await primary.innerText()).trim();
+  if (!/^Open files/.test(label)) throw new Error(`the primary action reads "${label}", not Open files`);
+  const others = await page.locator('aside.sidebar button.primary:visible').count();
+  if (others) throw new Error(`${others} primary buttons in the side panel compete with it`);
+  const dev = await page.locator('[data-dev-tool]').count();
+  if (dev) throw new Error(`${dev} developer tools on the page by default`);
+  if (await page.locator('.stage .overlay').isVisible()) throw new Error('the frame readout shows by default');
+  const generate = await page.getByRole('button', { name: /^generate/i }).count();
+  if (generate) throw new Error('a Generate button is on the page by default');
+  // Through the test hook, never the settings menu: they come and go with it.
+  await page.evaluate(() => globalThis.__3dheat.devTools(true));
+  await page.waitForTimeout(300);
+  const on = await page.locator('[data-dev-tool="panel"]').count();
+  await page.evaluate(() => globalThis.__3dheat.devTools(false));
+  await page.waitForTimeout(300);
+  if (on !== 1) throw new Error('the developer tools did not come with the setting');
+  if (await page.locator('[data-dev-tool]').count()) throw new Error('the developer tools stayed after the setting went off');
+  return `"${label}", developer tools hidden`;
+});
+
 // ------------------------------------------------------------- synthetic data
 
 await step('synthetic dataset loads', async () => {
-  await page.evaluate(() => globalThis.__3dheat.load(300_000));
+  // Through the worker, as the developer tools' test data is made (data/perfData.ts).
+  const rows = await page.evaluate(() => globalThis.__3dheat.generate(300_000));
+  if (!(rows > 0)) throw new Error('the test data generator loaded nothing');
   await page.waitForTimeout(1200);
   const s = await store();
   if (!s.dataset || s.dataset.count === 0) throw new Error('no dataset');

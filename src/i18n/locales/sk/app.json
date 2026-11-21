@@ -27,8 +27,6 @@
   "app.hint.noTime": "Tieto dáta nemajú stĺpec času – časová os je vypnutá a všetky dátové body sa zobrazia naraz.",
   "app.hint.flat": "Dáta ležia v rovine {axes} – v 3D scéne sa kreslia ako rovina.",
   "app.fatal": "Renderer sa nepodarilo inicializovať.",
-  "app.empty.heat.title": "Nie je načítaná žiadna dátová sada",
-  "app.empty.heat.hint": "Na začiatok si v bočnom paneli vygenerujte syntetickú.",
   "app.empty.race.title": "Nie sú načítané žiadne kolá",
   "app.empty.race.hint": "Pustite sem dva alebo viac súborov s kolami, alebo načítajte ukážkové kolá z bočného panela.",
   "app.tab.plan": "Taktika",

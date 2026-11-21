@@ -11,7 +11,7 @@ What the Heatmap tab reads, column by column, and the hints a Parquet file can c
 
 ## Files
 
-This is the one complete list of loadable files. The **Source** panel (**Files…**, **Folder…**, or drag and drop) accepts exactly these:
+This is the one complete list of loadable files. The **Source** panel and the start screen (**Open files…**, **Open folder…**, or drag and drop on the view) accept exactly these:
 
 | Extension | What it is | Read by |
 |---|---|---|

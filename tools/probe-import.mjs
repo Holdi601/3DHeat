@@ -43,18 +43,9 @@ console.log(
   await page.evaluate(() => window.__3dheat_engine.live.backend),
 );
 if (process.env.ROWS) {
-  // A heat dataset first, as a working session would have.
-  await page.getByText('Dataset', { exact: true }).click().catch(() => {});
-  await page.evaluate((m) => {
-    const label = [...document.querySelectorAll('.field .label span')].find((s) => s.textContent === 'Rows (millions)');
-    const input = label?.closest('.field')?.querySelector('input');
-    if (input) {
-      const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
-      set.call(input, String(m));
-      input.dispatchEvent(new Event('input', { bubbles: true }));
-    }
-  }, Number(process.env.ROWS));
-  await page.getByRole('button', { name: 'Generate' }).click();
+  // A heat dataset first, as a working session would have: test data through
+  // the test hook, made in the worker as the developer tools make it.
+  await page.evaluate((m) => window.__3dheat.generate(Math.round(m * 1e6)), Number(process.env.ROWS));
   await page.waitForFunction(() => (window.__3dheat_engine?.live.residentRows ?? 0) > 0, null, { timeout: 300000 });
   console.log('dataset rows', await page.evaluate(() => window.__3dheat_engine.live.residentRows));
 }

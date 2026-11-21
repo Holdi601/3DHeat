@@ -51,8 +51,9 @@ This page is the map of the tab. Each part has its own page:
 **The view** shows the course, the driven lines, the map, the cars, labels
 pinned to the track, and up to six car cards top left (see
 [Charts and the HUD](race-charts-and-hud.md)). With no laps loaded it says
-"No laps loaded - Drop two or more lap files here, or load the demo laps from
-the sidebar."
+"No laps loaded - Drop two or more lap files here, or open them from the
+sidebar." (**Demo laps**, a small link beside **Folder…**, loads three made-up
+laps for a first look.)
 
 **The bar under the view** holds the replay transport and, unless hidden,
 the distance charts.

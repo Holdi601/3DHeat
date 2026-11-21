@@ -94,8 +94,8 @@ Once a dataset is loaded, **Memory in use** (in the Source panel) shows what is 
 |---|---|
 | **RAM** | The dataset's columns in memory, against the RAM budget. |
 | **GPU** | Row data and the level on the GPU, against the GPU budget, with the rows resident and the rows that did not fit. Read from the renderer's own counters, without a GPU readback. |
-| **JavaScript heap** | The tab's heap and its limit, where the browser reports them (Chromium). On a cross-origin-isolated page **Measure everything** asks `performance.measureUserAgentSpecificMemory`, which includes the workers. |
-| Column list | Each column and what it holds, biggest first. Built-in fields are marked *(built in)*; text labels are estimated at two bytes a character. |
+| **JavaScript heap** (developer tools) | The tab's heap and its limit, where the browser reports them (Chromium). On a cross-origin-isolated page **Measure everything** asks `performance.measureUserAgentSpecificMemory`, which includes the workers. |
+| Column list (developer tools) | Each column and what it holds, biggest first. Built-in fields are marked *(built in)*; text labels are estimated at two bytes a character. |
 | **On demand** | For a load with columns read later: how many of them are in memory and what they hold, the row map, and how many were evicted. Each column is listed with its state - *in the file*, *reading*, *in memory*, *evicted*, *failed* - most recently used first; **Free** gives a column's memory back (never one a filter, the split, the value weight or the route events use). |
 
 When a column read on demand needs room, the least recently used columns that nothing uses are evicted first, until it fits the RAM budget. Only the copy in memory goes: the renderers' copies on the GPU stay until the GPU budget wants the room, so a column read again finds its upload still there.

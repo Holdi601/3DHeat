@@ -57,7 +57,7 @@ Every control is explained on its own page; the Details column links to it. Slid
 | **Reset to transparent → red → yellow → white** | | |
 | **Negative (subtractive teams)** ramp (Difference only) | transparent → green → blue → purple | [Difference](difference.md#colours) |
 
-### Sprite pixel clamps (closed)
+### Sprite pixel clamps (closed, developer tools only)
 
 | Control | Default | Range (jog ceiling) | Details |
 |---|---|---|---|

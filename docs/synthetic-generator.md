@@ -1,21 +1,25 @@
 ---
-title: Synthetic generator
+title: Test data (developer tools)
 parent: Getting data in
 nav_order: 5
 ---
 
-# Synthetic generator
+# Test data (developer tools)
 
-No data of your own? Press one button and 3DHeat invents a pretend battle for you, as small or as big as you like.
+Made-up data of any size, for checking what a machine can handle and for debugging the viewer. It is a developer tool, off by default: to analyse something, open your own files ([Loading files](loading-files.md)), or make the [demo data](demo-data.md) to try the viewer.
 
-1. Open the **Dataset** panel in the Heatmap sidebar (below **Source**).
-2. Scroll to **Synthetic generator**.
+1. Turn on **Developer tools** in the settings (the gear at the top of the side panel). `?dev` in the address turns them on for one page without changing the setting.
+2. In the Heatmap sidebar, open **More** at the end of the **Load** group, then **Developer tools** → **Test data (performance check)**.
 3. Set **Rows (millions)**. Try 1 first: the default of 8 million is heavy for a first try.
-4. Press **Generate**.
+4. Press **Generate test data**. It replaces the loaded data.
 
-![1 million rows, 8 teams, drawn in Team heat](assets/img/en/synthetic-generator-team-heat.webp)
+![1 million rows, 8 teams, drawn in Team heat, with the Developer tools open in the sidebar](assets/img/en/synthetic-generator-team-heat.webp)
 
-The **Dataset** panel can generate a dataset instead of loading one. It is meant for two things: trying the viewer without data of your own, and checking whether a given number of rows, sprite radius and budget hold a usable frame rate on a machine *before* committing a large real load to it. Its movement is shaped like a battle royale match - teams start apart, then are squeezed together - because uniform noise looks fine at any budget and hides exactly the artefacts worth catching.
+Its movement is shaped like a battle royale match - teams start apart, then are squeezed together - because uniform noise looks fine at any budget and hides exactly the artefacts worth catching. That makes it the way to check whether a given number of rows, sprite radius and budget hold a usable frame rate *before* committing a large real load to it; the smoke tests and performance probes draw it too.
+
+The start screen's small link **No data yet? Try a generated sample** makes the same data at one million rows, without the developer tools.
+
+With the developer tools on, the viewer also shows its internals: the full [stats overlay](performance-and-stats.md#the-stats-overlay) over the view, **Sprites / frame** and **Progressive refinement** in the Performance panel, the [sprite pixel clamps](sprite-shape.md), and the tab's heap and every column's bytes in **Memory in use**.
 
 ## Controls
 
@@ -26,9 +30,9 @@ The **Dataset** panel can generate a dataset instead of loading one. It is meant
 | **Per team** | 12 | Players per group (at least 1). |
 | **Map half-extent (m)** | 4000 | Half the width of the playable area on X and Z. |
 | Estimate line | | "≈ X GB of RAM, Y GB on the GPU after quantisation." (about 26 bytes of RAM and 8 bytes on the GPU per row). |
-| **Generate** | | Generates in the ingest worker, with progress, and replaces any loaded dataset. |
+| **Generate test data** | | Generates in the ingest worker, with progress, and replaces any loaded dataset. |
 
-Generation runs in the background worker, so tens of millions of rows do not freeze the page.
+Generation runs in the background worker, so tens of millions of rows do not freeze the page. Tests reach it without the developer tools' UI, through `window.__3dheat.generate(rows)` on the dev server.
 
 ## What it generates
 

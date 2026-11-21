@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { formatCount } from '../data/synth';
 import { useAnimationFrame, useEngine } from './EngineContext';
 import { num, t } from '../i18n';
+import { useDevTools } from './shell/shellStore';
 
 /**
  * Live perf readout, updated by writing to DOM nodes directly.
@@ -9,9 +10,17 @@ import { num, t } from '../i18n';
  * The convergence line is the honest part of the stochastic design: it says
  * outright what fraction of the candidate rows has been folded into the picture,
  * so a noisy frame is never mistaken for the finished answer.
+ *
+ * The readout is a developer tool (`useDevTools`): frame times, sprite budgets
+ * and cube counts are how the renderer is tuned, not what anyone analysing a
+ * match needs in the corner of the view. Without the developer tools only the
+ * one line that is about the data stays, and only while it is true: rows that
+ * did not fit on the graphics card.
  */
 export function StatsOverlay() {
   const engine = useEngine();
+  const dev = useDevTools();
+  const box = useRef<HTMLDivElement>(null);
   const fps = useRef<HTMLElement>(null);
   const frame = useRef<HTMLElement>(null);
   const splats = useRef<HTMLElement>(null);
@@ -51,10 +60,17 @@ export function StatsOverlay() {
       dropped.current.style.display = l.droppedRows > 0 ? '' : 'none';
       setText(droppedVal, formatCount(l.droppedRows));
     }
+    // Without the developer tools the box is that one line, so it goes with it.
+    if (box.current) {
+      const show = dev || l.droppedRows > 0 ? '' : 'none';
+      if (box.current.style.display !== show) box.current.style.display = show;
+    }
   }, !!engine);
 
   return (
-    <div className="overlay">
+    <div className="overlay" ref={box} style={dev ? undefined : { display: 'none' }} data-dev-tool={dev ? 'readout' : undefined}>
+      {dev && (
+        <>
       <div className="line">
         <span>{t('heat.statsOverlay.backend')}</span>
         <b ref={backend} title={engine?.backendFallbackReason ?? undefined}>
@@ -94,6 +110,8 @@ export function StatsOverlay() {
         <span>{t('heat.statsOverlay.cubes')}</span>
         <b ref={cubes}>0</b>
       </div>
+        </>
+      )}
       <div className="line warn" ref={dropped} style={{ display: 'none' }}>
         <span>{t('heat.statsOverlay.notResident')}</span>
         <b ref={droppedVal}>0</b>

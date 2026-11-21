@@ -327,7 +327,7 @@ export function Timeline() {
         <span className="progress-note">
           {dataset
             ? dataset.name
-            : t('heat.timeline.noDataset', { formats: 'parquet/csv' })}
+            : t('heat.timeline.empty')}
         </span>
       </div>
     </>

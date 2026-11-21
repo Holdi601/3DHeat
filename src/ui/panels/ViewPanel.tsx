@@ -64,6 +64,7 @@ import { CameraPose } from './CameraPose';
 import { JumpTo } from './JumpTo';
 import { num, t } from '../../i18n';
 import { lengthText, unitPrefs, useUnits } from '../../state/unitsStore';
+import { useDevTools } from '../shell/shellStore';
 
 export function CameraPanel() {
   useUnits();
@@ -530,6 +531,10 @@ function GamepadControls() {
 export function PerfPanel() {
   const budget = useStore((s) => s.budget);
   const patchBudget = useStore((s) => s.patchBudget);
+  // The sprite budget and the refinement switch are the sampler's internals:
+  // with the developer tools only. Target FPS, the heat resolution and the
+  // resource budgets are what a user sets.
+  const dev = useDevTools();
 
   return (
     <Section title={t('heat.viewPanel.performance')}>
@@ -558,6 +563,8 @@ export function PerfPanel() {
         onChange={(targetFps) => patchBudget({ targetFps })}
         format={(v) => num(v, 0)}
       />
+      {dev && (
+        <div data-dev-tool="sprites">
       <Slider
         label={budget.adaptive ? t('heat.viewPanel.perf.startingSprites') : t('heat.viewPanel.perf.sprites')}
         value={budget.splatsPerFrame}
@@ -569,6 +576,8 @@ export function PerfPanel() {
         onChange={(splatsPerFrame) => patchBudget({ splatsPerFrame })}
         format={(v) => t('heat.viewPanel.perf.millions', { value: num(v / 1e6, 2) })}
       />
+        </div>
+      )}
       <Slider
         label={t('heat.viewPanel.perf.heatResolution')}
         value={budget.heatScale}
@@ -579,12 +588,16 @@ export function PerfPanel() {
         format={(v) => t('heat.viewPanel.perf.percent', { value: num(v * 100, 0) })}
         hint={t('heat.viewPanel.perf.heatResolutionHint')}
       />
-      <Check
-        label={t('heat.viewPanel.perf.progressive')}
-        checked={budget.progressive}
-        onChange={(progressive) => patchBudget({ progressive })}
-        title={t('heat.viewPanel.perf.progressiveTitle')}
-      />
+      {dev && (
+        <div data-dev-tool="progressive">
+          <Check
+            label={t('heat.viewPanel.perf.progressive')}
+            checked={budget.progressive}
+            onChange={(progressive) => patchBudget({ progressive })}
+            title={t('heat.viewPanel.perf.progressiveTitle')}
+          />
+        </div>
+      )}
       <ResourceBudgets />
     </Section>
   );

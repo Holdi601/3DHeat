@@ -56,7 +56,7 @@ export function CatalogSection({ loadModel }: { loadModel: (file: File) => Promi
     let timer: ReturnType<typeof setTimeout> | undefined;
     const ask = () => {
       fetch(CATALOG_ROUTE)
-        .then((r) => (r.ok ? (r.json() as Promise<CatalogIndex>) : null))
+        .then((r) => (r.status === 200 ? (r.json() as Promise<CatalogIndex>) : null))
         .then((ix) => {
           if (stop || !ix || !Array.isArray(ix.items)) return;
           if (!picked.size) setIndex(ix);
