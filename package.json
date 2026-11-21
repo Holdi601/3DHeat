@@ -29,7 +29,7 @@
     "meshoptimizer": "^1.2.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "three": "^0.185.1",
+    "three": "^0.187.0",
     "zustand": "^5.0.15"
   },
   "devDependencies": {
@@ -37,7 +37,7 @@
     "@types/node": "^26.2.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
-    "@types/three": "^0.185.4",
+    "@types/three": "^0.187.0",
     "@vitejs/plugin-react": "^6.1.0",
     "@webgpu/types": "^0.1.72",
     "playwright": "^1.62.1",
