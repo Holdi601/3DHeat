@@ -114,7 +114,9 @@ async fn latest(State((s, addr)): State<(Shared, SocketAddr)>, UrlPath((owner, n
             json!({ "name": f, "size": b.len(), "browser_download_url": url, "digest": r.digests.get(f) })
         })
         .collect();
-    axum::Json(json!({ "tag_name": r.tag, "draft": false, "prerelease": false, "assets": assets })).into_response()
+    axum::Json(json!({ "tag_name": r.tag, "draft": false, "prerelease": false, "body": format!("Release notes of {}.", r.tag),
+        "published_at": "2026-11-21T00:00:00Z", "assets": assets }))
+    .into_response()
 }
 
 async fn download(State((s, _)): State<(Shared, SocketAddr)>, UrlPath((owner, name, tag, file)): UrlPath<(String, String, String, String)>) -> Response {

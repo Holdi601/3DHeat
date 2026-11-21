@@ -15,7 +15,9 @@
 
 pub mod index;
 pub mod manager;
+pub mod maps;
 pub mod route;
+pub mod settings;
 pub mod unpack;
 pub mod verify;
 pub mod version;

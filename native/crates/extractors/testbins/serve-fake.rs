@@ -2,7 +2,7 @@
 //! with two fake extractors released (one at 1.0.0 and later 1.1.0), and the
 //! Extractors route on 127.0.0.1 with a manager pointed at it and at a
 //! scratch folder. Prints `listening <port>` and serves until killed.
-//! `POST /__fake/publish` publishes 1.1.0 of the first.
+//! `POST /__fake/publish[?version=<v>]` publishes a new version (1.1.0) of the first.
 //!
 //!   cargo run -p heat3d-extractors --example serve-fake -- <scratch folder>
 
@@ -34,6 +34,7 @@ async fn main() {
         platform: fake::PLATFORM.into(),
         cache_for: Duration::from_secs(3600),
         check_timeout: Duration::from_secs(60),
+        status_timeout: Duration::from_secs(60),
     })
     .unwrap();
     let (r, p) = (releases.clone(), program.clone());
@@ -41,10 +42,11 @@ async fn main() {
         .nest_service("/__heat3d/extractors", router(Some(Arc::new(m)), Auth::Host))
         .route(
             "/__fake/publish",
-            post(move || {
+            post(move |q: axum::extract::Query<std::collections::HashMap<String, String>>| {
                 let (r, p) = (r.clone(), p.clone());
                 async move {
-                    r.lock().unwrap().by_repo.insert("Holdi601/Fake-heat3d-alpha".into(), fake::release("heat3d-alpha", "1.1.0", &p));
+                    let v = q.get("version").cloned().unwrap_or_else(|| "1.1.0".into());
+                    r.lock().unwrap().by_repo.insert("Holdi601/Fake-heat3d-alpha".into(), fake::release("heat3d-alpha", &v, &p));
                     "ok"
                 }
             }),

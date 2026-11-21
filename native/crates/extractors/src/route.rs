@@ -10,10 +10,18 @@
 //!   session and strangers get 403 from the gateway and never reach it.
 //!
 //! - `GET /` the state (`Manager::state`).
-//! - `POST /refresh` looks up the latest releases (`?fresh=1`: past the cache), then the state.
-//! - `POST /install/{id}` installs or updates in the background (202); the state shows the progress.
-//! - `POST /update-all` updates every installed extractor with a newer release.
+//! - `POST /refresh` looks up the latest releases (`?fresh=1`: past the cache, and the map
+//!   status forgotten), then the state. With "Update automatically" on it also starts the
+//!   updates it found (not to a skipped version); off, nothing is installed without asking.
+//! - `POST /install/{id}[?version=<v>]` installs or updates in the background (202); with a
+//!   version, only while that is still the latest (the one the user confirmed).
+//! - `POST /update-all?only=<id>@<v>,...` the updates the user confirmed; without `only`,
+//!   refused unless "Update automatically" is on.
+//! - `POST /settings?autoUpdate=0|1`, `POST /skip/{id}?version=<v>`, `POST /unskip/{id}`.
 //! - `POST /remove/{id}`, `POST /run/{id}`, `POST /check/{id}`.
+//! - `POST /status/{id}[?fresh=1]` the map status (`status --json`, kept until a fresh refresh
+//!   or an extract finishes); `POST /extract/{id}` with `{"game","new","changed","outdated","maps"}`
+//!   as JSON starts an extract (202); `POST /cancel/{id}` stops it.
 
 use std::net::SocketAddr;
 use std::sync::Arc;
@@ -27,6 +35,7 @@ use axum::{Json, Router};
 use serde_json::json;
 
 use crate::manager::Manager;
+use crate::maps::ExtractRequest;
 
 /// Who may use the route (see the module doc).
 #[derive(Clone)]
@@ -76,16 +85,83 @@ async fn refresh(State(m): State<M>, Query(q): Query<Fresh>) -> Response {
     Json(m.state()).into_response()
 }
 
-async fn install(State(m): State<M>, Path(id): Path<String>) -> Response {
-    match m.install(&id) {
+#[derive(serde::Deserialize)]
+struct Want {
+    version: Option<String>,
+}
+
+async fn install(State(m): State<M>, Path(id): Path<String>, Query(q): Query<Want>) -> Response {
+    match m.install(&id, q.version) {
         Ok(()) => (StatusCode::ACCEPTED, Json(m.state())).into_response(),
         Err(e) => refused(StatusCode::CONFLICT, e),
     }
 }
 
-async fn update_all(State(m): State<M>) -> Response {
-    let started = m.update_all().await;
+#[derive(serde::Deserialize)]
+struct Only {
+    only: Option<String>,
+}
+
+async fn update_all(State(m): State<M>, Query(q): Query<Only>) -> Response {
+    let only: Option<Vec<(String, String)>> =
+        q.only.map(|o| o.split(',').filter_map(|p| p.split_once('@')).map(|(i, v)| (i.to_string(), v.to_string())).collect());
+    if only.is_none() && !m.settings().auto_update {
+        return refused(StatusCode::CONFLICT, "updates are installed only when you confirm them, or with Update automatically on".into());
+    }
+    let started = m.updates(only).await;
     (StatusCode::ACCEPTED, Json(json!({ "started": started }))).into_response()
+}
+
+#[derive(serde::Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct SettingsQuery {
+    auto_update: Option<String>,
+}
+
+async fn settings(State(m): State<M>, Query(q): Query<SettingsQuery>) -> Response {
+    let r = match q.auto_update.as_deref() {
+        Some("1") => m.set_auto_update(true),
+        Some("0") => m.set_auto_update(false),
+        _ => Ok(()),
+    };
+    match r {
+        Ok(()) => Json(m.state()).into_response(),
+        Err(e) => refused(StatusCode::INTERNAL_SERVER_ERROR, e),
+    }
+}
+
+async fn skip(State(m): State<M>, Path(id): Path<String>, Query(q): Query<Want>) -> Response {
+    match m.skip(&id, q.version.as_deref().unwrap_or("")) {
+        Ok(()) => Json(m.state()).into_response(),
+        Err(e) => refused(StatusCode::BAD_REQUEST, e),
+    }
+}
+
+async fn unskip(State(m): State<M>, Path(id): Path<String>) -> Response {
+    match m.unskip(&id) {
+        Ok(()) => Json(m.state()).into_response(),
+        Err(e) => refused(StatusCode::INTERNAL_SERVER_ERROR, e),
+    }
+}
+
+async fn status(State(m): State<M>, Path(id): Path<String>, Query(q): Query<Fresh>) -> Response {
+    Json(m.map_status(&id, q.fresh.as_deref() == Some("1")).await).into_response()
+}
+
+async fn extract(State(m): State<M>, Path(id): Path<String>, body: axum::body::Bytes) -> Response {
+    let req: ExtractRequest = match serde_json::from_slice(&body) {
+        Ok(r) => r,
+        Err(_) => return refused(StatusCode::BAD_REQUEST, "which maps to extract, as JSON".into()),
+    };
+    match m.extract(&id, req).await {
+        Ok(()) => (StatusCode::ACCEPTED, Json(m.state())).into_response(),
+        Err(e) => refused(StatusCode::CONFLICT, e),
+    }
+}
+
+async fn cancel(State(m): State<M>, Path(id): Path<String>) -> Response {
+    m.cancel_extract(&id);
+    Json(m.state()).into_response()
 }
 
 async fn remove(State(m): State<M>, Path(id): Path<String>) -> Response {
@@ -118,6 +194,12 @@ pub fn router(manager: Option<Arc<Manager>>, auth: Auth) -> Router {
             .route("/refresh", post(refresh))
             .route("/install/{id}", post(install))
             .route("/update-all", post(update_all))
+            .route("/settings", post(settings))
+            .route("/skip/{id}", post(skip))
+            .route("/unskip/{id}", post(unskip))
+            .route("/status/{id}", post(status))
+            .route("/extract/{id}", post(extract).layer(axum::extract::DefaultBodyLimit::max(1 << 20)))
+            .route("/cancel/{id}", post(cancel))
             .route("/remove/{id}", post(remove))
             .route("/run/{id}", post(run))
             .route("/check/{id}", post(check))

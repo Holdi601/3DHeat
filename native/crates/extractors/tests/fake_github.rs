@@ -23,13 +23,15 @@ fn manager(api: String, dir: &Path) -> Arc<Manager> {
             platform: fake::PLATFORM.into(),
             cache_for: Duration::from_secs(3600),
             check_timeout: Duration::from_secs(60),
+            status_timeout: Duration::from_secs(60),
         })
         .unwrap(),
     )
 }
 
 async fn until(what: &str, mut f: impl FnMut() -> bool) {
-    for _ in 0..200 {
+    // A minute: a loaded machine (CI) starts the fake extractor slowly.
+    for _ in 0..600 {
         if f() {
             return;
         }
@@ -100,19 +102,71 @@ async fn install_check_run_update_remove() {
     assert_eq!(std::fs::read_to_string(&ran).unwrap(), "1.0.0 managed=true");
     assert_eq!(m.state()["extractors"][0]["running"], true);
     assert!(m.remove("heat3d-a").is_err(), "not removed while open");
-    assert!(m.install("heat3d-a").is_err(), "not updated while open");
+    assert!(m.install("heat3d-a", None).is_err(), "not updated while open");
     until("the fake extractor to close", || m.state()["extractors"][0]["running"] == false).await;
 
-    // A new release: found past the cache, updated to, the old version deleted.
+    // New maps: the status finds them, an extract takes them map by map, the counts follow.
+    let levels = dir.join("levels");
+    std::fs::write(levels.join(".fake-install.txt"), "m1\nm2\nbroken\n").unwrap();
+    let s = m.map_status("heat3d-a", false).await;
+    assert_eq!(s.error, None);
+    assert_eq!(s.games[0].counts.new, 3);
+    assert_eq!(m.state()["extractors"][0]["status"]["games"][0]["counts"]["new"], 3, "the status is in the state");
+    use heat3d_extractors::maps::ExtractRequest;
+    assert!(m.extract("heat3d-a", ExtractRequest::default()).await.is_err(), "nothing chosen");
+    assert!(m.extract("heat3d-a", ExtractRequest { maps: vec!["nope".into()], ..Default::default() }).await.is_err(), "not a listed map");
+    m.extract("heat3d-a", ExtractRequest { new: true, ..Default::default() }).await.unwrap();
+    assert!(m.remove("heat3d-a").is_err(), "not removed while extracting");
+    until("the extract", || m.state()["extractors"][0]["extract"]["running"] == false).await;
+    let x = &m.state()["extractors"][0]["extract"];
+    assert_eq!((x["total"].as_u64(), x["ok"].as_u64(), x["failed"].as_u64()), (Some(3), Some(2), Some(1)), "{x}");
+    assert_eq!(x["maps"][2]["detail"], "unreadable");
+    until("the status after the extract", || m.state()["extractors"][0]["status"]["games"][0]["counts"]["current"] == 2).await;
+    assert!(levels.join("fakegame").join("m1.glb").is_file());
+    // A map added to the install: the kept status says nothing new until a fresh refresh.
+    std::fs::write(levels.join(".fake-install.txt"), "m1\nm2\nbroken\nm3\n").unwrap();
+    assert_eq!(m.map_status("heat3d-a", false).await.games[0].counts.new, 1, "kept");
+    m.refresh(true).await;
+    assert!(m.state()["extractors"][0]["status"].is_null(), "forgotten by a fresh refresh");
+    assert_eq!(m.map_status("heat3d-a", false).await.games[0].counts.new, 2);
+    m.extract("heat3d-a", ExtractRequest { game: Some("fakegame".into()), maps: vec!["m3".into()], ..Default::default() }).await.unwrap();
+    until("the single map's extract", || m.state()["extractors"][0]["extract"]["running"] == false).await;
+    let x = m.state()["extractors"][0]["extract"].clone();
+    assert_eq!((x["total"].as_u64(), x["ok"].as_u64()), (Some(1), Some(1)), "{x}");
+    until("the single map", || m.state()["extractors"][0]["status"]["games"][0]["counts"]["current"] == 3).await;
+
+    // A new release: found past the cache; never installed without asking.
     releases.lock().unwrap().by_repo.insert("Holdi601/Fake-heat3d-a".into(), fake::release("heat3d-a", "1.1.0", &program));
     assert_eq!(m.latest("heat3d-a", true).await.unwrap().version, "1.1.0");
-    assert_eq!(m.state()["extractors"][0]["latest"], "1.1.0");
-    assert_eq!(m.update_all().await, ["heat3d-a"]);
+    let st = m.state();
+    assert_eq!(st["extractors"][0]["latest"], "1.1.0");
+    assert_eq!(st["extractors"][0]["notes"], "Release notes of v1.1.0.");
+    assert_eq!(st["settings"]["autoUpdate"], false, "off by default");
+    assert!(m.updates(None).await.is_empty(), "no update without asking");
+    assert!(m.refresh(false).await.is_empty(), "nor by a refresh");
+    assert!(m.updates(Some(vec![("heat3d-a".into(), "1.0.5".into())])).await.is_empty(), "not a version that is not the latest");
+    // Skipped, a version is not installed automatically either.
+    m.skip("heat3d-a", "1.1.0").unwrap();
+    m.set_auto_update(true).unwrap();
+    assert_eq!(m.state()["extractors"][0]["skipped"], true);
+    assert!(m.refresh(false).await.is_empty(), "skipped");
+    let kept = std::fs::read_to_string(dir.join("data").join("extractors").join("manager.json")).unwrap();
+    assert!(kept.contains("\"autoUpdate\": true") && kept.contains("1.1.0"), "{kept}");
+    m.unskip("heat3d-a").unwrap();
+    // With "Update automatically" on, a refresh updates; the old version is deleted.
+    assert_eq!(m.refresh(false).await, ["heat3d-a"]);
     until("the update", || m.state()["extractors"][0]["job"].is_null()).await;
     assert_eq!(m.installed("heat3d-a").as_deref(), Some("1.1.0"));
     assert!(!root.join("1.0.0").exists(), "the old version is gone");
     assert!(m.state()["extractors"][0]["check"]["checks"].is_array(), "checked after installing");
-    assert!(m.update_all().await.is_empty(), "nothing newer");
+    assert!(m.refresh(false).await.is_empty(), "nothing newer");
+    m.set_auto_update(false).unwrap();
+    // The confirmed one: exactly the version shown.
+    releases.lock().unwrap().by_repo.insert("Holdi601/Fake-heat3d-a".into(), fake::release("heat3d-a", "1.2.0", &program));
+    m.latest("heat3d-a", true).await.unwrap();
+    assert_eq!(m.updates(Some(vec![("heat3d-a".into(), "1.2.0".into())])).await, ["heat3d-a"]);
+    until("the confirmed update", || m.state()["extractors"][0]["job"].is_null()).await;
+    assert_eq!(m.installed("heat3d-a").as_deref(), Some("1.2.0"));
 
     // Removed: its folder is gone.
     m.remove("heat3d-a").unwrap();
@@ -134,7 +188,7 @@ async fn install_check_run_update_remove() {
         assert!(!r.exists() || std::fs::read_dir(&r).unwrap().next().is_none(), "{id} left files");
     }
     // Background installs report their failure.
-    m.install("heat3d-b").unwrap();
+    m.install("heat3d-b", None).unwrap();
     until("the failed install", || m.state()["extractors"][1]["job"]["phase"] == "failed").await;
     assert!(m.state()["extractors"][1]["job"]["error"].as_str().unwrap().contains("checksum"));
     let _ = std::fs::remove_dir_all(&dir);

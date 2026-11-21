@@ -33,6 +33,7 @@ fn manager(dir: &std::path::Path) -> Arc<heat3d_extractors::Manager> {
             platform: "windows-x64".into(),
             cache_for: std::time::Duration::from_secs(60),
             check_timeout: std::time::Duration::from_secs(5),
+            status_timeout: std::time::Duration::from_secs(60),
         })
         .unwrap(),
     )

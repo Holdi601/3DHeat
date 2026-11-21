@@ -537,7 +537,8 @@ const CATALOG_ROUTE = '/__heat3d/catalog';
 /**
  * The levels folder the extractors write into: `HEAT3D_LEVELS`, else `levels` in the git-ignored
  * `tools/local-data.json`, else the extractors' own default when it exists (docs/extractors.md):
- * `%LOCALAPPDATA%\3DHeat\levels` on Windows, `${XDG_DATA_HOME:-~/.local/share}/3dheat/levels` elsewhere.
+ * `%LOCALAPPDATA%\3DHeat\levels` on Windows, `~/Library/Application Support/3DHeat/levels` on macOS,
+ * `${XDG_DATA_HOME:-~/.local/share}/3dheat/levels` elsewhere.
  */
 function levelsRoot(): string | null {
   if (process.env.HEAT3D_LEVELS) return process.env.HEAT3D_LEVELS;
@@ -551,7 +552,9 @@ function levelsRoot(): string | null {
   const base =
     process.platform === 'win32'
       ? process.env.LOCALAPPDATA && `${process.env.LOCALAPPDATA}/3DHeat`
-      : `${process.env.XDG_DATA_HOME || `${os.homedir()}/.local/share`}/3dheat`;
+      : process.platform === 'darwin'
+        ? `${os.homedir()}/Library/Application Support/3DHeat`
+        : `${process.env.XDG_DATA_HOME || `${os.homedir()}/.local/share`}/3dheat`;
   return base && existsSync(`${base}/levels`) ? `${base}/levels` : null;
 }
 

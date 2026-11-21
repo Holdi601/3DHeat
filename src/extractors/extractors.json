@@ -8,8 +8,8 @@
       "games": ["War Thunder"],
       "what": "Replays (.wrpl) into tables, and the game's levels into 3D levels, from your own install",
       "repo": "Holdi601/3DHeat-Ext-WarThunder",
-      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz"},
-      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}"},
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz", "macos-arm64": "{id}-{version}-macos-arm64.tar.gz"},
+      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}", "macos-arm64": "{id}/{id}"},
       "sums": "SHA256SUMS"
     },
     {
@@ -28,8 +28,8 @@
       "games": ["Battlefield 6", "Battlefield 4", "Battlefield 1"],
       "what": "Levels from your own install into 3D levels: terrain, placed meshes and colour maps",
       "repo": "Holdi601/3DHeat-Ext-Battlefield",
-      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz"},
-      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}"},
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip"},
+      "exe": {"windows-x64": "{id}/{id}.exe"},
       "sums": "SHA256SUMS"
     },
     {
@@ -78,8 +78,8 @@
       "games": ["Dota 2"],
       "what": "The map from your own install into a 3D level: ground, cliffs, water, trees and buildings",
       "repo": "Holdi601/3DHeat-Ext-Dota",
-      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz"},
-      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}"},
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz", "macos-arm64": "{id}-{version}-macos-arm64.tar.gz"},
+      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}", "macos-arm64": "{id}/{id}"},
       "sums": "SHA256SUMS"
     },
     {
@@ -88,8 +88,8 @@
       "games": ["Dota 2"],
       "what": "Replays (.dem) into tables: every hero's track and what happened where",
       "repo": "Holdi601/3DHeat-Ext-DotaReplay",
-      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz"},
-      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}"},
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz", "macos-arm64": "{id}-{version}-macos-arm64.tar.gz"},
+      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}", "macos-arm64": "{id}/{id}"},
       "sums": "SHA256SUMS"
     },
     {
@@ -108,8 +108,8 @@
       "games": ["World of Warships"],
       "what": "Replays (.wowsreplay) into tables: every position over time, every kill where it happened",
       "repo": "Holdi601/3DHeat-Ext-WoWs",
-      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz"},
-      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}"},
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz", "macos-arm64": "{id}-{version}-macos-arm64.tar.gz"},
+      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}", "macos-arm64": "{id}/{id}"},
       "sums": "SHA256SUMS"
     },
     {
@@ -148,8 +148,8 @@
       "games": ["League of Legends", "VALORANT"],
       "what": "Replays (.rofl, .vrf) into box scores, match facts and event timelines",
       "repo": "Holdi601/3DHeat-Ext-Riot",
-      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz"},
-      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}"},
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz", "macos-arm64": "{id}-{version}-macos-arm64.tar.gz"},
+      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}", "macos-arm64": "{id}/{id}"},
       "sums": "SHA256SUMS"
     },
     {
@@ -168,8 +168,8 @@
       "games": ["World of Tanks"],
       "what": "Replays (.wotreplay) into tables: every position over time, every kill where it happened",
       "repo": "Holdi601/3DHeat-Ext-WoT",
-      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz"},
-      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}"},
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz", "macos-arm64": "{id}-{version}-macos-arm64.tar.gz"},
+      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}", "macos-arm64": "{id}/{id}"},
       "sums": "SHA256SUMS"
     },
     {
@@ -178,8 +178,8 @@
       "games": ["Racing games"],
       "what": "Race tracks and game levels from the files of a game you have installed",
       "repo": "Holdi601/3DHeat-GameFiles",
-      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz"},
-      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}"},
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz", "macos-arm64": "{id}-{version}-macos-arm64.tar.gz"},
+      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}", "macos-arm64": "{id}/{id}"},
       "sums": "SHA256SUMS"
     },
     {
@@ -188,8 +188,8 @@
       "games": ["Racing games"],
       "what": "Records your laps from the telemetry a racing game sends, one file per lap",
       "repo": "Holdi601/3DHeat-GameCapture",
-      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip"},
-      "exe": {"windows-x64": "{id}/{id}.exe"},
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz", "macos-arm64": "{id}-{version}-macos-arm64.tar.gz"},
+      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}", "macos-arm64": "{id}/{id}"},
       "sums": "SHA256SUMS"
     },
     {
@@ -198,8 +198,8 @@
       "games": ["Several games"],
       "what": "Writes down where you went and what happened while you play, for heatmaps afterwards",
       "repo": "Holdi601/3DHeat-Watcher",
-      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip"},
-      "exe": {"windows-x64": "{id}/{id}.exe"},
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz", "macos-arm64": "{id}-{version}-macos-arm64.tar.gz"},
+      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}", "macos-arm64": "{id}/{id}"},
       "sums": "SHA256SUMS"
     }
   ]

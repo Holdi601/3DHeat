@@ -20,6 +20,8 @@ use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 
 use crate::index::{platform, Entry, Index};
+use crate::maps::{Extract, Status};
+use crate::settings::Settings;
 use crate::unpack::{self, Kind};
 use crate::{verify, version};
 
@@ -53,12 +55,17 @@ pub struct Config {
     pub cache_for: Duration,
     /// How long `--check --json` may take.
     pub check_timeout: Duration,
+    /// How long `status --json` may take (it may hash the game's files).
+    pub status_timeout: Duration,
 }
 
-/// `<data>` of this user: `%LOCALAPPDATA%\3DHeat`, or `${XDG_DATA_HOME:-~/.local/share}/3dheat`.
+/// `<data>` of this user: `%LOCALAPPDATA%\3DHeat`, on macOS `~/Library/Application Support/3DHeat`,
+/// else `${XDG_DATA_HOME:-~/.local/share}/3dheat`.
 pub fn default_data_dir() -> Option<PathBuf> {
     if cfg!(windows) {
         std::env::var_os("LOCALAPPDATA").filter(|v| !v.is_empty()).map(|d| PathBuf::from(d).join("3DHeat"))
+    } else if cfg!(target_os = "macos") {
+        std::env::var_os("HOME").filter(|v| !v.is_empty()).map(|h| PathBuf::from(h).join("Library").join("Application Support").join("3DHeat"))
     } else {
         let xdg = std::env::var_os("XDG_DATA_HOME").filter(|v| !v.is_empty()).map(PathBuf::from);
         xdg.or_else(|| std::env::var_os("HOME").filter(|v| !v.is_empty()).map(|h| PathBuf::from(h).join(".local").join("share")))
@@ -87,6 +94,7 @@ impl Config {
             platform: platform()?.into(),
             cache_for: Duration::from_secs(3 * 3600),
             check_timeout: Duration::from_secs(60),
+            status_timeout: Duration::from_secs(600),
         };
         #[cfg(debug_assertions)]
         {
@@ -134,6 +142,9 @@ pub struct Release {
     pub version: String,
     pub archive: Asset,
     pub sums: Asset,
+    /// The release notes (its `body`, Markdown as written).
+    pub notes: String,
+    pub published: Option<String>,
 }
 
 /// An install or update under way, or how the last one failed.
@@ -166,18 +177,24 @@ pub struct Check {
 }
 
 #[derive(Default)]
-struct Inner {
+pub(crate) struct Inner {
     latest: HashMap<String, (Instant, Result<Release, String>)>,
     jobs: HashMap<String, Job>,
     running: HashMap<String, std::process::Child>,
     checks: HashMap<String, Check>,
+    /// Extractors with an old version that could not be deleted yet.
+    unclean: std::collections::HashSet<String>,
+    pub(crate) status: HashMap<String, Status>,
+    pub(crate) extracts: HashMap<String, Extract>,
+    pub(crate) cancels: HashMap<String, Arc<tokio::sync::Notify>>,
+    settings: Settings,
 }
 
 /// The manager. One per process (`shared`): two would race over the same folders.
 pub struct Manager {
-    cfg: Config,
+    pub(crate) cfg: Config,
     http: reqwest::Client,
-    inner: Mutex<Inner>,
+    pub(crate) inner: Mutex<Inner>,
 }
 
 fn clip(s: &str, n: usize) -> String {
@@ -230,7 +247,8 @@ impl Manager {
             }))
             .build()
             .map_err(|e| format!("no HTTPS client: {e}"))?;
-        Ok(Manager { cfg, http, inner: Mutex::new(Inner::default()) })
+        let settings = Settings::load(&cfg.data.join("extractors").join("manager.json"));
+        Ok(Manager { cfg, http, inner: Mutex::new(Inner { settings, ..Default::default() }) })
     }
 
     /// This process's manager, made on first use; `None` where it cannot work (no data folder, no build for this platform).
@@ -265,7 +283,7 @@ impl Manager {
         self.exe(e, &v).is_file().then_some(v)
     }
 
-    fn running(&self, id: &str) -> bool {
+    pub(crate) fn running(&self, id: &str) -> bool {
         let mut inner = self.inner.lock().unwrap();
         match inner.running.get_mut(id).map(|c| c.try_wait()) {
             Some(Ok(None)) => true,
@@ -277,7 +295,7 @@ impl Manager {
         }
     }
 
-    fn busy(&self, id: &str) -> bool {
+    pub(crate) fn busy(&self, id: &str) -> bool {
         self.inner.lock().unwrap().jobs.get(id).is_some_and(|j| j.phase != "failed")
     }
 
@@ -342,7 +360,9 @@ impl Manager {
         let name = e.asset(&self.cfg.platform, &version).ok_or("no build for this system")?;
         let archive = find(&name).ok_or_else(|| format!("version {version} has no build for this system yet"))?;
         let sums = find(&e.sums).ok_or_else(|| format!("version {version} has no checksums"))?;
-        Ok(Release { version, archive, sums })
+        let notes = v.get("body").and_then(Value::as_str).map(|b| b.chars().filter(|c| !c.is_control() || *c == '\n').take(20_000).collect()).unwrap_or_default();
+        let published = v.get("published_at").and_then(Value::as_str).map(|p| clip(p, 40));
+        Ok(Release { version, archive, sums, notes, published })
     }
 
     /// The latest release, from the cache while it is fresh (an error for ten minutes).
@@ -361,14 +381,64 @@ impl Manager {
         r
     }
 
-    /// Looks up every extractor's latest release (cached ones are kept unless `fresh`).
-    pub async fn refresh(self: &Arc<Self>, fresh: bool) {
+    /// Looks up every extractor's latest release (cached ones are kept unless `fresh`, which also
+    /// forgets the map status). With "Update automatically" on, starts the updates it found, but
+    /// not to a version the user skipped; off (the default), nothing is installed without asking.
+    /// The ids it started updating.
+    pub async fn refresh(self: &Arc<Self>, fresh: bool) -> Vec<String> {
+        if fresh {
+            self.inner.lock().unwrap().status.clear();
+        }
         let mut set = tokio::task::JoinSet::new();
         for e in self.cfg.index.entries.iter().filter(|e| e.supports(&self.cfg.platform)) {
             let (m, id) = (self.clone(), e.id.clone());
             set.spawn(async move { m.latest(&id, fresh).await.ok() });
         }
         while set.join_next().await.is_some() {}
+        if self.settings().auto_update {
+            self.updates(None).await
+        } else {
+            vec![]
+        }
+    }
+
+    // ------------------------------------------------------------- settings
+
+    fn settings_file(&self) -> PathBuf {
+        self.cfg.data.join("extractors").join("manager.json")
+    }
+
+    pub fn settings(&self) -> Settings {
+        self.inner.lock().unwrap().settings.clone()
+    }
+
+    fn change(&self, f: impl FnOnce(&mut Settings)) -> Result<(), String> {
+        let mut inner = self.inner.lock().unwrap();
+        let mut s = inner.settings.clone();
+        f(&mut s);
+        s.save(&self.settings_file())?;
+        inner.settings = s;
+        Ok(())
+    }
+
+    /// "Update automatically" on or off.
+    pub fn set_auto_update(&self, on: bool) -> Result<(), String> {
+        self.change(|s| s.auto_update = on)
+    }
+
+    /// "Skip this version": `version` of `id` is not offered again (a newer one is).
+    pub fn skip(&self, id: &str, version: &str) -> Result<(), String> {
+        self.entry(id)?;
+        let v = version::from_tag(version).filter(|v| v == version).ok_or("not a version")?;
+        self.change(|s| {
+            s.skip.insert(id.into(), v);
+        })
+    }
+
+    pub fn unskip(&self, id: &str) -> Result<(), String> {
+        self.change(|s| {
+            s.skip.remove(id);
+        })
     }
 
     // ------------------------------------------------------------- install
@@ -378,11 +448,15 @@ impl Manager {
         self.inner.lock().unwrap().jobs.insert(id.into(), j);
     }
 
-    /// Starts installing (or updating to) the latest release in the background.
-    pub fn install(self: &Arc<Self>, id: &str) -> Result<(), String> {
+    /// Starts installing (or updating to) the latest release in the background; with `want`, only
+    /// when the latest is still that version (the one the user was shown and confirmed).
+    pub fn install(self: &Arc<Self>, id: &str, want: Option<String>) -> Result<(), String> {
         self.entry(id)?;
         if self.running(id) {
             return Err("close the extractor first".into());
+        }
+        if self.extracting(id) {
+            return Err("it is extracting maps".into());
         }
         {
             let mut inner = self.inner.lock().unwrap();
@@ -392,14 +466,18 @@ impl Manager {
             inner.jobs.insert(id.into(), Job { version: String::new(), phase: "lookup", done: 0, total: 0, error: None });
         }
         let (m, id) = (self.clone(), id.to_string());
-        tokio::spawn(async move { m.install_now(&id).await });
+        tokio::spawn(async move { m.install_version(&id, want.as_deref()).await });
         Ok(())
     }
 
     /// Installs the latest release now: download, verify, unpack beside the old one, switch, clean up, check.
     /// A failure stays in the state (`job.phase` `failed`) until the next install or remove.
     pub async fn install_now(&self, id: &str) -> Result<(), String> {
-        let r = self.install_steps(id).await;
+        self.install_version(id, None).await
+    }
+
+    async fn install_version(&self, id: &str, want: Option<&str>) -> Result<(), String> {
+        let r = self.install_steps(id, want).await;
         let mut inner = self.inner.lock().unwrap();
         match &r {
             Ok(()) => {
@@ -414,9 +492,12 @@ impl Manager {
         r
     }
 
-    async fn install_steps(&self, id: &str) -> Result<(), String> {
+    async fn install_steps(&self, id: &str, want: Option<&str>) -> Result<(), String> {
         let e = self.entry(id)?.clone();
         let rel = self.latest(id, false).await?;
+        if want.is_some_and(|w| w != rel.version) {
+            return Err(format!("the latest release is now {}: look at it first", rel.version));
+        }
         if self.installed(id).as_deref() == Some(rel.version.as_str()) {
             return Ok(());
         }
@@ -463,6 +544,7 @@ impl Manager {
         let tmp = root.join(".current");
         std::fs::write(&tmp, &v).and_then(|_| std::fs::rename(&tmp, root.join("current"))).map_err(|err| format!("cannot switch versions: {err}"))?;
         self.clean(id);
+        self.inner.lock().unwrap().status.remove(id);
         self.set_job(id, &v, "check", 0, 0);
         let c = self.check(id).await;
         self.inner.lock().unwrap().checks.insert(id.into(), c);
@@ -470,16 +552,26 @@ impl Manager {
     }
 
     /// Everything in the extractor's folder but `current` and the version it names (older versions, leftovers).
+    /// A file still in use (Windows: an old version's check or status still running) stays, and
+    /// the extractor is cleaned again when the state is next read.
     fn clean(&self, id: &str) {
         let keep = self.installed(id);
-        let Ok(dir) = std::fs::read_dir(self.root(id)) else { return };
-        for d in dir.flatten() {
-            let n = d.file_name().to_string_lossy().to_string();
-            if n == "current" || Some(&n) == keep.as_ref() {
-                continue;
+        let mut left = false;
+        if let Ok(dir) = std::fs::read_dir(self.root(id)) {
+            for d in dir.flatten() {
+                let n = d.file_name().to_string_lossy().to_string();
+                if n == "current" || Some(&n) == keep.as_ref() {
+                    continue;
+                }
+                let gone = if d.path().is_dir() { std::fs::remove_dir_all(d.path()) } else { std::fs::remove_file(d.path()) };
+                left |= gone.is_err();
             }
-            // A file in use (Windows) stays until the next clean-up.
-            let _ = if d.path().is_dir() { std::fs::remove_dir_all(d.path()) } else { std::fs::remove_file(d.path()) };
+        }
+        let mut inner = self.inner.lock().unwrap();
+        if left {
+            inner.unclean.insert(id.into());
+        } else {
+            inner.unclean.remove(id);
         }
     }
 
@@ -504,14 +596,31 @@ impl Manager {
         Ok(verify::hex(&h.finalize()))
     }
 
-    /// Starts updating every installed extractor that has a newer release; the ids started.
-    pub async fn update_all(self: &Arc<Self>) -> Vec<String> {
-        self.refresh(false).await;
+    /// Starts updates; the ids started. With `only`, exactly the `(id, version)` pairs the user was
+    /// shown and confirmed, each while that is still the latest release. Without, every installed
+    /// extractor with a newer release that is not a skipped version, and only with "Update
+    /// automatically" on: otherwise nothing.
+    pub async fn updates(self: &Arc<Self>, only: Option<Vec<(String, String)>>) -> Vec<String> {
+        let settings = self.settings();
+        if only.is_none() && !settings.auto_update {
+            return vec![];
+        }
         let mut started = vec![];
         for e in &self.cfg.index.entries {
             let Some(have) = self.installed(&e.id) else { continue };
-            let newer = self.latest(&e.id, false).await.is_ok_and(|r| version::compare(&r.version, &have).is_gt());
-            if newer && self.install(&e.id).is_ok() {
+            let want = match &only {
+                Some(list) => match list.iter().find(|(id, _)| *id == e.id) {
+                    Some((_, v)) => v.clone(),
+                    None => continue,
+                },
+                None => match self.latest(&e.id, false).await {
+                    Ok(r) if !settings.skipped(&e.id, &r.version) => r.version,
+                    _ => continue,
+                },
+            };
+            let latest = self.latest(&e.id, false).await.ok().map(|r| r.version);
+            let newer = latest.as_deref() == Some(want.as_str()) && version::compare(&want, &have).is_gt();
+            if newer && self.install(&e.id, Some(want)).is_ok() {
                 started.push(e.id.clone());
             }
         }
@@ -524,8 +633,8 @@ impl Manager {
         if self.running(id) {
             return Err("close the extractor first".into());
         }
-        if self.busy(id) {
-            return Err("it is being installed".into());
+        if self.busy(id) || self.extracting(id) {
+            return Err("it is busy".into());
         }
         let root = self.root(id);
         if root.exists() {
@@ -539,7 +648,7 @@ impl Manager {
 
     // ------------------------------------------------------------- run and check
 
-    fn command(&self, id: &str) -> Result<(PathBuf, std::process::Command), String> {
+    pub(crate) fn command(&self, id: &str) -> Result<(PathBuf, std::process::Command), String> {
         let e = self.entry(id)?;
         let v = self.installed(id).ok_or("not installed")?;
         let exe = self.exe(e, &v);
@@ -561,6 +670,9 @@ impl Manager {
     pub fn run(&self, id: &str) -> Result<(), String> {
         if self.running(id) {
             return Err("already open".into());
+        }
+        if self.extracting(id) {
+            return Err("it is extracting maps".into());
         }
         let (_, mut c) = self.command(id)?;
         let child = c.stdout(Stdio::null()).stderr(Stdio::null()).spawn().map_err(|err| format!("could not start it: {err}"))?;
@@ -609,6 +721,12 @@ impl Manager {
 
     /// Everything the panel shows, as JSON.
     pub fn state(&self) -> Value {
+        let unclean: Vec<String> = self.inner.lock().unwrap().unclean.iter().cloned().collect();
+        for id in unclean {
+            if !self.busy(&id) && !self.extracting(&id) {
+                self.clean(&id);
+            }
+        }
         let list: Vec<Value> = self
             .cfg
             .index
@@ -620,6 +738,7 @@ impl Manager {
                 let running = self.running(&e.id);
                 let inner = self.inner.lock().unwrap();
                 let latest = inner.latest.get(&e.id).map(|(_, r)| r.clone());
+                let rel = latest.as_ref().and_then(|r| r.as_ref().ok());
                 json!({
                     "id": e.id, "name": e.name, "games": e.games, "what": e.what, "repo": e.repo,
                     "supported": supported,
@@ -627,9 +746,14 @@ impl Manager {
                     "latest": latest.as_ref().and_then(|r| r.as_ref().ok()).map(|r| r.version.clone()),
                     "latestSize": latest.as_ref().and_then(|r| r.as_ref().ok()).map(|r| r.archive.size),
                     "latestError": latest.as_ref().and_then(|r| r.as_ref().err()).cloned(),
+                    "notes": rel.map(|r| r.notes.clone()),
+                    "published": rel.and_then(|r| r.published.clone()),
+                    "skipped": rel.is_some_and(|r| inner.settings.skipped(&e.id, &r.version)),
                     "running": running,
                     "job": inner.jobs.get(&e.id),
                     "check": inner.checks.get(&e.id),
+                    "status": inner.status.get(&e.id),
+                    "extract": inner.extracts.get(&e.id),
                 })
             })
             .collect();
@@ -639,6 +763,7 @@ impl Manager {
             "data": self.cfg.data.join("extractors"),
             "levels": self.cfg.levels,
             "free": self.free_space(),
+            "settings": self.settings(),
             "extractors": list,
         })
     }
@@ -672,6 +797,7 @@ mod tests {
             platform: "windows-x64".into(),
             cache_for: Duration::from_secs(1),
             check_timeout: Duration::from_secs(1),
+            status_timeout: Duration::from_secs(1),
         };
         let ok = |c: &Config, u: &str| c.allowed(&Url::parse(u).unwrap());
         assert!(ok(&cfg, "https://api.github.com/repos/a/b/releases/latest"));

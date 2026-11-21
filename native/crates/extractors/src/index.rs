@@ -22,7 +22,7 @@ pub struct Entry {
     pub what: String,
     /// `owner/name` on GitHub.
     pub repo: String,
-    /// The release asset per platform (`windows-x64`, `linux-x64`), `{id}` and `{version}` filled in.
+    /// The release asset per platform (`windows-x64`, `linux-x64`, `macos-arm64`), `{id}` and `{version}` filled in.
     pub assets: BTreeMap<String, String>,
     /// The program inside the archive per platform, the same placeholders.
     pub exe: BTreeMap<String, String>,
@@ -50,6 +50,8 @@ pub fn platform() -> Option<&'static str> {
         Some("windows-x64")
     } else if cfg!(all(target_os = "linux", target_arch = "x86_64")) {
         Some("linux-x64")
+    } else if cfg!(all(target_os = "macos", target_arch = "aarch64")) {
+        Some("macos-arm64")
     } else {
         None
     }
@@ -147,7 +149,14 @@ mod tests {
         let wt = i.get("heat3d-warthunder").unwrap();
         assert_eq!(wt.asset("linux-x64", "0.4.0").unwrap(), "heat3d-warthunder-0.4.0-linux-x64.tar.gz");
         assert_eq!(wt.exe_path("linux-x64").unwrap(), "heat3d-warthunder/heat3d-warthunder");
-        assert!(!i.get("heat3d-gamecapture").unwrap().supports("linux-x64"));
+        assert_eq!(wt.asset("macos-arm64", "0.4.0").unwrap(), "heat3d-warthunder-0.4.0-macos-arm64.tar.gz");
+        assert_eq!(wt.exe_path("macos-arm64").unwrap(), "heat3d-warthunder/heat3d-warthunder");
+        for id in ["heat3d-battlefield", "heat3d-r6", "heat3d-r6-maps"] {
+            assert!(!i.get(id).unwrap().supports("linux-x64") && !i.get(id).unwrap().supports("macos-arm64"), "{id}");
+        }
+        assert_eq!(i.entries.iter().filter(|e| e.supports("linux-x64")).count(), 17);
+        assert_eq!(i.entries.iter().filter(|e| e.supports("macos-arm64")).count(), 9);
+        assert!(i.get("heat3d-gamecapture").unwrap().supports("macos-arm64") && !i.get("heat3d-dcs").unwrap().supports("macos-arm64"));
     }
 
     #[test]
