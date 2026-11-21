@@ -21,6 +21,7 @@ import type { AttributeColumn, Dataset } from '../state/types';
 import { CUBE_STRIDE } from '../data/tracks';
 import { CATALOG } from './catalog';
 import { placeFrame, poseFrame, TemplateCache, type Template } from './kit';
+import { packFigurePending } from './figurepack';
 import { hasJoints, InstanceBatches, meshOf, NO_PITCH } from './instances';
 import { aimOf, type AimNow } from './aim';
 import { cameraTracks } from '../render/lookAids';
@@ -387,8 +388,18 @@ export class FigureReplay {
 
   private template(kind: string): Template | null {
     const e = CATALOG[kind];
-    return e ? this.templates.get(kind, e.build) : null;
+    if (!e) return null;
+    // A pack model whose data is not here yet builds as the figure it stands in for (and asks for the data): built
+    // again once the data is here.
+    if (this.interim.has(kind) && !packFigurePending(kind)) {
+      this.interim.delete(kind);
+      this.templates.drop(kind);
+    } else if (!this.interim.has(kind) && packFigurePending(kind)) this.interim.add(kind);
+    return this.templates.get(kind, e.build);
   }
+
+  /** Kinds built before their pack model's data was here. */
+  private readonly interim = new Set<string>();
 
   /**
    * Figures for the live cubes (x, y, z, r, g, b, yaw, pitch each, `rows` the

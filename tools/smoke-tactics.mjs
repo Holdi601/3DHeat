@@ -255,7 +255,7 @@ await step('Import mission… reads a DCS .miz onto a layer per coalition', asyn
     const p = window.__3dheat_plan.getState().plan;
     return { game: p.game, layers: p.layers.map((l) => l.name), figures: p.figures.map((f) => f.kind), routes: p.arrows.length };
   });
-  expect(s.game === 'air' && s.layers.includes('Blue') && s.layers.includes('Red') && s.figures.includes('f-16c') && s.routes === 1, `imported ${JSON.stringify(s)}`);
+  expect(s.game === 'air' && s.layers.includes('Blue') && s.layers.includes('Red') && s.figures.some((k) => k.split('@')[0] === 'f-16c') && s.routes === 1, `imported ${JSON.stringify(s)}`);
 });
 
 await step('I opens the task picker: a patrol drawn on the map, Shift+5 overwatch, the legend', async () => {

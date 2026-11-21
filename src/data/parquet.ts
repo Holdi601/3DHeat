@@ -57,7 +57,9 @@ export async function previewParquet(file: File): Promise<ParquetPreview> {
       if (v === null || v === undefined || v === '') continue;
       seen++;
       if (typeof v === 'number' || typeof v === 'bigint' || v instanceof Date) numbers++;
-      else if (typeof v === 'string' && Number.isFinite(Number(v))) numbers++;
+      // Digits as text past float32's whole numbers (16,777,216) are ids, not measures: WoWs ship numbers would
+      // round to another ship's ("4179572528" read as 4179572480), so the column stays text.
+      else if (typeof v === 'string' && Number.isFinite(Number(v)) && !(Number.isInteger(Number(v)) && Math.abs(Number(v)) > 16777216)) numbers++;
     }
     // Empty in the sample (a column only some rows fill, its first rows null):
     // the schema's type says, so a number column is not taken for text.

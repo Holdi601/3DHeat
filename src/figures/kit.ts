@@ -304,6 +304,11 @@ export class TemplateCache {
     return t;
   }
 
+  /** Forgets a build, so the next `get` builds it again. */
+  drop(key: string): void {
+    this.built.delete(key);
+  }
+
   get size(): number {
     return this.built.size;
   }
