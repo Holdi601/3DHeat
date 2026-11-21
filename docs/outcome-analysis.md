@@ -43,7 +43,7 @@ Everything is per **map** (map, mode and mission together), per **side**, per **
 | Opens along a route | a quarter or more of the side's first lives took the route in their first two windows. Routes are found per map and side by clustering the lives' early paths (eight points each, the mean distance between them). A route away from the two main ones, used by under a fifth of the lives, is called a flank route. |
 | First blood, and where | the side made the round's first kill (in a zone). |
 | Meets the enemy early | the round's first loss came earlier than on the map's median round. |
-| Wins a fight in a zone | more of the other side's losses than its own in a zone in a window (two or more losses there). |
+| Wins a fight in a zone | more of the other side's losses than its own in a zone in the first two windows (two or more losses there). A fight won later is how a round ends, not a choice: on real data those only restated the result. |
 | Keeps together | the side's players stood closer to their centre than on the median round (first two windows). |
 | Pushes out fast | the side's centre was further from its spawn than on the median round (first two windows). |
 | Falls back | the side's centre moved back towards its spawn by a zone and a half after its furthest push, before the middle of the round. |
@@ -78,6 +78,7 @@ The **allowed-for difference** is the Mantel-Haenszel risk difference over these
 - **Rounds of one match are not independent.** In round games the same two teams play many rounds. The periods and regular-player checks are the guard here; intervals assume independent rounds and are somewhat too narrow.
 - **One map at a time.** A map needs about 50 side-rounds before it is read at all, and far more for zone patterns. Rare maps say nothing.
 - **Sampling.** Positions are kept every 2 to 60 seconds (finer for short rounds), so a brief visit to a zone may be missed. Zones are squares, not the map's own areas. Callout or objective names are used where the data has them.
+- **Late in a round, being somewhere means being alive.** A zone held in the last windows partly measures that the side still had players; the score at the window's start allows for some of it, not all.
 - **Mechanics.** In some modes, holding objectives *is* how a match is won (tickets bleed). Holding more of them late says little; which one a side takes first, and how soon, is the tactical part.
 
 ## For developers

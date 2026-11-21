@@ -365,6 +365,22 @@ export function buildGroup(key: string, matches: OutcomeMatch[]): OutcomeGroup |
   const byName = agree >= 0.85 || agree <= 0.15 || !(spread > 0);
   const sideOfSp = new Map<string, number>();
   sp.forEach((s, i) => sideOfSp.set(`${s.r}|${s.slot}`, byName ? s.name : km.of[i]));
+  // A side with no early start in a round (the data begins after its spawn) is the other end from its opponent's:
+  // left out, the rounds a side is seen in would not be a fair sample of its rounds.
+  if (!byName)
+    raw.forEach((r, ri) => {
+      const slots = matches[r.m].teams.length;
+      if (slots !== 2) return;
+      const a0 = sideOfSp.get(`${ri}|0`);
+      const a1 = sideOfSp.get(`${ri}|1`);
+      if (a0 === undefined && a1 !== undefined) sideOfSp.set(`${ri}|0`, 1 - a1);
+      else if (a1 === undefined && a0 !== undefined) sideOfSp.set(`${ri}|1`, 1 - a0);
+      // Both at one end: the spawns say nothing this round; neither is kept.
+      else if (a0 !== undefined && a0 === a1) {
+        sideOfSp.delete(`${ri}|0`);
+        sideOfSp.delete(`${ri}|1`);
+      }
+    });
   const sides = byName ? [...names] : ['A', 'B'];
   const spawnSum = [[0, 0, 0], [0, 0, 0]];
   sp.forEach((s, i) => {
@@ -583,7 +599,8 @@ export function buildGroup(key: string, matches: OutcomeMatch[]): OutcomeGroup |
       }
     }
     // Fights won: more of the other side's losses than its own in a zone in a window (two losses there or more).
-    for (let wdx = 0; wdx < WINDOWS; wdx++) {
+    // The first two windows only: a fight won late is how a round ends, not a choice that leads there.
+    for (let wdx = 0; wdx < 2; wdx++) {
       const [a, e] = windows[wdx];
       if (r.len < a + b / 2) continue;
       const tally = new Map<number, [number, number]>();
@@ -739,10 +756,21 @@ export function buildGroup(key: string, matches: OutcomeMatch[]): OutcomeGroup |
   // Sides told apart by spawn are named by the place they start at, where the data names one (a callout).
   let sidesBy: OutcomeGroup['sidesBy'] = byName ? 'team' : 'spawn';
   if (!byName) {
-    const at = spawns.map(([x, z]) => {
-      const zi = zoneIdx.get(zk(x, z));
-      const p = zi === undefined ? null : zones[zi].place;
-      return p && !p.startsWith('@') ? p : null;
+    // The place most of a side's rounds start at (three in five or more): a side whose start moves from round to
+    // round (a defence set up at the site it picks) is not named by any one of them.
+    const at = [0, 1].map((side) => {
+      const votes = new Map<string, number>();
+      let n = 0;
+      sp.forEach((e, i) => {
+        if ((byName ? e.name : km.of[i]) !== side) return;
+        n++;
+        const zi = zoneIdx.get(zk(e.p[0], e.p[1]));
+        const p = zi === undefined ? null : zones[zi].place;
+        if (p && !p.startsWith('@')) votes.set(p, (votes.get(p) ?? 0) + 1);
+      });
+      let best: string | null = null, bn = 0;
+      for (const [p, c] of votes) if (c > bn) [best, bn] = [p, c];
+      return best && bn >= 0.6 * n ? best : null;
     });
     if (at[0] && at[1] && at[0] !== at[1]) {
       sides[0] = at[0];

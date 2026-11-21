@@ -409,7 +409,7 @@ export async function analyseOutcome(
       pvals.push(p);
     }
     summaries.push({
-      key: g.key, sides: g.sides, sidesBy: g.sidesBy, matches: g.matches.length, rounds: g.rounds.length / 2, wins, zone: g.zone, b: g.b, windows: g.windows, median: g.median,
+      key: g.key, sides: g.sides, sidesBy: g.sidesBy, matches: g.matches.length, rounds: Math.round(g.rounds.length / 2), wins, zone: g.zone, b: g.b, windows: g.windows, median: g.median,
       spawns: g.spawns, objectives: g.objectives, tests,
     });
     await hooks.yieldEvery?.();
