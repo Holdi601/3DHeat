@@ -5,7 +5,9 @@
  * leave the buttons out:
  *
  *   HTML       one self-contained file: styles inside, pictures inline as data
- *              URLs, charts as inline SVG. Prints to PDF from the browser.
+ *              URLs, charts drawn by the chart module (`charts/draw.ts`, the
+ *              same drawing as the signs and the preview) as inline PNG, or
+ *              as SVG where there is no canvas. Prints to PDF from the browser.
  *   Markdown   the text, a block as Markdown (a picture, a table, a quote),
  *              zipped with its pictures under images/ - or one .md with the
  *              pictures inline, for a tool that reads data URLs.
@@ -14,6 +16,11 @@
  */
 
 import { exprChartSvg, exprChartTable, shortNumber } from '../charts/exprSvg';
+import { chartPng } from '../charts/ChartView';
+import { exprToChartData, readChartData } from '../charts/convert';
+import { localizeChart } from '../charts/format';
+import { colorChart, LIGHT_THEME } from '../charts/palette';
+import type { ChartData } from '../charts/types';
 import { int, num, t } from '../i18n';
 import { anchorSubject, type Anchor } from './anchors';
 import { esc, inline, markdownToHtml, plainText } from './markdown';
@@ -32,6 +39,31 @@ const val = (v: number | null | undefined) => (v === null || v === undefined || 
 
 const button = (ctx: RenderContext, action: string, id: string, label: string) =>
   ctx.interactive ? `<button type="button" class="block-btn" data-action="${action}" data-block="${esc(id)}">${esc(label)}</button>` : '';
+
+/**
+ * A chart block's data in the chart module's form: an expression chart's
+ * numbers converted, a block sent from a sign as it came; null when there is
+ * nothing counted yet.
+ */
+export function blockChartData(b: DocBlock | undefined): ChartData | null {
+  if (b?.type === 'chart') return b.data ? exprToChartData(b.spec, b.data) : null;
+  if (b?.type === 'chartBlock') {
+    const d = readChartData(b.block.data);
+    return d ? localizeChart(d) : null;
+  }
+  return null;
+}
+
+/** Where the preview mounts the chart (`ChartView`, ui/notes/AnalysisWindow.tsx): the same drawing as the signs, with hover, click and table. */
+const chartSlot = (id: string) => `<div class="chart-slot" data-chart-block="${esc(id)}"></div>`;
+
+/** A chart as an exported picture: the chart module's drawing in the light theme as PNG; null without a canvas. */
+function chartPicture(d: ChartData | null): string | null {
+  if (!d) return null;
+  const c = structuredClone(d);
+  colorChart(c, LIGHT_THEME, new Map());
+  return chartPng(c, LIGHT_THEME);
+}
 
 /** The heat spot's numbers, as the pick card says them. */
 export function heatLines(a: Extract<Anchor, { kind: 'heat' }>): [string, string][] {
@@ -70,8 +102,9 @@ export function blockHtml(b: DocBlock | undefined, ctx: RenderContext): string {
     }
     case 'chart': {
       const title = b.spec.title || b.spec.measure.name || b.spec.measure.expr;
+      const png = ctx.interactive ? null : chartPicture(blockChartData(b));
       const body = b.data
-        ? `${exprChartSvg(b.spec, b.data, { other: t('notes.chart.other'), empty: t('notes.chart.empty') })}<details><summary>${esc(t('notes.chart.table'))}</summary>${markdownToHtml(exprChartTable(b.data, t('notes.chart.other')))}</details><div class="dim">${esc(t('notes.chart.counted', { rows: int(b.data.rows), dataset: b.data.dataset || '–', when: new Date(b.data.at).toLocaleString() }))}</div>`
+        ? `${ctx.interactive ? chartSlot(b.id) : png ? `<img class="chart-img" src="${png}" alt="${esc(title)}">` : exprChartSvg(b.spec, b.data, { other: t('notes.chart.other'), empty: t('notes.chart.empty') })}<details><summary>${esc(t('notes.chart.table'))}</summary>${markdownToHtml(exprChartTable(b.data, t('notes.chart.other')))}</details><div class="dim">${esc(t('notes.chart.counted', { rows: int(b.data.rows), dataset: b.data.dataset || '–', when: new Date(b.data.at).toLocaleString() }))}</div>`
         : `<div class="dim">${esc(t('notes.chart.notCounted'))}</div>`;
       return `<figure class="block chart"><figcaption><b>${esc(title)}</b> <code>${esc(b.spec.measure.expr)}</code>${button(ctx, 'chart-refresh', b.id, t('notes.chart.refresh'))}${button(ctx, 'chart-edit', b.id, t('notes.chart.edit'))}</figcaption>${body}</figure>`;
     }
@@ -93,7 +126,9 @@ export function blockHtml(b: DocBlock | undefined, ctx: RenderContext): string {
       const data = sharedChartData(b.block);
       const src = b.block.source;
       const from = [src?.volumeName, src?.dataset, src?.scope].filter(Boolean).join(' · ');
-      return `<figure class="block chart"><figcaption><b>${esc(b.block.title || t('notes.untitled'))}</b>${from ? ` <span class="dim">${esc(from)}</span>` : ''}</figcaption>${exprChartSvg({ kind: sharedChartKind(b.block), title: b.block.title }, data, { other: t('notes.chart.other'), empty: t('notes.chart.empty') })}<details><summary>${esc(t('notes.chart.table'))}</summary>${markdownToHtml(exprChartTable(data, t('notes.chart.other')))}</details></figure>`;
+      const png = ctx.interactive ? null : chartPicture(blockChartData(b));
+      const pic = ctx.interactive ? chartSlot(b.id) : png ? `<img class="chart-img" src="${png}" alt="${esc(b.block.title)}">` : exprChartSvg({ kind: sharedChartKind(b.block), title: b.block.title }, data, { other: t('notes.chart.other'), empty: t('notes.chart.empty') });
+      return `<figure class="block chart"><figcaption><b>${esc(b.block.title || t('notes.untitled'))}</b>${from ? ` <span class="dim">${esc(from)}</span>` : ''}${button(ctx, 'chart-refresh', b.id, t('notes.chart.refresh'))}${button(ctx, 'chart-edit', b.id, t('notes.chart.edit'))}</figcaption>${pic}<details><summary>${esc(t('notes.chart.table'))}</summary>${markdownToHtml(exprChartTable(data, t('notes.chart.other')))}</details></figure>`;
     }
     case 'image':
       return `<figure class="block image"><img src="${b.src}" alt="${esc(b.caption)}">${b.caption ? `<figcaption>${inline(b.caption)}</figcaption>` : ''}</figure>`;
@@ -140,7 +175,9 @@ export const DOC_CSS = `
 .doc-render .note-card-head{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
 .doc-render .note-card .shot{max-width:100%;border-radius:6px;margin-top:6px}
 .doc-render .tag{display:inline-block;font-size:.82em;padding:0 6px;border-radius:999px;background:var(--doc-code,#eef1f5)}
-.doc-render .chart-svg{max-width:100%;height:auto;display:block}
+.doc-render .chart-svg,.doc-render .chart-img{max-width:100%;height:auto;display:block}
+.doc-render .chart-img{width:560px}
+.doc-render .chart-slot{position:relative;max-width:100%;min-height:260px}
 .doc-render li.task{list-style:none;margin-left:-1.2em}
 .doc-render .block-btn{margin-left:auto;font-size:12px}
 .doc-render .block-btn+.block-btn{margin-left:0}
@@ -206,8 +243,9 @@ function blockMarkdown(b: DocBlock | undefined, book: NotesBook, picture: (src: 
     case 'chart': {
       const title = b.spec.title || b.spec.measure.name || b.spec.measure.expr;
       if (!b.data) return `**${title}** (\`${b.spec.measure.expr}\`): *${t('notes.chart.notCounted')}*`;
-      const svg = exprChartSvg(b.spec, b.data, { other: t('notes.chart.other'), empty: t('notes.chart.empty') });
-      const src = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
+      const png = chartPicture(blockChartData(b));
+      const svg = png ? '' : exprChartSvg(b.spec, b.data, { other: t('notes.chart.other'), empty: t('notes.chart.empty') });
+      const src = png ?? `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
       return `${picture(src, b.id)}\n\n**${title}** (\`${b.spec.measure.expr}\`)\n\n${exprChartTable(b.data, t('notes.chart.other'))}`;
     }
     case 'note': {
@@ -222,8 +260,9 @@ function blockMarkdown(b: DocBlock | undefined, book: NotesBook, picture: (src: 
     }
     case 'chartBlock': {
       const data = sharedChartData(b.block);
-      const svg = exprChartSvg({ kind: sharedChartKind(b.block), title: b.block.title }, data, { other: t('notes.chart.other'), empty: t('notes.chart.empty') });
-      const src = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
+      const png = chartPicture(blockChartData(b));
+      const svg = png ? '' : exprChartSvg({ kind: sharedChartKind(b.block), title: b.block.title }, data, { other: t('notes.chart.other'), empty: t('notes.chart.empty') });
+      const src = png ?? `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
       return `${picture(src, b.id)}
 
 **${b.block.title || t('notes.untitled')}**

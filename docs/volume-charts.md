@@ -131,5 +131,9 @@ The charts are the shared module `src/charts/` (see `src/charts/index.ts`), used
 - `palette.ts` - the categorical slots for each theme, validated with the dataviz method against the panel surfaces (dark `#0e1218`: every check passes; light `#fbfcfd`: aqua, yellow and magenta under 3:1, so charts carry a legend and a table view), team colours from the team palette, `readTheme` from the design tokens.
 - `draw.ts` / `ChartView.tsx` - drawing onto a canvas with hit regions, tooltips and the table view.
 - `block.ts` - a chart as a document block (`heat3d.chartBlock/1`); documents register where blocks go with `registerChartBlockSink`.
+- `run.ts` / `runWorker.ts` - one chart counted over all the data, the view's rows or one volume's, in a worker: the analysis documents' charts.
+- `convert.ts` - the documents' expression charts (`exprSpec.ts`, counted by the Compare engine in `exprRun.ts`) as `ChartData`, so they are drawn the same way.
+
+The analysis documents ([Notes and analyses](notes-and-analyses.md)) draw every chart block with this module - in the preview with `ChartView`, in an export as a PNG (`chartPng`) - and their chart editor offers every kind with the same settings form as a sign (`src/ui/charts/ChartSpecFields.tsx`).
 
 The signs are `src/volumes/signs/` (the sign, its op-log store registered as the shared document `signs` in `src/state/sharedDocs.ts`, the worker and its client) and `src/ui/signs/` (the overlay, the panel). `tools/smoke-signs.mjs` drives them in a browser; with `ANALYSIS_GPU=1` it measures frame times with 20 signs live during playback of 50 million rows.

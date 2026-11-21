@@ -98,20 +98,25 @@ The analysis window opens over the view. On the left the session's documents and
 
 ### Charts
 
-A chart block is a spec - kind, measure, grouping, filter, sides, scope - counted by the [Compare panel's](compare-groups.md) expressions in its worker, a slice at a time from idle moments, so counting never holds a frame. Its numbers are kept in the document, so it shows them without the data and in an export; **Count again** counts them on the loaded data.
+A chart block offers every kind of the shared chart module, the same as the [charts on volumes](volume-charts.md): Bars, Stacked, Line, Area, Histogram, Donut, Tiles, Matrix, Scatter. Every chart in a document is drawn by that module - in the preview with hover, a click on a mark filtering the view, and the theme; in an export as a picture - so a document's chart and a sign's look the same. Its numbers are kept in the document, so it shows them without the data and in an export; **Count again** counts them on the loaded data.
 
-| Field | Meaning |
+Bars, Line and Tiles may be counted two ways (**Count with**):
+
+- **Expression**: a statistic of the [Compare panel's](compare-groups.md) expressions, counted in its worker a slice at a time from idle moments, so counting never holds a frame. The fields below.
+- **Chart settings**: the settings a volume's sign uses (measure, group by, split, compare, rounds, only rows with, sort - see [Charts on volumes](volume-charts.md#what-a-chart-shows)), over **All the data** or **The rows the view shows**, **Anywhere** or **Inside volume** (which also offers inside vs outside). Every other kind is counted this way, in a worker a chunk at a time.
+
+| Field (Expression) | Meaning |
 |---|---|
-| Chart | Bars, Line over time, or Numbers (tiles). |
+| Chart | Bars, Line over time, or Tiles. |
 | Statistic | A Compare statistic: `count()`, `kills() / deaths()`, `countIf(event == "kill")`, `avg(speed)`... |
 | Per | One number, a column's values (the top 8), time (20 steps of match time), the match, the round. |
 | Rows | A Compare filter on the rows counted (`team == "Allies"`); empty for all. |
 | Two sides | Two filters drawn side by side, as A and B. |
 | Over | All the data, or the rows the view shows (time window, filters, groups). |
 
-The spec is plain JSON (`src/charts/exprSpec.ts`: `{ v, kind, title, measure: { expr, name, unit }, groupBy, filter, diff: { a, b }, scope, anchor }`), counted by `src/charts/exprRun.ts` and drawn by `src/charts/exprSvg.ts`.
+An expression chart's spec is plain JSON (`src/charts/exprSpec.ts`: `{ v, kind, title, measure: { expr, name, unit }, groupBy, filter, diff: { a, b }, scope, anchor }`), counted by `src/charts/exprRun.ts`, its numbers turned into the module's chart data (`src/charts/convert.ts`) and drawn by `src/charts/draw.ts`; `src/charts/exprSvg.ts` draws it only where there is no canvas.
 
-A chart made elsewhere in the viewer - a volume's sign sending its chart to the document - comes in as the shared chart module's block (`heat3d.chartBlock/1`: title, spec, source, data as groups x series), kept as it came and drawn the same way. The documents take it through `takeChartBlock` (`src/ui/notes/actions.ts`), the sink a sender registers; such a block pasted as JSON into an analysis's text goes in as a block too.
+A chart with the chart settings, and a chart made elsewhere in the viewer - a volume's sign sending its chart to the document - is the shared chart module's block (`heat3d.chartBlock/1`: title, spec, source, data as groups x series), counted by `src/charts/run.ts` over the rows it names; **Count again** on a sign's block counts the rows inside its volume while the volume is there. The documents take it through `takeChartBlock` (`src/ui/notes/actions.ts`), the sink a sender registers; such a block pasted as JSON into an analysis's text goes in as a block too.
 
 ### Export
 
@@ -119,8 +124,8 @@ A chart made elsewhere in the viewer - a volume's sign sending its chart to the 
 
 | Format | What it is |
 |---|---|
-| HTML | One self-contained file: the styles inside, the pictures inline, the charts as SVG; no link to anything outside. Opens and prints anywhere. |
-| Markdown with pictures (.zip) | `<title>.md` and its pictures under `images/` (thumbnails and screenshots as JPEG or PNG, charts as SVG), a chart's numbers also as a table. |
+| HTML | One self-contained file: the styles inside, the pictures inline, the charts as pictures (PNG) drawn by the chart module; no link to anything outside. Opens and prints anywhere. |
+| Markdown with pictures (.zip) | `<title>.md` and its pictures under `images/` (thumbnails and screenshots as JPEG or PNG, charts as PNG), a chart's numbers also as a table. |
 | Markdown (one file) | The same text with the pictures inline as data URLs. |
 | Print or save as PDF | The HTML in a new tab, and the browser's print dialog: choose *Save as PDF*. |
 

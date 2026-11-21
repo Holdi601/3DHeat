@@ -274,6 +274,21 @@ function axisTicks(ctx: CanvasRenderingContext2D, th: ChartTheme, lo: number, hi
   }
 }
 
+/** Along x without a continuous axis (a chart whose groups are labels): as many of the labels as fit, evenly. */
+function labelTicks(ctx: CanvasRenderingContext2D, th: ChartTheme, d: ChartData, x0: number, x1: number, y: number): void {
+  const G = d.groups.length;
+  if (!G) return;
+  ctx.font = font(th);
+  ctx.fillStyle = th.faint;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  let wmax = 0;
+  for (const g of d.groups) wmax = Math.max(wmax, ctx.measureText(g.label).width);
+  const room = (x1 - x0) / G;
+  const step = Math.max(1, Math.ceil((Math.min(wmax, 90) + 8) / Math.max(1, room)));
+  for (let g = 0; g < G; g += step) ctx.fillText(ellipsize(ctx, d.groups[g].label, room * step - 4), x0 + room * (g + 0.5), y);
+}
+
 function valueAxis(ctx: CanvasRenderingContext2D, th: ChartTheme, max: number, x0: number, x1: number, y0: number, y1: number, f: ValueFormat): (v: number) => number {
   const ticks = niceTicks(0, max, Math.max(2, Math.floor((y1 - y0) / 34)));
   const hi = Math.max(max, ticks[ticks.length - 1] ?? max) || 1;
@@ -320,7 +335,8 @@ function drawLines(ctx: CanvasRenderingContext2D, d: ChartData, th: ChartTheme, 
   const sy = valueAxis(ctx, th, max, x0, x1, y0, y1, d.format);
   const ax = d.axis ?? { lo: 0, hi: G, label: '' };
   const bx = (g: number) => x0 + ((g + 0.5) / G) * (x1 - x0);
-  axisTicks(ctx, th, ax.lo, ax.hi, x0, x1, y1 + 3, !!ax.time, d.format);
+  if (d.axis) axisTicks(ctx, th, ax.lo, ax.hi, x0, x1, y1 + 3, !!ax.time, d.format);
+  else labelTicks(ctx, th, d, x0, x1, y1 + 3);
   if (o.now !== null && o.now !== undefined && o.now >= ax.lo && o.now <= ax.hi) {
     const x = Math.round(x0 + ((o.now - ax.lo) / (ax.hi - ax.lo)) * (x1 - x0)) + 0.5;
     ctx.strokeStyle = th.faint;
@@ -415,7 +431,8 @@ function drawColumns(ctx: CanvasRenderingContext2D, d: ChartData, th: ChartTheme
   const y1 = h - 15;
   const sy = valueAxis(ctx, th, max, x0, x1, y0, y1, d.format);
   const ax = d.axis ?? { lo: 0, hi: G, label: '' };
-  axisTicks(ctx, th, ax.lo, ax.hi, x0, x1, y1 + 3, !!ax.time, 'dec');
+  if (d.axis) axisTicks(ctx, th, ax.lo, ax.hi, x0, x1, y1 + 3, !!ax.time, 'dec');
+  else labelTicks(ctx, th, d, x0, x1, y1 + 3);
   const band = (x1 - x0) / G;
   const cw = Math.max(1, Math.min(BAR_MAX, (band - GAP * S) / S));
   for (let g = 0; g < G; g++) {

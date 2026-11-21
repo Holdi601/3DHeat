@@ -25,6 +25,27 @@ export function paintChart(canvas: HTMLCanvasElement, data: ChartData, theme: Ch
   return drawChart(ctx, data, theme, w, h, { hover, now });
 }
 
+/**
+ * A chart as a PNG data URL (for an exported document: no script, the same
+ * look), drawn in the given theme at twice the size for print; null where
+ * there is no canvas (tests, workers).
+ */
+export function chartPng(data: ChartData, theme: ChartTheme, w = 560, h = 260): string | null {
+  if (typeof document === 'undefined') return null;
+  const c = document.createElement('canvas');
+  const ctx = c.getContext('2d');
+  if (!ctx) return null;
+  c.width = w * 2;
+  c.height = h * 2;
+  ctx.setTransform(2, 0, 0, 2, 0, 0);
+  drawChart(ctx, data, theme, w, h);
+  try {
+    return c.toDataURL('image/png');
+  } catch {
+    return null;
+  }
+}
+
 /** The entity a click on a hit means: the group, or for a series-only mark the series. */
 export function entityOf(d: ChartData, hit: Hit): ChartEntity | null {
   if (d.kind === 'tiles') return null;

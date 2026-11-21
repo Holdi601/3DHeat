@@ -152,5 +152,16 @@
   "charts.vol.none": "No charts on this volume yet. Add one: it stands beside the volume in the world.",
   "charts.vol.add": "Add chart",
   "charts.vol.addTitle": "Add a chart of the rows inside the selected volume",
-  "charts.vol.show": "Show the charts in the world"
+  "charts.vol.show": "Show the charts in the world",
+  "charts.doc.countWith": "Count with",
+  "charts.doc.expr": "Expression",
+  "charts.doc.exprTitle": "Count with a Compare expression: a statistic such as count() or avg(speed), grouped and filtered by expressions",
+  "charts.doc.module": "Chart settings",
+  "charts.doc.moduleTitle": "Count with the chart settings a volume's sign uses: measure, group, compare, filters",
+  "charts.doc.rows": "Rows",
+  "charts.doc.rowsAll": "All the data",
+  "charts.doc.rowsView": "The rows the view shows",
+  "charts.doc.volume": "Inside volume",
+  "charts.doc.volumeNone": "Anywhere",
+  "charts.doc.volumeGone": "Its volume is gone: counted over the data instead."
 }

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { applyCollectionOps, diffCollection, isDocBatch, sharedDoc } from '../../state/sharedDocs';
 import { makeSign, parseSign, type Sign } from './sign';
 import { onLocalSignBatch, SIGNS_DOC, useSignStore } from './store';
-import { aggScopes, specColumns, windowMinutes } from './client';
+import { aggScopes, specColumns, windowMinutes } from '../../charts/data';
 import { FULL_SCOPE } from '../stats';
 import type { Dataset } from '../../state/types';
 

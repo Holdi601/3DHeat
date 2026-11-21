@@ -306,6 +306,40 @@ await step('every chart kind draws', async () => {
   }, ids);
 });
 
+await step('a sign sent to an analysis document, and a histogram made in it, are drawn by the chart module', async () => {
+  await page.evaluate(async () => {
+    const a = await globalThis.__3dheat.modules['ui/notes/actions']();
+    a.newAnalysis();
+  });
+  await page.waitForSelector('.analysis-preview', { timeout: 10_000 });
+  // The bar sign's send button: into the open document.
+  // The window lies over the sign: the button is pressed without pointing at it.
+  await page.locator(`.vsign[data-sign="${barId}"] .vsign-head button[title^="Send this chart"]`).dispatchEvent('click');
+  await page.waitForFunction(() => document.querySelectorAll('.analysis-preview .chart-slot canvas').length >= 1, null, { timeout: 10_000 });
+  // A chart of another kind from the document's own editor.
+  await page.locator('select[aria-label="Insert..."]').selectOption('chart');
+  await page.waitForSelector('.chart-editor', { timeout: 5000 });
+  await page.locator('.chart-editor .vsign-kinds button', { hasText: 'Histogram' }).click();
+  await page.locator('.chart-editor button.primary').click();
+  await page.waitForFunction(() => document.querySelectorAll('.analysis-preview .chart-slot canvas').length >= 2, null, { timeout: 60_000 });
+  const kinds = await page.evaluate(async () => {
+    const s = (await globalThis.__3dheat.modules['notes/store']()).useNotes.getState();
+    const doc = s.book.docs.find((d) => d.id === s.docOpen);
+    return Object.values(doc.blocks).map((b) => (b.type === 'chartBlock' ? b.block.data.kind : b.type));
+  });
+  expect(kinds.includes('bar') && kinds.includes('histogram'), `blocks ${kinds}`);
+  const html = await page.evaluate(async () => {
+    const s = (await globalThis.__3dheat.modules['notes/store']()).useNotes.getState();
+    const doc = s.book.docs.find((d) => d.id === s.docOpen);
+    return (await globalThis.__3dheat.modules['notes/export']()).docToHtml(doc, s.book);
+  });
+  expect((html.match(/class="chart-img" src="data:image\/png/g) ?? []).length === 2, 'the export draws both charts as the module does');
+  await wait(500);
+  await page.screenshot({ path: `${OUT}/signs-document.png` });
+  await page.evaluate(async () => (await globalThis.__3dheat.modules['notes/store']()).useNotes.getState().set({ docOpen: null }));
+  return kinds.join(', ');
+});
+
 await step('signs sync as operations: a peer batch applies, a repeat is ignored', async () => {
   const r = await page.evaluate(async () => {
     const st = globalThis.__ss;

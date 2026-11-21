@@ -15,9 +15,14 @@
  * changes of the document only.
  */
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { createRoot, type Root } from 'react-dom/client';
+import { ChartView } from '../../charts/ChartView';
+import { colorChart, readTheme } from '../../charts/palette';
+import { applyMarkFilter } from '../signs/markFilter';
+import { EngineContext } from '../EngineContext';
 import { t, useLang } from '../../i18n';
-import { docBodyHtml, docToHtml, docToMarkdown, docToZip, download, fileName, printDoc } from '../../notes/export';
+import { blockChartData, docBodyHtml, docToHtml, docToMarkdown, docToZip, download, fileName, printDoc } from '../../notes/export';
 import { jumpTo } from '../../notes/jump';
 import { outline, type AnalysisDoc } from '../../notes/model';
 import { slug } from '../../notes/markdown';
@@ -98,6 +103,41 @@ function Window({ doc }: { doc: AnalysisDoc }) {
 
   const html = useMemo(() => docBodyHtml({ ...doc, body }, { book, interactive: true }), [doc, body, book]);
   const heads = useMemo(() => outline(body), [body]);
+
+  // The charts in the preview: each slot the HTML leaves gets the chart module's
+  // own drawing (`ChartView`, as on the signs), with hover, a click that filters
+  // the view, and the theme of the panel it is in.
+  const chartRoots = useRef<Root[]>([]);
+  const chartMemory = useRef(new Map<string, Map<string, number>>());
+  useLayoutEffect(() => {
+    const host = preview.current;
+    // The old roots' slots went with the old HTML: let them go after this commit.
+    const old = chartRoots.current;
+    queueMicrotask(() => old.forEach((r) => r.unmount()));
+    chartRoots.current = [];
+    if (!host) return;
+    for (const slot of host.querySelectorAll<HTMLElement>('.chart-slot[data-chart-block]')) {
+      const id = slot.dataset.chartBlock ?? '';
+      const d = blockChartData(doc.blocks[id]);
+      if (!d) continue;
+      let mem = chartMemory.current.get(id);
+      if (!mem) chartMemory.current.set(id, (mem = new Map()));
+      colorChart(d, readTheme(slot), mem);
+      const root = createRoot(slot);
+      root.render(
+        <EngineContext.Provider value={engine}>
+          <ChartView data={d} width={Math.max(240, Math.min(640, slot.clientWidth || 560))} height={260} onPick={(e) => e.filter && applyMarkFilter(e.filter, e.label)} />
+        </EngineContext.Provider>,
+      );
+      chartRoots.current.push(root);
+    }
+  }, [html, doc.blocks, mode, engine]);
+  useEffect(() => () => {
+    const roots = chartRoots.current;
+    chartRoots.current = [];
+    // After this render: unmounting a root inside a render is not allowed.
+    queueMicrotask(() => roots.forEach((r) => r.unmount()));
+  }, []);
 
   /** A block in at the cursor. */
   const put = (block: Parameters<typeof insertBlock>[0]) => {
