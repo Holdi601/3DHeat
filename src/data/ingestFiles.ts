@@ -119,6 +119,9 @@ export interface IngestFilesResult {
  */
 const SHORTFALL_TOLERANCE = 0.95;
 
+/** The builder's word for a kept column too many-valued to filter by (`DatasetBuilder.finish`). */
+const COLUMN_DROPPED = 'data.builder.columnDropped';
+
 export async function ingestFiles(opts: IngestFilesOptions): Promise<IngestFilesResult> {
   const { files, columns, name, onProgress } = opts;
   // Columns left to be read later need files they can be read from alone
@@ -286,6 +289,11 @@ export async function ingestFiles(opts: IngestFilesOptions): Promise<IngestFiles
    * has to survive into the loaded dataset, where the panel shows it.
    */
   const said = dataset.said!;
+  // A column kept by the files' own instructions or by the guess that holds too
+  // many values to filter by (a War Thunder table's per-row turret states) is
+  // simply not offered as a filter: said only of a column the person ticked.
+  const byHand = new Set(mapping.byHand ?? []);
+  said.warnings = said.warnings.filter((w) => w.key !== COLUMN_DROPPED || byHand.has(String(w.values?.column)));
   if (expected > 0 && loaded < expected * SHORTFALL_TOLERANCE) {
     const missing = expected - loaded;
     const values = {

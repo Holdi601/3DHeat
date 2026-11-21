@@ -147,6 +147,22 @@ export const GAMES: GamePreset[] = [
   },
 ];
 
+/**
+ * The board's game for data of a game, by the id its files give it
+ * (`data/pickIdentity.ts`); null for a game the board has no preset of.
+ */
+export function tacticsGameFor(gameId: string | null): string | null {
+  if (!gameId) return null;
+  const g = gameId.toLowerCase();
+  if (g === 'cs2' || g === 'csgo') return 'cs2';
+  if (g === 'valorant') return 'valorant';
+  if (g.startsWith('battlefield')) return 'battlefield';
+  if (g === 'squad') return 'squad';
+  if (g.startsWith('arma')) return 'arma';
+  if (/^(warthunder|war-thunder|dcs|il2|tacview)$/.test(g)) return 'air';
+  return null;
+}
+
 export function gamePreset(id: string): GamePreset {
   return GAMES.find((g) => g.id === id) ?? GAMES[GAMES.length - 1];
 }

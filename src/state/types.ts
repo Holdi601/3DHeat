@@ -82,6 +82,13 @@ export interface ColumnMapping {
   /** Extra columns retained in memory so they can be filtered on later. */
   extra: string[];
   /**
+   * The extra columns the person ticked to keep, as opposed to those the files'
+   * own instructions or the guess kept. Only of those is it worth saying when
+   * one turns out to hold too many values to filter by: nobody asked for the
+   * others as filters, and saying so on every load reads as an error.
+   */
+  byHand?: string[];
+  /**
    * Columns left in the files at load and read when a filter or panel first
    * needs them (`data/columnSource.ts`). Parquet only; a load with a text file
    * in it loads them at once. Absent: not decided yet, so the load plan

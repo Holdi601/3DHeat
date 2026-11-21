@@ -44,6 +44,9 @@ import { DATA_EXTENSIONS, openSessionFile, RecentSession } from './OpenData';
 import { downloadSession } from '../../session/sessionFile';
 import { SessionOpenReport } from '../session/SessionPanel';
 import { useEngine } from '../EngineContext';
+import { setPendingLoad } from '../../state/pendingLoad';
+import { pickIdentity, type PickIdentity } from '../../data/pickIdentity';
+import { noteWantedLevel } from './autoLevel';
 
 const NO_COLUMNS: string[] = [];
 
@@ -88,10 +91,17 @@ function timeUnitLabel(u: TimeUnit): string {
 export function SourcePanel() {
   const engine = useEngine();
   const setDataset = useStore((s) => s.setDataset);
-  const load = useStore((s) => s.load);
+  // Not the whole load state: its progress changes ten times a second while a
+  // load runs, and the panel below it is hundreds of controls (`LoadProgress`).
+  const loadActive = useStore((s) => s.load.active);
+  const loadError = useStore((s) => s.load.error);
   const setLoad = useStore((s) => s.setLoad);
 
   const [picked, setPicked] = useState<PickedFile[]>([]);
+  /** What the pick is, as its containers say: game, map, how many matches. */
+  const [identity, setIdentity] = useState<PickIdentity | null>(null);
+  /** The pick has been loaded: the load card stands down until the next one. */
+  const [loadedPick, setLoadedPick] = useState(false);
   const [skipped, setSkipped] = useState<Array<{ name: string; reason: string }>>([]);
   const [preview, setPreview] = useState<SourcePreview | null>(null);
   const [mapping, setMapping] = useState<ColumnMapping | null>(null);
@@ -127,6 +137,11 @@ export function SourcePanel() {
       for (const name of failed) bad.push({ name, reason: t('data.filePick.notData') });
       setSkipped(bad);
       setPicked(accepted);
+      setLoadedPick(false);
+      const who = pickIdentity(chosen, accepted);
+      setIdentity(who);
+      // The level the files are on, to load by itself once they are (`autoLevel.ts`).
+      noteWantedLevel(who.gameId, who.map);
       setPreview(null);
       setMapping(null);
       setSize(null);
@@ -253,6 +268,7 @@ export function SourcePanel() {
       // Recordings the load started together (`recordingsAligned`) are watched together, not the busiest alone.
       if (ds.recordingsAligned) useStore.getState().patchTeam({ session: -1 });
       setLoad({ active: false, label: '', fraction: null, rowsSoFar: ds.count, error: null });
+      setLoadedPick(true);
     } catch (err) {
       setLoad({
         active: false,
@@ -290,8 +306,63 @@ export function SourcePanel() {
   const fullFootprint = mapping && keptRows > 0 ? estimateFootprint(mapping, keptRows, picked.length, plan?.labels ?? 0) : null;
   const fullFit = fullFootprint ? checkFit(fullFootprint, budgets) : null;
   const excessBytes = fullFootprint ? Math.max(0, fullFootprint.peakBytes - budgets.ram) : 0;
-  const loadSeconds = estimateLoadSeconds(loadRows);
-  const canLoad = !!validation?.ok && !load.active && fit?.verdict !== 'too-big';
+  // The rows a parse reads are every row, a stride thins them only afterwards; the kept columns are what each costs.
+  const loadSeconds = mapping ? estimateLoadSeconds(keptRows, 6 + mapping.extra.length, Math.min(budgets.cpu, picked.length)) : 0;
+  const canLoad = !!validation?.ok && !loadActive && fit?.verdict !== 'too-big';
+  /**
+   * Whether the columns want a look before loading: no reading instructions came
+   * with the files, or the guess left something to check. Only then is the
+   * mapping open; a file that says what its columns are loads with one click.
+   */
+  const columnsState: 'ok' | 'unsure' | 'bad' | null = !validation
+    ? null
+    : validation.errors.length > 0
+      ? 'bad'
+      : validation.warnings.length > 0 || !preview?.hints
+        ? 'unsure'
+        : 'ok';
+
+  // The pick, summed up for the load card in the middle of the view (`LoadCard.tsx`).
+  const goRef = useRef<() => void>(() => undefined);
+  goRef.current = () => void doLoad();
+  const dismissRef = useRef<() => void>(() => undefined);
+  dismissRef.current = () => {
+    setPicked([]);
+    setPreview(null);
+    setMapping(null);
+    setSize(null);
+    setPlan(null);
+    setIdentity(null);
+  };
+  const pickName = picked.length ? describeSelection(picked) : '';
+  const pickBytes = picked.length ? totalBytes(picked) : 0;
+  useEffect(() => {
+    if (!picked.length || loadedPick) {
+      setPendingLoad(null);
+      return;
+    }
+    setPendingLoad(
+      {
+        name: pickName,
+        files: picked.length,
+        matches: identity?.matches ?? picked.length,
+        bytes: pickBytes,
+        rows: size ? loadRows : null,
+        // The converter's own name for its game where its hints give one (`"game": "War Thunder"`).
+        game: hintedGame(preview?.hints) ?? identity?.game ?? null,
+        map: identity?.map ?? null,
+        columns: columnsState,
+        verdict: fit?.verdict ?? null,
+        stride,
+        seconds: size ? loadSeconds : null,
+        canLoad,
+      },
+      () => goRef.current(),
+      () => dismissRef.current(),
+    );
+  }, [picked.length, loadedPick, pickName, pickBytes, identity, size, loadRows, loadSeconds, preview, columnsState, fit?.verdict, stride, canLoad]);
+  // The card goes with the panel's pick.
+  useEffect(() => () => setPendingLoad(null), []);
   useEffect(() => {
     if (!autoLoad.current || !canLoad || !size) return;
     autoLoad.current = false;
@@ -375,20 +446,8 @@ export function SourcePanel() {
           </div>
         )}
 
-        {load.active && (
-          <>
-            <div className="hint">
-              {load.rowsSoFar > 0
-                ? t('heat.sourcePanel.progressRows', { label: load.label, rows: formatCount(load.rowsSoFar) })
-                : load.label}
-            </div>
-            <div className="bar">
-              <div style={{ width: `${((load.fraction ?? 0) * 100).toFixed(1)}%` }} />
-            </div>
-            <button onClick={() => loader.dispose()}>{t('heat.sourcePanel.cancel')}</button>
-          </>
-        )}
-        {load.error && <div className="err">{load.error}</div>}
+        <LoadProgress />
+        {loadError && <div className="err">{loadError}</div>}
 
         {validation && validation.errors.length > 0 && (
           <div className="err">
@@ -520,7 +579,12 @@ export function SourcePanel() {
       )}
 
       {mapping && preview && (
-        <Section title={t('heat.sourcePanel.mapping')} defaultOpen>
+        // Under Advanced while the files say what their columns are: opened by itself only when the guess wants a look.
+        <Section
+          key={columnsState === 'ok' ? 'advanced' : 'mapping'}
+          title={columnsState === 'ok' ? t('heat.sourcePanel.mappingAdvanced') : t('heat.sourcePanel.mapping')}
+          defaultOpen={columnsState !== 'ok'}
+        >
           {preview.format === 'csv' && (
             <div className="field">
               <div className="label">
@@ -786,6 +850,9 @@ export function SourcePanel() {
                           extra: e.target.checked
                             ? [...mapping.extra, c]
                             : mapping.extra.filter((n) => n !== c),
+                          byHand: e.target.checked
+                            ? [...(mapping.byHand ?? []), c]
+                            : (mapping.byHand ?? []).filter((n) => n !== c),
                         })
                       }
                     />
@@ -875,6 +942,34 @@ export function SourcePanel() {
       )}
     </>
   );
+}
+
+/**
+ * A running load: what it is doing, how far, and Cancel. Its own component so
+ * the progress, which changes ten times a second, redraws this and not the
+ * panel round it (a mapping of a hundred columns took over a second of the
+ * main thread across a load when it redrew with every report).
+ */
+export function LoadProgress() {
+  const load = useStore((s) => s.load);
+  if (!load.active) return null;
+  return (
+    <>
+      <div className="hint">
+        {load.rowsSoFar > 0 ? t('heat.sourcePanel.progressRows', { label: load.label, rows: formatCount(load.rowsSoFar) }) : load.label}
+      </div>
+      <div className="bar">
+        <div style={{ width: `${((load.fraction ?? 0) * 100).toFixed(1)}%` }} />
+      </div>
+      <button onClick={() => loader.dispose()}>{t('heat.sourcePanel.cancel')}</button>
+    </>
+  );
+}
+
+/** The game a file's hints name, when they name one as text. */
+function hintedGame(hints: unknown): string | null {
+  const g = hints && typeof hints === 'object' ? (hints as { game?: unknown }).game : null;
+  return typeof g === 'string' && g.trim() ? g.trim() : null;
 }
 
 function describeDelimiter(d: string): string {

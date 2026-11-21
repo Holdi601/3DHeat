@@ -181,6 +181,7 @@ export const LoadPlan = memo(function LoadPlan({
     setMapping({
       ...mapping,
       extra: keep ? [...mapping.extra, name] : mapping.extra.filter((n) => n !== name),
+      byHand: keep ? [...(mapping.byHand ?? []), name] : (mapping.byHand ?? []).filter((n) => n !== name),
       onDemand: (mapping.onDemand ?? []).filter((n) => n !== name),
       extraNumeric: keep && p ? { ...mapping.extraNumeric, [name]: mapping.extraNumeric[name] ?? !p.text } : mapping.extraNumeric,
     });

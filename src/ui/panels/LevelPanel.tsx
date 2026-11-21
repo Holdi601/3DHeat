@@ -138,7 +138,7 @@ function modelPayload(level: ModelLevel) {
 }
 
 /** Assemble a ModelLevel from what the worker produced. */
-function modelLevelFrom(name: string, m: LoadedModel): ModelLevel {
+export function modelLevelFrom(name: string, m: LoadedModel): ModelLevel {
   const dense = (m.structureTriangles ?? 0) > WIRE_OFF_ABOVE_TRIANGLES;
   const textured = !!m.atlas && structuresTextured(m.structureIndices, m.uvs, m.uvTiles);
   // Structures painted per object (an extracted level's own colours): solid in the match replay, as buildings.
@@ -219,7 +219,7 @@ function modelLevelFrom(name: string, m: LoadedModel): ModelLevel {
  * edges, since the terrain grid is regular and says nothing; and the credits,
  * which the canvas shows for as long as the level is shown.
  */
-function worldLevelFrom(name: string, r: BackdropResult, placement: GeoPlacement): ModelLevel {
+export function worldLevelFrom(name: string, r: BackdropResult, placement: GeoPlacement): ModelLevel {
   const m = r.mesh;
   const tri = (a: Uint32Array) => a.length / 3;
   const level = modelLevelFrom(name, {

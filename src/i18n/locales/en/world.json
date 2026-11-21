@@ -75,5 +75,7 @@
   "heat.world.dcs.otherTheatre": "The level is {level}, but the recording is on {data}.",
   "heat.world.dcs.loaded": "{theatre} from the game: {triangles}, {towns} towns, {airfields} airfields.",
   "heat.world.dcs.status": "On the game's ground: {real} tiles show the real world, {game} the game's own ground; the real world moved up to {shift} m onto the game's runways.",
-  "heat.world.dcs.name": "{theatre} from the game ({level})"
+  "heat.world.dcs.name": "{theatre} from the game ({level})",
+  "heat.world.hintAround": "The recording lies around {lat}°, {lon}° (its file's reference point is {refLat}°, {refLon}°). Tiles are downloaded on demand and kept in this browser, so the same area loads again offline.",
+  "heat.world.hintAroundIn": "The recording lies around {lat}°, {lon}°, in {theatre} (its file's reference point is {refLat}°, {refLon}°). Tiles are downloaded on demand and kept in this browser, so the same area loads again offline."
 }

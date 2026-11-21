@@ -988,13 +988,27 @@ export function formatBytes(n: number): string {
 /**
  * Projected wall-clock load time.
  *
- * Rate measured on real Parquet exports (1.2M rows/s on a desktop CPU, single
- * threaded). Reported so a very large selection can be recognised as a
- * multi-minute job before it is started rather than after.
+ * By cells, not rows: what a parse costs is a column's decode per row, so a
+ * table of a hundred kept columns takes twenty times one of five. Measured on
+ * real Parquet exports at about 7M cells a second a thread (1.2M rows/s of a
+ * six-column export; 66k rows/s of a converted War Thunder match keeping 110).
+ * Counting rows alone promised 11 s for 45 such matches that took well over a
+ * minute. Several files parse at once, but memory, not the thread count, sets
+ * how many (`parseHeadroom`), and a few is what a large load gets.
+ *
+ * Reported so a very large selection can be recognised as a multi-minute job
+ * before it is started rather than after.
  */
-export function estimateLoadSeconds(rows: number, rowsPerSecond = 1_200_000): number {
-  return rows / rowsPerSecond;
+export function estimateLoadSeconds(rows: number, columns = 6, parallel = 1): number {
+  const cells = rows * Math.max(1, columns);
+  return cells / CELLS_PER_SECOND / Math.max(1, Math.min(parallel, PARALLEL_GAIN));
 }
+
+/** Cells a parser thread decodes a second (see `estimateLoadSeconds`). */
+const CELLS_PER_SECOND = 7_200_000;
+
+/** The most several parser threads have been seen to speed a large load up by. */
+const PARALLEL_GAIN = 3;
 
 export function formatDuration(seconds: number): string {
   if (seconds < 1) return t('data.memory.duration.underSecond');

@@ -53,6 +53,10 @@ import { SessionPicker } from './ui/SessionPicker';
 import { SoftwareRenderingWarning } from './ui/SoftwareRenderingWarning';
 import { DevToolsPanel } from './ui/panels/DevToolsPanel';
 import { dropData, StartScreen } from './ui/panels/OpenData';
+import { LoadCard } from './ui/panels/LoadCard';
+import { AutoLevelChip, useAutoLevel } from './ui/panels/autoLevel';
+import { tacticsGameFor } from './tactics/games';
+import { usePendingLoad } from './state/pendingLoad';
 import { EntityPanel } from './ui/panels/EntityPanel';
 import { FilterPanel } from './ui/panels/FilterPanel';
 import { HeatPanel } from './ui/panels/HeatPanel';
@@ -149,12 +153,20 @@ export function App() {
   const mode = useStore((s) => s.mode);
   const setMode = useStore((s) => s.setMode);
   const dataset = useStore((s) => s.dataset);
+  const pendingPick = usePendingLoad((s) => !!s.pending);
   const setPlaying = useStore((s) => s.setPlaying);
   const tab = useRaceStore((s) => s.tab);
   const raceTab = tab === 'race';
   const matchTab = tab === 'match';
   const planTab = tab === 'plan';
   const vehicleTab = tab === 'vehicle';
+  // The tactics board opens on the game of the data loaded, while the board is still empty.
+  useEffect(() => {
+    if (!planTab) return;
+    const preset = tacticsGameFor(useAutoLevel.getState().wanted?.game ?? null);
+    const ps = usePlanStore.getState();
+    if (preset && ps.plan.game !== preset && !ps.plan.figures.length && !ps.plan.arrows.length && useStore.getState().dataset) ps.setGame(preset);
+  }, [planTab]);
   const raceCharts = useRaceStore((s) => s.view.charts);
   const sidebarHidden = useShell((s) => s.sidebarHidden);
   const sidebarTask = useShell((s) => taskOf(s.task, tab));
@@ -696,8 +708,10 @@ export function App() {
               <HeatLegend />
               <InspectHud />
               <NotesLayer />
-              {/* Nothing loaded: open real data (ui/panels/OpenData.tsx). */}
-              {!dataset && <StartScreen />}
+              {/* Nothing loaded: open real data (ui/panels/OpenData.tsx); a pick waiting: load it (LoadCard.tsx). */}
+              {!dataset && !pendingPick && <StartScreen />}
+              <LoadCard />
+              <AutoLevelChip />
                 </>
               )}
               <DashboardWindow />

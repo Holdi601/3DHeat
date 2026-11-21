@@ -54,6 +54,37 @@ export function dcsLabels(meta: DcsLevelMeta): WorldLabel[] {
 
 const gameLabel = (th: Theatre) => (th.game === 'dcs' ? t('heat.world.theatre.groupDcs') : t('heat.world.theatre.groupIl2'));
 
+/** A streamed theatre's name, as the level panel shows it. */
+export function streamName(theatre: Theatre): string {
+  return t('heat.world.stream.name', { game: gameLabel(theatre), theatre: theatre.name });
+}
+
+/**
+ * The level a streamed theatre starts as: no ground of its own (that comes as
+ * tiles round the camera), only the theatre's extent on the data's plane.
+ */
+export function emptyStream(placement: GeoPlacement, theatre: Theatre): BackdropResult {
+  const { bounds, band } = streamBounds(placement, theatre.box);
+  return {
+    mesh: {
+      vertices: new Float32Array(0),
+      colours: new Float32Array(0),
+      indices: new Uint32Array(0),
+      structureIndices: new Uint32Array(0),
+      structureEdges: new Uint32Array(0),
+      waterIndices: new Uint32Array(0),
+      partNames: [],
+      partRuns: { ground: new Uint32Array(0), structure: new Uint32Array(0), water: new Uint32Array(0) },
+      bounds,
+      groundBand: band,
+    },
+    labels: [],
+    credits: [],
+    stats: {} as BackdropResult['stats'],
+    notes: [],
+  };
+}
+
 /**
  * With no data to look at, the camera over a theatre's detailed area: 25 km
  * up and 50 km south of it, looking at it.
@@ -208,26 +239,7 @@ export function WorldBackdrop({
     const theatre = game?.th ?? theatreById(theatreId);
     if (!theatre) return;
     const placement: GeoPlacement = { geo: geo ?? theatreGeo(theatre), axes: geo ? (dataset?.axes ?? null) : THEATRE_AXES };
-    const { bounds, band } = streamBounds(placement, theatre.box);
-    const empty: BackdropResult = {
-      mesh: {
-        vertices: new Float32Array(0),
-        colours: new Float32Array(0),
-        indices: new Uint32Array(0),
-        structureIndices: new Uint32Array(0),
-        structureEdges: new Uint32Array(0),
-        waterIndices: new Uint32Array(0),
-        partNames: [],
-        partRuns: { ground: new Uint32Array(0), structure: new Uint32Array(0), water: new Uint32Array(0) },
-        bounds,
-        groundBand: band,
-      },
-      labels: [],
-      credits: [],
-      stats: {} as BackdropResult['stats'],
-      notes: [],
-    };
-    const lv = toLevel(game?.name ?? t('heat.world.stream.name', { game: gameLabel(theatre), theatre: theatre.name }), empty, placement);
+    const lv = toLevel(game?.name ?? streamName(theatre), emptyStream(placement, theatre), placement);
     if (!game) {
       setError(null);
       setNote(null);
@@ -365,7 +377,14 @@ export function WorldBackdrop({
               {t('heat.world.button')}
             </button>
           </div>
-          <div className="hint">{t('heat.world.hint', { lat: num(geo.lat0, 3), lon: num(geo.lon0, 3) })}</div>
+          {/* Where the data is, not the file's reference point: a DCS Caucasus recording's reference is 38° N 36° E, in Anatolia. */}
+          <div className="hint">
+            {(() => {
+              const where = theatreOfData(geo, dataset?.bounds, dataset?.axes);
+              const values = { lat: num(around.lat, 2), lon: num(around.lon, 2), refLat: num(geo.lat0, 3), refLon: num(geo.lon0, 3) };
+              return where ? t('heat.world.hintAroundIn', { ...values, theatre: where.name }) : t('heat.world.hintAround', values);
+            })()}
+          </div>
         </>
       )}
 

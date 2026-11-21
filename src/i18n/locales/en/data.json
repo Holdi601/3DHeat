@@ -1,6 +1,6 @@
 {
   "data.builder.noRows": "No rows were loaded.",
-  "data.builder.columnDropped": "Column \"{column}\" has {count, plural, one {{shown} distinct value} other {{shown} distinct values}}, more than the {max} that can be picked in a filter or a difference split, so it was not retained. If it identifies an entity, map it as the person column; if it is a per-match key, filter by time range instead.",
+  "data.builder.columnDropped": "Column \"{column}\" holds {count, plural, one {{shown} different value} other {{shown} different values}}, more than the {max} a filter can list, so it is not offered as a filter. The data itself is complete.",
   "data.builder.phase.sort": "Putting rows in time order",
   "data.builder.groupsDropped": "Group column has {count, plural, one {{shown} distinct value} other {{shown} distinct values}}, and at most {max} can be grouped by — every group needs a row in the group list and a texel in the table the shader reads. Loaded without groups. If it identifies an entity, map it as the person column instead; if you want to slice by it, add it as an extra column and filter on it.",
   "data.builder.phase.reorder": "Reordering columns ({done} of {total})",

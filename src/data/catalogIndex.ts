@@ -157,3 +157,12 @@ export function levelFor(items: readonly CatalogItem[], map: string, game?: stri
   const hits = items.filter((it) => it.kind === 'level' && norm(it.name) === want && (!game || it.game === game));
   return hits.length === 1 ? hits[0] : null;
 }
+
+/**
+ * The level for data a file names the map and game of: in the game's folder
+ * when there is one of that name (`warthunder`), else the one level of that
+ * name in any (a container's game id need not be its folder's name).
+ */
+export function levelForMap(items: readonly CatalogItem[], map: string, game: string | null): CatalogItem | null {
+  return (game ? levelFor(items, map, game) : null) ?? levelFor(items, map);
+}

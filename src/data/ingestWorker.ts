@@ -181,7 +181,8 @@ async function ingestAll(
  * The parser threads of one load.
  *
  * Workers are started as the scheduler asks for them, which is never more than
- * the parser-thread budget at once, and reused for the next file. `close`
+ * the parser-thread budget at once, and reused for the next file until they
+ * have read `RECYCLE_ROWS` rows (see there). `close`
  * terminates them all; it runs when the load ends however it ends. A cancel
  * terminates this worker from the page, and dedicated workers end with the
  * worker that owns them, so a cancel stops them too.
@@ -192,11 +193,29 @@ async function ingestAll(
  * there was a pool. A worker that dies after it started work is a crash and ends
  * the load (see `ParserCrash`).
  */
+/**
+ * Rows a parser thread reads before it is ended and a fresh one takes its place.
+ *
+ * A parser's heap keeps what the decoder left behind until its own collector
+ * runs, and nothing tells one thread's collector that the others are filling
+ * the same tab: thirty threads that had each read a 400k-row match with a
+ * hundred columns held their garbage side by side, a few hundred megabytes
+ * each, and took a tab of 45 War Thunder matches past its memory and down at
+ * the fourteenth file. Ending a thread gives its whole heap back at once. A
+ * fresh thread costs tens of milliseconds against the seconds such a file
+ * takes; a folder of small files still reuses its threads.
+ */
+const RECYCLE_ROWS = 200_000;
+
 class ParsePool {
   private readonly idle: Worker[] = [];
   private readonly all = new Set<Worker>();
   /** Workers that have answered at least once, and so are known to run. */
   private readonly spoke = new WeakSet<Worker>();
+  /** Whether any worker has answered: then workers can be started here, and one that dies crashed. */
+  private anySpoke = false;
+  /** Rows each worker has read, for `RECYCLE_ROWS`. */
+  private readonly read = new WeakMap<Worker, number>();
   private nextId = 1;
   private unavailable = false;
   private closed = false;
@@ -222,12 +241,14 @@ class ParsePool {
         const res = ev.data;
         if (res.id !== id) return;
         this.spoke.add(worker);
+        this.anySpoke = true;
         switch (res.kind) {
           case 'progress':
             onProgress(res.progress);
             break;
           case 'block':
             done();
+            this.read.set(worker, (this.read.get(worker) ?? 0) + res.block.px.length);
             this.release(worker);
             resolve(res.block);
             break;
@@ -243,7 +264,7 @@ class ParsePool {
         done();
         this.all.delete(worker);
         worker.terminate();
-        if (!this.spoke.has(worker)) {
+        if (!this.spoke.has(worker) && !this.anySpoke) {
           this.unavailable = true;
           parseHere(file, mapping, columns, stride, onProgress).then(resolve, reject);
         } else {
@@ -264,8 +285,10 @@ class ParsePool {
   }
 
   private release(w: Worker): void {
-    if (this.closed) w.terminate();
-    else this.idle.push(w);
+    if (this.closed || (this.read.get(w) ?? 0) >= RECYCLE_ROWS) {
+      w.terminate();
+      this.all.delete(w);
+    } else this.idle.push(w);
   }
 
   close(): void {
