@@ -447,20 +447,26 @@ await step('volume intersections: a line where the volume cuts the level, both b
   for (const backend of ['webgpu', 'webgl2']) {
     // WebGPU needs the full Chromium channel and its own flags (tools/probe-webgpu.mjs).
     const b = backend === 'webgpu'
-      ? await chromium.launch({ channel: 'chromium', headless: true, args: ['--enable-unsafe-webgpu', '--enable-features=Vulkan', '--disable-vulkan-surface', '--ignore-gpu-blocklist'] }).catch(() => null)
+      ? await chromium.launch({ channel: 'chromium', headless: true, timeout: 60_000, args: ['--enable-unsafe-webgpu', '--enable-features=Vulkan', '--disable-vulkan-surface', '--ignore-gpu-blocklist'] }).catch(() => null)
       : browser;
     if (!b) {
       notes.push('webgpu: no Chromium channel');
       continue;
     }
+    // A second page of the whole app on a dev server already busy with the first: the load event can take well
+    // over the default 30 s when the machine is loaded. Wait for the document, then for the app itself.
+    let r;
     const p = await b.newPage({ viewport: { width: 1400, height: 900 } });
-    p.on('pageerror', (e) => errors.push(String(e)));
-    await p.goto(`${url}${url.includes('?') ? '&' : '?'}backend=${backend}`);
-    await p.waitForFunction(() => !!globalThis.__3dheat_engine && !!globalThis.__3dheat, null, { timeout: 60_000 });
-    await p.waitForTimeout(800);
-    const r = await contourCheck(p);
-    await p.close();
-    if (b !== browser) await b.close();
+    try {
+      p.on('pageerror', (e) => errors.push(String(e)));
+      await p.goto(`${url}${url.includes('?') ? '&' : '?'}backend=${backend}`, { waitUntil: 'domcontentloaded', timeout: 180_000 });
+      await p.waitForFunction(() => !!globalThis.__3dheat_engine && !!globalThis.__3dheat, null, { timeout: 180_000 });
+      await p.waitForTimeout(800);
+      r = await contourCheck(p);
+    } finally {
+      await p.close().catch(() => {});
+      if (b !== browser) await b.close().catch(() => {});
+    }
     if (r.backend !== backend) {
       notes.push(`${backend}: not available here (ran ${r.backend})`);
       continue;

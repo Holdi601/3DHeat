@@ -3642,20 +3642,21 @@ await step('the key sheet opens with ? and lists the shortcuts; Esc closes it', 
 
 await step('F1 toggles help with the focus in a slider; Ctrl+B hides and shows the side panel', async () => {
   await onHeatView();
+  // Each key waits for the state it should make, not for a time: under load a render can take seconds.
+  const helpIs = (on) => page.waitForFunction((v) => !!document.querySelector('.help-panel') === v, on, { timeout: 15_000 }).then(() => true, () => false);
+  const panelIs = (shown) =>
+    page.waitForFunction((v) => (getComputedStyle(document.querySelector('.sidebar')).display !== 'none') === v, shown, { timeout: 15_000 }).then(() => true, () => false);
   const before = await page.evaluate(() => !!document.querySelector('.help-panel'));
   await page.locator('.sidebar input[type="range"]').first().focus();
   await page.keyboard.press('F1');
-  await page.waitForTimeout(200);
-  const after = await page.evaluate(() => !!document.querySelector('.help-panel'));
-  if (after === before) throw new Error('F1 did nothing from a slider');
+  if (!(await helpIs(!before))) throw new Error('F1 did nothing from a slider');
   await page.keyboard.press('F1');
+  if (!(await helpIs(before))) throw new Error('a second F1 did not undo the first');
   await page.locator(VIEWPORT).click({ position: { x: 40, y: 300 } });
   await page.keyboard.press('Control+b');
-  await page.waitForTimeout(300);
-  const hidden = await page.evaluate(() => getComputedStyle(document.querySelector('.sidebar')).display === 'none');
+  const hidden = await panelIs(false);
   await page.keyboard.press('Control+b');
-  await page.waitForTimeout(300);
-  const shown = await page.evaluate(() => getComputedStyle(document.querySelector('.sidebar')).display !== 'none');
+  const shown = await panelIs(true);
   if (!hidden || !shown) throw new Error(`hidden ${hidden}, shown again ${shown}`);
   return 'help from a slider; side panel off and on';
 });

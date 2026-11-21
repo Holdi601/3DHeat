@@ -450,6 +450,11 @@ export class WebgpuRenderer implements Renderer {
     return this.prof?.ms ?? {};
   }
 
+  /** Whole frames' GPU time read so far (first timed pass to last), milliseconds; null where the device cannot time. */
+  get gpuFrames(): { n: number; ms: Float32Array } | null {
+    return this.prof?.frames ?? null;
+  }
+
   private mapTexture: GPUTexture | null = null;
   /** The model level's geometry; null for an image level or none. */
   private levelMesh: GpuMesh | null = null;

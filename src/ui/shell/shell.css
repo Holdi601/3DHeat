@@ -248,17 +248,21 @@ button.icon-btn.on {
   display: none;
 }
 
+/* The level above the sections: a rule across the column, then the group's name in small accent capitals. The
+   sections under it are in sentence case, so the two never read as the same level. */
 .task-head {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 14px 16px 4px;
+  margin-top: 6px;
+  padding: 12px 16px 6px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line-soft);
   color: var(--accent);
-  font-size: 10px;
+  font-size: var(--fs-xs);
   font-weight: var(--fw-bold);
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  opacity: 0.85;
 }
 
 .sidebar:not([data-task='all']) .task-head {
@@ -733,7 +737,7 @@ button.icon-btn.on {
 }
 
 /*
- * A narrow view (a small window, or the wide Match panel beside it): the bar
+ * A narrow view (a small window): the bar
  * stands down the left edge under the camera readout, clear of the readouts
  * and cards across the top, its tips to the right of each button.
  */
@@ -780,6 +784,18 @@ button.icon-btn.on {
     left: 60px;
     max-width: calc(100% - 72px);
   }
+
+  /* No room for the key strip beside the cards along the bottom: the keys are in the search box (Ctrl+K), the
+     ? sheet and the help button at the top. */
+  .help {
+    display: none;
+  }
+}
+
+/* The first group under the task bar: the bar's own edge is its rule. */
+.task-bar + .task-group > .task-head {
+  margin-top: 0;
+  border-top: 0;
 }
 
 /* ------------------------------------------------------- side panel hidden */

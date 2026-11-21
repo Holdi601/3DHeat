@@ -407,7 +407,8 @@ export function App() {
 
           {vehicleTab ? (
             <>
-              <div style={{ padding: '12px 16px 0' }}>
+              {/* Empty (and so gone, app.css) unless the warning shows. */}
+              <div className="sw-slot">
                 <SoftwareRenderingWarning />
               </div>
               <TaskBar tab="vehicle" />

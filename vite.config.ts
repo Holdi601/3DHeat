@@ -149,7 +149,8 @@ interface LoadedPack {
  * repository) that replace the catalogue's of the same names. Its path comes
  * from the `HEAT3D_FIGURE_PACK` environment variable or the `figurePack` entry
  * of the git-ignored `tools/local-data.json`; without one, or when the file is
- * missing, the route answers 404 and the viewer keeps its own figures.
+ * missing, the index answers 204 (no content, so no console error at every page
+ * load) and the viewer keeps its own figures.
  *
  * The page never takes the pack file itself (tens of megabytes of JSON): the
  * route answers with an index (each figure's name and a tag of its content, and
@@ -199,7 +200,8 @@ function figurePack(): Plugin {
       const fig = /^\/f\/(.+)$/.exec(url.pathname);
       const name = fig ? decodeURIComponent(fig[1]) : null;
       if (!pack || (fig && !(name! in pack.figures))) {
-        res.statusCode = 404;
+        // No pack: 204 for the index, as the model-pack, ranges and layouts routes; a figure not in it stays 404.
+        res.statusCode = !pack && !fig ? 204 : 404;
         res.end();
         return;
       }

@@ -180,7 +180,7 @@ The board is also kept in the browser a moment after each change and comes back 
 
 ## Mission files
 
-**Import mission…** in the **File** section reads a game's mission file as the starting board, in place of the board (Undo brings it back):
+**Import mission…** in the **File** section reads a game's mission file as the starting board, in place of the board (Undo brings it back). A board with something on it asks first, in the viewer's own dialog:
 
 | Game | File | What comes in |
 |---|---|---|

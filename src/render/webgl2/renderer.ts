@@ -78,6 +78,7 @@ import { IndexUpload, type LevelIndexSets } from '../levelIndices';
 import { boxOutsideFrustum, diffWorldTiles, frustumPlanes, textureBytes } from '../worldTiles';
 import type { WorldTile } from '../../world/tileSet';
 import { num, t } from '../../i18n';
+import { GlFrameTimer, type FrameRing } from './frameTimer';
 
 /** Texture width for the row store. Power of two so the shader can shift/mask. */
 const ROW_TEX_WIDTH = 8192;
@@ -1600,6 +1601,9 @@ export class Webgl2Renderer implements Renderer {
     this.flushTiles();
     this.flushLevelIndices();
     this.flushDataUpload();
+    // Whole-frame GPU time, only while a frame-time check asks for it (frameTimer.ts). After the uploads: their
+    // packing is main-thread work, and a timer begun before it would count the GPU waiting for it as GPU time.
+    this.frameTimer.begin();
     // The line heat program, compiled off the frame rather than on the first
     // frame of line heat.
     if (!this.lineHeatProg && !this.lineHeatBroken && !this.lineHeatQueued) {
@@ -1674,6 +1678,7 @@ export class Webgl2Renderer implements Renderer {
       const meshes = [this.levelMesh, ...this.tileMeshes.values()];
       (this.ranges ??= new GlRanges(gl, this.clipControl)).takeViews(params.ranges, meshes, this.levelMesh);
     }
+    this.frameTimer.end();
 
     return { gpuMs: null };
   }
@@ -2428,6 +2433,11 @@ export class Webgl2Renderer implements Renderer {
    */
   private timeHeat(params: FrameParams): void {
     const gl = this.gl;
+    // While whole frames are timed, the heat is one of their segments (the extension times one query at a time).
+    if (this.frameTimer.enabled && this.frameTimer.available) {
+      this.frameTimer.timeHeat(() => this.drawHeat(params));
+      return;
+    }
     if (this.timer === undefined) this.timer = gl.getExtension('EXT_disjoint_timer_query_webgl2') as { TIME_ELAPSED_EXT: number; GPU_DISJOINT_EXT: number } | null;
     const t = this.timer;
     if (t && this.heatQuery && gl.getQueryParameter(this.heatQuery, gl.QUERY_RESULT_AVAILABLE)) {
@@ -2459,6 +2469,28 @@ export class Webgl2Renderer implements Renderer {
   /** Milliseconds of GPU time a pass, averaged; empty where the context cannot time them. */
   get gpuPassMs(): Record<string, number> {
     return this.passMs;
+  }
+
+  private ft: GlFrameTimer | undefined;
+  /** Whole frames' GPU time, while `frameTimer.enabled` (the frame-time check turns it on). */
+  get frameTimer(): GlFrameTimer {
+    return (this.ft ??= this.makeFrameTimer());
+  }
+
+  private makeFrameTimer(): GlFrameTimer {
+    const ft = new GlFrameTimer(this.gl);
+    // The heat's own time as the heat query would have given it, so the heat budget works the same meanwhile.
+    ft.onHeat = (ms) => {
+      const prev = this.passMs.heat;
+      this.passMs.heat = prev === undefined ? ms : prev * 0.9 + ms * 0.1;
+      this.passMs.heatLast = ms;
+    };
+    return ft;
+  }
+
+  /** Whole frames' GPU time read so far, milliseconds; null where the context cannot time frames. */
+  get gpuFrames(): FrameRing | null {
+    return this.frameTimer.available ? this.frameTimer.frames : null;
   }
 
   /**

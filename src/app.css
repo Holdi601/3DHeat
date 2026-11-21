@@ -272,11 +272,11 @@ select.language-picker {
   padding: 10px var(--sp-4);
   cursor: pointer;
   user-select: none;
+  /* Sentence case: the task groups' heads above are the only capitals in the column (shell.css). */
   color: var(--text-dim);
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: var(--fw-bold);
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
   transition: color var(--motion-fast) var(--motion-ease), background var(--motion-fast) var(--motion-ease);
 }
 
@@ -348,6 +348,8 @@ select.language-picker {
 .section .section > header {
   padding-left: 0;
   padding-right: 0;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
 }
 
 /* ---------------------------------------------------------------- controls */
@@ -501,6 +503,15 @@ svg.curve {
 }
 
 /* Drawing on the CPU: said where the user is, quietly enough to work beside. */
+/* Where the warning stands alone above a task bar: no gap left when it is not shown. */
+.sw-slot {
+  padding: 12px 16px 0;
+}
+
+.sw-slot:empty {
+  display: none;
+}
+
 .sw-warning {
   margin: 0 0 10px;
   padding: 8px 10px 8px 12px;

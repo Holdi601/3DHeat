@@ -702,6 +702,22 @@ export class Engine {
   private dartPx = 3;
   /** Frame interval, ms, smoothed: what steers the GPU tracks' level of detail. */
   private frameMsAvg = 16;
+  /**
+   * Each frame's work on the main thread (the engine's whole frame, ms), as a ring: `n` written so far, frame i at
+   * `cpu[i % cpu.length]`. Read by the frame-time check (tools/check-visual.mjs) beside `gpuFrames`.
+   */
+  readonly frameWork = { n: 0, cpu: new Float32Array(4096) };
+
+  /** Whole frames' GPU time read so far, where the backend can time it (WebGL2 only while `timeFrames(true)`). */
+  get gpuFrames(): { n: number; ms: Float32Array } | null {
+    return (this.renderer as { gpuFrames?: { n: number; ms: Float32Array } | null } | null)?.gpuFrames ?? null;
+  }
+
+  /** Times whole frames on the GPU (a few queries a frame on WebGL2; WebGPU times its passes anyway). */
+  timeFrames(on: boolean): void {
+    const ft = (this.renderer as { frameTimer?: { enabled: boolean } } | null)?.frameTimer;
+    if (ft) ft.enabled = on;
+  }
   private readonly gpuPose = emptyPose();
   /** Box replay's figures as GPU instances this frame (`figures/instances.ts`). */
   private figureBatches: FigureBatch[] | null = null;
@@ -1509,7 +1525,11 @@ export class Engine {
     const tick = (now: number) => {
       if (this.disposed) return;
       this.raf = requestAnimationFrame(tick);
+      const t0 = performance.now();
       this.frame(now);
+      // Two clock reads a frame: the frame's own work, which the display's pacing cannot hide or inflate.
+      const w = this.frameWork;
+      w.cpu[w.n++ % w.cpu.length] = performance.now() - t0;
     };
     this.raf = requestAnimationFrame(tick);
   }
@@ -4174,7 +4194,8 @@ export class Engine {
       // is sea level there, and drawn on the sea they fight it for depth far
       // off and show as dashed lines across the water.
       // The tactical display draws its own grid on the ground; the line grid would only glow as stripes under it.
-      showGrid: !lookOn && s.showGrid && (vehicleTab || !onEarth(s.level)),
+      // The vehicle stage has a floor only under a vehicle: with none, the grid seen edge-on is just stripes.
+      showGrid: !lookOn && s.showGrid && (vehicleTab ? this.vehicleStage.box !== null : !onEarth(s.level)),
       showAxes: !lookOn && s.showAxes && !vehicleTab && !onEarth(s.level),
       gridSpacing,
       gridExtent,

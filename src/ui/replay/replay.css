@@ -948,13 +948,25 @@
 .hit-mark-legend-head {
   flex-basis: 100%;
 }
+/* Each look on a chip of light paint, as on a unit's hull: the dark ones (hole, soot star) stay visible on the dark
+   panel. The same chip in both themes; it is the material, not the chrome. */
+.hit-look-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 16px;
+  margin-right: 6px;
+  vertical-align: -4px;
+  border-radius: 3px;
+  background: #b9b5a8;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
 .hit-look {
   display: inline-block;
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  margin-right: 6px;
-  vertical-align: -1px;
 }
 .hit-look.hole {
   background: radial-gradient(circle, #050505 0 38%, #2a231c 40% 100%);
@@ -965,7 +977,6 @@
 .hit-look.gouge {
   width: 18px;
   height: 6px;
-  vertical-align: 1px;
   background: linear-gradient(#d8d8cc 0 30%, #6b6b66 35% 65%, #d8d8cc 70%);
 }
 .hit-look.bullet {
@@ -975,9 +986,6 @@
   width: 12px;
   height: 12px;
   border-radius: 0;
-  margin-left: -1px;
-  margin-right: 5px;
-  vertical-align: -2px;
   background: radial-gradient(circle, #5c5245 0 30%, #0d0b0a 34% 100%);
   clip-path: polygon(50% 0, 59% 29%, 85% 15%, 71% 41%, 100% 50%, 71% 59%, 85% 85%, 59% 71%, 50% 100%, 41% 71%, 15% 85%, 29% 59%, 0 50%, 29% 41%, 15% 15%, 41% 29%);
 }

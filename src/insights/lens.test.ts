@@ -119,6 +119,19 @@ function battles(matches: number, mode: 'ground' | 'air' | 'sea', seed = 3): Dat
   } as unknown as Dataset;
 }
 
+const reports = new Map<string, ReturnType<typeof insightsSync>>();
+
+/** The insights of a set of simulated battles, worked out once for all the tests that read them (seconds each). */
+function battleReport(matches: number, mode: 'ground' | 'air' | 'sea') {
+  const key = `${mode} ${matches}`;
+  let r = reports.get(key);
+  if (!r) {
+    r = insightsSync(battles(matches, mode), FULL_SCOPE);
+    reports.set(key, r);
+  }
+  return r;
+}
+
 describe('the knowledge base', () => {
   it('has unique ids, known patterns, resolving references and links', () => {
     const ids = new Set<string>();
@@ -192,9 +205,10 @@ describe('lens statistics', () => {
   });
 });
 
-describe('lens metrics on simulated battles', () => {
+// The first test to read a battle set pays for its simulation and analysis: legitimately heavy, given room.
+describe('lens metrics on simulated battles', { timeout: 30_000 }, () => {
   it('measures attrition, force ratios, trades, initiative and key terrain on the ground', () => {
-    const rep = insightsSync(battles(60, 'ground'), FULL_SCOPE);
+    const rep = battleReport(60, 'ground');
     const L = rep.lens!;
     expect(L.lanchester).toBeDefined();
     expect(L.lanchester!.p).toBeGreaterThan(0.6);
@@ -210,7 +224,7 @@ describe('lens metrics on simulated battles', () => {
   });
 
   it('reads the energy state of aircraft', () => {
-    const rep = insightsSync(battles(40, 'air'), FULL_SCOPE);
+    const rep = battleReport(40, 'air');
     const E = rep.lens!.energy!;
     expect(rep.lens!.domain.air).toBe(1);
     expect(E.kills).toBeGreaterThan(50);
@@ -221,7 +235,7 @@ describe('lens metrics on simulated battles', () => {
   });
 
   it('measures combat power, ranges, the kill chain, dispersion, sorties and the salvo model', () => {
-    const rep = insightsSync(battles(60, 'ground'), FULL_SCOPE);
+    const rep = battleReport(60, 'ground');
     const L = rep.lens!;
     // Red shoots 1.6 times as well per unit: it kills more per unit-hour.
     expect(L.combatPower!.better).toBe('red');
@@ -232,18 +246,18 @@ describe('lens metrics on simulated battles', () => {
     expect(chain.launchToKill!.p50).toBeCloseTo(4, 0);
     expect(L.ranges!.groups[0].kill!.p50).toBeGreaterThan(100);
     expect(L.dispersion!.bins).toBeGreaterThan(10);
-    const sea = insightsSync(battles(60, 'sea'), FULL_SCOPE).lens!;
+    const sea = battleReport(60, 'sea').lens!;
     expect(sea.domain.sea).toBe(1);
     expect(sea.salvo!.alpha).toBeGreaterThan(0);
     expect(sea.salvo!.bins).toBeGreaterThan(50);
-    const air = insightsSync(battles(40, 'air'), FULL_SCOPE).lens!;
+    const air = battleReport(40, 'air').lens!;
     expect(air.ranges!.groups.find((g) => g.group === 'air')!.launch).not.toBeNull();
     const names = readReport(rep).map((x) => x.about);
     for (const id of ['lens.combatPower', 'lens.ranges', 'lens.killChain', 'lens.dispersion']) expect(names).toContain(id);
   });
 
   it('judges findings and metrics through the literature, in the debrief and for a model', () => {
-    const rep = insightsSync(battles(60, 'ground'), FULL_SCOPE);
+    const rep = battleReport(60, 'ground');
     const readings = readReport(rep, 'auto');
     const lanch = readings.find((x) => x.about === 'lens.lanchester')!;
     expect(lanch.literature.map((h) => h.id)).toContain('concept.lanchester-square');

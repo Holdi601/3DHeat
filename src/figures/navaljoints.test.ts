@@ -39,7 +39,10 @@ describe('ship gun joints', () => {
           expect(j.pitch ?? -1).toBeGreaterThanOrEqual(0);
           // Every barrel vertex lies ahead of the trunnion, the way the turret faces.
           const fwd = Math.cos(j.rest);
-          for (const [x] of vs) expect((x - j.pivot[0]) * fwd, `${name} joint ${i}`).toBeGreaterThan(-0.6);
+          // One check of the furthest back, not one per vertex (thousands of them made this test time out).
+          let back = Infinity;
+          for (const [x] of vs) back = Math.min(back, (x - j.pivot[0]) * fwd);
+          expect(back, `${name} joint ${i}`).toBeGreaterThan(-0.6);
         }
       });
       // Coarse and far builds train the same mounts.
@@ -54,5 +57,6 @@ describe('ship gun joints', () => {
       const t = e.build();
       expect(t.joints?.length ?? 0, name).toBeLessThan(255);
     }
-  });
+    // Builds every ship of the catalogue: real work, given room while the whole suite runs.
+  }, 30_000);
 });

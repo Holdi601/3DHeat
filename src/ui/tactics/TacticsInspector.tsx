@@ -70,7 +70,6 @@ export function GizmoControls() {
         <NumField label={t('tactics.gizmo.grid')} value={(grid > 0 ? grid : upm) / upm} onCommit={(v) => store().setGrid(Math.max(0, v) * upm, angleStep)} />
         <NumField label={t('tactics.gizmo.angle')} value={angleStep} digits={0} onCommit={(v) => store().setGrid(grid, v)} />
       </div>
-      <div className="hint">{t('tactics.gizmo.hint')}</div>
     </>
   );
 }

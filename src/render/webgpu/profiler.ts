@@ -16,6 +16,11 @@ export class GpuProfiler {
   private busy = false;
   private used = new Set<PassName>();
   readonly ms: Record<string, number> = {};
+  /**
+   * The GPU time of each frame read, from its first timed pass's start to its last one's end, in milliseconds: what
+   * the frame-time check judges (tools/check-visual.mjs). Frames whose readback was still in flight are not read.
+   */
+  readonly frames = { n: 0, ms: new Float32Array(4096) };
 
   constructor(device: GPUDevice) {
     this.set = device.createQuerySet({ type: 'timestamp', count: NAMES.length * 2 });
@@ -58,6 +63,15 @@ export class GpuProfiler {
       .then(() => {
         const t = new BigUint64Array(this.read.getMappedRange().slice(0));
         this.read.unmap();
+        let first = -1n;
+        let last = -1n;
+        NAMES.forEach((n, i) => {
+          if (!used.has(n)) return;
+          if (first < 0n || t[i * 2] < first) first = t[i * 2];
+          if (t[i * 2 + 1] > last) last = t[i * 2 + 1];
+        });
+        const span = first >= 0n && last >= first ? Number(last - first) / 1e6 : -1;
+        if (span >= 0 && span < 1000) this.frames.ms[this.frames.n++ % this.frames.ms.length] = span;
         NAMES.forEach((n, i) => {
           if (!used.has(n)) return;
           const d = Number(t[i * 2 + 1] - t[i * 2]) / 1e6;

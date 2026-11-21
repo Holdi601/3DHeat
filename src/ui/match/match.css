@@ -1,7 +1,7 @@
-/* The CS2 match tab: wider sidebar for the scoreboards, the heatmap beside it. */
+/* The match tab: the side panel as wide as on every other workspace (the scoreboards scroll sideways in it when a
+   game's columns need more), the heatmap beside it. */
 
 .app.match {
-  --sidebar-w: 470px;
   --side-t: #e0a43c;
   --side-ct: #5d9be0;
 }
@@ -209,6 +209,25 @@
 
 .score-table td.good {
   color: var(--good);
+}
+
+/* A scoreboard wider than the panel scrolls on its own, with the names kept in view. */
+.score-scroll {
+  overflow-x: auto;
+  margin-bottom: 8px;
+  scrollbar-width: thin;
+}
+
+.score-scroll > .score-table {
+  margin-bottom: 0;
+}
+
+.score-scroll .score-table th:first-child,
+.score-scroll .score-table td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--panel);
 }
 
 .score-table {

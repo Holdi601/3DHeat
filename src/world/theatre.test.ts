@@ -100,16 +100,17 @@ describe('a theatre backdrop', () => {
     const [w, sN] = fwd(s.box.south, s.box.west);
     const [e, nN] = fwd(s.box.north, s.box.east);
     let inside = 0;
+    let widest = 0;
     for (let i = 0; i < m.indices.length; i += 3) {
       const v = [m.indices[i], m.indices[i + 1], m.indices[i + 2]].map((k) => [m.vertices[k * 6], -m.vertices[k * 6 + 2]]);
       const cx = (v[0][0] + v[1][0] + v[2][0]) / 3;
       const cy = (v[0][1] + v[1][1] + v[2][1]) / 3;
       if (cx < w + 50 || cx > e - 50 || cy < sN + 50 || cy > nN - 50) continue;
       inside++;
-      const span = Math.max(...v.map((a) => Math.hypot(a[0] - v[0][0], a[1] - v[0][1])));
-      expect(span).toBeLessThan(800);
+      widest = Math.max(widest, ...v.map((a) => Math.hypot(a[0] - v[0][0], a[1] - v[0][1])));
     }
     expect(inside).toBeGreaterThan(100);
+    expect(widest).toBeLessThan(800);
     // Flat ground at 100 m on both levels, so the wall between them is flat too.
     expect(m.groundBand.minY).toBeCloseTo(100, 0);
     expect(m.groundBand.maxY).toBeCloseTo(100, 0);
@@ -123,7 +124,8 @@ describe('a theatre backdrop', () => {
     expect(s.runways).toBe(1);
     expect(r.credits).toEqual(['openfreemap', 'terrarium', 'ourairports']);
     expect(urls).toContain(OURAIRPORTS_RUNWAYS);
-  });
+    // Two terrain levels over 120 km: real meshing work, seconds while the whole suite runs.
+  }, 30_000);
 
   it('builds the whole theatre coarsely when no area is picked', async () => {
     const r = await buildBackdrop({ geo: theatreGeo(caucasus), axes: ACMI_AXES, context }, fakeIo());
@@ -131,7 +133,7 @@ describe('a theatre backdrop', () => {
     expect(r.stats.vectorZoom).toBeNull();
     expect(r.mesh.indices.length).toBeGreaterThan(0);
     expect(r.mesh.structureIndices.length).toBe(0);
-  });
+  }, 30_000);
 
   it('takes only cached map tiles once a build has downloaded its share', async () => {
     const io = fakeIo();

@@ -515,27 +515,29 @@ function TeamScore({ doc, team, sort }: { doc: MatchDoc; team: string; sort: Sor
   const players = useMemo(() => doc.players.filter((p) => p.team === team), [doc, team]);
   const rows = useSorted(players, sort);
   return (
-    <table className="score-table">
-      <thead>
-        <tr>
-          <SortTh sort={sort} id="name">{team}</SortTh>
-          <SortTh sort={sort} id="kills" title={t('match.scoreboard.killsTitle')}>K</SortTh>
-          <SortTh sort={sort} id="deaths" title={t('match.scoreboard.deathsTitle')}>D</SortTh>
-          <SortTh sort={sort} id="assists" title={t('match.scoreboard.assistsTitle')}>A</SortTh>
-          <SortTh sort={sort} id="diff" title={t('match.scoreboard.diffTitle')}>±</SortTh>
-          <SortTh sort={sort} id="adr" title={t('match.scoreboard.adrTitle')}>ADR</SortTh>
-          <SortTh sort={sort} id="kast" title={t('match.scoreboard.kastTitle')}>KAST</SortTh>
-          <SortTh sort={sort} id="hs" title={t('match.scoreboard.headshotsTitle')}>HS</SortTh>
-          <SortTh sort={sort} id="open" title={t('match.scoreboard.openTitle')}>{t('match.scoreboard.open')}</SortTh>
-          <SortTh sort={sort} id="clutches" title={t('match.scoreboard.clutchesTitle')}>{t('match.scoreboard.clutches')}</SortTh>
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((p) => (
-          <PlayerRow key={p.steamid} doc={doc} p={p} />
-        ))}
-      </tbody>
-    </table>
+    <div className="score-scroll">
+      <table className="score-table">
+        <thead>
+          <tr>
+            <SortTh sort={sort} id="name">{team}</SortTh>
+            <SortTh sort={sort} id="kills" title={t('match.scoreboard.killsTitle')}>K</SortTh>
+            <SortTh sort={sort} id="deaths" title={t('match.scoreboard.deathsTitle')}>D</SortTh>
+            <SortTh sort={sort} id="assists" title={t('match.scoreboard.assistsTitle')}>A</SortTh>
+            <SortTh sort={sort} id="diff" title={t('match.scoreboard.diffTitle')}>±</SortTh>
+            <SortTh sort={sort} id="adr" title={t('match.scoreboard.adrTitle')}>ADR</SortTh>
+            <SortTh sort={sort} id="kast" title={t('match.scoreboard.kastTitle')}>KAST</SortTh>
+            <SortTh sort={sort} id="hs" title={t('match.scoreboard.headshotsTitle')}>HS</SortTh>
+            <SortTh sort={sort} id="open" title={t('match.scoreboard.openTitle')}>{t('match.scoreboard.open')}</SortTh>
+            <SortTh sort={sort} id="clutches" title={t('match.scoreboard.clutchesTitle')}>{t('match.scoreboard.clutches')}</SortTh>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((p) => (
+            <PlayerRow key={p.steamid} doc={doc} p={p} />
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
@@ -619,38 +621,40 @@ function Across({ agg }: { agg: Aggregate }) {
         {t('match.across.summary', { matches: agg.matches, rounds: agg.rounds, maps: list(agg.maps) })}
         {agg.draws > 0 && ` · ${t('match.across.draws', { count: agg.draws })}`}
       </div>
-      <table className="score-table compact">
-        <thead>
-          <tr>
-            <th>{t('match.across.roundsWon')}</th>
-            <th>{t('match.across.all')}</th>
-            <th>{t('match.across.pistol')}</th>
-            {BUY_COLUMNS.map(([b, key]) => (
-              <th key={b}>{t(key)}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {(['T', 'CT'] as const).map((s) => (
-            <tr key={s}>
-              <td>
-                <SideTag side={s} />
-              </td>
-              <td>{percent(agg.sides[s])}</td>
-              <td title={`${int(agg.pistol[s].won)}/${int(agg.pistol[s].played)}`}>{percent(agg.pistol[s])}</td>
-              {BUY_COLUMNS.map(([b]) => {
-                const r = agg.buys[s][b] ?? { played: 0, won: 0 };
-                return (
-                  <td key={b} title={t('match.across.ofRounds', { won: int(r.won), played: r.played })}>
-                    {percent(r)}
-                    <span className="dim"> ({int(r.played)})</span>
-                  </td>
-                );
-              })}
+      <div className="score-scroll">
+        <table className="score-table compact">
+          <thead>
+            <tr>
+              <th>{t('match.across.roundsWon')}</th>
+              <th>{t('match.across.all')}</th>
+              <th>{t('match.across.pistol')}</th>
+              {BUY_COLUMNS.map(([b, key]) => (
+                <th key={b}>{t(key)}</th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {(['T', 'CT'] as const).map((s) => (
+              <tr key={s}>
+                <td>
+                  <SideTag side={s} />
+                </td>
+                <td>{percent(agg.sides[s])}</td>
+                <td title={`${int(agg.pistol[s].won)}/${int(agg.pistol[s].played)}`}>{percent(agg.pistol[s])}</td>
+                {BUY_COLUMNS.map(([b]) => {
+                  const r = agg.buys[s][b] ?? { played: 0, won: 0 };
+                  return (
+                    <td key={b} title={t('match.across.ofRounds', { won: int(r.won), played: r.played })}>
+                      {percent(r)}
+                      <span className="dim"> ({int(r.played)})</span>
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       <div className="dim">
         {t('match.across.bomb', {
           sites:
@@ -672,54 +676,58 @@ function Across({ agg }: { agg: Aggregate }) {
         })}
       </div>
       <div className="dim">{t('match.across.openingConverted', { pct: percent(agg.openingConverted) })}</div>
-      <table className="score-table compact">
-        <thead>
-          <tr>
-            <SortTh sort={openingSort} id="name">{t('match.across.openingsWhere')}</SortTh>
-            <SortTh sort={openingSort} id="count">{t('match.across.duels')}</SortTh>
-            <SortTh sort={openingSort} id="share">{t('match.across.sideWon', { side: 'T' })}</SortTh>
-          </tr>
-        </thead>
-        <tbody>
-          {openings.slice(0, 10).map((o) => (
-            <tr key={o.place}>
-              <td className="who">{placeName(o.place)}</td>
-              <td>{int(o.duels)}</td>
-              <td>{percentOf((100 * o.tWon) / o.duels)}</td>
+      <div className="score-scroll">
+        <table className="score-table compact">
+          <thead>
+            <tr>
+              <SortTh sort={openingSort} id="name">{t('match.across.openingsWhere')}</SortTh>
+              <SortTh sort={openingSort} id="count">{t('match.across.duels')}</SortTh>
+              <SortTh sort={openingSort} id="share">{t('match.across.sideWon', { side: 'T' })}</SortTh>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <table className="score-table compact">
-        <thead>
-          <tr>
-            <SortTh sort={playerSort} id="name">{t('match.across.players')}</SortTh>
-            <SortTh sort={playerSort} id="matches" title={t('match.across.matchesTitle')}>{t('match.across.matchesShort')}</SortTh>
-            <SortTh sort={playerSort} id="kd">K-D</SortTh>
-            <SortTh sort={playerSort} id="adr">ADR</SortTh>
-            <SortTh sort={playerSort} id="kast">KAST</SortTh>
-            <SortTh sort={playerSort} id="hs">HS</SortTh>
-            <SortTh sort={playerSort} id="open" title={t('match.across.openTitle')}>{t('match.across.open')}</SortTh>
-          </tr>
-        </thead>
-        <tbody>
-          {players.slice(0, 15).map((p) => (
-            <tr key={p.steamid} onClick={() => focus({ player: p.name, events: ['kill', 'death'] })} title={`${p.name} (${p.team})`}>
-              <td className="who">{p.name}</td>
-              <td>{int(p.matches)}</td>
-              <td>
-                {int(p.kills)}-{int(p.deaths)}
-              </td>
-              <td>{num(p.adr, 0)}</td>
-              <td>{percentOf(p.kast)}</td>
-              <td>{percentOf(p.headshotPct)}</td>
-              <td>
-                {int(p.openingKills)}-{int(p.openingDeaths)}
-              </td>
+          </thead>
+          <tbody>
+            {openings.slice(0, 10).map((o) => (
+              <tr key={o.place}>
+                <td className="who">{placeName(o.place)}</td>
+                <td>{int(o.duels)}</td>
+                <td>{percentOf((100 * o.tWon) / o.duels)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="score-scroll">
+        <table className="score-table compact">
+          <thead>
+            <tr>
+              <SortTh sort={playerSort} id="name">{t('match.across.players')}</SortTh>
+              <SortTh sort={playerSort} id="matches" title={t('match.across.matchesTitle')}>{t('match.across.matchesShort')}</SortTh>
+              <SortTh sort={playerSort} id="kd">K-D</SortTh>
+              <SortTh sort={playerSort} id="adr">ADR</SortTh>
+              <SortTh sort={playerSort} id="kast">KAST</SortTh>
+              <SortTh sort={playerSort} id="hs">HS</SortTh>
+              <SortTh sort={playerSort} id="open" title={t('match.across.openTitle')}>{t('match.across.open')}</SortTh>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {players.slice(0, 15).map((p) => (
+              <tr key={p.steamid} onClick={() => focus({ player: p.name, events: ['kill', 'death'] })} title={`${p.name} (${p.team})`}>
+                <td className="who">{p.name}</td>
+                <td>{int(p.matches)}</td>
+                <td>
+                  {int(p.kills)}-{int(p.deaths)}
+                </td>
+                <td>{num(p.adr, 0)}</td>
+                <td>{percentOf(p.kast)}</td>
+                <td>{percentOf(p.headshotPct)}</td>
+                <td>
+                  {int(p.openingKills)}-{int(p.openingDeaths)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </>
   );
 }

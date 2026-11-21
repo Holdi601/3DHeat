@@ -130,7 +130,9 @@ export function FigureControls({ toggle = true }: { toggle?: boolean }) {
               <div className="hit-mark-legend looks">
                 {(['Hole', 'Splash', 'Gouge', 'Bullet', 'Scorch'] as const).map((l) => (
                   <span key={l}>
-                    <i className={`hit-look ${l.toLowerCase()}`} />
+                    <span className="hit-look-chip">
+                      <i className={`hit-look ${l.toLowerCase()}`} />
+                    </span>
                     {t(`far.hitLook${l}`)}
                   </span>
                 ))}

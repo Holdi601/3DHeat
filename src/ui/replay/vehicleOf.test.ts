@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { sortUnits, vehicleOf, type Unit } from './units';
 
 const unit: Unit = {
@@ -35,11 +35,25 @@ describe('sorting units', () => {
     expect(names).toEqual(['alpha', 'Émile', 'unit 9', 'Unit 10', 'Zulu']);
   });
 
-  it('sorts a million units quickly', () => {
-    const many = Array.from({ length: 1_000_000 }, (_, i) => mk(`Unit ${(i * 7919) % 1_000_000}`));
-    const t0 = performance.now();
-    const out = sortUnits(many);
-    expect(out[0].name).toBe('Unit 0');
-    expect(performance.now() - t0).toBeLessThan(4000);
+  // A large overlay has a million units: what made that slow was a locale compare (or a key built) per comparison,
+  // n log n of them. Counted rather than timed, so a busy machine cannot fail it: one key per unit, no locale compare.
+  it('sorts many units with one key each, never a compare per pair', () => {
+    const n = 50_000;
+    const many = Array.from({ length: n }, (_, i) => mk(`Unit ${(i * 7919) % n}`));
+    const normalize = vi.spyOn(String.prototype, 'normalize');
+    const localeCompare = vi.spyOn(String.prototype, 'localeCompare');
+    try {
+      const out = sortUnits(many);
+      expect(normalize.mock.calls.length).toBeLessThanOrEqual(n);
+      expect(localeCompare).not.toHaveBeenCalled();
+      expect(out.map((u) => u.name).slice(0, 3)).toEqual(['Unit 0', 'Unit 1', 'Unit 2']);
+      expect(out[n - 1].name).toBe(`Unit ${n - 1}`);
+      let unordered = 0;
+      for (let i = 1; i < n; i++) if (Number(out[i].name.slice(5)) <= Number(out[i - 1].name.slice(5))) unordered++;
+      expect(unordered).toBe(0);
+    } finally {
+      normalize.mockRestore();
+      localeCompare.mockRestore();
+    }
   });
 });

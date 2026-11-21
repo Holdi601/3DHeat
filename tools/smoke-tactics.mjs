@@ -258,8 +258,27 @@ await step('Import mission… reads a DCS .miz onto a layer per coalition', asyn
   // The File section, open; the button opens this chooser, and handing it the file is the same.
   const input = page.locator('input[type=file][accept=".miz,.sqm"]');
   if (!(await input.count())) await page.locator('.tactics-panel .section > header', { hasText: /^▶\s*File$/ }).first().click();
-  await page.locator('input[type=file][accept=".miz,.sqm"]').setInputFiles({ name: 'smoke.miz', mimeType: 'application/zip', buffer: zip({ mission }) });
-  await page.waitForTimeout(800);
+  // A board with something on it asks first, in the viewer's own dialog: Cancel keeps the board, the dialog's
+  // button replaces it. An empty board takes the mission at once.
+  const imported = () => {
+    const p = window.__3dheat_plan.getState().plan;
+    // A unit drawn as a local model pack's model is kind@model: the type figure is the part before the @.
+    return p.layers.some((l) => l.name === 'Blue') && p.figures.some((f) => f.kind.split('@')[0] === 'f-16c');
+  };
+  const done = (expr) => page.waitForFunction(expr, null, { timeout: 15_000 });
+  const choose = () => input.setInputFiles({ name: 'smoke.miz', mimeType: 'application/zip', buffer: zip({ mission }) });
+  const before = await page.evaluate(() => window.__3dheat_plan.getState().plan.figures.length);
+  await choose();
+  await done(`!!document.querySelector('.dialog.confirm') || (${imported})()`);
+  if (await page.locator('.dialog.confirm').count()) {
+    expect(before > 0, 'asked to replace an empty board');
+    await page.locator('.dialog.confirm .dialog-actions button:not(.primary)').click();
+    await page.locator('.dialog.confirm').waitFor({ state: 'detached', timeout: 5000 });
+    expect((await page.evaluate(() => window.__3dheat_plan.getState().plan.figures.length)) === before, 'Cancel replaced the board');
+    await choose();
+    await page.locator('.dialog.confirm button.primary').click({ timeout: 15_000 });
+  }
+  await done(`(${imported})()`);
   const s = await page.evaluate(() => {
     const p = window.__3dheat_plan.getState().plan;
     return { game: p.game, layers: p.layers.map((l) => l.name), figures: p.figures.map((f) => f.kind), routes: p.arrows.length };

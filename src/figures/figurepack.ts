@@ -324,7 +324,8 @@ export function removeFigurePack<E extends Entry>(catalog: Record<string, E>, bu
 export async function fetchFigurePackIndex(): Promise<FigurePackIndex | null> {
   try {
     const r = await fetch(FIGURE_PACK_ROUTE, { cache: 'no-cache' });
-    if (!r.ok || !(r.headers.get('content-type') ?? '').includes('json')) return null;
+    // 204: the server has no pack.
+    if (!r.ok || r.status === 204 || !(r.headers.get('content-type') ?? '').includes('json')) return null;
     const p = (await r.json()) as FigurePackIndex;
     return p && p.version === 1 && typeof p.figures === 'object' ? p : null;
   } catch {

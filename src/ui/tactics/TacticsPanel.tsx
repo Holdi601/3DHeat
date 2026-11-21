@@ -11,7 +11,8 @@ import { GAMES, gamePreset } from '../../tactics/games';
 import { figureLabel } from '../../tactics/names';
 import { playbackAt, type ArrowStyle } from '../../tactics/plan';
 import { clock } from '../../tactics/timing';
-import { num, t, useLang } from '../../i18n';
+import { has, num, t, useLang } from '../../i18n';
+import { useHelpStore } from '../../state/helpStore';
 import { useEngine } from '../EngineContext';
 import { SortControl } from '../sort/SortControl';
 import { sortList } from '../sort/order';
@@ -132,7 +133,7 @@ export function TacticsPanel({ load, present }: { load?: ReactNode; present?: Re
   const importMission = async (file: File) => {
     try {
       const m = await readMission(file.name, new Uint8Array(await file.arrayBuffer()));
-      if (hasContent(plan) && !window.confirm(t('tactics.mission.replace'))) return;
+      if (hasContent(usePlanStore.getState().plan) && !(await confirmDialog(t('tactics.mission.replace'), t('tactics.mission.replaceOk')))) return;
       store().replacePlan(missionToPlan(m));
       const units = m.groups.reduce((n, g) => n + g.units.length, 0);
       const count = (k: string) => m.places.filter((p) => p.kind === k).length;
@@ -248,10 +249,10 @@ export function TacticsPanel({ load, present }: { load?: ReactNode; present?: Re
               {tool === 'note' && <NoteOptions />}
             </div>
           )}
-          <div className="hint tactics-hint">
-            {t(`tactics.hint.${moving ? 'moving' : tool}`)}
-            {draft || (tool === 'measure' && measuring && !measuring.done) ? ` ${t('tactics.hint.finish')}` : ''}
-          </div>
+          <ToolHint
+            tool={moving ? 'moving' : tool}
+            finishing={!!draft || (tool === 'measure' && !!measuring && !measuring.done)}
+          />
           {draft && (
             <div className="tactics-tools">
               <button className="on" onClick={() => store().finish()} title="Enter">
@@ -443,6 +444,29 @@ export function BoardBar() {
           onChange={(v) => store().setStepSeconds(step, v)}
         />
       </label>
+    </div>
+  );
+}
+
+/**
+ * What the tool in hand does, in one short line where the tool has one (`tactics.hint.<tool>Short`); the whole
+ * text, with the gizmo's for the Select tool, is the line's tooltip and is written out while the help (F1) is on.
+ */
+function ToolHint({ tool, finishing }: { tool: string; finishing: boolean }) {
+  const helpOn = useHelpStore((s) => s.on);
+  const toggleHelp = useHelpStore((s) => s.toggle);
+  const full = [t(`tactics.hint.${tool}`), tool === 'select' ? t('tactics.gizmo.hint') : '', finishing ? t('tactics.hint.finish') : '']
+    .filter(Boolean)
+    .join(' ');
+  const shortKey = `tactics.hint.${tool}Short`;
+  if (helpOn || !has(shortKey)) return <div className="hint tactics-hint">{full}</div>;
+  return (
+    <div className="hint tactics-hint" title={full}>
+      {t(shortKey)}
+      {finishing ? ` ${t('tactics.hint.finish')}` : ''}{' '}
+      <button type="button" className="tactics-hint-more" onClick={toggleHelp} title={full} aria-label={t('tactics.hint.more')}>
+        F1
+      </button>
     </div>
   );
 }

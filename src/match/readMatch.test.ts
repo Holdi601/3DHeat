@@ -36,7 +36,8 @@ function pack(stem: string, extra: Record<string, Uint8Array>): { dir: string; f
 
 const json = (v: unknown) => new TextEncoder().encode(JSON.stringify(v));
 
-describe("a loaded match's scoreboard, from its own file", () => {
+// Each test packs its file with the CLI, a node process of its own: room for it while the whole suite runs.
+describe("a loaded match's scoreboard, from its own file", { timeout: 60_000 }, () => {
   it("reads a battle's match document", async () => {
     const stem = 'm_RB_Dom_2026-01-01_10-00-00_aa';
     const { dir, file } = pack(stem, { [`${stem}.match.json`]: json({ format: 'heat3d-wt-replay-match', match: stem, map: 'm', started: '2026-01-01T10:00:00Z', players: [{ name: 'p1', team: '1', kills: 2 }] }) });

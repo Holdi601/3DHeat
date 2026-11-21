@@ -60,7 +60,7 @@ The viewer remembers, in this browser: which sections are open, the group picked
 
 Words are matched at their start first, anywhere in the label next, then in the panel's name. Accents do not matter (*echelle* finds *Échelle*).
 
-The settings of panels that are not on the screen come from an index of the whole side panel that is read from the source code itself ([`tools/commandIndex.ts`](https://github.com/Holdi601/3DHeat/blob/main/tools/commandIndex.ts)) whenever the viewer is built or served, so a new panel or control is in the palette without a separate step; whatever is on the screen when the palette opens is read from the page as well.
+The settings of panels that are not on the screen come from an index of the whole side panel that is read from the source code itself ([`tools/commandIndex.ts`](https://github.com/Holdi601/3DHeat/blob/main/tools/commandIndex.ts)) whenever the viewer is built or served, so a new panel or control is in the palette without a separate step. Labels kept in a table (the camera presets, the volume tools, the label fields of the figure replay) and labels made from a list of words count too; whatever is on the screen when the palette opens is read from the page as well.
 
 ## Key sheet
 
