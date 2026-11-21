@@ -82,7 +82,7 @@ export function vehicleKey(name: string): string {
 }
 
 /** The parts a pack model may have, in the order they are packed. */
-const PARTS = ['hull', 'gear', 'turret', 'gun'] as const;
+const PARTS = ['hull', 'gear', 'turret', 'gun', 'rotor'] as const;
 
 interface GltfNode {
   name?: string;
@@ -162,6 +162,8 @@ export function figureFromModelGlb(bytes: Uint8Array): ModelFigure {
     if (name === 'hull') parts.push({ name, pivot: [0, 0, 0] });
     else if (name === 'gear') parts.push({ name, pivot: [0, 0, 0], track: true });
     else if (name === 'turret') parts.push(turret ? { name, pivot: turret, joint: 'yaw' } : { name, pivot: [0, 0, 0] });
+    // A helicopter's main rotor: drawn where it stands (figures have no spinning joint).
+    else if (name === 'rotor') parts.push({ name, pivot: [0, 0, 0] });
     else parts.push(gun ? { name, pivot: gun, joint: 'pitch', ...(turret && present.includes('turret') ? { parent: 0 } : {}) } : { name, pivot: [0, 0, 0] });
     order.push(name);
   }
@@ -240,6 +242,9 @@ const TYPE_KIN: Record<string, [RegExp, string[]][]> = {
     [/boat/i, ['patrol-boat', 'rhib']],
     [/./, ['destroyer', 'patrol-boat']],
   ],
+  // A game's people (CS2's agents) stand in for the soldier; its weapons and items stand in for nothing.
+  person: [[/./, ['soldier']]],
+  item: [],
 };
 
 /** The catalogue figure a pack unit is a variant of: its alias, else the first figure its type word names. */

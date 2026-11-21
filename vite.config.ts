@@ -413,6 +413,63 @@ function modelPack(): Plugin {
   return { name: 'heat3d-model-pack', configureServer: handler, configurePreviewServer: handler };
 }
 
+/** Where the page asks for the games' unit catalogues (src/figures/unitcatalog.ts). */
+const UNIT_CATALOG_ROUTE = '/__heat3d/unit-catalogs';
+
+/**
+ * The games' unit catalogues the ext tools write (`catalog` verb) to
+ * `<levels>/<game>/catalog.json`, kept on this machine only: every game's
+ * items, cut to what the viewer uses (id, name, kind, class, nation, the real
+ * vehicle's name, domain), as `{ version: 1, games: [{ game, items }] }`. Read
+ * again when a file changes; 204 without any.
+ */
+function unitCatalogs(): Plugin {
+  const cache = new Map<string, { key: string; game: string; items: unknown[] }>();
+  const keep = ['id', 'name', 'kind', 'class', 'nation', 'key', 'domain'] as const;
+  const read = (): { game: string; items: unknown[] }[] => {
+    const root = levelsRoot();
+    if (!root || !existsSync(root)) return [];
+    const out: { game: string; items: unknown[] }[] = [];
+    for (const d of readdirSync(root, { withFileTypes: true })) {
+      if (!d.isDirectory()) continue;
+      const file = `${root}/${d.name}/catalog.json`;
+      try {
+        if (!existsSync(file)) continue;
+        const st = statSync(file);
+        const key = `${st.size}|${st.mtimeMs}`;
+        let hit = cache.get(file);
+        if (hit?.key !== key) {
+          const doc = JSON.parse(readFileSync(file, 'utf8')) as { format?: string; version?: number; game?: string; items?: Record<string, unknown>[] };
+          if (doc?.format !== '3dheat-catalog' || doc.version !== 1 || !Array.isArray(doc.items)) continue;
+          const items = doc.items
+            .filter((it) => it && typeof it.id === 'string' && typeof it.name === 'string')
+            .map((it) => Object.fromEntries(keep.filter((k) => typeof it[k] === 'string' && it[k] !== '').map((k) => [k, it[k]])));
+          hit = { key, game: String(doc.game ?? d.name), items };
+          cache.set(file, hit);
+        }
+        out.push({ game: hit.game, items: hit.items });
+      } catch {
+        // A catalogue that does not read is left out.
+      }
+    }
+    return out;
+  };
+  const handler = (server: ViteDevServer | { middlewares: ViteDevServer['middlewares'] }) => {
+    server.middlewares.use(UNIT_CATALOG_ROUTE, (_req, res) => {
+      const games = read();
+      if (!games.length) {
+        res.statusCode = 204;
+        res.end();
+        return;
+      }
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Cache-Control', 'no-cache');
+      res.end(JSON.stringify({ version: 1, games }));
+    });
+  };
+  return { name: 'heat3d-unit-catalogs', configureServer: handler, configurePreviewServer: handler };
+}
+
 /** Where the page asks for the catalogue folder's index (src/ui/panels/CatalogSection.tsx). */
 const CATALOG_ROUTE = '/__heat3d/catalog';
 
@@ -828,7 +885,7 @@ function selfUpdate(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [react(), hostMemory(), selfUpdate(), figurePack(), modelPack(), localRanges(), levelLayouts(), catalogFolder(), campaignFiles()],
+  plugins: [react(), hostMemory(), selfUpdate(), figurePack(), modelPack(), unitCatalogs(), localRanges(), levelLayouts(), catalogFolder(), campaignFiles()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

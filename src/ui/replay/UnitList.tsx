@@ -65,6 +65,8 @@ export function UnitList() {
       { id: 'name', label: t('ui.sort.name'), key: (u) => u.name },
       { id: 'team', label: t('ui.sort.team'), key: (u) => (dataset && u.team >= 0 ? teamName(dataset, u.team) : null) },
       { id: 'vehicle', label: t('ui.sort.vehicle'), key: (u) => u.vehicle },
+      // The vehicle's class by the game's catalogue: tanks with tanks, fighters with fighters.
+      { id: 'kind', label: t('ui.sort.kind'), key: (u) => u.vehicleClass ?? null },
       { id: 'time', label: t('ui.sort.time'), key: (u) => u.spans[0]?.[0], kind: 'number', dir: 'asc' },
     ],
     'name',
@@ -73,7 +75,9 @@ export function UnitList() {
   const groups = useMemo(() => {
     if (!index) return null;
     const q = query.trim().toLowerCase();
-    const match = (u: Unit) => (!inPlay || inPlay.has(u.key)) && (!q || u.name.toLowerCase().includes(q) || u.vehicles.some((v) => v.toLowerCase().includes(q)));
+    const match = (u: Unit) =>
+      (!inPlay || inPlay.has(u.key)) &&
+      (!q || u.name.toLowerCase().includes(q) || u.vehicles.some((v) => v.toLowerCase().includes(q)) || !!u.vehicleClass?.toLowerCase().includes(q) || u.nation?.toLowerCase() === q);
     // Name order first (quick, by rank); another sort refines it, so ties stay by name.
     const { option, dir } = sort;
     const order = (list: Unit[]) => (option.id === 'name' ? sortList(list, null, 'text', dir) : sortList(list, option.key, option.kind ?? 'text', dir, language));
@@ -116,7 +120,12 @@ export function UnitList() {
         {(() => {
           // The vehicle the player is in at the playhead: a respawn in another vehicle shows the new one.
           const v = vehicleOf(u, personAt(u, now));
-          return v && !u.name.startsWith(v) ? <span className="veh">{v}</span> : null;
+          const listed = [u.vehicleClass, u.nation].filter(Boolean).join(' · ');
+          return v && !u.name.startsWith(v) ? (
+            <span className="veh" title={listed ? `${v} · ${listed}` : undefined}>
+              {v}
+            </span>
+          ) : null;
         })()}
         {follow && follow !== u.key && (
           <button

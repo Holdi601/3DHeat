@@ -23,6 +23,7 @@ import { personRows, personRowsSteps } from '../../data/flight';
 import { trackName } from './replayData';
 import { isOverlay } from '../../match/overlay';
 import { cameraTracks } from '../../render/lookAids';
+import { catalogItem } from '../../figures/unitcatalog';
 
 export type UnitKind = 'player' | 'ai' | 'weapon';
 
@@ -46,6 +47,9 @@ export interface Unit {
   spans: [number, number][];
   /** Its place in its index's name order (`sortUnits`), where `unitsOf` made it. */
   rank?: number;
+  /** The vehicle's class and side as the game's own catalogue lists them (`figures/unitcatalog.ts`), when one does. */
+  vehicleClass?: string;
+  nation?: string;
 }
 
 export interface UnitIndex {
@@ -238,7 +242,9 @@ function* unitsSteps(d: Dataset): Generator<void, UnitIndex, void> {
     const weapon = effect || (!!pawnCol && OBJECT_PAWN.test(text(pawnCol, first))) || /^w[0-9a-f]/i.test(lifeText) || (acmi && WEAPON_TYPE.test(type)) || (!!kindCol && /^(weapon|projectile|missile|rocket|bomb|shell|torpedo)$/i.test(kind));
     const who = text(player, first).trim();
     const vehicleId = text(vehicleRaw, first);
-    const vehicle = text(display, first) || prettyVehicle(vehicleId);
+    // The game's catalogue names an id the data gives no display name for (DCS `F-16C_50`).
+    const listed = vehicleId ? catalogItem(vehicleId) : undefined;
+    const vehicle = text(display, first) || listed?.name || prettyVehicle(vehicleId);
     let ai: boolean;
     const flag = text(aiCol, first);
     const pf = text(playerFlag, first);
@@ -289,6 +295,8 @@ function* unitsSteps(d: Dataset): Generator<void, UnitIndex, void> {
         persons: [p],
         spans: [[t0, t1]],
         vehicles: [vehicle],
+        ...(listed?.class ? { vehicleClass: listed.class } : {}),
+        ...(listed?.nation ? { nation: listed.nation } : {}),
       };
       byKey.set(key, u);
       unitIndex.set(u, units.length);

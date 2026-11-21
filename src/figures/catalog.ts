@@ -25,6 +25,7 @@ import { buildMeshFigure } from './meshfig';
 import { MESH_FIGURES } from './meshes';
 import { fetchFigurePackIndex, installFigurePackIndex, installModelPackIndex } from './figurepack';
 import { fetchModelPackIndex } from './modelpack';
+import { fetchUnitCatalogs, installUnitCatalogs, lendCatalogModels } from './unitcatalog';
 
 export type FigureDomain = 'person' | 'ground' | 'air' | 'heli' | 'missile' | 'sea' | 'marker';
 
@@ -219,6 +220,9 @@ export const FIGURES: Record<string, () => Template> = Object.fromEntries(Object
 export const figurePackReady: Promise<number> =
   typeof location === 'undefined'
     ? Promise.resolve(0)
-    : Promise.all([fetchFigurePackIndex(), fetchModelPackIndex()]).then(
-        ([p, m]) => (p ? installFigurePackIndex(CATALOG, p, FIGURES, ALIASES) : 0) + (m ? installModelPackIndex(CATALOG, m, FIGURES, ALIASES) : 0),
-      );
+    : Promise.all([fetchFigurePackIndex(), fetchModelPackIndex(), fetchUnitCatalogs()]).then(([p, m, c]) => {
+        const n = (p ? installFigurePackIndex(CATALOG, p, FIGURES, ALIASES) : 0) + (m ? installModelPackIndex(CATALOG, m, FIGURES, ALIASES) : 0);
+        // The games' unit catalogues: names for the unit list, and other games' models for units by their real vehicle.
+        installUnitCatalogs(c);
+        return n + lendCatalogModels(c, m, ALIASES);
+      });
