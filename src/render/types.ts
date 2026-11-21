@@ -398,6 +398,12 @@ export interface FrameParams {
    */
   heatGain: number;
   /**
+   * A typical sprite's radius in texels of the heat target (the engine's
+   * spritePixels at this frame's heat resolution), for the WebGPU renderer's
+   * choice between binning and splatting (webgpu/heatBin.ts).
+   */
+  spriteTexels?: number;
+  /**
    * Redraw the canvas from the existing scene and heat buffers, drawing nothing
    * new into either.
    *

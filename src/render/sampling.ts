@@ -149,7 +149,9 @@ export function nextHeatCap(
   }
   // Well under, it grows towards what the budget would carry, at most doubling:
   // after a cut that went too deep, an eighth a step took seconds to come back.
-  if (startingRun && costMs < budgetMs * 0.5) return Math.min(o.ceiling, cap * Math.min(2, Math.max(1.125, (budgetMs * 0.7) / costMs)));
+  // From under seven tenths to 0.85: growing only from under half, to seven
+  // tenths, left the heat at half its budget for good.
+  if (startingRun && costMs < budgetMs * 0.7) return Math.min(o.ceiling, cap * Math.min(2, Math.max(1.125, (budgetMs * 0.85) / costMs)));
   return cap;
 }
 

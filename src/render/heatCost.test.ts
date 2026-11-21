@@ -66,7 +66,7 @@ describe('HeatLevel', () => {
 describe('nextHeatCap', () => {
   const o = { floor: 1000, ceiling: 1e9 };
   it('holds inside the band', () => {
-    expect(nextHeatCap(1e6, 5, 7, true, true, o)).toBe(1e6);
+    expect(nextHeatCap(1e6, 5.5, 7, true, true, o)).toBe(1e6);
   });
   it('cuts to nine tenths of the budget at once, to a quarter at most', () => {
     expect(nextHeatCap(1e6, 7 * 1.25, 7, true, false, o)).toBeCloseTo(1e6 * 0.72);
@@ -75,7 +75,7 @@ describe('nextHeatCap', () => {
   });
   it('grows only as a run starts, and only well under budget', () => {
     expect(nextHeatCap(1e6, 2, 7, true, false, o)).toBe(1e6);
-    expect(nextHeatCap(1e6, 3, 7, true, true, o)).toBeCloseTo(1e6 * (7 * 0.7) / 3);
+    expect(nextHeatCap(1e6, 3, 7, true, true, o)).toBeCloseTo(1e6 * (7 * 0.85) / 3);
     expect(nextHeatCap(1e6, 1, 7, true, true, o)).toBe(2e6);
   });
   it('ignores frames that drew nothing', () => {

@@ -10,6 +10,7 @@ import { GpuTracks } from './tracks';
 import { GpuSymbols } from './symbols';
 import { KEY_BUFFERS, KEYS_PER_BUFFER } from '../gpuTracks/store';
 import { GpuProfiler } from './profiler';
+import { BIN_RMAX, BIN_SLOTS, GpuHeatBin, rampFlags, type BinFrame } from './heatBin';
 import { ATLAS_MIP_LEVELS } from '../../data/atlas';
 import { packLineStarts, type LineData } from '../../data/lines';
 import { CURVE_LUT_SIZE } from '../../state/curve';
@@ -147,6 +148,24 @@ interface GpuChunk {
 
 /** The scene pass's background; the tactical display swaps exactly this for its own. */
 const SCENE_CLEAR = [0.086, 0.09, 0.102] as const;
+/**
+ * Rows a heat texel below which the splat stays: binning costs a fixed pass
+ * over the grid on top of its atomics, which only pays where the rows are many.
+ */
+const BIN_MIN_ROWS_PER_TEXEL = 0.25;
+/**
+ * The typical sprite radius, in heat texels, past which the heat splats. The
+ * heat's level lets a sprite grow to about 29 texels before it halves the
+ * resolution, and binning folds 16 at most (BIN_RMAX).
+ */
+const BIN_TYPICAL_MAX = 12;
+
+/** `?heatbin=0` / `?heatbin=1`, for comparing the two heat paths. */
+function heatBinForced(): 'auto' | 'on' | 'off' {
+  if (typeof location === 'undefined') return 'auto';
+  const v = new URLSearchParams(location.search).get('heatbin');
+  return v === null ? 'auto' : v === '0' ? 'off' : 'on';
+}
 
 /**
  * WebGPU backend.
@@ -407,6 +426,12 @@ export class WebgpuRenderer implements Renderer {
   /** Units placed by the GPU, made on first use. */
   private tracks: GpuTracks | null = null;
   private symbols: GpuSymbols | null = null;
+  /** The heat by compute binning where it matches the splat (heatBin.ts); made at prewarm. */
+  private heatBin: GpuHeatBin | null = null;
+  /** `?heatbin=0` keeps every frame on the splat, `?heatbin=1` bins whenever it can; probes set it too. */
+  heatBinMode: 'auto' | 'on' | 'off' = heatBinForced();
+  /** Whether the last heat pass was binned: its cost then does not grow with the sprites' size. */
+  heatBinned = false;
   /** GPU time a pass, with ?gpuprof where the device can. */
   private profiler: GpuProfiler | null | undefined;
   private get prof(): GpuProfiler | null {
@@ -828,6 +853,11 @@ export class WebgpuRenderer implements Renderer {
         // A device lost meanwhile: the pipelines are built on use as before.
       }
     }, 0);
+    // The binning pipelines, compiled in the background; the heat splats until they are there.
+    if (this.device.limits.maxStorageBuffersPerShaderStage >= 8) {
+      this.heatBin = new GpuHeatBin(this.device, this.curveView, this.sampler);
+      void this.heatBin.prewarm(this.heatF32 ? ['r32float', 'rgba32float'] : ['r16float', 'rgba16float']);
+    }
     // The figures' pipeline too, a task of its own: made on first use, it took part of the frame a load ends in.
     setTimeout(() => {
       try {
@@ -2904,6 +2934,14 @@ export class WebgpuRenderer implements Renderer {
       this.device.queue.writeBuffer(this.volumeBuffer, 0, block as unknown as BufferSource);
     }
 
+    // Binned where that matches the splat (heatBin.ts): set up before the
+    // uniforms, which carry each plan entry's share of the list.
+    const lines = params.lineHeat && this.lines !== null && !field;
+    const binFrame = this.binFrame(params, field !== null, lines, format, weight);
+    const bin = binFrame ? this.heatBin! : null;
+    const binBases = bin ? bin.begin(encoder, binFrame!, params.plan.map((p) => Math.min(p.blockCount, MAX_BLOCKS) * SAMPLE_BLOCK)) : null;
+    if (!field) this.heatBinned = bin !== null;
+
     const uniformOffsets: number[] = [];
     let splitSkipped = 0;
     params.plan.forEach((plan, index) => {
@@ -2941,9 +2979,17 @@ export class WebgpuRenderer implements Renderer {
           startOffsets[index],
           field ? [field.width, field.height] : null,
           hasDirs,
+          binBases ? [binBases[index], plan.chunk, index, Math.min(plan.blockCount, MAX_BLOCKS) * SAMPLE_BLOCK] : null,
         ),
       );
     });
+
+    if (bin) {
+      this.binHeat(encoder, params, bin, target, format, uniformOffsets, startOffsets);
+      if (!field) this.splitSkippedChunks = splitSkipped;
+      if (!direct) merge();
+      return;
+    }
 
     const pass = encoder.beginRenderPass({
       label: field ? 'direction field' : 'heat',
@@ -2953,7 +2999,6 @@ export class WebgpuRenderer implements Renderer {
       // depth as a texture. See buildHeatPipeline.
     });
     // Line heat where there are routes to draw; points otherwise, not nothing.
-    const lines = params.lineHeat && this.lines !== null && !field;
     pass.setPipeline(lines ? this.lineHeatPipelineFor(format) : this.heatPipelineFor(format));
 
     params.plan.forEach((plan, index) => {
@@ -2972,6 +3017,104 @@ export class WebgpuRenderer implements Renderer {
 
   /** See `Renderer.splitSkippedChunks`. */
   splitSkippedChunks = 0;
+
+  /**
+   * This frame's binning, or null to splat. Binned only where it matches the
+   * splat (see heatBin.ts): point heat, no wedges, no rate map, and in
+   * orthographic a radius the fold reaches. With `heatBinMode` 'auto', only
+   * where the rows outnumber the texels enough for binning to be the cheaper.
+   */
+  private binFrame(params: FrameParams, field: boolean, lines: boolean, format: GPUTextureFormat, weight: number): BinFrame | null {
+    const bin = this.heatBin;
+    if (this.heatBinMode === 'off' || !bin || !bin.canDraw(format) || field || lines || params.heat.rate) return null;
+    if (params.direction && params.direction.half < Math.PI) return null;
+    if (params.plan.length > BIN_SLOTS) return null;
+    // Sprites so wide that most would be splatted from the list anyway, and past
+    // its capacity binned at the fold's widest: splatted, all of them.
+    if ((params.spriteTexels ?? 0) > BIN_TYPICAL_MAX) return null;
+    const tpp = this.heatHeight / Math.max(1, this.height);
+    const minR = Math.max(Math.min(1, params.heat.minPixelRadius), params.heat.minPixelRadius * tpp);
+    const maxR = Math.max(1, params.heat.maxPixelRadius * tpp);
+    let uniformRadius = 0;
+    if (!params.perspective) {
+      // Every row the same size: the shader's radius with no depth to divide by.
+      uniformRadius = Math.min(maxR, Math.max(minR, params.heat.radius * params.proj[5] * this.heatHeight * 0.5));
+      if (uniformRadius > BIN_RMAX) return null;
+    }
+    if (this.heatBinMode === 'auto') {
+      let rows = 0;
+      for (const p of params.plan) rows += Math.min(p.blockCount, MAX_BLOCKS) * SAMPLE_BLOCK;
+      if (rows < this.heatWidth * this.heatHeight * BIN_MIN_ROWS_PER_TEXEL) return null;
+    }
+    const frame: BinFrame = {
+      width: this.heatWidth,
+      height: this.heatHeight,
+      perspective: params.perspective,
+      uniformRadius,
+      signed: params.useTeamSign || params.heat.signed || params.mode === 'heat-difference',
+      team: params.heat.teamColors,
+      weight,
+      centre: params.heat.centerIntensity,
+      edge: params.heat.edgeIntensity,
+      falloff: Math.max(0.01, params.heat.falloff),
+      rampFlags: rampFlags(params.heat.useCurve, params.heat.smoothRamp),
+      curveDirty: params.curveLutDirty,
+    };
+    return bin.fits(frame) ? frame : null;
+  }
+
+  /** The binned heat pass: bin every plan entry, resolve, then fold and splat the listed rows into `target`. */
+  private binHeat(
+    encoder: GPUCommandEncoder,
+    params: FrameParams,
+    bin: GpuHeatBin,
+    target: GPUTextureView,
+    format: GPUTextureFormat,
+    uniformOffsets: number[],
+    startOffsets: number[],
+  ): void {
+    const cpass = encoder.beginComputePass({ label: 'heat bin', timestampWrites: this.prof?.writes('heat', true, false) });
+    cpass.setPipeline(bin.binPipeline!);
+    params.plan.forEach((plan, index) => {
+      const offset = uniformOffsets[index];
+      if (offset < 0) return;
+      const blocks = Math.min(plan.blockCount, MAX_BLOCKS);
+      if (startOffsets[index] + blocks > MAX_BLOCKS) return;
+      cpass.setBindGroup(0, this.binBindGroup(plan.chunk, offset, bin));
+      const groups = Math.ceil((blocks * SAMPLE_BLOCK) / 256);
+      const x = Math.min(groups, 32768);
+      cpass.dispatchWorkgroups(x, Math.ceil(groups / x));
+    });
+    bin.resolve(cpass, format);
+    cpass.end();
+    const pass = encoder.beginRenderPass({
+      label: 'heat fold',
+      colorAttachments: [{ view: target, loadOp: 'load', storeOp: 'store' }],
+      timestampWrites: this.prof?.writes('heat', false, true),
+    });
+    bin.fold(pass, format);
+    pass.setPipeline(bin.listPipeline(format));
+    params.plan.forEach((plan, index) => {
+      const offset = uniformOffsets[index];
+      if (offset < 0) return;
+      pass.setBindGroup(0, this.heatBindGroup(plan.chunk, offset, false, format, bin));
+      pass.drawIndirect(bin.args, index * 16);
+    });
+    pass.end();
+  }
+
+  private binBindGroup(chunkIndex: number, offset: number, bin: GpuHeatBin): GPUBindGroup {
+    const chunk = this.chunks[chunkIndex];
+    const pipeline = bin.binPipeline!;
+    return this.cachedBindGroup(
+      `heat:bin:${chunkIndex}:${chunk.filterKey}:${offset}:${this.depthGeneration}:${bin.generation}:${chunk.passBits ? 'p' : ''}`,
+      pipeline.getBindGroupLayout(0),
+      () => [
+        ...this.heatEntries(chunk, offset, this.blockBuffer).filter((e) => e.binding !== 7 && e.binding !== 8 && e.binding !== 16),
+        ...bin.binEntries(),
+      ],
+    );
+  }
 
   /**
    * Fold the scratch estimate into the accumulator: `acc = acc*(1-a) + scratch*a`.
@@ -3327,6 +3470,7 @@ export class WebgpuRenderer implements Renderer {
     blockBase: number,
     fieldSize: [number, number] | null = null,
     hasDirs = false,
+    binLanes: [number, number, number, number] | null = null,
   ): number {
     const u = this.scratchFor(HEAT_UNIFORM_BYTES);
     const i = this.scratchU32;
@@ -3392,6 +3536,13 @@ export class WebgpuRenderer implements Renderer {
     i[46] = 0;
     i[47] = 0;
     for (let s = 48; s < 56; s++) u[s] = 0;
+    // Binning (heatBin.ts): the list base, the chunk, the plan slot and the rows dispatched, in spare lanes.
+    if (binLanes) {
+      i[45] = binLanes[0];
+      i[46] = binLanes[1];
+      i[47] = binLanes[2];
+      i[48] = binLanes[3];
+    }
     // Rows per packed filter slot, then this chunk's block-start base.
     i[56] = chunk.rows;
     i[57] = blockBase;
@@ -3670,23 +3821,32 @@ export class WebgpuRenderer implements Renderer {
     ]);
   }
 
-  private heatBindGroup(chunkIndex: number, offset: number, lines = false, format = this.heatFormat): GPUBindGroup {
+  /** With `bin`, the splat of the rows binning listed: the list in place of the block starts. */
+  private heatBindGroup(chunkIndex: number, offset: number, lines = false, format = this.heatFormat, bin: GpuHeatBin | null = null): GPUBindGroup {
     const chunk = this.chunks[chunkIndex];
     // The depth view is part of the key: it is recreated on resize, and a cached
     // bind group holding the old one would read a destroyed texture.
-    const pipeline = lines ? this.lineHeatPipelineFor(format) : this.heatPipelineFor(format);
+    const pipeline = bin ? bin.listPipeline(format) : lines ? this.lineHeatPipelineFor(format) : this.heatPipelineFor(format);
     return this.cachedBindGroup(
-      `${lines ? 'lineheat' : 'heat'}:${chunkIndex}:${chunk.filterKey}:${offset}:${this.depthGeneration}:${format}:${chunk.dirs ? 'd' : ''}:${chunk.passBits ? 'p' : ''}`,
+      `${lines ? 'lineheat' : bin ? 'heat:list' : 'heat'}:${chunkIndex}:${chunk.filterKey}:${offset}:${this.depthGeneration}:${format}:${chunk.dirs ? 'd' : ''}:${chunk.passBits ? 'p' : ''}`,
       pipeline.getBindGroupLayout(0),
       () => [
-        { binding: 16, resource: { buffer: chunk.dirs ?? this.emptyStorage } },
         // Line heat's segment starts; the point shader has no binding 14, and an
         // 'auto' layout holds only the bindings its shader uses.
         ...(lines ? [{ binding: 14, resource: { buffer: chunk.lineStarts ?? this.emptyStorage } }] : []),
+        ...this.heatEntries(chunk, offset, bin ? bin.list : this.blockBuffer),
+      ],
+    );
+  }
+
+  /** The point splat's bindings for one chunk, `blockStarts` at binding 3. */
+  private heatEntries(chunk: GpuChunk, offset: number, blockStarts: GPUBuffer): GPUBindGroupEntry[] {
+    return [
+        { binding: 16, resource: { buffer: chunk.dirs ?? this.emptyStorage } },
         { binding: 0, resource: this.uniforms.binding(offset, HEAT_UNIFORM_BYTES) },
         { binding: 1, resource: { buffer: chunk.positions } },
         { binding: 2, resource: { buffer: chunk.times ?? this.emptyStorage } },
-        { binding: 3, resource: { buffer: this.blockBuffer } },
+        { binding: 3, resource: { buffer: blockStarts } },
         { binding: 4, resource: { buffer: this.teamSignBuffer } },
         { binding: 5, resource: { buffer: chunk.filterValues ?? this.emptyStorage } },
         { binding: 6, resource: { buffer: chunk.passBits ?? this.emptyStorage } },
@@ -3706,8 +3866,7 @@ export class WebgpuRenderer implements Renderer {
         // safe direction when the target does not exist.
         { binding: 13, resource: this.structDepthView ?? this.mustDepthView() },
         { binding: 15, resource: { buffer: this.volumeBuffer } },
-      ],
-    );
+    ];
   }
 
   /**
@@ -4147,7 +4306,7 @@ export class WebgpuRenderer implements Renderer {
    * Getting that wrong reads a diagonal smear of the image and produces a
    * plausible-looking but wrong distribution.
    */
-  async readHeatField(maxSamples: number): Promise<Float32Array | null> {
+  async readHeatField(maxSamples: number, allChannels = false): Promise<Float32Array | null> {
     if (!this.heatTex || this.heatWidth <= 0 || this.heatHeight <= 0) return null;
     // One reader at a time: a buffer cannot be mapped twice, and overlapping
     // multi-megabyte readbacks were enough to take the whole page down.
@@ -4184,6 +4343,18 @@ export class WebgpuRenderer implements Renderer {
 
       const texels = this.heatWidth * this.heatHeight;
       const stride = Math.max(1, Math.floor(texels / Math.max(1, maxSamples)));
+      // Every channel, signed, every texel: for the probes comparing the heat paths.
+      if (allChannels) {
+        const ch = bytesPerTexel / (this.heatF32 ? 4 : 2);
+        const all = new Float32Array(texels * ch);
+        for (let y = 0; y < this.heatHeight; y++) {
+          for (let k = 0; k < this.heatWidth * ch; k++) {
+            const byte = y * bytesPerRow + k * (this.heatF32 ? 4 : 2);
+            all[y * this.heatWidth * ch + k] = this.heatF32 ? new Float32Array(range, byte, 1)[0] : halfToFloat(new Uint16Array(range, byte, 1)[0]);
+          }
+        }
+        return all;
+      }
       const out = new Float32Array(Math.ceil(texels / stride));
       let n = 0;
       for (let i = 0; i < texels; i += stride) {
@@ -4227,6 +4398,7 @@ export class WebgpuRenderer implements Renderer {
   }
 
   dispose(): void {
+    this.heatBin?.dispose();
     this.zones?.dispose();
     this.volumeContours?.dispose();
     this.ranges?.dispose();

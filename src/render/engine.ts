@@ -241,6 +241,17 @@ const EXACT_FLOOR_UNTIMED = 2_048 * SAMPLE_BLOCK;
  * rest is the level, the composite and the margin a display's refresh needs.
  */
 const HEAT_GPU_SHARE = 0.45;
+/**
+ * Where the GPU times every pass (WebGPU), the share all of them may take
+ * together; the heat gets what the level, the composite and the rest leave.
+ *
+ * 0.45 for the heat alone, less a quarter of the scene, held the heat near a
+ * quarter of the frame: at 100 million rows it took 4.7 of 16.7 ms and the GPU
+ * stood idle for the rest, while every moving frame drew a sample of the rows.
+ * Where only the heat is timed (WebGL2) the level's cost is unknown, and the
+ * share stays as it was.
+ */
+const FRAME_GPU_SHARE = 0.62;
 /** Drawn frames the sprite cap holds after a change, for the smoothed GPU time to catch up. */
 const CAP_HOLD_FRAMES = 12;
 /** Frames between steps up of the sprites drawn: the GPU's reading of a frame comes back in two or three. */
@@ -528,6 +539,8 @@ export class Engine {
   private rampFrame = -Infinity;
   /** The heat cost's latest reading where it is above the average. */
   private heatCostPeak = 0;
+  /** A typical sprite's radius in heat texels, this frame: FrameParams.spriteTexels. */
+  private spriteTexels = 0;
   /** Whether the growing window's base was drawn thinned, while the camera moved. */
   private baseThinned = false;
   /** Sprites the last frame that drew drew. */
@@ -3053,7 +3066,11 @@ export class Engine {
     // a few milliseconds of every frame meanwhile.
     const arriving = (renderer as { dataPending?: boolean }).dataPending || (renderer as { uploadsPending?: boolean }).uploadsPending ? ARRIVING_MS : 0;
     const heatBudgetMs =
-      heatGpuMs !== undefined ? Math.max(1, targetMs * HEAT_GPU_SHARE - (passMs?.scene ?? 0) * 0.25 - arriving) : targetMs;
+      heatGpuMs === undefined
+        ? targetMs
+        : passMs?.scene !== undefined
+          ? Math.max(1, targetMs * FRAME_GPU_SHARE - ['tracks', 'scene', 'structdepth', 'peel', 'composite'].reduce((a, n) => a + (passMs?.[n] ?? 0), 0) - arriving)
+          : Math.max(1, targetMs * HEAT_GPU_SHARE - arriving);
     const spritePx = this.spritePixels(s, height);
     // Not for line heat: a route is drawn at least a few pixels wide however
     // coarse the buffer, so a coarser level changes how much heat a thin route
@@ -3094,7 +3111,10 @@ export class Engine {
     // after the GPU time has shown the frame it already dropped. Below a couple
     // of texels the vertex work dominates and size stops mattering.
     const texelRadius = Math.max(2, spritePx * effectiveHeatScale);
-    if (this.capTexelRadius > 0 && this.dataset && this.heatTimed) {
+    this.spriteTexels = spritePx * effectiveHeatScale;
+    // Not where the heat is binned: a row costs the same at any size there.
+    const binned = (renderer as { heatBinned?: boolean }).heatBinned === true;
+    if (this.capTexelRadius > 0 && this.dataset && this.heatTimed && !binned) {
       const k = (this.capTexelRadius / texelRadius) ** 2;
       if (k < 0.9 || k > 1.1) {
         this.exactCap = Math.max(EXACT_FLOOR_SPRITES, Math.min(EXACT_SPRITE_CAP, this.exactCap * Math.max(0.25, Math.min(2, k))));
@@ -4050,6 +4070,7 @@ export class Engine {
       compositeOnly,
       blendAlpha,
       heatGain: this.frameGain,
+      spriteTexels: this.spriteTexels,
       accumFrames: this.accumFrames,
       timeLo,
       timeHi,

@@ -14,7 +14,7 @@ import { describe, expect, it } from 'vitest';
  * `tsc` does catch it, so this test buys nothing in correctness. It buys the
  * *message*: "line 385 has a backtick in a comment" instead of "',' expected".
  */
-const SHADER_FILES = ['webgl2/shaders.ts', 'webgpu/shaders.ts'];
+const SHADER_FILES = ['webgl2/shaders.ts', 'webgpu/shaders.ts', 'webgpu/heatBin.ts'];
 
 describe('shader source', () => {
   for (const file of SHADER_FILES) {
