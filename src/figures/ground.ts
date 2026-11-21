@@ -1059,7 +1059,7 @@ function trackBand(out: FigBuffer, fr: Frame3, path: P2[], band: number, s0: num
  * up): `prof` gives (distance along the axis, radius) in order, a radius of 0 a pole. Its segment count is given, not
  * set by its size as the parts' lathe sets it, so a dozen road wheels or a barrel's many rings stay light.
  */
-function revolve(out: FigBuffer, fr: Frame3, a: Vec3, d: Vec3, prof: P2[], n: number, col: Rgb, crease = 40): void {
+function revolve(out: FigBuffer, fr: Frame3, a: Vec3, d: Vec3, prof: P2[], n: number, col: Rgb, crease = 40, facing = false): void {
   const helper: Vec3 = Math.abs(d[2]) < 0.9 ? [0, 0, 1] : [1, 0, 0];
   const u = unit(cross3(d, helper));
   const v = cross3(d, u);
@@ -1079,7 +1079,9 @@ function revolve(out: FigBuffer, fr: Frame3, a: Vec3, d: Vec3, prof: P2[], n: nu
   m.grid(rows, true);
   const wa = at(fr, a[0], a[1], a[2]);
   const wb = at(fr, a[0] + d[0], a[1] + d[1], a[2] + d[2]);
-  m.emit(out, { crease, axis: [wa, [wb[0] - wa[0], wb[1] - wa[1], wb[2] - wa[2]]] });
+  const along: Vec3 = [wb[0] - wa[0], wb[1] - wa[1], wb[2] - wa[2]];
+  // Lit facing out from the axis, or (`facing`: a disc or a dish across it, a wheel's face) facing along it.
+  m.emit(out, facing ? { crease, facing: along } : { crease, axis: [wa, along] });
 }
 
 function cross3(a: Vec3, b: Vec3): Vec3 {
@@ -1201,7 +1203,8 @@ export function tyre(k: Kit, x: number, inner: number, up: number, r: number, w:
   const a: Vec3 = [x, inner, up];
   const d: Vec3 = [0, side, 0];
   revolve(k.fixed, k.fr, a, d, [[0, r * 0.66], [w * 0.16, r], [w * 0.84, r], [w, r * 0.66]], n, PAINT.tyre, 75);
-  revolve(k.team, k.fr, a, d, [[w, r * 0.66], [w - 0.04, r * 0.52], [w - 0.02, r * 0.2], [w + 0.01, 0]], n, grey(0.78), 50);
+  // The wheel's face looks out along the axle (lit from outside, not as if it faced into the tyre).
+  revolve(k.team, k.fr, a, d, [[w, r * 0.66], [w - 0.04, r * 0.52], [w - 0.02, r * 0.2], [w + 0.01, 0]], n, grey(0.78), 50, true);
 }
 
 /** Two bogies of two axles each under a rail vehicle, and the frame between them. */
@@ -1476,7 +1479,9 @@ function trailerBed(k: Kit, spec: GroundSpec): void {
   const x1 = half - bar;
   const r = wheelRadiusOf(spec);
   block(k.team, k.fr, [(x1 - half) / 2, 0, H - 0.15], x1 + half, spec.width - 0.1, 0.3, grey(0.78));
-  block(k.fixed, k.fr, [(x1 - half) / 2, 0, Math.min(H - 0.35, r + 0.05)], x1 + half - 0.4, 0.5, 0.2, PAINT.dark);
+  // The chassis frame under the bed, from the axles up to the bed: the bed does not float over its wheels.
+  const lo = Math.min(H - 0.45, r - 0.05);
+  block(k.fixed, k.fr, [(x1 - half) / 2, 0, (lo + H - 0.28) / 2], x1 + half - 0.4, 0.5, H - 0.28 - lo, PAINT.dark);
   tube(k.fixed, k.fr, [x1, 0, H - 0.25], [half, 0, Math.max(0.45, r)], 0.07, 0.06, PAINT.dark, 5);
   if (spec.outriggers) {
     for (const sx of [-1, 1]) {
@@ -1775,8 +1780,10 @@ function gun(k: Kit, spec: GroundSpec, g: GunSpec, top: number, turrets: TurretS
     const up = (t ? base + t.height : base) + (g.up ?? 0.25);
     const s = (t?.side ?? 0) + (g.side ?? 0.25);
     tube(k.fixed, k.fr, [x, s, up], [x + g.length, s, up], r, r, PAINT.dark, 5);
-    // The pintle or ring post it stands on, from the roof up to the gun.
-    if (t) tube(k.fixed, k.fr, [x + 0.3, s, base + t.height - 0.05], [x + 0.3, s, up - r], 0.035, 0.035, PAINT.dark, 5);
+    // The pintle or ring post it stands on, from the roof up to the gun; in an open turret from the floor of its well.
+    const wl = t?.well;
+    const inWell = !!wl && x + 0.3 - t!.x > wl.rear && x + 0.3 - t!.x < wl.front;
+    if (t) tube(k.fixed, k.fr, [x + 0.3, s, inWell ? base + (wl!.floor ?? 0) : base + t.height - 0.05], [x + 0.3, s, up - r], 0.035, 0.035, PAINT.dark, 5);
   }
   into(k, -1);
 }
