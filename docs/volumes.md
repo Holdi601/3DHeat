@@ -53,6 +53,17 @@ Each volume row has a show checkbox, a colour, a name, **include** or **exclude*
 
 The GPU filter takes up to 8 volumes with 64 outline points in all; a "!" marks a volume past that. Statistics and export still count it.
 
+## Lines on the level
+
+Each visible volume draws a line in its colour where it cuts the level: along the ground, up the walls, over every surface it passes through. A volume then reads as the ground it takes in, not as a box floating over the map.
+
+| Control | Default | Meaning |
+|---|---|---|
+| **Lines on the level** | on | Draw them. Remembered in this browser. |
+| **Line width** | 1.5 px | 0.5-6 px. |
+
+The lines are drawn in every mode (heat, replay, tactics...), over the picture and so over the heat, for the first 8 visible volumes the GPU tests (the same ones the filter applies). They are computed on the GPU from the scene's depth each frame: the world position of each pixel is rebuilt and each volume's boundary function (zero on its surface) is evaluated there; a pixel the boundary crosses is lit, with the width measured in pixels so the line keeps its width at any distance. Where the next pixel is a different surface (an edge in the depth, the sky) no line is drawn. Nothing is read back and no geometry is built ([`volumeContours.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/volumeContours.ts)).
+
 ## Statistics
 
 The **Statistics** area follows the filters, the time window and hidden groups. *Selected* shows the selected volume, *Compare all* puts every volume side by side. It shows:

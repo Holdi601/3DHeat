@@ -358,6 +358,103 @@ await step('engagement lines: exchanges found, drawn during the fight, gone afte
   return `${info.n} exchanges ${JSON.stringify(info.reasons)}; line drawn during the fight, gone after; ${timingText(t)}`;
 });
 
+// -------------------------------------------------------- volume intersections
+
+/** Lines where a cylinder cuts a flat terrain, seen from above, on one backend: pixels in its colour with the lines on and off. */
+async function contourCheck(p) {
+  return p.evaluate(async () => {
+    const h = globalThis.__3dheat;
+    const s = h.useStore.getState();
+    s.setDataset(h.generateSynthetic({ ...h.DEFAULT_SYNTH, rows: 20_000 }));
+    s.setMode('heat-simple');
+    s.patchTimeline({ mode: 'all' });
+    // Heat out of the way: only the level and the lines.
+    s.patchHeat({ saturation: 1e9 });
+    const b = h.useStore.getState().dataset.bounds;
+    const n = 40;
+    const lines = [];
+    for (let z = 0; z <= n; z++) for (let x = 0; x <= n; x++) lines.push(`v ${(b.minX + ((b.maxX - b.minX) * x) / n).toFixed(3)} ${b.minY.toFixed(3)} ${(b.minZ + ((b.maxZ - b.minZ) * z) / n).toFixed(3)}`);
+    for (let z = 0; z < n; z++)
+      for (let x = 0; x < n; x++) {
+        const a = z * (n + 1) + x + 1;
+        lines.push(`f ${a} ${a + 1} ${a + n + 1}`, `f ${a + 1} ${a + n + 2} ${a + n + 1}`);
+      }
+    const { modelLoader } = await import('/src/data/modelLoader.ts');
+    const m = await modelLoader.load(new File([lines.join('\n')], 'flat.obj', { type: 'text/plain' }), 4000);
+    s.setLevel({ kind: 'model', name: 'flat.obj', vertices: m.vertices, indices: m.indices, structureIndices: m.structureIndices, structureEdges: m.structureEdges, triangles: m.triangles, structureTriangles: m.structureTriangles, sourceTriangles: m.sourceTriangles, sourceStructureTriangles: m.sourceStructureTriangles, partNames: m.partNames, partClasses: m.partClasses, partReasons: m.partReasons, bounds: m.bounds, opacity: 1, desaturate: 1, brightness: 0.9, wireframe: false });
+    const vs = (await h.modules['volumes/store']()).useVolumeStore.getState();
+    vs.clear();
+    const cx = (b.minX + b.maxX) / 2;
+    const cz = (b.minZ + b.maxZ) / 2;
+    const r = (b.maxX - b.minX) * 0.2;
+    const v = vs.add({ kind: 'cylinder', x: cx, z: cz, radius: r, floor: b.minY - 50, ceil: b.minY + 50 });
+    const eng = globalThis.__3dheat_engine;
+    eng.camera.setOrientationDegrees(0, -89.9);
+    eng.frameDataset();
+    const prefs = (await h.modules['render/volumeContours']()).useContourPrefs;
+    const count = async (on) => {
+      prefs.getState().set({ on });
+      eng.invalidate(6);
+      await new Promise((res) => setTimeout(res, 900));
+      const f = await eng.captureFrame();
+      if (!f) return -1;
+      const hex = v.color.replace('#', '');
+      const [R, G, B] = [0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16));
+      let k = 0;
+      for (let i = 0; i < f.rgba.length; i += 4) if (Math.abs(f.rgba[i] - R) < 40 && Math.abs(f.rgba[i + 1] - G) < 40 && Math.abs(f.rgba[i + 2] - B) < 40) k++;
+      // The ring in pixels: its circumference on screen.
+      const c = eng.project(cx, b.minY, cz);
+      const e = eng.project(cx + r, b.minY, cz);
+      const ringPx = c && e ? 2 * Math.PI * Math.hypot(e.x - c.x, e.y - c.y) * (f.width / eng.canvas.clientWidth) : 0;
+      return { k, ringPx };
+    };
+    const on = await count(true);
+    const off = await count(false);
+    prefs.getState().set({ on: true });
+    vs.clear();
+    s.setLevel(null);
+    s.patchHeat({ saturation: 24 });
+    return { on, off, backend: eng.live.backend };
+  });
+}
+
+await step('volume intersections: a line where the volume cuts the level, both backends', async () => {
+  const notes = [];
+  for (const backend of ['webgpu', 'webgl2']) {
+    // WebGPU needs the full Chromium channel and its own flags (tools/probe-webgpu.mjs).
+    const b = backend === 'webgpu'
+      ? await chromium.launch({ channel: 'chromium', headless: true, args: ['--enable-unsafe-webgpu', '--enable-features=Vulkan', '--disable-vulkan-surface', '--ignore-gpu-blocklist'] }).catch(() => null)
+      : browser;
+    if (!b) {
+      notes.push('webgpu: no Chromium channel');
+      continue;
+    }
+    const p = await b.newPage({ viewport: { width: 1400, height: 900 } });
+    p.on('pageerror', (e) => errors.push(String(e)));
+    await p.goto(`${url}${url.includes('?') ? '&' : '?'}backend=${backend}`);
+    await p.waitForFunction(() => !!globalThis.__3dheat_engine && !!globalThis.__3dheat, null, { timeout: 60_000 });
+    await p.waitForTimeout(800);
+    const r = await contourCheck(p);
+    await p.close();
+    if (b !== browser) await b.close();
+    if (r.backend !== backend) {
+      notes.push(`${backend}: not available here (ran ${r.backend})`);
+      continue;
+    }
+    if (r.on.k < 0) {
+      notes.push(`${r.backend}: no capture`);
+      continue;
+    }
+    const added = r.on.k - r.off.k;
+    // About the ring's circumference times the line width, give or take.
+    expect(added > r.on.ringPx * 0.5 && added < r.on.ringPx * 8, `${r.backend}: ${added} line pixels for a ring of ${r.on.ringPx.toFixed(0)} px`);
+    notes.push(`${r.backend}: ${added} px for a ${r.on.ringPx.toFixed(0)} px ring`);
+  }
+  const t = await orbitTiming(2);
+  judge(t);
+  return `${notes.join('; ')}; ${timingText(t)}`;
+});
+
 // The stages that follow add their steps above this line.
 
 await browser.close();

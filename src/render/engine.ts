@@ -104,6 +104,7 @@ import { worldTiles } from '../world/tileSet';
 import { VolumeGestures, rayToVertical } from '../volumes/gestures';
 import { appendVolumeOverlay } from '../volumes/overlay';
 import { packVolumes, type VolumeDraw } from '../volumes/gpu';
+import { volumeContourDraw } from './volumeContours';
 import { selectedVolume, useVolumeStore } from '../volumes/store';
 import { volumeFilter } from '../volumes/volume';
 import { postDrawFor, tacticalLevel, tacticalLines, LOOK_TINT, type LookTrack, type TacticalLook } from './tacticalLook';
@@ -4085,6 +4086,8 @@ export class Engine {
           }
         : null,
       volumes: volumeDraw,
+      // Where the volumes cut the level: in every mode, the race tab aside.
+      volumeContours: raceTab ? null : volumeContourDraw(useVolumeStore.getState().volumes),
       ranges: !raceBuilt && !raceTab && s.mode === 'team' && !gpuStore ? this.rangeDraw : null,
     };
 

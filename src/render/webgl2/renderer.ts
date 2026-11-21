@@ -1,4 +1,5 @@
 import { GlZones } from './zones';
+import { GlVolumeContours } from './volumeContours';
 import { GlRanges } from './ranges';
 import { VOL_CFG, VOL_INFO, VOL_M, VOL_POLY, VOLUME_BLOCK_FLOATS, type VolumeDraw } from '../../volumes/gpu';
 import { GlFigures } from './figures';
@@ -334,6 +335,8 @@ export class Webgl2Renderer implements Renderer {
   private topTris: { buf: WebGLBuffer; vao: WebGLVertexArrayObject; capacity: number; data: Float32Array | null; count: number } | null = null;
   /** The capture zones' discs (`FrameParams.objectiveZones`), made on first use. */
   private zones: GlZones | null = null;
+  /** The volumes' lines on the level (`FrameParams.volumeContours`), made on first use. */
+  private volumeContours: GlVolumeContours | null = null;
   /** The engagement ranges (`FrameParams.ranges`), made on first use. */
   private ranges: GlRanges | null = null;
   /** The see-through triangles on the ground (`FrameParams.groundTris`), the same. */
@@ -2846,6 +2849,11 @@ export class Webgl2Renderer implements Renderer {
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     gl.bindVertexArray(null);
 
+    // Where the volumes cut the level, from the scene's depth (render/volumeContours.ts).
+    if (params.volumeContours && this.sceneDepth && params.level) {
+      (this.volumeContours ??= new GlVolumeContours(gl)).draw(params, params.volumeContours, this.sceneDepth, this.reverseZ, this.emptyVao);
+    }
+
     // Read back here, inside the same task as the draw, if anybody asked.
     //
     // It has to be here and nowhere else: the context is created with
@@ -3733,6 +3741,7 @@ export class Webgl2Renderer implements Renderer {
     this.pendingChunks = [];
     this.symbols?.dispose();
     this.zones?.dispose();
+    this.volumeContours?.dispose();
     this.ranges?.dispose();
     this.symbols = null;
     this.figures?.dispose();

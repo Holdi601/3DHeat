@@ -1,4 +1,5 @@
 import type { VolumeDraw } from '../volumes/gpu';
+import type { VolumeContourDraw } from './volumeContours';
 import type { FigureBatch } from '../figures/instances';
 import type { GpuTrackStore } from './gpuTracks/store';
 import type { LineData } from '../data/lines';
@@ -608,6 +609,11 @@ export interface FrameParams {
    * inside them, or only those outside. Null or absent filters nothing.
    */
   volumes?: VolumeDraw | null;
+  /**
+   * The visible volumes' lines where they cut the level (render/volumeContours.ts),
+   * drawn over the composited picture from the scene's depth. Null or absent: none.
+   */
+  volumeContours?: VolumeContourDraw | null;
   /**
    * The tactical display's screen pass (`post/tacticalPost.ts`): the composited
    * picture re-drawn as a glowing telemetry display. Null or absent: the

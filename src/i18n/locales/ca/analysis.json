@@ -150,5 +150,9 @@
   "analysis.engage.end.outnumbered": "{name} outnumbered, withdrawing",
   "analysis.engage.end.ammo": "{name} out of ammunition",
   "analysis.engage.end.fuel": "{name} low on fuel",
-  "analysis.engage.end.contact": "{name}"
+  "analysis.engage.end.contact": "{name}",
+  "analysis.contours.toggle": "Lines on the level",
+  "analysis.contours.title": "Draw a line in each volume's colour where it cuts the ground, the walls and every other surface of the level",
+  "analysis.contours.width": "Line width",
+  "analysis.contours.px": "{v} px"
 }

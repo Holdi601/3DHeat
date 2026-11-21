@@ -1,4 +1,5 @@
 import { GpuZones } from './zones';
+import { GpuVolumeContours } from './volumeContours';
 import { GPU_DEPTH_CLEAR, GPU_DEPTH_FORMAT, GPU_DEPTH_TEST, PEEL_EPSILON_REVERSE } from '../depth';
 import { GpuRanges } from './ranges';
 import { GpuPost } from './post';
@@ -341,6 +342,8 @@ export class WebgpuRenderer implements Renderer {
   private topTriCount = 0;
   /** The capture zones' discs (`FrameParams.objectiveZones`), made on first use. */
   private zones: GpuZones | null = null;
+  /** The volumes' lines on the level (`FrameParams.volumeContours`), made on first use. */
+  private volumeContours: GpuVolumeContours | null = null;
   /**
    * The replay's objectives under the units (`FrameParams.objectivesUnder`): triangles
    * through the ground in the scene, not tested nor written, made when first asked
@@ -3044,6 +3047,13 @@ export class WebgpuRenderer implements Renderer {
       this.zones.prepare(params, zones, 'top');
     }
 
+    // Where the volumes cut the level, from the scene's depth (render/volumeContours.ts).
+    const contours = params.volumeContours && params.level && this.depthView ? params.volumeContours : null;
+    if (contours) {
+      this.volumeContours ??= new GpuVolumeContours(this.device, this.canvasFormat);
+      this.volumeContours.prepare(params, contours, this.depthView!, this.width, this.height);
+    }
+
     const target = this.context.getCurrentTexture();
     this.debug.compositeTarget = `${target.width}x${target.height} ${target.format}`;
 
@@ -3069,6 +3079,7 @@ export class WebgpuRenderer implements Renderer {
         pass.setPipeline(this.compositePipeline);
         pass.setBindGroup(0, group);
         pass.draw(3);
+        if (contours && this.volumeContours) this.volumeContours.draw(pass);
         if (params.mode !== 'team') this.dirField?.draw(pass, params, this.width, this.height);
         if (topTris) {
           pass.setPipeline(topTris.pipeline);
@@ -4155,6 +4166,7 @@ export class WebgpuRenderer implements Renderer {
 
   dispose(): void {
     this.zones?.dispose();
+    this.volumeContours?.dispose();
     this.ranges?.dispose();
     for (const j of this.pendingChunks) {
       j.positions?.destroy();

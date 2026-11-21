@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Check, NumberField, Section, Segmented } from '../controls';
+import { Check, NumberField, Section, Segmented, Slider } from '../controls';
 import { useEngine } from '../EngineContext';
 import { num, t, useLang } from '../../i18n';
 import { useStore } from '../../state/store';
@@ -14,6 +14,26 @@ import { downloadBlob, exportTest, saveSink, selectRows, statsCsv, statsJson, wr
 import { shapeHeights, volumesFromJson, volumesToJson, withHeights, type Volume, type VolumeFilter } from '../../volumes/volume';
 import { SortControl, SortTh } from '../sort/SortControl';
 import { useSort, useSorted } from '../sort/useSort';
+import { useContourPrefs } from '../../render/volumeContours';
+
+/** The lines where the volumes cut the level (render/volumeContours.ts): on or off, and how wide. */
+function ContourControls() {
+  const engine = useEngine();
+  const on = useContourPrefs((s) => s.on);
+  const width = useContourPrefs((s) => s.width);
+  const set = (p: { on?: boolean; width?: number }) => {
+    useContourPrefs.getState().set(p);
+    engine?.invalidate(2);
+  };
+  return (
+    <>
+      <Check label={t('analysis.contours.toggle')} checked={on} onChange={(v) => set({ on: v })} title={t('analysis.contours.title')} />
+      {on && (
+        <Slider label={t('analysis.contours.width')} value={width} min={0.5} max={6} step={0.25} onChange={(v) => set({ width: v })} format={(v) => t('analysis.contours.px', { v: num(v, 2) })} />
+      )}
+    </>
+  );
+}
 
 const TOOLS: { kind: DrawKind; label: string; title: string }[] = [
   { kind: 'box', label: 'volumes.tool.box', title: 'volumes.tool.boxTitle' },
@@ -192,6 +212,7 @@ export function VolumePanel() {
         ]}
         onChange={vs.setFilter}
       />
+      <ContourControls />
 
       {volumes.length > 1 && <SortControl sort={sort} />}
       {sortedVolumes.map((v) => (
