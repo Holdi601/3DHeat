@@ -8,6 +8,7 @@
 
 import { keyAt, onBoard, routesIn, shown, type Plan, type PlanArrow, type PlanFigure, type Vec3 } from './plan';
 import { DEFAULT_MODE, MODES, modeSpeed, moveClassOf, speedTable, defaultUnitsPerMetre, type Mode, type SlopeModel } from './speeds';
+import { taskPauses } from './tasks';
 
 /** The floor near a point: the level's surface height below `y` (within `reach`), or null. */
 export type HeightAt = (x: number, y: number, z: number, reach: number) => number | null;
@@ -186,19 +187,55 @@ export function routeModes(arrow: PlanArrow, figure: PlanFigure): Mode[] {
   return Array.from({ length: n }, (_, i) => (arrow.modes?.[i] as Mode | undefined) ?? (arrow.mode as Mode | undefined) ?? d);
 }
 
-/** Times one figure's route. */
-export function timeArrow(plan: Plan, arrow: PlanArrow, figure: PlanFigure, heightAt: HeightAt | null = terrain): RouteTiming | null {
+/** Changes when the level's surface does: what timings worked out over it are cached by. */
+export function timingStamp(): number {
+  return terrainStamp;
+}
+
+/** The level's surface height below a point (within `reach`), or null without a level. */
+export function groundAt(x: number, y: number, z: number, reach: number): number | null {
+  return terrain ? terrain(x, y, z, reach) : null;
+}
+
+/**
+ * Times a path a figure moves along by itself (a task's patrol, sweep or
+ * orbit, `tasks.ts`): at `speed` metres a second where given, never over its
+ * top speed, else at its class's usual mode. Null for what does not move.
+ */
+export function timePath(plan: Plan, figure: PlanFigure, points: Vec3[], speed?: number | null): RouteTiming | null {
+  const cls = moveClassOf(figure.kind);
+  if (!cls || points.length < 2) return null;
+  const table = speedTable(plan.game);
+  const upm = unitsPerMetre(plan);
+  const top = topSpeed(plan, figure) ?? 0;
+  const usual = modeSpeed(table, figure.kind, DEFAULT_MODE[cls], figure.profile, figure.speeds) ?? top;
+  const v = Math.min(top || Infinity, speed && speed > 0 ? speed : usual);
+  const ground = cls === 'infantry' || cls === 'ground';
+  return timeRoute(points, {
+    speedOf: () => (v > 0 && Number.isFinite(v) ? v * upm : null),
+    modes: [DEFAULT_MODE[cls]],
+    pauses: [],
+    slope: ground ? table.slope : 'horizontal',
+    ground,
+    unitsPerMetre: upm,
+    heightAt: terrain,
+    maxSpeed: top * upm,
+  });
+}
+
+/** Times one figure's route; `extra` seconds are waited at its points on top of their own pauses (a task there, `tasks.ts`). */
+export function timeArrow(plan: Plan, arrow: PlanArrow, figure: PlanFigure, heightAt: HeightAt | null = terrain, extra?: number[]): RouteTiming | null {
   const cls = moveClassOf(figure.kind);
   if (!cls || arrow.points.length < 2) return null;
   const table = speedTable(plan.game);
   const upm = unitsPerMetre(plan);
-  return timeRoute(arrow.points, {
+  const out = timeRoute(arrow.points, {
     speedOf: (m) => {
       const v = modeSpeed(table, figure.kind, m, figure.profile, figure.speeds);
       return v === null ? null : v * upm;
     },
     modes: routeModes(arrow, figure),
-    pauses: arrow.pauses ?? [],
+    pauses: extra ? arrow.points.map((_, i) => Math.max(0, arrow.pauses?.[i] ?? 0) + (extra[i] ?? 0)) : (arrow.pauses ?? []),
     slope: cls === 'infantry' || cls === 'ground' ? table.slope : 'horizontal',
     ground: cls === 'infantry' || cls === 'ground',
     unitsPerMetre: upm,
@@ -206,6 +243,14 @@ export function timeArrow(plan: Plan, arrow: PlanArrow, figure: PlanFigure, heig
     maxSpeed: (topSpeed(plan, figure) ?? 0) * upm,
     at: arrow.at,
   });
+  // A task at the route's end (a patrol from there, an orbit) is waited for too: the route lasts until it is done.
+  const end = extra?.[arrow.points.length - 1] ?? 0;
+  if (end > 0) {
+    out.depart[out.depart.length - 1] += end;
+    out.total += end;
+    out.minTotal += end;
+  }
+  return out;
 }
 
 /**
@@ -223,18 +268,62 @@ export function topSpeed(plan: Plan, figure: PlanFigure): number | null {
   return best > 0 ? best : null;
 }
 
-/** Every route's timing in a plan, by arrow id; cached per plan and level. */
+/** What a task's waits at waypoints are worked out from: the routes' timings so far and the steps' starts they give. */
+export interface TimingContext {
+  timings: Map<string, RouteTiming>;
+  /** Seconds from the plan's start to each step's start, and the plan's length. */
+  starts: number[];
+  total: number;
+}
+
+/** A context from timings: the step lengths they make. */
+export function timingContext(plan: Plan, timings: Map<string, RouteTiming>): TimingContext {
+  const byStep = limitsFor(plan, timings).byStep;
+  const starts: number[] = [];
+  let t = 0;
+  for (const d of byStep) {
+    starts.push(t);
+    t += d;
+  }
+  return { timings, starts, total: t };
+}
+
+/**
+ * Every route's timing in a plan, by arrow id; cached per plan and level.
+ * Tasks at waypoints (`tasks.ts`: a patrol, a sweep or an orbit flown there,
+ * a hold until a trigger) wait there: their waits depend on when other
+ * figures get where, so they are worked out again until they settle.
+ */
 const cache = new WeakMap<Plan, { stamp: number; byArrow: Map<string, RouteTiming> }>();
 export function planTimings(plan: Plan): Map<string, RouteTiming> {
   const hit = cache.get(plan);
   if (hit && hit.stamp === terrainStamp) return hit.byArrow;
-  const byArrow = new Map<string, RouteTiming>();
+  let byArrow = new Map<string, RouteTiming>();
   const figures = new Map(plan.figures.map((f) => [f.id, f]));
-  for (const a of plan.arrows) {
-    if (a.style !== 'move' || !a.figure) continue;
-    const f = figures.get(a.figure);
-    const t = f ? timeArrow(plan, a, f) : null;
+  const moving = plan.arrows.filter((a) => a.style === 'move' && !!a.figure && figures.has(a.figure));
+  for (const a of moving) {
+    const t = timeArrow(plan, a, figures.get(a.figure!)!);
     if (t) byArrow.set(a.id, t);
+  }
+  if (plan.tasks?.length && plan.realTime !== false) {
+    let last = new Map<string, number[]>();
+    for (let round = 0; round < 8; round++) {
+      const extra = taskPauses(plan, timingContext(plan, byArrow));
+      let changed = false;
+      for (const [id, xs] of extra) {
+        const was = last.get(id);
+        if (!was || xs.some((x, i) => Math.abs(x - (was[i] ?? 0)) > 1e-3)) changed = true;
+      }
+      for (const id of last.keys()) if (!extra.has(id)) changed = true;
+      if (!changed) break;
+      last = extra;
+      const next = new Map<string, RouteTiming>();
+      for (const a of moving) {
+        const t = timeArrow(plan, a, figures.get(a.figure!)!, terrain, extra.get(a.id));
+        if (t) next.set(a.id, t);
+      }
+      byArrow = next;
+    }
   }
   cache.set(plan, { stamp: terrainStamp, byArrow });
   return byArrow;
@@ -271,7 +360,13 @@ export interface SpeedCheck {
 function stepLimits(plan: Plan): { byStep: number[]; checks: SpeedCheck[] } {
   const hit = durations.get(plan);
   if (hit && hit.stamp === terrainStamp) return hit;
-  const timings = planTimings(plan);
+  const out = { stamp: terrainStamp, ...limitsFor(plan, planTimings(plan)) };
+  durations.set(plan, out);
+  return out;
+}
+
+/** Each step's length and the speed checks, from given timings. */
+function limitsFor(plan: Plan, timings: Map<string, RouteTiming>): { byStep: number[]; checks: SpeedCheck[] } {
   const upm = unitsPerMetre(plan);
   const checks: SpeedCheck[] = [];
   const byStep = plan.steps.map((s, i) => {
@@ -299,9 +394,7 @@ function stepLimits(plan: Plan): { byStep: number[]; checks: SpeedCheck[] } {
     }
     return Math.max(set, need);
   });
-  const out = { stamp: terrainStamp, byStep, checks };
-  durations.set(plan, out);
-  return out;
+  return { byStep, checks };
 }
 
 /** Everywhere the figures' top speeds held the plan back: late arrivals, and steps lengthened for a figure. */

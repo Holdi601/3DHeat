@@ -162,7 +162,7 @@ describe('saving the board', () => {
   it('reads a version 1 plan onto the base layer and keeps everything of version 2', () => {
     const v1 = { version: 1, title: 'Old', game: 'cs2', level: '', teams: [{ id: 't', name: 'T', color: [1, 0, 0] }], steps: [{ name: '1', seconds: 4 }], figures: [{ id: 'f', kind: 'soldier', team: 't', label: 'A', keys: { 0: { x: 1, y: 0, z: 2, yaw: 0 } }, from: 0 }], arrows: [], areas: [], notes: [{ id: 'n', step: 0, at: { x: 0, y: 0, z: 0 }, text: 'hi' }], figureScale: 1 };
     const p = readPlan(JSON.stringify(v1));
-    expect(p.version).toBe(2);
+    expect(p.version).toBe(3);
     expect(p.layers.map((l) => l.id)).toEqual([BASE_LAYER]);
     expect(p.drawings).toEqual([]);
     const v2 = structuredClone(p);
@@ -182,7 +182,7 @@ describe('saving the board', () => {
     // A thing on a layer the file does not list goes on the base layer.
     expect(back.arrows[0].layer).toBeUndefined();
     expect(back.arrows[0].at).toEqual([null, 7]);
-    expect(() => readPlan('{"version":3,"teams":[]}')).toThrow(/version 3/);
+    expect(() => readPlan('{"version":4,"teams":[]}')).toThrow(/version 4/);
   });
 
   it('keeps the board in the browser, and survives storage that is full or refused', () => {

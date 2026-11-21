@@ -15,6 +15,7 @@
 import type { Mode } from './speeds';
 import { planTimings, poseOnRoute, stepDuration, stepStart } from './timing';
 import { channelAt } from './keyframes';
+import { applyTaskMoves, readCodes, readTasks, type GoCode, type PlanTask } from './tasks';
 
 export type Vec3 = { x: number; y: number; z: number };
 
@@ -158,7 +159,7 @@ export const TRACK_CHANNELS: TrackChannel[] = ['turret', 'gun', 'viewYaw', 'view
 export type FigureTracks = Partial<Record<TrackChannel, { t: number; v: number }[]>>;
 
 export interface Plan {
-  version: 2;
+  version: 3;
   title: string;
   /** Which game's palette and teams the plan was made with (`games.ts`). */
   game: string;
@@ -173,6 +174,10 @@ export interface Plan {
   areas: PlanArea[];
   notes: PlanNote[];
   drawings: PlanDrawing[];
+  /** What units do while they move or stand (`tasks.ts`): attack, patrol, overwatch a sector, hold until a trigger; on layers like routes. */
+  tasks: PlanTask[];
+  /** Go-codes the plan's holds wait for: a name, and when it is given. */
+  codes: GoCode[];
   /** Who saved it last and when (ISO time), for telling files apart. */
   savedBy?: string;
   savedAt?: string;
@@ -185,7 +190,7 @@ export interface Plan {
 }
 
 export function emptyPlan(game: string, teams: PlanTeam[], level = ''): Plan {
-  return { version: 2, title: '', game, level, teams, steps: [{ name: '1', seconds: 4 }], layers: [baseLayer()], figures: [], arrows: [], areas: [], notes: [], drawings: [], figureScale: 1 };
+  return { version: 3, title: '', game, level, teams, steps: [{ name: '1', seconds: 4 }], layers: [baseLayer()], figures: [], arrows: [], areas: [], notes: [], drawings: [], tasks: [], codes: [], figureScale: 1 };
 }
 
 export function baseLayer(): PlanLayer {
@@ -289,47 +294,60 @@ export function posesAt(plan: Plan, step: number, u: number): Map<string, BoardP
   // The moment, in seconds from the plan's start: what the keyframes are read at.
   const time = stepStart(plan, step) + u * length;
   for (const f of plan.figures) {
-    if (!onBoard(f, step) || !shown(plan, f)) continue;
-    const here = keyAt(f, step);
-    if (!here) continue;
-    let pose: BoardPose = here;
-    const route = routes.get(f.id);
-    const next = f.keys[step + 1];
-    if (route && route.points.length >= 2 && u > 0) {
-      const timing = plan.realTime === false ? undefined : planTimings(plan).get(route.id);
-      if (timing && timing.total > 0) {
-        const r = poseOnRoute(route.points, timing, u * length);
-        pose = { ...r.p, yaw: r.yaw, pitch: here.pitch, roll: here.roll };
-      } else {
-        const a = along(route.points, u);
-        pose = { ...a.p, yaw: a.yaw };
-      }
-    } else if (next && u > 0) {
-      const dx = next.x - here.x;
-      const dz = next.z - here.z;
-      const yaw = Math.hypot(dx, dz) > 1e-3 ? Math.atan2(dx, -dz) : here.yaw;
-      pose = { x: here.x + dx * u, y: here.y + (next.y - here.y) * u, z: here.z + dz * u, yaw: u >= 1 ? next.yaw : yaw };
-    }
-    if (f.tracks) {
-      const tr = f.tracks;
-      const turret = channelAt(tr, 'turret', time);
-      const gun = channelAt(tr, 'gun', time);
-      const vy = channelAt(tr, 'viewYaw', time);
-      const vp = channelAt(tr, 'viewPitch', time);
-      const sy = channelAt(tr, 'sensorYaw', time);
-      const sp = channelAt(tr, 'sensorPitch', time);
-      pose = {
-        ...pose,
-        ...(turret !== undefined ? { turret } : {}),
-        ...(gun !== undefined ? { gun } : {}),
-        ...(vy !== undefined || vp !== undefined ? { view: { yaw: vy ?? 0, pitch: vp ?? 0 } } : {}),
-        ...(sy !== undefined || sp !== undefined ? { sensor: { yaw: sy ?? 0, pitch: sp ?? 0 } } : {}),
-      };
-    }
-    out.set(f.id, pose);
+    const pose = figurePose(plan, f, step, u, routes, length, time);
+    if (pose) out.set(f.id, pose);
   }
+  // Tasks that move a figure while they run (a patrol, a sweep, an orbit, following another).
+  if (plan.tasks?.length) applyTaskMoves(plan, out, time);
   lastPoses.set(plan, { step, u, poses: out });
   return out;
+}
+
+/** Where a figure is at a moment of playback by its routes and keys alone (no task moves it), or null off the board. */
+export function basePoseAt(plan: Plan, f: PlanFigure, time: number): BoardPose | null {
+  const at = playbackAt(plan, time);
+  return figurePose(plan, f, at.step, at.u, routesIn(plan, at.step), stepDuration(plan, at.step), time);
+}
+
+function figurePose(plan: Plan, f: PlanFigure, step: number, u: number, routes: Map<string, PlanArrow>, length: number, time: number): BoardPose | null {
+  if (!onBoard(f, step) || !shown(plan, f)) return null;
+  const here = keyAt(f, step);
+  if (!here) return null;
+  let pose: BoardPose = here;
+  const route = routes.get(f.id);
+  const next = f.keys[step + 1];
+  if (route && route.points.length >= 2 && u > 0) {
+    const timing = plan.realTime === false ? undefined : planTimings(plan).get(route.id);
+    if (timing && timing.total > 0) {
+      const r = poseOnRoute(route.points, timing, u * length);
+      pose = { ...r.p, yaw: r.yaw, pitch: here.pitch, roll: here.roll };
+    } else {
+      const a = along(route.points, u);
+      pose = { ...a.p, yaw: a.yaw };
+    }
+  } else if (next && u > 0) {
+    const dx = next.x - here.x;
+    const dz = next.z - here.z;
+    const yaw = Math.hypot(dx, dz) > 1e-3 ? Math.atan2(dx, -dz) : here.yaw;
+    pose = { x: here.x + dx * u, y: here.y + (next.y - here.y) * u, z: here.z + dz * u, yaw: u >= 1 ? next.yaw : yaw };
+  }
+  if (f.tracks) {
+    const tr = f.tracks;
+    const turret = channelAt(tr, 'turret', time);
+    const gun = channelAt(tr, 'gun', time);
+    const vy = channelAt(tr, 'viewYaw', time);
+    const vp = channelAt(tr, 'viewPitch', time);
+    const sy = channelAt(tr, 'sensorYaw', time);
+    const sp = channelAt(tr, 'sensorPitch', time);
+    pose = {
+      ...pose,
+      ...(turret !== undefined ? { turret } : {}),
+      ...(gun !== undefined ? { gun } : {}),
+      ...(vy !== undefined || vp !== undefined ? { view: { yaw: vy ?? 0, pitch: vp ?? 0 } } : {}),
+      ...(sy !== undefined || sp !== undefined ? { sensor: { yaw: sy ?? 0, pitch: sp ?? 0 } } : {}),
+    };
+  }
+  return pose;
 }
 
 const lastPoses = new WeakMap<Plan, { step: number; u: number; poses: Map<string, BoardPose> }>();
@@ -391,13 +409,14 @@ export function throwArc(a: Vec3, b: Vec3, apex: number, segments = 24): Vec3[] 
 }
 
 /** The newest plan file version this viewer writes; it reads it and every older one. */
-export const PLAN_VERSION = 2;
+export const PLAN_VERSION = 3;
 
 /**
  * A plan read from JSON, checked: anything not a plan of a known version is
  * refused with the reason; a plan from a newer version is refused rather than
  * half read. A version 1 plan (before layers, drawings and keyframes) comes
- * in with everything on the base layer.
+ * in with everything on the base layer; a version 2 plan (before tasks and
+ * go-codes) with none of either.
  */
 export function readPlan(text: string): Plan {
   let v: unknown;
@@ -408,7 +427,7 @@ export function readPlan(text: string): Plan {
   }
   const p = v as Partial<Omit<Plan, 'version'>> & { version?: unknown };
   if (!p || typeof p !== 'object') throw new Error('not a plan');
-  if (p.version !== 1 && p.version !== 2) throw new Error(`plan version ${String(p.version)} is not one this viewer reads`);
+  if (p.version !== 1 && p.version !== 2 && p.version !== 3) throw new Error(`plan version ${String(p.version)} is not one this viewer reads`);
   const arr = (x: unknown) => (Array.isArray(x) ? x : []);
   const num = (x: unknown, d: number) => (typeof x === 'number' && Number.isFinite(x) ? x : d);
   const vec = (x: unknown): Vec3 => {
@@ -442,7 +461,7 @@ export function readPlan(text: string): Plan {
     return Object.keys(out).length ? out : undefined;
   };
   return {
-    version: 2,
+    version: 3,
     title: String(p.title ?? ''),
     game: String(p.game ?? 'generic'),
     level: String(p.level ?? ''),
@@ -509,6 +528,8 @@ export function readPlan(text: string): Plan {
         ...layer(d),
       }))
       .filter((d) => d.points.length >= (d.kind === 'circle' ? 2 : 1)),
+    tasks: readTasks(arr(p.tasks), layer),
+    codes: readCodes(arr(p.codes)),
     figureScale: num(p.figureScale, 1),
     ...(typeof p.unitsPerMetre === 'number' && p.unitsPerMetre > 0 ? { unitsPerMetre: p.unitsPerMetre } : {}),
     ...(p.realTime === false ? { realTime: false } : {}),

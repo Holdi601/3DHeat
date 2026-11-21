@@ -96,7 +96,7 @@ describe('the board', () => {
     const back = readPlan(text);
     expect(back.figures[0].kind).toBe('m1a2-abrams');
     expect(back.figures[0].keys[0].x).toBe(5);
-    expect(() => readPlan('{"version":3}')).toThrow(/version/);
+    expect(() => readPlan('{"version":4}')).toThrow(/version/);
     expect(() => readPlan('nope')).toThrow();
   });
 

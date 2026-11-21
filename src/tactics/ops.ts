@@ -15,7 +15,7 @@
 import type { Plan } from './plan';
 
 /** The plan's collections of entities with an `id`. */
-export const COLLECTIONS = ['layers', 'figures', 'arrows', 'areas', 'notes', 'drawings'] as const;
+export const COLLECTIONS = ['layers', 'figures', 'arrows', 'areas', 'notes', 'drawings', 'tasks', 'codes'] as const;
 export type Collection = (typeof COLLECTIONS)[number];
 
 type Fields = Record<string, unknown>;
