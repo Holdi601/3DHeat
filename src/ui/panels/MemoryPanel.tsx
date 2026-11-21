@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { residentColumns } from '../../data/resident';
+import { evictColumn, useColumnStore } from '../../data/columnStore';
 import { formatBytes } from '../../data/memory';
 import { formatCount } from '../../data/synth';
 import { useStore } from '../../state/store';
@@ -49,7 +50,9 @@ export function MemoryPanel() {
   const budget = useStore((s) => s.budget);
   const patchBudget = useStore((s) => s.patchBudget);
   const engine = useEngine();
-  const columns = useMemo(() => (dataset ? residentColumns(dataset) : []), [dataset]);
+  // The columns on demand: what is in memory, what waits in the files, what was evicted.
+  const onDemand = useColumnStore();
+  const columns = useMemo(() => (dataset ? residentColumns(dataset) : []), [dataset, onDemand.version]);
   const ram = columns.reduce((a, c) => a + c.bytes, 0);
   const [heap, setHeap] = useState<Heap | null>(() => quickHeap());
   const [showAll, setShowAll] = useState(false);
@@ -120,6 +123,7 @@ export function MemoryPanel() {
             {showAll ? t('heat.memoryPanel.fewer') : t('heat.memoryPanel.all', { count: columns.length })}
           </button>
         )}
+        {Object.keys(onDemand.entries).length > 0 && <OnDemandList entries={Object.values(onDemand.entries)} mapBytes={onDemand.mapBytes} evicted={onDemand.evicted} />}
         {roomy && (
           <div className="hint" style={{ color: 'var(--good)' }}>
             {t('heat.memoryPanel.roomy')}{' '}
@@ -132,5 +136,43 @@ export function MemoryPanel() {
         )}
       </div>
     </Section>
+  );
+}
+
+/** The columns a load can read again from its files, each with where it is now. */
+function OnDemandList({ entries, mapBytes, evicted }: { entries: ReturnType<typeof useColumnStore.getState>['entries'][string][]; mapBytes: number; evicted: number }) {
+  const resident = entries.filter((e) => e.state === 'resident');
+  return (
+    <div data-testid="memory-on-demand">
+      <div className="hint">
+        {t('heat.memoryPanel.onDemand', {
+          resident: resident.length,
+          count: entries.length,
+          bytes: formatBytes(resident.reduce((a, e) => a + e.bytes, 0)),
+          map: formatBytes(mapBytes),
+          evicted,
+        })}
+      </div>
+      <div className="team-list">
+        {[...entries]
+          .sort((a, b) => b.lastUsed - a.lastUsed)
+          .map((e) => (
+            <div className="team-row" key={e.name} data-testid={`on-demand-${e.name}`} data-state={e.state}>
+              <span className="name" title={e.name}>
+                {e.name}
+              </span>
+              <span className="val" style={{ color: e.state === 'resident' ? undefined : 'var(--text-dim)' }}>
+                {t(`heat.memoryPanel.state.${e.state}`)}
+              </span>
+              <span className="val">{formatBytes(e.bytes)}</span>
+              {e.state === 'resident' && (
+                <button title={t('heat.memoryPanel.evictTitle')} onClick={() => evictColumn(e.name)}>
+                  {t('heat.memoryPanel.evict')}
+                </button>
+              )}
+            </div>
+          ))}
+      </div>
+    </div>
   );
 }

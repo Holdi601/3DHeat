@@ -3,6 +3,7 @@ import { useStore } from '../../state/store';
 import { CANON, isCanonical } from '../../data/canonical';
 import { END_REASON, endReasonKey, outcomeKind } from '../../data/outcome';
 import { activeFilterFlags } from '../../render/filterTables';
+import { retryColumn, useColumnStore, type ColumnEntry } from '../../data/columnStore';
 import type { AttributeColumn, FilterSpec } from '../../state/types';
 import { Section, Segmented } from '../controls';
 import { int, num, t } from '../../i18n';
@@ -29,6 +30,10 @@ export function FilterPanel() {
   const dataset = useStore((s) => s.dataset);
   const filters = useStore((s) => s.filters);
   const setFilters = useStore((s) => s.setFilters);
+  // A column arriving or evicted changes `dataset.attrs` in place: this redraws the list.
+  useColumnStore((c) => c.version);
+  const entries = useColumnStore((c) => c.entries);
+  const later = Object.values(entries).filter((e) => e.state !== 'resident');
 
   if (!dataset) return null;
 
@@ -48,7 +53,7 @@ export function FilterPanel() {
     setFilters(next ? [...rest, next] : rest);
   };
 
-  if (dataset.attrs.length === 0) {
+  if (dataset.attrs.length === 0 && later.length === 0) {
     return (
       <Section title={t('heat.filterPanel.title')}>
         <div className="hint">
@@ -77,12 +82,49 @@ export function FilterPanel() {
         />
       ))}
 
+      {later.length > 0 && <LaterColumns later={later} />}
+
       {columnCount > 0 && (
         <button onClick={() => setFilters(filters.filter((f) => f.kind === 'teams' || f.kind === 'persons'))}>
           {t('heat.filterPanel.clearAll')}
         </button>
       )}
     </Section>
+  );
+}
+
+/**
+ * Columns left in the files at load (`data/columnStore.ts`), or evicted since:
+ * read on a click here, or as soon as a filter or the split asks for one.
+ */
+function LaterColumns({ later }: { later: ColumnEntry[] }) {
+  return (
+    <div className="field" data-testid="columns-later">
+      <div className="label">
+        <span>{t('heat.filterPanel.later.title')}</span>
+      </div>
+      <div className="hint">{t('heat.filterPanel.later.hint')}</div>
+      {[...later]
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map((e) => (
+          <div className="row" key={e.name} data-testid={`later-${e.name}`}>
+            <span style={{ flex: 1 }} title={e.name}>
+              {columnLabel(e.name)}
+              {e.state === 'evicted' && <span className="hint"> · {t('heat.filterPanel.later.evicted')}</span>}
+            </span>
+            {e.state === 'loading' ? (
+              <span className="val">{t('heat.filterPanel.later.reading', { percent: num(e.fraction * 100, 0) })}</span>
+            ) : (
+              <button onClick={() => void retryColumn(e.name)}>{t('heat.filterPanel.later.read')}</button>
+            )}
+            {e.state === 'error' && (
+              <div className="hint" style={{ color: 'var(--bad)' }}>
+                {t('heat.filterPanel.later.failed', { reason: e.error ?? '' })}
+              </div>
+            )}
+          </div>
+        ))}
+    </div>
   );
 }
 

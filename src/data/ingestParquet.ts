@@ -16,6 +16,7 @@ import { geoOfHints, parseHints } from './automap';
 import { splitObjectTracks } from './objectTracks';
 import { asyncBufferFromFile, readParquetColumns, type ColumnRequest } from './parquet';
 import { activeClauses, emptySourceBlock, readSelectedColumns, selectRows, type RowSelection } from './rowFilter';
+import { describeKept } from './columnSource';
 import type { ColumnMapping, TimeUnit } from '../state/types';
 
 /**
@@ -224,6 +225,12 @@ export async function ingestParquet(
     rejected: n - kept,
   };
   if (sel) block.filtered = filterStats(total, sel);
+  // Which file rows were kept, for reading the columns left in the file later (`columnSource.ts`).
+  const onDemand = mapping.onDemand ?? [];
+  if (onDemand.length) {
+    block.rowsOf = describeKept(n, step, keepMask, kept, sel ? selectedRows(sel) : null);
+    block.onDemandHere = onDemand.filter((c) => available.has(c));
+  }
   // The file's place on the earth, when its hints give one and the mapping
   // took the columns it is for (see `geoOfHints`).
   const hints = parseHints(metadata.key_value_metadata?.find((kv) => kv.key === 'heat3d')?.value);
@@ -235,6 +242,17 @@ export async function ingestParquet(
     block.timeLabel = timeLabel.trim().slice(0, 60);
 
   return kept === n ? block : compact(block, keepMask, kept);
+}
+
+/** The file row of each row a pre-filter selected, in the order `readSelectedColumns` reads them. */
+function selectedRows(sel: RowSelection): Uint32Array {
+  const out = new Uint32Array(sel.count);
+  let k = 0;
+  for (const r of sel.ranges) {
+    if (r.kept <= 0) continue;
+    for (let i = r.rowStart; i < r.rowEnd; i++) if (sel.keep[i]) out[k++] = i;
+  }
+  return out;
 }
 
 function filterStats(total: number, sel: RowSelection): NonNullable<SourceBlock['filtered']> {

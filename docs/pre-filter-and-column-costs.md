@@ -63,6 +63,16 @@ When the load does not fit, the section opens by itself, says by how much the lo
 
 **Forget** clears what is remembered for this kind of source.
 
+### Read later: columns on demand
+
+Each kept column of a Parquet load has a **later** box beside it. A column marked *later* stays in the files: it takes no memory at load and does not count in the fit check, so the same budget holds more rows. When a filter, the difference split, the value weight or the route events first use it, it is read from the files - that column alone - in a background worker, and the filter applies once it is in. The **Filters** panel lists such columns under **Read when needed**, with a **Read** button.
+
+By default the ordinary measures (numbers that are not events, weapons, classes, outcome, money or a campaign column) are marked *later*; categories load at once. Columns the load itself works from - the event type, the economy, the outcome, the campaign series - always load at once, because the columns it adds are built from them while it loads. A load that includes a text file (CSV) loads every kept column at once: a text file has no column that can be read alone.
+
+When the budget is exceeded, **Read N columns later instead** marks the columns the fit check would drop as *later* rather than leaving them out.
+
+To read a column again, the load keeps a row map in the worker: which file rows it kept (nothing when it kept them all) and where the time sort put them - one byte a row when every file is in time order on its own (two past 255 files), four bytes a row otherwise.
+
 ## Related
 
 - [Memory and budgets](memory-and-budgets.md): the fit check, strides and the resource budgets.

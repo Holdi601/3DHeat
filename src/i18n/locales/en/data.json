@@ -147,5 +147,6 @@
   "data.levelLibrary.requestFailed": "Level library request failed.",
   "data.builder.seriesArranged": "Campaign round {campaign}: {count} sessions played one after another, the time between them cut to {seconds} s",
   "data.ingestParquet.selecting": "Pre-filtering {file}",
-  "data.ingestFiles.prefiltered": "Pre-filtered while reading: {kept} of {rows} rows kept, {skipped} of {groups} row groups skipped unread."
+  "data.ingestFiles.prefiltered": "Pre-filtered while reading: {kept} of {rows} rows kept, {skipped} of {groups} row groups skipped unread.",
+  "data.columns.tooMany": "Column \"{column}\" has {count} distinct values, more than the {max} a filter or a difference split can pick from, so it cannot be read."
 }

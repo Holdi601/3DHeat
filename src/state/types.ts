@@ -82,6 +82,13 @@ export interface ColumnMapping {
   /** Extra columns retained in memory so they can be filtered on later. */
   extra: string[];
   /**
+   * Columns left in the files at load and read when a filter or panel first
+   * needs them (`data/columnSource.ts`). Parquet only; a load with a text file
+   * in it loads them at once. Absent: not decided yet, so the load plan
+   * proposes the ordinary measures.
+   */
+  onDemand?: string[];
+  /**
    * Per extra column: treat as a numeric range (true) or a category set (false).
    * Sniffed from the file's head, overridable — a numeric-looking id column is
    * far more useful as a category.
@@ -396,6 +403,13 @@ export interface Dataset {
    * Set only when every file of the load shares one reference.
    */
   geo?: GeoReference;
+  /**
+   * The row map a load leaves for reading its columns on demand, on the way
+   * from the ingest worker to the column worker (`data/columnStore.ts` takes
+   * it off the dataset when the dataset is shown). Absent once taken, and on a
+   * load with nothing left to read later.
+   */
+  columnSource?: import('../data/columnSource').ColumnSource;
   /** The source's names for the columns that took a role, for labelling a row the way its file does. */
   roleColumns?: Partial<Record<'x' | 'y' | 'z' | 'time' | 'person' | 'team' | 'session', string>>;
   /**

@@ -147,5 +147,6 @@
   "data.levelLibrary.requestFailed": "关卡库请求失败。",
   "data.builder.seriesArranged": "战役回合 {campaign}：{count} 个会话依次播放，其间的时间缩短为 {seconds} 秒",
   "data.ingestParquet.selecting": "Pre-filtering {file}",
-  "data.ingestFiles.prefiltered": "Pre-filtered while reading: {kept} of {rows} rows kept, {skipped} of {groups} row groups skipped unread."
+  "data.ingestFiles.prefiltered": "Pre-filtered while reading: {kept} of {rows} rows kept, {skipped} of {groups} row groups skipped unread.",
+  "data.columns.tooMany": "Column \"{column}\" has {count} distinct values, more than the {max} a filter or a difference split can pick from, so it cannot be read."
 }

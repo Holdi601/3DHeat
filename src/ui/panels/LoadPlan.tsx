@@ -2,6 +2,7 @@ import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { loader } from '../../data/loader';
 import type { SourcePreview } from '../../data/sourcePreview';
 import {
+  defaultOnDemand,
   dropToFit,
   forgetChoice,
   profileSample,
@@ -13,6 +14,7 @@ import {
 } from '../../data/columnProfile';
 import { activeClauses, expectedMatches, type MatchCount, type RowFilterClause } from '../../data/rowFilter';
 import { formatBytes } from '../../data/memory';
+import { onDemandEligible } from '../../data/columnSource';
 import { formatCount } from '../../data/synth';
 import type { ColumnMapping } from '../../state/types';
 import { num, t } from '../../i18n';
@@ -153,19 +155,40 @@ export const LoadPlan = memo(function LoadPlan({
   const eventColumn = quick.find((q) => QUICK[0].re.test(q.column.replace(/[\s-]/g, '_')))?.column ?? null;
   const killValues = eventColumn ? (byName(eventColumn)?.values ?? []).map((v) => v.value).filter((v) => KILL_LIKE.test(v)) : [];
 
+  // Columns left in the files until needed (`columnSource.ts`): Parquet only.
+  const canLater = preview.format === 'parquet';
+  const later = canLater ? (mapping.onDemand ?? []) : [];
+  // Proposed once a source's columns are known and nothing was chosen for it
+  // yet: the ordinary measures wait in the files.
+  const proposed = useRef<string | null>(null);
+  useEffect(() => {
+    if (!profile || !canLater || mapping.onDemand !== undefined || proposed.current === key) return;
+    proposed.current = key;
+    const wait = defaultOnDemand(profile, mapping);
+    setMapping({ ...mapping, extra: mapping.extra.filter((n) => !wait.includes(n)), onDemand: wait });
+  }, [profile, canLater, mapping, key, setMapping]);
+
   const suggestions = useMemo(
-    () => (profile ? suggestColumns(profile, mapping, Math.max(1, expected)) : []),
-    [profile, mapping, expected],
+    // A column read later costs the load nothing, and is not one to drop.
+    () => (profile ? suggestColumns(profile, mapping, Math.max(1, expected)) : []).map((s) => ({ ...s, later: later.includes(s.name) })),
+    [profile, mapping, expected, later],
   );
   const drop = excessBytes > 0 ? dropToFit(suggestions, excessBytes) : [];
+  const dropLater = canLater ? drop.filter((n) => onDemandEligible(n)) : [];
 
   const toggleKeep = (name: string, keep: boolean) => {
     const p = byName(name);
     setMapping({
       ...mapping,
       extra: keep ? [...mapping.extra, name] : mapping.extra.filter((n) => n !== name),
+      onDemand: (mapping.onDemand ?? []).filter((n) => n !== name),
       extraNumeric: keep && p ? { ...mapping.extraNumeric, [name]: mapping.extraNumeric[name] ?? !p.text } : mapping.extraNumeric,
     });
+  };
+  const setLater = (names: string[], wait: boolean) => {
+    const rest = (mapping.onDemand ?? []).filter((n) => !names.includes(n));
+    const extra = mapping.extra.filter((n) => !names.includes(n));
+    setMapping({ ...mapping, extra: wait ? extra : [...extra, ...names], onDemand: wait ? [...rest, ...names] : rest });
   };
 
   return (
@@ -306,6 +329,10 @@ export const LoadPlan = memo(function LoadPlan({
           drop={drop}
           excessBytes={excessBytes}
           onKeep={toggleKeep}
+          canLater={canLater}
+          onLater={(name, wait) => setLater([name], wait)}
+          laterSuggested={dropLater.length}
+          onLaterSuggested={() => setLater(dropLater, true)}
           onDropSuggested={() =>
             setMapping({ ...mapping, extra: mapping.extra.filter((n) => !drop.includes(n)) })
           }
@@ -326,24 +353,37 @@ function ColumnCosts({
   drop,
   excessBytes,
   onKeep,
+  canLater,
+  onLater,
+  laterSuggested,
+  onLaterSuggested,
   onDropSuggested,
   onForget,
 }: {
-  suggestions: ReturnType<typeof suggestColumns>;
+  suggestions: Array<ReturnType<typeof suggestColumns>[number] & { later: boolean }>;
   drop: string[];
   excessBytes: number;
   onKeep: (name: string, keep: boolean) => void;
+  canLater: boolean;
+  onLater: (name: string, later: boolean) => void;
+  laterSuggested: number;
+  onLaterSuggested: () => void;
   onDropSuggested: () => void;
   onForget: () => void;
 }) {
   const kept = suggestions.filter((s) => s.kept).reduce((a, s) => a + s.bytes, 0);
+  const waiting = suggestions.filter((s) => s.later).length;
   return (
     <Section title={t('heat.loadPlan.columnsTitle')} defaultOpen={excessBytes > 0}>
       <div role="dialog" aria-label={t('heat.loadPlan.columnsTitle')} data-testid="column-costs">
         <div className="hint">{t('heat.loadPlan.columnsHint', { kept: formatBytes(kept) })}</div>
+        {waiting > 0 && <div className="hint" data-testid="columns-later-note">{t('heat.loadPlan.laterNote', { count: waiting })}</div>}
         {excessBytes > 0 && (
           <div className="hint" style={{ color: 'var(--bad)' }}>
             {t('heat.loadPlan.over', { over: formatBytes(excessBytes) })}{' '}
+            {laterSuggested > 0 && (
+              <button onClick={onLaterSuggested}>{t('heat.loadPlan.laterSuggested', { count: laterSuggested })}</button>
+            )}{' '}
             {drop.length > 0 && (
               <button onClick={onDropSuggested}>{t('heat.loadPlan.dropSuggested', { count: drop.length })}</button>
             )}
@@ -352,11 +392,18 @@ function ColumnCosts({
         <div className="team-list">
           {suggestions.map((s) => (
             <label className="team-row" key={s.name} title={reasonLabel(s.reason)}>
-              <input type="checkbox" checked={s.kept} disabled={s.rank === 0} onChange={(e) => onKeep(s.name, e.target.checked)} />
+              <input type="checkbox" checked={s.kept || s.later} disabled={s.rank === 0} onChange={(e) => onKeep(s.name, e.target.checked)} />
               <span className="name" style={drop.includes(s.name) ? { color: 'var(--warm)' } : undefined}>
                 {s.name}
               </span>
-              <span className="val" style={{ minWidth: 64, textAlign: 'right' }}>
+              {canLater && s.rank > 0 && onDemandEligible(s.name) && (s.kept || s.later) && (
+                // A span, not a label: the row is the keep box's label already.
+                <span className="val" title={t('heat.loadPlan.laterTitle')} style={{ color: 'var(--text-dim)' }}>
+                  <input type="checkbox" data-testid={`later-${s.name}`} checked={s.later} onChange={(e) => onLater(s.name, e.target.checked)} />
+                  {t('heat.loadPlan.later')}
+                </span>
+              )}
+              <span className="val" style={{ minWidth: 64, textAlign: 'right', ...(s.later ? { color: 'var(--text-dim)' } : {}) }}>
                 {formatBytes(s.bytes)}
               </span>
               <span className="val" style={{ minWidth: 72, color: 'var(--text-dim)' }}>

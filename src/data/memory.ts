@@ -40,6 +40,7 @@ const B_SESSION = 4;
  * to one test run. It costs the same as any other category column.
  */
 const B_SOURCE = 4;
+const B_ROW_MAP = 2;
 
 /**
  * What the itemised sum misses, as a multiplier on the peak.
@@ -118,7 +119,11 @@ export function bytesPerRow(
     (hasTeam ? B_TEAM : 0) +
     (m.sessionId ? B_SESSION : 0) +
     (fileCount > 1 ? B_SOURCE : 0) +
-    attrCount * B_ATTR;
+    attrCount * B_ATTR +
+    // The row map the columns left in the files are read again with
+    // (`columnSource.ts`): one byte a row when each file is in time order, four
+    // when one is not; two is the estimate.
+    ((m.onDemand?.length ?? 0) > 0 ? B_ROW_MAP : 0);
 
   // Transient cost during ingest, itemised because it used to be dominated by a
   // full duplicate of every column and no longer is:

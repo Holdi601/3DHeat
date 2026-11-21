@@ -158,6 +158,12 @@ export function vehicleClassOf(names: string[], types: string[]): VehicleClass {
 const NAME_COLUMN = /^(name|vehicle|vehicle.?name|unit|unit.?type|model|aircraft|plane|tank|ship|craft|loadout|kit|figure)$/i;
 const TYPE_COLUMN = /^(type|class|kind|category|icon|role|domain|vehicle.?type|vehicle.?class)$/i;
 const EVENT_COLUMN = /^(events?|event.?type|event.?name)$/i;
+
+/** Whether the columns this module adds are worked out from this one (a name, a type or an event column). */
+export function feedsCanonical(name: string): boolean {
+  const n = name.trim();
+  return NAME_COLUMN.test(n) || TYPE_COLUMN.test(n) || EVENT_COLUMN.test(n);
+}
 const OTHER_NAME = /^(other.?vehicle|target.?vehicle|victim.?vehicle|other.?name)$/i;
 const OTHER_TYPE = /^(other.?type|target.?type|victim.?type|other.?kind|(other|target|victim).?vehicle.?(class|type))$/i;
 const AI_COLUMN = /^(ai|is.?ai|bot|is.?bot|actor)$/i;

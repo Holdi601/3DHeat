@@ -9,6 +9,7 @@ import { fileParseBytes, parseHeadroom } from './memory';
 import { errorMsg, msg, MsgError, say, sayDataset, type Msg } from './msg';
 import { asyncBufferFromFile } from './parquet';
 import { detectFormat } from './sourcePreview';
+import { onDemandOf } from './columnSource';
 import type { ColumnMapping, Dataset } from '../state/types';
 
 /** Parse one file into a block, wherever that happens: this thread or a worker. */
@@ -119,11 +120,20 @@ export interface IngestFilesResult {
 const SHORTFALL_TOLERANCE = 0.95;
 
 export async function ingestFiles(opts: IngestFilesOptions): Promise<IngestFilesResult> {
-  const { files, mapping, columns, name, onProgress } = opts;
+  const { files, columns, name, onProgress } = opts;
+  // Columns left to be read later need files they can be read from alone
+  // (`columnSource.ts`): Parquet. With any other file in the load they are
+  // loaded now, as every kept column was before.
+  const later = onDemandOf(opts.mapping);
+  const readable = later.length > 0 && files.every((f) => detectFormat(f.name) === 'parquet');
+  const mapping: ColumnMapping = readable
+    ? { ...opts.mapping, onDemand: later }
+    : { ...opts.mapping, extra: [...opts.mapping.extra, ...later], onDemand: [] };
   const parseFile = opts.parseFile ?? parseHere;
   const stride = Math.max(1, Math.floor(opts.stride ?? 1));
   const expected = opts.expectedRows ? Math.ceil(opts.expectedRows / stride) : 0;
   const builder = new DatasetBuilder(expected);
+  if (readable) builder.keepColumnSource(files, mapping, later);
   const failures: IngestFilesResult['failures'] = [];
   const total = files.length;
   const threads = total > 1 ? Math.max(1, Math.floor(opts.threads ?? 1)) : 1;
@@ -194,7 +204,7 @@ export async function ingestFiles(opts: IngestFilesOptions): Promise<IngestFiles
       // Tag the origin only when there is more than one file. With a single file
       // the column would be a constant, and a constant column costs 4 bytes a row
       // to tell you nothing.
-      builder.append(total > 1 ? { ...block, sourceName: file.name } : block);
+      builder.append(total > 1 ? { ...block, sourceName: file.name, fileIndex: i } : { ...block, fileIndex: i });
     } catch (err) {
       if (err instanceof ParserCrash) throw err;
       const why = errorMsg(err);

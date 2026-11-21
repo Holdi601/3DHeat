@@ -147,5 +147,6 @@
   "data.levelLibrary.requestFailed": "關卡庫請求失敗。",
   "data.builder.seriesArranged": "戰役回合 {campaign}：{count} 個工作階段依序播放，其間的時間縮短為 {seconds} 秒",
   "data.ingestParquet.selecting": "Pre-filtering {file}",
-  "data.ingestFiles.prefiltered": "Pre-filtered while reading: {kept} of {rows} rows kept, {skipped} of {groups} row groups skipped unread."
+  "data.ingestFiles.prefiltered": "Pre-filtered while reading: {kept} of {rows} rows kept, {skipped} of {groups} row groups skipped unread.",
+  "data.columns.tooMany": "Column \"{column}\" has {count} distinct values, more than the {max} a filter or a difference split can pick from, so it cannot be read."
 }

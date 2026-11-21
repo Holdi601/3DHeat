@@ -3550,8 +3550,13 @@ export class WebgpuRenderer implements Renderer {
     const bytes = Math.max(4, chunk.rows * 4);
     if (this.gpuBytesUsed + bytes > this.gpuBudgetBytes) this.evictFilterColumns(new Set(inUse.map((f) => f.column)), bytes);
     if (this.gpuBytesUsed + bytes > this.gpuBudgetBytes) return null;
-    const values = new Float32Array(chunk.rows);
-    for (let i = 0; i < chunk.rows; i++) values[i] = src[chunk.start + i];
+    // A float column is a view of its rows; ids are converted row by row.
+    let values: Float32Array;
+    if (src instanceof Float32Array) values = src.subarray(chunk.start, chunk.start + chunk.rows);
+    else {
+      values = new Float32Array(chunk.rows);
+      for (let i = 0; i < chunk.rows; i++) values[i] = src[chunk.start + i];
+    }
     const buf = this.makeBuffer(values, GPUBufferUsage.STORAGE, `filter column ${column}`);
     this.filterColumns.set(key, buf);
     this.gpuBytesUsed += buf.size;

@@ -96,6 +96,9 @@ Once a dataset is loaded, **Memory in use** (in the Source panel) shows what is 
 | **GPU** | Row data and the level on the GPU, against the GPU budget, with the rows resident and the rows that did not fit. Read from the renderer's own counters, without a GPU readback. |
 | **JavaScript heap** | The tab's heap and its limit, where the browser reports them (Chromium). On a cross-origin-isolated page **Measure everything** asks `performance.measureUserAgentSpecificMemory`, which includes the workers. |
 | Column list | Each column and what it holds, biggest first. Built-in fields are marked *(built in)*; text labels are estimated at two bytes a character. |
+| **On demand** | For a load with columns read later: how many of them are in memory and what they hold, the row map, and how many were evicted. Each column is listed with its state - *in the file*, *reading*, *in memory*, *evicted*, *failed* - most recently used first; **Free** gives a column's memory back (never one a filter, the split, the value weight or the route events use). |
+
+When a column read on demand needs room, the least recently used columns that nothing uses are evicted first, until it fits the RAM budget. Only the copy in memory goes: the renderers' copies on the GPU stay until the GPU budget wants the room, so a column read again finds its upload still there.
 
 When both RAM and GPU are under a quarter of their budgets, the panel says so and offers **Use more fidelity**: full-resolution heat and at least 8 million sprites a frame.
 
@@ -104,10 +107,11 @@ When both RAM and GPU are under a quarter of their budgets, the panel says so an
 From cheapest to most drastic:
 
 1. **A pre-filter.** Keep only the rows you need (for example kills and deaths) while reading; the rest never take memory. See [Pre-filter and column costs](pre-filter-and-column-costs.md).
-2. **Fewer filter columns.** Each is 4 bytes a row and a decode pass; a text column also costs its distinct strings. **Columns and what they cost** lists them, cheapest to lose first.
-3. **A stride.** Every *N*th row.
-4. **No time column.** No sort, no sort ceiling, no 4-8 bytes a row of time and lifetime - and no timeline.
-5. **Raise the budgets**, when you know the memory is there.
+2. **Columns read later.** A column marked *later* stays in the files until a filter or panel needs it and costs nothing at load; see [Read later: columns on demand](pre-filter-and-column-costs.md#read-later-columns-on-demand).
+3. **Fewer filter columns.** Each is 4 bytes a row and a decode pass; a text column also costs its distinct strings. **Columns and what they cost** lists them, cheapest to lose first.
+4. **A stride.** Every *N*th row.
+5. **No time column.** No sort, no sort ceiling, no 4-8 bytes a row of time and lifetime - and no timeline.
+6. **Raise the budgets**, when you know the memory is there.
 
 At render time, large datasets are handled by sampling and progressive accumulation rather than by reducing the data; see [Sampling and budgets](sampling-and-budgets.md).
 

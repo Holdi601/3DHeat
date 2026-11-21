@@ -147,5 +147,6 @@
   "data.levelLibrary.requestFailed": "A pályakönyvtár-kérés meghiúsult.",
   "data.builder.seriesArranged": "{campaign} hadjárati forduló: {count} munkamenet egymás után lejátszva, a köztük eltelt idő {seconds} mp-re rövidítve",
   "data.ingestParquet.selecting": "Pre-filtering {file}",
-  "data.ingestFiles.prefiltered": "Pre-filtered while reading: {kept} of {rows} rows kept, {skipped} of {groups} row groups skipped unread."
+  "data.ingestFiles.prefiltered": "Pre-filtered while reading: {kept} of {rows} rows kept, {skipped} of {groups} row groups skipped unread.",
+  "data.columns.tooMany": "Column \"{column}\" has {count} distinct values, more than the {max} a filter or a difference split can pick from, so it cannot be read."
 }

@@ -59,5 +59,7 @@ function blockBuffers(b: SourceBlock): Transferable[] {
   add(b.teamIds);
   add(b.sessionIds);
   for (const a of b.attrs) add(a.data);
+  add(b.rowsOf?.sel);
+  add(b.rowsOf?.drop);
   return [...seen] as Transferable[];
 }

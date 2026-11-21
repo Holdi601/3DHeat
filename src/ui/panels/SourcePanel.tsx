@@ -155,6 +155,7 @@ export function SourcePanel() {
           ...(recalled
             ? {
                 extra: recalled.extra,
+                ...(recalled.onDemand ? { onDemand: recalled.onDemand } : {}),
                 extraNumeric: { ...guessed.extraNumeric, ...recalled.extraNumeric },
                 rowFilter: recalled.rowFilter,
               }
@@ -203,6 +204,7 @@ export function SourcePanel() {
     setLoad({ active: true, label: t('heat.sourcePanel.loading'), fraction: 0, rowsSoFar: 0, error: null });
     rememberChoice(sourceKey(preview.columns), {
       extra: mapping.extra,
+      ...(mapping.onDemand ? { onDemand: mapping.onDemand } : {}),
       extraNumeric: mapping.extraNumeric,
       rowFilter: mapping.rowFilter ?? [],
     });

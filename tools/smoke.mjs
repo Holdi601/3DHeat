@@ -3398,6 +3398,90 @@ await step('capabilities disable modes the data cannot support', async () => {
   return 'team (both tabs) + timeline disabled, teams heat still offered';
 });
 
+await step('a column left in the file is read when a filter first needs it', async () => {
+  /**
+   * The columns on demand (`data/columnSource.ts`), through the real loader and
+   * the real column worker: a measure left in the file at load is not in
+   * memory, a filter on it reads it - in the dataset's order, off the page -
+   * and the filter applies once it is in; a column nothing uses can be
+   * evicted and comes back when a filter needs it again.
+   */
+  const { parquetWriteBuffer } = await import('hyparquet-writer');
+  const N = 20_000;
+  const buf = parquetWriteBuffer({
+    columnData: [
+      { name: 'time', data: Float64Array.from({ length: N }, (_, i) => i / 10), type: 'DOUBLE' },
+      { name: 'x', data: Float64Array.from({ length: N }, (_, i) => (i * 7) % 500), type: 'DOUBLE' },
+      { name: 'y', data: Float64Array.from({ length: N }, (_, i) => (i * 13) % 500), type: 'DOUBLE' },
+      { name: 'player', data: Array.from({ length: N }, (_, i) => `p${i % 8}`), type: 'STRING' },
+      { name: 'speed', data: Float64Array.from({ length: N }, (_, i) => i % 100), type: 'DOUBLE' },
+    ],
+    rowGroupSize: 4096,
+  });
+  await page.evaluate(() => {
+    const i = document.createElement('input');
+    i.type = 'file';
+    i.id = 'smoke-on-demand';
+    i.style.display = 'none';
+    document.body.appendChild(i);
+  });
+  await page.setInputFiles('#smoke-on-demand', [{ name: 'on-demand.parquet', mimeType: 'application/octet-stream', buffer: Buffer.from(buf) }]);
+  const r = await page.evaluate(async (N) => {
+    const h = globalThis.__3dheat;
+    const { loader } = await h.modules['data/loader']();
+    const cs = await h.modules['data/columnStore']();
+    const { filterIsActive } = await h.modules['render/filterTables']();
+    const file = document.getElementById('smoke-on-demand').files[0];
+    const mapping = {
+      x: 'x', y: 'y', z: null, lookMode: 'none', yaw: null, pitch: null, dirX: null, dirY: null, dirZ: null,
+      angleUnit: 'degrees', personId: 'player', teamId: null, sessionId: null, time: 'time', timeUnit: 'seconds',
+      extra: [], onDemand: ['speed'], extraNumeric: { speed: true }, delimiter: ',',
+      axes: { up: 'z', flipX: false, flipY: false, flipZ: false, scale: 1 },
+    };
+    const ds = await loader.ingest([file], mapping, [], 'on demand', 1, N);
+    const s = h.useStore.getState();
+    s.setDataset(ds);
+    const frame = () => new Promise((r) => requestAnimationFrame(r));
+    await frame();
+    const now = () => h.useStore.getState().dataset;
+    const entry = () => cs.useColumnStore.getState().entries.speed;
+    const before = { inAttrs: now().attrs.some((a) => a.name === 'speed'), state: entry()?.state ?? null };
+    // The filter asks; the read happens in the column worker while frames go on.
+    const spec = { kind: 'range', column: 'speed', min: 0, max: 49 };
+    h.useStore.getState().setFilters([spec]);
+    let frames = 0;
+    const until = performance.now() + 30_000;
+    while (performance.now() < until && entry()?.state !== 'resident') {
+      await frame();
+      frames++;
+    }
+    const col = now().attrs.find((a) => a.name === 'speed');
+    let wrong = 0;
+    for (let i = 0; col && i < N; i++) if (col.data[i] !== i % 100) wrong++;
+    const applied = !!col && filterIsActive(now(), h.useStore.getState().filters[0]);
+    // Pinned by the filter: not evicted. Unpinned: evicted, and read again on demand.
+    const refusedWhilePinned = !cs.evictColumn('speed');
+    h.useStore.getState().setFilters([]);
+    await frame();
+    const evicted = cs.evictColumn('speed') && !now().attrs.some((a) => a.name === 'speed') && entry().state === 'evicted';
+    h.useStore.getState().setFilters([spec]);
+    const until2 = performance.now() + 30_000;
+    while (performance.now() < until2 && entry()?.state !== 'resident') await frame();
+    const back = entry().state === 'resident' && entry().evictions === 1 && now().attrs.some((a) => a.name === 'speed');
+    h.useStore.getState().setFilters([]);
+    return { before, frames, state: entry().state, error: entry().error, wrong, applied, refusedWhilePinned, evicted, back, count: now().count };
+  }, N);
+  if (r.before.inAttrs) throw new Error('the column was loaded at once');
+  if (r.before.state !== 'deferred') throw new Error(`the column is ${r.before.state}, not waiting in the file`);
+  if (r.state !== 'resident') throw new Error(`the column never arrived (${r.state}${r.error ? `: ${r.error}` : ''})`);
+  if (r.wrong) throw new Error(`${r.wrong} of ${r.count} rows came back with the wrong value`);
+  if (!r.applied) throw new Error('the filter does not apply once its column is in');
+  if (!r.refusedWhilePinned) throw new Error('a column a filter uses was evicted');
+  if (!r.evicted) throw new Error('an unused column could not be evicted');
+  if (!r.back) throw new Error('an evicted column did not come back when a filter needed it');
+  return `read in ${r.frames} frames, ${r.count} rows in order, filter applied, evicted and read again`;
+});
+
 await step('no console errors', () => {
   if (errors.length) throw new Error(errors.slice(0, 6).join('\n         '));
   return `${logs.length} log lines`;

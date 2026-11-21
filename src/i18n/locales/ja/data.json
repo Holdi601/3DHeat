@@ -147,5 +147,6 @@
   "data.levelLibrary.requestFailed": "レベルライブラリへのリクエストに失敗しました。",
   "data.builder.seriesArranged": "キャンペーンラウンド {campaign}：{count} 件のセッションを順に再生し、間の時間を {seconds} 秒に短縮",
   "data.ingestParquet.selecting": "Pre-filtering {file}",
-  "data.ingestFiles.prefiltered": "Pre-filtered while reading: {kept} of {rows} rows kept, {skipped} of {groups} row groups skipped unread."
+  "data.ingestFiles.prefiltered": "Pre-filtered while reading: {kept} of {rows} rows kept, {skipped} of {groups} row groups skipped unread.",
+  "data.columns.tooMany": "Column \"{column}\" has {count} distinct values, more than the {max} a filter or a difference split can pick from, so it cannot be read."
 }

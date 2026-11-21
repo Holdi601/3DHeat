@@ -3059,7 +3059,10 @@ export class Webgl2Renderer implements Renderer {
     if (this.gpuBytesUsed + cost > this.gpuBudgetBytes) return null;
 
     const data = new Float32Array(ROW_TEX_WIDTH * texHeight);
-    for (let i = 0; i < rows; i++) data[i] = src[start + i];
+    // A float column is copied as a block; ids are converted row by row. On a
+    // filter's first frame this runs for every chunk at once.
+    if (src instanceof Float32Array) data.set(src.subarray(start, start + rows));
+    else for (let i = 0; i < rows; i++) data[i] = src[start + i];
 
     const gl = this.gl;
     const tex = createTexture(gl, {

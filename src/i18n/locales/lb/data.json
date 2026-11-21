@@ -147,5 +147,6 @@
   "data.levelLibrary.requestFailed": "D’Ufro un d’Level-Bibliothéik ass feelgeschloen.",
   "data.builder.seriesArranged": "Campagnesronn {campaign}: {count} Sessiounen eng no der anerer ofgespillt, d'Zäit dertëscht op {seconds} s gekierzt",
   "data.ingestParquet.selecting": "Pre-filtering {file}",
-  "data.ingestFiles.prefiltered": "Pre-filtered while reading: {kept} of {rows} rows kept, {skipped} of {groups} row groups skipped unread."
+  "data.ingestFiles.prefiltered": "Pre-filtered while reading: {kept} of {rows} rows kept, {skipped} of {groups} row groups skipped unread.",
+  "data.columns.tooMany": "Column \"{column}\" has {count} distinct values, more than the {max} a filter or a difference split can pick from, so it cannot be read."
 }

@@ -9,7 +9,11 @@ import { DEFAULT_SYNTH, generateSynthetic } from './data/synth';
 import { VIEW_PRESETS } from './render/camera';
 import { mixTeamColor, teamHeatColor } from './render/colors';
 import { CURVE_PRESETS, evalCurve } from './state/curve';
+import { installColumnDemand } from './data/columnStore';
 import './app.css';
+
+// The columns on demand follow the view: read what it uses, evict what it does not (data/columnStore).
+installColumnDemand(useStore);
 
 const el = document.getElementById('root');
 if (!el) throw new Error('#root missing');
@@ -38,6 +42,9 @@ if (import.meta.env.DEV) {
       'render/volumeContours': () => import('./render/volumeContours'),
       'ui/insights/cinemaStore': () => import('./ui/insights/cinemaStore'),
       'render/record': () => import('./render/record'),
+      'data/loader': () => import('./data/loader'),
+      'data/columnStore': () => import('./data/columnStore'),
+      'render/filterTables': () => import('./render/filterTables'),
     } as Record<string, () => Promise<unknown>>,
     generateSynthetic,
     DEFAULT_SYNTH,

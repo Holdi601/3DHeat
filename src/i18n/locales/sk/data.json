@@ -147,5 +147,6 @@
   "data.levelLibrary.requestFailed": "Požiadavka na knižnicu levelov zlyhala.",
   "data.builder.seriesArranged": "Kolo kampane {campaign}: relácie ({count}) prehrané jedna po druhej, čas medzi nimi skrátený na {seconds} s",
   "data.ingestParquet.selecting": "Pre-filtering {file}",
-  "data.ingestFiles.prefiltered": "Pre-filtered while reading: {kept} of {rows} rows kept, {skipped} of {groups} row groups skipped unread."
+  "data.ingestFiles.prefiltered": "Pre-filtered while reading: {kept} of {rows} rows kept, {skipped} of {groups} row groups skipped unread.",
+  "data.columns.tooMany": "Column \"{column}\" has {count} distinct values, more than the {max} a filter or a difference split can pick from, so it cannot be read."
 }

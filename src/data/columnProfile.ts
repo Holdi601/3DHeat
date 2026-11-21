@@ -3,6 +3,7 @@ import type { FileMetaData } from 'hyparquet';
 import { asyncBufferFromFile, displayValue, toNumber } from './parquet';
 import { stringBytes } from './resident';
 import type { ColumnMapping } from '../state/types';
+import { onDemandEligible } from './columnSource';
 
 /**
  * What each column of a source holds, enough to choose filters and to say what
@@ -318,6 +319,21 @@ export function suggestColumns(profiles: readonly ColumnProfile[], mapping: Colu
 }
 
 /**
+ * The kept columns a load leaves in the files until something needs them, as
+ * first proposed: the ordinary measures - numbers the importance ranks
+ * optional or lower - that the load itself does not read (`onDemandEligible`).
+ * Categories load at once: the load compares them to tell two things under
+ * one name apart (`DatasetBuilder.finish`, `personShared`).
+ */
+export function defaultOnDemand(profiles: readonly ColumnProfile[], mapping: ColumnMapping): string[] {
+  return mapping.extra.filter((name) => {
+    const p = profiles.find((x) => x.name === name);
+    if (!p || p.text || !(mapping.extraNumeric[name] ?? true)) return false;
+    return importanceOf(p, mapping).rank >= 2 && onDemandEligible(name);
+  });
+}
+
+/**
  * The kept columns to drop, in suggestion order, until `excess` bytes are freed.
  * Core columns are never offered; neither is rank 1 unless nothing else is left.
  */
@@ -354,6 +370,8 @@ export function sourceKey(columns: readonly string[]): string {
 /** What was chosen for a source last time: the kept columns and the row filter. */
 export interface LoadChoice {
   extra: string[];
+  /** Kept columns left in the files until needed (`columnSource.ts`); absent in a choice made before there were any. */
+  onDemand?: string[];
   extraNumeric: Record<string, boolean>;
   rowFilter: import('./rowFilter').RowFilterClause[];
 }
@@ -376,6 +394,7 @@ export function recallChoice(key: string, columns: readonly string[]): LoadChoic
     const have = new Set(columns);
     return {
       extra: (Array.isArray(v.extra) ? v.extra : []).filter((c) => typeof c === 'string' && have.has(c)),
+      ...(Array.isArray(v.onDemand) ? { onDemand: v.onDemand.filter((c) => typeof c === 'string' && have.has(c)) } : {}),
       extraNumeric: v.extraNumeric && typeof v.extraNumeric === 'object' ? v.extraNumeric : {},
       rowFilter: (Array.isArray(v.rowFilter) ? v.rowFilter : []).filter((c) => c && typeof c.column === 'string' && have.has(c.column)),
     };

@@ -13,6 +13,7 @@ import { generateSynthetic, type SynthOptions } from './synth';
 import type { ColumnMapping, Dataset } from '../state/types';
 import { profileParquet, type ColumnProfile } from './columnProfile';
 import { countMatches, type MatchCount, type RowFilterClause } from './rowFilter';
+import { sourceBuffers } from './columnSource';
 
 /**
  * Ingest runs here rather than on the main thread because parsing is measured in
@@ -296,5 +297,7 @@ function collectBuffers(d: Dataset): Transferable[] {
   add(d.sessionEnd);
   add(d.personShared);
   for (const a of d.attrs) add(a.data);
+  // The row map for the columns read later (`columnSource.ts`): a byte to four a row.
+  if (d.columnSource) for (const b of sourceBuffers(d.columnSource)) seen.add(b);
   return [...seen] as Transferable[];
 }

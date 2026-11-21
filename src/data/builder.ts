@@ -5,7 +5,8 @@ import { radixSortIndices } from './sort';
 import { CANON, canonicalColumns, type CategoryInput } from './canonical';
 import { valueColumns } from './cost';
 import { MAX_GROUPS } from '../render/types';
-import type { AttributeColumn, Dataset, GeoReference } from '../state/types';
+import type { AttributeColumn, ColumnMapping, Dataset, GeoReference } from '../state/types';
+import { mergeOf, onDemandEligible, type BlockRows } from './columnSource';
 import { emptyBounds } from '../state/types';
 import { extentOf } from './extent';
 
@@ -72,6 +73,12 @@ export interface SourceBlock {
   geo?: GeoReference;
   /** What the block's time counts from, as its file says (`MappingHints` `timeLabel`). */
   timeLabel?: string;
+  /** Which file rows the block kept, from a parser that can say (Parquet), for the columns read later (`columnSource.ts`). */
+  rowsOf?: Omit<BlockRows, 'file'>;
+  /** Of the columns left to be read later, those this block's file has. */
+  onDemandHere?: string[];
+  /** The block's file, as an index into the load's files. */
+  fileIndex?: number;
 }
 
 /** Attribute name for the synthesised per-row file origin. */
@@ -147,6 +154,21 @@ export class DatasetBuilder {
   private timeLabel: string | null | undefined = undefined;
   /** The campaign series the blocks were arranged into (`alignRecordings`), or null. */
   private series: Dataset['series'] | null = null;
+  /** Per block (parallel to `blockStarts`): which file rows it kept, where its parser said. */
+  private readonly blockRows: Array<BlockRows | null> = [];
+  /** The columns left to be read later that some file has. */
+  private readonly onDemandSeen = new Set<string>();
+  /** What a row map for the columns read later is built from (`keepColumnSource`), or null for none. */
+  private keep: { files: File[]; mapping: ColumnMapping; deferred: string[] } | null = null;
+
+  /**
+   * Leave a row map on the finished dataset for reading `deferred` from
+   * `files` later (`columnSource.ts`). Only if every block says which file rows
+   * it kept.
+   */
+  keepColumnSource(files: File[], mapping: ColumnMapping, deferred: string[]): void {
+    this.keep = { files, mapping, deferred };
+  }
 
   constructor(expectedRows = 0) {
     this.expected = Math.max(0, Math.floor(expectedRows));
@@ -214,6 +236,8 @@ export class DatasetBuilder {
     }
 
     this.blockStarts.push(base);
+    this.blockRows.push(block.rowsOf && block.fileIndex !== undefined ? { ...block.rowsOf, file: block.fileIndex } : null);
+    for (const c of block.onDemandHere ?? []) this.onDemandSeen.add(c);
     if (block.sessionIds) {
       this.session ??= zeroFilledU32(base, this.capacity());
       const remap = remapDictionary(block.sessionLabels, this.sessionDict);
@@ -475,6 +499,10 @@ export class DatasetBuilder {
     // sort is the normal path rather than an exception.
     phase('data.builder.phase.sort');
     const order = time && !isAscending(time) ? radixSortIndices(time) : null;
+    // Where the sort put each file's rows, for reading a column later (`columnSource.ts`):
+    // taken now, while `time` is still in the order the files were read.
+    const keep = this.keep && this.blockRows.length > 0 && this.blockRows.every((b) => b !== null) ? this.keep : null;
+    const merge = keep ? mergeOf(order, this.blockStarts, time, n) : null;
 
     const yaw = this.yaw ? this.yaw.finish() : null;
     const pitch = this.pitch ? this.pitch.finish() : null;
@@ -607,6 +635,21 @@ export class DatasetBuilder {
       ...(this.timeLabel && !aligned && epochMs === null ? { timeLabel: this.timeLabel } : {}),
       ...(this.series ? { series: this.series } : {}),
     };
+
+    if (keep && merge) {
+      const kindOf = (name: string) => ((keep.mapping.extraNumeric[name] ?? true) ? 'number' : 'category') as 'number' | 'category';
+      dataset.columnSource = {
+        files: keep.files,
+        mapping: keep.mapping,
+        blocks: this.blockRows as BlockRows[],
+        merge,
+        rows: n,
+        deferred: keep.deferred.filter((c) => this.onDemandSeen.has(c)).map((name) => ({ name, kind: kindOf(name) })),
+        refetchable: attrs
+          .filter((a) => keep.mapping.extra.includes(a.name) && onDemandEligible(a.name))
+          .map((a) => ({ name: a.name, kind: a.kind })),
+      };
+    }
 
     phase('data.builder.phase.extent');
     extentOf(dataset.px, dataset.py, dataset.pz, n, dataset.bounds);
