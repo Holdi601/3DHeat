@@ -2,7 +2,7 @@
   "about": "Thrown and launched projectiles per board game: launch speed (m/s), gravity (m/s^2), quadratic drag (1/m: deceleration k*|v|*v), how far the thrower's own movement carries into the throw, the throw strengths a game has, and a range cap where the game ends a projectile early. src: game = the game's own data file; public = a published real-world figure (the game may differ); estimate = a judged class value. See docs/tactics-board.md#throws-and-launches.",
   "sources": {
     "cs2-vdata": { "title": "CS2 weapons.vdata (m_flThrowVelocity 750, m_flMaxSpeed 245 for every grenade)", "url": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata", "accessed": "2026-11-21" },
-    "source-sdk": { "title": "Source SDK base grenade projectile: grenade gravity 0.4 of sv_gravity (800 u/s^2 in CS)", "url": "https://swarm.workshop.perforce.com/files/guest/knut_wikstrom/ValveSDKCodegame_shared/sdk/sdk_basegrenade_projectile.h", "accessed": "2026-11-21" },
+    "source-sdk": { "title": "Valve Source SDK, base grenade projectile (sdk_basegrenade_projectile.h): grenade gravity 0.4 of sv_gravity (800 u/s^2 in CS)", "accessed": "2026-11-21" },
     "m203": { "title": "40x46 mm low-velocity grenade: muzzle velocity about 76 m/s, maximum range about 400 m (published specifications)" },
     "rpg7": { "title": "RPG-7 / PG-7V: launched at about 115 m/s, boosted to about 295 m/s; effective about 200 m against moving targets (published specifications)" }
   },

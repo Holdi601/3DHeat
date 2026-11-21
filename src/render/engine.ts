@@ -1314,7 +1314,6 @@ export class Engine {
       formation: board.formation,
       pen: board.tool === 'draw' ? { kind: board.drawStyle.kind, color: board.drawStyle.color, width: drawWidth(board) } : null,
       stroke: board.stroke,
-      throwWeapon: board.tool === 'throw' ? `${board.throwSpec.projectile}|${board.throwSpec.strength}|${board.throwSpec.move}` : null,
       cursor: c,
       placing: board.tool === 'place' ? { kind: board.kind, team: board.team, yaw: board.yaw } : null,
       instanced: true,
@@ -1332,7 +1331,6 @@ export class Engine {
       boardIds.of(board.draft),
       boardIds.of(board.measure),
       boardIds.of(board.stroke),
-      board.tool === 'throw' ? boardIds.of(board.throwSpec) : '',
       board.tool === 'draw' ? boardIds.of(board.drawStyle) : '',
       board.formation,
       board.routesActiveOnly ? board.activeLayer : '',
@@ -1396,8 +1394,6 @@ export class Engine {
     return this.renderer.probeHeat(cssX * dpr, cssY * dpr, this.currentGain());
   }
 
-  start(): void {
-    if (this.raf || !this.renderer) return;
   /**
    * How a sprite weighs, for heat read on the CPU (render/heatStack.ts): the
    * heat shape settings and the value weight. Null where no heat sprites are
@@ -1440,6 +1436,8 @@ export class Engine {
     };
   }
 
+  start(): void {
+    if (this.raf || !this.renderer) return;
     this.lastNow = performance.now();
     const tick = (now: number) => {
       if (this.disposed) return;
@@ -2478,9 +2476,9 @@ export class Engine {
       cubes: this.pickCubes,
       level: this.level,
       accept,
+      heat: this.heatKernel(),
     });
     this.invalidate(2);
-      heat: this.heatKernel(),
   }
 
   /**
