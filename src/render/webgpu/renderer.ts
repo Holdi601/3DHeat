@@ -906,7 +906,10 @@ export class WebgpuRenderer implements Renderer {
       }
     }, 0);
     // The binning pipelines, compiled in the background; the heat splats until they are there.
-    if (this.device.limits.maxStorageBuffersPerShaderStage >= 8) {
+    // Not on a software adapter: its "GPU" memory is the tab's, the grid's few
+    // hundred megabytes took the page down there, and it is no faster than the
+    // splat on a CPU.
+    if (this.device.limits.maxStorageBuffersPerShaderStage >= 8 && !/swiftshader|llvmpipe|basic render|software/i.test(this.gpuName ?? '')) {
       this.heatBin = new GpuHeatBin(this.device, this.curveView, this.sampler);
       void this.heatBin.prewarm(this.heatF32 ? ['r32float', 'rgba32float'] : ['r16float', 'rgba16float']);
     }

@@ -23,6 +23,7 @@ Splatting draws one triangle per row and lights every texel the sprite covers. A
 | Sprites across an occlusion edge (a wall's or a hill's outline) | Splatted from a list | The splat dims part of such a sprite, per fragment; a cell can only dim it all or none |
 | Line heat, directional wedges, the direction field, the rate map | Splatted | Their kernels are not one radial function of distance |
 | WebGL2 | Splatted | No compute shaders |
+| A software adapter (SwiftShader) | Splatted | Its GPU memory is the tab's; the grid on top of the rest crashed the page |
 | Few rows (under a quarter per heat texel) | Splatted | The grid's fixed passes cost more than splatting so few |
 | A grid over 768 MB (a 4K canvas with team colours at full heat resolution) | Splatted | Too much of the card for one pass |
 
