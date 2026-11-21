@@ -12,6 +12,7 @@
  *   node tools/smoke-analysis.mjs [url] [--only=<step substring>]
  */
 import { chromium } from 'playwright';
+import { writeFileSync } from 'node:fs';
 
 const url = process.argv.find((a) => a.startsWith('http')) ?? 'http://127.0.0.1:5273/';
 const only = process.argv.find((a) => a.startsWith('--only='))?.slice(7) ?? null;
@@ -545,6 +546,78 @@ await step('caster cinema: a moment is reached without a cut, subtitled, and a c
   judge(t);
   await mod('/src/ui/insights/cinemaStore.ts', (m) => m.stopCinema());
   return `moved ${total.toFixed(0)} units, largest frame step ${((maxStep / total) * 100).toFixed(1)}%; subtitle "${sub.slice(0, 60)}..."; ${rings} rings; ${timingText(t)}`;
+});
+
+// ------------------------------------------------------- camera paths to video
+
+/** A short render of a two-key path at 320 x 180, in the view as it is; what came out. */
+async function renderShort(container, keep = false) {
+  return mod('/src/render/record.ts', async (m, [container, keep]) => {
+    const eng = globalThis.__3dheat_engine;
+    const p = eng.cameraPose();
+    const c = eng.camera;
+    const k0 = { u: 0, x: p.position.x, y: p.position.y, z: p.position.z, yaw: c.yawDegrees, pitch: c.pitchDegrees, fov: 60, ease: 'inOut' };
+    const k1 = { ...k0, u: 1, x: p.position.x + 30, ease: undefined };
+    const r = await m.renderPath(eng, { keys: [k0, k1], easing: 'smooth', timing: 'constant', container, size: { width: 320, height: 180 }, seconds: 0.5, fps: 8, kbps: 2000, maxWaitFrames: 4 });
+    const head = new Uint8Array(await r.blob.slice(0, 64).arrayBuffer());
+    const text = String.fromCharCode(...head);
+    const back = eng.renderSize;
+    let b64 = null;
+    if (keep) {
+      const all = new Uint8Array(await r.blob.arrayBuffer());
+      let s = '';
+      for (let i = 0; i < all.length; i += 0x8000) s += String.fromCharCode(...all.subarray(i, i + 0x8000));
+      b64 = btoa(s);
+    }
+    return { frames: r.frames, w: r.width, h: r.height, size: r.blob.size, ext: r.ext, codec: r.codec, ok: container === 'mp4' ? text.slice(4, 8) === 'ftyp' : text.includes(container === 'mkv' ? 'matroska' : 'webm'), restored: back === null, b64 };
+  }, [container, keep]);
+}
+
+await step('camera paths render to video in every mode, at a size of their own', async () => {
+  const avc = await page.evaluate(async () => {
+    try {
+      return (await VideoEncoder.isConfigSupported({ codec: 'avc1.42001f', width: 320, height: 180, bitrate: 1e6, framerate: 8 })).supported;
+    } catch {
+      return false;
+    }
+  });
+  const containers = avc ? ['mp4', 'mkv', 'webm'] : ['webm', 'mkv'];
+  const notes = [];
+  const modes = [
+    ['heat', async () => loadSynthetic(50_000, 'heat-simple')],
+    ['difference', async () => page.evaluate(() => globalThis.__3dheat.useStore.getState().setMode('heat-difference'))],
+    [
+      'replay',
+      async () => {
+        await page.evaluate(async (u) => {
+          await globalThis.__3dheat.loadUrls([u]);
+          globalThis.__3dheat.useStore.getState().setMode('team');
+        }, `${DEMO}/tanks.parquet`);
+        await wait(1500);
+      },
+    ],
+    [
+      'tactics',
+      async () => {
+        await page.getByRole('tab', { name: 'Tactics' }).or(page.getByRole('button', { name: 'Tactics' })).first().click();
+        await wait(800);
+      },
+    ],
+  ];
+  let i = 0;
+  for (const [name, setup] of modes) {
+    await setup();
+    await wait(500);
+    const c = containers[i++ % containers.length];
+    const r = await renderShort(c, !!process.env.ANALYSIS_SHOTS);
+    if (r.b64) writeFileSync(`${process.env.ANALYSIS_SHOTS}/render-${name}.${r.ext}`, Buffer.from(r.b64, 'base64'));
+    expect(r.frames === 4 && r.w === 320 && r.h === 180, `${name}: ${JSON.stringify(r)}`);
+    expect(r.ok && r.size > 100, `${name}: not a ${c} file (${r.size} bytes)`);
+    expect(r.restored, `${name}: the view kept the render size`);
+    notes.push(`${name} ${c} ${r.codec} ${r.size} B`);
+  }
+  await page.getByRole('tab', { name: 'Heatmap' }).or(page.getByRole('button', { name: 'Heatmap' })).first().click();
+  return `${notes.join('; ')}${avc ? '' : ' (no H.264 encoder in this browser: MP4 not tried)'}`;
 });
 
 // The stages that follow add their steps above this line.

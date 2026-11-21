@@ -11,7 +11,8 @@ import { suggestLineSettings, suggestMaxJumpAsync, type LineSettings } from '../
 import { DEFAULT_CURVE, normaliseCurve, type CurvePoint } from './curve';
 import type { DescendKey, Projection } from '../render/camera';
 import type { DirSource } from '../render/direction';
-import type { Keyframe, PathEasing } from '../render/campath';
+import type { Keyframe, PathEasing, PathTiming } from '../render/campath';
+import type { VideoContainer } from '../render/record';
 import { DEFAULT_GAMEPAD, type GamepadSettings } from '../render/gamepad';
 import type { ImageLevel, Level, ModelLevel } from '../render/level';
 import {
@@ -580,6 +581,15 @@ export interface DofSettings {
 export interface PathSettings {
   keys: Keyframe[];
   easing: PathEasing;
+  /** Keys reached at their own times, or the whole path at one steady speed (render/campath.ts). */
+  timing: PathTiming;
+  /** The video file: WebM, Matroska or MP4 (render/record.ts). */
+  container: VideoContainer;
+  /** The video's size: the canvas's, a preset height (16:9), or `custom`. */
+  size: 'canvas' | '720' | '1080' | '1440' | '2160' | 'custom';
+  /** Pixels, for `custom`. */
+  width: number;
+  height: number;
   /** Length of the output video. */
   seconds: number;
   fps: number;
@@ -779,6 +789,11 @@ export const useStore = create<AppState>((set) => ({
   path: {
     keys: [],
     easing: 'smooth',
+    timing: 'keys',
+    container: 'mp4',
+    size: '1080',
+    width: 1920,
+    height: 1080,
     seconds: 12,
     fps: 30,
     kbps: 16_000,

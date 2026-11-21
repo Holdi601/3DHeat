@@ -23,9 +23,34 @@ export interface Keyframe {
   yaw: number;
   pitch: number;
   fov: number;
+  /**
+   * How the move from this key to the next starts and ends: `in` starts slow,
+   * `out` arrives slow, `inOut` both, `none` (or absent) keeps the curve's own
+   * pace. A time remap inside the segment, so the path's shape is unchanged.
+   */
+  ease?: SegmentEase;
 }
 
-export type Pose = Omit<Keyframe, 'u'>;
+export type SegmentEase = 'none' | 'in' | 'out' | 'inOut';
+
+/** When the keys are reached: at their own times (`u`), or at one steady speed along the whole path. */
+export type PathTiming = 'keys' | 'constant';
+
+export type Pose = Omit<Keyframe, 'u' | 'ease'>;
+
+/** A segment's local time through its ease. */
+export function easeSegment(s: number, ease: SegmentEase | undefined): number {
+  switch (ease) {
+    case 'in':
+      return s * s;
+    case 'out':
+      return 1 - (1 - s) * (1 - s);
+    case 'inOut':
+      return s * s * (3 - 2 * s);
+    default:
+      return s;
+  }
+}
 
 /** Straight lines between keys, or a smooth curve through them. */
 export type PathEasing = 'linear' | 'smooth';
@@ -49,7 +74,7 @@ export function poseAt(keys: Keyframe[], u: number, easing: PathEasing = 'smooth
   const a = k[i];
   const b = k[i + 1];
   const h = b.u - a.u;
-  const s = h > 1e-9 ? (t - a.u) / h : 0;
+  const s = easeSegment(h > 1e-9 ? (t - a.u) / h : 0, a.ease);
 
   if (easing === 'linear') {
     return {
@@ -126,6 +151,56 @@ export function prepare(keys: Keyframe[]): Keyframe[] {
     k[i].yaw -= Math.round(d / 360) * 360;
   }
   return k;
+}
+
+/**
+ * The pose at `u` with the path's timing: `keys` reaches each key at its own
+ * `u`; `constant` moves at one speed along the curve's length, so the keys
+ * set the shape and the duration sets the pace.
+ */
+export function poseAlong(keys: Keyframe[], u: number, easing: PathEasing = 'smooth', timing: PathTiming = 'keys'): Pose | null {
+  if (timing === 'keys') return poseAt(keys, u, easing);
+  const table = arcTable(keys, easing);
+  if (!table) return poseAt(keys, u, easing);
+  const { v, len } = table;
+  const want = Math.min(1, Math.max(0, u)) * len[len.length - 1];
+  let lo = 0;
+  let hi = len.length - 1;
+  while (lo < hi - 1) {
+    const m = (lo + hi) >> 1;
+    if (len[m] <= want) lo = m;
+    else hi = m;
+  }
+  const span = len[hi] - len[lo];
+  const at = span > 1e-12 ? v[lo] + ((want - len[lo]) / span) * (v[hi] - v[lo]) : v[lo];
+  return poseAt(keys, at, easing);
+}
+
+let tableFor: { keys: Keyframe[]; easing: PathEasing; out: { v: Float64Array; len: Float64Array } | null } | null = null;
+
+/** Cumulative length along the path at evenly spaced `u`, for the constant-speed timing. */
+function arcTable(keys: Keyframe[], easing: PathEasing, steps = 1024): { v: Float64Array; len: Float64Array } | null {
+  if (tableFor && tableFor.keys === keys && tableFor.easing === easing) return tableFor.out;
+  const k = prepare(keys);
+  let out: { v: Float64Array; len: Float64Array } | null = null;
+  if (k.length >= 2) {
+    const v = new Float64Array(steps + 1);
+    const len = new Float64Array(steps + 1);
+    const u0 = k[0].u;
+    const u1 = k[k.length - 1].u;
+    let prev = poseAt(k, u0, easing)!;
+    for (let i = 0; i <= steps; i++) {
+      v[i] = u0 + ((u1 - u0) * i) / steps;
+      const p = poseAt(k, v[i], easing)!;
+      // Turning in place counts a little, so a path of pure turns still has a pace.
+      const d = Math.hypot(p.x - prev.x, p.y - prev.y, p.z - prev.z) + 1e-6 * Math.hypot(p.yaw - prev.yaw, p.pitch - prev.pitch);
+      len[i] = i ? len[i - 1] + d : 0;
+      prev = p;
+    }
+    if (len[steps] > 0) out = { v, len };
+  }
+  tableFor = { keys, easing, out };
+  return out;
 }
 
 function strip(f: Keyframe): Pose {

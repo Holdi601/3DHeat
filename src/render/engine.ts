@@ -573,6 +573,8 @@ export class Engine {
   readonly measure: MeasureState = { points: [], cursor: null, heat: null };
   measureEnabled = false;
   /** Click-to-inspect: the pick card's answers and the marker it draws. */
+  /** The drawing buffer's size while a video renders at a size of its own; null: the canvas's (render/record.ts). */
+  renderSize: { width: number; height: number } | null = null;
   readonly inspector = new Inspector();
   /** The drawn rows binned into places, for the heat labels and a pick's relative heat (render/heatField.ts). */
   readonly heatField = new HeatFieldService(() => this.heatReading());
@@ -4529,8 +4531,10 @@ export class Engine {
 
   private resizeCanvas(): { width: number; height: number } {
     const dpr = Math.min(2, window.devicePixelRatio || 1);
-    const w = Math.max(1, Math.round(this.canvas.clientWidth * dpr));
-    const h = Math.max(1, Math.round(this.canvas.clientHeight * dpr));
+    // A video render's own size (render/record.ts): the drawing buffer at it, whatever the window.
+    const fixed = this.renderSize;
+    const w = fixed ? fixed.width : Math.max(1, Math.round(this.canvas.clientWidth * dpr));
+    const h = fixed ? fixed.height : Math.max(1, Math.round(this.canvas.clientHeight * dpr));
     if (this.canvas.width !== w || this.canvas.height !== h) {
       this.canvas.width = w;
       this.canvas.height = h;

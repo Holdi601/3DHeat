@@ -35,6 +35,7 @@ const ID = {
   TrackUID: 0x73c5,
   TrackType: 0x83,
   CodecID: 0x86,
+  CodecPrivate: 0x63a2,
   DefaultDuration: 0x23e383,
   Video: 0xe0,
   PixelWidth: 0xb0,
@@ -176,10 +177,15 @@ export function muxWebM(opts: {
   height: number;
   /** Nominal frame interval in milliseconds — what the player uses to pace. */
   frameMs: number;
-  /** 'V_VP9' or 'V_VP8'. */
+  /** 'V_VP9', 'V_VP8', or 'V_MPEG4/ISO/AVC' (Matroska only). */
   codec: string;
+  /** `webm` (the default) or `matroska`: the same container, an .mkv may carry any codec. */
+  docType?: 'webm' | 'matroska';
+  /** The codec's own setup, where it has one: H.264's avcC record. */
+  codecPrivate?: Uint8Array | null;
 }): Blob {
   const { frames, width, height, frameMs, codec } = opts;
+  const docType = opts.docType ?? 'webm';
   if (frames.length === 0) throw new Error('nothing to mux');
 
   const header = element(
@@ -189,8 +195,8 @@ export function muxWebM(opts: {
       element(ID.EBMLReadVersion, uint(1)),
       element(ID.EBMLMaxIDLength, uint(4)),
       element(ID.EBMLMaxSizeLength, uint(8)),
-      element(ID.DocType, ascii('webm')),
-      element(ID.DocTypeVersion, uint(2)),
+      element(ID.DocType, ascii(docType)),
+      element(ID.DocTypeVersion, uint(docType === 'webm' ? 2 : 4)),
       element(ID.DocTypeReadVersion, uint(2)),
     ]),
   );
@@ -215,6 +221,7 @@ export function muxWebM(opts: {
         element(ID.TrackUID, uint(1)),
         element(ID.TrackType, uint(1)), // video
         element(ID.CodecID, ascii(codec)),
+        ...(opts.codecPrivate && opts.codecPrivate.length ? [element(ID.CodecPrivate, opts.codecPrivate)] : []),
         element(ID.DefaultDuration, uint(Math.round(frameMs * TIMECODE_SCALE_NS))),
         element(
           ID.Video,

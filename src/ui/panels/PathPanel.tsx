@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { pathLength, poseAt, prepare, type Keyframe } from '../../render/campath';
-import { renderPath, type RecordProgress } from '../../render/record';
+import { pathLength, poseAlong, prepare, type Keyframe, type SegmentEase } from '../../render/campath';
+import { renderPath, type RecordProgress, type VideoContainer } from '../../render/record';
+import { pathsToJson, readPaths, usePathLibrary } from '../../render/pathLibrary';
 import { useStore } from '../../state/store';
 import { Rich, Section, Segmented, Slider } from '../controls';
 import { useEngine } from '../EngineContext';
@@ -59,6 +60,16 @@ export function PathPanel() {
     patchPath({ keys: respace(next) });
   };
 
+  // A key's time, seconds into the video; kept between its neighbours.
+  const setKeyTime = (i: number, sec: number) => {
+    if (!Number.isFinite(sec)) return;
+    const u = Math.min(1, Math.max(0, sec / Math.max(0.001, path.seconds)));
+    const lo = i > 0 ? keys[i - 1].u + 1e-4 : 0;
+    const hi = i < keys.length - 1 ? keys[i + 1].u - 1e-4 : 1;
+    patchPath({ keys: keys.map((k, j) => (j === i ? { ...k, u: Math.min(hi, Math.max(lo, u)) } : k)) });
+  };
+  const setKeyEase = (i: number, ease: SegmentEase) => patchPath({ keys: keys.map((k, j) => (j === i ? { ...k, ease } : k)) });
+
   const removeKey = (i: number) => {
     const next = keys.filter((_, j) => j !== i);
     patchPath({ keys: respace(next) });
@@ -76,7 +87,7 @@ export function PathPanel() {
   // path can be judged before spending minutes rendering it.
   useEffect(() => {
     if (!engine || !path.showPreview) return;
-    const pose = poseAt(path.keys, path.preview, path.easing);
+    const pose = poseAlong(path.keys, path.preview, path.easing, path.timing);
     if (!pose) return;
     engine.camera.position.set(pose.x, pose.y, pose.z);
     engine.camera.setOrientationDegrees(pose.yaw, pose.pitch);
@@ -89,7 +100,7 @@ export function PathPanel() {
       const [lo, hi] = [s.dataset.timeRange[0], s.dataset.timeRange[1]];
       s.seek(lo + (hi - lo) * path.preview);
     }
-  }, [engine, path.showPreview, path.preview, path.easing, path.keys]);
+  }, [engine, path.showPreview, path.preview, path.easing, path.keys, path.timing]);
 
   const run = async () => {
     if (!engine) return;
@@ -102,6 +113,9 @@ export function PathPanel() {
       const out = await renderPath(engine, {
         keys: path.keys,
         easing: path.easing,
+        timing: path.timing,
+        container: path.container,
+        size: outputSize(path),
         seconds: path.seconds,
         fps: path.fps,
         kbps: path.kbps,
@@ -113,7 +127,7 @@ export function PathPanel() {
       url.current = URL.createObjectURL(out.blob);
       const a = document.createElement('a');
       a.href = url.current;
-      a.download = `3dheat-${out.width}x${out.height}-${out.frames}f.webm`;
+      a.download = `3dheat-${out.width}x${out.height}-${out.frames}f.${out.ext}`;
       a.click();
       const summary = {
         count: out.frames,
@@ -167,6 +181,28 @@ export function PathPanel() {
               <span className="dim">
                 {t('heat.pathPanel.keyAngles', { yaw: num(k.yaw, 0), pitch: num(k.pitch, 0) })}
               </span>
+              {path.timing === 'keys' && (
+                <input
+                  className="key-time"
+                  type="number"
+                  min={0}
+                  max={path.seconds}
+                  step={0.1}
+                  value={Number((k.u * path.seconds).toFixed(2))}
+                  disabled={busy}
+                  title={t('analysis.path.keyTimeTitle')}
+                  onChange={(e) => setKeyTime(i, Number(e.target.value))}
+                />
+              )}
+              {i < keys.length - 1 && (
+                <select value={k.ease ?? 'none'} disabled={busy} title={t('analysis.path.easeTitle')} onChange={(e) => setKeyEase(i, e.target.value as SegmentEase)}>
+                  {(['none', 'in', 'out', 'inOut'] as const).map((v) => (
+                    <option key={v} value={v}>
+                      {t(`analysis.path.ease.${v}`)}
+                    </option>
+                  ))}
+                </select>
+              )}
               <button className="link" title={t('heat.pathPanel.remove')} onClick={() => removeKey(i)} disabled={busy}>
                 ×
               </button>
@@ -198,6 +234,24 @@ export function PathPanel() {
               onChange={(easing) => patchPath({ easing })}
             />
           </div>
+          <div className="field">
+            <div className="label">
+              <span>{t('analysis.path.timing')}</span>
+            </div>
+            <Segmented<'keys' | 'constant'>
+              value={path.timing}
+              options={[
+                { value: 'keys', label: t('analysis.path.timingKeys'), title: t('analysis.path.timingKeysTitle') },
+                { value: 'constant', label: t('analysis.path.timingConstant'), title: t('analysis.path.timingConstantTitle') },
+              ]}
+              onChange={(timing) => patchPath({ timing })}
+            />
+          </div>
+          {path.timing === 'keys' && (
+            <button onClick={() => patchPath({ keys: respace(keys) })} disabled={busy} title={t('analysis.path.evenTitle')}>
+              {t('analysis.path.even')}
+            </button>
+          )}
           <div className="hint">
             {metres > 0
               ? t('heat.pathPanel.travel', {
@@ -276,6 +330,43 @@ export function PathPanel() {
         hint={t('heat.pathPanel.waitCapHint')}
       />
 
+      <div className="field">
+        <div className="label">
+          <span>{t('analysis.video.container')}</span>
+        </div>
+        <Segmented<VideoContainer>
+          value={path.container}
+          options={[
+            { value: 'mp4', label: 'MP4', title: t('analysis.video.mp4Title') },
+            { value: 'mkv', label: 'MKV', title: t('analysis.video.mkvTitle') },
+            { value: 'webm', label: 'WebM', title: t('analysis.video.webmTitle') },
+          ]}
+          onChange={(container) => patchPath({ container })}
+        />
+      </div>
+      <div className="field">
+        <div className="label">
+          <span>{t('analysis.video.size')}</span>
+        </div>
+        <select value={path.size} disabled={busy} onChange={(e) => patchPath({ size: e.target.value as typeof path.size })}>
+          <option value="canvas">{t('analysis.video.sizeCanvas')}</option>
+          <option value="720">1280 × 720</option>
+          <option value="1080">1920 × 1080</option>
+          <option value="1440">2560 × 1440</option>
+          <option value="2160">3840 × 2160</option>
+          <option value="custom">{t('analysis.video.sizeCustom')}</option>
+        </select>
+        {path.size === 'custom' && (
+          <span className="row" style={{ gap: 4 }}>
+            <input type="number" min={16} max={8192} step={2} value={path.width} disabled={busy} onChange={(e) => patchPath({ width: Math.max(16, Math.min(8192, Number(e.target.value) || 16)) })} aria-label={t('analysis.video.width')} />
+            ×
+            <input type="number" min={16} max={8192} step={2} value={path.height} disabled={busy} onChange={(e) => patchPath({ height: Math.max(16, Math.min(8192, Number(e.target.value) || 16)) })} aria-label={t('analysis.video.height')} />
+          </span>
+        )}
+      </div>
+
+      <SavedPaths busy={busy} />
+
       <div className="hint">
         <Rich text={t('heat.pathPanel.summary', { count: frames, window: timeline.window })} />
         {timeline.mode === 'all'
@@ -307,6 +398,101 @@ export function PathPanel() {
       {result && <div className="hint" style={{ color: 'var(--good)' }}>{result}</div>}
       {error && <div className="hint" style={{ color: 'var(--bad)' }}>{error}</div>}
     </Section>
+  );
+}
+
+/** The video's size for the panel's choice; null: the canvas's own. */
+function outputSize(p: { size: string; width: number; height: number }): { width: number; height: number } | null {
+  switch (p.size) {
+    case '720':
+      return { width: 1280, height: 720 };
+    case '1080':
+      return { width: 1920, height: 1080 };
+    case '1440':
+      return { width: 2560, height: 1440 };
+    case '2160':
+      return { width: 3840, height: 2160 };
+    case 'custom':
+      return { width: p.width, height: p.height };
+    default:
+      return null;
+  }
+}
+
+/** Named paths kept in this browser, and to and from a file (render/pathLibrary.ts). */
+function SavedPaths({ busy }: { busy: boolean }) {
+  const path = useStore((s) => s.path);
+  const lib = usePathLibrary();
+  const [name, setName] = useState('');
+  const [note, setNote] = useState<string | null>(null);
+  const file = useRef<HTMLInputElement>(null);
+  const save = () => {
+    if (!path.keys.length) return;
+    lib.save({ name: name.trim() || t('analysis.path.defaultName', { n: lib.paths.length + 1 }), keys: path.keys, easing: path.easing, timing: path.timing, seconds: path.seconds, fps: path.fps });
+    setName('');
+  };
+  const load = (id: string) => {
+    const p = lib.paths.find((x) => x.id === id);
+    if (p) useStore.getState().patchPath({ keys: p.keys.map((k) => ({ ...k })), easing: p.easing, timing: p.timing, seconds: p.seconds, fps: p.fps });
+  };
+  const exportAll = () => {
+    const blob = new Blob([pathsToJson(lib.paths)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = '3dheat-camera-paths.json';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  };
+  const importFile = async (f: File | undefined) => {
+    if (!f) return;
+    try {
+      const n = lib.merge(readPaths(JSON.parse(await f.text())));
+      setNote(t('analysis.path.imported', { n: int(n) }));
+    } catch {
+      setNote(t('analysis.path.importFailed'));
+    }
+  };
+  return (
+    <div className="saved-paths">
+      <div className="label">
+        <span>{t('analysis.path.saved')}</span>
+      </div>
+      <div className="row" style={{ gap: 4 }}>
+        <input type="text" value={name} placeholder={t('analysis.path.namePlaceholder')} onChange={(e) => setName(e.target.value)} disabled={busy} />
+        <button onClick={save} disabled={busy || !path.keys.length}>
+          {t('analysis.path.save')}
+        </button>
+      </div>
+      {lib.paths.map((p) => (
+        <div className="keyrow" key={p.id}>
+          <button className="link" onClick={() => load(p.id)} disabled={busy} title={t('analysis.path.loadTitle')}>
+            {p.name}
+          </button>
+          <span className="dim">{t('analysis.path.summary', { keys: int(p.keys.length), seconds: num(p.seconds, 1) })}</span>
+          <button
+            className="link"
+            onClick={() => {
+              const n = window.prompt(t('analysis.path.renamePrompt'), p.name);
+              if (n !== null) lib.rename(p.id, n);
+            }}
+            title={t('analysis.path.rename')}
+          >
+            ✎
+          </button>
+          <button className="link" onClick={() => lib.remove(p.id)} title={t('analysis.path.delete')}>
+            ×
+          </button>
+        </div>
+      ))}
+      <div className="row" style={{ gap: 4 }}>
+        <button onClick={exportAll} disabled={!lib.paths.length}>
+          {t('analysis.path.export')}
+        </button>
+        <button onClick={() => file.current?.click()}>{t('analysis.path.import')}</button>
+        <input ref={file} type="file" accept=".json,application/json" style={{ display: 'none' }} onChange={(e) => void importFile(e.target.files?.[0])} />
+      </div>
+      {note && <div className="hint">{note}</div>}
+    </div>
   );
 }
 

@@ -1,8 +1,9 @@
 import { playbackRange } from '../data/sessions';
 import { useStore } from '../state/store';
-import { poseAt, type Keyframe, type PathEasing } from './campath';
+import { poseAlong, type Keyframe, type PathEasing, type PathTiming } from './campath';
 import type { Engine } from './engine';
 import { muxWebM, type EncodedFrame } from './webm';
+import { avcCodecs, muxMp4 } from './mp4';
 import { list, t } from '../i18n';
 
 /**
@@ -24,9 +25,22 @@ import { list, t } from '../i18n';
  * make it something else.
  */
 
+/** The file a render writes: WebM (VP9/VP8), Matroska (H.264, else VP9/VP8) or MP4 (H.264). */
+export type VideoContainer = 'webm' | 'mkv' | 'mp4';
+
 export interface RecordOptions {
   keys: Keyframe[];
   easing: PathEasing;
+  /** Keys at their own times, or one steady speed along the path. Default `keys`. */
+  timing?: PathTiming;
+  /** Default `webm`. */
+  container?: VideoContainer;
+  /**
+   * Output size in pixels, independent of the window: the view is rendered at
+   * it for the length of the render (H.264 takes even sizes; odd ones are
+   * rounded down). Null: the canvas's own size.
+   */
+  size?: { width: number; height: number } | null;
   /** Output duration in seconds. */
   seconds: number;
   fps: number;
@@ -56,6 +70,8 @@ export interface RecordProgress {
 
 export interface RecordResult {
   blob: Blob;
+  /** File extension for the container: webm, mkv or mp4. */
+  ext: VideoContainer;
   frames: number;
   width: number;
   height: number;
@@ -64,10 +80,19 @@ export interface RecordResult {
 }
 
 /** VP9 profile 0, level 1.0, 8-bit, then VP8 for anything that refuses it. */
-const CODECS: Array<{ codec: string; container: string }> = [
+const VP: Array<{ codec: string; container: string }> = [
   { codec: 'vp09.00.10.08', container: 'V_VP9' },
   { codec: 'vp8', container: 'V_VP8' },
 ];
+
+/** The codecs to try for a container, in order. */
+function codecsFor(container: VideoContainer, width: number, height: number, fps: number): Array<{ codec: string; container: string; avc: boolean }> {
+  const avc = avcCodecs(width, height, fps).map((codec) => ({ codec, container: 'V_MPEG4/ISO/AVC', avc: true }));
+  const vp = VP.map((c) => ({ ...c, avc: false }));
+  if (container === 'mp4') return avc;
+  if (container === 'mkv') return [...avc, ...vp];
+  return vp;
+}
 
 export async function renderPath(engine: Engine, opts: RecordOptions): Promise<RecordResult> {
   if (typeof VideoEncoder === 'undefined') {
@@ -80,12 +105,25 @@ export async function renderPath(engine: Engine, opts: RecordOptions): Promise<R
   // render at a device-pixel size that is not necessarily the CSS size, and an
   // encoder configured to the wrong one fails on the first frame rather than at
   // configure time.
-  const probe = await engine.captureFrame();
-  if (!probe) throw new Error(t('render.record.noReadback'));
+  const container = opts.container ?? 'webm';
+  // A size of its own: the view renders at it while this runs (Engine.renderSize).
+  const prevSize = engine.renderSize;
+  if (opts.size) {
+    const even = (v: number) => Math.max(2, Math.floor(v / 2) * 2);
+    engine.renderSize = { width: even(opts.size.width), height: even(opts.size.height) };
+    engine.invalidate(3);
+    await new Promise((r) => requestAnimationFrame(r));
+    await new Promise((r) => requestAnimationFrame(r));
+  }
+  const probe = await engine.captureFrame().catch(() => null);
+  if (!probe) {
+    engine.renderSize = prevSize;
+    throw new Error(t('render.record.noReadback'));
+  }
   const { width, height } = probe;
 
-  let chosen: { codec: string; container: string } | null = null;
-  for (const c of CODECS) {
+  let chosen: { codec: string; container: string; avc: boolean } | null = null;
+  for (const c of codecsFor(container, width, height, opts.fps)) {
     const cfg = { codec: c.codec, width, height, bitrate: opts.kbps * 1000, framerate: opts.fps };
     try {
       const support = await VideoEncoder.isConfigSupported(cfg);
@@ -98,13 +136,21 @@ export async function renderPath(engine: Engine, opts: RecordOptions): Promise<R
       // false; either way this codec is not the one.
     }
   }
-  if (!chosen) throw new Error(t('render.record.noCodec', { codecs: list(['VP9', 'VP8']) }));
+  if (!chosen) {
+    engine.renderSize = prevSize;
+    throw new Error(t('render.record.noCodec', { codecs: list(container === 'mp4' ? ['H.264'] : container === 'mkv' ? ['H.264', 'VP9', 'VP8'] : ['VP9', 'VP8']) }));
+  }
+  const avc = chosen.avc;
+  let avcC: Uint8Array | null = null;
 
   const encoded: EncodedFrame[] = [];
   let bytes = 0;
   let encodeError: Error | null = null;
   const encoder = new VideoEncoder({
-    output: (chunk) => {
+    output: (chunk, meta) => {
+      // H.264's setup record comes with the first chunk.
+      const desc = meta?.decoderConfig?.description;
+      if (desc && !avcC) avcC = desc instanceof ArrayBuffer ? new Uint8Array(desc.slice(0)) : new Uint8Array((desc as ArrayBufferView).buffer.slice((desc as ArrayBufferView).byteOffset, (desc as ArrayBufferView).byteOffset + (desc as ArrayBufferView).byteLength));
       const data = new Uint8Array(chunk.byteLength);
       chunk.copyTo(data);
       encoded.push({
@@ -125,6 +171,8 @@ export async function renderPath(engine: Engine, opts: RecordOptions): Promise<R
     bitrate: opts.kbps * 1000,
     framerate: opts.fps,
     latencyMode: 'quality',
+    // Length-prefixed NAL units and an avcC record: what MP4 and Matroska carry.
+    ...(avc ? { avc: { format: 'avc' as const } } : {}),
   });
 
   // ---- take over the settings a render needs, and put them back afterwards
@@ -159,7 +207,7 @@ export async function renderPath(engine: Engine, opts: RecordOptions): Promise<R
 
       // Camera from the path. A path with no keys leaves it where it is, which is
       // how a fixed-camera timelapse is expressed.
-      const pose = poseAt(opts.keys, u, opts.easing);
+      const pose = poseAlong(opts.keys, u, opts.easing, opts.timing ?? 'keys');
       if (pose) {
         engine.camera.position.set(pose.x, pose.y, pose.z);
         engine.camera.setOrientationDegrees(pose.yaw, pose.pitch);
@@ -204,14 +252,23 @@ export async function renderPath(engine: Engine, opts: RecordOptions): Promise<R
 
     await encoder.flush();
     if (encodeError) throw encodeError;
-    const blob = muxWebM({ frames: encoded, width, height, frameMs, codec: chosen.container });
-    return { blob, frames: total, width, height, unconverged, codec: chosen.container };
+    let blob: Blob;
+    if (container === 'mp4') {
+      if (!avcC) throw new Error(t('analysis.video.noAvcConfig'));
+      blob = muxMp4({ frames: encoded, width, height, fps: opts.fps, avcC });
+    } else {
+      blob = muxWebM({ frames: encoded, width, height, frameMs, codec: chosen.container, docType: container === 'mkv' ? 'matroska' : 'webm', codecPrivate: avc ? avcC : null });
+      if (container === 'mkv') blob = new Blob([blob], { type: 'video/x-matroska' });
+    }
+    return { blob, ext: container, frames: total, width, height, unconverged, codec: chosen.codec };
   } finally {
     try {
       encoder.close();
     } catch {
       // Already closed by an error path; nothing to do.
     }
+    engine.renderSize = prevSize;
+    engine.invalidate(3);
     const s = useStore.getState();
     s.patchBudget(restore.budget);
     s.patchCamera({ fov: restore.camera.fov });
