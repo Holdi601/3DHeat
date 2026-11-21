@@ -98,6 +98,7 @@ With two or more visible volumes, press **Compare...**.
 ## Tips
 
 - Start from a finding: in [Insights](insights.md), **Volume here** adds a cylinder round the finding's place.
+- **Charts on a volume**: the small chart button at a volume's top corner puts charts of the rows inside it beside it in the world: [Charts on volumes](volume-charts.md).
 - **Breakdown...** opens the [Breakdown](breakdown.md) for the selected volume: who and what does best inside it.
 - **Compare groups...** compares any groups - teams, vehicles, players, files, matches, your own filters - inside the volumes (combined or each) or the whole map, with your own statistics: [Compare groups](compare-groups.md).
 - [Directional heat](directional-heat.md) can chart the directions inside the selected volume.

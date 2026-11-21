@@ -15,6 +15,7 @@ import { shapeHeights, volumesFromJson, volumesToJson, withHeights, type Volume,
 import { SortControl, SortTh } from '../sort/SortControl';
 import { useSort, useSorted } from '../sort/useSort';
 import { useContourPrefs } from '../../render/volumeContours';
+import { VolumeCharts } from '../signs/VolumeCharts';
 
 /** The lines where the volumes cut the level (render/volumeContours.ts): on or off, and how wide. */
 function ContourControls() {
@@ -246,6 +247,8 @@ export function VolumePanel() {
           }}
         />
       </div>
+
+      {dataset && sel && <VolumeCharts volume={sel} />}
 
       {dataset && visibleVolumes.length === 0 && (
         <div className="row" style={{ marginTop: 6 }}>

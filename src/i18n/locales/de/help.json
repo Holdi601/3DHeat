@@ -90,5 +90,7 @@
   "help.at.place": "Ortsname aus der Weltkarte: Stadt, Dorf oder Flugplatz.",
   "help.at.grid": "Kartengitter: der Name des Quadrats oder eine Gleitpfadmarke.",
   "help.at.raceLabel": "Streckenlabel: eine Kurve, ein Befund oder eine Statistik der Strecke; anklicken für mehr.",
-  "help.at.figure": "Figur einer Einheit: die Form ihres Typs in echter Größe, in der Teamfarbe."
+  "help.at.figure": "Figur einer Einheit: die Form ihres Typs in echter Größe, in der Teamfarbe.",
+  "help.at.chartButton": "Chart button of a volume: opens its charts panel, where charts of the rows inside it are added and edited.",
+  "help.at.chartSign": "Chart sign: a chart of the rows inside its volume, live with the filters, the time window and playback. Hover a mark for its value, click it to filter the view to it; drag the title to move it, the corner to size it."
 }

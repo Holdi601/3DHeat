@@ -90,5 +90,7 @@
   "help.at.place": "Place name from the world map: a city, a village or an airfield.",
   "help.at.grid": "Map grid: the square's name, or a glideslope's mark.",
   "help.at.raceLabel": "Course label: a corner, a finding or a statistic of the course; click it for more.",
-  "help.at.figure": "A unit's figure: its type's shape at its true size, in its team's colour."
+  "help.at.figure": "A unit's figure: its type's shape at its true size, in its team's colour.",
+  "help.at.chartButton": "Chart button of a volume: opens its charts panel, where charts of the rows inside it are added and edited.",
+  "help.at.chartSign": "Chart sign: a chart of the rows inside its volume, live with the filters, the time window and playback. Hover a mark for its value, click it to filter the view to it; drag the title to move it, the corner to size it."
 }

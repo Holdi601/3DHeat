@@ -63,6 +63,7 @@ import { SpeedOverlay } from './ui/SpeedOverlay';
 import { StatsOverlay } from './ui/StatsOverlay';
 import { WorldCredits } from './ui/WorldCredits';
 import { WorldOverlay } from './ui/WorldOverlay';
+import { VolumeSigns } from './ui/signs/VolumeSigns';
 import { clearLook } from './ui/replay/pair';
 import { CameraReadout, copyCameraPose } from './ui/CameraReadout';
 import { PickCard } from './ui/PickCard';
@@ -611,6 +612,7 @@ export function App() {
               <CasterCinema />
               <ReplayExtras />
               <HitMarkTip />
+              <VolumeSigns />
               <StatsOverlay />
               <SpeedOverlay />
               <InspectHud />

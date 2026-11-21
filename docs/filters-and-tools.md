@@ -26,6 +26,7 @@ Example: untick *Tank* under Filters, hide the Red team under Teams, and pick on
 | [Slice](slice.md) | Cut a slab out of the level and the heat, to look inside buildings. | Yes, and the level | No |
 | [Measure](measure.md) | A ruler, and the heat value under the cursor. | Yes | Yes |
 | [Volumes and comparison](volumes.md) | Draw 3D shapes and ask what happened inside. Can also filter. | Yes | Yes |
+| [Charts on volumes](volume-charts.md) | Charts of the rows inside a volume, standing beside it in the world. | Yes | Yes |
 | [Breakdown](breakdown.md) | Which vehicle, player or weapon does best in a place. | n/a | n/a |
 
 Hit analysis has its own area filter in the **Vehicles** tab: see [Hit analysis](hit-analysis.md).

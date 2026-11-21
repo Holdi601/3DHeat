@@ -27,10 +27,14 @@ export type HelpTarget =
   | 'place'
   | 'grid'
   | 'raceLabel'
-  | 'figure';
+  | 'figure'
+  | 'chartButton'
+  | 'chartSign';
 
 /** Selectors for each kind, most specific first: the first whose box holds the point wins. */
 export const HELP_TARGETS: ReadonlyArray<[string, HelpTarget]> = [
+  ['.vsign-btn', 'chartButton'],
+  ['.vsign', 'chartSign'],
   ['.objective-label.zone', 'zone'],
   ['.objective-label.site', 'site'],
   ['.objective-label', 'marker'],

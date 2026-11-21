@@ -32,6 +32,9 @@ import { WORKSPACES, type Workspace } from './keys';
 import { comboText, shortcut } from './shortcuts';
 import { TASKS, useShell, type Task, type Theme } from './shellStore';
 import { toast } from './kit';
+import { addChartTo } from '../signs/addChart';
+import { useSignStore } from '../../volumes/signs/store';
+import { useVolumeStore } from '../../volumes/store';
 
 export { score } from './match';
 
@@ -310,6 +313,16 @@ export function buildCommands(engine: Engine | null): Command[] {
     keysOf('tactical'),
   );
   action('saveView', t('shell.cmd.saveView'), () => saveViewNow(engine));
+  // Charts on volumes: one "add" per shown volume, the selected one first.
+  {
+    const vs = useVolumeStore.getState();
+    const shown = vs.volumes.filter((v) => v.visible);
+    const order = [...shown.filter((v) => v.id === vs.selected), ...shown.filter((v) => v.id !== vs.selected)];
+    if (useStore.getState().dataset)
+      for (const v of order) action(`chart.add.${v.id}`, t('charts.cmd.add', { name: v.name }), () => addChartTo(v.id), undefined, 'chart diagram sign graph bar volume');
+    const hidden = useSignStore.getState().hidden;
+    if (useSignStore.getState().signs.length) action('chart.toggle', hidden ? t('charts.cmd.show') : t('charts.cmd.hide'), () => useSignStore.getState().setHidden(!hidden), undefined, 'chart diagram sign');
+  }
   action(
     'sidebar',
     shell.sidebarHidden ? t('shell.cmd.sidebarShow') : t('shell.cmd.sidebarHide'),

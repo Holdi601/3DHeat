@@ -24,6 +24,8 @@ import { useObjectivesStore } from './objectivesStore';
 import { useInspectStore } from './inspectStore';
 import { useContourPrefs } from '../render/volumeContours';
 import { unitsOf } from '../ui/replay/units';
+import { useSignStore } from '../volumes/signs/store';
+import { parseSign, type Sign } from '../volumes/signs/sign';
 
 type Vec3 = { x: number; y: number; z: number };
 
@@ -43,6 +45,8 @@ export interface ViewState {
   lines: LineSettings;
   slice: SliceSettings;
   volumes: { list: Volume[]; filter: VolumeFilter; selected: string | null };
+  /** The chart signs on the volumes (absent in views saved before them). */
+  signs?: Sign[];
   layers: {
     objectives: { on: boolean; labels: boolean };
     contours: { on: boolean; width: number };
@@ -111,6 +115,7 @@ export function captureView(engine: Engine): ViewState {
     lines: structuredClone(s.lines),
     slice: { ...s.slice },
     volumes: { list: structuredClone(vs.volumes) as Volume[], filter: vs.filter, selected: vs.selected },
+    signs: structuredClone(useSignStore.getState().signs),
     layers: {
       objectives: { on: obj.on, labels: obj.labels },
       contours: { on: cp.on, width: cp.width },
@@ -167,6 +172,7 @@ export function applyView(engine: Engine, v: ViewState): string[] {
   if (v.volumes.list.length) vs.addMany(structuredClone(v.volumes.list));
   vs.setFilter(v.volumes.filter);
   if (v.volumes.selected) vs.select(v.volumes.selected);
+  if (Array.isArray(v.signs)) useSignStore.getState().replaceAll(v.signs.map(parseSign).filter((x): x is Sign => !!x));
   const obj = useObjectivesStore.getState();
   if (obj.on !== v.layers.objectives.on) obj.setOn(v.layers.objectives.on);
   if (obj.labels !== v.layers.objectives.labels) obj.setLabels(v.layers.objectives.labels);

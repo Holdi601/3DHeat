@@ -243,7 +243,7 @@ const words = (el: Element | null | undefined) => el?.textContent?.replace(/\s+/
 function controlAt(x: number, y: number): ControlHelp | null {
   if (x < 0 || typeof document.elementFromPoint !== 'function') return null;
   const el = document.elementFromPoint(x, y) as HTMLElement | null;
-  if (!el || !el.closest('.sidebar, .timeline-bar, .quick-bar, .settings-popover, .help-panel')) return null;
+  if (!el || !el.closest('.sidebar, .timeline-bar, .quick-bar, .settings-popover, .help-panel, .vsign-panel, .vsign-head')) return null;
   if (el.closest('.help-panel')) return null;
   const ctl = el.closest<HTMLElement>('button, select, input, textarea, label, [role="button"], [role="tab"], .field, summary');
   if (!ctl) return null;
