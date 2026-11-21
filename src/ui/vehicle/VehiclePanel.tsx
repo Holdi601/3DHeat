@@ -18,6 +18,12 @@ import { SortControl } from '../sort/SortControl';
 import { useSort, useSorted } from '../sort/useSort';
 import { TaskGroup } from '../shell/Shell';
 import { useColumnStore } from '../../data/columnStore';
+import { useHitMass } from '../../vehicle/mass/client';
+import { HitMassPanel } from './HitMassPanel';
+import { installVehicleDashboards } from '../../vehicle/mass/dashSource';
+
+// The hit analysis's dashboard source and starter dashboards (docs/vehicle-hits.md).
+installVehicleDashboards();
 
 /** The values of one field over the hits, most frequent first. */
 function tally(hits: VehicleHit[], key: (h: VehicleHit) => string): [string, number][] {
@@ -36,6 +42,26 @@ function tally(hits: VehicleHit[], key: (h: VehicleHit) => string): [string, num
  * the body parts hit.
  */
 export function VehiclePanel() {
+  const mass = useHitMass((m) => m.active);
+  return mass ? <HitMassPanel /> : <VehicleDatasetPanel />;
+}
+
+/** The way into the hit analysis over many matches (docs/vehicle-hits.md). */
+function HitMassEntry() {
+  const had = useHitMass((m) => m.stats);
+  return (
+    <TaskGroup task="explore" className="vehicle-panel">
+      <Section title={t('vhits.entry.title')} defaultOpen={false}>
+        <div className="hint">{t('vhits.entry.hint')}</div>
+        <button onClick={() => useHitMass.getState().set({ active: true })} data-vhits="enter">
+          {had ? t('vhits.entry.back') : t('vhits.entry.open')}
+        </button>
+      </Section>
+    </TaskGroup>
+  );
+}
+
+function VehicleDatasetPanel() {
   useUnits();
   const dataset = useStore((s) => s.dataset);
   const s = useVehicleStore();
@@ -121,6 +147,7 @@ export function VehiclePanel() {
         <Section title={t('vehicle.panel.title')} defaultOpen>
           <div className="hint">{t('vehicle.empty.noData')}</div>
         </Section>
+        <HitMassEntry />
       </TaskGroup>
     );
   }
@@ -140,6 +167,7 @@ export function VehiclePanel() {
           <div className="hint">{t('vehicle.empty.noHits')}</div>
           {set && set.unplaced > 0 && <div className="hint vehicle-warn">{t('vehicle.hint.unplaced', { n: set.unplaced })}</div>}
         </Section>
+        <HitMassEntry />
       </TaskGroup>
     );
   }
@@ -197,6 +225,7 @@ export function VehiclePanel() {
       </Section>
 
       <HitArea dataset={dataset} view={view} />
+      <HitMassEntry />
 
       <Section title={t('vehicle.look.title')} defaultOpen={view.anyPoint}>
         <Slider

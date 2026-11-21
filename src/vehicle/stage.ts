@@ -20,6 +20,7 @@ import { atRest, namesOf, packUnitOf, plateAt, plateCounts, platesOf, platesOfHi
 import { aimOf, type AimNow } from '../figures/aim';
 import { placesOf } from './places';
 import type { VehicleHit } from './hits';
+import { useHitMass, type HitMassState } from './mass/client';
 
 /** What the plate view shows now (the stage's last build), for the overlay's card: the unit's plates and their hits. */
 export interface PlateView {
@@ -55,12 +56,14 @@ export class VehicleStage {
 
   build(d: Dataset | null, scheme: HeatColorScheme): [VehicleFrame, boolean] {
     const s = useVehicleStore.getState();
-    const view = vehicleView(d, s);
     if (scheme !== this.lutScheme) {
       this.lutScheme = scheme;
       this.lut = buildColorLut(scheme, this.lut.length ? this.lut : undefined);
       this.lutKey++;
     }
+    const mass = useHitMass.getState();
+    if (mass.active) return this.buildMass(mass);
+    const view = vehicleView(d, s);
     if (view.figure !== this.figure) {
       this.figure = view.figure;
       this.frameWanted = view.figure !== null;
@@ -93,6 +96,44 @@ export class VehicleStage {
       figure: view.figure ?? '',
       hits: shiftHits(plates && this.atRest.size ? view.hits.map((h) => (this.atRest.has(h.id) ? { ...h, local: this.atRest.get(h.id)! } : h)) : view.hits, this.offset),
       look: { radius: s.radius, exposure: s.exposure, showPoints: s.showPoints, showHeat: s.showHeat, showArrows: s.showArrows, colourBy: s.colourBy },
+      lut: this.lut,
+      lutKey: this.lutKey,
+      selected: s.selected,
+    });
+  }
+
+  /**
+   * The hit analysis's vehicle (docs/vehicle-hits.md): its model's plates in the colours the worker's metric gives,
+   * its hits' marks where they struck the plates at rest. Everything here was made when the worker answered; the
+   * frame only hands it on.
+   */
+  private massZero: { list: Plate[]; counts: PlateCount[] } | null = null;
+  private buildMass(mass: HitMassState): [VehicleFrame, boolean] {
+    const s = useVehicleStore.getState();
+    const figure = mass.figure;
+    if (figure !== this.figure) {
+      this.figure = figure;
+      this.frameWanted = figure !== null;
+    }
+    shownPlates = null;
+    if (!figure) return this.scene.build({ figure: '', hits: [], look: { radius: s.radius, exposure: s.exposure, showPoints: s.showPoints, showHeat: false, showArrows: false, colourBy: 'outcome' }, lut: this.lut, lutKey: this.lutKey, selected: null });
+    this.box = this.scene.bounds(figure);
+    this.offset = [0, 0, 0];
+    const list = platesOf(figure);
+    let plates: { list: Plate[]; counts: PlateCount[]; picked: number; colours: Float32Array | null } | null = null;
+    if (list && list.length) {
+      if (this.massZero?.list !== list) this.massZero = { list, counts: list.map(() => ({ hits: 0, through: 0, stopped: 0, ricochet: 0, kills: 0 })) };
+      const hover = usePlateHover.getState().plate;
+      const picked = hover >= 0 && hover < list.length ? hover : mass.plate;
+      plates = { list, counts: this.massZero.counts, picked, colours: mass.colours };
+      shownPlates = { list, counts: this.massZero.counts };
+    }
+    return this.scene.build({
+      plates,
+      figure,
+      hits: NO_HITS,
+      marks: mass.drawn ?? NO_MARKS,
+      look: { radius: s.radius, exposure: s.exposure, showPoints: s.showPoints, showHeat: false, showArrows: false, colourBy: 'outcome' },
       lut: this.lut,
       lutKey: this.lutKey,
       selected: s.selected,
@@ -209,6 +250,9 @@ export class VehicleStage {
     return moved;
   }
 }
+
+const NO_HITS: VehicleHit[] = [];
+const NO_MARKS: NonNullable<Parameters<VehicleScene['build']>[0]['marks']> = [];
 
 function same(a: unknown[], b: unknown[]): boolean {
   return a.length === b.length && a.every((x, i) => x === b[i]);

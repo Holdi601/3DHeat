@@ -16,6 +16,7 @@ import { useEngine } from '../EngineContext';
 import { flyTo } from '../replay/replayView';
 import { unitsPerMetre } from '../replay/replayData';
 import type { Dataset } from '../../state/types';
+import { legendStops, useHitMass, vehicleName } from '../../vehicle/mass/client';
 
 /** mm:ss.s from the start of the recording. */
 function clock(s: number): string {
@@ -31,6 +32,37 @@ function clock(s: number): string {
  * the flat sheet when it is open.
  */
 export function VehicleOverlay() {
+  const mass = useHitMass((m) => m.active);
+  return mass ? <HitMassHud /> : <VehicleDatasetOverlay />;
+}
+
+/** Over the view in the hit analysis: the vehicle, its hits and the plates' colour key. */
+function HitMassHud() {
+  const m = useHitMass();
+  const r = m.result;
+  if (!m.vehicle || !r) return null;
+  const c = r.colours;
+  const tick = (v: number) => (!Number.isFinite(v) ? '' : m.compare ? `${v > 0 ? '+' : ''}${num(v * 100, 0)} pp` : m.metric === 'density' ? int(v) : m.metric === 'angle' ? `${num(v, 0)}°` : m.metric === 'speed' ? `${num(v, 0)} m/s` : `${num(v * 100, 0)} %`);
+  return (
+    <div className="vehicle-hud" data-vhits="hud">
+      <div className="vehicle-hud-name">{vehicleName(m.vehicle)}</div>
+      <div className="vehicle-hud-sub">{t('vhits.hud.hits', { kept: r.kept, rate: r.known ? `${num((100 * r.through) / r.known, 0)} %` : '-' })}</div>
+      {c && (
+        <>
+          <div className="vehicle-hud-sub">{m.compare ? t('vhits.colour.diffLegend') : t(`vhits.metric.${m.metric}`)}</div>
+          <div className="vehicle-ramp" style={{ background: `linear-gradient(to right, ${legendStops(c.diverging)})` }} />
+          <div className="vehicle-ramp-ends">
+            <span>{tick(c.lo)}</span>
+            {c.diverging && <span>{tick(c.mid)}</span>}
+            <span>{tick(c.hi)}</span>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function VehicleDatasetOverlay() {
   const dataset = useStore((s) => s.dataset);
   const scheme = useStore((s) => s.heat.scheme);
   const s = useVehicleStore();

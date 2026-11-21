@@ -230,7 +230,7 @@ function triDistance2(p: Vec3, t: Float32Array): number {
 }
 
 /** Squared distance from (px, py, pz) to the triangle at `k` of `t` (Ericson's closest point on a triangle). */
-function pointTri2(px: number, py: number, pz: number, t: Float32Array, k: number): number {
+export function pointTri2(px: number, py: number, pz: number, t: Float32Array, k: number): number {
   const ax = t[k], ay = t[k + 1], az = t[k + 2];
   const abx = t[k + 3] - ax, aby = t[k + 4] - ay, abz = t[k + 5] - az;
   const acx = t[k + 6] - ax, acy = t[k + 7] - ay, acz = t[k + 8] - az;
@@ -368,7 +368,7 @@ const LIGHT_DIR: Vec3 = [0.35 / 1.0, 0.85 / 1.0, 0.4 / 1.0].map((c) => c / Math.
  * plate the top of the ramp), unhit ones the paint; lit flat by the heatmap's light. Returns each plate's first
  * vertex and vertex count in `out`.
  */
-export function paintPlates(list: Plate[], counts: PlateCount[], ramp: (t: number, out: number[]) => void, out: VertexBuffer, lift: number, heat: boolean): [number, number][] {
+export function paintPlates(list: Plate[], counts: PlateCount[], ramp: (t: number, out: number[]) => void, out: VertexBuffer, lift: number, heat: boolean, colours: Float32Array | null = null): [number, number][] {
   const ranges: [number, number][] = [];
   let most = 0;
   for (const c of counts) if (c.hits > most) most = c.hits;
@@ -377,7 +377,11 @@ export function paintPlates(list: Plate[], counts: PlateCount[], ramp: (t: numbe
     const t = list[i].tris;
     const n = heat && most > 0 ? counts[i].hits / most : 0;
     let r = 0.66, g = 0.68, b = 0.7;
-    if (n > 0) {
+    // Colours given per plate (rgb, NaN: none - the paint, darker): the hit analysis's metric.
+    if (colours) {
+      if (Number.isFinite(colours[i * 3])) [r, g, b] = [colours[i * 3], colours[i * 3 + 1], colours[i * 3 + 2]];
+      else [r, g, b] = [0.3, 0.31, 0.33];
+    } else if (n > 0) {
       ramp(Math.max(0.08, n), col);
       const a = Math.max(0.55, col[3]);
       r = r * (1 - a) + col[0] * a;

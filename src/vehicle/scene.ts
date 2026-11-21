@@ -127,6 +127,9 @@ export interface Mark {
   hit: VehicleHit;
   p: Vec3;
   n: Vec3 | null;
+  /** Its own colour and size (times the usual), where the caller sets them (the hit analysis: by result, by calibre). */
+  colour?: Rgb;
+  scale?: number;
 }
 
 export interface HeatResult {
@@ -235,7 +238,9 @@ export interface VehicleInput {
   lutKey: number;
   selected: VehicleHit | null;
   /** The armour plates drawn in place of the figure's surface, each coloured by its hits (`plates.ts`); null: the figure. */
-  plates?: { list: Plate[]; counts: PlateCount[]; picked: number } | null;
+  plates?: { list: Plate[]; counts: PlateCount[]; picked: number; colours?: Float32Array | null } | null;
+  /** The marks placed already (the hit analysis's, on the plates at rest): drawn as they are, no heat. */
+  marks?: Mark[] | null;
 }
 
 /**
@@ -294,21 +299,23 @@ export class VehicleScene {
     this.lift = lift;
     const radius = input.look.radius > 0 ? input.look.radius : autoRadius(sizeOf(mesh));
     let changed = false;
-    const hk = [mesh, input.hits, radius];
+    const hk = [mesh, input.hits, radius, input.marks];
     if (!same(hk, this.heatKey)) {
       this.heatKey = hk;
-      this.result = heatOf(mesh, input.hits, radius, this.tags.get(input.figure) ?? null);
+      this.result = input.marks
+        ? { mesh, heat: ZERO(mesh.count), auto: 1, drawn: input.marks.length, off: 0, marks: input.marks, regions: null, centres: null }
+        : heatOf(mesh, input.hits, radius, this.tags.get(input.figure) ?? null);
       this.paintKey = [];
       changed = true;
     }
     const result = this.result!;
     const saturation = result.auto * Math.pow(2, -input.look.exposure);
     const pl = input.plates ?? null;
-    const pk = [result, saturation, input.lutKey, input.look.showHeat, pl?.list, pl?.counts];
+    const pk = [result, saturation, input.lutKey, input.look.showHeat, pl?.list, pl?.counts, pl?.colours];
     if (!same(pk, this.paintKey)) {
       this.paintKey = pk;
       this.surface.reset();
-      this.plateRanges = pl ? paintPlates(pl.list, pl.counts, rampOfLut(input.lut), this.surface, lift, input.look.showHeat) : null;
+      this.plateRanges = pl ? paintPlates(pl.list, pl.counts, rampOfLut(input.lut), this.surface, lift, input.look.showHeat, pl.colours ?? null) : null;
       if (!pl) paint(mesh, input.look.showHeat ? result.heat : ZERO(mesh.count), saturation, rampOfLut(input.lut), this.surface, [0, lift, 0]);
       this.markKey = [];
       changed = true;
@@ -399,20 +406,21 @@ function drawMarks(tris: VertexBuffer, lines: VertexBuffer, result: HeatResult, 
   let maxDamage = 0;
   for (const h of hits) if (h.damage !== null && h.damage > maxDamage) maxDamage = h.damage;
   const step = Math.max(1, Math.ceil(result.marks.length / 1500));
-  const segs = 10;
+  // Fewer sides a disc when there are many: a thousand and more read as dots anyway.
+  const segs = result.marks.length > 1000 ? 6 : 10;
   // Killing shots are ringed while they stand out; among dozens the rings only cover each other.
   const fewKills = hits.filter((h) => h.killingShot).length <= 12;
   const rim: Rgb = [0.08, 0.08, 0.1];
   for (let i = 0; i < result.marks.length; i++) {
     const m = result.marks[i];
     const h = m.hit;
-    const col = colours.of(h);
+    const col = m.colour ?? colours.of(h);
     // Just off the surface, along its normal (or towards where the shot came from).
     const n: Vec3 = m.n ?? (h.dir ? [-h.dir[0], -h.dir[1], -h.dir[2]] : [0, 1, 0]);
     const c: Vec3 = [m.p[0] + n[0] * r0 * 0.15, m.p[1] + lift + n[1] * r0 * 0.15, m.p[2] + n[2] * r0 * 0.15];
     const [a, b] = across(n);
     const k = h.damage !== null && maxDamage > 0 ? 0.7 + 0.8 * Math.sqrt(h.damage / maxDamage) : 1;
-    const r = r0 * k * (h.killingShot ? 1.4 : 1);
+    const r = r0 * k * (h.killingShot ? 1.4 : 1) * (m.scale ?? 1);
     if (look.showPoints) {
       for (let s = 0; s < segs; s++) {
         const t0 = (s / segs) * Math.PI * 2, t1 = ((s + 1) / segs) * Math.PI * 2;
