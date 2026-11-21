@@ -1,0 +1,36 @@
+{
+  "about": "Thrown and launched projectiles per board game: launch speed (m/s), gravity (m/s^2), quadratic drag (1/m: deceleration k*|v|*v), how far the thrower's own movement carries into the throw, the throw strengths a game has, and a range cap where the game ends a projectile early. src: game = the game's own data file; public = a published real-world figure (the game may differ); estimate = a judged class value. See docs/tactics-board.md#throws-and-launches.",
+  "sources": {
+    "cs2-vdata": { "title": "CS2 weapons.vdata (m_flThrowVelocity 750, m_flMaxSpeed 245 for every grenade)", "url": "https://github.com/SteamDatabase/GameTracking-CS2/blob/master/game/csgo/pak01_dir/scripts/weapons.vdata", "accessed": "2026-11-21" },
+    "source-sdk": { "title": "Source SDK base grenade projectile: grenade gravity 0.4 of sv_gravity (800 u/s^2 in CS)", "url": "https://swarm.workshop.perforce.com/files/guest/knut_wikstrom/ValveSDKCodegame_shared/sdk/sdk_basegrenade_projectile.h", "accessed": "2026-11-21" },
+    "m203": { "title": "40x46 mm low-velocity grenade: muzzle velocity about 76 m/s, maximum range about 400 m (published specifications)" },
+    "rpg7": { "title": "RPG-7 / PG-7V: launched at about 115 m/s, boosted to about 295 m/s; effective about 200 m against moving targets (published specifications)" }
+  },
+  "games": {
+    "cs2": [
+      { "id": "cs2-grenade", "name": "Grenade (smoke, flash, HE, molotov, decoy)", "kind": "thrown", "unitsPerMetre": 39.37, "speed": 675, "gravity": 320, "drag": 0, "carry": 1.25, "run": 245, "jump": 301.993, "strengths": [{ "id": "full", "factor": 1 }, { "id": "half", "factor": 0.65 }, { "id": "under", "factor": 0.3 }], "src": "game", "source": "cs2-vdata", "note": "Game units: throw velocity 750 (weapons.vdata) times 0.9, scaled 0.3 + 0.7 x strength (left click 1, both 0.5, right 0); gravity 0.4 x 800 (Source SDK); run 245 with a grenade (weapons.vdata); jump impulse 301.993 (sv_jump_impulse). The 0.9, the strength scaling and the 1.25 share of the thrower's velocity are the Source grenade code as the community documents it, not read from CS2 itself. Bounces are not followed." }
+    ],
+    "valorant": [
+      { "id": "val-throw", "name": "Thrown ability (typical)", "kind": "thrown", "speed": 19, "gravity": 9.81, "drag": 0, "carry": 1, "run": 6.75, "jump": 4.3, "strengths": [{ "id": "full", "factor": 1 }, { "id": "under", "factor": 0.45 }], "src": "estimate", "note": "Each agent's ability flies its own way and Riot does not publish the numbers: a typical overhand throw of about 35 m on the flat. Run 6.75 m/s is the published knife run speed." }
+    ],
+    "battlefield": [
+      { "id": "bf-hand-grenade", "name": "Hand grenade", "kind": "thrown", "speed": 19, "gravity": 9.81, "drag": 0, "carry": 1, "run": 7.2, "jump": 3.5, "strengths": [{ "id": "full", "factor": 1 }, { "id": "under", "factor": 0.5 }], "src": "estimate", "note": "About 35-40 m on the flat, as the range catalogue's class value; Battlefield games differ by title." },
+      { "id": "bf-40mm", "name": "40 mm under-barrel grenade", "kind": "launched", "speed": 76, "gravity": 9.81, "drag": 0, "maxRange": 400, "src": "public", "source": "m203", "note": "Real-world figures; the game's own drop may be stronger." },
+      { "id": "bf-rpg", "name": "RPG / rocket launcher", "kind": "launched", "speed": 150, "gravity": 9.81, "drag": 0, "maxRange": 400, "src": "estimate", "source": "rpg7", "note": "Battlefield rockets fly flat and fall slowly; the cap is the range catalogue's class value." }
+    ],
+    "squad": [
+      { "id": "squad-hand-grenade", "name": "Hand grenade", "kind": "thrown", "speed": 18, "gravity": 9.81, "drag": 0, "carry": 1, "run": 5.5, "jump": 2.5, "strengths": [{ "id": "full", "factor": 1 }, { "id": "under", "factor": 0.45 }], "src": "estimate", "note": "About 30 m on the flat; Squad's overhand and underhand throws." },
+      { "id": "squad-40mm", "name": "40 mm / GP-25 grenade", "kind": "launched", "speed": 76, "gravity": 9.81, "drag": 0, "maxRange": 400, "src": "public", "source": "m203" },
+      { "id": "squad-rpg", "name": "RPG-7 / rocket launcher", "kind": "launched", "speed": 115, "gravity": 9.81, "drag": 0, "maxRange": 400, "src": "public", "source": "rpg7", "note": "Launch speed only; the rocket's boost is not modelled, so far shots fall short of the game's." }
+    ],
+    "arma": [
+      { "id": "arma-hand-grenade", "name": "Hand grenade", "kind": "thrown", "speed": 18, "gravity": 9.81, "drag": 0, "carry": 1, "run": 5.2, "jump": 2.5, "strengths": [{ "id": "full", "factor": 1 }], "src": "estimate", "note": "A launch speed of about 18 m/s, about 33 m on the flat; mods and grenade types differ." },
+      { "id": "arma-40mm", "name": "40 mm under-barrel grenade", "kind": "launched", "speed": 76, "gravity": 9.81, "drag": 0, "maxRange": 400, "src": "public", "source": "m203" },
+      { "id": "arma-rpg", "name": "RPG / unguided rocket", "kind": "launched", "speed": 115, "gravity": 9.81, "drag": 0, "maxRange": 500, "src": "public", "source": "rpg7", "note": "Launch speed only; the cap is the range catalogue's." }
+    ],
+    "generic": [
+      { "id": "hand-grenade", "name": "Hand grenade", "kind": "thrown", "speed": 18, "gravity": 9.81, "drag": 0, "carry": 1, "run": 5, "jump": 2.5, "strengths": [{ "id": "full", "factor": 1 }, { "id": "under", "factor": 0.45 }], "src": "estimate", "note": "A typical overhand throw of about 33 m on the flat." },
+      { "id": "40mm", "name": "40 mm grenade launcher", "kind": "launched", "speed": 76, "gravity": 9.81, "drag": 0, "maxRange": 400, "src": "public", "source": "m203" }
+    ]
+  }
+}

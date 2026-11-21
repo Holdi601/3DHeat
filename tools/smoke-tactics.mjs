@@ -128,6 +128,21 @@ await step('4 Throw, 5 Area, 6 Note, 8 Erase and 9 Measure', async () => {
   }
 });
 
+await step('4 picks Throw: the landing comes in to the reach of a CS2 grenade', async () => {
+  await page.keyboard.press('Digit4');
+  const f = await figureAt();
+  await click(f.x, f.y);
+  // Far off the screen's middle: far past 36 m in a top view of the flat board.
+  await click(box.x + 20, box.y + 20);
+  const a = await page.evaluate(() => {
+    const s = window.__3dheat_plan.getState();
+    const t = s.plan.arrows.find((x) => x.style === 'throw');
+    return t && { weapon: t.weapon, d: Math.hypot(t.points[1].x - t.points[0].x, t.points[1].z - t.points[0].z) / 39.37 };
+  });
+  expect(a && a.weapon && a.d <= 40, `throw ${JSON.stringify(a)}`);
+  await page.keyboard.press('Digit1');
+});
+
 await step('Delete asks, then removes the selection', async () => {
   await page.keyboard.press('Control+KeyA');
   await page.keyboard.press('Delete');

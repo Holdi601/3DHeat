@@ -59,6 +59,19 @@ While a route (or a ruler) is being drawn, its last point shows how many waypoin
 
 **Backspace** takes the last point back. A finished route ends in a ring with a cross in its side's colour.
 
+### Throws and launches
+
+A throw reaches only as far as its game's physics carry it. With **Throw** in hand, pick what is thrown (**Throws**) - the game's grenades, under-barrel grenades and rocket launchers - and, for a thrown one, the **Strength** and how the **Thrower** moves as it lets go: **Standing**, **Running**, **Jumping** or **Running jump**. The hint says how far that reaches on the flat. While the landing point is chosen, a ring round the thrower shows the reach and the dashed arc is the real flight; a landing past the ring comes in to its edge. The flight is worked out from the launch speed (for a thrown one times the strength, plus the share of the thrower's own running and jumping the game passes on), the game's gravity and the projectile's drag, to where it comes down at the landing point's height; a launcher's round ends where the game ends it. Bounces and rolling are not followed.
+
+| Game | Projectiles | Where the numbers come from |
+|---|---|---|
+| Counter-Strike 2 | Every grenade (smoke, flash, HE, molotov, decoy): full, half (both buttons) and underhand throws | The game's weapon data: throw velocity 750 units/s and 245 units/s running with a grenade; grenade gravity 0.4 of 800 units/s² (Source); a jump of 302 units/s. The 0.9 share of the throw velocity, the strength scaling and the 1.25 share of the thrower's velocity follow the Source grenade code as it is commonly documented. About 36 m standing, further running and jumping. |
+| Valorant | A typical thrown ability | An estimate: each agent's ability flies its own way and the numbers are not published. |
+| Battlefield, Squad, Arma | Hand grenade; 40 mm grenade; RPG or rocket launcher | Hand grenades are estimates of about 30-40 m on the flat; 40 mm grenades and the RPG-7 take published real-world launch speeds (76 m/s; 115 m/s at launch, the boost not followed), capped at the range catalogue's reach. |
+| Other | Hand grenade, 40 mm grenade | As above. |
+
+The table is `src/tactics/throws.json`, each entry marked as the game's own data, a real-world figure or an estimate, with its source.
+
 ### Notes
 
 A note is text placed in the world. With **Note** in hand, set the next note's **Colour**, **Size (px)** and when it **Shows**, then click where it goes and type its text:

@@ -1,7 +1,8 @@
 import { momentOf, usePlanStore } from '../../state/planStore';
 import { type NoteShow, type PlanDrawing, type PlanNote } from '../../tactics/plan';
 import { clock, unitsPerMetre } from '../../tactics/timing';
-import { t } from '../../i18n';
+import { num, t } from '../../i18n';
+import { parseThrow, projectileById, projectilesFor, reach, THROW_MOVES, THROW_SOURCES, throwKey } from '../../tactics/ballistics';
 
 type Rgb = [number, number, number];
 
@@ -56,6 +57,56 @@ export function DrawOptions() {
           <input type="checkbox" checked={pen.always} onChange={(e) => store().setDrawStyle({ always: e.target.checked })} />
           {t('tactics.draw.always')}
         </label>
+      </div>
+    </>
+  );
+}
+
+/** The Throw tool: the projectile the game has, how hard it is thrown and how the thrower moves, and how far that reaches. */
+export function ThrowOptions() {
+  const spec = usePlanStore((s) => s.throwSpec);
+  const game = usePlanStore((s) => s.plan.game);
+  const store = usePlanStore.getState;
+  const list = projectilesFor(game);
+  const p = projectileById(spec.projectile) ?? list[0];
+  const parsed = parseThrow(throwKey(p.id, spec.strength, spec.move));
+  const far = parsed ? reach(parsed, 1, 0, 0).distance : 0;
+  const src = p.source ? THROW_SOURCES[p.source] : undefined;
+  return (
+    <>
+      <label className="field">
+        <span>{t('tactics.throw.projectile')}</span>
+        <select value={p.id} onChange={(e) => store().setThrowSpec({ projectile: e.target.value })}>
+          {list.map((x) => (
+            <option key={x.id} value={x.id}>
+              {x.name}
+            </option>
+          ))}
+        </select>
+      </label>
+      {p.kind === 'thrown' && (
+        <>
+          {p.strengths.length > 1 && (
+            <div className="tactics-tools" role="radiogroup" aria-label={t('tactics.throw.strength')}>
+              {p.strengths.map((x) => (
+                <button key={x.id} role="radio" aria-checked={spec.strength === x.id} className={spec.strength === x.id ? 'on' : ''} onClick={() => store().setThrowSpec({ strength: x.id })}>
+                  {t(`tactics.throw.strength.${x.id}`)}
+                </button>
+              ))}
+            </div>
+          )}
+          <div className="tactics-tools" role="radiogroup" aria-label={t('tactics.throw.move')}>
+            {THROW_MOVES.map((m) => (
+              <button key={m} role="radio" aria-checked={spec.move === m} className={spec.move === m ? 'on' : ''} onClick={() => store().setThrowSpec({ move: m })}>
+                {t(`tactics.throw.move.${m}`)}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+      <div className="hint">{t('tactics.throw.reach', { m: num(far, 1), speed: num(p.speed, 1), g: num(p.gravity, 2) })}</div>
+      <div className="hint">
+        {t(`tactics.throw.src.${p.src}`)} {p.note ?? ''} {src ? (src.url ? <a href={src.url} target="_blank" rel="noreferrer">{src.title}</a> : src.title) : null}
       </div>
     </>
   );

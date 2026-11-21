@@ -11,6 +11,7 @@
 import { create } from 'zustand';
 import { BASE_LAYER, editable, shown, emptyPlan, keyAt, layerOf, newId, onBoard, playbackAt, posesAt, readPlan, type ArrowStyle, type NoteShow, type Plan, type PlanDrawing, type PlanFigure, type PlanNote, type TrackChannel, type Vec3 } from '../tactics/plan';
 import { aimAt, withKey } from '../tactics/keyframes';
+import { parseThrow, projectileById, projectilesFor, solveThrow, throwKey, type ThrowMove } from '../tactics/ballistics';
 import { templateOf } from '../tactics/scene';
 import { applyOps, diffPlans, isOpBatch, type OpBatch } from '../tactics/ops';
 import { loadAuthor, loadLocal, saveAuthor, saveLocal } from '../tactics/autosave';
@@ -117,6 +118,9 @@ export interface PlanState {
   stroke: Vec3[] | null;
   /** How the next note looks and when it shows. */
   noteStyle: { color: [number, number, number]; size: number; show: NoteShow; duration: number };
+  /** How the Throw tool throws: the projectile (`tactics/throws.json`), the strength and how the thrower moves. */
+  throwSpec: { projectile: string; strength: string; move: ThrowMove };
+  setThrowSpec: (s: Partial<PlanState['throwSpec']>) => void;
   setDrawStyle: (s: Partial<PlanState['drawStyle']>) => void;
   setNoteStyle: (s: Partial<PlanState['noteStyle']>) => void;
   beginStroke: (at: Vec3) => void;
@@ -307,6 +311,14 @@ export const usePlanStore = create<PlanState>((set, get) => ({
     set(edit(s, plan));
   },
   startAim: (aiming) => set({ aiming: aiming && get().selected ? aiming : null, draft: null }),
+  throwSpec: { projectile: projectilesFor(startPlan.game)[0].id, strength: projectilesFor(startPlan.game)[0].strengths[0].id, move: 'stand' },
+  setThrowSpec: (p) => {
+    const next = { ...get().throwSpec, ...p };
+    const proj = projectileById(next.projectile);
+    // A strength the projectile does not have becomes its first.
+    if (proj && !proj.strengths.some((x) => x.id === next.strength)) next.strength = proj.strengths[0].id;
+    set({ throwSpec: next });
+  },
   drawStyle: { kind: 'stroke', color: [1, 0.85, 0.25], width: 0, always: false },
   stroke: null,
   noteStyle: { color: [1, 1, 1], size: 13, show: 'step', duration: 5 },
@@ -386,7 +398,8 @@ export const usePlanStore = create<PlanState>((set, get) => ({
     plan.game = preset.id;
     // Keep the figures; the sides follow the game where the plan is still empty of them.
     if (!plan.figures.length && !plan.arrows.length) plan.teams = preset.teams;
-    set({ ...edit(s, plan), team: plan.teams[0].id, kind: preset.palette[0].items[0] ?? 'soldier' });
+    const proj = projectilesFor(preset.id)[0];
+    set({ ...edit(s, plan), team: plan.teams[0].id, kind: preset.palette[0].items[0] ?? 'soldier', throwSpec: { projectile: proj.id, strength: proj.strengths[0].id, move: 'stand' } });
   },
   setTool: (tool) => {
     // A route half drawn is kept, not lost, when the tool changes.
@@ -644,10 +657,23 @@ export const usePlanStore = create<PlanState>((set, get) => ({
       const id = newId('r');
       const arrow = { id, step: s.step, team: d.team, style: d.style ?? 'move', points: d.points, ...(d.figure ? { figure: d.figure } : {}), ...onLayer(s) } as Plan['arrows'][number];
       if (d.kind === 'throw') {
+        // No further than the game's physics carry it: a landing past the reach comes in to its edge.
+        const ts = s.throwSpec;
+        const spec = parseThrow(throwKey(ts.projectile, ts.strength, ts.move));
+        if (spec) {
+          const upm = unitsPerMetre(plan);
+          const m = (p: Vec3) => ({ x: p.x / upm, y: p.y / upm, z: p.z / upm });
+          const r = solveThrow(spec, m(d.points[0]), m(d.points[d.points.length - 1]));
+          if (!r.reachable) {
+            const l = { x: r.landing.x * upm, y: d.points[d.points.length - 1].y, z: r.landing.z * upm };
+            arrow.points = [d.points[0], l];
+          }
+          arrow.weapon = throwKey(ts.projectile, ts.strength, ts.move);
+        }
         // The utility lands at the end and stays from this step on.
         const kind = CATALOG[s.kind]?.domain === 'marker' ? s.kind : 'cs2-smoke';
         const lands = newId('f');
-        const end = d.points[d.points.length - 1];
+        const end = arrow.points[arrow.points.length - 1];
         plan.figures.push({ id: lands, kind, team: d.team, label: figureLabel(kind), keys: { [s.step]: { ...end, yaw: 0 } }, from: s.step, ...onLayer(s) });
         arrow.lands = lands;
       }

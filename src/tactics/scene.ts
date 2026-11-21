@@ -11,6 +11,8 @@ import { CATALOG } from '../figures/catalog';
 import { place, poseFrame, TemplateCache, type Template } from '../figures/kit';
 import { InstanceBatches, meshOf, NO_PITCH, type FigureBatch } from '../figures/instances';
 import { directionOf } from './keyframes';
+import { parseThrow, reach, solveThrow } from './ballistics';
+import { unitsPerMetre } from './timing';
 import { BASE_LAYER, keyAt, layerOf, onBoard, posesAt, shown, throwArc, type Plan, type PlanArrow, type PlanDrawing, type PlanNote, type Vec3 } from './plan';
 import { gamePreset } from './games';
 import type { ArrivalGrid } from './telemetry';
@@ -41,6 +43,8 @@ export interface BoardView {
   /** The layer being drawn on, and whether only its routes and arrows are drawn. */
   activeLayer?: string;
   routesActiveOnly?: boolean;
+  /** The Throw tool's throw (`ballistics.ts`), "projectile|strength|move", while a throw is drawn. */
+  throwWeapon?: string | null;
   /** Playback seconds from the plan's start, when playing (time-bound notes); absent while editing. */
   time?: number | null;
 }
@@ -107,7 +111,7 @@ export class BoardScene {
       const here = a.step === view.step;
       if (!here && a.step !== view.step - 1) continue;
       if (!shown(plan, a) || (only !== null && layerOf(a) !== only)) continue;
-      arrow(tris, lines, a, color(a.team), width, here ? 0.85 : 0.22, preset.throwApex);
+      arrow(tris, lines, a, color(a.team), width, here ? 0.85 : 0.22, preset.throwApex, a.style === 'throw' ? throwPath(plan, a) : null);
       if (here) {
         a.points.forEach((p, i) => (sel.has(a.id) || sel.has(`${a.id}#${i}`)) && ring(lines, p, width * 0.9, white));
         // A route's end: a ring round its last waypoint, so where it stops reads at a glance.
@@ -155,7 +159,20 @@ export class BoardScene {
         drawing(tris, 'circle', pts, view.pen?.color ?? white, view.pen?.width ?? width * 0.5);
       } else if (pts.length >= 2) {
         const style = d.kind === 'throw' ? 'throw' : (d.style ?? 'move');
-        arrow(tris, lines, { id: 'draft', step: view.step, team: d.team, style, points: pts }, col, width, 0.55, preset.throwApex);
+        // A throw in hand: the reach round the thrower, and the real flight to where it would land.
+        let path: Vec3[] | null = null;
+        if (d.kind === 'throw' && view.throwWeapon) {
+          const spec = parseThrow(view.throwWeapon);
+          if (spec) {
+            const upm = unitsPerMetre(plan);
+            const r = reach(spec, 1, 0, 0).distance * upm;
+            ring(lines, pts[0], r, col);
+            ring(lines, pts[0], r * 0.995, col);
+            const f = solveThrow(spec, scaled(pts[0], 1 / upm), scaled(pts[pts.length - 1], 1 / upm));
+            path = f.points.map((q) => scaled(q, upm));
+          }
+        }
+        arrow(tris, lines, { id: 'draft', step: view.step, team: d.team, style, points: pts }, col, width, 0.55, preset.throwApex, path);
         // A group route: each figure's own way, faintly, from where it stands.
         if (d.group && d.group.length > 1) {
           const c = d.points[0];
@@ -313,6 +330,22 @@ function drawing(tris: VertexBuffer, kind: PlanDrawing['kind'], points: Vec3[], 
   }
 }
 
+const scaled = (p: Vec3, k: number): Vec3 => ({ x: p.x * k, y: p.y * k, z: p.z * k });
+
+/** A thrown arrow's flight by its game's physics (`ballistics.ts`), plan units; null for one without a projectile. Kept per arrow. */
+const flights = new WeakMap<PlanArrow, Vec3[] | null>();
+function throwPath(plan: Plan, a: PlanArrow): Vec3[] | null {
+  if (flights.has(a)) return flights.get(a)!;
+  const spec = parseThrow(a.weapon);
+  let out: Vec3[] | null = null;
+  if (spec && a.points.length >= 2) {
+    const upm = unitsPerMetre(plan);
+    out = solveThrow(spec, scaled(a.points[0], 1 / upm), scaled(a.points[a.points.length - 1], 1 / upm)).points.map((q) => scaled(q, upm));
+  }
+  flights.set(a, out);
+  return out;
+}
+
 /** A route's end: two rings and a cross through them, in its colour. */
 function endMark(lines: VertexBuffer, p: Vec3, width: number, col: Rgb): void {
   const r = width * 1.6;
@@ -339,17 +372,17 @@ function disc(tris: VertexBuffer, lines: VertexBuffer, c: Vec3, r: number, col: 
  * little off the surface it was drawn on. A throw is an arc in lines instead,
  * a look a thin line; an attack has a wider head.
  */
-function arrow(tris: VertexBuffer, lines: VertexBuffer, a: PlanArrow, col: Rgb, width: number, alpha: number, apex: number): void {
+function arrow(tris: VertexBuffer, lines: VertexBuffer, a: PlanArrow, col: Rgb, width: number, alpha: number, apex: number, flight: Vec3[] | null = null): void {
   const pts = a.points;
   if (pts.length < 2) return;
   if (a.style === 'throw') {
-    const arc = throwArc(pts[0], pts[pts.length - 1], apex);
+    const arc = flight && flight.length >= 2 ? flight : throwArc(pts[0], pts[pts.length - 1], apex);
     for (let i = 0; i + 1 < arc.length; i++) {
       // Dashed: every other segment.
       if (i % 2) continue;
       lines.line([arc[i].x, arc[i].y, arc[i].z], [arc[i + 1].x, arc[i + 1].y, arc[i + 1].z], col, alpha);
     }
-    ring(lines, pts[pts.length - 1], width * 1.2, col);
+    ring(lines, arc[arc.length - 1], width * 1.2, col);
     return;
   }
   if (a.style === 'look') {
