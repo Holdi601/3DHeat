@@ -314,6 +314,16 @@ impl Session {
             .unwrap_or(0)
     }
 
+    /// The address key of a connection (empty when unknown).
+    pub fn addr_of(&self, conn: ConnId) -> String {
+        self.conns.get(&conn).map(|c| c.addr.clone()).unwrap_or_default()
+    }
+
+    /// Turns a hello away for now (too many password checks waiting): not a failed login.
+    pub fn busy(&mut self, conn: ConnId, retry_ms: u32) -> Vec<Out> {
+        denied(conn, proto::Err::RateLimited, retry_ms)
+    }
+
     /// Whether logins are flooded: the server then waits a moment before each check.
     pub fn flooded(&mut self, now_ms: i64) -> bool {
         self.lockout.flooded(now_ms)

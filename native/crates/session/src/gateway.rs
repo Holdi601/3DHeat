@@ -201,6 +201,9 @@ pub struct Gateway {
     conns: Mutex<HashMap<ConnId, ConnTx>>,
     next_conn: AtomicU64,
     hashing: Semaphore,
+    /// Password checks waiting or running, in all and by address: a flood of
+    /// guesses cannot queue up work that outlasts it.
+    checks: Mutex<(usize, std::collections::HashSet<String>)>,
     cfg: GatewayConfig,
     host: HostLink,
     limits: PerIp,
@@ -287,6 +290,7 @@ impl Gateway {
             conns: Mutex::new(HashMap::new()),
             next_conn: AtomicU64::new(1),
             hashing: Semaphore::new(2),
+            checks: Mutex::new((0, std::collections::HashSet::new())),
             // The hard cap is above the soft one (`limits.conns`), which `admit` keeps by making room.
             limits: PerIp::new(NetLimits { conns: cfg.limits.conns * 4, ..cfg.limits.clone() }),
             cfg,
@@ -956,14 +960,39 @@ async fn run_conn(gw: Arc<Gateway>, sock: WebSocket, ip: IpAddr, hold: Option<Ar
 }
 
 /// A hello: the password checked off the session's lock, two at a time at most.
+/// Password checks waiting or running at once, at most (two run, the rest wait).
+const CHECKS_QUEUED: usize = 8;
+
+/// A hello: the password checked off the session's lock, two at a time at
+/// most, one per address, and only so many waiting: past that a guess is
+/// turned away at once (not counted as a failure), so a flood of guesses
+/// from many addresses cannot pile up work that goes on after it.
 async fn hello(gw: &Arc<Gateway>, conn: ConnId, h: proto::Hello) -> Vec<Out> {
-    let (phc, locked, flooded) = {
+    let (phc, locked, flooded, addr) = {
         let mut s = gw.session.lock().unwrap();
         let now = now_ms();
-        (s.password_to_check(&h), s.locked(conn, now), s.flooded(now))
+        (s.password_to_check(&h), s.locked(conn, now), s.flooded(now), s.addr_of(conn))
     };
     let mut ok = None;
     if let (Some(phc), 0) = (phc, locked) {
+        {
+            let mut q = gw.checks.lock().unwrap();
+            if q.0 >= CHECKS_QUEUED || !q.1.insert(addr.clone()) {
+                drop(q);
+                gw.refused.requests.fetch_add(1, Ordering::Relaxed);
+                return gw.session.lock().unwrap().busy(conn, 3000);
+            }
+            q.0 += 1;
+        }
+        struct Done<'a>(&'a Gateway, String);
+        impl Drop for Done<'_> {
+            fn drop(&mut self) {
+                let mut q = self.0.checks.lock().unwrap();
+                q.0 -= 1;
+                q.1.remove(&self.1);
+            }
+        }
+        let _done = Done(gw, addr);
         if flooded {
             tokio::time::sleep(Duration::from_millis(1000)).await;
         }

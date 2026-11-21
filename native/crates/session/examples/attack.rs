@@ -427,9 +427,10 @@ async fn main() {
         "brute" => {
             let denied = Arc::new(AtomicU64::new(0));
             let locked = Arc::new(AtomicU64::new(0));
+            let busy = Arc::new(AtomicU64::new(0));
             for i in 0..n {
-                let (t, denied, locked, refused) =
-                    (t.clone(), denied.clone(), locked.clone(), refused.clone());
+                let (t, denied, locked, refused, busy) =
+                    (t.clone(), denied.clone(), locked.clone(), refused.clone(), busy.clone());
                 tasks.push(tokio::spawn(async move {
                     let Ok(mut w) = ws(&t, src_of(i / 5)).await else {
                         refused.fetch_add(1, Ordering::Relaxed);
@@ -454,6 +455,8 @@ async fn main() {
                             {
                                 if d.code == heat3d_session::proto::Err::LockedOut as i32 {
                                     locked.fetch_add(1, Ordering::Relaxed);
+                                } else if d.code == heat3d_session::proto::Err::RateLimited as i32 {
+                                    busy.fetch_add(1, Ordering::Relaxed);
                                 } else {
                                     denied.fetch_add(1, Ordering::Relaxed);
                                 }
@@ -471,7 +474,7 @@ async fn main() {
             }
             println!(
                 "{}",
-                serde_json::json!({ "mode": mode, "guesses": n, "addresses": n.div_ceil(5), "wrong_password": denied.load(Ordering::Relaxed), "locked_out": locked.load(Ordering::Relaxed), "refused": refused.load(Ordering::Relaxed), "secs": start.elapsed().as_secs_f64() })
+                serde_json::json!({ "mode": mode, "guesses": n, "addresses": n.div_ceil(5), "wrong_password": denied.load(Ordering::Relaxed), "locked_out": locked.load(Ordering::Relaxed), "turned_away_busy": busy.load(Ordering::Relaxed), "refused": refused.load(Ordering::Relaxed), "secs": start.elapsed().as_secs_f64() })
             );
             return;
         }
