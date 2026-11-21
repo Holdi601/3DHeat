@@ -620,6 +620,54 @@ await step('camera paths render to video in every mode, at a size of their own',
   return `${notes.join('; ')}${avc ? '' : ' (no H.264 encoder in this browser: MP4 not tried)'}`;
 });
 
+// ---------------------------------------------------------------- saved views
+
+await step('saved views: save with a note, change everything, restore, export', async () => {
+  await loadSynthetic(50_000, 'heat-difference');
+  const before = await page.evaluate(() => {
+    const s = globalThis.__3dheat.useStore.getState();
+    s.toggleTeam(0, false);
+    const eng = globalThis.__3dheat_engine;
+    eng.setCameraPose({ x: 100, y: 900, z: 300 }, { x: 0, y: -0.8, z: -0.6 });
+    return eng.cameraPose().position;
+  });
+  await wait(300);
+  const head = page.locator('.section > header').filter({ hasText: /Saved views\s*$/ }).first();
+  await head.click();
+  await page.getByRole('textbox', { name: 'Name' }).first().fill('West hold');
+  await page.getByRole('textbox', { name: 'Note' }).first().fill('Blue hidden, difference from above');
+  await page.getByRole('button', { name: 'Save view' }).click();
+  await wait(200);
+  // Everything elsewhere.
+  await page.evaluate(() => {
+    const s = globalThis.__3dheat.useStore.getState();
+    s.setMode('heat-simple');
+    s.toggleTeam(0, true);
+    globalThis.__3dheat_engine.setCameraPose({ x: -500, y: 50, z: -500 }, { x: 1, y: 0, z: 0 });
+  });
+  await wait(300);
+  await page.locator('.saved-views .view-name', { hasText: 'West hold' }).first().click();
+  await wait(800);
+  const after = await page.evaluate(() => {
+    const s = globalThis.__3dheat.useStore.getState();
+    return { mode: s.mode, hidden: s.teamVisibility[0] === false, pos: globalThis.__3dheat_engine.cameraPose().position };
+  });
+  expect(after.mode === 'heat-difference', `mode ${after.mode}`);
+  expect(after.hidden, 'the hidden group came back');
+  expect(Math.hypot(after.pos.x - before.x, after.pos.y - before.y, after.pos.z - before.z) < 1, `camera at ${JSON.stringify(after.pos)}`);
+  const note = await page.locator('.saved-views .view-note-text').first().textContent();
+  expect(/Blue hidden/.test(note ?? ''), 'note not shown');
+  const download = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Export JSON' }).last().click();
+  const d = await download;
+  const text = await (await d.createReadStream()).toArray().then((parts) => Buffer.concat(parts).toString('utf8'));
+  expect(/heat3d\.views\/1/.test(text) && /West hold/.test(text), 'export lacks the view');
+  // Tidy: the list as it was.
+  await page.evaluate(() => localStorage.removeItem('heat3d.savedViews'));
+  await page.evaluate(() => globalThis.__3dheat.useStore.getState().toggleTeam(0, true));
+  return `restored mode, groups and camera; exported ${text.length} bytes`;
+});
+
 // The stages that follow add their steps above this line.
 
 await browser.close();

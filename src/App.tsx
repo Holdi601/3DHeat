@@ -69,6 +69,7 @@ import { CameraReadout, copyCameraPose } from './ui/CameraReadout';
 import { PickCard } from './ui/PickCard';
 import { HeatLabels } from './ui/heatInspect/HeatLabels';
 import { CasterCinema } from './ui/insights/CasterCinema';
+import { ViewsPanel } from './ui/panels/ViewsPanel';
 import { BreakdownWindow } from './ui/breakdown/BreakdownPanel';
 import { VersusWindow } from './ui/versus/VersusPanel';
 import { MassPanel, MassWindow } from './ui/mass/MassPanel';
@@ -477,6 +478,7 @@ export function App() {
               <FilterPanel />
               <VolumePanel />
               <InsightsPanel />
+              <ViewsPanel />
               <CameraPanel />
             </>
           ) : (
@@ -529,6 +531,7 @@ export function App() {
           <SlicePanel />
           <VolumePanel />
           <InsightsPanel />
+          <ViewsPanel />
           <MassPanel />
           <MeasurePanel />
           <PathPanel />

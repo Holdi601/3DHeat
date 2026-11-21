@@ -53,3 +53,29 @@
 .heat-rel {
   margin: 2px 0;
 }
+
+/* Saved views (ViewsPanel.tsx). */
+.view-note {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  margin: 4px 0;
+}
+.saved-views {
+  list-style: none;
+  margin: 6px 0;
+  padding: 0;
+}
+.saved-views li {
+  padding: 4px 0;
+  border-bottom: 1px solid var(--line);
+}
+.saved-views .view-name {
+  font-weight: 600;
+  text-align: left;
+}
+.view-note-text {
+  white-space: pre-wrap;
+  font-size: 11px;
+  opacity: 0.85;
+}
