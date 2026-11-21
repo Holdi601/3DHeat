@@ -255,7 +255,7 @@ const pages = {};
 
 // ------------------------------------------------------------ command-line tools
 {
-  const USER_TOOLS = ['3dheat-pack.mjs', '3dheat-summarize.mjs', 'acmi-to-parquet.mjs', 'dcs-campaign-rounds.mjs'];
+  const USER_TOOLS = ['3dheat-pack.mjs', '3dheat-summarize.mjs', 'acmi-to-parquet.mjs', 'dcs-campaign-rounds.mjs', 'usage-report.mjs'];
   const DEV_TOOLS = ['demo-data.mjs', 'docs-shots.mjs', 'docs-refs.mjs', 'smoke.mjs', 'check-visual.mjs', 'convert-media.mjs', 'probe-webgpu.mjs', 'probe-present.mjs'];
   const LIBRARIES = ['container.mjs'];
   // The first paragraph and the usage lines are the tools' own source comments and stay as written.

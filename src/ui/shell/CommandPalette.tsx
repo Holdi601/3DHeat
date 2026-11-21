@@ -10,6 +10,8 @@ import { useEngine } from '../EngineContext';
 import { buildCommands, score, type Command, type CommandGroup } from './commands';
 import { Icon, type IconName } from './Icon';
 import { useShell } from './shellStore';
+import { featureOfCommand } from '../../usage/features';
+import { noteOpen, noteUse, notePaletteDone, where, withSource } from '../../usage/hooks';
 
 const RECENT = 'heat3d.palette.recent';
 const LIMIT = 60;
@@ -80,9 +82,23 @@ function Palette() {
   }, [active]);
   useEffect(() => input.current?.focus(), []);
 
+  // The usage statistics: what was searched and run, told once when the palette closes.
+  const last = useRef({ query: '', shown: 0, ran: null as string | null });
+  last.current.query = query;
+  last.current.shown = shown.length;
+  useEffect(() => () => notePaletteDone(last.current.query, last.current.shown, last.current.ran), []);
+
   const run = (c: Command | undefined) => {
     if (!c) return;
     remember(c.id);
+    const feature = featureOfCommand(c.id, where.ws);
+    last.current.ran = feature ?? 'panel:palette';
+    // What it switches is reported by the stores (workspace, group, mode, overlays); the rest is a use, or a reveal.
+    withSource('palette', 2500);
+    if (feature && !/^(ws|task|mode|panel):/.test(feature) && !/^action\.(sheet|help|settings)$/.test(c.id)) {
+      if (c.group === 'setting') noteOpen(feature, true, { src: 'palette' });
+      else if (c.group !== 'section') noteUse(feature, { src: 'palette' });
+    }
     close();
     void c.run();
   };

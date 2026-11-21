@@ -6,6 +6,7 @@
  * `webkitGetAsEntry()` traversal for drag-and-drop. Neither one covers both.
  */
 
+import { notePick } from '../usage/hooks';
 import { t } from '../i18n';
 
 const DATA_EXT = /\.(parquet|pq|csv|tsv|txt|acmi|json|json\.gz|gpx|kml|kmz|nmea|nma|igc|fit)$/i;
@@ -168,6 +169,8 @@ export async function filesFromDataTransfer(dt: DataTransfer): Promise<PickedFil
   if (out.length === 0) {
     for (const file of Array.from(dt.files)) out.push({ file, relativePath: file.name });
   }
+  // The usage statistics keep how and the files' types, never their names.
+  if (out.length) notePick('drop', out.map((f) => f.file.name));
   return out;
 }
 

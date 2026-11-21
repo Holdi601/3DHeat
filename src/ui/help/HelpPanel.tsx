@@ -4,7 +4,11 @@
  * explained is what is drawn, and a ramp the user edited shows as edited.
  */
 
-import { useEffect, useState, type ReactNode } from 'react';
+import { featureOf } from '../../usage/features';
+import { where } from '../../usage/hooks';
+import { record, usageOn, useUsage } from '../../usage/recorder';
+import { FeedbackButtons } from '../usage/UsageUI';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { t } from '../../i18n';
 import type { Rgb } from '../../race/geometry';
 import { rgbCss } from '../../race/geometry';
@@ -188,6 +192,15 @@ function AtPointer() {
   const engine = useEngine();
   const [target, setTarget] = useState<HelpTarget | null>(null);
   const [control, setControl] = useState<ControlHelp | null>(null);
+  const usage = useUsage((s) => s.enabled);
+  // A help lookup, for the usage statistics: once per control the help shows.
+  const shownFor = useRef<string | null>(null);
+  useEffect(() => {
+    const id = control?.feature ?? null;
+    if (!id || id === shownFor.current) return;
+    shownFor.current = id;
+    if (usageOn()) record({ k: 'help', id, src: 'f1', ws: where.ws as never });
+  }, [control]);
   useEffect(() => {
     const figureAt = (x: number, y: number) => {
       if (!engine) return false;
@@ -203,6 +216,8 @@ function AtPointer() {
       return notePinAt(engine, x - r.left, y - r.top) !== null;
     };
     const read = () => {
+      // Over the card itself (its feedback buttons): what it shows stays.
+      if (lastPointer.x >= 0 && document.elementFromPoint?.(lastPointer.x, lastPointer.y)?.closest('.help-panel')) return;
       const c = controlAt(lastPointer.x, lastPointer.y);
       setControl(c);
       setTarget(c ? null : (targetInPage(lastPointer.x, lastPointer.y, null) ?? (pinAt(lastPointer.x, lastPointer.y) ? 'note' : figureAt(lastPointer.x, lastPointer.y) ? 'figure' : null)));
@@ -226,6 +241,7 @@ function AtPointer() {
           <span>
             <b>{control.name}</b>
             {control.about && <span className="help-about">{control.about}</span>}
+            {usage && control.feature && <FeedbackButtons id={control.feature} />}
           </span>
         </div>
       ) : (
@@ -239,6 +255,8 @@ function AtPointer() {
 interface ControlHelp {
   name: string;
   about: string | null;
+  /** Its usage-statistics id, for the feedback buttons. */
+  feature: string | null;
 }
 
 const words = (el: Element | null | undefined) => el?.textContent?.replace(/\s+/g, ' ').trim() ?? '';
@@ -265,7 +283,7 @@ function controlAt(x: number, y: number): ControlHelp | null {
   if (!name) return null;
   const titled = ctl.closest<HTMLElement>('[title]');
   const about = ctl.getAttribute('data-tip') || titled?.getAttribute('title') || words(field?.querySelector('.hint')) || null;
-  return { name: name.replace(/^▶\s*/, ''), about: about && about !== name ? about : null };
+  return { name: name.replace(/^▶\s*/, ''), about: about && about !== name ? about : null, feature: featureOf(ctl) };
 }
 
 /** The key over the view, while the help mode is on. */

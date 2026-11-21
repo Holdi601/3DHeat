@@ -14,6 +14,7 @@ What the viewer keeps in your browser (`localStorage`) between visits. Nothing o
 |---|---|---|
 | `3dheat.motion` |  | `src/ui/motion.ts` |
 | `3dheat.objectives` | objectives shown, layers, labels | `src/state/objectivesStore.ts` |
+| `3dheat.spawns` |  | `src/state/spawnDisplayStore.ts` |
 | `3dheat.versus.metrics` |  | `src/versus/metrics.ts` |
 | `3dheat.versus.pins` |  | `src/ui/versus/VersusPanel.tsx` |
 | `3dheat.volumes.…` | volumes, per dataset | `src/volumes/store.ts` |
@@ -29,10 +30,15 @@ What the viewer keeps in your browser (`localStorage`) between visits. Nothing o
 | `heat3d.inspect` | the pick card and camera readout | `src/state/inspectStore.ts` |
 | `heat3d.language` | the language picked | `src/i18n/index.ts` |
 | `heat3d.mirror` | the axis mirroring | `src/state/store.ts` |
+| `heat3d.notes` |  | `src/notes/store.ts` |
+| `heat3d.notes.book` |  | `src/notes/store.ts` |
 | `heat3d.palette.recent` | the last commands run from the command palette | `src/ui/shell/CommandPalette.tsx` |
 | `heat3d.replay` | replay labels, tactical display, 2D map, charts, head-up display, look, buildings, follow camera | `src/state/replayStore.ts` |
 | `heat3d.savedViews` |  | `src/state/savedViews.ts` |
 | `heat3d.sections` | which side panel sections are open | `src/ui/shell/sections.ts` |
+| `heat3d.session.autosave` |  | `src/session/sessionFile.ts` |
+| `heat3d.session.key` |  | `src/session/marks.ts` |
+| `heat3d.session.name` |  | `src/ui/session/SessionLayer.tsx` |
 | `heat3d.shell` | the theme, the side panel hidden or shown, the task group per workspace, the More folds, developer tools on or off | `src/ui/shell/shellStore.ts` |
 | `heat3d.speed` | the playback speed | `src/state/playbackSpeed.ts` |
 | `heat3d.tactics.author` |  | `src/tactics/autosave.ts` |
@@ -40,6 +46,7 @@ What the viewer keeps in your browser (`localStorage`) between visits. Nothing o
 | `heat3d.teamPalette` |  | `src/render/colors.ts` |
 | `heat3d.teamSides` |  | `src/data/teamSides.ts` |
 | `heat3d.units` | the units preset and single units | `src/state/unitsStore.ts` |
+| `heat3d.usage` | whether local usage statistics are kept: on, off, or unset (then the install decides); the statistics themselves are in IndexedDB, see [Usage statistics](usage-statistics.md) | `src/usage/recorder.ts` |
 | `heat3d.volumeContours` |  | `src/render/volumeContours.ts` |
 
 Heat settings, filters and the view mode are not kept: they start fresh with each load.

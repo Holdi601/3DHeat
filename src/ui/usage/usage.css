@@ -1,0 +1,138 @@
+/* Usage statistics: the settings row, the "Your usage" page, the feedback menu and form. */
+
+.usage-row .usage-toggle,
+.usage-page .usage-toggle {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.usage-about,
+.usage-state,
+.usage-foot {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+}
+
+.usage-foot {
+  color: var(--text-faint);
+}
+
+.usage-actions {
+  justify-content: flex-start;
+}
+
+.usage-page h3 {
+  margin: 6px 0 0;
+  font-size: var(--fs-md, 13px);
+}
+
+.usage-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px 18px;
+}
+
+.usage-summary {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--text-dim);
+}
+
+.usage-list h4 {
+  margin: 0 0 4px;
+  font-size: var(--fs-sm);
+  color: var(--text-dim);
+}
+
+.usage-list ol {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.usage-list li {
+  font-size: var(--fs-sm);
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.usage-side {
+  display: block;
+  color: var(--text-faint);
+  font-size: var(--fs-xs);
+}
+
+.usage-none {
+  margin: 0;
+  color: var(--text-faint);
+  font-size: var(--fs-sm);
+}
+
+.usage-menu {
+  position: fixed;
+  z-index: var(--z-modal);
+  min-width: 220px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--panel);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-3);
+}
+
+.usage-menu-title {
+  padding: 2px 4px 4px;
+  color: var(--text-faint);
+  font-size: var(--fs-xs);
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.usage-feedback-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.usage-feedback-buttons button {
+  text-align: left;
+}
+
+.help-panel .usage-feedback-buttons {
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.help-panel .usage-feedback-buttons button {
+  font-size: var(--fs-xs);
+  padding: 2px 6px;
+}
+
+.usage-feedback .usage-kinds {
+  flex-wrap: wrap;
+}
+
+.usage-note {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--text-dim);
+  font-size: var(--fs-sm);
+}
+
+.usage-note textarea {
+  width: 100%;
+  resize: vertical;
+}

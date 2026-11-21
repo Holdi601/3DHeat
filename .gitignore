@@ -12,6 +12,8 @@ dist/
 
 # Test artefacts: screenshots (they show maps), captured frames, benchmark reports.
 tools/.smoke/
+# Local usage statistics (docs/usage-statistics.md), when no usageDir is set.
+tools/.usage/
 tools/.shots/
 
 # Where the local test data lives - its folder names are confidential too.

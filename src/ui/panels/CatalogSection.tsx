@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { notePick } from '../../usage/hooks';
 import { int, t } from '../../i18n';
 import { useStore } from '../../state/store';
 import { useFrostbiteMaps } from '../../data/frostbiteLevel';
@@ -74,6 +75,7 @@ export function CatalogSection({ loadModel }: { loadModel: (file: File) => Promi
   }, []);
 
   const load = async (item: CatalogItem) => {
+    notePick('catalogue', [item.path]);
     setBusy(true);
     try {
       if (item.layouts) {

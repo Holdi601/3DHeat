@@ -4,13 +4,14 @@ import react from '@vitejs/plugin-react';
 import { fileURLToPath } from 'node:url';
 import { execFile, execFileSync } from 'node:child_process';
 import os from 'node:os';
-import { closeSync, createReadStream, existsSync, openSync, readdirSync, readFileSync, readSync, statSync, writeFileSync } from 'node:fs';
+import { appendFileSync, closeSync, createReadStream, existsSync, mkdirSync, openSync, readdirSync, readFileSync, readSync, statSync, unlinkSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { brotliCompressSync, constants as zlibConstants, gzipSync } from 'node:zlib';
 import { encodePackFigure, type PackFigure } from './src/figures/figurepackBin.ts';
 import { figureFromModelGlb, platesFromModelGlb } from './src/figures/modelpack.ts';
 import { classify, glbExtras, jsonExtras, linkLayouts, type CatalogIndex, type CatalogItem } from './src/data/catalogIndex.ts';
 import { buildCommandIndex } from './tools/commandIndex.ts';
+import { checkBatch, LIMITS } from './src/usage/schema.ts';
 
 /**
  * The GPU's memory, which no web API will report at any precision.
@@ -994,8 +995,146 @@ function selfUpdate(): Plugin {
   return { name: 'heat3d-self-update', configureServer: handler };
 }
 
+/** Where the page keeps its local usage statistics (src/usage/recorder.ts). */
+const USAGE_ROUTE = '/__heat3d/usage';
+
+/**
+ * Local usage statistics, written to this machine only (docs/usage-statistics.md).
+ *
+ * On when the git-ignored `tools/local-data.json` says `"usageStats": true`
+ * (or `HEAT3D_USAGE=1`); the folder is its `usageDir` (or `HEAT3D_USAGE_DIR`),
+ * else `tools/.usage`. Off, every request answers 204 and nothing is written.
+ *
+ * - `GET`: 200 `{ "enabled": true }` when on, so the page knows to post here.
+ * - `POST`: a batch `{ v: 1, events: [...] }` from this page's own origin, as
+ *   JSON, at most LIMITS.bytes and LIMITS.batch events, every event passing
+ *   the schema (src/usage/schema.ts) with its section and label ids checked
+ *   against the English messages - anything else is refused whole (400/413).
+ *   Appended to `usage-YYYY-MM-DD.jsonl`, one event a line; a day's file stops
+ *   growing at 64 MB.
+ * - `DELETE` (with `X-Heat3d-Usage: 1`, same origin): removes the usage files.
+ *
+ * Read per request (a small file), so switching it needs no restart.
+ */
+function usageStats(): Plugin {
+  const root = fileURLToPath(new URL('.', import.meta.url));
+  const english = new Set<string>();
+  try {
+    const dir = `${root}src/i18n/locales/en`;
+    for (const f of readdirSync(dir)) if (f.endsWith('.json')) for (const k of Object.keys(JSON.parse(readFileSync(`${dir}/${f}`, 'utf8')))) english.add(k);
+  } catch {
+    // No messages: no section or control id passes.
+  }
+  const isKey = (k: string) => english.has(k);
+  const config = (): { on: boolean; dir: string } => {
+    let on = process.env.HEAT3D_USAGE === '1';
+    let dir = process.env.HEAT3D_USAGE_DIR ?? '';
+    if (process.env.HEAT3D_USAGE !== '0' && process.env.HEAT3D_USAGE !== '1') {
+      try {
+        const local = `${root}tools/local-data.json`;
+        const j = existsSync(local) ? (JSON.parse(readFileSync(local, 'utf8')) as { usageStats?: unknown; usageDir?: unknown }) : {};
+        on = j.usageStats === true;
+        if (!dir && typeof j.usageDir === 'string') dir = j.usageDir;
+      } catch {
+        on = false;
+      }
+    }
+    return { on, dir: dir || `${root}tools/.usage` };
+  };
+  const day = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  };
+  const handler = (server: ViteDevServer | { middlewares: ViteDevServer['middlewares'] }) => {
+    server.middlewares.use(USAGE_ROUTE, (req, res) => {
+      const end = (code: number, body?: unknown) => {
+        res.statusCode = code;
+        res.setHeader('Cache-Control', 'no-store');
+        if (body === undefined) res.end();
+        else {
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify(body));
+        }
+      };
+      const { on, dir } = config();
+      if (!on) {
+        // Off: nothing kept, nothing said. The body is read away, not stored.
+        req.resume();
+        end(204);
+        return;
+      }
+      const origin = req.headers.origin;
+      const host = req.headers.host;
+      const sameOrigin = !origin || (!!host && (() => {
+        try {
+          return new URL(origin).host === host;
+        } catch {
+          return false;
+        }
+      })());
+      if (req.method === 'GET') {
+        end(200, { enabled: true });
+        return;
+      }
+      if (req.method === 'DELETE') {
+        if (!sameOrigin || req.headers['x-heat3d-usage'] !== '1') return end(403);
+        try {
+          if (existsSync(dir)) for (const f of readdirSync(dir)) if (/^usage-\d{4}-\d{2}-\d{2}\.jsonl$/.test(f)) unlinkSync(`${dir}/${f}`);
+        } catch {
+          return end(500);
+        }
+        return end(204);
+      }
+      if (req.method !== 'POST') return end(405);
+      if (!sameOrigin) {
+        req.resume();
+        return end(403);
+      }
+      if (!/^(application\/json|text\/plain)(;|$)/.test(req.headers['content-type'] ?? '')) {
+        req.resume();
+        return end(415);
+      }
+      const chunks: Buffer[] = [];
+      let bytes = 0;
+      let over = false;
+      req.on('data', (c: Buffer) => {
+        if (over) return;
+        bytes += c.length;
+        if (bytes > LIMITS.bytes) {
+          over = true;
+          end(413);
+          req.destroy();
+          return;
+        }
+        chunks.push(c);
+      });
+      req.on('end', () => {
+        if (over) return;
+        let body: unknown;
+        try {
+          body = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+        } catch {
+          return end(400, { error: 'json' });
+        }
+        const events = checkBatch(body, isKey);
+        if (typeof events === 'string') return end(400, { error: events });
+        try {
+          mkdirSync(dir, { recursive: true });
+          const file = `${dir}/usage-${day()}.jsonl`;
+          if (existsSync(file) && statSync(file).size > 64 * 1024 * 1024) return end(507);
+          appendFileSync(file, events.map((e) => JSON.stringify(e)).join('\n') + '\n');
+        } catch {
+          return end(500);
+        }
+        end(204);
+      });
+    });
+  };
+  return { name: 'heat3d-usage-stats', configureServer: handler, configurePreviewServer: handler };
+}
+
 export default defineConfig({
-  plugins: [react(), commandIndex(), hostMemory(), selfUpdate(), figurePack(), modelPack(), unitCatalogs(), localRanges(), levelLayouts(), catalogFolder(), campaignFiles()],
+  plugins: [react(), commandIndex(), usageStats(), hostMemory(), selfUpdate(), figurePack(), modelPack(), unitCatalogs(), localRanges(), levelLayouts(), catalogFolder(), campaignFiles()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

@@ -1,4 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { notePick } from './usage/hooks';
+import { installUsage, setUsageEngine } from './usage/track';
+import { UsageHost } from './ui/usage/UsageUI';
 import { filesFromDataTransfer } from './data/filePick';
 import { probeHostMemory } from './data/hostMemory';
 import { detectBudgets } from './data/memory';
@@ -162,6 +165,9 @@ export function App() {
   const heatTabMode = useRef<ViewMode>('heat-simple');
   // Browser shortcuts (Ctrl+S, Ctrl+P, F5...) don't fire while flying, and closing the tab with data loaded asks first.
   useEffect(() => guardBrowserKeys(), []);
+  // Local usage statistics: off unless switched on (Settings, or this install's tools/local-data.json).
+  // Its key listener goes first, so it knows a key opened what the shell's keys then open.
+  useEffect(() => installUsage(), []);
   // The shell's keys (palette, key sheet, side panel, workspaces), ahead of every other handler.
   useEffect(() => installShellKeys(), []);
   // The label size on the document, so every kind of label over the view takes
@@ -275,6 +281,7 @@ export function App() {
       }
       e.start();
       setEngine(e);
+      setUsageEngine(e);
       if (import.meta.env.DEV || '__TAURI_INTERNALS__' in globalThis) {
         // Handle for the smoke test and console poking: dev, and the native app's probes.
         (window as unknown as Record<string, unknown>).__3dheat_engine = e;
@@ -611,6 +618,7 @@ export function App() {
                 return;
               }
               const files = Array.from(e.dataTransfer.files);
+              notePick('drop', files.map((f) => f.name));
               void useMatchStore.getState().load(files);
               // The battles' capture zones over time, dropped with them.
               void loadObjectiveFiles(files);
@@ -683,6 +691,7 @@ export function App() {
         <CommandPalette />
         <ShortcutSheet />
         <ConfirmHost />
+        <UsageHost />
         <div className="timeline-bar">{vehicleTab ? null : planTab ? <BoardBar /> : raceTab ? <RaceBar /> : <Timeline />}</div>
       </div>
     </EngineContext.Provider>

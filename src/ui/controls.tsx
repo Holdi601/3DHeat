@@ -3,6 +3,7 @@ import { rememberSection, registerSection, sectionId, wasOpen } from './shell/se
 import { Jog } from './Jog';
 import { num, t } from '../i18n';
 import { NumberBox } from './NumberBox';
+import { noteOpen } from '../usage/hooks';
 
 export function Section({
   title,
@@ -23,6 +24,8 @@ export function Section({
   const setOpen = (v: boolean) => {
     setOpenState(v);
     rememberSection(id, v);
+    // The usage statistics count it by its title's key: a title with a value in it is not counted.
+    noteOpen(id.includes(' ') || id === title ? null : `sec:${id}`, v);
   };
   // The command palette opens a section by its id (ui/shell/sections.ts).
   useEffect(
@@ -30,6 +33,7 @@ export function Section({
       registerSection(id, () => {
         setOpenState(true);
         rememberSection(id, true);
+        noteOpen(id.includes(' ') || id === title ? null : `sec:${id}`, true);
       }),
     [id],
   );

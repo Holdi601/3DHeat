@@ -13,10 +13,13 @@ import { useStore } from '../state/store';
 import type { Dataset } from '../state/types';
 import { loader } from './loader';
 import { DEFAULT_SYNTH, type SynthOptions } from './synth';
+import { notePick } from '../usage/hooks';
 
 /** Generates `rows` rows (the rest from `DEFAULT_SYNTH`) in the worker and loads them; null when it failed. */
 export async function generatePerfData(opts: Partial<SynthOptions> & { rows: number }): Promise<Dataset | null> {
   const { setLoad, setDataset } = useStore.getState();
+  // A developer tool, tagged so in the usage statistics (the load that follows is counted as `generator`).
+  notePick('generator', [], { dev: true });
   // In the ingest worker: at tens of millions of rows it is seconds of work,
   // and on the main thread that is seconds of frozen UI.
   setLoad({ active: true, label: t('shell.dev.generating'), fraction: 0, rowsSoFar: 0, error: null });

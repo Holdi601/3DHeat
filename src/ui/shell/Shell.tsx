@@ -15,6 +15,7 @@ import { LanguagePicker } from '../LanguagePicker';
 import { MotionSetting } from '../MotionSetting';
 import { UnitsPicker } from '../UnitsPicker';
 import { SessionButton } from '../session/SessionButton';
+import { UsageSettingsRow } from '../usage/UsageUI';
 import { Icon, type IconName } from './Icon';
 import { WORKSPACES, type Workspace } from './keys';
 import { taskOf, useShell, WORKSPACE_TASKS, type Task, type Theme } from './shellStore';
@@ -58,7 +59,7 @@ export function Brand() {
     <div className="brand">
       <div className="brand-mark" aria-hidden="true" />
       <h1>3DHeat</h1>
-      <button type="button" className="search-btn" onClick={() => setPalette(true)} title={t('shell.palette.title')} aria-label={t('shell.palette.title')}>
+      <button type="button" className="search-btn" data-usage="panel:palette" onClick={() => setPalette(true)} title={t('shell.palette.title')} aria-label={t('shell.palette.title')}>
         <Icon name="search" size={14} />
         <span className="search-text">{t('shell.palette.button')}</span>
         <kbd>Ctrl K</kbd>
@@ -84,6 +85,7 @@ export function WorkspaceBar() {
             key={w}
             role="tab"
             aria-selected={tab === w}
+            data-usage={`ws:${w}`}
             className={tab === w ? 'on' : ''}
             onClick={() => setTab(w)}
             title={`${title ? t(title) : t(WORKSPACE_LABEL[w])} (Ctrl+Shift+${i + 1})`}
@@ -110,6 +112,7 @@ export function TaskBar({ tab }: { tab: string }) {
           type="button"
           className={task === x ? 'on' : ''}
           aria-pressed={task === x}
+          data-usage={`task:${tab}.${x}`}
           title={taskTitle(tab, x)}
           onClick={() => setTask(tab, x)}
         >
@@ -145,7 +148,7 @@ export function More({ id, children }: { id: string; children: ReactNode }) {
   const setMore = useShell((s) => s.setMore);
   return (
     <div className={`more${open ? ' expanded' : ''}`} data-more={id}>
-      <button type="button" className="more-toggle" aria-expanded={open} onClick={() => setMore(id, !open)}>
+      <button type="button" className="more-toggle" data-usage={`more:${id}`} aria-expanded={open} onClick={() => setMore(id, !open)}>
         <Icon name="more" size={14} />
         {open ? t('shell.more.less') : t('shell.more.more')}
       </button>
@@ -183,6 +186,7 @@ export function SettingsMenu() {
         type="button"
         className={`ghost icon-btn${open ? ' on' : ''}`}
         aria-expanded={open}
+        data-usage="panel:settings"
         aria-label={t('shell.settings.title')}
         title={t('shell.settings.title')}
         onClick={() => setOpen(!open)}
@@ -220,6 +224,7 @@ export function SettingsMenu() {
               {t('shell.dev.setting')}
             </label>
           </div>
+          <UsageSettingsRow onOpen={() => setOpen(false)} />
         </div>
       )}
     </div>

@@ -9,6 +9,7 @@ import { useEffect, useRef, type ReactNode } from 'react';
 import { create } from 'zustand';
 import { t } from '../../i18n';
 import { Icon } from './Icon';
+import { noteError } from '../../usage/hooks';
 
 // ---------------------------------------------------------------- toast
 
@@ -24,6 +25,8 @@ let nextId = 1;
 /** Says `text` for a moment at the bottom of the view. */
 export function toast(text: string, kind: Toast['kind'] = 'info', ms = 2200): void {
   const id = nextId++;
+  // A failure said to the user: the usage statistics blame what was used just before (never the words).
+  if (kind === 'bad') noteError('error', 'err:toast');
   useToasts.setState((s) => ({ list: [...s.list.slice(-2), { id, text, kind }] }));
   window.setTimeout(() => useToasts.setState((s) => ({ list: s.list.filter((x) => x.id !== id) })), ms);
 }

@@ -40,6 +40,9 @@ export interface IndexEntry {
   mode?: string;
   path: string[];
   label?: string;
+  /** The task group it is drawn in (`<TaskGroup task="...">`), and whether under a "More" fold: for the usage report's click cost. */
+  task?: string;
+  more?: true;
 }
 
 /** An ESTree node, as the parser gives it. */
@@ -49,6 +52,8 @@ interface Ctx {
   tab: string;
   mode?: string;
   path: string[];
+  task?: string;
+  more?: true;
   /** Option labels a component wrote before its JSX: given to the first section it opens. */
   pending?: string[];
   /** The component's own names that hold label keys (a table, a `t()` kept in a const). */
@@ -164,7 +169,7 @@ export function buildCommandIndex(root: string): IndexEntry[] {
       if (had.mode && !ctx.mode) delete had.mode;
       return;
     }
-    out.set(sig, { tab: ctx.tab, ...(ctx.mode ? { mode: ctx.mode } : {}), path: ctx.path, ...(label ? { label } : {}) });
+    out.set(sig, { tab: ctx.tab, ...(ctx.mode ? { mode: ctx.mode } : {}), path: ctx.path, ...(label ? { label } : {}), ...(ctx.task ? { task: ctx.task } : {}), ...(ctx.more ? { more: true as const } : {}) });
   };
 
   const keyList = Object.keys(english);
@@ -446,11 +451,18 @@ export function buildCommandIndex(root: string): IndexEntry[] {
       if (a.type === 'JSXAttribute' && isNode(a.value) && a.value.type === 'JSXExpressionContainer' && isNode(a.value.expression))
         attrs.set((a.name as Node).name as string, a.value.expression);
     let inner = ctx;
-    if (tag === 'Section') {
+    if (tag === 'TaskGroup' || tag === 'More') {
+      // Where a section sits in the side panel: its task group, folded or not.
+      const lit = (open.attributes as Node[]).find((a) => a.type === 'JSXAttribute' && (a.name as Node).name === 'task');
+      const task = lit && isNode(lit.value) && lit.value.type === 'Literal' ? String(lit.value.value) : undefined;
+      inner = tag === 'More' ? { ...ctx, more: true } : { ...ctx, task: task ?? ctx.task };
+      // The options waiting for the first section go with the copy, as they would have gone with `ctx`.
+      ctx.pending = undefined;
+    } else if (tag === 'Section') {
       const keys = keysOf(attrs.get('title'));
       if (!keys.length) return; // a title with a value in it: no id the palette can name
       for (const k of keys.slice(1)) add({ ...ctx, path: [...ctx.path, k] });
-      inner = { tab: ctx.tab, mode: ctx.mode, path: [...ctx.path, keys[0]], vars: ctx.vars, subst: ctx.subst };
+      inner = { tab: ctx.tab, mode: ctx.mode, path: [...ctx.path, keys[0]], vars: ctx.vars, subst: ctx.subst, task: ctx.task, more: ctx.more };
       add(inner);
       // The options the component listed before drawing this, its first section.
       for (const k of ctx.pending ?? []) add(inner, k);

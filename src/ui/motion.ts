@@ -165,6 +165,18 @@ export function noteFrame(ms: number, now: number): void {
   if (next !== s.degraded) useMotion.setState({ degraded: next });
 }
 
+/**
+ * The frames of the last second: how many, and their median duration. Read
+ * by the usage statistics' timer every few seconds, never on the frame path.
+ */
+export function recentFrames(now: number): { count: number; medianMs: number } {
+  const xs: number[] = [];
+  for (let i = 0; i < filled; i++) if (now - stamps[i] <= WINDOW_MS) xs.push(ring[i]);
+  if (!xs.length) return { count: 0, medianMs: 0 };
+  xs.sort((a, b) => a - b);
+  return { count: xs.length, medianMs: xs[xs.length >> 1] };
+}
+
 /** The hysteresis: the next degraded state from the current one and the rolling median. */
 export function qualityStep(degraded: boolean, median: number, now: number): boolean {
   if (!degraded) {

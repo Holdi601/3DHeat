@@ -25,9 +25,12 @@ function QuickButton({
   onClick,
   on,
   disabled,
+  usage,
 }: {
   icon: IconName;
   label: string;
+  /** The feature id the usage statistics count it as. */
+  usage: string;
   keyId?: string;
   onClick: () => void;
   on?: boolean;
@@ -36,7 +39,7 @@ function QuickButton({
   const s = keyId ? shortcut(keyId) : undefined;
   const title = s ? `${label} (${s.keys.map(comboText).join(' / ')})` : label;
   return (
-    <button type="button" className={`quick-btn${on ? ' on' : ''}`} aria-label={label} aria-pressed={on} data-tip={title} onClick={onClick} disabled={disabled}>
+    <button type="button" className={`quick-btn${on ? ' on' : ''}`} aria-label={label} aria-pressed={on} data-tip={title} data-usage={usage} onClick={onClick} disabled={disabled}>
       <Icon name={icon} size={16} />
     </button>
   );
@@ -58,17 +61,18 @@ export function QuickBar() {
   const heatLike = tab === 'heat' || tab === 'match';
   return (
     <div className="quick-bar" role="toolbar" aria-label={t('shell.quick.bar')}>
-      <QuickButton icon={playing ? 'pause' : 'play'} label={t('shell.cmd.play')} keyId="play" on={playing} onClick={togglePlay} />
-      <QuickButton icon="frame" label={t('shell.cmd.frame')} keyId="frame" onClick={() => engine?.frameDataset()} disabled={!hasData} />
-      <QuickButton icon="above" label={t('shell.quick.above')} onClick={() => engine?.applyPreset('Top')} disabled={!hasData} />
+      <QuickButton icon={playing ? 'pause' : 'play'} label={t('shell.cmd.play')} usage="cmd:play" keyId="play" on={playing} onClick={togglePlay} />
+      <QuickButton icon="frame" label={t('shell.cmd.frame')} usage="cmd:frame" keyId="frame" onClick={() => engine?.frameDataset()} disabled={!hasData} />
+      <QuickButton icon="above" label={t('shell.quick.above')} usage="cam:top" onClick={() => engine?.applyPreset('Top')} disabled={!hasData} />
       {heatLike && (
         <>
           <span className="quick-sep" />
-          <QuickButton icon="bookmark" label={t('shell.cmd.saveView')} onClick={() => saveViewNow(engine)} disabled={!engine} />
+          <QuickButton icon="bookmark" label={t('shell.cmd.saveView')} usage="cmd:saveView" onClick={() => saveViewNow(engine)} disabled={!engine} />
           {tab === 'heat' && (
             <QuickButton
               icon="ruler"
               label={t('shell.quick.ruler')}
+              usage="cmd:ruler"
               onClick={() => void clickControl({ tab: 'heat', path: ['heat.measurePanel.title'], label: 'heat.measurePanel.active' })}
             />
           )}
@@ -79,17 +83,19 @@ export function QuickBar() {
         icon="panel"
         label={sidebarHidden ? t('shell.cmd.sidebarShow') : t('shell.cmd.sidebarHide')}
         keyId="sidebar"
+        usage="cmd:sidebar"
         on={!sidebarHidden}
         onClick={() => useShell.getState().setSidebarHidden(!sidebarHidden)}
       />
-      <QuickButton icon="search" label={t('shell.palette.title')} keyId="palette" onClick={() => useShell.getState().setPalette(true)} />
-      <QuickButton icon="keyboard" label={t('shell.cmd.sheet')} keyId="sheet" onClick={() => useShell.getState().setSheet(true)} />
+      <QuickButton icon="search" label={t('shell.palette.title')} usage="panel:palette" keyId="palette" onClick={() => useShell.getState().setPalette(true)} />
+      <QuickButton icon="keyboard" label={t('shell.cmd.sheet')} usage="panel:sheet" keyId="sheet" onClick={() => useShell.getState().setSheet(true)} />
       {heatLike && follow !== null && (
         <span className="quick-context">
           <span className="quick-context-label">{t('shell.quick.following', { name: followName ?? `#${follow}` })}</span>
           <button
             type="button"
             className="quick-btn wide"
+            data-usage="cmd:stopFollow"
             title={`${t('shell.quick.stopFollow')} (Esc)`}
             onClick={() => {
               if (!clearLook()) useReplayStore.getState().stopFollow();

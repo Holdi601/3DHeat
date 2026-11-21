@@ -1733,6 +1733,7 @@ dependencies = [
  "heat3d-core",
  "heat3d-sandbox",
  "heat3d-session",
+ "serde_json",
  "tokio",
  "tower-http",
 ]

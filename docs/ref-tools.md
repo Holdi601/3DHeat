@@ -29,7 +29,7 @@ node tools/3dheat-pack.mjs repack <folder|file.3dheat>...
 The mass index (docs/mass-analysis.md): every `.3dheat` match under the folders gets its summary (`src/mass/summarize.ts`) - the match, its vehicles, teams, players and weapons, its phases, its grid - written into the container as the `summary` member, once; a match summarised already (by this version) is only read. Then one index per folder:
 
 ```
-node tools/3dheat-summarize.mjs <folder>... [--jobs N] [--force] [--no-write] [--no-index] [--limit N] [--settle MIN]
+node tools/3dheat-summarize.mjs <folder>... [--jobs N] [--force] [--moves] [--no-write] [--no-index] [--index-dir DIR] [--limit N] [--settle MIN]
 ```
 
 ### `acmi-to-parquet.mjs`
@@ -46,6 +46,14 @@ A DCS server's campaign rounds from its Tacview recordings alone: each recording
 
 ```
 node tools/dcs-campaign-rounds.mjs <out-folder> <folder>... [--official rounds.json ...] [--cache starts.jsonl]
+```
+
+### `usage-report.mjs`
+
+The usage report: what is used, how it is reached, and why the rest might not be (docs/usage-statistics.md).
+
+```
+node tools/usage-report.mjs [file or folder ...] [--all] [--top N] [--since YYYY-MM-DD] [--json]
 ```
 
 ## For developers and the docs {#for-developers-and-the-docs}

@@ -26,6 +26,7 @@ In the settings:
 | **Units** menu | Metric, Imperial, Aviation or Nautical |
 | **...** button beside **Units** | Opens "Choose a unit for each quantity": one drop-down per quantity |
 | **Language** menu | The viewer's language: [40 languages](languages.md), or the browser's |
+| **Usage statistics** | Off by default. **Keep local usage statistics to improve your layout** records which features you use and how you reach them, on this computer only; **Your usage…** shows them, with Export and Delete. What is and is not recorded: [Usage statistics](usage-statistics.md) |
 
 ![The header with the Units menu and the unit-per-quantity window open](assets/img/en/settings-units.webp)
 
@@ -67,7 +68,8 @@ These settings are kept in your browser between visits (nothing is sent anywhere
 - the replay's figure, symbol, label, camera and tactical display settings;
 - the playback speed and mirroring;
 - bookmarks per recording, volumes per dataset, objective layers;
-- the external AI settings (the key only if you tick *Remember*).
+- the external AI settings (the key only if you tick *Remember*);
+- the usage statistics, only if you switched them on ([what they hold](usage-statistics.md)).
 
 Heat settings, filters and the mode start fresh with every load. The full, generated list: [Stored settings](ref-settings-storage.md).
 
