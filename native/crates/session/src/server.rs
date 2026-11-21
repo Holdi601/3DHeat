@@ -240,6 +240,8 @@ struct Shared {
     files: usize,
     /// The manifest's hash: members fetch it first, then each file it names.
     manifest: String,
+    /// Marked confidential: members are told it is for people entitled to see it only.
+    confidential: bool,
     #[serde(skip)]
     hashes: Vec<String>,
 }
@@ -729,6 +731,9 @@ struct ShareReq {
     /// The host allows this pack made from a game's models to be shared, warned.
     #[serde(default)]
     allow_extracted: bool,
+    /// The host confirms sharing this item marked confidential, warned (only with people entitled to see it).
+    #[serde(default)]
+    confidential_ok: bool,
 }
 
 fn refuse(code: StatusCode, why: &str) -> Response {
@@ -758,12 +763,21 @@ async fn share_item(State(st): State<ShareState>, body: axum::body::Bytes) -> Re
     };
     match verdict {
         share::Verdict::Blocked(why) => return refused(why),
-        share::Verdict::Extracted if !req.allow_extracted => return refused("extracted"),
+        share::Verdict::Confidential(_) if !req.confidential_ok => return refused("confidential"),
         _ => {}
     }
+    if kind.extracted() && !req.allow_extracted {
+        return refused("extracted");
+    }
     let (bl, root, rel) = (cfg.blocklist.clone(), cfg.root.clone(), req.path.clone());
-    let hashed = tokio::task::spawn_blocking(move || -> Result<Vec<(String, PathBuf, String, u64)>, String> {
-        let files = share::files_of(&bl, &root, &rel, kind).map_err(|e| e.to_string())?;
+    let confidential_ok = req.confidential_ok;
+    let marked = matches!(verdict, share::Verdict::Confidential(_));
+    let hashed = tokio::task::spawn_blocking(move || -> Result<(Vec<(String, PathBuf, String, u64)>, bool), String> {
+        let (files, conf) = share::files_of(&bl, &root, &rel, kind).map_err(|e| e.to_string())?;
+        // One confidential file (in a pack's folder) makes the item confidential.
+        if conf.is_some() && !confidential_ok {
+            return Err("confidential".into());
+        }
         let mut out = Vec::with_capacity(files.len());
         let mut total = 0u64;
         for (path, disk) in files {
@@ -774,12 +788,12 @@ async fn share_item(State(st): State<ShareState>, body: axum::body::Bytes) -> Re
             }
             out.push((path, disk, hash, size));
         }
-        Ok(out)
+        Ok((out, conf.is_some()))
     })
     .await
     .unwrap_or_else(|_| Err("failed".into()));
-    let files = match hashed {
-        Ok(f) => f,
+    let (files, confidential) = match hashed {
+        Ok((f, c)) => (f, c || marked),
         Err(why) => return refused(&why),
     };
     let manifest = share::Manifest {
@@ -806,6 +820,7 @@ async fn share_item(State(st): State<ShareState>, body: axum::body::Bytes) -> Re
         size,
         files: files.len(),
         manifest: mhash.clone(),
+        confidential,
         hashes: files.iter().map(|f| f.2.clone()).chain([mhash.clone()]).collect(),
     };
     {
@@ -823,7 +838,7 @@ async fn share_item(State(st): State<ShareState>, body: axum::body::Bytes) -> Re
     }
     // The host's confirmation, with the time: what was shared, never where it is.
     st.audit.write(
-        &serde_json::json!({ "t": now_ms(), "event": "shared", "id": item.id, "kind": kind, "name": item.name, "files": item.files, "bytes": size, "rights_confirmed": true, "extracted_allowed": req.allow_extracted && kind.extracted() })
+        &serde_json::json!({ "t": now_ms(), "event": "shared", "id": item.id, "kind": kind, "name": item.name, "files": item.files, "bytes": size, "rights_confirmed": true, "extracted_allowed": req.allow_extracted && kind.extracted(), "confidential_confirmed": confidential })
             .to_string(),
     );
     json(serde_json::json!({ "item": item }))

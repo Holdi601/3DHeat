@@ -146,9 +146,15 @@ export function ShareAssets() {
       allow = await confirmDialog(t('session.share.extractedWarn', { name: it.name }), t('session.share.shareAnyway'));
       if (!allow) return;
     }
+    // Marked confidential: the host decides who is entitled to it, after a clear warning.
+    let confidential = false;
+    if (it.confidential) {
+      confidential = await confirmDialog(t('session.share.confidentialWarn', { name: it.name }), t('session.share.shareConfidential'));
+      if (!confidential) return;
+    }
     setBusy(it.path);
     try {
-      await shareItem(it.path, true, allow);
+      await shareItem(it.path, true, allow, confidential);
       setIndex(await shareIndex());
       toast(t('session.share.shared', { name: it.name }), 'good');
     } catch (e) {
@@ -174,7 +180,7 @@ export function ShareAssets() {
               {t('session.share.addressConsent')}
             </label>
           )}
-          {index.blocked > 0 && <p className="session-hint">{t('session.share.blocked', { n: index.blocked })}</p>}
+          {index.items.some((i) => i.confidential) && <p className="session-hint">{t('session.share.confidentialHint')}</p>}
           <input type="search" value={filter} onChange={(e) => setFilter(e.target.value)} placeholder={t('session.share.filter')} aria-label={t('session.share.filter')} />
           <ul className="session-list">
             {shown.map((it) => (
@@ -186,6 +192,7 @@ export function ShareAssets() {
                   {it.game ? `${it.game} · ` : ''}
                   {t(`session.share.kind.${it.kind}`)} · {kib(it.size)}
                   {it.extracted ? ` · ${t('session.share.extracted')}` : ''}
+                  {it.confidential ? ` · ${t('session.share.confidential')}` : ''}
                 </span>
                 <button type="button" className="ghost small" disabled={busy !== null} onClick={() => void share(it)}>
                   {busy === it.path ? t('session.share.sharing') : t('session.share.share')}
@@ -263,6 +270,7 @@ export function SharedByHost() {
             <span className="session-name">{it.name}</span>
             <span className="session-flag">
               {t(`session.share.kind.${it.kind}`)} · {kib(it.size)}
+              {it.confidential ? ` · ${t('session.share.confidential')}` : ''}
             </span>
             <button type="button" className="ghost small" disabled={busy !== null} onClick={() => void load(it)}>
               {busy?.id === it.id ? t('session.share.loading', { done: busy.done, all: busy.all }) : t('session.share.load')}
@@ -270,6 +278,7 @@ export function SharedByHost() {
           </li>
         ))}
       </ul>
+      {items.some((i) => i.confidential) && <p className="session-warn">{t('session.share.confidentialMember')}</p>}
       <p className="session-hint">{t('session.share.memberHint')}</p>
     </section>
   );

@@ -8,13 +8,16 @@
 //! check each hash before using it. Paths never leave the host's machine:
 //! members see a name, a kind and sizes.
 //!
-//! A **block list** keeps confidential material from being shared at all,
-//! whatever the host ticks: anything under a folder the host's local
-//! configuration names (kept beside the server's state, never in a
-//! repository), anything in a folder marked with a `.3dheat-confidential`
-//! file (or under one), and anything whose path has a word that marks
-//! confidential or licensed material. Links are followed before checking, so a
-//! link from the catalogue into a confidential folder is blocked too.
+//! **Confidential** material is recognised and needs a second, explicit
+//! confirmation with a warning before it is shared (the host decides who is
+//! entitled to see it, e.g. colleagues under the same agreement): anything
+//! under a folder the host's local configuration names (kept beside the
+//! server's state, never in a repository), anything in a folder marked with
+//! a `.3dheat-confidential` file (or under one), and anything whose path has
+//! a word that marks confidential material. Links are followed before
+//! checking, so a link from the catalogue into a confidential folder is
+//! confidential too. What is not inside the catalogue folder, or is no item
+//! of it, is never shared.
 //!
 //! Packs made from a game's own models (model packs, car packs, local figure
 //! packs) are local by nature: never shared unless the host allows it for
@@ -60,11 +63,13 @@ pub enum Verdict {
     Ok,
     /// A pack made from a game's models: only with the host's per-pack permission.
     Extracted,
-    /// Never: confidential, or not an item of the catalogue.
+    /// Marked confidential (why): only with the host's explicit per-item confirmation, warned.
+    Confidential(&'static str),
+    /// Never: not inside the catalogue folder, or not an item of it.
     Blocked(&'static str),
 }
 
-/// What the host's local configuration blocks, besides the built-in rules.
+/// What the host's local configuration marks confidential, besides the built-in rules.
 #[derive(Clone, Debug, Default)]
 pub struct Blocklist {
     roots: Vec<String>,
@@ -107,8 +112,8 @@ impl Blocklist {
         }
     }
 
-    /// Why `path` must never be shared, if it must not.
-    pub fn blocked(&self, path: &Path) -> Option<&'static str> {
+    /// Why `path` is confidential, if it is.
+    pub fn confidential(&self, path: &Path) -> Option<&'static str> {
         let mut forms = vec![norm(path)];
         // Followed through links and junctions: the place the bytes really are.
         if let Ok(real) = std::fs::canonicalize(path) {
@@ -200,7 +205,7 @@ pub fn classify(rel: &str) -> Option<(Kind, String, String)> {
     None
 }
 
-/// The verdict on `rel` under `root`: blocked when it is confidential or not inside the root.
+/// The verdict on `rel` under `root`: blocked when it is not inside the root, confidential when marked so.
 pub fn verdict(
     list: &Blocklist,
     root: &Path,
@@ -212,13 +217,13 @@ pub fn verdict(
     let Some(what) = classify(rel) else {
         return (Verdict::Blocked("not-an-item"), None);
     };
-    if let Some(why) = list.blocked(&path) {
-        return (Verdict::Blocked(why), Some(what));
+    if let Some(why) = list.confidential(&path) {
+        return (Verdict::Confidential(why), Some(what));
     }
     // A model pack's units, a level's side files: the folder is checked as well.
     if let Some(dir) = path.parent() {
-        if let Some(why) = list.blocked(dir) {
-            return (Verdict::Blocked(why), Some(what));
+        if let Some(why) = list.confidential(dir) {
+            return (Verdict::Confidential(why), Some(what));
         }
     }
     if what.0.extracted() {
@@ -277,14 +282,14 @@ pub const MAX_BYTES: u64 = 16 * 1024 * 1024 * 1024;
 
 /// The files an item is shared with: a level with its layouts and side file
 /// beside it, a pack with everything in its folder; each with its place
-/// under the item and its path on disk. Every one is checked against the
-/// block list again.
+/// under the item and its path on disk, and why any of them is confidential
+/// (every one is checked again: one confidential file makes the item so).
 pub fn files_of(
     list: &Blocklist,
     root: &Path,
     rel: &str,
     kind: Kind,
-) -> Result<Vec<(String, PathBuf)>, &'static str> {
+) -> Result<(Vec<(String, PathBuf)>, Option<&'static str>), &'static str> {
     let main = inside(root, rel).ok_or("outside")?;
     let dir = main.parent().ok_or("outside")?.to_path_buf();
     let file = main
@@ -312,9 +317,10 @@ pub fn files_of(
         }
         _ => {}
     }
+    let mut confidential = None;
     for (_, p) in &out {
-        if let Some(why) = list.blocked(p) {
-            return Err(why);
+        if confidential.is_none() {
+            confidential = list.confidential(p);
         }
         let real = std::fs::canonicalize(p).map_err(|_| "unreadable")?;
         if !real.starts_with(std::fs::canonicalize(root).map_err(|_| "outside")?) {
@@ -324,7 +330,7 @@ pub fn files_of(
     if out.len() > MAX_FILES {
         return Err("too-many-files");
     }
-    Ok(out)
+    Ok((out, confidential))
 }
 
 fn walk(
@@ -379,8 +385,8 @@ pub fn hash_file(p: &Path) -> std::io::Result<(String, u64)> {
     Ok((hex::encode(h.finalize()), size))
 }
 
-/// The catalogue's items under `root`, each with its verdict; blocked ones only counted, never named
-/// (the host's screen may be shared). `(items, blocked)`.
+/// The catalogue's items under `root`, each with its verdict (confidential ones marked so);
+/// what cannot be shared at all is only counted. `(items, blocked)`.
 pub fn list(blocks: &Blocklist, root: &Path) -> (Vec<serde_json::Value>, usize) {
     let mut files = Vec::new();
     let _ = walk_list(root, "", &mut files, 0);
@@ -398,7 +404,8 @@ pub fn list(blocks: &Blocklist, root: &Path) -> (Vec<serde_json::Value>, usize) 
             Verdict::Blocked(_) => blocked += 1,
             _ => items.push(serde_json::json!({
                 "path": rel, "kind": kind, "game": game, "name": name, "size": size,
-                "extracted": v == Verdict::Extracted,
+                "extracted": kind.extracted(),
+                "confidential": matches!(v, Verdict::Confidential(_)),
             })),
         }
     }
@@ -505,7 +512,7 @@ mod tests {
     }
 
     #[test]
-    fn the_block_list_holds_whatever_the_host_ticks() {
+    fn confidential_items_are_recognised_and_what_is_outside_is_never_shared() {
         let root = tree();
         let bl = local(&root);
         let v = |rel: &str| verdict(&bl, &root, rel).0;
@@ -515,26 +522,29 @@ mod tests {
         // Named in the local configuration.
         assert_eq!(
             v("secret-game/beta/beta.glb"),
-            Verdict::Blocked("confidential-folder")
+            Verdict::Confidential("confidential-folder")
         );
         // Marked with the marker file, in a folder above.
         assert_eq!(
             v("marked/gamma/gamma.glb"),
-            Verdict::Blocked("confidential-marker")
+            Verdict::Confidential("confidential-marker")
         );
         // Words that mark confidential or unreleased material.
         assert_eq!(
             v("games-not-for-release/delta/delta.glb"),
-            Verdict::Blocked("confidential-name")
+            Verdict::Confidential("confidential-name")
         );
-        assert_eq!(v("Confidential-Maps/x/x.glb"), Verdict::Blocked("confidential-name"));
+        assert_eq!(
+            v("Confidential-Maps/x/x.glb"),
+            Verdict::Confidential("confidential-name")
+        );
         // A word from the local configuration.
         let hush = root.join("hushhush-maps/e/e.glb");
         std::fs::create_dir_all(hush.parent().unwrap()).unwrap();
         std::fs::write(&hush, "x").unwrap();
         assert_eq!(
             v("hushhush-maps/e/e.glb"),
-            Verdict::Blocked("confidential-name")
+            Verdict::Confidential("confidential-name")
         );
         // Packs made from games' models: only with per-pack permission.
         assert_eq!(
@@ -566,19 +576,21 @@ mod tests {
     fn a_shared_item_takes_its_side_files_and_each_is_checked() {
         let root = tree();
         let bl = local(&root);
-        let f = files_of(&bl, &root, "warthunder/alpha/alpha.glb", Kind::Level).unwrap();
+        let (f, conf) = files_of(&bl, &root, "warthunder/alpha/alpha.glb", Kind::Level).unwrap();
+        assert_eq!(conf, None);
         let names: Vec<&str> = f.iter().map(|(n, _)| n.as_str()).collect();
         assert_eq!(names, ["alpha.glb", "alpha.layouts.json", "alpha.json"]);
-        let pack = files_of(
+        let (pack, conf) = files_of(
             &bl,
             &root,
             "model-packs/warthunder/model-pack.json",
             Kind::ModelPack,
         )
         .unwrap();
+        assert_eq!(conf, None);
         let names: Vec<&str> = pack.iter().map(|(n, _)| n.as_str()).collect();
         assert_eq!(names, ["model-pack.json", "units/t_80ud.glb"]);
-        // A file in a pack's folder that is marked confidential blocks the whole pack.
+        // A file in a pack's folder that is marked confidential makes the whole pack confidential.
         std::fs::write(
             root.join("model-packs/warthunder/units/.3dheat-confidential"),
             "",
@@ -591,21 +603,34 @@ mod tests {
                 "model-packs/warthunder/model-pack.json",
                 Kind::ModelPack
             )
-            .unwrap_err(),
-            "confidential-marker"
+            .unwrap()
+            .1,
+            Some("confidential-marker")
+        );
+        // Outside the root: never.
+        assert_eq!(
+            files_of(&bl, &root, "../x.glb", Kind::Level).unwrap_err(),
+            "outside"
         );
         let _ = std::fs::remove_dir_all(&root);
     }
 
     #[test]
-    fn the_list_counts_blocked_items_without_naming_them() {
+    fn the_list_marks_confidential_items() {
         let root = tree();
         let (items, blocked) = list(&local(&root), &root);
         let text = serde_json::to_string(&items).unwrap();
-        assert_eq!(blocked, 4);
-        for hidden in ["beta", "gamma", "delta", "Confidential-Maps", "secret-game"] {
-            assert!(!text.contains(hidden), "{hidden} named in {text}");
+        assert_eq!(blocked, 0);
+        for name in ["beta", "gamma", "delta", "x"] {
+            let it = items
+                .iter()
+                .find(|i| i["name"] == name)
+                .unwrap_or_else(|| panic!("{name} in {text}"));
+            assert_eq!(it["confidential"], true, "{name}");
         }
+        assert!(items
+            .iter()
+            .any(|i| i["name"] == "alpha" && i["confidential"] == false));
         assert!(text.contains("alpha") && !text.contains("alpha.layouts"));
         assert!(items
             .iter()

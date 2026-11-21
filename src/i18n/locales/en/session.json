@@ -221,7 +221,6 @@
   "session.share.hint": "Each item is shared only after you confirm you may. Members fetch its files by their content hash and check them; paths on this machine are never shown.",
   "session.share.addressConsent": "Members fetch shared files from this machine through the public address and can see it",
   "session.share.needConsent": "Agree first that members may see this machine's address.",
-  "session.share.blocked": "{n, plural, one {# confidential item is} other {# confidential items are}} blocked and not listed.",
   "session.share.filter": "Filter",
   "session.share.kind.level": "level",
   "session.share.kind.course": "course",
@@ -250,5 +249,10 @@
   "session.share.loadFailed": "Could not load {name}",
   "session.share.memberHint": "Every file is checked against its content hash before it is used, and kept in this browser by that hash.",
   "session.server.title": "Work together on a session server",
-  "session.server.hint": "Join a server someone hosts (3dheat serve or the desktop app) to share the view, marks and the board live. Saving and opening a session file above does not need one."
+  "session.server.hint": "Join a server someone hosts (3dheat serve or the desktop app) to share the view, marks and the board live. Saving and opening a session file above does not need one.",
+  "session.share.confidential": "confidential",
+  "session.share.confidentialHint": "Items marked confidential (a confidential folder, a marker file, a word in the path) can be shared only after a warning. For such a session, invite links and the waiting room are the safe way in.",
+  "session.share.confidentialWarn": "{name} is marked confidential. Only share it with people entitled to see it. Everyone in this session can fetch it - for such data, prefer a session joined by invite links only, with the waiting room on. Share it?",
+  "session.share.shareConfidential": "Share confidential item",
+  "session.share.confidentialMember": "Items marked confidential are for people entitled to see them only: do not pass them on."
 }

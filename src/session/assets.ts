@@ -4,8 +4,8 @@
  * (native/crates/session/src/share.rs).
  *
  * The host lists its catalogue (`/__heat3d/share`, the host's token only;
- * confidential items are blocked on the server and only counted, never
- * named), confirms the rights per item, and shares it. A member lists what
+ * items marked confidential are flagged and need a second, warned
+ * confirmation), confirms the rights per item, and shares it. A member lists what
  * is shared (`/api/shared`), fetches an item's manifest and then each file
  * by its SHA-256 (`/a/<hash>`), and checks every hash before using it. The
  * files are kept in this browser's cache by hash and checked again when
@@ -26,6 +26,8 @@ export interface CatalogEntry {
   size: number;
   /** Made from a game's own models: shared only when the host allows it for this pack. */
   extracted: boolean;
+  /** Marked confidential (a confidential folder, a marker file, a word): shared only after a warned confirmation. */
+  confidential: boolean;
 }
 
 /** A shared item, as members see it: never a path. */
@@ -37,6 +39,8 @@ export interface SharedItem {
   size: number;
   files: number;
   manifest: string;
+  /** Marked confidential by the host's machine: for people entitled to see it only. */
+  confidential?: boolean;
 }
 
 export interface ShareIndex {
@@ -88,8 +92,8 @@ async function hostCall<T>(path: string, body?: unknown): Promise<T> {
 }
 
 export const shareIndex = () => hostCall<ShareIndex>('');
-export const shareItem = (path: string, rights: boolean, allowExtracted: boolean) =>
-  hostCall<{ item: SharedItem }>('', { path, rights, allow_extracted: allowExtracted });
+export const shareItem = (path: string, rights: boolean, allowExtracted: boolean, confidentialOk = false) =>
+  hostCall<{ item: SharedItem }>('', { path, rights, allow_extracted: allowExtracted, confidential_ok: confidentialOk });
 export const unshare = (id: string) => hostCall<null>('/stop', { id });
 
 // ------------------------------------------------------------ a member
