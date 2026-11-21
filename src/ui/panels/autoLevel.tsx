@@ -24,11 +24,17 @@ import { t, useLang } from '../../i18n';
 import { loadLayoutFiles } from '../../state/levelLayoutsStore';
 import { useStore } from '../../state/store';
 import type { Dataset, GeoPlacement } from '../../state/types';
-import { theatreOfData } from '../../world/theatres';
+import { theatreOfData, theatreOfDcsFolder, type Theatre } from '../../world/theatres';
+import { dcsBuildings, dcsGroundFrom, mergeDcsModels, type DcsGroundData } from '../../world/dcsGround';
+import type { WorldLabel } from '../../world/backdrop';
+import { eastNorthOf, planeInverse } from '../../world/tiles';
+import { worldToData } from '../../render/pose';
+import { groundPersons } from '../../data/groundFit';
+import type { LoadedModel } from '../../data/modelLoader';
 import { reveal } from '../shell/commands';
 import { CATALOG_ROUTE } from './CatalogSection';
 import { modelLevelFrom, worldLevelFrom } from './LevelPanel';
-import { emptyStream, streamName } from './WorldBackdrop';
+import { dcsLabels, streamedLevel, type DcsLevelMeta } from './WorldBackdrop';
 
 interface AutoLevelState {
   /** What the last pick is on, as its files say; null before any. */
@@ -100,14 +106,83 @@ async function loadCatalogLevel(item: CatalogItem): Promise<void> {
   }
 }
 
-/** The theatre a recording flies in, streamed under it; false when it is in none known. */
-function streamTheatreUnder(d: Dataset): boolean {
+/** DCS areas loaded under one recording at most: each is tens of megabytes of the game's terrain. */
+const MAX_AREAS = 3;
+
+/**
+ * Where a recording's ground units are, on the earth: up to `n` of their rows,
+ * spread over the data, as [lat, lon].
+ */
+function groundPlaces(d: Dataset, n: number): Array<[number, number]> {
+  const geo = d.geo!;
+  const ground = groundPersons(d);
+  const inverse = planeInverse(geo);
+  const out: Array<[number, number]> = [];
+  const step = Math.max(1, Math.floor(d.count / (n * 4)));
+  for (let r = 0; r < d.count && out.length < n; r += step) {
+    if (ground && d.personId && !ground[d.personId[r]]) continue;
+    const [e, nn] = eastNorthOf(geo, worldToData({ x: d.px[r], y: d.py[r], z: d.pz[r] }, d.axes ?? null));
+    const [lat, lon] = inverse(e, nn);
+    if (Number.isFinite(lat) && Number.isFinite(lon)) out.push([lat, lon]);
+  }
+  return out;
+}
+
+/**
+ * The game's own ground under a DCS recording, from the levels folder's DCS
+ * areas (`dcs/<theatre>/r<n>/`, the DCS converter's levels with their .json):
+ * the areas its ground units drive in, most of them first. A recording's
+ * heights are the game's, and the real earth's differ from them by metres in
+ * the hills - tanks half in a slope beside others above it - so the streamed
+ * tiles take the game's heights wherever an area reaches. Null when no area
+ * holds any.
+ */
+async function dcsGroundUnder(d: Dataset, th: Theatre): Promise<{ dcs: DcsGroundData; labels: WorldLabel[]; name: string } | null> {
+  const areas = (await catalogItems()).filter((it) => it.kind === 'level' && it.game === 'dcs' && /^dcs\/[^/]+\/r\d+\//i.test(it.path));
+  if (!areas.length) return null;
+  const places = groundPlaces(d, 2000);
+  if (!places.length) return null;
+  const hits: Array<{ item: CatalogItem; meta: DcsLevelMeta; count: number }> = [];
+  for (const item of areas) {
+    const f = await catalogFile(item.path.replace(/\.glb$/i, '.json'));
+    if (!f) continue;
+    const meta = JSON.parse(await f.text()) as DcsLevelMeta;
+    if (theatreOfDcsFolder(meta.theatre)?.id !== th.id || !meta.bounds_latlon) continue;
+    const [s, w] = meta.bounds_latlon.south_west;
+    const [nn, e] = meta.bounds_latlon.north_east;
+    const count = places.filter(([la, lo]) => la >= s && la <= nn && lo >= w && lo <= e).length;
+    if (count) hits.push({ item, meta, count });
+  }
+  hits.sort((a, b) => b.count - a.count);
+  const chosen = hits.slice(0, MAX_AREAS);
+  if (!chosen.length) return null;
+  const parts: LoadedModel[] = [];
+  for (const h of chosen) {
+    const f = await catalogFile(h.item.path);
+    if (!f) return null;
+    parts.push(await modelLoader.load(f, Infinity, () => undefined));
+  }
+  const m = await mergeDcsModels(parts);
+  const metas = chosen.map((h) => h.meta);
+  const rows = metas.flatMap((x) => x.buildings?.rows ?? []);
+  return {
+    dcs: dcsGroundFrom(metas[0].theatre, m.vertices, m.colours, m.indices, m.waterIndices, dcsBuildings(rows)),
+    labels: metas.flatMap(dcsLabels),
+    name: t('heat.world.dcs.name', { theatre: th.name, level: metas.map((x) => x.level ?? '').join(' + ') }),
+  };
+}
+
+/** The theatre a recording flies in, streamed under it (on the game's own ground where the folder has it); false when it is in none known. */
+async function streamTheatreUnder(d: Dataset): Promise<boolean> {
   if (!d.geo) return false;
   const th = theatreOfData(d.geo, d.bounds, d.axes);
   if (!th) return false;
+  useAutoLevel.setState({ label: th.name });
   const placement: GeoPlacement = { geo: d.geo, axes: d.axes ?? null };
-  const lv = worldLevelFrom(streamName(th), emptyStream(placement, th), placement);
-  useStore.getState().setLevel({ ...lv, stream: { theatre: th.id, imagery: false, runways: true }, showTexture: false });
+  const game = th.game === 'dcs' ? await dcsGroundUnder(d, th).catch(() => null) : null;
+  if (levelTaken() || useStore.getState().dataset !== d) return false;
+  const lv = streamedLevel(th, placement, worldLevelFrom, { imagery: false, runways: true }, game ?? undefined);
+  useStore.getState().setLevel(lv);
   useAutoLevel.setState({ status: 'loaded', level: lv.name, label: th.name });
   return true;
 }
@@ -125,7 +200,8 @@ async function pickLevel(d: Dataset): Promise<void> {
   }
   // A recording on the earth: its theatre, streamed.
   if ((game && THEATRE_GAMES.test(game)) || d.geo?.theatre) {
-    if (streamTheatreUnder(d)) return;
+    if (await streamTheatreUnder(d)) return;
+    if (levelTaken()) return void useAutoLevel.setState({ status: 'none' });
   }
   useAutoLevel.setState({ status: 'none' });
 }

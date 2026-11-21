@@ -34,13 +34,15 @@ const SIZES = [25, 50, 100, 200, 400];
 type Detail = 'data' | 'point' | 'none';
 
 /** What the DCS converter writes beside its level (exporters/ext/dcs-maps, `<name>.json`); only what is read here. */
-interface DcsLevelMeta {
+export interface DcsLevelMeta {
   theatre: string;
   level?: string;
   towns?: Array<{ name: string; x?: number; z?: number; ground?: number | null }>;
   airfields?: Array<{ name: string; x: number; z: number; ground?: number | null }>;
   /** The game's buildings as boxes: x, z, base, height, half_x, half_z, heading_deg, kind per row. */
   buildings?: { rows?: number[][] } | null;
+  /** Where the area lies: [lat, lon] corners. */
+  bounds_latlon?: { south_west: [number, number]; north_east: [number, number] };
 }
 
 /** The DCS level's place names, in its own metres (x north, y up, z east): the game's towns and airfields. */
@@ -57,6 +59,35 @@ const gameLabel = (th: Theatre) => (th.game === 'dcs' ? t('heat.world.theatre.gr
 /** A streamed theatre's name, as the level panel shows it. */
 export function streamName(theatre: Theatre): string {
   return t('heat.world.stream.name', { game: gameLabel(theatre), theatre: theatre.name });
+}
+
+/**
+ * A theatre streamed round the camera as a level, on `placement`; with
+ * `game`, over the game's own ground (the DCS converter's areas: the tiles
+ * take its heights where it reaches, `world/dcsGround.ts`) and with its place
+ * names. What the level panel's Stream theatre and the automatic level
+ * (`autoLevel.tsx`) both put under the data.
+ */
+export function streamedLevel(
+  theatre: Theatre,
+  placement: GeoPlacement,
+  toLevel: (name: string, r: BackdropResult, placement: GeoPlacement) => ModelLevel,
+  look: { imagery: boolean; runways: boolean },
+  game?: { dcs: DcsGroundData; labels: WorldLabel[]; name: string },
+): ModelLevel {
+  const lv = toLevel(game?.name ?? streamName(theatre), emptyStream(placement, theatre), placement);
+  // The game's place names, from its metres to this plane.
+  const proj = game ? DCS_PROJECTIONS[game.dcs.theatre] : null;
+  const toPlane = planeForward(placement.geo);
+  const labels =
+    game && proj
+      ? game.labels.map((l) => {
+          const [la, lo] = fromDcs(proj, l.x, l.z);
+          const [e, n] = toPlane(la, lo);
+          return { ...l, ...dataToWorld(dataOfEastNorth(placement.geo, e, n, l.y), placement.axes) };
+        })
+      : lv.labels;
+  return { ...lv, labels, stream: { theatre: theatre.id, imagery: look.imagery, runways: look.runways, ...(game ? { dcs: game.dcs } : {}) }, showTexture: look.imagery };
 }
 
 /**
@@ -239,23 +270,11 @@ export function WorldBackdrop({
     const theatre = game?.th ?? theatreById(theatreId);
     if (!theatre) return;
     const placement: GeoPlacement = { geo: geo ?? theatreGeo(theatre), axes: geo ? (dataset?.axes ?? null) : THEATRE_AXES };
-    const lv = toLevel(game?.name ?? streamName(theatre), emptyStream(placement, theatre), placement);
     if (!game) {
       setError(null);
       setNote(null);
     }
-    // The game's place names, from its metres to this plane.
-    const proj = game ? DCS_PROJECTIONS[game.dcs.theatre] : null;
-    const toPlane = planeForward(placement.geo);
-    const labels =
-      game && proj
-        ? game.labels.map((l) => {
-            const [la, lo] = fromDcs(proj, l.x, l.z);
-            const [e, n] = toPlane(la, lo);
-            return { ...l, ...dataToWorld(dataOfEastNorth(placement.geo, e, n, l.y), placement.axes) };
-          })
-        : lv.labels;
-    setLevel({ ...lv, labels, stream: { theatre: theatre.id, imagery, runways, ...(game ? { dcs: game.dcs } : {}) }, showTexture: imagery });
+    setLevel(streamedLevel(theatre, placement, toLevel, { imagery, runways }, game));
     if (!geo && engine) cameraOverTheatre(engine, placement, game ? { ...theatre, detail: game.centre } : theatre);
   };
 
