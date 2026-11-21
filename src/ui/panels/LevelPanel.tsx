@@ -52,7 +52,7 @@ import { buildingsLook } from '../replay/buildings';
 import { NumberBox } from '../NumberBox';
 import { useLevelHandoff } from '../../session/dataRefs';
 import { loadLayoutFiles } from '../../state/levelLayoutsStore';
-import { catalogLevel, CatalogSection, loadCatalogItem } from './CatalogSection';
+import { catalogLevel, CatalogSection, loadCatalogItem, useArmaLevelAuto } from './CatalogSection';
 import { sameLevel, settleLevelRequest, takeLevelRequest, useLevelRequest } from '../../session/levelRequest';
 
 /** Longest edge we upload; larger maps are downscaled to fit the GPU. */
@@ -770,6 +770,9 @@ export function LevelPanel() {
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [levelAsk]);
+
+  // Arma recordings (OCAP): their world's level from the levels folder, whether or not the catalogue is open.
+  useArmaLevelAuto((f) => loadModel(f));
 
   const mdl = level?.kind === 'model' ? level : null;
   // Every structure field is optional on the level, so resolve the defaults once

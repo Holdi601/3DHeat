@@ -9,7 +9,7 @@
 import { notePick } from '../usage/hooks';
 import { t } from '../i18n';
 
-const DATA_EXT = /\.(parquet|pq|csv|tsv|txt|acmi|json|json\.gz|gpx|kml|kmz|nmea|nma|igc|fit)$/i;
+const DATA_EXT = /\.(parquet|pq|csv|tsv|txt|acmi|json|json\.gz|jsonl|gpx|kml|kmz|nmea|nma|igc|fit)$/i;
 
 /**
  * Files that carry positions.
@@ -113,7 +113,7 @@ export function openPicker(directory: boolean, multiple = true): Promise<PickedF
       input.setAttribute('directory', '');
     } else {
       input.multiple = multiple;
-      input.accept = '.3dheat,.parquet,.pq,.csv,.tsv,.txt,.acmi,.json,.gz,.gpx,.kml,.kmz,.nmea,.nma,.igc,.fit';
+      input.accept = '.3dheat,.parquet,.pq,.csv,.tsv,.txt,.acmi,.json,.jsonl,.gz,.gpx,.kml,.kmz,.nmea,.nma,.igc,.fit';
     }
     input.style.display = 'none';
     document.body.appendChild(input);

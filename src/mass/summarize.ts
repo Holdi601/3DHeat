@@ -1359,6 +1359,82 @@ export async function summarizeTable(file: AsyncBuffer, info: SummaryInfo, metad
   return b.finish();
 }
 
+/** A table already in memory, a column an array: what a recording's own reader makes (`ocap.ts`). */
+export interface MemoryTable {
+  columns: string[];
+  data: ArrayLike<unknown>[];
+  numeric: boolean[];
+  rows: number;
+}
+
+/**
+ * The rows in time order, ties in table order. A whole frame number column
+ * (`Frame`, OCAP's) is counted into buckets, a pass each way; any other time
+ * is sorted.
+ */
+function timeOrder(t: MemoryTable, timeColumn: string): Uint32Array {
+  const n = t.rows;
+  const order = new Uint32Array(n);
+  const frame = t.columns.includes('Frame') ? (t.data[t.columns.indexOf('Frame')] as ArrayLike<number>) : null;
+  if (frame) {
+    let max = 0;
+    let whole = true;
+    for (let i = 0; i < n && whole; i++) {
+      const f = frame[i];
+      if (!(f >= 0) || f !== Math.floor(f) || f > 1e7) whole = false;
+      else if (f > max) max = f;
+    }
+    if (whole) {
+      const start = new Uint32Array(max + 2);
+      for (let i = 0; i < n; i++) start[frame[i] + 1]++;
+      for (let f = 1; f < start.length; f++) start[f] += start[f - 1];
+      for (let i = 0; i < n; i++) order[start[frame[i]]++] = i;
+      return order;
+    }
+  }
+  const time = t.data[t.columns.indexOf(timeColumn)];
+  const tv = new Float64Array(n);
+  for (let i = 0; i < n; i++) {
+    order[i] = i;
+    tv[i] = Number(time[i]);
+  }
+  order.sort((a, c) => tv[a] - tv[c] || a - c);
+  return order;
+}
+
+/**
+ * A match's summary from a table in memory, read by `hints` (the reader's own,
+ * as a JSON string) as a file's footer would say them; null as
+ * `summarizeTable`. Its rows are fed in time order, as a converter's table
+ * has them.
+ */
+export function summarizeColumns(t: MemoryTable, info: SummaryInfo, hints: string | null): MatchSummary | null {
+  const sample = Math.min(50, t.rows);
+  const cell = (v: unknown) => (typeof v === 'number' && !Number.isFinite(v) ? '' : display(v));
+  const rows = Array.from({ length: sample }, (_, r) => t.columns.map((_, c) => cell(t.data[c][r])));
+  const r = leanSpec({ columns: t.columns, rows, numeric: t.numeric, hints, timestamps: [] });
+  if (!r.ok) return null;
+  const spec = r.spec;
+  const cols = summaryColumns(t.columns, (c) => t.numeric[t.columns.indexOf(c)], spec);
+  const b = new SummaryBuilder(spec, cols, info);
+  const want = SummaryBuilder.columnsOf(spec, cols).filter((c) => t.columns.includes(c));
+  const order = timeOrder(t, spec.time);
+  for (let lo = 0; lo < t.rows; lo += READ_ROWS) {
+    const hi = Math.min(t.rows, lo + READ_ROWS);
+    const out: Columns = {};
+    for (const c of want) {
+      const src = t.data[t.columns.indexOf(c)];
+      const numeric = t.numeric[t.columns.indexOf(c)];
+      const dst = numeric ? new Float64Array(hi - lo) : new Array<unknown>(hi - lo);
+      for (let k = lo; k < hi; k++) (dst as unknown[])[k - lo] = src[order[k]];
+      out[c] = dst;
+    }
+    b.add(out, hi - lo);
+  }
+  if (info.objectives?.length) b.objectives(info.objectives);
+  return b.finish();
+}
+
 /** The summary without its grid (what an index line and the panel hold). */
 export function headOf(s: MatchSummary): Omit<MatchSummary, 'grid'> {
   const { grid: _grid, ...head } = s;

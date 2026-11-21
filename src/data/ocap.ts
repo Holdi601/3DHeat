@@ -61,9 +61,31 @@
  * brush and size), GameDate and UTC (the in-game date and the server's clock
  * at that frame, from `times`), TimeMultiplier, Info (the recording's own
  * fields - author, versions, tags... - as JSON).
+ *
+ * Added to these: Game (Arma 3 or Arma Reforger), Map (the world by the name
+ * players know it, `armaWorlds.ts`), Faction (where the recording says it,
+ * or a Reforger side's stock faction), Unit (what a vehicle is in words the
+ * figures and model packs know: Reforger's catalogue id, an Arma 3 vehicle's
+ * real counterpart, `armaUnits.ts`), Won (1 on the side the mission's end
+ * names as the winner, 0 on the other fighting sides; empty without a
+ * winner), Winner and EndReason (the end message), Date (when the recording
+ * began) and Duration (seconds recorded).
+ *
+ * Arma Reforger: OCAP2's recorder for Reforger (github.com/OCAP2/addon-reforger,
+ * its receiver's `builder.go`, 2026-02) writes the same layout, with
+ * `extensionBuild` "reforger", the world as its world file
+ * (`worlds/MP/CTI_Campaign_Eden.ent`), no markers or shots, and positions as
+ * the engine has them: [x east, y up, z north]. Read as such, the table's X,
+ * Y, Z are east, north and height as for Arma 3, and the hints keep the
+ * engine's frame (north is +z, as in the Reforger levels the Reforger
+ * extractor writes); the facing is the column Yaw. 3DHeat's own Reforger
+ * recorder (exporters/watcher/mods/reforger, `.jsonl`: a header line, then
+ * entity, frame and event lines) is read the same way, with its faction keys.
  */
 
 import { GrowableF64 } from './growable';
+import { armaWorldOf, isReforgerWorldName } from './armaWorlds';
+import { arma3RealVehicle, reforgerFactionOfSide, reforgerUnitId, sideOfFaction, winnerOfText } from './armaUnits';
 
 export interface OcapTable {
   columns: string[];
@@ -76,14 +98,24 @@ export interface OcapTable {
   world: string;
   /** Seconds per frame. */
   captureDelay: number;
+  /** Recorded in Arma Reforger: positions in the engine's frame (see the hints). */
+  reforger: boolean;
+  /** Arma 3 or Arma Reforger. */
+  game: string;
+  /** The world as players know it (`Everon`, `Altis`). */
+  map: string;
 }
 
 /** Thrown for a file that is JSON of some other kind, or no JSON at all. */
 export class NotOcapError extends Error {}
 
-/** Whether a file name is an OCAP recording: what OCAP writes and what its web player serves. */
+/**
+ * Whether a file name is an OCAP recording: what OCAP writes and what its web
+ * player serves, and 3DHeat's own Reforger recorder's `.jsonl` (not the mass
+ * analysis's gzipped `3dheat-index.jsonl.gz`).
+ */
 export function isOcapName(name: string): boolean {
-  return /\.json(\.gz)?$/i.test(name);
+  return /\.json(\.gz)?$/i.test(name) || /\.jsonl$/i.test(name);
 }
 
 /** The text of a recording, gunzipped when it is gzip (by its bytes, whatever its name). */
@@ -112,8 +144,8 @@ const TYPE_OF_CLASS: Record<string, string> = {
   'static-mortar': 'Mortar',
 };
 
-type Raw = unknown[];
-interface RawEntity {
+export type Raw = unknown[];
+export interface RawEntity {
   id?: number;
   type?: string;
   name?: string;
@@ -122,13 +154,17 @@ interface RawEntity {
   role?: string;
   isPlayer?: number | boolean;
   class?: string;
+  /** 3DHeat's Reforger recorder: the faction key; its prefab. */
+  faction?: string;
+  prefab?: string;
   startFrameNum?: number;
   positions?: Raw[];
   framesFired?: Raw[];
 }
-interface RawRecording {
+export interface RawRecording {
   missionName?: string;
   worldName?: string;
+  extensionBuild?: string;
   captureDelay?: number;
   endFrame?: number;
   entities?: RawEntity[];
@@ -169,12 +205,14 @@ const numOr = (v: unknown, d: number): number => (typeof v === 'number' && Numbe
 interface Track {
   e: RawEntity;
   unit: boolean;
+  /** Positions as Reforger writes them: [x, up, north]. */
+  upY: boolean;
   entries: Raw[];
   from: Int32Array;
   to: Int32Array;
 }
 
-function trackOf(e: RawEntity): Track {
+function trackOf(e: RawEntity, upY = false): Track {
   const entries = Array.isArray(e.positions) ? e.positions : [];
   const unit = e.type === 'unit';
   const from = new Int32Array(entries.length);
@@ -188,7 +226,7 @@ function trackOf(e: RawEntity): Track {
     to[i] = Math.max(from[i], range ? numOr(range[1], from[i]) : frame);
     frame = to[i] + 1;
   }
-  return { e, unit, entries, from, to };
+  return { e, unit, upY, entries, from, to };
 }
 
 /** Entry i's state; an empty or broken entry repeats the one before. `prev` carries a unit's last name. */
@@ -199,13 +237,13 @@ function decode(t: Track, i: number, prev: State | null): State | null {
   if (!Array.isArray(r) || !Array.isArray(r[0])) return null;
   const p = r[0] as unknown[];
   const x = numOr(p[0], NaN);
-  const y = numOr(p[1], NaN);
+  const y = numOr(p[t.upY ? 2 : 1], NaN);
   if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
   const e = t.e;
   const s: State = {
     x,
     y,
-    z: numOr(p[2], 0),
+    z: numOr(p[t.upY ? 1 : 2], 0),
     dir: numOr(r[1], 0),
     alive: numOr(r[2], 1),
     inVehicle: 0,
@@ -262,18 +300,137 @@ interface EventCols {
   side?: string;
 }
 
-/** Parses an OCAP recording into the table. `name` is the file's name without its extension. */
-export function parseOcap(text: string, name = 'recording'): OcapTable {
+/**
+ * 3DHeat's own Reforger recorder (exporters/watcher/mods/reforger) as an OCAP
+ * recording: its `header` line the mission, its `entity` lines the entities
+ * (the faction key kept, its side as OCAP's), its `frame` lines their
+ * entries in the engine's [x, up, north] (a unit missing from a frame keeps
+ * its last entry), its `event` lines OCAP's events as they are. A line cut
+ * short (a crash mid-write) is skipped.
+ */
+function fromHeat3dReforger(text: string): RawRecording {
+  let header: Record<string, unknown> | null = null;
+  type Ent = RawEntity & { positions: Raw[]; next: number };
+  const ents = new Map<number, Ent>();
+  const events: Raw[] = [];
+  let endFrame = 0;
+  for (const line of text.split('\n')) {
+    if (!line.trim()) continue;
+    let o: Record<string, unknown>;
+    try {
+      o = JSON.parse(line) as Record<string, unknown>;
+    } catch {
+      continue;
+    }
+    if (o.type === 'header') header = o;
+    else if (o.type === 'entity' && typeof o.id === 'number') {
+      const vehicle = o.kind === 'vehicle';
+      const faction = str(o.faction);
+      const start = numOr(o.frame, 0);
+      ents.set(o.id, {
+        id: o.id, type: vehicle ? 'vehicle' : 'unit', name: str(o.name), side: sideOfFaction(faction) || 'CIV', faction,
+        group: o.group === undefined || o.group === null ? '' : String(o.group), role: vehicle ? '' : str(o.prefab),
+        isPlayer: numOr(o.playerId, 0) > 0 ? 1 : 0, class: vehicle ? str(o.class) || 'car' : undefined, prefab: str(o.prefab),
+        startFrameNum: start, positions: [], next: start,
+      });
+    } else if (o.type === 'frame') {
+      const f = numOr(o.frame, NaN);
+      if (!Number.isFinite(f)) continue;
+      endFrame = Math.max(endFrame, f);
+      for (const u of Array.isArray(o.units) ? (o.units as unknown[][]) : []) {
+        // [id, x, up, north, dir, alive, vehicle id or -1, player id or 0]
+        const e = Array.isArray(u) ? ents.get(u[0] as number) : undefined;
+        if (!e || e.type !== 'unit' || f < e.next) continue;
+        const entry: Raw = [[u[1], u[2], u[3]], u[4], u[5], numOr(u[6], -1) >= 0 ? u[6] : 0, e.name, numOr(u[7], 0) > 0 ? 1 : 0];
+        if (!e.positions.length) e.startFrameNum = f;
+        else for (const last = e.positions[e.positions.length - 1]; e.next < f; e.next++) e.positions.push(last);
+        e.positions.push(entry);
+        e.next = f + 1;
+      }
+      for (const v of Array.isArray(o.vehicles) ? (o.vehicles as unknown[][]) : []) {
+        // [id, x, up, north, dir, alive, [crew]]: an entry per frame range.
+        const e = Array.isArray(v) ? ents.get(v[0] as number) : undefined;
+        if (!e || e.type !== 'vehicle' || f < e.next) continue;
+        const last = e.positions[e.positions.length - 1];
+        if (last) (last[4] as number[])[1] = f - 1;
+        e.positions.push([[v[1], v[2], v[3]], v[4], v[5], Array.isArray(v[6]) ? v[6] : [], [f, f]]);
+        e.next = f + 1;
+      }
+    } else if (o.type === 'event' && Array.isArray(o.event)) events.push(o.event as Raw);
+    else if (o.type === 'end') endFrame = Math.max(endFrame, numOr(o.frame, 0));
+  }
+  if (!header || header.format !== 'heat3d-reforger') throw new NotOcapError('no heat3d-reforger header');
+  // A vehicle's last state holds to the end.
+  for (const e of ents.values()) {
+    const last = e.positions[e.positions.length - 1];
+    if (e.type === 'vehicle' && last) (last[4] as number[])[1] = Math.max((last[4] as number[])[0], endFrame);
+  }
+  return {
+    missionName: str(header.mission),
+    worldName: str(header.worldFile) || str(header.world),
+    extensionBuild: 'reforger',
+    captureDelay: numOr(header.captureDelay, 1),
+    endFrame,
+    times: header.startedUtc ? [{ frameNum: 0, systemTimeUTC: str(header.startedUtc) }] : [],
+    entities: [...ents.values()].map(({ next: _next, ...e }) => e),
+    events,
+    Markers: [],
+  };
+}
+
+/**
+ * A recording's document, whichever recorder wrote it, and whether it is
+ * Reforger's (its recorder says so, or its world is a world file); throws
+ * `NotOcapError` for anything else.
+ */
+export function readOcapDocument(text: string): { doc: RawRecording; reforger: boolean } {
   let doc: RawRecording;
-  try {
-    doc = JSON.parse(text) as RawRecording;
-  } catch {
-    throw new NotOcapError('not JSON');
+  if (/^\s*\{\s*"type"\s*:\s*"header"/.test(text.slice(0, 200))) doc = fromHeat3dReforger(text);
+  else {
+    try {
+      doc = JSON.parse(text) as RawRecording;
+    } catch {
+      throw new NotOcapError('not JSON');
+    }
   }
   if (!doc || typeof doc !== 'object' || !Array.isArray(doc.entities) || typeof doc.captureDelay !== 'number') throw new NotOcapError('no entities or captureDelay');
-  const delay = doc.captureDelay > 0 ? doc.captureDelay : 1;
+  return { doc, reforger: /reforger/i.test(str(doc.extensionBuild)) || isReforgerWorldName(str(doc.worldName)) };
+}
+
+/** An entity's first place and facing: [east, north, height], compass degrees; null when it has none. */
+export function firstPlaceOf(e: RawEntity, reforger: boolean): { x: number; y: number; z: number; dir: number; frame: number } | null {
+  const t = trackOf(e, reforger);
+  for (let i = 0; i < t.entries.length; i++) {
+    const s = decode(t, i, null);
+    if (s) return { x: s.x, y: s.y, z: s.z, dir: s.dir, frame: t.from[i] };
+  }
+  return null;
+}
+
+/** An entity's path, a place every `step` frames: [frame, east, north, height][]. */
+export function pathOf(e: RawEntity, reforger: boolean, step: number): number[][] {
+  const t = trackOf(e, reforger);
+  const out: number[][] = [];
+  let next = -Infinity;
+  for (let i = 0; i < t.entries.length; i++) {
+    if (t.to[i] < next) continue;
+    const s = decode(t, i, null);
+    if (!s) continue;
+    out.push([Math.max(t.from[i], next), s.x, s.y, s.z]);
+    next = Math.max(t.from[i], next) + step;
+  }
+  return out;
+}
+
+/** Parses an OCAP recording into the table. `name` is the file's name without its extension. */
+export function parseOcap(text: string, name = 'recording'): OcapTable {
+  const { doc, reforger } = readOcapDocument(text);
+  const delay = doc.captureDelay! > 0 ? doc.captureDelay! : 1;
   const mission = str(doc.missionName) || name;
   const world = str(doc.worldName);
+  const where = armaWorldOf(world, reforger);
+  const game = reforger ? 'Arma Reforger' : 'Arma 3';
+  const map = where?.name ?? world;
   const times = Array.isArray(doc.times) ? doc.times : [];
   const started = str((times.find((t) => t?.frameNum === 0) ?? times[0])?.systemTimeUTC);
   const date = started ? started.slice(0, 16).replace('T', ' ') : dateFromName(name);
@@ -281,9 +438,26 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
   const recording = date ? `${mission} (${date})` : mission;
 
   const tracks = new Map<number, Track>();
-  for (const e of doc.entities) if (e && typeof e === 'object' && typeof e.id === 'number') tracks.set(e.id, trackOf(e));
-  const label = (e: RawEntity) =>
-    e.type === 'mission' ? 'Mission' : e.type === 'marker' ? `${str(e.name)} #M${-999 - e.id!}` : `${str(e.name) || str(e.class) || str(e.type)} #${e.id}`;
+  for (const e of doc.entities ?? []) if (e && typeof e === 'object' && typeof e.id === 'number') tracks.set(e.id, trackOf(e, reforger));
+  // An entity's label and type word, made once: a long mission has millions of rows of each.
+  const labels = new Map<RawEntity, string>();
+  const label = (e: RawEntity) => {
+    let l = labels.get(e);
+    if (l === undefined) {
+      l = e.type === 'mission' ? 'Mission' : e.type === 'marker' ? `${str(e.name)} #M${-999 - e.id!}` : `${str(e.name) || str(e.class) || str(e.type)} #${e.id}`;
+      labels.set(e, l);
+    }
+    return l;
+  };
+  const typeWords = new Map<RawEntity, string>();
+  const typeWord = (e: RawEntity, unit: boolean) => {
+    let w = typeWords.get(e);
+    if (w === undefined) {
+      w = e.type === 'marker' ? 'Marker' : e.type === 'mission' ? 'Mission' : (TYPE_OF_CLASS[unit ? 'unit' : str(e.class)] ?? (str(e.class) || 'Vehicle'));
+      typeWords.set(e, w);
+    }
+    return w;
+  };
   const stateAt = (id: number, f: number): State | null => {
     const t = tracks.get(id);
     const i = t ? entryAt(t, f) : -1;
@@ -310,6 +484,19 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
   }
   for (const list of riding.values()) list.sort((a, b) => a[0] - b[0]);
 
+  // Who won: the side the mission's end names, else the one its message does.
+  let winner = '';
+  let endText = '';
+  for (const ev of Array.isArray(doc.events) ? doc.events : []) {
+    if (!Array.isArray(ev) || ev[1] !== 'endMission') continue;
+    const d = Array.isArray(ev[2]) ? (ev[2] as unknown[]) : ev.slice(2);
+    endText = str(d[1]) || endText;
+    winner = sideOfFaction(str(d[0])) || winnerOfText(endText) || winner;
+  }
+  const FIGHTING = new Set(['WEST', 'EAST', 'GUER']);
+  if (winner) FIGHTING.add(winner);
+  const duration = numOr(doc.endFrame, 0) * delay;
+
   const shots = new Map<number, Map<number, number>>();
   for (const t of tracks.values()) {
     const fired = t.e.framesFired;
@@ -335,7 +522,19 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
   const TY = new GrowableF64();
   const TZ = new GrowableF64();
   const MULT = new GrowableF64();
-  const S = { Object: [] as string[], Side: [] as string[], Vehicle: [] as string[], Type: [] as string[], Riding: [] as string[], Group: [] as string[], Role: [] as string[], Event: [] as string[], Killer: [] as string[], Victim: [] as string[], Weapon: [] as string[], Text: [] as string[], Color: [] as string[], Shape: [] as string[], GameDate: [] as string[], UTC: [] as string[] };
+  const WON = new GrowableF64();
+  const YAW = reforger ? new GrowableF64() : null;
+  const S = { Object: [] as string[], Side: [] as string[], Vehicle: [] as string[], Type: [] as string[], Riding: [] as string[], Group: [] as string[], Role: [] as string[], Event: [] as string[], Killer: [] as string[], Victim: [] as string[], Weapon: [] as string[], Text: [] as string[], Color: [] as string[], Shape: [] as string[], GameDate: [] as string[], UTC: [] as string[], Faction: [] as string[], Unit: [] as string[] };
+  // What each vehicle is, worked out once.
+  const unitOf = new Map<number, string>();
+  const unitWord = (e: RawEntity): string => {
+    let u = unitOf.get(e.id!);
+    if (u === undefined) {
+      u = e.type !== 'vehicle' ? '' : reforger ? reforgerUnitId(str(e.prefab)) || reforgerUnitId(str(e.name)) : arma3RealVehicle(str(e.name), str(e.class));
+      unitOf.set(e.id!, u);
+    }
+    return u;
+  };
   // The clock entries in frame order: each row gets the last one by its frame.
   const clock = times.filter((c) => c && typeof c.frameNum === 'number').sort((a, b) => a.frameNum! - b.frameNum!);
   const clockAt = (f: number) => {
@@ -404,9 +603,14 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
     SHOTS.push(ev ? NaN : (shots.get(e.id!)?.get(f) ?? 0));
     DIST.push(ev?.distance ?? NaN);
     S.Object.push(label(e));
-    S.Side.push(sideOf(t, f, s));
+    const side = sideOf(t, f, s);
+    S.Side.push(side);
+    S.Faction.push(t.unit || e.type === 'vehicle' ? str(e.faction) || (reforger ? reforgerFactionOfSide(side) : '') : '');
+    S.Unit.push(unitWord(e));
+    WON.push(winner && FIGHTING.has(side) && e.type !== 'mission' && e.type !== 'marker' ? (side === winner ? 1 : 0) : NaN);
+    YAW?.push(180 - s.dir);
     S.Vehicle.push(t.unit ? '' : str(e.name));
-    S.Type.push(e.type === 'marker' ? 'Marker' : e.type === 'mission' ? 'Mission' : (TYPE_OF_CLASS[t.unit ? 'unit' : str(e.class)] ?? (str(e.class) || 'Vehicle')));
+    S.Type.push(typeWord(e, t.unit));
     S.Riding.push(v ? str(v.name) : '');
     S.Group.push(t.unit ? s.group : '');
     S.Role.push(t.unit ? s.role : '');
@@ -477,7 +681,7 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
     const size = Array.isArray(m[8]) ? (m[8] as unknown[]).map((v) => str(v)).join('x') : '';
     const shape = [str(m[9]), str(m[10]), size].filter(Boolean).join(' ');
     const e: RawEntity = { id: -1000 - k, type: 'marker', name: text ? `marker ${text}` : `marker ${type}`, side };
-    const track: Track = { e, unit: false, entries: [], from: new Int32Array(0), to: new Int32Array(0) };
+    const track: Track = { e, unit: false, upY: false, entries: [], from: new Int32Array(0), to: new Int32Array(0) };
     let at: State | null = null;
     (m[7] as unknown[]).forEach((pos, j) => {
       if (!Array.isArray(pos) || typeof pos[0] !== 'number' || !Array.isArray(pos[1])) return;
@@ -492,7 +696,7 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
   });
 
   // What happened nowhere in particular is the mission's, at the middle of everything recorded.
-  const missionTrack: Track = { e: { id: -1, type: 'mission', name: 'Mission', side: '' }, unit: false, entries: [], from: new Int32Array(0), to: new Int32Array(0) };
+  const missionTrack: Track = { e: { id: -1, type: 'mission', name: 'Mission', side: '' }, unit: false, upY: false, entries: [], from: new Int32Array(0), to: new Int32Array(0) };
   const pending: [number, EventCols][] = [];
   const nowhere = (f: number, ev: EventCols) => pending.push([f, ev]);
 
@@ -553,7 +757,9 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
       // The mission's end, messages, tickets, counters, snapshots: what they say, as they say it.
       const data = ev.slice(2);
       const said = data.length === 1 && typeof data[0] === 'string' ? data[0] : JSON.stringify(data.length === 1 ? data[0] : data);
-      const side = kind === 'endMission' && Array.isArray(data[0]) ? str((data[0] as unknown[])[0]) : '';
+      const named = kind === 'endMission' && Array.isArray(data[0]) ? str((data[0] as unknown[])[0]) : '';
+      // A faction key (3DHeat's Reforger recorder) as its side.
+      const side = sideOfFaction(named) || named;
       const text = kind === 'endMission' && Array.isArray(data[0]) ? str((data[0] as unknown[])[1]) : said;
       nowhere(f, { event: `${kind}: ${text}`, text: said, side });
     }
@@ -570,24 +776,33 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
   // The recording's own fields, but for what the table already holds row by row.
   const own: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(doc as Record<string, unknown>)) if (!['entities', 'events', 'Markers', 'times'].includes(k)) own[k] = v;
-  const columns = ['Time', 'Frame', 'X', 'Y', 'Z', 'Object', 'Side', 'Heading', 'Vehicle', 'Type', 'Alive', 'InVehicle', 'Riding', 'Crew', 'Group', 'Role', 'Player', 'Shots', 'Event', 'Killer', 'Victim', 'Weapon', 'Distance', 'Mission', 'World', 'Recording', 'TargetX', 'TargetY', 'TargetZ', 'Text', 'Color', 'Shape', 'GameDate', 'UTC', 'TimeMultiplier', 'Info'];
+  const columns = ['Time', 'Frame', 'X', 'Y', 'Z', 'Object', 'Side', 'Heading', 'Vehicle', 'Type', 'Alive', 'InVehicle', 'Riding', 'Crew', 'Group', 'Role', 'Player', 'Shots', 'Event', 'Killer', 'Victim', 'Weapon', 'Distance', 'Mission', 'World', 'Recording', 'TargetX', 'TargetY', 'TargetZ', 'Text', 'Color', 'Shape', 'GameDate', 'UTC', 'TimeMultiplier', 'Info', 'Game', 'Map', 'Faction', 'Unit', 'Won', 'Winner', 'EndReason', 'Date', 'Duration', ...(YAW ? ['Yaw'] : [])];
   const data: (Float64Array | string[])[] = [
     TIME.finish(), FRAME.finish(), X.finish(), Y.finish(), Z.finish(), S.Object, S.Side, HEAD.finish(), S.Vehicle, S.Type,
     ALIVE.finish(), INVEH.finish(), S.Riding, CREW.finish(), S.Group, S.Role, PLAYER.finish(), SHOTS.finish(),
     S.Event, S.Killer, S.Victim, S.Weapon, DIST.finish(), fill(mission), fill(world), fill(recording),
     TX.finish(), TY.finish(), TZ.finish(), S.Text, S.Color, S.Shape, S.GameDate, S.UTC, MULT.finish(), fill(JSON.stringify(own)),
+    fill(game), fill(map), S.Faction, S.Unit, WON.finish(), fill(winner), fill(endText), fill(date), new Float64Array(n).fill(duration),
+    ...(YAW ? [YAW.finish()] : []),
   ];
-  return { columns, data, numeric: data.map((d) => d instanceof Float64Array), rows: n, title: mission, world, captureDelay: delay };
+  return { columns, data, numeric: data.map((d) => d instanceof Float64Array), rows: n, title: mission, world, captureDelay: delay, reforger, game, map };
 }
 
-/** How the viewer reads the table: Arma's map, north up, headings as compass bearings. */
-export function ocapHints(): {
+/**
+ * How the viewer reads the table: Arma's map, height up, headings as compass
+ * bearings. An Arma 3 recording's north is the world's -Z, so a heading of 0
+ * looks north, as for ACMI. A Reforger recording keeps the engine's frame
+ * (north +Z), the frame of the Reforger levels, and faces by Yaw (the bearing
+ * turned into that frame); like those levels it shows mirrored unless the
+ * view's world axis is inverted.
+ */
+export function ocapHints(t?: Pick<OcapTable, 'reforger'>): {
   axes: { up: 'z'; flipY: boolean };
   columns: Record<string, unknown>;
 } {
+  const reforger = !!t?.reforger;
   return {
-    // Y north becomes the world's -Z, so a heading of 0 looks north, as for ACMI.
-    axes: { up: 'z', flipY: true },
+    axes: { up: 'z', flipY: !reforger },
     columns: {
       x: 'X',
       y: 'Y',
@@ -598,9 +813,11 @@ export function ocapHints(): {
       teamId: 'Side',
       sessionId: 'Recording',
       lookMode: 'yawPitch',
-      yaw: 'Heading',
+      yaw: reforger ? 'Yaw' : 'Heading',
       angleUnit: 'degrees',
-      extra: ['Vehicle', 'Type', 'Event', 'Alive', 'InVehicle', 'Riding', 'Group', 'Role', 'Player', 'Shots', 'Killer', 'Victim', 'Weapon', 'Distance', 'Crew', 'Mission', 'World', 'Frame', 'TargetX', 'TargetY', 'TargetZ', 'Text', 'Color', 'Shape', 'GameDate', 'UTC', 'TimeMultiplier'],
+      // Unit before Vehicle: the figures take the first name they know. Date, Duration and EndReason, the same on
+      // every row of a recording, stay in the table for the mapping step and the mass analysis.
+      extra: ['Unit', 'Vehicle', 'Type', 'Game', 'Map', 'Faction', 'Won', 'Winner', 'Event', 'Alive', 'InVehicle', 'Riding', 'Group', 'Role', 'Player', 'Shots', 'Killer', 'Victim', 'Weapon', 'Distance', 'Crew', 'Mission', 'World', 'Frame', 'TargetX', 'TargetY', 'TargetZ', 'Text', 'Color', 'Shape', 'GameDate', 'UTC', 'TimeMultiplier'],
     },
   };
 }

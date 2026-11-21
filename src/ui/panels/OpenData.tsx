@@ -25,7 +25,7 @@ import { taskOf, useShell } from '../shell/shellStore';
 import { CATALOG_ROUTE } from './CatalogSection';
 
 /** The kinds of file the drop zone and the pickers take, as the drop zone lists them. */
-export const DATA_EXTENSIONS = '.parquet · .csv · .tsv · .3dheat · .acmi · .json · .gpx · .kml · .kmz · .nmea · .igc · .fit';
+export const DATA_EXTENSIONS = '.parquet · .csv · .tsv · .3dheat · .acmi · .json · .jsonl · .gpx · .kml · .kmz · .nmea · .igc · .fit';
 
 /** The size of the start screen's sample: enough to look like something, quick on any machine. */
 const SAMPLE_ROWS = 1_000_000;

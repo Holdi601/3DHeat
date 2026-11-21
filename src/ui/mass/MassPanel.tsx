@@ -61,7 +61,7 @@ export function MassPanel() {
         {st.facets && <button onClick={() => st.set({ open: !st.open })}>{st.open ? t('mass.close') : t('mass.openWindow')}</button>}
       </div>
       <input ref={folder} type="file" hidden {...({ webkitdirectory: '' } as object)} onChange={(e) => void pick(e.target.files).finally(() => (e.target.value = ''))} />
-      <input ref={filesIn} type="file" hidden multiple accept=".3dheat,.parquet,.gz" onChange={(e) => void pick(e.target.files).finally(() => (e.target.value = ''))} />
+      <input ref={filesIn} type="file" hidden multiple accept=".3dheat,.parquet,.gz,.json,.jsonl" onChange={(e) => void pick(e.target.files).finally(() => (e.target.value = ''))} />
       {st.progress && (
         <div className="hint" style={{ marginTop: 6 }}>
           {t(`mass.phase.${st.progress.phase}`, { done: st.progress.done, total: st.progress.total })}

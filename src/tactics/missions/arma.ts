@@ -53,14 +53,14 @@ export function armaWaypointTasks(w: SqmClass, at: { x: number; y: number; z: nu
   return out;
 }
 
-const SIDES: { re: RegExp; id: string; name: string; color: [number, number, number] }[] = [
+export const SIDES: { re: RegExp; id: string; name: string; color: [number, number, number] }[] = [
   { re: /^(west|blufor)$/i, id: 'blufor', name: 'BLUFOR', color: [0.26, 0.55, 0.95] },
   { re: /^(east|opfor)$/i, id: 'opfor', name: 'OPFOR', color: [0.93, 0.33, 0.27] },
   { re: /^(guer|independent|resistance|indep)$/i, id: 'indep', name: 'Independent', color: [0.35, 0.8, 0.4] },
   { re: /^(civ|civilian)$/i, id: 'civ', name: 'Civilian', color: [0.75, 0.55, 0.9] },
 ];
 
-const sideOf = (s: string) => SIDES.find((x) => x.re.test(s.trim()))?.id ?? 'blufor';
+export const sideOf = (s: string) => SIDES.find((x) => x.re.test(s.trim()))?.id ?? 'blufor';
 
 /** What an Arma class name says the unit is: its kind of vehicle from the words its name is made of. */
 export function armaCategory(type: string): { category: UnitCategory; hint: string | null } {

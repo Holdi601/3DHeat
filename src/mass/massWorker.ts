@@ -10,6 +10,7 @@
  */
 
 import { isContainer, openContainer } from '../data/container';
+import { isOcapName } from '../data/ocap';
 import { massInsights, insightMatches, type MassInsight, type MassReport } from './detect';
 import { GridMerge, mergeCell, type Channel } from './grids';
 import { discoverNiches, livesTable, nicheChildren, PlaceTables, roundsTable, type NicheCond, type NicheTable, type NicheTarget } from './niche';
@@ -183,6 +184,8 @@ const INDEX = /(^|\/)3dheat-index\.jsonl\.gz$/i;
 const GRIDS = /(^|\/)3dheat-index\.grids\.jsonl\.gz$/i;
 /** A loose table, not a sidecar (`<match>.<role>.parquet`). */
 const TABLE = /^(?!.*\.(messages|flight|packets|events|entities|props|units|combatlog|strings|raw|effects|objectives|chat)\.parquet$).*\.parquet$/i;
+/** An OCAP recording (`ocap.ts`), not the small JSON files beside a table or a level. */
+const RECORDING = (name: string) => isOcapName(name) && !/\.(match|course|level|meta|summary|session|hints|layouts|model-pack)\.json$/i.test(name) && !/^(catalog|ranges|figures[^/]*)\.json$/i.test(name);
 
 const valid = (s: { format?: string; version?: number } | null | undefined) => !!s && s.format === SUMMARY_FORMAT && s.version === SUMMARY_VERSION;
 
@@ -241,7 +244,7 @@ async function open(list: { file: File; path: string }[], add: boolean): Promise
   const dir = (p: string) => (p.includes('/') ? p.slice(0, p.lastIndexOf('/') + 1) : '');
   const known = new Set(store.paths);
   const matchFiles = new Map<string, File>();
-  for (const { file, path } of list) if ((isContainer(file.name) || TABLE.test(file.name)) && !known.has(path)) matchFiles.set(path, file);
+  for (const { file, path } of list) if ((isContainer(file.name) || TABLE.test(file.name) || RECORDING(file.name)) && !known.has(path)) matchFiles.set(path, file);
   stats.files = matchFiles.size;
   const gzOf = new Map<string, File>();
   for (const { file, path } of list) if (GRIDS.test(path)) gzOf.set(dir(path), file);
@@ -279,7 +282,10 @@ async function open(list: { file: File; path: string }[], add: boolean): Promise
   }
   // 2. The rest: the cache, the container's member, or worked out.
   const rest = [...matchFiles];
-  const threads = Math.max(1, Math.min(6, (navigator.hardwareConcurrency || 4) - 2));
+  // An OCAP recording is summarised from its whole table in memory (a long mission's is over a gigabyte): two at a
+  // time, as the page's threads share one process's memory.
+  const ocap = rest.some(([, f]) => RECORDING(f.name));
+  const threads = Math.max(1, Math.min(ocap ? 2 : 6, (navigator.hardwareConcurrency || 4) - 2));
   let pool: Pool | null = null;
   let next = 0;
   let computeMs = 0;

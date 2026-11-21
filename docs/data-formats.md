@@ -19,7 +19,7 @@ This is the one complete list of loadable files. The **Source** panel and the st
 | `.csv`, `.tsv`, `.txt` | Delimited text | the text reader (below) |
 | `.3dheat` | One match in one file (a ZIP holding the table and its extras) | loads as the table it holds - [One file a match](container.md) |
 | `.acmi` (also `.txt.acmi`, `.zip.acmi`) | Tacview flight recording | its own reader - [Tacview recordings](tacview-acmi.md) |
-| `.json`, `.json.gz` | OCAP recording (Arma-style) | its own reader |
+| `.json`, `.json.gz`, `.jsonl` | OCAP recording (Arma 3, Arma Reforger) | its own reader - [Arma recordings (OCAP)](ocap.md) |
 | `.gpx`, `.kml`, `.kmz`, `.nmea`, `.nma`, `.igc`, `.fit` | GPS tracks: GPX, KML/KMZ, NMEA logs, IGC gliding logs, FIT sports files | its own reader; positions come from latitude and longitude |
 
 Not loaded as positions: the small JSON files that sit beside a table to describe it (names ending in `.match.json`, `.course.json`, `.level.json`, `.meta.json`, `.summary.json`, `.session.json`, `.hints.json`), and a converter's extra tables (`<match>.events.parquet` and the like, see [Converters](converters.md)) unless you pick them on their own. Anything else is skipped with a reason. How a selection is filtered is explained in [Loading files](loading-files.md#which-files-are-kept).

@@ -1,6 +1,6 @@
 /**
  * Mission files as the board's starting state: a game's mission (DCS .miz,
- * Arma 3 mission.sqm, and more to follow) read into one neutral shape - the
+ * Arma 3 mission.sqm, an Arma OCAP recording's first moments, and more to follow) read into one neutral shape - the
  * sides, the groups with their units and routes, and the places that matter
  * (airbases, zones, markers) - and that shape made into a plan: a layer per
  * side, so one side's planners can hide the other's, every unit a figure
@@ -20,6 +20,7 @@ import { CATALOG } from '../../figures/catalog';
 import { figureLabel } from '../names';
 import { dcsMiz } from './dcs';
 import { armaSqm } from './arma';
+import { ocapRecording } from './ocap';
 
 export type UnitCategory = 'air' | 'heli' | 'ground' | 'sea' | 'infantry' | 'static';
 
@@ -116,10 +117,10 @@ export interface MissionImporter {
   read: (bytes: Uint8Array, name: string) => Promise<MissionState>;
 }
 
-export const IMPORTERS: MissionImporter[] = [dcsMiz, armaSqm];
+export const IMPORTERS: MissionImporter[] = [dcsMiz, armaSqm, ocapRecording];
 
 /** The file chooser's accept list. */
-export const MISSION_ACCEPT = '.miz,.sqm';
+export const MISSION_ACCEPT = '.miz,.sqm,.json,.gz,.jsonl';
 
 /** Reads a mission file with the reader that takes its name; refuses one no reader takes. */
 export async function readMission(name: string, bytes: Uint8Array): Promise<MissionState> {

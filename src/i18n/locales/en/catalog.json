@@ -2,5 +2,7 @@
   "catalog.title": "Levels folder",
   "catalog.pick": "Pick folder…",
   "catalog.pickTitle": "Index a folder of extracted levels, layouts and packs (without the local server)",
-  "catalog.hashing": "{count} files still being fingerprinted"
+  "catalog.hashing": "{count} files still being fingerprinted",
+  "catalog.armaNoLevel": "No level of {world} (Arma Reforger) in the levels folder: the recording shows without one, at its own heights. Extract the world with the Reforger tool to see it on its ground.",
+  "catalog.armaNoLevel3": "No level of {world} (Arma 3) yet: Arma 3 worlds have no level extractor so far. The recording shows on flat ground, at its own heights."
 }

@@ -4,6 +4,8 @@ import { int, t } from '../../i18n';
 import { useStore } from '../../state/store';
 import { useFrostbiteMaps } from '../../data/frostbiteLevel';
 import { byGame, classify, fingerprint, levelFor, linkLayouts, type CatalogIndex, type CatalogItem } from '../../data/catalogIndex';
+import { armaLevelFor, armaWorldsOfLabels, type ArmaWorld } from '../../data/armaWorlds';
+import type { Dataset } from '../../state/types';
 import { loadLayoutFiles } from '../../state/levelLayoutsStore';
 
 /** Where the local server answers the catalogue folder's index (vite.config.ts). */
@@ -66,6 +68,41 @@ async function fileOf(item: CatalogItem | string): Promise<File | null> {
   return new File([await r.blob()], path.split('/').pop() ?? path);
 }
 
+/** The worlds of a dataset's Arma recordings (OCAP), by its World and Game columns. */
+function armaWantedOf(dataset: Dataset | null): ArmaWorld[] {
+  const labels = (name: string) => dataset?.attrs.find((a) => a.name === name && a.kind === 'category')?.categories ?? [];
+  return armaWorldsOfLabels(labels('World'), labels('Game'));
+}
+
+/**
+ * Loaded Arma recordings get their world's level from the levels folder by
+ * themselves, once per set of worlds and only while no level is loaded. The
+ * level panel runs it, open or not; the folder's index is the one the catalogue
+ * section showed, else the local server's.
+ */
+export function useArmaLevelAuto(loadModel: (file: File) => Promise<void>): void {
+  const dataset = useStore((s) => s.dataset);
+  const level = useStore((s) => s.level);
+  const wanted = useMemo(() => armaWantedOf(dataset), [dataset]);
+  const done = useRef('');
+  useEffect(() => {
+    if (level || !wanted.length) return;
+    const key = wanted.map((w) => `${w.game}:${w.id}`).join(',');
+    if (done.current === key) return;
+    done.current = key;
+    void (async () => {
+      const ix =
+        shown ??
+        (await fetch(CATALOG_ROUTE)
+          .then((r) => (r.status === 200 ? (r.json() as Promise<CatalogIndex>) : null))
+          .catch(() => null));
+      const hit = ix && Array.isArray(ix.items) ? wanted.map((w) => armaLevelFor(ix.items, w)).find(Boolean) : null;
+      if (!hit || useStore.getState().level) return;
+      await loadCatalogItem(hit, loadModel);
+    })();
+  }, [level, wanted, loadModel]);
+}
+
 /**
  * The catalogue folder (the levels folder the extractors write into): what is
  * in it, by game, from the local server's index or a folder picked by hand.
@@ -78,6 +115,8 @@ export function CatalogSection({ loadModel }: { loadModel: (file: File) => Promi
   const input = useRef<HTMLInputElement>(null);
   const level = useStore((s) => s.level);
   const wanted = useFrostbiteMaps((s) => s.wanted);
+  const dataset = useStore((s) => s.dataset);
+  const armaWanted = useMemo(() => armaWantedOf(dataset), [dataset]);
 
   // The server's index, again while files are still being fingerprinted.
   useEffect(() => {
@@ -128,6 +167,8 @@ export function CatalogSection({ loadModel }: { loadModel: (file: File) => Promi
     void load(hit);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index, level, wanted]);
+  // Arma worlds with no level in the folder: said, so a missing level is not taken for a broken load.
+  const armaMissing = armaWanted.filter((w) => !index || !armaLevelFor(index.items, w));
 
   const groups = useMemo(() => (index ? byGame(index.items.filter((i) => i.kind === 'level' || i.kind === 'course')) : []), [index]);
   return (
@@ -148,6 +189,12 @@ export function CatalogSection({ loadModel }: { loadModel: (file: File) => Promi
         />
       </div>
       {index && index.pending > 0 && <div className="hint">{t('catalog.hashing', { count: int(index.pending) })}</div>}
+      {!level &&
+        armaMissing.map((w) => (
+          <div key={`${w.game}:${w.id}`} className="hint" data-arma-missing={w.id}>
+            {t(w.game === 'arma3' ? 'catalog.armaNoLevel3' : 'catalog.armaNoLevel', { world: w.name })}
+          </div>
+        ))}
       {groups.map((g) => (
         <details key={g.game}>
           <summary>

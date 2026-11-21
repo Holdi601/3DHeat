@@ -238,7 +238,7 @@ export async function ingestFiles(opts: IngestFilesOptions): Promise<IngestFiles
       count: total,
       threads,
       headroom,
-      cost: (i) => fileParseBytes(mapping, sizes.rows[i]),
+      cost: (i) => parseCost(files[i], mapping, sizes.rows[i]),
       parse: parseOne,
       take,
     });
@@ -425,6 +425,21 @@ export function parseInOrder<T>(opts: InOrderOptions<T>): Promise<void> {
  * files are counted. An unreadable footer gets the same share: the file will
  * most likely fail fast, and if not, the guess errs toward reserving.
  */
+/**
+ * An OCAP recording is read whole before its rows are (`ocap.ts`): the JSON
+ * document and every column of its table are held at once, far more than the
+ * mapped columns a row keeps. Measured on Arma 3 recordings: about 0.2 to 0.45
+ * rows a byte gzipped, 0.02 plain; the larger is reserved.
+ */
+const OCAP_BYTES_PER_ROW = 900;
+const OCAP_ROWS_PER_BYTE = { gz: 0.45, plain: 0.03 };
+
+/** Bytes parsing a file of `rows` rows holds at its peak. */
+function parseCost(file: File, mapping: ColumnMapping, rows: number): number {
+  const base = fileParseBytes(mapping, rows);
+  return detectFormat(file.name) === 'ocap' ? Math.max(base, rows * OCAP_BYTES_PER_ROW) : base;
+}
+
 async function rowsPerFile(files: File[], expectedRows: number): Promise<{ rows: number[]; exact: boolean }> {
   const rows: number[] = files.map(() => -1);
   let counted = 0;
@@ -451,8 +466,10 @@ async function rowsPerFile(files: File[], expectedRows: number): Promise<{ rows:
     rows[i] =
       expectedRows > counted
         ? Math.ceil(((expectedRows - counted) * files[i].size) / Math.max(1, rest))
-        : // No estimate to share: assume short lines, which reserves more, not less.
-          Math.ceil(files[i].size / CSV_MIN_LINE_BYTES);
+        : detectFormat(files[i].name) === 'ocap'
+          ? Math.ceil(files[i].size * (/\.gz$/i.test(files[i].name) ? OCAP_ROWS_PER_BYTE.gz : OCAP_ROWS_PER_BYTE.plain))
+          : // No estimate to share: assume short lines, which reserves more, not less.
+            Math.ceil(files[i].size / CSV_MIN_LINE_BYTES);
   }
   return { rows, exact };
 }

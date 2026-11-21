@@ -85,7 +85,11 @@ const FLIGHT = /^(grenade|projectile|nade|thrown|flight)$/i;
 /** A source's event name in the taxonomy. Tacview's `Destroyed` is the object's death. */
 export function eventKindOf(raw: string): EventKind {
   if (raw === 'Destroyed') return 'death';
-  return EVENT_MAP[raw.trim().toLowerCase()] ?? 'other';
+  const k = EVENT_MAP[raw.trim().toLowerCase()];
+  if (k) return k;
+  // An event word with its details after it (OCAP's `killed ← Smith (MX, 200 m)`, `fired (120 m)`, `captured: Alpha`).
+  const head = /^\s*([a-z_]+)\s*[←→:(]/i.exec(raw);
+  return (head && EVENT_MAP[head[1].toLowerCase()]) || 'other';
 }
 
 /** Labels the converter writes for the events it worked out (`acmiEvents.ts`): a file with them needs no second look. */

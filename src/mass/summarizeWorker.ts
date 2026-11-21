@@ -6,7 +6,8 @@
  */
 
 import { openContainer, isContainer } from '../data/container';
-import { objectivesOf, summarizeTable } from './summarize';
+import { objectivesOf, summarizeColumns, summarizeTable } from './summarize';
+import { isOcapName, ocapHints, ocapText, parseOcap } from '../data/ocap';
 import type { ObjectiveEvent } from '../outcome/collect';
 import type { MatchSummary } from './types';
 
@@ -41,6 +42,16 @@ ctx.onmessage = async (ev: MessageEvent<SummarizeRequest>) => {
       } catch {
         objectives = null;
       }
+    }
+    if (isOcapName(file.name)) {
+      // A recording its own reader reads (`ocap.ts`): the table in memory, read by the reader's hints.
+      const name = stem.replace(/\.jsonl?(\.gz)?$/i, '');
+      const t = parseOcap(await ocapText(file), name);
+      const started = (t.data[t.columns.indexOf('Date')] as string[] | undefined)?.[0] || null;
+      const info = { id: name, manifest: { game: t.game, map: t.map, mode: null, started, match: name }, doc: { mission: t.title }, by: 'viewer' };
+      const summary = summarizeColumns(t, info, JSON.stringify(ocapHints(t)));
+      ctx.postMessage({ id, ok: true, summary, ms: performance.now() - t0 } satisfies SummarizeResponse);
+      return;
     }
     if (!table) throw new Error('no table');
     const summary = await summarizeTable(asyncBuffer(table), { id: manifest?.match ?? stem, manifest, doc, objectives, by: 'viewer' });

@@ -19,7 +19,7 @@ export function ocapTableOf(file: File): Promise<OcapTable> {
   let t = tables.get(file);
   if (!t) {
     t = ocapText(file)
-      .then((text) => parseOcap(text, file.name.replace(/\.json(\.gz)?$/i, '')))
+      .then((text) => parseOcap(text, file.name.replace(/\.jsonl?(\.gz)?$/i, '')))
       .catch((e: unknown) => {
         if (e instanceof NotOcapError) throw new MsgError(msg('data.ocap.notOcap', { file: file.name }));
         throw e;
@@ -31,11 +31,17 @@ export function ocapTableOf(file: File): Promise<OcapTable> {
 
 /** What the mapping step shows of a recording: its columns, the first rows, and how to read it. */
 export async function previewOcap(file: File): Promise<TablePreview> {
-  return previewTable(await ocapTableOf(file), ocapHints() as MappingHints);
+  const t = await ocapTableOf(file);
+  // Not kept for the load: a long mission's table is a gigabyte, the load runs in a parser thread of its own, and a
+  // picked file stays referenced for the whole session.
+  tables.delete(file);
+  return previewTable(t, ocapHints(t) as MappingHints);
 }
 
 /** A recording as a block, by the mapping the user confirmed (the recording's own, unless changed). */
 export async function ingestOcap(file: File, mapping: ColumnMapping, onProgress: (p: IngestProgress) => void, stride = 1): Promise<SourceBlock> {
   onProgress(progress(msg('data.ingestParquet.reading', { file: file.name }), 0, 0));
-  return tableToBlock(await ocapTableOf(file), file, mapping, onProgress, stride);
+  const t = await ocapTableOf(file);
+  tables.delete(file);
+  return tableToBlock(t, file, mapping, onProgress, stride);
 }
