@@ -56,6 +56,10 @@ fn main() {
         let d = std::env::current_exe().ok()?.parent()?.join("web");
         d.join("index.html").is_file().then_some(d)
     };
+    if args.first().map(String::as_str) == Some("gateway") {
+        // The session server's gateway, started locked down by `serve` or `--host`.
+        tokio_runtime().block_on(heat3d_server::cli::gateway());
+    }
     if args.first().map(String::as_str) == Some("serve") {
         let rt = tokio_runtime();
         rt.block_on(heat3d_server::cli::serve(args[1..].to_vec(), Arc::new(Core::new()), web_beside_exe()));

@@ -21,7 +21,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file heat3d/session/v1/session.proto.
  */
 export const file_heat3d_session_v1_session: GenFile = /*@__PURE__*/
-  fileDesc("Ch9oZWF0M2Qvc2Vzc2lvbi92MS9zZXNzaW9uLnByb3RvEhFoZWF0M2Quc2Vzc2lvbi52MSLxAwoJQ2xpZW50TXNnEgsKA3JpZBgBIAEoDRIpCgVoZWxsbxgKIAEoCzIYLmhlYXQzZC5zZXNzaW9uLnYxLkhlbGxvSAASLwoIcHJlc2VuY2UYCyABKAsyGy5oZWF0M2Quc2Vzc2lvbi52MS5QcmVzZW5jZUgAEikKBWJhdGNoGAwgASgLMhguaGVhdDNkLnNlc3Npb24udjEuQmF0Y2hIABIrCgRsb29rGA0gASgLMhsuaGVhdDNkLnNlc3Npb24udjEuTG9va0hlcmVIABIuCgZmb2xsb3cYDiABKAsyHC5oZWF0M2Quc2Vzc2lvbi52MS5Gb2xsb3dTZXRIABIvCgVhZG1pbhgPIAEoCzIeLmhlYXQzZC5zZXNzaW9uLnYxLkFkbWluQWN0aW9uSAASJwoEcGluZxgQIAEoCzIXLmhlYXQzZC5zZXNzaW9uLnYxLlBpbmdIABIuCgZpbnZpdGUYESABKAsyHC5oZWF0M2Quc2Vzc2lvbi52MS5JbnZpdGVOZXdIABIyCghzZXR0aW5ncxgSIAEoCzIeLmhlYXQzZC5zZXNzaW9uLnYxLlNldHRpbmdzU2V0SAASLQoHZGF0YXNldBgTIAEoCzIaLmhlYXQzZC5zZXNzaW9uLnYxLkRhdGFzZXRIAEIGCgRib2R5IpEBCgVIZWxsbxINCgVwcm90bxgBIAEoDRIMCgRuYW1lGAIgASgJEhAKCHBhc3N3b3JkGAMgASgJEg4KBmludml0ZRgEIAEoCRIOCgZyZXN1bWUYBSABKAkSEgoKaG9zdF90b2tlbhgGIAEoCRISCgpjbGllbnRfa2V5GAcgASgJEhEKCXNpbmNlX3NlcRgIIAEoBCInCgRWZWMzEgkKAXgYASABKAISCQoBeRgCIAEoAhIJCgF6GAMgASgCIp0BCgRQb3NlEikKCHBvc2l0aW9uGAEgASgLMhcuaGVhdDNkLnNlc3Npb24udjEuVmVjMxIoCgdmb3J3YXJkGAIgASgLMhcuaGVhdDNkLnNlc3Npb24udjEuVmVjMxILCgNmb3YYAyABKAISDgoGYXNwZWN0GAQgASgCEg0KBW9ydGhvGAUgASgIEhQKDG9ydGhvX2hlaWdodBgGIAEoAiKJAQoIUHJlc2VuY2USJQoEcG9zZRgBIAEoCzIXLmhlYXQzZC5zZXNzaW9uLnYxLlBvc2USJwoGY3Vyc29yGAIgASgLMhcuaGVhdDNkLnNlc3Npb24udjEuVmVjMxISCgpoYXNfY3Vyc29yGAMgASgIEgsKA3RhYhgEIAEoCRIMCgRtb2RlGAUgASgJIoIBCgJPcBInCgRraW5kGAEgASgOMhkuaGVhdDNkLnNlc3Npb24udjEuT3BLaW5kEgwKBGNvbGwYAiABKAkSCgoCaWQYAyABKAkSDAoEanNvbhgEIAEoCRINCgV1bnNldBgFIAMoCRISCgVpbmRleBgGIAEoDUgAiAEBQggKBl9pbmRleCJQCgVCYXRjaBILCgNkb2MYASABKAkSCgoCaWQYAiABKAkSIgoDb3BzGAMgAygLMhUuaGVhdDNkLnNlc3Npb24udjEuT3ASCgoCYXQYBCABKAEilgEKCExvb2tIZXJlEgoKAnRvGAEgAygNEiUKBHBvc2UYAiABKAsyFy5oZWF0M2Quc2Vzc2lvbi52MS5Qb3NlEiYKBXBvaW50GAMgASgLMhcuaGVhdDNkLnNlc3Npb24udjEuVmVjMxIRCgloYXNfcG9pbnQYBCABKAgSDAoEbm90ZRgFIAEoCRIOCgZmb2xsb3cYBiABKAgiSAoJRm9sbG93U2V0EisKBG1vZGUYASABKA4yHS5oZWF0M2Quc2Vzc2lvbi52MS5Gb2xsb3dNb2RlEg4KBmxlYWRlchgCIAEoDSKVAQoLQWRtaW5BY3Rpb24SKgoEa2luZBgBIAEoDjIcLmhlYXQzZC5zZXNzaW9uLnYxLkFkbWluS2luZBIOCgZ0YXJnZXQYAiABKA0SEwoLZHVyYXRpb25fbXMYAyABKAMSJQoEcm9sZRgEIAEoDjIXLmhlYXQzZC5zZXNzaW9uLnYxLlJvbGUSDgoGcmVmX2lkGAUgASgEIhEKBFBpbmcSCQoBdBgBIAEoASJfCglJbnZpdGVOZXcSJQoEcm9sZRgBIAEoDjIXLmhlYXQzZC5zZXNzaW9uLnYxLlJvbGUSDAoEdXNlcxgCIAEoDRIOCgZ0dGxfbXMYAyABKAMSDQoFbGFiZWwYBCABKAkieQoLU2V0dGluZ3NTZXQSGQoMd2FpdGluZ19yb29tGAEgASgISACIAQESEAoIcGFzc3dvcmQYAiABKAkSFgoOY2xlYXJfcGFzc3dvcmQYAyABKAgSFAoMc2Vzc2lvbl9uYW1lGAQgASgJQg8KDV93YWl0aW5nX3Jvb20ibgoHRGF0YXNldBIMCgRuYW1lGAEgASgJEgwKBGhhc2gYAiABKAkSDAoEc2l6ZRgDIAEoBBISCgpsZXZlbF9uYW1lGAQgASgJEhIKCmxldmVsX2hhc2gYBSABKAkSEQoJcHVibGlzaGVkGAYgASgIIt8GCglTZXJ2ZXJNc2cSLQoHd2VsY29tZRgBIAEoCzIaLmhlYXQzZC5zZXNzaW9uLnYxLldlbGNvbWVIABItCgd3YWl0aW5nGAIgASgLMhouaGVhdDNkLnNlc3Npb24udjEuV2FpdGluZ0gAEisKBmRlbmllZBgDIAEoCzIZLmhlYXQzZC5zZXNzaW9uLnYxLkRlbmllZEgAEisKBnJvc3RlchgEIAEoCzIZLmhlYXQzZC5zZXNzaW9uLnYxLlJvc3RlckgAEjQKCHByZXNlbmNlGAUgASgLMiAuaGVhdDNkLnNlc3Npb24udjEuUHJlc2VuY2VGcmFtZUgAEioKAm9wGAYgASgLMhwuaGVhdDNkLnNlc3Npb24udjEuU2VxdWVuY2VkSAASLwoIc25hcHNob3QYByABKAsyGy5oZWF0M2Quc2Vzc2lvbi52MS5TbmFwc2hvdEgAEiwKBGxvb2sYCCABKAsyHC5oZWF0M2Quc2Vzc2lvbi52MS5Mb29rRXZlbnRIABIwCgZmb2xsb3cYCSABKAsyHi5oZWF0M2Quc2Vzc2lvbi52MS5Gb2xsb3dTdGF0ZUgAEiUKA2FjaxgKIAEoCzIWLmhlYXQzZC5zZXNzaW9uLnYxLkFja0gAEisKBmNsb3NlZBgLIAEoCzIZLmhlYXQzZC5zZXNzaW9uLnYxLkNsb3NlZEgAEicKBHBvbmcYDCABKAsyFy5oZWF0M2Quc2Vzc2lvbi52MS5Qb25nSAASLwoGaW52aXRlGA0gASgLMh0uaGVhdDNkLnNlc3Npb24udjEuSW52aXRlTWFkZUgAEi4KBGluZm8YDiABKAsyHi5oZWF0M2Quc2Vzc2lvbi52MS5TZXNzaW9uSW5mb0gAEjYKDHdhaXRpbmdfbGlzdBgPIAEoCzIeLmhlYXQzZC5zZXNzaW9uLnYxLldhaXRpbmdMaXN0SAASKgoEYmFucxgQIAEoCzIaLmhlYXQzZC5zZXNzaW9uLnYxLkJhbkxpc3RIABIrCgZub3RpY2UYESABKAsyGS5oZWF0M2Quc2Vzc2lvbi52MS5Ob3RpY2VIABIwCgdpbnZpdGVzGBIgASgLMh0uaGVhdDNkLnNlc3Npb24udjEuSW52aXRlTGlzdEgAQgYKBGJvZHkibAoHV2VsY29tZRILCgN5b3UYASABKA0SJQoEcm9sZRgCIAEoDjIXLmhlYXQzZC5zZXNzaW9uLnYxLlJvbGUSDgoGcmVzdW1lGAMgASgJEgsKA3NlcRgEIAEoBBIQCghjYXRjaF91cBgFIAEoCCIWCgdXYWl0aW5nEgsKA3lvdRgBIAEoDSJACgZEZW5pZWQSJAoEY29kZRgBIAEoDjIWLmhlYXQzZC5zZXNzaW9uLnYxLkVychIQCghyZXRyeV9tcxgCIAEoDSKAAQoGTWVtYmVyEgoKAmlkGAEgASgNEgwKBG5hbWUYAiABKAkSJQoEcm9sZRgDIAEoDjIXLmhlYXQzZC5zZXNzaW9uLnYxLlJvbGUSDQoFbXV0ZWQYBCABKAgSEwoLbXV0ZWRfdW50aWwYBSABKAMSEQoJY29ubmVjdGVkGAYgASgIIjQKBlJvc3RlchIqCgdtZW1iZXJzGAEgAygLMhkuaGVhdDNkLnNlc3Npb24udjEuTWVtYmVyIksKClByZXNlbmNlT2YSDgoGbWVtYmVyGAEgASgNEi0KCHByZXNlbmNlGAIgASgLMhsuaGVhdDNkLnNlc3Npb24udjEuUHJlc2VuY2UiSwoNUHJlc2VuY2VGcmFtZRIsCgVpdGVtcxgBIAMoCzIdLmhlYXQzZC5zZXNzaW9uLnYxLlByZXNlbmNlT2YSDAoEZ29uZRgCIAMoDSJmCglTZXF1ZW5jZWQSCwoDc2VxGAEgASgEEg4KBmF1dGhvchgCIAEoDRITCgthdXRob3JfbmFtZRgDIAEoCRInCgViYXRjaBgEIAEoCzIYLmhlYXQzZC5zZXNzaW9uLnYxLkJhdGNoIiUKCERvY1N0YXRlEgsKA2RvYxgBIAEoCRIMCgRqc29uGAIgASgJIkIKCFNuYXBzaG90EgsKA3NlcRgBIAEoBBIpCgRkb2NzGAIgAygLMhsuaGVhdDNkLnNlc3Npb24udjEuRG9jU3RhdGUiYwoJTG9va0V2ZW50EgoKAmlkGAEgASgEEgwKBGZyb20YAiABKA0SEQoJZnJvbV9uYW1lGAMgASgJEikKBGxvb2sYBCABKAsyGy5oZWF0M2Quc2Vzc2lvbi52MS5Mb29rSGVyZSJKCgtGb2xsb3dTdGF0ZRIrCgRtb2RlGAEgASgOMh0uaGVhdDNkLnNlc3Npb24udjEuRm9sbG93TW9kZRIOCgZsZWFkZXIYAiABKA0iSgoDQWNrEgsKA3JpZBgBIAEoDRIkCgRjb2RlGAIgASgOMhYuaGVhdDNkLnNlc3Npb24udjEuRXJyEhAKCHJldHJ5X21zGAMgASgNIjgKBkNsb3NlZBIuCgZyZWFzb24YASABKA4yHi5oZWF0M2Quc2Vzc2lvbi52MS5DbG9zZVJlYXNvbiIRCgRQb25nEgkKAXQYASABKAEifAoKSW52aXRlTWFkZRIKCgJpZBgBIAEoBBINCgV0b2tlbhgCIAEoCRIlCgRyb2xlGAMgASgOMhcuaGVhdDNkLnNlc3Npb24udjEuUm9sZRIPCgdleHBpcmVzGAQgASgDEgwKBHVzZXMYBSABKA0SDQoFbGFiZWwYBiABKAkiPAoKSW52aXRlTGlzdBIuCgdpbnZpdGVzGAEgAygLMh0uaGVhdDNkLnNlc3Npb24udjEuSW52aXRlTWFkZSKnAQoLU2Vzc2lvbkluZm8SDAoEbmFtZRgBIAEoCRIUCgx3YWl0aW5nX3Jvb20YAiABKAgSFAoMcGFzc3dvcmRfc2V0GAMgASgIEisKB2RhdGFzZXQYBCABKAsyGi5oZWF0M2Quc2Vzc2lvbi52MS5EYXRhc2V0EgsKA3RscxgFIAEoCBIPCgdleHBvc2VkGAYgASgIEhMKC21heF9jbGllbnRzGAcgASgNIjEKBldhaXRlchIKCgJpZBgBIAEoDRIMCgRuYW1lGAIgASgJEg0KBXNpbmNlGAMgASgDIjkKC1dhaXRpbmdMaXN0EioKB3dhaXRpbmcYASADKAsyGS5oZWF0M2Quc2Vzc2lvbi52MS5XYWl0ZXIiLgoDQmFuEgoKAmlkGAEgASgEEgwKBG5hbWUYAiABKAkSDQoFdW50aWwYAyABKAMiLwoHQmFuTGlzdBIkCgRiYW5zGAEgAygLMhYuaGVhdDNkLnNlc3Npb24udjEuQmFuIjUKBk5vdGljZRIrCgRraW5kGAEgASgOMh0uaGVhdDNkLnNlc3Npb24udjEuTm90aWNlS2luZCpVCgRSb2xlEhQKEFJPTEVfVU5TUEVDSUZJRUQQABIKCgZWSUVXRVIQARIICgREUkFXEAISDAoIRUxFVkFURUQQAxIJCgVBRE1JThAEEggKBEhPU1QQBSrXAQoDRXJyEgYKAk9LEAASDwoLQkFEX01FU1NBR0UQARINCglUT09fTEFSR0UQAhINCglGT1JCSURERU4QAxIQCgxSQVRFX0xJTUlURUQQBBIJCgVNVVRFRBAFEg0KCU5PVF9GT1VORBAGEhAKDEJBRF9QQVNTV09SRBAHEg4KCkxPQ0tFRF9PVVQQCBIKCgZCQU5ORUQQCRIICgRGVUxMEAoSCgoGREVOSUVEEAsSDAoIUFJPVE9DT0wQDBILCgdJTlZBTElEEA0SDgoKTk9UX0pPSU5FRBAOKkEKBk9wS2luZBISCg5PUF9VTlNQRUNJRklFRBAAEgcKA0FERBABEgcKA1NFVBACEgcKA0RFTBADEggKBE1FVEEQBCo1CgpGb2xsb3dNb2RlEg4KCkZPTExPV19PRkYQABIKCgZGT0xMT1cQARILCgdFTkZPUkNFEAIqjAEKCUFkbWluS2luZBIVChFBRE1JTl9VTlNQRUNJRklFRBAAEggKBE1VVEUQARIKCgZVTk1VVEUQAhIICgRLSUNLEAMSBwoDQkFOEAQSCQoFVU5CQU4QBRIMCghTRVRfUk9MRRAGEgkKBUFETUlUEAcSCAoEREVOWRAIEhEKDVJFVk9LRV9JTlZJVEUQCSp1CgtDbG9zZVJlYXNvbhIVChFDTE9TRV9VTlNQRUNJRklFRBAAEgoKBktJQ0tFRBABEg4KCkJBTk5FRF9OT1cQAhIMCghTSFVURE9XThADEgwKCFRPT19TTE9XEAQSCQoFQUJVU0UQBRIMCghSRVBMQUNFRBAGKloKCk5vdGljZUtpbmQSFgoSTk9USUNFX1VOU1BFQ0lGSUVEEAASDwoLTE9HSU5fRkxPT0QQARIPCgtZT1VfQ0hBTkdFRBACEhIKDlNUQVRFX1JFUExBQ0VEEANiBnByb3RvMw");
+  fileDesc("Ch9oZWF0M2Qvc2Vzc2lvbi92MS9zZXNzaW9uLnByb3RvEhFoZWF0M2Quc2Vzc2lvbi52MSLxAwoJQ2xpZW50TXNnEgsKA3JpZBgBIAEoDRIpCgVoZWxsbxgKIAEoCzIYLmhlYXQzZC5zZXNzaW9uLnYxLkhlbGxvSAASLwoIcHJlc2VuY2UYCyABKAsyGy5oZWF0M2Quc2Vzc2lvbi52MS5QcmVzZW5jZUgAEikKBWJhdGNoGAwgASgLMhguaGVhdDNkLnNlc3Npb24udjEuQmF0Y2hIABIrCgRsb29rGA0gASgLMhsuaGVhdDNkLnNlc3Npb24udjEuTG9va0hlcmVIABIuCgZmb2xsb3cYDiABKAsyHC5oZWF0M2Quc2Vzc2lvbi52MS5Gb2xsb3dTZXRIABIvCgVhZG1pbhgPIAEoCzIeLmhlYXQzZC5zZXNzaW9uLnYxLkFkbWluQWN0aW9uSAASJwoEcGluZxgQIAEoCzIXLmhlYXQzZC5zZXNzaW9uLnYxLlBpbmdIABIuCgZpbnZpdGUYESABKAsyHC5oZWF0M2Quc2Vzc2lvbi52MS5JbnZpdGVOZXdIABIyCghzZXR0aW5ncxgSIAEoCzIeLmhlYXQzZC5zZXNzaW9uLnYxLlNldHRpbmdzU2V0SAASLQoHZGF0YXNldBgTIAEoCzIaLmhlYXQzZC5zZXNzaW9uLnYxLkRhdGFzZXRIAEIGCgRib2R5IrMBCgVIZWxsbxINCgVwcm90bxgBIAEoDRIMCgRuYW1lGAIgASgJEhAKCHBhc3N3b3JkGAMgASgJEg4KBmludml0ZRgEIAEoCRIOCgZyZXN1bWUYBSABKAkSEgoKaG9zdF90b2tlbhgGIAEoCRISCgpjbGllbnRfa2V5GAcgASgJEhEKCXNpbmNlX3NlcRgIIAEoBBIPCgdrZXlfcHViGAkgASgMEg8KB2tleV9zaWcYCiABKAwiJwoEVmVjMxIJCgF4GAEgASgCEgkKAXkYAiABKAISCQoBehgDIAEoAiKdAQoEUG9zZRIpCghwb3NpdGlvbhgBIAEoCzIXLmhlYXQzZC5zZXNzaW9uLnYxLlZlYzMSKAoHZm9yd2FyZBgCIAEoCzIXLmhlYXQzZC5zZXNzaW9uLnYxLlZlYzMSCwoDZm92GAMgASgCEg4KBmFzcGVjdBgEIAEoAhINCgVvcnRobxgFIAEoCBIUCgxvcnRob19oZWlnaHQYBiABKAIiiQEKCFByZXNlbmNlEiUKBHBvc2UYASABKAsyFy5oZWF0M2Quc2Vzc2lvbi52MS5Qb3NlEicKBmN1cnNvchgCIAEoCzIXLmhlYXQzZC5zZXNzaW9uLnYxLlZlYzMSEgoKaGFzX2N1cnNvchgDIAEoCBILCgN0YWIYBCABKAkSDAoEbW9kZRgFIAEoCSKCAQoCT3ASJwoEa2luZBgBIAEoDjIZLmhlYXQzZC5zZXNzaW9uLnYxLk9wS2luZBIMCgRjb2xsGAIgASgJEgoKAmlkGAMgASgJEgwKBGpzb24YBCABKAkSDQoFdW5zZXQYBSADKAkSEgoFaW5kZXgYBiABKA1IAIgBAUIICgZfaW5kZXgiUAoFQmF0Y2gSCwoDZG9jGAEgASgJEgoKAmlkGAIgASgJEiIKA29wcxgDIAMoCzIVLmhlYXQzZC5zZXNzaW9uLnYxLk9wEgoKAmF0GAQgASgBIpYBCghMb29rSGVyZRIKCgJ0bxgBIAMoDRIlCgRwb3NlGAIgASgLMhcuaGVhdDNkLnNlc3Npb24udjEuUG9zZRImCgVwb2ludBgDIAEoCzIXLmhlYXQzZC5zZXNzaW9uLnYxLlZlYzMSEQoJaGFzX3BvaW50GAQgASgIEgwKBG5vdGUYBSABKAkSDgoGZm9sbG93GAYgASgIIkgKCUZvbGxvd1NldBIrCgRtb2RlGAEgASgOMh0uaGVhdDNkLnNlc3Npb24udjEuRm9sbG93TW9kZRIOCgZsZWFkZXIYAiABKA0ilQEKC0FkbWluQWN0aW9uEioKBGtpbmQYASABKA4yHC5oZWF0M2Quc2Vzc2lvbi52MS5BZG1pbktpbmQSDgoGdGFyZ2V0GAIgASgNEhMKC2R1cmF0aW9uX21zGAMgASgDEiUKBHJvbGUYBCABKA4yFy5oZWF0M2Quc2Vzc2lvbi52MS5Sb2xlEg4KBnJlZl9pZBgFIAEoBCIRCgRQaW5nEgkKAXQYASABKAEiXwoJSW52aXRlTmV3EiUKBHJvbGUYASABKA4yFy5oZWF0M2Quc2Vzc2lvbi52MS5Sb2xlEgwKBHVzZXMYAiABKA0SDgoGdHRsX21zGAMgASgDEg0KBWxhYmVsGAQgASgJInkKC1NldHRpbmdzU2V0EhkKDHdhaXRpbmdfcm9vbRgBIAEoCEgAiAEBEhAKCHBhc3N3b3JkGAIgASgJEhYKDmNsZWFyX3Bhc3N3b3JkGAMgASgIEhQKDHNlc3Npb25fbmFtZRgEIAEoCUIPCg1fd2FpdGluZ19yb29tIm4KB0RhdGFzZXQSDAoEbmFtZRgBIAEoCRIMCgRoYXNoGAIgASgJEgwKBHNpemUYAyABKAQSEgoKbGV2ZWxfbmFtZRgEIAEoCRISCgpsZXZlbF9oYXNoGAUgASgJEhEKCXB1Ymxpc2hlZBgGIAEoCCKSBwoJU2VydmVyTXNnEi0KB3dlbGNvbWUYASABKAsyGi5oZWF0M2Quc2Vzc2lvbi52MS5XZWxjb21lSAASLQoHd2FpdGluZxgCIAEoCzIaLmhlYXQzZC5zZXNzaW9uLnYxLldhaXRpbmdIABIrCgZkZW5pZWQYAyABKAsyGS5oZWF0M2Quc2Vzc2lvbi52MS5EZW5pZWRIABIrCgZyb3N0ZXIYBCABKAsyGS5oZWF0M2Quc2Vzc2lvbi52MS5Sb3N0ZXJIABI0CghwcmVzZW5jZRgFIAEoCzIgLmhlYXQzZC5zZXNzaW9uLnYxLlByZXNlbmNlRnJhbWVIABIqCgJvcBgGIAEoCzIcLmhlYXQzZC5zZXNzaW9uLnYxLlNlcXVlbmNlZEgAEi8KCHNuYXBzaG90GAcgASgLMhsuaGVhdDNkLnNlc3Npb24udjEuU25hcHNob3RIABIsCgRsb29rGAggASgLMhwuaGVhdDNkLnNlc3Npb24udjEuTG9va0V2ZW50SAASMAoGZm9sbG93GAkgASgLMh4uaGVhdDNkLnNlc3Npb24udjEuRm9sbG93U3RhdGVIABIlCgNhY2sYCiABKAsyFi5oZWF0M2Quc2Vzc2lvbi52MS5BY2tIABIrCgZjbG9zZWQYCyABKAsyGS5oZWF0M2Quc2Vzc2lvbi52MS5DbG9zZWRIABInCgRwb25nGAwgASgLMhcuaGVhdDNkLnNlc3Npb24udjEuUG9uZ0gAEi8KBmludml0ZRgNIAEoCzIdLmhlYXQzZC5zZXNzaW9uLnYxLkludml0ZU1hZGVIABIuCgRpbmZvGA4gASgLMh4uaGVhdDNkLnNlc3Npb24udjEuU2Vzc2lvbkluZm9IABI2Cgx3YWl0aW5nX2xpc3QYDyABKAsyHi5oZWF0M2Quc2Vzc2lvbi52MS5XYWl0aW5nTGlzdEgAEioKBGJhbnMYECABKAsyGi5oZWF0M2Quc2Vzc2lvbi52MS5CYW5MaXN0SAASKwoGbm90aWNlGBEgASgLMhkuaGVhdDNkLnNlc3Npb24udjEuTm90aWNlSAASMAoHaW52aXRlcxgSIAEoCzIdLmhlYXQzZC5zZXNzaW9uLnYxLkludml0ZUxpc3RIABIxCgljaGFsbGVuZ2UYEyABKAsyHC5oZWF0M2Quc2Vzc2lvbi52MS5DaGFsbGVuZ2VIAEIGCgRib2R5IhoKCUNoYWxsZW5nZRINCgVub25jZRgBIAEoDCJsCgdXZWxjb21lEgsKA3lvdRgBIAEoDRIlCgRyb2xlGAIgASgOMhcuaGVhdDNkLnNlc3Npb24udjEuUm9sZRIOCgZyZXN1bWUYAyABKAkSCwoDc2VxGAQgASgEEhAKCGNhdGNoX3VwGAUgASgIIhYKB1dhaXRpbmcSCwoDeW91GAEgASgNIkAKBkRlbmllZBIkCgRjb2RlGAEgASgOMhYuaGVhdDNkLnNlc3Npb24udjEuRXJyEhAKCHJldHJ5X21zGAIgASgNIoABCgZNZW1iZXISCgoCaWQYASABKA0SDAoEbmFtZRgCIAEoCRIlCgRyb2xlGAMgASgOMhcuaGVhdDNkLnNlc3Npb24udjEuUm9sZRINCgVtdXRlZBgEIAEoCBITCgttdXRlZF91bnRpbBgFIAEoAxIRCgljb25uZWN0ZWQYBiABKAgiNAoGUm9zdGVyEioKB21lbWJlcnMYASADKAsyGS5oZWF0M2Quc2Vzc2lvbi52MS5NZW1iZXIiSwoKUHJlc2VuY2VPZhIOCgZtZW1iZXIYASABKA0SLQoIcHJlc2VuY2UYAiABKAsyGy5oZWF0M2Quc2Vzc2lvbi52MS5QcmVzZW5jZSJLCg1QcmVzZW5jZUZyYW1lEiwKBWl0ZW1zGAEgAygLMh0uaGVhdDNkLnNlc3Npb24udjEuUHJlc2VuY2VPZhIMCgRnb25lGAIgAygNImYKCVNlcXVlbmNlZBILCgNzZXEYASABKAQSDgoGYXV0aG9yGAIgASgNEhMKC2F1dGhvcl9uYW1lGAMgASgJEicKBWJhdGNoGAQgASgLMhguaGVhdDNkLnNlc3Npb24udjEuQmF0Y2giJQoIRG9jU3RhdGUSCwoDZG9jGAEgASgJEgwKBGpzb24YAiABKAkiQgoIU25hcHNob3QSCwoDc2VxGAEgASgEEikKBGRvY3MYAiADKAsyGy5oZWF0M2Quc2Vzc2lvbi52MS5Eb2NTdGF0ZSJjCglMb29rRXZlbnQSCgoCaWQYASABKAQSDAoEZnJvbRgCIAEoDRIRCglmcm9tX25hbWUYAyABKAkSKQoEbG9vaxgEIAEoCzIbLmhlYXQzZC5zZXNzaW9uLnYxLkxvb2tIZXJlIkoKC0ZvbGxvd1N0YXRlEisKBG1vZGUYASABKA4yHS5oZWF0M2Quc2Vzc2lvbi52MS5Gb2xsb3dNb2RlEg4KBmxlYWRlchgCIAEoDSJKCgNBY2sSCwoDcmlkGAEgASgNEiQKBGNvZGUYAiABKA4yFi5oZWF0M2Quc2Vzc2lvbi52MS5FcnISEAoIcmV0cnlfbXMYAyABKA0iOAoGQ2xvc2VkEi4KBnJlYXNvbhgBIAEoDjIeLmhlYXQzZC5zZXNzaW9uLnYxLkNsb3NlUmVhc29uIhEKBFBvbmcSCQoBdBgBIAEoASJ8CgpJbnZpdGVNYWRlEgoKAmlkGAEgASgEEg0KBXRva2VuGAIgASgJEiUKBHJvbGUYAyABKA4yFy5oZWF0M2Quc2Vzc2lvbi52MS5Sb2xlEg8KB2V4cGlyZXMYBCABKAMSDAoEdXNlcxgFIAEoDRINCgVsYWJlbBgGIAEoCSI8CgpJbnZpdGVMaXN0Ei4KB2ludml0ZXMYASADKAsyHS5oZWF0M2Quc2Vzc2lvbi52MS5JbnZpdGVNYWRlIqcBCgtTZXNzaW9uSW5mbxIMCgRuYW1lGAEgASgJEhQKDHdhaXRpbmdfcm9vbRgCIAEoCBIUCgxwYXNzd29yZF9zZXQYAyABKAgSKwoHZGF0YXNldBgEIAEoCzIaLmhlYXQzZC5zZXNzaW9uLnYxLkRhdGFzZXQSCwoDdGxzGAUgASgIEg8KB2V4cG9zZWQYBiABKAgSEwoLbWF4X2NsaWVudHMYByABKA0iMQoGV2FpdGVyEgoKAmlkGAEgASgNEgwKBG5hbWUYAiABKAkSDQoFc2luY2UYAyABKAMiOQoLV2FpdGluZ0xpc3QSKgoHd2FpdGluZxgBIAMoCzIZLmhlYXQzZC5zZXNzaW9uLnYxLldhaXRlciIuCgNCYW4SCgoCaWQYASABKAQSDAoEbmFtZRgCIAEoCRINCgV1bnRpbBgDIAEoAyIvCgdCYW5MaXN0EiQKBGJhbnMYASADKAsyFi5oZWF0M2Quc2Vzc2lvbi52MS5CYW4iNQoGTm90aWNlEisKBGtpbmQYASABKA4yHS5oZWF0M2Quc2Vzc2lvbi52MS5Ob3RpY2VLaW5kKlUKBFJvbGUSFAoQUk9MRV9VTlNQRUNJRklFRBAAEgoKBlZJRVdFUhABEggKBERSQVcQAhIMCghFTEVWQVRFRBADEgkKBUFETUlOEAQSCAoESE9TVBAFKtcBCgNFcnISBgoCT0sQABIPCgtCQURfTUVTU0FHRRABEg0KCVRPT19MQVJHRRACEg0KCUZPUkJJRERFThADEhAKDFJBVEVfTElNSVRFRBAEEgkKBU1VVEVEEAUSDQoJTk9UX0ZPVU5EEAYSEAoMQkFEX1BBU1NXT1JEEAcSDgoKTE9DS0VEX09VVBAIEgoKBkJBTk5FRBAJEggKBEZVTEwQChIKCgZERU5JRUQQCxIMCghQUk9UT0NPTBAMEgsKB0lOVkFMSUQQDRIOCgpOT1RfSk9JTkVEEA4qQQoGT3BLaW5kEhIKDk9QX1VOU1BFQ0lGSUVEEAASBwoDQUREEAESBwoDU0VUEAISBwoDREVMEAMSCAoETUVUQRAEKjUKCkZvbGxvd01vZGUSDgoKRk9MTE9XX09GRhAAEgoKBkZPTExPVxABEgsKB0VORk9SQ0UQAiqMAQoJQWRtaW5LaW5kEhUKEUFETUlOX1VOU1BFQ0lGSUVEEAASCAoETVVURRABEgoKBlVOTVVURRACEggKBEtJQ0sQAxIHCgNCQU4QBBIJCgVVTkJBThAFEgwKCFNFVF9ST0xFEAYSCQoFQURNSVQQBxIICgRERU5ZEAgSEQoNUkVWT0tFX0lOVklURRAJKnUKC0Nsb3NlUmVhc29uEhUKEUNMT1NFX1VOU1BFQ0lGSUVEEAASCgoGS0lDS0VEEAESDgoKQkFOTkVEX05PVxACEgwKCFNIVVRET1dOEAMSDAoIVE9PX1NMT1cQBBIJCgVBQlVTRRAFEgwKCFJFUExBQ0VEEAYqbQoKTm90aWNlS2luZBIWChJOT1RJQ0VfVU5TUEVDSUZJRUQQABIPCgtMT0dJTl9GTE9PRBABEg8KC1lPVV9DSEFOR0VEEAISEgoOU1RBVEVfUkVQTEFDRUQQAxIRCg1UT0tFTl9ST1RBVEVEEARiBnByb3RvMw");
 
 /**
  * @generated from message heat3d.session.v1.ClientMsg
@@ -162,6 +162,21 @@ export type Hello = Message<"heat3d.session.v1.Hello"> & {
    * @generated from field: uint64 since_seq = 8;
    */
   sinceSeq: bigint;
+
+  /**
+   * The browser's Ed25519 public key (32 bytes) and its signature (64 bytes)
+   * over "heat3d.session.v1.join" + NUL + the Challenge's nonce. With them
+   * the member's key is proven (bans, invites and resuming hold to it);
+   * without them client_key is taken as an unproven name ("u:...").
+   *
+   * @generated from field: bytes key_pub = 9;
+   */
+  keyPub: Uint8Array;
+
+  /**
+   * @generated from field: bytes key_sig = 10;
+   */
+  keySig: Uint8Array;
 };
 
 /**
@@ -745,6 +760,12 @@ export type ServerMsg = Message<"heat3d.session.v1.ServerMsg"> & {
      */
     value: InviteList;
     case: "invites";
+  } | {
+    /**
+     * @generated from field: heat3d.session.v1.Challenge challenge = 19;
+     */
+    value: Challenge;
+    case: "challenge";
   } | { case: undefined; value?: undefined };
 };
 
@@ -754,6 +775,25 @@ export type ServerMsg = Message<"heat3d.session.v1.ServerMsg"> & {
  */
 export const ServerMsgSchema: GenMessage<ServerMsg> = /*@__PURE__*/
   messageDesc(file_heat3d_session_v1_session, 14);
+
+/**
+ * The first message on a connection: what the client signs with its key.
+ *
+ * @generated from message heat3d.session.v1.Challenge
+ */
+export type Challenge = Message<"heat3d.session.v1.Challenge"> & {
+  /**
+   * @generated from field: bytes nonce = 1;
+   */
+  nonce: Uint8Array;
+};
+
+/**
+ * Describes the message heat3d.session.v1.Challenge.
+ * Use `create(ChallengeSchema)` to create a new message.
+ */
+export const ChallengeSchema: GenMessage<Challenge> = /*@__PURE__*/
+  messageDesc(file_heat3d_session_v1_session, 15);
 
 /**
  * @generated from message heat3d.session.v1.Welcome
@@ -794,7 +834,7 @@ export type Welcome = Message<"heat3d.session.v1.Welcome"> & {
  * Use `create(WelcomeSchema)` to create a new message.
  */
 export const WelcomeSchema: GenMessage<Welcome> = /*@__PURE__*/
-  messageDesc(file_heat3d_session_v1_session, 15);
+  messageDesc(file_heat3d_session_v1_session, 16);
 
 /**
  * @generated from message heat3d.session.v1.Waiting
@@ -811,7 +851,7 @@ export type Waiting = Message<"heat3d.session.v1.Waiting"> & {
  * Use `create(WaitingSchema)` to create a new message.
  */
 export const WaitingSchema: GenMessage<Waiting> = /*@__PURE__*/
-  messageDesc(file_heat3d_session_v1_session, 16);
+  messageDesc(file_heat3d_session_v1_session, 17);
 
 /**
  * @generated from message heat3d.session.v1.Denied
@@ -835,7 +875,7 @@ export type Denied = Message<"heat3d.session.v1.Denied"> & {
  * Use `create(DeniedSchema)` to create a new message.
  */
 export const DeniedSchema: GenMessage<Denied> = /*@__PURE__*/
-  messageDesc(file_heat3d_session_v1_session, 17);
+  messageDesc(file_heat3d_session_v1_session, 18);
 
 /**
  * @generated from message heat3d.session.v1.Member
@@ -879,7 +919,7 @@ export type Member = Message<"heat3d.session.v1.Member"> & {
  * Use `create(MemberSchema)` to create a new message.
  */
 export const MemberSchema: GenMessage<Member> = /*@__PURE__*/
-  messageDesc(file_heat3d_session_v1_session, 18);
+  messageDesc(file_heat3d_session_v1_session, 19);
 
 /**
  * @generated from message heat3d.session.v1.Roster
@@ -896,7 +936,7 @@ export type Roster = Message<"heat3d.session.v1.Roster"> & {
  * Use `create(RosterSchema)` to create a new message.
  */
 export const RosterSchema: GenMessage<Roster> = /*@__PURE__*/
-  messageDesc(file_heat3d_session_v1_session, 19);
+  messageDesc(file_heat3d_session_v1_session, 20);
 
 /**
  * @generated from message heat3d.session.v1.PresenceOf
@@ -918,7 +958,7 @@ export type PresenceOf = Message<"heat3d.session.v1.PresenceOf"> & {
  * Use `create(PresenceOfSchema)` to create a new message.
  */
 export const PresenceOfSchema: GenMessage<PresenceOf> = /*@__PURE__*/
-  messageDesc(file_heat3d_session_v1_session, 20);
+  messageDesc(file_heat3d_session_v1_session, 21);
 
 /**
  * Everyone's latest presence, at most ten a second.
@@ -944,7 +984,7 @@ export type PresenceFrame = Message<"heat3d.session.v1.PresenceFrame"> & {
  * Use `create(PresenceFrameSchema)` to create a new message.
  */
 export const PresenceFrameSchema: GenMessage<PresenceFrame> = /*@__PURE__*/
-  messageDesc(file_heat3d_session_v1_session, 21);
+  messageDesc(file_heat3d_session_v1_session, 22);
 
 /**
  * @generated from message heat3d.session.v1.Sequenced
@@ -976,7 +1016,7 @@ export type Sequenced = Message<"heat3d.session.v1.Sequenced"> & {
  * Use `create(SequencedSchema)` to create a new message.
  */
 export const SequencedSchema: GenMessage<Sequenced> = /*@__PURE__*/
-  messageDesc(file_heat3d_session_v1_session, 22);
+  messageDesc(file_heat3d_session_v1_session, 23);
 
 /**
  * @generated from message heat3d.session.v1.DocState
@@ -1000,7 +1040,7 @@ export type DocState = Message<"heat3d.session.v1.DocState"> & {
  * Use `create(DocStateSchema)` to create a new message.
  */
 export const DocStateSchema: GenMessage<DocState> = /*@__PURE__*/
-  messageDesc(file_heat3d_session_v1_session, 23);
+  messageDesc(file_heat3d_session_v1_session, 24);
 
 /**
  * @generated from message heat3d.session.v1.Snapshot
@@ -1022,7 +1062,7 @@ export type Snapshot = Message<"heat3d.session.v1.Snapshot"> & {
  * Use `create(SnapshotSchema)` to create a new message.
  */
 export const SnapshotSchema: GenMessage<Snapshot> = /*@__PURE__*/
-  messageDesc(file_heat3d_session_v1_session, 24);
+  messageDesc(file_heat3d_session_v1_session, 25);
 
 /**
  * @generated from message heat3d.session.v1.LookEvent
@@ -1054,7 +1094,7 @@ export type LookEvent = Message<"heat3d.session.v1.LookEvent"> & {
  * Use `create(LookEventSchema)` to create a new message.
  */
 export const LookEventSchema: GenMessage<LookEvent> = /*@__PURE__*/
-  messageDesc(file_heat3d_session_v1_session, 25);
+  messageDesc(file_heat3d_session_v1_session, 26);
 
 /**
  * @generated from message heat3d.session.v1.FollowState
@@ -1076,7 +1116,7 @@ export type FollowState = Message<"heat3d.session.v1.FollowState"> & {
  * Use `create(FollowStateSchema)` to create a new message.
  */
 export const FollowStateSchema: GenMessage<FollowState> = /*@__PURE__*/
-  messageDesc(file_heat3d_session_v1_session, 26);
+  messageDesc(file_heat3d_session_v1_session, 27);
 
 /**
  * @generated from message heat3d.session.v1.Ack
@@ -1105,7 +1145,7 @@ export type Ack = Message<"heat3d.session.v1.Ack"> & {
  * Use `create(AckSchema)` to create a new message.
  */
 export const AckSchema: GenMessage<Ack> = /*@__PURE__*/
-  messageDesc(file_heat3d_session_v1_session, 27);
+  messageDesc(file_heat3d_session_v1_session, 28);
 
 /**
  * @generated from message heat3d.session.v1.Closed
@@ -1122,7 +1162,7 @@ export type Closed = Message<"heat3d.session.v1.Closed"> & {
  * Use `create(ClosedSchema)` to create a new message.
  */
 export const ClosedSchema: GenMessage<Closed> = /*@__PURE__*/
-  messageDesc(file_heat3d_session_v1_session, 28);
+  messageDesc(file_heat3d_session_v1_session, 29);
 
 /**
  * @generated from message heat3d.session.v1.Pong
@@ -1139,7 +1179,7 @@ export type Pong = Message<"heat3d.session.v1.Pong"> & {
  * Use `create(PongSchema)` to create a new message.
  */
 export const PongSchema: GenMessage<Pong> = /*@__PURE__*/
-  messageDesc(file_heat3d_session_v1_session, 29);
+  messageDesc(file_heat3d_session_v1_session, 30);
 
 /**
  * @generated from message heat3d.session.v1.InviteMade
@@ -1181,7 +1221,7 @@ export type InviteMade = Message<"heat3d.session.v1.InviteMade"> & {
  * Use `create(InviteMadeSchema)` to create a new message.
  */
 export const InviteMadeSchema: GenMessage<InviteMade> = /*@__PURE__*/
-  messageDesc(file_heat3d_session_v1_session, 30);
+  messageDesc(file_heat3d_session_v1_session, 31);
 
 /**
  * @generated from message heat3d.session.v1.InviteList
@@ -1198,7 +1238,7 @@ export type InviteList = Message<"heat3d.session.v1.InviteList"> & {
  * Use `create(InviteListSchema)` to create a new message.
  */
 export const InviteListSchema: GenMessage<InviteList> = /*@__PURE__*/
-  messageDesc(file_heat3d_session_v1_session, 31);
+  messageDesc(file_heat3d_session_v1_session, 32);
 
 /**
  * @generated from message heat3d.session.v1.SessionInfo
@@ -1247,7 +1287,7 @@ export type SessionInfo = Message<"heat3d.session.v1.SessionInfo"> & {
  * Use `create(SessionInfoSchema)` to create a new message.
  */
 export const SessionInfoSchema: GenMessage<SessionInfo> = /*@__PURE__*/
-  messageDesc(file_heat3d_session_v1_session, 32);
+  messageDesc(file_heat3d_session_v1_session, 33);
 
 /**
  * @generated from message heat3d.session.v1.Waiter
@@ -1274,7 +1314,7 @@ export type Waiter = Message<"heat3d.session.v1.Waiter"> & {
  * Use `create(WaiterSchema)` to create a new message.
  */
 export const WaiterSchema: GenMessage<Waiter> = /*@__PURE__*/
-  messageDesc(file_heat3d_session_v1_session, 33);
+  messageDesc(file_heat3d_session_v1_session, 34);
 
 /**
  * @generated from message heat3d.session.v1.WaitingList
@@ -1291,7 +1331,7 @@ export type WaitingList = Message<"heat3d.session.v1.WaitingList"> & {
  * Use `create(WaitingListSchema)` to create a new message.
  */
 export const WaitingListSchema: GenMessage<WaitingList> = /*@__PURE__*/
-  messageDesc(file_heat3d_session_v1_session, 34);
+  messageDesc(file_heat3d_session_v1_session, 35);
 
 /**
  * @generated from message heat3d.session.v1.Ban
@@ -1320,7 +1360,7 @@ export type Ban = Message<"heat3d.session.v1.Ban"> & {
  * Use `create(BanSchema)` to create a new message.
  */
 export const BanSchema: GenMessage<Ban> = /*@__PURE__*/
-  messageDesc(file_heat3d_session_v1_session, 35);
+  messageDesc(file_heat3d_session_v1_session, 36);
 
 /**
  * @generated from message heat3d.session.v1.BanList
@@ -1337,7 +1377,7 @@ export type BanList = Message<"heat3d.session.v1.BanList"> & {
  * Use `create(BanListSchema)` to create a new message.
  */
 export const BanListSchema: GenMessage<BanList> = /*@__PURE__*/
-  messageDesc(file_heat3d_session_v1_session, 36);
+  messageDesc(file_heat3d_session_v1_session, 37);
 
 /**
  * @generated from message heat3d.session.v1.Notice
@@ -1354,7 +1394,7 @@ export type Notice = Message<"heat3d.session.v1.Notice"> & {
  * Use `create(NoticeSchema)` to create a new message.
  */
 export const NoticeSchema: GenMessage<Notice> = /*@__PURE__*/
-  messageDesc(file_heat3d_session_v1_session, 37);
+  messageDesc(file_heat3d_session_v1_session, 38);
 
 /**
  * Ranked: a member may act on members below their own rank only.
@@ -1687,6 +1727,13 @@ export enum NoticeKind {
    * @generated from enum value: STATE_REPLACED = 3;
    */
   STATE_REPLACED = 3,
+
+  /**
+   * The member's resume token changed (a new role): the Welcome that follows carries it.
+   *
+   * @generated from enum value: TOKEN_ROTATED = 4;
+   */
+  TOKEN_ROTATED = 4,
 }
 
 /**

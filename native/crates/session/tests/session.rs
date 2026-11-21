@@ -838,12 +838,30 @@ fn ops_are_ordered_deduplicated_and_caught_up() {
     let rc = w.s.member_of(w.next - 1).unwrap();
     w.s.disconnect(w.next - 1, w.now);
     w.send(a, batch("marks", "a3", vec![add("pins", "q", "{}")]));
+    // The token alone, from another browser (another key): not the member.
+    let thief = w.conn(6);
+    let outs = w.s.hello_checked(
+        thief,
+        &Hello {
+            proto: 1,
+            resume: resume.clone(),
+            client_key: "key-thief".into(),
+            since_seq: 3,
+            ..Default::default()
+        },
+        w.now,
+    );
+    assert_eq!(w.s.member_of(thief), None, "a replayed token");
+    assert!(bodies(&outs, thief, &w.s)
+        .iter()
+        .any(|b| matches!(b, server_msg::Body::Denied(d) if d.code == proto::Err::NotFound as i32)));
     let c3 = w.conn(5);
     let outs = w.s.hello_checked(
         c3,
         &Hello {
             proto: 1,
             resume,
+            client_key: "key-r".into(),
             since_seq: 3,
             ..Default::default()
         },
@@ -1074,11 +1092,187 @@ fn connections_per_address_and_session_are_bounded() {
         ..Config::default()
     };
     let mut s = Session::new(cfg, "h".repeat(64));
-    assert!(s.connect(1, ip(1), 0).is_ok());
-    assert!(s.connect(2, ip(1), 0).is_ok());
-    assert_eq!(s.connect(3, ip(1), 0), Err(proto::Err::Full));
-    assert!(s.connect(4, ip(2), 0).is_ok());
-    assert_eq!(s.connect(5, ip(3), 0), Err(proto::Err::Full));
+    // Connections waiting for their hello hold no place, but only so many may wait.
+    for c in 0..heat3d_session::session::PENDING_PER_ADDR as u64 {
+        assert!(s.connect(100 + c, ip(9), 0).is_ok());
+    }
+    assert_eq!(s.connect(99, ip(9), 0), Err(proto::Err::Full));
+    let denied_full = |outs: &[Out], c: ConnId, s: &Session| {
+        bodies(outs, c, s)
+            .iter()
+            .any(|b| matches!(b, server_msg::Body::Denied(d) if d.code == proto::Err::Full as i32))
+    };
+    // Two from one address get in (the waiting room), the third is refused at its hello.
+    for c in 1..=3u64 {
+        assert!(s.connect(c, ip(1), 0).is_ok());
+    }
+    let o1 = s.hello_checked(1, &hello("a"), 0);
+    let o2 = s.hello_checked(2, &hello("b"), 0);
+    let o3 = s.hello_checked(3, &hello("c"), 0);
+    assert!(!denied_full(&o1, 1, &s) && !denied_full(&o2, 2, &s));
+    assert!(denied_full(&o3, 3, &s));
+    // The host always gets in, however full.
+    let cfg = Config {
+        max_clients: 1,
+        max_waiting: 1,
+        waiting_room: false,
+        cost: Cost::TEST,
+        ..Config::default()
+    };
+    let mut s = Session::new(cfg, "h".repeat(64));
+    s.set_password_hash(Some(heat3d_session::auth::hash_password(PW, Cost::TEST)));
+    s.connect(1, ip(1), 0).unwrap();
+    s.hello_checked(1, &hello("first"), 0);
+    assert!(s.member_of(1).is_some());
+    s.connect(2, ip(2), 0).unwrap();
+    let o = s.hello_checked(2, &hello("second"), 0);
+    assert!(denied_full(&o, 2, &s));
+    s.connect(3, ip(3), 0).unwrap();
+    s.hello_checked(
+        3,
+        &Hello {
+            proto: 1,
+            host_token: "h".repeat(64),
+            ..Default::default()
+        },
+        0,
+    );
+    assert!(s.member_of(3).is_some(), "the host, when full");
+}
+
+#[test]
+fn the_waiting_room_is_bounded() {
+    let cfg = Config {
+        max_waiting: 2,
+        max_per_addr: 10,
+        cost: Cost::TEST,
+        ..Config::default()
+    };
+    let mut s = Session::new(cfg, "h".repeat(64));
+    for c in 1..=3u64 {
+        s.connect(c, ip(c as u8), 0).unwrap();
+    }
+    let h = |n: &str| Hello {
+        proto: 1,
+        name: n.into(),
+        ..Default::default()
+    };
+    assert!(bodies(&s.hello_checked(1, &h("a"), 0), 1, &s).iter().any(|b| matches!(b, server_msg::Body::Waiting(_))));
+    assert!(bodies(&s.hello_checked(2, &h("b"), 0), 2, &s).iter().any(|b| matches!(b, server_msg::Body::Waiting(_))));
+    assert!(bodies(&s.hello_checked(3, &h("c"), 0), 3, &s)
+        .iter()
+        .any(|b| matches!(b, server_msg::Body::Denied(d) if d.code == proto::Err::Full as i32)));
+}
+
+#[test]
+fn a_proven_key_signs_the_challenge() {
+    use ed25519_dalek::{Signer, SigningKey};
+    let cfg = Config {
+        cost: Cost::TEST,
+        ..Config::default()
+    };
+    let mut s = Session::new(cfg, "h".repeat(64));
+    let outs = s.connect(1, ip(1), 0).unwrap();
+    let nonce = bodies(&outs, 1, &s)
+        .into_iter()
+        .find_map(|b| match b {
+            server_msg::Body::Challenge(c) => Some(c.nonce),
+            _ => None,
+        })
+        .expect("a challenge first");
+    let sk = SigningKey::from_bytes(&[9u8; 32]);
+    let mut m = heat3d_session::auth::JOIN_CONTEXT.to_vec();
+    m.extend_from_slice(&nonce);
+    let good = Hello {
+        proto: 1,
+        name: "signed".into(),
+        key_pub: sk.verifying_key().to_bytes().to_vec(),
+        key_sig: sk.sign(&m).to_bytes().to_vec(),
+        ..Default::default()
+    };
+    // Signed for another connection's nonce: refused.
+    s.connect(2, ip(2), 0).unwrap();
+    let o = s.hello_checked(2, &good, 0);
+    assert!(bodies(&o, 2, &s)
+        .iter()
+        .any(|b| matches!(b, server_msg::Body::Denied(d) if d.code == proto::Err::BadMessage as i32)));
+    // Its own: in the waiting room, under its proven key.
+    let o = s.hello_checked(1, &good, 0);
+    assert!(bodies(&o, 1, &s).iter().any(|b| matches!(b, server_msg::Body::Waiting(_))));
+    assert!(o.iter().any(|x| matches!(x, Out::Audit(l) if l.contains("\"waiting\""))));
+    // Naming that key without its signature does not make it one's own.
+    let key_hex: String = sk.verifying_key().to_bytes().iter().map(|b| format!("{b:02x}")).collect();
+    s.connect(3, ip(3), 0).unwrap();
+    let o = s.hello_checked(
+        3,
+        &Hello {
+            proto: 1,
+            name: "claims".into(),
+            client_key: key_hex,
+            ..Default::default()
+        },
+        0,
+    );
+    assert!(bodies(&o, 3, &s).iter().any(|b| matches!(b, server_msg::Body::Waiting(_))));
+}
+
+#[test]
+fn a_new_role_rotates_the_token() {
+    let mut w = World::new(false);
+    let (host, _) = w.host();
+    let (a, am) = w.member(host, "a", Role::Viewer, 2);
+    let outs = w.send(host, admin(AdminKind::SetRole, am, Role::Elevated));
+    let rotated = bodies(&outs, a, &w.s).into_iter().find_map(|b| match b {
+        server_msg::Body::Welcome(x) => Some(x),
+        _ => None,
+    });
+    let x = rotated.expect("a new welcome");
+    assert_eq!(x.role, Role::Elevated as i32);
+    assert!(outs.iter().any(|o| matches!(o, Out::Audit(l) if l.contains("\"role\""))));
+}
+
+#[test]
+fn an_invite_is_used_up_but_its_member_comes_back() {
+    let mut w = World::new(true);
+    let (host, _) = w.host();
+    let outs = w.send(
+        host,
+        client_msg::Body::Invite(proto::InviteNew {
+            role: Role::Draw as i32,
+            uses: 1,
+            ..Default::default()
+        }),
+    );
+    let token = bodies(&outs, host, &w.s)
+        .into_iter()
+        .find_map(|b| match b {
+            server_msg::Body::Invite(i) => Some(i.token),
+            _ => None,
+        })
+        .unwrap();
+    let with = |key: &str| Hello {
+        proto: 1,
+        name: key.into(),
+        invite: token.clone(),
+        client_key: key.into(),
+        ..Default::default()
+    };
+    let c1 = w.conn(2);
+    w.s.hello_checked(c1, &with("k1"), w.now);
+    assert!(w.s.member_of(c1).is_some());
+    // Used up: another browser cannot.
+    let c2 = w.conn(3);
+    w.s.hello_checked(c2, &with("k2"), w.now);
+    assert!(w.s.member_of(c2).is_none());
+    // The one it let in, gone and back with it: in again.
+    let m1 = w.s.member_of(c1).unwrap();
+    w.s.disconnect(c1, w.now);
+    w.now += 10 * 60_000;
+    w.s.tick(w.now);
+    assert!(w.s.conn_of(m1).is_none());
+    let c3 = w.conn(2);
+    w.s.hello_checked(c3, &with("k1"), w.now);
+    assert!(w.s.member_of(c3).is_some());
 }
 
 #[test]
@@ -1126,4 +1320,38 @@ fn settings_password_is_hashed_off_the_lock() {
     assert!(outs
         .iter()
         .any(|o| matches!(o, Out::HashPassword(p) if p == "a much longer password")));
+}
+
+#[test]
+fn the_shared_documents_have_a_size_cap() {
+    let cfg = Config {
+        cost: Cost::TEST,
+        waiting_room: false,
+        max_state_bytes: 200_000,
+        ..Config::default()
+    };
+    let mut s = Session::new(cfg, "h".repeat(64));
+    s.connect(1, ip(1), 0).unwrap();
+    s.hello(1, &Hello { proto: 1, name: "host".into(), host_token: "h".repeat(64), ..Default::default() }, None, 0);
+    let text = "x".repeat(15_000);
+    let mut too_large = false;
+    // Slowly enough for the session's operation budget; 30 notes of 15,000 characters are 450 KB.
+    for i in 0..30u32 {
+        let now = 1 + i as i64 * 1000;
+        let outs = s.message(
+            1,
+            ClientMsg {
+                rid: i + 1,
+                body: Some(batch("marks", &format!("b{i}"), vec![add("pins", &format!("p{i}"), &format!(r#"{{"text":"{text}"}}"#))])),
+            },
+            15_100,
+            now,
+        );
+        if ack_code(&outs, 1, &s) == Some(proto::Err::TooLarge) {
+            too_large = true;
+            break;
+        }
+    }
+    assert!(too_large, "the cap held");
+    assert!(s.docs_json().len() < 260_000);
 }

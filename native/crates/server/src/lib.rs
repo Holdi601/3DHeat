@@ -34,21 +34,27 @@ use tower_http::services::{ServeDir, ServeFile};
 struct Shared {
     core: Arc<Core>,
     owner_key: Option<Arc<str>>,
+    /// Others than the owner answered too (with a member's rights): the session server's mount.
+    remote: bool,
 }
 
 impl Shared {
-    fn access(&self, peer: SocketAddr, headers: &HeaderMap) -> Access {
+    fn access(&self, peer: SocketAddr, headers: &HeaderMap) -> Option<Access> {
         match &self.owner_key {
             Some(k) => {
-                let given = headers.get("x-heat3d-key").and_then(|v| v.to_str().ok());
-                if given == Some(k) {
-                    Access::OWNER
+                let given = headers.get("x-heat3d-key").and_then(|v| v.to_str().ok()).unwrap_or("");
+                if heat3d_session::auth::same_token(given, k) {
+                    Some(Access::OWNER)
+                } else if self.remote {
+                    Some(Access::REMOTE)
                 } else {
-                    Access::REMOTE
+                    // The window's own server: its window only. Any other page on this
+                    // machine (a website reaching for loopback ports) gets nothing.
+                    None
                 }
             }
-            None if peer.ip().is_loopback() => Access::OWNER,
-            None => Access::REMOTE,
+            None if peer.ip().is_loopback() => Some(Access::OWNER),
+            None => Some(Access::REMOTE),
         }
     }
 }
@@ -56,7 +62,8 @@ impl Shared {
 /// The data API, to mount at `/v1`. `cors` answers pages of other origins (the
 /// app's `heat3d` scheme fallback); `owner_key` see the module doc.
 pub fn data_router(core: Arc<Core>, owner_key: Option<String>, cors: bool) -> Router {
-    let shared = Shared { core, owner_key: owner_key.map(Arc::from) };
+    // CORS is the app window's server (other origins: its scheme fallback): the owner only there.
+    let shared = Shared { core, owner_key: owner_key.map(Arc::from), remote: !cors };
     let mut r = Router::new()
         .route("/", post(frame))
         .route("/ws", get(socket))
@@ -75,7 +82,9 @@ pub fn data_router(core: Arc<Core>, owner_key: Option<String>, cors: bool) -> Ro
 }
 
 async fn frame(State(s): State<Shared>, ConnectInfo(peer): ConnectInfo<SocketAddr>, headers: HeaderMap, body: Bytes) -> Response {
-    let access = s.access(peer, &headers);
+    let Some(access) = s.access(peer, &headers) else {
+        return StatusCode::FORBIDDEN.into_response();
+    };
     let core = s.core.clone();
     match tokio::task::spawn_blocking(move || core.handle_as(&body, access)).await {
         Ok(out) => ([(header::CONTENT_TYPE, "application/x-heat3d-frame")], out).into_response(),
@@ -84,7 +93,9 @@ async fn frame(State(s): State<Shared>, ConnectInfo(peer): ConnectInfo<SocketAdd
 }
 
 async fn socket(ws: WebSocketUpgrade, State(s): State<Shared>, ConnectInfo(peer): ConnectInfo<SocketAddr>, headers: HeaderMap) -> Response {
-    let access = s.access(peer, &headers);
+    let Some(access) = s.access(peer, &headers) else {
+        return StatusCode::FORBIDDEN.into_response();
+    };
     let core = s.core.clone();
     ws.max_message_size(64 << 20).on_upgrade(move |w| session(w, core, access))
 }

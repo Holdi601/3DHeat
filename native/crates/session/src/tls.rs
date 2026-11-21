@@ -96,16 +96,24 @@ fn self_signed(dir: &Path) -> Result<Material, String> {
         dir.join("key.pem"),
         dir.join("names.txt"),
     );
-    let ips = local_ips();
+    // Only this machine's local-network addresses: the certificate is shown
+    // to everyone who connects, so it names no public address (an IPv6
+    // address of the internet would tell where the host is) and not the
+    // computer's name.
+    let ips: Vec<IpAddr> = local_ips()
+        .into_iter()
+        .filter(|ip| crate::lan::is_local(*ip))
+        .collect();
     let names: Vec<String> = ips.iter().map(|i| i.to_string()).collect();
-    // Kept while it still names every address this machine has.
+    // Kept while it names exactly these addresses (one made by an earlier
+    // version, naming more, is made again).
     if let (Ok(c), Ok(k), Ok(s)) = (
         std::fs::read(&cp),
         std::fs::read(&kp),
         std::fs::read_to_string(&sp),
     ) {
         let kept: Vec<&str> = s.lines().collect();
-        if names.iter().all(|n| kept.contains(&n.as_str())) {
+        if names.len() == kept.len() && names.iter().all(|n| kept.contains(&n.as_str())) {
             let fingerprint = fingerprint_of_pem(&c);
             return Ok(Material {
                 cert_pem: c,
@@ -121,11 +129,6 @@ fn self_signed(dir: &Path) -> Result<Material, String> {
         .push(DnType::CommonName, "3DHeat session (self-signed)");
     for ip in &ips {
         params.subject_alt_names.push(SanType::IpAddress(*ip));
-    }
-    if let Ok(host) = std::env::var("COMPUTERNAME").or_else(|_| std::env::var("HOSTNAME")) {
-        if let Ok(n) = host.to_lowercase().try_into() {
-            params.subject_alt_names.push(SanType::DnsName(n));
-        }
     }
     let now = std::time::SystemTime::now();
     params.not_before = now.into();
@@ -161,6 +164,11 @@ mod tests {
             .unwrap();
         assert_eq!(a.fingerprint, b.fingerprint);
         assert_eq!(a.fingerprint.len(), 32 * 3 - 1);
+        // It names this machine's local-network addresses only.
+        let names = std::fs::read_to_string(dir.join("names.txt")).unwrap();
+        for n in names.lines() {
+            assert!(crate::lan::is_local(n.parse().unwrap()), "{n}");
+        }
         let _ = std::fs::remove_dir_all(dir);
     }
 

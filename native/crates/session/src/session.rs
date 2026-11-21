@@ -37,8 +37,11 @@ const STRIKES_MAX: u32 = 50;
 const LOG_KEEP: usize = 10_000;
 /// Batch ids remembered, so a batch sent again is applied once.
 const SEEN_KEEP: usize = 20_000;
+/// Connections waiting for their hello, at most: in all, and from one address.
+pub const PENDING_MAX: usize = 256;
+pub const PENDING_PER_ADDR: usize = 8;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub struct Config {
     pub name: String,
     pub max_clients: usize,
@@ -49,6 +52,10 @@ pub struct Config {
     pub cost: Cost,
     /// How long a member who dropped keeps their place, milliseconds.
     pub grace_ms: i64,
+    /// Clients in the waiting room at most (the host's and invited members' way in stays open).
+    pub max_waiting: usize,
+    /// The shared documents' size at most, bytes of JSON (all members together).
+    pub max_state_bytes: usize,
 }
 
 impl Default for Config {
@@ -62,6 +69,8 @@ impl Default for Config {
             exposed: false,
             cost: Cost::STRONG,
             grace_ms: 120_000,
+            max_waiting: 16,
+            max_state_bytes: 64 * 1024 * 1024,
         }
     }
 }
@@ -83,6 +92,17 @@ pub enum Out {
     Close(ConnId, CloseReason),
     /// The host set a new password: hash it off the session's lock and hand the hash to `set_password_hash`.
     HashPassword(String),
+    /// A line for the audit log (JSON; never a password or a token).
+    Audit(String),
+}
+
+/// An audit line: what happened, when, and its details.
+fn audit(now_ms: i64, event: &str, mut fields: serde_json::Value) -> Out {
+    if let Some(o) = fields.as_object_mut() {
+        o.insert("t".into(), now_ms.into());
+        o.insert("event".into(), event.into());
+    }
+    Out::Audit(fields.to_string())
 }
 
 #[derive(Clone, Debug)]
@@ -98,6 +118,8 @@ struct Conn {
     loopback: bool,
     state: ConnState,
     budgets: Budgets,
+    /// What the client signs with its key to join.
+    nonce: [u8; 32],
 }
 
 #[derive(Clone, Debug)]
@@ -105,9 +127,13 @@ struct Member {
     id: MemberId,
     name: String,
     role: Role,
+    /// The browser's key: 64 hex digits when proven by a signature, `u:...` when only named.
     client_key: String,
     resume: String,
     conn: Option<ConnId>,
+    /// The address it last connected from (its bans hold that too), and whether that was this machine.
+    addr: String,
+    loopback: bool,
     /// Some(0): for good; Some(t): until t.
     muted_until: Option<i64>,
     left_at: i64,
@@ -140,6 +166,8 @@ struct Invite {
     uses: u32,
     expires: i64,
     label: String,
+    /// The keys that joined with it: each may come back with it while it holds, without using it up.
+    redeemed: Vec<String>,
 }
 
 pub struct Session {
@@ -165,6 +193,10 @@ pub struct Session {
     dataset: Option<Dataset>,
     next_look: u64,
     gone: Vec<MemberId>,
+    /// The documents' JSON size, an estimate from above (exact after each recount).
+    state_bytes: usize,
+    /// Bytes of operations a second the whole session takes in: every batch goes out to everyone.
+    op_bytes: crate::limits::Bucket,
 }
 
 fn msg(body: server_msg::Body) -> ServerMsg {
@@ -247,6 +279,8 @@ impl Session {
             dataset: None,
             next_look: 1,
             gone: Vec::new(),
+            state_bytes: 0,
+            op_bytes: crate::limits::Bucket::new(4.0 * 1024.0 * 1024.0, 1024.0 * 1024.0, 0),
         }
     }
 
@@ -319,19 +353,27 @@ impl Session {
 
     // ------------------------------------------------------------ connecting
 
-    /// A new connection from `ip`: refused when the session or the address is full.
-    pub fn connect(&mut self, conn: ConnId, ip: IpAddr, now_ms: i64) -> Result<(), proto::Err> {
-        if self.conns.len() >= self.cfg.max_clients {
-            return Err(proto::Err::Full);
-        }
+    /// A new connection from `ip`, before its hello: it gets the challenge its
+    /// key signs. A connection holds no place in the session until its hello
+    /// (members and the waiting room are counted there), so sockets opened
+    /// and left idle cannot keep anyone out; only so many may be waiting for
+    /// their hello, from one address and in all.
+    pub fn connect(&mut self, conn: ConnId, ip: IpAddr, now_ms: i64) -> Result<Vec<Out>, proto::Err> {
         let addr = auth::addr_key(ip);
         let loopback = match ip {
             IpAddr::V4(v) => v.is_loopback(),
             IpAddr::V6(v) => v.is_loopback() || v.to_ipv4_mapped().is_some_and(|x| x.is_loopback()),
         };
-        if self.conns.values().filter(|c| c.addr == addr).count() >= self.cfg.max_per_addr {
+        let pending = self.conns.values().filter(|c| matches!(c.state, ConnState::New));
+        let (mut all, mut here) = (0usize, 0usize);
+        for c in pending {
+            all += 1;
+            here += (c.addr == addr) as usize;
+        }
+        if all >= PENDING_MAX || (!loopback && here >= PENDING_PER_ADDR) {
             return Err(proto::Err::Full);
         }
+        let nonce = auth::nonce();
         self.conns.insert(
             conn,
             Conn {
@@ -339,9 +381,30 @@ impl Session {
                 loopback,
                 state: ConnState::New,
                 budgets: Budgets::new(now_ms),
+                nonce,
             },
         );
-        Ok(())
+        Ok(vec![Out::Send(
+            Target::Conn(conn),
+            msg(server_msg::Body::Challenge(proto::Challenge {
+                nonce: nonce.to_vec(),
+            })),
+        )])
+    }
+
+    /// Whether a connection is in the session or its waiting room.
+    pub fn placed(&self, conn: ConnId) -> bool {
+        self.conns
+            .get(&conn)
+            .is_some_and(|c| !matches!(c.state, ConnState::New))
+    }
+
+    /// Connections in the session (waiting or joined) from `addr`.
+    fn placed_from(&self, addr: &str) -> usize {
+        self.conns
+            .values()
+            .filter(|c| c.addr == addr && !matches!(c.state, ConnState::New))
+            .count()
     }
 
     fn banned(&self, name: &str, key: &str, addr: &str, loopback: bool, now_ms: i64) -> bool {
@@ -369,7 +432,7 @@ impl Session {
         if !matches!(c.state, ConnState::New) || h.proto != PROTO {
             return denied(conn, proto::Err::Protocol, 0);
         }
-        let (addr, loopback) = (c.addr.clone(), c.loopback);
+        let (addr, loopback, nonce) = (c.addr.clone(), c.loopback, c.nonce);
         let locked = self.lockout.locked(&addr, now_ms);
         if locked > 0 {
             return denied(
@@ -378,17 +441,34 @@ impl Session {
                 locked.min(u32::MAX as i64) as u32,
             );
         }
-        if h.client_key.len() > 64 || !(h.client_key.is_empty() || text::ident(&h.client_key, 64)) {
-            return denied(conn, proto::Err::BadMessage, 0);
-        }
+        // The browser's key: proven by its signature of this connection's
+        // nonce, or only named (kept apart, `u:`).
+        let key = if !h.key_pub.is_empty() || !h.key_sig.is_empty() {
+            match auth::verify_join(&h.key_pub, &h.key_sig, &nonce) {
+                Some(k) => k,
+                None => {
+                    self.lockout.fail(&addr, now_ms);
+                    let mut out = denied(conn, proto::Err::BadMessage, 0);
+                    out.push(audit(now_ms, "auth_failed", serde_json::json!({ "how": "key", "addr": addr })));
+                    return out;
+                }
+            }
+        } else {
+            if h.client_key.len() > 64 || !(h.client_key.is_empty() || text::ident(&h.client_key, 64)) {
+                return denied(conn, proto::Err::BadMessage, 0);
+            }
+            auth::unproven_key(&h.client_key)
+        };
         let fallback = format!("Guest {}", self.next_member);
         let name = text::name(&h.name, &fallback);
 
-        // The host, by the token only it has.
+        // The host, by the token only it has; always let in, however full.
         if !h.host_token.is_empty() {
             if !self.is_host_token(&h.host_token) {
                 self.lockout.fail(&addr, now_ms);
-                return denied(conn, proto::Err::BadPassword, 0);
+                let mut out = denied(conn, proto::Err::BadPassword, 0);
+                out.push(audit(now_ms, "auth_failed", serde_json::json!({ "how": "host_token", "addr": addr })));
+                return out;
             }
             let existing = self
                 .members
@@ -397,14 +477,19 @@ impl Session {
                 .map(|m| m.id);
             let id = match existing {
                 Some(id) => id,
-                None => self.add_member(name.clone(), Role::Host, h.client_key.clone()),
+                None => self.add_member(name.clone(), Role::Host, key.clone()),
             };
             if let Some(m) = self.members.get_mut(&id) {
-                m.name = name;
+                m.name = name.clone();
+                if !key.is_empty() {
+                    m.client_key = key;
+                }
             }
-            return self.attach(conn, id, h.since_seq, true, now_ms);
+            let mut out = self.attach(conn, id, h.since_seq, true, now_ms);
+            out.push(audit(now_ms, "join", serde_json::json!({ "member": id, "name": name, "role": "host", "via": "host_token", "addr": addr })));
+            return out;
         }
-        // Coming back.
+        // Coming back: the resume token, from the browser that was given it.
         if !h.resume.is_empty() {
             let found = self
                 .members
@@ -412,6 +497,13 @@ impl Session {
                 .find(|m| m.role != Role::Host && auth::same_token(&m.resume, &h.resume))
                 .map(|m| (m.id, m.name.clone(), m.client_key.clone()));
             return match found {
+                // A token replayed from another browser does not bring its member back.
+                Some((_, _, k)) if k != key => {
+                    self.lockout.fail(&addr, now_ms);
+                    let mut out = denied(conn, proto::Err::NotFound, 0);
+                    out.push(audit(now_ms, "auth_failed", serde_json::json!({ "how": "resume_other_key", "addr": addr })));
+                    out
+                }
                 Some((id, n, k)) if !self.banned(&n, &k, &addr, loopback, now_ms) => {
                     self.attach(conn, id, h.since_seq, true, now_ms)
                 }
@@ -420,26 +512,43 @@ impl Session {
                 None => denied(conn, proto::Err::NotFound, 0),
             };
         }
-        if self.banned(&name, &h.client_key, &addr, loopback, now_ms) {
-            return denied(conn, proto::Err::Banned, 0);
+        if self.banned(&name, &key, &addr, loopback, now_ms) {
+            let mut out = denied(conn, proto::Err::Banned, 0);
+            out.push(audit(now_ms, "banned_refused", serde_json::json!({ "name": name, "addr": addr })));
+            return out;
         }
-        // An invite: its role, past the waiting room.
+        if self.placed_from(&addr) >= self.cfg.max_per_addr {
+            return denied(conn, proto::Err::Full, 5000);
+        }
+        // An invite: its role, past the waiting room. A key that joined with
+        // it may come back with it while it holds without using it up.
         if !h.invite.is_empty() {
             let Some(i) = self.invites.iter().position(|i| {
-                i.expires > now_ms && i.uses > 0 && auth::same_token(&i.token, &h.invite)
+                i.expires > now_ms
+                    && auth::same_token(&i.token, &h.invite)
+                    && (i.uses > 0 || (!key.is_empty() && i.redeemed.contains(&key)))
             }) else {
                 self.lockout.fail(&addr, now_ms);
-                return denied(conn, proto::Err::BadPassword, 0);
+                let mut out = denied(conn, proto::Err::BadPassword, 0);
+                out.push(audit(now_ms, "auth_failed", serde_json::json!({ "how": "invite", "addr": addr })));
+                return out;
             };
-            self.invites[i].uses -= 1;
-            let role = self.invites[i].role;
-            if self.invites[i].uses == 0 {
-                self.invites.remove(i);
+            if self.joined_count() >= self.cfg.max_clients {
+                return denied(conn, proto::Err::Full, 5000);
             }
+            let inv = &mut self.invites[i];
+            if key.is_empty() || !inv.redeemed.contains(&key) {
+                inv.uses -= 1;
+                if !key.is_empty() && inv.redeemed.len() < 1000 {
+                    inv.redeemed.push(key.clone());
+                }
+            }
+            let (role, inv_id) = (inv.role, inv.id);
             self.lockout.succeed(&addr);
-            let id = self.add_member(name, role, h.client_key.clone());
+            let id = self.add_member(name.clone(), role, key);
             let mut out = self.attach(conn, id, 0, false, now_ms);
             out.push(self.invites_msg());
+            out.push(audit(now_ms, "join", serde_json::json!({ "member": id, "name": name, "role": roles::name(role), "via": "invite", "invite": inv_id, "addr": addr })));
             return out;
         }
         // The password, when one is set.
@@ -457,6 +566,7 @@ impl Session {
                     0
                 };
                 let mut out = denied(conn, code, retry);
+                out.push(audit(now_ms, if locked_now { "locked_out" } else { "auth_failed" }, serde_json::json!({ "how": "password", "addr": addr })));
                 if self.lockout.flooded(now_ms) {
                     out.push(Out::Send(
                         Target::Admins,
@@ -471,13 +581,16 @@ impl Session {
         }
         // Without a password nobody joins unasked: the waiting room always.
         if self.cfg.waiting_room || self.password.is_none() {
+            if self.waiters.len() >= self.cfg.max_waiting {
+                return denied(conn, proto::Err::Full, 10_000);
+            }
             let id = self.next_member;
             self.next_member += 1;
             self.waiters.insert(
                 id,
                 WaiterState {
-                    name,
-                    client_key: h.client_key.clone(),
+                    name: name.clone(),
+                    client_key: key,
                     since: now_ms,
                 },
             );
@@ -490,10 +603,16 @@ impl Session {
                     msg(server_msg::Body::Waiting(Waiting { you: id })),
                 ),
                 self.waiting_msg(),
+                audit(now_ms, "waiting", serde_json::json!({ "waiter": id, "name": name, "addr": addr })),
             ];
         }
-        let id = self.add_member(name, Role::Viewer, h.client_key.clone());
-        self.attach(conn, id, 0, false, now_ms)
+        if self.joined_count() >= self.cfg.max_clients {
+            return denied(conn, proto::Err::Full, 5000);
+        }
+        let id = self.add_member(name.clone(), Role::Viewer, key);
+        let mut out = self.attach(conn, id, 0, false, now_ms);
+        out.push(audit(now_ms, "join", serde_json::json!({ "member": id, "name": name, "role": "viewer", "via": "password", "addr": addr })));
+        out
     }
 
     /// Checks the password itself (tests, and the fuzzer): `hello` with the verification inline.
@@ -508,7 +627,7 @@ impl Session {
         let id = self.next_member;
         self.next_member += 1;
         let client_key = if client_key.is_empty() {
-            auth::token()[..32].to_string()
+            format!("u:{}", &auth::token()[..32])
         } else {
             client_key
         };
@@ -521,6 +640,8 @@ impl Session {
                 client_key,
                 resume: auth::token(),
                 conn: None,
+                addr: String::new(),
+                loopback: false,
                 muted_until: None,
                 left_at: 0,
                 presence: None,
@@ -556,6 +677,10 @@ impl Session {
         };
         m.conn = Some(conn);
         m.left_at = 0;
+        if let Some(c) = self.conns.get(&conn) {
+            m.addr = c.addr.clone();
+            m.loopback = c.loopback;
+        }
         let (role, resume) = (m.role, m.resume.clone());
         let base = self.log.front().map(|s| s.seq - 1).unwrap_or(self.seq);
         let tail = resuming && since > 0 && since <= self.seq && since >= base;
@@ -791,6 +916,17 @@ impl Session {
         if dropped == allowed.len() {
             return vec![ack(conn, rid, proto::Err::Forbidden, 0)];
         }
+        let cost: usize = b.ops.iter().map(|o| o.json.len() + o.id.len() + 16).sum();
+        if self.op_bytes.take(cost as f64, now_ms).is_err() {
+            return vec![ack(conn, rid, proto::Err::RateLimited, 500)];
+        }
+        if self.state_bytes + cost > self.cfg.max_state_bytes {
+            // Near the cap: count exactly (deletions are counted only here).
+            self.state_bytes = self.docs.values().map(|d| d.to_json().len()).sum();
+            if self.state_bytes + cost > self.cfg.max_state_bytes {
+                return vec![ack(conn, rid, proto::Err::TooLarge, 0)];
+            }
+        }
         let mut b = b;
         if dropped > 0 {
             let mut keep = allowed.iter();
@@ -816,6 +952,7 @@ impl Session {
                 0,
             )];
         }
+        self.state_bytes += cost;
         self.seq += 1;
         let s = Sequenced {
             seq: self.seq,
@@ -986,6 +1123,7 @@ impl Session {
                     self.waiters.remove(&a.target);
                     let mut out = denied(wconn, proto::Err::Denied, 0);
                     out.push(self.waiting_msg());
+                    out.push(audit(now_ms, "deny", serde_json::json!({ "by": me, "waiter": a.target, "name": w.name })));
                     return ok(out);
                 }
                 let give = Role::try_from(a.role)
@@ -995,7 +1133,11 @@ impl Session {
                 if !roles::may_grant(role, give) {
                     return vec![ack(conn, rid, proto::Err::Forbidden, 0)];
                 }
+                if self.joined_count() >= self.cfg.max_clients {
+                    return vec![ack(conn, rid, proto::Err::Full, 0)];
+                }
                 self.waiters.remove(&a.target);
+                let admitted = audit(now_ms, "join", serde_json::json!({ "member": a.target, "name": w.name, "role": roles::name(give), "via": "admitted", "by": me }));
                 // The waiter keeps the id it waited under.
                 let id = a.target;
                 self.members.insert(
@@ -1005,12 +1147,14 @@ impl Session {
                         name: w.name,
                         role: give,
                         client_key: if w.client_key.is_empty() {
-                            auth::token()[..32].to_string()
+                            format!("u:{}", &auth::token()[..32])
                         } else {
                             w.client_key
                         },
                         resume: auth::token(),
                         conn: None,
+                        addr: String::new(),
+                        loopback: false,
                         muted_until: None,
                         left_at: 0,
                         presence: None,
@@ -1019,6 +1163,7 @@ impl Session {
                 );
                 let mut out = self.attach(wconn, id, 0, false, now_ms);
                 out.push(self.waiting_msg());
+                out.push(admitted);
                 ok(out)
             }
             AdminKind::Unban => {
@@ -1027,7 +1172,7 @@ impl Session {
                 if self.bans.len() == before {
                     return vec![ack(conn, rid, proto::Err::NotFound, 0)];
                 }
-                ok(vec![self.bans_msg(now_ms)])
+                ok(vec![self.bans_msg(now_ms), audit(now_ms, "unban", serde_json::json!({ "by": me, "ban": a.ref_id }))])
             }
             AdminKind::RevokeInvite => {
                 let before = self.invites.len();
@@ -1035,7 +1180,7 @@ impl Session {
                 if self.invites.len() == before {
                     return vec![ack(conn, rid, proto::Err::NotFound, 0)];
                 }
-                ok(vec![self.invites_msg()])
+                ok(vec![self.invites_msg(), audit(now_ms, "invite_revoked", serde_json::json!({ "by": me, "invite": a.ref_id }))])
             }
             AdminKind::Mute
             | AdminKind::Unmute
@@ -1063,7 +1208,8 @@ impl Session {
                                 None
                             };
                         }
-                        ok(vec![self.roster_msg(), you_changed])
+                        let ev = if kind == AdminKind::Mute { "mute" } else { "unmute" };
+                        ok(vec![self.roster_msg(), you_changed, audit(now_ms, ev, serde_json::json!({ "by": me, "member": t.id, "name": t.name, "until": until(a.duration_ms) }))])
                     }
                     AdminKind::SetRole => {
                         let Ok(give) = Role::try_from(a.role) else {
@@ -1072,10 +1218,32 @@ impl Session {
                         if !roles::may_grant(role, give) {
                             return vec![ack(conn, rid, proto::Err::Forbidden, 0)];
                         }
+                        // A new role, a new token: one copied before the change does not carry the new role.
+                        let resume = auth::token();
                         if let Some(m) = self.members.get_mut(&t.id) {
                             m.role = give;
+                            m.resume = resume.clone();
                         }
                         let mut out = vec![self.roster_msg(), you_changed];
+                        out.push(audit(now_ms, "role", serde_json::json!({ "by": me, "member": t.id, "name": t.name, "from": roles::name(t.role), "to": roles::name(give) })));
+                        if let Some(c) = t.conn {
+                            out.push(Out::Send(
+                                Target::Conn(c),
+                                msg(server_msg::Body::Welcome(Welcome {
+                                    you: t.id,
+                                    role: give as i32,
+                                    resume,
+                                    seq: self.seq,
+                                    catch_up: true,
+                                })),
+                            ));
+                            out.push(Out::Send(
+                                Target::Conn(c),
+                                msg(server_msg::Body::Notice(Notice {
+                                    kind: NoticeKind::TokenRotated as i32,
+                                })),
+                            ));
+                        }
                         // A new admin needs the lists.
                         if let (true, Some(c)) = (at_least(give, Role::Admin), t.conn) {
                             out.push(Out::Send(Target::Conn(c), self.waiting_body()));
@@ -1103,12 +1271,10 @@ impl Session {
                                 cs.state = ConnState::New;
                             }
                         }
+                        out.push(audit(now_ms, if kind == AdminKind::Ban { "ban" } else { "kick" }, serde_json::json!({ "by": me, "member": t.id, "name": t.name, "until": until(a.duration_ms) })));
                         if kind == AdminKind::Ban {
-                            let addr = t
-                                .conn
-                                .and_then(|c| self.conns.get(&c))
-                                .filter(|c| !c.loopback)
-                                .map(|c| c.addr.clone());
+                            // The address it was last on (also when it dropped a moment ago).
+                            let addr = (!t.addr.is_empty() && !t.loopback).then(|| t.addr.clone());
                             let id = self.next_ban;
                             self.next_ban += 1;
                             self.bans.push(BanEntry {
@@ -1172,6 +1338,7 @@ impl Session {
             uses: i.uses.clamp(1, 100),
             expires: now_ms + ttl,
             label: text::clean(&i.label, text::NOTE_CHARS, false),
+            redeemed: Vec::new(),
         };
         self.next_invite += 1;
         let made = InviteMade {
@@ -1182,10 +1349,12 @@ impl Session {
             uses: inv.uses,
             label: inv.label.clone(),
         };
+        let logged = audit(now_ms, "invite_made", serde_json::json!({ "by": me, "invite": inv.id, "role": roles::name(give), "uses": inv.uses, "expires": inv.expires, "label": inv.label }));
         self.invites.push(inv);
         vec![
             Out::Send(Target::Conn(conn), msg(server_msg::Body::Invite(made))),
             self.invites_msg(),
+            logged,
             ack(conn, rid, proto::Err::Ok, 0),
         ]
     }
@@ -1195,6 +1364,7 @@ impl Session {
             return vec![ack(conn, rid, proto::Err::Forbidden, 0)];
         }
         let mut out = Vec::new();
+        let changed_password = !s.password.is_empty();
         if !s.password.is_empty() {
             if s.password.chars().count() < auth::MIN_PASSWORD || s.password.len() > 1024 {
                 return vec![ack(conn, rid, proto::Err::Invalid, 0)];
@@ -1203,6 +1373,7 @@ impl Session {
         } else if s.clear_password {
             self.password = None;
         }
+        out.push(audit(0, "settings", serde_json::json!({ "by": me, "password_changed": changed_password, "password_cleared": s.clear_password && !changed_password, "waiting_room": s.waiting_room })));
         if let Some(w) = s.waiting_room {
             self.cfg.waiting_room = w;
         }
@@ -1346,6 +1517,7 @@ impl Session {
         }
         self.docs = docs;
         self.room = doc::MAX_ENTITIES - count;
+        self.state_bytes = json.len();
         self.seq += 1;
         // Nobody catches up across a replacement: the log starts again.
         self.log.clear();

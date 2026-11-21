@@ -20,7 +20,7 @@ pub const LOCKOUT_MS: i64 = 15 * 60 * 1000;
 pub const FLOOD_PER_MINUTE: u32 = 30;
 
 /// The hash's cost: the production one, or a cheap one for tests.
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, serde::Serialize, serde::Deserialize)]
 pub struct Cost {
     pub m_kib: u32,
     pub t: u32,
@@ -71,15 +71,49 @@ pub fn token() -> String {
     hex::encode(b)
 }
 
-/// Compares two tokens in constant time.
+/// Compares two tokens in constant time (their lengths are not secret: all are 64 hex digits).
 pub fn same_token(a: &str, b: &str) -> bool {
-    if a.len() != b.len() {
-        return false;
+    use subtle::ConstantTimeEq;
+    a.len() == b.len() && bool::from(a.as_bytes().ct_eq(b.as_bytes()))
+}
+
+/// What a browser signs to join: this, then the server's nonce.
+pub const JOIN_CONTEXT: &[u8] = b"heat3d.session.v1.join\0";
+
+/// A fresh nonce for a connection's challenge.
+pub fn nonce() -> [u8; 32] {
+    let mut b = [0u8; 32];
+    rand::rng().fill_bytes(&mut b);
+    b
+}
+
+/// The browser's key, as hex, when `sig` is its Ed25519 signature of the
+/// join context and `nonce` (strict verification: no malleable signatures,
+/// no small-order keys).
+pub fn verify_join(pubkey: &[u8], sig: &[u8], nonce: &[u8]) -> Option<String> {
+    let pk: [u8; 32] = pubkey.try_into().ok()?;
+    let sig: [u8; 64] = sig.try_into().ok()?;
+    let vk = ed25519_dalek::VerifyingKey::from_bytes(&pk).ok()?;
+    if vk.is_weak() {
+        return None;
     }
-    a.bytes()
-        .zip(b.bytes())
-        .fold(0u8, |acc, (x, y)| acc | (x ^ y))
-        == 0
+    let mut m = Vec::with_capacity(JOIN_CONTEXT.len() + nonce.len());
+    m.extend_from_slice(JOIN_CONTEXT);
+    m.extend_from_slice(nonce);
+    vk.verify_strict(&m, &ed25519_dalek::Signature::from_bytes(&sig))
+        .ok()?;
+    Some(hex::encode(pk))
+}
+
+/// A key a client named without proving it: kept apart from proven keys
+/// (which are 64 hex digits) by its `u:` prefix, so nobody can claim
+/// another browser's proven key by naming it.
+pub fn unproven_key(k: &str) -> String {
+    if k.is_empty() || k.starts_with("u:") {
+        return k.to_string();
+    }
+    let cut: String = k.chars().take(62).collect();
+    format!("u:{cut}")
 }
 
 /// The address a lockout or a ban is kept by: IPv4 as it is, IPv6 by its /64.
@@ -208,5 +242,30 @@ mod tests {
         assert!(same_token(&a, &a.clone()));
         assert!(!same_token(&a, &token()));
         assert!(!same_token(&a, "short"));
+    }
+
+    #[test]
+    fn join_signatures() {
+        use ed25519_dalek::{Signer, SigningKey};
+        let sk = SigningKey::from_bytes(&[7u8; 32]);
+        let n = nonce();
+        let mut m = JOIN_CONTEXT.to_vec();
+        m.extend_from_slice(&n);
+        let sig = sk.sign(&m).to_bytes();
+        let pk = sk.verifying_key().to_bytes();
+        assert_eq!(verify_join(&pk, &sig, &n), Some(hex::encode(pk)));
+        // Another nonce, a bit flipped, a short key: refused.
+        assert_eq!(verify_join(&pk, &sig, &nonce()), None);
+        let mut bad = sig;
+        bad[3] ^= 1;
+        assert_eq!(verify_join(&pk, &bad, &n), None);
+        assert_eq!(verify_join(&pk[..31], &sig, &n), None);
+        // The identity point is a weak key.
+        let mut id = [0u8; 32];
+        id[0] = 1;
+        assert_eq!(verify_join(&id, &sig, &n), None);
+        assert_eq!(unproven_key(&hex::encode(pk)).len(), 64);
+        assert!(unproven_key(&hex::encode(pk)).starts_with("u:"));
+        assert_eq!(unproven_key("u:abc"), "u:abc");
     }
 }

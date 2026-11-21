@@ -4,6 +4,7 @@ description = "3DHeat native core: ingest, sort and the engine's chunk layout"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
+publish = false
 
 [dependencies]
 heat3d-proto.workspace = true
@@ -18,6 +19,7 @@ ryu-js = "1"
 half = "2"
 flate2 = "1"
 sha2 = "0.10"
+getrandom = "0.3"
 parquet = { version = "60", default-features = false, features = ["arrow", "snap", "zstd", "lz4", "flate2", "flate2-rust_backend", "brotli"] }
 arrow-array = "60"
 arrow-schema = "60"

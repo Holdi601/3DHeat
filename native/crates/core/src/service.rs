@@ -118,7 +118,10 @@ impl Core {
 
     /// Lets the window name a file by token rather than by path.
     pub fn register_file(&self, path: PathBuf) -> String {
-        let token = format!("f{}", self.next.fetch_add(1, Ordering::Relaxed));
+        // Unguessable: a file's token is all it takes to read it.
+        let mut r = [0u8; 16];
+        getrandom::fill(&mut r).expect("the system's random source");
+        let token = format!("f{}", r.iter().map(|b| format!("{b:02x}")).collect::<String>());
         self.tokens.write().unwrap().insert(token.clone(), path);
         token
     }

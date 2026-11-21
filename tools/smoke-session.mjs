@@ -30,7 +30,7 @@ const N = Math.max(2, Math.min(20, Number(process.argv[2] ?? process.env.CLIENTS
 const APP = process.env.APP ?? 'http://127.0.0.1:5275/';
 const BIN = process.env.HEAT3D_SERVE_BIN ?? ['E:/cargo-targets/3dheat/release/3dheat.exe', 'E:/cargo-targets/3dheat/debug/3dheat.exe'].find(existsSync);
 if (!BIN) throw new Error('no 3dheat binary: cargo build -p heat3d-server in native/, or set HEAT3D_SERVE_BIN');
-const PORT = 7900 + Math.floor(Math.random() * 90);
+const PORT = Number(process.env.SESSION_PORT ?? 7900 + Math.floor(Math.random() * 90));
 const SERVER = `http://127.0.0.1:${PORT}`;
 const TOKEN = randomBytes(32).toString('hex');
 const PASSWORD = 'smoke test password 1234';

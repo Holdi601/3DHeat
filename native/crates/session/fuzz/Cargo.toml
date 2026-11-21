@@ -11,6 +11,10 @@ cargo-fuzz = true
 libfuzzer-sys = "0.4"
 prost = "0.14"
 heat3d-session = { path = ".." }
+arbitrary = { version = "1", features = ["derive"] }
+tokio = { version = "1", features = ["rt", "time", "io-util", "macros"] }
+axum = "0.8"
+tower = { version = "0.5", features = ["util"] }
 
 # Its own workspace: built with nightly by cargo-fuzz, apart from the rest.
 [workspace]
@@ -26,6 +30,27 @@ bench = false
 [[bin]]
 name = "doc_json"
 path = "fuzz_targets/doc_json.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "client_structured"
+path = "fuzz_targets/client_structured.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "asset_paths"
+path = "fuzz_targets/asset_paths.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "ipc_frames"
+path = "fuzz_targets/ipc_frames.rs"
 test = false
 doc = false
 bench = false

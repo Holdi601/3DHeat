@@ -1,57 +1,65 @@
-//! The session server on the network: serves the web build, speaks the
-//! session protocol over a WebSocket (`/ws`), and hands out files the host
-//! published by content hash only (`/a/<sha256>`), never by path.
+//! The session server's core: the part with the user's rights. It listens
+//! on the port, keeps the files (the web build, what the host published,
+//! uploads), mounts the native core's data API, writes the audit log, and
+//! starts the **gateway** (`gateway.rs`), which does everything else: TLS,
+//! HTTP, the WebSocket and the session's rules.
 //!
-//! Every connection has a reader (size checked before decoding, then
-//! `Session::message`) and a writer with a bounded queue: a client that
-//! falls more than 8 MB behind is cut off, and presence goes through a
-//! one-slot channel of its own, so a slow client loses only presence frames,
-//! never operations.
+//! With a sandbox (`ServeConfig::gateway`, what `3dheat serve` does) the
+//! gateway is a locked-down process of its own (`heat3d-sandbox`): the core
+//! accepts each TCP connection and relays its bytes over the channel
+//! (`ipc.rs`), and serves the gateway's requests for files on streams of the
+//! same channel, never trusting what they claim beyond what any member
+//! could ask. Without one (tests, `--no-sandbox`) the gateway runs in this
+//! process, the same code.
 //!
 //! By default only this machine and the local network get an answer; the
 //! internet (expert mode) has to be asked for, and needs TLS.
 
 use axum::body::Body;
-use axum::extract::ws::{CloseFrame, Message, WebSocket, WebSocketUpgrade};
-use axum::extract::{ConnectInfo, DefaultBodyLimit, Path, Query, Request, State};
-use axum::http::{header, HeaderMap, HeaderName, HeaderValue, StatusCode};
+use axum::extract::{ConnectInfo, Path, Query, Request, State};
+use axum::http::{header, HeaderValue, StatusCode};
 use axum::middleware::{self, Next};
 use axum::response::{IntoResponse, Response};
 use axum::routing::{get, post};
 use axum::Router;
-use futures_util::{SinkExt, StreamExt};
-use prost::Message as _;
+use futures_util::StreamExt;
+use hyper_util::rt::TokioIo;
 use sha2::{Digest, Sha256};
 use std::collections::HashMap;
-use std::net::{IpAddr, SocketAddr};
+use std::io::Write as _;
+use std::net::SocketAddr;
 use std::path::PathBuf;
-use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex, RwLock};
-use std::time::{Duration, SystemTime, UNIX_EPOCH};
+use std::time::Duration;
 use tokio::io::AsyncWriteExt;
-use tokio::sync::{mpsc, watch, Semaphore};
+use tokio::sync::watch;
 use tower::ServiceExt;
 use tower_http::services::{ServeDir, ServeFile};
-use tower_http::set_header::SetResponseHeaderLayer;
 
 use crate::auth;
-use crate::lan;
-use crate::proto::{self, client_msg, server_msg, ClientMsg, CloseReason, Dataset, ServerMsg};
-use crate::session::{Config, ConnId, Out, Session};
+use crate::gateway::{self, Gateway, GatewayConfig, HostLink, NetLimits, StartData};
+use crate::ipc::Mux;
+use crate::limits::PerIp;
+use crate::session::Config;
 use crate::tls::{self, TlsMode};
 
-/// A control message from a client, at most (checked before decoding).
-pub const MAX_CLIENT_MSG: usize = 64 * 1024;
-/// What may wait to be sent to one client before it is cut off.
-pub const MAX_BACKLOG: usize = 8 * 1024 * 1024;
-/// A session file the host opens, at most.
-pub const MAX_LOAD: usize = 64 * 1024 * 1024;
+pub use crate::gateway::{now_ms, MAX_BACKLOG, MAX_CLIENT_MSG, MAX_LOAD};
 
-pub fn now_ms() -> i64 {
-    SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .map(|d| d.as_millis() as i64)
-        .unwrap_or(0)
+/// How to start the gateway as its own process: this program, with these arguments.
+#[derive(Clone, Debug)]
+pub struct GatewayCommand {
+    pub exe: PathBuf,
+    pub args: Vec<String>,
+}
+
+impl GatewayCommand {
+    /// This very program, `gateway`: what `3dheat serve` (and the app) answer to.
+    pub fn this_program() -> Result<Self, String> {
+        Ok(Self {
+            exe: std::env::current_exe().map_err(|e| format!("this program's path: {e}"))?,
+            args: vec!["gateway".into()],
+        })
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -68,15 +76,20 @@ pub struct ServeConfig {
     pub password: Option<String>,
     /// The host's token; a random one when none.
     pub host_token: Option<String>,
-    /// Where the certificate and published uploads are kept.
+    /// Where the certificate, published uploads and the audit log are kept.
     pub state_dir: PathBuf,
     /// Files published for download from the start (the first one is the session's data).
     pub publish: Vec<PathBuf>,
     /// An upload the host publishes, at most, bytes.
     pub max_upload: u64,
-    /// More services under paths of their own, behind the same guard and headers:
-    /// `3dheat serve` mounts the native core's data API at `/v1` (crates/server).
+    /// More services under paths of their own (`3dheat serve` mounts the native
+    /// core's data API at `/v1`, crates/server). Members reach them with their
+    /// token, by POST, with a member's rights only.
     pub mount: Vec<(String, Router)>,
+    /// The network's limits.
+    pub limits: NetLimits,
+    /// The gateway as a locked-down process of its own; None: in this process.
+    pub gateway: Option<GatewayCommand>,
 }
 
 impl ServeConfig {
@@ -94,35 +107,10 @@ impl ServeConfig {
             publish: Vec::new(),
             max_upload: 8 * 1024 * 1024 * 1024,
             mount: Vec::new(),
+            limits: NetLimits::default(),
+            gateway: None,
         }
     }
-}
-
-enum Outgoing {
-    Bytes(Arc<Vec<u8>>),
-    Close(CloseReason),
-}
-
-struct ConnTx {
-    tx: mpsc::Sender<Outgoing>,
-    queued: Arc<AtomicUsize>,
-    presence: watch::Sender<Option<Arc<Vec<u8>>>>,
-}
-
-#[derive(Clone, Debug)]
-struct Asset {
-    path: PathBuf,
-    size: u64,
-    name: String,
-}
-
-struct App {
-    session: Mutex<Session>,
-    conns: Mutex<HashMap<ConnId, ConnTx>>,
-    next_conn: AtomicU64,
-    assets: RwLock<HashMap<String, Asset>>,
-    hashing: Semaphore,
-    cfg: ServeConfig,
 }
 
 /// A running server.
@@ -132,21 +120,16 @@ pub struct Running {
     /// The certificate's SHA-256 fingerprint, with TLS.
     pub fingerprint: Option<String>,
     pub scheme: &'static str,
-    handle: axum_server::Handle,
+    /// What the gateway gave up, in words (with a sandbox).
+    pub sandbox: Option<String>,
+    stop: watch::Sender<bool>,
     task: tokio::task::JoinHandle<std::io::Result<()>>,
-    ticker: tokio::task::JoinHandle<()>,
 }
 
 impl Running {
     /// The address to open as the host (the token in the fragment never reaches a server log).
     pub fn host_url(&self, host: &str) -> String {
-        format!(
-            "{}://{}:{}/#host={}",
-            self.scheme,
-            host,
-            self.addr.port(),
-            self.host_token
-        )
+        format!("{}://{}:{}/#host={}", self.scheme, host, self.addr.port(), self.host_token)
     }
 
     pub fn join_url(&self, host: &str) -> String {
@@ -154,72 +137,88 @@ impl Running {
     }
 
     pub async fn stop(self) {
-        self.handle.graceful_shutdown(Some(Duration::from_secs(2)));
-        self.ticker.abort();
-        let _ = self.task.await;
+        let _ = self.stop.send(true);
+        let _ = tokio::time::timeout(Duration::from_secs(3), self.task).await;
     }
 
     pub async fn wait(self) -> std::io::Result<()> {
-        let r = self.task.await.unwrap_or(Ok(()));
-        self.ticker.abort();
-        r
+        self.task.await.unwrap_or(Ok(()))
     }
 }
 
-fn encode(m: &ServerMsg) -> Arc<Vec<u8>> {
-    Arc::new(m.encode_to_vec())
+#[derive(Clone, Debug)]
+struct Asset {
+    path: PathBuf,
+    size: u64,
+    name: String,
 }
 
-impl App {
-    /// Sends what the session said to send, closes what it said to close.
-    fn dispatch(self: &Arc<Self>, outs: Vec<Out>) {
-        if outs.is_empty() {
+/// What the core keeps for the gateway's requests.
+struct Store {
+    assets: RwLock<HashMap<String, Asset>>,
+    state_dir: PathBuf,
+    max_upload: u64,
+    /// Uploads at once, at most.
+    uploading: tokio::sync::Semaphore,
+    /// Bytes uploaded since the start: at most `UPLOADS_TOTAL` (a gateway someone
+    /// took over cannot fill the disk through the host's uploads).
+    uploaded: std::sync::atomic::AtomicU64,
+}
+
+/// What may be uploaded in all while the server runs, bytes.
+const UPLOADS_TOTAL: u64 = 32 * 1024 * 1024 * 1024;
+
+/// The audit log: one JSON line per event in `audit.log` in the state
+/// folder, at most a thousand lines a minute (then one line saying how many
+/// were left out), the file rolled over at 10 MB. Never a password or a token.
+pub struct AuditLog {
+    path: PathBuf,
+    state: Mutex<(i64, u32, u64)>,
+}
+
+impl AuditLog {
+    pub fn new(dir: &std::path::Path) -> Self {
+        Self {
+            path: dir.join("audit.log"),
+            state: Mutex::new((0, 0, 0)),
+        }
+    }
+
+    pub fn write(&self, line: &str) {
+        let now = now_ms();
+        let mut st = self.state.lock().unwrap();
+        let minute = now / 60_000;
+        let mut out = String::new();
+        if st.0 != minute {
+            if st.2 > 0 {
+                out.push_str(&serde_json::json!({ "t": now, "event": "audit_suppressed", "lines": st.2 }).to_string());
+                out.push('\n');
+            }
+            *st = (minute, 0, 0);
+        }
+        if st.1 >= 1000 {
+            st.2 += 1;
             return;
         }
-        let mut sends: Vec<(Vec<ConnId>, Arc<Vec<u8>>)> = Vec::new();
-        let mut closes = Vec::new();
-        {
-            let s = self.session.lock().unwrap();
-            for o in outs {
-                match o {
-                    Out::Send(t, m) => sends.push((s.resolve(&t), encode(&m))),
-                    Out::Close(c, r) => closes.push((c, r)),
-                    Out::HashPassword(pw) => {
-                        let app = self.clone();
-                        let cost = s.cfg.cost;
-                        tokio::spawn(async move {
-                            let phc =
-                                tokio::task::spawn_blocking(move || auth::hash_password(&pw, cost))
-                                    .await
-                                    .ok();
-                            let outs = app.session.lock().unwrap().set_password_hash(phc);
-                            app.dispatch(outs);
-                        });
-                    }
-                }
+        st.1 += 1;
+        // The gateway's line, checked and stamped here: one line of JSON, nothing else.
+        let v = match serde_json::from_str::<serde_json::Value>(line) {
+            Ok(serde_json::Value::Object(mut m)) => {
+                m.insert("at".into(), now.into());
+                serde_json::Value::Object(m)
             }
+            _ => serde_json::json!({ "t": now, "event": "audit_malformed" }),
+        };
+        out.push_str(&v.to_string());
+        out.push('\n');
+        if std::fs::metadata(&self.path).map(|m| m.len() > 10 * 1024 * 1024).unwrap_or(false) {
+            let _ = std::fs::rename(&self.path, self.path.with_extension("log.1"));
         }
-        let conns = self.conns.lock().unwrap();
-        for (to, bytes) in sends {
-            for c in to {
-                if let Some(tx) = conns.get(&c) {
-                    let n = bytes.len();
-                    if tx.queued.load(Ordering::Relaxed) + n > MAX_BACKLOG {
-                        let _ = tx.tx.try_send(Outgoing::Close(CloseReason::TooSlow));
-                        continue;
-                    }
-                    tx.queued.fetch_add(n, Ordering::Relaxed);
-                    if tx.tx.try_send(Outgoing::Bytes(bytes.clone())).is_err() {
-                        tx.queued.fetch_sub(n, Ordering::Relaxed);
-                        let _ = tx.tx.try_send(Outgoing::Close(CloseReason::TooSlow));
-                    }
-                }
-            }
+        if let Some(d) = self.path.parent() {
+            let _ = std::fs::create_dir_all(d);
         }
-        for (c, r) in closes {
-            if let Some(tx) = conns.get(&c) {
-                let _ = tx.tx.try_send(Outgoing::Close(r));
-            }
+        if let Ok(mut f) = std::fs::OpenOptions::new().create(true).append(true).open(&self.path) {
+            let _ = f.write_all(out.as_bytes());
         }
     }
 }
@@ -231,488 +230,274 @@ pub async fn start(cfg: ServeConfig) -> Result<Running, String> {
         return Err("reaching the server from the internet needs TLS (drop --plain-http)".into());
     }
     if matches!(cfg.tls, TlsMode::Off) && !cfg.bind.ip().is_loopback() {
-        return Err(
-            "plain HTTP only on this machine (bind 127.0.0.1): browsers on other machines need TLS"
-                .into(),
-        );
+        return Err("plain HTTP only on this machine (bind 127.0.0.1): browsers on other machines need TLS".into());
     }
     let material = tls::material(&cfg.tls)?;
     let host_token = cfg.host_token.clone().unwrap_or_else(auth::token);
     let mut scfg = cfg.session.clone();
     scfg.tls = material.is_some();
     scfg.exposed = cfg.expose;
-    let mut session = Session::new(scfg.clone(), host_token.clone());
-    if let Some(pw) = &cfg.password {
-        if pw.chars().count() < auth::MIN_PASSWORD {
-            return Err(format!(
-                "the session password needs at least {} characters",
-                auth::MIN_PASSWORD
-            ));
+    let password_phc = match &cfg.password {
+        Some(pw) if pw.chars().count() < auth::MIN_PASSWORD => {
+            return Err(format!("the session password needs at least {} characters", auth::MIN_PASSWORD));
         }
-        session.set_password_hash(Some(auth::hash_password(pw, scfg.cost)));
-    }
+        Some(pw) => Some(auth::hash_password(pw, scfg.cost)),
+        None => None,
+    };
     let mut assets = HashMap::new();
+    let mut dataset = None;
     for (i, p) in cfg.publish.iter().enumerate() {
-        let (hash, size) = hash_file(p)
-            .await
-            .map_err(|e| format!("{}: {e}", p.display()))?;
-        let name = p
-            .file_name()
-            .map(|n| n.to_string_lossy().to_string())
-            .unwrap_or_default();
+        let (hash, size) = hash_file(p).await.map_err(|e| format!("{}: {e}", p.display()))?;
+        let name = p.file_name().map(|n| n.to_string_lossy().to_string()).unwrap_or_default();
         if i == 0 {
-            session.set_dataset(Dataset {
-                name: name.clone(),
-                hash: hash.clone(),
-                size,
-                published: true,
-                ..Default::default()
-            });
+            dataset = Some(StartData { name: name.clone(), hash: hash.clone(), size });
         }
-        assets.insert(
-            hash,
-            Asset {
-                path: p.clone(),
-                size,
-                name,
-            },
-        );
+        assets.insert(hash, Asset { path: p.clone(), size, name });
     }
-    let app = Arc::new(App {
-        session: Mutex::new(session),
-        conns: Mutex::new(HashMap::new()),
-        next_conn: AtomicU64::new(1),
+    let store = Arc::new(Store {
         assets: RwLock::new(assets),
-        hashing: Semaphore::new(2),
-        cfg: cfg.clone(),
+        state_dir: cfg.state_dir.clone(),
+        max_upload: cfg.max_upload,
+        uploading: tokio::sync::Semaphore::new(2),
+        uploaded: std::sync::atomic::AtomicU64::new(0),
     });
-
-    let router = router(app.clone());
-    let listener =
-        std::net::TcpListener::bind(cfg.bind).map_err(|e| format!("bind {}: {e}", cfg.bind))?;
-    listener.set_nonblocking(true).map_err(|e| e.to_string())?;
-    let addr = listener.local_addr().map_err(|e| e.to_string())?;
-    let handle = axum_server::Handle::new();
-    let svc = router.into_make_service_with_connect_info::<SocketAddr>();
-    let (task, fingerprint, scheme) = match material {
-        Some(m) => {
-            let rc = axum_server::tls_rustls::RustlsConfig::from_pem(m.cert_pem, m.key_pem)
-                .await
-                .map_err(|e| format!("TLS: {e}"))?;
-            let mut server = axum_server::from_tcp_rustls(listener, rc).handle(handle.clone());
-            server
-                .http_builder()
-                .http1()
-                .timer(hyper_util::rt::TokioTimer::new())
-                .header_read_timeout(Duration::from_secs(10));
-            (
-                tokio::spawn(async move { server.serve(svc).await }),
-                Some(m.fingerprint),
-                "https",
-            )
-        }
-        None => {
-            let mut server = axum_server::from_tcp(listener).handle(handle.clone());
-            server
-                .http_builder()
-                .http1()
-                .timer(hyper_util::rt::TokioTimer::new())
-                .header_read_timeout(Duration::from_secs(10));
-            (
-                tokio::spawn(async move { server.serve(svc).await }),
-                None,
-                "http",
-            )
-        }
+    let audit = Arc::new(AuditLog::new(&cfg.state_dir));
+    let core = core_router(store, cfg.web_root.clone(), &cfg.mount);
+    let gcfg = GatewayConfig {
+        expose: cfg.expose,
+        allow_origins: cfg.allow_origins.clone(),
+        session: scfg,
+        password_phc,
+        host_token: host_token.clone(),
+        dataset,
+        tls_cert_pem: material.as_ref().map(|m| String::from_utf8_lossy(&m.cert_pem).to_string()),
+        tls_key_pem: material.as_ref().map(|m| String::from_utf8_lossy(&m.key_pem).to_string()),
+        hsts: matches!(cfg.tls, TlsMode::Files { .. }),
+        mounts: cfg.mount.iter().map(|(p, _)| p.clone()).collect(),
+        limits: cfg.limits.clone(),
     };
 
-    // Presence and the clock, ten times a second: one frame for everyone,
-    // each connection's slot overwritten, so the slow skip frames.
-    let tick_app = app.clone();
-    let ticker = tokio::spawn(async move {
-        let mut iv = tokio::time::interval(Duration::from_millis(100));
-        iv.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
-        loop {
-            iv.tick().await;
-            let (frame, outs) = tick_app.session.lock().unwrap().tick(now_ms());
-            if let Some(f) = frame {
-                let bytes = encode(&f);
-                let joined = tick_app
-                    .session
-                    .lock()
-                    .unwrap()
-                    .resolve(&crate::session::Target::Joined);
-                let conns = tick_app.conns.lock().unwrap();
-                for c in joined {
-                    if let Some(tx) = conns.get(&c) {
-                        let _ = tx.presence.send(Some(bytes.clone()));
-                    }
-                }
-            }
-            tick_app.dispatch(outs);
+    let listener = std::net::TcpListener::bind(cfg.bind).map_err(|e| format!("bind {}: {e}", cfg.bind))?;
+    listener.set_nonblocking(true).map_err(|e| e.to_string())?;
+    let addr = listener.local_addr().map_err(|e| e.to_string())?;
+    let listener = tokio::net::TcpListener::from_std(listener).map_err(|e| e.to_string())?;
+    let (stop_tx, stop_rx) = watch::channel(false);
+    audit.write(&serde_json::json!({ "t": now_ms(), "event": "start", "addr": addr.to_string(), "exposed": cfg.expose, "tls": material.is_some(), "sandbox": cfg.gateway.is_some() }).to_string());
+
+    let (task, sandbox) = match cfg.gateway.clone() {
+        None => {
+            let a = audit.clone();
+            let link = HostLink::Local { router: core, audit: Arc::new(move |l: String| a.write(&l)) };
+            let gw = Gateway::new(gcfg, link)?;
+            (tokio::spawn(accept_local(listener, gw, stop_rx)), None)
         }
-    });
+        Some(cmd) => {
+            let (mux, how) = spawn_gateway(&cmd, &gcfg, core.clone(), audit.clone()).await?;
+            let sup = Supervisor { cmd, gcfg, core, audit: audit.clone(), limits: PerIp::new(NetLimits { conns: cfg.limits.conns * 4, ..cfg.limits.clone() }) };
+            (tokio::spawn(sup.run(listener, mux, stop_rx)), Some(how))
+        }
+    };
     Ok(Running {
         addr,
         host_token,
-        fingerprint,
-        scheme,
-        handle,
+        fingerprint: material.map(|m| m.fingerprint),
+        scheme: if matches!(cfg.tls, TlsMode::Off) { "http" } else { "https" },
+        sandbox,
+        stop: stop_tx,
         task,
-        ticker,
     })
 }
 
-/// The security headers on every answer.
-fn secured<S: Clone + Send + Sync + 'static>(r: Router<S>) -> Router<S> {
-    let h = |name: &'static str, value: &'static str| {
-        SetResponseHeaderLayer::overriding(
-            HeaderName::from_static(name),
-            HeaderValue::from_static(value),
-        )
-    };
-    r.layer(h(
-        "content-security-policy",
-        "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; \
-         connect-src 'self' wss: https:; font-src 'self' data:; media-src 'self' blob:; frame-ancestors 'none'; object-src 'none'; base-uri 'none'; form-action 'none'",
-    ))
-    .layer(h("x-content-type-options", "nosniff"))
-    .layer(h("x-frame-options", "DENY"))
-    .layer(h("referrer-policy", "no-referrer"))
-    .layer(h("cross-origin-opener-policy", "same-origin"))
-    .layer(h("cross-origin-resource-policy", "same-origin"))
-    .layer(h("permissions-policy", "camera=(), microphone=(), geolocation=()"))
-}
-
-fn router(app: Arc<App>) -> Router {
-    let mut r = Router::new()
-        .route("/session.json", get(info))
-        .route("/ws", get(ws))
-        .route("/a/{hash}", get(asset))
-        .route("/api/docs", get(docs_get))
-        .route(
-            "/api/load",
-            post(docs_load).layer(DefaultBodyLimit::max(MAX_LOAD)),
-        )
-        .route(
-            "/api/publish",
-            post(publish).layer(DefaultBodyLimit::disable()),
-        );
-    for (path, service) in &app.cfg.mount {
-        r = r.nest_service(path, service.clone());
+/// The gateway in this process: each connection straight to it.
+async fn accept_local(listener: tokio::net::TcpListener, gw: Arc<Gateway>, mut stop: watch::Receiver<bool>) -> std::io::Result<()> {
+    loop {
+        tokio::select! {
+            a = listener.accept() => {
+                let Ok((tcp, peer)) = a else {
+                    tokio::time::sleep(Duration::from_millis(50)).await;
+                    continue;
+                };
+                let _ = tcp.set_nodelay(true);
+                tokio::spawn(gw.clone().serve_conn(tcp, peer));
+            }
+            _ = stopped(&mut stop) => return Ok(()),
+        }
     }
-    r = match &app.cfg.web_root {
-        Some(root) => r.fallback_service(
-            ServeDir::new(root)
-                .append_index_html_on_directories(true)
-                .fallback(ServeFile::new(root.join("index.html"))),
-        ),
-        None => r.fallback(|| async {
-            (
-                StatusCode::NOT_FOUND,
-                "No web build: run `npm run build` and pass --web dist",
-            )
-        }),
-    };
-    secured(r)
-        .layer(middleware::from_fn_with_state(app.clone(), guard))
-        .with_state(app)
 }
 
-/// Only this machine and the local network, unless the host exposed the server.
-/// A page from an origin the host allowed (`--allow-origin`, a dev server) may
-/// call the server's HTTP side too; no other origin is answered for.
-async fn guard(
-    State(app): State<Arc<App>>,
-    ConnectInfo(peer): ConnectInfo<SocketAddr>,
-    req: Request,
-    next: Next,
-) -> Response {
-    if !app.cfg.expose && !lan::is_local(peer.ip()) {
-        return StatusCode::FORBIDDEN.into_response();
+/// Until the server is told to stop.
+async fn stopped(rx: &mut watch::Receiver<bool>) {
+    while !*rx.borrow_and_update() {
+        if rx.changed().await.is_err() {
+            return;
+        }
     }
-    let allowed = req
-        .headers()
-        .get(header::ORIGIN)
-        .and_then(|v| v.to_str().ok())
-        .filter(|o| app.cfg.allow_origins.iter().any(|a| a == o))
-        .and_then(|o| HeaderValue::from_str(o).ok());
-    let Some(origin) = allowed else {
-        return next.run(req).await;
-    };
-    let mut res = if req.method() == axum::http::Method::OPTIONS {
-        StatusCode::NO_CONTENT.into_response()
-    } else {
-        next.run(req).await
-    };
-    let h = res.headers_mut();
-    h.insert(header::ACCESS_CONTROL_ALLOW_ORIGIN, origin);
-    h.insert(
-        header::ACCESS_CONTROL_ALLOW_METHODS,
-        HeaderValue::from_static("GET, POST"),
-    );
-    h.insert(
-        header::ACCESS_CONTROL_ALLOW_HEADERS,
-        HeaderValue::from_static("authorization, content-type, range"),
-    );
-    h.insert(header::VARY, HeaderValue::from_static("origin"));
-    res
 }
 
-async fn info(State(app): State<Arc<App>>) -> Response {
-    let s = app.session.lock().unwrap();
-    let body = serde_json::json!({
-        "app": "3dheat",
-        "proto": crate::session::PROTO,
-        "name": s.cfg.name,
-        "password": s.password_to_check(&proto::Hello::default()).is_some(),
-        "tls": s.cfg.tls,
-        "exposed": s.cfg.exposed,
+/// The gateway process: started, told its settings, its requests served,
+/// and started again should it end.
+struct Supervisor {
+    cmd: GatewayCommand,
+    gcfg: GatewayConfig,
+    core: Router,
+    audit: Arc<AuditLog>,
+    /// The core's own cap on connections, before a byte is relayed.
+    limits: PerIp,
+}
+
+/// The gateway as its own process, and the channel to it: its settings
+/// sent, its requests and audit lines served, until it is ready.
+async fn spawn_gateway(cmd: &GatewayCommand, gcfg: &GatewayConfig, core: Router, audit: Arc<AuditLog>) -> Result<(Mux, String), String> {
+    let args: Vec<&str> = cmd.args.iter().map(String::as_str).collect();
+    let mut child = heat3d_sandbox::spawn(&cmd.exe, &args).map_err(|e| format!("starting the gateway: {e}"))?;
+    let stdout = std::mem::replace(&mut child.stdout, Box::new(tokio::io::empty()));
+    let stdin = std::mem::replace(&mut child.stdin, Box::new(tokio::io::sink()));
+    let mut stderr = std::mem::replace(&mut child.stderr, Box::new(tokio::io::empty()));
+    // What the gateway says on its error stream: the core's error stream, line by line.
+    tokio::spawn(async move {
+        use tokio::io::AsyncBufReadExt;
+        let mut lines = tokio::io::BufReader::new(&mut stderr).lines();
+        while let Ok(Some(l)) = lines.next_line().await {
+            eprintln!("3dheat gateway: {}", l.chars().take(500).collect::<String>());
+        }
     });
-    (
-        [
-            (header::CONTENT_TYPE, "application/json"),
-            (header::CACHE_CONTROL, "no-store"),
-        ],
-        body.to_string(),
-    )
-        .into_response()
-}
-
-fn bearer(h: &HeaderMap) -> String {
-    h.get(header::AUTHORIZATION)
-        .and_then(|v| v.to_str().ok())
-        .and_then(|v| v.strip_prefix("Bearer "))
-        .unwrap_or("")
-        .to_string()
-}
-
-/// Whether the WebSocket's origin is the server's own (or one allowed): no other site's page may open it.
-fn origin_ok(app: &App, h: &HeaderMap) -> bool {
-    let Some(origin) = h.get(header::ORIGIN).and_then(|v| v.to_str().ok()) else {
-        // Not a browser: the origin check is against other sites' pages.
-        return true;
-    };
-    if app.cfg.allow_origins.iter().any(|o| o == origin) {
-        return true;
-    }
-    let Some(host) = h.get(header::HOST).and_then(|v| v.to_str().ok()) else {
-        return false;
-    };
-    let scheme = if matches!(app.cfg.tls, TlsMode::Off) {
-        "http"
-    } else {
-        "https"
-    };
-    origin == format!("{scheme}://{host}")
-}
-
-async fn ws(
-    State(app): State<Arc<App>>,
-    ConnectInfo(peer): ConnectInfo<SocketAddr>,
-    headers: HeaderMap,
-    up: WebSocketUpgrade,
-) -> Response {
-    if !origin_ok(&app, &headers) {
-        return StatusCode::FORBIDDEN.into_response();
-    }
-    up.max_message_size(MAX_CLIENT_MSG)
-        .max_frame_size(MAX_CLIENT_MSG)
-        .on_upgrade(move |sock| run_conn(app, sock, peer.ip()))
-}
-
-async fn send_close(
-    sock: &mut futures_util::stream::SplitSink<WebSocket, Message>,
-    reason: CloseReason,
-) {
-    let code = match reason {
-        CloseReason::Kicked | CloseReason::BannedNow => 4001,
-        CloseReason::TooSlow => 4002,
-        CloseReason::Abuse => 4003,
-        CloseReason::Replaced => 4004,
-        CloseReason::Shutdown => 1001,
-        CloseReason::CloseUnspecified => 4000,
-    };
-    let _ = tokio::time::timeout(
-        Duration::from_secs(2),
-        sock.send(Message::Close(Some(CloseFrame {
-            code,
-            reason: "".into(),
-        }))),
-    )
-    .await;
-}
-
-async fn run_conn(app: Arc<App>, sock: WebSocket, ip: IpAddr) {
-    let conn = app.next_conn.fetch_add(1, Ordering::Relaxed);
-    let (mut sink, mut stream) = sock.split();
-    let connected = app.session.lock().unwrap().connect(conn, ip, now_ms());
-    if let Err(code) = connected {
-        let m = ServerMsg {
-            body: Some(server_msg::Body::Denied(proto::Denied {
-                code: code as i32,
-                retry_ms: 5000,
-            })),
-        };
-        let _ = sink.send(Message::Binary(m.encode_to_vec().into())).await;
-        send_close(&mut sink, CloseReason::CloseUnspecified).await;
-        return;
-    }
-    let (tx, mut rx) = mpsc::channel::<Outgoing>(4096);
-    let queued = Arc::new(AtomicUsize::new(0));
-    let (ptx, mut prx) = watch::channel::<Option<Arc<Vec<u8>>>>(None);
-    app.conns.lock().unwrap().insert(
-        conn,
-        ConnTx {
-            tx: tx.clone(),
-            queued: queued.clone(),
-            presence: ptx,
+    let (mux, mut incoming) = Mux::new(stdout, stdin, true);
+    mux.control(serde_json::to_string(gcfg).map_err(|e| e.to_string())?.as_bytes()).await;
+    // Ready, or what went wrong.
+    let ready = tokio::time::timeout(Duration::from_secs(20), incoming.control.recv()).await;
+    let how = match ready {
+        Ok(Some(b)) => match serde_json::from_slice::<serde_json::Value>(&b) {
+            Ok(v) if v["ready"] == true => {
+                let said = v["sandbox"].as_str().unwrap_or("").chars().take(300).collect::<String>();
+                match heat3d_sandbox::started_as() {
+                    "" => said,
+                    how => how.to_string(),
+                }
+            }
+            _ => return Err("the gateway did not start".into()),
         },
-    );
-
-    // The writer: the queue first, presence when there is room.
-    let wq = queued.clone();
-    let writer = tokio::spawn(async move {
+        _ => return Err("the gateway did not start (see its messages above)".into()),
+    };
+    // The gateway's requests (files, uploads, the data API) and audit lines.
+    tokio::spawn(async move {
         loop {
             tokio::select! {
-                biased;
-                o = rx.recv() => match o {
-                    Some(Outgoing::Bytes(b)) => {
-                        wq.fetch_sub(b.len(), Ordering::Relaxed);
-                        let sent = tokio::time::timeout(Duration::from_secs(15), sink.send(Message::Binary((*b).clone().into()))).await;
-                        if !matches!(sent, Ok(Ok(()))) { break; }
-                    }
-                    Some(Outgoing::Close(r)) => { send_close(&mut sink, r).await; break; }
-                    None => break,
-                },
-                ch = prx.changed() => {
-                    if ch.is_err() { break; }
-                    let b = prx.borrow_and_update().clone();
-                    if let Some(b) = b {
-                        let sent = tokio::time::timeout(Duration::from_secs(15), sink.send(Message::Binary((*b).clone().into()))).await;
-                        if !matches!(sent, Ok(Ok(()))) { break; }
+                s = incoming.streams.recv() => {
+                    let Some((meta, io)) = s else { break };
+                    if &meta[..] != b"http" { continue; }
+                    tokio::spawn(serve_core(io, core.clone()));
+                }
+                c = incoming.control.recv() => {
+                    let Some(b) = c else { break };
+                    if let Ok(v) = serde_json::from_slice::<serde_json::Value>(&b) {
+                        if let Some(line) = v["audit"].as_str() {
+                            audit.write(line);
+                        }
                     }
                 }
             }
         }
     });
-
-    let mut hello_done = false;
-    let mut bad = 0u32;
-    loop {
-        // A hello within ten seconds, then something (a ping at least) every minute.
-        let wait = if hello_done {
-            Duration::from_secs(60)
-        } else {
-            Duration::from_secs(10)
-        };
-        let next = tokio::select! {
-            n = tokio::time::timeout(wait, stream.next()) => n,
-            _ = tx.closed() => break,
-        };
-        let Ok(Some(Ok(frame))) = next else { break };
-        let data = match frame {
-            Message::Binary(b) => b,
-            Message::Ping(_) | Message::Pong(_) => continue,
-            Message::Close(_) => break,
-            Message::Text(_) => {
-                let _ = tx.try_send(Outgoing::Close(CloseReason::Abuse));
-                break;
-            }
-        };
-        if data.len() > MAX_CLIENT_MSG {
-            break;
+    // The child lives as long as the channel; it is killed when the channel ends.
+    let m3 = mux.clone();
+    tokio::spawn(async move {
+        tokio::select! {
+            _ = child.wait() => {}
+            _ = m3.closed() => { child.kill(); child.wait().await; }
         }
-        let Ok(m) = ClientMsg::decode(data.as_ref()) else {
-            bad += 1;
-            let ack = ServerMsg {
-                body: Some(server_msg::Body::Ack(proto::Ack {
-                    rid: 0,
-                    code: proto::Err::BadMessage as i32,
-                    retry_ms: 0,
-                })),
-            };
-            app.dispatch(vec![Out::Send(crate::session::Target::Conn(conn), ack)]);
-            if bad > 10 {
-                let _ = tx.try_send(Outgoing::Close(CloseReason::Abuse));
-                break;
-            }
-            continue;
-        };
-        if !hello_done {
-            let Some(client_msg::Body::Hello(h)) = m.body else {
-                let _ = tx.try_send(Outgoing::Close(CloseReason::CloseUnspecified));
-                break;
-            };
-            hello_done = true;
-            let outs = hello(&app, conn, h).await;
-            app.dispatch(outs);
-            continue;
-        }
-        let outs = app
-            .session
-            .lock()
-            .unwrap()
-            .message(conn, m, data.len(), now_ms());
-        app.dispatch(outs);
-    }
-    app.conns.lock().unwrap().remove(&conn);
-    let outs = app.session.lock().unwrap().disconnect(conn, now_ms());
-    app.dispatch(outs);
-    drop(tx);
-    let _ = tokio::time::timeout(Duration::from_secs(3), writer).await;
+    });
+    Ok((mux, how))
 }
 
-/// A hello: the password checked off the session's lock, two at a time at most.
-async fn hello(app: &Arc<App>, conn: ConnId, h: proto::Hello) -> Vec<Out> {
-    let (phc, locked, flooded) = {
-        let mut s = app.session.lock().unwrap();
-        let now = now_ms();
-        (s.password_to_check(&h), s.locked(conn, now), s.flooded(now))
+impl Supervisor {
+    async fn run(self, listener: tokio::net::TcpListener, mut mux: Mux, mut stop: watch::Receiver<bool>) -> std::io::Result<()> {
+        let mut restarts = 0u32;
+        loop {
+            tokio::select! {
+                a = listener.accept() => {
+                    let Ok((tcp, peer)) = a else {
+                        tokio::time::sleep(Duration::from_millis(50)).await;
+                        continue;
+                    };
+                    if !self.gcfg.expose && !crate::lan::is_local(peer.ip()) {
+                        continue;
+                    }
+                    let Some(slot) = self.limits.connect(peer.ip()) else { continue };
+                    let _ = tcp.set_nodelay(true);
+                    let mux = mux.clone();
+                    tokio::spawn(async move {
+                        let _slot = slot;
+                        let Ok(mut stream) = mux.open(peer.to_string().as_bytes()).await else { return };
+                        let mut tcp = tcp;
+                        let _ = tokio::io::copy_bidirectional(&mut tcp, &mut stream).await;
+                    });
+                }
+                _ = mux.closed() => {
+                    restarts += 1;
+                    self.audit.write(&serde_json::json!({ "t": now_ms(), "event": "gateway_ended", "restarts": restarts }).to_string());
+                    eprintln!("3dheat: the gateway ended; starting it again (the session starts afresh)");
+                    tokio::time::sleep(Duration::from_millis(500 * restarts.min(20) as u64)).await;
+                    match spawn_gateway(&self.cmd, &self.gcfg, self.core.clone(), self.audit.clone()).await {
+                        Ok((m, _)) => mux = m,
+                        Err(e) => {
+                            eprintln!("3dheat: {e}");
+                            if restarts > 20 { return Err(std::io::Error::other(e)); }
+                        }
+                    }
+                }
+                _ = stopped(&mut stop) => return Ok(()),
+            }
+        }
+    }
+}
+
+/// One request of the gateway's, on its stream: HTTP/1.1 to the core's router.
+async fn serve_core(io: tokio::io::DuplexStream, core: Router) {
+    let svc = hyper::service::service_fn(move |req: hyper::Request<hyper::body::Incoming>| {
+        let r = core.clone();
+        async move { r.oneshot(req.map(Body::new)).await }
+    });
+    let _ = hyper::server::conn::http1::Builder::new()
+        .max_buf_size(gateway::MAX_HEAD)
+        .serve_connection(TokioIo::new(io), svc)
+        .await;
+}
+
+/// What the core serves the gateway: the web build, published files by
+/// hash, uploads, and the mounted services, which see every request as a
+/// remote one (no address of this machine: never files by path).
+fn core_router(store: Arc<Store>, web_root: Option<PathBuf>, mounts: &[(String, Router)]) -> Router {
+    let mut r = Router::new()
+        .route("/a/{hash}", get(asset))
+        .route("/api/publish", post(publish).layer(axum::extract::DefaultBodyLimit::disable()))
+        .with_state(store);
+    for (path, service) in mounts {
+        r = r.nest_service(path, service.clone());
+    }
+    r = match web_root {
+        Some(root) => r.fallback_service(
+            ServeDir::new(&root)
+                .append_index_html_on_directories(true)
+                .fallback(ServeFile::new(root.join("index.html"))),
+        ),
+        None => r.fallback(|| async { (StatusCode::NOT_FOUND, "No web build: run `npm run build` and pass --web dist") }),
     };
-    let mut ok = None;
-    if let (Some(phc), 0) = (phc, locked) {
-        if flooded {
-            tokio::time::sleep(Duration::from_millis(1000)).await;
-        }
-        let Ok(_permit) = app.hashing.acquire().await else {
-            return vec![];
-        };
-        let pw = h.password.clone();
-        ok = Some(
-            tokio::task::spawn_blocking(move || auth::verify_password(&pw, &phc))
-                .await
-                .unwrap_or(false),
-        );
-    }
-    app.session.lock().unwrap().hello(conn, &h, ok, now_ms())
+    r.layer(middleware::from_fn(remote_only))
 }
 
-fn hex64(s: &str) -> bool {
-    s.len() == 64
-        && s.bytes()
-            .all(|b| b.is_ascii_hexdigit() && !b.is_ascii_uppercase())
+/// Every request the core serves is a stranger's, whatever it says.
+async fn remote_only(mut req: Request, next: Next) -> Response {
+    req.extensions_mut().insert(ConnectInfo(SocketAddr::from(([192, 0, 2, 1], 0))));
+    req.headers_mut().remove("x-heat3d-key");
+    next.run(req).await
 }
 
-/// A published file by its hash, for a joined member (Range requests work).
-async fn asset(
-    State(app): State<Arc<App>>,
-    Path(hash): Path<String>,
-    headers: HeaderMap,
-    req: Request,
-) -> Response {
-    if !hex64(&hash) {
+/// A published file by its hash (the gateway checked the member's token).
+async fn asset(State(store): State<Arc<Store>>, Path(hash): Path<String>, req: Request) -> Response {
+    if !gateway::hex64(&hash) {
         return StatusCode::NOT_FOUND.into_response();
     }
-    if !app
-        .session
-        .lock()
-        .unwrap()
-        .asset_token_ok(&bearer(&headers))
-    {
-        return StatusCode::UNAUTHORIZED.into_response();
-    }
-    let Some(a) = app.assets.read().unwrap().get(&hash).cloned() else {
+    let Some(a) = store.assets.read().unwrap().get(&hash).cloned() else {
         return StatusCode::NOT_FOUND.into_response();
     };
     let mut res = match ServeFile::new(&a.path).oneshot(req).await {
@@ -720,20 +505,11 @@ async fn asset(
         Err(_) => return StatusCode::INTERNAL_SERVER_ERROR.into_response(),
     };
     let h = res.headers_mut();
-    h.insert(
-        header::CONTENT_TYPE,
-        HeaderValue::from_static("application/octet-stream"),
-    );
-    h.insert(
-        header::CACHE_CONTROL,
-        HeaderValue::from_static("private, max-age=31536000, immutable"),
-    );
+    h.insert(header::CONTENT_TYPE, HeaderValue::from_static("application/octet-stream"));
+    h.insert(header::CACHE_CONTROL, HeaderValue::from_static("private, max-age=31536000, immutable"));
     if let Ok(v) = HeaderValue::from_str(&format!(
         "attachment; filename=\"{}\"",
-        a.name.replace(
-            |c: char| !c.is_ascii_alphanumeric() && c != '.' && c != '-' && c != '_',
-            "_"
-        )
+        a.name.replace(|c: char| !c.is_ascii_alphanumeric() && c != '.' && c != '-' && c != '_', "_")
     )) {
         h.insert(header::CONTENT_DISPOSITION, v);
     }
@@ -741,57 +517,17 @@ async fn asset(
     res
 }
 
-fn host_only(app: &App, headers: &HeaderMap) -> bool {
-    app.session.lock().unwrap().is_host_token(&bearer(headers))
-}
-
-/// The shared documents, for the host saving the session.
-async fn docs_get(State(app): State<Arc<App>>, headers: HeaderMap) -> Response {
-    if !host_only(&app, &headers) {
-        return StatusCode::UNAUTHORIZED.into_response();
-    }
-    let body = app.session.lock().unwrap().docs_json();
-    (
-        [
-            (header::CONTENT_TYPE, "application/json"),
-            (header::CACHE_CONTROL, "no-store"),
-        ],
-        body,
-    )
-        .into_response()
-}
-
-/// The host opened a session file: its documents replace the shared ones.
-async fn docs_load(State(app): State<Arc<App>>, headers: HeaderMap, body: String) -> Response {
-    if !host_only(&app, &headers) {
-        return StatusCode::UNAUTHORIZED.into_response();
-    }
-    let r = app.session.lock().unwrap().load_docs(&body);
-    match r {
-        Ok(outs) => {
-            app.dispatch(outs);
-            StatusCode::NO_CONTENT.into_response()
-        }
-        Err(e) => (StatusCode::UNPROCESSABLE_ENTITY, format!("{e:?}")).into_response(),
-    }
-}
-
 #[derive(serde::Deserialize)]
 struct PublishQuery {
     name: Option<String>,
 }
 
-/// The host publishes a file (its data, its level) for members to fetch by hash.
-async fn publish(
-    State(app): State<Arc<App>>,
-    headers: HeaderMap,
-    Query(q): Query<PublishQuery>,
-    body: Body,
-) -> Response {
-    if !host_only(&app, &headers) {
-        return StatusCode::UNAUTHORIZED.into_response();
-    }
-    let dir = app.cfg.state_dir.join("assets");
+/// The host publishes a file (the gateway checked the host's token): kept by its hash, never by a name.
+async fn publish(State(store): State<Arc<Store>>, Query(q): Query<PublishQuery>, body: Body) -> Response {
+    let Ok(_permit) = store.uploading.try_acquire() else {
+        return StatusCode::TOO_MANY_REQUESTS.into_response();
+    };
+    let dir = store.state_dir.join("assets");
     if tokio::fs::create_dir_all(&dir).await.is_err() {
         return StatusCode::INTERNAL_SERVER_ERROR.into_response();
     }
@@ -808,7 +544,8 @@ async fn publish(
             return StatusCode::BAD_REQUEST.into_response();
         };
         size += chunk.len() as u64;
-        if size > app.cfg.max_upload || f.write_all(&chunk).await.is_err() {
+        let all = store.uploaded.fetch_add(chunk.len() as u64, std::sync::atomic::Ordering::Relaxed) + chunk.len() as u64;
+        if size > store.max_upload || all > UPLOADS_TOTAL || f.write_all(&chunk).await.is_err() {
             drop(f);
             let _ = tokio::fs::remove_file(&tmp).await;
             return StatusCode::PAYLOAD_TOO_LARGE.into_response();
@@ -823,15 +560,8 @@ async fn publish(
         let _ = tokio::fs::remove_file(&tmp).await;
     }
     let name = crate::text::clean(q.name.as_deref().unwrap_or("data"), 200, false);
-    app.assets
-        .write()
-        .unwrap()
-        .insert(hash.clone(), Asset { path, size, name });
-    (
-        [(header::CONTENT_TYPE, "application/json")],
-        serde_json::json!({ "hash": hash, "size": size }).to_string(),
-    )
-        .into_response()
+    store.assets.write().unwrap().insert(hash.clone(), Asset { path, size, name });
+    ([(header::CONTENT_TYPE, "application/json")], serde_json::json!({ "hash": hash, "size": size }).to_string()).into_response()
 }
 
 async fn hash_file(p: &std::path::Path) -> std::io::Result<(String, u64)> {
@@ -849,4 +579,51 @@ async fn hash_file(p: &std::path::Path) -> std::io::Result<(String, u64)> {
         h.update(&buf[..n]);
     }
     Ok((hex::encode(h.finalize()), size))
+}
+
+/// A gateway in this process over a core serving `web_root` (plain HTTP, no
+/// request budget, `publish` published by hash), for tests and the fuzzer;
+/// inside a Tokio runtime.
+pub fn test_gateway(web_root: PathBuf, state_dir: PathBuf, host_token: String, publish: Vec<(String, PathBuf)>) -> Result<Arc<Gateway>, String> {
+    let store = Arc::new(Store {
+        assets: RwLock::new(
+            publish
+                .into_iter()
+                .map(|(hash, path)| (hash, Asset { path, size: 0, name: "data".into() }))
+                .collect(),
+        ),
+        state_dir,
+        max_upload: 1 << 20,
+        uploading: tokio::sync::Semaphore::new(2),
+        uploaded: std::sync::atomic::AtomicU64::new(0),
+    });
+    let core = core_router(store, Some(web_root), &[]);
+    let mut session = Config::default();
+    session.cost = auth::Cost::TEST;
+    let gcfg = GatewayConfig {
+        expose: false,
+        allow_origins: vec![],
+        session,
+        password_phc: None,
+        host_token,
+        dataset: None,
+        tls_cert_pem: None,
+        tls_key_pem: None,
+        hsts: false,
+        mounts: vec![],
+        limits: NetLimits { requests_burst: 1e12, requests_per_sec: 1e12, ..NetLimits::default() },
+    };
+    Gateway::new(gcfg, HostLink::Local { router: core, audit: Arc::new(|_| {}) })
+}
+
+/// The gateway's process: `3dheat gateway`, started by the core only.
+pub async fn gateway_main() -> i32 {
+    let r = gateway::run_child(tokio::io::stdin(), tokio::io::stdout(), heat3d_sandbox::lockdown).await;
+    match r {
+        Ok(()) => 0,
+        Err(e) => {
+            eprintln!("{e}");
+            1
+        }
+    }
 }

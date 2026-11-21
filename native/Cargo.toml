@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/proto", "crates/core", "crates/session", "crates/server", "crates/app-tauri"]
+members = ["crates/proto", "crates/core", "crates/sandbox", "crates/session", "crates/server", "crates/app-tauri"]
 # Built with nightly by cargo-fuzz, apart from the rest.
 exclude = ["crates/session/fuzz"]
 

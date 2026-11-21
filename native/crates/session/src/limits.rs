@@ -87,6 +87,101 @@ impl Budgets {
     }
 }
 
+/// Connections and requests by address: how many connections each has
+/// open, its request and upgrade budgets; and the connections in all.
+pub struct PerIp {
+    limits: crate::gateway::NetLimits,
+    by_addr: std::sync::Mutex<std::collections::HashMap<String, AddrState>>,
+    total: std::sync::Arc<std::sync::atomic::AtomicUsize>,
+}
+
+struct AddrState {
+    conns: std::sync::Arc<std::sync::atomic::AtomicUsize>,
+    requests: Bucket,
+    upgrades: Bucket,
+    last: i64,
+}
+
+/// A connection's place: given back when it ends.
+pub struct Slot {
+    conns: std::sync::Arc<std::sync::atomic::AtomicUsize>,
+    total: std::sync::Arc<std::sync::atomic::AtomicUsize>,
+}
+
+impl Drop for Slot {
+    fn drop(&mut self) {
+        use std::sync::atomic::Ordering;
+        self.conns.fetch_sub(1, Ordering::AcqRel);
+        self.total.fetch_sub(1, Ordering::AcqRel);
+    }
+}
+
+impl PerIp {
+    pub fn new(limits: crate::gateway::NetLimits) -> Self {
+        Self {
+            limits,
+            by_addr: Default::default(),
+            total: Default::default(),
+        }
+    }
+
+    fn with<T>(&self, ip: std::net::IpAddr, now_ms: i64, f: impl FnOnce(&mut AddrState) -> T) -> T {
+        let key = crate::auth::addr_key(ip);
+        let mut m = self.by_addr.lock().unwrap();
+        let l = &self.limits;
+        let s = m.entry(key).or_insert_with(|| AddrState {
+            conns: Default::default(),
+            requests: Bucket::new(l.requests_burst, l.requests_per_sec, now_ms),
+            upgrades: Bucket::new(l.upgrades_burst, l.upgrades_per_sec, now_ms),
+            last: now_ms,
+        });
+        s.last = now_ms;
+        f(s)
+    }
+
+    /// A new connection from `ip`, or None when it or everyone has too many.
+    pub fn connect(&self, ip: std::net::IpAddr) -> Option<Slot> {
+        use std::sync::atomic::Ordering;
+        if self.total.fetch_add(1, Ordering::AcqRel) >= self.limits.conns {
+            self.total.fetch_sub(1, Ordering::AcqRel);
+            return None;
+        }
+        let conns = self.with(ip, crate::gateway::now_ms(), |s| s.conns.clone());
+        if conns.fetch_add(1, Ordering::AcqRel) >= self.limits.conns_per_addr {
+            conns.fetch_sub(1, Ordering::AcqRel);
+            self.total.fetch_sub(1, Ordering::AcqRel);
+            return None;
+        }
+        Some(Slot {
+            conns,
+            total: self.total.clone(),
+        })
+    }
+
+    /// Whether `ip` may make another HTTP request now.
+    pub fn request(&self, ip: std::net::IpAddr, now_ms: i64) -> bool {
+        self.with(ip, now_ms, |s| s.requests.take(1.0, now_ms).is_ok())
+    }
+
+    /// Whether `ip` may open another WebSocket now.
+    pub fn upgrade(&self, ip: std::net::IpAddr, now_ms: i64) -> bool {
+        self.with(ip, now_ms, |s| s.upgrades.take(1.0, now_ms).is_ok())
+    }
+
+    /// Forgets addresses with nothing open that were quiet for ten minutes.
+    pub fn forget_idle(&self, now_ms: i64) {
+        use std::sync::atomic::Ordering;
+        self.by_addr
+            .lock()
+            .unwrap()
+            .retain(|_, s| s.conns.load(Ordering::Acquire) > 0 || now_ms - s.last < 600_000);
+    }
+
+    pub fn open(&self) -> usize {
+        self.total.load(std::sync::atomic::Ordering::Acquire)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

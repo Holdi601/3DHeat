@@ -7,6 +7,7 @@
  */
 
 import { create } from 'zustand';
+import { identityHex } from './identity';
 
 type V3 = { x: number; y: number; z: number };
 
@@ -107,20 +108,24 @@ export const useMarks = create<MarksStore>((set, get) => ({
 }));
 
 /**
- * A random key this browser keeps: it signs the marks set here, and the
- * session server knows a member's own entities by it across reconnects.
+ * This browser's key: the marks set here carry it, and the session server
+ * knows a member's own entities by it across reconnects. The Ed25519 key's
+ * hex once it is loaded (`identity.ts`; the server sees it proven), else a
+ * random one kept here, which the server keeps apart as only named (`u:`).
  */
 export function browserKey(): string {
+  const proven = identityHex();
+  if (proven) return proven;
   try {
     let k = localStorage.getItem('heat3d.session.key');
-    if (!k || !/^[A-Za-z0-9_-]{16,64}$/.test(k)) {
+    if (!k || !/^u:[A-Za-z0-9_-]{16,62}$/.test(k)) {
       const b = new Uint8Array(16);
       crypto.getRandomValues(b);
-      k = [...b].map((x) => x.toString(16).padStart(2, '0')).join('');
+      k = `u:${[...b].map((x) => x.toString(16).padStart(2, '0')).join('')}`;
       localStorage.setItem('heat3d.session.key', k);
     }
     return k;
   } catch {
-    return 'local';
+    return 'u:local';
   }
 }

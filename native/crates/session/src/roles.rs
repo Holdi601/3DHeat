@@ -66,6 +66,18 @@ pub fn may_moderate(actor: Role, target: Role) -> bool {
     at_least(actor, Role::Admin) && rank(actor) > rank(target)
 }
 
+/// A role's name, for the audit log.
+pub fn name(r: Role) -> &'static str {
+    match r {
+        Role::Unspecified => "none",
+        Role::Viewer => "viewer",
+        Role::Draw => "draw",
+        Role::Elevated => "elevated",
+        Role::Admin => "admin",
+        Role::Host => "host",
+    }
+}
+
 /// Whether `actor` may give the role `to` (on joining, by invite, or changing one).
 pub fn may_grant(actor: Role, to: Role) -> bool {
     match actor {

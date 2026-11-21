@@ -16,6 +16,8 @@ pub mod proto {
 
 pub mod auth;
 pub mod doc;
+pub mod gateway;
+pub mod ipc;
 pub mod lan;
 pub mod limits;
 pub mod roles;

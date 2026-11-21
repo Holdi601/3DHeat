@@ -1,0 +1,18 @@
+[package]
+name = "heat3d-sandbox"
+description = "Starts the session server's network gateway as a locked-down process: no files, no other processes, no network of its own"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+tokio = { version = "1", features = ["rt", "process", "fs", "io-util", "io-std"] }
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Security", "Win32_Security_Authorization", "Win32_System_Threading", "Win32_System_JobObjects", "Win32_System_Pipes", "Win32_System_Memory", "Win32_Security_Isolation"] }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+landlock = "0.4"
+seccompiler = "0.5"
+libc = "0.2"

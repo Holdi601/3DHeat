@@ -4,6 +4,7 @@ description = "3DHeat, the native app: the viewer in its own window, with the na
 version.workspace = true
 edition.workspace = true
 license.workspace = true
+publish = false
 
 [[bin]]
 # Named apart from the headless `3dheat` (crates/server): one folder holds both, and Windows

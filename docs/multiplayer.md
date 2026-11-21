@@ -30,12 +30,15 @@ The session server is one program, `3dheat` (built in `native/` with `cargo buil
 | `--bind ADDR` | The address to listen on: all of this machine's (`0.0.0.0`) by default. |
 | `--password-env VAR` / `--password-file FILE` | The session password (at least 12 characters), from an environment variable or a file - never on the command line, where other programs can read it. |
 | `--no-waiting-room` | Members with the password join at once. Without a password there is always a waiting room. |
-| `--max-clients N`, `--max-per-addr N` | Connections at most: 32, and 3 from one address. |
+| `--max-clients N`, `--max-per-addr N` | Members at most: 32, and 3 from one address. |
+| `--max-waiting N` | Clients in the waiting room at most (16). The host, invite links and members coming back still get in. |
+| `--max-connections N` | TCP connections at most, all clients together (1024; 64 from one address). |
 | `--publish FILE` | Makes a file fetchable by the members, by its content hash; the first is announced as the session's data. |
 | `--cert FILE --key FILE` | A real certificate (PEM), e.g. from Let's Encrypt, instead of the self-signed one. |
 | `--plain-http` | No TLS, on this machine only (`127.0.0.1`), for trying it out. |
 | `--allow-origin ORIGIN` | Also accept a viewer from this origin (a development server). |
 | `--state-dir DIR` | Where the certificate and published files are kept. |
+| `--no-sandbox` | Run the network gateway inside the server's own process instead of a locked-down process of its own (for debugging; not with `--expose-internet`). |
 | `--expose-internet` | Expert mode, see [Security](#security). |
 
 **The certificate.** On the local network the server makes a self-signed certificate once and keeps it, so its fingerprint stays the same. A browser warns about it the first time: compare the fingerprint the server printed with the one the browser shows (the padlock, *Certificate*), then accept it. TLS matters beyond privacy: browsers give WebGPU only to secure pages, so without it the members would fall back to WebGL2.
@@ -101,21 +104,67 @@ The file is JSON with `schema: heat3d.session/1`; a later version opens older fi
 
 ## Security
 
-What is in place now:
+The session server is built to be reached by people you did not choose: everything they send is checked before it is used, every resource they can claim has a limit, and the part that reads their bytes cannot touch your machine. `3dheat serve` was fuzzed and pentested before this was written (the gateway, its sandbox, limits, identity and content checks are described below).
 
-- **Local network only, by default.** The server answers only this machine and private, link-local and carrier-grade NAT addresses (the last for Tailscale). Anything else gets *403*.
-- **TLS** with a kept self-signed certificate on the local network, or your own certificate; plain HTTP only on this machine.
-- **Passwords** are kept only as an argon2id hash (64 MiB, 3 passes); at most two are checked at once. Five wrong passwords from one address (an IPv6 /64 counts as one) lock it out for 15 minutes, twice as long each time it happens again; many failures across addresses slow every login down and tell the host.
-- **Tokens**: the host's, resume and invite tokens are 256 random bits, compared in constant time; the host's travels only in the address's fragment and is taken out of the address bar at once.
-- **Every message checked**, on the server, before anything is done with it: at most 64 KiB before decoding, then its shape, then its values (finite coordinates inside the world, names and notes normalised and stripped of control and direction-override characters, no `__proto__`-style keys, bounded depth and length), then the sender's role, mute and limits. Each kind of action has its own budget; a client that floods is cut off; one that falls 8 MB behind is too, and a slow one only ever loses presence frames, never changes.
-- **The browser page**: a strict content security policy (scripts only from the server itself, no frames, no plugins), `nosniff`, no referrer, the WebSocket only from the server's own origin. Names, notes and labels are always shown as text.
-- **No file access**: members can fetch only files the host published, by content hash; there are no paths.
+### Two processes
 
-**The internet.** `--expose-internet` makes the server answer any address (TLS required). It is off by default, and the viewer shows a warning while it is on: the server is **not hardened for the internet yet**. That is Stage 3 - the gateway as its own sandboxed process, fuzzing in CI, a full pentest - and Stage 4 brings tunnels (no open port, no visible IP), the full asset sharing with consent and fingerprints. Until then, prefer the local network or a VPN such as Tailscale; if you open a port anyway, use a long password, invite links and the waiting room, and stop the server when the session ends.
+`3dheat serve` is two processes:
+
+- the **core**, with your rights: it listens on the port, keeps the files (the web build, what you published, uploads), the native core's data API, and the audit log;
+- the **gateway**, with none: TLS, HTTP, the WebSocket, every limit and the session's rules - everything a stranger's bytes reach. It has no network of its own: the core accepts each connection and relays its bytes over a pipe, and serves the gateway's few requests for files on the same pipe, answering them as it would answer any member (published files by hash, the web build, never a file by path).
+
+What the gateway gives up:
+
+| System | The gateway runs as |
+|---|---|
+| Windows | an **AppContainer** without a single capability (no network at all, none of your files, folders or registry, read or write), in a **job** (one process: it cannot start programs; 2 GiB of memory; no clipboard, desktop or system settings; ended with the core), with the child-process policy (no process creation by any route) and mitigations (no dynamic code, no images from the network or of low integrity, strict handle checks), with an environment of its system folders only. Where no AppContainer can be made, a restricted token at low integrity instead (it could then still read what you can read). |
+| Linux | `no_new_privs`, **Landlock** granting nothing (no file read, write or execute; on kernels 6.7 and later no TCP bind or connect), **seccomp** refusing sockets, `exec`, `ptrace`, namespaces, mounts, kernel modules and BPF, no core dumps, an empty environment, and the user `nobody` when started as root. |
+| macOS and others | a separate process with an empty environment, nothing more yet. |
+
+`3dheat sandbox-check` starts a gateway as `serve` does and has it try what someone who took it over would try: read and list your files, write there, connect to this machine, be reached on a port of its own, start a program. Each must say `blocked` (CI runs it on Windows and Linux). `3dheat serve` prints what is in force when it starts. If the gateway ends, the core starts a new one; the session then starts afresh (members come back through the waiting room or their invite links).
+
+### Limits
+
+| What | Limit |
+|---|---|
+| TCP connections | 1024 in all, 64 from one address (an IPv6 /64 counts as one); the core refuses the rest before a byte is read |
+| TLS handshake, a request's head | 10 seconds each; a head is 16 KiB at most |
+| A quiet connection | closed after 75 seconds; one whose client stops reading, after 30 seconds of no progress |
+| HTTP requests | 400 at once, then 100 a second, from one address; then *429* |
+| WebSocket upgrades | 20 at once, then one a second, from one address |
+| Before the hello | 5 seconds; 8 such connections from one address, 256 in all; they hold no place in the session |
+| Members, waiting room | 32 members (3 from one address), 16 waiting; the host always gets in |
+| A message | 64 KiB, checked before decoding; no compression (no decompression bombs) |
+| Per member | messages, bytes, batches, presence, look-here and follow (3 a minute), moderation and invites each have a budget; a flood is cut off; one that falls 8 MB behind is cut off; a slow one loses only presence frames |
+| The shared layers | 1 MiB a second of operations for the whole session (every change goes to everyone), 64 MiB of documents in all, 16,000 characters per text, 512 operations per batch, 32 documents |
+| Uploads | the host's only; 8 GiB each, two at a time; a session file 64 MiB |
+
+### Identity, passwords and tokens
+
+- **The browser's key.** Each browser makes an Ed25519 key pair once and keeps it in IndexedDB, its private half not extractable. Joining, the server sends a fresh challenge and the browser signs it: the server then knows the browser by its public key, not by anything the browser merely says. A member's own marks stay their own by it, a resume token works only from the browser that was given it (a copied token is useless), bans hold to it (and to the address and name), and an invite link used up still lets back in the browsers that joined with it. A browser without Ed25519 (or without IndexedDB) names a random key instead, which the server keeps apart (`u:...`) so it can never pass for a proven one.
+- **Passwords** are kept only as an argon2id hash (64 MiB, 3 passes), never in the gateway's environment, and checked two at a time at most. Five wrong passwords from one address (an IPv6 /64 counts as one) lock it out for 15 minutes, twice as long each time it happens again; many failures across addresses slow every login down and tell the host. A wrong password, invite or host token all get the same answer.
+- **Tokens** (the host's, resume and invite tokens) are 256 random bits, compared in constant time. Invite links expire (a day by default, a week at most) and are used up; a member's token changes when their role does; the host's travels only in the address's fragment and is taken out of the address bar at once.
+
+### What members send
+
+- **Checked on the server**, before anything is done with it: its size, then its shape, then its values (finite coordinates inside the world, names and notes normalised and stripped of control and direction-override characters, no `__proto__`-style keys, bounded depth and length), then the sender's role (each operation of a batch on its own: what the role may not do is dropped and said), mute and budgets.
+- **Shown as text.** Names, notes and labels are never markup. Notes and analysis documents are Markdown, rendered by the viewer's own renderer, which escapes all HTML, allows links only to `http`, `https`, `mailto` and the viewer's own places, and renders 64 KiB at most; pictures in notes must be raster images. Exported and printed analyses carry their own content security policy.
+- **The page** has a strict content security policy (scripts only from the server itself, no frames, no plugins, no inline script), `nosniff`, no referrer, `frame-ancestors 'none'`, and HSTS with a real certificate. The WebSocket opens only from the server's own origin (and the origins you allow), so another site's page cannot use a member's browser to talk to it.
+- **Files** go out only if the host published them, by their SHA-256, as `application/octet-stream` and an attachment; there are no paths. The data API (`/v1`) answers members only, with a member's rights (never a file by path). The desktop app's own window server answers its window only.
+
+### The audit log
+
+`audit.log` in the state folder (`--state-dir`) has one JSON line per join (how: host token, invite, password, admitted), failed login, lockout, role change, mute, kick, ban and unban, invite made and revoked, settings change (that the password changed, never the password), session file opened, file published, gateway restart, and once a minute how many connections and requests the limits refused. It never holds a password or a token. It does hold members' addresses: it stays on your machine, and the session never shows anyone another member's address.
+
+### Supply chain and testing
+
+`cargo-deny` and `cargo-audit` check the native workspace's dependencies (known vulnerabilities, sources, licences) and `npm audit` the viewer's, in CI (`.github/workflows/session-security.yml`), which also fuzzes every target for a minute on each change (`native/crates/session/fuzz`: every client message, structure-aware; the session file; the paths and assets through the gateway and the core; the channel between the two processes; and `tools/fuzz-markdown.mjs` for the Markdown renderer), and checks the sandbox on Windows and Linux. Lockfiles pin every version.
+
+**The internet.** `--expose-internet` makes the server answer any address (TLS required); off by default, and the viewer shows a note while it is on. The server is **hardened** for it (see the security notes above). Still: your address is visible to everyone you invite, nothing in front of the server filters a flood that saturates your line, and anyone with the link can knock. Use a long password, invite links and the waiting room, and stop the server when the session ends. Stage 4 brings tunnels (no open port, no visible address).
 
 ## For developers
 
 - Protocol: [`native/proto/heat3d/session/v1/session.proto`](https://github.com/Holdi601/3DHeat/blob/main/native/proto/heat3d/session/v1/session.proto) (prost on the server, protobuf-es in the viewer: `npm run proto:session` regenerates `src/session/proto/`).
-- Server: [`native/crates/session`](https://github.com/Holdi601/3DHeat/tree/main/native/crates/session): `session.rs` is every rule as pure logic, `server.rs` the network. `cargo test` runs the role matrix, limits, ordering and catch-up tests; `cargo +nightly fuzz run client_msg` (in `fuzz/`) fuzzes message handling.
+- Server: [`native/crates/session`](https://github.com/Holdi601/3DHeat/tree/main/native/crates/session): `session.rs` is every rule as pure logic, `gateway.rs` the network side (TLS, HTTP, WebSocket, limits), `server.rs` the core (port, files, audit log, the gateway process), `ipc.rs` the channel between them; [`native/crates/sandbox`](https://github.com/Holdi601/3DHeat/tree/main/native/crates/sandbox) locks the gateway down. `cargo test` runs the role matrix, limits, ordering and catch-up tests; `cargo +nightly fuzz run <target>` (in `fuzz/`: `client_msg`, `client_structured`, `doc_json`, `asset_paths`, `ipc_frames`) fuzzes it; `examples/attack.rs` and `tools/pentest-dos.mjs` are the pentest's load and abuse tools.
 - Viewer: [`src/session`](https://github.com/Holdi601/3DHeat/tree/main/src/session): `client.ts` the connection, `shared.ts` the shared layers (`registerSharedDoc` adds one), `sessionFile.ts` the session file.
 - `node tools/smoke-session.mjs` starts a server and 2 to 20 headless viewers, and tries every action in every role.

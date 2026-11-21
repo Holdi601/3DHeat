@@ -5,7 +5,7 @@
 //! `3dheat-app --host ...` beside the window).
 
 use heat3d_session::auth::Cost;
-use heat3d_session::server::{start, ServeConfig};
+use heat3d_session::server::{start, GatewayCommand, ServeConfig};
 use heat3d_session::tls::{local_ips, TlsMode};
 use std::net::{IpAddr, SocketAddr};
 use std::path::PathBuf;
@@ -29,17 +29,89 @@ OPTIONS:
     --no-waiting-room      Members with the password join at once (invite links always do)
     --max-clients N        Connections at most (default 32)
     --max-per-addr N       Connections from one address at most (default 3)
+    --max-waiting N        Clients in the waiting room at most (default 16)
+    --max-connections N    TCP connections at most, all clients together (default 1024)
     --publish FILE         Publish a file for members to fetch by its hash (repeatable; the first is the session's data)
     --cert FILE --key FILE Use this certificate (PEM) instead of the self-signed one
     --plain-http           No TLS: only on this machine (binds 127.0.0.1)
     --allow-origin ORIGIN  Also accept the WebSocket from this origin (a dev server; repeatable)
     --state-dir DIR        Where the certificate and uploads are kept
     --host-token HEX       The host's token (default: a new random one each start)
-    --expose-internet      EXPERT: answer addresses outside the local network. Not hardened yet
-                           (Stage 3): use only with a strong password and invite links.
+    --no-sandbox           Run the network gateway inside this process, not as its own
+                           locked-down process (for debugging; not with --expose-internet)
+    --expose-internet      EXPERT: answer addresses outside the local network (needs TLS).
+                           Use a strong password, invite links and the waiting room.
 ";
 
 pub const HELP: &str = USAGE;
+
+/// `gateway`: the session server's network gateway, started by `serve` only
+/// (its settings and connections come over standard input).
+pub async fn gateway() -> ! {
+    std::process::exit(heat3d_session::server::gateway_main().await)
+}
+
+/// `sandbox-check`: starts a gateway process locked down as `serve` does and
+/// has it try what a gateway someone took over would try: read and list the
+/// user's files, write there, connect to this machine, listen, start a
+/// program. Prints each, and fails when any was allowed.
+pub async fn sandbox_check() -> ! {
+    let dir = std::env::temp_dir().join(format!("heat3d-sandbox-check-{}", std::process::id()));
+    let _ = std::fs::create_dir_all(&dir);
+    let file = dir.join("secret.txt");
+    let _ = std::fs::write(&file, "a file of the user's");
+    let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap_or_else(|e| fail(&format!("listen: {e}")));
+    let port = listener.local_addr().map(|a| a.port()).unwrap_or(0);
+    let exe = std::env::current_exe().unwrap_or_else(|e| fail(&e.to_string()));
+    let (f, d, p) = (file.display().to_string(), dir.display().to_string(), port.to_string());
+    let mut child = heat3d_sandbox::spawn(&exe, &["gateway-probe", &quote(&f), &quote(&d), &p]).unwrap_or_else(|e| fail(&format!("starting the gateway: {e}")));
+    let mut out = String::new();
+    use tokio::io::AsyncBufReadExt;
+    let mut lines = tokio::io::BufReader::new(&mut child.stdout).lines();
+    let read = async {
+        while let Ok(Some(l)) = lines.next_line().await {
+            // The gateway listens: try to reach it, as a client on this machine would.
+            if let Some(p) = l.strip_prefix("PORT ").and_then(|p| p.trim().parse::<u16>().ok()) {
+                let to = std::net::SocketAddr::from(([127, 0, 0, 1], p));
+                let _ = tokio::time::timeout(std::time::Duration::from_secs(2), tokio::net::TcpStream::connect(to)).await;
+                continue;
+            }
+            out.push_str(&l);
+            out.push('\n');
+        }
+    };
+    let _ = tokio::time::timeout(std::time::Duration::from_secs(30), read).await;
+    child.wait().await;
+    let _ = std::fs::remove_dir_all(&dir);
+    let how = heat3d_sandbox::started_as();
+    if !how.is_empty() {
+        println!("{how}");
+    }
+    print!("{out}");
+    let lines: Vec<&str> = out.lines().filter(|l| l.ends_with(": ALLOWED") || l.ends_with(": blocked")).collect();
+    let allowed = lines.iter().filter(|l| l.ends_with("ALLOWED")).count();
+    std::process::exit(if lines.len() == 6 && allowed == 0 { 0 } else { 1 })
+}
+
+/// `gateway-probe FILE DIR PORT`: the inside of `sandbox-check`.
+pub fn gateway_probe(args: &[String]) -> ! {
+    let said = heat3d_sandbox::lockdown().unwrap_or_else(|e| format!("lockdown failed: {e}"));
+    println!("{said}");
+    let port = args.get(2).and_then(|p| p.parse().ok()).unwrap_or(9);
+    for l in heat3d_sandbox::probe(args.first().map(String::as_str).unwrap_or(""), args.get(1).map(String::as_str).unwrap_or(""), port) {
+        println!("{l}");
+    }
+    std::process::exit(0)
+}
+
+/// An argument with spaces, quoted for the Windows command line (paths here have no quotes).
+fn quote(s: &str) -> String {
+    if cfg!(windows) && s.contains(' ') {
+        format!("\"{s}\"")
+    } else {
+        s.to_string()
+    }
+}
 
 fn fail(msg: &str) -> ! {
     eprintln!("3dheat: {msg}\n\n{USAGE}");
@@ -74,6 +146,7 @@ pub async fn serve(rest: Vec<String>, core: Arc<Core>, default_web: Option<PathB
     let mut bind: Option<IpAddr> = None;
     let mut web: Option<PathBuf> = None;
     let mut plain = false;
+    let mut no_sandbox = false;
     let (mut cert, mut key) = (None, None);
     let mut cfg = ServeConfig::new("0.0.0.0:7878".parse().unwrap(), state_dir());
     let mut i = 0;
@@ -122,6 +195,17 @@ pub async fn serve(rest: Vec<String>, core: Arc<Core>, default_web: Option<PathB
                     .parse()
                     .unwrap_or_else(|_| fail("--max-per-addr: a number"))
             }
+            "--max-waiting" => {
+                cfg.session.max_waiting = val(&mut i, "--max-waiting")
+                    .parse()
+                    .unwrap_or_else(|_| fail("--max-waiting: a number"))
+            }
+            "--max-connections" => {
+                cfg.limits.conns = val(&mut i, "--max-connections")
+                    .parse()
+                    .unwrap_or_else(|_| fail("--max-connections: a number"))
+            }
+            "--no-sandbox" => no_sandbox = true,
             "--publish" => cfg.publish.push(PathBuf::from(val(&mut i, "--publish"))),
             "--cert" => cert = Some(PathBuf::from(val(&mut i, "--cert"))),
             "--key" => key = Some(PathBuf::from(val(&mut i, "--key"))),
@@ -161,17 +245,25 @@ pub async fn serve(rest: Vec<String>, core: Arc<Core>, default_web: Option<PathB
     });
     cfg.bind = SocketAddr::new(ip, port);
     cfg.web_root = web.or(default_web).or_else(web_root);
-    // The native core's data API beside the session: a browser of the session reads
-    // the host's data through it (only what the host shared; paths are the host's own).
-    cfg.mount.push(("/v1".into(), crate::data_router(core, None, false)));
+    // The native core's data API beside the session: a member's browser reads the
+    // host's data through it, with the member's token (the gateway checks it) and a
+    // member's rights only: never files by path. The owner's key is one nobody is told.
+    cfg.mount.push(("/v1".into(), crate::data_router(core, Some(heat3d_session::auth::token()), false)));
+    if no_sandbox && cfg.expose {
+        fail("--no-sandbox and --expose-internet do not go together");
+    }
+    if !no_sandbox {
+        cfg.gateway = Some(GatewayCommand::this_program().unwrap_or_else(|e| fail(&e)));
+    }
     if cfg.web_root.is_none() {
         eprintln!("3dheat: no web build found (run `npm run build`, then pass --web dist); serving the session only");
     }
     if cfg.expose {
         eprintln!(
-            "\n  WARNING: --expose-internet answers the whole internet. The session server is not hardened\n  \
-             for that yet (Stage 3: sandboxing, fuzzing in CI, a pentest). Use a strong password, prefer\n  \
-             invite links, keep the waiting room on, and stop the server when the session ends.\n"
+            "\n  NOTE: --expose-internet answers the whole internet. The server is hardened for it (see the\n  \
+             security notes in docs/multiplayer.md), but your address is visible and nothing filters floods\n  \
+             in front of it. Use a strong password, prefer invite links, keep the waiting room on, and stop\n  \
+             the server when the session ends.\n"
         );
     }
     let running = match start(cfg.clone()).await {
@@ -205,6 +297,10 @@ pub async fn serve(rest: Vec<String>, core: Arc<Core>, default_web: Option<PathB
         }
     } else {
         println!("  Join: {}", running.join_url(&host));
+    }
+    match &running.sandbox {
+        Some(how) => println!("  Gateway sandbox: {how}"),
+        None => println!("  Gateway: in this process (--no-sandbox)"),
     }
     if let Some(fp) = &running.fingerprint {
         println!("  Certificate SHA-256: {fp}");

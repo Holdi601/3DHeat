@@ -4,6 +4,7 @@ description = "3DHeat protocol types, generated from proto/heat3d/v1"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
+publish = false
 
 [dependencies]
 prost.workspace = true

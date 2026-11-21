@@ -1,0 +1,14 @@
+# cargo-audit (CI: session-security.yml). Every advisory fails the build
+# except these, each looked at on 2026-11-21:
+[advisories]
+ignore = [
+  # glib 0.18: unsound VariantStrIter. Only in the desktop app's Linux GTK stack
+  # (Tauri), not in the session server; goes when Tauri moves to glib 0.20.
+  "RUSTSEC-2024-0429",
+  # proc-macro-error: unmaintained, a build-time macro helper of the GTK stack.
+  "RUSTSEC-2024-0370",
+  # chrono: unmaintained, no known vulnerability; reached through arrow (the
+  # native core's Parquet reader), never with input of a session's members.
+  "RUSTSEC-2026-0543",
+]
+informational_warnings = ["unmaintained", "unsound", "notice"]

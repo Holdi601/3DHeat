@@ -1,0 +1,89 @@
+# The session server's security checks (docs/multiplayer.md, "Security"):
+# a short fuzz run of every target, the gateway's sandbox on Linux and
+# Windows, and the supply chain (cargo-deny, cargo-audit, npm audit).
+name: session-security
+
+on:
+  push:
+    branches: [main]
+    paths: ['native/**', 'src/session/**', 'src/notes/**', 'package.json', 'package-lock.json', '.github/workflows/session-security.yml']
+  pull_request:
+    paths: ['native/**', 'src/session/**', 'src/notes/**', 'package.json', 'package-lock.json', '.github/workflows/session-security.yml']
+  schedule:
+    - cron: '17 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fuzz:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@nightly
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: native/crates/session/fuzz
+      - name: cargo-fuzz
+        run: cargo install cargo-fuzz --locked --version 0.13.2
+      - name: Fuzz every target for a minute
+        working-directory: native/crates/session/fuzz
+        run: |
+          for t in client_msg client_structured doc_json asset_paths ipc_frames; do
+            cargo +nightly fuzz run "$t" -- -max_total_time=60 -rss_limit_mb=2048 -timeout=10
+          done
+      - name: Markdown sanitizer fuzz (two minutes)
+        run: |
+          npm ci
+          node tools/fuzz-markdown.mjs --seconds 120 --workers 2
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: fuzz-crashes
+          path: native/crates/session/fuzz/artifacts
+
+  sandbox:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-22.04]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: native
+      - name: The gateway's sandbox holds, and the session server's tests
+        working-directory: native
+        run: cargo test -p heat3d-sandbox -p heat3d-session -p heat3d-server
+
+  supply-chain:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+          persist-credentials: false
+      - uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          manifest-path: native/Cargo.toml
+          command: check advisories bans sources licenses
+      - uses: dtolnay/rust-toolchain@stable
+      - name: cargo-audit
+        working-directory: native
+        run: |
+          cargo install cargo-audit --locked
+          cargo audit --deny warnings
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: npm audit (what ships)
+        run: npm audit --omit=dev --audit-level=high

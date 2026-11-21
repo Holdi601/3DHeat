@@ -34,6 +34,7 @@ import {
 } from './proto/heat3d/session/v1/session_pb';
 import { capturePose, pointUnder, poseMoved, presence, presenceClock } from './presence';
 import { browserKey } from './marks';
+import { identity, signChallenge } from './identity';
 import { readDocState, SharedSync, type DocState, type OutBatch } from './shared';
 import { useSessionStore, type FollowModeName, type LookRequest, type Pose, type SessionRole } from './store';
 
@@ -182,6 +183,8 @@ class SessionClient {
       (b) => this.enqueue(b),
       (n) => useSessionStore.getState().patch({ notice: n ? 'tooBig' : null }),
     );
+    // The key is made (the first time) while the connection opens.
+    void identity();
     this.open();
     this.timers.push(window.setInterval(() => this.tick(), 100));
     this.timers.push(window.setInterval(() => this.send({ case: 'ping', value: { t: performance.now() } }), 15_000));
@@ -214,7 +217,7 @@ class SessionClient {
     }
     ws.binaryType = 'arraybuffer';
     this.ws = ws;
-    ws.onopen = () => this.hello();
+    // The server speaks first: a challenge the hello signs with this browser's key.
     ws.onmessage = (e) => {
       if (!(e.data instanceof ArrayBuffer)) return;
       let m: ServerMsg;
@@ -244,9 +247,13 @@ class SessionClient {
     };
   }
 
-  private hello(): void {
+  /** The hello, signed for this connection's challenge with the browser's key (none where it has none). */
+  private async hello(nonce: Uint8Array): Promise<void> {
     const o = this.opts;
-    if (!o) return;
+    const ws = this.ws;
+    if (!o || !ws) return;
+    const { keyPub, keySig } = await signChallenge(nonce);
+    if (this.ws !== ws) return;
     const seq = useSessionStore.getState().seq;
     this.send({
       case: 'hello',
@@ -257,7 +264,9 @@ class SessionClient {
         invite: this.resume ? '' : (o.invite ?? ''),
         resume: this.resume,
         hostToken: o.hostToken ?? '',
-        clientKey: browserKey(),
+        clientKey: keyPub.length ? '' : browserKey(),
+        keyPub,
+        keySig,
         sinceSeq: BigInt(this.resume ? seq : 0),
       },
     });
@@ -499,7 +508,12 @@ class SessionClient {
         st.patch({ lastInvite: { id: Number(x.id), token: x.token, role: ROLE_NAME[x.role] ?? 'viewer', expires: Number(x.expires), uses: x.uses, label: x.label } });
         break;
       }
+      case 'challenge':
+        void this.hello(b.value.nonce);
+        break;
       case 'notice':
+        // TOKEN_ROTATED needs nothing here: the welcome before it carried the new token.
+        if (b.value.kind === NoticeKind.TOKEN_ROTATED) break;
         st.patch({ notice: b.value.kind === NoticeKind.LOGIN_FLOOD ? 'loginFlood' : b.value.kind === NoticeKind.STATE_REPLACED ? 'stateReplaced' : b.value.kind === NoticeKind.YOU_CHANGED ? 'youChanged' : null });
         break;
       case 'pong':

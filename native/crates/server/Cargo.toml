@@ -4,6 +4,7 @@ description = "3DHeat server: the native core's data API, the web viewer and the
 version.workspace = true
 edition.workspace = true
 license.workspace = true
+publish = false
 
 [[bin]]
 name = "3dheat"
@@ -12,7 +13,8 @@ path = "src/main.rs"
 [dependencies]
 heat3d-core.workspace = true
 heat3d-session.workspace = true
+heat3d-sandbox = { path = "../sandbox" }
 anyhow.workspace = true
 axum = { version = "0.8", features = ["ws"] }
-tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "signal"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "signal", "io-util", "time"] }
 tower-http = { version = "0.6", features = ["fs", "cors"] }

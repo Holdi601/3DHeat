@@ -75,6 +75,12 @@ message Hello {
   string client_key = 7;
   // The last sequence number seen; the server sends what came after.
   uint64 since_seq = 8;
+  // The browser's Ed25519 public key (32 bytes) and its signature (64 bytes)
+  // over "heat3d.session.v1.join" + NUL + the Challenge's nonce. With them
+  // the member's key is proven (bans, invites and resuming hold to it);
+  // without them client_key is taken as an unproven name ("u:...").
+  bytes key_pub = 9;
+  bytes key_sig = 10;
 }
 
 message Vec3 {
@@ -244,7 +250,13 @@ message ServerMsg {
     BanList bans = 16;
     Notice notice = 17;
     InviteList invites = 18;
+    Challenge challenge = 19;
   }
+}
+
+// The first message on a connection: what the client signs with its key.
+message Challenge {
+  bytes nonce = 1;
 }
 
 message Welcome {
@@ -401,6 +413,8 @@ enum NoticeKind {
   YOU_CHANGED = 2;
   // The shared state was replaced (a session file loaded).
   STATE_REPLACED = 3;
+  // The member's resume token changed (a new role): the Welcome that follows carries it.
+  TOKEN_ROTATED = 4;
 }
 
 message Notice {

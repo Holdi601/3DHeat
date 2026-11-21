@@ -83,6 +83,15 @@ pub enum OpError {
     Full,
 }
 
+/// A refusal in a word, for an answer that must not echo what was sent.
+pub fn error_word(e: &OpError) -> &'static str {
+    match e {
+        OpError::Shape => "shape",
+        OpError::Value(_) => "value",
+        OpError::Full => "too large",
+    }
+}
+
 fn field_names(unset: &[String]) -> Result<Vec<String>, OpError> {
     if unset.len() > 256
         || !unset.iter().all(|k| {
