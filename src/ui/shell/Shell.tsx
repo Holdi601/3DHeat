@@ -14,6 +14,7 @@ import { HelpButton } from '../help/HelpPanel';
 import { LanguagePicker } from '../LanguagePicker';
 import { MotionSetting } from '../MotionSetting';
 import { UnitsPicker } from '../UnitsPicker';
+import { SessionButton } from '../session/SessionButton';
 import { Icon, type IconName } from './Icon';
 import { WORKSPACES, type Workspace } from './keys';
 import { taskOf, useShell, WORKSPACE_TASKS, type Task, type Theme } from './shellStore';
@@ -62,6 +63,7 @@ export function Brand() {
         <span className="search-text">{t('shell.palette.button')}</span>
         <kbd>Ctrl K</kbd>
       </button>
+      <SessionButton />
       <HelpButton />
       <SettingsMenu />
     </div>

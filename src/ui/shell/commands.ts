@@ -39,6 +39,10 @@ import { useNotes } from '../../notes/store';
 import { anchorSubject } from '../../notes/anchors';
 import { newAnalysis, noteHere, showNotesPanel } from '../notes/actions';
 import { goToNote } from '../notes/links';
+import { session } from '../../session/client';
+import { useMarks } from '../../session/marks';
+import { downloadSession } from '../../session/sessionFile';
+import { rankOf, useSessionStore } from '../../session/store';
 
 export { score } from './match';
 
@@ -345,6 +349,32 @@ export function buildCommands(engine: Engine | null): Command[] {
     action(`theme.${th}`, t('shell.cmd.theme', { theme: t(`shell.theme.${th}`) }), () => useShell.getState().setTheme(th));
   for (const m of ['auto', 'on', 'off'] as MotionSetting[])
     action(`motion.${m}`, `${t('motion.label')}: ${t(`motion.${m}`)}`, () => useMotion.getState().setSetting(m));
+
+  // The multiplayer session, and the session file (with or without one).
+  const ss = useSessionStore.getState();
+  const words = t('session.cmd.words');
+  action('session.panel', t('session.cmd.panel'), () => ss.setPanel(true), undefined, words);
+  action('session.save', t('session.cmd.save'), () => void downloadSession(engine, false), undefined, words);
+  if (ss.state !== 'joined' || ss.role === 'host')
+    action('session.open', t('session.cmd.open'), () => {
+      ss.setPanel(true);
+      // The panel's file picker, once the panel is there.
+      window.setTimeout(() => window.dispatchEvent(new Event('heat3d:open-session')), 50);
+    }, undefined, words);
+  for (const x of ['pin', 'draw', 'erase'] as const)
+    action(`session.mark.${x}`, t(`session.cmd.mark.${x}`), () => useMarks.getState().setTool(useMarks.getState().tool === x ? 'off' : x), undefined, words);
+  if (ss.state === 'joined') {
+    action('session.look', t('session.cmd.look'), () => session.lookHere({}), undefined, words);
+    action('session.followMe', t('session.cmd.followMe'), () => session.lookHere({ follow: true }), undefined, words);
+    if (ss.followPeer !== null || (ss.follow.mode === 'follow' && ss.follow.leader !== ss.me))
+      action('session.stopFollow', t('session.stopFollow'), () => ss.patch(ss.followPeer !== null ? { followPeer: null } : { followOptOut: true }), undefined, words);
+    if (rankOf(ss.role) >= rankOf('admin')) {
+      action('session.everyoneFollow', t('session.cmd.everyoneFollow'), () => session.setFollow('follow', ss.me ?? 0), undefined, words);
+      action('session.enforce', t('session.cmd.enforce'), () => session.setFollow('enforce', ss.me ?? 0), undefined, words);
+      action('session.followOff', t('session.cmd.followOff'), () => session.setFollow('off'), undefined, words);
+    }
+    action('session.leave', t('session.leave'), () => session.leave(), undefined, words);
+  }
 
   // Workspaces and task groups.
   WORKSPACES.forEach((w, i) =>

@@ -87,6 +87,7 @@ import { CommandPalette } from './ui/shell/CommandPalette';
 import { ShortcutSheet } from './ui/shell/ShortcutSheet';
 import { QuickBar } from './ui/shell/QuickBar';
 import { ConfirmHost, ToastHost } from './ui/shell/kit';
+import { SessionLayer } from './ui/session/SessionLayer';
 import { installShellKeys } from './ui/shell/keys';
 import { taskOf, useShell } from './ui/shell/shellStore';
 
@@ -652,6 +653,7 @@ export function App() {
               <HelpPanel />
               <WorldOverlay />
               <WorldCredits />
+              <SessionLayer />
               <QuickBar />
               <ToastHost />
               <div className="help">

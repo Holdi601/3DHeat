@@ -42,6 +42,7 @@ const PATHS = {
   moon: 'M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z',
   cursor: 'M5 3l14 7-6 2-2 6L5 3Z',
   note: 'M5 3h10l4 4v14H5V3Zm10 0v4h4M8 11h8M8 15h8M8 19h5',
+  people: 'M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-6 9a6 6 0 0 1 12 0m1-9a3 3 0 1 0 0-6m2.5 15a6 6 0 0 0-3.5-5.5',
 } as const;
 
 export type IconName = keyof typeof PATHS;

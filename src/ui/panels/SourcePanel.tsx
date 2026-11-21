@@ -38,6 +38,7 @@ import { LoadPlan, type LoadPlanResult } from './LoadPlan';
 import { MemoryPanel } from './MemoryPanel';
 import { recallChoice, rememberChoice, sourceKey } from '../../data/columnProfile';
 import { activeClauses } from '../../data/rowFilter';
+import { noteDataFiles, useDataHandoff } from '../../session/dataRefs';
 
 const NO_COLUMNS: string[] = [];
 
@@ -177,6 +178,15 @@ export function SourcePanel() {
     [setLoad],
   );
 
+  // Files handed over from the session (the host's data) or a packed session file: as if picked here.
+  useEffect(
+    () =>
+      useDataHandoff.subscribe((s, prev) => {
+        if (s.nonce !== prev.nonce && s.files?.length) void accept(s.files.map((file) => ({ file, relativePath: file.name })));
+      }),
+    [accept],
+  );
+
   const pick = async (directory: boolean, multiple: boolean) => {
     const files = await openPicker(directory, multiple);
     if (files.length > 0) await accept(files);
@@ -226,6 +236,8 @@ export function SourcePanel() {
       setLoad({ active: true, label: t('heat.sourcePanel.indexing'), fraction: null, rowsSoFar: ds.count, error: null });
       await prepareUnits(ds);
       setDataset(ds);
+      // What the data is, by content, for the session and its file.
+      noteDataFiles(picked.map((p) => p.file));
       // Recordings the load started together (`recordingsAligned`) are watched together, not the busiest alone.
       if (ds.recordingsAligned) useStore.getState().patchTeam({ session: -1 });
       setLoad({ active: false, label: '', fraction: null, rowsSoFar: ds.count, error: null });

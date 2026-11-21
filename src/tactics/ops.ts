@@ -29,6 +29,16 @@ export type PlanOp =
   /** Fields of the plan itself (title, game, sides, steps, sizes). */
   | { op: 'meta'; fields: Fields; unset?: string[] };
 
+/**
+ * An operation on any shared document (`session/shared.ts`): the same four,
+ * on collections named by the document. The plan's are one such document.
+ */
+export type DocOp =
+  | { op: 'add'; coll: string; id: string; value: Fields; index?: number }
+  | { op: 'set'; coll: string; id: string; fields: Fields; unset?: string[] }
+  | { op: 'del'; coll: string; id: string }
+  | { op: 'meta'; fields: Fields; unset?: string[] };
+
 /** One edit: its operations, who made it and when; `id` is unique across sessions. */
 export interface OpBatch {
   id: string;
@@ -39,6 +49,7 @@ export interface OpBatch {
 }
 
 const isColl = new Set<string>(COLLECTIONS);
+const isPlanColl = isColl;
 
 const same = (a: unknown, b: unknown) => a === b || JSON.stringify(a) === JSON.stringify(b);
 
@@ -56,10 +67,15 @@ function fieldDiff(a: Fields, b: Fields, skip?: Set<string>): { fields: Fields; 
 
 /** The operations that turn `a` into `b`. */
 export function diffPlans(a: Plan, b: Plan): PlanOp[] {
-  const ops: PlanOp[] = [];
-  const meta = fieldDiff(a as unknown as Fields, b as unknown as Fields, isColl);
+  return diffDocs(a, b, COLLECTIONS) as PlanOp[];
+}
+
+/** The operations that turn document `a` into `b`, its collections named by `colls`. */
+export function diffDocs(a: object, b: object, colls: readonly string[]): DocOp[] {
+  const ops: DocOp[] = [];
+  const meta = fieldDiff(a as unknown as Fields, b as unknown as Fields, colls === COLLECTIONS ? isColl : new Set(colls));
   if (meta) ops.push({ op: 'meta', fields: meta.fields, ...(meta.unset.length ? { unset: meta.unset } : {}) });
-  for (const coll of COLLECTIONS) {
+  for (const coll of colls) {
     const xs = ((a as unknown as Record<string, Fields[]>)[coll] ?? []) as Fields[];
     const ys = ((b as unknown as Record<string, Fields[]>)[coll] ?? []) as Fields[];
     if (xs === ys) continue;
@@ -88,9 +104,15 @@ export function diffPlans(a: Plan, b: Plan): PlanOp[] {
  * of one that is there replaces it.
  */
 export function applyOps(plan: Plan, ops: PlanOp[]): Plan {
-  const out = { ...plan } as unknown as Record<string, unknown>;
+  return applyDocOps(plan, ops, COLLECTIONS);
+}
+
+/** A document with operations applied, as `applyOps` does for a plan; its collections named by `colls`. */
+export function applyDocOps<T extends object>(doc: T, ops: DocOp[], colls: readonly string[]): T {
+  const isColl = colls === COLLECTIONS ? isPlanColl : new Set<string>(colls);
+  const out = { ...doc } as unknown as Record<string, unknown>;
   const copied = new Set<string>();
-  const coll = (c: Collection): Fields[] => {
+  const coll = (c: string): Fields[] => {
     if (!copied.has(c)) {
       out[c] = [...((out[c] as Fields[] | undefined) ?? [])];
       copied.add(c);
@@ -118,7 +140,7 @@ export function applyOps(plan: Plan, ops: PlanOp[]): Plan {
       xs[i] = v;
     }
   }
-  return out as unknown as Plan;
+  return out as unknown as T;
 }
 
 /** Whether a value is a batch this viewer can apply (from a file or a peer). */

@@ -1,0 +1,457 @@
+/* The multiplayer session: its panel, the others' cameras and pointers, marks, requests. */
+
+.session-btn {
+  position: relative;
+}
+
+.session-btn-dot {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  width: 7px;
+  height: 7px;
+  border-radius: var(--r-pill);
+  background: var(--text-faint);
+  box-shadow: 0 0 0 2px var(--panel);
+}
+
+.session-btn.joined .session-btn-dot {
+  background: var(--good);
+}
+
+.session-btn.connecting .session-btn-dot,
+.session-btn.reconnecting .session-btn-dot,
+.session-btn.waiting .session-btn-dot {
+  background: var(--warn);
+}
+
+.session-btn.closed .session-btn-dot {
+  background: var(--bad);
+}
+
+.session-btn-count {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 3px;
+  border-radius: var(--r-pill);
+  background: var(--warm);
+  color: #fff;
+  font-size: var(--fs-xs);
+  line-height: 15px;
+  text-align: center;
+}
+
+.session-panel {
+  position: absolute;
+  top: var(--sp-3);
+  right: var(--sp-3);
+  z-index: var(--z-panel);
+  width: 340px;
+  max-width: calc(100% - 2 * var(--sp-3));
+  max-height: calc(100% - 2 * var(--sp-3));
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-3);
+  color: var(--text);
+}
+
+.session-head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-3) var(--sp-2) var(--sp-4);
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.session-head h2 {
+  flex: 1;
+  margin: 0;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.session-body {
+  overflow: auto;
+  padding: var(--sp-2) var(--sp-4) var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.session-sec {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.session-sec h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin: var(--sp-2) 0 0;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.session-sec h4 {
+  margin: var(--sp-1) 0 0;
+  font-size: var(--fs-sm);
+  color: var(--text-dim);
+}
+
+.session-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: var(--fs-sm);
+  color: var(--text-dim);
+}
+
+.session-inline {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-sm);
+  color: var(--text-dim);
+}
+
+.session-check {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-sm);
+}
+
+.session-join {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.session-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-2);
+}
+
+.session-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.session-hint {
+  margin: 0;
+  font-size: var(--fs-xs);
+  color: var(--text-faint);
+}
+
+.session-error,
+.session-warn {
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--r-md);
+  font-size: var(--fs-sm);
+}
+
+.session-error {
+  background: color-mix(in srgb, var(--bad) 14%, transparent);
+  color: var(--bad);
+}
+
+.session-warn {
+  background: color-mix(in srgb, var(--warn) 14%, transparent);
+  color: var(--warn);
+}
+
+.session-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.session-member.away {
+  opacity: 0.55;
+}
+
+.session-member-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-height: 28px;
+}
+
+.session-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.session-mod {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  margin: 2px 0 var(--sp-2);
+  padding: var(--sp-2);
+  border-radius: var(--r-md);
+  background: var(--panel-2);
+}
+
+.session-role {
+  padding: 1px 7px;
+  border-radius: var(--r-pill);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  background: var(--surface-3);
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.session-role.host {
+  background: var(--accent-fill-strong);
+  color: var(--accent);
+}
+
+.session-role.admin {
+  background: color-mix(in srgb, var(--warm) 18%, transparent);
+  color: var(--warm);
+}
+
+.session-role.elevated {
+  background: color-mix(in srgb, var(--good) 16%, transparent);
+  color: var(--good);
+}
+
+.session-flag {
+  font-size: var(--fs-xs);
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+
+.session-conn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--fs-xs);
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.session-conn .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--r-pill);
+  background: var(--text-faint);
+}
+
+.session-conn.joined .dot {
+  background: var(--good);
+}
+
+.session-conn.connecting .dot,
+.session-conn.reconnecting .dot,
+.session-conn.waiting .dot {
+  background: var(--warn);
+}
+
+.session-conn.closed .dot {
+  background: var(--bad);
+}
+
+.session-link {
+  display: flex;
+  gap: var(--sp-2);
+}
+
+.session-link input {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+}
+
+.session-report {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--r-md);
+  background: var(--panel-2);
+  font-size: var(--fs-sm);
+}
+
+.session-report ul {
+  margin: 2px 0;
+  padding-left: 18px;
+}
+
+.session-leave {
+  margin-top: var(--sp-2);
+}
+
+/* Drawn over the view. */
+
+.session-presence,
+.session-marks {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+  z-index: var(--z-units);
+}
+
+.peer {
+  color: var(--c);
+}
+
+.peer-frustum {
+  fill: none;
+  stroke: var(--c);
+  stroke-width: 1.5;
+  stroke-opacity: 0.85;
+}
+
+.peer-dot {
+  fill: var(--c);
+  stroke: rgba(0, 0, 0, 0.6);
+  stroke-width: 1.5;
+}
+
+.peer-cursor {
+  fill: var(--c);
+  stroke: rgba(0, 0, 0, 0.7);
+  stroke-width: 1;
+}
+
+.peer-label {
+  fill: var(--c);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  paint-order: stroke;
+  stroke: rgba(0, 0, 0, 0.75);
+  stroke-width: 3px;
+}
+
+.peer-label.small {
+  font-size: var(--fs-xs);
+}
+
+.mark-stroke {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-opacity: 0.9;
+}
+
+.mark-stroke.draft {
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-dasharray: 6 4;
+}
+
+.mark-pin path {
+  fill: var(--c);
+  stroke: rgba(0, 0, 0, 0.7);
+  stroke-width: 1.2;
+}
+
+.mark-pin text {
+  fill: var(--text);
+  font-size: var(--fs-sm);
+  paint-order: stroke;
+  stroke: var(--bg);
+  stroke-width: 3px;
+}
+
+.session-mark-capture {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-hud-furniture);
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.session-mark-capture.erase {
+  cursor: not-allowed;
+}
+
+.session-pin-ask {
+  position: absolute;
+  z-index: var(--z-hud);
+  display: flex;
+  gap: var(--sp-1);
+  transform: translate(8px, -50%);
+  padding: var(--sp-1);
+  background: var(--panel);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-2);
+}
+
+.session-looks {
+  position: absolute;
+  left: var(--sp-3);
+  bottom: var(--sp-6);
+  z-index: var(--z-hud);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  width: 280px;
+  max-width: calc(100% - 2 * var(--sp-3));
+}
+
+.session-look {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--glass);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-2);
+  backdrop-filter: blur(6px);
+}
+
+.session-look-who {
+  font-weight: var(--fw-bold);
+}
+
+.session-look-note {
+  font-size: var(--fs-sm);
+  overflow-wrap: anywhere;
+}
+
+.session-follow-bar {
+  position: absolute;
+  top: var(--sp-3);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-hud);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-1) var(--sp-2) var(--sp-1) var(--sp-3);
+  background: var(--glass);
+  border: 1px solid var(--accent-dim);
+  border-radius: var(--r-pill);
+  font-size: var(--fs-sm);
+}
