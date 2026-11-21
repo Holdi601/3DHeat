@@ -17,6 +17,7 @@ import { raceClock, useRaceStore } from './state/raceStore';
 import { loadLapFiles } from './ui/race/actions';
 import { RaceBar } from './ui/race/RaceBar';
 import { HelpPanel } from './ui/help/HelpPanel';
+import { DashboardWindow } from './ui/dashboards/DashboardWindow';
 import { RaceWheelLabels } from './ui/race/RaceHelp';
 import { RaceHud } from './ui/race/RaceHud';
 import { RaceLabels } from './ui/race/RaceLabels';
@@ -699,6 +700,7 @@ export function App() {
               {!dataset && <StartScreen />}
                 </>
               )}
+              <DashboardWindow />
               <HelpPanel />
               <WorldOverlay />
               <WorldCredits />

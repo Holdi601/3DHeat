@@ -39,6 +39,9 @@ import { heatBlock, insightAnchor, insightBlock, planAnchor, savedViewBlock } fr
 import { stopViewKeys } from './keys';
 import { followLink, goToNote } from './links';
 import { thumbnail, viewNow } from '../../notes/capture';
+import { DashboardPage } from '../dashboards/Canvas';
+import { pageThumb } from '../dashboards/DashboardWindow';
+import { pageShown, useDash } from '../../dashboards/store';
 
 type Mode = 'write' | 'split' | 'preview';
 
@@ -130,6 +133,18 @@ function Window({ doc }: { doc: AnalysisDoc }) {
       );
       chartRoots.current.push(root);
     }
+    // Dashboard pages: live, their tiles counted while the preview shows them.
+    for (const slot of host.querySelectorAll<HTMLElement>('.dash-slot[data-dash-block]')) {
+      const b = doc.blocks[slot.dataset.dashBlock ?? ''];
+      if (b?.type !== 'dashboard') continue;
+      const root = createRoot(slot);
+      root.render(
+        <EngineContext.Provider value={engine}>
+          <DashboardPage dashId={b.dashId} pageId={b.pageId} width={Math.max(320, slot.clientWidth || 640)} />
+        </EngineContext.Provider>,
+      );
+      chartRoots.current.push(root);
+    }
   }, [html, doc.blocks, mode, engine]);
   useEffect(() => () => {
     const roots = chartRoots.current;
@@ -163,6 +178,16 @@ function Window({ doc }: { doc: AnalysisDoc }) {
     } else if (v === 'chart') {
       flush();
       setChart({ block: null });
+    } else if (v === 'dashboard') {
+      const ds = useDash.getState();
+      const page = ds.open ? pageShown(ds, ds.open) : null;
+      const dash = ds.dashboards.find((d) => d.id === ds.open);
+      if (!dash || !page) {
+        toast(t('notes.block.dashNone'), 'bad');
+        return;
+      }
+      const thumb = pageThumb(dash.id, page.id);
+      put({ type: 'dashboard', dashId: dash.id, pageId: page.id, name: `${dash.name} – ${page.name}`, ...(thumb ? { thumb } : {}) });
     } else if (v.startsWith('note:')) put({ type: 'note', noteId: v.slice(5) });
     else if (v === 'plan') {
       const thumb = await viewThumb(engine);
@@ -205,6 +230,22 @@ function Window({ doc }: { doc: AnalysisDoc }) {
           break;
         case 'chart-edit':
           setChart({ block: id });
+          break;
+        case 'dash-open':
+          if (b?.type === 'dashboard') {
+            const ds = useDash.getState();
+            ds.openDash(b.dashId);
+            ds.showPage(b.dashId, b.pageId);
+            ds.setShown(true);
+          }
+          break;
+        case 'dash-snap':
+          if (b?.type === 'dashboard') {
+            const thumb = pageThumb(b.dashId, b.pageId);
+            const cur = useNotes.getState().book.docs.find((d) => d.id === doc.id);
+            if (thumb && cur) useNotes.getState().updateDoc(doc.id, { blocks: { ...cur.blocks, [id]: { ...b, thumb } } });
+            toast(thumb ? t('notes.block.dashSnapped') : t('notes.block.dashNoSnap'), thumb ? 'good' : 'bad');
+          }
           break;
       }
       return;
@@ -334,6 +375,7 @@ function Window({ doc }: { doc: AnalysisDoc }) {
             <option value="chart">{t('notes.doc.insertChart')}</option>
             <option value="plan">{t('notes.doc.insertPlan')}</option>
             <option value="shot">{t('notes.doc.insertShot')}</option>
+            <option value="dashboard">{t('notes.doc.insertDashboard')}</option>
             {views.length > 0 && (
               <optgroup label={t('notes.doc.insertSavedView')}>
                 {views.map((v) => (

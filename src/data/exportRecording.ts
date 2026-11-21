@@ -11,7 +11,7 @@ import { geoFrame } from '../world/geoFrame';
 import { sourceSeconds } from './reshape';
 import { say } from './msg';
 
-function csvField(v: string | number): string {
+export function csvField(v: string | number): string {
   // A text that starts like a formula (a unit named "=HYPERLINK(...)") is kept as text: a spreadsheet would run it. A number stays one.
   const s = typeof v === 'number' ? (Number.isFinite(v) ? String(v) : '') : /^[=+\-@\t\r](?![\d.]+(?:e[+-]?\d+)?$)/i.test(v) ? `'${v}` : v;
   return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;

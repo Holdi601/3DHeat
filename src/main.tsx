@@ -50,6 +50,8 @@ if (import.meta.env.DEV) {
       'state/spawnDisplayStore': () => import('./state/spawnDisplayStore'),
       'volumes/signs/store': () => import('./volumes/signs/store'),
       'volumes/signs/client': () => import('./volumes/signs/client'),
+      'dashboards/client': () => import('./dashboards/client'),
+      'dashboards/store': () => import('./dashboards/store'),
       'ui/shell/shellStore': () => import('./ui/shell/shellStore'),
       'notes/store': () => import('./notes/store'),
       'notes/export': () => import('./notes/export'),

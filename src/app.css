@@ -48,7 +48,8 @@
   color-scheme: dark;
 }
 
-:root[data-theme='light'] {
+:root[data-theme='light'],
+.theme-light {
   --bg: #e9edf2;
   --panel: #fbfcfd;
   --panel-2: #f0f3f7;

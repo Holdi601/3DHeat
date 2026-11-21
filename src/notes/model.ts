@@ -53,7 +53,9 @@ export type DocBlock =
   | { id: string; type: 'plan'; anchor: Anchor; thumb?: string }
   | { id: string; type: 'image'; src: string; caption: string }
   /** A chart sent from elsewhere in the viewer, in the shared chart module's form (`sharedChart.ts`). */
-  | { id: string; type: 'chartBlock'; block: SharedChartBlock };
+  | { id: string; type: 'chartBlock'; block: SharedChartBlock }
+  /** A dashboard page, live in the preview (its tiles counted again), its last picture in an export (`dashboards/`). */
+  | { id: string; type: 'dashboard'; dashId: string; pageId: string; name: string; thumb?: string };
 
 export type BlockType = DocBlock['type'];
 
@@ -158,6 +160,8 @@ export function readBlock(v: unknown, id: string): DocBlock | null {
       const src = image(o.src);
       return src ? { id, type: 'image', src, caption: str(o.caption, 400) } : null;
     }
+    case 'dashboard':
+      return typeof o.dashId === 'string' && typeof o.pageId === 'string' ? { id, type: 'dashboard', dashId: o.dashId.slice(0, 64), pageId: o.pageId.slice(0, 64), name: str(o.name, 200), ...t } : null;
   }
   return null;
 }

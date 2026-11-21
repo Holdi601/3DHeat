@@ -141,6 +141,9 @@ export function blockHtml(b: DocBlock | undefined, ctx: RenderContext): string {
     }
     case 'image':
       return `<figure class="block image">${img(b.src, b.caption)}${b.caption ? `<figcaption>${inline(b.caption)}</figcaption>` : ''}</figure>`;
+    case 'dashboard':
+      // Live in the preview (ui/notes/AnalysisWindow.tsx mounts the page), its last picture elsewhere.
+      return `<figure class="block dashboard"><figcaption>${esc(t('notes.block.dashboard'))}: <b>${esc(b.name)}</b>${button(ctx, 'dash-open', b.id, t('notes.block.dashOpen'))}${button(ctx, 'dash-snap', b.id, t('notes.block.dashSnap'))}</figcaption>${ctx.interactive ? `<div class="dash-slot" data-dash-block="${esc(b.id)}"></div>` : img(b.thumb, b.name, 'chart-img') || `<div class="thumb-none">${esc(t('notes.block.noThumb'))}</div>`}</figure>`;
   }
 }
 
@@ -281,6 +284,8 @@ ${exprChartTable(data, t('notes.chart.other'))}`;
     }
     case 'image':
       return `${picture(b.src, b.id)}${b.caption ? `\n\n*${b.caption}*` : ''}`;
+    case 'dashboard':
+      return `${b.thumb ? `${picture(b.thumb, b.id)}\n\n` : ''}*${t('notes.block.dashboard')}: ${b.name}*`;
   }
 }
 

@@ -32,6 +32,8 @@ export interface DrawOptions {
   hover?: { s: number; g: number } | null;
   /** Where the playhead is along a time axis, in the axis' units; drawn as a hairline. */
   now?: number | null;
+  /** Marks picked elsewhere (a dashboard's selection): the others dimmed. */
+  focus?: ((s: number, g: number) => boolean) | null;
 }
 
 const FS = 10.5;
@@ -164,6 +166,7 @@ export function drawChart(ctx: CanvasRenderingContext2D, d: ChartData, th: Chart
 }
 
 function dimmed(o: DrawOptions, s: number, g: number): boolean {
+  if (o.focus && !o.focus(s, g)) return true;
   const hv = o.hover;
   if (!hv) return false;
   return !((hv.s === -1 || hv.s === s) && (hv.g === -1 || hv.g === g));

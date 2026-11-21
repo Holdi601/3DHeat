@@ -17,6 +17,7 @@ import { clickControl, saveViewNow, togglePlay } from './commands';
 import { Icon, type IconName } from './Icon';
 import { comboText, shortcut } from './shortcuts';
 import { useShell } from './shellStore';
+import { useDash } from '../../dashboards/store';
 
 function QuickButton({
   icon,
@@ -56,6 +57,7 @@ export function QuickBar() {
   const follow = useReplayStore((s) => s.follow);
   const followName = useStore((s) => (follow !== null ? (s.dataset?.personLabels[follow] ?? null) : null));
   const sidebarHidden = useShell((s) => s.sidebarHidden);
+  const dashShown = useDash((s) => s.shown);
   if (tab === 'vehicle') return null;
   const playing = tab === 'race' ? racePlaying : tab === 'plan' ? boardPlaying : timelinePlaying;
   const heatLike = tab === 'heat' || tab === 'match';
@@ -79,6 +81,7 @@ export function QuickBar() {
         </>
       )}
       <span className="quick-sep" />
+      <QuickButton icon="all" label={t('dash.quick')} usage="panel:dashboards" on={dashShown} onClick={() => useDash.getState().setShown(!dashShown)} />
       <QuickButton
         icon="panel"
         label={sidebarHidden ? t('shell.cmd.sidebarShow') : t('shell.cmd.sidebarHide')}

@@ -45,6 +45,7 @@ import { downloadSession } from '../../session/sessionFile';
 import { rankOf, useSessionStore } from '../../session/store';
 import { useMass } from '../../mass/client';
 import { runOutcome } from '../../mass/outcomeClient';
+import { dashboardCommands } from '../dashboards/DashboardWindow';
 
 export { score } from './match';
 
@@ -348,6 +349,8 @@ export function buildCommands(engine: Engine | null): Command[] {
       t('outcome.cmd.words'),
     );
   }
+  // Dashboards: new, from a template, open one, the page shown out as PNG / PDF.
+  for (const c of dashboardCommands()) action(c.id, c.label, c.run, undefined, c.words);
   action('noteHere', t('shell.cmd.noteHere'), () => noteHere(engine), keysOf('noteHere'), t('shell.cmd.noteWords'));
   action('newAnalysis', t('shell.cmd.newAnalysis'), () => newAnalysis(), undefined, t('shell.cmd.analysisWords'));
   action('notes', t('shell.cmd.notes'), () => showNotesPanel(), keysOf('notesPanel'), t('shell.cmd.noteWords'));

@@ -772,6 +772,14 @@ export function bindPredicate(src: string, schema: Schema): RNode | null {
   return b.pred(ast);
 }
 
+/** A calculated column: a row-level number, a yes / no counting as 1 or 0 (the dashboards' columns). */
+export function bindRow(src: string, schema: Schema): RNode {
+  const b = new Binder(src, schema);
+  const ast = parse(src);
+  if (ast.k === 'where') throw new ExprError('whereInFilter', {}, ast.s);
+  return b.row(ast).node;
+}
+
 /** A statistic: arithmetic over aggregates, each folded over the rows. */
 export function bindMetric(src: string, schema: Schema): BoundMetric {
   const b = new Binder(src, schema);

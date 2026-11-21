@@ -13,7 +13,7 @@ import type { ChartData, ChartEntity } from './types';
 import './charts.css';
 
 /** Draw a chart onto a canvas at the device's pixel ratio; returns its hit regions. */
-export function paintChart(canvas: HTMLCanvasElement, data: ChartData, theme: ChartTheme, w: number, h: number, hover: { s: number; g: number } | null = null, now: number | null = null): Hit[] {
+export function paintChart(canvas: HTMLCanvasElement, data: ChartData, theme: ChartTheme, w: number, h: number, hover: { s: number; g: number } | null = null, now: number | null = null, focus: ((s: number, g: number) => boolean) | null = null): Hit[] {
   const dpr = Math.min(2, typeof devicePixelRatio === 'number' ? devicePixelRatio : 1);
   const W = Math.max(1, Math.round(w * dpr));
   const H = Math.max(1, Math.round(h * dpr));
@@ -22,7 +22,7 @@ export function paintChart(canvas: HTMLCanvasElement, data: ChartData, theme: Ch
   const ctx = canvas.getContext('2d');
   if (!ctx) return [];
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  return drawChart(ctx, data, theme, w, h, { hover, now });
+  return drawChart(ctx, data, theme, w, h, { hover, now, focus });
 }
 
 /**
@@ -109,6 +109,8 @@ export function ChartView({
   table = false,
   now = null,
   colorMemory,
+  focus = null,
+  onMenu,
 }: {
   data: ChartData;
   width: number;
@@ -120,9 +122,13 @@ export function ChartView({
    */
   colorMemory?: Map<string, number>;
   /** A mark clicked: its group or series, which carries the filter it stands for. */
-  onPick?: (e: ChartEntity, hit: Hit) => void;
+  onPick?: (e: ChartEntity, hit: Hit, ev: React.MouseEvent) => void;
   table?: boolean;
   now?: number | null;
+  /** Marks picked elsewhere: the others dimmed (a dashboard's selection). */
+  focus?: ((s: number, g: number) => boolean) | null;
+  /** A mark's context menu (right click). */
+  onMenu?: (e: ChartEntity | null, hit: Hit | null, ev: React.MouseEvent) => void;
 }) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const tip = useRef<HTMLDivElement>(null);
@@ -147,8 +153,8 @@ export function ChartView({
       colorChart(d, theme, colorMemory);
     }
     shown.current = d;
-    hits.current = paintChart(c, d, theme, width, height, hover ? { s: hover.s, g: hover.g } : null, now);
-  }, [data, width, height, hover, table, themeTick, now, colorMemory]);
+    hits.current = paintChart(c, d, theme, width, height, hover ? { s: hover.s, g: hover.g } : null, now, focus);
+  }, [data, width, height, hover, table, themeTick, now, colorMemory, focus]);
   if (table) return <ChartTable data={data} />;
   return (
     <div className="chart-view" style={{ width, height }}>
@@ -180,7 +186,14 @@ export function ChartView({
           const r = e.currentTarget.getBoundingClientRect();
           const h = hitAt(hits.current, e.clientX - r.left, e.clientY - r.top);
           const ent = h ? entityOf(shown.current, h) : null;
-          if (h && ent && onPick) onPick(ent, h);
+          if (h && ent && onPick) onPick(ent, h, e);
+        }}
+        onContextMenu={(e) => {
+          if (!onMenu) return;
+          e.preventDefault();
+          const r = e.currentTarget.getBoundingClientRect();
+          const h = hitAt(hits.current, e.clientX - r.left, e.clientY - r.top);
+          onMenu(h ? entityOf(shown.current, h) : null, h, e);
         }}
       />
       <div className="chart-tip" ref={tip} style={{ display: 'none' }} />
