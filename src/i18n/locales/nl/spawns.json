@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Spawns",
+  "spawns.modeTitle": "Hoe de spawns van de indeling worden getekend",
+  "spawns.mode.off": "Uit",
+  "spawns.mode.offTitle": "Geen spawns",
+  "spawns.mode.groups": "Groepen",
+  "spawns.mode.groupsTitle": "Eén ring per team, vlag en fase",
+  "spawns.mode.points": "Elk punt",
+  "spawns.mode.pointsTitle": "Elk spawnpunt: een teken in de teamkleur, een streepje voor de richting, een symbool voor een voertuig",
+  "spawns.lines": "Lijnen naar de vlag",
+  "spawns.linesTitle": "Een lijn van elk spawnpunt naar het veroverpunt of HQ waar het bij hoort",
+  "spawns.flag": "Vlag",
+  "spawns.flagTitle": "Alleen de spawns van dit veroverpunt of HQ",
+  "spawns.team": "Team",
+  "spawns.stage": "Fase",
+  "spawns.any": "Alle",
+  "spawns.count": "{shown} van {total} spawnpunten",
+  "spawns.legend": "Vierkanten zijn voertuigen. Vaag: de vlag is op de afspeelpositie niet van de kant van de spawn"
+}

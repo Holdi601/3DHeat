@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Spawns",
+  "spawns.modeTitle": "How the layout's spawns are drawn",
+  "spawns.mode.off": "Off",
+  "spawns.mode.offTitle": "No spawns",
+  "spawns.mode.groups": "Groups",
+  "spawns.mode.groupsTitle": "One ring per team, flag and stage",
+  "spawns.mode.points": "Every point",
+  "spawns.mode.pointsTitle": "Every spawn point: a marker in its team's colour, a tick for its heading, a glyph for a vehicle",
+  "spawns.lines": "Lines to the flag",
+  "spawns.linesTitle": "A line from each spawn point to the capture point or HQ it belongs to",
+  "spawns.flag": "Flag",
+  "spawns.flagTitle": "Only the spawns of this capture point or HQ",
+  "spawns.team": "Team",
+  "spawns.stage": "Stage",
+  "spawns.any": "All",
+  "spawns.count": "{shown} of {total} spawn points",
+  "spawns.legend": "Squares are vehicles. Faded: the flag is not the spawn's side's at the playhead"
+}

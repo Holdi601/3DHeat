@@ -25,6 +25,7 @@
  */
 
 import { layerOf, type Objective, type ObjectiveLayer, type Vec3 } from './objectives';
+import { parseSpawnPoints, spawnOwners, type SpawnOwner, type SpawnPoint } from './layoutSpawns';
 
 export const LAYOUTS_FILE = /\.layouts\.json$/i;
 
@@ -43,6 +44,10 @@ export interface LevelLayout {
   /** What the layout calls this stage (`low ranks`), where it says. */
   stageName?: string;
   objectives: Objective[];
+  /** Every spawn point one by one (`layoutSpawns.ts`), for the spawn display. */
+  spawnPoints: SpawnPoint[];
+  /** The capture points and bases spawns belong to, by id. */
+  spawnOwners: Map<string, SpawnOwner>;
 }
 
 export interface LevelLayouts {
@@ -294,6 +299,7 @@ export function parseLevelLayouts(doc: unknown): LevelLayouts | null {
     const zones = rows('zones');
     const spawns = rows('spawns');
     const stageNames = l.stageNames && typeof l.stageNames === 'object' ? (l.stageNames as Record<string, unknown>) : {};
+    const owners = spawnOwners(objectives);
     const make = (stage: number | null): LevelLayout => {
       const keep = (o: Record<string, unknown>) => stage === null || stageOf(o) === null || stageOf(o) === stage;
       const list: Objective[] = [];
@@ -315,6 +321,8 @@ export function parseLevelLayouts(doc: unknown): LevelLayouts | null {
         stage,
         ...(stage !== null && str(stageNames[String(stage)]) ? { stageName: str(stageNames[String(stage)]) } : {}),
         objectives: list.sort((a, b) => (a.layer === 'zones' && b.layer === 'zones' ? a.letter.localeCompare(b.letter) : 0)),
+        spawnPoints: parseSpawnPoints(spawns.filter(keep), owners),
+        spawnOwners: owners,
       };
     };
     layouts.push(make(null));

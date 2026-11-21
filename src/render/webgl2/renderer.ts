@@ -1,4 +1,5 @@
 import { GlZones } from './zones';
+import { GlSpawnMarks } from './spawnMarks';
 import { GlVolumeContours } from './volumeContours';
 import { GlRanges } from './ranges';
 import { VOL_CFG, VOL_INFO, VOL_M, VOL_POLY, VOLUME_BLOCK_FLOATS, type VolumeDraw } from '../../volumes/gpu';
@@ -383,6 +384,8 @@ export class Webgl2Renderer implements Renderer {
   private topTris: { buf: WebGLBuffer; vao: WebGLVertexArrayObject; capacity: number; data: Float32Array | null; count: number } | null = null;
   /** The capture zones' discs (`FrameParams.objectiveZones`), made on first use. */
   private zones: GlZones | null = null;
+  /** The layout's spawn points one by one (`FrameParams.spawnMarks`), made on first use. */
+  private spawnMarks: GlSpawnMarks | null = null;
   /** The volumes' lines on the level (`FrameParams.volumeContours`), made on first use. */
   private volumeContours: GlVolumeContours | null = null;
   /** The engagement ranges (`FrameParams.ranges`), made on first use. */
@@ -2917,6 +2920,7 @@ export class Webgl2Renderer implements Renderer {
       if (params.topTris && params.topTriCount) this.drawTopTris(params, params.topTris, params.topTriCount);
       if (params.objectiveZones) (this.zones ??= new GlZones(this.gl)).draw(params, params.objectiveZones, false);
     }
+    if (params.spawnMarks && params.spawnMarks.count) (this.spawnMarks ??= new GlSpawnMarks(this.gl)).draw(params, params.spawnMarks);
     if (params.topVerts && params.topVertCount) this.drawTop(params, params.topVerts, params.topVertCount);
     if (params.topStatic && params.topStatic.count) this.drawTopStatic(params, params.topStatic);
     if (!target) this.readCapture();
@@ -3810,6 +3814,7 @@ export class Webgl2Renderer implements Renderer {
     this.pendingChunks = [];
     this.symbols?.dispose();
     this.zones?.dispose();
+    this.spawnMarks?.dispose();
     this.volumeContours?.dispose();
     this.ranges?.dispose();
     this.symbols = null;

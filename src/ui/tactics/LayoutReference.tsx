@@ -8,6 +8,7 @@ import { levelIdOfLevel } from '../../render/levelLayoutSource';
 import { OBJECTIVE_LAYERS, type Objective, type Vec3 } from '../../match/objectives';
 import { Check, Section } from '../controls';
 import { LevelLayoutPicker } from '../match/LevelLayoutPicker';
+import { SpawnControls } from '../match/SpawnControls';
 import { groundAt } from '../../tactics/timing';
 
 /** Spawn groups listed before "and N more". */
@@ -59,6 +60,7 @@ export function LayoutReference() {
     <Section title={t('objectives.title')} defaultOpen>
       <Check label={t('objectives.show')} checked={on} onChange={(v) => store.setOn(v)} title={t('objectives.showTitle')} />
       <LevelLayoutPicker />
+      {on && <SpawnControls />}
       {on && (
         <div className="chips">
           {OBJECTIVE_LAYERS.map((l) => (

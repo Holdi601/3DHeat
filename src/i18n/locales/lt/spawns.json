@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Atsiradimo taškai",
+  "spawns.modeTitle": "Kaip piešiami išdėstymo atsiradimo taškai",
+  "spawns.mode.off": "Išj.",
+  "spawns.mode.offTitle": "Be atsiradimo taškų",
+  "spawns.mode.groups": "Grupės",
+  "spawns.mode.groupsTitle": "Vienas žiedas kiekvienai komandai, vėliavai ir etapui",
+  "spawns.mode.points": "Kiekvienas taškas",
+  "spawns.mode.pointsTitle": "Kiekvienas atsiradimo taškas: žymė komandos spalva, brūkšnys krypčiai, simbolis transporto priemonei",
+  "spawns.lines": "Linijos iki vėliavos",
+  "spawns.linesTitle": "Linija nuo kiekvieno atsiradimo taško iki užėmimo taško ar štabo, kuriam jis priklauso",
+  "spawns.flag": "Vėliava",
+  "spawns.flagTitle": "Tik šio užėmimo taško ar štabo atsiradimo taškai",
+  "spawns.team": "Komanda",
+  "spawns.stage": "Etapas",
+  "spawns.any": "Visi",
+  "spawns.count": "{shown} iš {total} atsiradimo taškų",
+  "spawns.legend": "Kvadratai yra transporto priemonės. Blyškus: vėliava tuo metu nepriklauso taško pusei"
+}

@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Pikat e shfaqjes",
+  "spawns.modeTitle": "Si vizatohen pikat e shfaqjes së planit",
+  "spawns.mode.off": "Fikur",
+  "spawns.mode.offTitle": "Pa pika shfaqjeje",
+  "spawns.mode.groups": "Grupe",
+  "spawns.mode.groupsTitle": "Një unazë për ekip, flamur dhe fazë",
+  "spawns.mode.points": "Çdo pikë",
+  "spawns.mode.pointsTitle": "Çdo pikë shfaqjeje: një shenjë në ngjyrën e ekipit, një vijë për drejtimin, një simbol për mjetin",
+  "spawns.lines": "Vija te flamuri",
+  "spawns.linesTitle": "Një vijë nga çdo pikë shfaqjeje te pika e pushtimit ose shtabi ku bën pjesë",
+  "spawns.flag": "Flamuri",
+  "spawns.flagTitle": "Vetëm pikat e kësaj pike pushtimi ose shtabi",
+  "spawns.team": "Ekipi",
+  "spawns.stage": "Faza",
+  "spawns.any": "Të gjitha",
+  "spawns.count": "{shown} nga {total} pika shfaqjeje",
+  "spawns.legend": "Katrorët janë mjete. Zbehur: flamuri në atë çast nuk është i anës së pikës"
+}

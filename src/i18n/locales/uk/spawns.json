@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Респауни",
+  "spawns.modeTitle": "Як малюються точки відродження розкладки",
+  "spawns.mode.off": "Вимк.",
+  "spawns.mode.offTitle": "Без респаунів",
+  "spawns.mode.groups": "Групи",
+  "spawns.mode.groupsTitle": "Одне кільце на команду, прапор і етап",
+  "spawns.mode.points": "Кожна точка",
+  "spawns.mode.pointsTitle": "Кожна точка відродження: позначка кольору команди, риска напрямку, значок техніки",
+  "spawns.lines": "Лінії до прапора",
+  "spawns.linesTitle": "Лінія від кожної точки відродження до точки захоплення або штабу, до якого вона належить",
+  "spawns.flag": "Прапор",
+  "spawns.flagTitle": "Лише точки цієї точки захоплення або штабу",
+  "spawns.team": "Команда",
+  "spawns.stage": "Етап",
+  "spawns.any": "Усі",
+  "spawns.count": "{shown} з {total} точок відродження",
+  "spawns.legend": "Квадрати — техніка. Бліде: прапор у цю мить не в сторони точки"
+}

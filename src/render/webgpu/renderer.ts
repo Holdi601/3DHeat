@@ -1,4 +1,5 @@
 import { GpuZones } from './zones';
+import { GpuSpawnMarks } from './spawnMarks';
 import { GpuVolumeContours } from './volumeContours';
 import { GPU_DEPTH_CLEAR, GPU_DEPTH_FORMAT, GPU_DEPTH_TEST, PEEL_EPSILON_REVERSE } from '../depth';
 import { GpuRanges } from './ranges';
@@ -403,6 +404,8 @@ export class WebgpuRenderer implements Renderer {
   private topTriCount = 0;
   /** The capture zones' discs (`FrameParams.objectiveZones`), made on first use. */
   private zones: GpuZones | null = null;
+  /** The layout's spawn points one by one (`FrameParams.spawnMarks`), made on first use. */
+  private spawnMarks: GpuSpawnMarks | null = null;
   /** The volumes' lines on the level (`FrameParams.volumeContours`), made on first use. */
   private volumeContours: GpuVolumeContours | null = null;
   /**
@@ -3233,6 +3236,11 @@ export class WebgpuRenderer implements Renderer {
       this.zones ??= new GpuZones(this.device, SCENE_FORMAT, DEPTH_FORMAT, this.canvasFormat);
       this.zones.prepare(params, zones, 'top');
     }
+    const spawns = params.spawnMarks && params.spawnMarks.count ? params.spawnMarks : null;
+    if (spawns) {
+      this.spawnMarks ??= new GpuSpawnMarks(this.device, this.canvasFormat);
+      this.spawnMarks.prepare(params, spawns);
+    }
 
     // Where the volumes cut the level, from the scene's depth (render/volumeContours.ts).
     const contours = params.volumeContours && params.level && this.depthView ? params.volumeContours : null;
@@ -3275,6 +3283,7 @@ export class WebgpuRenderer implements Renderer {
           pass.draw(topTris.count);
         }
         if (zones && this.zones) this.zones.draw(pass, zones, 'top');
+        if (spawns && this.spawnMarks) this.spawnMarks.draw(pass, spawns);
         for (const l of [top, topStatic]) {
           if (!l) continue;
           pass.setPipeline(l.pipeline);
@@ -4400,6 +4409,7 @@ export class WebgpuRenderer implements Renderer {
   dispose(): void {
     this.heatBin?.dispose();
     this.zones?.dispose();
+    this.spawnMarks?.dispose();
     this.volumeContours?.dispose();
     this.ranges?.dispose();
     for (const j of this.pendingChunks) {

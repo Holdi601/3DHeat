@@ -1,0 +1,19 @@
+{
+  "spawns.title": "스폰",
+  "spawns.modeTitle": "레이아웃의 스폰을 그리는 방식",
+  "spawns.mode.off": "끔",
+  "spawns.mode.offTitle": "스폰 없음",
+  "spawns.mode.groups": "그룹",
+  "spawns.mode.groupsTitle": "팀·깃발·단계마다 고리 하나",
+  "spawns.mode.points": "모든 지점",
+  "spawns.mode.pointsTitle": "모든 스폰 지점: 팀 색 표시, 방향을 나타내는 선, 차량 기호",
+  "spawns.lines": "깃발까지 선",
+  "spawns.linesTitle": "각 스폰 지점에서 그것이 속한 점령 지점이나 본부까지의 선",
+  "spawns.flag": "깃발",
+  "spawns.flagTitle": "이 점령 지점이나 본부의 스폰만",
+  "spawns.team": "팀",
+  "spawns.stage": "단계",
+  "spawns.any": "전체",
+  "spawns.count": "스폰 지점 {total}개 중 {shown}개",
+  "spawns.legend": "사각형은 차량입니다. 흐림: 재생 위치에서 깃발이 그 스폰 편이 아님"
+}

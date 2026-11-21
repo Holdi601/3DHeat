@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Spawns",
+  "spawns.modeTitle": "Hvordan layoutets spawns tegnes",
+  "spawns.mode.off": "Fra",
+  "spawns.mode.offTitle": "Ingen spawns",
+  "spawns.mode.groups": "Grupper",
+  "spawns.mode.groupsTitle": "Én ring pr. hold, flag og fase",
+  "spawns.mode.points": "Hvert punkt",
+  "spawns.mode.pointsTitle": "Hvert spawnpunkt: et mærke i holdets farve, en streg for retningen, et tegn for et køretøj",
+  "spawns.lines": "Linjer til flaget",
+  "spawns.linesTitle": "En linje fra hvert spawnpunkt til erobringspunktet eller HQ'et, det hører til",
+  "spawns.flag": "Flag",
+  "spawns.flagTitle": "Kun spawns fra dette erobringspunkt eller HQ",
+  "spawns.team": "Hold",
+  "spawns.stage": "Fase",
+  "spawns.any": "Alle",
+  "spawns.count": "{shown} af {total} spawnpunkter",
+  "spawns.legend": "Firkanter er køretøjer. Bleg: flaget tilhører ikke spawnets side ved afspilningspunktet"
+}

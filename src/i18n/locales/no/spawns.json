@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Spawner",
+  "spawns.modeTitle": "Hvordan oppsettets spawner tegnes",
+  "spawns.mode.off": "Av",
+  "spawns.mode.offTitle": "Ingen spawner",
+  "spawns.mode.groups": "Grupper",
+  "spawns.mode.groupsTitle": "Én ring per lag, flagg og fase",
+  "spawns.mode.points": "Hvert punkt",
+  "spawns.mode.pointsTitle": "Hvert spawnpunkt: et merke i lagets farge, en strek for retningen, et tegn for et kjøretøy",
+  "spawns.lines": "Linjer til flagget",
+  "spawns.linesTitle": "En linje fra hvert spawnpunkt til erobringspunktet eller HQ-en det hører til",
+  "spawns.flag": "Flagg",
+  "spawns.flagTitle": "Bare spawnene til dette erobringspunktet eller HQ",
+  "spawns.team": "Lag",
+  "spawns.stage": "Fase",
+  "spawns.any": "Alle",
+  "spawns.count": "{shown} av {total} spawnpunkter",
+  "spawns.legend": "Firkanter er kjøretøy. Blek: flagget tilhører ikke spawnens side ved avspillingspunktet"
+}

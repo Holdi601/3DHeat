@@ -8,6 +8,7 @@
 import type { ObjectiveSource } from './objectives';
 import type { LevelLayout } from '../match/levelLayouts';
 import { layoutsDoc, shownLayout, useLevelLayouts, wantLayouts } from '../state/levelLayoutsStore';
+import { useSpawnDisplay } from '../state/spawnDisplayStore';
 
 /** A level's game and name from its part names (` @<game>/<level>`, as the map tools write them). */
 const PART = /\s@([a-z0-9][a-z0-9-]*)\/([A-Za-z0-9_\-.]+)\s*$/;
@@ -39,12 +40,18 @@ export function levelLayoutSource(level: unknown): ObjectiveSource | null {
   const layout = shownLayout(id.game, id.level);
   const found = layout ? layoutsDoc(id.game, id.level) : null;
   if (!layout || !found) return null;
-  const key = `${found.key}|${layout.id}|${useLevelLayouts.getState().rev}`;
+  // The spawns' rings only in the spawn display's `groups` (`state/spawnDisplayStore.ts`), one team's where it filters.
+  const sd = useSpawnDisplay.getState();
+  const key = `${found.key}|${layout.id}|${useLevelLayouts.getState().rev}|${sd.mode}|${sd.team}|${sd.owner}`;
   if (last && last.key === key && last.layout === layout) return last.source;
+  const owner = sd.owner ? layout.spawnOwners.get(sd.owner) : undefined;
+  const keep = (o: (typeof layout.objectives)[number]) =>
+    o.layer !== 'spawns' ||
+    (sd.mode === 'groups' && (sd.team === null || o.team === null || o.team === sd.team) && (!owner || o.name === owner.letter || o.name === owner.name || o.name === owner.id));
   // The same array each frame, so what is laid on the ground is laid once.
   const source: ObjectiveSource = {
     match: `@layout ${id.level} ${layout.id}`,
-    objectives: layout.objectives,
+    objectives: layout.objectives.every(keep) ? layout.objectives : layout.objectives.filter(keep),
     timeline: null,
     offset: 0,
     world: true,

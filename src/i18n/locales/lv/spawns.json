@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Rašanās punkti",
+  "spawns.modeTitle": "Kā tiek zīmēti izkārtojuma rašanās punkti",
+  "spawns.mode.off": "Izsl.",
+  "spawns.mode.offTitle": "Nav rašanās punktu",
+  "spawns.mode.groups": "Grupas",
+  "spawns.mode.groupsTitle": "Viens gredzens katrai komandai, karogam un posmam",
+  "spawns.mode.points": "Katrs punkts",
+  "spawns.mode.pointsTitle": "Katrs rašanās punkts: zīme komandas krāsā, svītra virzienam, simbols transportlīdzeklim",
+  "spawns.lines": "Līnijas uz karogu",
+  "spawns.linesTitle": "Līnija no katra rašanās punkta uz ieņemšanas punktu vai štābu, kam tas pieder",
+  "spawns.flag": "Karogs",
+  "spawns.flagTitle": "Tikai šī ieņemšanas punkta vai štāba rašanās punkti",
+  "spawns.team": "Komanda",
+  "spawns.stage": "Posms",
+  "spawns.any": "Visi",
+  "spawns.count": "{shown} no {total} rašanās punktiem",
+  "spawns.legend": "Kvadrāti ir transportlīdzekļi. Bāls: karogs atskaņošanas brīdī nepieder punkta pusei"
+}

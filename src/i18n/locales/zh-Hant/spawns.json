@@ -1,0 +1,19 @@
+{
+  "spawns.title": "出生點",
+  "spawns.modeTitle": "佈局的出生點如何繪製",
+  "spawns.mode.off": "關",
+  "spawns.mode.offTitle": "無出生點",
+  "spawns.mode.groups": "分組",
+  "spawns.mode.groupsTitle": "每個隊伍、旗幟和階段一個圓環",
+  "spawns.mode.points": "每個點",
+  "spawns.mode.pointsTitle": "每個出生點：隊伍顏色的標記、表示朝向的短線、載具符號",
+  "spawns.lines": "連到旗幟",
+  "spawns.linesTitle": "從每個出生點連到它所屬的佔領點或總部的線",
+  "spawns.flag": "旗幟",
+  "spawns.flagTitle": "僅此佔領點或總部的出生點",
+  "spawns.team": "隊伍",
+  "spawns.stage": "階段",
+  "spawns.any": "全部",
+  "spawns.count": "{total} 個出生點中的 {shown} 個",
+  "spawns.legend": "方塊是載具。變淡：在播放位置該旗幟不屬於出生點一方"
+}

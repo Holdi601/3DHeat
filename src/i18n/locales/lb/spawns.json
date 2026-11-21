@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Spawnen",
+  "spawns.modeTitle": "Wéi d'Spawnen vum Layout gezeechent ginn",
+  "spawns.mode.off": "Aus",
+  "spawns.mode.offTitle": "Keng Spawnen",
+  "spawns.mode.groups": "Gruppen",
+  "spawns.mode.groupsTitle": "E Rank pro Team, Fändel an Etapp",
+  "spawns.mode.points": "All Punkt",
+  "spawns.mode.pointsTitle": "All Spawnpunkt: e Mark an der Teamfaarf, e Strich fir d'Richtung, en Zeechen fir e Gefier",
+  "spawns.lines": "Linnen bis bei de Fändel",
+  "spawns.linesTitle": "Eng Linn vun all Spawnpunkt bis bei den Eruewerungspunkt oder den HQ, zu deem e gehéiert",
+  "spawns.flag": "Fändel",
+  "spawns.flagTitle": "Nëmmen d'Spawnen vun dësem Eruewerungspunkt oder HQ",
+  "spawns.team": "Team",
+  "spawns.stage": "Etapp",
+  "spawns.any": "All",
+  "spawns.count": "{shown} vun {total} Spawnpunkten",
+  "spawns.legend": "Quadrater si Gefierer. Bleech: de Fändel gehéiert zu deem Moment net der Säit vum Spawn"
+}

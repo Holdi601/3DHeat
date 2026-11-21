@@ -60,7 +60,10 @@ import { gamePreset } from '../tactics/games';
 import type { Dataset, FilterSpec } from '../state/types';
 import { CURVE_LUT_SIZE, bakeCurveLut, curveSignature } from '../state/curve';
 import { buildColorLut, isUnassignedLabel, teamHueCount, teamMemberColor } from './colors';
-import { levelLayoutSource } from './levelLayoutSource';
+import { levelIdOfLevel, levelLayoutSource } from './levelLayoutSource';
+import { SpawnMarkLayer, type SpawnMarkDraw } from './spawnMarks';
+import { useSpawnDisplay } from '../state/spawnDisplayStore';
+import { shownLayout, wantLayouts } from '../state/levelLayoutsStore';
 import type { Projection } from './camera';
 import { autoExposure, type ExposureResult } from './exposure';
 import { FlyCamera, MIN_FLY_SPEED } from './camera';
@@ -716,6 +719,9 @@ export class Engine {
   private rangeDraw: import('./types').RangeDraw | null = null;
   /** The battles' objectives on the ground (`objectives.ts`); its labels are the page's. */
   readonly objectiveDraw = new ObjectiveLayerDraw();
+  /** The level layout's spawn points one by one (`spawnMarks.ts`), and what the last frame drew of them. */
+  private readonly spawnLayer = new SpawnMarkLayer();
+  private spawnDrawn: SpawnMarkDraw | null = null;
   /** The objectives' lines over the heat, between frames that build them. */
   private objectiveTop: { data: Float32Array; count: number } | null = null;
   /** The places' and maneuvers' lines as one array, with a version that moves only when either set changes. */
@@ -2320,6 +2326,42 @@ export class Engine {
     return { data: out, count: n };
   }
 
+  /**
+   * The spawn markers of the loaded level's layout (`spawnMarks.ts`), in the
+   * replay's team colours, out of use where a replay says the flag is the
+   * other side's at the playhead; null when they are not shown.
+   */
+  private frameSpawns(s: ReturnType<typeof snapshot>, sources: ObjectiveSource[]): SpawnMarkDraw | null {
+    const sd = useSpawnDisplay.getState();
+    const id = sd.mode === 'points' && useObjectivesStore.getState().on ? levelIdOfLevel(s.level) : null;
+    if (id) wantLayouts(id.game, id.level);
+    const layout = id ? shownLayout(id.game, id.level) : null;
+    const d = this.dataset;
+    // Who holds the flags: the shown battle's capture timeline, else the one loaded when there is one.
+    const one = sources.length === 1 ? sources[0] : null;
+    let timeline = one?.timeline ?? null;
+    let offset = one?.offset ?? 0;
+    if (!timeline && layout) {
+      const all = Object.values(useObjectivesStore.getState().timelines);
+      if (all.length === 1) {
+        timeline = all[0];
+        offset = d && d.epochMs === null ? (d.timeOrigin ?? 0) : 0;
+      }
+    }
+    return this.spawnLayer.build({
+      layout,
+      mode: sd.mode,
+      lines: sd.lines,
+      filter: { owner: sd.owner, team: sd.team, stage: sd.stage },
+      teamColor: (team) => {
+        const i = (d?.teamLabels ?? []).indexOf(String(team));
+        return i >= 0 ? teamMemberColor(i, 0, 1) : teamMemberColor(Math.max(0, team - 1), 0, 1);
+      },
+      timeline,
+      t: this.playhead + offset,
+    });
+  }
+
   private frameObjectives(s: ReturnType<typeof snapshot>, sources: ObjectiveSource[], base: Float32Array | null, baseCount: number): { data: Float32Array | null; count: number } {
     const d = this.dataset;
     const level = s.level;
@@ -3206,6 +3248,12 @@ export class Engine {
       if (layout) objectiveSrc = [layout];
     }
     if (!objectiveSrc.length) this.objectiveDraw.clear();
+    // The layout's spawn points one by one, wherever a level is drawn; made again only when they change.
+    const spawnDraw = vehicleTab || (raceTab && !boardTab) ? null : this.frameSpawns(s, objectiveSrc);
+    if (spawnDraw !== this.spawnDrawn) {
+      this.spawnDrawn = spawnDraw;
+      this.invalidate(2);
+    }
     if (this.objectiveDraw.pending) this.invalidate(2);
     const objectiveSig = objectiveSrc.length ? `${objectives.rev}|${objectiveSrc.map((o) => o.match).join(',')}|${stateKey(objectiveSrc, this.playhead)}|${this.objectiveDraw.pending ? now : ''}` : '';
 
@@ -4123,6 +4171,7 @@ export class Engine {
       topStatic: this.staticTop(),
       topTris: this.objectiveTopTris?.data ?? null,
       groundTris: objGround?.data ?? null,
+      spawnMarks: spawnDraw,
       objectiveZones:
         (!raceBuilt || boardTab) && objectiveSrc.length && this.objectiveDraw.zones
           ? { ...this.objectiveDraw.zones, ground: s.mode === 'team', xray: s.mode === 'team' ? OBJECTIVE_XRAY : 1 }

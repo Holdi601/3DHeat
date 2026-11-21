@@ -46,6 +46,8 @@ if (import.meta.env.DEV) {
       'data/loader': () => import('./data/loader'),
       'data/columnStore': () => import('./data/columnStore'),
       'render/filterTables': () => import('./render/filterTables'),
+      'state/levelLayoutsStore': () => import('./state/levelLayoutsStore'),
+      'state/spawnDisplayStore': () => import('./state/spawnDisplayStore'),
     } as Record<string, () => Promise<unknown>>,
     generateSynthetic,
     DEFAULT_SYNTH,

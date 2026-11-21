@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Punti tad-dehra",
+  "spawns.modeTitle": "Kif jinġibdu l-punti tad-dehra tat-tqassim",
+  "spawns.mode.off": "Mitfi",
+  "spawns.mode.offTitle": "L-ebda punt",
+  "spawns.mode.groups": "Gruppi",
+  "spawns.mode.groupsTitle": "Ċirku wieħed għal kull tim, bandiera u stadju",
+  "spawns.mode.points": "Kull punt",
+  "spawns.mode.pointsTitle": "Kull punt tad-dehra: marka fil-kulur tat-tim, linja għad-direzzjoni, simbolu għal vettura",
+  "spawns.lines": "Linji sal-bandiera",
+  "spawns.linesTitle": "Linja minn kull punt tad-dehra sal-punt tal-qbid jew il-kwartieri li jappartjeni għalih",
+  "spawns.flag": "Bandiera",
+  "spawns.flagTitle": "Il-punti ta' dan il-punt tal-qbid jew kwartieri biss",
+  "spawns.team": "Tim",
+  "spawns.stage": "Stadju",
+  "spawns.any": "Kollha",
+  "spawns.count": "{shown} minn {total} punt tad-dehra",
+  "spawns.legend": "Il-kwadri huma vetturi. Ċar: il-bandiera mhix tan-naħa tal-punt f'dak il-mument"
+}

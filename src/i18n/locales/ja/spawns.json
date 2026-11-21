@@ -1,0 +1,19 @@
+{
+  "spawns.title": "スポーン",
+  "spawns.modeTitle": "レイアウトのスポーンの描き方",
+  "spawns.mode.off": "オフ",
+  "spawns.mode.offTitle": "スポーンなし",
+  "spawns.mode.groups": "グループ",
+  "spawns.mode.groupsTitle": "チーム・旗・段階ごとに輪を一つ",
+  "spawns.mode.points": "すべての地点",
+  "spawns.mode.pointsTitle": "すべてのスポーン地点：チーム色の印、向きを示す線、車両の記号",
+  "spawns.lines": "旗への線",
+  "spawns.linesTitle": "各スポーン地点から所属する拠点またはHQへの線",
+  "spawns.flag": "旗",
+  "spawns.flagTitle": "この拠点またはHQのスポーンのみ",
+  "spawns.team": "チーム",
+  "spawns.stage": "段階",
+  "spawns.any": "すべて",
+  "spawns.count": "{total} 地点中 {shown} 地点",
+  "spawns.legend": "四角は車両。淡色：再生位置でその旗はスポーン側のものではない"
+}

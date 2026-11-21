@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Спаунови",
+  "spawns.modeTitle": "Како се цртају тачке појављивања распореда",
+  "spawns.mode.off": "Иск.",
+  "spawns.mode.offTitle": "Без спаунова",
+  "spawns.mode.groups": "Групе",
+  "spawns.mode.groupsTitle": "Један прстен по тиму, застави и етапи",
+  "spawns.mode.points": "Свака тачка",
+  "spawns.mode.pointsTitle": "Свака тачка појављивања: ознака у боји тима, црта за смер, знак за возило",
+  "spawns.lines": "Линије до заставе",
+  "spawns.linesTitle": "Линија од сваке тачке појављивања до тачке заузимања или штаба коме припада",
+  "spawns.flag": "Застава",
+  "spawns.flagTitle": "Само спаунови ове тачке заузимања или штаба",
+  "spawns.team": "Тим",
+  "spawns.stage": "Етапа",
+  "spawns.any": "Све",
+  "spawns.count": "{shown} од {total} тачака појављивања",
+  "spawns.legend": "Квадрати су возила. Бледо: застава у том тренутку није стране тачке"
+}

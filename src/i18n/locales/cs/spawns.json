@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Spawny",
+  "spawns.modeTitle": "Jak se kreslí spawny rozložení",
+  "spawns.mode.off": "Vyp.",
+  "spawns.mode.offTitle": "Žádné spawny",
+  "spawns.mode.groups": "Skupiny",
+  "spawns.mode.groupsTitle": "Jeden kruh na tým, vlajku a fázi",
+  "spawns.mode.points": "Každý bod",
+  "spawns.mode.pointsTitle": "Každý spawn: značka v barvě týmu, čárka pro směr, symbol pro vozidlo",
+  "spawns.lines": "Čáry k vlajce",
+  "spawns.linesTitle": "Čára od každého spawnu k bodu obsazení nebo HQ, ke kterému patří",
+  "spawns.flag": "Vlajka",
+  "spawns.flagTitle": "Jen spawny tohoto bodu obsazení nebo HQ",
+  "spawns.team": "Tým",
+  "spawns.stage": "Fáze",
+  "spawns.any": "Vše",
+  "spawns.count": "{shown} z {total} spawnů",
+  "spawns.legend": "Čtverce jsou vozidla. Bledé: vlajka v tomto okamžiku nepatří straně spawnu"
+}

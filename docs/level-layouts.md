@@ -37,4 +37,4 @@ A spawn entry needs only a `position`. It may also carry:
 - `rule`: when it can be used (`flag`, `hq`, `stage`, `team`, `free`);
 - `vehicle`, `vehicleClass`, `vehicleKind`.
 
-The Battlefield tool writes all of these for Battlefield 6, 4 and 1. Any other game's layouts get the same display.
+The Battlefield tool writes all of these for Battlefield 6, 4 and 1. Any other game's layouts get the same display; a kind word in `vehicle` (War Thunder's `ground`, `aircraft`, `ship`, `helicopter`, `convoy`) picks the glyph.

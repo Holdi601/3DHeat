@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Upphafsstaðir",
+  "spawns.modeTitle": "Hvernig upphafsstaðir skipulagsins eru teiknaðir",
+  "spawns.mode.off": "Af",
+  "spawns.mode.offTitle": "Engir upphafsstaðir",
+  "spawns.mode.groups": "Hópar",
+  "spawns.mode.groupsTitle": "Einn hringur fyrir hvert lið, fána og áfanga",
+  "spawns.mode.points": "Hver punktur",
+  "spawns.mode.pointsTitle": "Hver upphafsstaður: merki í lit liðsins, strik fyrir stefnu, tákn fyrir farartæki",
+  "spawns.lines": "Línur að fána",
+  "spawns.linesTitle": "Lína frá hverjum upphafsstað að hertökustaðnum eða höfuðstöðvunum sem hann tilheyrir",
+  "spawns.flag": "Fáni",
+  "spawns.flagTitle": "Aðeins upphafsstaðir þessa hertökustaðar eða höfuðstöðva",
+  "spawns.team": "Lið",
+  "spawns.stage": "Áfangi",
+  "spawns.any": "Allir",
+  "spawns.count": "{shown} af {total} upphafsstöðum",
+  "spawns.legend": "Ferningar eru farartæki. Dauft: fáninn tilheyrir ekki hlið staðarins á þeirri stundu"
+}

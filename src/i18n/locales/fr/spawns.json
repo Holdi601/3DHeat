@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Apparitions",
+  "spawns.modeTitle": "Comment les points d'apparition de la disposition sont dessinés",
+  "spawns.mode.off": "Non",
+  "spawns.mode.offTitle": "Aucune apparition",
+  "spawns.mode.groups": "Groupes",
+  "spawns.mode.groupsTitle": "Un anneau par équipe, drapeau et étape",
+  "spawns.mode.points": "Chaque point",
+  "spawns.mode.pointsTitle": "Chaque point d'apparition : une marque à la couleur de son équipe, un trait pour son orientation, un symbole pour un véhicule",
+  "spawns.lines": "Lignes vers le drapeau",
+  "spawns.linesTitle": "Une ligne de chaque point d'apparition vers le point de capture ou le QG auquel il appartient",
+  "spawns.flag": "Drapeau",
+  "spawns.flagTitle": "Seulement les apparitions de ce point de capture ou QG",
+  "spawns.team": "Équipe",
+  "spawns.stage": "Étape",
+  "spawns.any": "Tous",
+  "spawns.count": "{shown} sur {total} points d'apparition",
+  "spawns.legend": "Les carrés sont des véhicules. Estompé : le drapeau n'est pas à son camp à la tête de lecture"
+}

@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Spawns",
+  "spawns.modeTitle": "Como são desenhados os spawns do layout",
+  "spawns.mode.off": "Não",
+  "spawns.mode.offTitle": "Sem spawns",
+  "spawns.mode.groups": "Grupos",
+  "spawns.mode.groupsTitle": "Um anel por equipa, bandeira e fase",
+  "spawns.mode.points": "Cada ponto",
+  "spawns.mode.pointsTitle": "Cada ponto de spawn: uma marca na cor da equipa, um traço para a direção, um símbolo para um veículo",
+  "spawns.lines": "Linhas à bandeira",
+  "spawns.linesTitle": "Uma linha de cada ponto de spawn ao ponto de captura ou QG a que pertence",
+  "spawns.flag": "Bandeira",
+  "spawns.flagTitle": "Só os spawns deste ponto de captura ou QG",
+  "spawns.team": "Equipa",
+  "spawns.stage": "Fase",
+  "spawns.any": "Todos",
+  "spawns.count": "{shown} de {total} pontos de spawn",
+  "spawns.legend": "Os quadrados são veículos. Esbatido: a bandeira não é do seu lado no cursor"
+}

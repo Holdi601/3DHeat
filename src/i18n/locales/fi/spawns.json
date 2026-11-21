@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Syntymispisteet",
+  "spawns.modeTitle": "Miten asettelun syntymispisteet piirretään",
+  "spawns.mode.off": "Pois",
+  "spawns.mode.offTitle": "Ei syntymispisteitä",
+  "spawns.mode.groups": "Ryhmät",
+  "spawns.mode.groupsTitle": "Yksi rengas joukkuetta, lippua ja vaihetta kohden",
+  "spawns.mode.points": "Jokainen piste",
+  "spawns.mode.pointsTitle": "Jokainen syntymispiste: merkki joukkueen värissä, viiva suunnalle, symboli ajoneuvolle",
+  "spawns.lines": "Viivat lippuun",
+  "spawns.linesTitle": "Viiva jokaisesta syntymispisteestä valtauspisteeseen tai päämajaan, johon se kuuluu",
+  "spawns.flag": "Lippu",
+  "spawns.flagTitle": "Vain tämän valtauspisteen tai päämajan syntymispisteet",
+  "spawns.team": "Joukkue",
+  "spawns.stage": "Vaihe",
+  "spawns.any": "Kaikki",
+  "spawns.count": "{shown}/{total} syntymispistettä",
+  "spawns.legend": "Neliöt ovat ajoneuvoja. Haalea: lippu ei toistokohdassa ole pisteen puolen"
+}

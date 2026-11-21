@@ -15,6 +15,7 @@ import { useEngine } from '../EngineContext';
 import { teamMemberColor } from '../../render/colors';
 import './objectives.css';
 import { LevelLayoutPicker, useLevelLayoutShown } from './LevelLayoutPicker';
+import { SpawnControls } from './SpawnControls';
 
 const swatch = (rgb: readonly number[]) => `rgb(${Math.round(rgb[0] * 255)},${Math.round(rgb[1] * 255)},${Math.round(rgb[2] * 255)})`;
 
@@ -119,6 +120,7 @@ export function ObjectivesPanel() {
         <>
           <Check label={t('objectives.show')} checked={on} onChange={(v) => store.setOn(v)} title={t('objectives.showTitle')} />
           <LevelLayoutPicker />
+          {on && <SpawnControls />}
           {on && (
             <div className="chips">
               {OBJECTIVE_LAYERS.map((l) => (

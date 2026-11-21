@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Рэспаўны",
+  "spawns.modeTitle": "Як малююцца пункты адраджэння раскладкі",
+  "spawns.mode.off": "Выкл.",
+  "spawns.mode.offTitle": "Без рэспаўнаў",
+  "spawns.mode.groups": "Групы",
+  "spawns.mode.groupsTitle": "Адно кольца на каманду, сцяг і этап",
+  "spawns.mode.points": "Кожны пункт",
+  "spawns.mode.pointsTitle": "Кожны пункт адраджэння: пазнака колеру каманды, рыска кірунку, значок тэхнікі",
+  "spawns.lines": "Лініі да сцяга",
+  "spawns.linesTitle": "Лінія ад кожнага пункта адраджэння да пункта захопу або штаба, да якога ён належыць",
+  "spawns.flag": "Сцяг",
+  "spawns.flagTitle": "Толькі пункты гэтага пункта захопу або штаба",
+  "spawns.team": "Каманда",
+  "spawns.stage": "Этап",
+  "spawns.any": "Усе",
+  "spawns.count": "{shown} з {total} пунктаў адраджэння",
+  "spawns.legend": "Квадраты — тэхніка. Бляклае: сцяг у гэты момант не ў боку пункта"
+}

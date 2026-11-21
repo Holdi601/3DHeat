@@ -1,0 +1,19 @@
+{
+  "spawns.title": "出生点",
+  "spawns.modeTitle": "布局的出生点如何绘制",
+  "spawns.mode.off": "关",
+  "spawns.mode.offTitle": "无出生点",
+  "spawns.mode.groups": "分组",
+  "spawns.mode.groupsTitle": "每个队伍、旗帜和阶段一个圆环",
+  "spawns.mode.points": "每个点",
+  "spawns.mode.pointsTitle": "每个出生点：队伍颜色的标记、表示朝向的短线、载具符号",
+  "spawns.lines": "连到旗帜",
+  "spawns.linesTitle": "从每个出生点连到它所属的占领点或总部的线",
+  "spawns.flag": "旗帜",
+  "spawns.flagTitle": "仅此占领点或总部的出生点",
+  "spawns.team": "队伍",
+  "spawns.stage": "阶段",
+  "spawns.any": "全部",
+  "spawns.count": "{total} 个出生点中的 {shown} 个",
+  "spawns.legend": "方块是载具。变淡：在播放位置该旗帜不属于出生点一方"
+}

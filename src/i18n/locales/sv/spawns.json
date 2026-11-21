@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Spawnar",
+  "spawns.modeTitle": "Hur layoutens spawnar ritas",
+  "spawns.mode.off": "Av",
+  "spawns.mode.offTitle": "Inga spawnar",
+  "spawns.mode.groups": "Grupper",
+  "spawns.mode.groupsTitle": "En ring per lag, flagga och fas",
+  "spawns.mode.points": "Varje punkt",
+  "spawns.mode.pointsTitle": "Varje spawnpunkt: en markör i lagets färg, ett streck för riktningen, en symbol för ett fordon",
+  "spawns.lines": "Linjer till flaggan",
+  "spawns.linesTitle": "En linje från varje spawnpunkt till erövringspunkten eller HQ:t den hör till",
+  "spawns.flag": "Flagga",
+  "spawns.flagTitle": "Bara spawnarna för denna erövringspunkt eller HQ",
+  "spawns.team": "Lag",
+  "spawns.stage": "Fas",
+  "spawns.any": "Alla",
+  "spawns.count": "{shown} av {total} spawnpunkter",
+  "spawns.legend": "Fyrkanter är fordon. Blek: flaggan är inte spawnens sidas vid uppspelningspunkten"
+}

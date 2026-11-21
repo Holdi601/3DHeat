@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Респауны",
+  "spawns.modeTitle": "Как рисуются точки возрождения раскладки",
+  "spawns.mode.off": "Выкл.",
+  "spawns.mode.offTitle": "Без респаунов",
+  "spawns.mode.groups": "Группы",
+  "spawns.mode.groupsTitle": "Одно кольцо на команду, флаг и этап",
+  "spawns.mode.points": "Каждая точка",
+  "spawns.mode.pointsTitle": "Каждая точка возрождения: метка цвета команды, черта направления, значок техники",
+  "spawns.lines": "Линии к флагу",
+  "spawns.linesTitle": "Линия от каждой точки возрождения к точке захвата или штабу, к которому она относится",
+  "spawns.flag": "Флаг",
+  "spawns.flagTitle": "Только точки этой точки захвата или штаба",
+  "spawns.team": "Команда",
+  "spawns.stage": "Этап",
+  "spawns.any": "Все",
+  "spawns.count": "{shown} из {total} точек возрождения",
+  "spawns.legend": "Квадраты — техника. Блёкло: флаг в этот момент не у стороны точки"
+}

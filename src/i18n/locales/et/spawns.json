@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Tekkekohad",
+  "spawns.modeTitle": "Kuidas paigutuse tekkekohti joonistatakse",
+  "spawns.mode.off": "Väljas",
+  "spawns.mode.offTitle": "Tekkekohti pole",
+  "spawns.mode.groups": "Rühmad",
+  "spawns.mode.groupsTitle": "Üks rõngas meeskonna, lipu ja etapi kohta",
+  "spawns.mode.points": "Iga punkt",
+  "spawns.mode.pointsTitle": "Iga tekkekoht: märk meeskonna värvis, kriips suuna jaoks, sümbol sõiduki jaoks",
+  "spawns.lines": "Jooned lipuni",
+  "spawns.linesTitle": "Joon igast tekkekohast vallutuspunkti või peakorterini, kuhu see kuulub",
+  "spawns.flag": "Lipp",
+  "spawns.flagTitle": "Ainult selle vallutuspunkti või peakorteri tekkekohad",
+  "spawns.team": "Meeskond",
+  "spawns.stage": "Etapp",
+  "spawns.any": "Kõik",
+  "spawns.count": "{shown} / {total} tekkekohta",
+  "spawns.legend": "Ruudud on sõidukid. Kahvatu: lipp ei kuulu esituskohal tekkekoha poolele"
+}

@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Spawnok",
+  "spawns.modeTitle": "Hogyan rajzolódnak az elrendezés spawnjai",
+  "spawns.mode.off": "Ki",
+  "spawns.mode.offTitle": "Nincs spawn",
+  "spawns.mode.groups": "Csoportok",
+  "spawns.mode.groupsTitle": "Egy gyűrű csapatonként, zászlónként és szakaszonként",
+  "spawns.mode.points": "Minden pont",
+  "spawns.mode.pointsTitle": "Minden spawnpont: jel a csapat színében, vonás az irányhoz, jel a járműhöz",
+  "spawns.lines": "Vonalak a zászlóhoz",
+  "spawns.linesTitle": "Vonal minden spawnponttól az elfoglalási ponthoz vagy főhadiszálláshoz, amelyhez tartozik",
+  "spawns.flag": "Zászló",
+  "spawns.flagTitle": "Csak ennek az elfoglalási pontnak vagy főhadiszállásnak a spawnjai",
+  "spawns.team": "Csapat",
+  "spawns.stage": "Szakasz",
+  "spawns.any": "Mind",
+  "spawns.count": "{shown} / {total} spawnpont",
+  "spawns.legend": "A négyzetek járművek. Halvány: a zászló a lejátszási pontnál nem a spawn oldaláé"
+}

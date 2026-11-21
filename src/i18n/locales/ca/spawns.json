@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Aparicions",
+  "spawns.modeTitle": "Com es dibuixen els punts d'aparició de la disposició",
+  "spawns.mode.off": "No",
+  "spawns.mode.offTitle": "Sense aparicions",
+  "spawns.mode.groups": "Grups",
+  "spawns.mode.groupsTitle": "Un anell per equip, bandera i fase",
+  "spawns.mode.points": "Cada punt",
+  "spawns.mode.pointsTitle": "Cada punt d'aparició: una marca del color del seu equip, un traç per a l'orientació, un símbol per a un vehicle",
+  "spawns.lines": "Línies a la bandera",
+  "spawns.linesTitle": "Una línia de cada punt d'aparició al punt de captura o quarter general al qual pertany",
+  "spawns.flag": "Bandera",
+  "spawns.flagTitle": "Només les aparicions d'aquest punt de captura o quarter",
+  "spawns.team": "Equip",
+  "spawns.stage": "Fase",
+  "spawns.any": "Tots",
+  "spawns.count": "{shown} de {total} punts d'aparició",
+  "spawns.legend": "Els quadrats són vehicles. Esvaït: la bandera no és del seu bàndol al capçal"
+}

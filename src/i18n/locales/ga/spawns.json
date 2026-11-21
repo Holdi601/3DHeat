@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Pointí athbheochana",
+  "spawns.modeTitle": "Conas a tharraingítear pointí athbheochana an leagain amach",
+  "spawns.mode.off": "As",
+  "spawns.mode.offTitle": "Gan pointí",
+  "spawns.mode.groups": "Grúpaí",
+  "spawns.mode.groupsTitle": "Fáinne amháin in aghaidh foirne, brataí agus céime",
+  "spawns.mode.points": "Gach pointe",
+  "spawns.mode.pointsTitle": "Gach pointe athbheochana: marc i ndath na foirne, stríoc don treo, siombail d'fheithicil",
+  "spawns.lines": "Línte go dtí an bhratach",
+  "spawns.linesTitle": "Líne ó gach pointe athbheochana go dtí an pointe gabhála nó an ceanncheathrú lena mbaineann sé",
+  "spawns.flag": "Bratach",
+  "spawns.flagTitle": "Pointí an phointe gabhála nó an cheanncheathrú seo amháin",
+  "spawns.team": "Foireann",
+  "spawns.stage": "Céim",
+  "spawns.any": "Gach ceann",
+  "spawns.count": "{shown} as {total} pointe athbheochana",
+  "spawns.legend": "Is feithiclí iad na cearnóga. Lag: níl an bhratach ag taobh an phointe ag an nóiméad sin"
+}

@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Doğma noktaları",
+  "spawns.modeTitle": "Düzenin doğma noktalarının nasıl çizileceği",
+  "spawns.mode.off": "Kapalı",
+  "spawns.mode.offTitle": "Doğma noktası yok",
+  "spawns.mode.groups": "Gruplar",
+  "spawns.mode.groupsTitle": "Takım, bayrak ve aşama başına bir halka",
+  "spawns.mode.points": "Her nokta",
+  "spawns.mode.pointsTitle": "Her doğma noktası: takım renginde bir işaret, yön için bir çizgi, araç için bir simge",
+  "spawns.lines": "Bayrağa çizgiler",
+  "spawns.linesTitle": "Her doğma noktasından ait olduğu ele geçirme noktasına veya karargâha bir çizgi",
+  "spawns.flag": "Bayrak",
+  "spawns.flagTitle": "Yalnızca bu ele geçirme noktasının veya karargâhın doğma noktaları",
+  "spawns.team": "Takım",
+  "spawns.stage": "Aşama",
+  "spawns.any": "Tümü",
+  "spawns.count": "{shown} / {total} doğma noktası",
+  "spawns.legend": "Kareler araçtır. Soluk: bayrak o anda noktanın tarafında değil"
+}

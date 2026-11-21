@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Spawnuri",
+  "spawns.modeTitle": "Cum sunt desenate spawnurile planului",
+  "spawns.mode.off": "Oprit",
+  "spawns.mode.offTitle": "Fără spawnuri",
+  "spawns.mode.groups": "Grupuri",
+  "spawns.mode.groupsTitle": "Un inel pe echipă, steag și etapă",
+  "spawns.mode.points": "Fiecare punct",
+  "spawns.mode.pointsTitle": "Fiecare punct de spawn: un semn în culoarea echipei, o liniuță pentru direcție, un simbol pentru vehicul",
+  "spawns.lines": "Linii spre steag",
+  "spawns.linesTitle": "O linie de la fiecare punct de spawn la punctul de capturare sau cartierul general căruia îi aparține",
+  "spawns.flag": "Steag",
+  "spawns.flagTitle": "Doar spawnurile acestui punct de capturare sau cartier general",
+  "spawns.team": "Echipă",
+  "spawns.stage": "Etapă",
+  "spawns.any": "Toate",
+  "spawns.count": "{shown} din {total} puncte de spawn",
+  "spawns.legend": "Pătratele sunt vehicule. Estompat: steagul nu este al părții spawnului la cursor"
+}

@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Spawni",
+  "spawns.modeTitle": "Kako se rišejo točke pojavljanja razporeditve",
+  "spawns.mode.off": "Izklop",
+  "spawns.mode.offTitle": "Brez spawnov",
+  "spawns.mode.groups": "Skupine",
+  "spawns.mode.groupsTitle": "En obroč na ekipo, zastavo in etapo",
+  "spawns.mode.points": "Vsaka točka",
+  "spawns.mode.pointsTitle": "Vsaka točka pojavljanja: oznaka v barvi ekipe, črtica za smer, znak za vozilo",
+  "spawns.lines": "Črte do zastave",
+  "spawns.linesTitle": "Črta od vsake točke pojavljanja do točke zavzetja ali poveljstva, ki mu pripada",
+  "spawns.flag": "Zastava",
+  "spawns.flagTitle": "Samo spawni te točke zavzetja ali poveljstva",
+  "spawns.team": "Ekipa",
+  "spawns.stage": "Etapa",
+  "spawns.any": "Vse",
+  "spawns.count": "{shown} od {total} točk pojavljanja",
+  "spawns.legend": "Kvadrati so vozila. Bledo: zastava v tem trenutku ni strani točke"
+}

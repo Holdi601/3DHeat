@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Apariciones",
+  "spawns.modeTitle": "Cómo se dibujan los puntos de aparición del diseño",
+  "spawns.mode.off": "No",
+  "spawns.mode.offTitle": "Sin apariciones",
+  "spawns.mode.groups": "Grupos",
+  "spawns.mode.groupsTitle": "Un anillo por equipo, bandera y fase",
+  "spawns.mode.points": "Cada punto",
+  "spawns.mode.pointsTitle": "Cada punto de aparición: una marca en el color de su equipo, un trazo para su orientación, un símbolo para un vehículo",
+  "spawns.lines": "Líneas a la bandera",
+  "spawns.linesTitle": "Una línea de cada punto de aparición al punto de captura o cuartel al que pertenece",
+  "spawns.flag": "Bandera",
+  "spawns.flagTitle": "Solo las apariciones de este punto de captura o cuartel",
+  "spawns.team": "Equipo",
+  "spawns.stage": "Fase",
+  "spawns.any": "Todos",
+  "spawns.count": "{shown} de {total} puntos de aparición",
+  "spawns.legend": "Los cuadrados son vehículos. Atenuado: la bandera no es de su bando en el cabezal"
+}

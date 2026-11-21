@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Spawns",
+  "spawns.modeTitle": "Wie die Spawns des Layouts gezeichnet werden",
+  "spawns.mode.off": "Aus",
+  "spawns.mode.offTitle": "Keine Spawns",
+  "spawns.mode.groups": "Gruppen",
+  "spawns.mode.groupsTitle": "Ein Ring je Team, Flagge und Stufe",
+  "spawns.mode.points": "Jeder Punkt",
+  "spawns.mode.pointsTitle": "Jeder Spawnpunkt: eine Marke in der Teamfarbe, ein Strich für die Blickrichtung, ein Zeichen für ein Fahrzeug",
+  "spawns.lines": "Linien zur Flagge",
+  "spawns.linesTitle": "Eine Linie von jedem Spawnpunkt zum Eroberungspunkt oder HQ, zu dem er gehört",
+  "spawns.flag": "Flagge",
+  "spawns.flagTitle": "Nur die Spawns dieses Eroberungspunkts oder HQ",
+  "spawns.team": "Team",
+  "spawns.stage": "Stufe",
+  "spawns.any": "Alle",
+  "spawns.count": "{shown} von {total} Spawnpunkten",
+  "spawns.legend": "Quadrate sind Fahrzeuge. Blass: Die Flagge gehört am Abspielpunkt nicht der Seite des Spawns"
+}

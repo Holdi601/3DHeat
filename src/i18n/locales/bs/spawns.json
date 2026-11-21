@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Spawnovi",
+  "spawns.modeTitle": "Kako se crtaju tačke pojavljivanja rasporeda",
+  "spawns.mode.off": "Isklj.",
+  "spawns.mode.offTitle": "Bez spawnova",
+  "spawns.mode.groups": "Grupe",
+  "spawns.mode.groupsTitle": "Jedan prsten po timu, zastavi i etapi",
+  "spawns.mode.points": "Svaka tačka",
+  "spawns.mode.pointsTitle": "Svaka tačka pojavljivanja: oznaka u boji tima, crtica za smjer, znak za vozilo",
+  "spawns.lines": "Linije do zastave",
+  "spawns.linesTitle": "Linija od svake tačke pojavljivanja do tačke osvajanja ili štaba kojem pripada",
+  "spawns.flag": "Zastava",
+  "spawns.flagTitle": "Samo spawnovi ove tačke osvajanja ili štaba",
+  "spawns.team": "Tim",
+  "spawns.stage": "Etapa",
+  "spawns.any": "Sve",
+  "spawns.count": "{shown} od {total} tačaka pojavljivanja",
+  "spawns.legend": "Kvadrati su vozila. Blijedo: zastava u tom trenutku nije strane tačke"
+}

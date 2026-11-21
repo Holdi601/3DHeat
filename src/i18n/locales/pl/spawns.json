@@ -1,0 +1,19 @@
+{
+  "spawns.title": "Spawny",
+  "spawns.modeTitle": "Jak rysowane są spawny układu",
+  "spawns.mode.off": "Wył.",
+  "spawns.mode.offTitle": "Bez spawnów",
+  "spawns.mode.groups": "Grupy",
+  "spawns.mode.groupsTitle": "Jeden pierścień na drużynę, flagę i etap",
+  "spawns.mode.points": "Każdy punkt",
+  "spawns.mode.pointsTitle": "Każdy punkt odrodzenia: znacznik w kolorze drużyny, kreska kierunku, symbol pojazdu",
+  "spawns.lines": "Linie do flagi",
+  "spawns.linesTitle": "Linia od każdego punktu odrodzenia do punktu przejęcia lub HQ, do którego należy",
+  "spawns.flag": "Flaga",
+  "spawns.flagTitle": "Tylko spawny tego punktu przejęcia lub HQ",
+  "spawns.team": "Drużyna",
+  "spawns.stage": "Etap",
+  "spawns.any": "Wszystkie",
+  "spawns.count": "{shown} z {total} punktów odrodzenia",
+  "spawns.legend": "Kwadraty to pojazdy. Wyblakłe: flaga nie należy w tym momencie do strony spawnu"
+}

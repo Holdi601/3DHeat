@@ -583,6 +583,13 @@ export interface FrameParams {
    */
   objectiveZones?: { verts: Float32Array; count: number; state: Float32Array; ground: boolean; xray: number } | null;
   /**
+   * A level layout's spawn points one by one (`spawnMarks.ts`): instances of
+   * twelve floats, uploaded when the array is a new one; drawn over the
+   * finished picture without depth, the lines to their owners first where
+   * `lines`. Absent: none.
+   */
+  spawnMarks?: { data: Float32Array; count: number; lines: boolean } | null;
+  /**
    * The replay's objectives under the units. Set, the renderers draw every
    * objective mark in the scene after the level and before the figures - the
    * ground-laid ones (`groundTris`, the zones' discs) depth tested, the ones
