@@ -38,6 +38,30 @@ export type PathTiming = 'keys' | 'constant';
 
 export type Pose = Omit<Keyframe, 'u' | 'ease'>;
 
+/** The shortest a video may be made by typing a key's time, in seconds. */
+export const MIN_PATH_SECONDS = 0.1;
+
+/**
+ * A key's time typed, `sec` seconds into a video of `seconds`; `keys` sorted
+ * (`prepare`). A key between others stays between them. The last key is the
+ * video's end, so its time is the duration: typing 3 there makes a 3 s video
+ * (it used to move the key to a quarter of a 12 s one, and the video stayed
+ * 12 s long). The other keys keep their places along the video, as they do
+ * when the duration is set - the same answer however the number is typed,
+ * digit by digit as it arrives. Null for a time that is not a number.
+ */
+export function retimeKey(keys: Keyframe[], i: number, sec: number, seconds: number): { keys: Keyframe[]; seconds: number } | null {
+  if (!Number.isFinite(sec) || i < 0 || i >= keys.length) return null;
+  const total = Math.max(MIN_PATH_SECONDS, seconds);
+  if (i === keys.length - 1 && keys.length > 1) {
+    return { seconds: Math.max(MIN_PATH_SECONDS, sec), keys: keys.map((k, j) => (j === i ? { ...k, u: 1 } : k)) };
+  }
+  const u = Math.min(1, Math.max(0, sec / total));
+  const lo = i > 0 ? keys[i - 1].u + 1e-4 : 0;
+  const hi = i < keys.length - 1 ? keys[i + 1].u - 1e-4 : 1;
+  return { seconds, keys: keys.map((k, j) => (j === i ? { ...k, u: Math.min(hi, Math.max(lo, u)) } : k)) };
+}
+
 /** A segment's local time through its ease. */
 export function easeSegment(s: number, ease: SegmentEase | undefined): number {
   switch (ease) {

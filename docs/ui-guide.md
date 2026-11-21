@@ -60,7 +60,7 @@ The viewer remembers, in this browser: which sections are open, the group picked
 
 `Ctrl+K`, or **Search…** at the top of the side panel. Type a few letters of what you want:
 
-- an action (*Play / pause*, *Frame the data*, *Save the current view*, *Copy the camera position*, *Theme: Light*, *Keyboard shortcuts*);
+- an action (*Play / pause*, *Frame the action*, *Frame everything*, *Save the current view*, *Copy the camera position*, *Theme: Light*, *Keyboard shortcuts*);
 - a workspace or task group (*Go to Match*, *Show the Compare panels*);
 - a view mode (*Heat*, *Difference*, *Team heat*, *Lines*, *Figure overlay*);
 - a camera view (*Camera: Top*, *Camera: Iso NE*, *Perspective*, *Parallel*);
@@ -85,8 +85,8 @@ Over the top of the view:
 | Button | Does | Key |
 |---|---|---|
 | Play / pause | The timeline, the race or the plan, by workspace | `K` |
-| Frame | Frames the data | `F` |
-| Look straight down | The top view, framed | |
+| Frame | Frames the action, the dense part of the data ([Camera](camera.md#framing)) | `F` (`Shift+F` frames everything) |
+| Look straight down | The top view, framed, in a parallel projection. The button stays lit while the parallel view is on, and a second press goes back to 3D. A **Parallel view** badge at the bottom right of the view says the same, with a **Back to 3D** button | |
 | Bookmark | Saves the current view under the next free name ([Saved views](saved-views.md)) | |
 | Ruler | Opens [Measure](measure.md) with the ruler on (Heatmap) | |
 | Side panel | Hides or shows it | `Ctrl+B` |

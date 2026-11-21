@@ -33,7 +33,7 @@ With no keyframes, a render holds the current camera still for the whole clip - 
 
 | Control | Default | Meaning |
 |---|---|---|
-| **Timing** (2+ keys) | *At the keys' times* | *At the keys' times*: each key is reached at its own time; the key list shows each key's time in seconds, editable (kept between its neighbours). *Steady speed*: the camera moves at one speed along the whole path - the keys set its shape, **Duration** its pace (the path is re-timed by its length, sampled at 1,024 points). |
+| **Timing** (2+ keys) | *At the keys' times* | *At the keys' times*: each key is reached at its own time; the key list shows each key's time in seconds, editable (kept between its neighbours). The last key's time is the video's end, so typing a time there sets the **Duration** too, with the other keys keeping their places along the video. *Steady speed*: the camera moves at one speed along the whole path - the keys set its shape, **Duration** its pace (the path is re-timed by its length, sampled at 1,024 points). |
 | **Space the keys evenly** | | Gives each move between keys the same share of the video. |
 | Ease (per key, except the last) | *Even* | How the move from this key to the next starts and ends: *Even*, *Ease in* (starts slow), *Ease out* (arrives slow), *Ease in and out*. A time remap inside the segment: the path's shape does not change. |
 
@@ -62,7 +62,7 @@ Recording works the same in every mode - Heat, Difference, Team heat, Lines, the
 | Travel line (2+ keys) | | | `N units of travel - M per second at this duration`, or a note that the keys are all in one place. |
 | **Preview along the path** (1+ keys) | off | | Drives the viewport camera from the path, and moves the playhead with it as the render does, so the move can be judged before rendering. |
 | **Position along path** (while previewing) | 0% | 0-100% | Where on the path to preview. |
-| **Duration** | 12 s | 1-120 s (3600) | Length of the video. |
+| **Duration** | 12 s | 1-120 s (3600) | Length of the video. A number typed in the box counts as it is typed. The last key's time box sets it too. |
 | **Frame rate** | 30 fps | 6-60 (240) | |
 | **Bitrate** | 16 Mbps | 1-60 Mbps, logarithmic (400) | Heat gradients band badly at low bitrates: there is little detail for a codec to hide error behind. |
 | **Convergence wait cap** | 240 frames | 2-600 (10,000) | The longest one output frame may wait to become exact. Frames that hit it are still written, and counted. |

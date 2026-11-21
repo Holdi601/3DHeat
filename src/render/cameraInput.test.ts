@@ -1,6 +1,7 @@
 import { Vector3 } from 'three';
 import { describe, expect, it } from 'vitest';
-import { FlyCamera, MouseDeltaFilter, ORTHO_ZOOM_PER_NOTCH } from './camera';
+import { FlyCamera, MIN_ZOOM_DISTANCE, MouseDeltaFilter, ORTHO_ZOOM_PER_NOTCH, ZOOM_PER_NOTCH } from './camera';
+import { setViewElement } from '../ui/viewKeys';
 import { targetAt } from '../ui/help/helpTarget';
 
 const ASPECT = 16 / 9;
@@ -126,7 +127,9 @@ describe('the down key', () => {
     const hadWin = 'window' in g;
     const hadDoc = 'document' in g;
     if (!hadWin) g.window = { addEventListener: (type: string, fn: (e: unknown) => void) => listeners.set(type, fn), removeEventListener() {} };
-    if (!hadDoc) g.document = { addEventListener() {}, removeEventListener() {} };
+    // The view has the focus: its keys fly it only then (ui/viewKeys.ts).
+    if (!hadDoc) g.document = { addEventListener() {}, removeEventListener() {}, activeElement: canvas };
+    setViewElement(canvas);
     try {
       cam.attach(canvas);
       const down = (code: string) => listeners.get('keydown')!({ code, target: null, preventDefault() {} });
@@ -139,6 +142,7 @@ describe('the down key', () => {
       cam.update(1, ASPECT, 60, 0.05, 40_000);
       expect(cam.position.y).toBe(100);
     } finally {
+      setViewElement(null);
       if (!hadWin) delete g.window;
       if (!hadDoc) delete g.document;
     }
@@ -158,5 +162,60 @@ describe('the help under the pointer', () => {
     expect(targetAt(10, 10, find, box)).toBe('marker');
     expect(targetAt(230, 10, find, box)).toBe('engage');
     expect(targetAt(500, 500, find, box)).toBe(null);
+  });
+});
+
+describe('the wheel zooms toward the pointer', () => {
+  /** A camera 1000 up, looking down at 45 degrees, with the ground 1414 away along the view. */
+  const looking = () => {
+    const cam = new FlyCamera();
+    cam.position.set(0, 1000, 0);
+    cam.setOrientationDegrees(0, -45);
+    cam.speed = 300;
+    settle(cam);
+    return cam;
+  };
+
+  it('moves along the line through the pointer, keeping what is under it there', () => {
+    const cam = looking();
+    // The ground point under a pointer right of centre and low on the screen.
+    const x = 1200;
+    const y = 700;
+    const dir = new Vector3((x / 1600) * 2 - 1, 1 - (y / 900) * 2, 0.5).unproject(cam.camera).sub(cam.position).normalize();
+    const t = -cam.position.y / dir.y;
+    const ground = cam.position.clone().addScaledVector(dir, t);
+    cam.depthAt = () => t;
+    const before = ndc(cam, ground);
+    cam.zoomAt(x, y, 1600, 900, -3);
+    settle(cam);
+    const after = ndc(cam, ground);
+    expect(after.x).toBeCloseTo(before.x, 4);
+    expect(after.y).toBeCloseTo(before.y, 4);
+    expect(cam.position.distanceTo(ground)).toBeCloseTo(t / ZOOM_PER_NOTCH ** 3, 3);
+    // The fly speed with the distance.
+    expect(cam.speed).toBeCloseTo(300 / ZOOM_PER_NOTCH ** 3, 6);
+  });
+
+  it('comes back out the same way, and never through what it zooms at', () => {
+    const cam = looking();
+    cam.depthAt = () => 10;
+    const start = cam.position.clone();
+    cam.zoomAt(800, 450, 1600, 900, -2);
+    cam.depthAt = () => 10 / ZOOM_PER_NOTCH ** 2;
+    cam.zoomAt(800, 450, 1600, 900, 2);
+    expect(cam.position.distanceTo(start)).toBeLessThan(1e-6);
+    for (let i = 0; i < 200; i++) {
+      cam.depthAt = () => Math.max(MIN_ZOOM_DISTANCE, 10 - cam.position.distanceTo(start));
+      cam.zoomAt(800, 450, 1600, 900, -4);
+    }
+    expect(cam.position.distanceTo(start)).toBeLessThanOrEqual(10 - MIN_ZOOM_DISTANCE + 1e-6);
+  });
+
+  it('falls back to the focus distance with nothing under the pointer', () => {
+    const cam = looking();
+    cam.focusDistance = 500;
+    cam.depthAt = () => null;
+    cam.zoomAt(800, 450, 1600, 900, -1);
+    expect(cam.focusDistance).toBeCloseTo(500 / ZOOM_PER_NOTCH, 6);
   });
 });

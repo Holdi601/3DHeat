@@ -58,14 +58,23 @@ export function QuickBar() {
   const followName = useStore((s) => (follow !== null ? (s.dataset?.personLabels[follow] ?? null) : null));
   const sidebarHidden = useShell((s) => s.sidebarHidden);
   const dashShown = useDash((s) => s.shown);
+  const parallel = useStore((s) => s.camera.projection === 'orthographic');
   if (tab === 'vehicle') return null;
   const playing = tab === 'race' ? racePlaying : tab === 'plan' ? boardPlaying : timelinePlaying;
   const heatLike = tab === 'heat' || tab === 'match';
   return (
     <div className="quick-bar" role="toolbar" aria-label={t('shell.quick.bar')}>
       <QuickButton icon={playing ? 'pause' : 'play'} label={t('shell.cmd.play')} usage="cmd:play" keyId="play" on={playing} onClick={togglePlay} />
-      <QuickButton icon="frame" label={t('shell.cmd.frame')} usage="cmd:frame" keyId="frame" onClick={() => engine?.frameDataset()} disabled={!hasData} />
-      <QuickButton icon="above" label={t('shell.quick.above')} usage="cam:top" onClick={() => engine?.applyPreset('Top')} disabled={!hasData} />
+      <QuickButton icon="frame" label={t('shell.cmd.frameAction')} usage="cmd:frame" keyId="frame" onClick={() => engine?.frameDataset()} disabled={!hasData} />
+      {/* A toggle: the top view is a parallel projection, and the same button takes the view back to 3D. */}
+      <QuickButton
+        icon="above"
+        label={parallel ? t('shell.quick.aboveOn') : t('shell.quick.above')}
+        usage="cam:top"
+        on={parallel}
+        onClick={() => (parallel ? engine?.setProjection('perspective') : engine?.applyPreset('Top'))}
+        disabled={!hasData}
+      />
       {heatLike && (
         <>
           <span className="quick-sep" />

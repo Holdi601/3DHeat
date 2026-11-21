@@ -8,6 +8,9 @@
  *
  * A key is written as its parts: modifiers first, then the key as printed on
  * the cap. Alternatives are separate combos.
+ *
+ * A key that types a character acts only while the view has the focus, and
+ * none acts while typing in a box (ui/viewKeys.ts).
  */
 
 export type ShortcutScope = 'shell' | 'camera' | 'view' | 'replay' | 'race' | 'tactics';
@@ -40,12 +43,15 @@ export const SHORTCUTS: Shortcut[] = [
   k('boost', 'camera', ['Shift']),
   k('slow', 'camera', ['Alt']),
   k('look', 'camera', ['Drag']),
-  k('wheel', 'camera', ['Wheel']),
+  // Ids stay as they were (the usage counts and the commands refer to them); the labels say what they do now.
+  { ...k('wheel', 'camera', ['Wheel']), label: 'shell.key.zoom' },
+  k('flySpeed', 'camera', ['Shift', 'Wheel']),
   // The heat and match views.
   k('play', 'view', ['K']),
-  k('frame', 'view', ['F']),
+  { ...k('frame', 'view', ['F']), label: 'shell.key.frameAction' },
+  k('frameAll', 'view', ['Shift', 'F']),
   k('modes', 'view', ['1'], ['2'], ['3'], ['4']),
-  k('copyPose', 'view', ['C']),
+  k('copyPose', 'view', ['Shift', 'C']),
   k('goTo', 'view', ['G']),
   k('tactical', 'view', ['T']),
   k('clear', 'view', ['Esc']),

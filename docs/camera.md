@@ -10,10 +10,10 @@ You fly through the scene like a bird: **W A S D** to move, drag the mouse to lo
 
 ## Fly in 4 steps
 
-1. Click once on the view so it has the keyboard.
+1. Click once on the view so it has the keyboard. That first click only gives it the focus; it picks nothing.
 2. Hold **W** to fly forward, **S** back, **A** and **D** sideways, **Space** up, **Q** down.
-3. Hold the left or right mouse button and drag to look around.
-4. Press **F** to frame all the data again.
+3. Hold the left or right mouse button and drag to look around. Turn the mouse wheel to zoom toward the pointer.
+4. Press **F** to frame the action again, or **Shift+F** to frame everything.
 
 The camera is a free-fly camera with a perspective and a parallel projection, preset views, a typed pose, and depth of field. Its settings are in the **Camera & scene** panel at the bottom of the sidebar (also shown in the Race analysis and Match tabs). The implementation is [`camera.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/camera.ts).
 
@@ -27,10 +27,12 @@ The camera is a free-fly camera with a perspective and a parallel projection, pr
 | `Shift` (held) | 6× faster |
 | left `Alt` (held) | 15% speed |
 | Drag with the left or right mouse button | Look around. The pointer is locked while dragging, with the mouse's raw movement where the browser offers it. A single movement event far larger than the ones before it - the browser's own glitch under pointer lock, which used to throw the view straight up into the sky - is ignored, as is the jump the pointer makes when the lock begins. |
-| Mouse wheel | Fly speed ×1.5 per notch (perspective); zoom about the pointer, ×1.25 per notch (parallel) |
-| `F` | Frame the data (not with `Ctrl`, `Alt` or `Cmd` held) |
-| Click (without dragging) | Show what is under the pointer ([Inspecting the view](#inspecting-the-view)) |
-| `C` | Copy the camera's position, yaw and pitch |
+| Mouse wheel | Zoom toward the pointer: the camera moves along the line through the pointer, a fifth closer per notch (a quarter further out), so what is under the pointer stays there. In parallel mode it zooms about the pointer, ×1.25 per notch |
+| `Shift` + mouse wheel | Fly speed ×1.5 per notch (perspective). **Mouse wheel** in the panel can swap the two |
+| `F` | Frame the action: the dense part of the data ([Framing](#framing)). Not with `Ctrl`, `Alt` or `Cmd` held |
+| `Shift+F` | Frame everything: the full extent of the data |
+| Click (without dragging) | Show what is under the pointer ([Inspecting the view](#inspecting-the-view)). The click that gives the view the focus shows nothing |
+| `Shift+C` | Copy the camera's position, yaw and pitch. `Shift` because a stray `C` overwrote the clipboard |
 | `G` | Go to a typed point |
 | `Esc` | Close the pick card (and stop following a unit) |
 
@@ -46,7 +48,17 @@ When the camera follows a unit in a replay ([Match replay](match-replay.md)), th
 | `V` / `Shift+V` | Next / previous camera view |
 | `Esc` | Stop looking at the second unit first, then stop following |
 
-Moving keys add up with a [gamepad](gamepad.md); see the [keyboard reference](keyboard-reference.md) for everything else. Keys are ignored while a text box or a drop-down has focus. Pitch is clamped just short of straight up and down.
+Moving keys add up with a [gamepad](gamepad.md); see the [keyboard reference](keyboard-reference.md) for everything else. The keys fly the view only while it has the focus: click it first. The line of key hints under the view says *click the view to give it the keys* until it has them. Keys are ignored while a text box, a drop-down, an editor or a dialog has focus. Pitch is clamped just short of straight up and down.
+
+### Zooming with the wheel
+
+The wheel zooms toward what is under the pointer. That is the level's surface where a level is loaded, and otherwise the floor of the action ([Framing](#framing)). Each notch brings the camera a fifth closer along the line through the pointer, down to 25 cm. The fly speed changes with the distance, so after zooming in to a single vehicle the keys still cross the view at the same pace. Before this change the wheel only set the fly speed, as in the games' free cameras. That is still on `Shift`+wheel, and the **Mouse wheel** setting (*Zooms* / *Sets fly speed*) swaps the two for anyone who wants the old behaviour. The choice is kept in this browser.
+
+### Framing
+
+A recording's full extent is often the wrong thing to show first. A War Thunder ground battle reaches out to airfields 15 to 20 km from the fight, and framed whole the battle is a dot. So the first view of a load, **F**, **Frame the action** and the preset views frame the *action*. The ground is cut into a 64 × 64 grid, and the busiest cells are taken until they hold nine tenths of the rows. Small dense clusters far from the main one, like an airfield where aircraft stand, are dropped. The box is drawn round the rows that remain, with its height set by their 2nd to 98th percentile. Where the data has the canonical **Event type** column, the fights alone (hits, damage, kills, deaths) decide where the action is. **Shift+F** and **Frame everything** frame the full extent.
+
+A mode switch keeps the camera. The figure overlay, a team line-up and a time shift replace the loaded data with data made from it, and the view stays where it was. Only a new load frames again. Each workspace keeps its own camera too: the vehicle turntable and the race tab's laps no longer leave the heat view's camera beside a figure or a car.
 
 ## Camera & scene panel
 
@@ -56,7 +68,7 @@ Moving keys add up with a [gamepad](gamepad.md); see the [keyboard reference](ke
 
 **Projection**: *Perspective* (default) or *Parallel*.
 
-*Parallel* (orthographic) removes foreshortening, so two hotspots of equal density read as the same size anywhere in the frame - the comparison a map heatmap exists to support - and it is what makes an isometric view isometric. In parallel mode the mouse wheel zooms about the pointer, a quarter per notch (there is no forward motion that changes scale), and the [speed display](#fly-speed) is hidden. `W` `A` `S` `D` pan the picture (forward is up the screen, not along the view axis, which would change nothing you can see) and `Space`/`E`/`Q` move up and down, at 0.6 view heights a second whatever the zoom; `Shift` and `Alt` still speed up and slow down. The parallel view also draws what lies behind the camera's position, as far back as the scene reaches, so flying down or zooming in never slices the ground off at the camera.
+*Parallel* (orthographic) removes foreshortening, so two hotspots of equal density read as the same size anywhere in the frame - the comparison a map heatmap exists to support - and it is what makes an isometric view isometric. In parallel mode the mouse wheel zooms about the pointer, a quarter per notch (there is no forward motion that changes scale), and the [speed display](#fly-speed) gives way to a **Parallel view** badge with a **Back to 3D** button, so the projection is never on without a sign of it. The **Look straight down** button over the view lights up while the parallel view is on, and a second press goes back to 3D. `W` `A` `S` `D` pan the picture (forward is up the screen, not along the view axis, which would change nothing you can see) and `Space`/`E`/`Q` move up and down, at 0.6 view heights a second whatever the zoom; `Shift` and `Alt` still speed up and slow down. The parallel view also draws what lies behind the camera's position, as far back as the scene reaches, so flying down or zooming in never slices the ground off at the camera.
 
 **Switching keeps the subject the same size.** A parallel projection has no field of view, so its frustum height is unrelated to the camera's distance; flipping naively either zooms wildly or shows nothing. Going to parallel sets the frustum height to what the perspective camera covers at the focus distance (2 × distance × tan(fov / 2), the focus distance being the distance of the last framing). Going back restores the perspective pose you left, at the same apparent scale, rather than wherever the parallel view wandered.
 
@@ -69,7 +81,7 @@ Moving keys add up with a [gamepad](gamepad.md); see the [keyboard reference](ke
 | | **Back to perspective** | Return to the perspective pose you left. Disabled in perspective. |
 | | **Three-quarter view** | Perspective, yaw -35°, pitch -28°. |
 
-Every preset switches the projection itself - under perspective a "top view" still converges towards a vanishing point and equal areas stop reading as equal - and frames the data from that direction.
+Every preset switches the projection itself - under perspective a "top view" still converges towards a vanishing point and equal areas stop reading as equal - and frames the action from that direction. The **Parallel view** badge says so and leads back.
 
 ### Field of view
 
@@ -77,7 +89,7 @@ Every preset switches the projection itself - under perspective a "top view" sti
 
 ### Fly speed
 
-**Fly speed** - world units (metres) per second at full throttle. Default 120; on every load the data's horizontal extent / 12. Logarithmic, 0.02-20,000 (200,000 with the handle; the handle changes it by ratios, not amounts). The mouse wheel multiplies or divides it by 1.5 per notch, within 0.02-200,000.
+**Fly speed** - world units (metres) per second at full throttle. Default 120; on every load the action's horizontal extent / 12 (twelve seconds to cross what is framed, see [Framing](#framing)). Logarithmic, 0.02-20,000 (200,000 with the handle; the handle changes it by ratios, not amounts). `Shift`+wheel multiplies or divides it by 1.5 per notch, within 0.02-200,000, and zooming with the wheel scales it with the distance.
 
 The same value is shown at the bottom right of the view (perspective only): the speed in m/s or km/s and the time it takes to cross the data (or the level, when a 3D level is loaded) at that speed. Drag it up or down to change the speed.
 
@@ -94,7 +106,8 @@ The same value is shown at the bottom right of the view (perspective only): the 
 | **Gamepad** | enabled | See [Gamepad and HOTAS](gamepad.md). |
 | **Pose** | | See below. |
 | **Inspect** | | The camera readout, click-to-pick, the yaw convention and *Go to a point*; see [Inspecting the view](#inspecting-the-view). |
-| **Frame dataset (F)** | | Fits the data (in the Race analysis tab: the laps) to the view, keeping the current direction. The camera is placed at r / tan(fov / 2) from the centre, r being half the diagonal of the data's bounds. |
+| **Mouse wheel** | Zooms | *Zooms* toward the pointer, `Shift`+wheel sets the fly speed; *Sets fly speed* the other way round. Kept in this browser. |
+| **Frame the action (F)**, **Frame everything (Shift+F)** | | Fits the action ([Framing](#framing)), or the whole extent, to the view (in the Race analysis tab: the laps), keeping the current direction. The camera is placed at r / tan(fov / 2) from the centre, r being half the diagonal of the box. |
 | **Grid**, **Axes** | on, on | A ground grid with a 1/2/5 × 10ⁿ spacing of about 1/40 of the data's span (extending to 1.5 × the data, between 8 and 120 grid steps), and coloured axes. |
 | **Invert world axis** X, Y, Z | off | See below. |
 
@@ -122,7 +135,7 @@ These three are remembered in the browser (`localStorage` key `heat3d.inspect`).
 
 At the top left of the view: the camera's **x**, **y**, **z**, **yaw** and **pitch**, live, with a tag naming the yaw convention. It shows the same numbers as the [Pose](#pose) boxes and costs nothing while flying (it is written to the page on the frame clock, without re-rendering the panels).
 
-- **copy** (or `C` anywhere outside a text box) puts `x X y Y z Z yaw A pitch B (viewer yaw)` on the clipboard, with `.` decimals whatever the language - a line the jump box, and any script, reads back.
+- **copy** (or `Shift+C` with the view focused) puts `x X y Y z Z yaw A pitch B (viewer yaw)` on the clipboard, with `.` decimals whatever the language - a line the jump box, and any script, reads back.
 - **go to** (or `G`) opens a box under it: paste a point and press `Enter` to look at it, or paste a whole copied pose to stand in that view. `Esc` closes the box.
 
 ### Coordinates: the data's own frame
@@ -155,7 +168,7 @@ A pasted pose with its own yaw and pitch always stands in that view.
 
 ### Click-to-pick
 
-A click on the view - press and release without dragging more than 4 pixels; a drag still looks around - shows a card at the top left with what is under the pointer. While the [ruler](measure.md) is on, clicks go to the ruler instead.
+A click on the view - press and release without dragging more than 4 pixels; a drag still looks around - shows a card at the top left with what is under the pointer. While the [ruler](measure.md) is on, clicks go to the ruler instead. The click that gives the view the focus, coming from a panel or another window, only does that: it opens no card, so clicking the view to use its keys does not also pick something.
 
 **A drawn data point wins.** The nearest sample within 8 pixels of the click, of those actually drawn: the rows in the time window and the lifetime, passing the [filters](filters.md), the groups shown and the difference split, inside the distance cull and a slice that clips the heat. In the box replay, a box under the pointer (anywhere on it). The card lists every column the row carries, under the source's own column names - time (wall-clock, or the file's own seconds with `m:ss.ss`), person, group, session, each retained column, the position and the look direction - and the distance from the camera. Only columns the load kept are in memory: a column not chosen as a [filter column](column-mapping.md) is not shown.
 

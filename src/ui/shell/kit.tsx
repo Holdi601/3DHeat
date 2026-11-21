@@ -65,11 +65,25 @@ export function Dialog({
   wide?: boolean;
 }) {
   const box = useRef<HTMLDivElement>(null);
+  // Where the focus was before the dialog: taken at the first render, as a
+  // field's `autoFocus` moves it in before any effect runs.
+  const before = useRef(typeof document !== 'undefined' ? (document.activeElement as HTMLElement | null) : null);
   useEffect(() => {
-    const before = document.activeElement as HTMLElement | null;
-    const first = box.current?.querySelector<HTMLElement>('[autofocus], input, button, [tabindex="0"]');
-    first?.focus();
-    return () => before?.focus?.();
+    // A field that took the focus itself (`autoFocus`) keeps it. Else the
+    // first field to type in, then the first control - never the close button
+    // in the head: the note editor put the focus there, and the note typed
+    // next went to the view's shortcuts instead.
+    const el = box.current;
+    if (el && !el.contains(document.activeElement)) {
+      const first =
+        el.querySelector<HTMLElement>('[autofocus], [data-autofocus]') ??
+        el.querySelector<HTMLElement>('input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=button]), textarea') ??
+        el.querySelector<HTMLElement>('.dialog-head ~ * :is(input, select, button, [tabindex="0"])') ??
+        el.querySelector<HTMLElement>('input, button, [tabindex="0"]');
+      first?.focus();
+    }
+    const back = before.current;
+    return () => back?.focus?.({ preventScroll: true });
   }, []);
   const onKey = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {

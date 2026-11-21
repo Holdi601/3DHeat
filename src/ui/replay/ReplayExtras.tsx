@@ -16,6 +16,7 @@ import { TacticalLabels } from './TacticalLabels';
 import { Subtitles } from './Subtitles';
 import { MediaPlayer } from './Media';
 import './replay.css';
+import { viewKey } from '../viewKeys';
 
 /** The event times of the kinds the event list shows, in the session played, ascending. */
 function shownEventTimes(): number[] {
@@ -89,15 +90,8 @@ export function ReplayExtras() {
   useEffect(() => {
     if (!on || !engine) return;
     const onKey = (ev: KeyboardEvent) => {
-      const el = ev.target as HTMLElement | null;
-      if (
-        el &&
-        (el.tagName === 'INPUT' ||
-          el.tagName === 'TEXTAREA' ||
-          el.tagName === 'SELECT' ||
-          el.isContentEditable)
-      )
-        return;
+      // Not while typing; the letters only with the view focused (ui/viewKeys.ts).
+      if (!viewKey(ev)) return;
       if (ev.ctrlKey || ev.metaKey || ev.altKey) return;
       const d = useStore.getState().dataset;
       if (!d || useStore.getState().mode !== 'team') return;

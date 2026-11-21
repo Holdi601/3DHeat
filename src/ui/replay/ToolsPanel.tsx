@@ -20,6 +20,7 @@ import { num, t } from '../../i18n';
 import { useUnits } from '../../state/unitsStore';
 import { unitSymbol } from '../../units/format';
 import { fromAltitude, toAltitude } from '../../units/units';
+import { deriveFrom } from '../../state/lineage';
 
 /** The sidebar sections of the replay's tools: time shift and trim, map and position, audio and video. */
 export function ToolsPanels() {
@@ -48,6 +49,8 @@ function show(was: Dataset, next: Dataset, playhead: number, allSessions = false
   const session = s.team.session;
   const label = session >= 0 ? was.sessionLabels[session] : null;
   const at = sourceSeconds(was, playhead);
+  // The same recording reshaped: the camera stays (render/engine.ts).
+  deriveFrom(next, was);
   s.setDataset(next);
   const i = label !== null && !allSessions ? next.sessionLabels.indexOf(label) : -1;
   useStore.setState((st) => ({ team: { ...st.team, session: allSessions ? -1 : i >= 0 ? i : st.team.session } }));

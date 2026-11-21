@@ -9,7 +9,7 @@ import { int, lang, num, onLanguageChange, t } from '../i18n';
 import { datasetCapabilities, defaultColumnSplit, splitHasTwoSides } from '../data/validate';
 import { suggestLineSettings, suggestMaxJumpAsync, type LineSettings } from '../data/lines';
 import { DEFAULT_CURVE, normaliseCurve, type CurvePoint } from './curve';
-import type { DescendKey, Projection } from '../render/camera';
+import type { DescendKey, Projection, WheelAction } from '../render/camera';
 import type { DirSource } from '../render/direction';
 import type { Keyframe, PathEasing, PathTiming } from '../render/campath';
 import type { VideoContainer } from '../render/record';
@@ -449,6 +449,7 @@ export interface AxisMirror {
 
 const MIRROR_KEY = 'heat3d.mirror';
 const DESCEND_KEY = 'heat3d.descendKey';
+const WHEEL_KEY = 'heat3d.wheel';
 /** The team palette a pick means for a dataset, made the one in use (render/colors.ts). */
 function paletteFor(pref: TeamPalettePref, d: Dataset): TeamPaletteId {
   const active = resolveTeamPalette(pref, d.teamLabels);
@@ -508,6 +509,16 @@ function savedMirror(): AxisMirror {
 }
 
 /** The key this viewer last flew down with besides Q: a per-browser convenience. */
+function savedWheel(): WheelAction {
+  try {
+    const v = localStorage.getItem(WHEEL_KEY);
+    if (v === 'zoom' || v === 'speed') return v;
+  } catch {
+    // No storage: the default.
+  }
+  return 'zoom';
+}
+
 function savedDescendKey(): DescendKey {
   try {
     const v = localStorage.getItem(DESCEND_KEY);
@@ -539,6 +550,12 @@ export interface CameraSettings {
    * page cannot stop outside full screen. Z, or Q alone, keeps Ctrl free.
    */
   descendKey: DescendKey;
+  /**
+   * What the mouse wheel does in perspective: zoom toward the pointer (the
+   * default) or tune the fly speed; Shift with the wheel does the other.
+   * Kept per browser, as the descend key is.
+   */
+  wheel: WheelAction;
   /**
    * World axes drawn reversed. A game that keeps a left-handed world (Forza,
    * Unreal) comes out mirrored in this right-handed view - a right-hand bend
@@ -889,6 +906,7 @@ export const useStore = create<AppState>((set) => ({
     far: 40_000,
     invertY: false,
     descendKey: savedDescendKey(),
+    wheel: savedWheel(),
     mirror: savedMirror(),
     projection: 'perspective',
     gamepad: { ...DEFAULT_GAMEPAD },
@@ -1055,6 +1073,13 @@ export const useStore = create<AppState>((set) => ({
     if (p.descendKey) {
       try {
         localStorage.setItem(DESCEND_KEY, p.descendKey);
+      } catch {
+        // Blocked storage: the choice lasts this session only.
+      }
+    }
+    if (p.wheel) {
+      try {
+        localStorage.setItem(WHEEL_KEY, p.wheel);
       } catch {
         // Blocked storage: the choice lasts this session only.
       }

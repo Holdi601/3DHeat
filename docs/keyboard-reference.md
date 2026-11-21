@@ -6,14 +6,16 @@ nav_order: 2
 
 # Keyboard and mouse reference
 
-Every key and mouse action in one place, so you can find the one you need. Click the view first so it has the keyboard. Keys are ignored while a text box or a drop-down has focus. In the viewer, `?` shows the same list (the key sheet), and `Ctrl+K` finds any action or setting by name with its key ([Interface guide](ui-guide.md)). One table in the code drives the key sheet: [`shortcuts.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/shell/shortcuts.ts).
+Every key and mouse action in one place, so you can find the one you need. Click the view first so it has the keyboard. That click only gives it the focus, it opens no pick card. The letter, digit and punctuation keys of the view act only while the view (or a button over it) has the focus. Clicked away to a panel, the same letters do nothing, so a sentence typed with the focus in the wrong place sets nothing off. No key acts while a text box, a drop-down, an editor, the command palette or a dialog has focus. In the viewer, `?` shows the same list (the key sheet), and `Ctrl+K` finds any action or setting by name with its key ([Interface guide](ui-guide.md)). One table in the code drives the key sheet: [`shortcuts.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/shell/shortcuts.ts).
 
 Quick finder:
 
 | I want to ... | Press |
 |---|---|
 | fly | `W A S D`, drag to look |
-| see everything | `F` |
+| see the action | `F` |
+| see everything, airfields included | `Shift+F` |
+| zoom in on a spot | wheel over it |
 | play or pause | `K` |
 | play backwards | `J` (press again to pause), forwards `L` |
 | find any action or setting | `Ctrl+K` |
@@ -50,8 +52,9 @@ From [`camera.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/camer
 | `Shift` (either) | Hold: 6× speed |
 | left `Alt` | Hold: 15% speed |
 | Left or right drag on the view | Look (pointer locked while the button is held) |
-| Wheel (perspective) | Fly speed ×1.5 per notch (at most 4 notches per wheel event) |
-| Wheel (parallel) | Zoom about the pointer, a quarter per notch |
+| Wheel (perspective) | Zoom toward the pointer, a fifth closer per notch (at most 4 notches per wheel event); the fly speed goes with the distance |
+| `Shift` + wheel (perspective) | Fly speed ×1.5 per notch. The View panel's **Mouse wheel** setting swaps the wheel and `Shift`+wheel |
+| Wheel (parallel) | Zoom about the pointer, a quarter per notch. A **Parallel view** badge over the view says the projection is on, and its **Back to 3D** button turns it off |
 | `W` `A` `S` `D` (parallel) | Pan the picture: up, left, down, right, at the same pace on screen at any zoom |
 | `Space` `E` / `Q` (parallel) | Move up and down; nothing behind the camera is cut away |
 | Right-click | Opens no context menu over the view |
@@ -63,8 +66,9 @@ From [`App.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/App.tsx).
 | Key | Effect |
 |---|---|
 | `K` | Play / pause the [timeline](timeline.md) |
-| `F` | Frame the data (not with `Ctrl`, `Alt` or `Cmd` held, and not by a held key repeating) |
-| `C` | Copy the camera's position, yaw and pitch ([camera readout](camera.md#camera-readout)) |
+| `F` | Frame the action: the dense part of the data, not airfields and strays kilometres out ([Camera](camera.md#framing)). Not with `Ctrl`, `Alt` or `Cmd` held, and not by a held key repeating |
+| `Shift+F` | Frame everything: the full extent of the data |
+| `Shift+C` | Copy the camera's position, yaw and pitch ([camera readout](camera.md#camera-readout)). `Shift` so a stray `C` cannot overwrite the clipboard |
 | `G` | Go to a typed point: opens the box under the camera readout |
 | `Esc` | Close the pick card; then stop looking at the second unit; then stop following a unit |
 | `T` | Tactical display look on or off ([Match replay](match-replay.md#display-style)) |
@@ -115,7 +119,7 @@ While the camera follows a unit, the wheel and the flying keys steer around the 
 
 ## Tactics board
 
-In the Tactics tab ([Tactics board](tactics-board.md)). `F`, `C`, `G` and `T` work as above; the number keys pick the board's tools instead of heat modes.
+In the Tactics tab ([Tactics board](tactics-board.md)). `F`, `Shift+F`, `Shift+C`, `G` and `T` work as above; the number keys pick the board's tools instead of heat modes.
 
 | Key | Effect |
 |---|---|

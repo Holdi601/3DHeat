@@ -46,7 +46,7 @@ import { useReplayStore } from './state/replayStore';
 import { usePlanStore } from './state/planStore';
 import './ui/match/match.css';
 import type { ViewMode } from './state/types';
-import { Rich, Segmented } from './ui/controls';
+import { Segmented } from './ui/controls';
 import { EngineContext } from './ui/EngineContext';
 import { applyBuildings } from './ui/replay/buildings';
 import { SessionPicker } from './ui/SessionPicker';
@@ -100,7 +100,10 @@ import { Brand, More, TaskBar, TaskGroup, WorkspaceBar } from './ui/shell/Shell'
 import { CommandPalette } from './ui/shell/CommandPalette';
 import { ShortcutSheet } from './ui/shell/ShortcutSheet';
 import { QuickBar } from './ui/shell/QuickBar';
-import { ConfirmHost, ToastHost } from './ui/shell/kit';
+import { ConfirmHost, ToastHost, toast } from './ui/shell/kit';
+import { typesCharacter, typing, viewHasKeys } from './ui/viewKeys';
+import { ProjectionBadge } from './ui/ProjectionBadge';
+import { ViewHint } from './ui/ViewHint';
 import { SessionLayer } from './ui/session/SessionLayer';
 import { installShellKeys } from './ui/shell/keys';
 import { taskOf, useShell } from './ui/shell/shellStore';
@@ -144,6 +147,22 @@ const DIGIT_MODES: Record<string, ViewMode> = {
 
 /** The match tab's two views: the units played back as figures, or the heat of the picked matches. */
 type MatchView = 'replay' | 'heat';
+
+
+/** When the hint below was last shown, `performance.now()` ms. */
+let viewKeysHinted = -Infinity;
+
+/**
+ * A view shortcut pressed with the focus elsewhere: says once in a while that
+ * the view takes its keys once clicked (ui/viewKeys.ts), rather than leaving
+ * the key to do nothing without a word.
+ */
+function hintViewKeys(): void {
+  const now = performance.now();
+  if (now - viewKeysHinted < 20_000) return;
+  viewKeysHinted = now;
+  toast(t('shell.viewKeys.hint'));
+}
 
 export function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -347,9 +366,16 @@ export function App() {
         useHelpStore.getState().toggle();
         return;
       }
-      if (ev.target instanceof HTMLInputElement || ev.target instanceof HTMLSelectElement) return;
-      // A modal dialog (a confirm) takes the keys: the board and the view stay as they are under it.
-      if (ev.target instanceof Element && ev.target.closest('[aria-modal="true"]')) return;
+      // Nothing while typing - a text field, an editor, the palette - or with a
+      // modal dialog open (a confirm, the note editor): the board and the view
+      // stay as they are under it (ui/viewKeys.ts).
+      if (typing(ev)) return;
+      // A key that types a character is a shortcut only with the view focused:
+      // a sentence typed with the focus elsewhere sets off nothing.
+      if (typesCharacter(ev) && !viewHasKeys()) {
+        if (/^(Key|Digit|Bracket|Backslash)/.test(ev.code)) hintViewKeys();
+        return;
+      }
       const race = useRaceStore.getState();
       if (race.tab === 'plan') {
         // The board's own keys (ui/tactics/boardKeys.ts); the heat modes' number keys do nothing here.
@@ -374,16 +400,17 @@ export function App() {
         ev.preventDefault();
         setPlaying(!useStore.getState().timeline.playing);
       } else if (ev.code === 'KeyF' && !ev.ctrlKey && !ev.metaKey && !ev.altKey && !ev.repeat) {
-        // Not with a modifier held: Ctrl is the fly camera's down key, and a
-        // Ctrl+F (or a held F repeating) threw the camera out to frame the
-        // whole map in the middle of a flight.
-        engine?.frameDataset();
+        // Not with Ctrl held: Ctrl is the fly camera's down key, and a Ctrl+F
+        // (or a held F repeating) threw the camera out to frame the whole map
+        // in the middle of a flight. F frames the action, Shift+F everything.
+        engine?.frameDataset(true, ev.shiftKey);
       } else if (ev.code === 'KeyT' && !ev.ctrlKey && !ev.metaKey && !ev.altKey) {
         // The tactical display, on and off.
         const r = useReplayStore.getState();
         r.setLook({ on: !r.look.on });
-      } else if (ev.code === 'KeyC' && !ev.ctrlKey && !ev.metaKey && !ev.altKey) {
-        // The camera's pose to the clipboard, as the readout over the view says it.
+      } else if (ev.code === 'KeyC' && ev.shiftKey && !ev.ctrlKey && !ev.metaKey && !ev.altKey) {
+        // The camera's pose to the clipboard, as the readout over the view says
+        // it. With Shift: a stray C overwrote whatever the clipboard held.
         void copyCameraPose(engine);
       } else if (ev.code === 'KeyG' && !ev.ctrlKey && !ev.metaKey && !ev.altKey) {
         // Into the jump box. The keystroke itself must not land in it.
@@ -720,10 +747,9 @@ export function App() {
               <WorldCredits />
               <SessionLayer />
               <QuickBar />
+              <ProjectionBadge />
               <ToastHost />
-              <div className="help">
-                <Rich text={t('shell.hint')} />
-              </div>
+              <ViewHint />
             </>
           )}
         </div>

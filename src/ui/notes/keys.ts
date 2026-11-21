@@ -12,16 +12,11 @@ import type { KeyboardEvent as ReactKeyboardEvent } from 'react';
 import type { Engine } from '../../render/engine';
 import { useRaceStore } from '../../state/raceStore';
 import { noteHere, showNotesPanel } from './actions';
+import { typing, viewHasKeys } from '../viewKeys';
 
-function typing(target: EventTarget | null): boolean {
-  const el = target as HTMLElement | null;
-  if (!el || !el.tagName) return false;
-  return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || el.isContentEditable;
-}
-
-/** Handles a notes key; true when it was one. */
+/** Handles a notes key; true when it was one. Not while typing, and only with the view focused (ui/viewKeys.ts). */
 export function notesKeyDown(ev: Pick<KeyboardEvent, 'code' | 'ctrlKey' | 'metaKey' | 'altKey' | 'shiftKey' | 'repeat' | 'target'>, engine: Engine | null): boolean {
-  if (ev.code !== 'KeyN' || ev.ctrlKey || ev.metaKey || ev.altKey || ev.repeat || typing(ev.target)) return false;
+  if (ev.code !== 'KeyN' || ev.ctrlKey || ev.metaKey || ev.altKey || ev.repeat || typing(ev) || !viewHasKeys()) return false;
   const tab = useRaceStore.getState().tab;
   if (tab !== 'heat' && tab !== 'match') return false;
   if (document.querySelector('.dialog-scrim')) return false;

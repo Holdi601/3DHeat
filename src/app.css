@@ -1391,6 +1391,33 @@ button.link:disabled {
   font-weight: 550;
 }
 
+/*
+ * The parallel projection, said, with the way back (ui/ProjectionBadge.tsx):
+ * where the fly-speed readout is in perspective, which a parallel view has no
+ * use for.
+ */
+.projection-badge {
+  position: absolute;
+  z-index: var(--z-hud);
+  right: 12px;
+  bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--glass);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--accent-dim);
+  border-radius: 6px;
+  padding: 4px 4px 4px 10px;
+  font-size: 11px;
+  color: var(--text);
+}
+
+.projection-badge button {
+  font-size: 11px;
+  padding: 3px 8px;
+}
+
 /* The derived "time to cross the scene" line — context, not the value. */
 .speed-hud .body i {
   color: var(--text-faint);
@@ -1463,7 +1490,8 @@ button.link:disabled {
   text-decoration: underline;
 }
 
-.stage:has(.world-credits) .speed-hud {
+.stage:has(.world-credits) .speed-hud,
+.stage:has(.world-credits) .projection-badge {
   bottom: 34px;
 }
 

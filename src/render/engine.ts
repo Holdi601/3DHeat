@@ -120,6 +120,21 @@ import { postDrawFor, tacticalLevel, tacticalLines, LOOK_TINT, type LookTrack, t
 import type { PostDraw } from './types';
 import { unitCategory } from '../ui/replay/objectType';
 import { unitsOf } from '../ui/replay/units';
+import { setViewElement, viewKey } from '../ui/viewKeys';
+import { actionBounds } from './actionFrame';
+import { sameData } from '../state/lineage';
+
+/** A camera put aside while another world has the view (`Engine.stashCamera`). */
+interface CameraStash {
+  position: Vector3;
+  yaw: number;
+  pitch: number;
+  roll: number;
+  speed: number;
+  projection: Projection;
+  orthoHeight: number;
+  focusDistance: number;
+}
 
 /** Milliseconds a frame may spend on work done a slice a frame (`data/slices.ts`). */
 const SLICE_MS = 5;
@@ -643,6 +658,10 @@ export class Engine {
   private raceBuiltAt = Number.NaN;
   private raceBuiltHover: number | null = null;
   private raceWasTab = false;
+  /** The world the camera is in: the data's (heat, match, board), a lap's, or the vehicle's. */
+  private cameraWorld: 'data' | 'race' | 'vehicle' = 'data';
+  /** The camera each world was left with. */
+  private readonly worldCameras = new Map<string, CameraStash>();
   /** The tactics board's geometry, and where on the level the pointer is while a board tool wants it. */
   private readonly boardScene = new BoardScene();
   /** The vehicle heatmap's figure and its turntable. */
@@ -834,8 +853,11 @@ export class Engine {
     warmSymbolAtlas();
     // Pack models built in a worker and swapped in once on the GPU, never built or uploaded whole in a frame.
     installPackModels();
+    setViewElement(canvas);
     this.detachInput = this.camera.attach(canvas);
     this.detachMeasure = this.attachMeasureInput(canvas);
+    // What the wheel zooms toward: the level's surface under the pointer, else the action's floor.
+    this.camera.depthAt = (x, y) => this.depthAt(x, y);
     // The tactics board: its gizmo keys while something is selected, shift-drag for a box.
     const boardKeys = { editor: ['KeyW', 'KeyE', 'KeyR'], blender: ['KeyG', 'KeyR', 'KeyS'] };
     this.camera.keyFilter = (e) => {
@@ -977,8 +999,8 @@ export class Engine {
     };
     const onKey = (e: KeyboardEvent) => {
       if (!this.volumesLive()) return;
-      const el = e.target as HTMLElement | null;
-      if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || el.isContentEditable)) return;
+      // Not while typing, and a letter only with the view focused (ui/viewKeys.ts).
+      if (!viewKey(e)) return;
       if (g.key(e.code, e.ctrlKey || e.metaKey, e.shiftKey)) {
         e.stopPropagation();
         e.preventDefault();
@@ -1114,9 +1136,25 @@ export class Engine {
     };
     /** A freehand stroke under way on the board (the Draw tool, button down). */
     let stroking = false;
+    /**
+     * Whether the press found the view without the keyboard: the first click
+     * on it only gives it the focus (ui/viewKeys.ts), and opens no pick card -
+     * the click the key sheet asks for before the keys was also a pick.
+     */
+    let focusing = false;
+    /** The window lost the focus since the last press: the press that brings it back only focuses too. */
+    let windowLeft = false;
+    const onWindowBlur = () => {
+      windowLeft = true;
+    };
     const onDown = (e: MouseEvent) => {
       downAt = toCanvas(e);
       travel = 0;
+      focusing = document.activeElement !== canvas || windowLeft;
+      windowLeft = false;
+      // Given here rather than left to the browser: a handler that takes the
+      // press can stop the default, focus and all.
+      if (document.activeElement !== canvas) canvas.focus({ preventScroll: true });
       const board = usePlanStore.getState();
       const drawing = e.button === 0 && useRaceStore.getState().tab === 'plan' && board.tool === 'draw';
       this.boardBox = !drawing && this.camera.pressFilter?.(e) ? { x0: downAt.x, y0: downAt.y, x1: downAt.x, y1: downAt.y } : null;
@@ -1185,9 +1223,9 @@ export class Engine {
         this.boardClick(from.x, from.y, e.shiftKey);
         return;
       }
-      // The vehicle heatmap's clicks pick a hit.
+      // The vehicle heatmap's clicks pick a hit; not the click that only gave the view the keyboard.
       if (useRaceStore.getState().tab === 'vehicle') {
-        this.vehicleStage.click(from.x, from.y, canvas.clientWidth, canvas.clientHeight, this.pickViewProj);
+        if (!focusing) this.vehicleStage.click(from.x, from.y, canvas.clientWidth, canvas.clientHeight, this.pickViewProj);
         return;
       }
       // The ruler, when on, owns the click; picking waits until it is off, so
@@ -1201,6 +1239,9 @@ export class Engine {
       if (this.notePinClick?.(from.x, from.y)) return;
       // A click on a volume selects it, for its handles; elsewhere it deselects.
       if (this.volumesLive() && this.volumeGestures.click(from.x, from.y)) return;
+      // A click that only gave the view the keyboard picks nothing: tools
+      // (the board, the ruler, a note's pin, a volume) take it, a pick waits.
+      if (focusing) return;
       if (useInspectStore.getState().pickOnClick) this.pickAt(from.x, from.y);
     };
     const onContext = (e: MouseEvent) => {
@@ -1222,7 +1263,9 @@ export class Engine {
     canvas.addEventListener('mousedown', onDown);
     window.addEventListener('mouseup', onUp);
     canvas.addEventListener('contextmenu', onContext);
+    window.addEventListener('blur', onWindowBlur);
     return () => {
+      window.removeEventListener('blur', onWindowBlur);
       canvas.removeEventListener('mousemove', onMove);
       window.removeEventListener('mousemove', onTravel);
       window.removeEventListener('mousemove', onBoxMove);
@@ -1823,8 +1866,14 @@ export class Engine {
     return [q(p), q(n)];
   }
 
-  /** Fit the data to the view. Keeps the current orientation by default. */
-  frameDataset(keepOrientation = true): void {
+  /**
+   * Fit the data to the view. Keeps the current orientation by default.
+   *
+   * On the heat and match views it frames the action (render/actionFrame.ts):
+   * the dense part of the data, not airfields and strays kilometres out;
+   * `everything` frames the full extent ("Frame everything", Shift+F).
+   */
+  frameDataset(keepOrientation = true, everything = false): void {
     const race = useRaceStore.getState();
     if (race.tab === 'race' && race.laps.length) {
       this.camera.frame(this.toDisplay(raceBounds(race)), snapshot().camera.fov, keepOrientation);
@@ -1852,8 +1901,33 @@ export class Engine {
       return;
     }
     if (this.dataset) {
-      this.camera.frame(this.toDisplay(this.dataset.bounds), snapshot().camera.fov, keepOrientation);
+      const box = everything ? this.dataset.bounds : actionBounds(this.dataset);
+      this.camera.frame(this.toDisplay(box), snapshot().camera.fov, keepOrientation);
     }
+  }
+
+  /**
+   * How far the camera is from what lies under a canvas point (CSS pixels):
+   * the level's surface, else the floor of the action (`actionBounds`), else
+   * nothing. What the wheel zooms toward.
+   */
+  private depthAt(cssX: number, cssY: number): number | null {
+    // The vehicle's turntable has neither the level nor the data under it:
+    // the distance its framing left (the focus distance) stands in.
+    if (this.cameraWorld === 'vehicle') return null;
+    const ray = this.rayAt(cssX, cssY);
+    if (!ray) return null;
+    let p = this.inspector.surfaceHit(ray);
+    if (!p && this.dataset && this.cameraWorld === 'data') {
+      const floor = actionBounds(this.dataset).minY;
+      const t = Math.abs(ray.dir.y) > 1e-9 ? (floor - ray.origin.y) / ray.dir.y : -1;
+      if (t > 0) p = { x: ray.origin.x + ray.dir.x * t, y: floor, z: ray.origin.z + ray.dir.z * t };
+    }
+    if (!p) return null;
+    const c = this.camera.position;
+    const eye = this.mirrorPoint(c.x, c.y, c.z);
+    const d = Math.hypot(p.x - eye.x, p.y - eye.y, p.z - eye.z);
+    return Number.isFinite(d) && d > 0 ? d : null;
   }
 
   /** A world box as the camera sees it, through the axis mirror. */
@@ -2725,6 +2799,34 @@ export class Engine {
     this.mirror = want;
   }
 
+  /** The camera's pose, speed and projection, to come back to. */
+  private stashCamera(): CameraStash {
+    const c = this.camera;
+    return {
+      position: c.position.clone(),
+      yaw: c.yaw,
+      pitch: c.pitch,
+      roll: c.roll,
+      speed: c.speed,
+      projection: c.projection,
+      orthoHeight: c.orthoHeight,
+      focusDistance: c.focusDistance,
+    };
+  }
+
+  private restoreCamera(p: CameraStash): void {
+    const c = this.camera;
+    if (p.projection !== c.projection) this.setProjection(p.projection);
+    c.position.copy(p.position);
+    c.yaw = p.yaw;
+    c.pitch = p.pitch;
+    c.roll = p.roll;
+    c.speed = p.speed;
+    c.orthoHeight = p.orthoHeight;
+    c.focusDistance = p.focusDistance;
+    c.moved = true;
+  }
+
   /**
    * Point at a preset view and immediately fit the data to it.
    *
@@ -2820,6 +2922,7 @@ export class Engine {
     }
 
     if (s.dataset !== this.dataset) {
+      const prevDataset = this.dataset;
       this.dataset = s.dataset;
       this.cursor = s.dataset ? new TrackCursor(s.dataset) : null;
       this.teamPalette = teamPaletteFor(s.dataset);
@@ -2869,9 +2972,25 @@ export class Engine {
       this.lines = null;
       this.live.lines = null;
       this.accumFrames = 0;
-      // A fresh dataset resets to the default three-quarter view rather than
-      // keeping whatever the previous one happened to be pointing at.
-      if (s.dataset) this.camera.frame(s.dataset.bounds, s.camera.fov, false);
+      // A fresh dataset resets to the default three-quarter view over its
+      // action (render/actionFrame.ts) rather than keeping whatever the
+      // previous one happened to be pointing at. Not one made from the same
+      // data: the figure overlay standing in for it, its teams lined up anew -
+      // a mode switch keeps the camera where the viewer put it.
+      if (s.dataset && !sameData(prevDataset, s.dataset)) {
+        const box = actionBounds(s.dataset);
+        this.camera.frame(this.toDisplay(box), s.camera.fov, false);
+        // The fly speed of the load's calibration (data/calibrate.ts: twelve
+        // seconds to cross), but across the action rather than the whole
+        // extent: airfields twenty kilometres out made it kilometres a second.
+        // Taken here, so the store's value from the whole extent is not pushed
+        // down over it below; the sync-back hands this one to the store.
+        const across = Math.max(box.maxX - box.minX, box.maxZ - box.minZ);
+        if (across > 0 && Number.isFinite(across)) {
+          this.camera.speed = Math.max(MIN_FLY_SPEED, across / 12);
+          this.lastStoreFlySpeed = s.camera.flySpeed;
+        }
+      }
     }
 
     if (s.level !== this.level) {
@@ -2968,6 +3087,16 @@ export class Engine {
       this.chase = null;
       this.invalidate(2);
     }
+    // Each world keeps its own camera: the vehicle's turntable and a lap's
+    // track left the camera beside a figure or a car, and back on the heat
+    // view it stayed there, kilometres from the data.
+    const world = vehicleTab ? 'vehicle' : race.tab === 'race' ? 'race' : 'data';
+    if (world !== this.cameraWorld) {
+      this.worldCameras.set(this.cameraWorld, this.stashCamera());
+      this.cameraWorld = world;
+      const back = this.worldCameras.get(world);
+      if (back) this.restoreCamera(back);
+    }
     let raceBuilt: ReturnType<RaceScene['build']> | null = null;
     let raceChanged = false;
     if (vehicleTab) {
@@ -2999,6 +3128,7 @@ export class Engine {
     const { width, height } = this.resizeCanvas();
     this.camera.invertY = s.camera.invertY;
     this.camera.descendKey = s.camera.descendKey ?? 'ctrl';
+    this.camera.wheelAction = s.camera.wheel ?? 'zoom';
     const mirror = s.camera.mirror;
     const want: [number, number, number] = [mirror.x ? -1 : 1, mirror.y ? -1 : 1, mirror.z ? -1 : 1];
     if (want.some((v, i) => v !== this.mirror[i])) this.setMirror(want);

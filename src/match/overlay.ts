@@ -15,6 +15,7 @@ import { DatasetBuilder, type BlockAttr, type SourceBlock } from '../data/builde
 import { say } from '../data/msg';
 import type { Dataset } from '../state/types';
 import { matchColumn } from './matches';
+import { deriveFrom } from '../state/lineage';
 
 export type OverlayColour = 'team' | 'group';
 
@@ -198,5 +199,7 @@ export function buildOverlay(d: Dataset, opts: OverlayOptions): Dataset | null {
   out.geo = d.geo;
   out.roleColumns = { ...d.roleColumns, session: undefined };
   overlays.add(out);
+  // Made from the loaded data: switching to it keeps the camera (render/engine.ts).
+  deriveFrom(out, d);
   return out;
 }

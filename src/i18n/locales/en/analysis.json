@@ -166,6 +166,7 @@
   "analysis.cinema.round": "round {n}",
   "analysis.cinema.distance": "{m} m",
   "analysis.path.keyTimeTitle": "When this key is reached, seconds into the video",
+  "analysis.path.lastKeyTimeTitle": "The video's end: the time typed here is its duration",
   "analysis.path.easeTitle": "How the move to the next key starts and ends",
   "analysis.path.ease.none": "Even",
   "analysis.path.ease.in": "Ease in",

@@ -7,20 +7,12 @@
 
 import { useRaceStore } from '../../state/raceStore';
 import { useShell } from './shellStore';
+import { isTextEntry } from '../viewKeys';
 
 /** The workspaces in the bar's order: Ctrl+Shift+1 to 5. */
 export const WORKSPACES = ['heat', 'race', 'match', 'plan', 'vehicle'] as const;
 export type Workspace = (typeof WORKSPACES)[number];
 
-function inTextField(target: EventTarget | null): boolean {
-  const el = target as HTMLElement | null;
-  if (!el || !el.tagName) return false;
-  const tag = el.tagName;
-  if (tag === 'TEXTAREA' || el.isContentEditable) return true;
-  if (tag !== 'INPUT') return false;
-  const type = (el as HTMLInputElement).type;
-  return type !== 'checkbox' && type !== 'radio' && type !== 'range' && type !== 'button';
-}
 
 /** Handles a shell key; true when it was one (the event is then stopped). */
 export function shellKeyDown(ev: KeyboardEvent): boolean {
@@ -45,7 +37,8 @@ export function shellKeyDown(ev: KeyboardEvent): boolean {
     return true;
   }
   // By the character: which key makes a ? depends on the keyboard's language.
-  if (ev.key === '?' && !ctrl && !ev.altKey && !inTextField(ev.target)) {
+  // Anywhere but in a box being typed in (ui/viewKeys.ts): the key sheet is help, not an action on the view.
+  if (ev.key === '?' && !ctrl && !ev.altKey && !isTextEntry(ev.target)) {
     shell.setSheet(!shell.sheet);
     return true;
   }

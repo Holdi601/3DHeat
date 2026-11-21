@@ -303,7 +303,8 @@ export function buildCommands(engine: Engine | null): Command[] {
 
   // Actions.
   action('play', t('shell.cmd.play'), togglePlay, keysOf('play'));
-  action('frame', t('shell.cmd.frame'), () => engine?.frameDataset(), keysOf('frame'));
+  action('frame', t('shell.cmd.frameAction'), () => engine?.frameDataset(), keysOf('frame'), `${t('shell.cmd.frame')} fit zoom`);
+  action('frameAll', t('shell.cmd.frameAll'), () => engine?.frameDataset(true, true), keysOf('frameAll'), `${t('shell.cmd.frame')} fit whole extent`);
   action('copyPose', t('shell.cmd.copyPose'), () => void copyCameraPose(engine), keysOf('copyPose'));
   action(
     'goTo',

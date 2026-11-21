@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { pathLength, poseAt, prepare, type Keyframe } from './campath';
+import { MIN_PATH_SECONDS, pathLength, poseAt, prepare, retimeKey, type Keyframe } from './campath';
 
 /**
  * A camera path's failures are all visible and none of them throw: a lurch at a
@@ -167,5 +167,28 @@ describe('pathLength', () => {
   it('measures a smooth curve as at least the straight-line distance', () => {
     const keys = [key(0, { x: 0 }), key(0.5, { x: 50, z: 40 }), key(1, { x: 100 })];
     expect(pathLength(keys, 'smooth')).toBeGreaterThan(100);
+  });
+});
+
+describe('retimeKey — a key time typed', () => {
+  const at = (u: number): Keyframe => ({ u, x: u * 10, y: 0, z: 0, yaw: 0, pitch: 0, fov: 60 });
+
+  it("sets the video's duration from the last key's time", () => {
+    const r = retimeKey([at(0), at(0.5), at(1)], 2, 3, 12)!;
+    expect(r.seconds).toBe(3);
+    expect(r.keys.map((k) => k.u)).toEqual([0, 0.5, 1]);
+  });
+
+  it('keeps a middle key between its neighbours and the duration as it was', () => {
+    const r = retimeKey([at(0), at(0.5), at(1)], 1, 30, 12)!;
+    expect(r.seconds).toBe(12);
+    expect(r.keys[1].u).toBeLessThan(1);
+    expect(r.keys[1].u).toBeGreaterThan(0.99);
+    expect(retimeKey([at(0), at(0.5), at(1)], 1, 3, 12)!.keys[1].u).toBeCloseTo(0.25, 6);
+  });
+
+  it('never makes a video of nothing, and ignores what is not a number', () => {
+    expect(retimeKey([at(0), at(1)], 1, 0, 12)!.seconds).toBe(MIN_PATH_SECONDS);
+    expect(retimeKey([at(0), at(1)], 1, Number.NaN, 12)).toBeNull();
   });
 });

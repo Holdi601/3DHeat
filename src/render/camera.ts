@@ -8,6 +8,7 @@ import {
   type GamepadSettings,
 } from './gamepad';
 import { t } from '../i18n';
+import { typing, viewHasKeys } from '../ui/viewKeys';
 
 export type Projection = 'perspective' | 'orthographic';
 
@@ -31,11 +32,26 @@ export const ISOMETRIC_PITCH = -(Math.atan(1 / Math.SQRT2) * 180) / Math.PI;
  */
 export const MIN_FLY_SPEED = 0.02;
 /**
- * Fly speed multiplier per wheel notch. Half again, which crosses the range from
- * a freshly framed map down to walking pace in about twenty notches. See the
- * wheel handler.
+ * Fly speed multiplier per Shift+wheel notch. Half again, which crosses the
+ * range from a freshly framed map down to walking pace in about twenty notches.
+ * See the wheel handler.
  */
 export const WHEEL_PER_NOTCH = 1.5;
+/**
+ * Distance to the point under the pointer per wheel notch in perspective: a
+ * fifth closer a notch in, a quarter further a notch out, so a battle framed
+ * from kilometres comes down to a single vehicle in about twenty notches.
+ */
+export const ZOOM_PER_NOTCH = 1.25;
+/** Nearest the wheel brings the camera to the point under the pointer, in world units. */
+export const MIN_ZOOM_DISTANCE = 0.25;
+
+/**
+ * What the mouse wheel does in perspective: zoom toward the pointer (the
+ * default, as in map and 3D tools), or tune the fly speed (as the games'
+ * free cameras do). Shift with the wheel does the other.
+ */
+export type WheelAction = 'zoom' | 'speed';
 /**
  * Parallel-view zoom per wheel notch: a quarter, so a whole map comes down to
  * a building in about fifteen notches.
@@ -287,10 +303,20 @@ export class FlyCamera {
   keyFilter: ((e: KeyboardEvent) => boolean) | null = null;
   /** Presses another tool takes (the board's box select); true leaves the camera still. */
   pressFilter: ((e: MouseEvent) => boolean) | null = null;
+  /** What the wheel does in perspective (`WheelAction`); Shift does the other. */
+  wheelAction: WheelAction = 'zoom';
+  /**
+   * How far from the camera what lies under a canvas point (CSS pixels) is,
+   * or null for nothing there: what the wheel zooms toward. Set by the engine,
+   * which knows the level and the data; without it the focus distance stands in.
+   */
+  depthAt: ((cssX: number, cssY: number) => number | null) | null = null;
 
   attach(canvas: HTMLCanvasElement): () => void {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      // The keys fly only the view that has them: never while typing, and only
+      // with the canvas focused (ui/viewKeys.ts) - or held by a drag over it.
+      if (typing(e) || (!this.dragging && !viewHasKeys())) return;
       if (!this.dragging && this.keyFilter?.(e)) return;
       this.keys.add(e.code);
       if (FLY_KEYS.has(e.code)) flownAt = performance.now();
@@ -380,8 +406,12 @@ export class FlyCamera {
     };
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
+      // Shift turns a wheel into a horizontal scroll in Chromium on Windows:
+      // the notch arrives as deltaX.
+      const delta = e.deltaY !== 0 ? e.deltaY : e.shiftKey ? e.deltaX : 0;
+      if (delta === 0) return;
       const perNotch = e.deltaMode === 1 ? 3 : e.deltaMode === 2 ? 1 : 100;
-      const notches = Math.max(-4, Math.min(4, e.deltaY / perNotch));
+      const notches = Math.max(-4, Math.min(4, delta / perNotch));
       if (this.projection === 'orthographic') {
         // Orthographic has no forward motion that changes apparent size, so the
         // wheel has to drive the frustum extent instead - by notches, as the fly
@@ -395,9 +425,16 @@ export class FlyCamera {
         this.zoomOrthoAt(ORTHO_ZOOM_PER_NOTCH ** notches, nx, ny, aspect);
         return;
       }
-      // In perspective the wheel tunes fly speed; a fly camera has no zoom.
-      //
-      // Counted in notches rather than scaled from `deltaY` directly. The old
+      // In perspective the wheel zooms toward the pointer, Shift+wheel tunes
+      // the fly speed (or the other way round, as `wheelAction` says). The
+      // wheel was the speed alone once, as in the games' free cameras, and a
+      // first look at a battle framed from kilometres became a flight past it.
+      if ((this.wheelAction === 'zoom') !== e.shiftKey) {
+        const r = canvas.getBoundingClientRect();
+        this.zoomAt(e.clientX - r.left, e.clientY - r.top, r.width, r.height, notches);
+        return;
+      }
+      // The speed, counted in notches rather than scaled from `deltaY` directly. The old
       // form gave about 11% per notch, which sounds fine until you note where
       // the speed starts: framing an eight-kilometre map sets it to some
       // thousands of metres a second, and climbing down from there to walking
@@ -663,6 +700,30 @@ export class FlyCamera {
     if (!k || !Number.isFinite(ndcX + ndcY)) return;
     const half = before * 0.5;
     this.moveOrtho(ndcY * half * k, ndcX * half * aspect * k, 0, 1);
+  }
+
+  /**
+   * Zoom the perspective view toward what is under a canvas point (CSS
+   * pixels of a `width` x `height` canvas) by `notches` of the wheel, negative
+   * in: the camera moves along the ray through the point, so what is under the
+   * pointer stays under it, and comes `ZOOM_PER_NOTCH` closer a notch. The fly
+   * speed goes with the distance, so the keys still cross the view at the same
+   * pace once there.
+   */
+  zoomAt(x: number, y: number, width: number, height: number, notches: number): void {
+    if (!(width > 0 && height > 0) || !Number.isFinite(notches) || notches === 0) return;
+    const cam = this.perspective;
+    const dir = this.tmp.set((x / width) * 2 - 1, 1 - (y / height) * 2, 0.5).unproject(cam).sub(cam.position);
+    const len = dir.length();
+    if (!(len > 0) || !Number.isFinite(len)) return;
+    dir.divideScalar(len);
+    const asked = this.depthAt?.(x, y);
+    const d = Math.max(MIN_ZOOM_DISTANCE, asked != null && Number.isFinite(asked) && asked > 0 ? asked : this.focusDistance);
+    const next = Math.max(MIN_ZOOM_DISTANCE, Math.min(5_000_000, d * ZOOM_PER_NOTCH ** notches));
+    this.position.addScaledVector(dir, d - next);
+    this.speed = Math.max(MIN_FLY_SPEED, Math.min(200_000, this.speed * (next / d)));
+    this.focusDistance = next;
+    this.moved = true;
   }
 
   /**

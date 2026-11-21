@@ -877,6 +877,9 @@ await step('background map renders under the heat', async () => {
     s.setMode('heat-simple');
     s.patchTimeline({ mode: 'all' });
     s.setLevel(null);
+    // The whole extent in view, as the map or mesh below spans it: framing the
+    // action can leave a plane at the data's lowest stray row out of the picture.
+    globalThis.__3dheat_engine.frameDataset(true, true);
   });
   await page.waitForTimeout(1400);
   const baseline = (await analyse(page)).nonBg;
@@ -998,6 +1001,9 @@ await step('3D level model loads, simplifies and renders', async () => {
     s.setMode('heat-simple');
     s.patchTimeline({ mode: 'all' });
     s.setLevel(null);
+    // The whole extent in view, as the map or mesh below spans it: framing the
+    // action can leave a plane at the data's lowest stray row out of the picture.
+    globalThis.__3dheat_engine.frameDataset(true, true);
   });
   await page.waitForTimeout(1400);
   const baseline = (await analyse(page)).nonBg;
@@ -2950,23 +2956,57 @@ await step('mouse movement is ignored when no button is held', async () => {
   return 'hover does not steer';
 });
 
-await step('real wheel tunes fly speed, and zooms in orthographic', async () => {
+await step('real wheel zooms toward the pointer, Shift+wheel tunes fly speed, and zooms in orthographic', async () => {
   const box = await page.locator(VIEWPORT).boundingBox();
-  const cx = box.x + box.width / 2;
-  const cy = box.y + box.height / 2;
-  await page.mouse.move(cx, cy);
+  // Off centre, so a zoom straight ahead and one toward the pointer differ.
+  const px = box.x + box.width * 0.7;
+  const py = box.y + box.height * 0.6;
+  await page.mouse.move(px, py);
+  // The line through the pointer, from the rendered camera.
+  const ray = () =>
+    page.evaluate(({ nx, ny }) => {
+      const cam = globalThis.__3dheat_engine.camera.camera;
+      const v = cam.position.clone().set(nx, ny, 0.5).unproject(cam).sub(cam.position).normalize();
+      return { x: v.x, y: v.y, z: v.z };
+    }, { nx: ((px - box.x) / box.width) * 2 - 1, ny: 1 - ((py - box.y) / box.height) * 2 });
 
   const before = await pose();
-  await page.mouse.wheel(0, -600);
+  const dir = await ray();
+  await page.mouse.wheel(0, -300);
+  await page.waitForTimeout(250);
+  const closer = await pose();
+  const moved = dist(before, closer);
+  if (!(moved > 1e-3)) throw new Error('the wheel did not move the camera');
+  const cos = ((closer.x - before.x) * dir.x + (closer.y - before.y) * dir.y + (closer.z - before.z) * dir.z) / moved;
+  if (cos < 0.995) throw new Error(`the wheel moved ${((Math.acos(Math.min(1, cos)) * 180) / Math.PI).toFixed(1)}° off the line through the pointer`);
+  if (Math.abs(closer.yaw - before.yaw) > 1e-6 || Math.abs(closer.pitch - before.pitch) > 1e-6) throw new Error('the wheel turned the camera');
+  if (!(closer.speed < before.speed)) throw new Error(`zooming in left the fly speed at ${closer.speed} from ${before.speed}`);
+  await page.mouse.wheel(0, 300);
+  await page.waitForTimeout(250);
+  const back = await pose();
+  if (!(dist(back, before) < moved * 0.05)) throw new Error(`wheel out did not come back: ${dist(back, before).toFixed(2)} from where it was`);
+
+  // Shift+wheel: the fly speed, not the place. Chromium on Windows sends it as a horizontal scroll.
+  const s0 = await pose();
+  await page.keyboard.down('Shift');
+  await page.mouse.wheel(0, -300);
+  await page.waitForTimeout(150);
+  await page.mouse.wheel(-300, 0);
+  await page.keyboard.up('Shift');
   await page.waitForTimeout(200);
   const faster = await pose();
-  if (!(faster.speed > before.speed * 1.2)) {
-    throw new Error(`wheel up gave ${faster.speed.toFixed(1)} from ${before.speed.toFixed(1)}`);
-  }
-  await page.mouse.wheel(0, 600);
+  if (!(faster.speed > s0.speed * 2)) throw new Error(`Shift+wheel gave ${faster.speed.toFixed(1)} from ${s0.speed.toFixed(1)}`);
+  if (dist(faster, s0) > 1e-6) throw new Error('Shift+wheel moved the camera');
+
+  // The setting swaps them.
+  await page.evaluate(() => globalThis.__3dheat.useStore.getState().patchCamera({ wheel: 'speed' }));
+  await page.waitForTimeout(150);
+  const w0 = await pose();
+  await page.mouse.wheel(0, 300);
   await page.waitForTimeout(200);
-  const restored = await pose();
-  if (!(restored.speed < faster.speed * 0.9)) throw new Error('wheel down did not slow the camera');
+  const slower = await pose();
+  await page.evaluate(() => globalThis.__3dheat.useStore.getState().patchCamera({ wheel: 'zoom' }));
+  if (!(slower.speed < w0.speed * 0.9) || dist(slower, w0) > 1e-6) throw new Error('with the wheel set to speed it did not slow the camera');
 
   await page.evaluate(() =>
     globalThis.__3dheat.useStore.getState().patchCamera({ projection: 'orthographic' }),
@@ -2986,7 +3026,8 @@ await step('real wheel tunes fly speed, and zooms in orthographic', async () => 
     globalThis.__3dheat.useStore.getState().patchCamera({ projection: 'perspective' }),
   );
   await page.waitForTimeout(400);
-  return `speed ${before.speed.toFixed(0)} -> ${faster.speed.toFixed(0)}, ortho zoom ok`;
+  await page.evaluate(() => globalThis.__3dheat.useStore.getState().patchCamera({ flySpeed: 500 }));
+  return `zoom ${moved.toFixed(1)} units along the pointer's line, Shift speed ${s0.speed.toFixed(0)} -> ${faster.speed.toFixed(0)}, ortho zoom ok`;
 });
 
 await step('typing in a panel field does not fly the camera', async () => {
@@ -3003,6 +3044,154 @@ await step('typing in a panel field does not fly the camera', async () => {
   const after = await pose();
   if (dist(before, after) > 1e-6) throw new Error('W in a text field moved the camera');
   return 'text entry is not flight control';
+});
+
+await step('the first click on an unfocused view only focuses it, and opens no pick card', async () => {
+  // The data in view, so the click has something to pick.
+  await page.evaluate(() => globalThis.__3dheat_engine.frameDataset());
+  await page.waitForTimeout(600);
+  // The focus away from the view, as after setting anything in a panel.
+  await page.evaluate(() => document.activeElement?.blur?.());
+  await page.evaluate(() => globalThis.__3dheat_engine.inspector.clear());
+  const box = await page.locator(VIEWPORT).boundingBox();
+  await page.locator(VIEWPORT).click({ position: { x: box.width / 2, y: box.height / 2 } });
+  await page.waitForTimeout(1200);
+  const first = await page.evaluate((sel) => ({ focused: document.activeElement === document.querySelector(sel), card: !!document.querySelector('.pick-card') }), VIEWPORT);
+  if (!first.focused) throw new Error('the click did not give the view the focus');
+  if (first.card) throw new Error('the focusing click also opened a pick card');
+  // The next click, the view focused, picks.
+  await page.locator(VIEWPORT).click({ position: { x: box.width / 2, y: box.height / 2 } });
+  await page.locator('.pick-card').waitFor({ timeout: 10_000 });
+  await page.evaluate(() => globalThis.__3dheat_engine.inspector.clear());
+  return 'focus first, pick second';
+});
+
+await step('letters typed with the focus away from the view set nothing off', async () => {
+  // A button in the side panel has the focus, as after clicking one.
+  await page.evaluate(() => document.querySelector('.sidebar button')?.focus());
+  const state = () =>
+    page.evaluate(() => {
+      const s = globalThis.__3dheat.useStore.getState();
+      return { playing: s.timeline.playing, mode: s.mode, cull: s.heat.cullFar, dialogs: document.querySelectorAll('.dialog').length };
+    });
+  const before = await pose();
+  const s0 = await state();
+  // No Space: on a focused button it is a click, as it should be.
+  await page.keyboard.type('kf3tnwasd[]gc', { delay: 10 });
+  await page.waitForTimeout(500);
+  const after = await pose();
+  const s1 = await state();
+  if (dist(before, after) > 1e-6) throw new Error('typing away from the view moved the camera');
+  if (JSON.stringify(s0) !== JSON.stringify(s1)) throw new Error(`typing away from the view changed ${JSON.stringify(s0)} -> ${JSON.stringify(s1)}`);
+  // The same letters with the view focused do act: K plays.
+  await page.locator(VIEWPORT).focus();
+  await page.keyboard.press('KeyK');
+  await page.waitForTimeout(200);
+  const playing = await page.evaluate(() => globalThis.__3dheat.useStore.getState().timeline.playing);
+  await page.keyboard.press('KeyK');
+  if (playing === s0.playing) throw new Error('K with the view focused did nothing');
+  // The hint under the view says which it is.
+  await page.waitForTimeout(100);
+  const hint = await page.locator('[data-testid="view-hint"]').getAttribute('class');
+  if (!/has-keys/.test(hint ?? '')) throw new Error(`the key hint did not say the view has the keys: ${hint}`);
+  return 'a sentence typed into a panel is just a sentence';
+});
+
+await step('the note editor opens with the focus in its title, and a note typed there flies nothing', async () => {
+  await page.locator(VIEWPORT).focus();
+  await page.keyboard.press('KeyN');
+  await page.locator('.note-editor').waitFor({ timeout: 20_000 });
+  await page.waitForTimeout(300);
+  const where = await page.evaluate(() => ({ tag: document.activeElement?.tagName, inEditor: !!document.activeElement?.closest('.note-editor') }));
+  if (where.tag !== 'INPUT' || !where.inEditor) throw new Error(`the focus went to ${JSON.stringify(where)}`);
+  const before = await pose();
+  const p0 = await page.evaluate(() => globalThis.__3dheat.useStore.getState().timeline.playing);
+  await page.keyboard.type('wasd kft', { delay: 10 });
+  await page.waitForTimeout(400);
+  const after = await pose();
+  const p1 = await page.evaluate(() => globalThis.__3dheat.useStore.getState().timeline.playing);
+  const typed = await page.locator('.note-editor input[type="text"]').first().inputValue();
+  // Esc in a field of the editor stays there (a note is not thrown away by it); the close button closes.
+  await page.locator('.note-editor .dialog-head button').click();
+  await page.waitForTimeout(300);
+  if (dist(before, after) > 1e-6) throw new Error('typing a note moved the camera');
+  if (p0 !== p1) throw new Error('typing a note started or stopped the playback');
+  if (typed !== 'wasd kft') throw new Error(`the title got "${typed}"`);
+  // Closed, the focus is back on the view.
+  const back = await page.evaluate((sel) => document.activeElement === document.querySelector(sel), VIEWPORT);
+  if (!back) throw new Error('closing the editor did not give the focus back to the view');
+  return 'typed into the title';
+});
+
+await step('a parallel view says so, and leads back to 3D', async () => {
+  await page.locator('.quick-bar [data-usage="cam:top"]').click();
+  await page.waitForTimeout(500);
+  const on = await page.evaluate(() => globalThis.__3dheat.useStore.getState().camera.projection);
+  if (on !== 'orthographic') throw new Error(`Look straight down gave ${on}`);
+  await page.locator('[data-testid="projection-badge"]').waitFor({ timeout: 5000 });
+  const pressed = await page.locator('.quick-bar [data-usage="cam:top"]').getAttribute('aria-pressed');
+  if (pressed !== 'true') throw new Error('the top-view button does not show the parallel view is on');
+  await page.locator('[data-testid="projection-badge"] button').click();
+  await page.waitForTimeout(400);
+  const off = await page.evaluate(() => globalThis.__3dheat.useStore.getState().camera.projection);
+  if (off !== 'perspective') throw new Error(`Back to 3D left ${off}`);
+  if (await page.locator('[data-testid="projection-badge"]').count()) throw new Error('the badge stayed');
+  return 'badge, then back';
+});
+
+await step('a dataset made from the loaded one keeps the camera; a new load frames', async () => {
+  await page.evaluate(() => {
+    const c = globalThis.__3dheat_engine.camera;
+    c.position.set(123, 456, 789);
+    c.moved = true;
+  });
+  await page.waitForTimeout(300);
+  await page.evaluate(() => {
+    const s = globalThis.__3dheat.useStore.getState();
+    // A copy sharing its positions, as the team line-up makes.
+    s.setDataset({ ...s.dataset });
+  });
+  await page.waitForTimeout(1200);
+  const kept = await pose();
+  if (Math.hypot(kept.x - 123, kept.y - 456, kept.z - 789) > 1e-3) throw new Error(`the swap moved the camera to ${kept.x},${kept.y},${kept.z}`);
+  await page.evaluate(() => globalThis.__3dheat.useStore.getState().setDataset(globalThis.__3dheat.generateSynthetic({ ...globalThis.__3dheat.DEFAULT_SYNTH, rows: 200_000 })));
+  await page.waitForTimeout(1500);
+  const framed = await pose();
+  if (Math.hypot(framed.x - 123, framed.y - 456, framed.z - 789) < 1) throw new Error('a new load did not frame');
+  await page.evaluate(() => globalThis.__3dheat.useStore.getState().patchCamera({ flySpeed: 500 }));
+  return 'kept, then framed';
+});
+
+await step('a duration typed into the camera path, or the last key\'s time, sets the video\'s length', async () => {
+  await openSection('Camera path');
+  const seconds = () => page.evaluate(() => globalThis.__3dheat.useStore.getState().path.seconds);
+  const duration = page.locator('.field', { has: page.locator('.label span', { hasText: /^Duration$/ }) }).first().locator('input[type=text]');
+  if (!(await duration.count())) return SKIP;
+  await duration.click();
+  await page.keyboard.press('Control+A');
+  await page.keyboard.type('3');
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(200);
+  if ((await seconds()) !== 3) throw new Error(`Duration 3 left ${await seconds()} s`);
+  // Two keys; the last one's time is the end of the video.
+  await page.evaluate(() => {
+    const s = globalThis.__3dheat.useStore.getState();
+    const k = (u, x) => ({ u, x, y: 100, z: 0, yaw: 0, pitch: -20, fov: 65 });
+    s.patchPath({ keys: [k(0, 0), k(1, 200)], timing: 'keys' });
+  });
+  await page.waitForTimeout(300);
+  const last = page.locator('.key-time').last();
+  await last.click();
+  await page.keyboard.press('Control+A');
+  await page.keyboard.type('7');
+  await page.keyboard.press('Tab');
+  await page.waitForTimeout(200);
+  const after = await seconds();
+  const summary = await page.locator('.section', { hasText: 'Camera path' }).first().textContent();
+  await page.evaluate(() => globalThis.__3dheat.useStore.getState().patchPath({ keys: [], seconds: 12 }));
+  if (after !== 7) throw new Error(`the last key's time 7 left the video ${after} s`);
+  if (!/210 frames/.test(summary ?? '')) throw new Error('the frame count did not follow the duration');
+  return 'Duration 3 s, last key 7 s = 210 frames';
 });
 
 await step('flying re-renders continuously rather than showing one frame', async () => {
@@ -3769,6 +3958,8 @@ await step('data notes: on a unit and a heat spot, a jump back, an analysis with
   await page.locator('.note-editor .dialog-actions .primary').click();
   // A note on a heat spot: a click on the heat, then the pick card's Note button.
   const box = await page.locator(VIEWPORT).boundingBox();
+  // The view focused first: the click that only focuses it picks nothing.
+  await page.locator(VIEWPORT).focus();
   await page.locator(VIEWPORT).click({ position: { x: box.width / 2, y: box.height / 2 } });
   await page.locator('.pick-card button', { hasText: /^Note$/ }).waitFor({ timeout: 8000 });
   await page.locator('.pick-card button', { hasText: /^Note$/ }).click();

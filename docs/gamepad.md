@@ -27,7 +27,7 @@ Any device the browser maps to the standard gamepad layout works. A flight stick
 | `RB` (held) | 6× faster |
 | `LB` (held) | 15% speed |
 | `A` (held) | 3× sprint (combines with RB/LB) |
-| `Y` (press) | Frame the data |
+| `Y` (press) | Frame the action (the dense part of the data, as `F` does) |
 
 Button numbers follow the standard layout: A 0, Y 3, LB 4, RB 5, LT 6, RT 7; sticks on axes 0-1 (left) and 2-3 (right).
 

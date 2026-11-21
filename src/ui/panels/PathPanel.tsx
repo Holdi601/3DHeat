@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { pathLength, poseAlong, prepare, type Keyframe, type SegmentEase } from '../../render/campath';
+import { pathLength, poseAlong, prepare, retimeKey, type Keyframe, type SegmentEase } from '../../render/campath';
+import { NumberBox } from '../NumberBox';
 import { renderPath, type RecordProgress, type VideoContainer } from '../../render/record';
 import { pathsToJson, readPaths, usePathLibrary } from '../../render/pathLibrary';
 import { useStore } from '../../state/store';
@@ -60,13 +61,11 @@ export function PathPanel() {
     patchPath({ keys: respace(next) });
   };
 
-  // A key's time, seconds into the video; kept between its neighbours.
+  // A key's time, seconds into the video; kept between its neighbours, and
+  // the last key's is the duration (`retimeKey`).
   const setKeyTime = (i: number, sec: number) => {
-    if (!Number.isFinite(sec)) return;
-    const u = Math.min(1, Math.max(0, sec / Math.max(0.001, path.seconds)));
-    const lo = i > 0 ? keys[i - 1].u + 1e-4 : 0;
-    const hi = i < keys.length - 1 ? keys[i + 1].u - 1e-4 : 1;
-    patchPath({ keys: keys.map((k, j) => (j === i ? { ...k, u: Math.min(hi, Math.max(lo, u)) } : k)) });
+    const next = retimeKey(keys, i, sec, path.seconds);
+    if (next) patchPath(next);
   };
   const setKeyEase = (i: number, ease: SegmentEase) => patchPath({ keys: keys.map((k, j) => (j === i ? { ...k, ease } : k)) });
 
@@ -182,16 +181,16 @@ export function PathPanel() {
                 {t('heat.pathPanel.keyAngles', { yaw: num(k.yaw, 0), pitch: num(k.pitch, 0) })}
               </span>
               {path.timing === 'keys' && (
-                <input
+                <NumberBox
                   className="key-time"
-                  type="number"
                   min={0}
-                  max={path.seconds}
                   step={0.1}
-                  value={Number((k.u * path.seconds).toFixed(2))}
+                  digits={2}
+                  value={k.u * path.seconds}
                   disabled={busy}
-                  title={t('analysis.path.keyTimeTitle')}
-                  onChange={(e) => setKeyTime(i, Number(e.target.value))}
+                  title={i === keys.length - 1 && keys.length > 1 ? t('analysis.path.lastKeyTimeTitle') : t('analysis.path.keyTimeTitle')}
+                  aria-label={t('analysis.path.keyTimeTitle')}
+                  onChange={(sec) => setKeyTime(i, sec)}
                 />
               )}
               {i < keys.length - 1 && (

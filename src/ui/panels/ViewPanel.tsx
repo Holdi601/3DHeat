@@ -247,6 +247,21 @@ export function CameraPanel() {
         <div className="hint">{t('heat.viewPanel.camera.descendKeyHint')}</div>
       </div>
 
+      <div className="field">
+        <div className="label">
+          <span>{t('heat.viewPanel.camera.wheel')}</span>
+        </div>
+        <Segmented
+          value={camera.wheel}
+          options={[
+            { value: 'zoom', label: t('heat.viewPanel.camera.wheelZoom') },
+            { value: 'speed', label: t('heat.viewPanel.camera.wheelSpeed') },
+          ]}
+          onChange={(wheel) => patchCamera({ wheel })}
+        />
+        <div className="hint">{t(camera.wheel === 'speed' ? 'heat.viewPanel.camera.wheelSpeedHint' : 'heat.viewPanel.camera.wheelZoomHint')}</div>
+      </div>
+
       <DepthOfField />
 
       <GamepadControls />
@@ -256,7 +271,8 @@ export function CameraPanel() {
       <JumpTo />
 
       <div className="row">
-        <button onClick={() => engine?.frameDataset()}>{t('heat.viewPanel.camera.frame', { key: 'F' })}</button>
+        <button onClick={() => engine?.frameDataset()} title={t('heat.viewPanel.camera.frameActionTitle')}>{t('heat.viewPanel.camera.frameAction', { key: 'F' })}</button>
+        <button onClick={() => engine?.frameDataset(true, true)}>{t('heat.viewPanel.camera.frameAll', { key: 'Shift+F' })}</button>
       </div>
 
       <div className="row">
