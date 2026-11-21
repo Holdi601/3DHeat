@@ -35,6 +35,7 @@ import { NumberBox } from '../NumberBox';
 import { SortControl } from '../sort/SortControl';
 import { useSort, useSorted } from '../sort/useSort';
 import { LoadPlan, type LoadPlanResult } from './LoadPlan';
+import { MemoryPanel } from './MemoryPanel';
 import { recallChoice, rememberChoice, sourceKey } from '../../data/columnProfile';
 import { activeClauses } from '../../data/rowFilter';
 
@@ -458,6 +459,8 @@ export function SourcePanel() {
           </button>
         )}
       </Section>
+
+      <MemoryPanel />
 
       {mapping && preview && size && (
         <LoadPlan

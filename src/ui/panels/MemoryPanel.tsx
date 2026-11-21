@@ -1,0 +1,136 @@
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { residentColumns } from '../../data/resident';
+import { formatBytes } from '../../data/memory';
+import { formatCount } from '../../data/synth';
+import { useStore } from '../../state/store';
+import { useAnimationFrame, useEngine } from '../EngineContext';
+import { num, t } from '../../i18n';
+import { Section } from '../controls';
+
+/**
+ * What is resident right now: the dataset's columns in RAM, the rows on the
+ * GPU, and the tab's own JavaScript heap, each against its budget.
+ *
+ * Read without touching the frame path: the columns once per dataset, the GPU
+ * figures from the engine's live counters (written by the renderer as it
+ * allocates, no readback), the heap every two seconds.
+ */
+
+/** Share of both budgets under which the panel offers more fidelity. */
+const ROOMY = 0.25;
+
+interface Heap {
+  used: number;
+  limit: number | null;
+  /** `measureUserAgentSpecificMemory`, which covers workers too, or Chrome's `performance.memory`. */
+  source: 'uasm' | 'performance';
+}
+
+function quickHeap(): Heap | null {
+  const m = (performance as Performance & { memory?: { usedJSHeapSize: number; jsHeapSizeLimit: number } }).memory;
+  return m ? { used: m.usedJSHeapSize, limit: m.jsHeapSizeLimit, source: 'performance' } : null;
+}
+
+/** The full measurement, where the page is cross-origin isolated; it takes a while and is asked for on demand. */
+async function fullHeap(): Promise<Heap | null> {
+  const p = performance as Performance & { measureUserAgentSpecificMemory?: () => Promise<{ bytes: number }> };
+  if (typeof p.measureUserAgentSpecificMemory !== 'function' || !globalThis.crossOriginIsolated) return null;
+  try {
+    const r = await p.measureUserAgentSpecificMemory();
+    return { used: r.bytes, limit: null, source: 'uasm' };
+  } catch {
+    return null;
+  }
+}
+
+export function MemoryPanel() {
+  const dataset = useStore((s) => s.dataset);
+  const budgets = useStore((s) => s.budgets);
+  const budget = useStore((s) => s.budget);
+  const patchBudget = useStore((s) => s.patchBudget);
+  const engine = useEngine();
+  const columns = useMemo(() => (dataset ? residentColumns(dataset) : []), [dataset]);
+  const ram = columns.reduce((a, c) => a + c.bytes, 0);
+  const [heap, setHeap] = useState<Heap | null>(() => quickHeap());
+  const [showAll, setShowAll] = useState(false);
+
+  useEffect(() => {
+    const h = setInterval(() => setHeap((prev) => (prev?.source === 'uasm' ? prev : quickHeap())), 2000);
+    return () => clearInterval(h);
+  }, []);
+
+  // GPU figures straight into the DOM: they change while chunks upload, and a
+  // React render per frame for three numbers is work the frame does not need.
+  const gpuLine = useRef<HTMLDivElement>(null);
+  const gpuUsed = useRef(0);
+  useAnimationFrame(() => {
+    if (!engine || !gpuLine.current) return;
+    const l = engine.live;
+    gpuUsed.current = l.gpuBytes + l.levelBytes;
+    const text = t('heat.memoryPanel.gpu', {
+      rows: formatBytes(l.gpuBytes),
+      level: formatBytes(l.levelBytes),
+      budget: formatBytes(budgets.gpu),
+      resident: formatCount(l.residentRows),
+      dropped: formatCount(l.droppedRows),
+    });
+    if (gpuLine.current.textContent !== text) gpuLine.current.textContent = text;
+  });
+
+  if (!dataset) return null;
+  const roomy = ram < budgets.ram * ROOMY && gpuUsed.current < budgets.gpu * ROOMY;
+  const canFiner = budget.heatScale < 1;
+  const shown = showAll ? columns : columns.slice(0, 8);
+
+  return (
+    <Section title={t('heat.memoryPanel.title')}>
+      <div data-testid="memory-panel">
+        <div className="hint">
+          {t('heat.memoryPanel.ram', {
+            used: formatBytes(ram),
+            budget: formatBytes(budgets.ram),
+            percent: num((ram / Math.max(1, budgets.ram)) * 100, 0),
+            rows: formatCount(dataset.count),
+          })}
+        </div>
+        <div className="hint" ref={gpuLine} />
+        {heap && (
+          <div className="hint">
+            {heap.limit
+              ? t('heat.memoryPanel.heap', { used: formatBytes(heap.used), limit: formatBytes(heap.limit) })
+              : t('heat.memoryPanel.heapAll', { used: formatBytes(heap.used) })}
+          </div>
+        )}
+        {typeof (performance as { measureUserAgentSpecificMemory?: unknown }).measureUserAgentSpecificMemory === 'function' &&
+          globalThis.crossOriginIsolated && (
+            <button onClick={() => void fullHeap().then((h) => h && setHeap(h))}>{t('heat.memoryPanel.measure')}</button>
+          )}
+        <div className="team-list">
+          {shown.map((c) => (
+            <div className="team-row" key={`${c.kind}:${c.name}`}>
+              <span className="name" title={c.name}>
+                {c.kind === 'attr' ? c.name : t('heat.memoryPanel.core', { name: c.name })}
+              </span>
+              <span className="val">{formatBytes(c.bytes)}</span>
+            </div>
+          ))}
+        </div>
+        {columns.length > 8 && (
+          <button onClick={() => setShowAll((v) => !v)}>
+            {showAll ? t('heat.memoryPanel.fewer') : t('heat.memoryPanel.all', { count: columns.length })}
+          </button>
+        )}
+        {roomy && (
+          <div className="hint" style={{ color: 'var(--good)' }}>
+            {t('heat.memoryPanel.roomy')}{' '}
+            {canFiner && (
+              <button onClick={() => patchBudget({ heatScale: 1, splatsPerFrame: Math.max(budget.splatsPerFrame, 8_000_000) })}>
+                {t('heat.memoryPanel.finer')}
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+    </Section>
+  );
+}

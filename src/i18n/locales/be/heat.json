@@ -828,5 +828,16 @@
   "heat.loadPlan.reason.json": "Structured detail (JSON): large and rarely filtered by.",
   "heat.loadPlan.reason.constant": "One value throughout: tells nothing apart.",
   "heat.loadPlan.remembered": "Kept columns and the pre-filter are remembered for this kind of source.",
-  "heat.loadPlan.forget": "Forget"
+  "heat.loadPlan.forget": "Forget",
+  "heat.memoryPanel.title": "Memory in use",
+  "heat.memoryPanel.ram": "RAM: {used} of {budget} ({percent}%) for {rows} rows.",
+  "heat.memoryPanel.gpu": "GPU: {rows} rows + {level} level of {budget}; {resident} rows resident, {dropped} did not fit.",
+  "heat.memoryPanel.heap": "JavaScript heap of this tab: {used} of {limit}.",
+  "heat.memoryPanel.heapAll": "Memory of this page, workers included: {used}.",
+  "heat.memoryPanel.measure": "Measure everything",
+  "heat.memoryPanel.core": "{name} (built in)",
+  "heat.memoryPanel.all": "All {count} columns",
+  "heat.memoryPanel.fewer": "Fewer",
+  "heat.memoryPanel.roomy": "Plenty of room left: finer heat and more sprites per frame would fit.",
+  "heat.memoryPanel.finer": "Use more fidelity"
 }

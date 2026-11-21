@@ -86,6 +86,19 @@ The renderer needs rows in ascending time order, so a mapped time column means s
 
 A GPU budget above the detected figure applies as set: the fit check and the upload take the same figure from one function ([`effectiveGpuBudget`](https://github.com/Holdi601/3DHeat/blob/main/src/render/budget.ts)), which caps it only at the GPU ceiling the slider stops at. So a load the check passes is uploaded in full. Past the detected figure the slider reads *(above detected)*: the number is then your judgement of the card, not a measurement, and setting it higher than the card has risks a lost context or a crawl.
 
+## Memory in use
+
+Once a dataset is loaded, **Memory in use** (in the Source panel) shows what is resident, read from the arrays themselves rather than from the estimate:
+
+| Line | Meaning |
+|---|---|
+| **RAM** | The dataset's columns in memory, against the RAM budget. |
+| **GPU** | Row data and the level on the GPU, against the GPU budget, with the rows resident and the rows that did not fit. Read from the renderer's own counters, without a GPU readback. |
+| **JavaScript heap** | The tab's heap and its limit, where the browser reports them (Chromium). On a cross-origin-isolated page **Measure everything** asks `performance.measureUserAgentSpecificMemory`, which includes the workers. |
+| Column list | Each column and what it holds, biggest first. Built-in fields are marked *(built in)*; text labels are estimated at two bytes a character. |
+
+When both RAM and GPU are under a quarter of their budgets, the panel says so and offers **Use more fidelity**: full-resolution heat and at least 8 million sprites a frame.
+
 ## Huge datasets: the levers
 
 From cheapest to most drastic:
