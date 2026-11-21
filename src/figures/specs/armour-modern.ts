@@ -13,7 +13,7 @@
  */
 
 import type { Named, SpecSet } from './index';
-import type { AddOn, AddOnMount, GroundSpec, GunSpec } from '../ground';
+import type { AddOn, AddOnMount, GroundSpec, GunSpec, TurretSpec } from '../ground';
 import type { Outline, P2 } from '../parts';
 import { ABRAMS, ABRAMS_TURRET, hull, LEO1, LEO2, leo2Bustle, LEO2_WEDGE, run, T72, T72B_TURRET, T80, TANKS, turret } from './tanks';
 import { bonnetCab, FMTV, forwardCab, GAZ_66, GM_CHASSIS, HEMTT, HMMWV, KAMAZ_43101, KRAZ_255, KRAZ_6322, M548, M939, MAN_HX, MAZ_543, MZKT_7930, PICKUP, TRAILER, URAL_4320, ZIL_131 } from './base';
@@ -108,7 +108,8 @@ G['t-72b3m'] = { cls: 'mbt', ...T72, turret: RELIKT_TURRET, addOns: [SMOKE_902(0
 // T-72B3 with Arena-M (2021): the active protection's radar head on its mast over the turret's rear and the belt of
 // launcher boxes along the turret's sides; the head about 3.4 m up (estimates from public photographs).
 G['t-72b3-arena-m'] = { cls: 'mbt', ...T72, turret: K5_TURRET, addOns: [...T72B89_ADD, SOSNA,
-  { on: 'turret', kind: 'drum', at: [-1.2, 0, 1.15], size: [0.22, 0.22, 0.65], metal: true },
+  // The mast from the turret's sloping back roof (0.5 m up there) to the head.
+  { on: 'turret', kind: 'drum', at: [-1.2, 0, 0.95], size: [0.22, 0.22, 1.05], metal: true },
   { on: 'turret', kind: 'drum', at: [-1.2, 0, 1.72], size: [0.75, 0.75, 0.5] },
   tb(0.3, 1.5, 0.62, 1.4, 0.3, 0.32, { ...M, yaw: -0.25 }), tb(-0.8, 1.38, 0.6, 0.9, 0.3, 0.32, { ...M, yaw: 0.3 })] };
 
@@ -156,8 +157,26 @@ G['t-90'] = { cls: 'mbt', ...T72, width: 3.78, turret: K5_TURRET, turrets: undef
 // T-90A (2004): the welded turret with its flat roof and faceted sides, K-5 wedges and Shtora (see tanks.ts).
 const T90A = base('t-90a');
 G['t-90a'] = { ...T90A, turrets: undefined, addOns: [...T72B89_ADD, tb(1.85, 0.62, 0.42, 0.3, 0.4, 0.3, M)] };
-// T-90M (2020): Relikt, the box bustle, the commander's panoramic sight, slat armour round the engine deck.
-G['t-90m'] = { ...base('t-90m'), turrets: undefined, addOns: [...T72_GLACIS(0.26), ...skirtBoxes(0.2, 3.2, 1.9, 0.6, 0.5, 4, 0.18), tb(0.95, -0.62, 1.0, 0.5, 0.5, 0.35), { ...PK_PAN, at: [-0.4, 0.72, 1.08] }, ...slats(-3.3, -1.3, 1.95, 1.15, 0.95)] };
+// T-90M (2020): the new welded turret - a flat roof 0.8 m over the deck, upright faceted sides - with Relikt over its
+// front as an arrowhead brow (drawn as plates of their own, `wedge`) and in tall modules down the front of its sides; the
+// box bustle as wide as the hull's middle and nearly as high as the roof, hung off the turret's back, caged in slat
+// armour; the Sosna-U gunner's sight box on the roof's left front, the commander's PK-5 panoramic sight on its drum
+// right in front of the cupola; Relikt on the glacis and skirts, slat armour round the engine deck. No Shtora.
+// Own rebuild from photographs (sources.md).
+const T90M_TURRET: TurretSpec = {
+  ...turret(-0.85, [[-2.25, 1.1], [-1.55, 1.12], [-1.48, 1.42], [-1.2, 1.55], [0.2, 1.6], [0.95, 1.6], [1.55, 1.02], [1.95, 0.5]], [[-2.25, 0.62], [-1.55, 0.68], [-1.45, 0.78], [0.95, 0.8], [1.6, 0.66], [1.95, 0.56]], 9, 1.9),
+  wedge: 0.95,
+};
+// The bustle's slat cage: a panel down each side and one across the back, a hand's breadth off the box.
+const T90M_CAGE = [tb(-1.9, 1.24, 0.42, 0.8, 0.05, 0.62, { ...M, ...DARK }), tb(-2.36, 0, 0.42, 0.05, 2.5, 0.62, DARK), tb(-1.98, 1.18, 0.42, 0.66, 0.14, 0.05, { ...M, ...DARK }), tb(-2.31, 0, 0.12, 0.12, 2.36, 0.05, DARK)];
+G['t-90m'] = {
+  ...base('t-90m'), turret: T90M_TURRET, turrets: undefined,
+  addOns: [...T72_GLACIS(0.26), ...skirtBoxes(0.2, 3.2, 1.9, 0.6, 0.5, 4, 0.18), ...slats(-3.3, -1.3, 1.95, 1.15, 0.95),
+    // Relikt down the front of the turret's sides, the brow's corners to the smoke dischargers.
+    tb(0.35, 1.66, 0.42, 1.2, 0.14, 0.62, M), SMOKE_902(-0.45, 1.6, 0.66),
+    tb(0.45, -0.68, 0.96, 0.5, 0.42, 0.32), { ...PK_PAN, at: [0.0, 0.76, 1.03], size: [0.34, 0.34, 0.46] }, tb(0.0, 0.76, 1.3, 0.3, 0.42, 0.2, DARK),
+    ...T90M_CAGE],
+};
 
 // ---------------------------------------------------------------- Leopard 2
 
@@ -194,7 +213,9 @@ G['leopard-2e'] = { cls: 'mbt', ...LEO2, turret: LEO2_WEDGE, guns: [L55], addOns
 const A4M_BASE = turret(-0.35, [[-1.98, 1.35], [-1.68, 1.55], [-1.4, 1.7], [2.15, 1.7], [2.45, 1.58], [2.5, 0.62]], [[-1.98, 0.72], [-1.75, 0.8], [2.2, 0.88], [2.5, 0.66]], 12, 2.4);
 const A4M_TURRET = { ...A4M_BASE, outline: { ...A4M_BASE.outline!, bottom: leo2Bustle(2.5) } };
 G['leopard-2a4m-can'] = { cls: 'mbt', ...LEO2, turret: A4M_TURRET, guns: [L44], addOns: [tb(1.25, 0.72, 0.94, 0.75, 0.55, 0.16), PERI(0.35), tb(-1.75, 1.62, 0.62, 0.45, 0.2, 0.26, { ...M, ...DARK }), tb(-1.85, 1.05, 0.4, 0.3, 0.6, 0.45, M), tb(-2.45, 0, 0.42, 0.08, 2.7, 0.6, DARK),
-  ...LEO2_GLACIS(0.28), hb(3.95, 0, 0.98, 0.3, 3.3, 0.5), ...skirtBoxes(-3.4, 3.7, 1.92, 0.6, 0.6, 5, 0.16), hb(-3.98, 0, 1.25, 0.08, 3.4, 0.8, DARK)] };
+  ...LEO2_GLACIS(0.28), hb(3.95, 0, 0.98, 0.3, 3.3, 0.5), ...skirtBoxes(-3.4, 3.7, 1.92, 0.6, 0.6, 5, 0.16), hb(-3.98, 0, 1.25, 0.08, 3.4, 0.8, DARK),
+  // Its brackets to the hull's back plate.
+  hb(-3.8, 1.3, 1.25, 0.36, 0.08, 0.08, { ...M, ...DARK })] };
 
 // ---------------------------------------------------------------- Leopard 1
 
