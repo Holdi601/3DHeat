@@ -51,6 +51,10 @@ To put a few chosen groups side by side with any statistics, your own included -
 
 You can rank by the groups, players and matches, any category column (a vehicle, a weapon, a side, a buy type, an agent or kit), any number column in ranges (armour, a loadout's value), a weapon column's **class** (rifle, sniper, SMG, pistol...) and how many pieces of **utility** a list column such as `inventory` holds.
 
+Deaths are counted past an event filter: with **Event type** set to kills and hits only, the deaths in the place still count (as deaths, not as rows of the view), or every K/D would read *n / 0*. A death logged by two rows at the same moment (War Thunder logs `dead` and `death`) counts once, and a death row's own weapon (the killer's, in most games) never stands for the victim's: the victim's is what it carried, or unknown.
+
+Where the data logs kills with their victim but no death rows at all, each kill is also its victim's death: counted where the victim's last row was, by what the victim carried (by the killer's value under **Opponent's**). A victim named by player while the rows are per player and vehicle (`name #30001`) is the player's vehicle seen last. Group names are plain where the game's [unit catalogue](figures.md) has them, else the id made readable (`88mm_pzgr_39` reads *88 mm pzgr 39*). The spot's **Radius** is in metres (world units).
+
 **Own** ranks by the row's own value. **Opponent's** ranks by the other party's value: the victim's weapon on a kill, the killer's on a death (needs an `other` / `victim` column naming them).
 
 ## State at the time

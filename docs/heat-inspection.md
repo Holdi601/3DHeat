@@ -11,7 +11,7 @@ Click a hot spot to see what it is made of: every row whose sprite covers that p
 ## Inspect a hot spot
 
 1. Click a point of the heat (with **Click shows what is there** on, see [Click-to-pick](camera.md#click-to-pick)). The pick card opens as before.
-2. Below the point's fields the card reads the heat at the click. On a large dataset this takes a moment (*Reading the heat here... N%*); the view keeps running meanwhile.
+2. The card reads the heat at the click first. On a large dataset this takes a moment (*Reading the heat here... N%*); the view keeps running meanwhile.
 3. Use **‹** and **›** to walk through the rows in the stack. The card's fields, the marker in the view and **Jump to in replay** follow the row shown. Past the last row the card returns to the point picked.
 4. **Jump to in replay** opens the match replay a few seconds before that row, behind whoever it is about (or flown to it when the row has no person).
 
@@ -25,6 +25,19 @@ A click on the level's surface reads the heat there too: the marker shows the va
 | **This place** | The rows in the cell under the pick, a cell two sprite radii across - the same unit the labels use. |
 | Relative line | *Hotter than P% of the N places in view: M× the median place, Q% of the hottest.* Places are the cells whose centre is on screen. In Difference a negative place is compared with the negative places. |
 | Order | *Strongest first* (by what each row adds) or *By time*. |
+
+Under the heat, the card sums up what the place is made of, from the rows in the stack, each weighed by what it adds to the heat there:
+
+| Line | Meaning |
+|---|---|
+| **What happened** | The events, by the viewer's event type, with the game's own word beside it where it differs (*damage (fire on)*). |
+| **Units** | The units, by the data's plain name where it has one (a short vehicle name), else the game's [unit catalogue](figures.md) name, else the id made readable. |
+| **Weapons** | The weapons or shells, the same way: the data's weapon name, else the id made readable (`88mm_pzgr_39` reads *88 mm pzgr 39*). |
+| **Who**, **Teams** | The players and teams. |
+| **Kills / deaths here** | Kill and death rows in the stack; a death logged twice at the same moment counts once. Where the data logs kills with their victims but no deaths of their own, it says the kills only: a victim died where it last was, which the [Breakdown](breakdown.md) counts. |
+| **This row** | The row picked (or walked to) in one line: who, in what, which team, what happened, with what. |
+
+Every column of the row, its coordinates and its look are behind **All columns**.
 
 ## Heat labels
 

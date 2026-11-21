@@ -12,6 +12,7 @@ import { useUnits } from '../state/unitsStore';
 import { DirectionSpot } from './DirectionSpot';
 import { BreakdownButton } from './breakdown/BreakdownPanel';
 import { HeatHere } from './heatInspect/HeatHere';
+import { PickSummary, rowLine } from './heatInspect/PickSummary';
 import { NoteBadge } from './notes/NoteBadge';
 import { noteHere } from './notes/actions';
 import { heatToAnalysis } from './notes/from';
@@ -122,14 +123,27 @@ export function PickCard() {
           </button>
         </div>
         <div className="pick-fields">
+          {/* The summary first: how hot, what the place is made of, the row in a line; every column after. */}
+          <HeatHere pick={pick} />
+          {pick.kind === 'data' && <PickSummary pick={pick} />}
+          {pick.kind === 'data' && pick.dataset && pick.row !== undefined && (
+            <div className="line pick-row-line" data-testid="pick-row-line">
+              <span>{t('heat.inspect.summary.row')}</span>
+              <b>{rowLine(pick.dataset, pick.row) || '—'}</b>
+            </div>
+          )}
           {pick.kind === 'surface' && pick.surface && <SurfaceLines pick={pick} />}
-          {pick.kind === 'data' &&
-            fields.map((f, i) => (
-              <div className="line" key={`${f.label}-${i}`}>
-                <span>{f.label}</span>
-                <b title={f.value}>{f.value}</b>
-              </div>
-            ))}
+          {pick.kind === 'data' && (
+            <details className="pick-all" data-testid="pick-all-columns">
+              <summary>{t('heat.inspect.summary.allColumns', { n: fields.length })}</summary>
+              {fields.map((f, i) => (
+                <div className="line" key={`${f.label}-${i}`}>
+                  <span>{f.label}</span>
+                  <b title={f.value}>{f.value}</b>
+                </div>
+              ))}
+            </details>
+          )}
           {pick.kind === 'surface' && local && (
             <>
               <div className="line">
@@ -162,7 +176,6 @@ export function PickCard() {
             <span>{t('heat.inspect.distance')}</span>
             <b>{formatLength(pick.distance)}</b>
           </div>
-          <HeatHere pick={pick} />
         </div>
         <DirectionSpot />
         <div className="pick-actions">

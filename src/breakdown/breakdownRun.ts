@@ -353,15 +353,55 @@ function upperBound(time: Float32Array, t: number): number {
   return a;
 }
 
+/**
+ * The persons an other-party (victim, killer) name stands for: the person of that label, else those whose label
+ * is that name and a number (War Thunder: the victim is named by player, a person is a player's vehicle,
+ * "name #30001").
+ */
+export function otherPersons(personLabels: readonly string[], names: readonly string[]): { otherPerson: Int32Array; otherMany: { offs: Int32Array; items: Int32Array } | null } {
+  const exact = new Map<string, number>();
+  const byName = new Map<string, number[]>();
+  personLabels.forEach((l, i) => {
+    exact.set(l, i);
+    const m = /^(.*\S)\s+#\d+$/.exec(l);
+    if (m) {
+      const list = byName.get(m[1]);
+      if (list) list.push(i);
+      else byName.set(m[1], [i]);
+    }
+  });
+  const otherPerson = new Int32Array(names.length).fill(-1);
+  const offs = new Int32Array(names.length + 1);
+  const items: number[] = [];
+  let many = false;
+  names.forEach((l, c) => {
+    offs[c] = items.length;
+    const e = exact.get(l);
+    if (e !== undefined) {
+      otherPerson[c] = e;
+      items.push(e);
+    } else {
+      const list = byName.get(l);
+      if (list) {
+        otherPerson[c] = list[0];
+        items.push(...list);
+        if (list.length > 1) many = true;
+      }
+    }
+  });
+  offs[names.length] = items.length;
+  return { otherPerson, otherMany: many ? { offs, items: Int32Array.from(items) } : null };
+}
+
 export function prepareBreakdown(ds: Dataset, req: BreakdownRequest): BreakdownPrep {
   const dim = req.dim ? buildDim(ds, req.dim, req.mode) : null;
   const factors = buildFactors(ds);
   const ev = ds.attrs.find((a) => a.name === CANON.event);
   const other = otherColumn(ds);
   let otherPerson: Int32Array | null = null;
+  let otherMany: { offs: Int32Array; items: Int32Array } | null = null;
   if (other && ds.personId) {
-    const index = new Map(ds.personLabels.map((l, i) => [l, i]));
-    otherPerson = Int32Array.from(other.categories!, (l) => index.get(l) ?? -1);
+    ({ otherPerson, otherMany } = otherPersons(ds.personLabels, other.categories!));
   }
   const won = wonColumn(ds);
   const round = won ? roundColumn(ds) : null;
@@ -375,6 +415,7 @@ export function prepareBreakdown(ds: Dataset, req: BreakdownRequest): BreakdownP
       ? Int8Array.from(ev.categories, (k) => (k === 'kill' ? EV_KILL : k === 'death' ? EV_DEATH : k === 'position' ? EV_POSITION : EV_OTHER))
       : null,
     otherPerson,
+    otherMany,
     missing: [missingOf(dimAttr), ...factors.columns.map((c) => missingOf(ds.attrs.find((a) => a.name === c)))],
     dim: dim ? dim.spec : null,
     factors: factors.sources,
@@ -384,6 +425,11 @@ export function prepareBreakdown(ds: Dataset, req: BreakdownRequest): BreakdownP
     hasWon: !!won,
     rounds,
   };
+  // An event filter (kills and hits only) would hide the deaths a K/D needs: they pass it (`eventFilters`).
+  const evFilters = Uint8Array.from(req.scope.filters, (f) => (f.column === CANON.event || /^(event|event.?name)$/i.test(f.column) ? 1 : 0));
+  meta.eventFilters = evFilters.some((v) => v) ? evFilters : null;
+  // Kills with their victims but no death rows: each kill is a death too (`BreakdownMeta.deathsFromKills`).
+  meta.deathsFromKills = !!meta.eventCode && !!otherPerson && meta.eventCode.includes(EV_KILL) && !meta.eventCode.includes(EV_DEATH) && otherPerson.some((x) => x >= 0);
   let side: SideRule = { mode: -1, teamSign: null, sign: null, positive: [0, 0], negative: [0, 0] };
   let splitColumn: string | null = null;
   if (req.split) {

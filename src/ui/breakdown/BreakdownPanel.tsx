@@ -14,6 +14,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { create } from 'zustand';
 import { SITUATION_COLUMN } from '../../insights/cqb/factors';
+import { plainName } from '../heatInspect/placeSummary';
 import type { BreakdownResult } from '../../breakdown/breakdown';
 import {
   dimensionsOf,
@@ -144,7 +145,11 @@ function dimLabel(d: Dimension): string {
 function groupLabel(d: Dimension, label: string): string {
   if (d.kind === 'weaponClass') return t(`breakdown.wclass.${label}`);
   if (d.kind === 'utility') return t('breakdown.utilityCount', { n: label === '4' ? '4+' : label });
-  if (d.kind === 'category') return valueLabel(d.column!, label);
+  if (d.kind === 'category') {
+    // The game's ids in plain words: the unit catalogue's name, else the id made readable ("88mm_pzgr_39" -> "88 mm pzgr 39").
+    const v = valueLabel(d.column!, label);
+    return v === label ? plainName(label) : v;
+  }
   return label;
 }
 
@@ -152,7 +157,7 @@ function factorLabel(f: Factor): string {
   // The close-quarters situations (`insights/cqb/factors.ts`) are the viewer's own words.
   if (f.column === SITUATION_COLUMN && f.value) return `${t('breakdown.situations')}: ${t(`breakdown.situation.${f.value}`)}`;
   const col = columnLabel(f.name);
-  return f.value === null ? col : `${col}: ${f.value}`;
+  return f.value === null ? col : `${col}: ${plainName(f.value)}`;
 }
 
 /** An effect and its 95% interval, as a ratio (×) or a difference. */
@@ -352,6 +357,7 @@ function BreakdownBody() {
           <label className="brk-field">
             {t('breakdown.radius')}
             <NumberBox min={0.1} step={0.1} digits={3} value={radius} onChange={(v) => ui.set({ radius: v })} />
+            <span className="mass-dim">{t('breakdown.radiusUnit')}</span>
           </label>
         )}
         {ui.region === 'volume' && volumes.length > 0 && (

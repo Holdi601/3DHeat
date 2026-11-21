@@ -30,9 +30,35 @@
   font-weight: 600;
 }
 .heat-here {
-  margin-top: 4px;
-  padding-top: 4px;
+  margin-top: 0;
+  padding-bottom: 4px;
+}
+/* The place's summary (PickSummary.tsx) under the heat, and the row's columns folded away after it. */
+.pick-summary {
+  padding: 4px 0;
   border-top: 1px solid var(--line);
+}
+.pick-summary small {
+  opacity: 0.75;
+  font-weight: normal;
+}
+.pick-shares b,
+.pick-row-line b {
+  white-space: normal;
+  text-align: right;
+}
+.pick-row-line {
+  border-top: 1px solid var(--line);
+  padding-top: 4px;
+}
+.pick-all {
+  margin-top: 4px;
+  border-top: 1px solid var(--line);
+  padding-top: 4px;
+}
+.pick-all > summary {
+  cursor: pointer;
+  color: var(--text-dim);
 }
 .heat-here small {
   opacity: 0.75;

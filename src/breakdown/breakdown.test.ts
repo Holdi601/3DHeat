@@ -10,14 +10,15 @@ import { binEdges, breakdownSync, buildFactors, dimensionsOf, weaponClassOf, typ
  * movement samples carry the gear, kill and death rows carry none (the death
  * row names the killer's weapon), `other` the other party, `won` the result.
  */
-function duel(): Dataset {
+function duel(killsOnly = false, twice = false): Dataset {
   const W = ['', 'AK-47', 'USP-S', 'Glock-18', 'M4A1-S'];
   const INV = ['', 'Knife|Flashbang', 'Knife'];
-  const EV = ['position', 'kill', 'death'];
-  const P = ['A', 'B'];
+  // Kills only: no death rows; the victim named by player, a person a player's vehicle ("A #11", as War Thunder names them).
+  const EV = killsOnly ? ['position', 'kill'] : ['position', 'kill', 'death'];
+  const P = killsOnly ? ['A #11', 'B #12'] : ['A', 'B'];
   const O = ['', 'A', 'B'];
   // [t, person, event, weapon, other, helmet, inventory, won, round, x]
-  const rows: [number, number, number, number, number, number, number, number, number, number][] = [
+  const all: [number, number, number, number, number, number, number, number, number, number][] = [
     [0, 0, 0, 1, 0, 1, 1, 1, 0, 0],
     [0, 1, 0, 2, 0, 0, 2, 0, 0, 1],
     [1, 0, 1, 1, 2, NaN, 0, 1, 0, 0],
@@ -27,6 +28,8 @@ function duel(): Dataset {
     [3, 1, 1, 4, 1, NaN, 0, 1, 1, 50],
     [3, 0, 2, 4, 2, NaN, 0, 0, 1, 0],
   ];
+  // `twice`: each death logged by two rows at the same moment (War Thunder's `dead` and `death`).
+  const rows = killsOnly ? all.filter((r) => r[2] !== 2) : twice ? all.flatMap((r) => (r[2] === 2 ? [r, r] : [r])) : all;
   const n = rows.length;
   const cat = (name: string, k: number, categories: string[]): AttributeColumn => ({
     name, kind: 'category', data: Uint32Array.from(rows, (r) => r[k]), min: 0, max: categories.length - 1, categories,
@@ -68,6 +71,40 @@ describe('breakdown', () => {
     expect(byLabel(labels, result.groups!.deaths)).toEqual({ 'AK-47': 0, 'USP-S': 1, 'Glock-18': 1, 'M4A1-S': 0 });
     expect(byLabel(labels, result.groups!.earn)['AK-47']).toBe(300);
     expect(result.total.presence).toBe(120);
+  });
+
+  it('counts the deaths a view of kills alone hides, but not as rows of it', () => {
+    const ds = duel();
+    // Event type: kills only (position, kill, death).
+    const filters = [{ column: CANON.event, kind: 'categories' as const, min: 0, max: 0, mask: Uint8Array.from([0, 1, 0]) }];
+    const { prep, result } = breakdownSync(ds, req(ds, { scope: { ...FULL_SCOPE, filters } as BreakdownRequest['scope'] }));
+    expect(result.total.kills).toBe(2);
+    expect(result.total.deaths).toBe(2);
+    expect(result.total.rows).toBe(2);
+    expect(byLabel(prep.dim!.labels, result.groups!.deaths)).toEqual({ 'AK-47': 0, 'USP-S': 1, 'Glock-18': 1, 'M4A1-S': 0 });
+  });
+
+  it('counts a death logged twice at the same moment once', () => {
+    const ds = duel(false, true);
+    const { prep, result } = breakdownSync(ds, req(ds));
+    expect(result.total.deaths).toBe(2);
+    expect(byLabel(prep.dim!.labels, result.groups!.deaths)).toEqual({ 'AK-47': 0, 'USP-S': 1, 'Glock-18': 1, 'M4A1-S': 0 });
+  });
+
+  it('counts a kill as its victim\'s death where the data logs no deaths, where the victim last was', () => {
+    const ds = duel(true);
+    const { prep, result } = breakdownSync(ds, req(ds));
+    const labels = prep.dim!.labels;
+    expect(byLabel(labels, result.groups!.kills)).toEqual({ 'AK-47': 1, 'USP-S': 0, 'Glock-18': 0, 'M4A1-S': 1 });
+    // By what the victim carried: B its USP-S, A its Glock-18.
+    expect(byLabel(labels, result.groups!.deaths)).toEqual({ 'AK-47': 0, 'USP-S': 1, 'Glock-18': 1, 'M4A1-S': 0 });
+    expect(result.total.deaths).toBe(2);
+    // B's kill at x = 50 is counted there; its victim A last stood at x = 0, so no death there.
+    const far = breakdownSync(ds, req(ds, { region: { kind: 'sphere', c: [50, 0, 0], r: 5 } })).result;
+    expect(far.total.kills).toBe(1);
+    expect(far.total.deaths).toBe(0);
+    const near = breakdownSync(ds, req(ds, { region: { kind: 'sphere', c: [0, 0, 0], r: 0.5 } })).result;
+    expect(near.total.deaths).toBe(1);
   });
 
   it('ranks by the opponent: the victim\'s weapon on a kill, the killer\'s on a death', () => {

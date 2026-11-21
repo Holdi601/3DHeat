@@ -9,6 +9,7 @@
   "breakdown.region.volume": "Volume",
   "breakdown.region.all": "All",
   "breakdown.radius": "Radius",
+  "breakdown.radiusUnit": "m (world units)",
   "breakdown.refresh": "Count again",
   "breakdown.failed": "The breakdown failed: {error}",
   "breakdown.counting": "Counting… {pct}%",

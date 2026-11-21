@@ -301,7 +301,7 @@ function closeVisit(a: Acc, p: number): void {
   a.visitAcc![p] = 0;
 }
 
-export function rowShown(sc: CompareScope, ch: CompareChunk, j: number): boolean {
+export function rowShown(sc: CompareScope, ch: CompareChunk, j: number, skip?: Uint8Array | null): boolean {
   if (ch.time) {
     const t = ch.time[j];
     if (sc.lifetimeNow !== null) {
@@ -316,6 +316,8 @@ export function rowShown(sc: CompareScope, ch: CompareChunk, j: number): boolean
     if (g < sc.groupShown.length && sc.groupShown[g] === 0) return false;
   }
   for (let k = 0; k < sc.filters.length; k++) {
+    // Filters a caller lets pass (the breakdown's deaths past an event-type filter).
+    if (skip && skip[k]) continue;
     const f = sc.filters[k];
     const data = ch.filt[k];
     if (!data) return false;

@@ -149,7 +149,7 @@ export function HeatHere({ pick }: { pick: PickResult }) {
           <span className="heat-stack-at">
             {at < 0 ? t('analysis.heat.picked') : t('analysis.heat.at', { i: int(at + 1), n: int(n) })}
             {at >= 0 && total !== 0 && (
-              <small> Â· {t('analysis.heat.adds', { value: num(share.get(row) ?? 0, 2), percent: num(((share.get(row) ?? 0) / total) * 100, 0) })}</small>
+              <small> · {t('analysis.heat.adds', { value: num(share.get(row) ?? 0, 2), percent: num(((share.get(row) ?? 0) / total) * 100, 0) })}</small>
             )}
           </span>
           <button onClick={() => show(at >= n - 1 ? -1 : at + 1)} title={t('analysis.heat.nextTitle')} aria-label={t('analysis.heat.nextTitle')}>

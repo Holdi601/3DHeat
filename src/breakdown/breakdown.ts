@@ -75,6 +75,12 @@ export interface BreakdownMeta {
   eventCode: Int8Array | null;
   /** Category of the other-party column -> person (-1 none); null without one. */
   otherPerson: Int32Array | null;
+  /**
+   * Where one other-party name stands for several persons (War Thunder names the victim by player, the rows
+   * are per player and vehicle): category c's persons are `items[offs[c] .. offs[c + 1])`, the one seen last
+   * is meant.
+   */
+  otherMany?: { offs: Int32Array; items: Int32Array } | null;
   /** Per column read (the dimension, then each factor source): categories that mean "nothing logged". */
   missing: (Uint8Array | null)[];
   dim: DimSpec | null;
@@ -85,6 +91,16 @@ export interface BreakdownMeta {
   hasWon: boolean;
   /** Rounds per session (largest round + 1); 1 without a round column. */
   rounds: number;
+  /**
+   * The data logs kills with their victim but no deaths at all: each kill is also its victim's death,
+   * counted where the victim last was, by what the victim carried.
+   */
+  deathsFromKills?: boolean;
+  /**
+   * The scope's filters on the event (1 each): a view of kills and hits alone still counts the deaths in it,
+   * or every K/D would read n/0.
+   */
+  eventFilters?: Uint8Array | null;
 }
 
 /** How the difference split signs a row (`render/filterTables.ts` `SplitTable`). */
@@ -176,6 +192,13 @@ export interface BreakdownJob {
   /** Per person: the session its state belongs to (-1 none), and the carried values per column. */
   pSess: Int32Array | null;
   carry: Float64Array[];
+  /** Per person, where its last row was (x, y, z), for deaths worked out from kills (`deathsFromKills`). */
+  pos: Float32Array | null;
+  /** Per person, the step of its last row (`otherMany`), and the step counter. */
+  last: Int32Array | null;
+  step: number;
+  /** Per person, the time of its last death: a second death row at the same moment is the same death. */
+  deathAt: Float64Array | null;
   /** Instance (session, round, person or team) -> index; per index its result and factor bits. */
   inst: Map<number, number>;
   instWon: Int8Array;
@@ -201,6 +224,10 @@ export function createBreakdown(meta: BreakdownMeta, scope: BreakdownScope, side
     t: { a: 0, b: 0, rows: 0, kills: 0, deaths: 0, presence: 0, earn: 0, cost: 0, played: 0, won: 0 },
     pSess: P > 0 ? new Int32Array(P).fill(-1) : null,
     carry: P > 0 ? Array.from({ length: cols }, () => new Float64Array(P).fill(NaN)) : [],
+    pos: P > 0 && meta.deathsFromKills ? new Float32Array(P * 3).fill(NaN) : null,
+    last: P > 0 && meta.otherMany ? new Int32Array(P).fill(-1) : null,
+    step: 0,
+    deathAt: P > 0 ? new Float64Array(P).fill(NaN) : null,
     inst: new Map(),
     instWon: new Int8Array(1024).fill(-1),
     instBits: new Uint32Array(1024 * words),
@@ -250,7 +277,8 @@ function valueAt(job: BreakdownJob, k: number, data: ColumnSlice, j: number, p: 
   const miss = job.meta.missing[k];
   const absent = raw !== raw || (miss !== null && raw < miss.length && miss[raw] === 1);
   const carried = p >= 0 ? job.carry[k][p] : NaN;
-  if (death && carried === carried) return carried;
+  // A death row's own value may be the killer's (its weapon): the victim's is what it carried, or unknown.
+  if (death && p >= 0) return carried;
   return absent ? carried : raw;
 }
 
@@ -297,6 +325,21 @@ function add(o: { [K in keyof Sums]: Float64Array }, i: number, sa: number, sb: 
   o.cost[i] += cost;
 }
 
+/** The person the other-party category `c` names: the only one, or of several the one seen last in the match. */
+function otherOf(job: BreakdownJob, c: number, sess: number): number {
+  const m = job.meta;
+  const many = m.otherMany;
+  if (many && job.last && c + 1 < many.offs.length && many.offs[c + 1] - many.offs[c] > 1) {
+    let best = -1;
+    for (let q = many.offs[c]; q < many.offs[c + 1]; q++) {
+      const o = many.items[q];
+      if (job.pSess![o] === sess && (best < 0 || job.last[o] > job.last[best])) best = o;
+    }
+    return best;
+  }
+  return m.otherPerson ? m.otherPerson[c] ?? -1 : -1;
+}
+
 /** Fold one chunk into the job. Chunks come in row order: the carried state follows them. */
 export function stepBreakdown(job: BreakdownJob, ch: BreakdownChunk): void {
   const { meta, scope } = job;
@@ -315,12 +358,20 @@ export function stepBreakdown(job: BreakdownJob, ch: BreakdownChunk): void {
     if (p >= 0 && job.pSess![p] !== sess) {
       job.pSess![p] = sess;
       for (const c of job.carry) c[p] = NaN;
+      job.deathAt![p] = NaN;
+    }
+    // Some games log one death twice (War Thunder's `dead` and `death`, the same moment): counted once.
+    let dupDeath = false;
+    if (death && p >= 0 && ch.time) {
+      const at = ch.time[j];
+      dupDeath = Math.abs(at - job.deathAt![p]) < 1;
+      job.deathAt![p] = at;
     }
     // Values at the time, before this row updates what the person carries.
     let g = -1;
     if (dim && ch.dim) {
       if (opp) {
-        const o = (code === EV_KILL || code === EV_DEATH) && ch.other && meta.otherPerson ? meta.otherPerson[ch.other[j]] ?? -1 : -1;
+        const o = (code === EV_KILL || code === EV_DEATH) && ch.other && meta.otherPerson ? otherOf(job, ch.other[j], sess) : -1;
         g = o >= 0 && job.pSess![o] === sess ? groupOf(dim, job.carry[0][o]) : -1;
       } else g = groupOf(dim, valueAt(job, 0, ch.dim, j, p, death));
     }
@@ -355,14 +406,34 @@ export function stepBreakdown(job: BreakdownJob, ch: BreakdownChunk): void {
       for (let k = 0; k < nf; k++) carry(k + 1, ch.factors[k]);
     }
 
-    if (!rowShown(scope, ch as unknown as CompareChunk, j)) continue;
+    // A kill is its victim's death too, where the data logs no deaths: where the victim last was, by what it carried.
+    if (job.pos && code === EV_KILL && ch.other && meta.otherPerson) {
+      const o = otherOf(job, ch.other[j], sess);
+      if (o >= 0 && o !== p && rowShown(scope, ch as unknown as CompareChunk, j)) victimDeath(job, ch, j, o, sess, dim, opp, p, death);
+    }
+    if (job.last && p >= 0) job.last[p] = job.step++;
+    if (job.pos && p >= 0) {
+      job.pos[p * 3] = ch.px[j];
+      job.pos[p * 3 + 1] = ch.py[j];
+      job.pos[p * 3 + 2] = ch.pz[j];
+    }
+
+    if (!rowShown(scope, ch as unknown as CompareChunk, j)) {
+      // A death the event filter hides: counted as a death all the same, not as a row of the view.
+      if (death && !dupDeath && meta.eventFilters && rowShown(scope, ch as unknown as CompareChunk, j, meta.eventFilters) && inRegion(job, ch.px[j], ch.py[j], ch.pz[j])) {
+        job.t.deaths++;
+        if (g >= 0) job.g!.deaths[g]++;
+        for (let q = 0; q < nOn; q++) job.f.deaths[factorScratch[q]]++;
+      }
+      continue;
+    }
     if (!inRegion(job, ch.px[j], ch.py[j], ch.pz[j])) continue;
     job.shown++;
     const sgn = sideOf(job, ch, j);
     const sa = sgn > 0 ? 1 : 0;
     const sb = sgn < 0 ? 1 : 0;
     const kill = code === EV_KILL ? 1 : 0;
-    const dead = death ? 1 : 0;
+    const dead = death && !dupDeath ? 1 : 0;
     let pres = 0;
     if (code === EV_POSITION && ch.life) {
       const l = ch.life[j];
@@ -397,6 +468,40 @@ export function stepBreakdown(job: BreakdownJob, ch: BreakdownChunk): void {
         }
         if (g >= 0) job.instGroup.add(i * G + g);
       }
+    }
+  }
+}
+
+/** The victim's death of a kill row (`deathsFromKills`): counted in the totals, the victim's group and factors. */
+function victimDeath(job: BreakdownJob, ch: BreakdownChunk, j: number, o: number, sess: number, dim: DimSpec | null, opp: boolean, p: number, death: boolean): void {
+  const pos = job.pos!;
+  const known = job.pSess![o] === sess && pos[o * 3] === pos[o * 3];
+  const x = known ? pos[o * 3] : ch.px[j];
+  const y = known ? pos[o * 3 + 1] : ch.py[j];
+  const z = known ? pos[o * 3 + 2] : ch.pz[j];
+  if (!inRegion(job, x, y, z)) return;
+  job.t.deaths++;
+  if (dim && job.g) {
+    // Own: what the victim carried; opponent: the killer's, as the kill row has it.
+    const g = opp ? (ch.dim ? groupOf(dim, valueAt(job, 0, ch.dim, j, p, death)) : -1) : known ? groupOf(dim, job.carry[0][o]) : -1;
+    if (g >= 0) job.g.deaths[g]++;
+  }
+  if (!known) return;
+  const nf = job.meta.factors.length;
+  for (let k = 0; k < nf; k++) {
+    const v = job.carry[k + 1][o];
+    if (v !== v) continue;
+    const src = job.meta.factors[k];
+    if (src.kind === 'flag') {
+      if (v !== 0) job.f.deaths[src.factor]++;
+      continue;
+    }
+    const c = Math.trunc(v);
+    if (src.kind === 'cat') {
+      const f = c >= 0 && c < src.factorOf.length ? src.factorOf[c] : -1;
+      if (f >= 0) job.f.deaths[f]++;
+    } else if (c >= 0 && c + 1 < src.offs.length) {
+      for (let q = src.offs[c]; q < src.offs[c + 1]; q++) job.f.deaths[src.items[q]]++;
     }
   }
 }
