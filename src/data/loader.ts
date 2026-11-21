@@ -10,6 +10,7 @@ import type { DataSource } from './dataSource';
 import { coreEndpoint, inNativeApp } from './native/core';
 import { nativeRefs } from './native/files';
 import type { NativeLoad } from './native/readers';
+import { expandContainerFiles, isContainer } from './container';
 
 /** How a load may parse: files at once, and the RAM budget they share. */
 export interface ParseBudget {
@@ -46,6 +47,17 @@ type UnidentifiedRequest = WorkerRequest extends infer R
  * The worker speaks in messages, having no language of its own; they are said
  * here, in the viewer's, before anything reaches the UI.
  */
+/**
+ * The tables to read for `files`: each `.3dheat` container replaced by its
+ * tables, as the pickers do (`expandContainers`). Done here as well, so a
+ * caller that hands the loader a container itself (the dev hooks, a probe, a
+ * drop that bypassed the picker) never has it read as text. Files that hold no
+ * container come back as they are, without a wait.
+ */
+export async function tablesOf(files: File[]): Promise<File[]> {
+  return files.some((f) => isContainer(f.name)) ? expandContainerFiles(files) : files;
+}
+
 /** Shortest gap between two progress reports of one job, in milliseconds. */
 const PROGRESS_MS = 100;
 
@@ -166,27 +178,30 @@ export class Loader implements DataSource {
     });
   }
 
-  preview(file: File, delimiter?: string): Promise<SourcePreview> {
-    return this.send<SourcePreview>({ kind: 'preview', file, delimiter });
+  async preview(file: File, delimiter?: string): Promise<SourcePreview> {
+    // A container previews as its first table.
+    const [table = file] = await tablesOf([file]);
+    return this.send<SourcePreview>({ kind: 'preview', file: table, delimiter });
   }
 
   /** Exact row totals from Parquet footers; estimates for CSV. */
-  measure(files: File[]): Promise<SelectionSize> {
-    return this.send<SelectionSize>({ kind: 'measure', files });
+  async measure(files: File[]): Promise<SelectionSize> {
+    return this.send<SelectionSize>({ kind: 'measure', files: await tablesOf(files) });
   }
 
   /** Every column of a Parquet file, for the pre-filter and the column costs. */
-  profile(file: File): Promise<ColumnProfile[]> {
-    return this.send<ColumnProfile[]>({ kind: 'profile', file });
+  async profile(file: File): Promise<ColumnProfile[]> {
+    const [table = file] = await tablesOf([file]);
+    return this.send<ColumnProfile[]>({ kind: 'profile', file: table });
   }
 
   /** Rows a row filter keeps across a selection; a sample past `timeMs`. */
-  count(files: File[], clauses: RowFilterClause[], timeMs?: number): Promise<MatchCount> {
-    return this.send<MatchCount>({ kind: 'count', files, clauses, timeMs });
+  async count(files: File[], clauses: RowFilterClause[], timeMs?: number): Promise<MatchCount> {
+    return this.send<MatchCount>({ kind: 'count', files: await tablesOf(files), clauses, timeMs });
   }
 
   ingest(
-    files: File[],
+    picked: File[],
     mapping: ColumnMapping,
     columns: string[],
     name: string,
@@ -199,6 +214,11 @@ export class Loader implements DataSource {
      */
     budget?: ParseBudget,
   ): Promise<Dataset> {
+    // Containers opened first; without one the request goes out at once, as it always did.
+    if (picked.some((f) => isContainer(f.name))) {
+      return tablesOf(picked).then((files) => this.ingest(files, mapping, columns, name, stride, expectedRows, onProgress, budget));
+    }
+    const files = picked;
     const chosen = useStore.getState().budgets;
     const { threads, ram } = budget ?? { threads: chosen.cpu, ram: chosen.ram };
     const send = (native?: NativeLoad) =>
