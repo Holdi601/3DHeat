@@ -160,7 +160,8 @@ export interface Kit {
  * turret (`parent`, -1 for a hull or casemate gun).
  */
 export interface Joint {
-  kind: 'yaw' | 'pitch';
+  /** `spin`: a propeller or rotor, turning on its own about `axis` through `pivot` (`SPIN` in instances.ts). */
+  kind: 'yaw' | 'pitch' | 'spin';
   /** In the template frame (x forward, y up, z right), metres. */
   pivot: Vec3;
   /**
@@ -173,6 +174,9 @@ export interface Joint {
   rest: number;
   /** For a gun: the elevation it was built at, radians, up positive. */
   pitch?: number;
+  /** For a spinning part: its shaft (a unit vector, template frame) and its turns, radians a second at full power. */
+  axis?: Vec3;
+  rate?: number;
 }
 
 /** Adds a moving part to the kit and returns its index (vertices go into it with `into`). */

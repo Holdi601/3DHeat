@@ -25,7 +25,10 @@ export interface MeshPart {
   name: string;
   /** A turret's ring centre, a gun's trunnion; template frame, metres. */
   pivot: Vec3;
-  joint?: 'yaw' | 'pitch';
+  joint?: 'yaw' | 'pitch' | 'spin';
+  /** A spinning part's shaft and turns (radians a second at full power). */
+  axis?: Vec3;
+  rate?: number;
   /** The joint (index among the jointed parts) a gun rides on. */
   parent?: number;
   /** A turret's yaw as built, radians, right positive: PI for a ship's after turret (default 0). */
@@ -226,6 +229,7 @@ function buildLod(m: MeshFigureData, lod: number, base?: Template): Template {
         parent,
         rest: part.rest ?? 0,
         ...(part.joint === 'pitch' ? { pitch: 0 } : {}),
+        ...(part.joint === 'spin' ? { axis: part.axis ?? [1, 0, 0], rate: part.rate ?? 0 } : {}),
       });
       joints.push(j);
     }

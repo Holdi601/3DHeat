@@ -41,8 +41,11 @@ type Vec3 = [number, number, number];
 export interface ModelPart {
   name: string;
   pivot: Vec3;
-  joint?: 'yaw' | 'pitch';
+  joint?: 'yaw' | 'pitch' | 'spin';
   parent?: number;
+  /** A spinning part's shaft and turns, radians a second at full power. */
+  axis?: Vec3;
+  rate?: number;
   /** A turret's yaw as built, radians, right positive (PI: a ship's after turret). */
   rest?: number;
   track?: boolean;
@@ -150,7 +153,7 @@ const vec3 = (x: unknown): Vec3 | null =>
  * A pack model (`.glb` bytes in the layout above) as a mesh figure: its three levels of detail, 16-bit over their
  * common box, with the turret and gun as jointed parts. Throws on a file of another layout.
  */
-export function figureFromModelGlb(bytes: Uint8Array): ModelFigure {
+export function figureFromModelGlb(bytes: Uint8Array, scale = 1): ModelFigure {
   const { json: g, bin } = readGlb(bytes);
   const root = g.nodes.find((n) => n.name === 'unit');
   if (!root) throw new Error('no unit node');
@@ -194,11 +197,15 @@ export function figureFromModelGlb(bytes: Uint8Array): ModelFigure {
       const parent = on !== null ? jointIndex.get(on) : undefined;
       jointIndex.set(name, jointIndex.size);
       parts.push({ name, pivot, joint: 'pitch', ...(parent !== undefined ? { parent } : {}) });
-    } else {
-      parts.push({ name, pivot: [0, 0, 0] });
-      const axis = vec3(x.axis);
-      if (base === 'rotor' && !prop && pivot && axis && axis[0] > 0.9 && typeof x.diameter === 'number') prop = { at: pivot, diameter: x.diameter };
-    }
+    } else if (base === 'rotor' && pivot && vec3(x.axis)) {
+      // A propeller or rotor spins on its own (a joint of its own kind): seen turning, not strobing at 60 frames a
+      // second - a main rotor 3 turns a second, a tail rotor or propeller 6, the faint disc showing the speed.
+      const axis = vec3(x.axis)!;
+      const main = Math.abs(axis[1]) > 0.9;
+      jointIndex.set(name, jointIndex.size);
+      parts.push({ name, pivot, joint: 'spin', axis, rate: 2 * Math.PI * (main ? 3 : 6) });
+      if (!prop && axis[0] > 0.9 && typeof x.diameter === 'number') prop = { at: pivot, diameter: x.diameter };
+    } else parts.push({ name, pivot: [0, 0, 0] });
     order.push(name);
   }
   const lo = [Infinity, Infinity, Infinity];
@@ -239,9 +246,15 @@ export function figureFromModelGlb(bytes: Uint8Array): ModelFigure {
     return out;
   });
   while (words.length < 3) words.push(words[words.length - 1]);
+  // A pack whose models are in another measure than its game's data (`scale` in its index): the box and the pivots
+  // scaled, the 16-bit positions span the box whatever it is.
+  if (scale !== 1) {
+    for (const q of parts) q.pivot = [q.pivot[0] * scale, q.pivot[1] * scale, q.pivot[2] * scale];
+    if (prop) prop = { at: [prop.at[0] * scale, prop.at[1] * scale, prop.at[2] * scale], diameter: prop.diameter * scale };
+  }
   return {
     anchor: meta.anchor === 'centre' ? 'centre' : 'ground',
-    box: [...lo, ...hi],
+    box: [...lo, ...hi].map((x) => x * scale),
     parts,
     crease: 50,
     lods: words.slice(0, 3),

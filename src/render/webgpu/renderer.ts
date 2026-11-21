@@ -3429,6 +3429,8 @@ export class WebgpuRenderer implements Renderer {
     u[16] = params.cameraPos[0];
     u[17] = params.cameraPos[1];
     u[18] = params.cameraPos[2];
+    // The figures' spinning parts' clock (camera.w): seconds, wrapped before float32 loses the fraction.
+    u[19] = (performance.now() / 1000) % 3600;
     u[20] = fadeStart;
     u[21] = fadeEnd;
     u[22] = size;

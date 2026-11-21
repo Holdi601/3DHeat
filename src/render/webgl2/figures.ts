@@ -122,6 +122,7 @@ export class GlFigures {
     this.u.f1('uFadeStart', 1e9);
     this.u.f1('uFadeEnd', 1e9 + 1);
     this.u.f1('uAlphaPass', pass);
+    this.u.f1('uSpinTime', (performance.now() / 1000) % 3600);
     gl.enable(gl.BLEND);
     gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     gl.depthMask(pass !== 2);

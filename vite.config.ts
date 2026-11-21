@@ -295,6 +295,8 @@ function modelPack(): Plugin {
     dir: string;
     files: Record<string, string>;
     units: Record<string, PackUnit>;
+    /** The pack's `scale`: its models' metres to the game's (a Dota pack's inches-as-metres to the data's units). */
+    scale: number;
   }
   const packs = new Map<string, Pack>();
   const bodies = new Map<string, Buffer>();
@@ -305,7 +307,7 @@ function modelPack(): Plugin {
     if (had?.key === key) return had;
     packs.delete(p);
     type Entry = { file?: string; domain?: string; type?: string; kind?: string; name?: string; names?: unknown; aliases?: unknown; key?: string; gameBuild?: string; source?: string };
-    const pack = JSON.parse(readFileSync(p, 'utf8')) as { format?: string; version?: number; game?: string; units?: Record<string, Entry> };
+    const pack = JSON.parse(readFileSync(p, 'utf8')) as { format?: string; version?: number; game?: string; scale?: number; units?: Record<string, Entry> };
     if (!pack || pack.format !== '3dheat-model-pack' || pack.version !== 1 || typeof pack.units !== 'object') return null;
     const game = String(pack.game ?? 'game').toLowerCase().replace(/[^a-z0-9_-]/g, '');
     const files: Record<string, string> = {};
@@ -314,7 +316,7 @@ function modelPack(): Plugin {
       if (!e || typeof e.file !== 'string' || /[\\/]|\.\./.test(e.file)) continue;
       const unit = id.toLowerCase();
       files[unit] = e.file;
-      const tag = createHash('sha1').update(`${e.file}|${e.key ?? ''}|${e.gameBuild ?? ''}|${e.source ?? ''}`).digest('hex').slice(0, 16);
+      const tag = createHash('sha1').update(`${e.file}|${e.key ?? ''}|${e.gameBuild ?? ''}|${e.source ?? ''}|${pack.scale ?? 1}`).digest('hex').slice(0, 16);
       const strings = (x: unknown) => (Array.isArray(x) ? x.filter((a): a is string => typeof a === 'string') : []);
       const aliases = strings(e.aliases);
       const names = strings(e.names);
@@ -328,7 +330,8 @@ function modelPack(): Plugin {
         ...(aliases.length ? { aliases } : {}),
       };
     }
-    const out = { key, game, dir: p.replace(/[\\/][^\\/]+$/, ''), files, units };
+    const scale = typeof pack.scale === 'number' && pack.scale > 0 ? pack.scale : 1;
+    const out = { key, game, dir: p.replace(/[\\/][^\\/]+$/, ''), files, units, scale };
     packs.set(p, out);
     return out;
   };
@@ -433,7 +436,7 @@ function modelPack(): Plugin {
       if (!body) {
         let raw: Buffer;
         try {
-          raw = Buffer.from(encodePackFigure(figureFromModelGlb(readFileSync(`${pack.dir}/${pack.files[unit]}`))));
+          raw = Buffer.from(encodePackFigure(figureFromModelGlb(readFileSync(`${pack.dir}/${pack.files[unit]}`), pack.scale)));
         } catch {
           res.statusCode = 404;
           res.end();

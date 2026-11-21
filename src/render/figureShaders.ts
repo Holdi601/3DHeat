@@ -167,6 +167,15 @@ function glslArticulate(): string {
   return `
 vec3 articulate(vec3 v, float yaw, float pitch, bool point) {
   float kind = aArt0.x;
+  if (kind > 3.5) {
+    // A propeller or rotor: turned about its shaft by the clock, at the power the gun elevation slot carries.
+    float power = pitch < -100.5 ? clamp((-101.0 - pitch) / 98.0, 0.0, 1.0) : 1.0;
+    float a = uSpinTime * aArt1.w * power;
+    vec3 k = aArt1.xyz;
+    vec3 c0 = point ? aArt0.yzw : vec3(0.0);
+    vec3 w = v - c0;
+    return c0 + w * cos(a) + cross(k, w) * sin(a) + k * dot(k, w) * (1.0 - cos(a));
+  }
   if (kind >= 1.5 && pitch > ${f(NO_PITCH_BELOW)}) {
     vec3 d = vec3(cos(aArt1.w), 0.0, sin(aArt1.w));
     vec3 tr = point ? aArt1.xyz : vec3(0.0);
@@ -196,6 +205,16 @@ function wgslArticulate(): string {
 fn articulate(v0 : vec3<f32>, yaw : f32, pitch : f32, point : bool, art0 : vec4<f32>, art1 : vec4<f32>, art2 : vec4<f32>) -> vec3<f32> {
   var v = v0;
   let kind = art0.x;
+  if (kind > 3.5) {
+    var power = 1.0;
+    if (pitch < -100.5) { power = clamp((-101.0 - pitch) / 98.0, 0.0, 1.0); }
+    let a = u.camera.w * art1.w * power;
+    let k = art1.xyz;
+    var c0 = vec3<f32>(0.0);
+    if (point) { c0 = art0.yzw; }
+    let w = v - c0;
+    return c0 + w * cos(a) + cross(k, w) * sin(a) + k * dot(k, w) * (1.0 - cos(a));
+  }
   if (kind >= 1.5 && pitch > ${f(NO_PITCH_BELOW)}) {
     let d = vec3<f32>(cos(art1.w), 0.0, sin(art1.w));
     var tr = vec3<f32>(0.0);
@@ -237,6 +256,8 @@ layout(location = 8) in vec4 aArt0;     // kind, turret pivot x, z, turret built
 layout(location = 9) in vec4 aArt1;     // trunnion x, y, z, gun built yaw
 layout(location = 10) in vec4 aArt2;    // gun built elevation
 uniform mat4 uViewProj;
+// Seconds on the scene's clock (wrapped), for spinning parts.
+uniform float uSpinTime;
 out vec4 vColor;
 out vec3 vWorld;
 out vec3 vEdge;

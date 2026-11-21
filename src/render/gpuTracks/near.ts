@@ -10,9 +10,10 @@
  * The test and the sizes are the place shader's (`shader.ts`).
  */
 
+import type { Dataset } from '../../state/types';
 import { fallbackWord } from '../../figures/symbolClass';
 import { FADE_FROM, farLook, WEAPON_PX } from '../symbols/lod';
-import { INSTANCE_STRIDE, NO_PITCH, type FigureBatch } from '../../figures/instances';
+import { INSTANCE_STRIDE, NO_PITCH, spinPitch, type FigureBatch } from '../../figures/instances';
 import { aimOf, type AimNow } from '../../figures/aim';
 import { emptyPose, evaluateTrack } from './evaluate';
 import { keyTime, TRACK_U32, trackDeadAt, type GpuTrackStore } from './store';
@@ -108,6 +109,29 @@ class Runs {
   }
 }
 
+/**
+ * A unit's propellers' and rotors' power from its row (`spinPitch`): its throttle (0-1 or per cent) above an idle of
+ * 0.3 while the engine turns, none when its rpm says it stands; null for data without a throttle column (they spin
+ * at full power).
+ */
+const spinCache = new WeakMap<Dataset, ((row: number) => number) | null>();
+function spinOf(d: Dataset): ((row: number) => number) | null {
+  let f = spinCache.get(d);
+  if (f !== undefined) return f;
+  const col = (re: RegExp) => d.attrs.find((a) => a.kind !== 'category' && re.test(a.name.trim()))?.data as Float32Array | undefined;
+  const thr = col(/^throttle$/i);
+  const rpm = col(/^rpm$/i);
+  f = thr
+    ? (row: number) => {
+        if (rpm && rpm[row] <= 0) return spinPitch(0);
+        const t = thr[row];
+        return Number.isFinite(t) ? spinPitch(0.3 + 0.7 * Math.min(1, Math.max(0, t > 1.5 ? t / 100 : t))) : NO_PITCH;
+      }
+    : null;
+  spinCache.set(d, f);
+  return f;
+}
+
 const pose = emptyPose();
 const aimNow: AimNow = { yaw: NaN, pitch: NaN };
 
@@ -126,6 +150,7 @@ export function nearFigures(s: GpuTrackStore, f: NearFrame, limit = 20000): Figu
   const m = f.viewProj;
   // Turrets and guns as the data has them now, where it has them and the keys have rows.
   const aim = s.keysAim && s.keyRow ? aimOf(s.dataset) : null;
+  const spin = s.keyRow ? spinOf(s.dataset) : null;
   let n = 0;
   const mode = f.farMode ?? 1;
   const T = f.symbolThreshold ?? 36;
@@ -193,7 +218,7 @@ export function nearFigures(s: GpuTrackStore, f: NearFrame, limit = 20000): Figu
       out[13] = -w[1];
       out[14] = -w[2];
     }
-    out[15] = aim && Number.isFinite(aimNow.pitch) ? aimNow.pitch : NO_PITCH;
+    out[15] = aim && Number.isFinite(aimNow.pitch) ? aimNow.pitch : spin ? spin(s.keyRow![pose.key]) : NO_PITCH;
     n++;
   }
   return runs.batches(s);

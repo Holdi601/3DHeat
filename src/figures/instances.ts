@@ -179,8 +179,29 @@ export function carrierOf(joints: Joint[], j: Joint): Joint {
   return c;
 }
 
+/**
+ * A spinning part's power in an instance's gun elevation slot, where the data says (throttle): `spinPitch(f)` for f
+ * in 0..1, below every real elevation and every dart's word. A plain `NO_PITCH` spins at full power (`SPIN`).
+ */
+export function spinPitch(f: number): number {
+  return -101 - Math.max(0, Math.min(1, f)) * 98;
+}
+
 /** A vertex's movement (the 12 floats after its tint) for the joint it moves with. */
 function writeJoint(out: Float32Array, o: number, j: Joint, parent: Joint | undefined, joints: Joint[]): void {
+  if (j.kind === 'spin') {
+    // Kind 4: the pivot, the shaft and the turns a second; the GPU turns it by the scene's clock (`figureShaders.ts`).
+    const a = j.axis ?? [1, 0, 0];
+    out[o] = 4;
+    out[o + 1] = j.pivot[0];
+    out[o + 2] = j.pivot[1];
+    out[o + 3] = j.pivot[2];
+    out[o + 4] = a[0];
+    out[o + 5] = a[1];
+    out[o + 6] = a[2];
+    out[o + 7] = j.rate ?? 0;
+    return;
+  }
   if (j.kind === 'yaw') {
     const c = carrierOf(joints, j);
     out[o] = 1;
@@ -212,7 +233,7 @@ function writeJoint(out: Float32Array, o: number, j: Joint, parent: Joint | unde
  */
 export function articulate(m: Float32Array, p: number, x: number, y: number, z: number, yaw: number, pitch: number, point: boolean, out: number[]): void {
   const kind = m[p + 12];
-  if (kind >= 1.5 && pitch > NO_PITCH_BELOW) {
+  if (kind >= 1.5 && kind < 3.5 && pitch > NO_PITCH_BELOW) {
     const gr = m[p + 19];
     const dx = Math.cos(gr);
     const dz = Math.sin(gr);
