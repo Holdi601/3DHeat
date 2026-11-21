@@ -13,6 +13,7 @@
  */
 
 import { BASE_LAYER, baseLayer, emptyPlan, newId, type Plan, type PlanFigure, type PlanTeam, type Vec3 } from '../plan';
+import { taskDef, type PlanTask, type TaskKind } from '../tasks';
 import { gamePreset } from '../games';
 import { figureFor } from '../../figures/match';
 import { CATALOG } from '../../figures/catalog';
@@ -37,8 +38,33 @@ export interface MissionUnit {
   player?: boolean;
 }
 
+/**
+ * A task a mission gives a group at a waypoint (DCS waypoint tasks and
+ * options, Arma waypoint types, combat modes and behaviours), as the board's
+ * task where the reader knows one (`tasks.ts`), else by the game's name.
+ */
+export interface MissionTask {
+  /** The game's own name for it. */
+  name: string;
+  kind?: TaskKind;
+  /** Where it acts, board coordinates: a target, an area's middle and edge, an orbit's anchor and far end. Absent: the waypoint. */
+  points?: Vec3[];
+  /** Metres: a sector's or an orbit turn's radius. */
+  range?: number;
+  /** An orbit's height, board y (metres above the board's zero). */
+  altitude?: number;
+  /** Metres a second. */
+  speed?: number;
+  duration?: number;
+  loops?: number;
+  /** A weapons or alarm state (`tasks.ts` ROE_STATES, ALARM_STATES). */
+  state?: string;
+}
+
 export interface MissionWaypoint {
   at: Vec3;
+  /** What the group does there. */
+  tasks?: MissionTask[];
   /** Speed on the leg to it, m/s, when the mission sets one. */
   speed?: number;
   /** Seconds from the mission's start it is to be reached, when the mission holds it to that. */
@@ -53,6 +79,8 @@ export interface MissionGroup {
   units: MissionUnit[];
   /** Its route, the first point where it starts. */
   route: MissionWaypoint[];
+  /** The group's own task from the start (DCS's main task), when it has one. */
+  task?: MissionTask;
 }
 
 export interface MissionPlace {
@@ -136,6 +164,7 @@ export function missionToPlan(m: MissionState): Plan {
   for (const g of m.groups) {
     const layer = layerOfSide.get(g.side);
     const lead = g.units[0];
+    const first = plan.figures.length;
     for (const u of g.units) {
       const kind = figureOfUnit(u);
       const f: PlanFigure = { id: newId('f'), kind, team: team(g.side), label: u.name || figureLabel(kind), keys: { 0: { ...u.at, yaw: u.yaw } }, from: 0, ...(layer && layer !== BASE_LAYER ? { layer } : {}) };
@@ -160,6 +189,34 @@ export function missionToPlan(m: MissionState): Plan {
         });
       }
     }
+    // The group's tasks: one task for all its units, at the waypoint the mission gives it.
+    const ids = plan.figures.slice(first).filter((f) => !f.kind.includes('base')).map((f) => f.id);
+    const routed = g.route.length >= 2 && g.category !== 'static';
+    const make = (t: MissionTask, at: Vec3, point: number | null) => {
+      const kind = t.kind ?? 'game';
+      const pts = t.points ?? (taskDef(kind).min > 0 || kind === 'orbit' ? [at] : undefined);
+      const task: PlanTask = {
+        id: newId('k'),
+        kind,
+        team: team(g.side),
+        figures: ids,
+        step: 0,
+        label: t.name,
+        ...(kind === 'game' ? { game: t.name } : {}),
+        ...(point !== null && routed ? { on: { step: 0, from: point } } : { start: 0 }),
+        ...(pts ? { points: pts } : {}),
+        ...(t.range ? { range: t.range } : {}),
+        ...(t.altitude !== undefined && pts?.length ? { altitude: t.altitude - pts[0].y } : {}),
+        ...(t.speed ? { speed: t.speed } : {}),
+        ...(t.duration ? { duration: t.duration } : {}),
+        ...(t.loops ? { loops: t.loops } : {}),
+        ...(t.state ? { state: t.state } : {}),
+        ...(layer ? { layer } : {}),
+      };
+      plan.tasks.push(task);
+    };
+    if (ids.length && g.task) make(g.task, g.route[0]?.at ?? lead?.at ?? { x: 0, y: 0, z: 0 }, null);
+    if (ids.length) g.route.forEach((w, i) => w.tasks?.forEach((t) => make(t, w.at, i)));
   }
   const seen = new Set<string>();
   for (const p of m.places) {

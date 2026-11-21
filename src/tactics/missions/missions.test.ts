@@ -220,3 +220,37 @@ describe('Arma missions', () => {
     expect(armaCategory('I_Boat_Transport_01_F').hint).toBe('patrol-boat');
   });
 });
+
+describe('mission tasks', () => {
+  it('reads DCS waypoint tasks and options as board tasks, unknown ones by their names', () => {
+    const lua = `mission = { ["theatre"] = "Caucasus", ["coalition"] = { ["blue"] = { ["country"] = { [1] = { ["plane"] = { ["group"] = { [1] = { ["name"] = "Viper", ["task"] = "CAP",
+      ["units"] = { [1] = { ["type"] = "F-16C_50", ["name"] = "Viper 1-1", ["x"] = 0, ["y"] = 0, ["alt"] = 500 } },
+      ["route"] = { ["points"] = {
+        [1] = { ["x"] = 0, ["y"] = 0, ["alt"] = 500 },
+        [2] = { ["x"] = 9000, ["y"] = 0, ["alt"] = 5000, ["speed"] = 200, ["task"] = { ["id"] = "ComboTask", ["params"] = { ["tasks"] = {
+          [1] = { ["id"] = "WrappedAction", ["enabled"] = true, ["params"] = { ["action"] = { ["id"] = "Option", ["params"] = { ["name"] = 0, ["value"] = 4 } } } },
+          [2] = { ["id"] = "Orbit", ["enabled"] = true, ["params"] = { ["pattern"] = "Race-Track", ["altitude"] = 6000, ["speed"] = 220 } },
+          [3] = { ["id"] = "Tanker", ["enabled"] = true, ["params"] = {} } } } } },
+        [3] = { ["x"] = 9000, ["y"] = 20000, ["alt"] = 5000 } } } } } } } } } } }`;
+    const plan = missionToPlan(readDcsMission(parseLuaAssignments(lua).mission as never, null, 'x.miz'));
+    const kinds = plan.tasks.map((t) => `${t.kind}${t.game ? `:${t.game}` : ''}${t.state ? `=${t.state}` : ''}`);
+    expect(kinds).toEqual(['game:CAP', 'roe=hold', 'orbit', 'game:Tanker']);
+    const orbit = plan.tasks.find((t) => t.kind === 'orbit')!;
+    expect(orbit.on).toEqual({ step: 0, from: 1 });
+    expect(orbit.points?.map((p) => [p.x, p.z])).toEqual([[9000, 0], [9000, 20000]]);
+    expect(orbit.altitude).toBe(1000);
+    expect(orbit.speed).toBe(220);
+    expect(orbit.figures).toEqual([plan.figures[0].id]);
+  });
+
+  it('reads Arma waypoint types, combat modes and behaviours as board tasks', () => {
+    const sqm = EDEN.replace('type="MOVE"; }; };', 'type="SAD"; combatMode="GREEN"; behaviour="STEALTH"; }; };');
+    const plan = missionToPlan(readArmaMission(sqm, 'mission.sqm'));
+    const kinds = plan.tasks.map((t) => `${t.kind}${t.state ? `=${t.state}` : ''}`);
+    expect(kinds).toEqual(['sweep', 'roe=return', 'alarm=stealth']);
+    expect(plan.tasks[0].figures).toHaveLength(2);
+    expect(plan.tasks[0].points).toHaveLength(2);
+    const odd = missionToPlan(readArmaMission(EDEN.replace('type="MOVE"', 'type="GETOUT"'), 'mission.sqm'));
+    expect(odd.tasks.map((t) => [t.kind, t.game])).toEqual([['game', 'GETOUT']]);
+  });
+});

@@ -15,7 +15,81 @@
 
 import { zipEntries } from '../../data/zip';
 import { luaList, luaNum, luaStr, luaTable, parseLuaAssignments, type LuaTable, type LuaValue } from './lua';
-import type { MissionGroup, MissionImporter, MissionPlace, MissionState, UnitCategory } from './index';
+import type { MissionGroup, MissionImporter, MissionPlace, MissionState, MissionTask, UnitCategory } from './index';
+import type { TaskKind } from '../tasks';
+
+/** DCS task ids the board has a task for. */
+const DCS_TASKS: Record<string, TaskKind> = {
+  Orbit: 'orbit',
+  AttackGroup: 'attack',
+  AttackUnit: 'attack',
+  AttackMapObject: 'attack',
+  Strafing: 'attack',
+  Bombing: 'strike',
+  BombingRunway: 'strike',
+  CarpetBombing: 'strike',
+  FireAtPoint: 'suppress',
+  Escort: 'escort',
+  GroundEscort: 'escort',
+  Follow: 'follow',
+  followBigFormation: 'follow',
+  Hold: 'hold',
+  FAC: 'recon',
+  FAC_AttackGroup: 'recon',
+  FAC_EngageGroup: 'recon',
+};
+
+/** DCS's group main tasks the board has a task for; the rest come in by their names. */
+const DCS_MAIN: Record<string, TaskKind> = { Reconnaissance: 'recon', AFAC: 'recon' };
+
+/** ROE option values: air 0-2 weapons free, 3 return fire, 4 weapons hold (ground and ships 2-4 alike). */
+const ROE: Record<number, string> = { 0: 'free', 1: 'free', 2: 'free', 3: 'return', 4: 'hold' };
+const ALARM: Record<number, string> = { 0: 'auto', 1: 'green', 2: 'red' };
+
+/**
+ * A waypoint's tasks (`task.params.tasks`, a ComboTask's list): each by the
+ * board's task where it has one - an orbit with its pattern, height and
+ * speed, an attack or a bombing at its point, the ROE and alarm state
+ * options as weapons and alarm states - else by its DCS id.
+ */
+export function dcsWaypointTasks(p: LuaTable, at: { x: number; y: number; z: number }): MissionTask[] {
+  const out: MissionTask[] = [];
+  const list = luaList(luaTable(luaTable(p.task)?.params)?.tasks);
+  for (const tv of list) {
+    const t = luaTable(tv);
+    if (!t || t.enabled === false) continue;
+    const id = luaStr(t.id);
+    const params = luaTable(t.params);
+    if (id === 'WrappedAction') {
+      const action = luaTable(params?.action);
+      const ap = luaTable(action?.params);
+      const aid = luaStr(action?.id);
+      if (aid === 'Option' && ap) {
+        const name = luaNum(ap.name, -1);
+        const value = luaNum(ap.value, -1);
+        if (name === 0 && ROE[value]) out.push({ name: 'ROE', kind: 'roe', state: ROE[value] });
+        else if (name === 9 && ALARM[value]) out.push({ name: 'Alarm State', kind: 'alarm', state: ALARM[value] });
+        continue;
+      }
+      if (aid) out.push({ name: aid });
+      continue;
+    }
+    if (!id || id === 'ComboTask') continue;
+    const kind = DCS_TASKS[id];
+    const pt = params && typeof params.x === 'number' && typeof params.y === 'number' ? { x: luaNum(params.x), y: at.y, z: luaNum(params.y) } : null;
+    const task: MissionTask = { name: id, ...(kind ? { kind } : {}) };
+    if (kind === 'orbit') {
+      const alt = luaNum(params?.altitude, NaN);
+      const speed = luaNum(params?.speed, 0);
+      if (Number.isFinite(alt)) task.altitude = alt;
+      if (speed > 0) task.speed = speed;
+      if (luaStr(params?.pattern) === 'Race-Track') task.points = [at];
+    } else if (pt && kind) task.points = [pt];
+    if (kind === 'suppress' && params) task.range = luaNum(params.radius, 0) || undefined;
+    out.push(task);
+  }
+  return out;
+}
 
 const SIDES: { key: string; id: string; name: string; color: [number, number, number] }[] = [
   { key: 'blue', id: 'blue', name: 'Blue', color: [0.26, 0.55, 0.95] },
@@ -89,10 +163,15 @@ export function readDcsMission(mission: LuaTable, dictionary: LuaTable | null, n
               if (airdrome >= 0 && !airbases.has(airdrome)) airbases.set(airdrome, { ...at, side: s.id });
               const eta = p.ETA_locked === true ? luaNum(p.ETA, -1) : -1;
               const speed = luaNum(p.speed, 0);
-              return { at, ...(speed > 0 ? { speed } : {}), ...(eta > 0 ? { eta } : {}), ...(typeof p.name === 'string' && p.name ? { name: dict(p.name) } : {}) };
+              const tasks = dcsWaypointTasks(p, at);
+              return { at, ...(speed > 0 ? { speed } : {}), ...(eta > 0 ? { eta } : {}), ...(typeof p.name === 'string' && p.name ? { name: dict(p.name) } : {}), ...(tasks.length ? { tasks } : {}) };
             });
+          // A racetrack runs from its waypoint to the next one.
+          route.forEach((w, i) => w.tasks?.forEach((t) => t.kind === 'orbit' && t.points && route[i + 1] && (t.points = [w.at, route[i + 1].at])));
           if (!units.length) continue;
-          groups.push({ name: dict(luaStr(g.name)), side: s.id, category: cat.category, units, route });
+          const main = luaStr(g.task);
+          const task: MissionTask | undefined = main && main !== 'Nothing' ? { name: main, ...(DCS_MAIN[main] ? { kind: DCS_MAIN[main] } : {}) } : undefined;
+          groups.push({ name: dict(luaStr(g.name)), side: s.id, category: cat.category, units, route, ...(task ? { task } : {}) });
         }
       }
     }

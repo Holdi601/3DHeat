@@ -10,7 +10,48 @@
  */
 
 import { isBinarisedSqm, parseSqm, sqmClass, sqmItems, sqmList, sqmNum, sqmStr, type SqmClass } from './sqm';
-import type { MissionGroup, MissionImporter, MissionPlace, MissionState, MissionUnit, MissionWaypoint, UnitCategory } from './index';
+import type { MissionGroup, MissionImporter, MissionPlace, MissionState, MissionTask, MissionUnit, MissionWaypoint, UnitCategory } from './index';
+import type { TaskKind } from '../tasks';
+
+/** Arma waypoint types the board has a task for; MOVE is the waypoint itself, the rest come in by their names. */
+const ARMA_TYPES: Record<string, TaskKind | null> = {
+  MOVE: null,
+  SAD: 'sweep',
+  DESTROY: 'attack',
+  GUARD: 'guard',
+  HOLD: 'hold',
+  SENTRY: 'screen',
+  SUPPORT: 'overwatch',
+  CYCLE: 'patrol',
+  LOITER: 'orbit',
+};
+/** Combat modes as weapons states: BLUE never fire, GREEN hold fire but defend, WHITE hold fire and engage, YELLOW / RED fire at will. */
+const COMBAT: Record<string, string> = { BLUE: 'hold', GREEN: 'return', WHITE: 'tight', YELLOW: 'free', RED: 'free' };
+const BEHAVIOUR: Record<string, string> = { CARELESS: 'safe', SAFE: 'safe', AWARE: 'aware', COMBAT: 'combat', STEALTH: 'stealth' };
+
+/**
+ * A waypoint's tasks: its type as the board's task (a search and destroy a
+ * sweep of the ground round it, a CYCLE a patrol back round the route), its
+ * combat mode as a weapons state and its behaviour as an alarm state.
+ * `route` is the group's points so far, for a CYCLE.
+ */
+export function armaWaypointTasks(w: SqmClass, at: { x: number; y: number; z: number }, route: { x: number; y: number; z: number }[]): MissionTask[] {
+  const out: MissionTask[] = [];
+  const attrs = sqmClass(w.Attributes);
+  const type = sqmStr(w.type).toUpperCase();
+  if (type && type in ARMA_TYPES) {
+    const kind = ARMA_TYPES[type];
+    if (kind === 'sweep') out.push({ name: type, kind, points: [at, { x: at.x + 50, y: at.y, z: at.z }] });
+    else if (kind === 'patrol') out.push({ name: type, kind, points: route.length >= 2 ? route.slice() : [at], loops: 2 });
+    else if (kind === 'orbit') out.push({ name: type, kind, points: [at], range: sqmNum(w.loiterRadius ?? attrs?.loiterRadius, 0) || undefined });
+    else if (kind) out.push({ name: type, kind });
+  } else if (type) out.push({ name: type });
+  const combat = sqmStr(w.combatMode ?? attrs?.combatMode).toUpperCase();
+  if (COMBAT[combat]) out.push({ name: combat, kind: 'roe', state: COMBAT[combat] });
+  const behaviour = sqmStr(w.behaviour ?? attrs?.behaviour).toUpperCase();
+  if (BEHAVIOUR[behaviour]) out.push({ name: behaviour, kind: 'alarm', state: BEHAVIOUR[behaviour] });
+  return out;
+}
 
 const SIDES: { re: RegExp; id: string; name: string; color: [number, number, number] }[] = [
   { re: /^(west|blufor)$/i, id: 'blufor', name: 'BLUFOR', color: [0.26, 0.55, 0.95] },
@@ -54,11 +95,16 @@ function edenUnit(o: SqmClass): MissionUnit | null {
   return { name: sqmStr(attrs?.name) || sqmStr(attrs?.description) || type, type, ...(cat.hint ? { figure: cat.hint } : {}), category: cat.category, at: world(pos), yaw, ...((attrs?.isPlayer ?? attrs?.isPlayable) ? { player: true } : {}) };
 }
 
-function waypointsOf(g: SqmClass): MissionWaypoint[] {
+function waypointsOf(g: SqmClass, start?: { x: number; y: number; z: number }): MissionWaypoint[] {
+  const seen: { x: number; y: number; z: number }[] = start ? [start] : [];
   return sqmItems(g.Waypoints)
     .map((w) => {
       const pos = sqmList(sqmClass(w.PositionInfo)?.position ?? w.position);
-      return pos.length >= 3 ? { at: world(pos), ...(sqmStr(w.type) ? { name: sqmStr(w.type) } : {}) } : null;
+      if (pos.length < 3) return null;
+      const at = world(pos);
+      const tasks = armaWaypointTasks(w, at, [...seen, at]);
+      seen.push(at);
+      return { at, ...(sqmStr(w.type) ? { name: sqmStr(w.type) } : {}), ...(tasks.length ? { tasks } : {}) };
     })
     .filter((w): w is MissionWaypoint => !!w);
 }
@@ -73,7 +119,7 @@ function walkEden(entities: SqmClass | null, groups: MissionGroup[], places: Mis
         .map(edenUnit)
         .filter((u): u is MissionUnit => !!u);
       if (!units.length) continue;
-      const route = waypointsOf(it);
+      const route = waypointsOf(it, units[0].at);
       groups.push({ name: sqmStr(sqmClass(it.Attributes)?.name) || `Group ${groups.length + 1}`, side: sideOf(sqmStr(it.side)), category: units[0].category, units, route: route.length ? [{ at: units[0].at }, ...route] : [] });
     } else if (dt === 'object') {
       // An object of no group: an empty vehicle or a prop.
@@ -103,7 +149,7 @@ function walkLegacy(mission: SqmClass, groups: MissionGroup[], places: MissionPl
       })
       .filter((u): u is MissionUnit => !!u);
     if (!units.length) continue;
-    const route = waypointsOf(g);
+    const route = waypointsOf(g, units[0].at);
     groups.push({ name: `Group ${groups.length + 1}`, side: sideOf(sqmStr(g.side)), category: units[0].category, units, route: route.length ? [{ at: units[0].at }, ...route] : [] });
   }
   for (const m of sqmItems(mission.Markers)) {
