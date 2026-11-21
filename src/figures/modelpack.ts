@@ -69,6 +69,8 @@ export interface ModelPackUnit {
   tag: string;
   domain?: string;
   type?: string;
+  /** What the game's tool calls the unit ("helicopter", "mbt"): tells a helicopter from an aeroplane. */
+  kind?: string;
   /** The real vehicle's name, the same in every game's pack ("T-80UD"): what other games' units are matched on. */
   name?: string;
   /** More names of the same vehicle (a long form beside the short one). */

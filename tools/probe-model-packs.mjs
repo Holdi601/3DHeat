@@ -7,7 +7,9 @@
  * the recording's vehicle types a catalogue names and how many of those a pack
  * model stands in for, and the frame intervals' median, p99 and max.
  *
- *   node tools/probe-model-packs.mjs --data=<file.3dheat|parquet> [--url=http://127.0.0.1:5273/]
+ *   node tools/probe-model-packs.mjs --data=<file.3dheat|parquet> [--url=http://127.0.0.1:5273/] [--list]
+ *
+ * `--list` also prints each vehicle type and the model it is drawn as (or "figure").
  */
 
 import { chromium } from 'playwright';
@@ -48,25 +50,18 @@ async function run(packs) {
     // The recording's vehicle types, and which a catalogue lists and a pack model stands in for.
     const col = d.attrs.find((a) => /^(vehicle|name|unittype)$/i.test(a.name.trim()) && a.kind === 'category');
     const types = new Set((col?.categories ?? []).map((c) => c.toLowerCase()));
-    const key = (s) => String(s ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+    // What the app itself made of them: a type drawn as a pack model has a `@model:` figure in the alias table.
     let listed = 0;
     let modelled = 0;
+    const drawn = [];
     try {
-      const [cr, pr] = await Promise.all([fetch('/__heat3d/unit-catalogs'), fetch('/__heat3d/model-pack')]);
-      const cats = cr.status === 200 ? await cr.json() : { games: [] };
-      const packsIdx = pr.status === 200 ? await pr.json() : { packs: [] };
-      const names = new Set();
-      const ids = new Set();
-      for (const p of packsIdx.packs) for (const [u, e] of Object.entries(p.units)) {
-        ids.add(u.toLowerCase());
-        for (const n of [e.name, ...(e.names ?? [])]) if (n && key(n).length >= 3) names.add(key(n));
-      }
-      const items = new Map();
-      for (const g of cats.games) for (const it of g.items) if (!items.has(it.id.toLowerCase())) items.set(it.id.toLowerCase(), it);
+      const cat = await h.modules['figures/catalog']();
+      const uc = await h.modules['figures/unitcatalog']();
+      await cat.figurePackReady;
       for (const t of types) {
-        const it = items.get(t);
-        if (it) listed++;
-        if (ids.has(t) || (it && names.has(key(it.key || it.name)))) modelled++;
+        if (uc.catalogItem(t)) listed++;
+        if (cat.ALIASES[t]?.includes('@model:')) modelled++;
+        drawn.push([t, cat.ALIASES[t]?.includes('@model:') ? cat.ALIASES[t] : 'figure']);
       }
     } catch {
       // counts stay 0
@@ -86,7 +81,7 @@ async function run(packs) {
       };
       requestAnimationFrame(tick);
     });
-    return { rows: d.count, types: types.size, listed, modelled, gaps: gaps.slice(2) };
+    return { rows: d.count, types: types.size, listed, modelled, drawn, gaps: gaps.slice(2) };
   }, name);
   await browser.close();
   const s = [...out.gaps].sort((a, b) => a - b);
@@ -95,6 +90,7 @@ async function run(packs) {
 
 for (const packs of [false, true]) {
   const r = await run(packs);
+  if (packs && argv.includes('--list')) for (const [t, fig] of r.drawn.sort()) console.log(`  ${t}: ${fig}`);
   console.log(
     `${packs ? 'packs on ' : 'packs off'}: ${r.rows.toLocaleString()} rows, ${r.types} vehicle types (${r.listed} in a catalogue, ${r.modelled} drawn as a pack model); ` +
       `frames median ${r.median.toFixed(1)} ms, p99 ${r.p99.toFixed(1)} ms, max ${r.max.toFixed(1)} ms`,

@@ -15,7 +15,8 @@
  * nothing changes.
  */
 
-import { vehicleKey, type ModelPackIndex } from './modelpack';
+import type { ModelPackIndex } from './modelpack';
+import { VehicleNames, vehicleSide } from './vehiclenames';
 
 /** Where the servers serve the catalogues (204 when there are none). */
 export const UNIT_CATALOG_ROUTE = '/__heat3d/unit-catalogs';
@@ -28,6 +29,8 @@ export interface CatalogUnit {
   nation?: string;
   /** The real vehicle's name, the same in every game ("T-72B3"). */
   key?: string;
+  /** More names of the same vehicle (a short form, another army's designation). */
+  names?: string[];
   domain?: string;
 }
 
@@ -75,22 +78,21 @@ export function catalogName(id: string): string {
 
 /**
  * Other games' models for the catalogued units no model of their own covers:
- * a unit id whose real vehicle (`key`, else its display name) is a pack
- * unit's name is drawn as that unit's model. `aliases` maps lower-case unit
- * ids to figures (`figures/catalog.ts`); the pack's own units are already in
- * it as `<figure>@model:<game>:<unit>`. Returns how many ids it lent a model.
+ * a unit id whose real vehicle (`key`, its display name, its further `names`)
+ * names a pack unit (`vehiclenames.ts`: the same vehicle, else the nearest of
+ * its family, else the same nickname, aircraft only for aircraft and so on)
+ * is drawn as that unit's model. `aliases` maps lower-case unit ids to figures
+ * (`figures/catalog.ts`); the pack's own units are already in it as
+ * `<figure>@model:<game>:<unit>`. Returns how many ids it lent a model.
  */
 export function lendCatalogModels(index: UnitCatalogIndex | null, packs: ModelPackIndex | null, aliases: Record<string, string>): number {
   if (!index || !packs || !Array.isArray(packs.packs) || !Array.isArray(index.games)) return 0;
-  const byName = new Map<string, string>();
+  const filed = new VehicleNames<string>();
   for (const pack of packs.packs) {
     for (const [unit, info] of Object.entries(pack?.units ?? {})) {
       const fig = aliases[unit.toLowerCase()];
-      if (!fig || !fig.includes('@model:')) continue;
-      for (const n of [info.name, ...(info.names ?? [])]) {
-        const k = typeof n === 'string' ? vehicleKey(n) : '';
-        if (k.length >= 3 && !byName.has(k)) byName.set(k, fig);
-      }
+      if (!fig || !fig.includes('@model:') || !info) continue;
+      filed.add([info.name, ...(info.names ?? [])], fig, vehicleSide(info.domain, `${info.kind ?? ''} ${info.type ?? ''}`));
     }
   }
   let lent = 0;
@@ -99,9 +101,9 @@ export function lendCatalogModels(index: UnitCatalogIndex | null, packs: ModelPa
       if (!it || typeof it.id !== 'string' || (it.kind && it.kind !== 'vehicle')) continue;
       const id = it.id.toLowerCase();
       if (aliases[id]?.includes('@model:')) continue;
-      const fig = byName.get(vehicleKey(it.key || it.name || ''));
-      if (!fig) continue;
-      aliases[id] = fig;
+      const hit = filed.find([it.key, it.name, ...(Array.isArray(it.names) ? it.names : [])], vehicleSide(it.domain, it.class));
+      if (!hit) continue;
+      aliases[id] = hit.value;
       lent++;
     }
   }

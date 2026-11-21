@@ -284,6 +284,7 @@ function modelPack(): Plugin {
     tag: string;
     domain?: string;
     type?: string;
+    kind?: string;
     name?: string;
     names?: string[];
     aliases?: string[];
@@ -303,7 +304,7 @@ function modelPack(): Plugin {
     const had = packs.get(p);
     if (had?.key === key) return had;
     packs.delete(p);
-    type Entry = { file?: string; domain?: string; type?: string; name?: string; names?: unknown; aliases?: unknown; key?: string; gameBuild?: string; source?: string };
+    type Entry = { file?: string; domain?: string; type?: string; kind?: string; name?: string; names?: unknown; aliases?: unknown; key?: string; gameBuild?: string; source?: string };
     const pack = JSON.parse(readFileSync(p, 'utf8')) as { format?: string; version?: number; game?: string; units?: Record<string, Entry> };
     if (!pack || pack.format !== '3dheat-model-pack' || pack.version !== 1 || typeof pack.units !== 'object') return null;
     const game = String(pack.game ?? 'game').toLowerCase().replace(/[^a-z0-9_-]/g, '');
@@ -321,6 +322,7 @@ function modelPack(): Plugin {
         tag,
         ...(e.domain ? { domain: e.domain } : {}),
         ...(e.type ? { type: e.type } : {}),
+        ...(typeof e.kind === 'string' && e.kind ? { kind: e.kind } : {}),
         ...(e.name ? { name: e.name } : {}),
         ...(names.length ? { names } : {}),
         ...(aliases.length ? { aliases } : {}),
@@ -465,7 +467,7 @@ const UNIT_CATALOG_ROUTE = '/__heat3d/unit-catalogs';
  * The games' unit catalogues the ext tools write (`catalog` verb) to
  * `<levels>/<game>/catalog.json`, kept on this machine only: every game's
  * items, cut to what the viewer uses (id, name, kind, class, nation, the real
- * vehicle's name, domain), as `{ version: 1, games: [{ game, items }] }`. Read
+ * vehicle's name and its further names, domain), as `{ version: 1, games: [{ game, items }] }`. Read
  * again when a file changes; 204 without any.
  */
 function unitCatalogs(): Plugin {
@@ -488,7 +490,13 @@ function unitCatalogs(): Plugin {
           if (doc?.format !== '3dheat-catalog' || doc.version !== 1 || !Array.isArray(doc.items)) continue;
           const items = doc.items
             .filter((it) => it && typeof it.id === 'string' && typeof it.name === 'string')
-            .map((it) => Object.fromEntries(keep.filter((k) => typeof it[k] === 'string' && it[k] !== '').map((k) => [k, it[k]])));
+            .map((it) => {
+              const out: Record<string, unknown> = Object.fromEntries(keep.filter((k) => typeof it[k] === 'string' && it[k] !== '').map((k) => [k, it[k]]));
+              // Further names of the vehicle (a short form, another designation), for matching across games.
+              const names = [...(Array.isArray(it.names) ? it.names : []), it.short].filter((n): n is string => typeof n === 'string' && n !== '' && n !== it.name);
+              if (names.length) out.names = [...new Set(names)];
+              return out;
+            });
           hit = { key, game: String(doc.game ?? d.name), items };
           cache.set(file, hit);
         }

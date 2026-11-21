@@ -30,6 +30,7 @@
 import { decodePackFigure } from './figurepackBin';
 import { buildMeshFigure, type MeshFigureData } from './meshfig';
 import { kinFor, MODEL_PACK_ROUTE, modelVariantName, vehicleKey, type ModelPackIndex } from './modelpack';
+import { VehicleNames, vehicleSide } from './vehiclenames';
 import type { Template } from './kit';
 
 export interface FigurePack {
@@ -146,7 +147,8 @@ const lazyBuilder = (name: string, own: () => Template) => () => {
  * 1. its own model: a pack unit of that id (or one of its `aliases`), the first pack in the index order that has it;
  * 2. another game's model of the same vehicle: an alias whose catalogue figure some pack unit's id also stands for
  *    (two games' T-72B3 both drawn as `t-72b3`), from the first pack that has one, the unit with the
- *    shortest id there; or whose name, letters and digits only, is one of a pack unit's real vehicle names (`name`, `names`);
+ *    shortest id there; or whose name is one of a pack unit's real vehicle names (`name`, `names`), as
+ *    `vehiclenames.ts` takes names for the same vehicle ("T-72B3 obr. 2016" for "T-72B3");
  * 3. its figure, as before.
  *
  * Install it after a figure pack, so a model takes precedence over the pack's figure. Pack units with no figure to
@@ -163,6 +165,7 @@ export function installModelPackIndex<E extends Entry>(
   const units: Record<string, string> = {};
   const byFigure = new Map<string, { name: string; id: string; pack: number }>();
   const byName = new Map<string, string>();
+  const sameVehicle = new VehicleNames<string>();
   const base = (f: string) => (f.indexOf('@') > 0 ? f.slice(0, f.indexOf('@')) : f);
   for (const [pi, pack] of index.packs.entries()) {
     if (!pack || typeof pack.game !== 'string' || typeof pack.units !== 'object') continue;
@@ -182,6 +185,7 @@ export function installModelPackIndex<E extends Entry>(
         if (!had || (had.pack === pi && id.length < had.id.length)) byFigure.set(base(known), { name, id, pack: pi });
       }
       for (const n of [info.name, ...(info.names ?? [])]) if (typeof n === 'string' && vehicleKey(n) && !byName.has(vehicleKey(n))) byName.set(vehicleKey(n), name);
+      sameVehicle.add([info.name, ...(info.names ?? [])], name, vehicleSide(info.domain, `${info.kind ?? ''} ${info.type ?? ''}`));
     }
   }
   install(catalog, names, lazyBuilder, units, builders, aliases);
@@ -194,7 +198,7 @@ export function installModelPackIndex<E extends Entry>(
   aliasTable = aliases;
   for (const [key, fig] of Object.entries(aliases)) {
     if (units[key] || fig.includes('@model:')) continue;
-    const v = byFigure.get(base(fig))?.name ?? byName.get(vehicleKey(key));
+    const v = byFigure.get(base(fig))?.name ?? byName.get(vehicleKey(key)) ?? sameVehicle.find([key], '', ['same'])?.value;
     if (v) lend(key, v);
   }
   for (const [key, v] of byName) if (!aliases[key] && !catalog[key]) lend(key, v);

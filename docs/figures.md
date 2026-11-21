@@ -82,7 +82,7 @@ You can also keep packs of per-unit vehicle models on your own machine, one per 
 A unit is drawn as the first of:
 
 1. its own model: a unit of its id in a pack;
-2. another pack's model of the same vehicle: a unit that stands for the same catalogue figure, or whose real vehicle name matches the unit's;
+2. another pack's model of the same vehicle: a unit that stands for the same catalogue figure, or whose real vehicle name matches the unit's (see [Names across games](#names-across-games));
 3. its figure.
 
 The viewer loads the packs from `HEAT3D_MODEL_PACK` (paths separated by `;`), or the `modelPack` entry of `tools/local-data.json`: one path, a list, or `{ "<game>": path }`, earlier packs first where two have the same vehicle. A pack is a folder with `model-pack.json` and one `.glb` per unit:
@@ -94,7 +94,17 @@ The viewer loads the packs from `HEAT3D_MODEL_PACK` (paths separated by `;`), or
 
 In the **Vehicles** tab, **Armour plates** draws a pack unit's plates in place of its surface, each in the colour of its hits over every match the filters and volumes keep. The plate under the pointer shows its name, thickness, class and how many hits went through, did not, bounced (where the game says) or killed.
 
-The game tools write these packs with their `models` command: War Thunder, Dota 2 (`heat3d-dota-maps models`: heroes with their default items and units, in their idle pose), World of Warships (`heat3d-wows-replay models`: each ship's armour model as the hull, and its plates by thickness under `dm`), Counter-Strike 2 (agents and weapons) and Battlefield 6, 4 and 1 (vehicles). A Dota table's `hero` column names the figure like a vehicle column.
+The game tools write these packs with their `models` command: War Thunder, Dota 2 (`heat3d-dota-maps models`: heroes with their default items and units, in their idle pose), World of Warships (`heat3d-wows-replay models`: each ship's armour model as the hull, and its plates by thickness under `dm`), Counter-Strike 2 (agents and weapons), Battlefield 6, 4 and 1 (vehicles; Battlefield 4 and 1 with their hit zones under `dm`), DCS World (`heat3d-dcs-maps models`: aircraft, helicopters, ground units and ships at rest, with the turret, gun and main rotor their animation arguments move, and their collision shells under `dm`) and Arma Reforger (`heat3d-reforger-maps models`: vehicles with wheels, turret, gun and rotor, and their hit zones and armour plates under `dm`). A Dota table's `hero` column names the figure like a vehicle column.
+
+### Names across games
+
+Games name the same vehicle differently: "T-72B3 obr. 2016" and "T-72B3", "2K22 Tunguska" and `2S6 "Tunguska"`, "MiG-29A Fulcrum" and "MiG-29". The viewer compares the names in three steps and takes the first that finds a model (`src/figures/vehiclenames.ts`):
+
+1. **The same vehicle.** The name as written, and the name without what only qualifies it: a year or "obr."/"mod.", a bracket, a nickname in quotes, a class word in front ("MBT", "Tk"), a variant tag at the end ("SEP", "ERA", "Export"), "Pz.Kpfw." written "Pz.", Mk numerals as digits. Also the designation without its nickname ("AH-1Z Viper" is an AH-1Z), and a table of other names of the same vehicle: NATO reporting names, Soviet index numbers, export names ("SA-19", "2K22" and "2S6"; "Fulcrum" and "MiG-29"; "Cheetah" and "Gepard").
+2. **The nearest of its family.** The designation's letters and first number ("Leopard 2", "T-72", "Su-25"): the model whose name shares the longest start, the parent before a sibling (an F-4E-45MC takes the F-4E before the F-4EJ), the nearest variant ("Leopard 2A7" takes a 2A7V, else the 2A6 before the 2A4). Families too wide to stand for one vehicle (M2, M3) are left out.
+3. **The same nickname.** "M2A4 Bradley" takes an M3 Bradley, "Saint-Chamond" the `Char d'assaut "Saint-Chamond"`.
+
+Aircraft only take aircraft, helicopters helicopters, ground vehicles ground vehicles and ships ships. A catalogue item's further `names` count like its name.
 
 ## Optional unit catalogues
 
