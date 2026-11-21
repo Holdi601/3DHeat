@@ -195,7 +195,8 @@ describe('insights', () => {
     const r = insightsSync(synth(true), FULL_SCOPE, level);
     expect(r.dataset.hasLevel).toBe(true);
     expect(r.detectors.find((d) => d.id === 'cover')!.tests).toBe(2);
-  });
+    // Every event's cover read against 31,000 level vertices: real work, given room while the whole suite runs.
+  }, 30_000);
 
   it('finds no power position, spawn trap or star player in noise', () => {
     const noise = insightsSync(synth(false, 30, 11), FULL_SCOPE);

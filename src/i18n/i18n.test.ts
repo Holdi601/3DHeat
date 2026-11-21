@@ -4,6 +4,8 @@ import { afterAll, describe, expect, it } from 'vitest';
 import { int, list, num, setLanguage, t } from '.';
 import { detect, LANGUAGES } from './languages';
 import { argumentNames, formatMessage, messageParts } from './message';
+import { MISTAKE_ORDER } from '../race/stats';
+import { CHANNELS } from '../race/schema';
 
 const LOCALES = join(__dirname, 'locales');
 
@@ -114,8 +116,6 @@ describe('the catalogs', { timeout: 30_000 }, () => {
   });
 
   it('have the messages the code puts together from parts', async () => {
-    const { MISTAKE_ORDER } = await import('../race/stats');
-    const { CHANNELS } = await import('../race/schema');
     const profile = readFileSync(join(__dirname, '../race/profile.ts'), 'utf8');
     const traits = [...profile.matchAll(/(?:plus|minus)\[[^\]]+\]\.push\(([^)]*)\)/g)].flatMap((m) =>
       [...m[1].matchAll(/'(\w+)'/g)].map((x) => `race.cars.trait.${x[1]}`),

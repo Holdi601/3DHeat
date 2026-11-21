@@ -24,14 +24,18 @@ describe('TrackTable', () => {
       }
     }
     expect(t.count).toBe(90000);
+    // Counted, then one expect: 180,000 of them made this test take seconds.
     let i = 0;
+    let moved = 0;
+    let lost = 0;
     for (let p = 0; p < 300; p++) {
       for (let s = 0; s < 300; s++) {
         const id = t.track(p, s);
-        expect(id).toBe(ids[i++]);
-        expect(t.last[id]).toBe(p * 1000 + s);
+        if (id !== ids[i++]) moved++;
+        if (t.last[id] !== p * 1000 + s) lost++;
       }
     }
+    expect({ moved, lost }).toEqual({ moved: 0, lost: 0 });
     expect(t.count).toBe(90000);
   });
 });

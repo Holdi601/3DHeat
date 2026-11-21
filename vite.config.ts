@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { defineConfig, type Plugin, type ViteDevServer } from 'vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath } from 'node:url';
@@ -1048,6 +1049,11 @@ export default defineConfig({
   },
   worker: {
     format: 'es',
+  },
+  test: {
+    // Half the cores, not all but one: a test file per core starved each other's seconds-long tests past their time
+    // limits whenever the machine had other work, and the run takes hardly longer.
+    maxWorkers: '50%',
   },
   build: {
     target: 'esnext',

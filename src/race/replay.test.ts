@@ -155,7 +155,10 @@ describe('car glyph', () => {
     expect(plain.count % 3).toBe(0);
     // Slip rings and suspension pads come on with the telemetry.
     expect(rich.count).toBeGreaterThan(plain.count);
-    for (let i = 0; i < rich.count * 7; i++) expect(Number.isFinite(rich.data[i])).toBe(true);
+    // One check, not an expect per coordinate: v * 0 is NaN for NaN or an infinity, 0 otherwise.
+    let sum = 0;
+    for (let i = 0; i < rich.count * 7; i++) sum += rich.data[i] * 0;
+    expect(Number.isFinite(sum)).toBe(true);
   });
 
   it('sits on the road at the lap position', () => {

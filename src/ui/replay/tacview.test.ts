@@ -10,6 +10,8 @@ import { chartUnits } from './ChartDock';
 import { unitsOf } from './units';
 import { DEFAULT_AIDS, DEFAULT_LABEL_RULES, readAids, readRules } from '../../state/replayStore';
 import { killWeapon, parseWtMatch } from '../../match/wtMatch';
+import { markColumns } from './ReplayMarks';
+import { fromBullseye } from './fields';
 import { ladderY, headingOfYaw } from './CockpitHud';
 import { niceBar } from './TacticalMap';
 import { PRESET_UNITS } from '../../units/units';
@@ -381,8 +383,7 @@ describe('War Thunder weapon names', () => {
 });
 
 describe('timeline marks', () => {
-  it('counts marks per pixel column for the density bar', async () => {
-    const { markColumns } = await import('./ReplayMarks');
+  it('counts marks per pixel column for the density bar', () => {
     const cols = markColumns([0, 0.4, 5, 9.99, 12], 10, (t) => t);
     expect(Array.from(cols)).toEqual([2, 0, 0, 0, 0, 1, 0, 0, 0, 1]);
   });
@@ -390,7 +391,6 @@ describe('timeline marks', () => {
 
 describe('bullseye', () => {
   it("reads bearing and range from the team's bullseye object", async () => {
-    const { fromBullseye } = await import('./fields');
     const type = cat('Type', ['Navaid+Static+Bullseye', 'Air+FixedWing']);
     const d = {
       count: 2,

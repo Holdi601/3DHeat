@@ -1,8 +1,8 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { applyDocOps, type DocOp } from '../tactics/ops';
 import { chunkOps, DocRegistry, registerSharedDoc, SharedSync, toDocState, type DocState, type OutBatch, type SharedDoc } from './shared';
 import { captureSession, openSession, readSessionBlob, readSessionJson, sessionBlob, SESSION_SCHEMA } from './sessionFile';
-import { noteDataFiles } from './dataRefs';
+import { loadedData, noteDataFiles } from './dataRefs';
 import { registerBuiltInDocs } from './docs';
 import { useNotes } from '../notes/store';
 import { EMPTY_BOOK } from '../notes/model';
@@ -177,7 +177,8 @@ describe('the session file', () => {
   it('packs the data in and gets it back out', async () => {
     const data = new File([new Uint8Array(3000).map((_, i) => i % 251)], 'match.parquet');
     noteDataFiles([data]);
-    await new Promise((r) => setTimeout(r, 50));
+    // The fingerprint is worked out in the background: waited for, not for a fixed 50 ms a busy machine can overrun.
+    await vi.waitFor(() => expect(loadedData().refs).toHaveLength(1), { timeout: 10_000 });
     const blob = await sessionBlob(captureSession(null), true);
     const { file, packed } = await readSessionBlob(blob);
     expect(file.data).toHaveLength(1);

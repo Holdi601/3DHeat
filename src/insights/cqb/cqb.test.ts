@@ -105,7 +105,8 @@ describe('close-quarters statistics', () => {
     expect(shows.get('lens.cqbPeek')!.patterns['peeker-advantage']).toBe(1);
     expect(shows.get('lens.cqbFunnel')!.why).toMatch(/p3/);
     expect(shows.get('lens.cqbWinProb')!.why).toMatch(/Brier/);
-  });
+    // 500 simulated rounds and the model fitted on them: seconds of real work while the whole suite runs.
+  }, 30_000);
 
   it('keeps the false discovery rate over 100 null datasets', () => {
     // Every effect off: the tests of planted effects are true nulls. The others (the value of an

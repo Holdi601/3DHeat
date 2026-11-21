@@ -117,8 +117,11 @@ describe('the local figure pack', () => {
     expect(files.filter((f) => /(^|\/)local-pack\/|figure-pack[^/]*\.json$|\.figpack\.json$/i.test(f))).toEqual([]);
     // A carved figure's mark in any tracked source or data file: one `git grep` (reading every file here took
     // seconds under a full test run). Exit 1 is "none found".
-    const grep = spawnSync('git', ['grep', '-l', '-E', '"carved"[[:space:]]*:[[:space:]]*true', '--', '*.json', '*.ts', '*.js', ':!exporters/'], { cwd: REPO, encoding: 'utf8', maxBuffer: 1 << 26 });
-    expect(grep.status === 0 || grep.status === 1, grep.stderr).toBe(true);
+    const run = () => spawnSync('git', ['grep', '-l', '-E', '"carved"[[:space:]]*:[[:space:]]*true', '--', '*.json', '*.ts', '*.js', ':!exporters/'], { cwd: REPO, encoding: 'utf8', maxBuffer: 1 << 26 });
+    let grep = run();
+    // A process the machine could not start just then (no status) is tried once more.
+    if (grep.status === null) grep = run();
+    expect(grep.status === 0 || grep.status === 1, `git grep: status ${grep.status}, ${grep.error ?? ''} ${grep.stderr}`).toBe(true);
     expect(grep.stdout.split('\n').filter(Boolean)).toEqual([]);
     // Two git processes: room for them while the whole suite runs.
   }, 30_000);

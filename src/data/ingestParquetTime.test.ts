@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { emptyColumnMapping } from '../state/types';
+// Imported with the file (the mocks above it are hoisted): loading the module is not the test's time.
+import { ingestParquet } from './ingestParquet';
 
 /**
  * A Parquet time column holding ISO-8601 text.
@@ -46,7 +48,6 @@ vi.mock('./parquet', () => ({
 
 describe('an ISO-8601 text time column in Parquet', () => {
   it('is parsed as dates, not read as numbers', async () => {
-    const { ingestParquet } = await import('./ingestParquet');
     const mapping = { ...emptyColumnMapping(), x: 'x', y: 'y', time: 't', timeUnit: 'iso8601' as const };
     const block = await ingestParquet(new File(['x'], 'times.parquet'), mapping, () => {});
     const base = Date.parse('2025-01-01T00:00:00Z') / 1000;

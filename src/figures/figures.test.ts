@@ -23,8 +23,11 @@ describe('figure catalogue', () => {
       expect(t.triangles, name).toBeLessThan(12000);
       for (const d of [t.team, t.fixed]) {
         expect(d.length % 21, name).toBe(0);
-        // One check per buffer: an expect per coordinate makes this test take seconds.
-        expect(d.every(Number.isFinite), name).toBe(true);
+        // One check per buffer, in a plain loop (a callback per coordinate took seconds): v * 0 is NaN for NaN or
+        // an infinity and 0 otherwise, so the sum is finite only when every coordinate is.
+        let sum = 0;
+        for (let i = 0; i < d.length; i++) sum += d[i] * 0;
+        expect(Number.isFinite(sum), name).toBe(true);
       }
     }
   });
