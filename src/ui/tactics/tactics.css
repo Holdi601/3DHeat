@@ -10,6 +10,110 @@
   width: 100%;
   box-sizing: border-box;
 }
+
+/* The plan on top, above the task bar: game and name side by side, then the sides. */
+.tactics-head {
+  padding: var(--sp-3) var(--sp-4) var(--sp-2);
+}
+.tactics-head-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--sp-2);
+  align-items: end;
+}
+.tactics-head-row > * {
+  margin: 0;
+  min-width: 0;
+}
+.tactics-head-row input,
+.tactics-head-row select {
+  height: 30px;
+}
+.tactics-head .tactics-teams {
+  margin-bottom: 0;
+}
+.tactics-teams button {
+  border-radius: var(--r-pill);
+  padding: 4px 12px;
+}
+
+/* The tools: a grid of equal buttons, each with its key. */
+.tactics-toolgrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  margin: 2px 0 8px;
+}
+.tactics-toolgrid button {
+  position: relative;
+  min-width: 0;
+  padding: 6px 12px 6px 6px;
+  text-align: center;
+}
+.tactics-tool-name {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* The tool's key, small in the corner, so the name has the width. */
+.tactics-toolgrid kbd {
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--text-faint);
+  font-size: 9.5px;
+  line-height: 1;
+}
+.tactics-toolgrid button.on kbd {
+  color: var(--accent);
+}
+/* What the tool in hand needs: set off under the tools. */
+.tactics-options {
+  margin: 0 0 8px;
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--accent-dim);
+  border-radius: var(--r-md);
+  background: var(--panel-2);
+}
+.tactics-options > :first-child {
+  margin-top: 0;
+}
+.tactics-options > :last-child {
+  margin-bottom: 0;
+}
+.tactics-hint {
+  margin: 4px 0 8px;
+}
+.tactics-editbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 6px;
+  margin: 8px 0;
+}
+.tactics-editbar button {
+  padding: 5px 7px;
+}
+.tactics-editbar button.icon-btn {
+  width: 26px;
+  padding: 0;
+}
+.tactics-search-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+.tactics-search-row .tactics-search {
+  flex: 1;
+  min-width: 0;
+}
 .tactics-teams,
 .tactics-tools {
   display: flex;

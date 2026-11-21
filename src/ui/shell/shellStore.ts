@@ -8,8 +8,27 @@ import { create } from 'zustand';
 
 export type Theme = 'dark' | 'light' | 'system';
 /** The task groups of a workspace's side panel; `all` shows every group. */
-export type Task = 'all' | 'load' | 'explore' | 'compare' | 'present';
-export const TASKS: Task[] = ['all', 'load', 'explore', 'compare', 'present'];
+export type Task = 'all' | 'load' | 'explore' | 'analyse' | 'compare' | 'draw' | 'plan' | 'present';
+export const TASKS: Task[] = ['all', 'load', 'explore', 'analyse', 'compare', 'draw', 'plan', 'present'];
+
+/**
+ * Each workspace's task groups, in the order of its side panel: the long
+ * workspaces by what is done with them - load, look, compare or analyse,
+ * present - and the tactics board by drawing and planning first.
+ */
+export const WORKSPACE_TASKS: Record<string, Task[]> = {
+  heat: ['all', 'load', 'explore', 'compare', 'present'],
+  match: ['all', 'load', 'explore', 'compare', 'present'],
+  race: ['all', 'load', 'analyse', 'present'],
+  plan: ['all', 'draw', 'plan', 'load', 'present'],
+  vehicle: ['all', 'load', 'explore', 'analyse', 'present'],
+};
+
+/** The task group shown on a workspace: one of its own, else all. */
+export function taskOf(kept: Record<string, Task>, tab: string): Task {
+  const x = kept[tab];
+  return x && (WORKSPACE_TASKS[tab] ?? TASKS).includes(x) ? x : 'all';
+}
 
 const KEY = 'heat3d.shell';
 

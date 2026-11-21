@@ -9,6 +9,7 @@ import { brotliCompressSync, constants as zlibConstants, gzipSync } from 'node:z
 import { encodePackFigure, type PackFigure } from './src/figures/figurepackBin.ts';
 import { figureFromModelGlb, platesFromModelGlb } from './src/figures/modelpack.ts';
 import { classify, glbExtras, jsonExtras, linkLayouts, type CatalogIndex, type CatalogItem } from './src/data/catalogIndex.ts';
+import { buildCommandIndex } from './tools/commandIndex.ts';
 
 /**
  * The GPU's memory, which no web API will report at any precision.
@@ -537,6 +538,37 @@ function levelsRoot(): string | null {
  * again only when it changes; until then its `sha256` is null and `pending`
  * counts it. Nothing outside the folder is served.
  */
+/**
+ * The command palette's index of the side panel (tools/commandIndex.ts), as
+ * `virtual:command-index`: read from the source when the page (or a test)
+ * first asks for it, and again after a component or a message changes, so a
+ * new panel is in Ctrl+K without a step anyone has to remember.
+ */
+function commandIndex(): Plugin {
+  const ID = 'virtual:command-index';
+  const RESOLVED = `\0${ID}`;
+  let cached: string | null = null;
+  return {
+    name: 'heat3d-command-index',
+    resolveId: (id) => (id === ID ? RESOLVED : null),
+    load(id) {
+      if (id !== RESOLVED) return null;
+      cached ??= JSON.stringify({ entries: buildCommandIndex(fileURLToPath(new URL('.', import.meta.url))) });
+      return `export default ${cached};`;
+    },
+    configureServer(server) {
+      const stale = (file: string) => {
+        if (!/[\\/]src[\\/].*\.(tsx|json)$/.test(file) || cached === null) return;
+        cached = null;
+        const mod = server.moduleGraph.getModuleById(RESOLVED);
+        if (mod) server.moduleGraph.invalidateModule(mod);
+      };
+      server.watcher.on('change', stale);
+      server.watcher.on('add', stale);
+    },
+  };
+}
+
 function catalogFolder(): Plugin {
   type Known = { bytes: number; mtime: number; sha256: string; extractor: string | null; gameBuild: string | null };
   let known: Record<string, Known> | null = null;
@@ -947,7 +979,7 @@ function selfUpdate(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [react(), hostMemory(), selfUpdate(), figurePack(), modelPack(), unitCatalogs(), localRanges(), levelLayouts(), catalogFolder(), campaignFiles()],
+  plugins: [react(), commandIndex(), hostMemory(), selfUpdate(), figurePack(), modelPack(), unitCatalogs(), localRanges(), levelLayouts(), catalogFolder(), campaignFiles()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

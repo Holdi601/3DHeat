@@ -11,14 +11,13 @@
 import { BOARD_TOOLS, usePlanStore } from '../../state/planStore';
 import { t } from '../../i18n';
 import { TASKS, taskDef } from '../../tactics/tasks';
+import { confirmDialog } from '../shell/kit';
 
-/** Asks before removing the selection; true when it was removed. */
-export function confirmRemoveSelection(): boolean {
-  const s = usePlanStore.getState();
-  const n = s.selection.length;
+/** Asks (in the viewer's dialog) before removing the selection; true when it was removed. */
+export async function confirmRemoveSelection(): Promise<boolean> {
+  const n = usePlanStore.getState().selection.length;
   if (!n) return false;
-  const ok = typeof window === 'undefined' || typeof window.confirm !== 'function' ? true : window.confirm(t('tactics.removeConfirm', { n }));
-  if (!ok) return false;
+  if (!(await confirmDialog(t('tactics.removeConfirm', { n }), t('tactics.remove')))) return false;
   usePlanStore.getState().removeSelection();
   return true;
 }
@@ -83,7 +82,7 @@ export function boardKeyDown(ev: KeyboardEvent): boolean {
   }
   if ((ev.code === 'Delete' || ev.code === 'Backspace') && board.selection.length) {
     ev.preventDefault();
-    confirmRemoveSelection();
+    void confirmRemoveSelection();
     return true;
   }
   if (ctrl || ev.altKey) return false;

@@ -1194,16 +1194,17 @@ function RaceViewSection() {
   );
 }
 
-export function RacePanel() {
+/** The race side panel, one task group's part of it: the laps, the analysis, or the view. */
+export function RacePanel({ part }: { part: 'load' | 'analyse' | 'present' }) {
+  if (part === 'load') return <LapsSection />;
+  if (part === 'present') return <RaceViewSection />;
   return (
     <>
-      <LapsSection />
       <StatsSection />
       <InsightsSection />
       <CornersSection />
       <ControlSection />
       <CarsSection />
-      <RaceViewSection />
     </>
   );
 }

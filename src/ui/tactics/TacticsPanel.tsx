@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, type ReactNode } from 'react';
 import { Section, Select, Slider } from '../controls';
 import { BOARD_TOOLS, momentOf, movableSelection, usePlanStore, type BoardTool } from '../../state/planStore';
 import { toolKeys } from './boardKeys';
@@ -21,13 +21,17 @@ import { GizmoControls, SelectionInspector, TelemetryPanel, TimingSettings } fro
 import { TasksPanel } from './TasksPanel';
 import './tactics.css';
 import { NumberBox } from '../NumberBox';
+import { Icon } from '../shell/Icon';
+import { confirmDialog } from '../shell/kit';
+import { TaskBar, TaskGroup } from '../shell/Shell';
 
 /**
- * The tactics board's sidebar: which game, which side, the tool in hand, the
- * figures to place, the board's size of figures, what is selected, and the
- * plan's file.
+ * The tactics board's sidebar: the plan's game, name and side on top, then by
+ * task - Draw (the tools with what the one in hand needs under it, what is
+ * selected, the figures to place, the layers), Plan (tasks, timing, match
+ * data), Load (the plan's file, mission import, the level) and Present.
  */
-export function TacticsPanel() {
+export function TacticsPanel({ load, present }: { load?: ReactNode; present?: ReactNode }) {
   const plan = usePlanStore((s) => s.plan);
   const tool = usePlanStore((s) => s.tool);
   const kind = usePlanStore((s) => s.kind);
@@ -159,17 +163,20 @@ export function TacticsPanel() {
 
   return (
     <div className="tactics-panel">
-      <Section title={t('tactics.title')} defaultOpen>
-        <Select
-          label={t('tactics.game')}
-          value={plan.game}
-          options={GAMES.map((g) => ({ value: g.id, label: g.name }))}
-          onChange={(g) => g && store().setGame(g)}
-        />
-        <label className="field">
-          <span>{t('tactics.name')}</span>
-          <input type="text" value={plan.title} placeholder={t('tactics.namePlaceholder')} onChange={(e) => store().setTitle(e.target.value)} />
-        </label>
+      {/* The plan itself, above the task bar: which game, its name, and the side placed for. */}
+      <div className="tactics-head">
+        <div className="tactics-head-row">
+          <Select
+            label={t('tactics.game')}
+            value={plan.game}
+            options={GAMES.map((g) => ({ value: g.id, label: g.name }))}
+            onChange={(g) => g && store().setGame(g)}
+          />
+          <label className="field">
+            <span>{t('tactics.name')}</span>
+            <input type="text" value={plan.title} placeholder={t('tactics.namePlaceholder')} onChange={(e) => store().setTitle(e.target.value)} />
+          </label>
+        </div>
         {plan.game === 'valorant' &&
           (maps ? (
             <Select
@@ -201,159 +208,184 @@ export function TacticsPanel() {
             </button>
           ))}
         </div>
-        <div className="tactics-tools" role="toolbar" aria-label={t('tactics.tools')}>
-          {tools.map((x) => (
-            <button key={x.id} className={tool === x.id ? 'on' : ''} onClick={() => store().setTool(x.id)} title={`${x.label} (${x.keys})`} aria-keyshortcuts={x.keys.replace(' / ', ' ')}>
-              {x.label}
-              <kbd>{x.keys.split(' / ')[0]}</kbd>
-            </button>
-          ))}
-        </div>
-        {tool === 'waypoints' && (
-          <>
+      </div>
+
+      <TaskBar tab="plan" />
+
+      <TaskGroup task="draw">
+        <Section title={t('tactics.tools')} defaultOpen>
+          <div className="tactics-toolgrid" role="toolbar" aria-label={t('tactics.tools')}>
+            {tools.map((x) => (
+              <button key={x.id} className={tool === x.id ? 'on' : ''} onClick={() => store().setTool(x.id)} title={`${x.label} (${x.keys})`} aria-keyshortcuts={x.keys.replace(' / ', ' ')}>
+                <span className="tactics-tool-name">{x.label}</span>
+                <kbd>{x.keys.split(' / ')[0]}</kbd>
+              </button>
+            ))}
+          </div>
+          {/* What the tool in hand needs, under it; nothing for the tools that need nothing. */}
+          {(tool === 'waypoints' || tool === 'select' || tool === 'draw' || tool === 'throw' || tool === 'note') && (
+            <div className="tactics-options">
+              {tool === 'waypoints' && (
+                <>
+                  <div className="tactics-tools">
+                    {styles.map((x) => (
+                      <button key={x.id} className={arrowStyle === x.id ? 'on' : ''} onClick={() => store().setArrowStyle(x.id)}>
+                        {x.label}
+                      </button>
+                    ))}
+                  </div>
+                  {groupSize > 1 && (
+                    <label className="field" style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <input type="checkbox" checked={formation} onChange={(e) => store().setFormation(e.target.checked)} />
+                      <span>{t('tactics.formation', { n: groupSize })}</span>
+                    </label>
+                  )}
+                </>
+              )}
+              {tool === 'select' && <GizmoControls />}
+              {tool === 'draw' && <DrawOptions />}
+              {tool === 'throw' && <ThrowOptions />}
+              {tool === 'note' && <NoteOptions />}
+            </div>
+          )}
+          <div className="hint tactics-hint">
+            {t(`tactics.hint.${moving ? 'moving' : tool}`)}
+            {draft || (tool === 'measure' && measuring && !measuring.done) ? ` ${t('tactics.hint.finish')}` : ''}
+          </div>
+          {draft && (
             <div className="tactics-tools">
-              {styles.map((x) => (
-                <button key={x.id} className={arrowStyle === x.id ? 'on' : ''} onClick={() => store().setArrowStyle(x.id)}>
-                  {x.label}
-                </button>
-              ))}
+              <button className="on" onClick={() => store().finish()} title="Enter">
+                {t('tactics.finishRoute')}
+              </button>
+              <button onClick={() => store().undoPoint()} title="Backspace">
+                {t('tactics.undoPoint')}
+              </button>
+              <button onClick={() => store().cancel()}>{t('tactics.dropRoute')}</button>
             </div>
-            {groupSize > 1 && (
-              <label className="field" style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <input type="checkbox" checked={formation} onChange={(e) => store().setFormation(e.target.checked)} />
-                <span>{t('tactics.formation', { n: groupSize })}</span>
-              </label>
-            )}
-          </>
-        )}
-        {tool === 'select' && <GizmoControls />}
-        {tool === 'draw' && <DrawOptions />}
-        {tool === 'throw' && <ThrowOptions />}
-        {tool === 'note' && <NoteOptions />}
-        <div className="hint">
-          {t(`tactics.hint.${moving ? 'moving' : tool}`)}
-          {draft || (tool === 'measure' && measuring && !measuring.done) ? ` ${t('tactics.hint.finish')}` : ''}
-        </div>
-        {draft && (
+          )}
+          <div className="tactics-editbar">
+            <div className="btn-group">
+              <button className="icon-btn" disabled={!canUndo} onClick={() => store().undo()} title={`${t('tactics.undo')} (Ctrl+Z)`} aria-label={t('tactics.undo')}>
+                <Icon name="undo" size={15} />
+              </button>
+              <button className="icon-btn" disabled={!canRedo} onClick={() => store().redo()} title={`${t('tactics.redo')} (Ctrl+Y)`} aria-label={t('tactics.redo')}>
+                <Icon name="redo" size={15} />
+              </button>
+              <button className="icon-btn" onClick={() => store().rotateSelected(-Math.PI / 12)} title={`${t('tactics.rotateLeft')} (Shift+R)`} aria-label={t('tactics.rotateLeft')}>
+                <Icon name="rotl" size={15} />
+              </button>
+              <button className="icon-btn" onClick={() => store().rotateSelected(Math.PI / 12)} title={`${t('tactics.rotateRight')} (R)`} aria-label={t('tactics.rotateRight')}>
+                <Icon name="rotr" size={15} />
+              </button>
+            </div>
+            <div className="btn-group">
+              <button onClick={() => engine?.applyPreset('Top')}>{t('tactics.topView')}</button>
+              <button onClick={() => engine?.applyPreset('Perspective')}>{t('tactics.view3d')}</button>
+              <button onClick={() => engine?.frameDataset(true)} title="F">
+                {t('tactics.frame')}
+              </button>
+            </div>
+          </div>
+          <Slider
+            label={t('tactics.figureScale')}
+            value={plan.figureScale}
+            min={0.1}
+            max={200}
+            logarithmic
+            onChange={(v) => store().setFigureScale(v)}
+            format={(v) => `${num(v, v < 10 ? 1 : 0)}×`}
+            hint={t('tactics.figureScaleHint')}
+          />
+        </Section>
+
+        <SelectionInspector />
+
+        <Section title={t('tactics.palette')} defaultOpen>
+          <div className="tactics-search-row">
+            <input className="tactics-search" type="search" value={search} placeholder={t('tactics.search')} onChange={(e) => setSearch(e.target.value)} />
+            <SortControl sort={sort} />
+          </div>
+          {groups.map((g) => (
+            <div key={g.group} className="tactics-group">
+              <div className="tactics-group-name">{t(`tactics.group.${g.group.replace(/ /g, '-')}`)}</div>
+              <div className="tactics-items">
+                {g.items.map((n) => (
+                  <button key={n} className={tool === 'place' && kind === n ? 'on' : kind === n ? 'picked' : ''} onClick={() => store().setKind(n)}>
+                    {figureLabel(n)}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </Section>
+
+        <LayersPanel />
+      </TaskGroup>
+
+      <TaskGroup task="plan">
+        <TasksPanel />
+
+        <Section title={t('tactics.timing.title')}>
+          <TimingSettings />
+        </Section>
+
+        <TelemetryPanel />
+      </TaskGroup>
+
+      <TaskGroup task="load">
+        <Section title={t('tactics.file')} defaultOpen>
           <div className="tactics-tools">
-            <button className="on" onClick={() => store().finish()} title="Enter">
-              {t('tactics.finishRoute')}
+            <button onClick={save}>{t('tactics.save')}</button>
+            <button onClick={() => fileRef.current?.click()}>{t('tactics.open')}</button>
+            <button onClick={() => missionRef.current?.click()} title={t('tactics.mission.hint')}>
+              {t('tactics.mission.import')}
             </button>
-            <button onClick={() => store().undoPoint()} title="Backspace">
-              {t('tactics.undoPoint')}
+            <button className="danger" onClick={() => void confirmDialog(t('tactics.clearConfirm'), t('tactics.clear')).then((ok) => ok && store().clear())}>
+              {t('tactics.clear')}
             </button>
-            <button onClick={() => store().cancel()}>{t('tactics.dropRoute')}</button>
           </div>
-        )}
-        <div className="tactics-tools">
-          <button disabled={!canUndo} onClick={() => store().undo()} title="Ctrl+Z">
-            {t('tactics.undo')}
-          </button>
-          <button disabled={!canRedo} onClick={() => store().redo()} title="Ctrl+Y">
-            {t('tactics.redo')}
-          </button>
-          <button onClick={() => store().rotateSelected(-Math.PI / 12)} title="Shift+R">
-            ⟲
-          </button>
-          <button onClick={() => store().rotateSelected(Math.PI / 12)} title="R">
-            ⟳
-          </button>
-          <button onClick={() => engine?.applyPreset('Top')}>{t('tactics.topView')}</button>
-          <button onClick={() => engine?.applyPreset('Perspective')}>{t('tactics.view3d')}</button>
-          <button onClick={() => engine?.frameDataset(true)} title="F">
-            {t('tactics.frame')}
-          </button>
-        </div>
-        <Slider
-          label={t('tactics.figureScale')}
-          value={plan.figureScale}
-          min={0.1}
-          max={200}
-          logarithmic
-          onChange={(v) => store().setFigureScale(v)}
-          format={(v) => `${num(v, v < 10 ? 1 : 0)}×`}
-          hint={t('tactics.figureScaleHint')}
-        />
-      </Section>
-
-      <LayersPanel />
-
-      <SelectionInspector />
-
-      <TasksPanel />
-
-      <Section title={t('tactics.timing.title')}>
-        <TimingSettings />
-      </Section>
-
-      <TelemetryPanel />
-
-      <Section title={t('tactics.palette')} defaultOpen>
-        <input className="tactics-search" type="search" value={search} placeholder={t('tactics.search')} onChange={(e) => setSearch(e.target.value)} />
-        <SortControl sort={sort} />
-        {groups.map((g) => (
-          <div key={g.group} className="tactics-group">
-            <div className="tactics-group-name">{t(`tactics.group.${g.group.replace(/ /g, '-')}`)}</div>
-            <div className="tactics-items">
-              {g.items.map((n) => (
-                <button key={n} className={tool === 'place' && kind === n ? 'on' : kind === n ? 'picked' : ''} onClick={() => store().setKind(n)}>
-                  {figureLabel(n)}
-                </button>
-              ))}
-            </div>
+          <input
+            ref={fileRef}
+            type="file"
+            accept=".json,.h3dplan.json"
+            style={{ display: 'none' }}
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) void open(f);
+              e.target.value = '';
+            }}
+          />
+          <input
+            ref={missionRef}
+            type="file"
+            accept={MISSION_ACCEPT}
+            style={{ display: 'none' }}
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) void importMission(f);
+              e.target.value = '';
+            }}
+          />
+          {imported && <div className="hint">{imported}</div>}
+          {error && <div className="hint" style={{ color: 'var(--warm)' }}>{error}</div>}
+          <div className="hint">{t('tactics.counts', { figures: plan.figures.length, arrows: plan.arrows.length, steps: plan.steps.length })}</div>
+          <label className="field">
+            <span>{t('tactics.author')}</span>
+            <input type="text" value={author} placeholder={t('tactics.authorPlaceholder')} onChange={(e) => store().setAuthor(e.target.value)} />
+          </label>
+          {plan.savedAt && <div className="hint">{t('tactics.savedBy', { who: plan.savedBy ?? '-', at: new Date(plan.savedAt).toLocaleString() })}</div>}
+          <div className="hint">
+            {autosave.full
+              ? t('tactics.autosave.full')
+              : autosave.at
+                ? t(autosave.restored ? 'tactics.autosave.restored' : 'tactics.autosave.kept', { at: new Date(autosave.at).toLocaleTimeString() })
+                : t('tactics.autosave.none')}
           </div>
-        ))}
-      </Section>
+        </Section>
+        {load}
+      </TaskGroup>
 
-      <Section title={t('tactics.file')}>
-        <div className="tactics-tools">
-          <button onClick={save}>{t('tactics.save')}</button>
-          <button onClick={() => fileRef.current?.click()}>{t('tactics.open')}</button>
-          <button onClick={() => window.confirm(t('tactics.clearConfirm')) && store().clear()}>{t('tactics.clear')}</button>
-        </div>
-        <input
-          ref={fileRef}
-          type="file"
-          accept=".json,.h3dplan.json"
-          style={{ display: 'none' }}
-          onChange={(e) => {
-            const f = e.target.files?.[0];
-            if (f) void open(f);
-            e.target.value = '';
-          }}
-        />
-        <div className="tactics-tools">
-          <button onClick={() => missionRef.current?.click()} title={t('tactics.mission.hint')}>
-            {t('tactics.mission.import')}
-          </button>
-        </div>
-        <input
-          ref={missionRef}
-          type="file"
-          accept={MISSION_ACCEPT}
-          style={{ display: 'none' }}
-          onChange={(e) => {
-            const f = e.target.files?.[0];
-            if (f) void importMission(f);
-            e.target.value = '';
-          }}
-        />
-        {imported && <div className="hint">{imported}</div>}
-        {error && <div className="hint" style={{ color: 'var(--warm)' }}>{error}</div>}
-        <div className="hint">{t('tactics.counts', { figures: plan.figures.length, arrows: plan.arrows.length, steps: plan.steps.length })}</div>
-        <label className="field">
-          <span>{t('tactics.author')}</span>
-          <input type="text" value={author} placeholder={t('tactics.authorPlaceholder')} onChange={(e) => store().setAuthor(e.target.value)} />
-        </label>
-        {plan.savedAt && <div className="hint">{t('tactics.savedBy', { who: plan.savedBy ?? '-', at: new Date(plan.savedAt).toLocaleString() })}</div>}
-        <div className="hint">
-          {autosave.full
-            ? t('tactics.autosave.full')
-            : autosave.at
-              ? t(autosave.restored ? 'tactics.autosave.restored' : 'tactics.autosave.kept', { at: new Date(autosave.at).toLocaleTimeString() })
-              : t('tactics.autosave.none')}
-        </div>
-      </Section>
+      <TaskGroup task="present">{present}</TaskGroup>
     </div>
   );
 }

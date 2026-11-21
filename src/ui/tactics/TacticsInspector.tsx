@@ -138,7 +138,7 @@ export function SelectionInspector() {
             {t('tactics.move')}
           </button>
         )}
-        <button onClick={() => confirmRemoveSelection()} title="Delete">
+        <button className="danger" onClick={() => void confirmRemoveSelection()} title="Delete">
           {t('tactics.remove')}
         </button>
       </div>

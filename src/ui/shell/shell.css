@@ -117,12 +117,13 @@ button.icon-btn.on {
 }
 
 .sidebar > .tabs button {
-  flex: 1 1 0;
+  /* As wide as the name needs: a long one ("Race analysis") keeps one line beside the short ones. */
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 3px;
-  padding: 6px 2px 5px;
+  padding: 6px 4px 5px;
   border: 1px solid transparent;
   border-radius: var(--r-sm);
   background: transparent;
@@ -239,7 +240,10 @@ button.icon-btn.on {
 /* One group shown: the others hidden, never unmounted. */
 .sidebar[data-task='load'] .task-group:not([data-task='load']),
 .sidebar[data-task='explore'] .task-group:not([data-task='explore']),
+.sidebar[data-task='analyse'] .task-group:not([data-task='analyse']),
 .sidebar[data-task='compare'] .task-group:not([data-task='compare']),
+.sidebar[data-task='draw'] .task-group:not([data-task='draw']),
+.sidebar[data-task='plan'] .task-group:not([data-task='plan']),
 .sidebar[data-task='present'] .task-group:not([data-task='present']) {
   display: none;
 }
@@ -726,6 +730,56 @@ button.icon-btn.on {
   text-overflow: ellipsis;
   white-space: nowrap;
   color: var(--accent);
+}
+
+/*
+ * A narrow view (a small window, or the wide Match panel beside it): the bar
+ * stands down the left edge under the camera readout, clear of the readouts
+ * and cards across the top, its tips to the right of each button.
+ */
+.stage {
+  container: stage / inline-size;
+}
+
+@container stage (max-width: 760px) {
+  .quick-bar {
+    top: 92px;
+    left: 12px;
+    transform: none;
+    flex-direction: column;
+  }
+
+  .quick-sep {
+    width: 18px;
+    height: 1px;
+    margin: 3px 0;
+  }
+
+  .quick-context {
+    flex-direction: column;
+    margin: 4px 0 0;
+    padding: 6px 0 0;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  /* Who is followed shows on the unit's card; the bar keeps the stop. */
+  .quick-context-label {
+    display: none;
+  }
+
+  .quick-bar [data-tip]:hover::after,
+  .quick-bar [data-tip]:focus-visible::after {
+    top: 50%;
+    left: calc(100% + 8px);
+    transform: translateY(-50%);
+  }
+
+  .app.race .race-hud {
+    top: 12px;
+    left: 60px;
+    max-width: calc(100% - 72px);
+  }
 }
 
 /* ------------------------------------------------------- side panel hidden */

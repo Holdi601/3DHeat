@@ -3,6 +3,7 @@ import { Section } from '../controls';
 import { usePlanStore } from '../../state/planStore';
 import { BASE_LAYER, layerOf, routeConflicts, type Plan } from '../../tactics/plan';
 import { t } from '../../i18n';
+import { confirmDialog } from '../shell/kit';
 
 /** How many things are on a layer. */
 function countOn(plan: Plan, id: string): number {
@@ -75,7 +76,11 @@ export function LayersPanel() {
         </button>
         <button
           disabled={active === BASE_LAYER}
-          onClick={() => current && window.confirm(t('tactics.layers.removeConfirm', { name: current.name, n: countOn(plan, active) })) && store().removeLayer(active)}
+          className="danger"
+          onClick={() =>
+            current &&
+            void confirmDialog(t('tactics.layers.removeConfirm', { name: current.name, n: countOn(plan, active) }), t('tactics.layers.remove')).then((ok) => ok && store().removeLayer(active))
+          }
         >
           {t('tactics.layers.remove')}
         </button>

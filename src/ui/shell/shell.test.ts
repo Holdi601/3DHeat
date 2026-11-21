@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useRaceStore } from '../../state/raceStore';
-import index from './commandIndex.json';
+import index from 'virtual:command-index';
 import { shellKeyDown } from './keys';
 import { score } from './match';
 import { SHORTCUTS } from './shortcuts';
@@ -95,9 +95,13 @@ describe('the command palette', () => {
   });
 
   it('indexes sections and settings of every workspace', () => {
-    const entries = (index as { entries: Array<{ tab: string; path: string[]; label?: string }> }).entries;
+    const entries = index.entries;
     for (const tab of ['heat', 'race', 'match', 'plan', 'vehicle']) expect(entries.some((e) => e.tab === tab)).toBe(true);
     expect(entries.some((e) => e.path.includes('heat.heatPanel.shape') && e.label)).toBe(true);
+    // Read from the source: the task-grouped panels of every workspace are in it.
+    expect(entries.some((e) => e.tab === 'plan' && e.path[0] === 'tactics.tools' && e.label === 'tactics.topView')).toBe(true);
+    expect(entries.some((e) => e.tab === 'race' && e.path[0] === 'race.ui.corners.title')).toBe(true);
+    expect(entries.some((e) => e.tab === 'heat' && e.mode === 'heat-lines' && e.path[0] === 'heat.linePanel.title')).toBe(true);
   });
 });
 

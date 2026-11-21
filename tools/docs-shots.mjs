@@ -850,7 +850,7 @@ const SHOTS = {
     });
     await click('tactics.topView', {}, { wait: 1500 });
     await collapseAll();
-    await section('tactics.title');
+    await section('tactics.tools');
     await sideTop();
     await shot('tactics');
   },

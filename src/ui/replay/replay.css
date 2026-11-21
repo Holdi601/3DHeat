@@ -24,8 +24,8 @@
   line-height: 1.3;
   padding: 1px 5px;
   border-radius: 3px;
-  background: rgba(12, 14, 18, 0.72);
-  color: #e8eaee;
+  background: var(--glass);
+  color: var(--text);
 }
 .replay-label {
   /* Clicks go through to the view, which finds the label from where it was put. */
@@ -33,39 +33,39 @@
   font-size: calc(11px * var(--label-scale, 1));
   white-space: pre;
   border: 1px solid transparent;
-  border-left: 3px solid #9aa3ad;
+  border-left: 3px solid var(--text-faint);
   font-variant-numeric: tabular-nums;
 }
 .replay-label.ai {
-  background: rgba(12, 14, 18, 0.55);
-  color: #c4c9d1;
+  background: var(--glass);
+  color: var(--text-dim);
 }
 .replay-label.selected {
-  border-color: rgba(255, 255, 255, 0.55);
+  border-color: color-mix(in srgb, var(--text) 55%, transparent);
 }
 .replay-label.followed {
-  border-color: #6fb6ff;
+  border-color: var(--accent);
 }
 .replay-label.picked {
-  border-color: #ffd166;
+  border-color: var(--highlight);
 }
 .replay-hover {
   position: absolute;
   left: 0;
   top: 0;
   pointer-events: none;
-  background: rgba(12, 14, 18, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: var(--glass-strong);
+  border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
   border-radius: 6px;
   padding: 6px 9px;
   font-size: 11px;
-  color: #c9ced6;
+  color: var(--text-dim);
   font-variant-numeric: tabular-nums;
   max-width: 340px;
   z-index: var(--z-tooltip);
 }
 .replay-hover .hh {
-  color: #fff;
+  color: var(--text);
   font-weight: 600;
   margin-bottom: 3px;
 }
@@ -78,22 +78,22 @@
 }
 .replay-hover .hg b,
 .unit-card .uc-grid b {
-  color: #fff;
+  color: var(--text);
   font-weight: 550;
   text-align: right;
   white-space: nowrap;
 }
 .replay-hover .hf {
   margin-top: 4px;
-  color: #8a919b;
+  color: var(--text-faint);
   font-size: 10px;
 }
 .replay-event {
-  color: #ffb4a8;
+  color: var(--bad);
   border: 1px solid rgba(255, 120, 100, 0.6);
 }
 .replay-braa {
-  color: #ffd166;
+  color: var(--highlight);
   font-variant-numeric: tabular-nums;
 }
 .replay-events {
@@ -119,7 +119,7 @@
 }
 .replay-graph svg {
   display: block;
-  background: rgba(255, 255, 255, 0.03);
+  background: color-mix(in srgb, var(--text) 3%, transparent);
   border-radius: 3px;
 }
 
@@ -176,7 +176,7 @@
   border: 1px solid transparent;
 }
 .unit-row:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: color-mix(in srgb, var(--text) 6%, transparent);
 }
 .unit-row.gone {
   opacity: 0.45;
@@ -186,10 +186,10 @@
   opacity: 0.6;
 }
 .unit-row.selected {
-  border-color: rgba(255, 255, 255, 0.25);
+  border-color: color-mix(in srgb, var(--text) 25%, transparent);
 }
 .unit-row.followed {
-  border-color: #6fb6ff;
+  border-color: var(--accent);
 }
 .unit-row .who {
   white-space: nowrap;
@@ -230,10 +230,10 @@
   color: var(--text-dim);
 }
 .unit-row .look.on {
-  color: #ffd166;
+  color: var(--highlight);
 }
 .unit-row.target {
-  border-color: #ffd166;
+  border-color: var(--highlight);
 }
 .swatch {
   display: inline-block;
@@ -256,7 +256,7 @@
 }
 .chip.on {
   opacity: 1;
-  border-color: #6fb6ff;
+  border-color: var(--accent);
 }
 .chip.link {
   opacity: 0.8;
@@ -270,7 +270,7 @@
 }
 .unit-card {
   pointer-events: auto;
-  background: rgba(12, 14, 18, 0.86);
+  background: var(--glass);
   backdrop-filter: blur(8px);
   border: 1px solid var(--line);
   border-radius: 6px;
@@ -306,8 +306,8 @@
   padding: 1px 6px;
 }
 .unit-card .uc-actions button.on {
-  border-color: #6fb6ff;
-  color: #6fb6ff;
+  border-color: var(--accent);
+  color: var(--accent);
 }
 .unit-card .uc-sub {
   opacity: 0.8;
@@ -335,27 +335,27 @@
 /* The second unit's card, B: compact, marked in the target's colour. */
 .unit-card.uc-second {
   min-width: 230px;
-  border-left: 3px solid #ffd166;
+  border-left: 3px solid var(--highlight);
 }
 .unit-card.uc-second .uc-grid {
   grid-template-columns: auto auto auto auto;
   line-height: 1.4;
 }
 .unit-card .uc-role {
-  color: #ffd166;
+  color: var(--highlight);
   font-weight: 700;
   font-size: 10px;
-  border: 1px solid #ffd166;
+  border: 1px solid var(--highlight);
   border-radius: 3px;
   padding: 0 3px;
 }
 /* The values between A and B, between their cards. */
 .pair-strip {
   pointer-events: auto;
-  background: rgba(12, 14, 18, 0.86);
+  background: var(--glass);
   backdrop-filter: blur(8px);
   border: 1px solid var(--line);
-  border-left: 3px solid #ffd166;
+  border-left: 3px solid var(--highlight);
   border-radius: 6px;
   padding: 4px 9px;
   font-size: 11px;
@@ -378,7 +378,7 @@
   max-width: 130px;
 }
 .pair-strip .ps-arrow {
-  color: #ffd166;
+  color: var(--highlight);
 }
 .pair-strip .ps-status {
   margin-left: auto;
@@ -391,7 +391,7 @@
   line-height: 1.5;
 }
 .pair-strip .ps-grid b {
-  color: #fff;
+  color: var(--text);
   font-weight: 550;
   text-align: right;
   white-space: nowrap;
@@ -441,7 +441,7 @@
   font-size: 12px;
 }
 .replay-braa.blocked {
-  color: #ff8a8a;
+  color: var(--bad);
 }
 .replay-toast {
   position: absolute;
@@ -450,8 +450,8 @@
   transform: translateX(-50%);
   padding: 4px 12px;
   border-radius: 4px;
-  background: rgba(12, 14, 18, 0.85);
-  color: #e8eaee;
+  background: var(--glass);
+  color: var(--text);
   font-size: 12px;
   pointer-events: none;
   z-index: var(--z-panel);
@@ -461,10 +461,10 @@
 .tac-map {
   position: absolute;
   z-index: var(--z-dock);
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid color-mix(in srgb, var(--text) 16%, transparent);
   border-radius: 6px;
   overflow: hidden;
-  background: #0e1116;
+  background: var(--panel);
 }
 .tac-map.pip {
   right: 12px;
@@ -491,11 +491,11 @@
 .tac-map .tm-tools button {
   min-width: 24px;
   padding: 1px 6px;
-  background: rgba(12, 14, 18, 0.8);
+  background: var(--glass);
 }
 .tac-map .tm-tools button.on {
-  border-color: #6fb6ff;
-  color: #6fb6ff;
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 /* The chart window. */
@@ -504,7 +504,7 @@
   left: 12px;
   bottom: 64px;
   z-index: var(--z-dock);
-  background: rgba(12, 14, 18, 0.9);
+  background: var(--glass-strong);
   backdrop-filter: blur(8px);
   border: 1px solid var(--line);
   border-radius: 6px;
@@ -560,13 +560,13 @@
   cursor: pointer;
 }
 .chart-dock .cd-bg {
-  fill: rgba(255, 255, 255, 0.03);
+  fill: color-mix(in srgb, var(--text) 3%, transparent);
 }
 .chart-dock .cd-grid {
-  stroke: rgba(255, 255, 255, 0.08);
+  stroke: color-mix(in srgb, var(--text) 8%, transparent);
 }
 .chart-dock .cd-tick {
-  fill: #8a919b;
+  fill: var(--text-faint);
   font-size: 10px;
   font-variant-numeric: tabular-nums;
 }
@@ -611,7 +611,7 @@
   z-index: var(--z-modal);
   display: flex;
   flex-direction: column;
-  background: rgba(14, 16, 20, 0.96);
+  background: var(--glass-strong);
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 10px 12px;
@@ -640,7 +640,7 @@
 .stats-table th {
   position: sticky;
   top: 0;
-  background: #1a1d23;
+  background: var(--panel-2);
   cursor: pointer;
   text-align: right;
   padding: 4px 8px;
@@ -648,12 +648,12 @@
   font-weight: 550;
 }
 .stats-table th.on {
-  color: #6fb6ff;
+  color: var(--accent);
 }
 .stats-table td {
   text-align: right;
   padding: 2px 8px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid color-mix(in srgb, var(--text) 5%, transparent);
   white-space: nowrap;
 }
 .stats-table th:first-child,
@@ -665,7 +665,7 @@
   color: var(--text-dim);
 }
 .stats-table tbody tr:hover td {
-  background: rgba(111, 182, 255, 0.08);
+  background: var(--accent-fill);
   cursor: pointer;
 }
 
@@ -697,7 +697,7 @@
 
 /* ---- Tacview parity, second round: alarms, lock and engagement words, grids, subtitles, media */
 .replay-label.alarm {
-  border-color: #ff5a5a;
+  border-color: var(--bad);
   background: rgba(90, 10, 10, 0.8);
 }
 .replay-tactical {
@@ -720,12 +720,12 @@
 }
 .replay-lock {
   background: rgba(70, 8, 6, 0.8);
-  color: #ffb3a8;
+  color: var(--bad);
   border: 1px solid rgba(255, 77, 64, 0.6);
 }
 .replay-engage {
-  background: rgba(12, 14, 18, 0.7);
-  color: #ffd9a0;
+  background: var(--glass);
+  color: var(--warn);
 }
 /* An exchange of fire under way: solid. Before and after it, and range pairs: dashed. */
 .replay-engage-line {
@@ -740,7 +740,7 @@
   stroke-dasharray: 2 4;
 }
 .replay-engage.end {
-  color: #9fd4ff;
+  color: var(--accent);
 }
 .geo-overlay {
   position: absolute;
@@ -837,7 +837,7 @@
   pointer-events: none;
   font-size: 15px;
   line-height: 1.35;
-  color: #fff;
+  color: var(--text);
   z-index: var(--z-hud);
 }
 .replay-subtitles > div {
@@ -852,7 +852,7 @@
   display: block;
 }
 .replay-subtitles b {
-  color: #ffd166;
+  color: var(--highlight);
 }
 .media-pip {
   position: absolute;
@@ -865,7 +865,7 @@
   max-width: 90%;
   resize: both;
   overflow: hidden;
-  background: rgba(12, 14, 18, 0.9);
+  background: var(--glass-strong);
   border: 1px solid var(--line);
   border-radius: 6px;
   display: flex;
@@ -909,10 +909,10 @@
 }
 .limit-row.belowFloor,
 .limit-row.aboveCeiling {
-  color: #ff8f8f;
+  color: var(--bad);
 }
 .limit-row.backInside {
-  color: #9bd59b;
+  color: var(--good);
 }
 .label-row {
   margin-top: 8px;

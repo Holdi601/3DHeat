@@ -112,5 +112,19 @@
   "shell.key.boardPlay": "Play / pause the plan",
   "shell.key.taskPicker": "Task picker for the selected units",
   "shell.key.taskLegend": "Legend of the task symbols",
-  "shell.key.quickTask": "Give the selection one of nine tasks"
+  "shell.key.quickTask": "Give the selection one of nine tasks",
+  "shell.task.analyse": "Analyse",
+  "shell.task.draw": "Draw",
+  "shell.task.plan": "Plan",
+  "shell.taskTitle.race.load": "Laps and the course",
+  "shell.taskTitle.race.analyse": "Statistics, where to improve, corners, car control and the cars",
+  "shell.taskTitle.race.present": "The view over the course and the camera",
+  "shell.taskTitle.plan.draw": "Tools, the selection, figures and layers",
+  "shell.taskTitle.plan.plan": "Tasks, timing and match data",
+  "shell.taskTitle.plan.load": "The plan's file, mission import, the level and its layouts",
+  "shell.taskTitle.plan.present": "The camera",
+  "shell.taskTitle.vehicle.load": "Data files",
+  "shell.taskTitle.vehicle.explore": "The vehicle, how its hits look and which are shown",
+  "shell.taskTitle.vehicle.analyse": "Penetration, hit areas, sides, body parts and modules",
+  "shell.taskTitle.vehicle.present": "The camera"
 }

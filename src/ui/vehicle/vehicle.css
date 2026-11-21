@@ -97,7 +97,7 @@
   right: 12px;
   width: 240px;
   padding: 10px 12px;
-  background: rgba(20, 23, 28, 0.86);
+  background: var(--glass);
   border: 1px solid var(--line);
   border-radius: 6px;
   pointer-events: none;
@@ -158,7 +158,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(5, 6, 8, 0.72);
+  background: var(--scrim);
 }
 
 .vehicle-sheet-card {
@@ -190,11 +190,11 @@
 }
 
 .vehicle-sheet-bar a.button {
-  background: var(--accent-dim);
-  border: 1px solid #3a83c9;
-  border-radius: 4px;
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: var(--r-sm);
   padding: 6px 10px;
-  color: #fff;
+  color: var(--accent-ink);
   text-decoration: none;
 }
 
@@ -242,7 +242,7 @@
 
 .vehicle-chips button.on {
   opacity: 1;
-  border-color: #3a4452;
+  border-color: var(--line-strong);
 }
 
 .vehicle-chips i,
@@ -265,7 +265,7 @@
   left: 12px;
   width: 260px;
   padding: 10px 12px;
-  background: rgba(20, 23, 28, 0.94);
+  background: var(--glass-strong);
   border: 1px solid var(--line);
   border-radius: 6px;
   font-size: 12px;
@@ -326,7 +326,7 @@
   gap: 5px;
   padding: 2px 4px 2px 7px;
   font-size: 11px;
-  border: 1px solid #3a4452;
+  border: 1px solid var(--line-strong);
   border-radius: 4px;
 }
 
@@ -356,7 +356,7 @@
 .vehicle-breakdown td {
   padding: 2px 0 2px 6px;
   text-align: right;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid color-mix(in srgb, var(--text) 5%, transparent);
 }
 
 .vehicle-breakdown td.vehicle-filter-name {

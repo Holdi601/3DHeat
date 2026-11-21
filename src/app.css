@@ -16,6 +16,9 @@
   --surface-3: #1b222d;
   --surface-hover: #1f2733;
   --glass: rgba(9, 12, 17, 0.8);
+  --glass-strong: rgba(11, 14, 19, 0.94);
+  /* The dimming behind a modal: dark in either theme. */
+  --scrim: rgba(3, 5, 8, 0.6);
   --line: #242c38;
   --line-soft: #19202a;
   --line-strong: #344052;
@@ -31,7 +34,8 @@
   --accent-fill-strong: rgba(70, 200, 255, 0.24);
   --accent-ink: #04131c;
   --accent-glow: 0 0 0 1px rgba(70, 200, 255, 0.4), 0 0 14px rgba(70, 200, 255, 0.16);
-  /* Meaning. */
+  /* Meaning; highlight marks what is picked or paired (a second unit, a target). */
+  --highlight: #ffd166;
   --warm: #ff6a3d;
   --warn: #ffb547;
   --good: #3ddc84;
@@ -51,6 +55,7 @@
   --surface-3: #e6ebf1;
   --surface-hover: #e3e9f0;
   --glass: rgba(251, 252, 253, 0.9);
+  --glass-strong: rgba(251, 252, 253, 0.97);
   --line: #d3dae3;
   --line-soft: #e3e8ee;
   --line-strong: #b9c3cf;
@@ -64,6 +69,7 @@
   --accent-fill-strong: rgba(11, 111, 184, 0.18);
   --accent-ink: #ffffff;
   --accent-glow: 0 0 0 1px rgba(11, 111, 184, 0.45);
+  --highlight: #8f6500;
   --warm: #c2491f;
   --warn: #9a6200;
   --good: #157a43;
@@ -518,7 +524,7 @@ svg.curve {
   padding: 8px 10px;
   border: 1px solid var(--accent-dim);
   border-radius: 6px;
-  background: rgba(43, 111, 179, 0.12);
+  background: var(--accent-fill);
   font-size: 11.5px;
   display: flex;
   flex-direction: column;
@@ -812,6 +818,37 @@ button.ghost {
 button.ghost:hover:not(:disabled) {
   background: var(--surface-hover);
   border-color: var(--line);
+}
+
+/* A button that removes or clears: quiet until hovered, then in the colour of a loss. */
+button.danger {
+  color: var(--bad);
+}
+
+button.danger:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--bad) 12%, transparent);
+  border-color: color-mix(in srgb, var(--bad) 55%, transparent);
+}
+
+/* Buttons that belong together, joined into one bar. */
+.btn-group {
+  display: inline-flex;
+}
+
+.btn-group > button:not(:first-child) {
+  margin-left: -1px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.btn-group > button:not(:last-child) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.btn-group > button:hover:not(:disabled),
+.btn-group > button:focus-visible {
+  position: relative;
 }
 
 .seg {
@@ -1295,7 +1332,7 @@ button.link:disabled {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(12, 14, 18, 0.82);
+  background: var(--glass);
   backdrop-filter: blur(8px);
   border: 1px solid var(--line);
   border-radius: 6px;
@@ -1313,7 +1350,7 @@ button.link:disabled {
 
 .speed-hud.active {
   border-color: var(--accent);
-  background: rgba(12, 14, 18, 0.95);
+  background: var(--glass-strong);
 }
 
 .speed-hud .grip {
@@ -1397,7 +1434,7 @@ button.link:disabled {
   bottom: 0;
   max-width: 70%;
   padding: 2px 8px;
-  background: rgba(12, 14, 18, 0.72);
+  background: var(--glass);
   border-top-left-radius: 4px;
   color: var(--text-dim);
   font-size: 10px;
@@ -1436,7 +1473,7 @@ button.link:disabled {
   margin: 0 1px;
   padding: 0 4px;
   border-bottom-width: 1px;
-  background: rgba(255, 255, 255, 0.06);
+  background: color-mix(in srgb, var(--text) 6%, transparent);
   font-size: 10px;
 }
 
@@ -1615,7 +1652,7 @@ button.link:disabled {
   background: var(--panel-2);
   border: 1px solid var(--line);
   border-radius: 6px;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-2);
 }
 .units-popover-title {
   font-weight: 600;

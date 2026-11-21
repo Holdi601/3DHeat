@@ -281,9 +281,9 @@
   max-width: min(760px, calc(100% - 32px));
   padding: 8px 14px;
   border-radius: 8px;
-  background: rgba(10, 12, 16, 0.82);
+  background: var(--glass);
   border: 1px solid var(--line);
-  color: #f2f4f8;
+  color: var(--text);
   text-align: center;
   pointer-events: auto;
   animation: cast-sub-in 0.35s ease-out;
@@ -303,12 +303,12 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #ffcf6e;
+  color: var(--highlight);
   margin-bottom: 2px;
 }
 .cast-chip {
   margin-left: 8px;
-  color: #b8c4d6;
+  color: var(--text-dim);
   text-transform: none;
   letter-spacing: 0;
   font-variant-numeric: tabular-nums;
@@ -346,11 +346,11 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  border: 2px solid #ffcf6e;
+  border: 2px solid var(--highlight);
   box-shadow: 0 0 8px rgba(255, 207, 110, 0.6);
 }
 .cast-ring.other::before {
-  border-color: #ff6b6b;
+  border-color: var(--bad);
   box-shadow: 0 0 8px rgba(255, 107, 107, 0.6);
 }
 .cast-ring span {
@@ -361,9 +361,9 @@
   font-size: 11px;
   padding: 0 4px;
   border-radius: 3px;
-  background: rgba(10, 12, 16, 0.75);
-  color: #ffcf6e;
+  background: var(--glass);
+  color: var(--highlight);
 }
 .cast-ring.other span {
-  color: #ff8f8f;
+  color: var(--bad);
 }

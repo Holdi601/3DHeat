@@ -86,7 +86,7 @@ import { ShortcutSheet } from './ui/shell/ShortcutSheet';
 import { QuickBar } from './ui/shell/QuickBar';
 import { ConfirmHost, ToastHost } from './ui/shell/kit';
 import { installShellKeys } from './ui/shell/keys';
-import { useShell } from './ui/shell/shellStore';
+import { taskOf, useShell } from './ui/shell/shellStore';
 
 /** The view modes, in the viewer's language: a function, so the words are looked up when shown. */
 const modes = (): Array<{ value: ViewMode; label: string; title: string }> => [
@@ -144,7 +144,7 @@ export function App() {
   const vehicleTab = tab === 'vehicle';
   const raceCharts = useRaceStore((s) => s.view.charts);
   const sidebarHidden = useShell((s) => s.sidebarHidden);
-  const sidebarTask = useShell((s) => s.task[tab] ?? 'all');
+  const sidebarTask = useShell((s) => taskOf(s.task, tab));
   const lang = useLang();
 
   /**
@@ -304,6 +304,8 @@ export function App() {
         return;
       }
       if (ev.target instanceof HTMLInputElement || ev.target instanceof HTMLSelectElement) return;
+      // A modal dialog (a confirm) takes the keys: the board and the view stay as they are under it.
+      if (ev.target instanceof Element && ev.target.closest('[aria-modal="true"]')) return;
       const race = useRaceStore.getState();
       if (race.tab === 'plan') {
         // The board's own keys (ui/tactics/boardKeys.ts); the heat modes' number keys do nothing here.
@@ -395,7 +397,7 @@ export function App() {
   return (
     <EngineContext.Provider value={engine}>
       <div className={`app${sidebarHidden ? ' no-sidebar' : ''}${raceTab ? ' race' : ''}${matchTab ? ' match' : ''}${vehicleTab ? ' vehicle' : ''}${raceTab && !raceCharts ? ' no-charts' : ''}`}>
-        <aside className="sidebar" data-task={raceTab || planTab || vehicleTab ? 'all' : sidebarTask}>
+        <aside className="sidebar" data-task={sidebarTask}>
           <Brand />
           <UpdateBanner />
           <WorkspaceBar />
@@ -405,22 +407,40 @@ export function App() {
               <div style={{ padding: '12px 16px 0' }}>
                 <SoftwareRenderingWarning />
               </div>
+              <TaskBar tab="vehicle" />
+              <TaskGroup task="load">
+                <SourcePanel />
+              </TaskGroup>
+              {/* Its own groups: Explore (the vehicle, the look, the filter) and Analyse (the tallies). */}
               <VehiclePanel />
-              <SourcePanel />
-              <CameraPanel />
+              <TaskGroup task="present">
+                <CameraPanel />
+              </TaskGroup>
             </>
           ) : planTab ? (
-            <>
-              <TacticsPanel />
-              <LevelPanel />
-              <LayoutReference />
-              <CameraPanel />
-            </>
+            <TacticsPanel
+              load={
+                <>
+                  <LevelPanel />
+                  <LayoutReference />
+                </>
+              }
+              present={<CameraPanel />}
+            />
           ) : raceTab ? (
             <>
-              <RacePanel />
-              <LevelPanel />
-              <CameraPanel />
+              <TaskBar tab="race" />
+              <TaskGroup task="load">
+                <RacePanel part="load" />
+                <LevelPanel />
+              </TaskGroup>
+              <TaskGroup task="analyse">
+                <RacePanel part="analyse" />
+              </TaskGroup>
+              <TaskGroup task="present">
+                <RacePanel part="present" />
+                <CameraPanel />
+              </TaskGroup>
             </>
           ) : matchTab ? (
             <>

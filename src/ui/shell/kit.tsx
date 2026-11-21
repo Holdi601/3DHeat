@@ -124,6 +124,15 @@ export function confirmDialog(text: string, ok?: string): Promise<boolean> {
   });
 }
 
+/** Answers the question being asked, if any (a test, or a key that stands for a button); true when there was one. */
+export function answerConfirm(yes: boolean): boolean {
+  const ask = useAsk.getState().ask;
+  if (!ask) return false;
+  useAsk.setState({ ask: null });
+  ask.resolve(yes);
+  return true;
+}
+
 export function ConfirmHost() {
   const ask = useAsk((s) => s.ask);
   if (!ask) return null;

@@ -15,7 +15,7 @@
   line-height: calc(16px * var(--label-scale, 1));
   padding: 0 5px;
   border-radius: 3px;
-  background: rgba(12, 14, 18, 0.78);
+  background: var(--glass);
   font-variant-numeric: tabular-nums;
 }
 .heat-label.hot {

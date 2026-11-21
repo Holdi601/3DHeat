@@ -16,6 +16,7 @@ import { useVolumeStore } from '../../volumes/store';
 import { HitArea, HitBreakdown } from './HitArea';
 import { SortControl } from '../sort/SortControl';
 import { useSort, useSorted } from '../sort/useSort';
+import { TaskGroup } from '../shell/Shell';
 
 /** The values of one field over the hits, most frequent first. */
 function tally(hits: VehicleHit[], key: (h: VehicleHit) => string): [string, number][] {
@@ -113,21 +114,21 @@ export function VehiclePanel() {
 
   if (!dataset) {
     return (
-      <div className="vehicle-panel">
+      <TaskGroup task="explore" className="vehicle-panel">
         <Section title={t('vehicle.panel.title')} defaultOpen>
           <div className="hint">{t('vehicle.empty.noData')}</div>
         </Section>
-      </div>
+      </TaskGroup>
     );
   }
   if (!set || set.vehicles.size === 0) {
     return (
-      <div className="vehicle-panel">
+      <TaskGroup task="explore" className="vehicle-panel">
         <Section title={t('vehicle.panel.title')} defaultOpen>
           <div className="hint">{t('vehicle.empty.noHits')}</div>
           {set && set.unplaced > 0 && <div className="hint vehicle-warn">{t('vehicle.hint.unplaced', { n: set.unplaced })}</div>}
         </Section>
-      </div>
+      </TaskGroup>
     );
   }
 
@@ -146,7 +147,8 @@ export function VehiclePanel() {
   ];
 
   return (
-    <div className="vehicle-panel">
+    <>
+    <TaskGroup task="explore" className="vehicle-panel">
       <Section title={t('vehicle.panel.title')} defaultOpen>
         <Select
           label={t('vehicle.pick.label')}
@@ -241,6 +243,14 @@ export function VehiclePanel() {
         )}
       </Section>
 
+      <Section title={t('vehicle.filter.title')} defaultOpen={false}>
+        <FilterList list="vehicle.filter.matches" title={t('vehicle.filter.matches')} items={matches} picked={s.matches} onToggle={(v) => s.toggle('matches', v, matches.map(([k]) => k))} onAll={() => s.patch({ matches: null })} />
+        <FilterList list="vehicle.filter.shooters" title={t('vehicle.filter.shooters')} items={shooters} picked={s.shooters} onToggle={(v) => s.toggle('shooters', v, shooters.map(([k]) => k))} onAll={() => s.patch({ shooters: null })} />
+        <FilterList list="vehicle.filter.weapons" title={t('vehicle.filter.weapons')} items={weapons} picked={s.weapons} onToggle={(v) => s.toggle('weapons', v, weapons.map(([k]) => k))} onAll={() => s.patch({ weapons: null })} />
+      </Section>
+    </TaskGroup>
+
+    <TaskGroup task="analyse" className="vehicle-panel">
       {((through.known > 0 && set.source !== 'cs2' && set.source !== 'dota' && view.anyPoint) || killing.n > 0) && (
         <Section title={t('vehicle.stats.title')} defaultOpen>
           {through.known > 0 && set.source !== 'cs2' && set.source !== 'dota' && view.anyPoint && (
@@ -286,13 +296,8 @@ export function VehiclePanel() {
           <ModuleBars modules={modules} />
         </Section>
       )}
-
-      <Section title={t('vehicle.filter.title')} defaultOpen={false}>
-        <FilterList list="vehicle.filter.matches" title={t('vehicle.filter.matches')} items={matches} picked={s.matches} onToggle={(v) => s.toggle('matches', v, matches.map(([k]) => k))} onAll={() => s.patch({ matches: null })} />
-        <FilterList list="vehicle.filter.shooters" title={t('vehicle.filter.shooters')} items={shooters} picked={s.shooters} onToggle={(v) => s.toggle('shooters', v, shooters.map(([k]) => k))} onAll={() => s.patch({ shooters: null })} />
-        <FilterList list="vehicle.filter.weapons" title={t('vehicle.filter.weapons')} items={weapons} picked={s.weapons} onToggle={(v) => s.toggle('weapons', v, weapons.map(([k]) => k))} onAll={() => s.patch({ weapons: null })} />
-      </Section>
-    </div>
+    </TaskGroup>
+    </>
   );
 }
 

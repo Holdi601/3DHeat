@@ -16,7 +16,7 @@
   line-height: calc(16px * var(--label-scale, 1));
   padding: 0 5px;
   border-radius: 3px;
-  background: rgba(12, 14, 18, 0.72);
+  background: var(--glass);
   border: 1px solid var(--c, #ddd);
   color: var(--c, #ddd);
   font-variant-numeric: tabular-nums;
@@ -32,7 +32,7 @@
   text-align: center;
   font-size: calc(15px * var(--label-scale, 1));
   font-weight: 800;
-  color: #fff;
+  color: var(--text);
   text-shadow: 0 0 3px rgba(0, 0, 0, 0.9);
   background:
     radial-gradient(closest-side, var(--c, #ddd) 66%, rgba(12, 14, 18, 0.85) 69%, transparent 72%),

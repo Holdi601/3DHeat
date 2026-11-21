@@ -14,14 +14,14 @@ How the viewer is laid out, and the quick ways to reach anything: the command pa
 |---|---|---|
 | Header | Top of the side panel | The name, **Search…** (the command palette), **?** (help) and the gear (settings: theme, animations, units, language) |
 | Workspaces | Under the header | **Heatmap**, **Race analysis**, **Match**, **Tactics**, **Vehicles**. `Ctrl+Shift+1` … `5` |
-| Task bar | Heatmap and Match | **All**, **Load**, **Explore**, **Compare**, **Present**: shows one group of panels at a time |
+| Task bar | Every workspace | **All** and the workspace's task groups (below): shows one group of panels at a time |
 | Side panel | Left | The panels of the workspace, each a section that opens and closes. `Ctrl+B` hides it |
 | Quick bar | Top of the view | The actions used most, one click each |
 | Timeline | Bottom | Play, scrub and the time window (the race chart and the board's steps on their tabs) |
 
 ## Task groups
 
-On the Heatmap and Match workspaces the panels are grouped by what you are doing:
+On every workspace the panels are grouped by what you are doing. Heatmap and Match:
 
 | Group | Panels |
 |---|---|
@@ -30,7 +30,15 @@ On the Heatmap and Match workspaces the panels are grouped by what you are doing
 | **Compare** | Difference split, volumes, insights, mass analysis, the ruler |
 | **Present** | Saved views, camera path and video, Camera & scene. Under **More**: Performance |
 
-**All** shows every group, each under its name. A group only hides the others' panels; nothing is reset, and a filter or setting in a hidden panel keeps working. The **Plan** task is the **Tactics** workspace.
+The other workspaces:
+
+| Workspace | Groups |
+|---|---|
+| **Race analysis** | **Load**: Laps, Background / level · **Analyse**: Course statistics, Where to improve, Corner by corner, Car control, Cars compared · **Present**: View, Camera & scene |
+| **Tactics** | **Draw**: Tools (with the options of the tool in hand under them), the selection, Figures, Layers · **Plan**: Tasks, Timing, Compare with match data · **Load**: File (save, open, import a mission, clear), Background / level, the level's layouts (Objectives) · **Present**: Camera & scene. The game, the plan's name and the side stay above the task bar |
+| **Vehicles** | **Load**: Source · **Explore**: Vehicle heatmap, hit areas, Look, Filter · **Analyse**: the tallies (penetration, hit areas, sides, body parts, modules) · **Present**: Camera & scene |
+
+**All** shows every group, each under its name. A group only hides the others' panels; nothing is reset, and a filter or setting in a hidden panel keeps working. The task picked is kept per workspace.
 
 Panels used now and then sit under **More** at the end of their group (and in **Heat shape**'s neighbours: *Sprite pixel clamps* and *Distance culling*). **More** opens by itself while a panel inside it is open.
 
@@ -52,7 +60,7 @@ The viewer remembers, in this browser: which sections are open, the group picked
 
 Words are matched at their start first, anywhere in the label next, then in the panel's name. Accents do not matter (*echelle* finds *Échelle*).
 
-The settings of panels that are not on the screen come from an index of the whole side panel, [`commandIndex.json`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/shell/commandIndex.json), written by `node tools/gen-command-index.mjs`; whatever is on the screen when the palette opens is read from the page, so a new control is found as soon as its section is open.
+The settings of panels that are not on the screen come from an index of the whole side panel that is read from the source code itself ([`tools/commandIndex.ts`](https://github.com/Holdi601/3DHeat/blob/main/tools/commandIndex.ts)) whenever the viewer is built or served, so a new panel or control is in the palette without a separate step; whatever is on the screen when the palette opens is read from the page as well.
 
 ## Key sheet
 

@@ -143,11 +143,20 @@ await step('4 picks Throw: the landing comes in to the reach of a CS2 grenade', 
   await page.keyboard.press('Digit1');
 });
 
-await step('Delete asks, then removes the selection', async () => {
+await step("Delete asks in the viewer's dialog, then removes the selection", async () => {
   await page.keyboard.press('Control+KeyA');
   await page.keyboard.press('Delete');
+  // The shell's confirm, not the browser's: Esc keeps everything, the dialog's Remove removes.
+  await page.locator('.dialog.confirm').waitFor({ timeout: 3000 });
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(200);
+  expect((await plan()).figures > 0, 'Esc on the confirm removed the figures');
+  await canvas.focus();
+  await page.keyboard.press('Delete');
+  await page.locator('.dialog.confirm button.primary').click();
   await page.waitForTimeout(200);
   expect((await plan()).figures === 0, 'figures left after Delete');
+  await canvas.focus();
 });
 
 await step('7 picks Draw: a drag draws a stroke and leaves the camera where it was', async () => {

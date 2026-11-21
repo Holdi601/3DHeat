@@ -299,7 +299,7 @@
 
 .vs-table tr.on th,
 .vs-table tr.on td {
-  background: rgba(77, 163, 255, 0.12);
+  background: var(--accent-fill);
 }
 
 .vs-table .vs-sub {
@@ -345,7 +345,7 @@
 
 .vs-few {
   border-color: #c98500;
-  color: #e0a43a;
+  color: var(--warn);
 }
 
 .vs-cards {

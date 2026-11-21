@@ -14,7 +14,7 @@
   background: var(--cmp-surface);
   border: 1px solid var(--line);
   border-radius: 8px;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-2);
   color: var(--text);
   font-size: 12px;
   font-variant-numeric: tabular-nums;
@@ -231,7 +231,7 @@
 }
 
 .cmp-cell-dark {
-  fill: #0b0d10;
+  fill: var(--stage-bg);
   font-size: 10.5px;
   pointer-events: none;
 }
@@ -261,7 +261,7 @@
   position: absolute;
   z-index: 2;
   pointer-events: none;
-  background: rgba(12, 14, 18, 0.94);
+  background: var(--glass-strong);
   border: 1px solid var(--line);
   border-radius: 6px;
   padding: 6px 9px;

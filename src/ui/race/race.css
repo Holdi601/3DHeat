@@ -519,7 +519,8 @@ button.finding.on {
 .race-hud {
   position: absolute;
   left: 12px;
-  top: 12px;
+  /* Under the quick bar, which sits over the top of the view. */
+  top: 54px;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -528,7 +529,7 @@ button.finding.on {
 }
 
 .hud-card {
-  background: rgba(20, 23, 28, 0.86);
+  background: var(--glass);
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 7px 9px 8px;
@@ -649,7 +650,7 @@ button.finding.on {
 
 .race-label.corner {
   color: var(--text);
-  background: rgba(20, 23, 28, 0.72);
+  background: var(--glass);
   border: 1px solid var(--line);
   border-radius: 3px;
   padding: 0 4px;
@@ -659,7 +660,7 @@ button.finding.on {
   pointer-events: auto;
   cursor: pointer;
   color: var(--text);
-  background: rgba(20, 23, 28, 0.9);
+  background: var(--glass-strong);
   border: 2px solid;
   border-radius: 3px;
   padding: 0 5px;
@@ -670,7 +671,7 @@ button.finding.on {
   pointer-events: auto;
   cursor: pointer;
   color: var(--text);
-  background: rgba(20, 23, 28, 0.9);
+  background: var(--glass-strong);
   border: 2px solid;
   border-radius: 10px;
   min-width: 20px;
@@ -734,9 +735,9 @@ button.finding.on {
 }
 
 .icon-btn.primary {
-  background: var(--accent-dim);
-  border-color: #3a83c9;
-  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
 }
 
 .race-charts {
@@ -803,7 +804,7 @@ button.finding.on {
 }
 
 .race-charts .corner-band {
-  fill: rgba(255, 255, 255, 0.025);
+  fill: color-mix(in srgb, var(--text) 2%, transparent);
 }
 
 .race-charts .strip-bg {
@@ -830,7 +831,7 @@ button.finding.on {
 .chart-tip {
   position: absolute;
   pointer-events: none;
-  background: rgba(14, 16, 20, 0.96);
+  background: var(--glass-strong);
   border: 1px solid var(--line);
   border-radius: 6px;
   padding: 6px 8px;
@@ -861,7 +862,7 @@ button.finding.on {
 
 .hud-cursor {
   flex-basis: 100%;
-  color: #ffd27a;
+  color: var(--warn);
   font-size: 11px;
 }
 
@@ -957,7 +958,7 @@ button.finding.on {
 }
 
 .hud-trace .lane {
-  fill: rgba(255, 255, 255, 0.03);
+  fill: color-mix(in srgb, var(--text) 3%, transparent);
 }
 
 .hud-trace .mid {
@@ -1026,7 +1027,7 @@ button.finding.on {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-2);
 }
 
 .picker-head {
@@ -1088,9 +1089,9 @@ button.chip-toggle {
 }
 
 button.chip-toggle.on {
-  background: var(--accent-dim);
-  border-color: #3a83c9;
-  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
 }
 
 /* ------------------------------------------------------- course statistics */
@@ -1280,7 +1281,7 @@ button.chip-toggle.on {
   pointer-events: auto;
   cursor: pointer;
   color: var(--text);
-  background: rgba(20, 23, 28, 0.9);
+  background: var(--glass-strong);
   border: 1px solid rgb(255, 128, 41);
   border-radius: 3px;
   padding: 0 5px;

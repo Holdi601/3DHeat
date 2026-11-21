@@ -3,7 +3,7 @@
  * their keys, the workspaces and task groups, the view modes and camera views,
  * every section of the side panel and every setting in it - those on screen
  * read from the page, the rest from the index of the whole panel
- * (commandIndex.json, written by tools/gen-command-index.mjs) - and the saved
+ * (`virtual:command-index`, built from the source by tools/commandIndex.ts) - and the saved
  * views. Nothing here runs on the frame path: it is built once per opening.
  *
  * A section or a setting is "revealed": its workspace (and the view mode that
@@ -27,10 +27,10 @@ import type { ViewMode } from '../../state/types';
 import { toggleLockedFullscreen } from '../browserKeys';
 import { copyCameraPose } from '../CameraReadout';
 import { useMotion, type MotionSetting } from '../motion';
-import indexData from './commandIndex.json';
+import indexData from 'virtual:command-index';
 import { WORKSPACES, type Workspace } from './keys';
 import { comboText, shortcut } from './shortcuts';
-import { TASKS, useShell, type Task, type Theme } from './shellStore';
+import { taskOf, useShell, WORKSPACE_TASKS, type Task, type Theme } from './shellStore';
 import { toast } from './kit';
 import { addChartTo } from '../signs/addChart';
 import { useSignStore } from '../../volumes/signs/store';
@@ -203,7 +203,7 @@ export async function reveal(target: { tab?: Workspace; mode?: string; path: str
   // The task group that holds it, when another group is showing.
   const group = section.closest<HTMLElement>('.task-group')?.dataset.task as Task | undefined;
   const tab = useRaceStore.getState().tab;
-  const task = useShell.getState().task[tab] ?? 'all';
+  const task = taskOf(useShell.getState().task, tab);
   if (group && task !== 'all' && task !== group) useShell.getState().setTask(tab, group);
   await nextFrame();
   const header = section.querySelector<HTMLElement>(':scope > header');
@@ -349,15 +349,14 @@ export function buildCommands(engine: Engine | null): Command[] {
       run: () => race.setTab(w),
     }),
   );
-  if (tab === 'heat' || tab === 'match')
-    for (const x of TASKS as Task[])
-      out.push({
-        id: `task.${x}`,
-        label: t('shell.cmd.task', { name: t(`shell.task.${x}`) }),
-        group: 'workspace',
-        hint: t(WORKSPACE_LABEL[tab]),
-        run: () => useShell.getState().setTask(tab, x),
-      });
+  for (const x of WORKSPACE_TASKS[tab] ?? [])
+    out.push({
+      id: `task.${x}`,
+      label: t('shell.cmd.task', { name: t(`shell.task.${x}`) }),
+      group: 'workspace',
+      hint: t(WORKSPACE_LABEL[tab]),
+      run: () => useShell.getState().setTask(tab, x),
+    });
 
   // View modes.
   for (const m of MODES) {

@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { keyAt } from './plan';
 import { usePlanStore } from '../state/planStore';
 import { boardKeyDown } from '../ui/tactics/boardKeys';
+import { answerConfirm } from '../ui/shell/kit';
 import { BoardScene } from './scene';
 
 const at = (x: number, z: number) => ({ x, y: 0, z });
@@ -98,15 +99,17 @@ describe('the board tools', () => {
     for (const r of routes) expect(r.points[1].x).toBeCloseTo(2);
   });
 
-  it('removes the selection after asking, in one undo step', () => {
+  it("removes the selection after asking (in the viewer's dialog), in one undo step", async () => {
     const a = place('soldier', 0, 0);
     const b = place('mbt', 10, 0);
     st().selectRefs([a, b], false);
-    vi.stubGlobal('window', { confirm: () => false });
     key('Delete');
+    expect(answerConfirm(false)).toBe(true);
+    await Promise.resolve();
     expect(st().plan.figures).toHaveLength(2);
-    vi.stubGlobal('window', { confirm: () => true });
     key('Delete');
+    expect(answerConfirm(true)).toBe(true);
+    await new Promise((r) => setTimeout(r, 0));
     expect(st().plan.figures).toHaveLength(0);
     st().undo();
     expect(st().plan.figures).toHaveLength(2);

@@ -16,7 +16,7 @@ import { MotionSetting } from '../MotionSetting';
 import { UnitsPicker } from '../UnitsPicker';
 import { Icon, type IconName } from './Icon';
 import { WORKSPACES, type Workspace } from './keys';
-import { TASKS, useShell, type Task, type Theme } from './shellStore';
+import { taskOf, useShell, WORKSPACE_TASKS, type Task, type Theme } from './shellStore';
 import './shell.css';
 
 const WORKSPACE_ICON: Record<Workspace, IconName> = { heat: 'heat', race: 'race', match: 'match', plan: 'plan', vehicle: 'vehicle' };
@@ -28,7 +28,21 @@ const WORKSPACE_LABEL: Record<Workspace, string> = {
   vehicle: 'vehicle.tab.label',
 };
 const WORKSPACE_TITLE: Partial<Record<Workspace, string>> = { match: 'app.tab.matchTitle', plan: 'app.tab.planTitle', vehicle: 'vehicle.tab.title' };
-const TASK_ICON: Record<Task, IconName> = { all: 'all', load: 'load', explore: 'explore', compare: 'compare', present: 'present' };
+const TASK_ICON: Record<Task, IconName> = {
+  all: 'all',
+  load: 'load',
+  explore: 'explore',
+  analyse: 'analyse',
+  compare: 'compare',
+  draw: 'draw',
+  plan: 'checklist',
+  present: 'present',
+};
+
+/** What a task group holds on a workspace, for its tooltip. */
+export function taskTitle(tab: string, task: Task): string {
+  return t(task === 'all' || tab === 'heat' || tab === 'match' ? `shell.task.${task}Title` : `shell.taskTitle.${tab}.${task}`);
+}
 
 /** The workspace's name, in the viewer's language. */
 export function workspaceLabel(w: Workspace): string {
@@ -84,17 +98,17 @@ export function WorkspaceBar() {
 /** The task bar of a long workspace: which group of sections is shown. */
 export function TaskBar({ tab }: { tab: string }) {
   useLang();
-  const task = useShell((s) => s.task[tab] ?? 'all');
+  const task = useShell((s) => taskOf(s.task, tab));
   const setTask = useShell((s) => s.setTask);
   return (
     <div className="task-bar" aria-label={t('shell.task.bar')}>
-      {TASKS.map((x) => (
+      {(WORKSPACE_TASKS[tab] ?? []).map((x) => (
         <button
           key={x}
           type="button"
           className={task === x ? 'on' : ''}
           aria-pressed={task === x}
-          title={t(`shell.task.${x}Title`)}
+          title={taskTitle(tab, x)}
           onClick={() => setTask(tab, x)}
         >
           <Icon name={TASK_ICON[x]} size={14} />
@@ -106,9 +120,9 @@ export function TaskBar({ tab }: { tab: string }) {
 }
 
 /** A group of sections for one task; its heading shows when every group is. */
-export function TaskGroup({ task, children }: { task: Exclude<Task, 'all'>; children: ReactNode }) {
+export function TaskGroup({ task, children, className }: { task: Exclude<Task, 'all'>; children: ReactNode; className?: string }) {
   return (
-    <div className="task-group" data-task={task}>
+    <div className={`task-group${className ? ` ${className}` : ''}`} data-task={task}>
       <div className="task-head" aria-hidden="true">
         <Icon name={TASK_ICON[task]} size={12} />
         {t(`shell.task.${task}`)}

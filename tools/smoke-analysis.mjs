@@ -662,6 +662,18 @@ await step('saved views: save with a note, change everything, restore, export', 
   const d = await download;
   const text = await (await d.createReadStream()).toArray().then((parts) => Buffer.concat(parts).toString('utf8'));
   expect(/heat3d\.views\/1/.test(text) && /West hold/.test(text), 'export lacks the view');
+  // Delete asks in the viewer's own dialog, not the browser's: Cancel keeps the view, Delete removes it.
+  const named = page.locator('.saved-views .view-name', { hasText: 'West hold' });
+  const del = page.locator('.saved-views button[title="Delete"]').first();
+  await del.click();
+  await page.locator('.dialog.confirm').waitFor({ timeout: 3000 });
+  await page.locator('.dialog.confirm button', { hasText: 'Cancel' }).click();
+  await wait(200);
+  expect((await named.count()) === 1, 'Cancel removed the view');
+  await del.click();
+  await page.locator('.dialog.confirm button.primary').click();
+  await wait(200);
+  expect((await named.count()) === 0, 'Delete kept the view');
   // Tidy: the list as it was.
   await page.evaluate(() => localStorage.removeItem('heat3d.savedViews'));
   await page.evaluate(() => globalThis.__3dheat.useStore.getState().toggleTeam(0, true));

@@ -10,6 +10,7 @@ import { applyView, captureView, readViews, useSavedViews, viewsToJson, type Sav
 import { useStore } from '../../state/store';
 import { Section } from '../controls';
 import { useEngine } from '../EngineContext';
+import { confirmDialog } from '../shell/kit';
 import '../heatInspect/heatInspect.css';
 
 export function ViewsPanel() {
@@ -89,9 +90,9 @@ export function ViewsPanel() {
                   </button>
                   <button
                     className="link"
-                    onClick={() => {
-                      if (window.confirm(t('analysis.views.deleteConfirm', { name: v.name }))) useSavedViews.getState().remove(v.id);
-                    }}
+                    onClick={() =>
+                      void confirmDialog(t('analysis.views.deleteConfirm', { name: v.name }), t('analysis.views.delete')).then((ok) => ok && useSavedViews.getState().remove(v.id))
+                    }
                     title={t('analysis.views.delete')}
                   >
                     ×
