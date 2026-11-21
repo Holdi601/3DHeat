@@ -93,7 +93,7 @@ Shared layers are changed by small operations - add this, set that field, delete
 
 ## Saving and opening a session
 
-**Save session** (in the panel, and in the command palette, Ctrl+K) writes one file, `name.3dheat-session`. It holds:
+A session file needs no server: it is your work as one file. **Save session** and **Open session…** are in the data panel (the **Load** tab of the sidebar), in this panel under **Session file** (apart from joining a server, below it), and in the command palette (Ctrl+K). **Save session** writes one file, `name.3dheat-session`. It holds:
 
 - every shared layer: marks and notes, the tactics board, and any other layer that registered itself, as their state;
 - the saved views and the view on screen;
@@ -102,7 +102,12 @@ Shared layers are changed by small operations - add this, set that field, delete
 
 Never in it: the password, any token, the ban list.
 
-**Open session** works alone too: the layers come back on your board and in your view, and a report says what the file was made on that is not loaded here (which data files, which level), so you know what to load. The host opening a session file in a session replaces what everyone shares, and everyone sees the change. The host's viewer also keeps a copy every two minutes in the browser (**Restore the autosave** in the panel).
+**Open session** works alone too: the layers come back on your board and in your view at once, and a report (in the data panel and in this panel) says what the file was made on that is not loaded here, and follows it until everything is back:
+
+- **The level** loads by itself, by name, from the levels folder or the level library. Where it is in neither, the report says so, with a button to the level panel.
+- **The data**: **Load the missing data…** asks for the folder that holds it. Only the files that are this session's data (the same name, size and fingerprint, also inside `.3dheat` files) are loaded, and they load at once; **Pick files…** does the same with single files. Where the browser can (Chromium), the folder is remembered: the next session file that lacks data offers it again (**From** *folder*), and the browser asks to allow reading it. A packed session file loads its own data by itself.
+- **The view on screen** (camera, mode, filters, time, the match picked, layers) comes back once its data and level are loaded, not before: its filters name the data's columns and values. **Put it back now** applies it with what is there.
+- The list of missing data shrinks as data is loaded (also data loaded by hand in the data panel) and goes when nothing is missing. The host opening a session file in a session replaces what everyone shares, and everyone sees the change. The host's viewer also keeps a copy every two minutes in the browser (**Restore the autosave** in the panel).
 
 The file is JSON with `schema: heat3d.session/1`; a later version opens older files through its migrations.
 
@@ -241,5 +246,5 @@ The host can share **levels, the catalogue and figure or model packs** from the 
 
 - Protocol: [`native/proto/heat3d/session/v1/session.proto`](https://github.com/Holdi601/3DHeat/blob/main/native/proto/heat3d/session/v1/session.proto) (prost on the server, protobuf-es in the viewer: `npm run proto:session` regenerates `src/session/proto/`).
 - Server: [`native/crates/session`](https://github.com/Holdi601/3DHeat/tree/main/native/crates/session): `session.rs` is every rule as pure logic, `gateway.rs` the network side (TLS, HTTP, WebSocket, limits), `server.rs` the core (port, files, audit log, the gateway process), `ipc.rs` the channel between them; [`native/crates/sandbox`](https://github.com/Holdi601/3DHeat/tree/main/native/crates/sandbox) locks the gateway down. `cargo test` runs the role matrix, limits, ordering and catch-up tests; `cargo +nightly fuzz run <target>` (in `fuzz/`: `client_msg`, `client_structured`, `doc_json`, `asset_paths`, `ipc_frames`) fuzzes it; `examples/attack.rs` and `tools/pentest-dos.mjs` are the pentest's load and abuse tools (`attack` also tries your own proxy on the local network with `HEAT3D_ATTACK_LAN=1`); `proxy.rs` decides whom to believe about client addresses, `share.rs` holds the block list.
-- Viewer: [`src/session`](https://github.com/Holdi601/3DHeat/tree/main/src/session): `client.ts` the connection, `shared.ts` the shared layers (`registerSharedDoc` adds one), `sessionFile.ts` the session file.
+- Viewer: [`src/session`](https://github.com/Holdi601/3DHeat/tree/main/src/session): `client.ts` the connection, `shared.ts` the shared layers (`registerSharedDoc` adds one), `sessionFile.ts` the session file, `sessionOpen.ts` an opened file followed until its data, level and view are back (`dataFolder.ts` the remembered data folder, `levelRequest.ts` a level asked for by name).
 - `node tools/smoke-session.mjs` starts a server and 2 to 20 headless viewers, and tries every action in every role; with `--proxy` the members join through a reverse proxy on this machine (`tools/proxy-chain.mjs`, each member its own client address), as in a public session.

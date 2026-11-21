@@ -41,6 +41,9 @@ import { activeClauses } from '../../data/rowFilter';
 import { noteDataFiles, useDataHandoff } from '../../session/dataRefs';
 import { DatasetSummary } from './DatasetPanel';
 import { DATA_EXTENSIONS, openSessionFile, RecentSession } from './OpenData';
+import { downloadSession } from '../../session/sessionFile';
+import { SessionOpenReport } from '../session/SessionPanel';
+import { useEngine } from '../EngineContext';
 
 const NO_COLUMNS: string[] = [];
 
@@ -83,6 +86,7 @@ function timeUnitLabel(u: TimeUnit): string {
  * without these controls.
  */
 export function SourcePanel() {
+  const engine = useEngine();
   const setDataset = useStore((s) => s.setDataset);
   const load = useStore((s) => s.load);
   const setLoad = useStore((s) => s.setLoad);
@@ -100,6 +104,8 @@ export function SourcePanel() {
   /** The pre-filter's expected rows and the kept text columns' label bytes (`LoadPlan`). */
   const [plan, setPlan] = useState<LoadPlanResult | null>(null);
   const dropRef = useRef<HTMLDivElement>(null);
+  /** Files handed over to be loaded at once (a session file's data): loaded as soon as they can be. */
+  const autoLoad = useRef(false);
 
   const patch = (p: Partial<ColumnMapping>) =>
     setMapping((m) => (m ? { ...m, ...p } : m));
@@ -184,12 +190,16 @@ export function SourcePanel() {
   useEffect(
     () =>
       useDataHandoff.subscribe((s, prev) => {
-        if (s.nonce !== prev.nonce && s.files?.length) void accept(s.picked ?? s.files.map((file) => ({ file, relativePath: file.name })));
+        if (s.nonce !== prev.nonce && s.files?.length) {
+          autoLoad.current = s.load;
+          void accept(s.picked ?? s.files.map((file) => ({ file, relativePath: file.name })));
+        }
       }),
     [accept],
   );
 
   const pick = async (directory: boolean, multiple: boolean) => {
+    autoLoad.current = false;
     const files = await openPicker(directory, multiple);
     if (files.length > 0) await accept(files);
   };
@@ -282,6 +292,12 @@ export function SourcePanel() {
   const excessBytes = fullFootprint ? Math.max(0, fullFootprint.peakBytes - budgets.ram) : 0;
   const loadSeconds = estimateLoadSeconds(loadRows);
   const canLoad = !!validation?.ok && !load.active && fit?.verdict !== 'too-big';
+  useEffect(() => {
+    if (!autoLoad.current || !canLoad || !size) return;
+    autoLoad.current = false;
+    void doLoad();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canLoad, size]);
 
   // Pre-fill the stride that makes an oversized selection fit, but never
   // override a value that was set deliberately.
@@ -305,8 +321,14 @@ export function SourcePanel() {
           <button onClick={() => openSessionFile()} title={t('heat.sourcePanel.openSessionTitle')}>
             {t('heat.sourcePanel.openSession')}
           </button>
+          <button onClick={() => void downloadSession(engine, false)} title={t('heat.sourcePanel.saveSessionTitle')}>
+            {t('heat.sourcePanel.saveSession')}
+          </button>
         </div>
         <RecentSession />
+        <div className="source-session-report">
+          <SessionOpenReport />
+        </div>
         <div
           ref={dropRef}
           className={`dropzone${hot ? ' hot' : ''}`}

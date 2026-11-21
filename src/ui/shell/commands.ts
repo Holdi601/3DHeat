@@ -374,11 +374,7 @@ export function buildCommands(engine: Engine | null): Command[] {
   action('session.panel', t('session.cmd.panel'), () => ss.setPanel(true), undefined, words);
   action('session.save', t('session.cmd.save'), () => void downloadSession(engine, false), undefined, words);
   if (ss.state !== 'joined' || ss.role === 'host')
-    action('session.open', t('session.cmd.open'), () => {
-      ss.setPanel(true);
-      // The panel's file picker, once the panel is there.
-      window.setTimeout(() => window.dispatchEvent(new Event('heat3d:open-session')), 50);
-    }, undefined, words);
+    action('session.open', t('session.cmd.open'), () => void window.dispatchEvent(new Event('heat3d:open-session')), undefined, words);
   for (const x of ['pin', 'draw', 'erase'] as const)
     action(`session.mark.${x}`, t(`session.cmd.mark.${x}`), () => useMarks.getState().setTool(useMarks.getState().tool === x ? 'off' : x), undefined, words);
   if (ss.state === 'joined') {

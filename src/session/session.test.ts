@@ -2,7 +2,9 @@ import { describe, expect, it, vi } from 'vitest';
 import { applyDocOps, type DocOp } from '../tactics/ops';
 import { chunkOps, DocRegistry, registerSharedDoc, SharedSync, toDocState, type DocState, type OutBatch, type SharedDoc } from './shared';
 import { captureSession, openSession, readSessionBlob, readSessionJson, sessionBlob, SESSION_SCHEMA } from './sessionFile';
-import { loadedData, noteDataFiles } from './dataRefs';
+import { fingerprint, loadedData, matchDataFiles, noteDataFiles, type DataRef } from './dataRefs';
+import { sameLevel } from './levelRequest';
+import { restoreSession, useSessionOpen } from './sessionOpen';
 import { registerBuiltInDocs } from './docs';
 import { useNotes } from '../notes/store';
 import { EMPTY_BOOK } from '../notes/model';
@@ -189,5 +191,48 @@ describe('the session file', () => {
     const plain = await readSessionBlob(await sessionBlob(captureSession(null), false));
     expect(plain.packed).toEqual([]);
     expect(plain.file.data[0].fingerprint).toMatch(/^[0-9a-f]{64}$/);
+  });
+});
+
+describe('opening a session file whose data is not loaded', () => {
+  const bytes = (n: number, seed: number) => new Uint8Array(n).map((_, i) => (i * 7 + seed) % 251);
+  const ref = async (f: File): Promise<DataRef> => ({ name: f.name, size: f.size, fingerprint: await fingerprint(f) });
+
+  it('finds its data in a pick by name, size and content, and nothing else', async () => {
+    const a = new File([bytes(4000, 1)], 'a.parquet');
+    const b = new File([bytes(5000, 2)], 'b.parquet');
+    const want = [await ref(a), await ref(b)];
+    // Same name and size, other content: not it. Another file: not read.
+    const fake = new File([bytes(4000, 9)], 'a.parquet');
+    const other = new File([bytes(10, 3)], 'notes.txt');
+    const pick = [fake, other, b].map((file) => ({ file, relativePath: `folder/${file.name}` }));
+    const r = await matchDataFiles(want, pick);
+    expect(r.keep.map((k) => k.file)).toEqual([b]);
+    expect(r.found.map((f) => f.name)).toEqual(['b.parquet']);
+    expect(r.still.map((f) => f.name)).toEqual(['a.parquet']);
+  });
+
+  it('knows a level by its file name or its name', () => {
+    expect(sameLevel('town.glb', { name: 'town', path: 'game/town.glb' })).toBe(true);
+    expect(sameLevel('town.glb', { name: 'Town.glb' })).toBe(true);
+    expect(sameLevel('town.glb', { name: 'town_snow', path: 'game/town_snow.glb' })).toBe(false);
+  });
+
+  it('keeps the view until its data is loaded, and the report follows the data', async () => {
+    noteDataFiles([]);
+    const data = new File([bytes(3000, 5)], 'round.parquet');
+    const file = readSessionJson({
+      schema: SESSION_SCHEMA,
+      data: [await ref(data)],
+      current: { camera: { position: { x: 1, y: 2, z: 3 } }, timeline: {}, filters: [] },
+    });
+    const report = await restoreSession(null, file, []);
+    expect(report.missing).toHaveLength(1);
+    // Not applied before the data is there: its filters would be dropped.
+    expect(report.pendingView).not.toBeNull();
+    expect(report.viewMissing).toEqual([]);
+    expect(useSessionOpen.getState().missing).toHaveLength(1);
+    noteDataFiles([data]);
+    await vi.waitFor(() => expect(useSessionOpen.getState().missing).toHaveLength(0), { timeout: 10_000 });
   });
 });

@@ -199,6 +199,10 @@ export interface LoadReport {
   views: number;
   /** What the view on screen named and this data lacks. */
   viewMissing: string[];
+  /** The view on screen, kept to be put back once the data it was made on is loaded (`sessionOpen.ts`). */
+  pendingView: ViewState | null;
+  /** The data the file was made on. */
+  data: DataRef[];
   /** The packed data files, to load. */
   packed: File[];
   invites: SessionFile['settings']['invites'];
@@ -232,14 +236,20 @@ export async function openSession(engine: Engine | null, file: SessionFile, pack
     if (file.notes) loadNotesState(file.notes);
   }
   const views = useSavedViews.getState().merge(file.views);
-  const viewMissing = engine && file.current ? applyView(engine, file.current) : [];
   const { missing } = compareData(file.data);
+  const level = file.level && useStore.getState().level?.name !== file.level.name ? file.level.name : null;
+  // The view names the data's columns, teams and units, and the camera stands on its level: put back now only where
+  // both are here, else once they are (`sessionOpen.ts`), so its filters are not dropped for want of the data.
+  const now = !!engine && !!file.current && !missing.length && !level && (!file.data.length || !!useStore.getState().dataset);
+  const viewMissing = now ? applyView(engine!, file.current!) : [];
   return {
     missing,
-    level: file.level && useStore.getState().level?.name !== file.level.name ? file.level.name : null,
+    level,
     unknown,
     views,
     viewMissing,
+    pendingView: now ? null : file.current,
+    data: file.data,
     packed,
     invites: file.settings.invites,
     roles: file.settings.roles,

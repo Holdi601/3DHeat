@@ -45,13 +45,13 @@ The **Session / match** column says which match, raid, round, run or lap a row b
 
 - interpolation, trails and line-heat routes never cross a session change;
 - a row's lifetime ends at the end of its own session;
-- the **Session** picker appears at the top of the sidebar, under the mode bar.
+- the **Match** picker appears at the top of the sidebar, under the mode bar (it picks one of the data's sessions; called a match there so it is not taken for a session file or a session server).
 
 A session column is very often a *timestamp* - the match's start instant, repeated on every row of that match. The auto-mapper looks for session names before person and group for this reason ([Column mapping](column-mapping.md#session-person-group)). A racing lap or stint is a session too: two laps by the same car must not be joined into one track.
 
-### The Session picker
+### The Match picker {#the-session-picker}
 
-![The Session picker open on a file of ten matches: All sessions (10), Match 01, Match 02 and so on](assets/img/en/sessions-persons-groups-picker.webp)
+![The Match picker open on a file of ten matches: All matches (10), Match 01, Match 02 and so on](assets/img/en/sessions-persons-groups-picker.webp)
 
 *Ten matches in one file: pick one or see them all.*
 
@@ -60,8 +60,8 @@ Shown when the dataset has listed sessions (see the limit below).
 | Part | Meaning |
 |---|---|
 | Label on the right | The selected session's row count, or *all at once*. |
-| Menu | *All sessions (N)*, then every session, busiest first, as `label - N rows, span` (span in seconds below 90 s, minutes below 90 min, hours above). |
-| Amber hint | Shown for *All sessions*: positions are still never joined across sessions, but concurrent matches put unrelated players on the map together. |
+| Menu | *All matches (N)*, then every session, busiest first, as `label - N rows, span` (span in seconds below 90 s, minutes below 90 min, hours above). |
+| Amber hint | Shown for *All matches*: positions are still never joined across sessions, but concurrent matches put unrelated players on the map together. |
 | Hint | Shown in the heat modes when one session is picked: the pick moves the playhead only. |
 
 On load the busiest session is selected. Picking a session seeks the playhead to that session's start.

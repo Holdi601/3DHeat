@@ -31,7 +31,7 @@ export const DATA_EXTENSIONS = '.parquet · .csv · .tsv · .3dheat · .acmi · 
 const SAMPLE_ROWS = 1_000_000;
 
 /** The side panel shown, on a group that holds the Source panel, so the mapping and Load are in sight. */
-function showLoadGroup(): void {
+export function showLoadGroup(): void {
   const shell = useShell.getState();
   if (shell.sidebarHidden) shell.setSidebarHidden(false);
   const tab = useRaceStore.getState().tab;
@@ -58,9 +58,9 @@ export async function dropData(dt: DataTransfer): Promise<void> {
 
 /** The session panel's file picker: a saved `.3dheat-session` (views, notes, the board, the data it names). */
 export function openSessionFile(): void {
-  useSessionStore.getState().setPanel(true);
-  // The panel's picker, once the panel is there (the same as the command).
-  window.setTimeout(() => window.dispatchEvent(new Event('heat3d:open-session')), 50);
+  // Opened by the session layer; its report shows in the data panel, the server's panel is not needed for it.
+  showLoadGroup();
+  window.dispatchEvent(new Event('heat3d:open-session'));
 }
 
 /** The last session, kept in this browser, to take up again: a line with a link, or nothing. */
@@ -77,8 +77,8 @@ export function RecentSession() {
       data-testid="recent-session"
       title={t('app.empty.start.restoreTitle')}
       onClick={() => {
-        useSessionStore.getState().setPanel(true);
-        window.setTimeout(() => window.dispatchEvent(new Event('heat3d:restore-session')), 50);
+        showLoadGroup();
+        window.dispatchEvent(new Event('heat3d:restore-session'));
       }}
     >
       {t('app.empty.start.restore', { time: new Date(auto.savedAt).toLocaleString() })}

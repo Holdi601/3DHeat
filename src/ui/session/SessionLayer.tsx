@@ -19,7 +19,9 @@ import { useRaceStore } from '../../state/raceStore';
 import { usePlanStore } from '../../state/planStore';
 import { useAnimationFrame, useEngine } from '../EngineContext';
 import { toast } from '../shell/kit';
-import { SessionPanel } from './SessionPanel';
+import { chooseSessionFile, SessionPanel } from './SessionPanel';
+import { readAutosave } from '../../session/sessionFile';
+import { restoreSession } from '../../session/sessionOpen';
 import { urlIntent } from './sessionUrl';
 import './session.css';
 
@@ -446,6 +448,23 @@ export function SessionLayer() {
     return () => {
       canvas.removeEventListener('pointermove', move);
       canvas.removeEventListener('pointerleave', leave);
+    };
+  }, [engine]);
+
+  // Opening a session file and taking up the autosave, from anywhere (the start screen, the data panel, the palette):
+  // the report shows in the data panel and in this panel, the server part is not needed for it.
+  useEffect(() => {
+    const onOpen = () => chooseSessionFile(engine);
+    const onRestore = () => {
+      const st = useSessionStore.getState();
+      const auto = st.state !== 'joined' ? readAutosave() : null;
+      if (auto) void restoreSession(engine, auto, []);
+    };
+    window.addEventListener('heat3d:open-session', onOpen);
+    window.addEventListener('heat3d:restore-session', onRestore);
+    return () => {
+      window.removeEventListener('heat3d:open-session', onOpen);
+      window.removeEventListener('heat3d:restore-session', onRestore);
     };
   }, [engine]);
 

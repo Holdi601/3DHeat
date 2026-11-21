@@ -6,16 +6,22 @@
  * server checks again anyway.
  */
 
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { int, t, useLang } from '../../i18n';
 import { session } from '../../session/client';
 import { loadedData, handData } from '../../session/dataRefs';
+import { useLevelRequest } from '../../session/levelRequest';
 import { useMarks, browserKey, type MarkTool } from '../../session/marks';
-import { downloadSession, openSession, readAutosave, readSessionBlob, SESSION_EXT, type LoadReport } from '../../session/sessionFile';
+import { downloadSession, readAutosave, readSessionBlob, SESSION_EXT } from '../../session/sessionFile';
+import { applyPending, closeOpenReport, findMissingData, restoreSession, useSessionOpen } from '../../session/sessionOpen';
+import type { Engine } from '../../render/engine';
+import { useStore } from '../../state/store';
 import { rankOf, ROLES, useSessionStore, type SessionMember, type SessionRole } from '../../session/store';
 import { useEngine } from '../EngineContext';
 import { Icon } from '../shell/Icon';
 import { confirmDialog, toast } from '../shell/kit';
+import { openSection } from '../shell/sections';
+import { showLoadGroup } from '../panels/OpenData';
 import { serverHint, defaultServer, urlIntent } from './sessionUrl';
 import { GoPublic, ShareAssets, SharedByHost } from './PublicSection';
 import { usePublic } from '../../session/public';
@@ -533,109 +539,165 @@ function HostData() {
   );
 }
 
-/** Saving and opening a session file: alone or as the host. */
+/** Picks a `.3dheat-session` and opens it (`restoreSession`), saying what went wrong. */
+export function chooseSessionFile(engine: Engine | null): void {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = `${SESSION_EXT},application/json,.json`;
+  input.style.display = 'none';
+  document.body.appendChild(input);
+  input.onchange = () => {
+    const f = input.files?.[0];
+    input.remove();
+    if (f) void openChosen(engine, f);
+  };
+  input.oncancel = () => input.remove();
+  input.click();
+}
+
+async function openChosen(engine: Engine | null, f: File): Promise<void> {
+  try {
+    const { file, packed } = await readSessionBlob(f);
+    await restoreSession(engine, file, packed);
+    toast(t('session.file.opened'), 'good');
+    // The report is in the data panel too: where the missing data is loaded.
+    if (!useSessionStore.getState().panel) showLoadGroup();
+  } catch (e) {
+    const k = e instanceof Error ? e.message : '';
+    toast(t(['notSession', 'newer', 'notHost', 'loadFailed'].includes(k) ? `session.file.err.${k}` : 'session.file.err.notSession'), 'bad');
+  }
+}
+
+/** Saving and opening a session file: alone or as the host. Its own thing: no server needed. */
 export function SessionFiles() {
   const engine = useEngine();
   const state = useSessionStore((s) => s.state);
   const role = useSessionStore((s) => s.role);
   const [pack, setPack] = useState(false);
-  const [report, setReport] = useState<LoadReport | null>(null);
-  const input = useRef<HTMLInputElement>(null);
   const mayOpen = state !== 'joined' || role === 'host';
   const auto = state !== 'joined' ? readAutosave() : null;
-  const open = async (f: File) => {
-    try {
-      const { file, packed } = await readSessionBlob(f);
-      setReport(await openSession(engine, file, packed));
-      toast(t('session.file.opened'), 'good');
-    } catch (e) {
-      const k = e instanceof Error ? e.message : '';
-      toast(t(['notSession', 'newer', 'notHost', 'loadFailed'].includes(k) ? `session.file.err.${k}` : 'session.file.err.notSession'), 'bad');
-    }
-  };
-  useEffect(() => {
-    const onOpen = () => input.current?.click();
-    window.addEventListener('heat3d:open-session', onOpen);
-    return () => window.removeEventListener('heat3d:open-session', onOpen);
-  }, []);
-  // The start screen's and the Source panel's "last session" link: the autosave, with its report here.
-  useEffect(() => {
-    const onRestore = () => {
-      if (auto && mayOpen) void openSession(engine, auto, []).then(setReport);
-    };
-    window.addEventListener('heat3d:restore-session', onRestore);
-    return () => window.removeEventListener('heat3d:restore-session', onRestore);
-  }, [auto, mayOpen, engine]);
   return (
-    <section className="session-sec">
+    <section className="session-sec session-file-sec" aria-label={t('session.file.title')}>
       <h3>{t('session.file.title')}</h3>
+      <p className="session-hint">{t('session.file.hint')}</p>
       <div className="session-actions">
         <button type="button" onClick={() => void downloadSession(engine, pack)}>
           {t('session.file.save')}
         </button>
         {mayOpen && (
-          <button type="button" onClick={() => input.current?.click()}>
+          <button type="button" onClick={() => chooseSessionFile(engine)}>
             {t('session.file.open')}
           </button>
         )}
-        <input
-          ref={input}
-          type="file"
-          accept={`${SESSION_EXT},application/json`}
-          hidden
-          onChange={(e) => {
-            const f = e.target.files?.[0];
-            e.target.value = '';
-            if (f) void open(f);
-          }}
-        />
       </div>
       <label className="session-check">
         <input type="checkbox" checked={pack} onChange={(e) => setPack(e.target.checked)} />
         {t('session.file.pack')}
       </label>
       {auto && mayOpen && (
-        <button type="button" className="small" onClick={() => void openSession(engine, auto, []).then(setReport)}>
+        <button type="button" className="small" onClick={() => void restoreSession(engine, auto, [])}>
           {t('session.file.restoreAuto', { time: new Date(auto.savedAt).toLocaleString() })}
         </button>
       )}
-      {report && <LoadReportView r={report} onClose={() => setReport(null)} />}
+      <SessionOpenReport />
     </section>
   );
 }
 
-function LoadReportView({ r, onClose }: { r: LoadReport; onClose: () => void }) {
+/** Shows the level panel, open, in the side panel. */
+function toLevelPanel(): void {
+  showLoadGroup();
+  const id = 'heat.levelPanel.title';
+  openSection(id);
+  window.setTimeout(() => document.querySelector(`[data-section="${id}"]`)?.scrollIntoView({ block: 'start', behavior: 'smooth' }), 80);
+}
+
+/** What an opened session file named and is not here yet, kept up to date, with the ways to get it. */
+export function SessionOpenReport() {
+  useLang();
   const role = useSessionStore((s) => s.role);
-  const ok = !r.missing.length && !r.level && !r.viewMissing.length && !r.unknown.length;
+  const r = useSessionOpen((s) => s.report);
+  const missing = useSessionOpen((s) => s.missing);
+  const pendingView = useSessionOpen((s) => s.pendingView);
+  const viewMissing = useSessionOpen((s) => s.viewMissing);
+  const finding = useSessionOpen((s) => s.finding);
+  const kept = useSessionOpen((s) => s.keptFolder);
+  const lv = useLevelRequest((s) => s.status);
+  const loading = useStore((s) => s.load.active);
+  if (!r) return null;
+  const levelGap = !!r.level && lv !== 'loaded';
+  const ok = !missing.length && !levelGap && !pendingView && !viewMissing.length && !r.unknown.length;
+  const busy = finding === 'busy';
   return (
-    <div className="session-report" role="status">
+    <div className="session-report" role="status" data-testid="session-report">
       <div className="session-member-row">
         <strong>{ok ? t('session.report.ok') : t('session.report.title')}</strong>
-        <button type="button" className="ghost small" onClick={onClose} aria-label={t('shell.close')}>
+        <button type="button" className="ghost small" onClick={closeOpenReport} aria-label={t('shell.close')}>
           <Icon name="close" size={13} />
         </button>
       </div>
       {r.views > 0 && <div>{t('session.report.views', { n: r.views })}</div>}
-      {r.missing.length > 0 && (
-        <div>
+      {r.data.length > 0 && !missing.length && <div data-testid="session-report-data-ok">{t('session.report.dataOk', { n: r.data.length })}</div>}
+      {missing.length > 0 && (
+        <div data-testid="session-report-missing">
           {t('session.report.missing')}
           <ul>
-            {r.missing.map((m) => (
+            {missing.map((m) => (
               <li key={m.fingerprint}>
                 {m.name} ({int(Math.round(m.size / 1024))} KiB)
               </li>
             ))}
           </ul>
+          <div className="session-actions">
+            <button type="button" className="primary small" disabled={busy || loading} onClick={() => void findMissingData('folder')} title={t('session.report.findFolderTitle')}>
+              {t('session.report.findFolder')}
+            </button>
+            <button type="button" className="small" disabled={busy || loading} onClick={() => void findMissingData('files')}>
+              {t('session.report.findFiles')}
+            </button>
+            {kept && (
+              <button type="button" className="small" disabled={busy || loading} onClick={() => void findMissingData('kept')} title={t('session.report.findKeptTitle')}>
+                {t('session.report.findKept', { folder: kept })}
+              </button>
+            )}
+          </div>
           <div className="session-hint">{t('session.report.whereData')}</div>
         </div>
       )}
-      {r.packed.length > 0 && (
-        <button type="button" className="small" onClick={() => handData(r.packed)}>
+      {busy && <div>{t('session.report.finding')}</div>}
+      {finding && finding !== 'busy' && missing.length > 0 && (
+        <div data-testid="session-report-found">
+          {t('session.report.found', { found: finding.found, total: finding.found + finding.still, looked: finding.looked })}
+        </div>
+      )}
+      {missing.length > 0 && loading && <div>{t('session.report.dataLoading')}</div>}
+      {r.packed.length > 0 && missing.length > 0 && (
+        <button type="button" className="small" onClick={() => handData(r.packed, true)}>
           {t('session.report.loadPacked', { n: r.packed.length })}
         </button>
       )}
-      {r.level && <div>{t('session.report.level', { name: r.level })}</div>}
-      {r.viewMissing.length > 0 && <div>{t('session.report.viewMissing', { list: r.viewMissing.join(', ') })}</div>}
+      {r.level && lv !== 'loaded' && (
+        <div data-testid="session-report-level">
+          {lv === 'pending' || lv === 'loading' ? t('session.report.levelLoading', { name: r.level }) : t('session.report.level', { name: r.level })}
+          {lv !== 'pending' && lv !== 'loading' && (
+            <div className="session-actions">
+              <button type="button" className="small" onClick={toLevelPanel}>
+                {t('session.report.toLevelPanel')}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+      {r.level && lv === 'loaded' && <div>{t('session.report.levelLoaded', { name: r.level })}</div>}
+      {pendingView && (
+        <div data-testid="session-report-view">
+          {t('session.report.viewWaiting')}{' '}
+          <button type="button" className="link" onClick={applyPending}>
+            {t('session.report.viewNow')}
+          </button>
+        </div>
+      )}
+      {viewMissing.length > 0 && <div>{t('session.report.viewMissing', { list: viewMissing.join(', ') })}</div>}
       {r.unknown.length > 0 && <div>{t('session.report.unknown', { list: r.unknown.join(', ') })}</div>}
       {role === 'host' && r.invites.length > 0 && (
         <button
@@ -677,9 +739,14 @@ export function SessionPanel() {
         {inside && info && !info.tls && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1' && <div className="session-warn">{t('session.warn.noTls')}</div>}
         {state === 'off' || state === 'closed' || state === 'connecting' ? (
           <>
-            <JoinForm />
-            <MarkTools />
+            {/* The file first and on its own: it needs no server. Joining one is the other half. */}
             <SessionFiles />
+            <section className="session-sec session-server-sec" aria-label={t('session.server.title')}>
+              <h3>{t('session.server.title')}</h3>
+              <p className="session-hint">{t('session.server.hint')}</p>
+              <JoinForm />
+            </section>
+            <MarkTools />
           </>
         ) : state === 'waiting' ? (
           <section className="session-sec">

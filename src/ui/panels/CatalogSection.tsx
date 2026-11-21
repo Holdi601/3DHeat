@@ -11,6 +11,8 @@ export const CATALOG_ROUTE = '/__heat3d/catalog';
 
 /** A folder picked by hand: its files by path under it, for loading. */
 let picked = new Map<string, File>();
+/** The index shown now (the server's or a picked folder's), for loading a level by name. */
+let shown: CatalogIndex | null = null;
 
 function indexOfPicked(files: FileList): CatalogIndex {
   picked = new Map();
@@ -27,6 +29,32 @@ function indexOfPicked(files: FileList): CatalogIndex {
     items.push({ path, ...c, bytes: f.size, mtime: f.lastModified, sha256: null, extractor: null, gameBuild: null });
   }
   return { version: 1, root, items: linkLayouts(items), pending: 0 };
+}
+
+/** The level (or course) `same` picks in the levels folder, or null: the index shown, else the local server's. */
+export async function catalogLevel(same: (item: CatalogItem) => boolean): Promise<CatalogItem | null> {
+  let ix = shown;
+  if (!ix) {
+    try {
+      const r = await fetch(CATALOG_ROUTE);
+      ix = r.status === 200 ? ((await r.json()) as CatalogIndex) : null;
+    } catch {
+      ix = null;
+    }
+  }
+  if (!ix || !Array.isArray(ix.items)) return null;
+  return ix.items.find((i) => (i.kind === 'level' || i.kind === 'course') && same(i)) ?? null;
+}
+
+/** Loads a level of the folder, its layouts first. */
+export async function loadCatalogItem(item: CatalogItem, loadModel: (file: File) => Promise<void>): Promise<void> {
+  notePick('catalogue', [item.path]);
+  if (item.layouts) {
+    const l = await fileOf(item.layouts);
+    if (l) await loadLayoutFiles([new File([l], l.name.endsWith('.layouts.json') ? l.name : `${item.name}.layouts.json`)]);
+  }
+  const f = await fileOf(item);
+  if (f) await loadModel(f);
 }
 
 async function fileOf(item: CatalogItem | string): Promise<File | null> {
@@ -74,16 +102,15 @@ export function CatalogSection({ loadModel }: { loadModel: (file: File) => Promi
     };
   }, []);
 
+  // What the panel shows is what a level asked for by name is looked up in.
+  useEffect(() => {
+    shown = index;
+  }, [index]);
+
   const load = async (item: CatalogItem) => {
-    notePick('catalogue', [item.path]);
     setBusy(true);
     try {
-      if (item.layouts) {
-        const l = await fileOf(item.layouts);
-        if (l) await loadLayoutFiles([new File([l], l.name.endsWith('.layouts.json') ? l.name : `${item.name}.layouts.json`)]);
-      }
-      const f = await fileOf(item);
-      if (f) await loadModel(f);
+      await loadCatalogItem(item, loadModel);
     } finally {
       setBusy(false);
     }

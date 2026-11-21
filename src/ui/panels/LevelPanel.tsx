@@ -50,9 +50,10 @@ import { useRaceStore } from '../../state/raceStore';
 import { useReplayStore } from '../../state/replayStore';
 import { buildingsLook } from '../replay/buildings';
 import { NumberBox } from '../NumberBox';
-import { CatalogSection } from './CatalogSection';
 import { useLevelHandoff } from '../../session/dataRefs';
 import { loadLayoutFiles } from '../../state/levelLayoutsStore';
+import { catalogLevel, CatalogSection, loadCatalogItem } from './CatalogSection';
+import { sameLevel, settleLevelRequest, takeLevelRequest, useLevelRequest } from '../../session/levelRequest';
 
 /** Longest edge we upload; larger maps are downscaled to fit the GPU. */
 const MAX_MAP_EDGE = 8192;
@@ -746,6 +747,29 @@ export function LevelPanel() {
       if (s.nonce !== prev.nonce) take();
     });
   }, []);
+
+  // A level asked for by name (an opened session file's): the levels folder's, else the library's.
+  const levelAsk = useLevelRequest((st) => (st.status === 'pending' ? st.nonce : 0));
+  useEffect(() => {
+    if (!levelAsk || !takeLevelRequest(levelAsk)) return;
+    const name = useLevelRequest.getState().name ?? '';
+    void (async () => {
+      let found = false;
+      try {
+        const item = await catalogLevel((i) => sameLevel(name, i));
+        if (item) await loadCatalogItem(item, loadModel);
+        else {
+          const meta = (await listLevels().catch(() => [] as StoredLevelMeta[])).find((m) => sameLevel(name, m));
+          if (meta) await loadFromLibrary(meta);
+        }
+        const now = useStore.getState().level;
+        found = !!now && sameLevel(name, { name: now.name });
+      } finally {
+        settleLevelRequest(levelAsk, found);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [levelAsk]);
 
   const mdl = level?.kind === 'model' ? level : null;
   // Every structure field is optional on the level, so resolve the defaults once

@@ -10,6 +10,7 @@
  */
 
 import { create } from 'zustand';
+import { isContainer, openContainer } from '../data/container';
 import type { PickedFile } from '../data/filePick';
 
 export interface DataRef {
@@ -42,12 +43,20 @@ interface Loaded {
 
 let loaded: Loaded = { files: [], refs: [] };
 
+/**
+ * Counts each change of the loaded data whose references are known, so what
+ * depends on them (an opened session file's report) can follow.
+ */
+export const useLoadedRefs = create<{ version: number }>(() => ({ version: 0 }));
+
 /** The data panel loaded these files: their references, worked out in the background. */
 export function noteDataFiles(files: File[]): void {
   const mine = { files, refs: [] as DataRef[] };
   loaded = mine;
   void Promise.all(files.map(async (f) => ({ name: f.name, size: f.size, fingerprint: await fingerprint(f).catch(() => '') }))).then((refs) => {
-    if (loaded === mine) mine.refs = refs;
+    if (loaded !== mine) return;
+    mine.refs = refs;
+    useLoadedRefs.setState((s) => ({ version: s.version + 1 }));
   });
 }
 
@@ -70,19 +79,62 @@ export function compareData(want: DataRef[]): { have: DataRef[]; missing: DataRe
  * session file's, the start screen's picker or a drop on the view). `picked`
  * keeps the paths under a picked or dropped folder, which say what the files are.
  */
-export const useDataHandoff = create<{ files: File[] | null; picked: PickedFile[] | null; nonce: number }>(() => ({
+export const useDataHandoff = create<{ files: File[] | null; picked: PickedFile[] | null; nonce: number; load: boolean }>(() => ({
   files: null,
   picked: null,
   nonce: 0,
+  load: false,
 }));
 
-export function handData(files: File[]): void {
-  useDataHandoff.setState((s) => ({ files, picked: null, nonce: s.nonce + 1 }));
+/** `load`: the panel loads them by itself once it has read them (a session file's data), instead of waiting for Load. */
+export function handData(files: File[], load = false): void {
+  useDataHandoff.setState((s) => ({ files, picked: null, nonce: s.nonce + 1, load }));
 }
 
 /** Files picked or dropped outside the data panel, with their paths, for it to take. */
-export function handPicked(picked: PickedFile[]): void {
-  useDataHandoff.setState((s) => ({ files: picked.map((p) => p.file), picked, nonce: s.nonce + 1 }));
+export function handPicked(picked: PickedFile[], load = false): void {
+  useDataHandoff.setState((s) => ({ files: picked.map((p) => p.file), picked, nonce: s.nonce + 1, load }));
+}
+
+/**
+ * Of a pick (a folder, some files), those that hold data `want` names: a file
+ * of the same name, size and fingerprint, or a `.3dheat` container with such a
+ * table in it (the container itself is kept, its match documents with it).
+ * Only same-named, same-sized files are read for their fingerprint, so a big
+ * folder costs a listing. `found` are the references met, `still` the rest.
+ */
+export async function matchDataFiles(want: DataRef[], picked: PickedFile[]): Promise<{ keep: PickedFile[]; found: DataRef[]; still: DataRef[] }> {
+  const byName = new Map<string, DataRef[]>();
+  for (const w of want) {
+    const k = `${w.name}|${w.size}`;
+    const l = byName.get(k);
+    if (l) l.push(w);
+    else byName.set(k, [w]);
+  }
+  const met = new Set<string>();
+  const keep: PickedFile[] = [];
+  const hit = async (f: File): Promise<boolean> => {
+    const cands = byName.get(`${f.name}|${f.size}`);
+    if (!cands) return false;
+    const fp = await fingerprint(f).catch(() => '');
+    const c = cands.find((w) => w.fingerprint === fp);
+    if (!c) return false;
+    met.add(c.fingerprint);
+    return true;
+  };
+  for (const p of picked) {
+    if (isContainer(p.file.name)) {
+      try {
+        const c = await openContainer(p.file);
+        let any = false;
+        for (const t of c.tables) if (await hit(t)) any = true;
+        if (any) keep.push(p);
+      } catch {
+        // Not a container after all: left out.
+      }
+    } else if (await hit(p.file)) keep.push(p);
+  }
+  return { keep, found: want.filter((w) => met.has(w.fingerprint)), still: want.filter((w) => !met.has(w.fingerprint)) };
 }
 
 /**

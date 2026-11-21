@@ -44,7 +44,7 @@ Hints in the panel explain that interpolation and trails join samples within one
 
 ## The session being played
 
-With a session column, the **Session** picker at the top of the sidebar ([Sessions](sessions-persons-groups.md#the-session-picker)) decides which match is played back. The busiest is chosen on load. Only rows of that session become boxes and trails, and the timeline runs over that session's span instead of the whole dataset's. *All sessions* plays every session at once, still never joining samples across sessions.
+With a session column, the **Match** picker at the top of the sidebar ([Sessions](sessions-persons-groups.md#the-session-picker)) decides which match is played back. The busiest is chosen on load. Only rows of that session become boxes and trails, and the timeline runs over that session's span instead of the whole dataset's. *All matches* plays every session at once, still never joining samples across sessions.
 
 ## What is drawn when
 
