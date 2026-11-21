@@ -213,7 +213,6 @@
   "heat.heatPanel.heatRamp": "Skala toplote",
   "heat.heatPanel.resetPositive": "Vrati na prozirno → crveno → žuto → bijelo",
   "heat.heatPanel.negativeRamp": "Negativno (timovi koji oduzimaju)",
-  "heat.heatPanel.resetNegative": "Vrati na prozirno → zeleno → plavo → ljubičasto",
   "heat.heatPanel.clamps": "Ograničenja piksela sprajta",
   "heat.heatPanel.clampsHint": "Zaštita od prekomjernog iscrtavanja. Sprajt koji pokriva N piksela košta N operacija miješanja, pa neograničen radijus izbliza pretvara sličicu od 60 fps u sličicu od 2 fps.",
   "heat.heatPanel.minPixelRadius": "Najmanji radijus u pikselima",

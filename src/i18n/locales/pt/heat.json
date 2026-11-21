@@ -213,7 +213,6 @@
   "heat.heatPanel.heatRamp": "Rampa de calor",
   "heat.heatPanel.resetPositive": "Repor para transparente → vermelho → amarelo → branco",
   "heat.heatPanel.negativeRamp": "Negativo (equipas subtrativas)",
-  "heat.heatPanel.resetNegative": "Repor para transparente → verde → azul → roxo",
   "heat.heatPanel.clamps": "Limites de píxeis do sprite",
   "heat.heatPanel.clampsHint": "A proteção contra o overdraw. Um sprite que cobre N píxeis custa N operações de mistura, por isso um raio sem limite visto de perto é o que transforma um fotograma de 60fps num de 2fps.",
   "heat.heatPanel.minPixelRadius": "Raio mínimo em píxeis",

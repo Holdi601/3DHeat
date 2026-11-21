@@ -213,7 +213,6 @@
   "heat.heatPanel.heatRamp": "Varmerampe",
   "heat.heatPanel.resetPositive": "Tilbakestill til gjennomsiktig → rød → gul → hvit",
   "heat.heatPanel.negativeRamp": "Negativ (lag som trekker fra)",
-  "heat.heatPanel.resetNegative": "Tilbakestill til gjennomsiktig → grønn → blå → lilla",
   "heat.heatPanel.clamps": "Pikselgrenser for sprites",
   "heat.heatPanel.clampsHint": "Vernet mot overdraw. En sprite som dekker N piksler koster N blandingsoperasjoner, så en ubegrenset radius på nært hold er det som gjør et bilde i 60 fps om til et i 2 fps.",
   "heat.heatPanel.minPixelRadius": "Minste pikselradius",

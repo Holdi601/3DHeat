@@ -213,7 +213,6 @@
   "heat.heatPanel.heatRamp": "Soojusskaala",
   "heat.heatPanel.resetPositive": "Lähtesta: läbipaistev → punane → kollane → valge",
   "heat.heatPanel.negativeRamp": "Negatiivne (lahutavad võistkonnad)",
-  "heat.heatPanel.resetNegative": "Lähtesta: läbipaistev → roheline → sinine → lilla",
   "heat.heatPanel.clamps": "Spraidi pikslipiirangud",
   "heat.heatPanel.clampsHint": "Ülejoonistamise kaitse. N pikslit kattev sprait maksab N segamistoimingut, seega piiramata raadius lähedalt teebki 60 fps kaadrist 2 fps kaadri.",
   "heat.heatPanel.minPixelRadius": "Min raadius pikslites",

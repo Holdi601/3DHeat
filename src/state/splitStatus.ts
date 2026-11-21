@@ -13,6 +13,9 @@ export interface SplitStatus {
   negative: number;
   /** False when the counts were scaled up from a sample of the rows. */
   exact: boolean;
+  /** Matches (sessions) with rows on each side; 0 where the data has none. */
+  positiveMatches: number;
+  negativeMatches: number;
   /**
    * Chunks of rows the last heat pass left out because the split's column could
    * not be put on the GPU for them. They are not drawn at all, never drawn with
@@ -27,6 +30,8 @@ export const useSplitStatus = create<SplitStatus>(() => ({
   positive: 0,
   negative: 0,
   exact: true,
+  positiveMatches: 0,
+  negativeMatches: 0,
   skippedChunks: 0,
   chunks: 0,
 }));
@@ -38,6 +43,8 @@ export function publishSplitStatus(next: SplitStatus): void {
     cur.positive === next.positive &&
     cur.negative === next.negative &&
     cur.exact === next.exact &&
+    cur.positiveMatches === next.positiveMatches &&
+    cur.negativeMatches === next.negativeMatches &&
     cur.skippedChunks === next.skippedChunks &&
     cur.chunks === next.chunks
   ) {

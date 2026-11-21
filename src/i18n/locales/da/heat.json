@@ -213,7 +213,6 @@
   "heat.heatPanel.heatRamp": "Varmerampe",
   "heat.heatPanel.resetPositive": "Nulstil til gennemsigtig → rød → gul → hvid",
   "heat.heatPanel.negativeRamp": "Negativ (subtraktive hold)",
-  "heat.heatPanel.resetNegative": "Nulstil til gennemsigtig → grøn → blå → lilla",
   "heat.heatPanel.clamps": "Pixelgrænser for sprites",
   "heat.heatPanel.clampsHint": "Værnet mod overdraw. En sprite, der dækker N pixels, koster N blend-operationer, så en ubegrænset radius tæt på er det, der forvandler et billede ved 60 fps til et ved 2 fps.",
   "heat.heatPanel.minPixelRadius": "Min. pixelradius",

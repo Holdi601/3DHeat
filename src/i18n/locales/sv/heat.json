@@ -213,7 +213,6 @@
   "heat.heatPanel.heatRamp": "Värmeramp",
   "heat.heatPanel.resetPositive": "Återställ till genomskinlig → röd → gul → vit",
   "heat.heatPanel.negativeRamp": "Negativ (subtraherande lag)",
-  "heat.heatPanel.resetNegative": "Återställ till genomskinlig → grön → blå → lila",
   "heat.heatPanel.clamps": "Pixelgränser för sprites",
   "heat.heatPanel.clampsHint": "Skyddet mot överritning. En sprite som täcker N pixlar kostar N blandningsoperationer, så en obegränsad radie på nära håll är det som förvandlar en bildruta i 60 fps till en i 2 fps.",
   "heat.heatPanel.minPixelRadius": "Minsta pixelradie",

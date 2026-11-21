@@ -213,7 +213,6 @@
   "heat.heatPanel.heatRamp": "Rampa căldurii",
   "heat.heatPanel.resetPositive": "Resetează la transparent → roșu → galben → alb",
   "heat.heatPanel.negativeRamp": "Negativ (echipe subtractive)",
-  "heat.heatPanel.resetNegative": "Resetează la transparent → verde → albastru → violet",
   "heat.heatPanel.clamps": "Limite de pixeli pentru sprite-uri",
   "heat.heatPanel.clampsHint": "Protecția împotriva supradesenării. Un sprite care acoperă N pixeli costă N operații de amestecare, deci o rază nelimitată văzută de aproape este ce transformă un cadru de 60 fps într-unul de 2 fps.",
   "heat.heatPanel.minPixelRadius": "Raza minimă în pixeli",

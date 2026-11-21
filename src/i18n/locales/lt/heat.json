@@ -213,7 +213,6 @@
   "heat.heatPanel.heatRamp": "Šilumos skalė",
   "heat.heatPanel.resetPositive": "Atkurti: skaidri → raudona → geltona → balta",
   "heat.heatPanel.negativeRamp": "Neigiama (atimančios komandos)",
-  "heat.heatPanel.resetNegative": "Atkurti: skaidri → žalia → mėlyna → violetinė",
   "heat.heatPanel.clamps": "Spraito pikselių ribos",
   "heat.heatPanel.clampsHint": "Apsauga nuo perpiešimo. N pikselių dengiantis spraitas kainuoja N maišymo operacijų, todėl neribotas spindulys iš arti paverčia 60 fps kadrą 2 fps kadru.",
   "heat.heatPanel.minPixelRadius": "Mažiausias spindulys pikseliais",

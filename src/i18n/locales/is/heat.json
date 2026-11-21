@@ -213,7 +213,6 @@
   "heat.heatPanel.heatRamp": "Hitaskali",
   "heat.heatPanel.resetPositive": "Endurstilla á gegnsætt → rautt → gult → hvítt",
   "heat.heatPanel.negativeRamp": "Neikvæður (frádregin lið)",
-  "heat.heatPanel.resetNegative": "Endurstilla á gegnsætt → grænt → blátt → fjólublátt",
   "heat.heatPanel.clamps": "Pixlamörk depla",
   "heat.heatPanel.clampsHint": "Vörnin gegn yfirteikningu. Depill sem þekur N pixla kostar N blöndunaraðgerðir, svo ótakmarkaður radíus í návígi er það sem breytir 60 fps ramma í 2 fps ramma.",
   "heat.heatPanel.minPixelRadius": "Lágm. pixlaradíus",

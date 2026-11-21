@@ -213,7 +213,6 @@
   "heat.heatPanel.heatRamp": "Heat-Verlaf",
   "heat.heatPanel.resetPositive": "Zrécksetzen op transparent → rout → giel → wäiss",
   "heat.heatPanel.negativeRamp": "Negativ (subtraktiv Equippen)",
-  "heat.heatPanel.resetNegative": "Zrécksetzen op transparent → gréng → blo → mof",
   "heat.heatPanel.clamps": "Pixelgrenze fir Sprites",
   "heat.heatPanel.clampsHint": "De Schutz géint Overdraw. E Sprite, deen N Pixel deckt, kascht N Blend-Operatiounen, dofir mécht en onbegrenzte Radius vu no aus engem Frame mat 60 fps ee mat 2 fps.",
   "heat.heatPanel.minPixelRadius": "Minimale Pixelradius",

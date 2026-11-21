@@ -385,6 +385,13 @@ export interface SideCounts {
   negative: number;
   /** False when only every so-many-th row was read and the totals scaled up. */
   exact: boolean;
+  /**
+   * Matches (sessions) with any row on each side, 0 and 0 where the data has no
+   * session column. Exact even when the rows were sampled: a match long enough to
+   * count is read many times over by the stride.
+   */
+  positiveMatches?: number;
+  negativeMatches?: number;
 }
 
 /**
@@ -394,7 +401,8 @@ export interface SideCounts {
  * split - and not by the view: the distance cull and the slice follow the
  * camera, and a side's share of the data should not change because the camera
  * moved. Reads every row up to `maxRows`, then every so-many-th one and scales
- * up, which keeps a playing window's recount to a few milliseconds on any load.
+ * up. All at once here (the panels, the tests); the engine counts a slice of
+ * rows a frame with `sideCountSteps`, so a new split never stalls a frame.
  */
 export function splitSideCounts(
   ds: Dataset,
@@ -405,6 +413,28 @@ export function splitSideCounts(
   split: SplitTable,
   maxRows = 4_000_000,
 ): SideCounts {
+  const steps = sideCountSteps(ds, rowLo, rowHi, filters, teamSign, split, maxRows, Infinity);
+  for (;;) {
+    const r = steps.next();
+    if (r.done) return r.value;
+  }
+}
+
+/**
+ * `splitSideCounts` a slice at a time: yields after every `slice` rows read,
+ * returns the counts. The tables it is given must not change while it runs
+ * (the engine starts a new count when they do).
+ */
+export function* sideCountSteps(
+  ds: Dataset,
+  rowLo: number,
+  rowHi: number,
+  filters: ActiveFilter[],
+  teamSign: Int8Array | null,
+  split: SplitTable,
+  maxRows = 4_000_000,
+  slice = 65_536,
+): Generator<void, SideCounts, void> {
   const lo = Math.max(0, rowLo);
   const hi = Math.min(ds.count, rowHi);
   const span = hi - lo;
@@ -416,11 +446,19 @@ export function splitSideCounts(
   const splitData = split.mode !== 0 && split.column ? filterColumnData(ds, split.column) : null;
   if (split.mode !== 0 && !splitData) return { positive: 0, negative: 0, exact: stride === 1 };
   const team = ds.teamId;
+  // Which side each match has rows on: bit 1 the + side, bit 2 the − side.
+  const session = ds.sessionId;
+  const seen = session && ds.sessionLabels.length ? new Uint8Array(ds.sessionLabels.length) : null;
   let pos = 0;
   let neg = 0;
   const fs = resolved.map((r) => r.f);
   const cols = resolved.map((r) => r.data!);
+  let read = 0;
   for (let i = lo; i < hi; i += stride) {
+    if (++read >= slice) {
+      read = 0;
+      yield;
+    }
     if (!Number.isFinite(ds.px[i])) continue;
     if (!rowPasses(fs, cols, i)) continue;
     const g = team ? team[i] : 0;
@@ -443,8 +481,26 @@ export function splitSideCounts(
     }
     if (sign > 0) pos++;
     else if (sign < 0) neg++;
+    else continue;
+    if (seen) {
+      const m = session![i];
+      if (m < seen.length) seen[m] |= sign > 0 ? 1 : 2;
+    }
   }
-  return { positive: pos * stride, negative: neg * stride, exact: stride === 1 };
+  let pm = 0;
+  let nm = 0;
+  if (seen) {
+    for (let m = 0; m < seen.length; m++) {
+      if (seen[m] & 1) pm++;
+      if (seen[m] & 2) nm++;
+    }
+  }
+  const out: SideCounts = { positive: pos * stride, negative: neg * stride, exact: stride === 1 };
+  if (seen) {
+    out.positiveMatches = pm;
+    out.negativeMatches = nm;
+  }
+  return out;
 }
 
 /**
@@ -461,4 +517,20 @@ export function sideScales(counts: { positive: number; negative: number }): [num
   if (!(positive > 0 && negative > 0)) return [1, 1];
   const half = (positive + negative) / 2;
   return [half / positive, half / negative];
+}
+
+/**
+ * Per-side weights that compare one match of each side: each side divided by
+ * the matches it has rows in, scaled as if each side had half of the matches
+ * (as `sideScales` does with rows, so the exposure roughly carries over). Won against lost with the + side's seven matches won
+ * and the − side's four lost then reads as the heat of a match won against
+ * that of a match lost - not as the side that played more matches being
+ * hotter everywhere. Falls back to the row shares where the data has no
+ * matches to count.
+ */
+export function matchScales(counts: SideCounts): [number, number] {
+  const p = counts.positiveMatches ?? 0;
+  const n = counts.negativeMatches ?? 0;
+  if (!(p > 0 && n > 0)) return sideScales(counts);
+  return sideScales({ positive: p, negative: n });
 }

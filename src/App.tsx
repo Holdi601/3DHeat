@@ -64,6 +64,8 @@ import { PathPanel } from './ui/panels/PathPanel';
 import { SourcePanel } from './ui/panels/SourcePanel';
 import { SlicePanel } from './ui/panels/SlicePanel';
 import { SplitPanel } from './ui/panels/SplitPanel';
+import { DifferenceBar } from './ui/panels/DifferenceBar';
+import { HeatLegend } from './ui/HeatLegend';
 import { TeamPanel, TeamsList } from './ui/panels/TeamPanel';
 import { CameraPanel, PerfPanel } from './ui/panels/ViewPanel';
 import { SpeedOverlay } from './ui/SpeedOverlay';
@@ -544,6 +546,8 @@ export function App() {
             */}
             <SoftwareRenderingWarning />
             <Segmented value={mode} options={modeOptions} onChange={setMode} />
+            {/* What the difference sets against what: where Difference is picked, not under Compare alone. */}
+            <DifferenceBar />
             {/*
               Above everything, and outside the team panel: the session decides
               what counts as one continuous track, so it changes what the viewer
@@ -688,6 +692,7 @@ export function App() {
               <VolumeSigns />
               <StatsOverlay />
               <SpeedOverlay />
+              <HeatLegend />
               <InspectHud />
               <NotesLayer />
               {/* Nothing loaded: open real data (ui/panels/OpenData.tsx). */}

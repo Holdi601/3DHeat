@@ -213,7 +213,6 @@
   "heat.heatPanel.heatRamp": "ヒートランプ",
   "heat.heatPanel.resetPositive": "透明 → 赤 → 黄 → 白 にリセット",
   "heat.heatPanel.negativeRamp": "負（減算チーム）",
-  "heat.heatPanel.resetNegative": "透明 → 緑 → 青 → 紫 にリセット",
   "heat.heatPanel.clamps": "スプライトのピクセル制限",
   "heat.heatPanel.clampsHint": "オーバードローの防止策です。Nピクセルを覆うスプライトはN回のブレンド処理がかかるので、近くで半径を制限しないと60fpsのフレームが2fpsになります。",
   "heat.heatPanel.minPixelRadius": "最小ピクセル半径",

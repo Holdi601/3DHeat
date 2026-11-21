@@ -213,7 +213,6 @@
   "heat.heatPanel.heatRamp": "Hőskála",
   "heat.heatPanel.resetPositive": "Visszaállítás: átlátszó → piros → sárga → fehér",
   "heat.heatPanel.negativeRamp": "Negatív (kivonó csapatok)",
-  "heat.heatPanel.resetNegative": "Visszaállítás: átlátszó → zöld → kék → lila",
   "heat.heatPanel.clamps": "Sprite-pixelkorlátok",
   "heat.heatPanel.clampsHint": "A túlrajzolás elleni védelem. Egy N pixelt lefedő sprite N keverési műveletbe kerül, így közelről egy korlátozatlan sugár az, ami egy 60 fps-es képkockából 2 fps-eset csinál.",
   "heat.heatPanel.minPixelRadius": "Min. pixelsugár",

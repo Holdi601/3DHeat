@@ -213,7 +213,6 @@
   "heat.heatPanel.heatRamp": "Lestvica toplote",
   "heat.heatPanel.resetPositive": "Ponastavi na prosojno → rdeča → rumena → bela",
   "heat.heatPanel.negativeRamp": "Negativna (odštevajoče ekipe)",
-  "heat.heatPanel.resetNegative": "Ponastavi na prosojno → zelena → modra → vijolična",
   "heat.heatPanel.clamps": "Omejitve slikovnih pik sprajta",
   "heat.heatPanel.clampsHint": "Zaščita pred prekomernim risanjem. Sprajt, ki pokrije N slikovnih pik, stane N operacij mešanja, zato neomejen polmer od blizu iz sličice s 60 fps naredi sličico z 2 fps.",
   "heat.heatPanel.minPixelRadius": "Najm. polmer v pikah",

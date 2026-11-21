@@ -213,7 +213,6 @@
   "heat.heatPanel.heatRamp": "Grádán teasa",
   "heat.heatPanel.resetPositive": "Athshocraigh go trédhearcach → dearg → buí → bán",
   "heat.heatPanel.negativeRamp": "Diúltach (foirne dealaitheacha)",
-  "heat.heatPanel.resetNegative": "Athshocraigh go trédhearcach → glas → gorm → corcra",
   "heat.heatPanel.clamps": "Teanntáin picteilíní na sprideanna",
   "heat.heatPanel.clampsHint": "An garda ró-tharraingthe. Cosnaíonn sprid a chlúdaíonn N picteilín N oibríocht chumasctha, mar sin is é ga gan teanntán go gar don cheamara a dhéanann fráma 2fps d'fhráma 60fps.",
   "heat.heatPanel.minPixelRadius": "Íosgha picteilín",

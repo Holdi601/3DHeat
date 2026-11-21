@@ -6,16 +6,16 @@ nav_order: 5
 
 # Difference
 
-Red where team A was more, green-blue where team B was, nothing where they were equal.
+Red where team A was more, blue where team B was, nothing where they were equal.
 
-**Difference** (key 2) is signed heat. Rows of one population add heat; rows of another subtract it. Where the two overlap evenly the result is zero and fully transparent; where one dominates it shows in that side's colours - by default warm (transparent → red → yellow → white) for the **+** side and cool (transparent → green → blue → purple) for the **−** side.
+**Difference** (key 2) is signed heat. Rows of one population add heat; rows of another subtract it. Where the two overlap evenly the result is zero and fully transparent; where one dominates it shows in that side's colours - by default warm (transparent → red → yellow → white) for the **+** side and cool (transparent → blue → light blue → white) for the **−** side. The [colour scale](colour-and-exposure.md#the-colour-scale) over the view names both sides and says what the colours mean in numbers.
 
 ![Difference heat: red where the + side was more, green and blue where the - side was more](assets/img/en/difference-split.webp)
 
 ## How to use it
 
 1. Press `2` (or pick **Difference** in the mode bar).
-2. Open **Difference split** in the sidebar.
+2. Under the mode bar, **Compare** offers **Teams** and, where the data says who won, **Won vs lost** (see [Won against lost](#won-against-lost)). Any other column: open **Difference split** in the sidebar.
 3. Choose what to **Split by**: usually *Groups*.
 4. Put one group (or value) on **+** and another on **−**.
 5. Read the colours: warm means the + side, cool means the − side. The panel warns if one side has no rows (see [Messages you may see](#messages-you-may-see)).
@@ -23,6 +23,20 @@ Red where team A was more, green-blue where team B was, nothing where they were 
 *Which* two populations is the whole question, so the split can be any retained column, not only groups. Rows that fall on **neither** side are **left out**, not counted as zero: that is what makes a split over two of many values compare exactly those two, and it composes with the [filters](filters.md) - filter down to one map, then split that by build.
 
 The mode needs two sides: a group column with at least two groups, or a split over a column kept for filtering. On data with fewer than two groups a load starts with a column split - the *Source file* column of a multi-file load first, otherwise the first category column with two values, otherwise the first numeric column with a span - so *compare two loads* works on data without any groups. Only data with neither leaves the mode unavailable; so does a column split left with nothing on one side.
+
+## Won against lost
+
+Right under the mode bar while Difference is on:
+
+| Control | What it does |
+|---|---|
+| **Compare**: **Teams** / **Round won vs lost** / **Match won vs lost** | Teams: the groups set on + and − in the [Teams list](teams-list.md). Won vs lost: the rows of a side that went on to win on **+**, of a side that went on to lose on **−**, by the [outcome columns](data-formats.md#outcome-columns) (*Round* where the data has rounds; a game without rounds has one button, **Won vs lost**). |
+| **Side** | *Every side*, or one team: then team 1 won is set against team 1 lost, not the winners of either team against the losers of either. It shows only that team (the Teams list's ticks). |
+| **Each half**: **As counted** / **Per row** / **Per match** | How each half is scaled before they are set against each other. *As counted*: as many rows as it has, so the half with more rows is hotter everywhere. *Per row*: divided by its own rows (the same as [Compare shares, not counts](#compare-shares-not-counts)). *Per match*: divided by the matches it has rows in - one match won against one match lost; where the data has no match (session) column it is not offered. Won vs lost starts on *Per match*. |
+
+The line below says what each half holds: *+ won: 318,703 rows in 5 matches; − lost: 155,768 rows in 3 matches. Each half scaled to its own matches.*
+
+To set two pictures side by side - won and lost, two filters, two loads - lock the [colour scale](colour-and-exposure.md#the-colour-scale) first: every view is then coloured on the same scale.
 
 ## The Difference split panel
 
@@ -86,11 +100,11 @@ A value in both ranges counts as +. The ranges do not have to cover the column; 
 
 **Difference** / **Share of +** at the top of the panel chooses what is drawn. *Share of +* colours each place by the + side's share of the rows on either side there, against that share over everything shown: warm above it, cool below, nothing where it is the same, and nothing where a place has too few rows. With the won rounds on + and the lost on − it is a win-rate map; **Round win rate** and **Match win rate** set that up in one press where the data has [outcome columns](data-formats.md#outcome-columns). See [Win rate](win-rate.md).
 
-**Round: won vs lost** and **Match: won vs lost** set up the same sides as a plain difference: the winning side's rows on **+**, the losing side's on **−**, so the map shows where winners were more than losers rather than a share. The outcome filters (**Round result**, **Match result**) narrow every other view the same way, events included.
+**Round: won vs lost** and **Match: won vs lost** set up the same sides as a plain difference, each half per match (see [Won against lost](#won-against-lost)): the winning side's rows on **+**, the losing side's on **−**, so the map shows where winners were more than losers rather than a share. The outcome filters (**Round result**, **Match result**) narrow every other view the same way, events included.
 
 ## Colours
 
-The **Heat colours** section shows two ramp editors in this mode: **Positive (additive teams)** and **Negative (subtractive teams)**, each with its own reset button (*Reset to transparent → red → yellow → white*, *Reset to transparent → green → blue → purple*). The composite takes the absolute value of the net heat through the [saturation point and response](colour-and-exposure.md), and picks the negative ramp where the net is below zero. See [Colour and exposure](colour-and-exposure.md#the-ramp-editor).
+The **Heat colours** section shows two ramp editors in this mode: **Positive (additive teams)** and **Negative (subtractive teams)**, each with its own reset button (*Reset to transparent → red → yellow → white*, *Reset to transparent → blue → light blue → white*). The two arms are one warm and one cool hue around nothing, each lighter as it grows, so they stay apart for colour-blind readers too. The composite takes the absolute value of the net heat through the [saturation point and response](colour-and-exposure.md), and picks the negative ramp where the net is below zero. See [Colour and exposure](colour-and-exposure.md#the-ramp-editor).
 
 Use the *Linear* density response when the size of the difference matters: it is the only response where equal colour means equal count.
 

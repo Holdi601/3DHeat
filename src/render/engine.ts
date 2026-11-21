@@ -90,7 +90,7 @@ import { HeatFieldService } from './heatField';
 import { lookAtDistance, lookAtPitch, type Vec3 } from './pose';
 import { useInspectStore } from '../state/inspectStore';
 import { effectiveGpuBudget } from './budget';
-import { buildActiveFilters, frameSignTables, sideScales, splitSideCounts, type SideCounts, type SplitTable } from './filterTables';
+import { buildActiveFilters, frameSignTables, matchScales, sideCountSteps, sideScales, type SideCounts, type SplitTable } from './filterTables';
 import { overallShare } from './rateMap';
 import { ExposureFollower } from './exposureFollow';
 import { publishSplitStatus } from '../state/splitStatus';
@@ -296,6 +296,8 @@ const EXPOSURE_SAMPLES = 40_000;
  * already exposed correctly.
  */
 const AUTO_EXPOSE_AFTER_FRAMES = 8;
+/** Milliseconds a frame spends counting the difference's sides (`updateSideCounts`). */
+const SIDE_COUNT_MS = 2;
 
 /**
  * Magnitude the estimated peak of the field is mapped to in a half-float target.
@@ -459,6 +461,8 @@ export class Engine {
   private sideCountsKey = '';
   private sideCountsRange: [number, number] = [0, 0];
   private sideCountsAt = 0;
+  /** The count under way, a slice a frame; see `updateSideCounts`. */
+  private sideCountJob: Generator<void, SideCounts, void> | null = null;
   /** Chunks the last splat left out for want of the split's column, of how many. */
   private splitChunks = { skipped: 0, total: 0 };
   /** Last projection seen from the store, to tell a UI change from a camera one. */
@@ -1676,6 +1680,32 @@ export class Engine {
   }
 
   /**
+   * Meter the exposure again once the field has had a few frames to build - on
+   * a load, a new kind of heat, new filters. Not while the scale is locked
+   * (`HeatSettings.exposureLocked`): comparing two views on one scale is what
+   * the lock is for, and a filter that re-metered would undo it.
+   */
+  private meterSoon(): void {
+    if (snapshot().heat.exposureLocked) return;
+    this.autoExposePending = AUTO_EXPOSE_AFTER_FRAMES;
+  }
+
+  /**
+   * Lock the scale at what is on screen (a glide under way stops where it is),
+   * or unlock it: the exposure then follows the view again and is metered anew.
+   */
+  lockExposure(on: boolean): void {
+    const st = useStore.getState();
+    if (on) {
+      const shown = this.shownSaturation;
+      st.patchHeat({ exposureLocked: true, followExposure: false, ...(shown && shown > 0 ? { saturation: shown } : {}) });
+      return;
+    }
+    st.patchHeat({ exposureLocked: false, followExposure: true });
+    if (this.dataset) this.meterSoon();
+  }
+
+  /**
    * Set the saturation point from the field currently on screen.
    *
    * Meters the accumulated heat rather than deriving it, because the analytic
@@ -1740,7 +1770,7 @@ export class Engine {
   private updateSideCounts(
     now: number,
     difference: boolean,
-    shares: boolean,
+    shares: 'rows' | 'matches' | null,
     timeLo: number,
     timeHi: number,
     filters: ActiveFilter[],
@@ -1758,16 +1788,34 @@ export class Engine {
     const range = candidateRange(ds, timeLo, timeHi);
     const moved = range[0] !== this.sideCountsRange[0] || range[1] !== this.sideCountsRange[1];
     if (key !== this.sideCountsKey || (moved && now - this.sideCountsAt > 250)) {
-      this.sideCounts = splitSideCounts(ds, range[0], range[1], filters, teamSign, split);
+      // Counted a slice a frame (a million rows took 20-40 ms at once): the
+      // counts in force stay until the new ones are in.
+      this.sideCountJob = sideCountSteps(ds, range[0], range[1], filters, teamSign, split);
       this.sideCountsKey = key;
       this.sideCountsRange = range;
       this.sideCountsAt = now;
+    }
+    if (this.sideCountJob) {
+      const until = performance.now() + SIDE_COUNT_MS;
+      for (;;) {
+        const r = this.sideCountJob.next();
+        if (r.done) {
+          this.sideCounts = r.value;
+          this.sideCountJob = null;
+          break;
+        }
+        if (performance.now() >= until) {
+          // Another frame to go on in, even with nothing else moving.
+          this.invalidate(1);
+          break;
+        }
+      }
     }
     if (!shares) return [1, 1];
     // Quantised, so a playing window's slowly drifting counts do not restart the
     // accumulation every time they move a fraction of a per cent.
     const q = (v: number) => Math.exp(Math.round(Math.log(v) * 50) / 50);
-    const [p, n] = sideScales(this.sideCounts);
+    const [p, n] = shares === 'matches' ? matchScales(this.sideCounts) : sideScales(this.sideCounts);
     return [q(p), q(n)];
   }
 
@@ -2803,7 +2851,8 @@ export class Engine {
       // it replaces can leave the interesting part of the data in the bottom
       // quarter of the ramp, and a first-time user has no reason to suspect the
       // saturation slider rather than the data.
-      this.autoExposePending = s.dataset ? AUTO_EXPOSE_AFTER_FRAMES : 0;
+      this.autoExposePending = 0;
+      if (s.dataset) this.meterSoon();
       // A new scene's cost is unknown: its sprites ramp up from a few.
       this.prevSprites = RAMP_START_SPRITES;
       this.geometrySig = '';
@@ -3028,7 +3077,7 @@ export class Engine {
     // next heat mode with a saturation for nothing.
     const heatKind = raceTab || s.mode === 'team' ? null : s.mode === 'heat-lines' ? `lines|${this.linesKey}` : 'points';
     if (heatKind !== null && heatKind !== this.meteredKind) {
-      if (this.meteredKind !== null && this.dataset) this.autoExposePending = AUTO_EXPOSE_AFTER_FRAMES;
+      if (this.meteredKind !== null && this.dataset) this.meterSoon();
       this.meteredKind = heatKind;
       this.prevSprites = RAMP_START_SPRITES;
     }
@@ -3106,7 +3155,7 @@ export class Engine {
     const splitScale = this.updateSideCounts(
       now,
       heatMode === 'heat-difference' && !raceTab && s.mode !== 'team',
-      s.heat.splitShares && !rateMap,
+      s.heat.splitShares && !rateMap ? s.heat.splitPer : null,
       timeLo,
       rowsHi,
       activeFilters,
@@ -3118,7 +3167,7 @@ export class Engine {
     // all of it would leave all but invisible. Meter again, as on a load.
     // Metered once the heat draws the new filters, not while it still shows the old.
     if (s.filters !== this.meteredFilters || drawnFilterKey !== this.meteredFilterKey) {
-      if (this.meteredFilters !== null && this.dataset) this.autoExposePending = AUTO_EXPOSE_AFTER_FRAMES;
+      if (this.meteredFilters !== null && this.dataset) this.meterSoon();
       this.meteredFilters = s.filters;
       this.meteredFilterKey = drawnFilterKey;
     }
@@ -4311,7 +4360,7 @@ export class Engine {
     }
     // Following the view: meter again once the camera has come to rest, and
     // glide to the result. Heat modes only - the box replay has no field.
-    const follow = !raceTab && s.mode !== 'team' && !!this.dataset && h.followExposure;
+    const follow = !raceTab && s.mode !== 'team' && !!this.dataset && h.followExposure && !h.exposureLocked;
     const due = this.follower.frame(cameraMoved, follow);
     if (due !== null && !this.followMetering && this.autoExposePending === 0) void this.followExposure(due);
     // What the split drew, for the panel: the rows on each side, and chunks left
@@ -4329,6 +4378,8 @@ export class Engine {
         positive: this.sideCounts.positive,
         negative: this.sideCounts.negative,
         exact: this.sideCounts.exact,
+        positiveMatches: this.sideCounts.positiveMatches ?? 0,
+        negativeMatches: this.sideCounts.negativeMatches ?? 0,
         skippedChunks: this.splitChunks.skipped,
         chunks: this.splitChunks.total,
       });

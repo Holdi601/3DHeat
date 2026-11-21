@@ -213,7 +213,6 @@
   "heat.heatPanel.heatRamp": "Скала топлоте",
   "heat.heatPanel.resetPositive": "Ресетуј на провидно → црвено → жуто → бело",
   "heat.heatPanel.negativeRamp": "Негативна (тимови који одузимају)",
-  "heat.heatPanel.resetNegative": "Ресетуј на провидно → зелено → плаво → љубичасто",
   "heat.heatPanel.clamps": "Ограничења спрајта у пикселима",
   "heat.heatPanel.clampsHint": "Заштита од прецртавања. Спрајт који покрива N пиксела кошта N операција мешања, па неограничен полупречник изблиза претвара кадар од 60 fps у кадар од 2 fps.",
   "heat.heatPanel.minPixelRadius": "Најмањи полупречник у пикселима",

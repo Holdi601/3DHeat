@@ -213,7 +213,6 @@
   "heat.heatPanel.heatRamp": "Rampe de chaleur",
   "heat.heatPanel.resetPositive": "Réinitialiser à transparent → rouge → jaune → blanc",
   "heat.heatPanel.negativeRamp": "Négative (équipes soustractives)",
-  "heat.heatPanel.resetNegative": "Réinitialiser à transparent → vert → bleu → violet",
   "heat.heatPanel.clamps": "Limites des sprites en pixels",
   "heat.heatPanel.clampsHint": "La protection contre le surdessin. Un sprite qui couvre N pixels coûte N opérations de mélange : un rayon non limité vu de près, c’est ce qui transforme une image à 60 fps en une image à 2 fps.",
   "heat.heatPanel.minPixelRadius": "Rayon min. en pixels",

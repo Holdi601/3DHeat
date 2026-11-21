@@ -213,7 +213,6 @@
   "heat.heatPanel.heatRamp": "Топлинна скала",
   "heat.heatPanel.resetPositive": "Нулиране към прозрачно → червено → жълто → бяло",
   "heat.heatPanel.negativeRamp": "Отрицателна (изваждащи отбори)",
-  "heat.heatPanel.resetNegative": "Нулиране към прозрачно → зелено → синьо → лилаво",
   "heat.heatPanel.clamps": "Ограничения на спрайтовете в пиксели",
   "heat.heatPanel.clampsHint": "Защитата срещу презарисуване. Спрайт, покриващ N пиксела, струва N операции на смесване, така че неограничен радиус отблизо е това, което превръща кадър от 60 fps в кадър от 2 fps.",
   "heat.heatPanel.minPixelRadius": "Мин. радиус в пиксели",

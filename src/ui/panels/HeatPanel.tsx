@@ -228,6 +228,18 @@ export function HeatPanel() {
         />
         <div className="hint">{t('heat.heatPanel.followExposureHint')}</div>
         <Check
+          label={t('heat.heatPanel.lockScale')}
+          checked={heat.exposureLocked}
+          onChange={(on) => engine?.lockExposure(on)}
+          title={t('heat.heatPanel.lockScaleHint')}
+        />
+        <div className="hint">{t('heat.heatPanel.lockScaleHint')}</div>
+        <Check
+          label={t('heat.heatPanel.showLegend')}
+          checked={heat.showLegend}
+          onChange={(showLegend) => patchHeat({ showLegend })}
+        />
+        <Check
           label={t('heat.heatPanel.zoomInvariant')}
           checked={heat.zoomInvariant}
           onChange={(zoomInvariant) => patchHeat({ zoomInvariant })}

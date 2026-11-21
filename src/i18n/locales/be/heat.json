@@ -213,7 +213,6 @@
   "heat.heatPanel.heatRamp": "Шкала цяпла",
   "heat.heatPanel.resetPositive": "Скінуць да празрысты → чырвоны → жоўты → белы",
   "heat.heatPanel.negativeRamp": "Адмоўнае (каманды з мінусам)",
-  "heat.heatPanel.resetNegative": "Скінуць да празрысты → зялёны → сіні → фіялетавы",
   "heat.heatPanel.clamps": "Абмежаванні спрайта ў пікселях",
   "heat.heatPanel.clampsHint": "Абарона ад перамалёўкі. Спрайт, які пакрывае N пікселяў, каштуе N аперацый змешвання, таму неабмежаваны радыус зблізку ператварае кадр на 60 fps у кадр на 2 fps.",
   "heat.heatPanel.minPixelRadius": "Мін. радыус у пікселях",

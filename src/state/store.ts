@@ -76,11 +76,26 @@ export interface HeatSettings {
    */
   followExposure: boolean;
   /**
+   * The scale stays as it is: nothing meters the exposure again by itself - not
+   * a camera at rest, not a new filter, a new heat kind or a new load - so two
+   * views (won and lost, two filters, two loads) are coloured on one scale. The
+   * Auto-expose button and the saturation slider still set it by hand.
+   */
+  exposureLocked: boolean;
+  /** The colour scale over the view (ui/HeatLegend.tsx), with its numbers and the lock. */
+  showLegend: boolean;
+  /**
    * Difference mode: weight each side by the inverse of its own row count, so
    * the picture compares where each side is proportionally more common rather
    * than which side simply has more rows. See `sideScales`.
    */
   splitShares: boolean;
+  /**
+   * What `splitShares` divides each side by: its rows, or the matches (sessions)
+   * it has rows in - "a match won against a match lost". Matches fall back to
+   * rows where the data has no session column.
+   */
+  splitPer: 'rows' | 'matches';
   /**
    * Difference mode as a rate: per place the + side's share of the rows on
    * either side, coloured above (warm) or below (cool) its share over
@@ -751,7 +766,10 @@ export const useStore = create<AppState>((set) => ({
     maxPixelRadius: 96,
     zoomInvariant: true,
     followExposure: true,
+    exposureLocked: false,
+    showLegend: true,
     splitShares: false,
+    splitPer: 'rows',
     splitRate: false,
     // Rows, not rounds: a player standing still adds a row a sample, so a place
     // needs a few seconds of presence before its share says anything.

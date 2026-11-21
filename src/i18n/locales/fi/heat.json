@@ -213,7 +213,6 @@
   "heat.heatPanel.heatRamp": "Lämpöliukuma",
   "heat.heatPanel.resetPositive": "Palauta: läpinäkyvä → punainen → keltainen → valkoinen",
   "heat.heatPanel.negativeRamp": "Negatiivinen (vähentävät joukkueet)",
-  "heat.heatPanel.resetNegative": "Palauta: läpinäkyvä → vihreä → sininen → violetti",
   "heat.heatPanel.clamps": "Spritejen pikselirajat",
   "heat.heatPanel.clampsHint": "Ylipiirron suoja. N pikseliä peittävä sprite maksaa N sekoitusoperaatiota, joten rajoittamaton säde läheltä on se, mikä muuttaa 60 fps:n kuvan 2 fps:n kuvaksi.",
   "heat.heatPanel.minPixelRadius": "Pienin pikselisäde",

@@ -213,7 +213,6 @@
   "heat.heatPanel.heatRamp": "Rampa de calor",
   "heat.heatPanel.resetPositive": "Restablecer a transparente → rojo → amarillo → blanco",
   "heat.heatPanel.negativeRamp": "Negativo (equipos sustractivos)",
-  "heat.heatPanel.resetNegative": "Restablecer a transparente → verde → azul → morado",
   "heat.heatPanel.clamps": "Límites de píxeles del sprite",
   "heat.heatPanel.clampsHint": "La protección contra el sobredibujado. Un sprite que cubre N píxeles cuesta N operaciones de mezcla, así que un radio sin límite visto de cerca es lo que convierte un fotograma de 60fps en uno de 2fps.",
   "heat.heatPanel.minPixelRadius": "Radio mínimo en píxeles",

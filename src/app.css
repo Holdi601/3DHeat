@@ -1740,3 +1740,124 @@ button.link:disabled {
   margin: 4px auto;
   color: var(--text);
 }
+
+/*
+ * The heat's colour scale over the view (ui/HeatLegend.tsx): bottom right,
+ * above the fly speed. Its text in the text tokens, never in a ramp colour;
+ * the bar sits on the panel surface so the diverging middle reads as nothing.
+ */
+.heat-legend {
+  position: absolute;
+  z-index: var(--z-hud);
+  right: 12px;
+  bottom: 52px;
+  width: 272px;
+  padding: 7px 10px 6px;
+  background: var(--glass);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-size: 10.5px;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.heat-legend-head,
+.heat-legend-sides {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.heat-legend-head > span {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.heat-legend-sides {
+  margin-top: 3px;
+  color: var(--text);
+}
+
+.heat-legend-sides span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 48%;
+}
+
+.heat-legend-lock {
+  padding: 1px 7px;
+  font-size: 10px;
+}
+
+.heat-legend-lock.on {
+  border-color: var(--accent);
+  background: var(--accent-fill-strong);
+  color: var(--text);
+}
+
+.heat-legend-bar {
+  position: relative;
+  height: 10px;
+  margin-top: 5px;
+  border-radius: 2px;
+  background-color: var(--surface-hover);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.heat-legend-mid {
+  position: absolute;
+  left: 50%;
+  top: -2px;
+  bottom: -2px;
+  width: 1px;
+  background: var(--text-faint);
+}
+
+.heat-legend-ticks {
+  position: relative;
+  height: 14px;
+  margin-top: 2px;
+}
+
+.heat-legend-ticks span {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.heat-legend-ticks span.first {
+  transform: none;
+}
+
+.heat-legend-ticks span.last {
+  transform: translateX(-100%);
+}
+
+.heat-legend-unit {
+  margin-top: 1px;
+  color: var(--text-faint);
+}
+
+/* What the difference sets against what, under the mode switch (ui/panels/DifferenceBar.tsx). */
+.diff-bar {
+  margin-top: 8px;
+}
+
+.diff-bar .field {
+  margin-top: 6px;
+}
+
+.diff-bar-side {
+  margin-top: 6px;
+  gap: 8px;
+  align-items: center;
+}
+
+.diff-bar-side select {
+  flex: 1;
+  min-width: 0;
+}

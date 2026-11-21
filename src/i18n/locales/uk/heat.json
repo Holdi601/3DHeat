@@ -213,7 +213,6 @@
   "heat.heatPanel.heatRamp": "Шкала тепла",
   "heat.heatPanel.resetPositive": "Скинути на прозорий → червоний → жовтий → білий",
   "heat.heatPanel.negativeRamp": "Від’ємна (команди, що віднімають)",
-  "heat.heatPanel.resetNegative": "Скинути на прозорий → зелений → синій → фіолетовий",
   "heat.heatPanel.clamps": "Обмеження спрайта в пікселях",
   "heat.heatPanel.clampsHint": "Захист від перемальовування. Спрайт, що покриває N пікселів, коштує N операцій змішування, тому необмежений радіус зблизька перетворює кадр на 60 fps на кадр на 2 fps.",
   "heat.heatPanel.minPixelRadius": "Мін. радіус у пікселях",

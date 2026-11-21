@@ -213,7 +213,6 @@
   "heat.heatPanel.heatRamp": "Škála tepla",
   "heat.heatPanel.resetPositive": "Obnovit na průhledná → červená → žlutá → bílá",
   "heat.heatPanel.negativeRamp": "Záporná (odečítající týmy)",
-  "heat.heatPanel.resetNegative": "Obnovit na průhledná → zelená → modrá → fialová",
   "heat.heatPanel.clamps": "Omezení pixelů spritů",
   "heat.heatPanel.clampsHint": "Ochrana proti overdraw. Sprite pokrývající N pixelů stojí N operací míchání, takže neomezený poloměr zblízka udělá ze snímku při 60 fps snímek při 2 fps.",
   "heat.heatPanel.minPixelRadius": "Min. poloměr v pixelech",

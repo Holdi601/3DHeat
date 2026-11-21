@@ -213,7 +213,6 @@
   "heat.heatPanel.heatRamp": "Siltuma skala",
   "heat.heatPanel.resetPositive": "Atiestatīt uz caurspīdīgs → sarkans → dzeltens → balts",
   "heat.heatPanel.negativeRamp": "Negatīvā (atņemošās komandas)",
-  "heat.heatPanel.resetNegative": "Atiestatīt uz caurspīdīgs → zaļš → zils → violets",
   "heat.heatPanel.clamps": "Spraitu pikseļu ierobežojumi",
   "heat.heatPanel.clampsHint": "Pārzīmēšanas aizsargs. Spraits, kas aizņem N pikseļus, maksā N sajaukšanas operācijas, tāpēc neierobežots rādiuss tuvumā ir tas, kas 60 fps kadru pārvērš 2 fps kadrā.",
   "heat.heatPanel.minPixelRadius": "Min. rādiuss pikseļos",

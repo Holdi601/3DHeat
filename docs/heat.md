@@ -55,7 +55,7 @@ Every control is explained on its own page; the Details column links to it. Slid
 | Group swatches and **Colour separation** (Team heat only) | 1.4 | [Team heat](team-heat.md) |
 | **Heat ramp** editor (*Positive (additive teams)* in Difference, *Opacity ramp* in Team heat) | transparent → red → yellow → white | [Colour and exposure](colour-and-exposure.md#the-ramp-editor) |
 | **Reset to transparent → red → yellow → white** | | |
-| **Negative (subtractive teams)** ramp (Difference only) | transparent → green → blue → purple | [Difference](difference.md#colours) |
+| **Negative (subtractive teams)** ramp (Difference only) | transparent → blue → light blue → white | [Difference](difference.md#colours) |
 
 ### Sprite pixel clamps (closed, developer tools only)
 

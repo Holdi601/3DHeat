@@ -34,13 +34,27 @@ It also runs **automatically**:
 - 8 frames after the [filters](filters.md) change (filtering every position down to a hundred events changes the density by orders of magnitude);
 - 8 frames after switching between point heat and [line heat](line-heat.md), or changing which routes line heat draws, because a line lays down far less heat per sample than a sprite.
 
+None of these while the [scale is locked](#the-colour-scale).
+
 When nothing is lit, the automatic run leaves the saturation alone; the button falls back to the analytic estimate and says *nothing lit to meter - used the analytic estimate*.
 
 ### Follow the view
 
 **Follow the view** (Heat shape section, default on) meters again each time the camera comes to rest, so a region you fly into uses the whole colour ramp instead of the scale metered for the whole map. Small changes are ignored and the scale glides rather than jumps. It runs in the four heat modes, not in the figure overlay.
 
-Untick it to lock the scale and compare places on one scale. Dragging **Saturation point** by hand locks it too.
+Untick it to keep the scale while the camera moves. Dragging **Saturation point** by hand does that too. To keep it through filters and loads as well, use **Lock the scale** (below).
+
+## The colour scale
+
+The box at the bottom right of the view (**Show the colour scale over the view** in Heat shape) says what the colours mean:
+
+- **Heat** and **Lines**: the ramp from none to the top, with the values at none, the middle and the top. A saturating response never quite reaches the top, so the last value reads *≥*.
+- **Difference**: both arms around a middle line, the **−** side on the left and the **+** side on the right, each named (*lost* and *won*, or the teams on each side), with the values at both ends, both middles and 0.
+- **Share of +** ([win-rate map](win-rate.md)): the share won at both ends and in the middle, around the share overall.
+
+The values are **rows per km²** (per 100 m² for sprites under 30 m), smoothed over the sprite: the heat at a place divided by what one sprite adds over its disc (its radius² times 2π∫ramp(s)·s ds), so the reading is the same at any zoom. A row is one sample or event of the data, after the filters. Under a difference scaled per row they are *% of the side's rows per km²*, scaled per match *rows per km² in one match of the side*. [Line heat](line-heat.md) and heat weighed by a [value](value-weighting.md) are given in the heat's own units.
+
+**Lock scale** on the box (and **Lock the scale** in Heat shape) keeps the scale where it is: nothing meters the exposure again by itself - not a new filter, a new load, a new kind of heat or the camera coming to rest. Two views - won and lost, two filters, two loads - are then coloured on one scale and can be set side by side; the box says *locked at saturation N*. **Auto-expose** and the **Saturation point** slider still set it by hand. Unlocked, the scale follows the view again and is metered anew.
 
 ## Density response
 
@@ -80,10 +94,10 @@ Stops may be given in any order; they are sorted when the ramp is built. The **a
 | Position | Positive (Heat, Lines, Difference +) | Negative (Difference −) |
 |---|---|---|
 | 0.00 | black, alpha 0 | black, alpha 0 |
-| 0.15 | rgb(180, 0, 0), alpha 0.55 | rgb(0, 170, 60), alpha 0.55 |
-| 0.45 | rgb(255, 40, 0), alpha 0.85 | rgb(0, 190, 200), alpha 0.85 |
-| 0.72 | rgb(255, 220, 40), alpha 0.95 | rgb(40, 80, 255), alpha 0.95 |
-| 1.00 | white, alpha 1 | rgb(170, 60, 255), alpha 1 |
+| 0.15 | rgb(180, 0, 0), alpha 0.55 | rgb(20, 70, 190), alpha 0.55 |
+| 0.45 | rgb(255, 40, 0), alpha 0.85 | rgb(30, 125, 245), alpha 0.85 |
+| 0.72 | rgb(255, 220, 40), alpha 0.95 | rgb(110, 190, 255), alpha 0.95 |
+| 1.00 | white, alpha 1 | rgb(225, 245, 255), alpha 1 |
 
 ## While the camera moves
 
