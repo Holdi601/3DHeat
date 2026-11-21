@@ -137,7 +137,7 @@ mod tests {
     #[test]
     fn the_shipped_index_reads() {
         let i = Index::shipped();
-        assert_eq!(i.entries.len(), 20);
+        assert_eq!(i.entries.len(), 21);
         for e in &i.entries {
             assert!(e.repo.starts_with("Holdi601/"), "{}", e.id);
             assert!(e.supports("windows-x64"), "{}", e.id);
@@ -154,7 +154,7 @@ mod tests {
         for id in ["heat3d-battlefield", "heat3d-r6", "heat3d-r6-maps"] {
             assert!(!i.get(id).unwrap().supports("linux-x64") && !i.get(id).unwrap().supports("macos-arm64"), "{id}");
         }
-        assert_eq!(i.entries.iter().filter(|e| e.supports("linux-x64")).count(), 17);
+        assert_eq!(i.entries.iter().filter(|e| e.supports("linux-x64")).count(), 18);
         assert_eq!(i.entries.iter().filter(|e| e.supports("macos-arm64")).count(), 9);
         assert!(i.get("heat3d-gamecapture").unwrap().supports("macos-arm64") && !i.get("heat3d-dcs").unwrap().supports("macos-arm64"));
     }
