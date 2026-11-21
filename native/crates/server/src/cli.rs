@@ -382,7 +382,7 @@ pub async fn serve(rest: Vec<String>, core: Arc<Core>, default_web: Option<PathB
         );
     }
     if cfg.share.is_some() {
-        println!("  Sharing: catalogue items the host confirms (session panel); confidential ones are blocked");
+        println!("  Sharing: catalogue items the host confirms (session panel); confidential ones only after a warning");
     }
     let code = tokio::select! {
         r = running.wait() => match r { Err(e) => { eprintln!("3dheat: {e}"); 1 } Ok(()) => 0 },
