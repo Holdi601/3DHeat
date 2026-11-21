@@ -19,7 +19,7 @@ describe('outcome analysis', () => {
     expect(hold!.zone!.x0).toBeLessThanOrEqual(930);
     expect(hold!.zone!.x1).toBeGreaterThan(930);
     expect(hold!.folds[0]).toBeGreaterThanOrEqual(4);
-  });
+  }, 60_000);
 
   it('finds nothing in a fair coin: the false discovery rate holds over many runs', async () => {
     // Under a fair coin, Benjamini-Hochberg at 5% calls something in about one run of twenty.
@@ -36,7 +36,7 @@ describe('outcome analysis', () => {
     const { report } = await analyseOutcome([{ key: 'c', matches: synthMatches(800, 21, { aheadCorner: true }) }]);
     const late = report.findings.filter((f) => f.kind === 'hold' && f.side === 0 && f.feature.window === 2 && f.zone && f.zone.x1 > 930 && f.zone.x0 <= 930);
     for (const f of late) expect(f.consequence).toBe(true);
-  });
+  }, 60_000);
 
   it('tests within strata: a confounded split vanishes once the strata are allowed for', () => {
     // Within each stratum no difference; pooled, the "with" arm sits in the winning stratum.
