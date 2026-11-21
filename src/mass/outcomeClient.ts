@@ -11,10 +11,10 @@ import { outcomeColumns } from '../data/outcome';
 import { sourceSeconds } from '../data/reshape';
 import type { Engine } from '../render/engine';
 import { useStore } from '../state/store';
-import type { OutcomeFinding } from '../outcome/analyze';
+import type { GroupSummary, OutcomeFinding } from '../outcome/analyze';
 import { outcomeLines, type OutcomeMap } from '../outcome/view';
 import { askMass, drillDown, postMass, useMass } from './client';
-import type { OutcomeResult } from './massWorker';
+import type { OutcomeGroupBy, OutcomeResult } from './massWorker';
 import { usePlaceLines } from './placeLines';
 
 export interface OutcomeState {
@@ -25,6 +25,10 @@ export interface OutcomeState {
   error: string | null;
   /** Work out the moves of matches whose summaries lack them (reads their tables). */
   compute: boolean;
+  /** Read maps under the minimum too, as leads (exploratory). */
+  explore: boolean;
+  /** What makes a map: map, mode and mission; map and mode; the map alone. */
+  groupBy: OutcomeGroupBy;
   group: string | null;
   side: number;
   /** Zones by a window of the round, or at a moment of it (the time slider). */
@@ -42,6 +46,8 @@ export const useOutcome = create<OutcomeState>((set) => ({
   running: false,
   error: null,
   compute: false,
+  explore: true,
+  groupBy: 'mission',
   group: null,
   side: 0,
   by: 'window',
@@ -54,6 +60,18 @@ export const useOutcome = create<OutcomeState>((set) => ({
 
 if (import.meta.env.DEV) (globalThis as { __outcome?: typeof useOutcome }).__outcome = useOutcome;
 
+/** Every map of a result, the tested ones first, then those read as leads. */
+export function resultGroups(r: OutcomeResult | null): GroupSummary[] {
+  if (!r) return [];
+  const by = (a: GroupSummary, b: GroupSummary) => b.matches - a.matches;
+  return [...r.report.groups.slice().sort(by), ...(r.explore?.groups ?? []).slice().sort(by)];
+}
+
+/** Every finding of a result: the tested ones, then the leads of the maps under the minimum. */
+export function resultFindings(r: OutcomeResult | null): OutcomeFinding[] {
+  return r ? [...r.report.findings, ...(r.explore?.findings ?? [])] : [];
+}
+
 /** Runs the analysis on the mass panel's filter. */
 export async function runOutcome(engine: Engine | null): Promise<void> {
   const st = useOutcome.getState();
@@ -61,9 +79,9 @@ export async function runOutcome(engine: Engine | null): Promise<void> {
   st.set({ running: true, error: null });
   const filter = useMass.getState().filter;
   try {
-    const result = await askMass<OutcomeResult>({ type: 'outcome', filter, compute: st.compute }, 'outcome');
-    const g = result.report.groups.slice().sort((a, b) => b.matches - a.matches)[0];
-    const keep = st.group && result.report.groups.some((x) => x.key === st.group) ? st.group : (g?.key ?? null);
+    const result = await askMass<OutcomeResult>({ type: 'outcome', filter, compute: st.compute, explore: st.explore, groupBy: st.groupBy }, 'outcome');
+    const groups = resultGroups(result);
+    const keep = st.group && groups.some((x) => x.key === st.group) ? st.group : (groups[0]?.key ?? null);
     useOutcome.getState().set({ result, resultKey: JSON.stringify(filter), group: keep, focus: null });
     await refreshOutcomeMap(engine, true);
   } catch (e) {
@@ -82,7 +100,7 @@ export function cancelOutcome(): void {
 /** The finding picked, from the last result. */
 export function focusedFinding(): OutcomeFinding | null {
   const s = useOutcome.getState();
-  return s.result?.report.findings.find((f) => f.id === s.focus) ?? null;
+  return resultFindings(s.result).find((f) => f.id === s.focus) ?? null;
 }
 
 /** Asks the worker for the selection's zones and routes and draws them; `frame` puts the camera over them. */
@@ -166,7 +184,7 @@ export async function compareFinding(engine: Engine | null, f: OutcomeFinding): 
     pick.push(f.matches[j]);
     if (f.matchWins[j]) won.add(f.matches[j]);
   }
-  const g = useOutcome.getState().result?.report.groups.find((x) => x.key === f.group);
+  const g = resultGroups(useOutcome.getState().result).find((x) => x.key === f.group);
   const drill = { matches: pick, ...(g?.sidesBy === 'team' ? { team: f.sideName } : {}) };
   // The files' names, in the drill's order, to tell the won matches in the loaded data.
   const names = await askMass<{ files: File[] }>({ type: 'drill', filter: useMass.getState().filter, drill: { matches: pick } }, 'drill');

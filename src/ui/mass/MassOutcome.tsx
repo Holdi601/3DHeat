@@ -14,10 +14,11 @@ import { useEffect, useMemo } from 'react';
 import { int, list, num, t, useLang } from '../../i18n';
 import { useMass } from '../../mass/client';
 import {
-  cancelOutcome, compareFinding, COMPARE_MATCHES, drawOutcome, frameFinding, openExample, refreshOutcomeMap, runOutcome, useOutcome,
+  cancelOutcome, compareFinding, COMPARE_MATCHES, drawOutcome, frameFinding, openExample, refreshOutcomeMap, resultFindings, resultGroups, runOutcome, useOutcome,
 } from '../../mass/outcomeClient';
-import type { OutcomeFinding } from '../../outcome/analyze';
-import { clockText, detailText, sayFinding } from '../../outcome/narrate';
+import type { OutcomeGroupBy, OutcomeResult } from '../../mass/massWorker';
+import { DEFAULT_OPTIONS, type GroupSummary, type OutcomeFinding } from '../../outcome/analyze';
+import { clockText, detailText, leadText, sayFinding } from '../../outcome/narrate';
 import { cssColor, FULL_DELTA } from '../../outcome/view';
 import type { SharedChartBlock } from '../../notes/sharedChart';
 import { takeChartBlock } from '../notes/actions';
@@ -38,7 +39,7 @@ export function MassOutcome() {
   const filter = useMass((s) => s.filter);
   const progress = useMass((s) => s.progress);
   const r = st.result;
-  const groups = useMemo(() => (r ? [...r.report.groups].sort((a, b) => b.matches - a.matches) : []), [r]);
+  const groups = useMemo(() => resultGroups(r), [r]);
   const g = groups.find((x) => x.key === st.group) ?? null;
   const stale = !!r && st.resultKey !== JSON.stringify(filter);
   // The zones follow the selection.
@@ -46,7 +47,8 @@ export function MassOutcome() {
     if (r) void refreshOutcomeMap(engine);
   }, [r, st.group, st.side, st.by, st.window, st.slice]);
   useEffect(() => drawOutcome(engine), [st.focus]);
-  const findings = useMemo(() => (r ? r.report.findings.filter((f) => !st.group || f.group === st.group) : []), [r, st.group]);
+  const findings = useMemo(() => resultFindings(r).filter((f) => !st.group || f.group === st.group), [r, st.group]);
+  const explored = !!g?.exploratory;
   const slices = (st.group && r?.slices[st.group]) || null;
   return (
     <div className="mass-outcome">
@@ -63,19 +65,40 @@ export function MassOutcome() {
           <input type="checkbox" checked={st.compute} onChange={(e) => st.set({ compute: e.target.checked })} />
           {t('outcome.compute')}
         </label>
-        {st.running && (
+        <label className="row" style={{ gap: 4 }} title={t('outcome.exploreTitle', { min: OUTCOME_MIN, explore: EXPLORE_MIN })}>
+          <input type="checkbox" checked={st.explore} data-testid="outcome-explore" onChange={(e) => st.set({ explore: e.target.checked })} />
+          {t('outcome.explore')}
+        </label>
+        <label className="brk-field" title={t('outcome.groupByTitle')}>
+          {t('outcome.groupBy')}
+          <select value={st.groupBy} data-testid="outcome-groupby" onChange={(e) => st.set({ groupBy: e.target.value as OutcomeGroupBy })}>
+            {(['mission', 'mode', 'map'] as const).map((v) => (
+              <option key={v} value={v}>{t(`outcome.groupBy.${v}`)}</option>
+            ))}
+          </select>
+        </label>
+      </div>
+      {st.running && (
+        <div className="row" style={{ gap: 8, alignItems: 'center', marginTop: 4 }}>
+          {progress && progress.total > 0 && <progress max={progress.total} value={progress.done} style={{ width: 160 }} />}
           <span className="hint" data-testid="outcome-progress">
             {progress && (progress.phase === 'outcome' || progress.phase === 'moves') ? t(`outcome.phase.${progress.phase}`, { done: progress.done, total: progress.total }) : progress ? t(`mass.phase.${progress.phase}`, { done: progress.done, total: progress.total }) : t('outcome.running')}
           </span>
-        )}
-      </div>
+        </div>
+      )}
       {st.error && <div className="hint" style={{ color: 'var(--warm)' }}>{st.error}</div>}
       {!r && !st.running && <div className="hint">{t('outcome.noResult')}</div>}
       {r && (
         <>
           <div className="hint" data-testid="outcome-stats" style={stale ? { opacity: 0.6 } : undefined}>
-            {t('outcome.stats', { matches: int(r.matches), read: int(r.read), missing: r.missing, small: r.small, tests: int(r.report.tests), found: int(r.report.findings.length), secs: num(r.report.ms / 1000, 1) })}
+            {t('outcome.stats', { matches: int(r.matches), read: int(r.read), missing: r.missing, small: r.small, tests: int(r.report.tests), found: int(r.report.findings.length), secs: num(((r.report.ms ?? 0) + (r.explore?.ms ?? 0)) / 1000, 1) })}
           </div>
+          {r.computeRan && (
+            <div className="hint" data-testid="outcome-computed">
+              {t('outcome.computed', { computed: r.computed, failed: r.computeFailed ?? 0, noFile: r.noFile ?? 0, left: r.missing })}
+            </div>
+          )}
+          <Coverage r={r} />
           <Dropped />
           <div className="row" style={{ gap: 8, flexWrap: 'wrap', alignItems: 'center', marginTop: 6 }}>
             <label className="brk-field">
@@ -111,18 +134,91 @@ export function MassOutcome() {
               </label>
             )}
           </div>
+          {g && <GroupLine g={g} />}
           {g?.sidesBy === 'spawn' && <div className="hint">{t('outcome.sidesBySpawn')}</div>}
           {g?.sidesBy === 'place' && <div className="hint">{t('outcome.sidesByPlace')}</div>}
           <Legend />
-          <h4 style={{ margin: '10px 0 4px' }}>{t('outcome.findings', { n: findings.length })}</h4>
-          {!findings.length && <div className="hint">{t('outcome.none')}</div>}
+          <h4 style={{ margin: '10px 0 4px' }}>{explored ? t('outcome.leads', { n: findings.length }) : t('outcome.findings', { n: findings.length })}</h4>
+          {explored && g && (
+            <div className="outcome-explore-note" data-testid="outcome-explore-note">
+              {t('outcome.exploreNote', { rounds: int(g.rounds), min: int(r.minRounds ?? OUTCOME_MIN), arm: int(DEFAULT_OPTIONS.minArm) })}
+            </div>
+          )}
+          {!findings.length && <div className="hint">{explored ? t('outcome.noLeads') : t('outcome.none')}</div>}
           <div className="outcome-list">
             {findings.slice(0, MAX_LIST).map((f) => (
-              <FindingRow key={f.id} f={f} engine={engine} rounds={(g?.rounds ?? 0) > (g?.matches ?? 0) * 1.5} />
+              <FindingRow key={f.id} f={f} engine={engine} rounds={(g?.rounds ?? 0) > (g?.matches ?? 0) * 1.5} sideRounds={g?.wins[f.side]?.n ?? 0} />
             ))}
           </div>
         </>
       )}
+    </div>
+  );
+}
+
+/** The rounds a map needs before it is tested, and before it is read as leads (`massWorker.ts`). */
+const OUTCOME_MIN = 50;
+const EXPLORE_MIN = 8;
+
+/**
+ * Every map of the run: its matches and rounds against the rounds it needs, and what became of it - tested,
+ * read as leads, too few, without moves. A click picks the map.
+ */
+function Coverage({ r }: { r: OutcomeResult }) {
+  const st = useOutcome();
+  const cov = r.coverage ?? [];
+  if (!cov.length) return null;
+  const min = r.minRounds ?? OUTCOME_MIN;
+  const built = new Set(resultGroups(r).map((x) => x.key));
+  return (
+    <div className="outcome-coverage" data-testid="outcome-coverage">
+      <div className="hint">{t('outcome.coverage.head', { min: int(min), arm: int(DEFAULT_OPTIONS.minArm), explore: int(r.exploreMin ?? EXPLORE_MIN) })}</div>
+      <table className="brk-table outcome-cov-table">
+        <thead>
+          <tr>
+            <th>{t('outcome.group')}</th>
+            <th className="num">{t('outcome.coverage.matches')}</th>
+            <th className="num">{t('outcome.coverage.rounds')}</th>
+            <th>{t('outcome.coverage.of')}</th>
+            <th>{t('outcome.coverage.status')}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {cov.map((c) => {
+            const can = built.has(c.key);
+            return (
+              <tr key={c.key} className={`${can ? '' : 'outcome-cov-off'}${st.group === c.key ? ' mass-picked' : ''}`} onClick={can ? () => st.set({ group: c.key, focus: null }) : undefined}>
+                <td>{c.key}</td>
+                <td className="num">{int(c.matches)}</td>
+                <td className="num">{int(c.rounds)}</td>
+                <td>
+                  <span className="outcome-need" title={t('outcome.coverage.barTitle', { rounds: int(c.rounds), min: int(min) })}>
+                    <span style={{ width: `${Math.min(100, (100 * c.rounds) / min)}%` }} />
+                  </span>
+                  {` ${int(Math.min(c.rounds, min))}/${int(min)}`}
+                </td>
+                <td className={`outcome-status ${c.status}`}>{t(`outcome.coverage.${c.status}`, { more: int(Math.max(0, min - c.rounds)), missing: int(c.missing) })}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/** The picked map's sides and what of its candidate patterns was tested, and why the rest was not. */
+function GroupLine({ g }: { g: GroupSummary }) {
+  return (
+    <div className="hint" data-testid="outcome-group-line">
+      {t('outcome.groupLine', {
+        rounds: int(g.rounds),
+        sides: list(g.sides.map((s, i) => t('outcome.sideRounds', { side: s, n: int(g.wins[i]?.n ?? 0), k: int(g.wins[i]?.k ?? 0) }))),
+        tests: int(g.tests),
+        small: g.small ?? 0,
+        noContrast: g.noContrast ?? 0,
+        arm: int(DEFAULT_OPTIONS.minArm),
+      })}
     </div>
   );
 }
@@ -153,11 +249,11 @@ function Legend() {
   );
 }
 
-function FindingRow({ f, engine, rounds }: { f: OutcomeFinding; engine: Engine | null; rounds: boolean }) {
+function FindingRow({ f, engine, rounds, sideRounds }: { f: OutcomeFinding; engine: Engine | null; rounds: boolean; sideRounds: number }) {
   const focus = useOutcome((s) => s.focus);
   const set = useOutcome((s) => s.set);
   const on = focus === f.id;
-  const sentence = sayFinding(f, rounds);
+  const sentence = f.exploratory ? leadText(f, rounds) : sayFinding(f, rounds);
   return (
     <div className={`outcome-row${on ? ' on' : ''}`} data-testid="outcome-finding">
       <div className="row" style={{ gap: 8, alignItems: 'baseline' }}>
@@ -167,6 +263,12 @@ function FindingRow({ f, engine, rounds }: { f: OutcomeFinding; engine: Engine |
         <span>{sentence}</span>
       </div>
       <div className="row" style={{ gap: 6, flexWrap: 'wrap', marginTop: 2 }}>
+        {f.exploratory && (
+          <span className="outcome-badge explore" title={t('outcome.badge.exploreTitle')}>
+            {t('outcome.badge.explore')}
+          </span>
+        )}
+        {f.exploratory && <span className="mass-dim">{t('outcome.leadNeed', { need: int(f.need), have: int(sideRounds) })}</span>}
         {f.consequence && (
           <span className="outcome-badge" title={t('outcome.badge.consequenceTitle', { with: pct(f.aheadWith), without: pct(f.aheadWithout) })}>
             {t('outcome.badge.consequence')}

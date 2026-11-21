@@ -31,7 +31,34 @@ A made-up example of a finding:
 
 The Ctrl+K palette has **Outcome analysis: what wins** and **Outcome analysis: run**.
 
-Summaries made before the outcome analysis existed lack each side's moves. Tick **Work out missing moves** to read those matches' tables once (slow, cached afterwards), or rebuild the folder's index with `node tools/3dheat-summarize.mjs <folder> --moves`.
+Summaries made before the outcome analysis existed lack each side's moves. Tick **Work out missing moves** to read those matches' tables once (slow, cached afterwards), or rebuild the folder's index with `node tools/3dheat-summarize.mjs <folder> --moves`. While it works, a bar shows how many matches are done; afterwards a line says how many were worked out, how many failed, and how many could not be read because their files are not open (an index opened without its matches' folder).
+
+## How many matches it needs
+
+The table under the run's summary lists every map of the matches picked, with its matches, its rounds, a bar of the rounds against the minimum, and what became of it:
+
+| Status | Means |
+|---|---|
+| tested | 50 rounds or more: every pattern tested as below |
+| under the minimum: read as leads | 8 to 49 rounds: read as exploratory leads (below), when **Read small maps as leads** is ticked |
+| too few rounds | under 8 rounds: nothing is read |
+| no moves | the summaries lack the moves: tick **Work out missing moves** |
+| read, but its sides could not be told apart | too few starts or lives to tell the sides or their spawns apart |
+
+Fifty rounds is only the floor. Each pattern then needs 20 of a side's rounds with it and 20 without, and to pass the false discovery rate over a run's many patterns a difference of 15 points needs a few hundred rounds of the side. Under the picked map's sides, a line says how many rounds each side played and won, how many patterns were tested, and how many were not because one arm had too few rounds or the pattern was nearly always or never there.
+
+**A map is** sets which matches count as one map: map, mode and mission (the default); map and mode; or the map alone. Pooling the missions or modes gives a map more rounds, but its layouts and objectives differ between them, which the patterns do not allow for.
+
+### Leads on maps under the minimum
+
+A map with 8 to 49 rounds is read anyway, apart from the tested ones (its tests do not count in the run's false discovery rate), and its patterns are listed as **Leads**, marked **exploratory**:
+
+- each arm needs only 4 rounds, and only a difference of 15 points or more is listed, at most six a side;
+- nothing is held to the false discovery rate: the q stays beside each lead, and is usually near 1;
+- a lead says both arms' plain counts with their 95% Wilson intervals ("won 6 of 8 matches (75%, CI 41–93%) against 2 of 9 otherwise"), and how many of the side's rounds would tell a difference that size from chance: 80% power at a two-sided 0.5% level (about what the false discovery rate asks of one pattern among many), with the rates kept within 10–90%, and never fewer than give each arm its 20 rounds;
+- leads are ranked by their plain p, the least likely to be chance first.
+
+With a handful of rounds, large differences come up by chance all the time. A lead is something to look at in the replays, not a finding.
 
 ## What it looks at
 

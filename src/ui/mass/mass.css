@@ -196,3 +196,60 @@
 .outcome-ex {
   font-size: var(--fs-xs);
 }
+
+/* Outcome tab: the maps against the rounds they need, and the leads of the maps under it. */
+.outcome-coverage {
+  margin-top: 6px;
+}
+
+.outcome-cov-table td.num,
+.outcome-cov-table th.num {
+  text-align: right;
+}
+
+.brk-table tr.outcome-cov-off {
+  cursor: default;
+}
+
+.outcome-need {
+  display: inline-block;
+  width: 70px;
+  height: 7px;
+  border-radius: 3px;
+  background: var(--line-soft);
+  vertical-align: middle;
+  overflow: hidden;
+}
+
+.outcome-need > span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+}
+
+.outcome-status.tested {
+  color: var(--good);
+}
+
+.outcome-status.explored {
+  color: var(--warn);
+}
+
+.outcome-status.tooFew,
+.outcome-status.noMoves,
+.outcome-status.notBuilt {
+  color: var(--text-dim);
+}
+
+.outcome-explore-note {
+  margin: 2px 0 6px;
+  padding: 6px 8px;
+  border-left: 3px solid var(--warn);
+  background: color-mix(in srgb, var(--warn) 10%, transparent);
+  line-height: 1.35;
+}
+
+.outcome-badge.explore {
+  border-color: var(--warn);
+  color: var(--warn);
+}

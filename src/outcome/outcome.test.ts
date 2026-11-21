@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { analyseOutcome, cmh } from './analyze';
+import { analyseOutcome, cmh, EXPLORE_OPTIONS, roundsNeeded } from './analyze';
 import { buildGroup, clusterRoutes } from './features';
 import { synthMatches } from './synth';
 import { outcomeLines, outcomeMap } from './view';
@@ -31,6 +31,31 @@ describe('outcome analysis', () => {
     }
     expect(runs).toBeLessThanOrEqual(3);
   }, 60_000);
+
+  it('reads a map under the minimum as leads: marked, capped, each saying the rounds it would need', async () => {
+    const matches = synthMatches(16, 5, { routeLeft: 0.4, holdCorner: 0.4 });
+    const tested = await analyseOutcome([{ key: 's', matches: synthMatches(16, 5, { routeLeft: 0.4, holdCorner: 0.4 }) }]);
+    // Under the minimum nothing passes as a finding: every pattern lacks rounds in one arm.
+    expect(tested.report.findings).toHaveLength(0);
+    expect(tested.report.groups[0].small).toBeGreaterThan(0);
+    const { report } = await analyseOutcome([{ key: 's', matches }], { ...EXPLORE_OPTIONS });
+    expect(report.groups[0].exploratory).toBe(true);
+    for (const f of report.findings) {
+      expect(f.exploratory).toBe(true);
+      expect(Math.abs(f.diff)).toBeGreaterThanOrEqual(EXPLORE_OPTIONS.minDiff);
+      // More rounds than the side has: a lead, not a finding.
+      expect(f.need).toBeGreaterThan(f.with.n + f.without.n);
+    }
+    for (const s of [0, 1]) expect(report.findings.filter((f) => f.side === s).length).toBeLessThanOrEqual(6);
+  }, 60_000);
+
+  it('says how many rounds a difference needs: more for a smaller one, never under the arms\' minimum', () => {
+    const big = roundsNeeded(0.3, 0.65, 0.35, 0.5);
+    const small = roundsNeeded(0.1, 0.55, 0.45, 0.5);
+    expect(small).toBeGreaterThan(big * 5);
+    expect(roundsNeeded(0.9, 1, 0, 0.5)).toBeGreaterThanOrEqual(40);
+    expect(roundsNeeded(0.9, 1, 0, 0.1)).toBeGreaterThanOrEqual(200);
+  });
 
   it('says a pattern that only shows when already ahead is likely a consequence', async () => {
     const { report } = await analyseOutcome([{ key: 'c', matches: synthMatches(800, 21, { aheadCorner: true }) }]);

@@ -33,9 +33,32 @@ export interface OutcomeOptions {
   fdr: number;
   /** Smallest difference in win rate worth saying. */
   minDiff: number;
+  /**
+   * Exploratory: maps below the minimum, read anyway. Nothing is held to the false discovery rate (the q is
+   * said, not used); each pattern says how many rounds would tell its difference from chance.
+   */
+  exploratory?: boolean;
 }
 
 export const DEFAULT_OPTIONS: OutcomeOptions = { minArm: 20, fdr: 0.05, minDiff: 0.05 };
+/** The exploratory read of maps below the minimum: small arms, no false discovery gate, only large differences. */
+export const EXPLORE_OPTIONS: OutcomeOptions = { minArm: 4, fdr: 1, minDiff: 0.15, exploratory: true };
+
+/**
+ * Side-rounds of one side needed before a difference `d` in win rate could pass: 80% power at a two-sided 0.5%
+ * level (about what the false discovery rate asks of one pattern among the many a run tests), with the pattern
+ * in a share `s` of the rounds and the arms' rates `p1`, `p0`; and never fewer than give each arm `minArm`.
+ * The rates are kept off 0 and 1, where a handful of rounds would say they never vary.
+ */
+export function roundsNeeded(d: number, p1: number, p0: number, s: number, minArm = DEFAULT_OPTIONS.minArm): number {
+  const c = (p: number) => Math.min(0.9, Math.max(0.1, Number.isFinite(p) ? p : 0.5));
+  const a = c(p1), b = c(p0);
+  const share = Math.min(0.9, Math.max(0.1, s));
+  const dd = Math.max(0.02, Math.abs(d));
+  const z = 2.81 + 0.84;
+  const power = Math.ceil((z * z * ((a * (1 - a)) / share + (b * (1 - b)) / (1 - share))) / (dd * dd));
+  return Math.max(power, Math.ceil(minArm / Math.min(share, 1 - share)));
+}
 
 /** Kinds every player knows go with winning (first blood, the better buy): said, ranked after the tactical ones. */
 const BASELINE = new Set<FeatureKind>(['firstKill', 'buyFull', 'buyAdv']);
@@ -43,6 +66,8 @@ const BASELINE = new Set<FeatureKind>(['firstKill', 'buyFull', 'buyAdv']);
 /** Kinds where one side's having it in a round is the other's not having it. */
 const MIRRORED = new Set<FeatureKind>(['firstKill', 'capFirst']);
 
+/** Leads an exploratory read keeps per map and side. */
+const EXPLORE_PER_SIDE = 6;
 /** Periods the matches are cut into by date for the consistency check. */
 export const FOLDS = 5;
 /** Side-rounds a player needs on a side of a map to count as a regular there. */
@@ -120,6 +145,10 @@ export interface OutcomeFinding {
   /** Per match of `matches`: 1 where the side won most of its rounds with the pattern there. */
   matchWins: number[];
   examples: { match: number; round: number; at: number; t0: number; won: number }[];
+  /** Read below the minimum (`OutcomeOptions.exploratory`): a lead for the replays, not a finding. */
+  exploratory?: boolean;
+  /** Side-rounds of this side that would tell a difference this size from chance (`roundsNeeded`). */
+  need: number;
 }
 
 export interface GroupSummary {
@@ -137,6 +166,11 @@ export interface GroupSummary {
   spawns: [number, number][];
   objectives: { name: string; x: number; z: number }[];
   tests: number;
+  /** Candidate patterns not tested: too few side-rounds in one arm, nearly always or never there. */
+  small: number;
+  noContrast: number;
+  /** Read below the minimum (exploratory). */
+  exploratory?: boolean;
 }
 
 export interface OutcomeReport {
@@ -307,7 +341,7 @@ export async function analyseOutcome(
       const rs = g.rounds.filter((r) => r.side === s);
       return armOf(rs.reduce((a, r) => a + r.won, 0), rs.length);
     });
-    let tests = 0;
+    let tests = 0, small = 0, noContrast = 0;
     for (const f of g.features) {
       if (!KINDS.includes(f.kind)) continue;
       const rows = g.rounds.filter((r) => eligible(g, f, r));
@@ -316,10 +350,12 @@ export async function analyseOutcome(
       const n0 = rows.length - n1;
       if (n1 < o.minArm || n0 < o.minArm) {
         drop('small');
+        small++;
         continue;
       }
       if (n1 / rows.length < 0.05 || n1 / rows.length > 0.95) {
         drop('noContrast');
+        noContrast++;
         continue;
       }
       tests++;
@@ -419,26 +455,32 @@ export async function analyseOutcome(
           return { matches: [...per.keys()], matchWins: [...per.values()].map(([w, n]) => (w * 2 > n ? 1 : 0)) };
         })(),
         examples: [...pick(1), ...pick(0)].map((r) => ({ match: r.match, round: r.roundNo, at: f.at, t0: r.t0, won: r.won })),
+        ...(o.exploratory ? { exploratory: true } : {}),
+        need: roundsNeeded(Number.isFinite(rd) ? rd : diff, k1 / n1, k0 / n0, n1 / rows.length),
       });
       pvals.push(p);
     }
     summaries.push({
       key: g.key, sides: g.sides, sidesBy: g.sidesBy, matches: g.matches.length, rounds: Math.round(g.rounds.length / 2), wins, zone: g.zone, b: g.b, windows: g.windows, median: g.median,
-      spawns: g.spawns, objectives: g.objectives, tests,
+      spawns: g.spawns, objectives: g.objectives, tests, small, noContrast,
+      ...(o.exploratory ? { exploratory: true } : {}),
     });
     await hooks.yieldEvery?.();
   }
   const q = bhAdjust(pvals);
   const findings: OutcomeFinding[] = [];
   pending.forEach((c, i) => {
-    if (!(q[i] <= o.fdr)) return drop('notSignificant');
+    // Exploratory: the q is said beside it, not used as a gate (the docs and the badge say so).
+    if (!o.exploratory && !(q[i] <= o.fdr)) return drop('notSignificant');
     if (Math.abs(c.diff) < o.minDiff) return drop('tooSmall');
     // Allowed for the team, the players and the score, too little is left: the plain difference was theirs.
     if (Math.abs(c.adjDiff) < o.minDiff || Math.sign(c.adjDiff) !== Math.sign(c.diff)) return drop('explained');
     const stable = c.folds[1] < 3 || c.folds[0] >= Math.ceil(0.6 * c.folds[1]);
     if (!stable) drop('unstable');
     const agreeShare = c.folds[1] ? c.folds[0] / c.folds[1] : 0.5;
-    const score = Math.abs(c.adjDiff) * (0.5 + 0.5 * agreeShare) * (c.consequence || c.strengthExplained ? 0.25 : 1) * (stable ? 1 : 0.3) * (BASELINE.has(c.kind) ? 0.5 : 1);
+    // Exploratory: every difference is large on few rounds; the least likely to be chance (the plain p) goes first.
+    const size = o.exploratory ? -Math.log10(Math.max(1e-12, c.p)) : Math.abs(c.adjDiff);
+    const score = size * (0.5 + 0.5 * agreeShare) * (c.consequence || c.strengthExplained ? 0.25 : 1) * (stable ? 1 : 0.3) * (BASELINE.has(c.kind) ? 0.5 : 1);
     findings.push({ ...c, q: q[i], stable, score, near: 0 });
   });
   findings.sort((a, b) => b.score - a.score);
@@ -462,6 +504,19 @@ export async function analyseOutcome(
     } else kept.push(f);
   }
   findings.length = 0;
-  findings.push(...kept);
+  // Exploratory: a few leads a map and side, not a list of everything a handful of rounds can show.
+  const perSide = new Map<string, number>();
+  for (const f of kept) {
+    if (o.exploratory) {
+      const k = `${f.group}|${f.side}`;
+      const n = (perSide.get(k) ?? 0) + 1;
+      perSide.set(k, n);
+      if (n > EXPLORE_PER_SIDE) {
+        drop('exploreCap');
+        continue;
+      }
+    }
+    findings.push(f);
+  }
   return { report: { groups: summaries, findings, tests: pvals.length, dropped, ms: Math.round(performance.now() - t0), options: o }, groups };
 }

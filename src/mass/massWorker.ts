@@ -24,7 +24,7 @@ import { GRID_KINDS, SUMMARY_FORMAT, SUMMARY_VERSION, type MatchSummary, type Su
 import { maneuverRows } from './maneuvers';
 import { cqbRows } from './cqb';
 import { surfaceRows } from './marks';
-import { analyseOutcome, type OutcomeOptions, type OutcomeReport } from '../outcome/analyze';
+import { analyseOutcome, EXPLORE_OPTIONS, type OutcomeOptions, type OutcomeReport } from '../outcome/analyze';
 import type { OutcomeGroup, OutcomeMatch } from '../outcome/features';
 import { compactMoves, MOVES_VERSION } from '../outcome/types';
 import { outcomeMap } from '../outcome/view';
@@ -49,14 +49,48 @@ export type MassRequest =
   | { type: 'niche'; id: number; filter: MassFilter; table: string; target: NicheTarget; base: NicheCond[] }
   | { type: 'drill'; id: number; filter: MassFilter; drill?: MassDrill; insight?: MassInsight }
   /** The outcome analysis (`outcome/`) of the filter's matches; `compute` works out the moves of matches whose summaries lack them. */
-  | { type: 'outcome'; id: number; filter: MassFilter; options?: Partial<OutcomeOptions>; compute?: boolean; minMatches?: number }
+  | {
+      type: 'outcome'; id: number; filter: MassFilter; options?: Partial<OutcomeOptions>; compute?: boolean; minMatches?: number;
+      /** Maps below the minimum read too, as leads (`EXPLORE_OPTIONS`); on unless false. */
+      explore?: boolean;
+      /** What makes a map: map, mode and mission (the default), map and mode, or the map alone. */
+      groupBy?: OutcomeGroupBy;
+    }
   | { type: 'outcomeCancel' }
   /** A side's zones and routes coloured by win rate, for a window or a moment (slice) of the last outcome run. */
   | { type: 'outcomeMap'; id: number; group: string; side: number; window?: number; slice?: number };
 
+export type OutcomeGroupBy = 'mission' | 'mode' | 'map';
+
+/** One map (group) of a run: what it has against what it needs, and what became of it. */
+export interface OutcomeCoverage {
+  key: string;
+  matches: number;
+  /** Rounds (a match is one where the game has none). */
+  rounds: number;
+  /** Matches read with their moves, and those lacking moves. */
+  read: number;
+  missing: number;
+  /**
+   * tested: at or over the minimum; explored: under it, read as leads; tooFew: under even that; noMoves: no match
+   * of it had its moves; notBuilt: read, but its sides or starts could not be told apart.
+   */
+  status: 'tested' | 'explored' | 'tooFew' | 'noMoves' | 'notBuilt';
+}
+
 /** What the outcome analysis hands back besides its report: what it could not read. */
 export interface OutcomeResult {
   report: OutcomeReport;
+  /** The maps under the minimum, read as leads (exploratory), or null. */
+  explore: OutcomeReport | null;
+  /** Every map of the filter with its rounds against the minimum; the minimum and the exploratory floor. */
+  coverage: OutcomeCoverage[];
+  minRounds: number;
+  exploreMin: number;
+  /** Whether moves were to be worked out; then those failed, and matches whose file is not open (an index opened alone). */
+  computeRan: boolean;
+  computeFailed: number;
+  noFile: number;
   /** Matches in the filter, those read, those without moves in their summaries (worked out with `compute`), in groups too small. */
   matches: number;
   read: number;
@@ -458,8 +492,10 @@ const filterKey = (f: MassFilter) => JSON.stringify(f);
 
 let outcomeGroups = new Map<string, OutcomeGroup>();
 let outcomeCancel = false;
-/** Side-rounds a group needs before it is read at all (each arm of a test needs `minArm`). */
-const OUTCOME_MIN_ROUNDS = 50;
+/** Rounds a group needs before it is tested (each arm of a test needs `minArm` of each side's rounds). */
+export const OUTCOME_MIN_ROUNDS = 50;
+/** Rounds a group needs to be read at all, as leads (exploratory), under the minimum. */
+export const OUTCOME_EXPLORE_MIN = 8;
 
 async function outcomeRun(m: Extract<MassRequest, { type: 'outcome' }>): Promise<OutcomeResult> {
   outcomeCancel = false;
@@ -468,19 +504,22 @@ async function outcomeRun(m: Extract<MassRequest, { type: 'outcome' }>): Promise
   const byKey = new Map<string, number[]>();
   for (let i = 0; i < mask.length; i++) {
     if (!mask[i]) continue;
-    const key = [store.str(store.m.map.get(i)), store.str(store.m.mode.get(i)), store.str(store.m.mission.get(i))].filter(Boolean).join(' · ') || '-';
+    const parts = [store.str(store.m.map.get(i)), m.groupBy === 'map' ? '' : store.str(store.m.mode.get(i)), m.groupBy === 'map' || m.groupBy === 'mode' ? '' : store.str(store.m.mission.get(i))];
+    const key = parts.filter(Boolean).join(' · ') || '-';
     let l = byKey.get(key);
     if (!l) byKey.set(key, (l = []));
     l.push(i);
   }
   const rounds = (i: number) => Math.max(1, (store.outcome[i]?.r.length ?? 3) / 3);
   const minRounds = Math.max(OUTCOME_MIN_ROUNDS, m.minMatches ?? 0);
-  const keys = [...byKey].filter(([, l]) => l.reduce((a, i) => a + rounds(i), 0) >= minRounds).map(([k]) => k);
+  const roundsOf = new Map([...byKey].map(([k, l]) => [k, Math.round(l.reduce((a, i) => a + rounds(i), 0))]));
+  const keys = [...byKey.keys()].filter((k) => roundsOf.get(k)! >= minRounds);
+  const exploreKeys = m.explore === false ? [] : [...byKey.keys()].filter((k) => roundsOf.get(k)! < minRounds && roundsOf.get(k)! >= OUTCOME_EXPLORE_MIN);
   const small = [...byKey].filter(([k]) => !keys.includes(k)).reduce((a, [, l]) => a + l.length, 0);
   const groupOf = new Map<number, string>();
-  for (const k of keys) for (const i of byKey.get(k)!) groupOf.set(i, k);
+  for (const k of [...keys, ...exploreKeys]) for (const i of byKey.get(k)!) groupOf.set(i, k);
   const want = [...groupOf.keys()];
-  const got = new Map<string, OutcomeMatch[]>(keys.map((k) => [k, []]));
+  const got = new Map<string, OutcomeMatch[]>([...keys, ...exploreKeys].map((k) => [k, []]));
   const grounds = new Map<string, number>();
   const missing = new Set<number>();
   const readSet = new Set<number>();
@@ -509,7 +548,7 @@ async function outcomeRun(m: Extract<MassRequest, { type: 'outcome' }>): Promise
   }, false);
   // Matches whose grid could not be read at all count as missing too.
   for (const i of want) if (!readSet.has(i)) missing.add(i);
-  let computed = 0;
+  let computed = 0, computeFailed = 0, noFile = 0;
   if (m.compute && missing.size) {
     const list = [...missing];
     const threads = Math.max(1, Math.min(6, (navigator.hardwareConcurrency || 4) - 2));
@@ -523,7 +562,11 @@ async function outcomeRun(m: Extract<MassRequest, { type: 'outcome' }>): Promise
         if (k >= list.length) return;
         const i = list[k];
         const file = files[i];
-        if (!file) continue;
+        if (!file) {
+          noFile++;
+          post({ type: 'progress', done: ++done, total: list.length, phase: 'moves' });
+          continue;
+        }
         const path = store.paths[store.m.source.get(i)] ?? file.name;
         try {
           const r = await pool.run({ file, path });
@@ -540,9 +583,9 @@ async function outcomeRun(m: Extract<MassRequest, { type: 'outcome' }>): Promise
             }
             take(i, grid);
             computed++;
-          }
+          } else computeFailed++;
         } catch {
-          // left out
+          computeFailed++;
         }
         post({ type: 'progress', done: ++done, total: list.length, phase: 'moves' });
       }
@@ -554,18 +597,36 @@ async function outcomeRun(m: Extract<MassRequest, { type: 'outcome' }>): Promise
     }
     if (outcomeCancel) throw new Error('cancelled');
   }
+  const readOf = new Map<string, number>();
+  for (const [k, l] of got) readOf.set(k, l.length);
   const input = keys.map((key) => ({ key, matches: got.get(key)! })).filter((x) => x.matches.length);
+  const exploreInput = exploreKeys.map((key) => ({ key, matches: got.get(key)! })).filter((x) => x.matches.length);
   got.clear();
-  const { report, groups } = await analyseOutcome(input, m.options ?? {}, {
-    progress: (done, total) => post({ type: 'progress', done, total, phase: 'outcome' }),
+  const total = input.length + exploreInput.length;
+  const hooks = (base: number) => ({
+    progress: (done: number) => post({ type: 'progress', done: base + done, total, phase: 'outcome' }),
     cancelled: () => outcomeCancel,
     // A task boundary between groups: a cancel gets in.
-    yieldEvery: () => new Promise((r) => setTimeout(r, 0)),
+    yieldEvery: () => new Promise<void>((r) => setTimeout(r, 0)),
   });
-  outcomeGroups = new Map(groups.map((g) => [g.key, g]));
+  const { report, groups } = await analyseOutcome(input, m.options ?? {}, hooks(0));
+  // The maps under the minimum, on their own: their tests do not count in the run's false discovery rate.
+  const ex = exploreInput.length ? await analyseOutcome(exploreInput, { ...EXPLORE_OPTIONS }, hooks(input.length)) : null;
+  outcomeGroups = new Map([...groups, ...(ex?.groups ?? [])].map((g) => [g.key, g]));
   const slices: OutcomeResult['slices'] = {};
-  for (const g of groups) slices[g.key] = { slices: g.slices, slice: g.slice };
-  return { report, matches: mask.reduce((a, v) => a + v, 0), read: readSet.size, missing: missing.size, computed, small, slices };
+  for (const g of [...groups, ...(ex?.groups ?? [])]) slices[g.key] = { slices: g.slices, slice: g.slice };
+  const built = new Set([...report.groups, ...(ex?.report.groups ?? [])].map((g) => g.key));
+  const coverage: OutcomeCoverage[] = [...byKey].map(([key, l]) => {
+    const r = readOf.get(key) ?? 0;
+    const listed = keys.includes(key) || exploreKeys.includes(key);
+    const status: OutcomeCoverage['status'] = !listed ? 'tooFew' : !r ? 'noMoves' : !built.has(key) ? 'notBuilt' : keys.includes(key) ? 'tested' : 'explored';
+    return { key, matches: l.length, rounds: roundsOf.get(key)!, read: r, missing: listed ? l.length - r : 0, status };
+  });
+  coverage.sort((a, b) => b.rounds - a.rounds);
+  return {
+    report, explore: ex?.report ?? null, coverage, minRounds, exploreMin: OUTCOME_EXPLORE_MIN, computeRan: !!m.compute, computeFailed, noFile,
+    matches: mask.reduce((a, v) => a + v, 0), read: readSet.size, missing: missing.size, computed, small, slices,
+  };
 }
 /** Files handed over before an `open`, a slice a message. */
 let incoming: { file: File; path: string }[] = [];

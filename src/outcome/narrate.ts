@@ -89,6 +89,26 @@ export function sayFinding(f: OutcomeFinding, rounds: boolean): string {
   });
 }
 
+/** A lead of a map under the minimum (exploratory): the plain counts of both arms with their intervals, nothing more. */
+export function leadText(f: OutcomeFinding, rounds: boolean): string {
+  return t('outcome.sayLead', {
+    group: f.group,
+    side: t('outcome.sideName', { by: f.sideBy, name: f.sideName }),
+    what: whatText(f),
+    k1: int(f.with.k),
+    n1: int(f.with.n),
+    withPct: pct(f.with.rate),
+    lo: pct(f.with.lo),
+    hi: pct(f.with.hi),
+    k2: int(f.without.k),
+    n2: int(f.without.n),
+    withoutPct: pct(f.without.rate),
+    lo2: pct(f.without.lo),
+    hi2: pct(f.without.hi),
+    unit: t('outcome.unit', { rounds: rounds ? 'yes' : 'no' }),
+  });
+}
+
 export function detailText(f: OutcomeFinding): string {
   return t('outcome.detail', { adj: pts(f.adjDiff), diff: pts(f.diff), lo: pts(f.lo), hi: pts(f.hi), q: f.q < 0.001 ? '<0.001' : num(f.q, 3) });
 }
