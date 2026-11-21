@@ -82,6 +82,13 @@ export interface TurretSpec {
    * end walls, its side walls are drawn round the well, the floor dark. An Ostwind's or a Wirbelwind's open turret.
    */
   well?: { rear: number; front: number; floor?: number; wall?: number };
+  /**
+   * Add-on wedge armour (with `outline`): the outline's front from this far forward of the turret's centre is an
+   * arrowhead of spaced plates bolted on (Leopard 2A5 on, Strv 122), drawn as welded plates of its own a step darker
+   * than the turret, the upright turret face behind it. The silhouette stays the outline's; the wedge turns with the
+   * turret.
+   */
+  wedge?: number;
 }
 
 export interface GunSpec {
@@ -571,6 +578,17 @@ function addOn(k: Kit, a: AddOn, o: Vec3): void {
 function spanOf(o: Outline): [number, number] {
   const lists = [o.top, o.bottom, o.plan];
   return [Math.max(...lists.map((l) => Math.min(...l.map((p) => p[0])))), Math.min(...lists.map((l) => Math.max(...l.map((p) => p[0]))))];
+}
+
+/** An outline cut to its stretch between `lo` and `hi` along x: each polyline ended where the cut crosses it. */
+function clipOutline(o: Outline, lo: number, hi: number): Outline {
+  const cut = (l: P2[]): P2[] => {
+    const inner = l.filter((p) => p[0] > lo && p[0] < hi);
+    const a: P2[] = lo >= l[0][0] ? [[lo, lerpPoly(l, lo)]] : l.filter((p) => p[0] === l[0][0]);
+    const b: P2[] = hi <= l[l.length - 1][0] ? [[hi, lerpPoly(l, hi)]] : l.filter((p) => p[0] === l[l.length - 1][0]);
+    return [...a.filter((p) => !inner.includes(p)), ...inner, ...b.filter((p) => !inner.includes(p))];
+  };
+  return { ...o, top: cut(o.top), bottom: cut(o.bottom), plan: cut(o.plan), round: Array.isArray(o.round) ? cut(o.round) : o.round };
 }
 
 /** The outline's roundness at `x` (a number, or by station). */
@@ -1555,7 +1573,12 @@ function turret(k: Kit, spec: GroundSpec, t: TurretSpec, base: number): void {
     const o = t.outline;
     const moved: Outline = { ...o, top: o.top.map(([f, u]) => [x + f, base + u]), bottom: o.bottom.map(([f, u]) => [x + f, base + u]), plan: o.plan.map(([f, w2]) => [x + f, w2]), round: Array.isArray(o.round) ? o.round.map(([f, r]) => [x + f, r]) : o.round, side: s, section: moveSection(o, x, base) };
     const wl = t.well;
-    shell(k.team, k.fr, wl ? openWell(k, moved, { rear: x + wl.rear, front: x + wl.front, floor: wl.floor === undefined ? undefined : base + wl.floor, wall: wl.wall }) : moved, grey(0.9), lean, main);
+    const body = wl ? openWell(k, moved, { rear: x + wl.rear, front: x + wl.front, floor: wl.floor === undefined ? undefined : base + wl.floor, wall: wl.wall }) : moved;
+    if (t.wedge !== undefined && !wl) {
+      // The add-on wedge: the turret up to its upright face, the arrowhead in front as plates of its own.
+      shell(k.team, k.fr, clipOutline(body, -Infinity, x + t.wedge), grey(0.9), lean, main);
+      facetBody(k.team, k.fr, clipOutline(body, x + t.wedge, Infinity), grey(ADD_ON_SHADE), lean);
+    } else shell(k.team, k.fr, body, grey(0.9), lean, main);
   } else if (shape === 'cast' || shape === 'round') {
     // A casting: widest a little behind its middle, the front drawn in under the gun, the roof a low dome.
     const k2 = shape === 'round' ? 1 : 0.9;

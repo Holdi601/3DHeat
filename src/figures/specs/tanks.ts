@@ -94,8 +94,9 @@ export const LEO2: GroundSpec = {
   cupola: true,
 };
 G['leopard-2a4'] = { cls: 'mbt', ...LEO2 };
-// Leopard 2A5 / 2A6: the spaced-armour arrowhead on the turret front, its top sloping down to the point; the A6 with the long L/55.
-export const LEO2_WEDGE = leo2Turret([[-1.98, 1.35], [-1.68, 1.6], [1.5, 1.68], [2.25, 1.15], [2.85, 0.42]], [[-1.98, 0.72], [-1.75, 0.82], [1.4, 0.88], [2.85, 0.42]], 2.25);
+// Leopard 2A5 / 2A6: the spaced-armour arrowhead on the turret front, its top sloping down to the point, drawn as an
+// add-on in front of the upright turret face at 1.5 m; the A6 with the long L/55.
+export const LEO2_WEDGE: TurretSpec = { ...leo2Turret([[-1.98, 1.35], [-1.68, 1.6], [1.5, 1.68], [2.25, 1.15], [2.85, 0.42]], [[-1.98, 0.72], [-1.75, 0.82], [1.4, 0.88], [2.85, 0.42]], 2.25), wedge: 1.5 };
 G['leopard-2a5'] = { cls: 'mbt', ...LEO2, turret: LEO2_WEDGE };
 G['leopard-2a6'] = { cls: 'mbt', ...LEO2, turret: LEO2_WEDGE, guns: [{ mount: 'turret', length: 6.6, calibre: 0.12, extractor: 0.45, at: 0.45 }] };
 

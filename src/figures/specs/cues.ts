@@ -2270,10 +2270,9 @@ export const CUES: Record<string, CueEntry> = {
     { cue: 'thicker cast cheeks ("Super Dolly Parton")', check: castTurret },
     { cue: 'Kontakt-1 rows on turret and glacis', check: (s) => adds('box', 5, 'turret')(s) && adds('box', 10, 'hull')(s) },
   ]),
-  't-72b-k5': ground(['t-72b-1989', 't-72b3', 't-72b3-arena-m', 't-90'], [
-    { cue: 'squared Kontakt-5 brow over the turret front', check: angular },
-    { cue: 'K-5 plate on the glacis, boxes on the front skirts', check: adds('box', 4, 'hull') },
-  ]),
+  't-72b-k5': ground(['t-72b-1989', 't-72b3', 't-72b3-arena-m', 't-90'], [{ cue: 'K-5 plate on the glacis, boxes on the front skirts', check: adds('box', 4, 'hull') }]),
+  't-72b-k5-brow': ground(['t-72b3', 't-72b3-arena-m', 't-90'], [{ cue: 'squared Kontakt-5 brow over the turret front', check: angular }]),
+  't-72b-1989': ground('t-72b-1989', [{ cue: 'cast turret under the Kontakt-5 brow', check: castTurret }]),
   't-72b3': ground(['t-72b3', 't-72b3-arena-m'], [{ cue: 'Sosna-U sight box on the roof', check: adds('box', 2, 'turret') }]),
   't-72b3-arena-m': ground('t-72b3-arena-m', [
     { cue: "Arena-M radar head on its mast over the turret's rear", check: (s) => (s.addOns ?? []).some((a) => a.on === 'turret' && a.kind === 'drum' && a.at[2] >= 1.5 && a.size[0] >= 0.6) },

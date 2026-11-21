@@ -98,7 +98,9 @@ G['t-72av'] = { cls: 'mbt', ...T72, addOns: [SMOKE_902(0.7, 1.35, 0.45), LUNA(1.
 G['t-72b'] = { cls: 'mbt', ...T72, turret: T72B_TURRET, addOns: [SMOKE_902(0.7, 1.42, 0.45), LUNA(1.5, 0.82, 0.74), ...K1_TURRET(1.7, 1.5, 0.84), ...T72_GLACIS(0.1, 3, 5)] };
 // T-72B obr. 1989: Kontakt-5 - the squared brow on the turret, a thick plate on the glacis, boxes on the front skirts.
 const T72B89_ADD = [SMOKE_902(0.6, 1.5, 0.45), LUNA(1.75, 0.82, 0.74), ...T72_GLACIS(0.22), ...skirtBoxes(1.0, 3.2, 1.78, 0.62, 0.42, 3)];
-G['t-72b-1989'] = { cls: 'mbt', ...T72, turret: K5_TURRET, addOns: T72B89_ADD };
+// Its turret drawn as the casting it is under the K-5 lids (the T-72B3's and the T-90's keep the squarer drawing, which
+// fits their silhouettes better).
+G['t-72b-1989'] = { cls: 'mbt', ...T72, turret: { ...K5_TURRET, outline: { ...K5_TURRET.outline!, round: 4.8 } }, addOns: T72B89_ADD };
 // T-72B3 (2011): the 1989 tank with the Sosna-U sight box on the roof.
 G['t-72b3'] = { cls: 'mbt', ...T72, turret: K5_TURRET, addOns: [...T72B89_ADD, SOSNA] };
 // T-72B3M (B3 obr. 2016): Relikt on the turret, its sides and the skirts, the commander's panoramic sight, slat armour round the engine deck.
