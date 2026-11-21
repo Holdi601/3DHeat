@@ -255,6 +255,12 @@ pub async fn serve(rest: Vec<String>, core: Arc<Core>, default_web: Option<PathB
         "/__heat3d/usage".into(),
         crate::usage::usage_router(crate::usage::UsageConfig::find(None, cfg.web_root.as_deref())),
     ));
+    // The Extractors panel's route (docs/extractors.md): installs and starts programs on
+    // this machine, so the host's own browser only, by its token, as the statistics.
+    cfg.host_mount.push((
+        "/__heat3d/extractors".into(),
+        heat3d_extractors::router(heat3d_extractors::Manager::shared(), heat3d_extractors::Auth::Host),
+    ));
     if no_sandbox && cfg.expose {
         fail("--no-sandbox and --expose-internet do not go together");
     }

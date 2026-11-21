@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/proto", "crates/core", "crates/sandbox", "crates/session", "crates/server", "crates/app-tauri"]
+members = ["crates/proto", "crates/core", "crates/sandbox", "crates/session", "crates/server", "crates/extractors", "crates/app-tauri"]
 # Built with nightly by cargo-fuzz, apart from the rest.
 exclude = ["crates/session/fuzz"]
 
@@ -14,6 +14,7 @@ heat3d-proto = { path = "crates/proto" }
 heat3d-core = { path = "crates/core" }
 heat3d-server = { path = "crates/server" }
 heat3d-session = { path = "crates/session" }
+heat3d-extractors = { path = "crates/extractors" }
 prost = "0.14"
 prost-build = "0.14"
 protox = "0.10"

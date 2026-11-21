@@ -1,0 +1,34 @@
+[package]
+name = "heat3d-extractors"
+description = "3DHeat's extractors manager: finds, downloads, verifies, installs, updates, removes and starts the separate extractor programs"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+axum = "0.8"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "process", "time", "sync", "io-util", "net", "fs"] }
+# HTTPS to GitHub only, with ring as the TLS crypto (as the session server) and the system's certificate store.
+reqwest = { version = "0.13", default-features = false, features = ["rustls-no-provider"] }
+rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12"] }
+sha2 = "0.10"
+zip = { version = "9", default-features = false, features = ["deflate-flate2"] }
+flate2 = "1"
+tar = { version = "0.4", default-features = false }
+fs4 = "1"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net"] }
+
+# Test programs (cargo builds them with the tests): a stand-in extractor, and the manager's
+# route over a stand-in GitHub for the panel's smoke test (tools/smoke-extractors.mjs).
+[[example]]
+name = "fake-extractor"
+path = "testbins/fake-extractor.rs"
+
+[[example]]
+name = "serve-fake"
+path = "testbins/serve-fake.rs"

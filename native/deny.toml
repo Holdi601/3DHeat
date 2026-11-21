@@ -29,6 +29,9 @@ allow = [
   "BSL-1.0",
   "MPL-2.0",
   "0BSD",
+  # The Mozilla root certificates as data (webpki-root-certs, under rustls-platform-verifier):
+  # the extractors manager's HTTPS to GitHub.
+  "CDLA-Permissive-2.0",
 ]
 
 [bans]

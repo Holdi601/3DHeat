@@ -4,8 +4,9 @@
 //! - `data_router`: the protocol (`heat3d-proto`) over HTTP and WebSocket:
 //!   `POST /` one frame in, one frame out; `GET /ws` a WebSocket of frames.
 //!   Mounted at `/v1`.
-//! - `spawn_local`: the app window's own server, on a loopback port: the viewer
-//!   and `/v1`, the owner known by a key only the window is told.
+//! - `spawn_local`: the app window's own server, on a loopback port: the viewer,
+//!   `/v1` and the Extractors panel's route (`heat3d-extractors`), the owner
+//!   known by a key only the window is told.
 //! - `cli`: `3dheat serve`, the session server with `/v1` mounted, headless or
 //!   from the app (`3dheat-app serve`, or `3dheat-app --host` beside the window).
 //!
@@ -123,7 +124,9 @@ async fn session(mut s: WebSocket, core: Arc<Core>, access: Access) {
 pub async fn spawn_local(core: Arc<Core>, web: Option<PathBuf>, owner_key: String) -> Result<SocketAddr> {
     let listener = tokio::net::TcpListener::bind(SocketAddr::from(([127, 0, 0, 1], 0))).await.context("binding a loopback port")?;
     let addr = listener.local_addr()?;
-    let mut app = Router::new().nest_service("/v1", data_router(core, Some(owner_key), true));
+    // The Extractors panel's route (docs/extractors.md): this window only, by the same key.
+    let extractors = heat3d_extractors::router(heat3d_extractors::Manager::shared(), heat3d_extractors::Auth::Key(Arc::from(owner_key.as_str())));
+    let mut app = Router::new().nest_service("/v1", data_router(core, Some(owner_key), true)).nest_service("/__heat3d/extractors", extractors);
     if let Some(dir) = web {
         let index = dir.join("index.html");
         app = app.fallback_service(ServeDir::new(dir).fallback(ServeFile::new(index)));

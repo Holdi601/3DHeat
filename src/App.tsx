@@ -54,6 +54,7 @@ import { EntityPanel } from './ui/panels/EntityPanel';
 import { FilterPanel } from './ui/panels/FilterPanel';
 import { HeatPanel } from './ui/panels/HeatPanel';
 import { LevelPanel } from './ui/panels/LevelPanel';
+import { ExtractorsPanel } from './ui/panels/ExtractorsPanel';
 import { MeasurePanel } from './ui/panels/MeasurePanel';
 import { VolumePanel } from './ui/panels/VolumePanel';
 import { InsightsPanel } from './ui/insights/InsightsPanel';
@@ -555,6 +556,7 @@ export function App() {
           <TaskGroup task="load">
             <SourcePanel />
             <LevelPanel />
+            <ExtractorsPanel />
             <More id="heat.load">
               <LeanOverlayPanel />
               <DevToolsPanel />

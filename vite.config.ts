@@ -534,16 +534,25 @@ function unitCatalogs(): Plugin {
 /** Where the page asks for the catalogue folder's index (src/ui/panels/CatalogSection.tsx). */
 const CATALOG_ROUTE = '/__heat3d/catalog';
 
-/** The levels folder the extractors write into: `HEAT3D_LEVELS`, else `levels` in the git-ignored `tools/local-data.json`. */
+/**
+ * The levels folder the extractors write into: `HEAT3D_LEVELS`, else `levels` in the git-ignored
+ * `tools/local-data.json`, else the extractors' own default when it exists (docs/extractors.md):
+ * `%LOCALAPPDATA%\3DHeat\levels` on Windows, `${XDG_DATA_HOME:-~/.local/share}/3dheat/levels` elsewhere.
+ */
 function levelsRoot(): string | null {
   if (process.env.HEAT3D_LEVELS) return process.env.HEAT3D_LEVELS;
   try {
     const local = fileURLToPath(new URL('./tools/local-data.json', import.meta.url));
     const l = existsSync(local) ? (JSON.parse(readFileSync(local, 'utf8')) as { levels?: unknown }).levels : undefined;
-    return typeof l === 'string' ? l : null;
+    if (typeof l === 'string') return l;
   } catch {
-    return null;
+    // The default below.
   }
+  const base =
+    process.platform === 'win32'
+      ? process.env.LOCALAPPDATA && `${process.env.LOCALAPPDATA}/3DHeat`
+      : `${process.env.XDG_DATA_HOME || `${os.homedir()}/.local/share`}/3dheat`;
+  return base && existsSync(`${base}/levels`) ? `${base}/levels` : null;
 }
 
 /**

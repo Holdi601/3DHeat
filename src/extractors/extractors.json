@@ -1,0 +1,206 @@
+{
+  "format": "3dheat-extractors",
+  "version": 1,
+  "extractors": [
+    {
+      "id": "heat3d-warthunder",
+      "name": "War Thunder",
+      "games": ["War Thunder"],
+      "what": "Replays (.wrpl) into tables, and the game's levels into 3D levels, from your own install",
+      "repo": "Holdi601/3DHeat-Ext-WarThunder",
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz"},
+      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}"},
+      "sums": "SHA256SUMS"
+    },
+    {
+      "id": "heat3d-dcs",
+      "name": "DCS World",
+      "games": ["DCS World"],
+      "what": "Theatres from your own install into 3D levels: ground, sea, airfields, roads and towns",
+      "repo": "Holdi601/3DHeat-Ext-DCS",
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz"},
+      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}"},
+      "sums": "SHA256SUMS"
+    },
+    {
+      "id": "heat3d-battlefield",
+      "name": "Battlefield",
+      "games": ["Battlefield 6", "Battlefield 4", "Battlefield 1"],
+      "what": "Levels from your own install into 3D levels: terrain, placed meshes and colour maps",
+      "repo": "Holdi601/3DHeat-Ext-Battlefield",
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz"},
+      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}"},
+      "sums": "SHA256SUMS"
+    },
+    {
+      "id": "heat3d-cs2",
+      "name": "Counter-Strike 2",
+      "games": ["Counter-Strike 2"],
+      "what": "Demos (.dem) into tables, round by round, and maps into 3D levels",
+      "repo": "Holdi601/3DHeat-CS2",
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz"},
+      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}"},
+      "sums": "SHA256SUMS"
+    },
+    {
+      "id": "heat3d-r6-maps",
+      "name": "Rainbow Six Siege maps",
+      "games": ["Rainbow Six Siege"],
+      "what": "Maps from your own install into 3D levels",
+      "repo": "Holdi601/3DHeat-Ext-R6-Maps",
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip"},
+      "exe": {"windows-x64": "{id}/{id}.exe"},
+      "sums": "SHA256SUMS"
+    },
+    {
+      "id": "heat3d-r6",
+      "name": "Rainbow Six Siege replays",
+      "games": ["Rainbow Six Siege"],
+      "what": "Match replays (.rec) into tables",
+      "repo": "Holdi601/3DHeat-Ext-R6",
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip"},
+      "exe": {"windows-x64": "{id}/{id}.exe"},
+      "sums": "SHA256SUMS"
+    },
+    {
+      "id": "heat3d-reforger",
+      "name": "Arma Reforger",
+      "games": ["Arma Reforger"],
+      "what": "Worlds from your own install into 3D levels: terrain, sea and placed models",
+      "repo": "Holdi601/3DHeat-Ext-Reforger",
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz"},
+      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}"},
+      "sums": "SHA256SUMS"
+    },
+    {
+      "id": "heat3d-dota-maps",
+      "name": "Dota 2 map",
+      "games": ["Dota 2"],
+      "what": "The map from your own install into a 3D level: ground, cliffs, water, trees and buildings",
+      "repo": "Holdi601/3DHeat-Ext-Dota",
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz"},
+      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}"},
+      "sums": "SHA256SUMS"
+    },
+    {
+      "id": "heat3d-dota-replay",
+      "name": "Dota 2 replays",
+      "games": ["Dota 2"],
+      "what": "Replays (.dem) into tables: every hero's track and what happened where",
+      "repo": "Holdi601/3DHeat-Ext-DotaReplay",
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz"},
+      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}"},
+      "sums": "SHA256SUMS"
+    },
+    {
+      "id": "heat3d-forza",
+      "name": "Forza",
+      "games": ["Forza Horizon", "Forza Motorsport"],
+      "what": "Courses, races and cars from your own install",
+      "repo": "Holdi601/3DHeat-Ext-Forza",
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz"},
+      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}"},
+      "sums": "SHA256SUMS"
+    },
+    {
+      "id": "heat3d-wows",
+      "name": "World of Warships",
+      "games": ["World of Warships"],
+      "what": "Replays (.wowsreplay) into tables: every position over time, every kill where it happened",
+      "repo": "Holdi601/3DHeat-Ext-WoWs",
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz"},
+      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}"},
+      "sums": "SHA256SUMS"
+    },
+    {
+      "id": "heat3d-acrally",
+      "name": "Assetto Corsa Rally",
+      "games": ["Assetto Corsa Rally"],
+      "what": "Stages from your own install as courses around a recorded lap",
+      "repo": "Holdi601/3DHeat-Ext-ACRally",
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz"},
+      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}"},
+      "sums": "SHA256SUMS"
+    },
+    {
+      "id": "heat3d-beamng",
+      "name": "BeamNG.drive",
+      "games": ["BeamNG.drive"],
+      "what": "Levels from your own install as courses around a recorded lap",
+      "repo": "Holdi601/3DHeat-Ext-BeamNG",
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz"},
+      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}"},
+      "sums": "SHA256SUMS"
+    },
+    {
+      "id": "heat3d-il2",
+      "name": "IL-2 Sturmovik",
+      "games": ["IL-2 Sturmovik"],
+      "what": "Maps from your own install into 3D levels",
+      "repo": "Holdi601/3DHeat-Ext-IL2",
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz"},
+      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}"},
+      "sums": "SHA256SUMS"
+    },
+    {
+      "id": "heat3d-riot",
+      "name": "League of Legends and VALORANT",
+      "games": ["League of Legends", "VALORANT"],
+      "what": "Replays (.rofl, .vrf) into box scores, match facts and event timelines",
+      "repo": "Holdi601/3DHeat-Ext-Riot",
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz"},
+      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}"},
+      "sums": "SHA256SUMS"
+    },
+    {
+      "id": "heat3d-squad",
+      "name": "Squad",
+      "games": ["Squad"],
+      "what": "Server demos into heatmap tables",
+      "repo": "Holdi601/3DHeat-Ext-Squad",
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz"},
+      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}"},
+      "sums": "SHA256SUMS"
+    },
+    {
+      "id": "heat3d-wot",
+      "name": "World of Tanks",
+      "games": ["World of Tanks"],
+      "what": "Replays (.wotreplay) into tables: every position over time, every kill where it happened",
+      "repo": "Holdi601/3DHeat-Ext-WoT",
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz"},
+      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}"},
+      "sums": "SHA256SUMS"
+    },
+    {
+      "id": "heat3d-gamefiles",
+      "name": "GameFiles",
+      "games": ["Racing games"],
+      "what": "Race tracks and game levels from the files of a game you have installed",
+      "repo": "Holdi601/3DHeat-GameFiles",
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz"},
+      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}"},
+      "sums": "SHA256SUMS"
+    },
+    {
+      "id": "heat3d-gamecapture",
+      "name": "GameCapture",
+      "games": ["Racing games"],
+      "what": "Records your laps from the telemetry a racing game sends, one file per lap",
+      "repo": "Holdi601/3DHeat-GameCapture",
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip"},
+      "exe": {"windows-x64": "{id}/{id}.exe"},
+      "sums": "SHA256SUMS"
+    },
+    {
+      "id": "heat3d-watcher",
+      "name": "Watcher",
+      "games": ["Several games"],
+      "what": "Writes down where you went and what happened while you play, for heatmaps afterwards",
+      "repo": "Holdi601/3DHeat-Watcher",
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip"},
+      "exe": {"windows-x64": "{id}/{id}.exe"},
+      "sums": "SHA256SUMS"
+    }
+  ]
+}
