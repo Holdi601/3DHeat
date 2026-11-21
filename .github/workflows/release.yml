@@ -94,7 +94,7 @@ jobs:
       - name: Collect
         shell: bash
         run: cp native/target/release/bundle/nsis/*.exe native/target/release/bundle/msi/*.msi out/
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: release-windows
           path: out/*
@@ -140,7 +140,7 @@ jobs:
           rpm -qp --requires native/target/release/bundle/rpm/*.rpm 2>/dev/null || true
       - name: Collect
         run: cp native/target/release/bundle/appimage/*.AppImage native/target/release/bundle/deb/*.deb native/target/release/bundle/rpm/*.rpm out/
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: release-linux-x64
           path: out/*
@@ -167,7 +167,7 @@ jobs:
         run: cargo build --release --locked -p heat3d-server
       - name: Server packages
         run: bash native/packaging/server-package.sh "${{ needs.version.outputs.version }}" linux-arm64 native/target/release/3dheat dist out
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: release-linux-arm64
           path: out/*
@@ -205,7 +205,7 @@ jobs:
           docker rm -f heat
       - name: Save
         run: docker save 3dheat-server:${{ needs.version.outputs.version }} | gzip > 3dheat-server-${{ needs.version.outputs.version }}-docker-${{ matrix.arch }}.tar.gz
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: docker-${{ matrix.arch }}
           path: 3dheat-server-*-docker-*.tar.gz
