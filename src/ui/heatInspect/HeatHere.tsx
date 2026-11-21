@@ -144,7 +144,7 @@ export function HeatHere({ pick }: { pick: PickResult }) {
       {n > 0 && (
         <div className="heat-stack-nav row wrap">
           <button onClick={() => show(at <= -1 ? n - 1 : at - 1)} title={t('analysis.heat.prevTitle')} aria-label={t('analysis.heat.prevTitle')}>
-            â€¹
+            ‹
           </button>
           <span className="heat-stack-at">
             {at < 0 ? t('analysis.heat.picked') : t('analysis.heat.at', { i: int(at + 1), n: int(n) })}
@@ -153,7 +153,7 @@ export function HeatHere({ pick }: { pick: PickResult }) {
             )}
           </span>
           <button onClick={() => show(at >= n - 1 ? -1 : at + 1)} title={t('analysis.heat.nextTitle')} aria-label={t('analysis.heat.nextTitle')}>
-            â€º
+            ›
           </button>
           {ds?.time && (
             <select value={order} onChange={(e) => setOrder(e.target.value as Order)} title={t('analysis.heat.orderTitle')}>

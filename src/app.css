@@ -1,20 +1,114 @@
-:root {
-  --bg: #0b0d10;
-  --panel: #14171c;
-  --panel-2: #1a1e25;
-  --line: #262c35;
-  --line-soft: #1f242c;
-  --text: #dfe4ec;
-  --text-dim: #8d96a5;
-  --text-faint: #616b7a;
-  --accent: #4da3ff;
-  --accent-dim: #2b6fb3;
+/*
+ * The design tokens: every colour, space, radius, size, shadow and duration
+ * the chrome is drawn with, in one place (docs/ui-guide.md). Dark first; the
+ * light theme redefines the colours on the root, and the view with everything
+ * drawn over it (`.stage`) keeps the dark ones in either, since the scene
+ * behind them is dark. Team colours are not tokens: they come from the team
+ * palette (Auto / Soft / Strong / Strong alt) and are the same in both themes.
+ */
+:root,
+:root[data-theme='light'] .stage,
+.theme-dark {
+  /* Surfaces, from the page up: the app, a panel, a control, a raised layer. */
+  --bg: #07090d;
+  --panel: #0e1218;
+  --panel-2: #151a22;
+  --surface-3: #1b222d;
+  --surface-hover: #1f2733;
+  --glass: rgba(9, 12, 17, 0.8);
+  --line: #242c38;
+  --line-soft: #19202a;
+  --line-strong: #344052;
+  /* Text: AA on every surface above (4.5:1 at the faintest). */
+  --text: #e6ebf2;
+  --text-dim: #a3adbd;
+  --text-faint: #7d8899;
+  /* Accent: cyan, with a quiet fill and a glow for what is on. */
+  --accent: #46c8ff;
+  --accent-dim: #1d76ad;
+  --accent-hover: #74d6ff;
+  --accent-fill: rgba(70, 200, 255, 0.14);
+  --accent-fill-strong: rgba(70, 200, 255, 0.24);
+  --accent-ink: #04131c;
+  --accent-glow: 0 0 0 1px rgba(70, 200, 255, 0.4), 0 0 14px rgba(70, 200, 255, 0.16);
+  /* Meaning. */
   --warm: #ff6a3d;
-  --good: #46d17f;
+  --warn: #ffb547;
+  --good: #3ddc84;
   --bad: #ff5d5d;
-  --sidebar-w: 322px;
-  --timeline-h: 92px;
+  --stage-bg: #11141a;
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-2: 0 6px 20px rgba(0, 0, 0, 0.45);
+  --shadow-3: 0 18px 48px rgba(0, 0, 0, 0.6);
+
+  color-scheme: dark;
+}
+
+:root[data-theme='light'] {
+  --bg: #e9edf2;
+  --panel: #fbfcfd;
+  --panel-2: #f0f3f7;
+  --surface-3: #e6ebf1;
+  --surface-hover: #e3e9f0;
+  --glass: rgba(251, 252, 253, 0.9);
+  --line: #d3dae3;
+  --line-soft: #e3e8ee;
+  --line-strong: #b9c3cf;
+  --text: #121821;
+  --text-dim: #3f4a5a;
+  --text-faint: #5f6b7c;
+  --accent: #0b6fb8;
+  --accent-dim: #0b6fb8;
+  --accent-hover: #095e9c;
+  --accent-fill: rgba(11, 111, 184, 0.1);
+  --accent-fill-strong: rgba(11, 111, 184, 0.18);
+  --accent-ink: #ffffff;
+  --accent-glow: 0 0 0 1px rgba(11, 111, 184, 0.45);
+  --warm: #c2491f;
+  --warn: #9a6200;
+  --good: #157a43;
+  --bad: #c62828;
+  --shadow-1: 0 1px 2px rgba(16, 24, 40, 0.08);
+  --shadow-2: 0 6px 20px rgba(16, 24, 40, 0.12);
+  --shadow-3: 0 18px 48px rgba(16, 24, 40, 0.2);
+
+  color-scheme: light;
+}
+
+:root {
+  /* Space: a 4-pixel scale. */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  /* Radii. */
+  --r-xs: 3px;
+  --r-sm: 5px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-pill: 999px;
+  /* Type. */
+  --font-ui: 'Inter', 'Segoe UI Variable Text', 'Segoe UI', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   --mono: ui-monospace, 'Cascadia Mono', 'SF Mono', Menlo, Consolas, monospace;
+  --fs-xs: 10.5px;
+  --fs-sm: 11.5px;
+  --fs-md: 13px;
+  --fs-lg: 15px;
+  --fs-xl: 18px;
+  --fw-medium: 550;
+  --fw-bold: 650;
+  /* Focus: a ring outside the control, in the accent, on every focusable thing. */
+  --focus-ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+  /* Motion: ui/motion.ts sets these (0 when motion is off); the values here are its defaults. */
+  --motion-fast: 180ms;
+  --motion-base: 300ms;
+  --motion-slow: 500ms;
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Layout. */
+  --sidebar-w: 336px;
+  --timeline-h: 92px;
   /*
    * One stacking scale for everything drawn over the view. Things pinned to
    * the world sit lowest, place names under unit labels, and every card,
@@ -30,9 +124,8 @@
   --z-popover: 40;
   --z-tooltip: 50;
 
-  color-scheme: dark;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  font-size: 13px;
+  font-family: var(--font-ui);
+  font-size: var(--fs-md);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -52,9 +145,26 @@ body,
 
 button,
 input,
-select {
+select,
+textarea {
   font: inherit;
   color: inherit;
+}
+
+/* One focus ring for everything the keyboard reaches; none for a mouse click. */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+::selection {
+  background: var(--accent-fill-strong);
+}
+
+/* Thin scrollbars in the panel colours. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
 }
 
 /* ------------------------------------------------------------------ layout */
@@ -70,6 +180,8 @@ select {
   grid-row: 1 / 3;
   background: var(--panel);
   border-right: 1px solid var(--line);
+  /* Room for the focus ring of a control at the edge. */
+  scrollbar-gutter: stable;
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
@@ -79,7 +191,8 @@ select {
 .stage {
   position: relative;
   overflow: hidden;
-  background: #16181c;
+  background: var(--stage-bg);
+  color: var(--text);
 }
 
 .stage canvas {
@@ -93,6 +206,7 @@ select {
 .timeline-bar {
   background: var(--panel);
   border-top: 1px solid var(--line);
+  box-shadow: inset 0 1px 0 var(--line-soft);
   padding: 10px 16px;
   display: flex;
   flex-direction: column;
@@ -141,42 +255,93 @@ select.language-picker {
 
 .section {
   border-bottom: 1px solid var(--line-soft);
+  position: relative;
 }
 
 .section > header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 9px 16px;
+  gap: var(--sp-2);
+  padding: 10px var(--sp-4);
   cursor: pointer;
   user-select: none;
   color: var(--text-dim);
   font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.07em;
   text-transform: uppercase;
+  transition: color var(--motion-fast) var(--motion-ease), background var(--motion-fast) var(--motion-ease);
 }
 
 .section > header:hover {
   color: var(--text);
-  background: var(--panel-2);
+  background: var(--surface-hover);
+}
+
+.section > header:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--accent);
 }
 
 .section > header .chev {
-  font-size: 9px;
-  opacity: 0.65;
-  transition: transform 120ms ease;
+  display: inline-block;
+  width: 10px;
+  font-size: 8px;
+  opacity: 0.6;
+  transition: transform var(--motion-fast) var(--motion-ease);
+}
+
+.section.open > header {
+  color: var(--text);
 }
 
 .section.open > header .chev {
   transform: rotate(90deg);
+  color: var(--accent);
+  opacity: 1;
+}
+
+/* The open section's edge, in the accent: where you are in a long column. */
+.section.open::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(var(--accent), transparent 85%);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.section .section.open::before {
+  display: none;
+}
+
+/* A flash where the command palette or a shortcut led to. */
+.section.flash > header,
+.flash-control {
+  animation: flash-in calc(var(--motion-slow) * 3) var(--motion-ease);
+}
+
+@keyframes flash-in {
+  0%,
+  40% {
+    background: var(--accent-fill-strong);
+    box-shadow: 0 0 0 1px var(--accent);
+  }
 }
 
 .section .body {
-  padding: 4px 16px 14px;
+  padding: var(--sp-1) var(--sp-4) 14px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.section .section > header {
+  padding-left: 0;
+  padding-right: 0;
 }
 
 /* ---------------------------------------------------------------- controls */
@@ -209,6 +374,13 @@ select.language-picker {
   color: var(--text);
   font-variant-numeric: tabular-nums;
   font-size: 11px;
+}
+
+/* Explanations under a control or a heading: quieter than what they explain. */
+.hint {
+  color: var(--text-faint);
+  font-size: 11px;
+  line-height: 1.45;
 }
 
 .field .hint {
@@ -320,6 +492,24 @@ svg.curve {
 
 .row.wrap {
   flex-wrap: wrap;
+}
+
+/* Drawing on the CPU: said where the user is, quietly enough to work beside. */
+.sw-warning {
+  margin: 0 0 10px;
+  padding: 8px 10px 8px 12px;
+  border: 1px solid color-mix(in srgb, var(--bad) 45%, transparent);
+  border-left: 3px solid var(--bad);
+  border-radius: var(--r-sm);
+  background: color-mix(in srgb, var(--bad) 8%, transparent);
+  color: var(--text-dim);
+  font-size: var(--fs-xs);
+  line-height: 1.45;
+}
+
+.sw-warning strong {
+  color: var(--bad);
+  font-size: var(--fs-sm);
 }
 
 /* A newer version is out: under the title, above everything it might change. */
@@ -442,43 +632,82 @@ input[type='range'] {
 }
 
 input[type='range']::-webkit-slider-runnable-track {
-  height: 3px;
-  background: var(--line);
-  border-radius: 2px;
+  height: 4px;
+  background: var(--line-strong);
+  border-radius: var(--r-pill);
 }
 
 input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 12px;
-  height: 12px;
-  margin-top: -4.5px;
+  width: 14px;
+  height: 14px;
+  margin-top: -5px;
   border-radius: 50%;
   background: var(--accent);
-  border: none;
+  border: 2px solid var(--panel);
+  box-shadow: 0 0 0 1px var(--accent-dim);
   cursor: pointer;
+  transition: box-shadow var(--motion-fast) var(--motion-ease);
 }
 
 input[type='range']:hover::-webkit-slider-thumb {
-  background: #6cb6ff;
+  background: var(--accent-hover);
+  box-shadow: var(--accent-glow);
+}
+
+input[type='range']:focus-visible {
+  box-shadow: none;
+}
+
+input[type='range']:focus-visible::-webkit-slider-thumb {
+  box-shadow: var(--focus-ring);
+}
+
+input[type='range']::-moz-range-track {
+  height: 4px;
+  background: var(--line-strong);
+  border-radius: var(--r-pill);
+}
+
+input[type='range']::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--panel);
 }
 
 input[type='number'],
 input[type='text'],
-select {
+input[type='search'],
+select,
+textarea {
   background: var(--panel-2);
   border: 1px solid var(--line);
-  border-radius: 4px;
+  border-radius: var(--r-sm);
   padding: 5px 7px;
   width: 100%;
   min-width: 0;
   font-variant-numeric: tabular-nums;
+  transition: border-color var(--motion-fast) var(--motion-ease), box-shadow var(--motion-fast) var(--motion-ease);
+}
+
+input[type='number']:hover,
+input[type='text']:hover,
+input[type='search']:hover,
+select:hover,
+textarea:hover {
+  border-color: var(--line-strong);
 }
 
 input[type='number']:focus,
 input[type='text']:focus,
-select:focus {
+input[type='search']:focus,
+select:focus,
+textarea:focus {
   outline: none;
-  border-color: var(--accent-dim);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-fill);
 }
 
 input.narrow {
@@ -537,16 +766,24 @@ input.narrow {
 button {
   background: var(--panel-2);
   border: 1px solid var(--line);
-  border-radius: 4px;
+  border-radius: var(--r-sm);
   padding: 6px 10px;
   cursor: pointer;
-  transition: background 100ms ease, border-color 100ms ease;
+  transition:
+    background var(--motion-fast) var(--motion-ease),
+    border-color var(--motion-fast) var(--motion-ease),
+    color var(--motion-fast) var(--motion-ease),
+    box-shadow var(--motion-fast) var(--motion-ease);
   white-space: nowrap;
 }
 
 button:hover:not(:disabled) {
-  background: #232932;
-  border-color: #333b47;
+  background: var(--surface-hover);
+  border-color: var(--line-strong);
+}
+
+button:active:not(:disabled) {
+  background: var(--surface-3);
 }
 
 button:disabled {
@@ -555,14 +792,26 @@ button:disabled {
 }
 
 button.primary {
-  background: var(--accent-dim);
-  border-color: #3a83c9;
-  color: #fff;
-  font-weight: 550;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+  font-weight: var(--fw-medium);
 }
 
 button.primary:hover:not(:disabled) {
-  background: #3b86cc;
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+/* A quiet button: no box until hovered. */
+button.ghost {
+  background: transparent;
+  border-color: transparent;
+}
+
+button.ghost:hover:not(:disabled) {
+  background: var(--surface-hover);
+  border-color: var(--line);
 }
 
 .seg {
@@ -572,19 +821,19 @@ button.primary:hover:not(:disabled) {
      language do not fit 300 pixels. The 1px gaps over the line colour draw the
      dividers, between rows as well as between buttons. */
   flex-wrap: wrap;
-  gap: 1px;
-  background: var(--line);
+  gap: 2px;
+  padding: 2px;
+  background: var(--bg);
   border: 1px solid var(--line);
-  border-radius: 5px;
-  overflow: hidden;
+  border-radius: var(--r-md);
 }
 
 .seg button {
   flex: 1 1 auto;
-  border: none;
-  border-radius: 0;
-  background: var(--panel);
-  padding: 7px 6px;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  background: transparent;
+  padding: 6px 6px;
   font-size: 11.5px;
   color: var(--text-dim);
   /* A single word wider than the whole row still breaks, hyphenated where the
@@ -596,10 +845,19 @@ button.primary:hover:not(:disabled) {
   line-height: 1.25;
 }
 
-.seg button.on {
-  background: var(--accent-dim);
-  color: #fff;
-  font-weight: 550;
+.seg button:hover:not(:disabled) {
+  background: var(--surface-hover);
+  border-color: transparent;
+  color: var(--text);
+}
+
+.seg button.on,
+.seg button.on:hover:not(:disabled) {
+  background: var(--accent-fill-strong);
+  border-color: var(--accent-dim);
+  color: var(--text);
+  font-weight: var(--fw-medium);
+  box-shadow: inset 0 -2px 0 var(--accent);
 }
 
 label.check {
@@ -617,9 +875,10 @@ label.check:hover {
 
 label.check input {
   accent-color: var(--accent);
-  width: 13px;
-  height: 13px;
+  width: 14px;
+  height: 14px;
   margin: 0;
+  flex: 0 0 auto;
 }
 
 /* ------------------------------------------------------------------- teams */
@@ -783,10 +1042,11 @@ label.check input {
   position: absolute;
   top: 12px;
   right: 12px;
-  background: rgba(12, 14, 18, 0.82);
+  background: var(--glass);
   backdrop-filter: blur(8px);
   border: 1px solid var(--line);
-  border-radius: 6px;
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-2);
   padding: 9px 11px;
   font-size: 11px;
   min-width: 196px;
@@ -844,10 +1104,11 @@ label.check input {
 .cam-readout,
 .pick-card {
   pointer-events: auto;
-  background: rgba(12, 14, 18, 0.82);
+  background: var(--glass);
   backdrop-filter: blur(8px);
   border: 1px solid var(--line);
-  border-radius: 6px;
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-2);
   padding: 6px 9px;
   font-size: 11px;
   font-variant-numeric: tabular-nums;
@@ -1167,15 +1428,15 @@ button.link:disabled {
   font-size: 10.5px;
   line-height: 1.6;
   pointer-events: none;
-  max-width: 300px;
+  max-width: 560px;
 }
 
 .help kbd {
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid var(--line);
-  border-radius: 3px;
+  min-width: 0;
+  margin: 0 1px;
   padding: 0 4px;
-  font-family: inherit;
+  border-bottom-width: 1px;
+  background: rgba(255, 255, 255, 0.06);
   font-size: 10px;
 }
 

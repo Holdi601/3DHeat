@@ -27,18 +27,7 @@ export function SoftwareRenderingWarning() {
   const advice = softwareRenderingAdvice(classifyRenderer(gpuName));
   if (!advice) return null;
   return (
-    <div
-      data-testid="software-rendering-warning"
-      style={{
-        margin: '8px 0 0',
-        padding: '8px 10px',
-        borderRadius: 6,
-        border: '1px solid var(--bad)',
-        color: 'var(--bad)',
-        fontSize: 12,
-        lineHeight: 1.45,
-      }}
-    >
+    <div data-testid="software-rendering-warning" className="sw-warning" role="alert">
       <strong>{t('heat.softwareRenderingWarning.title')}</strong>
       <br />
       {advice}
