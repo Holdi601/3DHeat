@@ -3,6 +3,8 @@ import { Section, Select, Slider } from '../controls';
 import { BOARD_TOOLS, momentOf, movableSelection, usePlanStore, type BoardTool } from '../../state/planStore';
 import { toolKeys } from './boardKeys';
 import { LayersPanel } from './LayersPanel';
+import { MISSION_ACCEPT, missionToPlan, readMission } from '../../tactics/missions';
+import { hasContent } from '../../tactics/autosave';
 import { DrawOptions, NoteOptions, ThrowOptions } from './PenOptions';
 import { useStore } from '../../state/store';
 import { GAMES, gamePreset } from '../../tactics/games';
@@ -119,6 +121,31 @@ export function TacticsPanel() {
     a.download = `${name}.h3dplan.json`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  };
+  const missionRef = useRef<HTMLInputElement>(null);
+  const [imported, setImported] = useState<string | null>(null);
+  const importMission = async (file: File) => {
+    try {
+      const m = await readMission(file.name, new Uint8Array(await file.arrayBuffer()));
+      if (hasContent(plan) && !window.confirm(t('tactics.mission.replace'))) return;
+      store().replacePlan(missionToPlan(m));
+      const units = m.groups.reduce((n, g) => n + g.units.length, 0);
+      const count = (k: string) => m.places.filter((p) => p.kind === k).length;
+      setImported(
+        [
+          t('tactics.mission.done', { units, groups: m.groups.length, airbases: count('airbase') + count('farp'), zones: count('zone'), markers: count('marker') + count('objective') + count('bullseye') }),
+          m.map ? t('tactics.mission.map', { map: m.map }) : '',
+          ...m.notes,
+        ]
+          .filter(Boolean)
+          .join(' '),
+      );
+      setError(null);
+      engine?.frameDataset(true);
+    } catch (e) {
+      setImported(null);
+      setError(t('tactics.mission.bad', { reason: e instanceof Error ? e.message : String(e) }));
+    }
   };
   const open = async (file: File) => {
     try {
@@ -292,6 +319,23 @@ export function TacticsPanel() {
             e.target.value = '';
           }}
         />
+        <div className="tactics-tools">
+          <button onClick={() => missionRef.current?.click()} title={t('tactics.mission.hint')}>
+            {t('tactics.mission.import')}
+          </button>
+        </div>
+        <input
+          ref={missionRef}
+          type="file"
+          accept={MISSION_ACCEPT}
+          style={{ display: 'none' }}
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) void importMission(f);
+            e.target.value = '';
+          }}
+        />
+        {imported && <div className="hint">{imported}</div>}
         {error && <div className="hint" style={{ color: 'var(--warm)' }}>{error}</div>}
         <div className="hint">{t('tactics.counts', { figures: plan.figures.length, arrows: plan.arrows.length, steps: plan.steps.length })}</div>
         <label className="field">

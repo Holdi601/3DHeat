@@ -225,6 +225,39 @@ await step('the board is kept in the browser and comes back after a reload', asy
   await page.getByRole('tab', { name: 'Tactics' }).or(page.getByRole('button', { name: 'Tactics' })).first().click();
 });
 
+/** A stored zip of named text files (a .miz as small as it gets). */
+function zip(files) {
+  const parts = [];
+  const central = [];
+  let offset = 0;
+  const u16 = (v) => [v & 255, (v >> 8) & 255];
+  const u32 = (v) => [v & 255, (v >> 8) & 255, (v >> 16) & 255, (v >>> 24) & 255];
+  for (const [name, text] of Object.entries(files)) {
+    const n = [...Buffer.from(name)];
+    const d = [...Buffer.from(text)];
+    const local = [...u32(0x04034b50), ...u16(20), ...u16(0), ...u16(0), ...u16(0), ...u16(0), ...u32(0), ...u32(d.length), ...u32(d.length), ...u16(n.length), ...u16(0), ...n, ...d];
+    central.push(...u32(0x02014b50), ...u16(20), ...u16(20), ...u16(0), ...u16(0), ...u16(0), ...u16(0), ...u32(0), ...u32(d.length), ...u32(d.length), ...u16(n.length), ...u16(0), ...u16(0), ...u16(0), ...u16(0), ...u32(0), ...u32(offset), ...n);
+    parts.push(...local);
+    offset += local.length;
+  }
+  const count = Object.keys(files).length;
+  return Buffer.from([...parts, ...central, ...u32(0x06054b50), ...u16(0), ...u16(0), ...u16(count), ...u16(count), ...u32(central.length), ...u32(offset), ...u16(0)]);
+}
+
+await step('Import mission… reads a DCS .miz onto a layer per coalition', async () => {
+  const mission = 'mission = { ["theatre"] = "Caucasus", ["coalition"] = { ["blue"] = { ["country"] = { [1] = { ["plane"] = { ["group"] = { [1] = { ["name"] = "Viper", ["units"] = { [1] = { ["type"] = "F-16C_50", ["name"] = "Viper 1-1", ["x"] = 0, ["y"] = 0, ["alt"] = 500, ["heading"] = 0 } }, ["route"] = { ["points"] = { [1] = { ["x"] = 0, ["y"] = 0, ["alt"] = 500 }, [2] = { ["x"] = 9000, ["y"] = 0, ["alt"] = 5000, ["speed"] = 200 } } } } } } } } }, ["red"] = { ["country"] = { [1] = { ["vehicle"] = { ["group"] = { [1] = { ["name"] = "SAM", ["units"] = { [1] = { ["type"] = "Tor 9A331", ["name"] = "Tor", ["x"] = 8000, ["y"] = 1000 } } } } } } } } } }';
+  // The File section, open; the button opens this chooser, and handing it the file is the same.
+  const input = page.locator('input[type=file][accept=".miz,.sqm"]');
+  if (!(await input.count())) await page.locator('.tactics-panel .section > header', { hasText: /^▶\s*File$/ }).first().click();
+  await page.locator('input[type=file][accept=".miz,.sqm"]').setInputFiles({ name: 'smoke.miz', mimeType: 'application/zip', buffer: zip({ mission }) });
+  await page.waitForTimeout(800);
+  const s = await page.evaluate(() => {
+    const p = window.__3dheat_plan.getState().plan;
+    return { game: p.game, layers: p.layers.map((l) => l.name), figures: p.figures.map((f) => f.kind), routes: p.arrows.length };
+  });
+  expect(s.game === 'air' && s.layers.includes('Blue') && s.layers.includes('Red') && s.figures.includes('f-16c') && s.routes === 1, `imported ${JSON.stringify(s)}`);
+});
+
 /** Frame intervals over a few seconds, sorted. */
 const frameTimes = async (ms = 5000) => {
   const t = await page.evaluate(

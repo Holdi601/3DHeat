@@ -183,6 +183,8 @@ export interface PlanState {
   play: (on: boolean) => void;
   setPlayTime: (t: number) => void;
   load: (text: string, level: string) => void;
+  /** A whole plan made elsewhere (a mission file read in), in place of the board's; one undo step. */
+  replacePlan: (plan: Plan) => void;
   clear: () => void;
 
   addLayer: (name?: string) => string;
@@ -924,6 +926,11 @@ export const usePlanStore = create<PlanState>((set, get) => ({
     const plan = readPlan(text);
     if (!plan.level) plan.level = level;
     set({ ...edit(s, plan), step: 0, selected: null, selection: [], draft: null, team: plan.teams[0].id, activeLayer: BASE_LAYER });
+  },
+  replacePlan: (plan) => {
+    const s = get();
+    const proj = projectilesFor(plan.game)[0];
+    set({ ...edit(s, plan), step: 0, selected: null, selection: [], draft: null, scrub: null, team: plan.teams[0].id, activeLayer: BASE_LAYER, throwSpec: { projectile: proj.id, strength: proj.strengths[0].id, move: 'stand' } });
   },
   clear: () => {
     const s = get();

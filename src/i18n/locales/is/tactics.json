@@ -270,5 +270,11 @@
   "tactics.throw.reach": "Reaches {m} m on the flat (launched at {speed} m/s, gravity {g} m/s²).",
   "tactics.throw.src.game": "From the game's own data.",
   "tactics.throw.src.public": "Real-world figures; the game may differ.",
-  "tactics.throw.src.estimate": "An estimate."
+  "tactics.throw.src.estimate": "An estimate.",
+  "tactics.mission.import": "Import mission…",
+  "tactics.mission.hint": "A mission file as the starting board: DCS World (.miz) or Arma 3 (mission.sqm). Each side goes on its own layer.",
+  "tactics.mission.replace": "Put the mission in place of the board? Undo brings the board back.",
+  "tactics.mission.done": "Read {units} units in {groups} groups, {airbases} airbases and FARPs, {zones} zones and {markers} markers; each side is on its own layer.",
+  "tactics.mission.map": "Set on {map}: load that level to plan on its ground.",
+  "tactics.mission.bad": "Could not read the mission: {reason}"
 }

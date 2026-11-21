@@ -174,6 +174,19 @@ The **File** section holds **Save**, **Open** and **Clear**. **Save** writes the
 
 The board is also kept in the browser a moment after each change and comes back when the viewer is opened again; the **File** section says when it was last kept. Where the browser does not allow it (a private window, blocked site data) or has no room for a large board, the board works the same and only the file keeps it.
 
+## Mission files
+
+**Import mission…** in the **File** section reads a game's mission file as the starting board, in place of the board (Undo brings it back):
+
+| Game | File | What comes in |
+|---|---|---|
+| DCS World | `.miz` | Each coalition (Blue, Red, Neutral) on its own layer; every plane, helicopter, vehicle, ship and static of every group as a figure where the mission puts it, facing its heading, named as in the mission (names kept in the mission's dictionary are looked up); each group's route as a route of every unit in it (the wingmen keep their places off the lead), with the leg speed as the unit's own cruise or normal speed and the arrival times the mission holds waypoints to (**Be there**); airfields where routes take off and land, FARPs, trigger zones (as areas) and each side's bullseye on a **Mission places** layer. Positions are DCS's own metres, as the DCS levels lie, so the mission falls on its theatre's level - the line under the button says which one to load. |
+| Arma 3 | `mission.sqm` | The Eden editor's layout (and the older pre-Eden one): each side (BLUFOR, OPFOR, Independent, Civilian) on its own layer; every group's soldiers, vehicles, aircraft and boats where they stand and which way they face, the group's waypoints as its route; markers as notes and objectives, triggers as areas. A binarised `mission.sqm` is not text; the message says to save it again with **Binarize the scenario file** off. |
+
+A unit type the figure catalogue knows gets its own figure; others get one judged from the type name (an Arma `..._MBT_...` is a tank), else the generic figure of their kind. Hide the other side's layer to plan with your own side only.
+
+The readers share one shape (sides, groups with units and routes, places), so other games' mission files can follow: IL-2 Great Battles (`.mission`, text), Falcon BMS (campaign and tactical engagement files) and Arma Reforger scenarios are next. The importers live in `src/tactics/missions/`.
+
 Every change to the board is also recorded as a list of operations - add, change or remove one thing by its id, or change the board's own settings - signed with **Your name**. Two people's changes to different things never overwrite each other, which is what a shared session will exchange.
 
 ## Figures
