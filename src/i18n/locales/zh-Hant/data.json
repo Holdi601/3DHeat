@@ -145,5 +145,7 @@
   "data.filePick.files": "{count, plural, other {# 個檔案}}",
   "data.levelLibrary.openFailed": "無法開啟關卡庫。",
   "data.levelLibrary.requestFailed": "關卡庫請求失敗。",
-  "data.builder.seriesArranged": "戰役回合 {campaign}：{count} 個工作階段依序播放，其間的時間縮短為 {seconds} 秒"
+  "data.builder.seriesArranged": "戰役回合 {campaign}：{count} 個工作階段依序播放，其間的時間縮短為 {seconds} 秒",
+  "data.ingestParquet.selecting": "Pre-filtering {file}",
+  "data.ingestFiles.prefiltered": "Pre-filtered while reading: {kept} of {rows} rows kept, {skipped} of {groups} row groups skipped unread."
 }

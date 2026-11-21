@@ -8,6 +8,7 @@
  */
 
 import { sayingTable, type Msg } from '../data/msg';
+import type { RowFilterClause } from '../data/rowFilter';
 
 export type TimeUnit =
   | 'seconds'
@@ -99,6 +100,11 @@ export interface ColumnMapping {
    * replay; without it they are guessed from the extent of the data.
    */
   entitySize?: number;
+  /**
+   * Rows to keep while reading (`data/rowFilter.ts`): a row failing any clause
+   * never reaches memory or the GPU. Absent or empty keeps every row.
+   */
+  rowFilter?: RowFilterClause[];
 }
 
 export function emptyColumnMapping(): ColumnMapping {

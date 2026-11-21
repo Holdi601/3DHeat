@@ -3,6 +3,7 @@ import { CsvScanner, type FieldSink } from './csv';
 import { Dictionary, GrowableF32, GrowableF64, GrowableU32 } from './growable';
 import { msg, MsgError, say, type Msg } from './msg';
 import type { ColumnMapping, TimeUnit } from '../state/types';
+import { activeClauses, compileClause, emptySourceBlock, type ValueTest } from './rowFilter';
 
 export interface IngestProgress {
   /** What is being done, in English: `msg` is what the main thread says. */
@@ -166,6 +167,43 @@ export async function ingestCsv(
     extraNames.push(name);
   }
 
+  // The row filter's columns, read only to decide (`rowFilter.ts`): their slots
+  // are flagged so a passing row never pushes them into a column of its own.
+  const clauses = activeClauses(mapping.rowFilter);
+  const numberTests: Array<{ slot: number; test: ValueTest }> = [];
+  const textTests: Array<{ slot: number; test: ValueTest; seen: Int8Array[] }> = [];
+  let nonePass = false;
+  for (const c of clauses) {
+    const ci = indexOf(c.column);
+    const test = compileClause(c);
+    if (ci < 0) {
+      if (!test(null)) nonePass = true;
+      continue;
+    }
+    if (c.kind === 'range') numberTests.push({ slot: addNumber(ci), test });
+    else textTests.push({ slot: addText(ci), test, seen: [new Int8Array(256)] });
+  }
+  if (nonePass) return emptySourceBlock({ rows: 0, kept: 0, rowsSkipped: 0, groups: 0, groupsSkipped: 0 });
+  const numberOnly = new Uint8Array(numberSlots.length);
+  for (const t of numberTests) numberOnly[t.slot] = 1;
+  const textOnly = new Uint8Array(textSlots.length);
+  for (const t of textTests) textOnly[t.slot] = 1;
+  const filtering = numberTests.length + textTests.length > 0;
+  /** One answer per dictionary id, so each distinct text is tested once: 0 untested, 1 pass, 2 fail. */
+  const passesText = (t: (typeof textTests)[number], id: number): boolean => {
+    const page = id >> 8;
+    while (t.seen.length <= page) t.seen.push(new Int8Array(256));
+    const cell = t.seen[page];
+    let v = cell[id & 255];
+    if (v === 0) {
+      v = t.test(textSlots[t.slot].dict.labels[id]) ? 1 : 2;
+      cell[id & 255] = v;
+    }
+    return v === 1;
+  };
+  let filteredRows = 0;
+  let filteredOut = 0;
+
   let rows = 0;
   let rejected = 0;
   let seen = 0;
@@ -184,6 +222,21 @@ export async function ingestCsv(
         rowTexts[i] = textSlots[i].dict.intern(v);
       },
       endRow: () => {
+        if (filtering) {
+          filteredRows++;
+          for (let i = 0; i < numberTests.length; i++) {
+            if (!numberTests[i].test(rowNumbers[numberTests[i].slot])) {
+              filteredOut++;
+              return;
+            }
+          }
+          for (let i = 0; i < textTests.length; i++) {
+            if (!passesText(textTests[i], rowTexts[textTests[i].slot])) {
+              filteredOut++;
+              return;
+            }
+          }
+        }
         // Decimation happens here so skipped rows cost only the scan, never an
         // array push or a dictionary insert.
         if (step > 1 && seen++ % step !== 0) return;
@@ -201,10 +254,11 @@ export async function ingestCsv(
         }
         const wideSlot = wide ? wide.slot : -1;
         for (let i = 0; i < numberSlots.length; i++) {
+          if (numberOnly[i]) continue;
           if (i === wideSlot) wide!.data.push(rowNumbers[i]);
           else numberSlots[i].push(rowNumbers[i]);
         }
-        for (let i = 0; i < textSlots.length; i++) textSlots[i].out.push(rowTexts[i]);
+        for (let i = 0; i < textSlots.length; i++) if (!textOnly[i]) textSlots[i].out.push(rowTexts[i]);
         rows++;
       },
     },
@@ -226,6 +280,10 @@ export async function ingestCsv(
   }
   scanner.end();
 
+  const filtered = filtering
+    ? { rows: filteredRows, kept: filteredRows - filteredOut, rowsSkipped: 0, groups: 0, groupsSkipped: 0 }
+    : undefined;
+  if (rows === 0 && filtered && filtered.kept === 0) return emptySourceBlock(filtered);
   if (rows === 0) {
     throw new MsgError(
       rejected > 0
@@ -287,6 +345,7 @@ export async function ingestCsv(
     sessionLabels: slots.session >= 0 ? textSlots[slots.session].dict.labels : [],
     attrs,
     rejected,
+    ...(filtered ? { filtered } : {}),
   };
 }
 

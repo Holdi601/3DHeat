@@ -145,5 +145,7 @@
   "data.filePick.files": "{count, plural, one {# файл} few {# файла} many {# файлов} other {# файла}}",
   "data.levelLibrary.openFailed": "Не удалось открыть библиотеку уровней.",
   "data.levelLibrary.requestFailed": "Запрос к библиотеке уровней не удался.",
-  "data.builder.seriesArranged": "Раунд кампании {campaign}: сессии ({count}) воспроизводятся одна за другой, время между ними сокращено до {seconds} с"
+  "data.builder.seriesArranged": "Раунд кампании {campaign}: сессии ({count}) воспроизводятся одна за другой, время между ними сокращено до {seconds} с",
+  "data.ingestParquet.selecting": "Pre-filtering {file}",
+  "data.ingestFiles.prefiltered": "Pre-filtered while reading: {kept} of {rows} rows kept, {skipped} of {groups} row groups skipped unread."
 }

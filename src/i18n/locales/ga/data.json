@@ -145,5 +145,7 @@
   "data.filePick.files": "{count, plural, one {# chomhad} two {# chomhad} few {# chomhad} many {# gcomhad} other {# comhad}}",
   "data.levelLibrary.openFailed": "Níorbh fhéidir leabharlann na leibhéal a oscailt.",
   "data.levelLibrary.requestFailed": "Theip ar an iarratas chuig leabharlann na leibhéal.",
-  "data.builder.seriesArranged": "Babhta feachtais {campaign}: seisiúin ({count}) seinnte ceann i ndiaidh a chéile, an t-am eatarthu giorraithe go {seconds} s"
+  "data.builder.seriesArranged": "Babhta feachtais {campaign}: seisiúin ({count}) seinnte ceann i ndiaidh a chéile, an t-am eatarthu giorraithe go {seconds} s",
+  "data.ingestParquet.selecting": "Pre-filtering {file}",
+  "data.ingestFiles.prefiltered": "Pre-filtered while reading: {kept} of {rows} rows kept, {skipped} of {groups} row groups skipped unread."
 }

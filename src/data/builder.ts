@@ -55,6 +55,8 @@ export interface SourceBlock {
   attrs: BlockAttr[];
   /** Rows the parser refused, for reporting. */
   rejected: number;
+  /** What the row filter did to this file, when one was set (`rowFilter.ts`). */
+  filtered?: { rows: number; kept: number; rowsSkipped: number; groups: number; groupsSkipped: number };
   /**
    * Which file this block came from.
    *

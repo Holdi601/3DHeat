@@ -145,5 +145,7 @@
   "data.filePick.files": "{count, plural, other {파일 #개}}",
   "data.levelLibrary.openFailed": "레벨 라이브러리를 열 수 없습니다.",
   "data.levelLibrary.requestFailed": "레벨 라이브러리 요청에 실패했습니다.",
-  "data.builder.seriesArranged": "캠페인 라운드 {campaign}: 세션 {count}개를 차례로 재생하고, 그 사이 시간을 {seconds}초로 줄임"
+  "data.builder.seriesArranged": "캠페인 라운드 {campaign}: 세션 {count}개를 차례로 재생하고, 그 사이 시간을 {seconds}초로 줄임",
+  "data.ingestParquet.selecting": "Pre-filtering {file}",
+  "data.ingestFiles.prefiltered": "Pre-filtered while reading: {kept} of {rows} rows kept, {skipped} of {groups} row groups skipped unread."
 }

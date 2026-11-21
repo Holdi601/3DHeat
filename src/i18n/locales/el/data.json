@@ -145,5 +145,7 @@
   "data.filePick.files": "{count, plural, one {# αρχείο} other {# αρχεία}}",
   "data.levelLibrary.openFailed": "Δεν ήταν δυνατό το άνοιγμα της βιβλιοθήκης πιστών.",
   "data.levelLibrary.requestFailed": "Το αίτημα προς τη βιβλιοθήκη πιστών απέτυχε.",
-  "data.builder.seriesArranged": "Γύρος εκστρατείας {campaign}: συνεδρίες ({count}) αναπαράγονται η μία μετά την άλλη, ο χρόνος ανάμεσά τους συντομευμένος σε {seconds} s"
+  "data.builder.seriesArranged": "Γύρος εκστρατείας {campaign}: συνεδρίες ({count}) αναπαράγονται η μία μετά την άλλη, ο χρόνος ανάμεσά τους συντομευμένος σε {seconds} s",
+  "data.ingestParquet.selecting": "Pre-filtering {file}",
+  "data.ingestFiles.prefiltered": "Pre-filtered while reading: {kept} of {rows} rows kept, {skipped} of {groups} row groups skipped unread."
 }

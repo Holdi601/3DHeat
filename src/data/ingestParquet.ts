@@ -15,6 +15,7 @@ import { msg, MsgError } from './msg';
 import { geoOfHints, parseHints } from './automap';
 import { splitObjectTracks } from './objectTracks';
 import { asyncBufferFromFile, readParquetColumns, type ColumnRequest } from './parquet';
+import { activeClauses, emptySourceBlock, readSelectedColumns, selectRows, type RowSelection } from './rowFilter';
 import type { ColumnMapping, TimeUnit } from '../state/types';
 
 /**
@@ -40,10 +41,26 @@ export async function ingestParquet(
 
   const buf = asyncBufferFromFile(file);
   const metadata = await parquetMetadataAsync(buf);
-  const n = Number(metadata.num_rows);
-  if (n === 0) throw new MsgError(msg('data.ingestParquet.noRows', { file: file.name }));
+  const total = Number(metadata.num_rows);
+  if (total === 0) throw new MsgError(msg('data.ingestParquet.noRows', { file: file.name }));
 
   const available = new Set(columnNames(metadata));
+
+  // The row filter decides first, from its own columns alone (`rowFilter.ts`),
+  // so every array below is allocated at the kept count rather than the file's.
+  const clauses = activeClauses(mapping.rowFilter);
+  let sel: RowSelection | null = null;
+  if (clauses.length > 0) {
+    const selecting = msg('data.ingestParquet.selecting', { file: file.name });
+    onProgress(progress(selecting, 0, 0));
+    const wanted = [
+      mapping.x, mapping.y, mapping.z, mapping.yaw, mapping.pitch, mapping.dirX, mapping.dirY, mapping.dirZ,
+      mapping.time, mapping.personId, mapping.teamId, mapping.sessionId, 'pawn', 'entity', ...mapping.extra,
+    ].filter((c): c is string => !!c);
+    sel = await selectRows(buf, metadata, clauses, wanted, (f) => onProgress(progress(selecting, f * 0.3, 0)));
+    if (sel.count === 0) return emptySourceBlock(filterStats(total, sel));
+  }
+  const n = sel ? sel.count : total;
   /** `role` names the mapping in the message: x, y, z, yaw, pitch, dirX, dirY, dirZ, time, person, team, session or filter. */
   const require = (name: string | null, role: string): string | null => {
     if (!name) return null;
@@ -143,9 +160,13 @@ export async function ingestParquet(
 
   const reading = msg('data.ingestParquet.reading', { file: file.name });
   onProgress(progress(reading, 0, 0));
-  await readParquetColumns(buf, metadata, requests, n, (f) =>
-    onProgress(progress(reading, f, Math.round(f * n))),
-  );
+  if (sel) {
+    await readSelectedColumns(sel, requests, (f) => onProgress(progress(reading, 0.3 + f * 0.7, Math.round(f * n))));
+  } else {
+    await readParquetColumns(buf, metadata, requests, n, (f) =>
+      onProgress(progress(reading, f, Math.round(f * n))),
+    );
+  }
 
   if (objects && person) splitObjectTracks(person.ids, person.dict, objects.pawn.ids, objects.pawn.dict.labels, objects.entity);
 
@@ -202,6 +223,7 @@ export async function ingestParquet(
     attrs,
     rejected: n - kept,
   };
+  if (sel) block.filtered = filterStats(total, sel);
   // The file's place on the earth, when its hints give one and the mapping
   // took the columns it is for (see `geoOfHints`).
   const hints = parseHints(metadata.key_value_metadata?.find((kv) => kv.key === 'heat3d')?.value);
@@ -213,6 +235,10 @@ export async function ingestParquet(
     block.timeLabel = timeLabel.trim().slice(0, 60);
 
   return kept === n ? block : compact(block, keepMask, kept);
+}
+
+function filterStats(total: number, sel: RowSelection): NonNullable<SourceBlock['filtered']> {
+  return { rows: total, kept: sel.count, rowsSkipped: sel.rowsSkipped, groups: sel.groups, groupsSkipped: sel.groupsSkipped };
 }
 
 /** Drop masked-out rows from every array in a block. */

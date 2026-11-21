@@ -145,5 +145,7 @@
   "data.filePick.files": "{count, plural, one {# ficheiro} other {# ficheiros}}",
   "data.levelLibrary.openFailed": "Não foi possível abrir a biblioteca de níveis.",
   "data.levelLibrary.requestFailed": "O pedido à biblioteca de níveis falhou.",
-  "data.builder.seriesArranged": "Ronda de campanha {campaign}: {count} sessões reproduzidas uma após a outra, o tempo entre elas reduzido a {seconds} s"
+  "data.builder.seriesArranged": "Ronda de campanha {campaign}: {count} sessões reproduzidas uma após a outra, o tempo entre elas reduzido a {seconds} s",
+  "data.ingestParquet.selecting": "Pre-filtering {file}",
+  "data.ingestFiles.prefiltered": "Pre-filtered while reading: {kept} of {rows} rows kept, {skipped} of {groups} row groups skipped unread."
 }

@@ -142,15 +142,25 @@ export function bytesPerRow(
   return { steady, peak: Math.ceil((steady + transient) * PEAK_OVERHEAD), gpu };
 }
 
-export function estimateFootprint(m: ColumnMapping, rows: number, fileCount = 1): Footprint {
+export function estimateFootprint(
+  m: ColumnMapping,
+  rows: number,
+  fileCount = 1,
+  /**
+   * Bytes of category label tables the kept text columns add (`labelBytes` in
+   * `columnProfile.ts`): per row they are zero, in total they can be the most.
+   */
+  labels = 0,
+): Footprint {
   const per = bytesPerRow(m, fileCount);
+  const perLabel = rows > 0 ? labels / rows : 0;
   return {
     rows,
-    steadyPerRow: per.steady,
-    peakPerRow: per.peak,
+    steadyPerRow: per.steady + perLabel,
+    peakPerRow: per.peak + perLabel,
     gpuPerRow: per.gpu,
-    steadyBytes: rows * per.steady,
-    peakBytes: rows * per.peak,
+    steadyBytes: rows * per.steady + labels,
+    peakBytes: rows * per.peak + labels,
     gpuBytes: rows * per.gpu,
     // A mapped time column is what forces the permutation. Without one the rows
     // keep their file order and no sort happens, so no ceiling applies.

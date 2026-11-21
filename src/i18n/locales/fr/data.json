@@ -145,5 +145,7 @@
   "data.filePick.files": "{count, plural, one {# fichier} other {# fichiers}}",
   "data.levelLibrary.openFailed": "Impossible d’ouvrir la bibliothèque de niveaux.",
   "data.levelLibrary.requestFailed": "La requête à la bibliothèque de niveaux a échoué.",
-  "data.builder.seriesArranged": "Manche de campagne {campaign} : {count} sessions jouées l'une après l'autre, le temps entre elles réduit à {seconds} s"
+  "data.builder.seriesArranged": "Manche de campagne {campaign} : {count} sessions jouées l'une après l'autre, le temps entre elles réduit à {seconds} s",
+  "data.ingestParquet.selecting": "Pre-filtering {file}",
+  "data.ingestFiles.prefiltered": "Pre-filtered while reading: {kept} of {rows} rows kept, {skipped} of {groups} row groups skipped unread."
 }

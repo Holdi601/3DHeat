@@ -10,6 +10,7 @@ import {
 } from '../../data/filePick';
 import { expandContainers } from '../../data/container';
 import { loadMatchesBeside } from '../../state/matchStore';
+import { loadLayoutFiles, noteLayoutModes } from '../../state/levelLayoutsStore';
 import { noteR6Maps } from '../../data/r6Level';
 import { noteFrostbiteMaps } from '../../data/frostbiteLevel';
 import { loader, type LoaderProgress } from '../../data/loader';
@@ -33,6 +34,9 @@ import { prepareUnits } from '../replay/units';
 import { NumberBox } from '../NumberBox';
 import { SortControl } from '../sort/SortControl';
 import { useSort, useSorted } from '../sort/useSort';
+import { LoadPlan, type LoadPlanResult } from './LoadPlan';
+import { recallChoice, rememberChoice, sourceKey } from '../../data/columnProfile';
+import { activeClauses } from '../../data/rowFilter';
 
 const NO_COLUMNS: string[] = [];
 
@@ -89,6 +93,8 @@ export function SourcePanel() {
   const [strideTouched, setStrideTouched] = useState(false);
   const [hot, setHot] = useState(false);
   const [showSample, setShowSample] = useState(false);
+  /** The pre-filter's expected rows and the kept text columns' label bytes (`LoadPlan`). */
+  const [plan, setPlan] = useState<LoadPlanResult | null>(null);
   const dropRef = useRef<HTMLDivElement>(null);
 
   const patch = (p: Partial<ColumnMapping>) =>
@@ -100,6 +106,9 @@ export function SourcePanel() {
       const { files: raw, failed } = await expandContainers(chosen);
       // The battles' match documents and objectives with them, for the match tab and the level.
       void loadMatchesBeside(chosen.map((f) => f.file));
+      // A level's `.layouts.json` picked with the data, and the modes the tables are played in, for its layout.
+      void loadLayoutFiles(chosen.map((f) => f.file));
+      void noteLayoutModes(chosen.map((f) => f.file));
       // The Siege maps they are on, for the level panel to offer the R6 tool's levels.
       void noteR6Maps(chosen.map((f) => f.file));
       // The Battlefield maps they are on (a `map` column), for the level panel to offer those levels.
@@ -111,6 +120,7 @@ export function SourcePanel() {
       setPreview(null);
       setMapping(null);
       setSize(null);
+      setPlan(null);
       setStride(1);
       setStrideTouched(false);
       if (accepted.length === 0) {
@@ -124,20 +134,30 @@ export function SourcePanel() {
         // fits in memory needs the total, and a Parquet footer read is cheap.
         const p = await loader.preview(accepted[0].file, delimiter);
         setPreview(p);
+        const guessed = autoMap({
+          columns: p.columns,
+          rows: p.rows,
+          numeric: p.numeric,
+          logicalTypes: p.logicalTypes,
+          hints: p.hints,
+          constant: p.constant,
+          // The preview samples one file, so the mapping has to be told how many
+          // are coming: a column holding one value per file — which region, which
+          // test run — looks constant in that sample and would be dropped as
+          // unfilterable, exactly when merging the files makes it worth having.
+          fileCount: accepted.length,
+        });
+        // What was kept and pre-filtered for this kind of source last time (`LoadPlan`).
+        const recalled = recallChoice(sourceKey(p.columns), p.columns);
         setMapping({
-          ...autoMap({
-            columns: p.columns,
-            rows: p.rows,
-            numeric: p.numeric,
-            logicalTypes: p.logicalTypes,
-            hints: p.hints,
-            constant: p.constant,
-            // The preview samples one file, so the mapping has to be told how many
-            // are coming: a column holding one value per file — which region, which
-            // test run — looks constant in that sample and would be dropped as
-            // unfilterable, exactly when merging the files makes it worth having.
-            fileCount: accepted.length,
-          }),
+          ...guessed,
+          ...(recalled
+            ? {
+                extra: recalled.extra,
+                extraNumeric: { ...guessed.extraNumeric, ...recalled.extraNumeric },
+                rowFilter: recalled.rowFilter,
+              }
+            : {}),
           delimiter: p.delimiter,
         });
         setLoad({ active: true, label: t('heat.sourcePanel.countingRows'), fraction: null, rowsSoFar: 0, error: null });
@@ -180,6 +200,12 @@ export function SourcePanel() {
     const onProgress = (p: LoaderProgress) =>
       setLoad({ active: true, label: p.label, fraction: p.fraction, rowsSoFar: p.rows });
     setLoad({ active: true, label: t('heat.sourcePanel.loading'), fraction: 0, rowsSoFar: 0, error: null });
+    rememberChoice(sourceKey(preview.columns), {
+      extra: mapping.extra,
+      extraNumeric: mapping.extraNumeric,
+      rowFilter: mapping.rowFilter ?? [],
+    });
+    const filtering = activeClauses(mapping.rowFilter).length > 0;
     try {
       const ds = await loader.ingest(
         picked.map((p) => p.file),
@@ -188,8 +214,9 @@ export function SourcePanel() {
         describeSelection(picked),
         stride,
         // Exact for Parquet, estimated for CSV; either way it lets the builder
-        // allocate once instead of growing.
-        size?.rows ?? 0,
+        // allocate once instead of growing. Under a pre-filter only a count over
+        // every file is exact enough: an estimate would read as a short load.
+        filtering ? (plan?.exact ? plan.rows : 0) : (size?.rows ?? 0),
         onProgress,
       );
       // The unit index a few milliseconds a frame, before the first render would build it all at once.
@@ -211,6 +238,7 @@ export function SourcePanel() {
 
   // The same array while the preview is, so the selects keep their option lists.
   const columns = preview?.columns;
+  const pickedFiles = useMemo(() => picked.map((p) => p.file), [picked]);
   const columnOptions = useMemo(() => (columns ?? []).map((c) => ({ value: c, label: c })), [columns]);
   const columnSort = useSort<string>(
     'source.columns',
@@ -224,16 +252,17 @@ export function SourcePanel() {
 
   const validation = mapping ? validateMapping(mapping, preview) : null;
   const totalRows = size?.rows ?? 0;
-  const loadRows = Math.floor(totalRows / Math.max(1, stride));
+  // What the pre-filter is expected to keep, which is what a stride then thins.
+  const keptRows = mapping && activeClauses(mapping.rowFilter).length > 0 && plan ? plan.rows : totalRows;
+  const loadRows = Math.floor(keptRows / Math.max(1, stride));
   // The file count matters to the estimate: merging more than one adds a
   // `Source file` column, four bytes a row that no mapping mentions.
-  const footprint = mapping ? estimateFootprint(mapping, loadRows, picked.length) : null;
+  const footprint = mapping ? estimateFootprint(mapping, loadRows, picked.length, plan ? plan.labels / Math.max(1, stride) : 0) : null;
   const fit = footprint ? checkFit(footprint, budgets) : null;
   // Full-size fit, so the panel can propose a stride before one is chosen.
-  const fullFit =
-    mapping && totalRows > 0
-      ? checkFit(estimateFootprint(mapping, totalRows, picked.length), budgets)
-      : null;
+  const fullFootprint = mapping && keptRows > 0 ? estimateFootprint(mapping, keptRows, picked.length, plan?.labels ?? 0) : null;
+  const fullFit = fullFootprint ? checkFit(fullFootprint, budgets) : null;
+  const excessBytes = fullFootprint ? Math.max(0, fullFootprint.peakBytes - budgets.ram) : 0;
   const loadSeconds = estimateLoadSeconds(loadRows);
   const canLoad = !!validation?.ok && !load.active && fit?.verdict !== 'too-big';
 
@@ -241,7 +270,8 @@ export function SourcePanel() {
   // override a value that was set deliberately.
   const suggested = fullFit?.suggestedStride ?? 1;
   useEffect(() => {
-    if (suggested > 1 && !strideTouched) setStride(suggested);
+    // Back down to 1 as well, when a pre-filter or a dropped column makes the load fit.
+    if (!strideTouched) setStride(Math.max(1, suggested));
   }, [suggested, strideTouched]);
 
   return (
@@ -428,6 +458,18 @@ export function SourcePanel() {
           </button>
         )}
       </Section>
+
+      {mapping && preview && size && (
+        <LoadPlan
+          files={pickedFiles}
+          preview={preview}
+          mapping={mapping}
+          setMapping={setMapping}
+          totalRows={totalRows}
+          excessBytes={excessBytes}
+          onPlan={setPlan}
+        />
+      )}
 
       {mapping && preview && (
         <Section title={t('heat.sourcePanel.mapping')} defaultOpen>

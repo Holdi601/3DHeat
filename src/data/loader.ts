@@ -4,6 +4,8 @@ import type { WorkerRequest, WorkerResponse } from './ingestWorker';
 import { msg, say, sayDataset } from './msg';
 import type { SelectionSize, SourcePreview } from './sourcePreview';
 import type { SynthOptions } from './synth';
+import type { ColumnProfile } from './columnProfile';
+import type { MatchCount, RowFilterClause } from './rowFilter';
 
 /** How a load may parse: files at once, and the RAM budget they share. */
 export interface ParseBudget {
@@ -40,6 +42,9 @@ type UnidentifiedRequest = WorkerRequest extends infer R
  * The worker speaks in messages, having no language of its own; they are said
  * here, in the viewer's, before anything reaches the UI.
  */
+/** Shortest gap between two progress reports of one job, in milliseconds. */
+const PROGRESS_MS = 100;
+
 export class Loader {
   private worker: Worker | null = null;
   private nextId = 1;
@@ -69,9 +74,14 @@ export class Loader {
   private handle(res: WorkerResponse): void {
     const entry = this.pending.get(res.id);
     if (!entry) return;
+    if (res.kind !== 'progress') {
+      const slot = this.lastProgress.get(res.id);
+      if (slot?.timer) clearTimeout(slot.timer);
+      this.lastProgress.delete(res.id);
+    }
     switch (res.kind) {
       case 'progress':
-        entry.onProgress?.({ label: say(res.label), fraction: res.fraction, rows: res.rows });
+        this.progress(res.id, entry, { label: say(res.label), fraction: res.fraction, rows: res.rows });
         break;
       case 'preview':
         this.pending.delete(res.id);
@@ -80,6 +90,14 @@ export class Loader {
       case 'measure':
         this.pending.delete(res.id);
         (entry.resolve as (v: SelectionSize) => void)(res.size);
+        break;
+      case 'profile':
+        this.pending.delete(res.id);
+        (entry.resolve as (v: ColumnProfile[]) => void)(res.profile);
+        break;
+      case 'count':
+        this.pending.delete(res.id);
+        (entry.resolve as (v: MatchCount) => void)(res.count);
         break;
       case 'dataset':
         this.pending.delete(res.id);
@@ -91,6 +109,43 @@ export class Loader {
         entry.reject(new Error(say(res.message)));
         break;
     }
+  }
+
+  /**
+   * Progress at most every `PROGRESS_MS` per job, the latest one winning.
+   *
+   * Each report re-renders the load panel on the main thread, and a mass load
+   * of many files in parallel parser threads sends hundreds a second: frames
+   * of 100 ms and more while 200 matches loaded. Nobody reads a progress line
+   * faster than this, so nothing is lost but the hitches.
+   */
+  private readonly lastProgress = new Map<number, { at: number; timer: ReturnType<typeof setTimeout> | null; next: LoaderProgress | null }>();
+
+  private progress(id: number, entry: { onProgress?: (p: LoaderProgress) => void }, p: LoaderProgress): void {
+    if (!entry.onProgress) return;
+    const now = performance.now();
+    let slot = this.lastProgress.get(id);
+    if (!slot) {
+      slot = { at: -Infinity, timer: null, next: null };
+      this.lastProgress.set(id, slot);
+    }
+    if (now - slot.at >= PROGRESS_MS) {
+      slot.at = now;
+      slot.next = null;
+      entry.onProgress(p);
+      return;
+    }
+    slot.next = p;
+    if (slot.timer) return;
+    const s = slot;
+    s.timer = setTimeout(() => {
+      s.timer = null;
+      if (!s.next || !this.pending.has(id)) return;
+      s.at = performance.now();
+      const q = s.next;
+      s.next = null;
+      entry.onProgress?.(q);
+    }, PROGRESS_MS - (now - slot.at));
   }
 
   private send<T>(req: UnidentifiedRequest, onProgress?: (p: LoaderProgress) => void): Promise<T> {
@@ -113,6 +168,16 @@ export class Loader {
   /** Exact row totals from Parquet footers; estimates for CSV. */
   measure(files: File[]): Promise<SelectionSize> {
     return this.send<SelectionSize>({ kind: 'measure', files });
+  }
+
+  /** Every column of a Parquet file, for the pre-filter and the column costs. */
+  profile(file: File): Promise<ColumnProfile[]> {
+    return this.send<ColumnProfile[]>({ kind: 'profile', file });
+  }
+
+  /** Rows a row filter keeps across a selection; a sample past `timeMs`. */
+  count(files: File[], clauses: RowFilterClause[], timeMs?: number): Promise<MatchCount> {
+    return this.send<MatchCount>({ kind: 'count', files, clauses, timeMs });
   }
 
   ingest(

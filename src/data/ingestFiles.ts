@@ -140,6 +140,8 @@ export async function ingestFiles(opts: IngestFilesOptions): Promise<IngestFiles
   let partialRows = 0;
   let merged = 0;
   let running = 0;
+  /** What the row filter kept, summed over the files (`rowFilter.ts`). */
+  const filtered = { files: 0, rows: 0, kept: 0, groups: 0, groupsSkipped: 0 };
 
   const parseOne = async (i: number): Promise<SourceBlock> => {
     const file = files[i];
@@ -182,6 +184,13 @@ export async function ingestFiles(opts: IngestFilesOptions): Promise<IngestFiles
     try {
       if (!outcome.ok) throw outcome.error;
       const block = outcome.value;
+      if (block.filtered) {
+        filtered.files++;
+        filtered.rows += block.filtered.rows;
+        filtered.kept += block.filtered.kept;
+        filtered.groups += block.filtered.groups;
+        filtered.groupsSkipped += block.filtered.groupsSkipped;
+      }
       // Tag the origin only when there is more than one file. With a single file
       // the column would be a constant, and a constant column costs 4 bytes a row
       // to tell you nothing.
@@ -278,6 +287,16 @@ export async function ingestFiles(opts: IngestFilesOptions): Promise<IngestFiles
     };
     said.warnings.push(
       msg(failures.length > 0 ? 'data.ingestFiles.shortUnread' : 'data.ingestFiles.shortDropped', values),
+    );
+  }
+  if (filtered.files > 0) {
+    said.notes.push(
+      msg('data.ingestFiles.prefiltered', {
+        kept: { int: filtered.kept },
+        rows: { int: filtered.rows },
+        groups: { int: filtered.groups },
+        skipped: { int: filtered.groupsSkipped },
+      }),
     );
   }
   if (stride > 1) said.notes.push(msg('data.ingestFiles.stride', { stride: { int: stride }, ord: { ordinal: stride } }));

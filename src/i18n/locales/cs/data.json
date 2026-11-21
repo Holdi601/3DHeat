@@ -145,5 +145,7 @@
   "data.filePick.files": "{count, plural, one {# soubor} few {# soubory} many {# souboru} other {# souborů}}",
   "data.levelLibrary.openFailed": "Knihovnu úrovní nelze otevřít.",
   "data.levelLibrary.requestFailed": "Požadavek na knihovnu úrovní selhal.",
-  "data.builder.seriesArranged": "Kolo kampaně {campaign}: relace ({count}) přehrané jedna po druhé, čas mezi nimi zkrácen na {seconds} s"
+  "data.builder.seriesArranged": "Kolo kampaně {campaign}: relace ({count}) přehrané jedna po druhé, čas mezi nimi zkrácen na {seconds} s",
+  "data.ingestParquet.selecting": "Pre-filtering {file}",
+  "data.ingestFiles.prefiltered": "Pre-filtered while reading: {kept} of {rows} rows kept, {skipped} of {groups} row groups skipped unread."
 }

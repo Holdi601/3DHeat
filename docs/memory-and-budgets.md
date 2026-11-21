@@ -90,10 +90,11 @@ A GPU budget above the detected figure applies as set: the fit check and the upl
 
 From cheapest to most drastic:
 
-1. **Fewer filter columns.** Each is 4 bytes a row and a decode pass.
-2. **A stride.** Every *N*th row.
-3. **No time column.** No sort, no sort ceiling, no 4-8 bytes a row of time and lifetime - and no timeline.
-4. **Raise the budgets**, when you know the memory is there.
+1. **A pre-filter.** Keep only the rows you need (for example kills and deaths) while reading; the rest never take memory. See [Pre-filter and column costs](pre-filter-and-column-costs.md).
+2. **Fewer filter columns.** Each is 4 bytes a row and a decode pass; a text column also costs its distinct strings. **Columns and what they cost** lists them, cheapest to lose first.
+3. **A stride.** Every *N*th row.
+4. **No time column.** No sort, no sort ceiling, no 4-8 bytes a row of time and lifetime - and no timeline.
+5. **Raise the budgets**, when you know the memory is there.
 
 At render time, large datasets are handled by sampling and progressive accumulation rather than by reducing the data; see [Sampling and budgets](sampling-and-budgets.md).
 

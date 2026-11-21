@@ -11,6 +11,8 @@ import {
 } from './sourcePreview';
 import { generateSynthetic, type SynthOptions } from './synth';
 import type { ColumnMapping, Dataset } from '../state/types';
+import { profileParquet, type ColumnProfile } from './columnProfile';
+import { countMatches, type MatchCount, type RowFilterClause } from './rowFilter';
 
 /**
  * Ingest runs here rather than on the main thread because parsing is measured in
@@ -28,6 +30,10 @@ import type { ColumnMapping, Dataset } from '../state/types';
 export type WorkerRequest =
   | { id: number; kind: 'preview'; file: File; delimiter?: string }
   | { id: number; kind: 'measure'; files: File[] }
+  /** Every column of the first file: types, spans, distinct values (`columnProfile.ts`). */
+  | { id: number; kind: 'profile'; file: File }
+  /** Rows a row filter keeps, from its columns alone (`rowFilter.ts`). */
+  | { id: number; kind: 'count'; files: File[]; clauses: RowFilterClause[]; timeMs?: number }
   | {
       id: number;
       kind: 'ingest';
@@ -47,6 +53,8 @@ export type WorkerRequest =
 export type WorkerResponse =
   | { id: number; kind: 'preview'; preview: SourcePreview }
   | { id: number; kind: 'measure'; size: SelectionSize }
+  | { id: number; kind: 'profile'; profile: ColumnProfile[] }
+  | { id: number; kind: 'count'; count: MatchCount }
   | { id: number; kind: 'progress'; label: Msg; fraction: number | null; rows: number }
   | { id: number; kind: 'dataset'; dataset: Dataset }
   | { id: number; kind: 'error'; message: Msg | string };
@@ -70,6 +78,14 @@ ctx.onmessage = async (ev: MessageEvent<WorkerRequest>) => {
       }
       case 'measure': {
         post({ id: req.id, kind: 'measure', size: await measureSelection(req.files) });
+        break;
+      }
+      case 'profile': {
+        post({ id: req.id, kind: 'profile', profile: await profileParquet(req.file) });
+        break;
+      }
+      case 'count': {
+        post({ id: req.id, kind: 'count', count: await countMatches(req.files, req.clauses, req.timeMs) });
         break;
       }
       case 'ingest': {
