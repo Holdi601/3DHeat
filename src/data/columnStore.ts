@@ -100,6 +100,7 @@ export function columnBytes(a: Pick<AttributeColumn, 'data' | 'categories'>): nu
 export function adoptColumnSource(ds: Dataset): void {
   const src = ds.columnSource;
   delete ds.columnSource;
+  dropParked();
   const prev = useColumnStore.getState().source;
   if (prev) post({ kind: 'drop', source: prev });
   if (!src) {
@@ -128,6 +129,7 @@ export function adoptColumnSource(ds: Dataset): void {
  */
 function adoptNative(ds: Dataset): void {
   const info = ds.native!;
+  dropParked();
   const prev = useColumnStore.getState().source;
   if (prev && !isNativeSource(prev)) post({ kind: 'drop', source: prev });
   const source = `native-${info.handle}`;
@@ -162,7 +164,46 @@ function readNative(e: ColumnEntry, ds: Dataset, source: string): Promise<void> 
   })();
 }
 
+/**
+ * A load's columns put aside while other rows are shown (the figure overlay
+ * built from its matches): the row map stays in the worker, the entries as
+ * they were, and both come back with the load's rows (`unpark`). Without this
+ * every column left in the files was lost once the overlay had been shown -
+ * the hit points with them, and the Vehicles tab listed only aircraft.
+ */
+let parked: { source: string; entries: Record<string, ColumnEntry>; mapBytes: number; fingerprint: string } | null = null;
+
+function dropParked(): void {
+  if (parked && !isNativeSource(parked.source)) post({ kind: 'drop', source: parked.source });
+  parked = null;
+}
+
+function park(): void {
+  const st = useColumnStore.getState();
+  if (!st.source) return;
+  dropParked();
+  // Reads under way finish into nothing (`receive` checks the source): their entries are read again once back.
+  const entries: Record<string, ColumnEntry> = {};
+  for (const [k, e] of Object.entries(st.entries)) entries[k] = e.state === 'loading' ? { ...e, state: e.onDemand ? 'deferred' : 'evicted', fraction: 0 } : e;
+  parked = { source: st.source, entries, mapBytes: st.mapBytes, fingerprint };
+  for (const [id, p] of pending) {
+    pending.delete(id);
+    p.resolve();
+  }
+  inflight.clear();
+  fingerprint = '';
+  useColumnStore.setState((c) => ({ source: null, entries: {}, mapBytes: 0, version: c.version + 1 }));
+}
+
+function unpark(): void {
+  const p = parked!;
+  parked = null;
+  fingerprint = p.fingerprint;
+  useColumnStore.setState((c) => ({ source: p.source, entries: p.entries, mapBytes: p.mapBytes, version: c.version + 1 }));
+}
+
 function reset(): void {
+  dropParked();
   const prev = useColumnStore.getState().source;
   if (prev && !isNativeSource(prev)) post({ kind: 'drop', source: prev });
   fingerprint = '';
@@ -369,15 +410,19 @@ export function installColumnDemand(store: ColumnHost & { subscribe: (fn: () => 
       // must not take the place of the one on screen.
       if (s.dataset?.columnSource) adoptColumnSource(s.dataset);
       else if (s.dataset?.native?.onDemand.length && useColumnStore.getState().source !== `native-${s.dataset.native.handle}`) adoptNative(s.dataset);
+      else if (parked && s.dataset && rowFingerprint(s.dataset) === parked.fingerprint) unpark();
       else if (useColumnStore.getState().source) {
         // A copy of the same rows (the sides lined up, an outcome added) keeps
         // its columns; different rows, or the same in another order, do not.
         if (!s.dataset || rowFingerprint(s.dataset) !== fingerprint) {
-          reset();
+          // Other rows over the load (the figure overlay of its matches): its
+          // columns wait for its rows to come back rather than being dropped.
+          if (s.dataset) park();
+          else reset();
           return;
         }
         useColumnStore.setState((c) => ({ version: c.version + 1 }));
-      }
+      } else if (!s.dataset) reset();
     }
     if (useColumnStore.getState().source) void ensureColumns(pinnedColumns(s));
   });

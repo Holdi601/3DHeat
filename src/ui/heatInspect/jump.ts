@@ -46,8 +46,11 @@ export function jumpToRow(engine: Engine, d: Dataset, row: number): void {
   };
   const race = useRaceStore.getState();
   if (race.tab !== 'match' || useStore.getState().mode !== 'team') {
-    race.setTab('match');
-    if (useStore.getState().mode !== 'team') useStore.getState().setMode('team');
+    // The tab sets the replay's mode itself: setting it here too, while the heatmap tab still shows, built the
+    // figure overlay of every match for a frame (a copy of all rows, the playhead and the match reset).
+    if (race.tab !== 'match') race.setTab('match');
+    // On the match tab already (its heat view): the replay there plays the match alone.
+    else useStore.getState().setMode('team');
     // The tab's own effects first: the overlay put back, the replay's mode set.
     timer = window.setTimeout(go, 150);
     return;
