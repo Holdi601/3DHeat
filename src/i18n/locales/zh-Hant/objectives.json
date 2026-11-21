@@ -31,5 +31,9 @@
   "objectives.events.captured": "{zone} 被 {team} 佔領",
   "objectives.events.neutralised": "{team} 失去 {zone}",
   "objectives.legend.neutral": "中立",
-  "objectives.legend.capturing": "佔領中"
+  "objectives.legend.capturing": "佔領中",
+  "objectives.layer.bounds": "界外",
+  "objectives.layer.boundsTitle": "以斜線標出隊伍界外區域：在對方遊戲區域內但在己方區域外",
+  "objectives.layout": "配置",
+  "objectives.layoutTitle": "繪製其目標、遊戲區域和出生點的地圖遊戲模式；依資料的模式選擇"
 }

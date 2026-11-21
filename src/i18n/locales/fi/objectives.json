@@ -31,5 +31,9 @@
   "objectives.events.captured": "{team} valtasi alueen {zone}",
   "objectives.events.neutralised": "{team} menetti alueen {zone}",
   "objectives.legend.neutral": "neutraali",
-  "objectives.legend.capturing": "valloitetaan"
+  "objectives.legend.capturing": "valloitetaan",
+  "objectives.layer.bounds": "Alueen ulkopuolella",
+  "objectives.layer.boundsTitle": "Viivoitettu, missä joukkue on alueen ulkopuolella: toisen puolen pelialueella mutta oman ulkopuolella",
+  "objectives.layout": "Asettelu",
+  "objectives.layoutTitle": "Kartan pelitila, jonka tavoitteet, pelialueet ja syntypisteet piirretään; valittu datan tilan mukaan"
 }

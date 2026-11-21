@@ -31,5 +31,9 @@
   "objectives.events.captured": "{zone} capturată de {team}",
   "objectives.events.neutralised": "{zone} pierdută de {team}",
   "objectives.legend.neutral": "neutră",
-  "objectives.legend.capturing": "în curs de capturare"
+  "objectives.legend.capturing": "în curs de capturare",
+  "objectives.layer.bounds": "În afara limitelor",
+  "objectives.layer.boundsTitle": "Hașurat unde o echipă e în afara limitelor: în zona de joc a celeilalte părți, dar în afara propriei zone",
+  "objectives.layout": "Aranjare",
+  "objectives.layoutTitle": "Modul hărții ale cărui obiective, zone de joc și puncte de apariție sunt desenate; ales după modul datelor"
 }

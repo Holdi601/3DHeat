@@ -113,6 +113,7 @@ describe('objectives', () => {
       spawns: true,
       airfields: true,
       areas: true,
+      bounds: true,
       targets: true,
     };
     const frame = (t: number) =>

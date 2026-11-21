@@ -31,5 +31,9 @@
   "objectives.events.captured": "{zone} captured by {team}",
   "objectives.events.neutralised": "{zone} lost by {team}",
   "objectives.legend.neutral": "neutral",
-  "objectives.legend.capturing": "being captured"
+  "objectives.legend.capturing": "being captured",
+  "objectives.layer.bounds": "Out of bounds",
+  "objectives.layer.boundsTitle": "Hatched where a team is out of bounds: ground inside the other side's play area but outside its own",
+  "objectives.layout": "Layout",
+  "objectives.layoutTitle": "The level's game mode whose objectives, play areas and spawns are drawn; picked from the data's mode"
 }

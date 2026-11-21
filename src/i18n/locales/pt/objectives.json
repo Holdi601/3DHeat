@@ -31,5 +31,9 @@
   "objectives.events.captured": "{zone} capturada por {team}",
   "objectives.events.neutralised": "{zone} perdida por {team}",
   "objectives.legend.neutral": "neutra",
-  "objectives.legend.capturing": "em captura"
+  "objectives.legend.capturing": "em captura",
+  "objectives.layer.bounds": "Fora dos limites",
+  "objectives.layer.boundsTitle": "Tracejado onde uma equipa está fora dos limites: dentro da área de jogo do outro lado mas fora da sua",
+  "objectives.layout": "Disposição",
+  "objectives.layoutTitle": "O modo de jogo do mapa cujos objetivos, áreas de jogo e spawns são desenhados; escolhido pelo modo dos dados"
 }

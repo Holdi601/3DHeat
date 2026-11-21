@@ -31,5 +31,9 @@
   "objectives.events.captured": "{zone} catturata da {team}",
   "objectives.events.neutralised": "{zone} persa da {team}",
   "objectives.legend.neutral": "neutrale",
-  "objectives.legend.capturing": "in conquista"
+  "objectives.legend.capturing": "in conquista",
+  "objectives.layer.bounds": "Fuori area",
+  "objectives.layer.boundsTitle": "Tratteggiato dove una squadra è fuori area: nell'area di gioco dell'altra parte ma fuori dalla propria",
+  "objectives.layout": "Disposizione",
+  "objectives.layoutTitle": "La modalità della mappa di cui si disegnano obiettivi, aree di gioco e spawn; scelta in base alla modalità dei dati"
 }

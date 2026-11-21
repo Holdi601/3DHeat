@@ -31,5 +31,9 @@
   "objectives.events.captured": "{zone} – elfoglalta: {team}",
   "objectives.events.neutralised": "{zone} – elvesztette: {team}",
   "objectives.legend.neutral": "semleges",
-  "objectives.legend.capturing": "foglalás alatt"
+  "objectives.legend.capturing": "foglalás alatt",
+  "objectives.layer.bounds": "Pályán kívül",
+  "objectives.layer.boundsTitle": "Vonalkázva, ahol egy csapat pályán kívül van: a másik fél játékterén belül, de a sajátján kívül",
+  "objectives.layout": "Elrendezés",
+  "objectives.layoutTitle": "A pálya játékmódja, amelynek céljai, játékterei és spawnjai látszanak; az adatok módja szerint választva"
 }

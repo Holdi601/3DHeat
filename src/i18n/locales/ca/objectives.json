@@ -31,5 +31,9 @@
   "objectives.events.captured": "{zone} capturada per {team}",
   "objectives.events.neutralised": "{zone} perduda per {team}",
   "objectives.legend.neutral": "neutral",
-  "objectives.legend.capturing": "en captura"
+  "objectives.legend.capturing": "en captura",
+  "objectives.layer.bounds": "Fora de límits",
+  "objectives.layer.boundsTitle": "Ratllat on un equip és fora de límits: dins l'àrea de joc de l'altre bàndol però fora de la seva",
+  "objectives.layout": "Disposició",
+  "objectives.layoutTitle": "El mode de joc del mapa del qual es dibuixen objectius, àrees de joc i aparicions; triat segons el mode de les dades"
 }

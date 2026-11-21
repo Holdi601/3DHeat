@@ -22,6 +22,7 @@ import type { GameMatch } from '../match/wtMatch';
 import { matchesOf, pickedMatches } from '../match/matches';
 import { SOURCE_COLUMN } from '../data/builder';
 import { OBJECTIVE_LAYERS as OBJECTIVE_LAYER_LIST, siteActive, toWorld, zoneAt, type Objective, type ObjectiveLayer, type ObjectiveTimeline, type Vec3 } from '../match/objectives';
+import { ShapeUtils, Vector2 } from 'three';
 import { runSlice, WAIT, type SliceJob } from '../data/slices';
 import { MAX_ZONES, ZONE_PART, ZONE_STATE_FLOATS, ZONE_VERTEX_FLOATS } from './zoneShaders';
 
@@ -34,6 +35,8 @@ export interface ObjectiveSource {
   offset: number;
   /** The team label each owner number stands for, where it is not the number itself (a DCS campaign's coalitions). */
   ownerLabels?: Record<number, string>;
+  /** Positions in the level's frame, not the data's (a level's layout): drawn without the data's axes. */
+  world?: boolean;
 }
 
 /** A label to place over the view. */
@@ -66,6 +69,8 @@ interface Placed {
    * so a zone's disc follows the hill it lies on.
    */
   discs: Float32Array[][];
+  /** A play area's fill: triangles (xyz), laid on the ground. */
+  fill?: Float32Array;
 }
 
 /** A zone's disc from just outside its edge in: a dark rim (it reads on any ground), the edge band, the progress band, then the fill. */
@@ -299,14 +304,31 @@ function appendBand(out: Float32Array, v: number, a: Float32Array, b: Float32Arr
   return v;
 }
 
+/** Appends triangles (xyz) in one colour; the vertex count after. */
+function appendTris(out: Float32Array, v: number, xyz: Float32Array, rgb: readonly number[], alpha: number): number {
+  for (let i = 0; i < xyz.length; i += 3) {
+    const o = v * 7;
+    out[o] = xyz[i];
+    out[o + 1] = xyz[i + 1];
+    out[o + 2] = xyz[i + 2];
+    out[o + 3] = rgb[0];
+    out[o + 4] = rgb[1];
+    out[o + 5] = rgb[2];
+    out[o + 6] = alpha;
+    v++;
+  }
+  return v;
+}
+
 /** Lays one battle's objectives on the ground, yielding now and then. */
-function* place(sources: ObjectiveSource[], axes: Dataset['axes'] | null, ground: GroundAt | null, ready: () => boolean): SliceJob<Placed[]> {
+function* place(sources: ObjectiveSource[], dataAxes: Dataset['axes'] | null, ground: GroundAt | null, ready: () => boolean): SliceJob<Placed[]> {
   // The level's surface is indexed a slice a frame too: until it is, nothing is laid.
   if (ground) while (!ready()) yield WAIT;
   const out: Placed[] = [];
   const seen = new Set<string>();
-  const scale = axes?.scale || 1;
   for (const src of sources) {
+    const axes = src.world ? null : dataAxes;
+    const scale = axes?.scale || 1;
     for (const o of src.objectives) {
       const key = `${o.type}|${o.name}|${Math.round(o.position[0])}|${Math.round(o.position[2])}`;
       if (seen.has(key)) continue;
@@ -349,7 +371,24 @@ function* place(sources: ObjectiveSource[], axes: Dataset['axes'] | null, ground
         }
         const gy = gr ? gr(sx, sz) : null;
         p.anchor = [sx, (gy ?? baseY) + lift, sz];
+      } else if (o.shape === 'hatch' && o.points.length > 1) {
+        // Out of bounds: strokes, each a pair of points, laid on the ground, a few a slice (a big map has thousands of points).
+        for (let i = 0; i + 1 < o.points.length; i += 2) {
+          p.outlines.push({ pts: path([toWorld(o.points[i], axes), toWorld(o.points[i + 1], axes)], false, gr, lift), closed: false });
+          if (i % 24 === 22) yield;
+        }
       } else if (o.shape === 'outline' && o.points.length > 1) {
+        // A play area is filled too, faintly, in its team's colour.
+        if (o.type === 'play_area' && o.points.length > 2) {
+          const flat = areaFill(o.points.map((q) => toWorld(q, axes)));
+          // Laid on the ground a slice at a time: a big play area is thousands of corners.
+          for (let i = 0; i < flat.length; i += 3) {
+            const g = gr ? gr(flat[i], flat[i + 2]) : null;
+            flat[i + 1] = (g ?? flat[i + 1]) + tl;
+            if (i % 1200 === 1197) yield;
+          }
+          p.fill = flat;
+        }
         p.outlines.push({
           pts: path(
             o.points.map((q) => toWorld(q, axes)),
@@ -439,9 +478,41 @@ function* place(sources: ObjectiveSource[], axes: Dataset['axes'] | null, ground
   return out;
 }
 
-/** Whether an objective is drawn as lines: the areas and the targets' crosses; the rest are discs. */
+/** Whether an objective is drawn as lines: the areas, out of bounds and the targets' crosses; the rest are discs. */
 function linesOf(o: Objective): boolean {
-  return o.layer === 'areas' || o.layer === 'targets';
+  return o.layer === 'areas' || o.layer === 'bounds' || o.layer === 'targets';
+}
+
+/** Longest edge of a play area's fill triangles before they are split: each corner is laid on the ground. */
+const FILL_EDGE = 40;
+
+/**
+ * A polygon's inside as triangles (xyz), split until no edge is longer than
+ * `FILL_EDGE`, so that each corner can be laid on the ground and the fill
+ * follows the hills under it. The heights are the polygon's mean until then.
+ */
+function areaFill(corners: Vec3[]): Float32Array {
+  const contour = corners.map((c) => new Vector2(c[0], c[2]));
+  const y0 = corners.reduce((a, c) => a + c[1], 0) / corners.length;
+  const tris: number[][] = ShapeUtils.triangulateShape(contour, []).map((t) => t.flatMap((i) => [corners[i][0], corners[i][2]]));
+  const out: number[] = [];
+  for (let guard = 0; tris.length && guard < 200000; guard++) {
+    const t = tris.pop()!;
+    const [ax, az, bx, bz, cx, cz] = t;
+    const ab = Math.hypot(bx - ax, bz - az);
+    const bc = Math.hypot(cx - bx, cz - bz);
+    const ca = Math.hypot(ax - cx, az - cz);
+    const m = Math.max(ab, bc, ca);
+    if (m > FILL_EDGE) {
+      // Split the longest edge in two.
+      if (m === ab) tris.push([ax, az, (ax + bx) / 2, (az + bz) / 2, cx, cz], [(ax + bx) / 2, (az + bz) / 2, bx, bz, cx, cz]);
+      else if (m === bc) tris.push([ax, az, bx, bz, (bx + cx) / 2, (bz + cz) / 2], [ax, az, (bx + cx) / 2, (bz + cz) / 2, cx, cz]);
+      else tris.push([ax, az, bx, bz, (cx + ax) / 2, (cz + az) / 2], [(cx + ax) / 2, (cz + az) / 2, bx, bz, cx, cz]);
+      continue;
+    }
+    for (let k = 0; k < 6; k += 2) out.push(t[k], y0, t[k + 1]);
+  }
+  return Float32Array.from(out);
 }
 
 /** Appends the line pieces of a run of points (xyz) to `out` from vertex `v`; the vertex count after. */
@@ -580,7 +651,7 @@ export class ObjectiveLayerDraw {
         continue;
       }
       const rgb = o.layer === 'areas' ? (o.type === 'battle_area' ? AREA : teamRgb) : o.layer === 'targets' ? TARGET : teamRgb;
-      const a = o.layer === 'areas' ? (o.type === 'battle_area' ? 0.7 : 0.45) : 0.9;
+      const a = o.layer === 'areas' ? (o.type === 'battle_area' ? 0.7 : 0.45) : o.layer === 'bounds' ? 0.4 : 0.9;
       if (linesOf(o)) for (const ol of p.outlines) v = appendRun(out, v, ol.pts, ol.pts.length / 3, rgb, a);
       if (o.layer === 'spawns') {
         // How many began there; a spawn nobody used (an air spawn in a ground battle) says nothing.
@@ -684,6 +755,7 @@ export class ObjectiveLayerDraw {
     for (const p of placed) {
       if (!f.layers[p.o.layer]) continue;
       for (const d of p.discs) need += (d.length - 1) * (d[0].length / 3 - 1) * 6;
+      if (p.fill) need += p.fill.length / 3;
     }
     if (!need) return { ground: null, top: null };
     const g = new Float32Array(need * 7);
@@ -692,8 +764,10 @@ export class ObjectiveLayerDraw {
     let tv = 0;
     for (const p of placed) {
       const o = p.o;
-      if (!f.layers[o.layer] || !p.discs.length) continue;
+      if (!f.layers[o.layer]) continue;
       const rgb = o.layer === 'targets' ? TARGET : o.team ? f.teamColor(o.team) : NEUTRAL;
+      if (p.fill) gv = appendTris(g, gv, p.fill, rgb, o.team ? 0.12 : 0.06);
+      if (!p.discs.length) continue;
       for (const d of p.discs) {
         const n = d[0].length / 3 - 1;
         gv = appendBand(g, gv, d[0], d[1], n, rgb, 0.85);

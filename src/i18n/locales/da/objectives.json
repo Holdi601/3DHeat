@@ -31,5 +31,9 @@
   "objectives.events.captured": "{zone} erobret af {team}",
   "objectives.events.neutralised": "{zone} tabt af {team}",
   "objectives.legend.neutral": "neutral",
-  "objectives.legend.capturing": "indtages"
+  "objectives.legend.capturing": "indtages",
+  "objectives.layer.bounds": "Uden for området",
+  "objectives.layer.boundsTitle": "Skraveret hvor et hold er uden for området: inden for den anden sides spilleområde, men uden for sit eget",
+  "objectives.layout": "Layout",
+  "objectives.layoutTitle": "Kortets spiltilstand, hvis mål, spilleområder og spawns tegnes; valgt efter dataenes tilstand"
 }

@@ -14,6 +14,7 @@ import { useSort, useSorted } from '../sort/useSort';
 import { useEngine } from '../EngineContext';
 import { teamMemberColor } from '../../render/colors';
 import './objectives.css';
+import { LevelLayoutPicker, useLevelLayoutShown } from './LevelLayoutPicker';
 
 const swatch = (rgb: readonly number[]) => `rgb(${Math.round(rgb[0] * 255)},${Math.round(rgb[1] * 255)},${Math.round(rgb[2] * 255)})`;
 
@@ -45,7 +46,8 @@ export function ObjectivesPanel() {
   const error = useObjectivesStore((s) => s.error);
   const store = useObjectivesStore.getState();
   const modes = useMemo(() => (dataset ? matchModes(dataset, games) : []), [dataset, games]);
-  const any = games.some((g) => g.objectives && g.objectives.length);
+  const layoutShown = useLevelLayoutShown();
+  const any = games.some((g) => g.objectives && g.objectives.length) || layoutShown;
   // The modes loaded, how many matches each.
   const byMode = useMemo(() => {
     const out = new Map<string, { mode: string; name: string; indices: number[] }>();
@@ -113,6 +115,7 @@ export function ObjectivesPanel() {
       {any ? (
         <>
           <Check label={t('objectives.show')} checked={on} onChange={(v) => store.setOn(v)} title={t('objectives.showTitle')} />
+          <LevelLayoutPicker />
           {on && (
             <div className="chips">
               {OBJECTIVE_LAYERS.map((l) => (

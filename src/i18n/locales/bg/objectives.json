@@ -31,5 +31,9 @@
   "objectives.events.captured": "{zone} превзета от {team}",
   "objectives.events.neutralised": "{zone} загубена от {team}",
   "objectives.legend.neutral": "неутрална",
-  "objectives.legend.capturing": "превзема се"
+  "objectives.legend.capturing": "превзема се",
+  "objectives.layer.bounds": "Извън границите",
+  "objectives.layer.boundsTitle": "Щриховано, където отбор е извън границите: в зоната на другата страна, но извън своята",
+  "objectives.layout": "Оформление",
+  "objectives.layoutTitle": "Режимът на картата, чиито цели, игрови зони и появявания се рисуват; избран по режима на данните"
 }

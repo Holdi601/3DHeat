@@ -31,5 +31,9 @@
   "objectives.events.captured": "{zone} erövrad av {team}",
   "objectives.events.neutralised": "{zone} förlorad av {team}",
   "objectives.legend.neutral": "neutral",
-  "objectives.legend.capturing": "intas"
+  "objectives.legend.capturing": "intas",
+  "objectives.layer.bounds": "Utanför området",
+  "objectives.layer.boundsTitle": "Skrafferat där ett lag är utanför området: inom andra sidans spelområde men utanför sitt eget",
+  "objectives.layout": "Layout",
+  "objectives.layoutTitle": "Kartans spelläge vars mål, spelområden och spawnpunkter ritas; valt efter datans läge"
 }

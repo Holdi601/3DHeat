@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import { fileURLToPath } from 'node:url';
 import { execFile, execFileSync } from 'node:child_process';
 import os from 'node:os';
-import { createReadStream, existsSync, readFileSync, statSync } from 'node:fs';
+import { createReadStream, existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { brotliCompressSync, constants as zlibConstants, gzipSync } from 'node:zlib';
 import { encodePackFigure, type PackFigure } from './src/figures/figurepackBin.ts';
@@ -241,6 +241,69 @@ function figurePack(): Plugin {
   return { name: 'heat3d-figure-pack', configureServer: handler, configurePreviewServer: handler };
 }
 
+/** Where the page asks for a level's layouts (src/state/levelLayoutsStore.ts). */
+const LAYOUTS_ROUTE = '/__heat3d/layouts';
+
+/**
+ * A level's `<Level>.layouts.json` from the levels folder: `/<game>/<level>`
+ * answers `<levels>/<game>/<Level>.layouts.json` (the level's name matched
+ * without case), where `<levels>` is `HEAT3D_LEVELS` or the `levels` entry of
+ * the git-ignored `tools/local-data.json`; 404 when there is none. The viewer
+ * asks once for each level it loads and draws the layout of the data's mode.
+ */
+function levelLayouts(): Plugin {
+  const root = (): string | null => {
+    if (process.env.HEAT3D_LEVELS) return process.env.HEAT3D_LEVELS;
+    try {
+      const local = fileURLToPath(new URL('./tools/local-data.json', import.meta.url));
+      const l = existsSync(local) ? (JSON.parse(readFileSync(local, 'utf8')) as { levels?: unknown }).levels : undefined;
+      return typeof l === 'string' ? l : null;
+    } catch {
+      return null;
+    }
+  };
+  const handler = (server: ViteDevServer | { middlewares: ViteDevServer['middlewares'] }) => {
+    server.middlewares.use(LAYOUTS_ROUTE, (req, res) => {
+      const m = /^[/]([a-z0-9-]+|_)[/]([A-Za-z0-9_.-]+)$/.exec(decodeURIComponent(new URL(req.url ?? '/', 'http://x').pathname));
+      const base = root();
+      let file: string | null = null;
+      if (m && base) {
+        // `_`: a level whose game is not known, looked for in every game's folder.
+        const want = `${m[2]}.layouts.json`.toLowerCase();
+        try {
+          const dirs = m[1] === '_' ? readdirSync(base).map((d) => `${base}/${d}`) : [`${base}/${m[1]}`];
+          for (const dir of dirs) {
+            const hit = existsSync(dir) && statSync(dir).isDirectory() ? readdirSync(dir).find((n) => n.toLowerCase() === want) : undefined;
+            if (hit) {
+              file = `${dir}/${hit}`;
+              break;
+            }
+          }
+        } catch {
+          file = null;
+        }
+      }
+      if (!file) {
+        res.statusCode = 404;
+        res.end();
+        return;
+      }
+      const body = readFileSync(file);
+      const tag = `"${createHash('sha1').update(body).digest('hex').slice(0, 20)}"`;
+      res.setHeader('ETag', tag);
+      res.setHeader('Cache-Control', 'no-cache');
+      if (req.headers['if-none-match'] === tag) {
+        res.statusCode = 304;
+        res.end();
+        return;
+      }
+      res.setHeader('Content-Type', 'application/json');
+      res.end(body);
+    });
+  };
+  return { name: 'heat3d-level-layouts', configureServer: handler, configurePreviewServer: handler };
+}
+
 /** Where the page asks for a game's local range catalogue (src/ranges/local.ts). */
 const LOCAL_RANGES_ROUTE = '/__heat3d/ranges';
 
@@ -443,7 +506,7 @@ function selfUpdate(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [react(), hostMemory(), selfUpdate(), figurePack(), localRanges(), campaignFiles()],
+  plugins: [react(), hostMemory(), selfUpdate(), figurePack(), localRanges(), levelLayouts(), campaignFiles()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

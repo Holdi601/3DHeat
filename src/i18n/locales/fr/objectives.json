@@ -31,5 +31,9 @@
   "objectives.events.captured": "{zone} capturée par {team}",
   "objectives.events.neutralised": "{zone} perdue par {team}",
   "objectives.legend.neutral": "neutre",
-  "objectives.legend.capturing": "en cours de capture"
+  "objectives.legend.capturing": "en cours de capture",
+  "objectives.layer.bounds": "Hors limites",
+  "objectives.layer.boundsTitle": "Hachuré là où une équipe est hors limites : dans la zone de jeu de l'autre camp mais hors de la sienne",
+  "objectives.layout": "Disposition",
+  "objectives.layoutTitle": "Le mode de jeu de la carte dont les objectifs, zones de jeu et apparitions sont dessinés ; choisi d'après le mode des données"
 }

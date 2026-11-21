@@ -31,5 +31,9 @@
   "objectives.events.captured": "{team} vallutas ala {zone}",
   "objectives.events.neutralised": "{team} kaotas ala {zone}",
   "objectives.legend.neutral": "neutraalne",
-  "objectives.legend.capturing": "vallutatakse"
+  "objectives.legend.capturing": "vallutatakse",
+  "objectives.layer.bounds": "Piiridest väljas",
+  "objectives.layer.boundsTitle": "Viirutatud, kus meeskond on piiridest väljas: teise poole mängualal, kuid omast väljas",
+  "objectives.layout": "Paigutus",
+  "objectives.layoutTitle": "Kaardi mängurežiim, mille eesmärgid, mängualad ja tekkekohad joonistatakse; valitud andmete režiimi järgi"
 }

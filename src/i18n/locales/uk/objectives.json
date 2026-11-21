@@ -31,5 +31,9 @@
   "objectives.events.captured": "{zone} захоплено командою {team}",
   "objectives.events.neutralised": "{zone} втрачено командою {team}",
   "objectives.legend.neutral": "нейтральна",
-  "objectives.legend.capturing": "захоплюється"
+  "objectives.legend.capturing": "захоплюється",
+  "objectives.layer.bounds": "За межею",
+  "objectives.layer.boundsTitle": "Заштриховано там, де команда за межею: в ігровій зоні іншої сторони, але поза своєю",
+  "objectives.layout": "Розкладка",
+  "objectives.layoutTitle": "Режим мапи, чиї цілі, ігрові зони та точки появи малюються; вибраний за режимом даних"
 }

@@ -31,5 +31,9 @@
   "objectives.events.captured": "{zone} захоплена камандай {team}",
   "objectives.events.neutralised": "{zone} страчана камандай {team}",
   "objectives.legend.neutral": "нейтральная",
-  "objectives.legend.capturing": "захопліваецца"
+  "objectives.legend.capturing": "захопліваецца",
+  "objectives.layer.bounds": "За мяжой",
+  "objectives.layer.boundsTitle": "Заштрыхавана там, дзе каманда за мяжой: у гульнявой зоне другога боку, але па-за сваёй",
+  "objectives.layout": "Раскладка",
+  "objectives.layoutTitle": "Рэжым мапы, чые мэты, гульнявыя зоны і пункты з’яўлення малююцца; абраны па рэжыме даных"
 }

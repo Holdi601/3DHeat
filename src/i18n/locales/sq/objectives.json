@@ -31,5 +31,9 @@
   "objectives.events.captured": "{zone} u pushtua nga {team}",
   "objectives.events.neutralised": "{zone} u humb nga {team}",
   "objectives.legend.neutral": "neutrale",
-  "objectives.legend.capturing": "po kapet"
+  "objectives.legend.capturing": "po kapet",
+  "objectives.layer.bounds": "Jashtë kufijve",
+  "objectives.layer.boundsTitle": "I vizatuar me viza ku një ekip është jashtë kufijve: brenda zonës së lojës së palës tjetër por jashtë së vetës",
+  "objectives.layout": "Paraqitja",
+  "objectives.layoutTitle": "Mënyra e lojës e hartës, objektivat, zonat e lojës dhe pikat e shfaqjes së së cilës vizatohen; zgjidhet sipas mënyrës së të dhënave"
 }

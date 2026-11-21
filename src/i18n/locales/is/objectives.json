@@ -31,5 +31,9 @@
   "objectives.events.captured": "{team} hertók {zone}",
   "objectives.events.neutralised": "{team} missti {zone}",
   "objectives.legend.neutral": "hlutlaust",
-  "objectives.legend.capturing": "verið að taka"
+  "objectives.legend.capturing": "verið að taka",
+  "objectives.layer.bounds": "Utan svæðis",
+  "objectives.layer.boundsTitle": "Skástrikað þar sem lið er utan svæðis: innan leiksvæðis hinnar hliðarinnar en utan síns eigin",
+  "objectives.layout": "Uppsetning",
+  "objectives.layoutTitle": "Leikhamur kortsins sem markmið, leiksvæði og upphafsstaðir eru teiknuð fyrir; valinn eftir ham gagnanna"
 }

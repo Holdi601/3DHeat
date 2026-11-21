@@ -31,5 +31,9 @@
   "objectives.events.captured": "{zone} obsadil(a) {team}",
   "objectives.events.neutralised": "{zone} ztratil(a) {team}",
   "objectives.legend.neutral": "neutrální",
-  "objectives.legend.capturing": "obsazuje se"
+  "objectives.legend.capturing": "obsazuje se",
+  "objectives.layer.bounds": "Mimo hranice",
+  "objectives.layer.boundsTitle": "Šrafováno tam, kde je tým mimo hranice: v hracím prostoru druhé strany, ale mimo vlastní",
+  "objectives.layout": "Rozložení",
+  "objectives.layoutTitle": "Herní režim mapy, jehož cíle, hrací prostory a spawny se kreslí; vybraný podle režimu dat"
 }

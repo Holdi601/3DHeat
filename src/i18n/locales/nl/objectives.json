@@ -31,5 +31,9 @@
   "objectives.events.captured": "{zone} veroverd door {team}",
   "objectives.events.neutralised": "{zone} verloren door {team}",
   "objectives.legend.neutral": "neutraal",
-  "objectives.legend.capturing": "wordt veroverd"
+  "objectives.legend.capturing": "wordt veroverd",
+  "objectives.layer.bounds": "Buiten bereik",
+  "objectives.layer.boundsTitle": "Gearceerd waar een team buiten bereik is: binnen het speelgebied van de andere kant maar buiten het eigen",
+  "objectives.layout": "Indeling",
+  "objectives.layoutTitle": "De spelmodus van de kaart waarvan doelen, speelgebieden en spawns worden getekend; gekozen naar de modus van de data"
 }

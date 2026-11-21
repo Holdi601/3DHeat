@@ -31,5 +31,9 @@
   "objectives.events.captured": "{zone}: κατάληψη από {team}",
   "objectives.events.neutralised": "{zone}: χάθηκε από {team}",
   "objectives.legend.neutral": "ουδέτερη",
-  "objectives.legend.capturing": "καταλαμβάνεται"
+  "objectives.legend.capturing": "καταλαμβάνεται",
+  "objectives.layer.bounds": "Εκτός ορίων",
+  "objectives.layer.boundsTitle": "Γραμμοσκιασμένο όπου μια ομάδα είναι εκτός ορίων: μέσα στην περιοχή της άλλης πλευράς αλλά έξω από τη δική της",
+  "objectives.layout": "Διάταξη",
+  "objectives.layoutTitle": "Η λειτουργία του χάρτη της οποίας σχεδιάζονται στόχοι, περιοχές παιχνιδιού και σημεία εμφάνισης· επιλέγεται από τη λειτουργία των δεδομένων"
 }

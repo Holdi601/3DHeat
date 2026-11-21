@@ -31,5 +31,9 @@
   "objectives.events.captured": "{zone} vun {team} eruewert",
   "objectives.events.neutralised": "{zone} vun {team} verluer",
   "objectives.legend.neutral": "neutral",
-  "objectives.legend.capturing": "gëtt eruewert"
+  "objectives.legend.capturing": "gëtt eruewert",
+  "objectives.layer.bounds": "Ausserhalb",
+  "objectives.layer.boundsTitle": "Schrafféiert, wou eng Equipe ausserhalb ass: am Spillberäich vun der anerer Säit, mee net am eegenen",
+  "objectives.layout": "Layout",
+  "objectives.layoutTitle": "De Spillmodus vun der Kaart, deem seng Ziler, Spillberäicher a Spawns gezeechent ginn; no dem Modus vun den Donnéeë gewielt"
 }

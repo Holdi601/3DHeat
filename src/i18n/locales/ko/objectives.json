@@ -31,5 +31,9 @@
   "objectives.events.captured": "{team}이(가) {zone} 점령",
   "objectives.events.neutralised": "{team}이(가) {zone} 상실",
   "objectives.legend.neutral": "중립",
-  "objectives.legend.capturing": "점령 중"
+  "objectives.legend.capturing": "점령 중",
+  "objectives.layer.bounds": "경계 밖",
+  "objectives.layer.boundsTitle": "팀이 경계 밖인 곳을 빗금으로 표시: 상대편 플레이 영역 안이지만 자기 영역 밖",
+  "objectives.layout": "레이아웃",
+  "objectives.layoutTitle": "목표, 플레이 영역, 스폰을 그리는 맵의 게임 모드. 데이터의 모드에서 선택"
 }

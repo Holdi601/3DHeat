@@ -31,5 +31,9 @@
   "objectives.events.captured": "{zone} gafa ag {team}",
   "objectives.events.neutralised": "{zone} caillte ag {team}",
   "objectives.legend.neutral": "neodrach",
-  "objectives.legend.capturing": "á ghabháil"
+  "objectives.legend.capturing": "á ghabháil",
+  "objectives.layer.bounds": "Lasmuigh de theorainn",
+  "objectives.layer.boundsTitle": "Línithe áit a bhfuil foireann lasmuigh de theorainn: laistigh de limistéar imeartha an taobh eile ach lasmuigh dá cheann féin",
+  "objectives.layout": "Leagan amach",
+  "objectives.layoutTitle": "Mód cluiche na léarscáile a dtarraingítear a chuspóirí, a limistéir imeartha agus a láithreacha sceite; roghnaithe de réir mhód na sonraí"
 }

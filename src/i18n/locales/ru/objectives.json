@@ -31,5 +31,9 @@
   "objectives.events.captured": "{zone} захвачена командой {team}",
   "objectives.events.neutralised": "{zone} потеряна командой {team}",
   "objectives.legend.neutral": "нейтральная",
-  "objectives.legend.capturing": "захватывается"
+  "objectives.legend.capturing": "захватывается",
+  "objectives.layer.bounds": "За границей",
+  "objectives.layer.boundsTitle": "Заштриховано там, где команда за границей: в игровой зоне другой стороны, но вне своей",
+  "objectives.layout": "Раскладка",
+  "objectives.layoutTitle": "Режим карты, чьи цели, игровые зоны и точки появления рисуются; выбран по режиму данных"
 }

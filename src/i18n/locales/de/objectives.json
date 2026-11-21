@@ -31,5 +31,9 @@
   "objectives.events.captured": "{zone} von {team} erobert",
   "objectives.events.neutralised": "{zone} von {team} verloren",
   "objectives.legend.neutral": "neutral",
-  "objectives.legend.capturing": "wird erobert"
+  "objectives.legend.capturing": "wird erobert",
+  "objectives.layer.bounds": "Außerhalb",
+  "objectives.layer.boundsTitle": "Schraffiert, wo ein Team außerhalb ist: Gelände im Spielbereich der anderen Seite, aber nicht im eigenen",
+  "objectives.layout": "Layout",
+  "objectives.layoutTitle": "Der Spielmodus der Karte, dessen Ziele, Spielbereiche und Spawns gezeichnet werden; nach dem Modus der Daten gewählt"
 }

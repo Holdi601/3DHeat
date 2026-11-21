@@ -31,5 +31,9 @@
   "objectives.events.captured": "{team} užėmė {zone}",
   "objectives.events.neutralised": "{team} prarado {zone}",
   "objectives.legend.neutral": "neutrali",
-  "objectives.legend.capturing": "užimama"
+  "objectives.legend.capturing": "užimama",
+  "objectives.layer.bounds": "Už ribų",
+  "objectives.layer.boundsTitle": "Užbrūkšniuota ten, kur komanda už ribų: kitos pusės žaidimo zonoje, bet už savosios",
+  "objectives.layout": "Išdėstymas",
+  "objectives.layoutTitle": "Žemėlapio žaidimo režimas, kurio tikslai, žaidimo zonos ir atsiradimo vietos piešiami; parinktas pagal duomenų režimą"
 }

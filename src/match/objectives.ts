@@ -16,8 +16,8 @@ import type { AxisMapping } from '../state/types';
 export type Vec3 = [number, number, number];
 
 /** The layers the viewer shows or hides together. */
-export type ObjectiveLayer = 'zones' | 'spawns' | 'airfields' | 'areas' | 'targets';
-export const OBJECTIVE_LAYERS: readonly ObjectiveLayer[] = ['zones', 'spawns', 'airfields', 'areas', 'targets'];
+export type ObjectiveLayer = 'zones' | 'spawns' | 'airfields' | 'areas' | 'bounds' | 'targets';
+export const OBJECTIVE_LAYERS: readonly ObjectiveLayer[] = ['zones', 'spawns', 'airfields', 'areas', 'bounds', 'targets'];
 
 export interface Objective {
   type: string;

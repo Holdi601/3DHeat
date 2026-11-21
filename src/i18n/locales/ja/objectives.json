@@ -31,5 +31,9 @@
   "objectives.events.captured": "{zone} を {team} が占領",
   "objectives.events.neutralised": "{zone} を {team} が喪失",
   "objectives.legend.neutral": "中立",
-  "objectives.legend.capturing": "占領中"
+  "objectives.legend.capturing": "占領中",
+  "objectives.layer.bounds": "範囲外",
+  "objectives.layer.boundsTitle": "チームが範囲外になる場所を斜線で表示：相手側のプレイエリア内で自軍のエリア外",
+  "objectives.layout": "レイアウト",
+  "objectives.layoutTitle": "目標・プレイエリア・スポーンを描くマップのゲームモード。データのモードから選択"
 }

@@ -31,5 +31,9 @@
   "objectives.events.captured": "{zone} je zavzela ekipa {team}",
   "objectives.events.neutralised": "{zone} je izgubila ekipa {team}",
   "objectives.legend.neutral": "nevtralna",
-  "objectives.legend.capturing": "se zavzema"
+  "objectives.legend.capturing": "se zavzema",
+  "objectives.layer.bounds": "Izven meja",
+  "objectives.layer.boundsTitle": "Šrafirano, kjer je ekipa izven meja: v igralnem območju druge strani, a zunaj svojega",
+  "objectives.layout": "Postavitev",
+  "objectives.layoutTitle": "Način igre zemljevida, katerega cilji, igralna območja in točke pojavljanja so narisani; izbran po načinu podatkov"
 }

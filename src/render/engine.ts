@@ -55,6 +55,7 @@ import { gamePreset } from '../tactics/games';
 import type { Dataset, FilterSpec } from '../state/types';
 import { CURVE_LUT_SIZE, bakeCurveLut, curveSignature } from '../state/curve';
 import { buildColorLut, isUnassignedLabel, teamHueCount, teamMemberColor } from './colors';
+import { levelLayoutSource } from './levelLayoutSource';
 import type { Projection } from './camera';
 import { autoExposure, type ExposureResult } from './exposure';
 import { FlyCamera, MIN_FLY_SPEED } from './camera';
@@ -2157,6 +2158,8 @@ export class Engine {
         // A replay's team (1, 2) in the colour its units have; a source may name the team label a number stands for.
         teamColor: (team) => {
           const i = d.teamLabels.indexOf((sources.length === 1 ? sources[0].ownerLabels?.[team] : undefined) ?? String(team));
+          // A level's layout on data without its team numbers: the first two team colours.
+          if (i < 0 && sources.length === 1 && sources[0].world && team > 0) return teamMemberColor(team - 1, 0, 1);
           return i >= 0 ? teamMemberColor(i, 0, 1) : [0.86, 0.86, 0.82];
         },
         ground,
@@ -2980,12 +2983,17 @@ export class Engine {
     // The battles' objectives: which, and the zones' state at the playhead, which redraws the scene when it changes
     // (every frame while they are being laid on the ground).
     const objectives = useObjectivesStore.getState();
-    const objectiveSrc: ObjectiveSource[] =
+    let objectiveSrc: ObjectiveSource[] =
       !raceTab && objectives.on && this.dataset ? objectiveSources(this.dataset, this.objectiveGames(objectives.lite), objectives.timelines, s.filters, s.team.session) : [];
     // A many-match load's objectives, and the shown battle's capture zones, read when first wanted (`objectivesLazy.ts`).
     if (!raceTab && objectives.on && this.dataset) {
       wantObjectives();
       if (objectiveSrc.length === 1 && !objectiveSrc[0].timeline) wantTimeline(objectiveSrc[0].match);
+    }
+    // Without a battle's own objectives, the level's layout for the data's mode (`state/levelLayoutsStore.ts`).
+    if (!objectiveSrc.length && !raceTab && objectives.on) {
+      const layout = levelLayoutSource(s.level);
+      if (layout) objectiveSrc = [layout];
     }
     if (!objectiveSrc.length) this.objectiveDraw.clear();
     if (this.objectiveDraw.pending) this.invalidate(2);

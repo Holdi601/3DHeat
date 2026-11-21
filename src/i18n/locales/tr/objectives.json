@@ -31,5 +31,9 @@
   "objectives.events.captured": "{zone}, {team} tarafından ele geçirildi",
   "objectives.events.neutralised": "{zone}, {team} tarafından kaybedildi",
   "objectives.legend.neutral": "tarafsız",
-  "objectives.legend.capturing": "ele geçiriliyor"
+  "objectives.legend.capturing": "ele geçiriliyor",
+  "objectives.layer.bounds": "Sınır dışı",
+  "objectives.layer.boundsTitle": "Bir takımın sınır dışında olduğu yerler taralı: karşı tarafın oyun alanında ama kendi alanının dışında",
+  "objectives.layout": "Düzen",
+  "objectives.layoutTitle": "Haritanın hedefleri, oyun alanları ve doğma noktaları çizilen oyun modu; verinin modundan seçilir"
 }

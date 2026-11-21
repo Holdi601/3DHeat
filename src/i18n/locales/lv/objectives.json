@@ -31,5 +31,9 @@
   "objectives.events.captured": "{team} ieņēma {zone}",
   "objectives.events.neutralised": "{team} zaudēja {zone}",
   "objectives.legend.neutral": "neitrāla",
-  "objectives.legend.capturing": "tiek ieņemta"
+  "objectives.legend.capturing": "tiek ieņemta",
+  "objectives.layer.bounds": "Ārpus robežām",
+  "objectives.layer.boundsTitle": "Svītrots, kur komanda ir ārpus robežām: otras puses spēles zonā, bet ārpus savējās",
+  "objectives.layout": "Izkārtojums",
+  "objectives.layoutTitle": "Kartes spēles režīms, kura mērķi, spēles zonas un parādīšanās vietas tiek zīmētas; izvēlēts pēc datu režīma"
 }

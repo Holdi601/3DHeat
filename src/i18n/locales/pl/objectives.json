@@ -31,5 +31,9 @@
   "objectives.events.captured": "{zone} przejęta przez {team}",
   "objectives.events.neutralised": "{zone} utracona przez {team}",
   "objectives.legend.neutral": "neutralna",
-  "objectives.legend.capturing": "przejmowana"
+  "objectives.legend.capturing": "przejmowana",
+  "objectives.layer.bounds": "Poza obszarem",
+  "objectives.layer.boundsTitle": "Zakreskowane tam, gdzie drużyna jest poza obszarem: w obszarze gry drugiej strony, ale poza własnym",
+  "objectives.layout": "Układ",
+  "objectives.layoutTitle": "Tryb gry mapy, którego cele, obszary gry i spawny są rysowane; wybrany według trybu danych"
 }

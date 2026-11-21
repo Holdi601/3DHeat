@@ -31,5 +31,9 @@
   "objectives.events.captured": "{zone} maqbuda minn {team}",
   "objectives.events.neutralised": "{zone} mitlufa minn {team}",
   "objectives.legend.neutral": "newtrali",
-  "objectives.legend.capturing": "qed tinqabad"
+  "objectives.legend.capturing": "qed tinqabad",
+  "objectives.layer.bounds": "Barra mil-limiti",
+  "objectives.layer.boundsTitle": "Immarkat fejn tim huwa barra mil-limiti: ġewwa ż-żona tal-logħob tan-naħa l-oħra imma barra minn tiegħu",
+  "objectives.layout": "Tqassim",
+  "objectives.layoutTitle": "Il-mod tal-logħba tal-mappa li jinġibdu l-objettivi, iż-żoni tal-logħob u l-punti tad-dehra tiegħu; magħżul skont il-mod tad-data"
 }

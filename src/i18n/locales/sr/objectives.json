@@ -31,5 +31,9 @@
   "objectives.events.captured": "{zone} освојио {team}",
   "objectives.events.neutralised": "{zone} изгубио {team}",
   "objectives.legend.neutral": "неутрална",
-  "objectives.legend.capturing": "осваја се"
+  "objectives.legend.capturing": "осваја се",
+  "objectives.layer.bounds": "Van granica",
+  "objectives.layer.boundsTitle": "Šrafirano gde je tim van granica: unutar oblasti igre druge strane, a van svoje",
+  "objectives.layout": "Raspored",
+  "objectives.layoutTitle": "Režim igre mape čiji se ciljevi, oblasti igre i mesta pojavljivanja crtaju; izabran prema režimu podataka"
 }
