@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useStore } from '../../state/store';
 import { useReplayStore, type Scope } from '../../state/replayStore';
 import { useAnimationFrame, useEngine } from '../EngineContext';
@@ -11,6 +11,8 @@ import { t } from '../../i18n';
 import type { Dataset } from '../../state/types';
 import './replay.css';
 import { unitPrefs } from '../../state/unitsStore';
+import { runSliced } from '../../render/inspector';
+import { activeExchanges, engagedTracks, engagementsOf, exchangeSpan } from './engagements';
 
 /** Most engagement lines drawn at once: the nearest pairs first. */
 const MAX_LINES = 60;
@@ -46,8 +48,14 @@ export function TacticalLabels() {
   const aids = useReplayStore((s) => s.aids);
   const root = useRef<HTMLDivElement>(null);
   const lines = useRef<SVGPathElement>(null);
+  const soft = useRef<SVGPathElement>(null);
   const pool = useRef<HTMLDivElement[]>([]);
   const on = !!engine && !!dataset && ((aids.lockLabels && aids.locks !== 'off') || aids.engagements !== 'off');
+  // Off or gone: the engine need not place the engaged tracks any more.
+  useEffect(() => {
+    if (!on) engagedTracks.clear();
+    return () => engagedTracks.clear();
+  }, [on]);
 
   useAnimationFrame(() => {
     const host = root.current;
@@ -101,9 +109,48 @@ export function TacticalLabels() {
       }
     }
 
-    // ---- multiple engagements: each unit in scope to every opponent in range
+    // ---- engagement lines by exchange: a pair that fought, from before its first contact to after its last
     let d = '';
-    if (aids.engagements !== 'off') {
+    let dSoft = '';
+    if (aids.engagements !== 'off' && aids.engageBy === 'exchange') {
+      const e = engagementsOf(dataset, (g) => runSliced(g, () => false, undefined, 6));
+      const now = engine.live.playhead;
+      const on = e ? activeExchanges(e, now, aids.engageBefore, aids.engageAfter) : [];
+      engagedTracks.clear();
+      for (const { x } of on.slice(0, MAX_LINES * 2)) {
+        engagedTracks.add(x.a);
+        engagedTracks.add(x.b);
+      }
+      let drawn = 0;
+      for (const { x, phase } of on) {
+        if (drawn >= MAX_LINES) break;
+        if (!inScope(aids.engagements, x.a) && !inScope(aids.engagements, x.b)) continue;
+        const a = pos.get(x.a);
+        const b = pos.get(x.b);
+        if (!a || !b) continue;
+        const pa = project(a);
+        const pb = project(b);
+        if (!pa || !pb) continue;
+        drawn++;
+        const seg = `M${pa.x.toFixed(1)},${pa.y.toFixed(1)}L${pb.x.toFixed(1)},${pb.y.toFixed(1)}`;
+        if (phase === 'fight') d += seg;
+        else dSoft += seg;
+        const mid = { x: (pa.x + pb.x) / 2, y: (pa.y + pb.y) / 2 };
+        if (!visible(mid)) continue;
+        const [, end] = exchangeSpan(x, aids.engageBefore, aids.engageAfter);
+        // Past the last contact and cut short by one side leaving: say why.
+        const cut = phase === 'tail' && x.reason !== 'contact' && x.hardEnd <= x.t1 + aids.engageAfter && end - now < 3;
+        texts.push({
+          x: mid.x,
+          y: mid.y,
+          s: cut ? t(`analysis.engage.end.${x.reason}`, { name: unitOf(x.by)?.name ?? '?' }) : formatValue('distance', range(a, b), unitPrefs()),
+          cls: cut ? 'replay-engage end' : 'replay-engage',
+        });
+      }
+    }
+    else if (engagedTracks.size) engagedTracks.clear();
+    // ---- multiple engagements: each unit in scope to every opponent in range
+    if (aids.engagements !== 'off' && aids.engageBy === 'range') {
       const pairs: { a: (typeof tracks)[number]; b: (typeof tracks)[number]; dist: number }[] = [];
       const seen = new Set<string>();
       const fixed = markers(dataset);
@@ -127,12 +174,13 @@ export function TacticalLabels() {
         const pa = project(a);
         const pb = project(b);
         if (!pa || !pb) continue;
-        d += `M${pa.x.toFixed(1)},${pa.y.toFixed(1)}L${pb.x.toFixed(1)},${pb.y.toFixed(1)}`;
+        dSoft += `M${pa.x.toFixed(1)},${pa.y.toFixed(1)}L${pb.x.toFixed(1)},${pb.y.toFixed(1)}`;
         const mid = { x: (pa.x + pb.x) / 2, y: (pa.y + pb.y) / 2 };
         if (visible(mid)) texts.push({ x: mid.x, y: mid.y, s: formatValue('distance', dist, unitPrefs()), cls: 'replay-engage' });
       }
     }
     lines.current?.setAttribute('d', d);
+    soft.current?.setAttribute('d', dSoft);
 
     // ---- the words, from a pool
     if (pool.current[0] && pool.current[0].parentNode !== host) pool.current = [];
@@ -160,6 +208,7 @@ export function TacticalLabels() {
     <div className="replay-tactical" ref={root}>
       <svg className="replay-pair">
         <path ref={lines} className="replay-engage-line" />
+        <path ref={soft} className="replay-engage-line soft" />
       </svg>
     </div>
   );

@@ -80,6 +80,28 @@ War Thunder's server replays give the radar cones, locks and sight lines from th
 
 A tank's turret turns as the recording has it, whatever the look and aim aids show. Where a turret column has nothing to do with where its player aims (as far apart as random angles: War Thunder's server replays of game version 101421 on, converted before heat3d-wt-replay 0.2.1, read every turret a bit off), the turrets are taken from where the players look instead.
 
+### Engagement lines
+
+**Engagement lines** join two opponents while they fight. Pick who they are drawn for (none, the selected units, all, or one kind), then what draws a line:
+
+| Setting | Default | Meaning |
+|---|---|---|
+| *Exchanges of fire* / *Within range* | *Exchanges of fire* | *Exchanges of fire*: a line per exchange between two tracks, read from the events. *Within range*: Tacview's multiple engagements, every opponent within **Engagement range** of a unit (1-200 km), the nearest 60 pairs, dashed. |
+| **Show before** | 5 s | 0-60 s. How long before the first contact of an exchange its line appears (dashed). |
+| **Show after** | 8 s | 0-120 s. How long after the last contact it stays (dashed), unless one side breaks off first. |
+
+An exchange is the contact events (fire, launch, hit, damage, kill, death) of two tracks of opposing teams where one names the other (the other-party column; a weapon's rows count for whoever launched it), with no quiet gap over 10 s. The line is solid from the first contact to the last and shows the range between them. It is never drawn across a death or a respawn: each life is its own track, and a line ends with the first of the two lives. Past the last contact it ends early when one side disengages, and for its last seconds says why:
+
+| End | When |
+|---|---|
+| *name down* | A death was recorded within 2 s of that life's end. |
+| *name out of ammunition* | The data has an `ammo`/`rounds` column and it reaches 0. |
+| *name low on fuel* | The data has a `fuel` column and it falls under 5% of what the track had when the exchange began. |
+| *name breaks off* | The distance between them grows for 3 s on end, by at least a sixth, with no contact in between; *name* is whoever moved away. |
+| *name outnumbered, withdrawing* | As above, and the side moving away faced more opponents in that fight than it had friends in it. |
+
+The exchanges are worked out once per dataset, a few milliseconds at a time between frames ([`engagements.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/replay/engagements.ts)); disengagement is looked for up to 120 s past the last contact.
+
 ### Display style
 
 `T` (or the **Show as tactical display** toggle) switches the look to a radar-screen style: glow, outlines, contour lines, a measurement grid, scan lines, range rings, altitude ladders, panels with kills and events, and a **Director** that moves the camera to events by itself.

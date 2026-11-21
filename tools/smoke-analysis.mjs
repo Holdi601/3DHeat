@@ -208,13 +208,14 @@ await step('difference mode labels the most negative places too', async () => {
 
 // ------------------------------------------------------------------ insights
 
-/** A module of the app, the instance the app loaded (after an edit the dev server adds a version query). */
+/** A module of the app, the app's own instance (`__3dheat.modules` in main.tsx). */
 const mod = (path, fn, a) =>
   page.evaluate(
     async ([p, src, arg]) => {
-      const seen = performance.getEntriesByType('resource').map((e) => e.name).filter((n) => new URL(n).pathname === p);
-      const u = seen.length ? seen[seen.length - 1] : p;
-      return new Function('m', 'arg', `return (${src})(m, arg)`)(await import(u), arg);
+      const name = p.replace(/^\/src\//, '').replace(/\.tsx?$/, '');
+      const load = globalThis.__3dheat.modules[name];
+      if (!load) throw new Error(`no module ${name} in __3dheat.modules`);
+      return new Function('m', 'arg', `return (${src})(m, arg)`)(await load(), arg);
     },
     [path, fn.toString(), a],
   );
@@ -228,9 +229,9 @@ await step('insights: plain words, tight places, no whole-map findings', async (
   await wait(1500);
   const report = await mod('/src/insights/run.ts', async (m) => {
     const s = globalThis.__3dheat.useStore.getState();
-    const scope = await import('/src/volumes/scope.ts');
+    const scope = await globalThis.__3dheat.modules['volumes/scope']();
     const r = await m.runInsights(s.dataset, scope.currentScope(s, 0), s.level, {});
-    const store = await import('/src/insights/store.ts');
+    const store = await globalThis.__3dheat.modules['insights/store']();
     store.useInsights.getState().set({ report: r, key: null, running: false, selected: null });
     const g = r.grid;
     const extent = Math.max(g.nx, g.nz) * g.fine;
@@ -291,6 +292,70 @@ await step('insights: "Volume here" fits the events, not the map height', async 
   expect(h < height, `volume height ${h} vs data height ${height}`);
   await mod('/src/volumes/store.ts', (m) => m.useVolumeStore.getState().clear());
   return `volume r ${v.last.radius.toFixed(0)}, ${v.last.floor.toFixed(0)}..${v.last.ceil.toFixed(0)} (data ${height.toFixed(0)} high)`;
+});
+
+// ------------------------------------------------------------- engagement lines
+
+await step('engagement lines: exchanges found, drawn during the fight, gone after', async () => {
+  await page.evaluate(async (u) => {
+    await globalThis.__3dheat.loadUrls([u]);
+    globalThis.__3dheat.useStore.getState().setMode('team');
+  }, `${DEMO}/tanks.parquet`);
+  await wait(2000);
+  // The figure replay's own dataset: overlaid matches name their tracks by match.
+  const info = await mod('/src/ui/replay/engagements.ts', (m) => {
+    const ds = globalThis.__3dheat.useStore.getState().dataset;
+    const g = m.findEngagements(ds);
+    let r = g.next();
+    while (!r.done) r = g.next();
+    const e = r.value;
+    const reasons = {};
+    for (const x of e.exchanges) reasons[x.reason] = (reasons[x.reason] ?? 0) + 1;
+    const x = e.exchanges.find((y) => y.t1 - y.t0 > 1) ?? e.exchanges[0];
+    const row = x ? Array.from(ds.personId).indexOf(x.a) : -1;
+    return { n: e.exchanges.length, reasons, x: x ? { t0: x.t0, t1: x.t1, hardEnd: x.hardEnd, a: x.a, b: x.b } : null, session: ds.sessionId && row >= 0 ? ds.sessionId[row] : -1 };
+  });
+  expect(info.n > 0 && info.x, 'no exchanges in the tank demo');
+  await page.evaluate((session) => {
+    const s = globalThis.__3dheat.useStore.getState();
+    if (session >= 0) s.patchTeam({ session });
+    // The replay at a moment: in All mode every sample is drawn and there is no now.
+    s.patchTimeline({ mode: 'play' });
+    s.setPlaying(false);
+  }, info.session);
+  await wait(1500);
+  await mod('/src/state/replayStore.ts', (m) => {
+    const r = m.useReplayStore.getState();
+    r.setAids ? r.setAids({ engagements: 'all', engageBy: 'exchange', engageBefore: 2, engageAfter: 2 }) : m.useReplayStore.setState({ aids: { ...r.aids, engagements: 'all', engageBy: 'exchange', engageBefore: 2, engageAfter: 2 } });
+  });
+  const seek = (t) => page.evaluate((t) => globalThis.__3dheat.useStore.getState().seek(t), t);
+  const path = () => page.evaluate(() => (document.querySelector('.replay-engage-line:not(.soft)')?.getAttribute('d') ?? '') + '|' + (document.querySelector('.replay-engage-line.soft')?.getAttribute('d') ?? ''));
+  await seek((info.x.t0 + info.x.t1) / 2);
+  await wait(1500);
+  // The camera over the pair, so both ends are on screen.
+  const placed = await page.evaluate(([a, b]) => {
+    const eng = globalThis.__3dheat_engine;
+    const ta = eng.liveTracks.find((t) => t.person === a);
+    const tb = eng.liveTracks.find((t) => t.person === b);
+    if (!ta || !tb) return eng.liveTracks.map((t) => t.person);
+    const r = Math.hypot(ta.x - tb.x, ta.y - tb.y, ta.z - tb.z);
+    eng.camera.setOrientationDegrees(0, -60);
+    eng.frameAround((ta.x + tb.x) / 2, (ta.y + tb.y) / 2, (ta.z + tb.z) / 2, Math.max(r, 20));
+    return true;
+  }, [info.x.a, info.x.b]);
+  expect(placed === true, `the engaged tracks are not placed: live ${JSON.stringify(placed)}`);
+  await wait(800);
+  const during = await path();
+  const engaged = await mod('/src/ui/replay/engagements.ts', (m) => m.engagedTracks.size);
+  expect(engaged >= 2, `${engaged} tracks engaged at the fight`);
+  expect(during.replace('|', '').length > 4, 'no engagement line during the fight');
+  await seek(info.x.hardEnd + 30);
+  await wait(1000);
+  const after = await mod('/src/ui/replay/engagements.ts', (m) => [...m.engagedTracks]);
+  expect(!(after.includes(info.x.a) && after.includes(info.x.b)), 'the pair is still engaged after its end');
+  const t = await orbitTiming(2);
+  judge(t);
+  return `${info.n} exchanges ${JSON.stringify(info.reasons)}; line drawn during the fight, gone after; ${timingText(t)}`;
 });
 
 // The stages that follow add their steps above this line.

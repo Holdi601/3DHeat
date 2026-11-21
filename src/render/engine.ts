@@ -37,6 +37,7 @@ import { ObjectiveLayerDraw, objectiveSources, stateKey, type ObjectiveSource } 
 import { withPlaceLines } from '../mass/placeLines';
 import { withManeuverLines } from '../insights/maneuver/lines';
 import { withInsightLines } from '../insights/highlight';
+import { engagedTracks } from '../ui/replay/engagements';
 import { DirectionController } from './directionController';
 import { dropLinesOn, unitsPerMetre } from '../ui/replay/replayData';
 import { FollowRig, type RigMode } from './followRig';
@@ -1924,6 +1925,8 @@ export class Engine {
     if (r.pair) for (const p of r.pair) want.add(p);
     // The second unit of the padlock and target views, which the camera and its card read.
     if (r.targetPerson !== null) want.add(r.targetPerson);
+    // Both sides of the exchanges whose engagement lines are drawn (ui/replay/engagements.ts).
+    for (const p of engagedTracks) want.add(p);
     const tracks: typeof this.liveTracks = [];
     const pose = this.gpuPose;
     for (const p of want) {

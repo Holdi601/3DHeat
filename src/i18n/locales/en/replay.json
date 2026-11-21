@@ -404,7 +404,7 @@
   "replay.aids.lockLabels": "Lock labels",
   "replay.aids.lockLabelsTitle": "The locked target's name and range on each lock line",
   "replay.aids.engagements": "Engagement lines",
-  "replay.aids.engagementsTitle": "A line from each unit to every opponent within range, with the range on it (several engagements at once)",
+  "replay.aids.engagementsTitle": "Lines between opponents who fight: by their exchanges of fire (with seconds before and after), or every opponent within range",
   "replay.aids.engagementRange": "Engagement range",
   "replay.chart.axisTitle": "What the chart runs along: time, or the distance flown through the air or over the ground",
   "replay.chart.axis.time": "Time",

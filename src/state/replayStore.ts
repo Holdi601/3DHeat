@@ -88,8 +88,13 @@ export interface DisplayAids {
   pilotSight: Scope;
   /** The locked target's name and range along each lock line. */
   lockLabels: boolean;
-  /** Lines with ranges from each unit to every opponent within `engagementRange` (Tacview's multiple engagements). */
+  /** Engagement lines between opponents: by their exchanges of fire, or every pair within `engagementRange` (Tacview's multiple engagements). */
   engagements: Scope;
+  /** What draws a line: an exchange of fire (ui/replay/engagements.ts) or being within range. */
+  engageBy: 'exchange' | 'range';
+  /** Seconds an exchange's line shows before its first contact and after its last. */
+  engageBefore: number;
+  engageAfter: number;
   /** Metres. */
   engagementRange: number;
   /** View cones from where players look (their view angles), with the team panel's look direction on. */
@@ -115,6 +120,9 @@ export const DEFAULT_AIDS: DisplayAids = {
   pilotSight: 'selected',
   lockLabels: true,
   engagements: 'off',
+  engageBy: 'exchange',
+  engageBefore: 5,
+  engageAfter: 8,
   engagementRange: 20000,
   look: 'all',
   lookFov: 90,
@@ -300,6 +308,9 @@ export function readAids(v: unknown): DisplayAids {
     pilotSight: scopeOf(a.pilotSight, d.pilotSight),
     lockLabels: a.lockLabels !== false,
     engagements: scopeOf(a.engagements, d.engagements),
+    engageBy: a.engageBy === 'range' ? 'range' : d.engageBy,
+    engageBefore: typeof a.engageBefore === 'number' && a.engageBefore >= 0 ? Math.min(120, a.engageBefore) : d.engageBefore,
+    engageAfter: typeof a.engageAfter === 'number' && a.engageAfter >= 0 ? Math.min(120, a.engageAfter) : d.engageAfter,
     engagementRange: typeof a.engagementRange === 'number' && a.engagementRange > 0 ? Math.min(500000, a.engagementRange) : d.engagementRange,
     look: scopeOf(a.look, d.look),
     lookFov: typeof a.lookFov === 'number' && a.lookFov >= 0 ? Math.min(150, a.lookFov) : d.lookFov,

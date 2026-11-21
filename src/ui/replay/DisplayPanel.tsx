@@ -158,6 +158,39 @@ export function DisplayPanel() {
         onChange={(v) => set({ engagements: v })}
       />
       {aids.engagements !== 'off' && (
+        <Segmented
+          value={aids.engageBy}
+          onChange={(v) => set({ engageBy: v })}
+          options={[
+            { value: 'exchange', label: t('analysis.engage.byExchange') },
+            { value: 'range', label: t('analysis.engage.byRange') },
+          ]}
+        />
+      )}
+      {aids.engagements !== 'off' && aids.engageBy === 'exchange' && (
+        <>
+          <div className="hint">{t('analysis.engage.hint')}</div>
+          <Slider
+            label={t('analysis.engage.before')}
+            value={aids.engageBefore}
+            min={0}
+            max={60}
+            step={0.5}
+            onChange={(v) => set({ engageBefore: v })}
+            format={(v) => t('analysis.engage.seconds', { s: num(v, v < 10 ? 1 : 0) })}
+          />
+          <Slider
+            label={t('analysis.engage.after')}
+            value={aids.engageAfter}
+            min={0}
+            max={120}
+            step={0.5}
+            onChange={(v) => set({ engageAfter: v })}
+            format={(v) => t('analysis.engage.seconds', { s: num(v, v < 10 ? 1 : 0) })}
+          />
+        </>
+      )}
+      {aids.engagements !== 'off' && aids.engageBy === 'range' && (
         <Slider
           label={t('replay.aids.engagementRange')}
           value={aids.engagementRange / 1000}

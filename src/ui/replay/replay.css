@@ -727,12 +727,20 @@
   background: rgba(12, 14, 18, 0.7);
   color: #ffd9a0;
 }
+/* An exchange of fire under way: solid. Before and after it, and range pairs: dashed. */
 .replay-engage-line {
   fill: none;
   stroke: #ffb347;
+  stroke-width: 1.5;
+  stroke-opacity: 0.85;
+}
+.replay-engage-line.soft {
   stroke-width: 1;
   stroke-opacity: 0.55;
   stroke-dasharray: 2 4;
+}
+.replay-engage.end {
+  color: #9fd4ff;
 }
 .geo-overlay {
   position: absolute;

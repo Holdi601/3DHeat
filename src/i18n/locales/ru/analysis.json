@@ -138,5 +138,17 @@
   "analysis.ins.det.value.do": "Bring expensive units where they earn, not where they are lost.",
   "analysis.ins.zones.hot.passing.compare": "Players spent only {presShare} of their time here: they stop here to fire and move on, {ratio}× what that time would predict.",
   "analysis.ins.zones.hot.passing.why": "A firing spot used in passing: a good angle that is safe only for a moment.",
-  "analysis.ins.zones.hot.passing.do": "Use it to shoot and move. To deny it, pre-aim it or cover it from a second angle."
+  "analysis.ins.zones.hot.passing.do": "Use it to shoot and move. To deny it, pre-aim it or cover it from a second angle.",
+  "analysis.engage.byExchange": "Exchanges of fire",
+  "analysis.engage.byRange": "Within range",
+  "analysis.engage.hint": "A line joins two opponents while they fight: solid from the first shot, hit or kill between them to the last, dashed for the seconds before and after. It never outlives either life and ends when one side breaks off.",
+  "analysis.engage.before": "Show before",
+  "analysis.engage.after": "Show after",
+  "analysis.engage.seconds": "{s} s",
+  "analysis.engage.end.death": "{name} down",
+  "analysis.engage.end.retreat": "{name} breaks off",
+  "analysis.engage.end.outnumbered": "{name} outnumbered, withdrawing",
+  "analysis.engage.end.ammo": "{name} out of ammunition",
+  "analysis.engage.end.fuel": "{name} low on fuel",
+  "analysis.engage.end.contact": "{name}"
 }

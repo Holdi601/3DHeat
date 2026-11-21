@@ -64,7 +64,7 @@ Where to find the features: the **Match** tab, **Figure replay** (or **Figure ov
 | Mouse position lat/long, MGRS, bullseye | The pick card (click a point) gives latitude/longitude in degrees, minutes and seconds and MGRS beside the world metres; bullseye per unit (field) | new |
 | Custom logo | Not built | n/a (branding) |
 | 3D models, nearest when unknown | Own figure catalogue, nearest counterpart, true size | done |
-| Multiple engagements (lines between all pairs) | **Engagement lines**: from each unit in scope to every opponent within the set range (1-200 km), each with its range, the nearest 60 pairs; the measured pair as before | new |
+| Multiple engagements (lines between all pairs) | **Engagement lines** *Within range*: from each unit in scope to every opponent within the set range (1-200 km), each with its range, the nearest 60 pairs; the measured pair as before. *Exchanges of fire* (the default) draws a line per exchange instead, with seconds before and after, cut at deaths, respawns and disengagement ([Match replay](match-replay.md#engagement-lines)) | new |
 
 ## Labels
 

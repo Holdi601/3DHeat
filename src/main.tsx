@@ -22,6 +22,20 @@ if (import.meta.env.DEV) {
     useStore,
     useInspectStore,
     useVersus,
+    /**
+     * The app's own instances of modules a probe drives (tools/smoke-analysis.mjs):
+     * importing their URL from the page gets a second copy once the dev server has
+     * versioned them, and its stores are not the app's.
+     */
+    modules: {
+      'insights/run': () => import('./insights/run'),
+      'insights/store': () => import('./insights/store'),
+      'insights/highlight': () => import('./insights/highlight'),
+      'volumes/store': () => import('./volumes/store'),
+      'volumes/scope': () => import('./volumes/scope'),
+      'state/replayStore': () => import('./state/replayStore'),
+      'ui/replay/engagements': () => import('./ui/replay/engagements'),
+    } as Record<string, () => Promise<unknown>>,
     generateSynthetic,
     DEFAULT_SYNTH,
     CURVE_PRESETS,
