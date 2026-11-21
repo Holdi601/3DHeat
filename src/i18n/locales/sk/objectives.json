@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "Mimo hraníc",
   "objectives.layer.boundsTitle": "Šrafované tam, kde je tím mimo hraníc: v hracom priestore druhej strany, ale mimo vlastného",
   "objectives.layout": "Rozloženie",
-  "objectives.layoutTitle": "Herný režim mapy, ktorého ciele, hracie priestory a spawny sa kreslia; vybraný podľa režimu dát"
+  "objectives.layoutTitle": "Herný režim mapy, ktorého ciele, hracie priestory a spawny sa kreslia; vybraný podľa režimu dát",
+  "objectives.place": "Umiestniť",
+  "objectives.placeTitle": "Figúra zvoleného druhu a strany na ďalší bod spawnu tejto skupiny",
+  "objectives.placeAll": "Všetky",
+  "objectives.placeAllTitle": "Figúra na každý bod spawnu tejto skupiny",
+  "objectives.placeHint": "Spawny rozloženia: umiestnite tam zvolenú figúru",
+  "objectives.placeMore": "+{count} ďalších"
 }

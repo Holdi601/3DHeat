@@ -14,9 +14,11 @@
  * objectives (`objective` with a `kind`: `mcom`, `telegraph`, `bomb_target`,
  * `bomb_site`, `flag`...). Zones are each team's play area (`play_area`, an
  * outline; outside it the team is out of bounds) and any `out_of_bounds`
- * area. Spawns are points with a team, and the capture point (`base`) that
+ * area (an outline, drawn hatched; its team the side it is out of bounds for,
+ * none for everyone). Spawns are points with a team, and the capture point (`base`) that
  * owns them where one does. Anything may carry a `stage` (Rush, Breakthrough):
- * a layout with stages is offered whole and a stage at a time.
+ * a layout with stages is offered whole and a stage at a time, each named by
+ * the layout's `stageNames` where it has them (`{ "1": "low ranks" }`).
  *
  * Positions are the level's own, the same frame as its model: the viewer
  * draws them where the level is, whatever axes the data has.
@@ -38,6 +40,8 @@ export interface LevelLayout {
   mode: string;
   aliases: string[];
   stage: number | null;
+  /** What the layout calls this stage (`low ranks`), where it says. */
+  stageName?: string;
   objectives: Objective[];
 }
 
@@ -228,6 +232,51 @@ export function outOfBounds(areas: Objective[]): Objective[] {
   return out;
 }
 
+/**
+ * An out-of-bounds area given as an outline (ground a mission excludes, a
+ * spawn's kill area) as hatching: diagonal strokes across the inside, as the
+ * play areas' out of bounds are drawn, the outline's own edge where they end.
+ */
+export function hatchInside(o: Objective): Objective {
+  const poly = o.points;
+  let x0 = Infinity;
+  let x1 = -Infinity;
+  let z0 = Infinity;
+  let z1 = -Infinity;
+  let y = 0;
+  for (const p of poly) {
+    x0 = Math.min(x0, p[0]);
+    x1 = Math.max(x1, p[0]);
+    z0 = Math.min(z0, p[2]);
+    z1 = Math.max(z1, p[2]);
+    y += p[1] / poly.length;
+  }
+  const step = Math.min(60, Math.max(4, Math.max(x1 - x0, z1 - z0) / 12));
+  const r2 = Math.SQRT1_2;
+  const pts: Vec3[] = [];
+  const [va0, va1] = [x0 - z1, x1 - z0].map((v) => v * r2);
+  for (let v = va0 + step / 2; v < va1; v += step) {
+    const us: number[] = [];
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const va = (poly[j][0] - poly[j][2]) * r2;
+      const vb = (poly[i][0] - poly[i][2]) * r2;
+      if (va > v === vb > v) continue;
+      const f = (v - va) / (vb - va);
+      const ua = (poly[j][0] + poly[j][2]) * r2;
+      const ub = (poly[i][0] + poly[i][2]) * r2;
+      us.push(ua + (ub - ua) * f);
+    }
+    us.sort((a, b) => a - b);
+    // Even-odd: the stretches between the first and second crossing, the third and fourth...
+    for (let i = 0; i + 1 < us.length; i += 2) {
+      if (us[i + 1] - us[i] > 0.5) pts.push([(us[i] + v) * r2, y, (us[i] - v) * r2], [(us[i + 1] + v) * r2, y, (us[i + 1] - v) * r2]);
+    }
+  }
+  // The edge too, as strokes: each side a pair of points.
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) pts.push(poly[j], poly[i]);
+  return { ...o, shape: 'hatch', points: pts };
+}
+
 const stageOf = (o: Record<string, unknown>): number | null => (typeof o.stage === 'number' ? o.stage : null);
 
 /** A `<Level>.layouts.json`'s layouts, each stage of a staged one also on its own; null when it is not one. */
@@ -244,6 +293,7 @@ export function parseLevelLayouts(doc: unknown): LevelLayouts | null {
     const objectives = rows('objectives');
     const zones = rows('zones');
     const spawns = rows('spawns');
+    const stageNames = l.stageNames && typeof l.stageNames === 'object' ? (l.stageNames as Record<string, unknown>) : {};
     const make = (stage: number | null): LevelLayout => {
       const keep = (o: Record<string, unknown>) => stage === null || stageOf(o) === null || stageOf(o) === stage;
       const list: Objective[] = [];
@@ -253,7 +303,7 @@ export function parseLevelLayouts(doc: unknown): LevelLayouts | null {
       }
       for (const z of zones.filter(keep)) {
         const ob = objective(z, 'play_area');
-        if (ob && ob.points.length > 2) list.push(ob);
+        if (ob && ob.points.length > 2) list.push(ob.type === 'out_of_bounds' ? hatchInside(ob) : ob);
       }
       list.push(...outOfBounds(list.filter((o) => o.type === 'play_area')));
       list.push(...spawnGroups(spawns.filter(keep)));
@@ -263,6 +313,7 @@ export function parseLevelLayouts(doc: unknown): LevelLayouts | null {
         mode: str(l.mode) || id,
         aliases: Array.isArray(l.aliases) ? (l.aliases as unknown[]).filter((a): a is string => typeof a === 'string') : [],
         stage,
+        ...(stage !== null && str(stageNames[String(stage)]) ? { stageName: str(stageNames[String(stage)]) } : {}),
         objectives: list.sort((a, b) => (a.layer === 'zones' && b.layer === 'zones' ? a.letter.localeCompare(b.letter) : 0)),
       };
     };

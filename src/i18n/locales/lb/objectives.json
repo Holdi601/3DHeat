@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "Ausserhalb",
   "objectives.layer.boundsTitle": "Schrafféiert, wou eng Equipe ausserhalb ass: am Spillberäich vun der anerer Säit, mee net am eegenen",
   "objectives.layout": "Layout",
-  "objectives.layoutTitle": "De Spillmodus vun der Kaart, deem seng Ziler, Spillberäicher a Spawns gezeechent ginn; no dem Modus vun den Donnéeë gewielt"
+  "objectives.layoutTitle": "De Spillmodus vun der Kaart, deem seng Ziler, Spillberäicher a Spawns gezeechent ginn; no dem Modus vun den Donnéeë gewielt",
+  "objectives.place": "Setzen",
+  "objectives.placeTitle": "Eng Figur vun der gewielter Aart a Säit op den nächste Spawnpunkt vun dëser Grupp",
+  "objectives.placeAll": "All",
+  "objectives.placeAllTitle": "Eng Figur op all Spawnpunkt vun dëser Grupp",
+  "objectives.placeHint": "Spawns vum Layout: déi gewielte Figur do setzen",
+  "objectives.placeMore": "+{count} weider"
 }

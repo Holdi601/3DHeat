@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "За границей",
   "objectives.layer.boundsTitle": "Заштриховано там, где команда за границей: в игровой зоне другой стороны, но вне своей",
   "objectives.layout": "Раскладка",
-  "objectives.layoutTitle": "Режим карты, чьи цели, игровые зоны и точки появления рисуются; выбран по режиму данных"
+  "objectives.layoutTitle": "Режим карты, чьи цели, игровые зоны и точки появления рисуются; выбран по режиму данных",
+  "objectives.place": "Поставить",
+  "objectives.placeTitle": "Фигура выбранного типа и стороны на следующую точку появления этой группы",
+  "objectives.placeAll": "Все",
+  "objectives.placeAllTitle": "Фигура на каждую точку появления этой группы",
+  "objectives.placeHint": "Точки появления раскладки: поставьте туда выбранную фигуру",
+  "objectives.placeMore": "+{count} ещё"
 }

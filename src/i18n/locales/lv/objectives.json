@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "Ārpus robežām",
   "objectives.layer.boundsTitle": "Svītrots, kur komanda ir ārpus robežām: otras puses spēles zonā, bet ārpus savējās",
   "objectives.layout": "Izkārtojums",
-  "objectives.layoutTitle": "Kartes spēles režīms, kura mērķi, spēles zonas un parādīšanās vietas tiek zīmētas; izvēlēts pēc datu režīma"
+  "objectives.layoutTitle": "Kartes spēles režīms, kura mērķi, spēles zonas un parādīšanās vietas tiek zīmētas; izvēlēts pēc datu režīma",
+  "objectives.place": "Novietot",
+  "objectives.placeTitle": "Izvēlētā veida un puses figūra nākamajā šīs grupas parādīšanās punktā",
+  "objectives.placeAll": "Visi",
+  "objectives.placeAllTitle": "Figūra katrā šīs grupas parādīšanās punktā",
+  "objectives.placeHint": "Izkārtojuma parādīšanās punkti: novietojiet tur izvēlēto figūru",
+  "objectives.placeMore": "+{count} vēl"
 }

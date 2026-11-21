@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "Izvan granica",
   "objectives.layer.boundsTitle": "Šrafirano gdje je tim izvan granica: unutar područja igre druge strane, a izvan svojeg",
   "objectives.layout": "Raspored",
-  "objectives.layoutTitle": "Način igre karte čiji se ciljevi, područja igre i mjesta stvaranja crtaju; odabran prema načinu podataka"
+  "objectives.layoutTitle": "Način igre karte čiji se ciljevi, područja igre i mjesta stvaranja crtaju; odabran prema načinu podataka",
+  "objectives.place": "Postavi",
+  "objectives.placeTitle": "Figura odabrane vrste i strane na sljedeću točku stvaranja ove skupine",
+  "objectives.placeAll": "Sve",
+  "objectives.placeAllTitle": "Figura na svaku točku stvaranja ove skupine",
+  "objectives.placeHint": "Točke stvaranja rasporeda: postavite tamo odabranu figuru",
+  "objectives.placeMore": "+{count} više"
 }

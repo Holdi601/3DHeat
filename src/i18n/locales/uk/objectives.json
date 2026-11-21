@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "За межею",
   "objectives.layer.boundsTitle": "Заштриховано там, де команда за межею: в ігровій зоні іншої сторони, але поза своєю",
   "objectives.layout": "Розкладка",
-  "objectives.layoutTitle": "Режим мапи, чиї цілі, ігрові зони та точки появи малюються; вибраний за режимом даних"
+  "objectives.layoutTitle": "Режим мапи, чиї цілі, ігрові зони та точки появи малюються; вибраний за режимом даних",
+  "objectives.place": "Поставити",
+  "objectives.placeTitle": "Фігура обраного типу й сторони на наступну точку появи цієї групи",
+  "objectives.placeAll": "Усі",
+  "objectives.placeAllTitle": "Фігура на кожну точку появи цієї групи",
+  "objectives.placeHint": "Точки появи розкладки: поставте туди обрану фігуру",
+  "objectives.placeMore": "+{count} ще"
 }

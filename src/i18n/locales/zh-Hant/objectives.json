@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "界外",
   "objectives.layer.boundsTitle": "以斜線標出隊伍界外區域：在對方遊戲區域內但在己方區域外",
   "objectives.layout": "配置",
-  "objectives.layoutTitle": "繪製其目標、遊戲區域和出生點的地圖遊戲模式；依資料的模式選擇"
+  "objectives.layoutTitle": "繪製其目標、遊戲區域和出生點的地圖遊戲模式；依資料的模式選擇",
+  "objectives.place": "放置",
+  "objectives.placeTitle": "將所選類型與陣營的單位放到該組的下一個出生點",
+  "objectives.placeAll": "全部",
+  "objectives.placeAllTitle": "在該組的每個出生點放一個單位",
+  "objectives.placeHint": "佈局的出生點：把所選單位放在那裡",
+  "objectives.placeMore": "另有 {count} 個"
 }

@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "Jashtë kufijve",
   "objectives.layer.boundsTitle": "I vizatuar me viza ku një ekip është jashtë kufijve: brenda zonës së lojës së palës tjetër por jashtë së vetës",
   "objectives.layout": "Paraqitja",
-  "objectives.layoutTitle": "Mënyra e lojës e hartës, objektivat, zonat e lojës dhe pikat e shfaqjes së së cilës vizatohen; zgjidhet sipas mënyrës së të dhënave"
+  "objectives.layoutTitle": "Mënyra e lojës e hartës, objektivat, zonat e lojës dhe pikat e shfaqjes së së cilës vizatohen; zgjidhet sipas mënyrës së të dhënave",
+  "objectives.place": "Vendos",
+  "objectives.placeTitle": "Një figurë e llojit dhe anës së zgjedhur në pikën e radhës të shfaqjes së grupit",
+  "objectives.placeAll": "Të gjitha",
+  "objectives.placeAllTitle": "Një figurë në çdo pikë shfaqjeje të grupit",
+  "objectives.placeHint": "Pikat e shfaqjes së paraqitjes: vendosni aty figurën e zgjedhur",
+  "objectives.placeMore": "+{count} më shumë"
 }

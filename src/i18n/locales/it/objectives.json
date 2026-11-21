@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "Fuori area",
   "objectives.layer.boundsTitle": "Tratteggiato dove una squadra è fuori area: nell'area di gioco dell'altra parte ma fuori dalla propria",
   "objectives.layout": "Disposizione",
-  "objectives.layoutTitle": "La modalità della mappa di cui si disegnano obiettivi, aree di gioco e spawn; scelta in base alla modalità dei dati"
+  "objectives.layoutTitle": "La modalità della mappa di cui si disegnano obiettivi, aree di gioco e spawn; scelta in base alla modalità dei dati",
+  "objectives.place": "Posiziona",
+  "objectives.placeTitle": "Una figura del tipo e della fazione scelti al prossimo punto di spawn di questo gruppo",
+  "objectives.placeAll": "Tutti",
+  "objectives.placeAllTitle": "Una figura in ogni punto di spawn di questo gruppo",
+  "objectives.placeHint": "Spawn del layout: posiziona lì la figura scelta",
+  "objectives.placeMore": "+{count} altri"
 }

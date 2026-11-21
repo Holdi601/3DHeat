@@ -27,7 +27,7 @@ export function LevelLayoutPicker() {
       <select value={shown.id} onChange={(e) => choose(key, e.target.value)}>
         {doc.layouts.map((l) => (
           <option key={l.id} value={l.id}>
-            {l.stage === null ? l.name : `${l.name} ${l.stage}`}
+            {l.stage === null ? l.name : `${l.name} · ${l.stageName ?? l.stage}`}
           </option>
         ))}
       </select>

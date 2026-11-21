@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "Už ribų",
   "objectives.layer.boundsTitle": "Užbrūkšniuota ten, kur komanda už ribų: kitos pusės žaidimo zonoje, bet už savosios",
   "objectives.layout": "Išdėstymas",
-  "objectives.layoutTitle": "Žemėlapio žaidimo režimas, kurio tikslai, žaidimo zonos ir atsiradimo vietos piešiami; parinktas pagal duomenų režimą"
+  "objectives.layoutTitle": "Žemėlapio žaidimo režimas, kurio tikslai, žaidimo zonos ir atsiradimo vietos piešiami; parinktas pagal duomenų režimą",
+  "objectives.place": "Padėti",
+  "objectives.placeTitle": "Pasirinktos rūšies ir pusės figūra kitame šios grupės atsiradimo taške",
+  "objectives.placeAll": "Visi",
+  "objectives.placeAllTitle": "Figūra kiekviename šios grupės atsiradimo taške",
+  "objectives.placeHint": "Išdėstymo atsiradimo taškai: padėkite ten pasirinktą figūrą",
+  "objectives.placeMore": "+{count} daugiau"
 }

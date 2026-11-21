@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "Out of bounds",
   "objectives.layer.boundsTitle": "Hatched where a team is out of bounds: ground inside the other side's play area but outside its own",
   "objectives.layout": "Layout",
-  "objectives.layoutTitle": "The level's game mode whose objectives, play areas and spawns are drawn; picked from the data's mode"
+  "objectives.layoutTitle": "The level's game mode whose objectives, play areas and spawns are drawn; picked from the data's mode",
+  "objectives.place": "Place",
+  "objectives.placeTitle": "A figure of the chosen kind and side at this group's next spawn point",
+  "objectives.placeAll": "All",
+  "objectives.placeAllTitle": "A figure at every spawn point of this group",
+  "objectives.placeHint": "Spawns of the layout: place the chosen figure there",
+  "objectives.placeMore": "+{count} more"
 }

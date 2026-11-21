@@ -653,6 +653,24 @@ function levelLayouts(): Plugin {
               break;
             }
           }
+          // A level in a folder of its own, beside its glb (`<game>/<Level>/`, `<game>/<theatre>/r1/`): a few folders down.
+          const below = (d: string, depth: number): string | null => {
+            if (depth > 3 || !existsSync(d) || !statSync(d).isDirectory()) return null;
+            const subs = readdirSync(d, { withFileTypes: true }).filter((e) => e.isDirectory() && !e.name.startsWith('.'));
+            for (const e of subs) {
+              const hit = readdirSync(`${d}/${e.name}`).find((x) => x.toLowerCase() === want);
+              if (hit) return `${d}/${e.name}/${hit}`;
+            }
+            for (const e of subs) {
+              const deeper = below(`${d}/${e.name}`, depth + 1);
+              if (deeper) return deeper;
+            }
+            return null;
+          };
+          for (const dir of file ? [] : dirs) {
+            file = below(dir, 1);
+            if (file) break;
+          }
         } catch {
           file = null;
         }

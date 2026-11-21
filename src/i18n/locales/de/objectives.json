@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "Außerhalb",
   "objectives.layer.boundsTitle": "Schraffiert, wo ein Team außerhalb ist: Gelände im Spielbereich der anderen Seite, aber nicht im eigenen",
   "objectives.layout": "Layout",
-  "objectives.layoutTitle": "Der Spielmodus der Karte, dessen Ziele, Spielbereiche und Spawns gezeichnet werden; nach dem Modus der Daten gewählt"
+  "objectives.layoutTitle": "Der Spielmodus der Karte, dessen Ziele, Spielbereiche und Spawns gezeichnet werden; nach dem Modus der Daten gewählt",
+  "objectives.place": "Setzen",
+  "objectives.placeTitle": "Eine Figur der gewählten Art und Seite an den nächsten Spawnpunkt dieser Gruppe",
+  "objectives.placeAll": "Alle",
+  "objectives.placeAllTitle": "Eine Figur an jeden Spawnpunkt dieser Gruppe",
+  "objectives.placeHint": "Spawns des Layouts: die gewählte Figur dort setzen",
+  "objectives.placeMore": "+{count} weitere"
 }

@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "În afara limitelor",
   "objectives.layer.boundsTitle": "Hașurat unde o echipă e în afara limitelor: în zona de joc a celeilalte părți, dar în afara propriei zone",
   "objectives.layout": "Aranjare",
-  "objectives.layoutTitle": "Modul hărții ale cărui obiective, zone de joc și puncte de apariție sunt desenate; ales după modul datelor"
+  "objectives.layoutTitle": "Modul hărții ale cărui obiective, zone de joc și puncte de apariție sunt desenate; ales după modul datelor",
+  "objectives.place": "Plasează",
+  "objectives.placeTitle": "O figură de tipul și tabăra alese la următorul punct de apariție al grupului",
+  "objectives.placeAll": "Toate",
+  "objectives.placeAllTitle": "O figură la fiecare punct de apariție al grupului",
+  "objectives.placeHint": "Punctele de apariție ale aranjamentului: plasați acolo figura aleasă",
+  "objectives.placeMore": "+{count} în plus"
 }

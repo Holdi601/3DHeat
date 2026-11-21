@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "範囲外",
   "objectives.layer.boundsTitle": "チームが範囲外になる場所を斜線で表示：相手側のプレイエリア内で自軍のエリア外",
   "objectives.layout": "レイアウト",
-  "objectives.layoutTitle": "目標・プレイエリア・スポーンを描くマップのゲームモード。データのモードから選択"
+  "objectives.layoutTitle": "目標・プレイエリア・スポーンを描くマップのゲームモード。データのモードから選択",
+  "objectives.place": "配置",
+  "objectives.placeTitle": "選んだ種類と陣営のフィギュアをこのグループの次のスポーン地点に置く",
+  "objectives.placeAll": "すべて",
+  "objectives.placeAllTitle": "このグループのすべてのスポーン地点にフィギュアを置く",
+  "objectives.placeHint": "レイアウトのスポーン地点: 選んだフィギュアをそこに配置",
+  "objectives.placeMore": "ほか {count} 件"
 }

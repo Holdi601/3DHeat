@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "Fora dos limites",
   "objectives.layer.boundsTitle": "Tracejado onde uma equipa está fora dos limites: dentro da área de jogo do outro lado mas fora da sua",
   "objectives.layout": "Disposição",
-  "objectives.layoutTitle": "O modo de jogo do mapa cujos objetivos, áreas de jogo e spawns são desenhados; escolhido pelo modo dos dados"
+  "objectives.layoutTitle": "O modo de jogo do mapa cujos objetivos, áreas de jogo e spawns são desenhados; escolhido pelo modo dos dados",
+  "objectives.place": "Colocar",
+  "objectives.placeTitle": "Uma figura do tipo e lado escolhidos no próximo ponto de surgimento deste grupo",
+  "objectives.placeAll": "Todos",
+  "objectives.placeAllTitle": "Uma figura em cada ponto de surgimento deste grupo",
+  "objectives.placeHint": "Pontos de surgimento do layout: coloque lá a figura escolhida",
+  "objectives.placeMore": "+{count} mais"
 }

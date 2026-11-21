@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "Piiridest väljas",
   "objectives.layer.boundsTitle": "Viirutatud, kus meeskond on piiridest väljas: teise poole mängualal, kuid omast väljas",
   "objectives.layout": "Paigutus",
-  "objectives.layoutTitle": "Kaardi mängurežiim, mille eesmärgid, mängualad ja tekkekohad joonistatakse; valitud andmete režiimi järgi"
+  "objectives.layoutTitle": "Kaardi mängurežiim, mille eesmärgid, mängualad ja tekkekohad joonistatakse; valitud andmete režiimi järgi",
+  "objectives.place": "Paiguta",
+  "objectives.placeTitle": "Valitud liigi ja poole kuju selle rühma järgmisse tekkekohta",
+  "objectives.placeAll": "Kõik",
+  "objectives.placeAllTitle": "Kuju selle rühma igasse tekkekohta",
+  "objectives.placeHint": "Paigutuse tekkekohad: paiguta valitud kuju sinna",
+  "objectives.placeMore": "+{count} veel"
 }

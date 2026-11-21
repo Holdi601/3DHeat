@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "Pályán kívül",
   "objectives.layer.boundsTitle": "Vonalkázva, ahol egy csapat pályán kívül van: a másik fél játékterén belül, de a sajátján kívül",
   "objectives.layout": "Elrendezés",
-  "objectives.layoutTitle": "A pálya játékmódja, amelynek céljai, játékterei és spawnjai látszanak; az adatok módja szerint választva"
+  "objectives.layoutTitle": "A pálya játékmódja, amelynek céljai, játékterei és spawnjai látszanak; az adatok módja szerint választva",
+  "objectives.place": "Elhelyez",
+  "objectives.placeTitle": "A választott fajtájú és oldalú figura a csoport következő kezdőpontjára",
+  "objectives.placeAll": "Mind",
+  "objectives.placeAllTitle": "Figura a csoport minden kezdőpontjára",
+  "objectives.placeHint": "Az elrendezés kezdőpontjai: helyezze oda a választott figurát",
+  "objectives.placeMore": "+{count} további"
 }

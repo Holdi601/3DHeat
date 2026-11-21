@@ -89,6 +89,37 @@ describe('level layouts', () => {
     expect(d.layouts[0].objectives.some((o) => o.type === 'out_of_bounds')).toBe(true);
   });
 
+  it('hatches an out-of-bounds outline inside, names stages', () => {
+    const d = parseLevelLayouts({
+      format: '3dheat-layouts',
+      game: 'warthunder',
+      level: 'avg_test',
+      layouts: [
+        {
+          id: 'test_dom',
+          stageNames: { 1: 'low ranks', 2: 'top ranks' },
+          objectives: [
+            { type: 'airfield', position: [0, 0, 0], stage: 1 },
+            { type: 'airfield', position: [900, 0, 0], stage: 2 },
+          ],
+          zones: [{ type: 'out_of_bounds', team: 2, points: square(0, 0, 100, 100) }],
+          spawns: [],
+        },
+      ],
+    })!;
+    expect(d.layouts.map((l) => [l.id, l.stageName])).toEqual([
+      ['test_dom', undefined],
+      ['test_dom#1', 'low ranks'],
+      ['test_dom#2', 'top ranks'],
+    ]);
+    const oob = d.layouts[0].objectives.find((o) => o.type === 'out_of_bounds')!;
+    expect([oob.team, oob.layer, oob.shape]).toEqual([2, 'bounds', 'hatch']);
+    // Strokes in pairs, all inside the square (its edge included).
+    expect(oob.points.length % 2).toBe(0);
+    expect(oob.points.length).toBeGreaterThan(8);
+    for (const p of oob.points) expect(p[0] > -0.01 && p[0] < 100.01 && p[2] > -0.01 && p[2] < 100.01).toBe(true);
+  });
+
   it("picks the layout the data's mode names", () => {
     const d = parseLevelLayouts(doc)!;
     expect(pickLayout(d, ['RushLarge0'])!.id).toBe('RushLarge0');

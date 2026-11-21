@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "Poza obszarem",
   "objectives.layer.boundsTitle": "Zakreskowane tam, gdzie drużyna jest poza obszarem: w obszarze gry drugiej strony, ale poza własnym",
   "objectives.layout": "Układ",
-  "objectives.layoutTitle": "Tryb gry mapy, którego cele, obszary gry i spawny są rysowane; wybrany według trybu danych"
+  "objectives.layoutTitle": "Tryb gry mapy, którego cele, obszary gry i spawny są rysowane; wybrany według trybu danych",
+  "objectives.place": "Umieść",
+  "objectives.placeTitle": "Figura wybranego rodzaju i strony w następnym punkcie odrodzenia tej grupy",
+  "objectives.placeAll": "Wszystkie",
+  "objectives.placeAllTitle": "Figura w każdym punkcie odrodzenia tej grupy",
+  "objectives.placeHint": "Punkty odrodzenia układu: umieść tam wybraną figurę",
+  "objectives.placeMore": "+{count} więcej"
 }

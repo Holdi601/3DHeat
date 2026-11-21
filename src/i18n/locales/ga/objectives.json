@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "Lasmuigh de theorainn",
   "objectives.layer.boundsTitle": "Línithe áit a bhfuil foireann lasmuigh de theorainn: laistigh de limistéar imeartha an taobh eile ach lasmuigh dá cheann féin",
   "objectives.layout": "Leagan amach",
-  "objectives.layoutTitle": "Mód cluiche na léarscáile a dtarraingítear a chuspóirí, a limistéir imeartha agus a láithreacha sceite; roghnaithe de réir mhód na sonraí"
+  "objectives.layoutTitle": "Mód cluiche na léarscáile a dtarraingítear a chuspóirí, a limistéir imeartha agus a láithreacha sceite; roghnaithe de réir mhód na sonraí",
+  "objectives.place": "Cuir",
+  "objectives.placeTitle": "Figiúr den chineál agus den taobh roghnaithe ag an gcéad phointe sceite eile den ghrúpa",
+  "objectives.placeAll": "Gach ceann",
+  "objectives.placeAllTitle": "Figiúr ag gach pointe sceite den ghrúpa",
+  "objectives.placeHint": "Pointí sceite an leagain amach: cuir an figiúr roghnaithe ansin",
+  "objectives.placeMore": "+{count} eile"
 }

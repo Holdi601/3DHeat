@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "Utanför området",
   "objectives.layer.boundsTitle": "Skrafferat där ett lag är utanför området: inom andra sidans spelområde men utanför sitt eget",
   "objectives.layout": "Layout",
-  "objectives.layoutTitle": "Kartans spelläge vars mål, spelområden och spawnpunkter ritas; valt efter datans läge"
+  "objectives.layoutTitle": "Kartans spelläge vars mål, spelområden och spawnpunkter ritas; valt efter datans läge",
+  "objectives.place": "Placera",
+  "objectives.placeTitle": "En figur av vald typ och sida på gruppens nästa spawnpunkt",
+  "objectives.placeAll": "Alla",
+  "objectives.placeAllTitle": "En figur på varje spawnpunkt i gruppen",
+  "objectives.placeHint": "Layoutens spawnpunkter: placera vald figur där",
+  "objectives.placeMore": "+{count} till"
 }

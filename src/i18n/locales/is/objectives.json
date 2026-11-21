@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "Utan svæðis",
   "objectives.layer.boundsTitle": "Skástrikað þar sem lið er utan svæðis: innan leiksvæðis hinnar hliðarinnar en utan síns eigin",
   "objectives.layout": "Uppsetning",
-  "objectives.layoutTitle": "Leikhamur kortsins sem markmið, leiksvæði og upphafsstaðir eru teiknuð fyrir; valinn eftir ham gagnanna"
+  "objectives.layoutTitle": "Leikhamur kortsins sem markmið, leiksvæði og upphafsstaðir eru teiknuð fyrir; valinn eftir ham gagnanna",
+  "objectives.place": "Setja",
+  "objectives.placeTitle": "Mynd af valinni gerð og hlið á næsta upphafsstað hópsins",
+  "objectives.placeAll": "Allar",
+  "objectives.placeAllTitle": "Mynd á hvern upphafsstað hópsins",
+  "objectives.placeHint": "Upphafsstaðir útlitsins: settu valda mynd þar",
+  "objectives.placeMore": "+{count} í viðbót"
 }

@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "За мяжой",
   "objectives.layer.boundsTitle": "Заштрыхавана там, дзе каманда за мяжой: у гульнявой зоне другога боку, але па-за сваёй",
   "objectives.layout": "Раскладка",
-  "objectives.layoutTitle": "Рэжым мапы, чые мэты, гульнявыя зоны і пункты з’яўлення малююцца; абраны па рэжыме даных"
+  "objectives.layoutTitle": "Рэжым мапы, чые мэты, гульнявыя зоны і пункты з’яўлення малююцца; абраны па рэжыме даных",
+  "objectives.place": "Паставіць",
+  "objectives.placeTitle": "Фігура абранага тыпу і боку на наступны пункт з’яўлення гэтай групы",
+  "objectives.placeAll": "Усе",
+  "objectives.placeAllTitle": "Фігура на кожны пункт з’яўлення гэтай групы",
+  "objectives.placeHint": "Пункты з’яўлення раскладкі: пастаўце туды абраную фігуру",
+  "objectives.placeMore": "+{count} яшчэ"
 }

@@ -111,7 +111,7 @@ export function dcsYaw(heading: number): number {
 }
 
 /** A mission's own data: the `mission` table (and the dictionary for keyed names) to the neutral shape. */
-export function readDcsMission(mission: LuaTable, dictionary: LuaTable | null, name: string): MissionState {
+export function readDcsMission(mission: LuaTable, dictionary: LuaTable | null, name: string, airbaseNames?: ReadonlyMap<number, string>): MissionState {
   const dict = (s: string) => (s.startsWith('DictKey_') && dictionary && typeof dictionary[s] === 'string' ? (dictionary[s] as string) : s);
   const groups: MissionGroup[] = [];
   const places: MissionPlace[] = [];
@@ -176,7 +176,7 @@ export function readDcsMission(mission: LuaTable, dictionary: LuaTable | null, n
       }
     }
   }
-  for (const [id, a] of airbases) places.push({ name: `Airfield ${id}`, kind: 'airbase', at: { x: a.x, y: a.y, z: a.z }, side: a.side });
+  for (const [id, a] of airbases) places.push({ name: airbaseNames?.get(id) ?? `Airfield ${id}`, kind: 'airbase', at: { x: a.x, y: a.y, z: a.z }, side: a.side });
   for (const zv of luaList(luaTable(mission.triggers)?.zones)) {
     const z = luaTable(zv);
     if (!z) continue;
@@ -195,6 +195,25 @@ export function readDcsMission(mission: LuaTable, dictionary: LuaTable | null, n
     places,
     notes,
   };
+}
+
+/**
+ * A theatre's airbases by id with their names, from its layouts
+ * (`<theatre>.layouts.json`, which the DCS maps tool writes into the levels
+ * folder), asked of the local server; none without one (a hosted build).
+ */
+export async function dcsAirbaseNames(theatre: string): Promise<Map<number, string>> {
+  const out = new Map<number, string>();
+  if (!theatre || typeof fetch !== 'function') return out;
+  try {
+    const r = await fetch(`/__heat3d/layouts/dcs/${encodeURIComponent(theatre)}`);
+    if (!r.ok || r.status === 204) return out;
+    const doc = (await r.json()) as { layouts?: { objectives?: { type?: string; airdromeId?: number; name?: string }[] }[] };
+    for (const l of doc.layouts ?? []) for (const o of l.objectives ?? []) if (o.type === 'airfield' && typeof o.airdromeId === 'number' && o.name) out.set(o.airdromeId, o.name);
+  } catch {
+    // No server or no layouts: airbases go by their ids.
+  }
+  return out;
 }
 
 /** The `mission` file's table, and the dictionary's, from a .miz. */
@@ -224,6 +243,7 @@ export const dcsMiz: MissionImporter = {
   accepts: (name) => name.endsWith('.miz'),
   read: async (bytes, name) => {
     const { mission, dictionary } = await missionTables(bytes);
-    return readDcsMission(mission, dictionary, name.split(/[\\/]/).pop() ?? name);
+    const names = await dcsAirbaseNames(luaStr(mission.theatre));
+    return readDcsMission(mission, dictionary, name.split(/[\\/]/).pop() ?? name, names);
   },
 };

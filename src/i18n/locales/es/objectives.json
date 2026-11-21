@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "Fuera de límites",
   "objectives.layer.boundsTitle": "Rayado donde un equipo está fuera de límites: dentro del área de juego del otro bando pero fuera de la suya",
   "objectives.layout": "Diseño",
-  "objectives.layoutTitle": "El modo de juego del mapa cuyos objetivos, áreas de juego y apariciones se dibujan; elegido según el modo de los datos"
+  "objectives.layoutTitle": "El modo de juego del mapa cuyos objetivos, áreas de juego y apariciones se dibujan; elegido según el modo de los datos",
+  "objectives.place": "Colocar",
+  "objectives.placeTitle": "Una figura del tipo y bando elegidos en el siguiente punto de aparición de este grupo",
+  "objectives.placeAll": "Todos",
+  "objectives.placeAllTitle": "Una figura en cada punto de aparición de este grupo",
+  "objectives.placeHint": "Apariciones del diseño: coloca allí la figura elegida",
+  "objectives.placeMore": "+{count} más"
 }

@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "Uden for området",
   "objectives.layer.boundsTitle": "Skraveret hvor et hold er uden for området: inden for den anden sides spilleområde, men uden for sit eget",
   "objectives.layout": "Layout",
-  "objectives.layoutTitle": "Kortets spiltilstand, hvis mål, spilleområder og spawns tegnes; valgt efter dataenes tilstand"
+  "objectives.layoutTitle": "Kortets spiltilstand, hvis mål, spilleområder og spawns tegnes; valgt efter dataenes tilstand",
+  "objectives.place": "Placér",
+  "objectives.placeTitle": "En figur af den valgte type og side på gruppens næste spawnpunkt",
+  "objectives.placeAll": "Alle",
+  "objectives.placeAllTitle": "En figur på hvert spawnpunkt i gruppen",
+  "objectives.placeHint": "Layoutets spawns: placér den valgte figur der",
+  "objectives.placeMore": "+{count} mere"
 }

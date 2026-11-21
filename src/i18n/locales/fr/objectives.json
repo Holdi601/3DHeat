@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "Hors limites",
   "objectives.layer.boundsTitle": "Hachuré là où une équipe est hors limites : dans la zone de jeu de l'autre camp mais hors de la sienne",
   "objectives.layout": "Disposition",
-  "objectives.layoutTitle": "Le mode de jeu de la carte dont les objectifs, zones de jeu et apparitions sont dessinés ; choisi d'après le mode des données"
+  "objectives.layoutTitle": "Le mode de jeu de la carte dont les objectifs, zones de jeu et apparitions sont dessinés ; choisi d'après le mode des données",
+  "objectives.place": "Placer",
+  "objectives.placeTitle": "Une figure du type et du camp choisis au prochain point d'apparition de ce groupe",
+  "objectives.placeAll": "Tous",
+  "objectives.placeAllTitle": "Une figure à chaque point d'apparition de ce groupe",
+  "objectives.placeHint": "Apparitions du layout : y placer la figure choisie",
+  "objectives.placeMore": "+{count} de plus"
 }

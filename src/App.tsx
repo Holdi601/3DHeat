@@ -23,6 +23,7 @@ import { ObjectivesPanel } from './ui/match/ObjectivesPanel';
 import { ObjectiveLabels } from './ui/match/ObjectiveLabels';
 import { MatchPanel } from './ui/match/MatchPanel';
 import { BoardBar, TacticsPanel } from './ui/tactics/TacticsPanel';
+import { LayoutReference } from './ui/tactics/LayoutReference';
 import { BoardLabels } from './ui/tactics/BoardLabels';
 import { boardKeyDown } from './ui/tactics/boardKeys';
 import { ReplayOverlay } from './ui/replay/ReplayOverlay';
@@ -411,6 +412,7 @@ export function App() {
             <>
               <TacticsPanel />
               <LevelPanel />
+              <LayoutReference />
               <CameraPanel />
             </>
           ) : raceTab ? (

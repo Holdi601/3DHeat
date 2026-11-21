@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "Utenfor området",
   "objectives.layer.boundsTitle": "Skravert der et lag er utenfor området: innenfor den andre sidens spilleområde, men utenfor sitt eget",
   "objectives.layout": "Oppsett",
-  "objectives.layoutTitle": "Kartets spillmodus som får mål, spilleområder og spawnpunkter tegnet; valgt etter dataenes modus"
+  "objectives.layoutTitle": "Kartets spillmodus som får mål, spilleområder og spawnpunkter tegnet; valgt etter dataenes modus",
+  "objectives.place": "Plasser",
+  "objectives.placeTitle": "En figur av valgt type og side på gruppens neste spawnpunkt",
+  "objectives.placeAll": "Alle",
+  "objectives.placeAllTitle": "En figur på hvert spawnpunkt i gruppen",
+  "objectives.placeHint": "Oppsettets spawnpunkter: plasser valgt figur der",
+  "objectives.placeMore": "+{count} til"
 }

@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "경계 밖",
   "objectives.layer.boundsTitle": "팀이 경계 밖인 곳을 빗금으로 표시: 상대편 플레이 영역 안이지만 자기 영역 밖",
   "objectives.layout": "레이아웃",
-  "objectives.layoutTitle": "목표, 플레이 영역, 스폰을 그리는 맵의 게임 모드. 데이터의 모드에서 선택"
+  "objectives.layoutTitle": "목표, 플레이 영역, 스폰을 그리는 맵의 게임 모드. 데이터의 모드에서 선택",
+  "objectives.place": "배치",
+  "objectives.placeTitle": "선택한 종류와 진영의 피규어를 이 그룹의 다음 스폰 지점에 놓기",
+  "objectives.placeAll": "모두",
+  "objectives.placeAllTitle": "이 그룹의 모든 스폰 지점에 피규어 놓기",
+  "objectives.placeHint": "레이아웃의 스폰 지점: 선택한 피규어를 그곳에 배치",
+  "objectives.placeMore": "+{count}개 더"
 }

@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "Buiten bereik",
   "objectives.layer.boundsTitle": "Gearceerd waar een team buiten bereik is: binnen het speelgebied van de andere kant maar buiten het eigen",
   "objectives.layout": "Indeling",
-  "objectives.layoutTitle": "De spelmodus van de kaart waarvan doelen, speelgebieden en spawns worden getekend; gekozen naar de modus van de data"
+  "objectives.layoutTitle": "De spelmodus van de kaart waarvan doelen, speelgebieden en spawns worden getekend; gekozen naar de modus van de data",
+  "objectives.place": "Plaatsen",
+  "objectives.placeTitle": "Een figuur van de gekozen soort en kant op het volgende spawnpunt van deze groep",
+  "objectives.placeAll": "Alle",
+  "objectives.placeAllTitle": "Een figuur op elk spawnpunt van deze groep",
+  "objectives.placeHint": "Spawns van de lay-out: plaats daar de gekozen figuur",
+  "objectives.placeMore": "+{count} meer"
 }

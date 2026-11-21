@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "Izven meja",
   "objectives.layer.boundsTitle": "Šrafirano, kjer je ekipa izven meja: v igralnem območju druge strani, a zunaj svojega",
   "objectives.layout": "Postavitev",
-  "objectives.layoutTitle": "Način igre zemljevida, katerega cilji, igralna območja in točke pojavljanja so narisani; izbran po načinu podatkov"
+  "objectives.layoutTitle": "Način igre zemljevida, katerega cilji, igralna območja in točke pojavljanja so narisani; izbran po načinu podatkov",
+  "objectives.place": "Postavi",
+  "objectives.placeTitle": "Figura izbrane vrste in strani na naslednjo točko pojavljanja te skupine",
+  "objectives.placeAll": "Vse",
+  "objectives.placeAllTitle": "Figura na vsako točko pojavljanja te skupine",
+  "objectives.placeHint": "Točke pojavljanja postavitve: tja postavite izbrano figuro",
+  "objectives.placeMore": "+{count} več"
 }

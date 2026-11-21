@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "Alueen ulkopuolella",
   "objectives.layer.boundsTitle": "Viivoitettu, missä joukkue on alueen ulkopuolella: toisen puolen pelialueella mutta oman ulkopuolella",
   "objectives.layout": "Asettelu",
-  "objectives.layoutTitle": "Kartan pelitila, jonka tavoitteet, pelialueet ja syntypisteet piirretään; valittu datan tilan mukaan"
+  "objectives.layoutTitle": "Kartan pelitila, jonka tavoitteet, pelialueet ja syntypisteet piirretään; valittu datan tilan mukaan",
+  "objectives.place": "Sijoita",
+  "objectives.placeTitle": "Valitun tyypin ja puolen hahmo ryhmän seuraavaan syntypisteeseen",
+  "objectives.placeAll": "Kaikki",
+  "objectives.placeAllTitle": "Hahmo ryhmän jokaiseen syntypisteeseen",
+  "objectives.placeHint": "Asettelun syntypisteet: sijoita valittu hahmo sinne",
+  "objectives.placeMore": "+{count} lisää"
 }

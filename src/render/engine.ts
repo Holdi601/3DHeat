@@ -2321,7 +2321,7 @@ export class Engine {
   }
 
   private frameObjectives(s: ReturnType<typeof snapshot>, sources: ObjectiveSource[], base: Float32Array | null, baseCount: number): { data: Float32Array | null; count: number } {
-    const d = this.dataset!;
+    const d = this.dataset;
     const level = s.level;
     const top = level?.kind === 'model' ? level.bounds.maxY + 50 : 1e5;
     const ray = { origin: { x: 0, y: top, z: 0 }, dir: { x: 0, y: -1, z: 0 } };
@@ -2335,12 +2335,12 @@ export class Engine {
     return this.objectiveDraw.build(
       {
         sources,
-        axes: d.axes ?? null,
+        axes: d?.axes ?? null,
         layers: useObjectivesStore.getState().layers,
         t: this.playhead,
         // A replay's team (1, 2) in the colour its units have; a source may name the team label a number stands for.
         teamColor: (team) => {
-          const i = d.teamLabels.indexOf((sources.length === 1 ? sources[0].ownerLabels?.[team] : undefined) ?? String(team));
+          const i = (d?.teamLabels ?? []).indexOf((sources.length === 1 ? sources[0].ownerLabels?.[team] : undefined) ?? String(team));
           // A level's layout on data without its team numbers: the first two team colours.
           if (i < 0 && sources.length === 1 && sources[0].world && team > 0) return teamMemberColor(team - 1, 0, 1);
           return i >= 0 ? teamMemberColor(i, 0, 1) : [0.86, 0.86, 0.82];
@@ -3199,8 +3199,9 @@ export class Engine {
       wantObjectives();
       if (objectiveSrc.length === 1 && !objectiveSrc[0].timeline) wantTimeline(objectiveSrc[0].match);
     }
-    // Without a battle's own objectives, the level's layout for the data's mode (`state/levelLayoutsStore.ts`).
-    if (!objectiveSrc.length && !raceTab && objectives.on) {
+    // Without a battle's own objectives, the level's layout for the data's mode (`state/levelLayoutsStore.ts`);
+    // on the tactics board too, as the plan's reference, with or without data.
+    if (!objectiveSrc.length && (!raceTab || boardTab) && objectives.on) {
       const layout = levelLayoutSource(s.level);
       if (layout) objectiveSrc = [layout];
     }
@@ -3917,7 +3918,8 @@ export class Engine {
     // under every rise of it, and a ring behind a hill was gone; now what the ground hides still shows.
     // Their filled shapes - zones' discs, edges and capture bands, spawns', markers' - are triangles made only
     // when a zone changes: on the ground with the figures in the replay, their edges over everything as well.
-    if (!objectiveSrc.length || raceBuilt) {
+    // The board draws the level's layout over its own scene; the race and vehicle tabs draw none.
+    if (!objectiveSrc.length || (raceBuilt && !boardTab)) {
       this.objectiveTop = null;
       this.objectiveTopTris = null;
     } else if (s.mode === 'team') {
@@ -4122,7 +4124,7 @@ export class Engine {
       topTris: this.objectiveTopTris?.data ?? null,
       groundTris: objGround?.data ?? null,
       objectiveZones:
-        !raceBuilt && objectiveSrc.length && this.objectiveDraw.zones
+        (!raceBuilt || boardTab) && objectiveSrc.length && this.objectiveDraw.zones
           ? { ...this.objectiveDraw.zones, ground: s.mode === 'team', xray: s.mode === 'team' ? OBJECTIVE_XRAY : 1 }
           : null,
       groundTriCount: objGround?.count ?? 0,

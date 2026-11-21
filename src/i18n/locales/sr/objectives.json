@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "Van granica",
   "objectives.layer.boundsTitle": "Šrafirano gde je tim van granica: unutar oblasti igre druge strane, a van svoje",
   "objectives.layout": "Raspored",
-  "objectives.layoutTitle": "Režim igre mape čiji se ciljevi, oblasti igre i mesta pojavljivanja crtaju; izabran prema režimu podataka"
+  "objectives.layoutTitle": "Režim igre mape čiji se ciljevi, oblasti igre i mesta pojavljivanja crtaju; izabran prema režimu podataka",
+  "objectives.place": "Постави",
+  "objectives.placeTitle": "Фигура изабране врсте и стране на следећу тачку појављивања ове групе",
+  "objectives.placeAll": "Све",
+  "objectives.placeAllTitle": "Фигура на сваку тачку појављивања ове групе",
+  "objectives.placeHint": "Тачке појављивања распореда: поставите тамо изабрану фигуру",
+  "objectives.placeMore": "+{count} још"
 }

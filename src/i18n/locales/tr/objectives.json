@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "Sınır dışı",
   "objectives.layer.boundsTitle": "Bir takımın sınır dışında olduğu yerler taralı: karşı tarafın oyun alanında ama kendi alanının dışında",
   "objectives.layout": "Düzen",
-  "objectives.layoutTitle": "Haritanın hedefleri, oyun alanları ve doğma noktaları çizilen oyun modu; verinin modundan seçilir"
+  "objectives.layoutTitle": "Haritanın hedefleri, oyun alanları ve doğma noktaları çizilen oyun modu; verinin modundan seçilir",
+  "objectives.place": "Yerleştir",
+  "objectives.placeTitle": "Seçilen tür ve taraftan bir figürü bu grubun sıradaki doğma noktasına koyar",
+  "objectives.placeAll": "Tümü",
+  "objectives.placeAllTitle": "Bu grubun her doğma noktasına bir figür",
+  "objectives.placeHint": "Düzenin doğma noktaları: seçilen figürü oraya yerleştirin",
+  "objectives.placeMore": "+{count} daha"
 }

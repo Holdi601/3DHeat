@@ -37,5 +37,11 @@
   "objectives.layer.bounds": "Barra mil-limiti",
   "objectives.layer.boundsTitle": "Immarkat fejn tim huwa barra mil-limiti: ġewwa ż-żona tal-logħob tan-naħa l-oħra imma barra minn tiegħu",
   "objectives.layout": "Tqassim",
-  "objectives.layoutTitle": "Il-mod tal-logħba tal-mappa li jinġibdu l-objettivi, iż-żoni tal-logħob u l-punti tad-dehra tiegħu; magħżul skont il-mod tad-data"
+  "objectives.layoutTitle": "Il-mod tal-logħba tal-mappa li jinġibdu l-objettivi, iż-żoni tal-logħob u l-punti tad-dehra tiegħu; magħżul skont il-mod tad-data",
+  "objectives.place": "Qiegħed",
+  "objectives.placeTitle": "Figura tat-tip u tan-naħa magħżula fil-punt li jmiss tat-tnissil ta' dan il-grupp",
+  "objectives.placeAll": "Kollha",
+  "objectives.placeAllTitle": "Figura f'kull punt tat-tnissil ta' dan il-grupp",
+  "objectives.placeHint": "Punti tat-tnissil tat-tqassim: qiegħed hemm il-figura magħżula",
+  "objectives.placeMore": "+{count} oħra"
 }

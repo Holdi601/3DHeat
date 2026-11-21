@@ -142,6 +142,11 @@ describe('DCS missions', () => {
     expect(p.figures.filter((f) => f.kind === 'forward-base').map((f) => f.label).sort()).toEqual(['Airfield 13', 'London']);
   });
 
+  it('names airbases from the theatre layouts where it has them', () => {
+    const m = readDcsMission(parseLuaAssignments(MISSION).mission as never, null, 'x.miz', new Map([[13, 'Krasnodar-Center']]));
+    expect(m.places.filter((p) => p.kind === 'airbase').map((p) => p.name)).toEqual(['Krasnodar-Center']);
+  });
+
   it('refuses what is not a mission', async () => {
     await expect(readMission('x.miz', zip({ other: '1' }))).rejects.toThrow(/no "mission"/);
     await expect(readMission('x.txt', new Uint8Array(4))).rejects.toThrow(/no mission reader/);
