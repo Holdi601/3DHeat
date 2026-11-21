@@ -18,6 +18,11 @@
  *            whatever it did: a dark soot star round a lighter centre,
  *            blackened in the middle where it got through
  *
+ * A mark on the far side of its unit from the eye (its surface faces away)
+ * still reads: a faint ring in its colour on the line of sight to it, brought
+ * out in front of the unit, so it shows over the unit where the mark is,
+ * hidden behind it, rather than nowhere.
+ *
  * A thin ring round each in the hit analysis' outcome colour
  * (`vehicle/scene.ts`), so this view and the Vehicles tab agree; the killing
  * shot's larger. Optionally a floating marker above the fresh hits as well,
@@ -44,7 +49,7 @@ import { drain, explosiveAmmo, hitsOfSteps, OUTCOMES, type HitSet, type VehicleH
 import { placesOf, placesSteps, type HitPlaces } from '../vehicle/places';
 import { figureOfVehicle, OUTCOME_COLOURS, templateOfFigure } from '../vehicle/scene';
 import { turretOf, type TurretBox } from './turret';
-import { fitScale, snapToFigure, SNAP_STRIDE } from './snap';
+import { fitScale, reachOf, snapToFigure, SNAP_STRIDE } from './snap';
 import { aimOf, aimSteps, type AimNow } from './aim';
 import { matchIndexSteps } from './match';
 import { bodyOf, FireBody } from '../data/fires';
@@ -71,6 +76,8 @@ const POP_S = 0.3;
 const FADE = 0.3;
 /** Outcomes up to this index in `OUTCOMES` got through (kill .. damage): an explosive round's blast has a hole. */
 const HOLE_OUTCOMES = OUTCOMES.indexOf('damage');
+/** A hidden mark's hint's opacity, times the mark's (see the top). */
+const GHOST = 0.45;
 /** A shot this far off the surface's normal or more glances off (cosine of 70 degrees). */
 const GLANCING = 0.34;
 
@@ -114,7 +121,9 @@ export interface HitMarks {
   /** The vehicle hit, an index into `vehicles`. */
   vehicle: Int32Array;
   /** Per vehicle hit: its figure, its marks, whether they are on the figure yet and whether that was asked for. */
-  vehicles: { figure: string; marks: number[]; done: boolean; asked: boolean }[];
+  vehicles: { figure: string; marks: number[]; done: boolean; asked: boolean; reach?: number }[];
+  /** The part each hit is known to have struck (`HitPart` in `snap.ts`: any, hull, turret); a game's part names map onto these. */
+  on?: Uint8Array;
   /** The units hit, and each one's marks in time order (`marks` from `start[i]` to `start[i + 1]`). */
   persons: Int32Array;
   start: Int32Array;
@@ -342,6 +351,8 @@ interface Placed {
   id: number;
   box: TurretBox | null;
   snapped: Float32Array | null;
+  /** The figure's box's diagonal, m. */
+  reach?: number;
   /** The answer to a scale's fit (`askScale`) instead. */
   scale?: number;
 }
@@ -360,7 +371,7 @@ function markWorker(): Worker | null {
           for (let v = 0; v < job.m.vehicles.length; v++) placeOnFigure(job.m, v);
           return;
         }
-        applyPlaced(job.m, job.v, e.data.box, e.data.snapped);
+        applyPlaced(job.m, job.v, e.data.box, e.data.snapped, e.data.reach);
       });
     } catch {
       worker = null;
@@ -390,11 +401,12 @@ function fitRequest(m: HitMarks): { figure: string; pts: Float32Array; dir: Floa
 }
 
 /** The points, turret yaws and shot ways of a vehicle's marks, for the snap. */
-function request(m: HitMarks, v: number): { pts: Float32Array; yaw: Float32Array; dir: Float32Array } {
+function request(m: HitMarks, v: number): { pts: Float32Array; yaw: Float32Array; dir: Float32Array; on: Uint8Array } {
   const list = m.vehicles[v].marks;
   const pts = new Float32Array(list.length * 3);
   const yaw = new Float32Array(list.length);
   const dir = new Float32Array(list.length * 3);
+  const on = new Uint8Array(list.length);
   for (let i = 0; i < list.length; i++) {
     const k = list[i];
     for (let a = 0; a < 3; a++) {
@@ -402,8 +414,9 @@ function request(m: HitMarks, v: number): { pts: Float32Array; yaw: Float32Array
       dir[i * 3 + a] = m.dir[k * 3 + a];
     }
     yaw[i] = m.yawHit[k];
+    on[i] = m.on ? m.on[k] : 0;
   }
-  return { pts, yaw, dir };
+  return { pts, yaw, dir, on };
 }
 
 /**
@@ -431,7 +444,7 @@ export function placeOnFigure(m: HitMarks, v: number): boolean {
       pending.set(id, { m, v });
       const r = request(m, v);
       const scale = scaleOf(m, v);
-      w.postMessage({ id, figure: veh.figure, ...r, scale }, [r.pts.buffer, r.yaw.buffer, r.dir.buffer]);
+      w.postMessage({ id, figure: veh.figure, ...r, scale }, [r.pts.buffer, r.yaw.buffer, r.dir.buffer, r.on.buffer]);
     }
     return false;
   }
@@ -444,7 +457,7 @@ export function placeOnFigure(m: HitMarks, v: number): boolean {
   }
   const t = templateOfFigure(veh.figure);
   const r = request(m, v);
-  applyPlaced(m, v, t ? turretOf(t) : null, t ? snapToFigure(t, r.pts, r.yaw, r.dir, scaleOf(m, v)) : null);
+  applyPlaced(m, v, t ? turretOf(t) : null, t ? snapToFigure(t, r.pts, r.yaw, r.dir, scaleOf(m, v), r.on) : null, t ? reachOf(t) : undefined);
   return true;
 }
 
@@ -455,9 +468,10 @@ function scaleOf(m: HitMarks, v: number): number {
 }
 
 /** A vehicle's marks as snapped (`snapToFigure`): the point, the normal, the turret, the look. */
-function applyPlaced(m: HitMarks, v: number, box: TurretBox | null, snapped: Float32Array | null): void {
+function applyPlaced(m: HitMarks, v: number, box: TurretBox | null, snapped: Float32Array | null, reach?: number): void {
   const veh = m.vehicles[v];
   veh.done = true;
+  veh.reach = reach;
   const scale = scaleOf(m, v);
   veh.marks.forEach((k, i) => {
     const o = i * SNAP_STRIDE;
@@ -717,6 +731,10 @@ export class HitMarkLayer {
       const nx = fx * na + ux * nb + rx * nc, ny = fy * na + uy * nb + ry * nc, nz = fz * na + uz * nb + rz * nc;
       const sx = fx * da + ux * db + rx * dc, sy = fy * da + uy * db + ry * dc, sz = fz * da + uz * db + rz * dc;
       shown = this.decal(m.look[k] as Look, x, y, z, nx, ny, nz, sx, sy, sz, hole, ps, col, kill, alpha, m.outcome[k] <= HOLE_OUTCOMES);
+      // Its surface turned away from the eye, the unit hides it: a faint ring over the unit on the line of sight to it.
+      const reach = (m.vehicles[m.vehicle[k]].reach ?? NaN) * scale;
+      const ex = v.eye[0] - x, ey = v.eye[1] - y, ez = v.eye[2] - z;
+      if (nx * ex + ny * ey + nz * ez < 0 && reach > 0) this.ghost(x, y, z, ex, ey, ez, reach, Math.max(shown, hole * 2.75), col, alpha);
     }
     if (float) shown = Math.max(shown, this.marker(x, y, z, v, scale, ps, age, kill, col, alpha));
     if (shown <= 0) return;
@@ -726,6 +744,38 @@ export class HitMarkLayer {
     this.drawn.xyz[i * 3 + 2] = this.cz;
     this.drawn.hit[i] = m.hit[k];
     this.drawn.radius[i] = shown;
+  }
+
+  /**
+   * A hidden mark's hint (see the top): a ring of the mark's own size on screen
+   * (`r` there, m) facing the eye, `reach` in front of the mark along the line
+   * of sight `e` (the eye less the mark): in front of the unit, so it shows
+   * where the mark is; nothing when the eye is that close.
+   */
+  private ghost(x: number, y: number, z: number, ex: number, ey: number, ez: number, reach: number, r: number, col: readonly number[], alpha: number): void {
+    const el = Math.hypot(ex, ey, ez);
+    if (!(el > reach * 1.5)) return;
+    const dx = ex / el, dy = ey / el, dz = ez / el;
+    // Nearer the eye by `reach`: smaller by as much, to cover what the mark would.
+    const k = (el - reach) / el;
+    const hl = Math.hypot(dx, dz);
+    const cx = this.cx, cy = this.cy, cz = this.cz;
+    this.bx = hl > 1e-6 ? dz / hl : 1;
+    this.by = 0;
+    this.bz = hl > 1e-6 ? -dx / hl : 0;
+    this.ux = dy * this.bz - dz * this.by;
+    this.uy = dz * this.bx - dx * this.bz;
+    this.uz = dx * this.by - dy * this.bx;
+    this.ex = dx;
+    this.ey = dy;
+    this.ez = dz;
+    this.cx = x + dx * reach;
+    this.cy = y + dy * reach;
+    this.cz = z + dz * reach;
+    this.ring(r * 0.8 * k, r * k, 0, col, GHOST * alpha);
+    this.cx = cx;
+    this.cy = cy;
+    this.cz = cz;
   }
 
   /**

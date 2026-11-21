@@ -7,7 +7,7 @@
 import { CATALOG, figurePackReady } from './catalog';
 import { loadPackFigures } from './figurepack';
 import type { Template } from './kit';
-import { fitScale, snapToFigure } from './snap';
+import { fitScale, reachOf, snapToFigure } from './snap';
 import { turretOf } from './turret';
 
 const built = new Map<string, Template | null>();
@@ -27,12 +27,14 @@ interface Ask {
   pts: Float32Array;
   yaw: Float32Array;
   dir: Float32Array;
+  /** Per point the part it struck (`HitPart`), where known. */
+  on?: Uint8Array;
   scale?: number;
   fit?: { figure: string; pts: Float32Array; dir: Float32Array }[];
 }
 
 self.onmessage = async (e: MessageEvent<Ask>) => {
-  const { id, figure, pts, yaw, dir, scale, fit } = e.data;
+  const { id, figure, pts, yaw, dir, on, scale, fit } = e.data;
   // The figures as the model worker draws them: a local figure pack's (`figurepack.ts`) when there is one.
   await figurePackReady;
   await loadPackFigures(fit ? fit.map((f) => f.figure) : [figure]);
@@ -51,14 +53,16 @@ self.onmessage = async (e: MessageEvent<Ask>) => {
   }
   let box = null;
   let snapped: Float32Array | null = null;
+  let reach: number | undefined;
   try {
     const t = figureOf(figure);
     if (t) {
       box = turretOf(t);
-      snapped = snapToFigure(t, pts, yaw, dir, scale ?? 1);
+      snapped = snapToFigure(t, pts, yaw, dir, scale ?? 1, on);
+      reach = reachOf(t);
     }
   } catch {
     // A figure that fails to build leaves its marks where the data says.
   }
-  (self as unknown as Worker).postMessage({ id, box, snapped }, snapped ? [snapped.buffer] : []);
+  (self as unknown as Worker).postMessage({ id, box, snapped, reach }, snapped ? [snapped.buffer] : []);
 };

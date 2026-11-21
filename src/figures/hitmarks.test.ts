@@ -5,7 +5,9 @@ import { explosiveAmmo, OUTCOMES, type Outcome } from '../vehicle/hits';
 import { OUTCOME_COLOURS } from '../vehicle/scene';
 import { finish, newKit } from './kit';
 import { HitMarkLayer, holeRadius, indexByUnit, lastAtOrBefore, Look, lookOf, type HitMarks, type MarkPose, type MarkView } from './hitmarks';
-import { fitScale, snapToFigure, SNAP_STRIDE } from './snap';
+import { fitScale, HitPart, snapToFigure, SNAP_STRIDE } from './snap';
+import { CATALOG } from './catalog';
+import { turretOf } from './turret';
 
 /** Marks on units standing at x = 10 * person, facing +x, on their roofs: [time, person, outcome, killing, session]. */
 function marks(list: [number, number, Outcome, boolean, number][]): HitMarks {
@@ -222,5 +224,48 @@ describe('hit marks', () => {
     expect(scale).toBeLessThan(0.65);
     // In the figure's metres already: left as they are.
     expect(fitScale([{ t, pts: Float32Array.from(pts, (v) => v / 1.6), dir: Float32Array.from(dir) }])).toBe(1);
+  });
+  it("puts a point inside a tank onto its outer surface, never under the turret, and onto the part it struck", () => {
+    for (const name of ['t-90m', 'leopard-2a5', 'm4a3-76w-sherman', 'tiger-ii-h', 'bf-109-g6', 'iowa']) {
+      if (!CATALOG[name]) continue;
+      const t = CATALOG[name].build();
+      const tb = turretOf(t);
+      // Points all through the figure's box, the shot's way not known: each goes to a surface one can see.
+      const pts: number[] = [];
+      for (let i = 0; i < 6; i++) for (let j = 0; j < 4; j++) for (let q = 0; q < 3; q++) pts.push(t.min[0] + ((i + 0.5) / 6) * (t.max[0] - t.min[0]), t.min[1] + ((j + 0.5) / 4) * (t.max[1] - t.min[1]), t.min[2] + ((q + 0.5) / 3) * (t.max[2] - t.min[2]));
+      const n = pts.length / 3;
+      // The turret as built at the hit (its yaw known), so each point says whether it went onto the turret.
+      const out = snapToFigure(t, Float32Array.from(pts), new Float32Array(n).fill(tb ? tb.rest : NaN), new Float32Array(n * 3).fill(NaN));
+      for (let i = 0; i < n; i++) {
+        const o = i * SNAP_STRIDE;
+        expect(Number.isFinite(out[o]), name).toBe(true);
+        // Nothing on the hull's roof under the turret: a point there would be covered by it.
+        if (tb && out[o + 6] === 0 && Math.hypot(out[o] - tb.px, out[o + 2] - tb.pz) < tb.reach * 0.5) expect(out[o + 1], `${name} point ${i}`).toBeLessThan(tb.min[1] - 0.05);
+      }
+      if (!tb) continue;
+      // Told it struck the turret, a point low on the hull's side goes onto the turret; told the hull, it stays there.
+      const p = Float32Array.of(tb.px, tb.min[1] - 0.4, t.max[2] - 0.1);
+      const yaw = Float32Array.of(tb.rest);
+      expect(snapToFigure(t, p, yaw, Float32Array.of(NaN, NaN, NaN), 1, Uint8Array.of(HitPart.Turret))[6], name).toBe(1);
+      expect(snapToFigure(t, p, yaw, Float32Array.of(NaN, NaN, NaN), 1, Uint8Array.of(HitPart.Hull))[6], name).toBe(0);
+    }
+  });
+
+  it('draws a faint ring over the unit where a mark on its far side is hidden', () => {
+    const m = marks([[1, 0, 'damage', false, -1]]);
+    m.vehicles[0].reach = 8;
+    // A mark on the unit's underside, the eye above it: its surface faces away.
+    m.normal[1] = -1;
+    const draw = (normalUp: number) => {
+      m.normal[1] = normalUp;
+      const out = new VertexBuffer();
+      new HitMarkLayer().build(m, view(1, Infinity), out);
+      // Vertices nearer the eye than the mark's point by more than the unit's reach / 2: the hint's.
+      let near = 0;
+      for (let i = 0; i < out.count; i++) if (out.data[i * 7 + 1] > 0.5 + 2) near++;
+      return near;
+    };
+    expect(draw(-1)).toBeGreaterThan(0);
+    expect(draw(1)).toBe(0);
   });
 });

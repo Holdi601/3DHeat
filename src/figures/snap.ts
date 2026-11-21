@@ -16,6 +16,15 @@
  * come back in the figure's frame with the turret at rest, to be turned as
  * the turret turns.
  *
+ * Only the figure's outer surface takes a mark: a triangle no line from
+ * outside reaches (the hull's roof under the turret, the turret's floor, a
+ * face inside another part) is never snapped to, so a point that lies inside
+ * the figure goes to the nearest surface one can see, not to one hidden under
+ * the turret.
+ *
+ * Where the data says which part was hit (`on`: the hull or the turret; a
+ * game's part names map onto these), only that part's surface is tried.
+ *
  * The points may come in another scale than the figure's metres (War
  * Thunder's ground hits as converted so far lie about 1.6 times too far out,
  * so nearly every point lay outside the figure and went to its nearest
@@ -29,6 +38,10 @@ import { turretOf } from './turret';
 
 /** Floats a snapped point takes: x, y, z, normal x, y, z, 1 on the turret else 0. */
 export const SNAP_STRIDE = 7;
+
+/** The part a hit is known to have struck (`snapToFigure`'s `on`): any, the hull (and what it carries), the turret (and its gun). */
+export const HitPart = { Any: 0, Hull: 1, Turret: 2 } as const;
+export type HitPart = (typeof HitPart)[keyof typeof HitPart];
 
 /** Which joints turn with the main turret: it and every joint carried on it. */
 function turretJoints(t: Template): Uint8Array | null {
@@ -54,9 +67,10 @@ function turretJoints(t: Template): Uint8Array | null {
  * Snaps `n` points (`pts`, x y z each, the figure's frame: forward, up,
  * right; times `scale`) onto the figure. `yaw` per point: the turret's yaw
  * at the hit (radians, NaN for none known); `dir` the way each shot
- * travelled (unit, NaN for not known).
+ * travelled (unit, NaN for not known); `on` per point the part it struck
+ * (`HitPart`), where the data says.
  */
-export function snapToFigure(t: Template, pts: Float32Array, yaw: Float32Array, dir: Float32Array, scale = 1): Float32Array {
+export function snapToFigure(t: Template, pts: Float32Array, yaw: Float32Array, dir: Float32Array, scale = 1, on?: Uint8Array): Float32Array {
   const n = yaw.length;
   const out = new Float32Array(n * SNAP_STRIDE).fill(NaN);
   const tb = turretOf(t);
@@ -70,6 +84,9 @@ export function snapToFigure(t: Template, pts: Float32Array, yaw: Float32Array, 
     // On the hull as it is; on the turret turned back to rest, where the turret's yaw then is known. Where it is
     // not, the turret stands as built, as the figure draws it then: any triangle.
     const turned = !!tb && g.turret && Number.isFinite(yaw[i]);
+    // The part the data names: only its surface is tried (none named, or no turret to name: any).
+    const want = on && g.turret ? on[i] : HitPart.Any;
+    const hull = want !== HitPart.Turret, top = want !== HitPart.Hull;
     // The point and the shot's way in the turret's frame at rest.
     let tx = px, tz = pz, tdx = dx, tdz = dz;
     if (turned) {
@@ -86,16 +103,18 @@ export function snapToFigure(t: Template, pts: Float32Array, yaw: Float32Array, 
     // Along the shot: from outside the figure towards the point, the first surface met.
     if (along) {
       const back = g.reach + Math.hypot(px - mx, py - my, pz - mz);
-      hit = ray(g, px - dx * back, py - dy * back, pz - dz * back, dx, dy, dz, turned ? 0 : -1);
-      if (turned) hit = better(hit, ray(g, tx - tdx * back, py - dy * back, tz - tdz * back, tdx, dy, tdz, 1));
+      const only = turned || want !== HitPart.Any;
+      if (hull || !only) hit = ray(g, px - dx * back, py - dy * back, pz - dz * back, dx, dy, dz, only ? 0 : -1);
+      if (only && top) hit = better(hit, ray(g, tx - tdx * back, py - dy * back, tz - tdz * back, tdx, dy, tdz, 1));
     }
     // The line misses the figure, or the shot's way is not known: the nearest surface.
     if (hit < 0) {
-      hit = nearest(g, px, py, pz, turned ? 0 : -1);
-      if (turned) hit = better(hit, nearest(g, tx, py, tz, 1));
+      const only = turned || want !== HitPart.Any;
+      if (hull || !only) hit = nearest(g, px, py, pz, only ? 0 : -1);
+      if (only && top) hit = better(hit, nearest(g, tx, py, tz, 1));
     }
     if (hit < 0) continue;
-    const onT = turned && g.part[hit] === 1;
+    const onT = (turned || want === HitPart.Turret) && g.part[hit] === 1;
     const sx = P[0], sy = P[1], sz = P[2];
     let nx = g.normal[hit * 3], ny = g.normal[hit * 3 + 1], nz = g.normal[hit * 3 + 2];
     // The normal faces against the shot where it is known (a shot strikes the side towards it), else outwards.
@@ -117,6 +136,11 @@ export function snapToFigure(t: Template, pts: Float32Array, yaw: Float32Array, 
     out[o + 6] = onTurret ? 1 : 0;
   }
   return out;
+}
+
+/** A figure's box's diagonal, m: a line this long towards the eye from any point on it ends in front of it. */
+export function reachOf(t: Template): number {
+  return Math.hypot(t.max[0] - t.min[0], t.max[1] - t.min[1], t.max[2] - t.min[2]);
 }
 
 /** The hull's find (`first`, its point in `KEEP`, distance in `KEPT`) or the turret's (`P`, `D`), whichever is nearer, into `P`. */
@@ -179,6 +203,8 @@ interface Grid {
   normal: Float32Array;
   /** 1 for a triangle on the turret (or what it carries). */
   part: Uint8Array;
+  /** 1 for a triangle on the figure's outer surface (`exposure`); the others take no mark. */
+  exposed: Uint8Array;
   turret: boolean;
   min: [number, number, number];
   cell: number;
@@ -240,9 +266,42 @@ function gridOf(t: Template): Grid {
   const items = new Int32Array(counts[cells]);
   const fill = counts.slice(0, cells);
   for (let i = 0; i < m; i++) each(i, (c) => (items[fill[c]++] = i));
-  const g: Grid = { tri, normal, part: Uint8Array.from(part), turret: part.some((p) => p === 1), min, cell, dims, start: counts, items, seen: new Int32Array(m), stamp: 0, reach: Math.hypot(t.max[0] - t.min[0], t.max[1] - t.min[1], t.max[2] - t.min[2]) + 1 };
+  const g: Grid = { tri, normal, part: Uint8Array.from(part), exposed: new Uint8Array(m).fill(1), turret: part.some((p) => p === 1), min, cell, dims, start: counts, items, seen: new Int32Array(m), stamp: 0, reach: Math.hypot(t.max[0] - t.min[0], t.max[1] - t.min[1], t.max[2] - t.min[2]) + 1 };
+  g.exposed = exposure(g, size);
   grids.set(t, g);
   return g;
+}
+
+/** Directions a triangle is looked at from, to see whether it can be seen at all: the six axes and the eight corners. */
+const LOOKS: number[][] = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1], ...[-1, 1].flatMap((x) => [-1, 1].flatMap((y) => [-1, 1].map((z) => [x, y, z].map((v) => v / Math.sqrt(3)))))];
+
+/**
+ * Which triangles lie on the figure's outer surface: those from whose middle a line leads out of the figure without
+ * meeting another triangle, along their normal (either way: a part may be wound inside out) or one of `LOOKS`. A
+ * triangle no such line leaves - the hull's roof under the turret, the turret's floor on it, a face inside another
+ * part - is hidden from every side. As the figure stands at rest: under a turret is under it whichever way it turns.
+ */
+function exposure(g: Grid, size: number): Uint8Array {
+  const n = g.part.length;
+  const out = new Uint8Array(n);
+  const eps = Math.max(1e-3, size * 2e-4);
+  const v = g.tri;
+  for (let i = 0; i < n; i++) {
+    const o = i * 9;
+    const cx = (v[o] + v[o + 3] + v[o + 6]) / 3, cy = (v[o + 1] + v[o + 4] + v[o + 7]) / 3, cz = (v[o + 2] + v[o + 5] + v[o + 8]) / 3;
+    const nx = g.normal[i * 3], ny = g.normal[i * 3 + 1], nz = g.normal[i * 3 + 2];
+    for (let k = -2; k < LOOKS.length; k++) {
+      const d = k === -2 ? [nx, ny, nz] : k === -1 ? [-nx, -ny, -nz] : LOOKS[k];
+      // Along the face's own plane a line would graze its neighbours.
+      if (Math.abs(d[0] * nx + d[1] * ny + d[2] * nz) < 0.2) continue;
+      if (ray(g, cx + d[0] * eps, cy + d[1] * eps, cz + d[2] * eps, d[0], d[1], d[2], -1, i) < 0) {
+        out[i] = 1;
+        break;
+      }
+    }
+  }
+  // A figure seen from nowhere (it should not be): every triangle takes marks, as before.
+  return out.some((x) => x) ? out : out.fill(1);
 }
 
 /** `nearest`'s distance, reused. */
@@ -273,7 +332,7 @@ function nearest(g: Grid, x: number, y: number, z: number, part: number): number
           const c = (ix * dims[1] + iy) * dims[2] + iz;
           for (let k = g.start[c]; k < g.start[c + 1]; k++) {
             const i = g.items[k];
-            if (g.seen[i] === stamp || (part >= 0 && g.part[i] !== part)) continue;
+            if (g.seen[i] === stamp || (part >= 0 && g.part[i] !== part) || !g.exposed[i]) continue;
             g.seen[i] = stamp;
             const o = i * 9, v = g.tri;
             closest(x, y, z, v[o], v[o + 1], v[o + 2], v[o + 3], v[o + 4], v[o + 5], v[o + 6], v[o + 7], v[o + 8]);
@@ -303,10 +362,12 @@ function nearest(g: Grid, x: number, y: number, z: number, part: number): number
  * The first triangle of part `part` (-1: any) a line from `o` along `d`
  * (unit) meets (its index, -1 for none), the point into `P` and how far
  * along into `D`: the grid's cells walked in the line's order (Amanatides
- * and Woo), each cell's triangles tested (Moeller and Trumbore). The
+ * and Woo), each cell's triangles tested (Moeller and Trumbore): only the
+ * outer surface's, or, with `skip` (a triangle looking out from itself),
+ * every one but that. The
  * previous answer is kept in `KEEP`, `KEPT` first.
  */
-function ray(g: Grid, ox: number, oy: number, oz: number, dx: number, dy: number, dz: number, part: number): number {
+function ray(g: Grid, ox: number, oy: number, oz: number, dx: number, dy: number, dz: number, part: number, skip = -1): number {
   keep();
   const stamp = ++g.stamp;
   const { dims, min, cell } = g;
@@ -338,7 +399,7 @@ function ray(g: Grid, ox: number, oy: number, oz: number, dx: number, dy: number
     const cc = (c[0] * dims[1] + c[1]) * dims[2] + c[2];
     for (let k = g.start[cc]; k < g.start[cc + 1]; k++) {
       const i = g.items[k];
-      if (g.seen[i] === stamp || (part >= 0 && g.part[i] !== part)) continue;
+      if (g.seen[i] === stamp || (part >= 0 && g.part[i] !== part) || i === skip || (skip < 0 && !g.exposed[i])) continue;
       g.seen[i] = stamp;
       const q = i * 9;
       const e1x = v[q + 3] - v[q], e1y = v[q + 4] - v[q + 1], e1z = v[q + 5] - v[q + 2];
