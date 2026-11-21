@@ -23,6 +23,10 @@ import { GRID_KINDS, SUMMARY_FORMAT, SUMMARY_VERSION, type MatchSummary, type Su
 import { maneuverRows } from './maneuvers';
 import { cqbRows } from './cqb';
 import { surfaceRows } from './marks';
+import { analyseOutcome, type OutcomeOptions, type OutcomeReport } from '../outcome/analyze';
+import type { OutcomeGroup, OutcomeMatch } from '../outcome/features';
+import { compactMoves, MOVES_VERSION } from '../outcome/types';
+import { outcomeMap } from '../outcome/view';
 
 export type MassQuery =
   | { kind: 'overview' }
@@ -42,7 +46,25 @@ export type MassRequest =
   | { type: 'grid'; id: number; filter: MassFilter; map: string; channel: Channel; level: number; team: string | null }
   | { type: 'insights'; id: number; filter: MassFilter; maps: number; stageB?: boolean }
   | { type: 'niche'; id: number; filter: MassFilter; table: string; target: NicheTarget; base: NicheCond[] }
-  | { type: 'drill'; id: number; filter: MassFilter; drill?: MassDrill; insight?: MassInsight };
+  | { type: 'drill'; id: number; filter: MassFilter; drill?: MassDrill; insight?: MassInsight }
+  /** The outcome analysis (`outcome/`) of the filter's matches; `compute` works out the moves of matches whose summaries lack them. */
+  | { type: 'outcome'; id: number; filter: MassFilter; options?: Partial<OutcomeOptions>; compute?: boolean; minMatches?: number }
+  | { type: 'outcomeCancel' }
+  /** A side's zones and routes coloured by win rate, for a window or a moment (slice) of the last outcome run. */
+  | { type: 'outcomeMap'; id: number; group: string; side: number; window?: number; slice?: number };
+
+/** What the outcome analysis hands back besides its report: what it could not read. */
+export interface OutcomeResult {
+  report: OutcomeReport;
+  /** Matches in the filter, those read, those without moves in their summaries (worked out with `compute`), in groups too small. */
+  matches: number;
+  read: number;
+  missing: number;
+  computed: number;
+  small: number;
+  /** Per group: its slices for the time slider, and the slice length. */
+  slices: Record<string, { slices: number; slice: number }>;
+}
 
 export interface MassFacets {
   matches: number;
@@ -67,7 +89,7 @@ export interface MassLoadStats {
 }
 
 export type MassResponse =
-  | { type: 'progress'; done: number; total: number; phase: 'index' | 'summaries' | 'grids' }
+  | { type: 'progress'; done: number; total: number; phase: 'index' | 'summaries' | 'grids' | 'outcome' | 'moves' }
   | { type: 'ready'; facets: MassFacets; stats: MassLoadStats }
   | { type: 'result'; id: number; data: unknown; ms: number }
   | { type: 'error'; id?: number; message: string };
@@ -223,8 +245,10 @@ async function open(list: { file: File; path: string }[], add: boolean): Promise
   stats.files = matchFiles.size;
   const gzOf = new Map<string, File>();
   for (const { file, path } of list) if (GRIDS.test(path)) gzOf.set(dir(path), file);
-  // 1. The folders' indexes: a line a match, taken when its file is here with the same size.
+  // 1. The folders' indexes: a line a match, taken when its file is here with the same size. Index files
+  // picked without any match (an index copied from where the matches are): every line, nothing to load.
   const indexes = list.filter((f) => INDEX.test(f.path));
+  const indexOnly = matchFiles.size === 0 && indexes.length > 0;
   let done = 0;
   for (const ix of indexes) {
     const base = dir(ix.path);
@@ -237,6 +261,14 @@ async function open(list: { file: File; path: string }[], add: boolean): Promise
       }
       const path = base + e.path;
       const f = matchFiles.get(path);
+      if (indexOnly) {
+        if (!valid(e.head) || known.has(path)) continue;
+        const gz = gzOf.get(base);
+        addMatch(path, null, e.head, gz ? { kind: 'index', gz, path: e.path } : { kind: 'none' });
+        stats.fromIndex++;
+        if (++done % 500 === 0) post({ type: 'progress', done, total: done, phase: 'index' });
+        continue;
+      }
       if (!f || f.size !== e.size || !valid(e.head)) continue;
       matchFiles.delete(path);
       const gz = gzOf.get(base);
@@ -414,6 +446,121 @@ function planFor(list: number[]) {
 }
 
 const filterKey = (f: MassFilter) => JSON.stringify(f);
+
+// ---------------------------------------------------------------------------
+// The outcome analysis
+
+let outcomeGroups = new Map<string, OutcomeGroup>();
+let outcomeCancel = false;
+/** Side-rounds a group needs before it is read at all (each arm of a test needs `minArm`). */
+const OUTCOME_MIN_ROUNDS = 50;
+
+async function outcomeRun(m: Extract<MassRequest, { type: 'outcome' }>): Promise<OutcomeResult> {
+  outcomeCancel = false;
+  const mask = store.matchMask(m.filter);
+  // Groups: a map, mode and mission each; small ones are not read.
+  const byKey = new Map<string, number[]>();
+  for (let i = 0; i < mask.length; i++) {
+    if (!mask[i]) continue;
+    const key = [store.str(store.m.map.get(i)), store.str(store.m.mode.get(i)), store.str(store.m.mission.get(i))].filter(Boolean).join(' · ') || '-';
+    let l = byKey.get(key);
+    if (!l) byKey.set(key, (l = []));
+    l.push(i);
+  }
+  const rounds = (i: number) => Math.max(1, (store.outcome[i]?.r.length ?? 3) / 3);
+  const minRounds = Math.max(OUTCOME_MIN_ROUNDS, m.minMatches ?? 0);
+  const keys = [...byKey].filter(([, l]) => l.reduce((a, i) => a + rounds(i), 0) >= minRounds).map(([k]) => k);
+  const small = [...byKey].filter(([k]) => !keys.includes(k)).reduce((a, [, l]) => a + l.length, 0);
+  const groupOf = new Map<number, string>();
+  for (const k of keys) for (const i of byKey.get(k)!) groupOf.set(i, k);
+  const want = [...groupOf.keys()];
+  const got = new Map<string, OutcomeMatch[]>(keys.map((k) => [k, []]));
+  const grounds = new Map<string, number>();
+  const missing = new Set<number>();
+  const readSet = new Set<number>();
+  const take = (i: number, g: SummaryGrid) => {
+    const key = groupOf.get(i)!;
+    if (!g.mv || !(g.mv.v >= MOVES_VERSION)) {
+      missing.add(i);
+      return;
+    }
+    // The ground's heights from a few matches of each group: enough to draw on.
+    const ng = grounds.get(key) ?? 0;
+    grounds.set(key, ng + 1);
+    const started = store.m.started.get(i);
+    got.get(key)!.push({
+      i, started: Number.isFinite(started) ? started * 1000 : null, teams: teamsOf(i), mv: compactMoves(g.mv),
+      ground: ng < 20 ? { cell: g.cell, ix: g.ix, iz: g.iz, y: g.y, p: g.p } : null,
+    });
+    missing.delete(i);
+    readSet.add(i);
+  };
+  let seen = 0;
+  await streamGrids(want, (i, g) => {
+    if (outcomeCancel) throw new Error('cancelled');
+    take(i, g);
+    if (++seen % 100 === 0) post({ type: 'progress', done: seen, total: want.length, phase: 'grids' });
+  }, false);
+  // Matches whose grid could not be read at all count as missing too.
+  for (const i of want) if (!readSet.has(i)) missing.add(i);
+  let computed = 0;
+  if (m.compute && missing.size) {
+    const list = [...missing];
+    const threads = Math.max(1, Math.min(6, (navigator.hardwareConcurrency || 4) - 2));
+    const pool = new Pool(threads);
+    let next = 0;
+    let done = 0;
+    const work = async () => {
+      for (;;) {
+        if (outcomeCancel) return;
+        const k = next++;
+        if (k >= list.length) return;
+        const i = list[k];
+        const file = files[i];
+        if (!file) continue;
+        const path = store.paths[store.m.source.get(i)] ?? file.name;
+        try {
+          const r = await pool.run({ file, path });
+          if (r.ok && r.summary?.grid) {
+            const key = cacheKey(path, file);
+            const { grid, ...head } = r.summary;
+            // Cached as any summary worked out here, so the next run reads it.
+            if (await idbPut('grids', key, grid)) {
+              await idbPut('heads', key, head);
+              grids[i] = { kind: 'idb', key };
+            } else {
+              memoryGrids.set(i, grid);
+              grids[i] = { kind: 'memory' };
+            }
+            take(i, grid);
+            computed++;
+          }
+        } catch {
+          // left out
+        }
+        post({ type: 'progress', done: ++done, total: list.length, phase: 'moves' });
+      }
+    };
+    try {
+      await Promise.all(Array.from({ length: threads }, work));
+    } finally {
+      pool.close();
+    }
+    if (outcomeCancel) throw new Error('cancelled');
+  }
+  const input = keys.map((key) => ({ key, matches: got.get(key)! })).filter((x) => x.matches.length);
+  got.clear();
+  const { report, groups } = await analyseOutcome(input, m.options ?? {}, {
+    progress: (done, total) => post({ type: 'progress', done, total, phase: 'outcome' }),
+    cancelled: () => outcomeCancel,
+    // A task boundary between groups: a cancel gets in.
+    yieldEvery: () => new Promise((r) => setTimeout(r, 0)),
+  });
+  outcomeGroups = new Map(groups.map((g) => [g.key, g]));
+  const slices: OutcomeResult['slices'] = {};
+  for (const g of groups) slices[g.key] = { slices: g.slices, slice: g.slice };
+  return { report, matches: mask.reduce((a, v) => a + v, 0), read: readSet.size, missing: missing.size, computed, small, slices };
+}
 /** Files handed over before an `open`, a slice a message. */
 let incoming: { file: File; path: string }[] = [];
 
@@ -511,6 +658,19 @@ ctx.onmessage = async (ev: MessageEvent<MassRequest>) => {
       }
       const t = nicheTables.tables.find((x) => x.name === m.table) ?? nicheTables.tables[0];
       return post({ type: 'result', id: m.id, data: nicheChildren(t, m.target, m.base, store.matches), ms: performance.now() - t0 });
+    }
+    if (m.type === 'outcomeCancel') {
+      outcomeCancel = true;
+      return;
+    }
+    if (m.type === 'outcome') {
+      const data = await outcomeRun(m);
+      return post({ type: 'result', id: m.id, data, ms: performance.now() - t0 });
+    }
+    if (m.type === 'outcomeMap') {
+      const g = outcomeGroups.get(m.group);
+      const data = g ? outcomeMap(g, m.side, { window: m.window, slice: m.slice }) : null;
+      return post({ type: 'result', id: m.id, data, ms: performance.now() - t0 });
     }
     if (m.type === 'drill') {
       const list = m.insight ? insightMatches(store, m.filter, m.insight) : drillMatches(store, store.matchMask(m.filter), m.drill ?? {});

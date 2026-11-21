@@ -43,6 +43,8 @@ import { session } from '../../session/client';
 import { useMarks } from '../../session/marks';
 import { downloadSession } from '../../session/sessionFile';
 import { rankOf, useSessionStore } from '../../session/store';
+import { useMass } from '../../mass/client';
+import { runOutcome } from '../../mass/outcomeClient';
 
 export { score } from './match';
 
@@ -330,6 +332,21 @@ export function buildCommands(engine: Engine | null): Command[] {
       for (const v of order) action(`chart.add.${v.id}`, t('charts.cmd.add', { name: v.name }), () => addChartTo(v.id), undefined, 'chart diagram sign graph bar volume');
     const hidden = useSignStore.getState().hidden;
     if (useSignStore.getState().signs.length) action('chart.toggle', hidden ? t('charts.cmd.show') : t('charts.cmd.hide'), () => useSignStore.getState().setHidden(!hidden), undefined, 'chart diagram sign');
+  }
+  // The outcome analysis: once the mass analysis has matches.
+  if (useMass.getState().facets) {
+    const toOutcome = () => useMass.getState().set({ open: true, tab: 'outcome' });
+    action('outcome.open', t('outcome.cmd.open'), toOutcome, undefined, t('outcome.cmd.words'));
+    action(
+      'outcome.run',
+      t('outcome.cmd.run'),
+      () => {
+        toOutcome();
+        void runOutcome(engine);
+      },
+      undefined,
+      t('outcome.cmd.words'),
+    );
   }
   action('noteHere', t('shell.cmd.noteHere'), () => noteHere(engine), keysOf('noteHere'), t('shell.cmd.noteWords'));
   action('newAnalysis', t('shell.cmd.newAnalysis'), () => newAnalysis(), undefined, t('shell.cmd.analysisWords'));

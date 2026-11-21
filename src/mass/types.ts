@@ -16,6 +16,7 @@ import type { ManeuverSection } from '../insights/maneuver/summary';
 import type { BehaviourMetrics } from '../insights/behaviour/types';
 import type { CqbCounts } from '../insights/cqb/finish';
 import type { MarkCounts } from './marks';
+import type { MovesSection } from '../outcome/types';
 
 /** The member's `format` and its version: a reader takes its own major, a newer one is worked out again. */
 export const SUMMARY_FORMAT = '3dheat-summary';
@@ -189,6 +190,11 @@ export interface SummaryGrid {
    * phases (fractions of its length) are minutes over `duration`.
    */
   ts: { cell: number; minute: number; v: number[] };
+  /**
+   * Where each side was, when (`outcome/types.ts`): every life's path, the deaths, the objectives' captures,
+   * for the outcome analysis. Absent in summaries written before it (the analysis works those out again).
+   */
+  mv?: MovesSection;
 }
 
 export interface MatchSummary {

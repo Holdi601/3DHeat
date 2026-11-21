@@ -25,6 +25,7 @@ import { analyseMatch } from '../insights/maneuver/analyse';
 import { ManeuverCollector } from '../insights/maneuver/collect';
 import { CqbCollector } from '../insights/cqb/summary';
 import { MarkCollector } from './marks';
+import { MovesCollector, type ObjectiveEvent } from '../outcome/collect';
 import { maneuverSection } from '../insights/maneuver/summary';
 import { BehaviourTap, tapColumns, type TapColumns } from '../insights/behaviour/summaryTap';
 import type { EvKind, ManeuverMatch, MatchTracks } from '../insights/maneuver/types';
@@ -40,6 +41,28 @@ export interface SummaryInfo {
   by?: string;
   /** Handed the match's movement analysis in full (the summary keeps only its counts). */
   onManeuvers?: (m: ManeuverMatch | null, tracks: MatchTracks | undefined) => void;
+  /** The objectives' captures (the container's `objectives` table, `objectivesOf`), for the outcome analysis. */
+  objectives?: ObjectiveEvent[] | null;
+}
+
+/**
+ * The captures of a converter's objectives table (`<match>.objectives.parquet`,
+ * role `objectives`: `time`, `event`, `zone`, `owner`, `x`, `y`, `z`): the
+ * rows saying a zone was taken or neutralised. Empty for anything else.
+ */
+export async function objectivesOf(file: AsyncBuffer): Promise<ObjectiveEvent[]> {
+  const md = await parquetMetadataAsync(file);
+  const have = new Set(leafColumns(md));
+  if (!['time', 'event', 'zone', 'owner'].every((c) => have.has(c))) return [];
+  const rows = (await parquetReadObjects({ file, metadata: md, columns: ['time', 'event', 'zone', 'owner', 'x', 'y', 'z'].filter((c) => have.has(c)), compressors: COMPRESSORS })) as Record<string, unknown>[];
+  const out: ObjectiveEvent[] = [];
+  for (const r of rows) {
+    const ev = text(r.event).trim().toLowerCase();
+    if (ev !== 'captured' && ev !== 'neutralised' && ev !== 'neutralized') continue;
+    const owner = ev === 'captured' ? text(r.owner).trim() : '';
+    out.push({ t: num(r.time), zone: text(r.zone).trim(), owner: owner === '0' ? '' : owner, x: num(r.x), y: num(r.y), z: num(r.z) });
+  }
+  return out;
 }
 
 /** The canonical events the movement analysis reads (`insights/maneuver`). */
@@ -318,6 +341,8 @@ export class SummaryBuilder {
   private readonly cqb: CqbCollector | null;
   /** Marks on the level per surface (`marks.ts`), where the data has them. */
   private readonly marks: MarkCollector | null;
+  /** Where each side was, when, for the outcome analysis (`outcome/collect.ts`). */
+  private readonly moves = new MovesCollector();
   // The round outcome: rounds by their column's value, each side's result in each, unit-rounds,
   // the rounds each side was in each cell (`(cell * SLOTS + slot) * MAX_ROUNDS + round` -> seconds).
   private readonly roundOf = new Map<number, number>();
@@ -752,6 +777,7 @@ export class SummaryBuilder {
         this.mv.sample(uIdx, -1, u.team < MAX_TEAMS ? u.team : -1, u.veh >= 0 ? this.vehCls[u.veh] : -1, t, x, Y[i], z);
         if (bRound) this.bh.round(uIdx, sideOf(uIdx), num(bRound[i]), t, bEquip ? num(bEquip[i]) : NaN, bClock ? num(bClock[i]) : NaN);
         this.bh.pos(uIdx, sideOf(uIdx), t, x, z);
+        if (u.team < MAX_TEAMS) this.moves.pos(uIdx, u.team, u.veh >= 0 ? this.vehCls[u.veh] : -1, u.actor === 1 ? u.player : '', ri, t, x, z, placeCol ? text(placeCol[i]).trim() : '');
         const dt = t - u.lastT;
         if (dt > 0 && dt <= PRESENCE_GAP) {
           u.presence += dt;
@@ -806,6 +832,7 @@ export class SummaryBuilder {
       if (DEATHS.has(kName) && u) {
         if (t - u.lastDeath < DEATH_TWICE) continue;
         u.lastDeath = t;
+        if (placed && u.team < MAX_TEAMS) this.moves.death(ri, t, x, z, u.team);
       }
       this.events[kind]++;
       const mk = MV_KIND[kName];
@@ -858,6 +885,25 @@ export class SummaryBuilder {
           }
         }
       }
+    }
+  }
+
+  /**
+   * The objectives' captures where the match records them (a converter's
+   * `objectives` table: War Thunder's capture zones), in the table's own
+   * axes and team names; after the rows.
+   */
+  objectives(list: ObjectiveEvent[]): void {
+    const a = this.spec.axes;
+    const sc0 = a.scale || 1;
+    for (const e of list) {
+      const t = e.t * this.spec.timeScale;
+      if (!Number.isFinite(t)) continue;
+      const x = e.x * (a.flipX ? -1 : 1) * sc0;
+      // The ground's second axis: z, or y where the data's up is z.
+      const z = a.up === 'z' ? e.y * (a.flipY ? -1 : 1) * sc0 : e.z * (a.flipZ ? -1 : 1) * sc0;
+      const slot = e.owner ? (this.teamOf.get(e.owner) ?? -1) : -1;
+      this.moves.objective(-1, t, e.zone, slot, x, z);
     }
   }
 
@@ -953,6 +999,8 @@ export class SummaryBuilder {
       grid.pw = [];
       for (const [key, [w, l]] of [...pw].sort((a, b) => a[0] - b[0])) grid.pw.push(Math.floor(key / SLOTS), key % SLOTS, w, l);
     }
+    const mv = this.moves.finish({ cell: this.cell, roundNo: this.roundNo, result: (ri, s) => this.roundResult(ri, s), slotOut, teams: T });
+    if (mv) grid.mv = mv;
     for (const [k, v] of sorted(this.cts)) {
       const kind = k % SK;
       const minute = Math.floor(k / SK) % MINUTE_BINS;
@@ -1307,6 +1355,7 @@ export async function summarizeTable(file: AsyncBuffer, info: SummaryInfo, metad
     }
     start += rgRows;
   }
+  if (info.objectives?.length) b.objectives(info.objectives);
   return b.finish();
 }
 

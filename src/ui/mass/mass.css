@@ -154,3 +154,45 @@
   white-space: normal;
   min-width: 340px;
 }
+
+/* Outcome tab (MassOutcome.tsx): one pattern a row, its colour chip the diverging key's. */
+.outcome-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.outcome-row {
+  padding: 6px 8px;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-md);
+  line-height: 1.35;
+}
+
+.outcome-row.on {
+  border-color: var(--accent);
+}
+
+.outcome-chip {
+  flex: none;
+  display: inline-block;
+  min-width: 16px;
+  padding: 0 3px;
+  border-radius: 4px;
+  color: var(--bg);
+  font-weight: var(--fw-bold);
+  text-align: center;
+}
+
+.outcome-badge {
+  padding: 0 6px;
+  border-radius: 3px;
+  border: 1px solid var(--line-strong);
+  color: var(--text-dim);
+  font-size: var(--fs-xs);
+  white-space: nowrap;
+}
+
+.outcome-ex {
+  font-size: var(--fs-xs);
+}

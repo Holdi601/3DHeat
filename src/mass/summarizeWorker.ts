@@ -6,7 +6,8 @@
  */
 
 import { openContainer, isContainer } from '../data/container';
-import { summarizeTable } from './summarize';
+import { objectivesOf, summarizeTable } from './summarize';
+import type { ObjectiveEvent } from '../outcome/collect';
 import type { MatchSummary } from './types';
 
 export type SummarizeRequest = { id: number; file: File; path: string };
@@ -23,6 +24,7 @@ ctx.onmessage = async (ev: MessageEvent<SummarizeRequest>) => {
     let table: File | null = file;
     let manifest = null;
     let doc: Record<string, unknown> | null = null;
+    let objectives: ObjectiveEvent[] | null = null;
     const stem = path.slice(path.lastIndexOf('/') + 1).replace(/\.(3dheat|parquet)$/i, '');
     if (isContainer(file.name)) {
       const c = await openContainer(file);
@@ -33,9 +35,15 @@ ctx.onmessage = async (ev: MessageEvent<SummarizeRequest>) => {
       } catch {
         doc = null;
       }
+      try {
+        const o = await c.member('objectives');
+        if (o) objectives = await objectivesOf(asyncBuffer(o));
+      } catch {
+        objectives = null;
+      }
     }
     if (!table) throw new Error('no table');
-    const summary = await summarizeTable(asyncBuffer(table), { id: manifest?.match ?? stem, manifest, doc, by: 'viewer' });
+    const summary = await summarizeTable(asyncBuffer(table), { id: manifest?.match ?? stem, manifest, doc, objectives, by: 'viewer' });
     ctx.postMessage({ id, ok: true, summary, ms: performance.now() - t0 } satisfies SummarizeResponse);
   } catch (e) {
     ctx.postMessage({ id, ok: false, error: e instanceof Error ? e.message : String(e) } satisfies SummarizeResponse);

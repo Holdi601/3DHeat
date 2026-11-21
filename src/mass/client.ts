@@ -18,7 +18,7 @@ import { placeLines, usePlaceLines } from './placeLines';
 import type { MassFacets, MassLoadStats, MassRequest, MassResponse } from './massWorker';
 import type { MassDrill, MassFilter } from './store';
 
-export type MassTab = 'overview' | 'balance' | 'trends' | 'players' | 'sides' | 'maneuvers' | 'cqb' | 'surfaces' | 'map' | 'insights' | 'places' | 'niches';
+export type MassTab = 'overview' | 'balance' | 'trends' | 'players' | 'sides' | 'maneuvers' | 'cqb' | 'surfaces' | 'map' | 'insights' | 'places' | 'niches' | 'outcome';
 
 export interface MassState {
   open: boolean;
@@ -169,6 +169,11 @@ export function askMass<T>(req: DistributiveOmit<Extract<MassRequest, { id: numb
 }
 
 type DistributiveOmit<T, K extends keyof T> = T extends unknown ? Omit<T, K> : never;
+
+/** A message the worker answers with nothing (a cancel). */
+export function postMass(req: Exclude<MassRequest, { id: number }>): void {
+  ensure().postMessage(req);
+}
 
 /** A category column of the loaded dataset holding the value: a vehicle's name column, say. */
 function columnWith(value: string, prefer: RegExp): string | null {

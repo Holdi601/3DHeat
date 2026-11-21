@@ -12,6 +12,7 @@ import { NichesTab, PlacesTab, sayMass } from './MassPlaces';
 import { MassManeuvers } from './MassManeuvers';
 import { MassCqb } from './MassCqb';
 import { MassSurfaces } from './MassSurfaces';
+import { MassOutcome } from './MassOutcome';
 import { SortControl, SortTh } from '../sort/SortControl';
 import { useSort, useSorted, type SortOption } from '../sort/useSort';
 import '../compare/compare.css';
@@ -93,7 +94,7 @@ function MassBody() {
   const setFilter = (p: Partial<typeof filter>) => st.set({ filter: { ...filter, ...p } });
   const one = (l?: string[]) => l?.[0] ?? '';
   const maps = f.maps.filter((m) => !filter.games?.length || filter.games.includes(m.game));
-  const tabs: MassTab[] = ['overview', 'balance', 'trends', 'players', 'sides', 'maneuvers', 'cqb', 'surfaces', 'map', 'insights', 'places', 'niches'];
+  const tabs: MassTab[] = ['overview', 'balance', 'trends', 'players', 'sides', 'maneuvers', 'cqb', 'surfaces', 'map', 'insights', 'places', 'niches', 'outcome'];
   // The window's frame first, its date fields and tab a frame later: one frame for all of it ran long.
   const [ready, setReady] = useState(false);
   useEffect(() => {
@@ -146,7 +147,7 @@ function MassBody() {
             </label>
           </>
         )}
-        <Segmented<MassTab> value={st.tab} options={tabs.map((v) => ({ value: v, label: v === 'maneuvers' ? t('maneuver.tab') : t(`mass.tab.${v}`) }))} onChange={(tab) => st.set({ tab })} />
+        <Segmented<MassTab> value={st.tab} options={tabs.map((v) => ({ value: v, label: v === 'maneuvers' ? t('maneuver.tab') : v === 'outcome' ? t('outcome.tab') : t(`mass.tab.${v}`) }))} onChange={(tab) => st.set({ tab })} />
         <span className="cmp-status">
           {st.drilling ? t('mass.drilling') : st.progress ? t(`mass.phase.${st.progress.phase}`, { done: st.progress.done, total: st.progress.total }) : ''}
         </span>
@@ -168,6 +169,7 @@ function MassBody() {
           {st.tab === 'insights' && <InsightsTab />}
           {st.tab === 'places' && <PlacesTab />}
           {st.tab === 'niches' && <NichesTab />}
+          {st.tab === 'outcome' && <MassOutcome />}
         </div>
       </div>
     </div>

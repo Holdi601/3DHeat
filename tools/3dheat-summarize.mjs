@@ -13,11 +13,15 @@
  * (same size and time as the file), else the container's member, else works
  * the summary out itself.
  *
- *   node tools/3dheat-summarize.mjs <folder>... [--jobs N] [--force] [--no-write] [--no-index] [--limit N] [--settle MIN]
+ *   node tools/3dheat-summarize.mjs <folder>... [--jobs N] [--force] [--moves] [--no-write] [--no-index] [--index-dir DIR] [--limit N] [--settle MIN]
  *
  * A file changed in the last `--settle` minutes (10 by default) is left out:
  * a converter may still be writing it.
- * --no-write leaves the containers as they are (the index only). Meant to run
+ * --no-write leaves the containers as they are (the index only). --moves works
+ * out again a summary without the outcome analysis' moves (`grid.mv`, current
+ * version). --index-dir writes the index files into DIR (a folder of its own
+ * per folder named, by its base name, when there are several) instead of
+ * beside the matches; the paths in them stay relative to the folder. Meant to run
  * on the machine that holds the files, at low priority:
  * `nice -n 19 ionice -c3 node tools/3dheat-summarize.mjs ...`.
  */
@@ -44,7 +48,8 @@ async function workerMain() {
   const load = async (p) => (await runnerImport(path.join(ROOT, p), { root: ROOT, logLevel: 'silent', configFile: false })).module;
   const S = await load('src/mass/summarize.ts');
   const T = await load('src/mass/types.ts');
-  const { write, force, tmp } = workerData;
+  const O = await load('src/outcome/types.ts');
+  const { write, force, moves, tmp } = workerData;
   parentPort.on('message', async ({ job, file }) => {
     const t0 = performance.now();
     let c = null;
@@ -54,7 +59,8 @@ async function workerMain() {
       const have = m.members.find((x) => x.role === T.SUMMARY_ROLE);
       if (have && !force) {
         const s = JSON.parse((await c.read(have.name)).toString('utf8'));
-        if (s?.format === T.SUMMARY_FORMAT && s.version === T.SUMMARY_VERSION) {
+        const movesOk = !moves || !s?.grid || (s.grid.mv && s.grid.mv.v >= O.MOVES_VERSION);
+        if (s?.format === T.SUMMARY_FORMAT && s.version === T.SUMMARY_VERSION && movesOk) {
           await c.close();
           c = null;
           parentPort.postMessage({ ok: true, job, summary: s, cached: true, ms: performance.now() - t0 });
@@ -85,8 +91,20 @@ async function workerMain() {
             doc = null;
           }
         }
+        // The objectives' captures (War Thunder's capture zones), for the outcome analysis.
+        let objectives = null;
+        const objMember = m.members.find((x) => x.role === 'objectives');
+        if (objMember) {
+          try {
+            const b = await c.read(objMember.name);
+            const ab = b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength);
+            objectives = await S.objectivesOf({ byteLength: ab.byteLength, slice: async (s0, e0) => ab.slice(s0, e0 ?? ab.byteLength) });
+          } catch {
+            objectives = null;
+          }
+        }
         const stem = path.basename(file).replace(/\.3dheat$/i, '');
-        summary = await S.summarizeTable(buf, { id: m.match ?? stem, manifest: m, doc, by: 'tools/3dheat-summarize.mjs' });
+        summary = await S.summarizeTable(buf, { id: m.match ?? stem, manifest: m, doc, objectives, by: 'tools/3dheat-summarize.mjs' });
         doc = null;
       } finally {
         await fh.close();
@@ -150,10 +168,11 @@ async function cli() {
     return i < 0 ? undefined : args[i + 1];
   };
   const has = (k) => args.includes(k);
-  const folders = args.filter((a, i) => !a.startsWith('--') && !['--jobs', '--limit', '--settle'].includes(args[i - 1]));
+  const folders = args.filter((a, i) => !a.startsWith('--') && !['--jobs', '--limit', '--settle', '--index-dir'].includes(args[i - 1]));
+  const indexDir = flag('--index-dir');
   const settleMs = Number(flag('--settle') ?? 10) * 60_000;
   if (!folders.length) {
-    console.error('usage: node tools/3dheat-summarize.mjs <folder>... [--jobs N] [--force] [--no-write] [--no-index] [--limit N]');
+    console.error('usage: node tools/3dheat-summarize.mjs <folder>... [--jobs N] [--force] [--moves] [--no-write] [--no-index] [--index-dir DIR] [--limit N]');
     process.exit(2);
   }
   const jobs = Math.max(1, Number(flag('--jobs') ?? Math.max(1, Math.min(4, os.cpus().length - 1))));
@@ -164,7 +183,7 @@ async function cli() {
   const workers = await Promise.all(
     Array.from({ length: jobs }, () =>
       new Promise((resolve, reject) => {
-        const w = new Worker(SELF, { workerData: { write, force: has('--force'), tmp }, resourceLimits: { maxOldGenerationSizeMb: 6144 } });
+        const w = new Worker(SELF, { workerData: { write, force: has('--force'), moves: has('--moves'), tmp }, resourceLimits: { maxOldGenerationSizeMb: 6144 } });
         w.once('message', () => resolve(w));
         w.once('error', reject);
       }),
@@ -176,8 +195,13 @@ async function cli() {
     const files = walk(folder)
       .filter((f) => now - fs.statSync(f).mtimeMs >= settleMs)
       .slice(0, limit);
-    const index = has('--no-index') ? null : gzLines(path.join(folder, INDEX));
-    const grids = has('--no-index') ? null : gzLines(path.join(folder, GRIDS));
+    let into = folder;
+    if (indexDir) {
+      into = folders.length > 1 ? path.join(indexDir, path.basename(path.resolve(folder))) : indexDir;
+      fs.mkdirSync(into, { recursive: true });
+    }
+    const index = has('--no-index') ? null : gzLines(path.join(into, INDEX));
+    const grids = has('--no-index') ? null : gzLines(path.join(into, GRIDS));
     let next = 0;
     let done = 0;
     const tick = Date.now();

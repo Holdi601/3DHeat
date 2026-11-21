@@ -70,6 +70,7 @@ Pick a folder (or files; **Add folder...** joins another). The window has the fi
 | Map | a map's summed grid: presence, kills, deaths, K/D, any event, flow, and **hot in how many matches** (stability); by team, at 1, 2, 4 or 8 times the cell |
 | Places | places that stand out in the numbers but not in the heat (a large area busy as a whole, corridors, height bands), and places whose holders win more or fewer of their rounds; **Find places** |
 | Niches | groups doing markedly better or worse than the rest (a vehicle on one map, a sector at one height), and groups of rounds won beyond what their side won in the same matches; **Find niches** |
+| Outcome | what goes with winning per map and side: zones held in each part of the round, opening routes, first blood, fights, keeping together, pushing out, falling back, objectives, line-up; win rate with and without each, drawn in the view ([Outcome analysis](outcome-analysis.md)) |
 | Insights | the mass detectors and the map detectors (below); **Copy report (JSON)** gives the JSON a language model reads |
 
 ## Insights over many matches
@@ -84,6 +85,8 @@ Where the matches say who won each round (the `won` [outcome column](data-format
 - **Niches: round win.** The **Rounds** table holds every life's round: the map, the side, the part of the match (rounds 1-4, 5-8, ...), the vehicle (an operator, an agent), the weapon it used most, the place it held longest, the buy (eco, force, full) and whether its side made the first kill. A group is judged against what its side won in the same matches, so *T on Dust with an AWP* is a niche only when those rounds were won more often than T's other rounds in those matches. A made-up example: *"m1 · T · AWP: wins 80% of 320 rounds, against 62% expected from the same sides in the same matches (odds 2.3x; 40 matches)."* Ranked by the lift times the support; **Load** loads the matches whose rounds show it most.
 
 Both need summaries of version 2 (see [Getting the summaries](#getting-the-summaries)): older ones are worked out again.
+
+The **Outcome** tab goes further: which zones held, routes taken, fights, objectives and line-ups go with winning on each map and side, allowed for player strength and the score at the time. See [Outcome analysis](outcome-analysis.md).
 
 The **Insights** tab finds, over all matches, vehicles that trade or win better or worse than the rest, places hot in a steady share of matches, sides that win more than an even split, vehicles whose use moves over the dates, and parts of the match that hold more kills than an even spread. Each finding carries its counts, effect, interval and a false discovery rate (held to 5%), and a click loads its matches. Details: [For developers](#for-developers).
 
@@ -143,7 +146,10 @@ Plain JSON (`src/mass/types.ts`), about 5-30 KB deflated a match:
   herding, lanes, crowding, leaders, stragglers, breaking point, risk after
   losses, streaks, buy agreement, suppression), each with its own null model,
   p and q - see [Collective behaviour](collective-behaviour.md);
-- the grid (below).
+- the grid (below), with the moves (`grid.mv`): every life's path a point
+  every few seconds, the deaths and the objectives' captures, for the
+  [outcome analysis](outcome-analysis.md); about 10-30 KB a match before
+  deflating, absent in summaries made before it (`--moves` works them out).
 
 Counted as the viewer counts: columns found as the many-match loader finds
 them (`leanSpec`), events by `data/canonical.ts`; a kill a Tacview weapon
