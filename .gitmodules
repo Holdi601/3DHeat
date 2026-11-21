@@ -61,3 +61,6 @@
 [submodule "exporters/ext/r6-maps"]
 	path = exporters/ext/r6-maps
 	url = https://github.com/Holdi601/3DHeat-Ext-R6-Maps.git
+[submodule "exporters/ext/arma3-maps"]
+	path = exporters/ext/arma3-maps
+	url = https://github.com/Holdi601/3DHeat-Ext-Arma3.git

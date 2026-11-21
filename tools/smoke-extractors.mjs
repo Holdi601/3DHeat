@@ -209,7 +209,7 @@ try {
     const s = await openPanel(plain);
     await s.getByText('Get the extractors').waitFor({ timeout: WAIT });
     const links = await s.locator('a[href^="https://github.com/Holdi601/"][href$="/releases/latest"]').count();
-    expect(links === 20, `${links} links`);
+    expect(links === 21, `${links} links`);
     await plain.close();
   });
 } finally {

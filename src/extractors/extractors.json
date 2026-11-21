@@ -73,6 +73,16 @@
       "sums": "SHA256SUMS"
     },
     {
+      "id": "heat3d-arma3",
+      "name": "Arma 3",
+      "games": ["Arma 3"],
+      "what": "Terrains from your own install into 3D levels: ground, sea, roads, buildings, towns and airfields, and the vehicle catalogue",
+      "repo": "Holdi601/3DHeat-Ext-Arma3",
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz"},
+      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}"},
+      "sums": "SHA256SUMS"
+    },
+    {
       "id": "heat3d-dota-maps",
       "name": "Dota 2 map",
       "games": ["Dota 2"],
