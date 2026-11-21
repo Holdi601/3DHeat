@@ -310,9 +310,12 @@ impl Manager {
                 }
             }
             let ended = tokio::time::timeout(Duration::from_secs(30), child.wait()).await;
+            m.inner.lock().unwrap().cancels.remove(&id);
+            // The counts after the extract, taken before it is said to be over: whoever follows the
+            // extract (the panel) reads the new counts with its end.
+            m.map_status(&id, true).await;
             {
                 let mut inner = m.inner.lock().unwrap();
-                inner.cancels.remove(&id);
                 if let Some(x) = inner.extracts.get_mut(&id) {
                     x.running = false;
                     if cancelled {
@@ -326,8 +329,6 @@ impl Manager {
                     }
                 }
             }
-            // The counts after the extract.
-            m.map_status(&id, true).await;
         });
         Ok(())
     }
