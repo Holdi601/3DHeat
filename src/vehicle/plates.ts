@@ -295,3 +295,26 @@ export function paintPlates(list: Plate[], counts: PlateCount[], ramp: (t: numbe
   }
   return ranges;
 }
+
+/**
+ * A point struck on a turned turret (its gun raised) back where the model holds it at rest: turned back about the
+ * turret's vertical by the yaw, then lowered about the trunnion by the elevation (radians, right and up positive) -
+ * so a hit on the turret lies on its plate whichever way the turret faced. `part` is the plate's (`turret`, `gun`).
+ */
+export function atRest(p: Vec3, part: string, yaw: number, pitch: number, turret: Vec3 | null, gun: Vec3 | null): Vec3 {
+  let [x, y, z] = p;
+  const base = part.split('.')[0];
+  if ((base === 'turret' || base === 'gun') && turret && Number.isFinite(yaw)) {
+    const c = Math.cos(-yaw), s = Math.sin(-yaw);
+    const dx = x - turret[0], dz = z - turret[2];
+    x = turret[0] + dx * c - dz * s;
+    z = turret[2] + dx * s + dz * c;
+  }
+  if (base === 'gun' && gun && Number.isFinite(pitch)) {
+    const c = Math.cos(-pitch), s = Math.sin(-pitch);
+    const dx = x - gun[0], dy = y - gun[1];
+    x = gun[0] + dx * c - dy * s;
+    y = gun[1] + dx * s + dy * c;
+  }
+  return [x, y, z];
+}

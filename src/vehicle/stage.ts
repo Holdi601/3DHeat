@@ -16,7 +16,10 @@ import { templateOfFigure, VehicleScene, type VehicleFrame } from './scene';
 import { offsetFor, shiftHits } from './fit';
 import type { Vec3 } from '../race/geometry';
 import { vehicleView } from './view';
-import { namesOf, packUnitOf, plateAt, plateCounts, platesOf, platesOfHits, platesVersion, type Plate, type PlateCount } from './plates';
+import { atRest, namesOf, packUnitOf, plateAt, plateCounts, platesOf, platesOfHits, platesVersion, type Plate, type PlateCount } from './plates';
+import { aimOf, type AimNow } from '../figures/aim';
+import { placesOf } from './places';
+import type { VehicleHit } from './hits';
 
 /** What the plate view shows now (the stage's last build), for the overlay's card: the unit's plates and their hits. */
 export interface PlateView {
@@ -45,6 +48,8 @@ export class VehicleStage {
   private plateKey: unknown[] = [];
   private plateAtHit: Map<number, number> = new Map();
   private plateCounts: PlateCount[] = [];
+  /** Hits on turret and gun plates, their points turned back to the turret's rest (`restPoints`). */
+  private atRest = new Map<number, Vec3>();
   private hoverAt: { x: number; y: number } | null = null;
   private hoverT = 0;
 
@@ -72,7 +77,10 @@ export class VehicleStage {
       const names = namesOf(unit.game);
       const key = [list, view.all, names, view.hits, platesVersion()];
       if (!same(key, this.plateKey)) {
-        if (this.plateKey[0] !== list || this.plateKey[1] !== view.all || this.plateKey[2] !== names) this.plateAtHit = platesOfHits(view.all, list, names);
+        if (this.plateKey[0] !== list || this.plateKey[1] !== view.all || this.plateKey[2] !== names) {
+          this.plateAtHit = platesOfHits(view.all, list, names);
+          this.atRest = d && view.set ? restPoints(d, view.set, view.all, list, this.plateAtHit, view.figure!) : new Map();
+        }
         this.plateCounts = plateCounts(view.hits, list, this.plateAtHit);
         this.plateKey = key;
       }
@@ -83,7 +91,7 @@ export class VehicleStage {
     return this.scene.build({
       plates,
       figure: view.figure ?? '',
-      hits: shiftHits(view.hits, this.offset),
+      hits: shiftHits(plates && this.atRest.size ? view.hits.map((h) => (this.atRest.has(h.id) ? { ...h, local: this.atRest.get(h.id)! } : h)) : view.hits, this.offset),
       look: { radius: s.radius, exposure: s.exposure, showPoints: s.showPoints, showHeat: s.showHeat, showArrows: s.showArrows, colourBy: s.colourBy },
       lut: this.lut,
       lutKey: this.lutKey,
@@ -204,4 +212,29 @@ export class VehicleStage {
 
 function same(a: unknown[], b: unknown[]): boolean {
   return a.length === b.length && a.every((x, i) => x === b[i]);
+}
+
+/**
+ * The hits on turret and gun plates with their points where the model holds those plates at rest: the victim's turret
+ * yaw and gun elevation at the hit (`aim.ts`, from its row then) turned back about the figure's turret and trunnion.
+ */
+function restPoints(d: Dataset, set: NonNullable<ReturnType<typeof vehicleView>['set']>, hits: VehicleHit[], list: Plate[], at: Map<number, number>, figure: string): Map<number, Vec3> {
+  const out = new Map<number, Vec3>();
+  const aim = aimOf(d);
+  const t = templateOfFigure(figure);
+  const turret = t?.joints?.find((j) => j.kind === 'yaw' && j.parent < 0)?.pivot ?? null;
+  const gun = t?.joints?.find((j) => j.kind === 'pitch')?.pivot ?? null;
+  if (!aim || !turret) return out;
+  const places = placesOf(d, set);
+  const now: AimNow = { yaw: NaN, pitch: NaN };
+  for (const h of hits) {
+    const i = at.get(h.id) ?? -1;
+    if (i < 0 || !h.local || !/^(turret|gun)/.test(list[i].part)) continue;
+    const row = places.rows[h.id * 2] ?? -1;
+    if (row < 0) continue;
+    aim.at(row, h.time, now);
+    if (!Number.isFinite(now.yaw)) continue;
+    out.set(h.id, atRest(h.local, list[i].part, now.yaw, now.pitch, turret as Vec3, gun as Vec3 | null));
+  }
+  return out;
 }
