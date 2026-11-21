@@ -11,7 +11,13 @@
  * a wrong password, the origin check, and that everyone ends with the same
  * state.
  *
- *   node tools/smoke-session.mjs [clients=6]
+ *   node tools/smoke-session.mjs [clients=6] [--proxy]
+ *
+ * With `--proxy` the members join through a reverse proxy on this machine
+ * (tools/proxy-chain.mjs: each member its own client address), as a public
+ * session's would; the host stays on the server itself. The server trusts
+ * only that proxy, allows 3 members per address (the default), and must
+ * tell each member by the address the proxy names.
  *
  * Needs the dev server (APP, default http://127.0.0.1:5275/) and the server
  * binary (HEAT3D_SERVE_BIN, default the release build in
@@ -21,17 +27,24 @@
 import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
-import { existsSync, mkdtempSync, rmSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { request } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join as joinPath } from 'node:path';
+import { startProxy } from './proxy-chain.mjs';
 
-const N = Math.max(2, Math.min(20, Number(process.argv[2] ?? process.env.CLIENTS ?? 6)));
+const ARGS = process.argv.slice(2).filter((a) => !a.startsWith('--'));
+const PROXY = process.argv.includes('--proxy') || process.env.SMOKE_PROXY === '1';
+const N = Math.max(2, Math.min(20, Number(ARGS[0] ?? process.env.CLIENTS ?? 6)));
 const APP = process.env.APP ?? 'http://127.0.0.1:5275/';
 const BIN = process.env.HEAT3D_SERVE_BIN ?? ['E:/cargo-targets/3dheat/release/3dheat.exe', 'E:/cargo-targets/3dheat/debug/3dheat.exe'].find(existsSync);
 if (!BIN) throw new Error('no 3dheat binary: cargo build -p heat3d-server in native/, or set HEAT3D_SERVE_BIN');
 const PORT = Number(process.env.SESSION_PORT ?? 7900 + Math.floor(Math.random() * 90));
 const SERVER = `http://127.0.0.1:${PORT}`;
+const PROXY_PORT = Number(process.env.PROXY_PORT ?? PORT + 1);
+let nextClient = 10;
+/** Where a viewer reaches the session: the server itself, or the proxy at a loopback address of its own (one client each). */
+const serverFor = (label) => (PROXY && label !== 'host' ? `http://127.0.0.${nextClient++}:${PROXY_PORT}` : SERVER);
 const TOKEN = randomBytes(32).toString('hex');
 const PASSWORD = 'smoke test password 1234';
 const state = mkdtempSync(joinPath(tmpdir(), 'heat3d-session-smoke-'));
@@ -48,7 +61,9 @@ const server = spawn(
   BIN,
   [
     'serve', '--plain-http', '--port', String(PORT), '--test-cost', '--host-token', TOKEN, '--password-env', 'HEAT3D_SMOKE_PW',
-    '--allow-origin', new URL(APP).origin, '--max-clients', '64', '--max-per-addr', '64', '--state-dir', state, '--name', 'Smoke',
+    '--allow-origin', new URL(APP).origin, '--max-clients', '64', '--state-dir', state, '--name', 'Smoke',
+    // Through the proxy each member is its own address: the default of 3 per address must hold for them.
+    ...(PROXY ? ['--trusted-proxy', '127.0.0.1', '--max-per-addr', '3'] : ['--max-per-addr', '64']),
   ],
   { env: { ...process.env, HEAT3D_SMOKE_PW: PASSWORD }, stdio: ['ignore', 'pipe', 'pipe'] },
 );
@@ -80,12 +95,23 @@ check('assets need a member token', unauth.status === 401, `status ${unauth.stat
 const loadNoToken = await fetch(`${SERVER}/api/load`, { method: 'POST', body: '{}' });
 check('session load needs the host token', loadNoToken.status === 401);
 
+// ------------------------------------------------------------ the proxy
+const proxy = PROXY ? await startProxy({ upstream: SERVER, port: PROXY_PORT, hosts: Array.from({ length: N + 8 }, (_, i) => `127.0.0.${10 + i}`) }) : null;
+if (PROXY) {
+  const via = `http://127.0.0.${10 + N + 7}:${PROXY_PORT}`;
+  const pinfo = await (await fetch(`${via}/session.json`)).json();
+  check('the proxy reaches the server, which says it is public', pinfo.app === '3dheat' && pinfo.exposed === true, `exposed ${pinfo.exposed}`);
+  const blocked = await Promise.all(['/api/docs', '/api/load', '/__heat3d/public'].map(async (p) => (await fetch(`${via}${p}`, { method: p === '/api/load' ? 'POST' : 'GET' })).status));
+  check("the proxy keeps the host's own endpoints off the public door", blocked.every((c) => c === 403), blocked.join(','));
+}
+
 // ------------------------------------------------------------ the viewers
 const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
 const errors = [];
 const missing = new Set();
 const pages = [];
 async function open(label, hash = '') {
+  const server = serverFor(label);
   const ctx = await browser.newContext({ viewport: { width: 640, height: 400 } });
   const page = await ctx.newPage();
   // This machine's own figure and model packs are not part of the test (the routes answer 404 without them).
@@ -95,10 +121,10 @@ async function open(label, hash = '') {
   page.on('console', (m) => {
     if (m.type() === 'error' && !/WebSocket connection to .* failed/.test(m.text())) errors.push(`${label}: ${m.text()}`);
   });
-  await page.goto(`${APP}?backend=webgl2&session=${encodeURIComponent(SERVER)}${hash}`, { waitUntil: 'commit', timeout: 180_000 });
+  await page.goto(`${APP}?backend=webgl2&session=${encodeURIComponent(server)}${hash}`, { waitUntil: 'commit', timeout: 180_000 });
   // A cold dev server on a busy machine takes minutes for the first page.
   await page.waitForFunction(() => !!window.__heat3dSession?.marks && !!window.__3dheat_engine, null, { timeout: 600_000 });
-  const v = { label, page, ctx };
+  const v = { label, page, ctx, server };
   pages.push(v);
   return v;
 }
@@ -114,7 +140,7 @@ async function until(v, pred, ms = 8000) {
   }
   return last;
 }
-const join = (v, name, password = PASSWORD) => S(v, ({ url, name, password }) => window.__heat3dSession.client.join({ url, name, password }), { url: SERVER, name, password });
+const join = (v, name, password = PASSWORD) => S(v, ({ url, name, password }) => window.__heat3dSession.client.join({ url, name, password }), { url: v.server, name, password });
 
 const host = await open('host', `#host=${TOKEN}`);
 let hs = await until(host, (s) => s.state === 'joined');
@@ -348,9 +374,21 @@ check('every member ends with the same marks', same.length === 0, same.join(',')
   check('opening the session file restores the shared layers for everyone', gone && back, `gone ${gone}, on the server ${serverHas}, back ${back}`);
 }
 
+if (PROXY) {
+  // The server told every member by the address the proxy named, the host by its own.
+  const log = readFileSync(joinPath(state, 'audit.log'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
+  const placed = log.filter((e) => (e.event === 'waiting' || e.event === 'join') && e.addr);
+  const members = placed.filter((e) => e.via !== 'host_token');
+  const named = new Set(members.map((e) => e.addr));
+  const viaProxy = members.length > 0 && members.every((e) => /^198\.18\.0\.\d+$/.test(e.addr)) && named.size >= N - 1;
+  const hostDirect = placed.some((e) => e.via === 'host_token' && e.addr === '127.0.0.1');
+  check('each member is known by the address the proxy named', viaProxy && hostDirect, `${named.size} member addresses; ${[...named].slice(0, 4).join(' ')}`);
+}
+
 check('no page errors', errors.length === 0, [...errors.slice(0, 3), ...missing].join(' | '));
 
 await browser.close();
+await proxy?.close();
 server.kill();
 rmSync(state, { recursive: true, force: true });
 const failed = results.filter((r) => !r.ok);

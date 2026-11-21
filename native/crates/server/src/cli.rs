@@ -5,7 +5,9 @@
 //! `3dheat-app --host ...` beside the window).
 
 use heat3d_session::auth::Cost;
-use heat3d_session::server::{start, GatewayCommand, ServeConfig};
+use heat3d_session::proxy::{Net, TrustedProxies};
+use heat3d_session::server::{start, GatewayCommand, ServeConfig, ShareConfig};
+use heat3d_session::share::Blocklist;
 use heat3d_session::tls::{local_ips, TlsMode};
 use std::net::{IpAddr, SocketAddr};
 use std::path::PathBuf;
@@ -41,6 +43,13 @@ OPTIONS:
                            locked-down process (for debugging; not with --expose-internet)
     --expose-internet      EXPERT: answer addresses outside the local network (needs TLS).
                            Use a strong password, invite links and the waiting room.
+    --trusted-proxy ADDR   A reverse proxy (address or network) whose X-Forwarded-For /
+                           X-Real-IP name the client (repeatable); nobody else's are believed
+    --trust-cloudflared    Believe CF-Connecting-IP from cloudflared on this machine (a tunnel
+                           you run yourself; the server's own tunnel does this by itself)
+    --local-config FILE    This machine's settings for going public and sharing (default:
+                           local.json in the state folder; never put it in a repository)
+    --catalog DIR          The catalogue folder items may be shared from (default: HEAT3D_LEVELS)
 ";
 
 pub const HELP: &str = USAGE;
@@ -147,6 +156,10 @@ pub async fn serve(rest: Vec<String>, core: Arc<Core>, default_web: Option<PathB
     let mut web: Option<PathBuf> = None;
     let mut plain = false;
     let mut no_sandbox = false;
+    let mut trusted: Vec<Net> = Vec::new();
+    let mut trust_cloudflared = false;
+    let mut local_config: Option<PathBuf> = None;
+    let mut catalog: Option<PathBuf> = None;
     let (mut cert, mut key) = (None, None);
     let mut cfg = ServeConfig::new("0.0.0.0:7878".parse().unwrap(), state_dir());
     let mut i = 0;
@@ -220,6 +233,14 @@ pub async fn serve(rest: Vec<String>, core: Arc<Core>, default_web: Option<PathB
                 cfg.host_token = Some(t.to_lowercase());
             }
             "--expose-internet" => cfg.expose = true,
+            "--trusted-proxy" => trusted.push(
+                val(&mut i, "--trusted-proxy")
+                    .parse()
+                    .unwrap_or_else(|e: String| fail(&format!("--trusted-proxy: {e}"))),
+            ),
+            "--trust-cloudflared" => trust_cloudflared = true,
+            "--local-config" => local_config = Some(PathBuf::from(val(&mut i, "--local-config"))),
+            "--catalog" => catalog = Some(PathBuf::from(val(&mut i, "--catalog"))),
             // Tests only: a cheap password hash.
             "--test-cost" => cfg.session.cost = Cost::TEST,
             "-h" | "--help" => {
@@ -245,6 +266,21 @@ pub async fn serve(rest: Vec<String>, core: Arc<Core>, default_web: Option<PathB
     });
     cfg.bind = SocketAddr::new(ip, port);
     cfg.web_root = web.or(default_web).or_else(web_root);
+    // This machine's own settings: the proxy it trusts, how it goes public, what it may share.
+    let local = crate::public::LocalConfig::load(local_config.as_deref(), &cfg.state_dir).unwrap_or_else(|e| fail(&e));
+    trusted.extend(local.trusted_proxies.iter().copied());
+    cfg.proxies = TrustedProxies { proxies: trusted, cloudflared: trust_cloudflared };
+    let share = local.share.clone().unwrap_or_default();
+    let catalog = catalog
+        .or(share.catalog.clone())
+        .or_else(|| std::env::var_os("HEAT3D_LEVELS").map(PathBuf::from))
+        .filter(|d| d.is_dir());
+    cfg.share = catalog.map(|root| ShareConfig { root, blocklist: Blocklist::new(&share.blocked, &share.blocked_words) });
+    let cert_file = match &cfg.tls {
+        TlsMode::SelfSigned(dir) => Some(dir.join("cert.pem")),
+        TlsMode::Files { cert, .. } => Some(cert.clone()),
+        TlsMode::Off => None,
+    };
     // The native core's data API beside the session: a member's browser reads the
     // host's data through it, with the member's token (the gateway checks it) and a
     // member's rights only: never files by path. The owner's key is one nobody is told.
@@ -267,6 +303,19 @@ pub async fn serve(rest: Vec<String>, core: Arc<Core>, default_web: Option<PathB
     if !no_sandbox {
         cfg.gateway = Some(GatewayCommand::this_program().unwrap_or_else(|e| fail(&e)));
     }
+    // Going public: the host's browser asks (`/__heat3d/public`, the host's token only).
+    let public = crate::public::Public::new(
+        local.clone(),
+        crate::public::ServerFacts {
+            port,
+            bind: ip,
+            tls: !matches!(cfg.tls, TlsMode::Off),
+            expose: cfg.expose,
+            cert_file,
+            base: cfg.proxies.clone(),
+        },
+    );
+    cfg.host_mount.push((crate::public::PUBLIC_ROUTE.into(), public.router()));
     if cfg.web_root.is_none() {
         eprintln!("3dheat: no web build found (run `npm run build`, then pass --web dist); serving the session only");
     }
@@ -282,6 +331,7 @@ pub async fn serve(rest: Vec<String>, core: Arc<Core>, default_web: Option<PathB
         Ok(r) => r,
         Err(e) => fail(&e),
     };
+    public.attach(running.control());
     let host = if ip.is_unspecified() {
         "127.0.0.1".to_string()
     } else {
@@ -323,8 +373,24 @@ pub async fn serve(rest: Vec<String>, core: Arc<Core>, default_web: Option<PathB
     if cfg.password.is_none() {
         println!("  No password: everyone waits in the waiting room until you let them in, or joins by an invite link.");
     }
-    tokio::select! {
-        r = running.wait() => if let Err(e) = r { eprintln!("3dheat: {e}"); std::process::exit(1); },
-        _ = tokio::signal::ctrl_c() => { println!("stopping"); }
+    if cfg.proxies.any() {
+        let names: Vec<String> = cfg.proxies.proxies.iter().map(|n| n.to_string()).collect();
+        println!(
+            "  Client addresses believed from: {}{}",
+            names.join(", "),
+            if cfg.proxies.cloudflared { " cloudflared (loopback)" } else { "" }
+        );
+    }
+    if cfg.share.is_some() {
+        println!("  Sharing: catalogue items the host confirms (session panel); confidential ones are blocked");
+    }
+    let code = tokio::select! {
+        r = running.wait() => match r { Err(e) => { eprintln!("3dheat: {e}"); 1 } Ok(()) => 0 },
+        _ = tokio::signal::ctrl_c() => { println!("stopping"); 0 }
+    };
+    // Nothing stays public after the server: the proxy or tunnel ends with it.
+    public.shut().await;
+    if code != 0 {
+        std::process::exit(code);
     }
 }

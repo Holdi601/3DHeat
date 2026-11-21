@@ -158,6 +158,20 @@ impl PerIp {
         })
     }
 
+    /// A new connection from a trusted proxy (many clients behind one
+    /// address): it counts against the total only.
+    pub fn connect_shared(&self) -> Option<Slot> {
+        use std::sync::atomic::Ordering;
+        if self.total.fetch_add(1, Ordering::AcqRel) >= self.limits.conns {
+            self.total.fetch_sub(1, Ordering::AcqRel);
+            return None;
+        }
+        Some(Slot {
+            conns: Default::default(),
+            total: self.total.clone(),
+        })
+    }
+
     /// Whether `ip` may make another HTTP request now.
     pub fn request(&self, ip: std::net::IpAddr, now_ms: i64) -> bool {
         self.with(ip, now_ms, |s| s.requests.take(1.0, now_ms).is_ok())

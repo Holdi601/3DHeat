@@ -17,6 +17,8 @@ import { useEngine } from '../EngineContext';
 import { Icon } from '../shell/Icon';
 import { confirmDialog, toast } from '../shell/kit';
 import { serverHint, defaultServer, urlIntent } from './sessionUrl';
+import { GoPublic, ShareAssets, SharedByHost } from './PublicSection';
+import { usePublic } from '../../session/public';
 
 const roleLabel = (r: SessionRole) => t(`session.role.${r}`);
 
@@ -332,9 +334,11 @@ function Invites() {
   const [uses, setUses] = useState(1);
   const [hours, setHours] = useState(24);
   const [label, setLabel] = useState('');
+  // While the session is public, invite links point at its public address.
+  const pub = usePublic((s) => (s.status?.phase === 'on' ? s.status.url : null));
   if (rankOf(role) < rankOf('admin')) return null;
   const grantable = ROLES.filter((r) => r !== 'host' && (role === 'host' ? true : rankOf(r) < rankOf('admin')));
-  const link = last?.token ? `${location.origin}${location.pathname}#invite=${last.token}` : '';
+  const link = last?.token ? `${pub ? `${pub.replace(/\/+$/, '')}/` : `${location.origin}${location.pathname}`}#invite=${last.token}` : '';
   return (
     <section className="session-sec">
       <h3>{t('session.invite.title')}</h3>
@@ -698,9 +702,12 @@ export function SessionPanel() {
             <LookHere />
             <MarkTools />
             <HostData />
+            <SharedByHost />
             <Invites />
             <Bans />
+            <GoPublic />
             <HostSettings />
+            <ShareAssets />
             <SessionFiles />
           </>
         )}

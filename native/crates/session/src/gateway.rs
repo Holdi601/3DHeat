@@ -40,6 +40,7 @@ use crate::auth;
 use crate::ipc::Mux;
 use crate::lan;
 use crate::limits::PerIp;
+use crate::proxy::{TrustedProxies, Via};
 use crate::proto::{self, client_msg, server_msg, ClientMsg, CloseReason, Dataset, ServerMsg};
 use crate::session::{Config, ConnId, Out, Session, Target};
 
@@ -124,6 +125,9 @@ pub struct GatewayConfig {
     #[serde(default)]
     pub host_mounts: Vec<String>,
     pub limits: NetLimits,
+    /// Reverse proxies and tunnels trusted to name the client (`proxy.rs`).
+    #[serde(default)]
+    pub proxies: TrustedProxies,
 }
 
 /// The way to what needs the user's rights: the core's router in this
@@ -217,6 +221,8 @@ pub struct Gateway {
     /// Every connection being served, for making room (`admit`).
     live: Mutex<HashMap<u64, Arc<Live>>>,
     next_live: AtomicU64,
+    /// Who may name the client (changes while the server runs: the tunnel starts and stops).
+    proxies: std::sync::RwLock<TrustedProxies>,
 }
 
 /// Where a connection is: what decides whether it may be ended to make room.
@@ -304,10 +310,19 @@ impl Gateway {
             refused: Refusals::default(),
             live: Mutex::new(HashMap::new()),
             next_live: AtomicU64::new(1),
+            proxies: std::sync::RwLock::new(TrustedProxies::default()),
         });
+        gw.set_proxies(gw.cfg.proxies.clone());
         *gw.router.lock().unwrap() = Some(router(gw.clone()));
         gw.clone().ticker();
         Ok(gw)
+    }
+
+    /// Whom to believe about clients' addresses from now on. A session
+    /// reached through a proxy or tunnel says it is exposed to the internet.
+    pub fn set_proxies(&self, p: TrustedProxies) {
+        self.session.lock().unwrap().cfg.exposed = self.cfg.expose || p.any();
+        *self.proxies.write().unwrap() = p;
     }
 
     /// The HTTP side, as served on every connection (tests and the fuzzer call it directly).
@@ -421,7 +436,11 @@ impl Gateway {
             // Not this machine and not the local network: not even a TLS handshake.
             return;
         }
-        let Some(slot) = self.limits.connect(peer.ip()) else {
+        // A trusted proxy's connections carry many clients: they count against the total only; each
+        // request's client is then held to the per-address limits (`serve_http`, `guard`, the session).
+        let shared = self.proxies.read().unwrap().trusts(peer.ip());
+        let slot = if shared { self.limits.connect_shared() } else { self.limits.connect(peer.ip()) };
+        let Some(slot) = slot else {
             self.refused.conns.fetch_add(1, Ordering::Relaxed);
             return;
         };
@@ -498,7 +517,10 @@ where
     IO: AsyncRead + AsyncWrite + Unpin + Send + 'static,
 {
     let svc = hyper::service::service_fn(move |mut req: hyper::Request<hyper::body::Incoming>| {
-        req.extensions_mut().insert(ConnectInfo(peer));
+        // Each request's own client: behind a proxy that keeps connections open, one connection carries many.
+        let client = hold.gw.proxies.read().unwrap().client(peer.ip(), req.headers());
+        req.extensions_mut().insert(ConnectInfo(SocketAddr::new(client.ip, peer.port())));
+        req.extensions_mut().insert(client.via);
         req.extensions_mut().insert(hold.clone());
         let r = router.clone();
         async move { r.oneshot(req.map(Body::new)).await }
@@ -669,6 +691,7 @@ fn router(gw: Arc<Gateway>) -> Router {
         .route("/session.json", get(info))
         .route("/ws", get(ws))
         .route("/a/{hash}", get(asset))
+        .route("/api/shared", get(shared_items))
         .route("/api/docs", get(docs_get))
         .route("/api/load", post(docs_load))
         .route("/api/publish", post(publish));
@@ -698,7 +721,9 @@ async fn guard(
     req: Request,
     next: Next,
 ) -> Response {
-    if !gw.cfg.expose && !lan::is_local(peer.ip()) {
+    // Through a trusted proxy or tunnel the client is wherever it is: the host made the session public.
+    let via = req.extensions().get::<Via>().copied().unwrap_or(Via::Direct);
+    if !gw.cfg.expose && via == Via::Direct && !lan::is_local(peer.ip()) {
         return StatusCode::FORBIDDEN.into_response();
     }
     if !gw.limits.request(peer.ip(), now_ms()) {
@@ -762,7 +787,7 @@ fn bearer(h: &HeaderMap) -> String {
 }
 
 /// Whether the WebSocket's origin is the server's own (or one allowed): no other site's page may open it.
-fn origin_ok(gw: &Gateway, h: &HeaderMap) -> bool {
+fn origin_ok(gw: &Gateway, h: &HeaderMap, via: Via) -> bool {
     let Some(origin) = h.get(header::ORIGIN).and_then(|v| v.to_str().ok()) else {
         // Not a browser: the origin check is against other sites' pages.
         return true;
@@ -774,17 +799,19 @@ fn origin_ok(gw: &Gateway, h: &HeaderMap) -> bool {
         return false;
     };
     let scheme = if gw.tls.is_none() { "http" } else { "https" };
-    origin == format!("{scheme}://{host}")
+    // Through a proxy or tunnel the browser's page is HTTPS whatever the last hop is.
+    origin == format!("{scheme}://{host}") || (via != Via::Direct && origin == format!("https://{host}"))
 }
 
 async fn ws(
     State(gw): State<Arc<Gateway>>,
     ConnectInfo(peer): ConnectInfo<SocketAddr>,
     hold: Option<axum::Extension<Arc<Hold>>>,
+    via: Option<axum::Extension<Via>>,
     headers: HeaderMap,
     up: WebSocketUpgrade,
 ) -> Response {
-    if !origin_ok(&gw, &headers) {
+    if !origin_ok(&gw, &headers, via.map(|v| v.0).unwrap_or(Via::Direct)) {
         return StatusCode::FORBIDDEN.into_response();
     }
     if !gw.limits.upgrade(peer.ip(), now_ms()) {
@@ -1072,6 +1099,14 @@ async fn asset(
         .await
 }
 
+/// The catalogue items the host shares, for a joined member: names, kinds, sizes and manifest hashes only.
+async fn shared_items(State(gw): State<Arc<Gateway>>, headers: HeaderMap) -> Response {
+    if !gw.session.lock().unwrap().asset_token_ok(&bearer(&headers)) {
+        return StatusCode::UNAUTHORIZED.into_response();
+    }
+    gw.host.http(to_core(Method::GET, "/shared", &headers, Body::empty())).await
+}
+
 fn host_only(gw: &Gateway, headers: &HeaderMap) -> bool {
     gw.session.lock().unwrap().is_host_token(&bearer(headers))
 }
@@ -1259,6 +1294,15 @@ where
                 let Some((meta, io)) = s else { break };
                 let Ok(peer) = std::str::from_utf8(&meta).unwrap_or("").parse::<SocketAddr>() else { continue };
                 tokio::spawn(gw.clone().serve_conn(io, peer));
+            }
+            // The core's word while running: whom to believe about clients' addresses.
+            c = incoming.control.recv() => {
+                let Some(b) = c else { break };
+                if let Ok(v) = serde_json::from_slice::<serde_json::Value>(&b) {
+                    if let Some(p) = v.get("proxies").and_then(|p| serde_json::from_value::<TrustedProxies>(p.clone()).ok()) {
+                        gw.set_proxies(p);
+                    }
+                }
             }
             _ = mux.closed() => break,
         }

@@ -16,7 +16,8 @@ heat3d-session.workspace = true
 heat3d-extractors.workspace = true
 heat3d-sandbox = { path = "../sandbox" }
 anyhow.workspace = true
+serde.workspace = true
 serde_json.workspace = true
 axum = { version = "0.8", features = ["ws"] }
-tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "signal", "io-util", "time"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "signal", "io-util", "time", "process", "sync"] }
 tower-http = { version = "0.6", features = ["fs", "cors"] }

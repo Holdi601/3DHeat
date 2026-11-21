@@ -84,3 +84,18 @@ export function handData(files: File[]): void {
 export function handPicked(picked: PickedFile[]): void {
   useDataHandoff.setState((s) => ({ files: picked.map((p) => p.file), picked, nonce: s.nonce + 1 }));
 }
+
+/**
+ * A level for the level panel to load as if picked there (one the host shared
+ * in the session), with its layouts file when it has one. Kept until a level
+ * panel takes it, so it waits while none is on screen.
+ */
+export const useLevelHandoff = create<{ file: File | null; layouts: File | null; nonce: number }>(() => ({
+  file: null,
+  layouts: null,
+  nonce: 0,
+}));
+
+export function handLevel(file: File, layouts: File | null = null): void {
+  useLevelHandoff.setState((s) => ({ file, layouts, nonce: s.nonce + 1 }));
+}

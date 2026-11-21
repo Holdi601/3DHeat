@@ -40,6 +40,8 @@ use crate::auth;
 use crate::gateway::{self, Gateway, GatewayConfig, HostLink, NetLimits, StartData};
 use crate::ipc::Mux;
 use crate::limits::PerIp;
+use crate::proxy::TrustedProxies;
+use crate::share::{self, Blocklist};
 use crate::session::Config;
 use crate::tls::{self, TlsMode};
 
@@ -94,6 +96,18 @@ pub struct ServeConfig {
     pub limits: NetLimits,
     /// The gateway as a locked-down process of its own; None: in this process.
     pub gateway: Option<GatewayCommand>,
+    /// Reverse proxies and tunnels trusted to name the client (`proxy.rs`);
+    /// `Running::set_proxies` changes it while the server runs.
+    pub proxies: TrustedProxies,
+    /// The catalogue folder the host may share items of, and what is blocked (`share.rs`); None: no sharing.
+    pub share: Option<ShareConfig>,
+}
+
+/// Sharing from the host's catalogue folder.
+#[derive(Clone, Debug)]
+pub struct ShareConfig {
+    pub root: PathBuf,
+    pub blocklist: Blocklist,
 }
 
 impl ServeConfig {
@@ -114,6 +128,8 @@ impl ServeConfig {
             host_mount: Vec::new(),
             limits: NetLimits::default(),
             gateway: None,
+            proxies: TrustedProxies::default(),
+            share: None,
         }
     }
 }
@@ -129,9 +145,50 @@ pub struct Running {
     pub sandbox: Option<String>,
     stop: watch::Sender<bool>,
     task: tokio::task::JoinHandle<std::io::Result<()>>,
+    control: Arc<Control>,
+}
+
+/// What the core changes in the running gateway: whom to believe about clients' addresses.
+pub struct Control {
+    proxies: RwLock<TrustedProxies>,
+    link: Mutex<Option<CtlLink>>,
+}
+
+enum CtlLink {
+    Local(Arc<Gateway>),
+    Remote(Mux),
+}
+
+impl Control {
+    fn new(p: TrustedProxies) -> Arc<Self> {
+        Arc::new(Self { proxies: RwLock::new(p), link: Mutex::new(None) })
+    }
+
+    pub fn proxies(&self) -> TrustedProxies {
+        self.proxies.read().unwrap().clone()
+    }
+
+    /// From now on, in the core and the gateway (and a gateway started again).
+    pub fn set_proxies(&self, p: TrustedProxies) {
+        *self.proxies.write().unwrap() = p.clone();
+        match &*self.link.lock().unwrap() {
+            Some(CtlLink::Local(gw)) => gw.set_proxies(p),
+            Some(CtlLink::Remote(mux)) => {
+                let mux = mux.clone();
+                let msg = serde_json::json!({ "proxies": p }).to_string();
+                tokio::spawn(async move { mux.control(msg.as_bytes()).await });
+            }
+            None => {}
+        }
+    }
 }
 
 impl Running {
+    /// Whom the server believes about clients' addresses, changeable while it runs.
+    pub fn control(&self) -> Arc<Control> {
+        self.control.clone()
+    }
+
     /// The address to open as the host (the token in the fragment never reaches a server log).
     pub fn host_url(&self, host: &str) -> String {
         format!("{}://{}:{}/#host={}", self.scheme, host, self.addr.port(), self.host_token)
@@ -168,6 +225,23 @@ struct Store {
     /// Bytes uploaded since the start: at most `UPLOADS_TOTAL` (a gateway someone
     /// took over cannot fill the disk through the host's uploads).
     uploaded: std::sync::atomic::AtomicU64,
+    /// Items of the catalogue the host shares (`share.rs`).
+    shared: RwLock<Vec<Shared>>,
+}
+
+/// An item the host shares: what members see of it, and the hashes it put on offer.
+#[derive(Clone, Debug, serde::Serialize)]
+struct Shared {
+    id: String,
+    kind: share::Kind,
+    game: String,
+    name: String,
+    size: u64,
+    files: usize,
+    /// The manifest's hash: members fetch it first, then each file it names.
+    manifest: String,
+    #[serde(skip)]
+    hashes: Vec<String>,
 }
 
 /// What may be uploaded in all while the server runs, bytes.
@@ -265,9 +339,13 @@ pub async fn start(cfg: ServeConfig) -> Result<Running, String> {
         max_upload: cfg.max_upload,
         uploading: tokio::sync::Semaphore::new(2),
         uploaded: std::sync::atomic::AtomicU64::new(0),
+        shared: RwLock::new(Vec::new()),
     });
     let audit = Arc::new(AuditLog::new(&cfg.state_dir));
-    let core = core_router(store, cfg.web_root.clone(), &cfg.mount, &cfg.host_mount);
+    // Sharing from the catalogue: the host's browser only (the gateway forwards it with the host's token).
+    let mut host_mount = cfg.host_mount.clone();
+    host_mount.push((SHARE_ROUTE.into(), share_router(store.clone(), audit.clone(), cfg.share.clone())));
+    let core = core_router(store, cfg.web_root.clone(), &cfg.mount, &host_mount);
     let gcfg = GatewayConfig {
         expose: cfg.expose,
         allow_origins: cfg.allow_origins.clone(),
@@ -279,9 +357,11 @@ pub async fn start(cfg: ServeConfig) -> Result<Running, String> {
         tls_key_pem: material.as_ref().map(|m| String::from_utf8_lossy(&m.key_pem).to_string()),
         hsts: matches!(cfg.tls, TlsMode::Files { .. }),
         mounts: cfg.mount.iter().map(|(p, _)| p.clone()).collect(),
-        host_mounts: cfg.host_mount.iter().map(|(p, _)| p.clone()).collect(),
+        host_mounts: host_mount.iter().map(|(p, _)| p.clone()).collect(),
         limits: cfg.limits.clone(),
+        proxies: cfg.proxies.clone(),
     };
+    let control = Control::new(cfg.proxies.clone());
 
     let listener = std::net::TcpListener::bind(cfg.bind).map_err(|e| format!("bind {}: {e}", cfg.bind))?;
     listener.set_nonblocking(true).map_err(|e| e.to_string())?;
@@ -295,11 +375,20 @@ pub async fn start(cfg: ServeConfig) -> Result<Running, String> {
             let a = audit.clone();
             let link = HostLink::Local { router: core, audit: Arc::new(move |l: String| a.write(&l)) };
             let gw = Gateway::new(gcfg, link)?;
+            *control.link.lock().unwrap() = Some(CtlLink::Local(gw.clone()));
             (tokio::spawn(accept_local(listener, gw, stop_rx)), None)
         }
         Some(cmd) => {
             let (mux, how) = spawn_gateway(&cmd, &gcfg, core.clone(), audit.clone()).await?;
-            let sup = Supervisor { cmd, gcfg, core, audit: audit.clone(), limits: PerIp::new(NetLimits { conns: cfg.limits.conns * 4, ..cfg.limits.clone() }) };
+            *control.link.lock().unwrap() = Some(CtlLink::Remote(mux.clone()));
+            let sup = Supervisor {
+                cmd,
+                gcfg,
+                core,
+                audit: audit.clone(),
+                limits: PerIp::new(NetLimits { conns: cfg.limits.conns * 4, ..cfg.limits.clone() }),
+                control: control.clone(),
+            };
             (tokio::spawn(sup.run(listener, mux, stop_rx)), Some(how))
         }
     };
@@ -311,6 +400,7 @@ pub async fn start(cfg: ServeConfig) -> Result<Running, String> {
         sandbox,
         stop: stop_tx,
         task,
+        control,
     })
 }
 
@@ -349,6 +439,7 @@ struct Supervisor {
     audit: Arc<AuditLog>,
     /// The core's own cap on connections, before a byte is relayed.
     limits: PerIp,
+    control: Arc<Control>,
 }
 
 /// The gateway as its own process, and the channel to it: its settings
@@ -428,7 +519,10 @@ impl Supervisor {
                     if !self.gcfg.expose && !crate::lan::is_local(peer.ip()) {
                         continue;
                     }
-                    let Some(slot) = self.limits.connect(peer.ip()) else { continue };
+                    // A trusted proxy carries many clients: its connections count against the total only.
+                    let shared = self.control.proxies.read().unwrap().trusts(peer.ip());
+                    let slot = if shared { self.limits.connect_shared() } else { self.limits.connect(peer.ip()) };
+                    let Some(slot) = slot else { continue };
                     let _ = tcp.set_nodelay(true);
                     let mux = mux.clone();
                     tokio::spawn(async move {
@@ -443,8 +537,12 @@ impl Supervisor {
                     self.audit.write(&serde_json::json!({ "t": now_ms(), "event": "gateway_ended", "restarts": restarts }).to_string());
                     eprintln!("3dheat: the gateway ended; starting it again (the session starts afresh)");
                     tokio::time::sleep(Duration::from_millis(500 * restarts.min(20) as u64)).await;
-                    match spawn_gateway(&self.cmd, &self.gcfg, self.core.clone(), self.audit.clone()).await {
-                        Ok((m, _)) => mux = m,
+                    let gcfg = GatewayConfig { proxies: self.control.proxies(), ..self.gcfg.clone() };
+                    match spawn_gateway(&self.cmd, &gcfg, self.core.clone(), self.audit.clone()).await {
+                        Ok((m, _)) => {
+                            *self.control.link.lock().unwrap() = Some(CtlLink::Remote(m.clone()));
+                            mux = m;
+                        }
                         Err(e) => {
                             eprintln!("3dheat: {e}");
                             if restarts > 20 { return Err(std::io::Error::other(e)); }
@@ -476,6 +574,7 @@ fn core_router(store: Arc<Store>, web_root: Option<PathBuf>, mounts: &[(String, 
     let mut r = Router::new()
         .route("/a/{hash}", get(asset))
         .route("/api/publish", post(publish).layer(axum::extract::DefaultBodyLimit::disable()))
+        .route("/shared", get(shared_list))
         .with_state(store);
     for (path, service) in mounts {
         r = r.nest_service(path, service.clone());
@@ -584,6 +683,182 @@ async fn publish(State(store): State<Arc<Store>>, Query(q): Query<PublishQuery>,
     ([(header::CONTENT_TYPE, "application/json")], serde_json::json!({ "hash": hash, "size": size }).to_string()).into_response()
 }
 
+/// Where the host's browser lists, shares and stops sharing catalogue items.
+pub const SHARE_ROUTE: &str = "/__heat3d/share";
+
+/// The shared items as members see them: names, kinds, sizes, the manifest's hash; never a path.
+async fn shared_list(State(store): State<Arc<Store>>) -> Response {
+    let items = store.shared.read().unwrap().clone();
+    json(serde_json::json!({ "items": items }))
+}
+
+#[derive(Clone)]
+struct ShareState {
+    store: Arc<Store>,
+    audit: Arc<AuditLog>,
+    cfg: Option<ShareConfig>,
+}
+
+fn share_router(store: Arc<Store>, audit: Arc<AuditLog>, cfg: Option<ShareConfig>) -> Router {
+    Router::new()
+        .route("/", get(share_index).post(share_item))
+        .route("/stop", post(share_stop))
+        .with_state(ShareState { store, audit, cfg })
+}
+
+fn json(v: serde_json::Value) -> Response {
+    ([(header::CONTENT_TYPE, "application/json"), (header::CACHE_CONTROL, "no-store")], v.to_string()).into_response()
+}
+
+/// The catalogue's items the host could share (blocked ones only counted), and what is shared.
+async fn share_index(State(st): State<ShareState>) -> Response {
+    let shared = st.store.shared.read().unwrap().clone();
+    let Some(cfg) = st.cfg.clone() else {
+        return json(serde_json::json!({ "available": false, "items": [], "blocked": 0, "shared": shared }));
+    };
+    let (items, blocked) = tokio::task::spawn_blocking(move || share::list(&cfg.blocklist, &cfg.root)).await.unwrap_or_default();
+    json(serde_json::json!({ "available": true, "items": items, "blocked": blocked, "shared": shared }))
+}
+
+#[derive(serde::Deserialize)]
+struct ShareReq {
+    path: String,
+    /// The host confirms holding the rights to share it.
+    #[serde(default)]
+    rights: bool,
+    /// The host allows this pack made from a game's models to be shared, warned.
+    #[serde(default)]
+    allow_extracted: bool,
+}
+
+fn refuse(code: StatusCode, why: &str) -> Response {
+    let mut r = json(serde_json::json!({ "error": why }));
+    *r.status_mut() = code;
+    r
+}
+
+/// Shares one item: checked against the block list, its files hashed and put on offer, its manifest made.
+async fn share_item(State(st): State<ShareState>, body: axum::body::Bytes) -> Response {
+    let Ok(req) = serde_json::from_slice::<ShareReq>(&body) else {
+        return refuse(StatusCode::BAD_REQUEST, "shape");
+    };
+    let Some(cfg) = st.cfg.clone() else {
+        return refuse(StatusCode::NOT_FOUND, "no-catalogue");
+    };
+    if !req.rights {
+        return refuse(StatusCode::FORBIDDEN, "rights");
+    }
+    let (verdict, what) = share::verdict(&cfg.blocklist, &cfg.root, &req.path);
+    let refused = |why: &str| {
+        st.audit.write(&serde_json::json!({ "t": now_ms(), "event": "share_refused", "reason": why }).to_string());
+        refuse(StatusCode::FORBIDDEN, why)
+    };
+    let Some((kind, game, name)) = what else {
+        return refused("blocked");
+    };
+    match verdict {
+        share::Verdict::Blocked(why) => return refused(why),
+        share::Verdict::Extracted if !req.allow_extracted => return refused("extracted"),
+        _ => {}
+    }
+    let (bl, root, rel) = (cfg.blocklist.clone(), cfg.root.clone(), req.path.clone());
+    let hashed = tokio::task::spawn_blocking(move || -> Result<Vec<(String, PathBuf, String, u64)>, String> {
+        let files = share::files_of(&bl, &root, &rel, kind).map_err(|e| e.to_string())?;
+        let mut out = Vec::with_capacity(files.len());
+        let mut total = 0u64;
+        for (path, disk) in files {
+            let (hash, size) = share::hash_file(&disk).map_err(|_| "unreadable".to_string())?;
+            total += size;
+            if total > share::MAX_BYTES {
+                return Err("too-large".into());
+            }
+            out.push((path, disk, hash, size));
+        }
+        Ok(out)
+    })
+    .await
+    .unwrap_or_else(|_| Err("failed".into()));
+    let files = match hashed {
+        Ok(f) => f,
+        Err(why) => return refused(&why),
+    };
+    let manifest = share::Manifest {
+        format: "3dheat-share".into(),
+        version: 1,
+        kind,
+        game: crate::text::clean(&game, 80, false),
+        name: crate::text::clean(&name, 200, false),
+        files: files.iter().map(|(p, _, h, s)| share::ManifestFile { path: p.clone(), hash: h.clone(), size: *s }).collect(),
+    };
+    let bytes = serde_json::to_vec(&manifest).unwrap_or_default();
+    let mhash = hex::encode(Sha256::digest(&bytes));
+    let dir = st.store.state_dir.join("assets");
+    let mpath = dir.join(&mhash);
+    if tokio::fs::create_dir_all(&dir).await.is_err() || tokio::fs::write(&mpath, &bytes).await.is_err() {
+        return refuse(StatusCode::INTERNAL_SERVER_ERROR, "state");
+    }
+    let size: u64 = files.iter().map(|f| f.3).sum();
+    let item = Shared {
+        id: mhash[..16].to_string(),
+        kind,
+        game: manifest.game.clone(),
+        name: manifest.name.clone(),
+        size,
+        files: files.len(),
+        manifest: mhash.clone(),
+        hashes: files.iter().map(|f| f.2.clone()).chain([mhash.clone()]).collect(),
+    };
+    {
+        let mut assets = st.store.assets.write().unwrap();
+        assets.insert(mhash.clone(), Asset { path: mpath, size: bytes.len() as u64, name: "manifest.json".into() });
+        for (p, disk, hash, size) in &files {
+            let leaf = p.rsplit('/').next().unwrap_or(p).to_string();
+            assets.insert(hash.clone(), Asset { path: disk.clone(), size: *size, name: leaf });
+        }
+    }
+    {
+        let mut shared = st.store.shared.write().unwrap();
+        shared.retain(|s| s.id != item.id);
+        shared.push(item.clone());
+    }
+    // The host's confirmation, with the time: what was shared, never where it is.
+    st.audit.write(
+        &serde_json::json!({ "t": now_ms(), "event": "shared", "id": item.id, "kind": kind, "name": item.name, "files": item.files, "bytes": size, "rights_confirmed": true, "extracted_allowed": req.allow_extracted && kind.extracted() })
+            .to_string(),
+    );
+    json(serde_json::json!({ "item": item }))
+}
+
+#[derive(serde::Deserialize)]
+struct StopReq {
+    id: String,
+}
+
+/// Stops sharing an item: its files are no longer on offer (unless another shared item has them too).
+async fn share_stop(State(st): State<ShareState>, body: axum::body::Bytes) -> Response {
+    let Ok(req) = serde_json::from_slice::<StopReq>(&body) else {
+        return StatusCode::BAD_REQUEST.into_response();
+    };
+    let gone = {
+        let mut shared = st.store.shared.write().unwrap();
+        let Some(i) = shared.iter().position(|s| s.id == req.id) else {
+            return StatusCode::NOT_FOUND.into_response();
+        };
+        shared.remove(i)
+    };
+    let keep: std::collections::HashSet<String> = st.store.shared.read().unwrap().iter().flat_map(|s| s.hashes.clone()).collect();
+    {
+        let mut assets = st.store.assets.write().unwrap();
+        for h in &gone.hashes {
+            if !keep.contains(h) {
+                assets.remove(h);
+            }
+        }
+    }
+    st.audit.write(&serde_json::json!({ "t": now_ms(), "event": "unshared", "id": gone.id }).to_string());
+    StatusCode::NO_CONTENT.into_response()
+}
+
 async fn hash_file(p: &std::path::Path) -> std::io::Result<(String, u64)> {
     use tokio::io::AsyncReadExt;
     let mut f = tokio::fs::File::open(p).await?;
@@ -616,6 +891,7 @@ pub fn test_gateway(web_root: PathBuf, state_dir: PathBuf, host_token: String, p
         max_upload: 1 << 20,
         uploading: tokio::sync::Semaphore::new(2),
         uploaded: std::sync::atomic::AtomicU64::new(0),
+        shared: RwLock::new(Vec::new()),
     });
     let core = core_router(store, Some(web_root), &[], &[]);
     let mut session = Config::default();
@@ -633,6 +909,7 @@ pub fn test_gateway(web_root: PathBuf, state_dir: PathBuf, host_token: String, p
         mounts: vec![],
         host_mounts: vec![],
         limits: NetLimits { requests_burst: 1e12, requests_per_sec: 1e12, ..NetLimits::default() },
+        proxies: TrustedProxies::default(),
     };
     Gateway::new(gcfg, HostLink::Local { router: core, audit: Arc::new(|_| {}) })
 }

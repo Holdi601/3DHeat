@@ -1788,6 +1788,7 @@ dependencies = [
  "heat3d-extractors",
  "heat3d-sandbox",
  "heat3d-session",
+ "serde",
  "serde_json",
  "tokio",
  "tower-http",

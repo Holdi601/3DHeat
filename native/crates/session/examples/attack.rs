@@ -85,8 +85,13 @@ enum Conn {
 }
 
 impl Target {
-    /// A TCP connection from 127.0.0.`src` (2..=254).
+    /// A TCP connection from 127.0.0.`src` (2..=254); to a proxy on the local network, from this machine's address.
     async fn tcp(&self, src: u8) -> std::io::Result<TcpStream> {
+        if !self.addr.ip().is_loopback() {
+            return tokio::time::timeout(Duration::from_secs(10), TcpStream::connect(self.addr))
+                .await
+                .map_err(|_| std::io::ErrorKind::TimedOut)?;
+        }
         let s = TcpSocket::new_v4()?;
         s.bind(SocketAddr::new(
             IpAddr::V4(Ipv4Addr::new(127, 0, 0, src)),
@@ -238,10 +243,12 @@ async fn main() {
     };
     let host = rest.trim_end_matches('/').to_string();
     let addr: SocketAddr = host.parse().expect("an address and port");
-    // This machine only.
+    // This machine only; with HEAT3D_ATTACK_LAN=1 also a proxy of one's own on the local network
+    // (a public session's proxy, tried from this machine's own address before the router lets anyone in).
+    let lan = std::env::var("HEAT3D_ATTACK_LAN").as_deref() == Ok("1");
     assert!(
-        addr.ip().is_loopback(),
-        "attack only a server on this machine"
+        addr.ip().is_loopback() || (lan && heat3d_session::lan::is_local(addr.ip())),
+        "attack only a server on this machine (or, with HEAT3D_ATTACK_LAN=1, your own proxy on the local network)"
     );
     let cfg = rustls::ClientConfig::builder()
         .dangerous()

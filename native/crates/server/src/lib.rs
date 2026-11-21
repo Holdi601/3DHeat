@@ -15,6 +15,7 @@
 //! is the owner's; with one, only a request carrying it.
 
 pub mod cli;
+pub mod public;
 pub mod usage;
 
 use std::net::SocketAddr;

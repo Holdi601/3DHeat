@@ -39,7 +39,11 @@ The session server is one program, `3dheat` (built in `native/` with `cargo buil
 | `--allow-origin ORIGIN` | Also accept a viewer from this origin (a development server). |
 | `--state-dir DIR` | Where the certificate and published files are kept. |
 | `--no-sandbox` | Run the network gateway inside the server's own process instead of a locked-down process of its own (for debugging; not with `--expose-internet`). |
-| `--expose-internet` | Expert mode, see [Security](#security). |
+| `--expose-internet` | Expert mode: answer any address directly, see [Port forwarding](#port-forwarding-expert). |
+| `--trusted-proxy ADDR` | A reverse proxy (an address or a network such as `10.0.0.0/8`; repeatable) whose `X-Forwarded-For` / `X-Real-IP` name the client. See [Who the client is](#who-the-client-is-trusted-proxies). |
+| `--trust-cloudflared` | Believe `CF-Connecting-IP` from `cloudflared` on this machine (a tunnel you run yourself; the server's own tunnel does this by itself). |
+| `--local-config FILE` | This machine's settings for going public and for sharing (default: `local.json` in the state folder). Never put it in a repository. |
+| `--catalog DIR` | The catalogue folder whose items the host may share (default: the `HEAT3D_LEVELS` folder). |
 
 **The certificate.** On the local network the server makes a self-signed certificate once and keeps it, so its fingerprint stays the same. A browser warns about it the first time: compare the fingerprint the server printed with the one the browser shows (the padlock, *Certificate*), then accept it. TLS matters beyond privacy: browsers give WebGPU only to secure pages, so without it the members would fall back to WebGL2.
 
@@ -55,7 +59,7 @@ The button at the top of the side panel shows the connection: green connected, a
 
 **Your own view.** Every member has their own camera, mode, filters and selection. What the session shares is listed below; nothing else changes on your screen because someone else changed theirs.
 
-**Your data.** Each member loads the same data in their own viewer. When the host has published it (**Share your data** in the panel, after ticking that they may share it), the panel offers **Load the host's data**: the file is fetched from the host's server by its content hash and checked against it before it is used. Asset sharing with full consent and a block list (levels, the figure catalogue) comes in a later stage.
+**Your data.** Each member loads the same data in their own viewer. When the host has published it (**Share your data** in the panel, after ticking that they may share it), the panel offers **Load the host's data**: the file is fetched from the host's server by its content hash and checked against it before it is used. Levels, the catalogue and packs travel the same way, by content hash, once the host shares them: see [Sharing assets](#sharing-assets).
 
 ## What is shared
 
@@ -160,11 +164,82 @@ What the gateway gives up:
 
 `cargo-deny` and `cargo-audit` check the native workspace's dependencies (known vulnerabilities, sources, licences) and `npm audit` the viewer's, in CI (`.github/workflows/session-security.yml`), which also fuzzes every target for a minute on each change (`native/crates/session/fuzz`: every client message, structure-aware; the session file; the paths and assets through the gateway and the core; the channel between the two processes; and `tools/fuzz-markdown.mjs` for the Markdown renderer), and checks the sandbox on Windows and Linux. Lockfiles pin every version.
 
-**The internet.** `--expose-internet` makes the server answer any address (TLS required); off by default, and the viewer shows a note while it is on. The server is **hardened** for it (see the security notes above). Still: your address is visible to everyone you invite, nothing in front of the server filters a flood that saturates your line, and anyone with the link can knock. Use a long password, invite links and the waiting room, and stop the server when the session ends. Stage 4 brings tunnels (no open port, no visible address).
+## Public sessions
+
+By default only this machine and its local network get an answer. To let people in from the internet, the host opens the session panel and uses **Make session public**. It offers three ways, says first what becomes reachable (the session's page, its connection and the files the host shares - nothing else on the machine) and whether the host's IP address can be seen, starts the way picked, runs a **self-test** (it fetches `/session.json` through the public address, and through the proxy on the local network where it knows it), and only then shows the join link to copy. **Stop public** ends it; so does ending the server. Public links keep the **waiting room** on: the host lets in everyone who joins with the password, and invite links (which carry their role) skip it. While the session is public, invite links point at its public address.
+
+### Cloudflare Tunnel (the default)
+
+For anyone without a domain of their own. Put the `cloudflared` program (from Cloudflare's releases; no installation, no administrator rights, no service) on the `PATH` or next to `3dheat`. **Make session public** then starts a *quick tunnel*: a random `https://….trycloudflare.com` address, no account, no open port on your router, your IP address hidden behind Cloudflare. For a fixed address, create a named tunnel with your Cloudflare account and name it in the local configuration (`"cloudflared": { "tunnel": "<name>", "hostname": "<its hostname>" }`). Quick tunnels have no uptime guarantee; they suit a session, not a service.
+
+While the tunnel runs, the server takes each visitor's address from `CF-Connecting-IP`, and only from `cloudflared` on this machine (see below). The last hop is this machine's loopback to the server's own certificate.
+
+### Your own domain, through a reverse proxy
+
+If you have a domain with a valid certificate, run a small reverse proxy on a machine of your local network (a NAS, a small server) and forward one port of your router to it. The proxy terminates TLS with the real certificate, forwards to `3dheat serve` on your PC (WebSocket included) and filters floods before they reach it. A proxy that fits the server's own limits:
+
+- per client address: 64 connections, 100 requests a second after a burst of 400, one WebSocket upgrade a second after 20; 1024 connections and 50 upgrades a second in all (a flood from many addresses cannot pile up password checks);
+- request heads within 10 seconds, 16 KiB at most; bodies of 1 MiB (16 MiB for `/v1`); 75 seconds idle; WebSocket reads for 90 seconds;
+- `X-Real-IP` and `X-Forwarded-For` **set** to the client's address (never appended to what the client sent), `CF-Connecting-IP` and `Forwarded` removed;
+- `/api/publish`, `/api/load`, `/api/docs` and `/__heat3d/` refused: the host's own endpoints are for the host's browser on the PC, never through the public door;
+- the server's certificate checked on the last hop (the self-signed one, by its name `localhost`), one upstream connection per request or WebSocket, no temporary files for large downloads;
+- HSTS only while the certificate is valid; memory and CPU capped; no access log (visitors' addresses stay out of the proxy's logs);
+- **off while no session is public**: started when the host makes the session public and stopped afterwards, and stopping by itself when the PC has been unreachable for a while.
+
+nginx handles all of this with its stock modules (`limit_conn`, `limit_req`, `proxy_ssl_verify`, WebSocket upgrade headers). Then tell the server about it in the local configuration (`local.json` in the state folder):
+
+```json
+{
+  "trustedProxies": ["192.168.1.20"],
+  "ownDomain": {
+    "url": "https://sessions.example.org:8443",
+    "upstream": "192.168.1.10",
+    "start": ["ssh", "-o", "BatchMode=yes", "me@proxy-box", "~/heat3d-proxy/ctl.sh start {upstream}"],
+    "stop": ["ssh", "-o", "BatchMode=yes", "me@proxy-box", "~/heat3d-proxy/ctl.sh stop"],
+    "checkVia": "192.168.1.20:8443"
+  }
+}
+```
+
+`start` and `stop` are commands the server runs to start and stop the proxy (here over SSH with a key); `{upstream}` becomes this PC's address and the server's port, and the server's certificate is written to the start command's input, so the proxy can check whom it talks to. `checkVia` is the proxy's own address on the local network, for the self-test through it (routers often do not loop a public address back, so the test from outside may fail from inside even when it works).
+
+On the PC: the server must listen on the local network (the default, `--bind 0.0.0.0`), and the firewall should let in **only the proxy's address**, on the server's port only. On Windows, as administrator:
+
+```
+New-NetFirewallRule -DisplayName "3DHeat session (reverse proxy)" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 7878 -RemoteAddress 192.168.1.20 -Program "C:\path\to\3dheat.exe" -Profile Private
+```
+
+Create the rule before the server first listens on the network, so Windows does not ask (an answer of *Cancel* there makes a blocking rule that wins over this one). Your domain points at your public IP address: everyone with the link can see it.
+
+### Port forwarding (expert)
+
+`--expose-internet` makes the server answer any address directly (TLS required; with `--cert` and `--key` for a real certificate); off by default, and the viewer shows a note while it is on. Forward the port on your router to the PC. The server is **hardened** for it (see [Security](#security)), but nothing in front of it filters a flood that saturates your line, and your address is visible to everyone you invite. Name the address in `"portForward": { "url": "https://…:7878" }` to have **Make session public** test it and show the link. Use a long password, invite links and the waiting room, and stop the server when the session ends.
+
+### Who the client is: trusted proxies
+
+Behind a proxy or a tunnel every connection comes from the proxy, so every limit, lockout and ban by address would hit everyone at once. The server takes the client's address from forwarding headers **only** from peers it was told to trust:
+
+| The connection comes from | The client's address is |
+|---|---|
+| a `--trusted-proxy` (or `trustedProxies` in the local configuration) | the right-most `X-Forwarded-For` entry that is not itself a trusted proxy, else `X-Real-IP` |
+| `cloudflared` on loopback, while the server's tunnel runs or with `--trust-cloudflared` | `CF-Connecting-IP` - and nothing else (`X-Forwarded-For` from loopback is ignored) |
+| anyone else | the connection's own address: forwarding headers are ignored |
+
+A forwarded address that is this machine, no address or garbage is not believed (it would earn the host's own exemptions): such requests count as one unknown address together. A trusted proxy's connections count against the server's total only, and each request's client is then held to the per-address limits (requests, upgrades, waiting hellos, members per address, lockouts, bans), each request on its own (a proxy may carry several clients on one connection). Through a trusted proxy or tunnel the session says it is reachable from the internet.
+
+## Sharing assets
+
+The host can share **levels, the catalogue and figure or model packs** from the catalogue folder (the levels folder the extractors write into; `--catalog`, `share.catalog` in the local configuration, or `HEAT3D_LEVELS`) with the members, by content hash. Off until the host switches it on in the session panel (**Share assets**), and then only the items the host shares, one at a time:
+
+- **The host confirms the rights** for each item before it is shared; the server logs the confirmation with the time (in the audit log: what was shared, never where it lies).
+- **A block list** keeps confidential material from being shared at all, whatever the host ticks: anything under a folder named in the local configuration (`"share": { "blocked": ["D:/levels/licensed"], "blockedWords": ["codename"] }`), anything in or under a folder holding a file named `.3dheat-confidential`, and anything whose path has a word that marks confidential or licensed material. Links are followed before the check. Blocked items are not even listed in the panel, only counted (the host's screen may be shared).
+- **Packs made from a game's own model files** (model packs, car packs, local figure packs) stay on the host's machine: sharing one needs a second confirmation for that pack, with a warning.
+- **Members** see each shared item's name, kind and size - never a path - and **Load** it: its manifest first, then every file by its SHA-256, each checked before it is used. A level goes to the level panel (with its layouts); a single-file item is saved for the member; files are kept in the browser's cache by hash and checked again when taken from it.
+- Members fetch the files from the host's server: through your own domain or a port forward they can see its address, which the panel asks the host to agree to before sharing; through a Cloudflare Tunnel the address stays hidden.
 
 ## For developers
 
 - Protocol: [`native/proto/heat3d/session/v1/session.proto`](https://github.com/Holdi601/3DHeat/blob/main/native/proto/heat3d/session/v1/session.proto) (prost on the server, protobuf-es in the viewer: `npm run proto:session` regenerates `src/session/proto/`).
-- Server: [`native/crates/session`](https://github.com/Holdi601/3DHeat/tree/main/native/crates/session): `session.rs` is every rule as pure logic, `gateway.rs` the network side (TLS, HTTP, WebSocket, limits), `server.rs` the core (port, files, audit log, the gateway process), `ipc.rs` the channel between them; [`native/crates/sandbox`](https://github.com/Holdi601/3DHeat/tree/main/native/crates/sandbox) locks the gateway down. `cargo test` runs the role matrix, limits, ordering and catch-up tests; `cargo +nightly fuzz run <target>` (in `fuzz/`: `client_msg`, `client_structured`, `doc_json`, `asset_paths`, `ipc_frames`) fuzzes it; `examples/attack.rs` and `tools/pentest-dos.mjs` are the pentest's load and abuse tools.
+- Server: [`native/crates/session`](https://github.com/Holdi601/3DHeat/tree/main/native/crates/session): `session.rs` is every rule as pure logic, `gateway.rs` the network side (TLS, HTTP, WebSocket, limits), `server.rs` the core (port, files, audit log, the gateway process), `ipc.rs` the channel between them; [`native/crates/sandbox`](https://github.com/Holdi601/3DHeat/tree/main/native/crates/sandbox) locks the gateway down. `cargo test` runs the role matrix, limits, ordering and catch-up tests; `cargo +nightly fuzz run <target>` (in `fuzz/`: `client_msg`, `client_structured`, `doc_json`, `asset_paths`, `ipc_frames`) fuzzes it; `examples/attack.rs` and `tools/pentest-dos.mjs` are the pentest's load and abuse tools (`attack` also tries your own proxy on the local network with `HEAT3D_ATTACK_LAN=1`); `proxy.rs` decides whom to believe about client addresses, `share.rs` holds the block list.
 - Viewer: [`src/session`](https://github.com/Holdi601/3DHeat/tree/main/src/session): `client.ts` the connection, `shared.ts` the shared layers (`registerSharedDoc` adds one), `sessionFile.ts` the session file.
-- `node tools/smoke-session.mjs` starts a server and 2 to 20 headless viewers, and tries every action in every role.
+- `node tools/smoke-session.mjs` starts a server and 2 to 20 headless viewers, and tries every action in every role; with `--proxy` the members join through a reverse proxy on this machine (`tools/proxy-chain.mjs`, each member its own client address), as in a public session.

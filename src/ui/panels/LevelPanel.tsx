@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   deleteLevel,
   listLevels,
@@ -51,6 +51,8 @@ import { useReplayStore } from '../../state/replayStore';
 import { buildingsLook } from '../replay/buildings';
 import { NumberBox } from '../NumberBox';
 import { CatalogSection } from './CatalogSection';
+import { useLevelHandoff } from '../../session/dataRefs';
+import { loadLayoutFiles } from '../../state/levelLayoutsStore';
 
 /** Longest edge we upload; larger maps are downscaled to fit the GPU. */
 const MAX_MAP_EDGE = 8192;
@@ -725,6 +727,25 @@ export function LevelPanel() {
     void loadBf(bfOffers[0]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bfAuto]);
+
+  // A level handed over from the session (the host shared it): as if picked here, by whichever panel takes it first.
+  const loadModelRef = useRef(loadModel);
+  loadModelRef.current = loadModel;
+  useEffect(() => {
+    const take = () => {
+      const { file, layouts } = useLevelHandoff.getState();
+      if (!file) return;
+      useLevelHandoff.setState({ file: null, layouts: null });
+      void (async () => {
+        if (layouts) await loadLayoutFiles([layouts]);
+        await loadModelRef.current(file);
+      })();
+    };
+    take();
+    return useLevelHandoff.subscribe((s, prev) => {
+      if (s.nonce !== prev.nonce) take();
+    });
+  }, []);
 
   const mdl = level?.kind === 'model' ? level : null;
   // Every structure field is optional on the level, so resolve the defaults once
