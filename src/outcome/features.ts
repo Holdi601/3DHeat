@@ -22,6 +22,11 @@ export interface OutcomeMatch {
   /** Team names by slot. */
   teams: string[];
   mv: MovesData;
+  /**
+   * The round outcome section of the summary (`mass/types.ts` OutcomeSection: `r` by 3, `u` unit-rounds by 7),
+   * for the buys, where the data has them.
+   */
+  rounds?: { r: number[]; u: number[] } | null;
   /** The ground's height: the summary grid's cells (`cell`, `ix`, `iz`, mean height `y`, presence `p`). */
   ground?: { cell: number; ix: number[]; iz: number[]; y: number[]; p: number[] } | null;
 }
@@ -45,7 +50,7 @@ const HOLD_SHARE = 0.2;
 /** Share of a side's starts in a zone that make it the side's spawn (holding it says nothing). */
 const SPAWN_SHARE = 0.2;
 
-export type FeatureKind = 'hold' | 'route' | 'firstKill' | 'firstKillAt' | 'earlyContact' | 'fight' | 'grouped' | 'fast' | 'retreat' | 'capFirst' | 'capFast' | 'capZone' | 'cls' | 'clsMore';
+export type FeatureKind = 'hold' | 'route' | 'firstKill' | 'firstKillAt' | 'earlyContact' | 'fight' | 'grouped' | 'fast' | 'retreat' | 'capFirst' | 'capFast' | 'capZone' | 'cls' | 'clsMore' | 'buyFull' | 'buyAdv';
 
 export interface FeatureDef {
   id: number;
@@ -203,6 +208,31 @@ function readRounds(matches: OutcomeMatch[], playerId: (s: string) => number): R
     }
   });
   return out;
+}
+
+/** Each side's mean buy in a round (by its number) from the summary's unit-rounds; null without buys. */
+const buyMemo = new WeakMap<object, Map<number, Map<number, number>>>();
+function buyOf(m: OutcomeMatch, roundNo: number): Map<number, number> | null {
+  const o = m.rounds;
+  if (!o || !o.u?.length) return null;
+  let by = buyMemo.get(o);
+  if (!by) {
+    const sums = new Map<number, Map<number, [number, number]>>();
+    for (let k = 0; k + 6 < o.u.length; k += 7) {
+      const b = o.u[k + 5];
+      if (b < 0) continue;
+      const rn = o.r[o.u[k] * 3];
+      let s = sums.get(rn);
+      if (!s) sums.set(rn, (s = new Map()));
+      const a = s.get(o.u[k + 1]) ?? [0, 0];
+      a[0] += b;
+      a[1]++;
+      s.set(o.u[k + 1], a);
+    }
+    by = new Map([...sums].map(([rn, s]) => [rn, new Map([...s].map(([slot, [sum, n]]) => [slot, sum / n]))]));
+    buyMemo.set(o, by);
+  }
+  return by.get(roundNo) ?? null;
 }
 
 /** 2-means of points (a few rounds of Lloyd's from the two farthest apart). */
@@ -639,6 +669,16 @@ export function buildGroup(key: string, matches: OutcomeMatch[]): OutcomeGroup |
       firstCap[wi] = mine.t;
       const name = matches[r.m].mv.oz?.[mine.zone]?.name;
       if (name !== undefined) sr.feats.add(feat(`capZone|${sr.side}|${name}`, { kind: 'capZone', side: sr.side, name, at: 0 }));
+    }
+    // The buy (CS2's economy): the side's mean buy (0 eco, 1 force, 2 full) a full one, and better than the other side's.
+    const buy = buyOf(matches[r.m], sr.roundNo);
+    if (buy) {
+      const mine = buy.get(w.slot);
+      const other = buy.get(w.slot === 0 ? 1 : 0);
+      if (mine !== undefined) {
+        if (mine >= 1.5) sr.feats.add(feat(`buyFull|${sr.side}`, { kind: 'buyFull', side: sr.side, at: 0 }));
+        if (other !== undefined && mine - other >= 0.5) sr.feats.add(feat(`buyAdv|${sr.side}`, { kind: 'buyAdv', side: sr.side, at: 0 }));
+      }
     }
     // What it fielded at the start (the lives of the first window): a class at all, and more of it than the other
     // side. Later lives are left out: how many a side spawns says how often it died, and what it can spawn later

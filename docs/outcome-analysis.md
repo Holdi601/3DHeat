@@ -48,7 +48,8 @@ Everything is per **map** (map, mode and mission together), per **side**, per **
 | Pushes out fast | the side's centre was further from its spawn than on the median round (first two windows). |
 | Falls back | the side's centre moved back towards its spawn by a zone and a half after its furthest push, before the middle of the round. |
 | Objectives | the round's first objective taken; the side's first one sooner than its median; which objective it took first. From the converter's objectives table where it has one (War Thunder's capture zones). |
-| What it fields | a vehicle class at all, or more of it than the other side. |
+| What it fields | a vehicle class in its opening line-up (lives of the first window), or more of it than the other side. Later lives are left out: how many a side spawns says how often it died. |
+| The buy | where the data has buys (CS2): the side's mean buy is a full one, and better than the other side's by half a step (eco 0, force 1, full 2). |
 
 ## How a pattern is judged
 

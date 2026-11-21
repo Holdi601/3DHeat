@@ -37,6 +37,9 @@ export interface OutcomeOptions {
 
 export const DEFAULT_OPTIONS: OutcomeOptions = { minArm: 20, fdr: 0.05, minDiff: 0.05 };
 
+/** Kinds every player knows go with winning (first blood, the better buy): said, ranked after the tactical ones. */
+const BASELINE = new Set<FeatureKind>(['firstKill', 'buyFull', 'buyAdv']);
+
 /** Kinds where one side's having it in a round is the other's not having it. */
 const MIRRORED = new Set<FeatureKind>(['firstKill', 'capFirst']);
 
@@ -47,7 +50,7 @@ const REGULAR = 10;
 /** Prior strength (side-rounds at 50%) of a player's win rate. */
 const PLAYER_PRIOR = 10;
 /** Kinds that only one side of a pair is tested for (the other is its mirror). */
-const KINDS: FeatureKind[] = ['hold', 'route', 'firstKill', 'firstKillAt', 'earlyContact', 'fight', 'grouped', 'fast', 'retreat', 'capFirst', 'capFast', 'capZone', 'cls', 'clsMore'];
+const KINDS: FeatureKind[] = ['hold', 'route', 'firstKill', 'firstKillAt', 'earlyContact', 'fight', 'grouped', 'fast', 'retreat', 'capFirst', 'capFast', 'capZone', 'cls', 'clsMore', 'buyFull', 'buyAdv'];
 
 export interface Arm {
   k: number;
@@ -424,7 +427,7 @@ export async function analyseOutcome(
     const stable = c.folds[1] < 3 || c.folds[0] >= Math.ceil(0.6 * c.folds[1]);
     if (!stable) drop('unstable');
     const agreeShare = c.folds[1] ? c.folds[0] / c.folds[1] : 0.5;
-    const score = Math.abs(c.adjDiff) * (0.5 + 0.5 * agreeShare) * (c.consequence || c.strengthExplained ? 0.25 : 1) * (stable ? 1 : 0.3);
+    const score = Math.abs(c.adjDiff) * (0.5 + 0.5 * agreeShare) * (c.consequence || c.strengthExplained ? 0.25 : 1) * (stable ? 1 : 0.3) * (BASELINE.has(c.kind) ? 0.5 : 1);
     findings.push({ ...c, q: q[i], stable, score, near: 0 });
   });
   findings.sort((a, b) => b.score - a.score);

@@ -44,6 +44,8 @@
   "outcome.what.capFirst": "takes the first objective",
   "outcome.what.capFast": "takes its first objective sooner than usual",
   "outcome.what.capZone": "takes objective {name} first",
+  "outcome.what.buyFull": "buys in full (rifles and armour)",
+  "outcome.what.buyAdv": "buys better than the other side",
   "outcome.what.cls": "starts with {cls} in its line-up",
   "outcome.what.clsMore": "starts with more {cls} than the other side",
   "outcome.zone.where": "{depth, select, own {in its own half} mid {in the middle} other {in the enemy half}}{lateral, select, centre {} left {, on the left} other {, on the right}}",

@@ -489,7 +489,7 @@ async function outcomeRun(m: Extract<MassRequest, { type: 'outcome' }>): Promise
     grounds.set(key, ng + 1);
     const started = store.m.started.get(i);
     got.get(key)!.push({
-      i, started: Number.isFinite(started) ? started * 1000 : null, teams: teamsOf(i), mv: compactMoves(g.mv),
+      i, started: Number.isFinite(started) ? started * 1000 : null, teams: teamsOf(i), mv: compactMoves(g.mv), rounds: store.outcome[i] ?? null,
       ground: ng < 20 ? { cell: g.cell, ix: g.ix, iz: g.iz, y: g.y, p: g.p } : null,
     });
     missing.delete(i);
