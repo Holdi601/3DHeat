@@ -1,0 +1,408 @@
+// 3DHeat multiplayer session protocol, version 1.
+//
+// One WebSocket per client, binary frames, one message per frame: the
+// client sends ClientMsg, the server sends ServerMsg. The server is the
+// authority: it checks every message against the sender's role and limits,
+// sequences the shared layers' operations and fans them out.
+//
+// Free-form values (the fields of an operation, a document's state) travel
+// as JSON text inside the message, bounded by the frame size and checked
+// on the server before they are applied.
+
+syntax = "proto3";
+
+package heat3d.session.v1;
+
+// Ranked: a member may act on members below their own rank only.
+enum Role {
+  ROLE_UNSPECIFIED = 0;
+  VIEWER = 1;
+  DRAW = 2;
+  ELEVATED = 3;
+  ADMIN = 4;
+  HOST = 5;
+}
+
+enum Err {
+  OK = 0;
+  BAD_MESSAGE = 1;
+  TOO_LARGE = 2;
+  FORBIDDEN = 3;
+  RATE_LIMITED = 4;
+  MUTED = 5;
+  NOT_FOUND = 6;
+  BAD_PASSWORD = 7;
+  LOCKED_OUT = 8;
+  BANNED = 9;
+  FULL = 10;
+  DENIED = 11;
+  PROTOCOL = 12;
+  INVALID = 13;
+  NOT_JOINED = 14;
+}
+
+// ---------------------------------------------------------------- client to server
+
+message ClientMsg {
+  // Echoed in the Ack; 0 asks for none.
+  uint32 rid = 1;
+  oneof body {
+    Hello hello = 10;
+    Presence presence = 11;
+    Batch batch = 12;
+    LookHere look = 13;
+    FollowSet follow = 14;
+    AdminAction admin = 15;
+    Ping ping = 16;
+    InviteNew invite = 17;
+    SettingsSet settings = 18;
+    Dataset dataset = 19;
+  }
+}
+
+// The first message on a connection.
+message Hello {
+  uint32 proto = 1;
+  string name = 2;
+  string password = 3;
+  // An invite link's token: joins with its role, past the waiting room.
+  string invite = 4;
+  // The resume token of an earlier connection: the same member again.
+  string resume = 5;
+  // The host's token (printed by `3dheat serve`, handed to the app).
+  string host_token = 6;
+  // A random key this browser keeps: own marks stay one's own across reconnects.
+  string client_key = 7;
+  // The last sequence number seen; the server sends what came after.
+  uint64 since_seq = 8;
+}
+
+message Vec3 {
+  float x = 1;
+  float y = 2;
+  float z = 3;
+}
+
+// Where a member's camera is and what it sees.
+message Pose {
+  Vec3 position = 1;
+  Vec3 forward = 2;
+  // Vertical field of view, degrees.
+  float fov = 3;
+  // Width over height of the view.
+  float aspect = 4;
+  bool ortho = 5;
+  float ortho_height = 6;
+}
+
+message Presence {
+  Pose pose = 1;
+  // The point under the member's pointer, when on the scene.
+  Vec3 cursor = 2;
+  bool has_cursor = 3;
+  // The workspace and view mode, short ids.
+  string tab = 4;
+  string mode = 5;
+}
+
+enum OpKind {
+  OP_UNSPECIFIED = 0;
+  ADD = 1;
+  SET = 2;
+  DEL = 3;
+  META = 4;
+}
+
+// One change to a shared document: add an entity, set some of its fields,
+// delete it, or change the document's own fields (META).
+message Op {
+  OpKind kind = 1;
+  string coll = 2;
+  string id = 3;
+  // ADD: the entity; SET and META: the fields set. A JSON object.
+  string json = 4;
+  repeated string unset = 5;
+  // ADD: where in its collection; absent at the end.
+  optional uint32 index = 6;
+}
+
+// One edit to one shared document.
+message Batch {
+  // The document: "tactics", "marks", "notes", ... (registered by the client).
+  string doc = 1;
+  // Unique across sessions; a batch sent twice is applied once.
+  string id = 2;
+  repeated Op ops = 3;
+  // Milliseconds since 1970, the author's clock.
+  double at = 4;
+}
+
+// "Look here": asks members to look at the sender's view (or follow it).
+message LookHere {
+  // Members asked; none asks everyone.
+  repeated uint32 to = 1;
+  Pose pose = 2;
+  Vec3 point = 3;
+  bool has_point = 4;
+  string note = 5;
+  // Asks them to follow the sender's camera rather than jump once.
+  bool follow = 6;
+}
+
+enum FollowMode {
+  FOLLOW_OFF = 0;
+  // Members follow the leader's camera and may stop.
+  FOLLOW = 1;
+  // Members follow and cannot stop.
+  ENFORCE = 2;
+}
+
+message FollowSet {
+  FollowMode mode = 1;
+  // The member followed; 0 the host.
+  uint32 leader = 2;
+}
+
+enum AdminKind {
+  ADMIN_UNSPECIFIED = 0;
+  MUTE = 1;
+  UNMUTE = 2;
+  KICK = 3;
+  BAN = 4;
+  UNBAN = 5;
+  SET_ROLE = 6;
+  ADMIT = 7;
+  DENY = 8;
+  REVOKE_INVITE = 9;
+}
+
+message AdminAction {
+  AdminKind kind = 1;
+  // The member (or waiting client) acted on.
+  uint32 target = 2;
+  // MUTE and BAN: how long, milliseconds; 0 for good.
+  int64 duration_ms = 3;
+  // SET_ROLE and ADMIT: the role given.
+  Role role = 4;
+  // UNBAN: the ban's id; REVOKE_INVITE: the invite's id.
+  uint64 ref_id = 5;
+}
+
+message Ping {
+  double t = 1;
+}
+
+message InviteNew {
+  Role role = 1;
+  // How many may join with it; 0 one.
+  uint32 uses = 2;
+  // How long it holds, milliseconds; 0 a day.
+  int64 ttl_ms = 3;
+  // Who it is for, shown in the list.
+  string label = 4;
+}
+
+// Host only.
+message SettingsSet {
+  optional bool waiting_room = 1;
+  // A new session password (at least 12 characters); empty with clear_password removes it.
+  string password = 2;
+  bool clear_password = 3;
+  string session_name = 4;
+}
+
+// The data and level the session looks at, by content hash.
+message Dataset {
+  string name = 1;
+  string hash = 2;
+  uint64 size = 3;
+  string level_name = 4;
+  string level_hash = 5;
+  // Whether the host published the file for download (GET /a/<hash>).
+  bool published = 6;
+}
+
+// ---------------------------------------------------------------- server to client
+
+message ServerMsg {
+  oneof body {
+    Welcome welcome = 1;
+    Waiting waiting = 2;
+    Denied denied = 3;
+    Roster roster = 4;
+    PresenceFrame presence = 5;
+    Sequenced op = 6;
+    Snapshot snapshot = 7;
+    LookEvent look = 8;
+    FollowState follow = 9;
+    Ack ack = 10;
+    Closed closed = 11;
+    Pong pong = 12;
+    InviteMade invite = 13;
+    SessionInfo info = 14;
+    WaitingList waiting_list = 15;
+    BanList bans = 16;
+    Notice notice = 17;
+    InviteList invites = 18;
+  }
+}
+
+message Welcome {
+  uint32 you = 1;
+  Role role = 2;
+  // Send back in Hello.resume to come back as the same member.
+  string resume = 3;
+  uint64 seq = 4;
+  // Whether what follows is the whole state (a Snapshot) or the operations missed.
+  bool catch_up = 5;
+}
+
+message Waiting {
+  uint32 you = 1;
+}
+
+message Denied {
+  Err code = 1;
+  // When to try again, milliseconds; 0 not soon.
+  uint32 retry_ms = 2;
+}
+
+message Member {
+  uint32 id = 1;
+  string name = 2;
+  Role role = 3;
+  bool muted = 4;
+  // Milliseconds since 1970; 0 for good.
+  int64 muted_until = 5;
+  bool connected = 6;
+}
+
+message Roster {
+  repeated Member members = 1;
+}
+
+message PresenceOf {
+  uint32 member = 1;
+  Presence presence = 2;
+}
+
+// Everyone's latest presence, at most ten a second.
+message PresenceFrame {
+  repeated PresenceOf items = 1;
+  // Members whose presence ended (left).
+  repeated uint32 gone = 2;
+}
+
+message Sequenced {
+  uint64 seq = 1;
+  uint32 author = 2;
+  string author_name = 3;
+  Batch batch = 4;
+}
+
+message DocState {
+  string doc = 1;
+  // {"meta": {...}, "colls": {"name": [entity, ...]}}
+  string json = 2;
+}
+
+message Snapshot {
+  uint64 seq = 1;
+  repeated DocState docs = 2;
+}
+
+message LookEvent {
+  uint64 id = 1;
+  uint32 from = 2;
+  string from_name = 3;
+  LookHere look = 4;
+}
+
+message FollowState {
+  FollowMode mode = 1;
+  uint32 leader = 2;
+}
+
+message Ack {
+  uint32 rid = 1;
+  Err code = 2;
+  // RATE_LIMITED: when to try again, milliseconds.
+  uint32 retry_ms = 3;
+}
+
+enum CloseReason {
+  CLOSE_UNSPECIFIED = 0;
+  KICKED = 1;
+  BANNED_NOW = 2;
+  SHUTDOWN = 3;
+  TOO_SLOW = 4;
+  ABUSE = 5;
+  REPLACED = 6;
+}
+
+message Closed {
+  CloseReason reason = 1;
+}
+
+message Pong {
+  double t = 1;
+}
+
+message InviteMade {
+  uint64 id = 1;
+  string token = 2;
+  Role role = 3;
+  int64 expires = 4;
+  uint32 uses = 5;
+  string label = 6;
+}
+
+message InviteList {
+  repeated InviteMade invites = 1;
+}
+
+message SessionInfo {
+  string name = 1;
+  bool waiting_room = 2;
+  bool password_set = 3;
+  Dataset dataset = 4;
+  bool tls = 5;
+  // Reachable from outside the local network (expert mode).
+  bool exposed = 6;
+  uint32 max_clients = 7;
+}
+
+message Waiter {
+  uint32 id = 1;
+  string name = 2;
+  int64 since = 3;
+}
+
+message WaitingList {
+  repeated Waiter waiting = 1;
+}
+
+message Ban {
+  uint64 id = 1;
+  string name = 2;
+  // Milliseconds since 1970; 0 for good.
+  int64 until = 3;
+}
+
+message BanList {
+  repeated Ban bans = 1;
+}
+
+enum NoticeKind {
+  NOTICE_UNSPECIFIED = 0;
+  // Many failed logins: logins are slowed down.
+  LOGIN_FLOOD = 1;
+  // The member was muted or unmuted, or their role changed.
+  YOU_CHANGED = 2;
+  // The shared state was replaced (a session file loaded).
+  STATE_REPLACED = 3;
+}
+
+message Notice {
+  NoticeKind kind = 1;
+}
