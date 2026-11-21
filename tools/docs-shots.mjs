@@ -102,6 +102,8 @@ async function click(key, values, opts = {}) {
 async function section(key, values) {
   const title = L(key, values);
   const head = page.locator('.section > header', { hasText: title }).first();
+  // A panel folded under its task group's "More" (ui/shell/Shell.tsx): the More first.
+  await head.evaluate((h) => h.closest('.more:not(.expanded)')?.querySelector('.more-toggle')?.click());
   const open = await head.evaluate((h) => h.parentElement.classList.contains('open'));
   if (!open) await head.click();
   await wait(300);

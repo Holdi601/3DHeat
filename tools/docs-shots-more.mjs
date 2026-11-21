@@ -201,7 +201,8 @@ export default (ctx) => {
       await camera(...OVERVIEW);
       await sidebarTop();
       const help = page.getByTitle(L('help.toggle')).first();
-      const more = page.getByTitle(L('units.moreTitle')).first();
+      // Units and language live behind the settings gear since the shell (ui/shell/Shell.tsx).
+      const more = page.getByTitle(L('shell.settings.title'), { exact: true }).first();
       // The 470 px sidebar of the Match tab, so the window opens inside the page.
       await page.evaluate(() => document.documentElement.style.setProperty('--sidebar-w', '560px'));
       await more.click();
