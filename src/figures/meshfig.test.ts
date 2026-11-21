@@ -2,7 +2,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import { describe, expect, it } from 'vitest';
 import { CATALOG } from './catalog';
-import { buildMeshFigure, decodeLod, type MeshFigureData } from './meshfig';
+import { buildMeshFigure, decodeLod, singleSided, type MeshFigureData } from './meshfig';
 import { MESH_FIGURES } from './meshes';
 import { meshOf } from './instances';
 import { turretOf } from './turret';
@@ -129,5 +129,18 @@ describe('mesh figures', () => {
     for (const f of readdirSync(dir).filter((x) => x.endsWith('.ts') && x !== 'index.ts')) {
       expect(gzipSync(readFileSync(new URL(f, dir))).length, f).toBeLessThan(60_000);
     }
+  });
+  it("draw a game model's double-sided faces once, the side facing out", () => {
+    // A box with every face also drawn the other way round, under other corner indices.
+    const { p, t } = box([0, 0, 0, 1, 1, 1]);
+    const p2 = [...p, ...p];
+    const t2 = [...t];
+    for (let i = 0; i < t.length; i += 3) t2.push(t[i] + 8, t[i + 2] + 8, t[i + 1] + 8);
+    const keep = singleSided(new Float32Array(p2), t2);
+    expect(keep.reduce((a, b) => a + b, 0)).toBe(12);
+    // The box's own (outward) triangles are the ones kept.
+    expect([...keep.slice(0, 12)].every((k) => k === 1)).toBe(true);
+    // Repeats of one triangle are dropped too.
+    expect([...singleSided(new Float32Array(p), [...t, 0, 2, 1])].filter((k) => !k).length).toBe(1);
   });
 });

@@ -141,6 +141,58 @@ function deckUnder(t: Template, p: Float32Array, shift: Vec3): number {
   return Number.isFinite(deck) ? deck : t.joints?.find((q) => q.kind === 'yaw')?.pivot[1] ?? 0;
 }
 
+/**
+ * Which triangles to draw: of the triangles on the same three corners (a game model's double-sided faces, drawn
+ * once each way round; repeats), only the one facing most away from the part's middle. Both drawn, they would fight
+ * for the same pixels (figures are drawn without culling), the one facing in lit as if it faced away: the hatched,
+ * dark patches over a model's double-sided plates.
+ */
+export function singleSided(p: Float32Array, idx: ArrayLike<number>): Uint8Array {
+  const nt = Math.floor(idx.length / 3);
+  const keep = new Uint8Array(nt).fill(1);
+  // Corners by position: a model may repeat a corner under other indices.
+  const at = new Map<string, number>();
+  const id = new Int32Array(p.length / 3);
+  let mx = 0, my = 0, mz = 0;
+  for (let v = 0; v < id.length; v++) {
+    const k = `${p[v * 3]},${p[v * 3 + 1]},${p[v * 3 + 2]}`;
+    let i = at.get(k);
+    if (i === undefined) at.set(k, (i = at.size));
+    id[v] = i;
+    mx += p[v * 3];
+    my += p[v * 3 + 1];
+    mz += p[v * 3 + 2];
+  }
+  const n = Math.max(1, id.length);
+  mx /= n;
+  my /= n;
+  mz /= n;
+  const N = at.size + 1;
+  const first = new Map<number, number>();
+  const facing = (t: number): number => {
+    const a = idx[t * 3] * 3, b = idx[t * 3 + 1] * 3, c = idx[t * 3 + 2] * 3;
+    const ux = p[b] - p[a], uy = p[b + 1] - p[a + 1], uz = p[b + 2] - p[a + 2];
+    const vx = p[c] - p[a], vy = p[c + 1] - p[a + 1], vz = p[c + 2] - p[a + 2];
+    const nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
+    return nx * ((p[a] + p[b] + p[c]) / 3 - mx) + ny * ((p[a + 1] + p[b + 1] + p[c + 1]) / 3 - my) + nz * ((p[a + 2] + p[b + 2] + p[c + 2]) / 3 - mz);
+  };
+  for (let t = 0; t < nt; t++) {
+    const s = [id[idx[t * 3]], id[idx[t * 3 + 1]], id[idx[t * 3 + 2]]].sort((x, y) => x - y);
+    const key = (s[0] * N + s[1]) * N + s[2];
+    const o = first.get(key);
+    if (o === undefined) {
+      first.set(key, t);
+      continue;
+    }
+    // A twin: the one facing outwards stays.
+    if (facing(t) > facing(o)) {
+      keep[o] = 0;
+      first.set(key, t);
+    } else keep[t] = 0;
+  }
+  return keep;
+}
+
 function buildLod(m: MeshFigureData, lod: number, base?: Template): Template {
   const k = newKit();
   const parts = decodeLod(m, lod);
@@ -188,7 +240,9 @@ function buildLod(m: MeshFigureData, lod: number, base?: Template): Template {
       fixed.v(at, PAINT.track);
     }
     const gear = !part.joint ? m.gear : undefined;
+    const keep = singleSided(p, idx);
     for (let t = 0; t < idx.length; t += 3) {
+      if (!keep[t / 3]) continue;
       const a = idx[t],
         b = idx[t + 1],
         c = idx[t + 2];
