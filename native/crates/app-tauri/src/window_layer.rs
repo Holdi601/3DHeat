@@ -36,8 +36,29 @@ pub mod linux {
 
     pub fn prepare() {
         if std::env::var_os("WAYLAND_DISPLAY").is_none() {
-            eprintln!("3DHeat needs a Wayland session (X11 is not supported).");
+            let session = std::env::var("XDG_SESSION_TYPE").unwrap_or_else(|_| "unknown".into());
+            let msg = format!(
+                "3DHeat needs a Wayland session; this one is {session}. X11 is not supported.\n\
+                 Log out and pick a Wayland session at the login screen (GNOME, KDE Plasma and most\n\
+                 desktops offer one), then start 3DHeat again."
+            );
+            eprintln!("{msg}");
+            // Started from a menu there is no terminal to read that in: say it in a dialog
+            // where the desktop has a tool for one.
+            for (tool, args) in [
+                ("zenity", vec!["--error", "--title=3DHeat", "--no-wrap", "--text"]),
+                ("kdialog", vec!["--title", "3DHeat", "--error"]),
+                ("notify-send", vec!["-u", "critical", "3DHeat"]),
+            ] {
+                if std::process::Command::new(tool).args(&args).arg(&msg).status().is_ok() {
+                    break;
+                }
+            }
             std::process::exit(1);
+        }
+        if crate::requirements::run().iter().any(|c| c.id == "vulkan" && c.status != "ok") {
+            // Not fatal: the first-run check page says what to install.
+            eprintln!("3DHeat: no usable Vulkan driver was found; see Settings > System check.");
         }
         // GTK picks X11 when DISPLAY is set too; the layering needs Wayland.
         std::env::set_var("GDK_BACKEND", "wayland");

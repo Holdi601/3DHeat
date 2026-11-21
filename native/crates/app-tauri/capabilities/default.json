@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "The viewer's window, loaded from the app's own loopback server: core events and the app's commands (core_endpoint, shared_echo, host_memory). The native core itself is reached over that server, not through commands.",
+  "description": "The viewer's window, loaded from the app's own loopback server: core events and the app's commands (core_endpoint, shared_echo, host_memory, the system check, the update notice). The native core itself is reached over that server, not through commands. The updater plugin's own commands are not granted: the app's update commands use it from Rust.",
   "windows": [
     "main"
   ],
@@ -9,7 +9,13 @@
     "core:default",
     "allow-core-endpoint",
     "allow-shared-echo",
-    "allow-host-memory"
+    "allow-host-memory",
+    "allow-requirements",
+    "allow-open-fix",
+    "allow-update-status",
+    "allow-update-check",
+    "allow-update-now",
+    "allow-update-settings"
   ],
   "remote": {
     "urls": [

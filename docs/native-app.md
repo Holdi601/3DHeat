@@ -14,8 +14,85 @@ The app is new (Stage 2c of the native version). Today the core reads the files 
 
 | System | Requirement |
 |---|---|
-| Windows | Windows 10 or 11, 64-bit, with the Microsoft Edge WebView2 runtime (the installer fetches it when missing) |
-| Linux | 64-bit, **a Wayland session**. X11 is not supported: the app refuses to start without `WAYLAND_DISPLAY` |
+| Windows | Windows 10 (version 1809 or later) or 11, 64-bit, with the Microsoft Edge WebView2 runtime (the installer fetches it when missing), and a graphics card with a DirectX 12 driver |
+| Linux | 64-bit, **a Wayland session**, and a Vulkan driver. X11 is not supported: the app refuses to start without `WAYLAND_DISPLAY`, and says so in a dialog |
+
+## Downloads
+
+Each release on the [releases page](https://github.com/Holdi601/3DHeat/releases) carries:
+
+| File | What it is |
+|---|---|
+| `3DHeat_<version>_x64-setup.exe` | Windows: the app's installer (for the current user, no administrator rights) |
+| `3DHeat_<version>_x64_en-US.msi` | Windows: the app as an MSI package, for managed installs |
+| `3DHeat_<version>_amd64.AppImage` | Linux: the app in one file, with what it can bundle (WebKitGTK, the Vulkan loader); updates itself |
+| `3DHeat_<version>_amd64.deb`, `3DHeat-<version>-1.x86_64.rpm` | Linux: the app as a package for apt (Debian, Ubuntu) or dnf/zypper (Fedora, openSUSE) |
+| `3dheat-server-<version>-windows-x64.zip` | Windows: the headless server, portable (unpack and run) |
+| `3dheat-server-<version>-linux-x64.tar.gz`, `...-linux-arm64.tar.gz` | Linux: the headless server, portable |
+| `3dheat-server_<version>_amd64.deb`, `..._arm64.deb` | Linux: the headless server as a package, with a systemd unit installed **disabled** |
+| `SHA256SUMS` | the SHA-256 of every file above |
+| `*.sig`, `latest.json` | the updater's signatures and manifest |
+
+Check a download with `sha256sum -c SHA256SUMS --ignore-missing` (Linux) or `Get-FileHash <file>` (Windows, compare with its line).
+
+The server's packages hold the program and the web viewer it serves (`dist/`, beside the program; `/usr/share/3dheat/dist` in the .deb). The .deb's service (`3dheat.service`) runs as its own unprivileged user with its state in `/var/lib/3dheat`; its options go in `/etc/default/3dheat`, and it starts only after `sudo systemctl enable --now 3dheat`.
+
+### As a container
+
+`native/packaging/docker/` holds a `Dockerfile` for the server with the web viewer, and an example `compose.yaml`. The image runs as an unprivileged user (65532) on a read-only filesystem, keeps its state in the `/state` volume, and has a health check (`3dheat healthcheck`). It is not in a registry yet: build it from the repository root,
+
+```
+docker build -f native/packaging/docker/Dockerfile -t 3dheat-server:local .
+HEAT3D_SESSION_PASSWORD=... docker compose -f native/packaging/docker/compose.yaml up -d
+```
+
+and take the Host address from `docker compose ... logs`. The release workflow builds the image for amd64 and arm64 and keeps it as a workflow artifact (`docker load < 3dheat-server-<version>-docker-<arch>.tar.gz`).
+
+## What the installers check
+
+| Where | Checked | When something is missing |
+|---|---|---|
+| Windows installer (NSIS) | 64-bit Windows 10 1809 or later | says so and installs nothing |
+| | the WebView2 runtime | installs it (Microsoft's bootstrapper, embedded in the installer) |
+| | the graphics card: a DirectX 12 device, Vulkan, the memory (`3dheat-app --check-requirements`, once the files are in place) | says what is missing, with the card maker's driver page. Drivers cannot be installed by 3DHeat |
+| MSI | 64-bit Windows 10 or 11, the WebView2 runtime | as above; the card is checked at the first start |
+| .deb and .rpm | WebKitGTK 4.1, GTK 3, the Vulkan loader (`libvulkan1` / `vulkan-loader`) as dependencies; Mesa's Vulkan drivers recommended | the package manager installs them |
+| AppImage | bundles WebKitGTK and the Vulkan loader; the driver must be the system's | checked at the first start |
+
+The Visual C++ runtime is linked into both programs (`3dheat-app.exe` and `3dheat.exe`), so no Visual C++ redistributable is needed; what they use besides is the Universal CRT, which Windows 10 and 11 ship. The release workflow checks this with `dumpbin /dependents`.
+
+**The system check.** At its first start (once per version), the app checks the machine and opens its system check page when anything is missing: Windows and WebView2, or the Wayland session; the graphics card with DirectX 12 or Vulkan (a software-only Vulkan device counts as missing on Linux); the memory; and whether the window gets a WebGPU adapter. Each line says what was found, and **Fix** opens the page that fixes it: the card maker's driver page (NVIDIA, AMD, Intel), the WebView2 download, Windows Update, or the Linux notes below. Settings › **System check…** opens it again.
+
+### Linux
+
+The app runs on Wayland only (GNOME, KDE Plasma and most desktops offer a Wayland session at the login screen). It draws with Vulkan: install the loader and your card's Vulkan driver, for example `sudo apt install libvulkan1 mesa-vulkan-drivers` (Debian, Ubuntu) or `sudo dnf install vulkan-loader mesa-vulkan-drivers` (Fedora); NVIDIA's own driver brings its Vulkan driver with it. `vulkaninfo --summary` shows what the system offers.
+
+**The server** checks what would stop it before it starts, and says so plainly: a port another program holds (`--port N` picks another), a port below 1024 that the user may not open, a `--bind` address that is not the machine's, `--cert`/`--key` files that are missing, unreadable or not PEM, and a `--web` folder without the web build.
+
+## Updates
+
+**The app asks before it updates.** It checks the releases on GitHub about 20 seconds after it starts and every six hours. When a newer version is out, a notice shows the version, an excerpt of its notes and three buttons: **Update now** (downloads it, checks its signature, installs it and starts again), **Later** (asks again at the next start), and **Skip this version** (not offered again; **Check now** in Settings offers it anyway).
+
+With Settings › **Update automatically** on, the app updates without asking: it downloads the new version in the background, checks its signature, and installs it when the app closes, so a session in progress is never cut. The Windows installer and the AppImage update in place; a .deb or .rpm install is updated by the package manager, so there the notice opens the release page instead.
+
+**The server asks too.** `3dheat serve` checks at start and every six hours, in the way the other 3DHeat tools do (one request to GitHub, the answer kept six hours, quiet when offline), and prints a notice: `[3dheat] 3DHeat 0.2.0 is out (this is 0.1.0). <release page>`. Then:
+
+| Command | What it does |
+|---|---|
+| `3dheat --check-update` | says whether a newer release is out, with the first lines of its notes |
+| `3dheat update` | asks `Update now? [Y/n]`, then updates the folder the program is in; `--yes` skips the question |
+| `3dheat serve --auto-update` (or `"autoUpdate": true` in the server's `local.json`) | updates by itself when a newer release is out; the new version is used from the next start, so a running session is never cut |
+| `3dheat serve --no-update-check` (or `"updateCheck": false`, or `HEAT3D_NO_UPDATE=1`) | no check at all |
+
+Only the portable server (zip, tar.gz) updates itself. The .deb is updated by the package manager, and a container by its new image; for those there is only the notice.
+
+**Signatures.** Every update is checked before it is installed: the app's updater and the server both verify the release's minisign signature (`.sig`) against the public key built into them, and refuse a package that does not match. The signatures are made on the maintainer's own machine; the private key is not on GitHub, not even as a secret. How a release comes about:
+
+1. A version tag (or a manual run of the `release` workflow) builds every package above, unsigned, writes `SHA256SUMS`, and leaves everything in a **draft** release. The workflow never publishes.
+2. The maintainer runs `native/tools/sign-release.ps1 -Tag v<version> -KeyFile <private key> -PasswordFile <password file>`: it downloads the draft, checks every file against `SHA256SUMS`, signs the Windows setup, the AppImage and the server archives, writes `latest.json` (the app updater's manifest: version, notes, and per platform the installer and its signature), and uploads those to the draft.
+3. Publishing the draft (`gh release edit v<version> --draft=false`) is a separate, deliberate step. From then on the updaters offer the version.
+
+The key pair is made once with `npx tauri signer generate -w <file>` (in `native/`); only its public half goes into the app (`plugins.updater.pubkey` in `tauri.conf.json`) and the server (`crates/server/src/update.rs`; a test keeps the two equal). Lose the private key and no update can be signed for the installed copies any more, so keep a backup of it offline.
 
 ## What the core does
 
@@ -114,4 +191,4 @@ npm ci && (cd native && npm ci && npm run icons)
 cd native && npx tauri build
 ```
 
-The installers land in `target/release/bundle/` (NSIS and MSI on Windows, AppImage and deb on Linux). `node native/tools/smoke-shell.mjs` starts the built app (`3dheat-app.exe` in the build folder), picks a synthetic Parquet file, loads it through the core and checks that the heat draws, then builds two of the shared vectors' loads both ways (core and viewer) and checks every column is the same. `node native/tools/probe-native-load.mjs --dir <row-ceiling folder> --rows 100,400` measures loads in the app: time until every row is on the GPU, the page's and the core's memory, and frame times under camera motion with the timeline playing (`--path page` for the viewer building the dataset, as before).
+The installers land in `target/release/bundle/` (NSIS and MSI on Windows, AppImage, deb and rpm on Linux). The server's packages: `bash native/packaging/server-package.sh <version> <windows-x64|linux-x64|linux-arm64> <program> dist <out folder>`. `.github/workflows/release.yml` builds all of them on a version tag, and the container image, into a draft release (see Updates). `node native/tools/smoke-shell.mjs` starts the built app (`3dheat-app.exe` in the build folder), picks a synthetic Parquet file, loads it through the core and checks that the heat draws, then builds two of the shared vectors' loads both ways (core and viewer) and checks every column is the same. `node native/tools/probe-native-load.mjs --dir <row-ceiling folder> --rows 100,400` measures loads in the app: time until every row is on the GPU, the page's and the core's memory, and frame times under camera motion with the timeline playing (`--path page` for the viewer building the dataset, as before).

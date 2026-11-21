@@ -23,13 +23,15 @@ serde.workspace = true
 serde_json.workspace = true
 anyhow.workspace = true
 getrandom = "0.3"
-tokio = { version = "1", features = ["rt-multi-thread"] }
-# The card's memory budget (VK_EXT_memory_budget), the loader found at run time.
+tokio = { version = "1", features = ["rt-multi-thread", "time"] }
+# The card's memory budget (VK_EXT_memory_budget) and the system check's Vulkan device, the loader found at run time.
 ash = { version = "0.38", default-features = false, features = ["loaded", "std"] }
+# Updates from the GitHub releases, signature checked (src/update.rs).
+tauri-plugin-updater = "2"
 
 [target.'cfg(windows)'.dependencies]
 webview2-com = "0.39"
-windows = { version = "0.62", features = ["Win32_Foundation", "Win32_System_Com", "Win32_Graphics_Dxgi", "Win32_System_Performance", "Win32_System_Diagnostics_ToolHelp"] }
+windows = { version = "0.62", features = ["Win32_Foundation", "Win32_System_Com", "Win32_Graphics_Dxgi", "Win32_Graphics_Direct3D", "Win32_Graphics_Direct3D12", "Win32_System_Performance", "Win32_System_Diagnostics_ToolHelp"] }
 windows-core = "0.62"
 
 [target.'cfg(target_os = "linux")'.dependencies]

@@ -1,0 +1,254 @@
+# Release artifacts of the native app and the headless server (docs/native-app.md):
+#   Windows: the app's NSIS and MSI installers, the server as a portable zip;
+#   Linux (Wayland): the app as AppImage, .deb and .rpm, the server as tar.gz and
+#   .deb (x64 and arm64), with a systemd unit installed disabled;
+#   the server as a container image (amd64 and arm64), kept as a workflow
+#   artifact here: it is not pushed to any registry.
+# Every file gets a line in SHA256SUMS, and everything lands in a DRAFT release.
+# Nothing here publishes a release, and nothing here signs: the updater
+# signatures are made on the maintainer's machine (native/tools/sign-release.ps1),
+# which uploads them and latest.json to the draft. No signing key is on GitHub.
+name: release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to build (default: package.json); the draft is named v<version>'
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}-${{ inputs.version }}
+  cancel-in-progress: false
+
+jobs:
+  version:
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+      tag: ${{ steps.v.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: v
+        name: Version and tag agree with the package and the Rust workspace
+        shell: bash
+        run: |
+          pkg=$(node -p "require('./package.json').version")
+          cargo=$(sed -n 's/^version = "\(.*\)"/\1/p' native/Cargo.toml | head -1)
+          if [ "${GITHUB_REF_TYPE}" = tag ]; then v="${GITHUB_REF_NAME#v}"; else v="${{ inputs.version }}"; v="${v#v}"; v="${v:-$pkg}"; fi
+          echo "package.json $pkg, native/Cargo.toml $cargo, release $v"
+          [ "$v" = "$pkg" ] || { echo "::error::release $v but package.json says $pkg"; exit 1; }
+          [ "$v" = "$cargo" ] || { echo "::error::release $v but native/Cargo.toml says $cargo"; exit 1; }
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+          echo "tag=v$v" >> "$GITHUB_OUTPUT"
+
+  windows:
+    needs: version
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: native
+      - run: npm ci
+      - working-directory: native
+        run: npm ci
+      - name: Icons
+        working-directory: native
+        run: |
+          npx playwright install chromium
+          npm run icons
+      - name: Installers (unsigned)
+        working-directory: native
+        run: npx tauri build --bundles nsis,msi
+      - name: Headless server
+        working-directory: native
+        run: cargo build --release --locked -p heat3d-server
+      - name: No Visual C++ redistributable needed
+        shell: pwsh
+        run: |
+          $vs = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -property installationPath
+          $dumpbin = Get-ChildItem "$vs\VC\Tools\MSVC\*\bin\Hostx64\x64\dumpbin.exe" | Select-Object -First 1
+          foreach ($exe in 'native\target\release\3dheat-app.exe', 'native\target\release\3dheat.exe') {
+            $deps = & $dumpbin.FullName /dependents $exe | Select-String '\.dll' | ForEach-Object { $_.Line.Trim() }
+            Write-Output "$exe : $($deps -join ', ')"
+            if ($deps | Where-Object { $_ -match '^(vcruntime|msvcp)\d+' }) { throw "$exe needs the VC++ redistributable" }
+          }
+      - name: The installer's own check runs
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath native\target\release\3dheat-app.exe -ArgumentList '--check-requirements', '--report', "$env:RUNNER_TEMP\req.txt" -Wait -PassThru
+          Write-Output "exit $($p.ExitCode)"; Get-Content "$env:RUNNER_TEMP\req.txt"
+      - name: Server package
+        shell: bash
+        run: bash native/packaging/server-package.sh "${{ needs.version.outputs.version }}" windows-x64 native/target/release/3dheat.exe dist out
+      - name: Collect
+        shell: bash
+        run: cp native/target/release/bundle/nsis/*.exe native/target/release/bundle/msi/*.msi out/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-windows
+          path: out/*
+          if-no-files-found: error
+
+  linux:
+    needs: version
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Linux packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev libwayland-dev libxdo-dev libssl-dev patchelf libvulkan1
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: native
+      - run: npm ci
+      - working-directory: native
+        run: npm ci
+      - name: Icons
+        working-directory: native
+        run: |
+          npx playwright install chromium
+          npm run icons
+      - name: AppImage, .deb, .rpm (unsigned)
+        working-directory: native
+        run: npx tauri build --bundles appimage,deb,rpm
+      - name: Headless server
+        working-directory: native
+        run: cargo build --release --locked -p heat3d-server
+      - name: Server packages
+        run: bash native/packaging/server-package.sh "${{ needs.version.outputs.version }}" linux-x64 native/target/release/3dheat dist out
+      - name: The packages declare what they need
+        run: |
+          dpkg-deb -f native/target/release/bundle/deb/*.deb Depends Recommends
+          dpkg-deb -f out/3dheat-server_*_amd64.deb Depends
+          dpkg-deb -c out/3dheat-server_*_amd64.deb | grep -E '3dheat.service|usr/bin/3dheat$'
+          rpm -qp --requires native/target/release/bundle/rpm/*.rpm 2>/dev/null || true
+      - name: Collect
+        run: cp native/target/release/bundle/appimage/*.AppImage native/target/release/bundle/deb/*.deb native/target/release/bundle/rpm/*.rpm out/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-linux-x64
+          path: out/*
+          if-no-files-found: error
+
+  server-arm64:
+    needs: version
+    runs-on: ubuntu-22.04-arm
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: native
+      - name: Web build
+        run: |
+          npm ci
+          npm run build
+      - name: Headless server
+        working-directory: native
+        run: cargo build --release --locked -p heat3d-server
+      - name: Server packages
+        run: bash native/packaging/server-package.sh "${{ needs.version.outputs.version }}" linux-arm64 native/target/release/3dheat dist out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-linux-arm64
+          path: out/*
+          if-no-files-found: error
+
+  docker:
+    needs: version
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the image (not pushed anywhere)
+        run: docker build -f native/packaging/docker/Dockerfile --build-arg VERSION=${{ needs.version.outputs.version }} -t 3dheat-server:${{ needs.version.outputs.version }} .
+      - name: Starts read-only as a non-root user and turns healthy
+        run: |
+          docker run -d --name heat --read-only --tmpfs /tmp --cap-drop ALL --security-opt no-new-privileges:true \
+            -p 127.0.0.1:7878:7878 -v heatstate:/state 3dheat-server:${{ needs.version.outputs.version }}
+          for i in $(seq 1 30); do
+            s=$(docker inspect -f '{{.State.Health.Status}}' heat); echo "$s"
+            [ "$s" = healthy ] && break
+            [ "$(docker inspect -f '{{.State.Running}}' heat)" = true ] || break
+            sleep 3
+          done
+          docker logs heat
+          [ "$(docker inspect -f '{{.Config.User}}' heat)" = "65532:65532" ]
+          [ "$(docker inspect -f '{{.State.Health.Status}}' heat)" = healthy ]
+          curl -sk -o /dev/null -w '%{http_code}\n' https://127.0.0.1:7878/ | grep -q 200
+          docker rm -f heat
+      - name: Save
+        run: docker save 3dheat-server:${{ needs.version.outputs.version }} | gzip > 3dheat-server-${{ needs.version.outputs.version }}-docker-${{ matrix.arch }}.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: docker-${{ matrix.arch }}
+          path: 3dheat-server-*-docker-*.tar.gz
+          if-no-files-found: error
+
+  draft:
+    needs: [version, windows, linux, server-arm64, docker]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: release-*
+          path: files
+          merge-multiple: true
+      - name: Checksums
+        working-directory: files
+        run: |
+          sha256sum * > SHA256SUMS
+          cat SHA256SUMS
+      - name: Notes
+        run: |
+          v=${{ needs.version.outputs.version }}
+          {
+            echo "3DHeat $v: the native app and the headless server."
+            echo
+            awk -v v="$v" '/^## /{p = index($0, v) > 0; next} p' CHANGELOG.md | head -60
+            echo
+            echo "Unsigned build of commit ${GITHUB_SHA}. The updater signatures and latest.json are added by the maintainer before release; the container images (amd64, arm64) are workflow artifacts of run ${GITHUB_RUN_ID}, not in any registry."
+          } > notes.md
+          cat notes.md
+      - name: Draft release (never published here)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag=${{ needs.version.outputs.tag }}
+          if gh release view "$tag" --json isDraft -q .isDraft > state.txt 2>/dev/null; then
+            if [ "$(cat state.txt)" != true ]; then echo "::error::release $tag is already published; not touched"; exit 1; fi
+            gh release upload "$tag" files/* --clobber
+            gh release edit "$tag" --draft=true --notes-file notes.md
+          else
+            gh release create "$tag" files/* --draft --target "$GITHUB_SHA" --title "3DHeat ${{ needs.version.outputs.version }}" --notes-file notes.md
+          fi
+          gh release view "$tag" --json url,isDraft,assets -q '.url, .isDraft, (.assets | length)'

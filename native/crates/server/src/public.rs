@@ -64,6 +64,10 @@ pub struct LocalConfig {
     pub cloudflared: Option<Cloudflared>,
     pub port_forward: Option<PortForward>,
     pub share: Option<ShareLocal>,
+    /// `true`: the headless server updates itself (as `serve --auto-update`); else it only says so.
+    pub auto_update: Option<bool>,
+    /// `false`: no update check at all (as `serve --no-update-check`).
+    pub update_check: Option<bool>,
 }
 
 #[derive(Clone, Debug, Deserialize)]

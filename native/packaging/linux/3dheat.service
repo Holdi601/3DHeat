@@ -1,0 +1,52 @@
+# 3DHeat server (`3dheat serve`) as a system service. Installed by the
+# 3dheat-server package, disabled: nothing starts until you enable it.
+#
+#   sudo systemctl edit 3dheat          # options, see /etc/default/3dheat
+#   sudo systemctl enable --now 3dheat
+#
+# The service runs as its own unprivileged user, with its state (the
+# self-signed certificate, uploads) in /var/lib/3dheat.
+
+[Unit]
+Description=3DHeat server (multiplayer sessions and the web viewer)
+Documentation=https://github.com/Holdi601/3DHeat/blob/main/docs/native-app.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+DynamicUser=yes
+StateDirectory=3dheat
+CacheDirectory=3dheat
+Environment=HOME=/var/lib/3dheat
+Environment=XDG_CACHE_HOME=/var/cache/3dheat
+# HEAT3D_SERVE_ARGS: the options of `3dheat serve` (`3dheat serve --help`).
+Environment=HEAT3D_SERVE_ARGS=
+EnvironmentFile=-/etc/default/3dheat
+ExecStart=/bin/sh -c 'exec /usr/bin/3dheat serve --web /usr/share/3dheat/dist --state-dir /var/lib/3dheat $HEAT3D_SERVE_ARGS'
+Restart=on-failure
+RestartSec=5
+
+# Hardening: the server needs its state folder and the network, nothing else.
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX AF_NETLINK
+CapabilityBoundingSet=
+AmbientCapabilities=
+SystemCallArchitectures=native
+
+[Install]
+WantedBy=multi-user.target

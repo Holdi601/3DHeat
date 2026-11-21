@@ -29,8 +29,10 @@
       "nsis",
       "msi",
       "appimage",
-      "deb"
+      "deb",
+      "rpm"
     ],
+    "createUpdaterArtifacts": false,
     "category": "Utility",
     "shortDescription": "Realtime 3D telemetry heatmap viewer",
     "license": "MIT",
@@ -46,10 +48,53 @@
     ],
     "windows": {
       "nsis": {
-        "installMode": "currentUser"
+        "installMode": "currentUser",
+        "installerHooks": "installer/hooks.nsh"
+      },
+      "wix": {
+        "fragmentPaths": [
+          "installer/requirements.wxs"
+        ],
+        "componentGroupRefs": [
+          "HeatRequirements"
+        ]
       },
       "webviewInstallMode": {
-        "type": "downloadBootstrapper"
+        "type": "embedBootstrapper"
+      }
+    },
+    "linux": {
+      "deb": {
+        "depends": [
+          "libvulkan1"
+        ],
+        "recommends": [
+          "mesa-vulkan-drivers"
+        ]
+      },
+      "rpm": {
+        "depends": [
+          "vulkan-loader"
+        ],
+        "recommends": [
+          "mesa-vulkan-drivers"
+        ]
+      },
+      "appimage": {
+        "files": {
+          "/usr/lib/libvulkan.so.1": "/usr/lib/x86_64-linux-gnu/libvulkan.so.1"
+        }
+      }
+    }
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDMyQzdBOTY0RkU1RUY4NzUKUldSMStGNytaS25ITW93SUQ3L2hyWWlaYnd6aFpWVDZ6aCtWdU91WVY2MHA1QTlsWXBla2g0MXgK",
+      "endpoints": [
+        "https://github.com/Holdi601/3DHeat/releases/latest/download/latest.json"
+      ],
+      "windows": {
+        "installMode": "passive"
       }
     }
   }

@@ -1,0 +1,7 @@
+.git
+**/node_modules
+**/target
+dist
+exporters
+native/crates/session/fuzz/target
+native/crates/session/fuzz/corpus

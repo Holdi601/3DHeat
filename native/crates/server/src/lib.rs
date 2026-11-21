@@ -16,6 +16,7 @@
 
 pub mod cli;
 pub mod public;
+pub mod update;
 pub mod usage;
 
 use std::net::SocketAddr;

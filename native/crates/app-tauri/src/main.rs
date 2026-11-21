@@ -25,7 +25,9 @@
 mod files;
 mod memory;
 mod protocol;
+mod requirements;
 mod shared;
+mod update;
 mod window_layer;
 
 use std::sync::Arc;
@@ -66,13 +68,29 @@ fn main() {
         rt.block_on(heat3d_server::cli::serve(args[1..].to_vec(), Arc::new(Core::new()), web_beside_exe()));
         return;
     }
+    if args.first().map(String::as_str) == Some("--check-requirements") {
+        // The installer's check, before any window (installer/hooks.nsh).
+        std::process::exit(requirements::cli(&args));
+    }
     let host_args: Option<Vec<String>> = args.iter().position(|a| a == "--host").map(|i| args[i + 1..].to_vec());
 
     window_layer::prepare();
     let core = Arc::new(Core::new());
     let scheme_core = core.clone();
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![core_endpoint, memory::host_memory, shared::shared_echo])
+        .plugin(tauri_plugin_updater::Builder::new().build())
+        .manage(update::State::default())
+        .invoke_handler(tauri::generate_handler![
+            core_endpoint,
+            memory::host_memory,
+            shared::shared_echo,
+            requirements::requirements,
+            requirements::open_fix,
+            update::update_status,
+            update::update_check,
+            update::update_now,
+            update::update_settings
+        ])
         .register_asynchronous_uri_scheme_protocol("heat3d", move |_ctx, request, responder| {
             let core = scheme_core.clone();
             // Off the event loop: a load takes seconds, and the window keeps drawing meanwhile.
@@ -109,10 +127,17 @@ fn main() {
                 let (core, web) = (core.clone(), web.clone());
                 tauri::async_runtime::spawn(heat3d_server::cli::serve(rest, core, web));
             }
+            // Asks GitHub for a newer release; updates only when asked to (update.rs).
+            update::start(app.handle().clone());
             Ok(())
         })
-        .run(tauri::generate_context!())
-        .expect("3DHeat failed to start");
+        .build(tauri::generate_context!())
+        .expect("3DHeat failed to start")
+        .run(|app, event| {
+            if let tauri::RunEvent::Exit = event {
+                update::on_exit(app);
+            }
+        });
 }
 
 fn tokio_runtime() -> tokio::runtime::Runtime {

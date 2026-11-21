@@ -50,9 +50,79 @@ OPTIONS:
     --local-config FILE    This machine's settings for going public and sharing (default:
                            local.json in the state folder; never put it in a repository)
     --catalog DIR          The catalogue folder items may be shared from (default: HEAT3D_LEVELS)
+    --auto-update          Update by itself when a newer release is out (signature checked;
+                           used from the next start). Without it the server only says so.
+                           Also `\"autoUpdate\": true` in the local config
+    --no-update-check      Do not ask GitHub for a newer release (also HEAT3D_NO_UPDATE=1)
+
+OTHER COMMANDS:
+    3dheat --check-update  Say whether a newer release is out
+    3dheat update [--yes]  Update this copy (asks first, unless --yes)
+    3dheat healthcheck [--port N]
+                           Exit 0 when a server answers on this machine (for containers)
+    3dheat --version       This program's version
 ";
 
 pub const HELP: &str = USAGE;
+
+/// `healthcheck [--port N]`: whether a server listens on this machine's port.
+pub fn healthcheck(args: &[String]) -> ! {
+    let port = args
+        .iter()
+        .position(|a| a == "--port")
+        .and_then(|i| args.get(i + 1))
+        .and_then(|p| p.parse::<u16>().ok())
+        .unwrap_or(7878);
+    let to = SocketAddr::from(([127, 0, 0, 1], port));
+    match std::net::TcpStream::connect_timeout(&to, std::time::Duration::from_secs(3)) {
+        Ok(_) => std::process::exit(0),
+        Err(e) => {
+            eprintln!("3dheat: nothing answers on {to}: {e}");
+            std::process::exit(1)
+        }
+    }
+}
+
+/// Before the server starts: what would make it fail, said plainly. The port is
+/// tried (and let go again), the certificate files read, the web build looked for.
+pub fn preflight(bind: SocketAddr, tls: &TlsMode, web: Option<&std::path::Path>, web_given: bool) -> Result<(), String> {
+    if let TlsMode::Files { cert, key } = tls {
+        for (what, file, marker) in [("--cert", cert, "CERTIFICATE"), ("--key", key, "PRIVATE KEY")] {
+            let text = std::fs::read_to_string(file).map_err(|e| match e.kind() {
+                std::io::ErrorKind::NotFound => format!("{what} {}: there is no such file", file.display()),
+                std::io::ErrorKind::PermissionDenied => format!("{what} {}: this user may not read it", file.display()),
+                _ => format!("{what} {}: {e}", file.display()),
+            })?;
+            if !text.contains("-----BEGIN") || !text.contains(marker) {
+                return Err(format!("{what} {}: not a PEM file with a {} in it", file.display(), marker.to_lowercase()));
+            }
+        }
+    }
+    if web_given && !web.is_some_and(|w| w.join("index.html").is_file()) {
+        return Err(format!(
+            "--web {}: no index.html there (the web build: run `npm run build` and pass its dist folder)",
+            web.map(|w| w.display().to_string()).unwrap_or_default()
+        ));
+    }
+    match std::net::TcpListener::bind(bind) {
+        Ok(l) => drop(l),
+        Err(e) => {
+            let port = bind.port();
+            return Err(match e.kind() {
+                std::io::ErrorKind::AddrInUse => format!(
+                    "port {port} on {} is in use by another program (another `3dheat serve`?): stop it, or pick another port with --port N",
+                    bind.ip()
+                ),
+                std::io::ErrorKind::PermissionDenied => format!(
+                    "port {port} may not be opened by this user (ports below 1024 need rights on Linux; or another program holds it exclusively): use --port N from 1024 up"
+                ),
+                std::io::ErrorKind::AddrNotAvailable => format!("--bind {}: not an address of this machine", bind.ip()),
+                _ => format!("port {port} on {} could not be opened: {e}", bind.ip()),
+            });
+        }
+    }
+    Ok(())
+}
 
 /// `gateway`: the session server's network gateway, started by `serve` only
 /// (its settings and connections come over standard input).
@@ -160,6 +230,8 @@ pub async fn serve(rest: Vec<String>, core: Arc<Core>, default_web: Option<PathB
     let mut trust_cloudflared = false;
     let mut local_config: Option<PathBuf> = None;
     let mut catalog: Option<PathBuf> = None;
+    let mut auto_update = false;
+    let mut update_check = true;
     let (mut cert, mut key) = (None, None);
     let mut cfg = ServeConfig::new("0.0.0.0:7878".parse().unwrap(), state_dir());
     let mut i = 0;
@@ -241,6 +313,8 @@ pub async fn serve(rest: Vec<String>, core: Arc<Core>, default_web: Option<PathB
             "--trust-cloudflared" => trust_cloudflared = true,
             "--local-config" => local_config = Some(PathBuf::from(val(&mut i, "--local-config"))),
             "--catalog" => catalog = Some(PathBuf::from(val(&mut i, "--catalog"))),
+            "--auto-update" => auto_update = true,
+            "--no-update-check" => update_check = false,
             // Tests only: a cheap password hash.
             "--test-cost" => cfg.session.cost = Cost::TEST,
             "-h" | "--help" => {
@@ -265,9 +339,18 @@ pub async fn serve(rest: Vec<String>, core: Arc<Core>, default_web: Option<PathB
         }
     });
     cfg.bind = SocketAddr::new(ip, port);
+    let web_given = web.is_some();
     cfg.web_root = web.or(default_web).or_else(web_root);
+    if let Err(e) = preflight(cfg.bind, &cfg.tls, cfg.web_root.as_deref(), web_given) {
+        eprintln!("3dheat: {e}");
+        std::process::exit(2);
+    }
     // This machine's own settings: the proxy it trusts, how it goes public, what it may share.
     let local = crate::public::LocalConfig::load(local_config.as_deref(), &cfg.state_dir).unwrap_or_else(|e| fail(&e));
+    if update_check && local.update_check != Some(false) {
+        // Beside the session, never in its way: a notice, or with auto-update the new version on disk.
+        tokio::spawn(crate::update::serve_check(auto_update || local.auto_update == Some(true)));
+    }
     trusted.extend(local.trusted_proxies.iter().copied());
     cfg.proxies = TrustedProxies { proxies: trusted, cloudflared: trust_cloudflared };
     let share = local.share.clone().unwrap_or_default();

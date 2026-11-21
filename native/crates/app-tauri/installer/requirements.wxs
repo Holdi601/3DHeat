@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The MSI's own check (tauri.conf.json: bundle.windows.wix): 64-bit Windows 10
+  or 11, else a clear message and no install. (Windows Installer reports
+  Windows 10 and 11 as 6.3, VersionNT 603.) WebView2 is checked and installed by
+  Tauri's own step; the graphics card is checked at the app's first start
+  (Settings > System check). The component group only pulls this fragment in.
+-->
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <Condition Message="3DHeat needs 64-bit Windows 10 (version 1809 or later) or Windows 11.">
+      <![CDATA[Installed OR (VersionNT64 >= 603)]]>
+    </Condition>
+    <ComponentGroup Id="HeatRequirements" />
+  </Fragment>
+</Wix>

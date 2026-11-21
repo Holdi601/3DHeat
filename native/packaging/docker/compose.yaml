@@ -1,0 +1,32 @@
+# An example: the 3DHeat server in a container.
+#   docker compose -f native/packaging/docker/compose.yaml up -d
+# The image is built locally from this repository (no registry image yet).
+# Open https://<this machine>:7878 and take the Host address from the log:
+#   docker compose -f native/packaging/docker/compose.yaml logs 3dheat
+services:
+  3dheat:
+    build:
+      context: ../../..
+      dockerfile: native/packaging/docker/Dockerfile
+    image: 3dheat-server:local
+    restart: unless-stopped
+    # Members on the local network reach the session through this port. Keep
+    # "127.0.0.1:7878:7878" instead to try it on this machine only.
+    ports:
+      - "7878:7878"
+    # Further options of `3dheat serve` (`3dheat serve --help`), after the image's own.
+    command: ["--name", "LAN session", "--password-env", "HEAT3D_SESSION_PASSWORD"]
+    environment:
+      # At least 12 characters; better from an .env file beside this one, never committed.
+      HEAT3D_SESSION_PASSWORD: ${HEAT3D_SESSION_PASSWORD:?set HEAT3D_SESSION_PASSWORD}
+    read_only: true
+    tmpfs:
+      - /tmp
+    volumes:
+      - state:/state
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+volumes:
+  state:

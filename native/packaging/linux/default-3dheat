@@ -1,0 +1,15 @@
+# Options for the 3dheat service (/lib/systemd/system/3dheat.service): the
+# options of `3dheat serve` (run `3dheat serve --help` for all of them).
+#
+# A password, kept away from this file: put it in /etc/3dheat/password
+# (readable by root only), then `sudo systemctl edit 3dheat` and add
+#   [Service]
+#   LoadCredential=password:/etc/3dheat/password
+# and here: --password-file /run/credentials/3dheat.service/password
+#
+# Example:
+#   HEAT3D_SERVE_ARGS="--name LAN --port 7878 --password-file /run/credentials/3dheat.service/password"
+#
+# The update check: the package manager updates this program; the service only
+# says when a newer release is out (in its log). HEAT3D_NO_UPDATE=1 turns that off.
+HEAT3D_SERVE_ARGS=""

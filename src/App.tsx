@@ -93,6 +93,7 @@ import { useInspectStore } from './state/inspectStore';
 import { Timeline } from './ui/Timeline';
 import { LinePanel } from './ui/panels/LinePanel';
 import { UpdateBanner } from './ui/UpdateBanner';
+import { AppUpdateBanner } from './ui/AppUpdate';
 import { VehiclePanel } from './ui/vehicle/VehiclePanel';
 import { VehicleOverlay } from './ui/vehicle/VehicleOverlay';
 import { guardBrowserKeys } from './ui/browserKeys';
@@ -471,6 +472,7 @@ export function App() {
         <aside className="sidebar" data-task={sidebarTask}>
           <Brand />
           <UpdateBanner />
+          <AppUpdateBanner />
           <WorkspaceBar />
 
           {vehicleTab ? (
