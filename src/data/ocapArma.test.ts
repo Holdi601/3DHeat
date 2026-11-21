@@ -76,7 +76,11 @@ const A3 = {
     [2, 'killed', 1, [0, 'MX 6.5 mm'], 180],
     [4, 'endMission', ['WEST', 'BLUFOR triumphed!']],
   ],
-  Markers: [['hd_objective', 'Objective Oak', 0, 4, -1, '000000', -1, [[0, [1500, 2500, 0], 0]]]],
+  Markers: [
+    ['hd_objective', 'Objective Oak', 0, 4, -1, '000000', -1, [[0, [1500, 2500, 0], 0]]],
+    // Far off the map: left out of the table.
+    ['mil_dot', '', 0, 4, -1, '000000', -1, [[0, [110000, 2000, 0], 0]]],
+  ],
 };
 
 /** OCAP2's recorder for Reforger, as its receiver builds it: positions [x, up, north], world a world file, gaps null. */
@@ -207,6 +211,9 @@ describe('OCAP for Arma 3 and Arma Reforger', () => {
     expect(col<Float64Array>(t, 'Duration')[0]).toBe(4);
     expect(col<string[]>(t, 'Date')[0]).toBe('2026-11-21 19:00');
     expect(ocapHints(t).axes.flipY).toBe(true);
+    expect(obj).toContain('marker Objective Oak #M1');
+    expect(obj.some((o) => o.startsWith('marker mil_dot'))).toBe(false);
+    expect(ev[obj.indexOf('marker Objective Oak #M1')]).toBe('marker');
   });
 
   it('reads Reforger positions as east, north, height and keeps the engine frame for display', async () => {
@@ -279,7 +286,8 @@ describe('OCAP for Arma 3 and Arma Reforger', () => {
     expect(col<string[]>(t, 'Side')[rows[0]]).toBe('EAST');
     expect(col<string[]>(t, 'Riding')[rows[2]]).toBe('BTR70');
     expect(col<string[]>(t, 'Winner')[0]).toBe('EAST');
-    expect(ev).toContain('getin → BTR70');
+    expect(col<string[]>(t, 'Detail')).toContain('getin → BTR70');
+    expect(ev).toContain('getin');
     const btr = [...obj.keys()].filter((i) => obj[i] === 'BTR70 #1' && !ev[i]);
     expect(btr.map((i) => col<Float64Array>(t, 'Frame')[i])).toEqual([0, 1, 2, 3]);
   });

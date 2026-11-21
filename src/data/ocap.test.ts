@@ -149,17 +149,21 @@ describe('OCAP', () => {
   });
 
   it('places events where they happened, naming both sides', () => {
-    const ev = col<string[]>('Event');
+    // The full account is the Detail; the Event its kind, a word a filter can list.
+    const ev = col<string[]>('Detail');
+    const kind = col<string[]>('Event');
     const obj = col<string[]>('Object');
     const at = (s: string) => ev.findIndex((e) => e.startsWith(s));
     const killed = at('killed');
     expect(ev[killed]).toBe('killed ← Alpha (MX 6.5 mm, 212 m)');
+    expect(kind[killed]).toBe('killed');
     expect(obj[killed]).toBe('Ivan #1');
     expect(col<Float64Array>('X')[killed]).toBe(300);
     expect(col<Float64Array>('Distance')[killed]).toBeCloseTo(212.4);
     expect(col<string[]>('Killer')[killed]).toBe('Alpha');
     const kill = at('kill →');
     expect(ev[kill]).toBe('kill → Ivan (MX 6.5 mm, 212 m)');
+    expect(kind[kill]).toBe('kill');
     expect(obj[kill]).toBe('Alpha #0');
     // A hit by nobody: no killer, no distance.
     expect(ev[at('hit')]).toBe('hit');
@@ -168,6 +172,8 @@ describe('OCAP', () => {
     // What happened nowhere in particular: the mission's, in the middle of everything.
     const end = at('endMission');
     expect(ev[end]).toBe('endMission: BLUFOR wins');
+    expect(kind[end]).toBe('endMission');
+    expect(kind[at('getin')]).toBe('getin');
     expect(obj[end]).toBe('Mission');
     expect(col<string[]>('Side')[end]).toBe('WEST');
     expect(col<string[]>('Type')[end]).toBe('Mission');
@@ -176,7 +182,7 @@ describe('OCAP', () => {
   });
 
   it('keeps every shot with where it went, the markers, the clock and the recording\'s own fields', () => {
-    const ev = col<string[]>('Event');
+    const ev = col<string[]>('Detail');
     const fired = [...ev.keys()].filter((i) => ev[i].startsWith('fired'));
     expect(fired.length).toBe(2);
     const f = fired[0];

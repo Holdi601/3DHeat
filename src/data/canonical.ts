@@ -60,7 +60,7 @@ const EVENT_MAP: Record<string, EventKind> = {
   grenade: 'other', projectile: 'other', nade: 'other', thrown: 'other', flight: 'other',
   burst: 'fire', shot: 'fire', gun_shot: 'fire', fire: 'fire', fire_start: 'fire', fire_stop: 'fire', weapon_fire: 'fire', slash: 'fire', hasfired: 'fire', shoot: 'fire', fired: 'fire', tracer: 'fire',
   launch: 'launch', launched: 'launch', torpedo: 'launch', throw: 'launch', release: 'launch',
-  hit: 'hit', hit_critical: 'hit', hit_severe: 'hit', struck: 'hit', impact: 'hit', hasbeenhitby: 'hit',
+  hit: 'hit', hits: 'hit', hit_critical: 'hit', hit_severe: 'hit', struck: 'hit', impact: 'hit', hasbeenhitby: 'hit',
   miss: 'miss', missed: 'miss',
   explosion: 'explosion', flak: 'explosion', he: 'explosion', molotov: 'explosion', inferno: 'explosion', smoke: 'explosion', flash: 'explosion', explode: 'explosion',
   hurt: 'damage', damage: 'damage', damaged: 'damage', module_destroyed: 'damage', wounded: 'damage', fire_on: 'damage', blind: 'damage',

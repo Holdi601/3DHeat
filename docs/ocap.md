@@ -29,14 +29,16 @@ Everything the recording holds:
 - **Markers**, each as an object of its own, wherever it was put.
 - **The mission**: its name, the world, the author, the date, the in-game clock, how long it ran, and the recorder's own fields.
 
-A dead unit or wreck is kept once, where it died, not for the rest of the mission.
+A dead unit or wreck is kept once, where it died, not for the rest of the mission. A marker placed far off the map (more than 5 km beyond everything that moved) is left out, so it does not stretch the view over empty kilometres.
 
 ### Columns
 
-The table has OCAP's own columns (`Time`, `Frame`, `X` east, `Y` north, `Z` height, `Object`, `Side`, `Heading`, `Vehicle`, `Type`, `Alive`, `Riding`, `Crew`, `Group`, `Role`, `Player`, `Shots`, `Event`, `Killer`, `Victim`, `Weapon`, `Distance`, `Mission`, `World`, `Recording`, `TargetX/Y/Z`, `Text`, `Color`, `Shape`, `GameDate`, `UTC`, `TimeMultiplier`, `Info`) and these:
+The table has OCAP's own columns (`Time`, `Frame`, `X` east, `Y` north, `Z` height, `Object`, `Side`, `Heading`, `Vehicle`, `Type`, `Alive`, `Riding`, `Crew`, `Group`, `Role`, `Player`, `Shots`, `Event`, `Killer`, `Victim`, `Weapon`, `Distance`, `Mission`, `World`, `Recording`, `TargetX/Y/Z`, `Text`, `Color`, `Shape`, `GameDate`, `UTC` (the server's clock; not loaded by default, it changes every second), `TimeMultiplier`, `Info`) and these:
 
 | Column | What it says |
 |---|---|
+| `Event` | the kind of event, a word a filter can list: `killed` and `hit` on the victim, `kill` and `hits` on the shooter, `fired`, `getin`, `getout`, `connected`, `disconnected`, `captured`, `marker`, `endMission` and the rest as OCAP names them |
+| `Detail` | the event in full: `killed ← Smith (MX 6.5 mm, 212 m)` (not loaded by default: a long mission has more different ones than a filter can hold) |
 | `Game` | Arma 3 or Arma Reforger |
 | `Map` | the world as players know it: Everon for Reforger's `Eden`, Livonia for Arma 3's `Enoch` |
 | `Faction` | the faction, where the recording names it; for the Reforger recorder, the stock faction its side stands for (US, USSR, FIA) |

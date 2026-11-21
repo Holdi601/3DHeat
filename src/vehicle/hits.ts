@@ -32,7 +32,7 @@
  *                 in the world, placed in the vehicle's frame from its own
  *                 rows when the converter gives no point), the damage type in
  *                 `detail`, the damage from the `damaged` row of the moment
- *   Arma (OCAP)   `hit ← …` / `killed ← …` - the victim's row, `Killer`,
+ *   Arma (OCAP)   `hit` / `killed` - the victim's row, `Killer`,
  *                 `Weapon`, `Distance`: who, with what, from how far; no point
  *   Dota 2        `hurt` without a hitgroup - the hero's row, the attacker
  *                 `other`, the damage `value`, the ability `text`; no point
@@ -200,7 +200,7 @@ export const MODULE_WINDOW = 0.6;
 export const MARK_WINDOW = 0.6;
 
 const CS2_HIT = /^(hurt|player_hurt)$/i;
-/** OCAP's victim rows: "hit ← killer (weapon, 120 m)", "killed"; not the killer's "hit → victim". */
+/** OCAP's victim rows: `hit`, `killed` (older tables: "hit ← killer (weapon, 120 m)"); not the shooter's `hits` ("hit → victim"). */
 const OCAP_HIT = /^(hit|killed)\b(?!\s*→)/i;
 /** A victim's row that names a bone or a point. */
 const VICTIM_HIT = /^(hit|impact|hurt|wound(ed)?|damage(d)?|hit_?part)$/i;

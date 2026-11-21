@@ -281,6 +281,20 @@ function entryAt(t: Track, f: number): number {
   return -1;
 }
 
+/**
+ * An event's kind, the Event column: a word a filter can list (`killed`,
+ * `kill`, `hit` on the victim, `hits` on the shooter, `fired`, `marker`,
+ * `connected`, `endMission`...), whatever the mission. What it says in full
+ * (`killed ← Smith (MX 6.5 mm, 212 m)`) is the Detail column: a long mission
+ * has more different ones than a filter can hold.
+ */
+function shortEvent(e: string): string {
+  if (!e) return '';
+  if (/^hit\s*→/.test(e)) return 'hits';
+  if (/^marker gone/.test(e)) return 'marker gone';
+  return /^[A-Za-z_]+/.exec(e)?.[0] ?? e;
+}
+
 /** A recording's date from its file name, as OCAP names them: 2026_10_27__23_33_Name.json. */
 function dateFromName(name: string): string {
   const m = /^(\d{4})_(\d{2})_(\d{2})__(\d{2})_(\d{2})/.exec(name);
@@ -524,7 +538,7 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
   const MULT = new GrowableF64();
   const WON = new GrowableF64();
   const YAW = reforger ? new GrowableF64() : null;
-  const S = { Object: [] as string[], Side: [] as string[], Vehicle: [] as string[], Type: [] as string[], Riding: [] as string[], Group: [] as string[], Role: [] as string[], Event: [] as string[], Killer: [] as string[], Victim: [] as string[], Weapon: [] as string[], Text: [] as string[], Color: [] as string[], Shape: [] as string[], GameDate: [] as string[], UTC: [] as string[], Faction: [] as string[], Unit: [] as string[] };
+  const S = { Object: [] as string[], Side: [] as string[], Vehicle: [] as string[], Type: [] as string[], Riding: [] as string[], Group: [] as string[], Role: [] as string[], Event: [] as string[], Killer: [] as string[], Victim: [] as string[], Weapon: [] as string[], Text: [] as string[], Color: [] as string[], Shape: [] as string[], GameDate: [] as string[], UTC: [] as string[], Faction: [] as string[], Unit: [] as string[], Detail: [] as string[] };
   // What each vehicle is, worked out once.
   const unitOf = new Map<number, string>();
   const unitWord = (e: RawEntity): string => {
@@ -614,7 +628,8 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
     S.Riding.push(v ? str(v.name) : '');
     S.Group.push(t.unit ? s.group : '');
     S.Role.push(t.unit ? s.role : '');
-    S.Event.push(ev?.event ?? '');
+    S.Event.push(ev ? shortEvent(ev.event) : '');
+    S.Detail.push(ev?.event ?? '');
     S.Killer.push(ev?.killer ?? '');
     S.Victim.push(ev?.victim ?? '');
     S.Weapon.push(ev?.weapon ?? '');
@@ -670,8 +685,13 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
     }
   }
 
-  // The map's markers: each its own object, a row wherever it was put.
+  // The map's markers: each its own object, a row wherever it was put. One put far off the map (more than 5 km
+  // beyond everything that moved: a line's stray point, a marker parked off the edge) is left out, as it would
+  // stretch the view's extent over empty kilometres.
   const markers = Array.isArray(doc.Markers) ? doc.Markers : [];
+  const OFF = 5000;
+  const seen = Number.isFinite(minX);
+  const [x0, x1, y0, y1] = [minX - OFF, maxX + OFF, minY - OFF, maxY + OFF];
   markers.forEach((m, k) => {
     if (!Array.isArray(m) || m.length < 8 || !Array.isArray(m[7])) return;
     const type = str(m[0]);
@@ -682,15 +702,19 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
     const shape = [str(m[9]), str(m[10]), size].filter(Boolean).join(' ');
     const e: RawEntity = { id: -1000 - k, type: 'marker', name: text ? `marker ${text}` : `marker ${type}`, side };
     const track: Track = { e, unit: false, upY: false, entries: [], from: new Int32Array(0), to: new Int32Array(0) };
+    let placed = false;
     let at: State | null = null;
-    (m[7] as unknown[]).forEach((pos, j) => {
+    (m[7] as unknown[]).forEach((pos) => {
       if (!Array.isArray(pos) || typeof pos[0] !== 'number' || !Array.isArray(pos[1])) return;
       const p = pos[1] as unknown[];
       const x = numOr(p[0], NaN);
       const y = numOr(p[1], NaN);
       if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+      if (seen && (x < x0 || x > x1 || y < y0 || y > y1)) return;
       at = { x, y, z: numOr(p[2], 0), dir: numOr(pos[2], 0), alive: 1, inVehicle: 0, crew: [], name: e.name!, isPlayer: 0, role: '', group: '', side };
-      push(track, pos[0], at, { event: j === 0 ? `marker ${type}${text ? `: ${text}` : ''}` : '', text, color: str(m[5]), shape, side });
+      const first = !placed;
+      placed = true;
+      push(track, pos[0], at, { event: first ? `marker ${type}${text ? `: ${text}` : ''}` : '', text, color: str(m[5]), shape, side });
     });
     if (at && last >= 0) push(track, last, at, { event: `marker gone${text ? `: ${text}` : ''}`, text, color: str(m[5]), shape, side });
   });
@@ -776,13 +800,13 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
   // The recording's own fields, but for what the table already holds row by row.
   const own: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(doc as Record<string, unknown>)) if (!['entities', 'events', 'Markers', 'times'].includes(k)) own[k] = v;
-  const columns = ['Time', 'Frame', 'X', 'Y', 'Z', 'Object', 'Side', 'Heading', 'Vehicle', 'Type', 'Alive', 'InVehicle', 'Riding', 'Crew', 'Group', 'Role', 'Player', 'Shots', 'Event', 'Killer', 'Victim', 'Weapon', 'Distance', 'Mission', 'World', 'Recording', 'TargetX', 'TargetY', 'TargetZ', 'Text', 'Color', 'Shape', 'GameDate', 'UTC', 'TimeMultiplier', 'Info', 'Game', 'Map', 'Faction', 'Unit', 'Won', 'Winner', 'EndReason', 'Date', 'Duration', ...(YAW ? ['Yaw'] : [])];
+  const columns = ['Time', 'Frame', 'X', 'Y', 'Z', 'Object', 'Side', 'Heading', 'Vehicle', 'Type', 'Alive', 'InVehicle', 'Riding', 'Crew', 'Group', 'Role', 'Player', 'Shots', 'Event', 'Killer', 'Victim', 'Weapon', 'Distance', 'Mission', 'World', 'Recording', 'TargetX', 'TargetY', 'TargetZ', 'Text', 'Color', 'Shape', 'GameDate', 'UTC', 'TimeMultiplier', 'Info', 'Game', 'Map', 'Faction', 'Unit', 'Won', 'Winner', 'EndReason', 'Date', 'Duration', 'Detail', ...(YAW ? ['Yaw'] : [])];
   const data: (Float64Array | string[])[] = [
     TIME.finish(), FRAME.finish(), X.finish(), Y.finish(), Z.finish(), S.Object, S.Side, HEAD.finish(), S.Vehicle, S.Type,
     ALIVE.finish(), INVEH.finish(), S.Riding, CREW.finish(), S.Group, S.Role, PLAYER.finish(), SHOTS.finish(),
     S.Event, S.Killer, S.Victim, S.Weapon, DIST.finish(), fill(mission), fill(world), fill(recording),
     TX.finish(), TY.finish(), TZ.finish(), S.Text, S.Color, S.Shape, S.GameDate, S.UTC, MULT.finish(), fill(JSON.stringify(own)),
-    fill(game), fill(map), S.Faction, S.Unit, WON.finish(), fill(winner), fill(endText), fill(date), new Float64Array(n).fill(duration),
+    fill(game), fill(map), S.Faction, S.Unit, WON.finish(), fill(winner), fill(endText), fill(date), new Float64Array(n).fill(duration), S.Detail,
     ...(YAW ? [YAW.finish()] : []),
   ];
   return { columns, data, numeric: data.map((d) => d instanceof Float64Array), rows: n, title: mission, world, captureDelay: delay, reforger, game, map };
@@ -817,7 +841,7 @@ export function ocapHints(t?: Pick<OcapTable, 'reforger'>): {
       angleUnit: 'degrees',
       // Unit before Vehicle: the figures take the first name they know. Date, Duration and EndReason, the same on
       // every row of a recording, stay in the table for the mapping step and the mass analysis.
-      extra: ['Unit', 'Vehicle', 'Type', 'Game', 'Map', 'Faction', 'Won', 'Winner', 'Event', 'Alive', 'InVehicle', 'Riding', 'Group', 'Role', 'Player', 'Shots', 'Killer', 'Victim', 'Weapon', 'Distance', 'Crew', 'Mission', 'World', 'Frame', 'TargetX', 'TargetY', 'TargetZ', 'Text', 'Color', 'Shape', 'GameDate', 'UTC', 'TimeMultiplier'],
+      extra: ['Unit', 'Vehicle', 'Type', 'Game', 'Map', 'Faction', 'Won', 'Winner', 'Event', 'Alive', 'InVehicle', 'Riding', 'Group', 'Role', 'Player', 'Shots', 'Killer', 'Victim', 'Weapon', 'Distance', 'Crew', 'Mission', 'World', 'Frame', 'TargetX', 'TargetY', 'TargetZ', 'Text', 'Color', 'Shape', 'GameDate', 'TimeMultiplier'],
     },
   };
 }
