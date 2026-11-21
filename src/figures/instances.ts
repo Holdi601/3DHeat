@@ -103,6 +103,13 @@ export function meshOf(t: Template): FigureMesh {
   return m;
 }
 
+/** A template's mesh built elsewhere (a worker's `meshOf`, `packWorker.ts`): what `meshOf` gives for it from now on. */
+export function adoptMesh(t: Template, data: Float32Array, count: number): FigureMesh {
+  const m = { id: nextId++, data, count };
+  meshes.set(t, m);
+  return m;
+}
+
 /** Where a mesh vertex keeps its edge code (`markEdges`), the third of the three spare floats. */
 export const EDGE_AT = 22;
 

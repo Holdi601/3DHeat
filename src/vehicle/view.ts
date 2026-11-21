@@ -12,7 +12,7 @@ import { filterList, hitsHeld, hitsOf, hitsReady, type HitSet, type VehicleHit, 
 import { figureOfVehicle, templateOfFigure } from './scene';
 import { placeBoxHits } from './boxes';
 import { CATALOG } from '../figures/catalog';
-import { loadPackFigures, packFigurePending, packFiguresVersion } from '../figures/figurepack';
+import { loadPackFigures, packFigurePending, packFiguresVersion, packGameOf } from '../figures/figurepack';
 import { areaKeep, inArea } from './area';
 
 export interface VehicleView {
@@ -82,7 +82,7 @@ export function vehicleView(d: Dataset | null, s: Choice): VehicleView {
     const list = [...set.vehicles.values()].sort((a, b) => b.hits + b.modules - (a.hits + a.modules));
     const vehicle = (s.vehicle ? set.vehicles.get(s.vehicle) : undefined) ?? list[0] ?? null;
     if (vehicle) {
-      let figure = figureOfVehicle(vehicle);
+      let figure = figureOfVehicle(vehicle, packGameOf(set.vehicles.keys()));
       // A local pack's model of the vehicle (`figurepack.ts`) once its data is here; until then the figure it stands in for.
       if (packFigurePending(figure)) {
         void loadPackFigures([figure]);

@@ -53,6 +53,7 @@ import { turretOf, type TurretBox } from './turret';
 import { fitScale, reachOf, snapToFigure, SNAP_STRIDE } from './snap';
 import { aimOf, aimSteps, type AimNow } from './aim';
 import { matchIndexSteps } from './match';
+import { packGameOf } from './figurepack';
 import { bodyOf, FireBody } from '../data/fires';
 import type { FirePose } from './fires';
 
@@ -258,6 +259,8 @@ function* marksFromSteps(d: Dataset, set: HitSet, places: HitPlaces): Generator<
   const now: AimNow = { yaw: NaN, pitch: NaN };
   const out = empty(keep.length);
   const index = new Map<string, number>();
+  // The recording's game as the model packs tell it: a unit id two games' packs both have is drawn as this game's.
+  const game = packGameOf(set.vehicles.keys());
   for (let k = 0; k < keep.length; k++) {
     if (k % 1024 === 1023) yield;
     const { h, person, row } = keep[k];
@@ -278,7 +281,7 @@ function* marksFromSteps(d: Dataset, set: HitSet, places: HitPlaces): Generator<
     if (v === undefined) {
       v = out.vehicles.length;
       index.set(h.vehicle, v);
-      out.vehicles.push({ figure: figureOfVehicle(info ?? { id: h.vehicle, name: '', kind: '' }), marks: [], done: false, asked: false });
+      out.vehicles.push({ figure: figureOfVehicle(info ?? { id: h.vehicle, name: '', kind: '' }, game), marks: [], done: false, asked: false });
       // Finding a vehicle's figure goes through the catalogue's names: a step of its own.
       yield;
     }

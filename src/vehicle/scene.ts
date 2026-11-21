@@ -15,6 +15,7 @@
 import { paintPlates, type Plate, type PlateCount } from './plates';
 import { lapColor, VertexBuffer, type Rgb, type Vec3 } from '../race/geometry';
 import { CATALOG } from '../figures/catalog';
+import { ownModelIn } from '../figures/figurepack';
 import { TemplateCache, type Template } from '../figures/kit';
 import { figureFor, figureForClass } from '../figures/match';
 import type { Outcome, VehicleHit, VehicleInfo } from './hits';
@@ -46,10 +47,16 @@ export const OUTCOME_COLOURS: Record<Outcome, Rgb> = {
   hit: [0.95, 0.95, 0.95],
 };
 
-/** The figure a vehicle is drawn as: by its id and name, else by its kind, else a generic one of its domain. */
-export function figureOfVehicle(v: Pick<VehicleInfo, 'id' | 'name' | 'kind'>): string {
+/**
+ * The figure a vehicle is drawn as: by its id and name, else by its kind, else a generic one of its domain. `game`: the
+ * recording's game as the model packs tell it (`packGameOf`), so an id two games' packs both have is drawn as this
+ * game's model.
+ */
+export function figureOfVehicle(v: Pick<VehicleInfo, 'id' | 'name' | 'kind'>, game: string | null = null): string {
   // A Dota 2 hero stands as a person: its hits have no point, the figure only says whose they are.
   if (v.id === 'soldier' || v.kind === 'person' || v.kind === 'hero') return 'soldier';
+  const own = game ? ownModelIn(game, v.id) : undefined;
+  if (own && CATALOG[own]) return own;
   const types = v.kind ? [v.kind] : [];
   const f = figureFor([v.id, v.name, ...[v.id, v.name].map(bareName)].filter(Boolean), types);
   // A figure found by the name; one found only by the type is a class's, chosen below more closely.

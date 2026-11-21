@@ -81,11 +81,13 @@ You can also keep packs of per-unit vehicle models on your own machine, one per 
 
 A unit is drawn as the first of:
 
-1. its own model: a unit of its id in a pack;
+1. its own model: a unit of its id in a pack. Where two games' packs have a unit of the same id (Battlefield 4's `lav25` and Arma Reforger's `LAV25`), a recording is drawn with its own game's: the game whose pack has the most of the recording's unit names;
 2. another pack's model of the same vehicle: a unit that stands for the same catalogue figure, or whose real vehicle name matches the unit's (see [Names across games](#names-across-games)), drawn on the unit's own figure;
 3. its figure.
 
 A model is lent only to a unit of its kind: an aircraft's to an aircraft, a helicopter's to a helicopter, a drone's to a drone, a ground vehicle's to a ground vehicle, a ship's to a ship. A helicopter's model never stands on a fighter's figure, nor the other way round. Units a pack marks as `static` (barriers, buildings, containers, sandbags) stand for no unit and are never offered as a model.
+
+A model is fetched, read and built off the page's own thread, and its meshes go to the graphics card a few megabytes a frame. Until all of them are there the unit keeps the figure its model stands in for; then it changes to the model from one frame to the next. Sixty models arriving while a recording plays cost no frame.
 
 The viewer loads the packs from `HEAT3D_MODEL_PACK` (paths separated by `;`), or the `modelPack` entry of `tools/local-data.json`: one path, a list, or `{ "<game>": path }`, earlier packs first where two have the same vehicle. A pack is a folder with `model-pack.json` and one `.glb` per unit:
 

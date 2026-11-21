@@ -21,7 +21,7 @@ import type { AttributeColumn, Dataset } from '../state/types';
 import { CUBE_STRIDE } from '../data/tracks';
 import { CATALOG } from './catalog';
 import { placeFrame, poseFrame, TemplateCache, type Template } from './kit';
-import { packFigurePending } from './figurepack';
+import { modelPackIndexStamp, ownModelIn, packFigurePending, packGameOf } from './figurepack';
 import { gearUpPitch, hasJoints, InstanceBatches, meshOf, NO_PITCH, spinPitch } from './instances';
 import { gearUpRows } from './gearstate';
 import { aimOf, type AimNow } from './aim';
@@ -225,8 +225,13 @@ export class FigureReplay {
     g.count++;
   }
 
+  /** The game the data is of, as the model packs tell it (`packGameOf`), and the packs' index it was told by. */
+  private packGame: string | null = null;
+  private packStamp = -1;
+
   private attach(d: Dataset): void {
     this.dataset = d;
+    this.packStamp = -1;
     this.kinds.clear();
     this.words?.clear();
     this.lives?.clear();
@@ -311,12 +316,20 @@ export class FigureReplay {
       return k;
     }
     if (!this.names.length && !this.types.length) return null;
+    // The model packs' index arrived after the data: kinds worked out without it are worked out again.
+    if (this.packStamp !== modelPackIndexStamp()) {
+      this.packStamp = modelPackIndexStamp();
+      this.kinds.clear();
+      this.packGame = packGameOf(this.names.flatMap((a) => a.categories ?? []));
+    }
     const names = this.names.map((a) => a.categories![(a.data as Uint32Array)[row]] ?? '');
     const types = this.types.map((a) => a.categories![(a.data as Uint32Array)[row]] ?? '');
     const key = `${names.join('\u0001')}\u0002${types.join('\u0001')}`;
     let k = this.kinds.get(key);
     if (k === undefined) {
-      k = figureFor(names, types);
+      // A unit id two games' packs both have: the recording's own game's model, whichever pack came first.
+      const own = this.packGame ? names.map((n) => ownModelIn(this.packGame!, n)).find((x) => x && CATALOG[x]) : undefined;
+      k = own ?? figureFor(names, types);
       this.kinds.set(key, k);
     }
     return k;
@@ -387,6 +400,20 @@ export class FigureReplay {
     return this.template(kind);
   }
 
+  /** The dataset's gear rows as this build has them (`gearUpRows`, asked once a build: it works a slice each time). */
+  private gearRows: Uint8Array | null | undefined;
+  private gearAsked = false;
+
+  /** Whether a figure with landing gear that folds (a `gear` joint: a model pack's aircraft) has it up at a row. */
+  private gearUpAt(d: Dataset, t: Template, row: number): boolean {
+    if (row < 0 || !t.joints?.some((j) => j.kind === 'gear')) return false;
+    if (!this.gearAsked) {
+      this.gearAsked = true;
+      this.gearRows = gearUpRows(d);
+    }
+    return this.gearRows?.[row] === 1;
+  }
+
   private template(kind: string): Template | null {
     const e = CATALOG[kind];
     if (!e) return null;
@@ -407,6 +434,7 @@ export class FigureReplay {
    * row each stands for); what has no figure is left in `rest`.
    */
   build(d: Dataset, cubes: Float32Array, count: number, rows: Int32Array, o: FigureReplayOptions): void {
+    this.gearAsked = false;
     this.tris.reset();
     this.batches.reset();
     this.drawnScale.clear();
@@ -560,11 +588,11 @@ export class FigureReplay {
         // Its turret turned and its gun raised as the data has them now.
         aim.at(row, o.time, aimNow);
         const pitch = Number.isFinite(aimNow.pitch) ? aimNow.pitch : NO_PITCH;
-        this.batches.add(meshOf(drawn), relativeFrame(fr, o.origin), scale, team, alpha, Number.isFinite(aimNow.yaw) ? aimNow.yaw : 0, gearUpAt(d, drawn, row) ? gearUpPitch(pitch) : pitch);
+        this.batches.add(meshOf(drawn), relativeFrame(fr, o.origin), scale, team, alpha, Number.isFinite(aimNow.yaw) ? aimNow.yaw : 0, this.gearUpAt(d, drawn, row) ? gearUpPitch(pitch) : pitch);
       } else {
         // A wreck's propellers and rotors stand still.
         const still = dead ? spinPitch(0) : NO_PITCH;
-        this.batches.add(meshOf(drawn), relativeFrame(fr, o.origin), scale, team, alpha, 0, gearUpAt(d, drawn, row) ? gearUpPitch(still) : still);
+        this.batches.add(meshOf(drawn), relativeFrame(fr, o.origin), scale, team, alpha, 0, this.gearUpAt(d, drawn, row) ? gearUpPitch(still) : still);
       }
       this.placed.push({ box: i, row, kind: kind!, fr, scale, min: t.min, max: t.max });
     }
@@ -638,8 +666,3 @@ function named(kind: string, state: Sweep | null): string {
   return state === 'spread' || state === 'swept' ? `${kind}@${state}` : kind;
 }
 
-/** Whether a figure with landing gear that folds (a `gear` joint: a model pack's aircraft) has it up at a row. */
-function gearUpAt(d: Dataset, t: Template, row: number): boolean {
-  if (row < 0 || !t.joints?.some((j) => j.kind === 'gear')) return false;
-  return gearUpRows(d)?.[row] === 1;
-}

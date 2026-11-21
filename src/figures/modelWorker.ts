@@ -32,7 +32,15 @@ const plain = (m: FigureMesh | null): ModelMesh | null => (m ? { data: m.data, c
 
 self.onmessage = async (e: MessageEvent<ModelAsk>) => {
   const kind = e.data.kind;
-  const post = (a: ModelAnswer) => (self as unknown as Worker).postMessage(a);
+  // The meshes handed over, not copied: a copy is made on the page's thread as the message is read.
+  const post = (a: ModelAnswer) => {
+    const m = a.models;
+    const own = (x: ModelMesh | null) => (x ? { data: x.data.slice(), count: x.count } : null);
+    const models = m ? { ...m, full: own(m.full)!, coarse: own(m.coarse), far: own(m.far) } : null;
+    const transfer = new Set<ArrayBuffer>();
+    for (const x of models ? [models.full, models.coarse, models.far] : []) if (x) transfer.add(x.data.buffer as ArrayBuffer);
+    (self as unknown as Worker).postMessage({ ...a, models }, [...transfer]);
+  };
   // A local figure pack (`figurepack.ts`), when there is one, is in place before the first build, and the kind's data
   // from it is here before the kind is built.
   await figurePackReady;

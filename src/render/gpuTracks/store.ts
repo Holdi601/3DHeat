@@ -54,6 +54,8 @@ import { CHUNK_KEYS, CHUNK_SHIFT, CHUNK_U32 } from './chunks';
 import { dartIndex, dartMeshes } from '../symbols/darts';
 import { classify, Domain, isEffectDomain, isWeaponDomain, packWord } from '../../figures/symbolClass';
 import { markGaps } from '../../data/gaps';
+import { makeResident } from '../../figures/residency';
+import { matchIndexSteps } from '../../figures/match';
 
 export { CHUNK_KEYS, CHUNK_SHIFT, CHUNK_U32, encodeChunk } from './chunks';
 
@@ -228,6 +230,8 @@ function kindModels(kind: string): { done: boolean; value: KindModels | null; fa
         const m = e.data.models;
         const adopt = (x: { data: Float32Array; count: number } | null): FigureMesh | null => (x ? { id: workerMeshId++, data: x.data, count: x.count } : null);
         job.value = m ? { full: adopt(m.full)!, coarse: adopt(m.coarse), far: adopt(m.far), longest: m.longest, air: m.air } : null;
+        // On their way to the GPU while the tracks are still being built, a slice a frame (`figures/residency.ts`).
+        if (job.value) makeResident([job.value.full, job.value.coarse, job.value.far].filter((x): x is FigureMesh => !!x));
         job.failed = !!e.data.error;
         job.done = true;
       };
@@ -243,6 +247,17 @@ function kindModels(kind: string): { done: boolean; value: KindModels | null; fa
   kindJobs.set(kind, job);
   modelWorker.postMessage({ kind });
   return job;
+}
+
+/** How many kinds were asked of the model worker, how many are back, and how many came back with meshes (for probes). */
+export function kindModelsState(): { asked: number; back: number; meshes: number } {
+  let back = 0;
+  let meshes = 0;
+  for (const job of kindJobs.values()) {
+    if (job.done) back++;
+    if (job.value) meshes++;
+  }
+  return { asked: kindJobs.size, back, meshes };
 }
 
 export class TrackFigures {
@@ -477,7 +492,7 @@ function* buildSteps(d: Dataset, o: BuildOptions): SliceJob<GpuTrackStore | null
   yield;
 
   /** Marks the rows kept as keys at a tolerance (0: all but doubled times); returns how many. */
-  const held = heldSamples(rows, start, persons, px, py, pz, time, units);
+  const held = yield* heldSamples(rows, start, persons, px, py, pz, time, units);
   yield;
   const keep = new Uint8Array(samples);
   const choose = function* (tol: number): Generator<void, number, void> {
@@ -534,7 +549,9 @@ function* buildSteps(d: Dataset, o: BuildOptions): SliceJob<GpuTrackStore | null
   }
   if (keys > o.maxKeys) return null;
 
-  // What each track is drawn as.
+  // What each track is drawn as: the catalogue's name index first, a slice at a time (built whole on first asking,
+  // it held a frame 20 ms).
+  yield* matchIndexSteps();
   const figures = new TrackFigures(d);
   // Every kind asked of the model worker at once, so it builds them while the keys are worked out.
   for (let p = 0; p < persons; p++) {
@@ -678,6 +695,7 @@ function* buildSteps(d: Dataset, o: BuildOptions): SliceJob<GpuTrackStore | null
   table.set(chunkData.subarray(0, chunkAt), head);
   for (let i = 0; i < tracks; i++) table[i * TRACK_U32 + 7] += head - 1;
   yield;
+  const keysAim = yield* aimKeys(d, keyRow.subarray(0, key), table, tracks, units);
   return {
     dataset: d,
     tracks,
@@ -685,7 +703,7 @@ function* buildSteps(d: Dataset, o: BuildOptions): SliceJob<GpuTrackStore | null
     keysA: keysA.subarray(0, key * KEY_U32),
     keysB: keysB.subarray(0, key),
     keyRow: keyRow.subarray(0, key),
-    keysAim: aimKeys(d, keyRow.subarray(0, key), table, tracks, units),
+    keysAim,
     keys: key,
     meshes: figures.meshes,
     meshTracks: figures.meshTracks.slice(0, figures.meshes.length),
@@ -703,7 +721,7 @@ function* buildSteps(d: Dataset, o: BuildOptions): SliceJob<GpuTrackStore | null
  * The turret and gun at each key, where the data has them, and an aircraft's landing gear up where it is
  * (`GEAR_UP_WORD` on a key with no aim); marks the tracks that have them.
  */
-function aimKeys(d: Dataset, keyRow: Int32Array, trackData: Uint32Array, tracks: number, units: number): Uint32Array | null {
+function* aimKeys(d: Dataset, keyRow: Int32Array, trackData: Uint32Array, tracks: number, units: number): SliceJob<Uint32Array | null> {
   const aim = aimOf(d);
   if (!d.time) return null;
   const gc = gearColumns(d);
@@ -716,8 +734,10 @@ function aimKeys(d: Dataset, keyRow: Int32Array, trackData: Uint32Array, tracks:
   if (!aim && !flying.length) return null;
   const out = new Uint32Array(keyRow.length);
   const now: AimNow = { yaw: NaN, pitch: NaN };
+  // A slice's end every few thousand keys: a recording of 650,000 keys took 25 ms here, gear and all, in one go.
   if (aim)
     for (let k = 0; k < keyRow.length; k++) {
+      if ((k & 0x3fff) === 0x3fff) yield;
       const r = keyRow[k];
       aim.at(r, d.time[r], now);
       out[k] = packAim(now.yaw, now.pitch);
@@ -725,7 +745,12 @@ function aimKeys(d: Dataset, keyRow: Int32Array, trackData: Uint32Array, tracks:
   else out.fill(0xffffffff);
   if (gc && flying.length) {
     const up = new Uint8Array(keyRow.length);
+    let since = 0;
     for (const i of flying) {
+      if ((since += trackData[i * TRACK_U32 + 1]) > 0x4000) {
+        since = 0;
+        yield;
+      }
       const first = trackData[i * TRACK_U32];
       const n = trackData[i * TRACK_U32 + 1];
       const heli = ((trackData[i * TRACK_U32 + 15] >>> 16) & 15) === Domain.Heli;
@@ -746,13 +771,19 @@ function aimKeys(d: Dataset, keyRow: Int32Array, trackData: Uint32Array, tracks:
  * client late by a frame); as keys they would stop the unit and jump it on.
  * The first sample of the run is where the unit was then, and stays.
  */
-export function heldSamples(rows: Int32Array, start: Int32Array, persons: number, px: ArrayLike<number>, py: ArrayLike<number>, pz: ArrayLike<number>, time: ArrayLike<number>, units: number): Uint8Array {
+export function* heldSamples(rows: Int32Array, start: Int32Array, persons: number, px: ArrayLike<number>, py: ArrayLike<number>, pz: ArrayLike<number>, time: ArrayLike<number>, units: number): SliceJob<Uint8Array> {
   const held = new Uint8Array(rows.length);
+  // A slice's end every few tens of thousands of samples: 650,000 of them took 10 ms in one go.
+  let since = 0;
   const same = (i: number, j: number) => px[rows[i]] === px[rows[j]] && py[rows[i]] === py[rows[j]] && pz[rows[i]] === pz[rows[j]];
   const dist = (i: number, j: number) => Math.hypot(px[rows[j]] - px[rows[i]], py[rows[j]] - py[rows[i]], pz[rows[j]] - pz[rows[i]]);
   for (let p = 0; p < persons; p++) {
     const a = start[p];
     const b = start[p + 1];
+    if ((since += b - a) > 0x8000) {
+      since = 0;
+      yield;
+    }
     for (let k = a + 1; k < b - 1; k++) {
       if (!same(k, k - 1)) continue;
       // The run k - 1 .. e at one place.

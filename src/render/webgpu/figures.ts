@@ -9,9 +9,20 @@ import { GPU_DEPTH_TEST } from '../depth';
 import type { FigureBatch, FigureMesh } from '../../figures/instances';
 import { INSTANCE_STRIDE, MESH_STRIDE } from '../../figures/instances';
 import { figureWgsl, seeThrough } from '../figureShaders';
+import { markResident, nextToUpload, playbackStarting, setMeshUploader, uploadsWaiting } from '../../figures/residency';
 
 /** Figure mesh bytes written in one frame at most; see `meshFor`. */
 const MESH_BYTES_PER_FRAME = 2 * 1024 * 1024;
+/** The same while playback starts (`playbackStarting`): only what a frame draws, and less of it. */
+const MESH_BYTES_STARTING = 512 * 1024;
+
+/** A mesh part way to the GPU: its buffer, and how far it is written. */
+interface MeshUpload {
+  mesh: FigureMesh;
+  buf: GPUBuffer;
+  at: number;
+  see: boolean;
+}
 
 interface MeshGpu {
   buf: GPUBuffer;
@@ -100,32 +111,83 @@ export class GpuFigures {
     });
     this.pipeline = pipeline(1, true);
     this.seePipeline = pipeline(2, false);
+    setMeshUploader(true);
   }
 
-  /** Mesh bytes written this frame, and the frame they count for; see `meshFor`. */
+  /** Mesh bytes written this frame (`pump` starts the count); see `meshFor`. */
   private uploadedBytes = 0;
-  private uploadedFrame = -1;
+  /** This frame's budget for them (`pump`). */
+  private budget = MESH_BYTES_PER_FRAME;
+  /** Meshes part way to the GPU, by id: written a slice a frame, drawn once whole. */
+  private readonly partial = new Map<number, MeshUpload>();
 
   /**
-   * A mesh's vertex buffer, made on first use - a few megabytes of them a
-   * frame at most, null past that: the frame the GPU tracks became ready wrote
-   * every figure of the catalogue at once, a tenth of a second without a frame.
-   * A mesh not made yet is drawn from the next frame.
+   * A mesh's vertex buffer, made on first use and written a few megabytes a
+   * frame at most, null until it is whole: the frame the GPU tracks became
+   * ready wrote every figure of the catalogue at once, a tenth of a second
+   * without a frame, and one ship's model is tens of megabytes. A mesh not
+   * whole yet is drawn from the frame it is. Meshes asked for ahead of their
+   * first draw (`figures/residency.ts`) take what a frame's draws leave.
    */
   private meshFor(mesh: FigureMesh): MeshGpu | null {
-    let m = this.meshes.get(mesh.id);
+    const m = this.meshes.get(mesh.id);
     if (m) return m;
-    if (this.uploadedFrame !== this.frame) {
-      this.uploadedFrame = this.frame;
-      this.uploadedBytes = 0;
+    let u = this.partial.get(mesh.id);
+    if (!u) {
+      if (this.uploadedBytes >= this.budget) return null;
+      const buf = this.device.createBuffer({ label: `figure mesh ${mesh.id}`, size: Math.max(16, mesh.data.byteLength), usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST });
+      u = { mesh, buf, at: 0, see: false };
+      this.partial.set(mesh.id, u);
     }
-    if (this.uploadedBytes > 0 && this.uploadedBytes + mesh.data.byteLength > MESH_BYTES_PER_FRAME) return null;
-    this.uploadedBytes += mesh.data.byteLength;
-    const buf = this.device.createBuffer({ label: `figure mesh ${mesh.id}`, size: Math.max(16, mesh.data.byteLength), usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST });
-    this.device.queue.writeBuffer(buf, 0, mesh.data.buffer, mesh.data.byteOffset, mesh.data.byteLength);
-    m = { buf, count: mesh.count, see: seeThrough(mesh.data), used: 0 };
-    this.meshes.set(mesh.id, m);
+    return this.write(u);
+  }
+
+  /** Writes what this frame's budget allows of an upload; the mesh once it is whole, else null. */
+  private write(u: MeshUpload): MeshGpu | null {
+    const d = u.mesh.data;
+    const room = this.budget - this.uploadedBytes;
+    if (room <= 0) return null;
+    // Whole vertices, so the see-through test reads each one once.
+    const V = MESH_STRIDE * 4;
+    const n = Math.min(d.byteLength - u.at, Math.max(V, Math.floor(room / V) * V));
+    if (n > 0) {
+      this.device.queue.writeBuffer(u.buf, u.at, d.buffer, d.byteOffset + u.at, n);
+      u.see ||= seeThrough(d.subarray(u.at / 4, (u.at + n) / 4));
+      u.at += n;
+      this.uploadedBytes += n;
+    }
+    if (u.at < d.byteLength) return null;
+    this.partial.delete(u.mesh.id);
+    const m: MeshGpu = { buf: u.buf, count: u.mesh.count, see: u.see, used: this.frame };
+    this.meshes.set(u.mesh.id, m);
+    markResident(u.mesh.id, true);
     return m;
+  }
+
+  /** Whether meshes are on their way (`pump` carries them on). */
+  get uploading(): boolean {
+    return this.partial.size > 0 || uploadsWaiting() > 0;
+  }
+
+  /**
+   * A frame's start: the budget counted afresh, uploads under way carried on, then meshes asked for ahead of their
+   * draw (`makeResident`) started, while the budget lasts.
+   */
+  pump(): void {
+    this.uploadedBytes = 0;
+    // While playback starts the meshes asked for ahead wait; the frame's own draws take a smaller slice.
+    const starting = playbackStarting();
+    this.budget = starting ? MESH_BYTES_STARTING : MESH_BYTES_PER_FRAME;
+    for (const u of this.partial.values()) {
+      if (this.uploadedBytes >= this.budget) return;
+      this.write(u);
+    }
+    if (starting) return;
+    while (this.uploadedBytes < this.budget) {
+      const mesh = nextToUpload();
+      if (!mesh) return;
+      this.meshFor(mesh);
+    }
   }
 
   /**
@@ -218,13 +280,17 @@ export class GpuFigures {
         if (this.frame - m.used < 600) continue;
         m.buf.destroy();
         this.meshes.delete(id);
+        markResident(id, false);
       }
     }
   }
 
   dispose(): void {
+    setMeshUploader(false);
     for (const m of this.meshes.values()) m.buf.destroy();
     this.meshes.clear();
+    for (const u of this.partial.values()) u.buf.destroy();
+    this.partial.clear();
     this.instances?.destroy();
     this.instances = null;
   }

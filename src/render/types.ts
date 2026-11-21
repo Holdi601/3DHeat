@@ -932,6 +932,11 @@ export interface Renderer {
    * backend cannot place units on the GPU (WebGL2).
    */
   readonly gpuTracksMaxBytes?: number;
+  /**
+   * Whether the GPU tracks can be drawn now; the first call starts what they need made (their pipelines, compiled
+   * off the frame). Absent: always.
+   */
+  gpuTracksReady?(): boolean;
   /** GPU bytes the GPU tracks hold now. */
   readonly gpuTracksBytes?: number;
   readonly gpuBytesUsed: number;

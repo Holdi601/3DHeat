@@ -3389,10 +3389,14 @@ await step('the RAM budget comes from the host, not the browser cap', async () =
       // the budget against a later reading tests the machine's mood; checking
       // it against the reading it was derived from tests the rule.
       freeSeen: s.ramFreeBytes,
+      // The installed figure the budget was built from. Matched against the
+      // endpoint rather than the note's wording, which is translated and has
+      // changed before.
+      totalSeen: s.ramTotalBytes,
     };
   });
   if (b.capped) throw new Error(`still using the clamped guess: ${b.source}`);
-  if (!/dev server/.test(b.source)) throw new Error(`budget not sourced from the host: ${b.source}`);
+  if (b.totalSeen !== host.totalBytes) throw new Error(`budget not sourced from the host: ${b.source}`);
   // Both shares are upper bounds, so the budget must sit under each of them —
   // and above the 4.8GB the clamp produces, or the endpoint changed nothing.
   const CAPPED = 8 * 1024 ** 3 * 0.6;

@@ -16,6 +16,8 @@ import { hasDirectionTracks } from '../tactics/keyframes';
 import { VehicleStage } from '../vehicle/stage';
 import { FigureReplay } from '../figures/replay';
 import { packFiguresVersion } from '../figures/figurepack';
+import { installPackModels } from '../figures/packModels';
+import { notePlayback } from '../figures/residency';
 import { EffectLayer } from '../figures/effects';
 import { emptySample, MotionModel, MotionRefiner } from '../figures/motion';
 import { WeaponLayer } from './weapons';
@@ -830,6 +832,8 @@ export class Engine {
     sliceBudget.ms = SLICE_MS;
     // The far-off glyphs' atlas drawn in a worker now, not on the first frame that shows one.
     warmSymbolAtlas();
+    // Pack models built in a worker and swapped in once on the GPU, never built or uploaded whole in a frame.
+    installPackModels();
     this.detachInput = this.camera.attach(canvas);
     this.detachMeasure = this.attachMeasureInput(canvas);
     // The tactics board: its gizmo keys while something is selected, shift-drag for a box.
@@ -2034,11 +2038,14 @@ export class Engine {
     if (!d || !max || !d.time || !d.personId) return null;
     // An overlay loaded straight into tracks (overlay/lean): drawn from them whatever its size.
     const lean = registeredGpuTrackStore(d);
-    if (lean) return lean;
+    // The tracks' pipelines are compiled while the store is built (`gpuTracksReady`): until both are done, pending.
+    if (lean) return renderer.gpuTracksReady?.() === false ? undefined : lean;
     const force = gpuTracksForced();
     if (force === false || (d.personLabels.length < GPU_TRACKS_FROM && !force)) return null;
     if (s.team.session >= 0 && d.sessionId && d.sessionLabels.length > 1) return null;
-    return gpuTrackStoreSliced(d, { maxKeys: Math.floor(max / 8) }, boxesSteps);
+    const ready = renderer.gpuTracksReady?.() ?? true;
+    const store = gpuTrackStoreSliced(d, { maxKeys: Math.floor(max / 8) }, boxesSteps);
+    return store && !ready ? undefined : store;
   }
 
   /**
@@ -2928,6 +2935,8 @@ export class Engine {
     const playing = s.timeline.playing && !!this.dataset;
     // Played backwards as Tacview's reverse playback: the same, from the end towards the start.
     const back = !!s.timeline.reverse;
+    // Pack models wait out the start of playback, and the meshes uploaded meanwhile take a smaller slice a frame.
+    notePlayback(playing, now);
     if (playing && !this.wasPlaying) {
       // Starting from the end restarts, the way every media player does. Without
       // this, pressing Play after a run to the end looks like a dead button.

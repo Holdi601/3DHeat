@@ -12,6 +12,7 @@
 
 import type { Dataset } from '../state/types';
 import { personRows } from '../data/flight';
+import { sliced, type SliceJob } from '../data/slices';
 
 /** On the ground below this height, metres. */
 const GROUND = 5;
@@ -76,30 +77,37 @@ export function gearUpKeys(d: Dataset, c: GearColumns, rows: ArrayLike<number>, 
 /** Rows beyond which the CPU figures (small loads; larger ones are the GPU tracks') leave the gear down. */
 const ROWS_ESTIMATED = 500_000;
 const rowCache = new WeakMap<Dataset, Uint8Array | null>();
+const rowJobs = new WeakMap<Dataset, SliceJob<Uint8Array | null>>();
 
 /**
  * Whether the gear is up at a dataset row, for the CPU figures (`replay.ts`): the gear column where it says, else the
- * same estimate as the tracks' keys, worked out once for the whole dataset on first asking (the CPU figures draw
- * small loads; a larger one keeps its gear down). Null when the data can say nothing.
+ * same estimate as the tracks' keys, worked out once for the whole dataset on first asking, a slice a frame
+ * (`undefined` meanwhile: the gear stays down; the first model with gear to arrive while a recording played held a
+ * frame for it). The CPU figures draw small loads; a larger one keeps its gear down. Null when the data can say
+ * nothing. Ask once a frame: each asking works a step at least.
  */
-export function gearUpRows(d: Dataset): Uint8Array | null {
-  let up = rowCache.get(d);
-  if (up !== undefined) return up;
+export function gearUpRows(d: Dataset): Uint8Array | null | undefined {
+  return sliced(rowCache, rowJobs, d, () => gearRowsSteps(d));
+}
+
+function* gearRowsSteps(d: Dataset): SliceJob<Uint8Array | null> {
   const c = gearColumns(d);
-  up = null;
-  if (c && d.personId && d.count <= ROWS_ESTIMATED) {
-    const pr = personRows(d);
-    if (pr) {
-      up = new Uint8Array(d.count);
-      let tmp = new Uint8Array(0);
-      for (let p = 0; p + 1 < pr.start.length; p++) {
-        const rows = pr.rows.subarray(pr.start[p], pr.start[p + 1]);
-        if (tmp.length < rows.length) tmp = new Uint8Array(rows.length);
-        gearUpKeys(d, c, rows, d.entitySize ? d.entitySize / 0.8 : 1, false, tmp, 0);
-        for (let k = 0; k < rows.length; k++) up[rows[k]] = tmp[k];
-      }
+  if (!c || !d.personId || d.count > ROWS_ESTIMATED) return null;
+  const pr = personRows(d);
+  yield;
+  if (!pr) return null;
+  const up = new Uint8Array(d.count);
+  let tmp = new Uint8Array(0);
+  let since = 0;
+  for (let p = 0; p + 1 < pr.start.length; p++) {
+    const rows = pr.rows.subarray(pr.start[p], pr.start[p + 1]);
+    if (tmp.length < rows.length) tmp = new Uint8Array(rows.length);
+    gearUpKeys(d, c, rows, d.entitySize ? d.entitySize / 0.8 : 1, false, tmp, 0);
+    for (let k = 0; k < rows.length; k++) up[rows[k]] = tmp[k];
+    if ((since += rows.length) > 0x4000) {
+      since = 0;
+      yield;
     }
   }
-  rowCache.set(d, up);
   return up;
 }

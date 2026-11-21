@@ -115,25 +115,41 @@ export class GpuTracks {
   /** GPU bytes held, for the stats. */
   bytes = 0;
 
-  constructor(
+  private constructor(
     private readonly device: GPUDevice,
-    colorFormat: GPUTextureFormat,
-    depthFormat: GPUTextureFormat,
+    p: { place: GPUComputePipeline; finish: GPUComputePipeline; marks: GPUComputePipeline; trail: GPURenderPipeline },
   ) {
-    this.place = device.createComputePipeline({ label: 'tracks place', layout: 'auto', compute: { module: device.createShaderModule({ label: 'tracks place', code: PLACE_WGSL }), entryPoint: 'place' } });
-    this.finish = device.createComputePipeline({ label: 'tracks finish', layout: 'auto', compute: { module: device.createShaderModule({ label: 'tracks finish', code: FINISH_WGSL }), entryPoint: 'finish' } });
-    this.marks = device.createComputePipeline({ label: 'tracks marks', layout: 'auto', compute: { module: device.createShaderModule({ label: 'tracks marks', code: MARKS_WGSL }), entryPoint: 'marks' } });
+    this.place = p.place;
+    this.finish = p.finish;
+    this.marks = p.marks;
+    this.trailPipeline = p.trail;
     this.uniform = device.createBuffer({ label: 'tracks uniforms', size: U_BYTES, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
     this.meshCountBuf = device.createBuffer({ label: 'tracks mesh count', size: 16, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+  }
+
+  /**
+   * The GPU tracks with their pipelines compiled off the frame: the place shader alone took the GPU process 200 ms
+   * to compile, and made on the frame the tracks were first drawn (while a recording played) it held that frame as
+   * long. Asked for as soon as a dataset may want tracks (`Renderer.gpuTracksReady`), ready long before they are.
+   */
+  static async create(device: GPUDevice, colorFormat: GPUTextureFormat, depthFormat: GPUTextureFormat): Promise<GpuTracks> {
+    const compute = (label: string, code: string, entryPoint: string) =>
+      device.createComputePipelineAsync({ label, layout: 'auto', compute: { module: device.createShaderModule({ label, code }), entryPoint } });
     const tm = device.createShaderModule({ label: 'tracks trail', code: TRAIL_WGSL });
-    this.trailPipeline = device.createRenderPipeline({
-      label: 'tracks trail',
-      layout: 'auto',
-      vertex: { module: tm, entryPoint: 'vsTrail', buffers: [{ arrayStride: 32, attributes: [{ shaderLocation: 0, offset: 0, format: 'float32x4' }, { shaderLocation: 1, offset: 16, format: 'float32x4' }] }] },
-      fragment: { module: tm, entryPoint: 'fsTrail', targets: [{ format: colorFormat, blend: { color: { srcFactor: 'src-alpha', dstFactor: 'one-minus-src-alpha', operation: 'add' }, alpha: { srcFactor: 'one', dstFactor: 'one-minus-src-alpha', operation: 'add' } } }] },
-      primitive: { topology: 'line-list' },
-      depthStencil: { format: depthFormat, depthWriteEnabled: false, depthCompare: GPU_DEPTH_TEST },
-    });
+    const [place, finish, marks, trail] = await Promise.all([
+      compute('tracks place', PLACE_WGSL, 'place'),
+      compute('tracks finish', FINISH_WGSL, 'finish'),
+      compute('tracks marks', MARKS_WGSL, 'marks'),
+      device.createRenderPipelineAsync({
+        label: 'tracks trail',
+        layout: 'auto',
+        vertex: { module: tm, entryPoint: 'vsTrail', buffers: [{ arrayStride: 32, attributes: [{ shaderLocation: 0, offset: 0, format: 'float32x4' }, { shaderLocation: 1, offset: 16, format: 'float32x4' }] }] },
+        fragment: { module: tm, entryPoint: 'fsTrail', targets: [{ format: colorFormat, blend: { color: { srcFactor: 'src-alpha', dstFactor: 'one-minus-src-alpha', operation: 'add' }, alpha: { srcFactor: 'one', dstFactor: 'one-minus-src-alpha', operation: 'add' } } }] },
+        primitive: { topology: 'line-list' },
+        depthStencil: { format: depthFormat, depthWriteEnabled: false, depthCompare: GPU_DEPTH_TEST },
+      }),
+    ]);
+    return new GpuTracks(device, { place, finish, marks, trail });
   }
 
   /**

@@ -876,7 +876,7 @@ export class WebgpuRenderer implements Renderer {
 
   /** Whether geometry is still on its way; the engine redraws the scene when it lands. */
   get uploadsPending(): boolean {
-    return this.levelIndices !== null || this.uploading.size > 0 || this.tileQueue.length > 0 || (this.tracks?.uploading ?? false);
+    return this.levelIndices !== null || this.uploading.size > 0 || this.tileQueue.length > 0 || (this.tracks?.uploading ?? false) || (this.figures?.uploading ?? false);
   }
 
   /** Whether all of a mesh's geometry has arrived. */
@@ -2496,7 +2496,28 @@ export class WebgpuRenderer implements Renderer {
     return { gpuMs: null };
   }
 
+  /** The GPU tracks' pipelines being compiled (`gpuTracksReady`); failed: the tracks are not drawn here. */
+  private tracksMaking: Promise<void> | null = null;
+  private tracksFailed = false;
+  private disposed = false;
+
+  gpuTracksReady(): boolean {
+    if (this.tracks) return true;
+    this.tracksMaking ??= GpuTracks.create(this.device, SCENE_FORMAT, DEPTH_FORMAT).then(
+      (t) => {
+        if (this.disposed) t.dispose();
+        else this.tracks = t;
+      },
+      (err: unknown) => {
+        this.tracksFailed = true;
+        console.warn('GPU tracks: pipelines failed to compile', err);
+      },
+    );
+    return false;
+  }
+
   get gpuTracksMaxBytes(): number {
+    if (this.tracksFailed) return 0;
     // The keys' x, y, z, t (8 bytes each) in up to two buffers (`KEY_BUFFERS`), each within one binding.
     const one = Math.min(this.device.limits.maxStorageBufferBindingSize, this.device.limits.maxBufferSize, KEYS_PER_BUFFER * 8);
     return one < KEYS_PER_BUFFER * 8 ? one : KEY_BUFFERS * KEYS_PER_BUFFER * 8;
@@ -2507,9 +2528,10 @@ export class WebgpuRenderer implements Renderer {
   }
 
   private drawScene(encoder: GPUCommandEncoder, params: FrameParams): void {
+    // Figure meshes on their way to the GPU, a slice a frame (`figures/residency.ts`).
+    this.figures?.pump();
     // The GPU tracks are placed first, in a compute pass of their own.
-    if (params.gpuTracks) {
-      this.tracks ??= new GpuTracks(this.device, SCENE_FORMAT, DEPTH_FORMAT);
+    if (params.gpuTracks && this.gpuTracksReady() && this.tracks) {
       this.tracks.compute(encoder, { ...params.gpuTracks, viewProj: params.viewProj, camera: params.cameraPos }, this.prof?.writes('tracks'));
     }
     // Every uniform slot this pass needs is written before the pass opens, so
@@ -4759,6 +4781,7 @@ export class WebgpuRenderer implements Renderer {
   }
 
   dispose(): void {
+    this.disposed = true;
     this.heatBin?.dispose();
     this.zones?.dispose();
     this.spawnMarks?.dispose();

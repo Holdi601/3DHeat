@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { figureFromModelGlb, isOwnModel, kinFor, modelVariantName, packSide, platesFromModelGlb, sidesMeet, vehicleKey, type ModelPackIndex } from './modelpack';
 import { buildMeshFigure } from './meshfig';
-import { installModelPackIndex, removeFigurePack } from './figurepack';
+import { installModelPackIndex, ownModelIn, packGameOf, removeFigurePack } from './figurepack';
 import type { Template } from './kit';
 
 /** A box as a glb mesh: 8 corners, 12 triangles. */
@@ -159,6 +159,49 @@ describe('model pack', () => {
     expect(aliases.b_m2a4).toBe('m2a4');
     expect(aliases[vehicleKey('T-72B3 mod. 2016')]).toBeUndefined();
     expect(catalog['m2a4@model:gamea:a_m2a4']).toBeUndefined();
+  });
+
+  it("draws a unit id two games' packs both have as its own game's model, whatever the pack order", () => {
+    const own = (): Template => ({ team: new Float32Array(0), fixed: new Float32Array(0), min: [0, 0, 0], max: [1, 1, 1], anchor: 'ground', triangles: 0 });
+    const catalog: Record<string, { domain: string; cls: string; build: () => Template }> = {
+      'lav-25': { domain: 'ground', cls: 'apc-wheeled', build: own },
+      'apc-wheeled': { domain: 'ground', cls: 'apc-wheeled', build: own },
+      jeep: { domain: 'ground', cls: 'jeep', build: own },
+    };
+    const aliases: Record<string, string> = { lav25: 'lav-25' };
+    const index: ModelPackIndex = {
+      version: 1,
+      packs: [
+        { game: 'battlefield-4', units: { lav25: { tag: 'a', domain: 'ground', kind: 'ifv', name: 'LAV-25' }, m1abrams: { tag: 'b', domain: 'ground', kind: 'mbt' } } },
+        {
+          game: 'arma-reforger',
+          units: {
+            LAV25: { tag: 'c', domain: 'ground', kind: 'apc', name: 'LAV-25' },
+            M1025: { tag: 'd', domain: 'ground', kind: 'car' },
+            BTR70: { tag: 'e', domain: 'ground', kind: 'apc' },
+          },
+        },
+      ],
+    };
+    installModelPackIndex(catalog, index, undefined, aliases);
+    const bf4 = 'lav-25@model:battlefield-4:lav25';
+    const reforger = 'lav-25@model:arma-reforger:lav25';
+    // The alias table keeps the first pack's; both are figures.
+    expect(aliases.lav25).toBe(bf4);
+    expect(catalog[bf4]).toBeDefined();
+    expect(catalog[reforger]).toBeDefined();
+    // A recording names its own game's units: the game is the pack with the most of them.
+    expect(packGameOf(['LAV25', 'M1025', 'BTR70', 'Soldier'])).toBe('arma-reforger');
+    expect(packGameOf(['lav25', 'M1Abrams'])).toBe('battlefield-4');
+    expect(packGameOf(['Soldier'])).toBeNull();
+    // Each game's recording draws the id with its own game's model; an id of one pack alone is the alias table's.
+    expect(ownModelIn('arma-reforger', 'LAV25')).toBe(reforger);
+    expect(ownModelIn('battlefield-4', 'LAV25')).toBe(bf4);
+    expect(ownModelIn('arma-reforger', 'M1025')).toBeUndefined();
+    expect(ownModelIn('warthunder', 'LAV25')).toBeUndefined();
+    removeFigurePack(catalog);
+    expect(ownModelIn('arma-reforger', 'LAV25')).toBeUndefined();
+    expect(aliases.lav25).toBe('lav-25');
   });
 
   it('finds a stand-in figure by the type word when the unit has no alias', () => {

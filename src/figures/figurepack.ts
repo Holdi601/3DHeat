@@ -80,6 +80,31 @@ const dataOf = (name: string): MeshFigureData | undefined => {
 /** Counts every change of what the packs draw (an index installed or removed, a figure's data arrived): for views that keep what they built. */
 let version = 0;
 
+/**
+ * Where the page's thread takes pack figures from (`packModels.ts`): built in a worker, adopted once on the GPU. Not
+ * set (tests, tools, workers), a pack figure's data is fetched and the figure built where it is asked for.
+ */
+export interface PackTemplateSource {
+  /** The figure, once it is here whole. */
+  get(name: string): Template | undefined;
+  /** Asks for figures; resolves once each is here or has failed. */
+  load(names: string[]): Promise<void>;
+}
+let templateSource: PackTemplateSource | null = null;
+
+export function setPackTemplateSource(s: PackTemplateSource | null): void {
+  templateSource = s;
+  version++;
+}
+
+/** A pack figure has arrived from the template source: views that keep their builds build it again. */
+export function packFigureArrived(): void {
+  version++;
+}
+
+/** Whether a pack figure is here to build from: its data, or with a template source, the figure itself. */
+const here = (name: string): boolean => (templateSource ? !!templateSource.get(name) : !!dataOf(name));
+
 /** Changes whenever a pack figure's data arrives or a pack is installed or removed (`packFigurePending`). */
 export function packFiguresVersion(): number {
   return version;
@@ -91,7 +116,7 @@ export function packFiguresVersion(): number {
  * has moved on.
  */
 export function packFigurePending(name: string): boolean {
-  return indexed.has(name) && !dataOf(name);
+  return indexed.has(name) && !here(name);
 }
 
 function valid(m: unknown): m is MeshFigureData {
@@ -145,6 +170,12 @@ export function installFigurePackIndex<E extends Entry>(
 
 /** A pack figure's builder: from its data once `loadPackFigures` has it, until then as `own` (and the data is asked for). */
 const lazyBuilder = (name: string, own: () => Template) => () => {
+  if (templateSource) {
+    const t = templateSource.get(name);
+    if (t) return t;
+    void templateSource.load([name]);
+    return own();
+  }
   const m = dataOf(name);
   if (m) return buildMeshFigure(m, own);
   void loadPackFigures([name]);
@@ -185,11 +216,15 @@ export function installModelPackIndex<E extends Entry & { domain?: string; cls?:
   for (const [n, e] of Object.entries(catalog)) if (e.cls && !n.includes('@') && !classes.has(e.cls)) classes.set(e.cls, n);
   const entry = (n: string) => catalog[n];
   const byClass = (cls: string) => (catalog[cls] ? cls : (classes.get(cls) ?? null));
+  // Every pack's own units, also where an earlier pack has a unit of the same id (Battlefield 4's `lav25` and Arma
+  // Reforger's `LAV25`): the alias table keeps the first, and a recording of the other game is drawn with its own
+  // (`packGameOf`, `ownModelIn`).
+  const claimed = new Map<string, Map<string, string>>();
   for (const [pi, pack] of index.packs.entries()) {
     if (!pack || typeof pack.game !== 'string' || typeof pack.units !== 'object') continue;
     for (const [unit, info] of Object.entries(pack.units)) {
       const id = unit.toLowerCase();
-      if (!info || typeof info.tag !== 'string' || units[id]) continue;
+      if (!info || typeof info.tag !== 'string' || claimed.get(id)?.has(pack.game)) continue;
       // A static object (a barrier, a building, a container) and an item stand for no unit: `kinFor` gives none.
       const kin = kinFor(id, info, entry, aliases, byClass);
       if (!kin) continue;
@@ -197,7 +232,14 @@ export function installModelPackIndex<E extends Entry & { domain?: string; cls?:
       const ix = { tag: info.tag, at: `${MODEL_PACK_ROUTE}/u/${encodeURIComponent(pack.game)}/${encodeURIComponent(id)}` };
       indexed.set(name, ix);
       names.push(name);
-      for (const k of [id, ...(info.aliases ?? []).map((a) => a.toLowerCase())]) units[k] ??= name;
+      for (const k of [id, ...(info.aliases ?? []).map((a) => a.toLowerCase())]) {
+        units[k] ??= name;
+        let by = claimed.get(k);
+        if (!by) claimed.set(k, (by = new Map()));
+        if (!by.has(pack.game)) by.set(pack.game, name);
+      }
+      // An id an earlier pack has already: drawn as this game's own model only in this game's recordings.
+      if (units[id] !== name) continue;
       const lent: Lent = { name, game: pack.game, id, side: packSide(info), ix };
       // Only an id the catalogue knows by name speaks for its figure's vehicle (not one placed by its type word).
       const known = aliases[id];
@@ -210,6 +252,17 @@ export function installModelPackIndex<E extends Entry & { domain?: string; cls?:
     }
   }
   install(catalog, names, lazyBuilder, units, builders, aliases);
+  ownByGame.clear();
+  idsByGame.clear();
+  for (const [id, by] of claimed) {
+    if (by.size > 1) ownByGame.set(id, by);
+    for (const g of by.keys()) {
+      let ids = idsByGame.get(g);
+      if (!ids) idsByGame.set(g, (ids = new Set()));
+      ids.add(id);
+    }
+  }
+  packIndexStamp++;
   // Other games' units of the same vehicles: aliases left on a figure a pack model stands for, and real names. A
   // lent model sits on the borrowing unit's own figure (a DCS Mi-8MT on the Mi-8MTV2's, not on whatever figure the
   // lending game's unit stands in for), and only where the two are of one side: a helicopter's model never on a
@@ -245,12 +298,49 @@ export function installModelPackIndex<E extends Entry & { domain?: string; cls?:
   return names.length;
 }
 
+/** Unit ids more than one pack has a model of: id -> game -> that game's variant (`installModelPackIndex`). */
+const ownByGame = new Map<string, Map<string, string>>();
+/** Each pack's unit ids (and aliases), by game. */
+const idsByGame = new Map<string, Set<string>>();
+let packIndexStamp = 0;
+
+/** Changes whenever a model packs' index is installed: what `packGameOf` and `ownModelIn` answered may have changed. */
+export function modelPackIndexStamp(): number {
+  return packIndexStamp;
+}
+
+/**
+ * The game whose pack has the most of a recording's unit names as its own units (null: none has any): the game the
+ * recording is of, as far as the packs can tell. Ties go to the earlier pack.
+ */
+export function packGameOf(names: Iterable<string>): string | null {
+  if (!idsByGame.size) return null;
+  const count = new Map<string, number>();
+  for (const raw of names) {
+    const id = raw.toLowerCase();
+    for (const [g, ids] of idsByGame) if (ids.has(id)) count.set(g, (count.get(g) ?? 0) + 1);
+  }
+  let best: string | null = null;
+  let top = 0;
+  for (const [g, n] of count) if (n > top) [best, top] = [g, n];
+  return best;
+}
+
+/**
+ * A unit's own model in a recording of `game`, where more than one pack has a unit of that id: that game's, never the
+ * other's. Undefined where the id is only one pack's (the alias table has it) or not this game's.
+ */
+export function ownModelIn(game: string, id: string): string | undefined {
+  return ownByGame.get(id.toLowerCase())?.get(game);
+}
+
 /**
  * Fetches the data of an installed index's figures among `names` that are not here yet (others are skipped), so their
  * builds take it. Resolves once each is here or has failed (a failed one keeps building as the catalogue's own); never
  * rejects.
  */
 export function loadPackFigures(names: Iterable<string>): Promise<void> {
+  if (templateSource) return templateSource.load([...names].filter((n) => indexed.has(n)));
   const waits: Promise<void>[] = [];
   for (const name of names) {
     const ix = indexed.get(name);
@@ -274,7 +364,7 @@ export function loadPackFigures(names: Iterable<string>): Promise<void> {
 
 /** Whether an installed index's figure has its data here (`loadPackFigures`). */
 export function packFigureLoaded(name: string): boolean {
-  return !!dataOf(name);
+  return here(name);
 }
 
 async function fetchPackFigure(at: string, tag: string): Promise<MeshFigureData | null> {
@@ -352,6 +442,8 @@ export function removeFigurePack<E extends Entry>(catalog: Record<string, E>, bu
     }
   }
   aliased.clear();
+  ownByGame.clear();
+  idsByGame.clear();
   indexed.clear();
   fetched.clear();
   fetching.clear();
