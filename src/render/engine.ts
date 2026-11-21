@@ -1312,7 +1312,7 @@ export class Engine {
       this.boardKey = '';
     }
     const heat = useTelemetry.getState().heat;
-    const wantsCursor = board.tool !== 'select' || board.moving;
+    const wantsCursor = board.tool !== 'select' || board.moving || !!board.taskDraft;
     this.boardCursor = wantsCursor && this.cursorPx ? this.worldAt(this.cursorPx.x, this.cursorPx.y) : null;
     // The moment shown: playback's, the time slider's, or the step's start.
     const at = momentOf(board, this.boardPlayTime);
@@ -1340,6 +1340,9 @@ export class Engine {
       activeLayer: board.activeLayer,
       routesActiveOnly: board.routesActiveOnly,
       time: board.playing || board.scrub !== null ? time : null,
+      moment: time,
+      task: board.task,
+      taskDraft: board.taskDraft?.points ?? null,
     };
     this.boardView = { plan: board.plan, view };
     const key = [
@@ -1354,6 +1357,8 @@ export class Engine {
       board.tool === 'throw' ? boardIds.of(board.throwSpec) : '',
       board.tool === 'draw' ? boardIds.of(board.drawStyle) : '',
       board.formation,
+      board.task ?? '',
+      boardIds.of(board.taskDraft),
       board.routesActiveOnly ? board.activeLayer : '',
       // Time-bound notes come and go while it plays: a tenth of a second is fine enough.
       board.playing && board.plan.notes.some((n) => n.show === 'timed') ? Math.floor(time * 10) : '',
@@ -1372,8 +1377,21 @@ export class Engine {
   /** The board's figures as GPU instances, relative to this frame's origin. */
   private boardFigures(): FigureBatch[] | null {
     const v = this.boardView;
-    return v ? this.boardScene.figures(v.plan, v.view, this.originArr) : null;
+    if (!v) return null;
+    // The camera, for the tasks' badges: a size on screen at any zoom.
+    const m = this.viewArr;
+    const hgt = Math.max(1, this.canvas.clientHeight);
+    const persp = this.camera.projection === 'perspective';
+    const tanHalf = Math.tan((snapshot().camera.fov * Math.PI) / 360);
+    const ortho = this.camera.orthoHeight / hgt;
+    this.boardCam.right = [m[0], m[4], m[8]];
+    this.boardCam.up = [m[1], m[5], m[9]];
+    this.boardCam.eye = this.camPos;
+    this.boardCam.pxAt = persp ? (d: number) => (d * 2 * tanHalf) / hgt : () => ortho;
+    return this.boardScene.figures(v.plan, v.view, this.originArr, this.boardCam);
   }
+
+  private readonly boardCam: import('../tactics/taskScene').BoardCam = { eye: [0, 0, 0], right: [1, 0, 0], up: [0, 1, 0], pxAt: () => 1 };
 
   clearMeasure(): void {
     this.measure.points.length = 0;

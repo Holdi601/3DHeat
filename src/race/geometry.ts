@@ -27,6 +27,14 @@ export class VertexBuffer {
     this.data = next;
   }
 
+  /** Another buffer's vertices after these. */
+  append(b: VertexBuffer): void {
+    if (!b.count) return;
+    this.grow(b.count);
+    this.data.set(b.data.subarray(0, b.count * 7), this.count * 7);
+    this.count += b.count;
+  }
+
   vertex(x: number, y: number, z: number, r: number, g: number, b: number, a: number): void {
     this.grow(1);
     const o = this.count * 7;

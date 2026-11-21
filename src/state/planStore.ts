@@ -21,6 +21,8 @@ import { figureLabel } from '../tactics/names';
 import { applyTransform, type GizmoMode, type Transform } from '../tactics/gizmo';
 import type { Mode } from '../tactics/speeds';
 import { routeModes, stepStart, unitsPerMetre } from '../tactics/timing';
+import { taskDef, type GoCode, type PlanTask, type TaskKind } from '../tactics/tasks';
+import { routesIn } from '../tactics/plan';
 
 export type BoardTool = 'select' | 'place' | 'waypoints' | 'throw' | 'area' | 'note' | 'draw' | 'erase' | 'measure';
 
@@ -203,6 +205,25 @@ export interface PlanState {
   setAuthor: (name: string) => void;
   /** A batch from elsewhere (a peer, a file of operations): applied, logged, not undoable here. */
   applyRemote: (batch: OpBatch) => void;
+
+  /** The task being edited (`tactics/tasks.ts`), and the points of one being drawn on the map (clicks add, Enter ends). */
+  task: string | null;
+  taskDraft: { task: string; points: Vec3[] } | null;
+  /** The task picker and the legend of task symbols, open. */
+  taskPicker: boolean;
+  taskLegend: boolean;
+  setTaskPicker: (on: boolean) => void;
+  setTaskLegend: (on: boolean) => void;
+  /** Gives the selected figures (a group: all of them) a task, at the moment shown; a control measure needs none. Its id, or null when it needs a unit and none is selected. */
+  addTask: (kind: TaskKind) => string | null;
+  setTask: (id: string, patch: Partial<PlanTask>, unset?: (keyof PlanTask)[]) => void;
+  removeTask: (id: string) => void;
+  selectTask: (id: string | null) => void;
+  /** Draws a task's points on the map anew. */
+  drawTask: (id: string) => void;
+  addCode: (name?: string) => string;
+  setCode: (id: string, patch: Partial<GoCode>) => void;
+  removeCode: (id: string) => void;
 }
 
 /** Batches the session log keeps. */
@@ -282,6 +303,82 @@ export const usePlanStore = create<PlanState>((set, get) => ({
   autosave: { at: restored?.at ?? null, restored: !!restored, full: false },
   scrub: null,
   aiming: null,
+  task: null,
+  taskDraft: null,
+  taskPicker: false,
+  taskLegend: false,
+  setTaskPicker: (taskPicker) => set({ taskPicker }),
+  setTaskLegend: (taskLegend) => set({ taskLegend }),
+  addTask: (kind) => {
+    const s = get();
+    if (!canDraw(s)) return null;
+    const def = taskDef(kind);
+    const plan = clone(s.plan);
+    let figs = def.for ? movableSelection(plan, s.step, s.selection) : [];
+    if (def.for && !figs.length) return null;
+    const m = momentOf(s);
+    const task: PlanTask = { id: newId('k'), kind, team: figs.length ? (plan.figures.find((f) => f.id === figs[0])?.team ?? s.team) : s.team, figures: figs, step: s.step, ...onLayer(s) };
+    // Following, escorting, intercepting: the last picked is the one followed.
+    if (def.moves === 'follow' && figs.length > 1 && s.selected && figs.includes(s.selected)) {
+      task.target = s.selected;
+      task.figures = figs = figs.filter((x) => x !== s.selected);
+    }
+    // A hold, and a task that moves the figure, at its route's waypoint where it has a route in this step: the route waits for it there.
+    const route = figs.length ? routesIn(plan, s.step).get(figs[0]) : undefined;
+    if (route && (kind === 'hold' || def.moves === 'path')) task.on = { step: s.step, from: kind === 'hold' ? 0 : route.points.length - 1 };
+    else if (def.for) task.start = Math.round(m.time * 10) / 10;
+    if (kind === 'hold') task.trigger = { kind: 'time', at: Math.round(m.time) + 10 };
+    if (kind === 'patrol') task.loops = 2;
+    if (kind === 'sweep') task.pattern = 'lanes';
+    if (kind === 'roe') task.state = 'hold';
+    if (kind === 'alarm') task.state = 'red';
+    plan.tasks = [...(plan.tasks ?? []), task];
+    set({ ...edit(s, plan), task: task.id, taskPicker: false, taskDraft: def.min > 0 ? { task: task.id, points: [] } : null, draft: null, aiming: null });
+    return task.id;
+  },
+  setTask: (id, patch, unset) => {
+    const s = get();
+    const plan = clone(s.plan);
+    const t = plan.tasks.find((x) => x.id === id);
+    if (!t) return;
+    Object.assign(t, structuredClone(patch));
+    for (const k of unset ?? []) delete t[k];
+    set(edit(s, plan));
+  },
+  removeTask: (id) => {
+    const s = get();
+    const plan = clone(s.plan);
+    plan.tasks = plan.tasks.filter((x) => x.id !== id);
+    set({ ...edit(s, plan), task: s.task === id ? null : s.task, taskDraft: s.taskDraft?.task === id ? null : s.taskDraft });
+  },
+  selectTask: (task) => set({ task, taskDraft: null }),
+  drawTask: (id) => {
+    if (!get().plan.tasks.some((t) => t.id === id)) return;
+    set({ task: id, taskDraft: { task: id, points: [] }, draft: null, aiming: null });
+  },
+  addCode: (name) => {
+    const s = get();
+    const plan = clone(s.plan);
+    const id = newId('c');
+    plan.codes = [...(plan.codes ?? []), { id, name: name ?? `Code ${(plan.codes?.length ?? 0) + 1}`, at: Math.round(momentOf(s).time) }];
+    set(edit(s, plan));
+    return id;
+  },
+  setCode: (id, patch) => {
+    const s = get();
+    const plan = clone(s.plan);
+    const c = plan.codes.find((x) => x.id === id);
+    if (!c) return;
+    Object.assign(c, patch);
+    if (patch.at === undefined && 'at' in patch) delete c.at;
+    set(edit(s, plan));
+  },
+  removeCode: (id) => {
+    const s = get();
+    const plan = clone(s.plan);
+    plan.codes = plan.codes.filter((x) => x.id !== id);
+    set(edit(s, plan));
+  },
   setScrub: (t) => {
     const s = get();
     if (t === null) {
@@ -454,6 +551,10 @@ export const usePlanStore = create<PlanState>((set, get) => ({
       if (f.to !== undefined && f.to >= step) f.to = Math.max(f.from, f.to - 1);
     }
     plan.figures = plan.figures.filter((f) => Object.keys(f.keys).length);
+    // Tasks on the step's routes go with them; later steps' move up.
+    plan.tasks = (plan.tasks ?? [])
+      .filter((t) => t.on?.step !== step)
+      .map((t) => ({ ...t, step: t.step > step ? t.step - 1 : t.step === step ? Math.max(0, step - 1) : t.step, ...(t.on && t.on.step > step ? { on: { ...t.on, step: t.on.step - 1 } } : {}) }));
     set({ ...edit(s, plan), step: Math.min(s.step, plan.steps.length - 1) });
   },
   setStepSeconds: (step, seconds) => {
@@ -480,6 +581,19 @@ export const usePlanStore = create<PlanState>((set, get) => ({
     // Placing and drawing start from figures only.
     const hit = s.tool === 'select' || s.tool === 'erase' ? ref : ref && s.plan.figures.some((f) => f.id === ref) ? ref : null;
     const step = s.step;
+    // A task's points: each click one more; a point or a sector's target ends with the first, an orbit with its second.
+    if (s.taskDraft) {
+      const t = s.plan.tasks.find((x) => x.id === s.taskDraft!.task);
+      if (!t) {
+        set({ taskDraft: null });
+        return;
+      }
+      const points = [...s.taskDraft.points, at];
+      set({ taskDraft: { ...s.taskDraft, points } });
+      const def = taskDef(t.kind);
+      if (def.shape === 'point' || def.shape === 'sector' || def.shape === 'figure' || def.shape === 'none' || (t.kind === 'orbit' && points.length >= 2)) get().finish();
+      return;
+    }
     // Aiming: the selected figure's turret and gun, eyes or sensor at the clicked point, at the moment shown.
     if (s.aiming) {
       const f = s.plan.figures.find((x) => x.id === s.selected);
@@ -625,6 +739,12 @@ export const usePlanStore = create<PlanState>((set, get) => ({
 
   finish: () => {
     const s = get();
+    if (s.taskDraft) {
+      const d = s.taskDraft;
+      set({ taskDraft: null });
+      if (d.points.length) get().setTask(d.task, { points: d.points });
+      return;
+    }
     if (s.tool === 'measure' && s.measure && !s.measure.done) {
       set({ measure: s.measure.points.length >= 2 ? { ...s.measure, done: true } : null });
       return;
@@ -690,6 +810,10 @@ export const usePlanStore = create<PlanState>((set, get) => ({
   },
   undoPoint: () => {
     const s = get();
+    if (s.taskDraft) {
+      set({ taskDraft: s.taskDraft.points.length ? { ...s.taskDraft, points: s.taskDraft.points.slice(0, -1) } : null });
+      return;
+    }
     if (s.tool === 'measure' && s.measure && !s.measure.done) {
       set({ measure: s.measure.points.length > 1 ? { ...s.measure, points: s.measure.points.slice(0, -1) } : null });
       return;
@@ -698,7 +822,7 @@ export const usePlanStore = create<PlanState>((set, get) => ({
     set({ draft: s.draft.points.length > 1 ? { ...s.draft, points: s.draft.points.slice(0, -1) } : null });
   },
   setFormation: (formation) => set({ formation }),
-  cancel: () => set({ draft: null, moving: false, measure: null }),
+  cancel: () => set({ draft: null, moving: false, measure: null, taskDraft: null }),
   removeSelection: () => {
     const s = get();
     if (!s.selection.length) return;
@@ -768,6 +892,11 @@ export const usePlanStore = create<PlanState>((set, get) => ({
     } else {
       plan.figures = plan.figures.filter((x) => x.id !== id);
       plan.arrows = plan.arrows.filter((a) => a.figure !== id && a.lands !== id);
+      // Its tasks lose it; one left with nobody to do it goes too.
+      plan.tasks = (plan.tasks ?? [])
+        .map((t) => (t.figures.includes(id) ? { ...t, figures: t.figures.filter((x) => x !== id) } : t))
+        .filter((t) => t.figures.length || !taskDef(t.kind).for);
+      for (const t of plan.tasks) if (t.target === id) delete t.target;
     }
     plan.arrows = plan.arrows.filter((a) => a.id !== id);
     plan.areas = plan.areas.filter((a) => a.id !== id);
@@ -995,6 +1124,7 @@ export const usePlanStore = create<PlanState>((set, get) => ({
     for (const a of plan.areas.filter(on)) plan.areas.push({ ...structuredClone(a), id: newId('a'), layer: nid });
     for (const n of plan.notes.filter(on)) plan.notes.push({ ...structuredClone(n), id: newId('n'), layer: nid });
     for (const x of plan.drawings.filter(on)) plan.drawings.push({ ...structuredClone(x), id: newId('d'), layer: nid });
+    for (const x of (plan.tasks ?? []).filter(on)) plan.tasks.push({ ...structuredClone(x), id: newId('k'), layer: nid, figures: x.figures.map((f) => figureIds.get(f) ?? f), ...(x.target ? { target: figureIds.get(x.target) ?? x.target } : {}) });
     // The copy is the one worked on: the original hidden, so its routes do not play under it.
     src.visible = false;
     set({ ...edit(s, plan), activeLayer: nid, selection: [], selected: null });
@@ -1012,6 +1142,7 @@ export const usePlanStore = create<PlanState>((set, get) => ({
     plan.areas = plan.areas.filter((a) => !on(a));
     plan.notes = plan.notes.filter((n) => !on(n));
     plan.drawings = plan.drawings.filter((x) => !on(x));
+    plan.tasks = (plan.tasks ?? []).filter((x) => !on(x)).map((t) => (t.figures.some((f) => gone.has(f)) ? { ...t, figures: t.figures.filter((f) => !gone.has(f)) } : t));
     set({ ...edit(s, plan), activeLayer: s.activeLayer === id ? BASE_LAYER : s.activeLayer, selection: [], selected: null });
   },
   moveSelectionToLayer: (id) => {

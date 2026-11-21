@@ -16,6 +16,7 @@ import { unitsPerMetre } from './timing';
 import { BASE_LAYER, keyAt, layerOf, onBoard, posesAt, shown, throwArc, type Plan, type PlanArrow, type PlanDrawing, type PlanNote, type Vec3 } from './plan';
 import { gamePreset } from './games';
 import type { ArrivalGrid } from './telemetry';
+import { taskGraphics, taskInstances, type BoardCam } from './taskScene';
 
 export interface BoardView {
   step: number;
@@ -47,6 +48,11 @@ export interface BoardView {
   throwWeapon?: string | null;
   /** Playback seconds from the plan's start, when playing (time-bound notes); absent while editing. */
   time?: number | null;
+  /** The moment shown, seconds from the plan's start: what the tasks' badges and cones follow. */
+  moment?: number;
+  /** The task being edited (`tasks.ts`), drawn in white; and the points of one being drawn. */
+  task?: string | null;
+  taskDraft?: Vec3[] | null;
 }
 
 /** Whether a note shows now: in its step, always, or (time-bound) while playback is in its window. */
@@ -104,6 +110,17 @@ export class BoardScene {
       if (sel.has(d.id)) for (const p of d.kind === 'circle' ? d.points.slice(0, 1) : [d.points[0], d.points[d.points.length - 1]]) ring(lines, p, Math.max(d.width, width) * 1.5, white);
     }
     if (view.pen && view.stroke && view.stroke.length) drawing(tris, view.pen.kind, view.stroke, view.pen.color, view.pen.width);
+    // Tasks: their lines on the map in this step, built once per plan and step (`taskScene.ts`).
+    if (plan.tasks?.length) {
+      const g = taskGraphics(plan, view.step, view.task ?? null);
+      tris.append(g.tris);
+      lines.append(g.lines);
+    }
+    if (view.taskDraft?.length) {
+      const pts = view.cursor ? [...view.taskDraft, view.cursor] : view.taskDraft;
+      for (let i = 0; i + 1 < pts.length; i++) lines.line([pts[i].x, pts[i].y + 0.2, pts[i].z], [pts[i + 1].x, pts[i + 1].y + 0.2, pts[i + 1].z], white, 1);
+      for (const p of view.taskDraft) ring(lines, p, width * 0.8, white);
+    }
     // Arrows of this step, and the last step's faintly, so a phase reads as following on:
     // shown layers' (the active layer's only, when the others' routes are to stay out of the way).
     const only = view.routesActiveOnly ? (view.activeLayer ?? BASE_LAYER) : null;
@@ -208,7 +225,7 @@ export class BoardScene {
    * Positions relative to `origin` (FrameParams.viewProjRel), so it is called
    * once the frame's origin is known.
    */
-  figures(plan: Plan, view: BoardView, origin: ArrayLike<number>): FigureBatch[] {
+  figures(plan: Plan, view: BoardView, origin: ArrayLike<number>, cam?: BoardCam | null): FigureBatch[] {
     const out = this.batches;
     out.reset();
     const scale = Math.max(0.05, plan.figureScale);
@@ -232,6 +249,8 @@ export class BoardScene {
       }
     }
     if (view.placing && view.cursor) put(view.placing.kind, { ...view.cursor, yaw: view.placing.yaw }, color(view.placing.team), 0.55);
+    // The tasks' badges and the cones of the sectors running now, sized on screen.
+    if (cam && plan.tasks?.length) taskInstances(plan, view.step, view.moment ?? 0, poses, cam, origin, out, (f) => (templateOf(f.kind)?.max[1] ?? 1) * scale, view.task ?? null);
     return out.list;
   }
 }

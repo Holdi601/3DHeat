@@ -18,6 +18,7 @@ import { sortList } from '../sort/order';
 import { useSort } from '../sort/useSort';
 import { fetchValorantMaps, RIOT_NOTICE, valorantLevel, type ValorantMap } from '../../tactics/valorantMaps';
 import { GizmoControls, SelectionInspector, TelemetryPanel, TimingSettings } from './TacticsInspector';
+import { TasksPanel } from './TasksPanel';
 import './tactics.css';
 import { NumberBox } from '../NumberBox';
 
@@ -278,6 +279,8 @@ export function TacticsPanel() {
       <LayersPanel />
 
       <SelectionInspector />
+
+      <TasksPanel />
 
       <Section title={t('tactics.timing.title')}>
         <TimingSettings />

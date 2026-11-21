@@ -303,3 +303,122 @@
   width: 100%;
   white-space: normal;
 }
+
+/* Tasks (TasksPanel.tsx): the picker, the legend, the list and the editor. */
+.task-icon {
+  flex: none;
+  vertical-align: middle;
+  color: var(--accent, #8fc3ff);
+}
+.task-icon .plate {
+  fill: rgba(10, 12, 14, 0.85);
+  stroke: currentColor;
+  stroke-width: 0.06;
+}
+.task-icon.warn {
+  color: #ff5a4a;
+}
+.task-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 4px 0;
+}
+.task-actions button.on,
+.task-field button.on,
+.task-row.on {
+  outline: 1px solid var(--accent, #8fc3ff);
+}
+.task-actions .danger {
+  margin-left: auto;
+}
+.task-picker input[type='search'] {
+  width: 100%;
+  box-sizing: border-box;
+}
+.task-picker,
+.task-legend {
+  max-height: 320px;
+  overflow-y: auto;
+  margin: 4px 0;
+}
+.task-group-name {
+  font-size: 11px;
+  opacity: 0.7;
+  margin: 6px 0 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.task-pick,
+.task-row,
+.task-conflict,
+.task-legend-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  text-align: left;
+  padding: 2px 4px;
+}
+.task-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.task-pick kbd,
+.task-actions kbd {
+  font-size: 10px;
+  opacity: 0.75;
+}
+.task-editor {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  padding: 6px;
+  margin: 6px 0;
+}
+.task-editor-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+.task-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin: 2px 0;
+}
+.task-field input,
+.task-field select {
+  width: 9em;
+}
+.task-code {
+  display: flex;
+  gap: 4px;
+  margin: 2px 0;
+}
+.task-code input[type='text'] {
+  flex: 1;
+  min-width: 0;
+}
+.task-code input[type='number'] {
+  width: 5em;
+}
+.task-conflict {
+  color: #ffb3a8;
+  font-size: 12px;
+  white-space: normal;
+}
+.task-warn-count {
+  background: #c8382b;
+  color: #fff;
+  border-radius: 8px;
+  padding: 0 6px;
+  font-size: 11px;
+}
+.hint.warn {
+  color: #ffb3a8;
+}
