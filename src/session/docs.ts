@@ -1,7 +1,8 @@
 /**
  * The shared layers this viewer brings to a session, registered with
- * `shared.ts`: the tactics board (`planStore`) and the marks (world notes
- * and drawings over any view, `marks.ts`). Another module adds its own
+ * `shared.ts`: the tactics board (`planStore`), the marks (world notes and
+ * drawings over any view, `marks.ts`) and the data notes and analysis
+ * documents (`notes/store.ts`, collections `notes` and `docs`). Another module adds its own
  * document the same way (`registerSharedDoc`), and it is synced and saved
  * with the session without anything here knowing it.
  */
@@ -11,6 +12,8 @@ import { COLLECTIONS } from '../tactics/ops';
 import { hasContent } from '../tactics/autosave';
 import { gamePreset } from '../tactics/games';
 import { usePlanStore } from '../state/planStore';
+import { useNotes } from '../notes/store';
+import { EMPTY_BOOK, readBook, type NotesBook } from '../notes/model';
 import { registerSharedDoc } from './shared';
 import { MARK_COLLS, emptyMarks, useMarks, type MarksState } from './marks';
 
@@ -53,5 +56,18 @@ export function registerBuiltInDocs(): void {
     set: (state) => useMarks.setState({ doc: state as MarksState }),
     empty: emptyMarks,
     hasContent: (state) => MARK_COLLS.some((c) => ((state as unknown as Record<string, unknown[]>)[c]?.length ?? 0) > 0),
+  });
+  // The notes book: its edits go through `commit` (a new book each), so the
+  // sync reads them as differences like any other document; a state from the
+  // session replaces the book and bumps `rev`, which redraws pins and marks.
+  // Its own op log (`onLocalBatch` / `applyRemote`) stays the notes' local
+  // history; the session file also keeps it (`sessionFile.ts`, `notesState`).
+  registerSharedDoc({
+    key: 'notes',
+    colls: ['notes', 'docs'],
+    get: () => useNotes.getState().book,
+    set: (state) => useNotes.setState((s) => ({ book: readBook(state as NotesBook), rev: s.rev + 1 })),
+    empty: () => EMPTY_BOOK,
+    hasContent: (state) => ((state as NotesBook).notes?.length ?? 0) + ((state as NotesBook).docs?.length ?? 0) > 0,
   });
 }

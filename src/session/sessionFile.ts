@@ -17,6 +17,7 @@
 import type { Engine } from '../render/engine';
 import { applyView, captureView, readViews, useSavedViews, type SavedView, type ViewState } from '../state/savedViews';
 import { useStore } from '../state/store';
+import { loadNotesState, notesState, type NotesSessionState } from '../notes/store';
 import { compareData, fingerprint, loadedData, type DataRef } from './dataRefs';
 import { loadLocalStates, localStates, readDocState, type DocState } from './shared';
 import { session, httpUrl } from './client';
@@ -47,6 +48,8 @@ export interface SessionFile {
   };
   /** Data packed in after the JSON. */
   packed?: (DataRef & { offset: number })[];
+  /** The notes and analyses with their own edit history (`notes/store.ts`); their state is also in `docs.notes`. */
+  notes?: NotesSessionState;
 }
 
 /** Steps from older files to the current one: `from version n` to n + 1. */
@@ -107,6 +110,7 @@ export function readSessionJson(json: unknown): SessionFile {
       invites: Array.isArray(s.invites) ? s.invites.filter((i) => i && typeof i.label === 'string' && roles.has(i.role)).slice(0, 100) : [],
       roles: Array.isArray(s.roles) ? s.roles.filter((r) => r && typeof r.name === 'string' && roles.has(r.role)).slice(0, 200) : [],
     },
+    ...(f.notes && typeof f.notes === 'object' ? { notes: f.notes as NotesSessionState } : {}),
     ...(Array.isArray(f.packed) ? { packed: (refs(f.packed) as (DataRef & { offset: number })[]).filter((p) => Number.isFinite(p.offset)) } : {}),
   };
 }
@@ -140,6 +144,7 @@ export function captureSession(engine: Engine | null, name = ''): SessionFile {
       invites: st.invites.filter((i) => i.role !== 'host').map((i) => ({ label: i.label, role: i.role })),
       roles: st.members.filter((m) => m.role !== 'host' && m.role !== 'viewer').map((m) => ({ name: m.name, role: m.role })),
     },
+    notes: notesState(),
   };
 }
 
@@ -223,6 +228,8 @@ export async function openSession(engine: Engine | null, file: SessionFile, pack
     }
   } else {
     unknown = loadLocalStates(file.docs);
+    // The notes with their history, where the file has it.
+    if (file.notes) loadNotesState(file.notes);
   }
   const views = useSavedViews.getState().merge(file.views);
   const viewMissing = engine && file.current ? applyView(engine, file.current) : [];

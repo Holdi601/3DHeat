@@ -3,6 +3,9 @@ import { applyDocOps, type DocOp } from '../tactics/ops';
 import { chunkOps, DocRegistry, registerSharedDoc, SharedSync, toDocState, type DocState, type OutBatch, type SharedDoc } from './shared';
 import { captureSession, openSession, readSessionBlob, readSessionJson, sessionBlob, SESSION_SCHEMA } from './sessionFile';
 import { noteDataFiles } from './dataRefs';
+import { registerBuiltInDocs } from './docs';
+import { useNotes } from '../notes/store';
+import { EMPTY_BOOK } from '../notes/model';
 
 type Pins = { title?: string; pins: { id: string; x?: number; label?: string }[] };
 
@@ -149,6 +152,17 @@ describe('the session file', () => {
     expect(report.unknown).not.toContain('roundtrip');
     // Nothing secret goes in.
     expect(text).not.toMatch(/password|token|resume|bans/i);
+  });
+
+  it('keeps the notes and analyses, as a layer and with their history', async () => {
+    registerBuiltInDocs();
+    useNotes.getState().addDoc('Plan A', '# Push B');
+    const file = readSessionJson(JSON.parse(JSON.stringify(captureSession(null))));
+    expect(file.docs.notes.colls.docs).toHaveLength(1);
+    expect(file.notes?.book.docs).toHaveLength(1);
+    useNotes.setState({ book: EMPTY_BOOK });
+    await openSession(null, file, []);
+    expect(useNotes.getState().book.docs.map((d) => d.title)).toEqual(['Plan A']);
   });
 
   it('refuses a newer file and something else, and keeps layers no module knows', () => {

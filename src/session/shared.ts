@@ -22,6 +22,7 @@
  */
 
 import { applyDocOps, diffDocs, type DocOp } from '../tactics/ops';
+import { registerSharedDoc as registerInApp, sharedDoc as appDoc, sharedDocs as appDocs, type SharedDoc as AppSharedDoc } from '../state/sharedDocs';
 
 type Fields = Record<string, unknown>;
 
@@ -31,20 +32,11 @@ export interface DocState {
   colls: Record<string, Fields[]>;
 }
 
-export interface SharedDoc {
-  /** Its name on the wire and in a session file: `[a-z0-9_-]`, at most 32. */
-  key: string;
-  /** Its collections of entities with an `id`. */
-  colls: readonly string[];
-  /** The document as the viewer has it now (an immutable object: a new one per edit). */
-  get(): object;
-  /** Replaces it with a state from elsewhere: not an edit of this viewer's, not on its undo list. */
-  set(state: object): void;
-  /** An empty document. */
-  empty(): object;
-  /** Whether a state has anything worth keeping. */
-  hasContent?(state: object): boolean;
-}
+/**
+ * A shared document (`state/sharedDocs.ts` is where the viewer's modules
+ * register theirs: the tactics board, marks, notes, chart signs, ...).
+ */
+export type SharedDoc = AppSharedDoc;
 
 /** The documents a viewer shares; one per viewer (tests make several). */
 export class DocRegistry {
@@ -72,7 +64,20 @@ export class DocRegistry {
   }
 }
 
-export const registry = new DocRegistry();
+/** The viewer's own registry (`state/sharedDocs.ts`), seen through the same interface. */
+class AppRegistry extends DocRegistry {
+  register(d: SharedDoc): void {
+    registerInApp(d);
+  }
+  all(): SharedDoc[] {
+    return appDocs();
+  }
+  get(key: string): SharedDoc | undefined {
+    return appDoc(key);
+  }
+}
+
+export const registry: DocRegistry = new AppRegistry();
 
 /** Adds a document to the shared layers (once per key; again replaces it). */
 export function registerSharedDoc(d: SharedDoc): void {
@@ -301,6 +306,7 @@ export class SharedSync {
   tick(): void {
     if (!this.started) return;
     for (const d of this.reg.all()) if (!this.byKey.has(d.key)) this.attachNew(d);
+    if ([...this.byKey.values()].some((s) => !s.doc && this.reg.get(s.key))) this.adopt();
     for (const s of this.byKey.values()) this.flush(s);
   }
 

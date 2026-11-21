@@ -61,7 +61,7 @@ The button at the top of the side panel shows the connection: green connected, a
 | **Presence**: each member's camera (a frustum with their name, in their colour) and pointer, in the same workspace | Everyone, by moving |
 | **Marks**: notes set on the scene and freehand drawings (the panel's *Marks*, or the command palette) | Draw-only and up: their own; elevated and up: anyone's |
 | **The tactics board**: figures, routes, tasks, layers, keyframes, notes, drawings | Elevated and up; draw-only: their own drawings and notes on it |
-| Other layers that register themselves (notes, analysis documents) | As for marks, by default |
+| **Data notes and analysis documents**, chart signs, and any other layer that registers itself | As for marks: draw-only and up their own, elevated and up anyone's |
 | **Follow**: everyone follows one camera, or is locked to it | Admin and host |
 
 Shared layers are changed by small operations - add this, set that field, delete that - which the host numbers in the order they arrive and sends to everyone. Where two members change the same field at the same moment, the one the host received last is kept, for both. A change the host refuses (the role does not allow it, the member is muted) disappears from the member's screen again.
