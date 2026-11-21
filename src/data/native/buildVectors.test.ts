@@ -35,8 +35,15 @@ async function webBuild(c: Case) {
   return describeBuilt(dataset as Dataset, failures.map((f) => f.file));
 }
 
+/** The vector files a case needs that are not on disk (they are committed; `make-build-vectors.mjs` makes them again). */
+const missing = cases.flatMap((c) => c.files).filter((f) => !existsSync(join(dir, f)));
+
 describe('the dataset build vectors', () => {
-  it('are what the web build makes', async () => {
+  it('are on disk', () => {
+    expect(missing, `missing build vectors - run: node native/vectors/make-build-vectors.mjs`).toEqual([]);
+  });
+
+  it.skipIf(missing.length > 0)('are what the web build makes', async () => {
     const got: Record<string, unknown> = {};
     for (const c of cases) got[c.name] = await webBuild(c);
     if (update || !existsSync(expectedPath)) {

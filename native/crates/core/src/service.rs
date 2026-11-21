@@ -208,9 +208,16 @@ impl Core {
             Body::ReadTable(r) => self.read_table(r, out, access)?,
             Body::ScanCsv(r) => self.scan_csv(r, out, access)?,
             Body::BuildChunks(r) => self.build_chunks(r, access)?,
-            Body::ReadChunk(r) if self.built.lock().unwrap().contains_key(&r.handle) => self.read_built_chunk(r, out)?,
+            // Shared memory reaches the app's own window only: never a request from elsewhere.
+            Body::ReadChunk(mut r) if self.built.lock().unwrap().contains_key(&r.handle) => {
+                r.shared &= access.paths;
+                self.read_built_chunk(r, out)?
+            }
             Body::BuildDataset(r) => self.build_dataset(r, access)?,
-            Body::ReadDatasetColumns(r) => self.read_dataset_columns(r, out)?,
+            Body::ReadDatasetColumns(mut r) => {
+                r.shared &= access.paths;
+                self.read_dataset_columns(r, out)?
+            }
             Body::BuildProgress(p) => {
                 let (phase, fraction) = self.progress.lock().unwrap().get(&p.token).cloned().unwrap_or_default();
                 Body::BuildProgressReply(v1::BuildProgressReply { phase, fraction })

@@ -87,6 +87,12 @@ export async function probeHostMemory(force = false): Promise<HostMemory | null>
   }
 
   const run = (async (): Promise<HostMemory | null> => {
+    // The native app answers itself (its `host_memory` command), card memory included.
+    const tauri = (globalThis as unknown as { __TAURI_INTERNALS__?: { invoke(cmd: string): Promise<unknown> } }).__TAURI_INTERNALS__;
+    if (tauri) {
+      const got = await tauri.invoke('host_memory').catch(() => null);
+      if (got) return parse(got);
+    }
     try {
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);

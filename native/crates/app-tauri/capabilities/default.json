@@ -1,14 +1,15 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "The viewer's window, loaded from the app's own loopback server: core events and the app's two commands (core_endpoint, shared_echo). The native core itself is reached over that server, not through commands.",
+  "description": "The viewer's window, loaded from the app's own loopback server: core events and the app's commands (core_endpoint, shared_echo, host_memory). The native core itself is reached over that server, not through commands.",
   "windows": [
     "main"
   ],
   "permissions": [
     "core:default",
     "allow-core-endpoint",
-    "allow-shared-echo"
+    "allow-shared-echo",
+    "allow-host-memory"
   ],
   "remote": {
     "urls": [

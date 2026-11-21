@@ -39,6 +39,47 @@ struct Endpoint {
     key: String,
 }
 
+/// The machine as the viewer's budgets read it (`src/data/hostMemory.ts`): in a
+/// browser the dev server answers `/__host/memory`; in the app, this. Above all
+/// the card's memory, which no page can learn and which sets the GPU budget.
+#[tauri::command]
+fn host_memory() -> serde_json::Value {
+    let (vram, source) = vram_bytes();
+    serde_json::json!({
+        "totalBytes": heat3d_core::memory::total_bytes(),
+        "cpus": std::thread::available_parallelism().map(|n| n.get()).unwrap_or(0),
+        "platform": std::env::consts::OS,
+        "vramBytes": vram,
+        "vramSource": source,
+    })
+}
+
+/// The largest adapter's own memory (DXGI), on Windows.
+fn vram_bytes() -> (Option<u64>, &'static str) {
+    #[cfg(windows)]
+    {
+        use windows::Win32::Graphics::Dxgi::{CreateDXGIFactory1, IDXGIFactory1};
+        // SAFETY: plain DXGI queries.
+        let best = unsafe {
+            CreateDXGIFactory1::<IDXGIFactory1>().ok().map(|f| {
+                let mut best = 0u64;
+                let mut i = 0;
+                while let Ok(a) = f.EnumAdapters1(i) {
+                    if let Ok(d) = a.GetDesc1() {
+                        best = best.max(d.DedicatedVideoMemory as u64);
+                    }
+                    i += 1;
+                }
+                best
+            })
+        };
+        if let Some(b) = best.filter(|&b| b > 0) {
+            return (Some(b), "DXGI");
+        }
+    }
+    (None, "")
+}
+
 #[tauri::command]
 fn core_endpoint(endpoint: tauri::State<'_, Option<Endpoint>>) -> Option<Endpoint> {
     endpoint.inner().clone()
@@ -71,7 +112,7 @@ fn main() {
     let core = Arc::new(Core::new());
     let scheme_core = core.clone();
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![core_endpoint, shared::shared_echo])
+        .invoke_handler(tauri::generate_handler![core_endpoint, host_memory, shared::shared_echo])
         .register_asynchronous_uri_scheme_protocol("heat3d", move |_ctx, request, responder| {
             let core = scheme_core.clone();
             // Off the event loop: a load takes seconds, and the window keeps drawing meanwhile.

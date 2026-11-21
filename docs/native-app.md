@@ -8,7 +8,7 @@ nav_order: 20
 
 3DHeat also runs as a desktop app. It is the same viewer, with every feature of the browser version, in a window of its own. Behind it sits a native core that reads your files with every core of the machine and has the machine's whole memory to work with.
 
-The app is new (Stage 2a of the native version). Today the core does the reading; the heat is still drawn by the viewer in the window, exactly as in the browser. A native viewport comes later.
+The app is new (Stage 2c of the native version). Today the core reads the files and, for Parquet tables, builds the whole dataset; the heat is still drawn by the viewer in the window, from chunks the core packed. A native viewport comes later.
 
 ## System requirements
 
@@ -32,18 +32,39 @@ The core gives the viewer exactly what the viewer's own readers would have built
 
 On Linux the viewer reads its files itself for now.
 
+### Datasets built by the core
+
+A load of Parquet tables (plain or in `.3dheat` files) goes further: the core builds the whole dataset, not just its columns. It merges the files, puts the rows in time order, measures the extent, builds the roster, the sessions and each row's lifetime, and packs the GPU chunks the engine draws from, all with every core. The viewer then takes over:
+
+- **the columns**, without a copy: the core writes them into memory the window shares with it (WebView2 shared buffers), and from then on core and viewer read the same memory;
+- **the GPU chunks**, already packed: the engine writes them to the GPU a slice a frame, as it does with its own, and gives each chunk's bytes back as soon as it is on the GPU;
+- **columns left in the files** (the load plan's "read when needed"): the core reads them when the view asks, and keeps them; the viewer drops its copy when memory is short and asks again.
+
+Past 200 million rows the viewer keeps every k-th row (say every 2nd of 400 million): tracks, replay, picking and the analyses work on that copy, while the heat on the GPU draws every row. Filters reach every row too; their columns come from the core a chunk at a time. The difference split's column, the value weight, the route heat and the direction wedges work on the viewer's copy only for such a load, and are not drawn over all rows yet.
+
+The core builds exactly what the viewer's own build would have: tests compare both on shared inputs (`native/vectors/build`), and the app's smoke run compares both in the app. A load whose columns the viewer derives further columns from (an event type, a vehicle name, a cost or an AI flag; see the canonical and value columns) is built by the viewer, with the core reading the files as above, and so is any load with a file in another format. The console says which way a load went.
+
 ## Measured
 
-On a 16-core PC (32 threads) with 61 GB of memory, on the synthetic 10-million-row tables of the row-ceiling probe (x, y, z, time, player, team), while other work shared the machine:
+On a 16-core PC (32 threads) with 61 GB of memory and an RTX 5080 (16 GB), on the synthetic 10-million-row tables of the row-ceiling probe (x, y, z, time, player, team; eight more measures left to be read when needed), while other work shared the machine (`native/tools/probe-native-load.mjs`, each load twice):
 
-| Rows | Browser (Chromium tab) | App, the page building the dataset | Core alone, to the engine's chunk layout |
+| Rows | Browser (Chromium tab) | App, the page building the dataset (Stage 2a) | App, the core building it (Stage 2c) |
 |---|---|---|---|
-| 100 million | 13 to 17 s, 8 GB | 19 s, 10 GB | **3.8 s**, 6.4 GB (read 1.6 s, sort 0.9 s, lifetimes 0.25 s, packing 0.45 s) |
-| 400 million | no result within 10 minutes (the tab's memory ceiling) | does not fit the page | **16 s**, 18.5 GB |
+| 100 million | 13 to 17 s, 8 GB | 19 s (42 s on the day the 2c numbers were taken), page 7 to 10 GB | **10 to 12 s** until every row is on the GPU, the dataset ready after 4.6 to 5.4 s; page 0.7 GB, core 3.9 to 5.4 GB at its peak and 0.85 GB after |
+| 400 million | no result within 10 minutes (the tab's memory ceiling) | does not fit the page | **32 to 40 s** until all 400 million rows are on the GPU, the dataset ready after 16 to 19 s; page 0.6 GB, core 15 to 17.7 GB at its peak |
+| 1 billion | | | not measured: it needs about 40 GB free, and the machine had about 20 |
 
-Moving bytes from the core into the page: about 0.6 GB/s through the app's loopback server (what the app uses), 1.3 GB/s through WebView2 shared memory, 0.1 GB/s through a custom URL scheme.
+The 400-million-row loads ran with the page's copy at 100 million rows (every 4th row, `heat3d.nativePageRows`), since the machine had only about 20 GB free; the default of 200 million adds about 3 GB of shared memory.
 
-What this means today: the core reads, sorts and packs four to five times faster than the browser and is not limited by a tab's memory, but in the app the page still builds the dataset the engine draws from, so a load is as fast, and as limited, as in the browser. The gain reaches the screen once the engine takes the core's packed chunks directly and frees its own copies after upload, and once the native viewport draws them.
+Frame times with the camera moving and the timeline playing, once loaded: p99 19 ms at 100 million rows, 21 to 23 ms at 400 million (p50 16.7 ms, the display's 60 Hz). Single frames of up to 69 ms happened on the shared machine, at 100 million rows as on the page's own path before.
+
+The core's own share: at 100 million rows reading 2.1 s, merging 0.8 s, sorting 1.6 s, lifetimes 0.2 s; at 400 million reading 7 to 8 s, sorting 6.5 to 7 s. Alone (`heat3d-ingest --dataset`), 400 million rows build and pack in 18 s at a peak of 16 GB. What follows the build is the GPU upload: the engine writes the chunks a slice a frame, about 0.3 to 0.5 GB/s, so that no frame waits for it, while the chunks already there draw.
+
+"Page" is the window's own memory (its private bytes). The columns the page took over are in memory it shares with the core, counted once, in neither; at 100 million rows that is about 3 GB. Every row's chunk bytes are given back as soon as they are on the GPU.
+
+Moving bytes from the core into the page: about 0.6 GB/s through the app's loopback server, 1.1 to 1.3 GB/s through WebView2 shared memory (what the app uses for columns and chunks), 0.1 GB/s through a custom URL scheme. A shared buffer holds at most 2 GiB, which is one reason the page's copy stops at 200 million rows.
+
+What limits a load now: the core's memory (about 40 bytes a row at its peak), and the GPU budget, 70 % of the card's memory (12 bytes a row of chunks; the app reads the card's size itself). The page no longer does.
 
 ## Letting others in: `3dheat serve`
 
@@ -64,12 +85,12 @@ Everything lives in `native/`, a Rust workspace:
 | Crate | What it is |
 |---|---|
 | `crates/proto` | the protocol between a viewer and a core (`proto/heat3d/v1/heat3d.proto`), generated for Rust at build time; `npm run proto` in `native/` generates the TypeScript side into `src/data/native/gen` |
-| `crates/core` | the readers, the parallel sort, the engine's chunk layout and the request handler. No Tauri in it. `cargo test -p heat3d-core` |
+| `crates/core` | the readers, the parallel sort, the dataset build (`build.rs`: everything the viewer's build does after reading), the built datasets held by handle (`dataset.rs`: columns, chunks packed on request, columns read on demand), and the request handler. No Tauri in it. `cargo test -p heat3d-core` |
 | `crates/session` | the multiplayer session server (roles, waiting room, presence, the shared layers' op log); its messages are in `proto/heat3d/session/v1` |
 | `crates/server` | the data API over HTTP and WebSocket, the window's loopback server, and `3dheat serve` (session plus data API, headless) |
 | `crates/app-tauri` | the desktop app (`3DHeat`), a thin layer: the window, loaded from its own loopback server (`/v1` with a key only the window gets), the file handover, and the server embedded |
 
-`vectors/` holds `.3dheat` test files read by both the TypeScript and the Rust reader.
+`vectors/` holds test inputs both sides are held to: `.3dheat` files read by the TypeScript and the Rust reader (`container/`), and Parquet loads built by the viewer's build and by the core's (`build/`: `node native/vectors/make-build-vectors.mjs` makes the files, `UPDATE_VECTORS=1 npx vitest run src/data/native/buildVectors.test.ts` writes what the viewer builds of them, `cargo test -p heat3d-core --test build_vectors` checks the core against it).
 
 Building:
 
@@ -78,4 +99,4 @@ npm ci && (cd native && npm ci && npm run icons)
 cd native && npx tauri build
 ```
 
-The installers land in `target/release/bundle/` (NSIS and MSI on Windows, AppImage and deb on Linux). `node native/tools/smoke-shell.mjs` starts the built app (`3dheat-app.exe` in the build folder), picks a synthetic Parquet file, loads it through the core and checks that the heat draws.
+The installers land in `target/release/bundle/` (NSIS and MSI on Windows, AppImage and deb on Linux). `node native/tools/smoke-shell.mjs` starts the built app (`3dheat-app.exe` in the build folder), picks a synthetic Parquet file, loads it through the core and checks that the heat draws, then builds two of the shared vectors' loads both ways (core and viewer) and checks every column is the same. `node native/tools/probe-native-load.mjs --dir <row-ceiling folder> --rows 100,400` measures loads in the app: time until every row is on the GPU, the page's and the core's memory, and frame times under camera motion with the timeline playing (`--path page` for the viewer building the dataset, as before).

@@ -437,7 +437,8 @@ pub fn build(files: &[ParquetFile], spec: &BuildSpec, progress: &(dyn Fn(&str, f
                 },
             ));
         }
-        let at_once = (rayon::current_num_threads() / 4).clamp(2, 8);
+        // Few files at once: each holds its columns whole until copied in, and spreads its row groups over every core anyway.
+        let at_once = (rayon::current_num_threads() / 8).clamp(2, 4);
         let mut parts = parts.into_iter();
         let total = files.len().max(1);
         let mut done = 0usize;

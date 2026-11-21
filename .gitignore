@@ -59,6 +59,8 @@ races/
 
 # Data, by type: telemetry, tables, lap recordings.
 *.parquet
+# Except the made-up test vectors both builds are held to (native/vectors/make-build-vectors.mjs).
+!native/vectors/build/*.parquet
 *.csv
 *.tsv
 *.npz
