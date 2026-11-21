@@ -157,6 +157,8 @@ export interface LiveReadout {
   /** Rows resident on the GPU, and rows that did not fit. */
   residentRows: number;
   droppedRows: number;
+  /** Whether the heat still draws the previous filters while the new ones' columns reach the GPU. */
+  filtersPending: boolean;
   gpuBytes: number;
   /** GPU bytes of the level and the world tiles, apart from the rows' `gpuBytes`. */
   levelBytes: number;
@@ -428,6 +430,7 @@ export class Engine {
   private autoExposePending = 0;
   /** The filters the exposure was last metered for: a change meters it again. */
   private meteredFilters: FilterSpec[] | null = null;
+  private meteredFilterKey = '';
   /** Re-meters the exposure when the camera comes to rest; see `followExposure`. */
   private readonly follower = new ExposureFollower();
   /** A follow reading is in flight; another is not started until it lands. */
@@ -563,6 +566,7 @@ export class Engine {
     budget: 0,
     residentRows: 0,
     droppedRows: 0,
+    filtersPending: false,
     gpuBytes: 0,
     levelBytes: 0,
     gpuName: null,
@@ -2940,7 +2944,14 @@ export class Engine {
     );
     // The person filter is one of these: a slot over the person ids, so the heat
     // shows the selected people as the box replay does.
-    const activeFilters = buildActiveFilters(this.dataset, s.filters, this.filterCache);
+    const askedFilters = buildActiveFilters(this.dataset, s.filters, this.filterCache);
+    // What the heat draws this frame: the filters asked for once their columns
+    // are on the GPU for every chunk, the previous ones until then. Everything
+    // below - the accumulation's signature, the sides' counts, the picking -
+    // follows the drawn set, so a filter takes effect in one frame, whole.
+    const activeFilters = renderer.prepareFilters ? renderer.prepareFilters(askedFilters) : askedFilters;
+    this.live.filtersPending = renderer.filtersPending ?? false;
+    const drawnFilterKey = activeFilters.map((f) => f.key).join(';');
     // Heat weighed by a value column (render/valueWeight.ts).
     const weight = valueWeight(this.dataset, s.heat.weightBy);
     // The difference as a rate (render/rateMap.ts): a share of counts, so the
@@ -2959,9 +2970,11 @@ export class Engine {
     // A filter can take what is drawn from every position to a hundred kills -
     // a density orders of magnitude lower, which the saturation metered for
     // all of it would leave all but invisible. Meter again, as on a load.
-    if (s.filters !== this.meteredFilters) {
+    // Metered once the heat draws the new filters, not while it still shows the old.
+    if (s.filters !== this.meteredFilters || drawnFilterKey !== this.meteredFilterKey) {
       if (this.meteredFilters !== null && this.dataset) this.autoExposePending = AUTO_EXPOSE_AFTER_FRAMES;
       this.meteredFilters = s.filters;
+      this.meteredFilterKey = drawnFilterKey;
     }
 
     // ---- colour LUT
@@ -3231,7 +3244,7 @@ export class Engine {
       useLifetime ? 'life' : tl.window,
       // A filter change alters which rows contribute, so accumulated heat is
       // no longer an estimate of anything and must be discarded.
-      activeFilters.map((f) => f.key).join(';'),
+      drawnFilterKey,
       // So does the volumes filter.
       volumeDraw ? volumeDraw.key : '',
       // The wedge reshapes every sprite, and the direction field accumulates

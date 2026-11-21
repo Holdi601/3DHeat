@@ -14,6 +14,13 @@
  * disk.
  *
  *   node tools/probe-row-ceiling.mjs --dir E:/scratch/rows --mode ondemand --from 200 --step 50 --to 600
+ *
+ * `--backend webgpu` runs the WebGPU renderer (on the real GPU, in the full
+ * Chromium channel). The filter line reports the frames once the filter's column
+ * is in memory - the first, p99 and max - and how long until the heat draws it
+ * (`live.filtersPending`): the columns reach the GPU a slice a frame.
+ * `--max-filter-ms 50` makes that a gate: the probe exits 1 when any of those
+ * frames took longer.
  */
 import { existsSync, linkSync, mkdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
@@ -23,7 +30,8 @@ const arg = (name, def) => {
   const i = process.argv.indexOf(`--${name}`);
   return i >= 0 ? process.argv[i + 1] : def;
 };
-const url = arg('url', 'http://127.0.0.1:5273/?backend=webgl2');
+const backend = arg('backend', 'webgl2');
+const url = arg('url', `http://127.0.0.1:5273/?backend=${backend}`);
 const dir = arg('dir', null);
 const mode = arg('mode', 'ondemand');
 const perFile = Number(arg('rows-per-file', 10_000_000));
@@ -33,6 +41,8 @@ const step = Number(arg('step', 50)) * 1e6;
 const to = Number(arg('to', 600)) * 1e6;
 const soft = process.argv.includes('--soft');
 const threads = Number(arg('threads', 4));
+// A regression gate: exit 1 when a frame around applying the filter took longer.
+const maxFilterMs = Number(arg('max-filter-ms', 0));
 if (!dir) throw new Error('--dir is required');
 mkdirSync(dir, { recursive: true });
 
@@ -115,11 +125,16 @@ const quantile = (s, q) => s[Math.min(s.length - 1, Math.floor(s.length * q))];
 async function attempt(rows) {
   const files = copies(Math.ceil(rows / perFile));
   const total = files.length * perFile;
-  const browser = await chromium.launch({
-    args: soft
-      ? ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader']
-      : ['--use-angle=d3d11', '--ignore-gpu-blocklist', '--enable-gpu'],
-  });
+  // WebGPU needs the full Chromium channel: the headless shell has no adapter.
+  const browser = await chromium.launch(
+    backend === 'webgpu'
+      ? { channel: 'chromium', args: ['--enable-unsafe-webgpu', '--ignore-gpu-blocklist'] }
+      : {
+          args: soft
+            ? ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader']
+            : ['--use-angle=d3d11', '--ignore-gpu-blocklist', '--enable-gpu'],
+        },
+  );
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
   let crashed = false;
   page.on('crash', () => {
@@ -159,12 +174,17 @@ async function attempt(rows) {
         try {
           // As the Source panel loads: the exact row count from the footers, and the RAM budget the app chose.
           const ram = globalThis.__3dheat.useStore.getState().budgets.ram;
-          const ds = await loader.ingest(files, m, [], 'probe', 1, total, undefined, { threads, ram });
+          const skipped = [];
+          const onProgress = (p) => {
+            if (p && JSON.stringify(p.label ?? '').includes('skipped')) skipped.push(JSON.stringify(p.label).slice(0, 600));
+          };
+          const ds = await loader.ingest(files, m, [], 'probe', 1, total, onProgress, { threads, ram });
           globalThis.__3dheat.useStore.getState().setDataset(ds);
           const live = globalThis.__3dheat_engine.live;
           const until = performance.now() + 600_000;
           while (performance.now() < until && live.residentRows + live.droppedRows < ds.count) await new Promise((r) => setTimeout(r, 200));
-          return { ok: true, rows: ds.count, resident: live.residentRows, dropped: live.droppedRows, attrs: ds.attrs.length };
+          const b = globalThis.__3dheat.useStore.getState().budget;
+          return { ok: true, rows: ds.count, files: files.length, said: [...skipped, ...(ds.said ? ds.said.warnings.map((m) => JSON.stringify(m)) : [])].slice(0, 6), resident: live.residentRows, dropped: live.droppedRows, attrs: ds.attrs.length, gpuBytes: live.gpuBytes, gpuBudget: b.gpuBudgetBytes, gpuMax: b.gpuBudgetMax, backend: live.backend };
         } catch (e) {
           return { ok: false, error: String(e && e.message ? e.message : e) };
         }
@@ -212,18 +232,31 @@ async function attempt(rows) {
               dts.push(now - last);
               last = now;
             }
-            // And the frames just after, when the filter first applies.
-            for (let k = 0; k < 120; k++) {
+            // And the frames just after, when the filter first applies: at least
+            // 120, and on until the heat shows it (`filtersPending`).
+            const after = [];
+            const applyAt = performance.now();
+            let appliedMs = null;
+            for (let k = 0; k < 120 || (appliedMs === null && performance.now() - applyAt < 60_000); k++) {
               eng.camera.setOrientationDegrees(eng.camera.yawDegrees + 0.3, eng.camera.pitchDegrees);
               await new Promise((r) => requestAnimationFrame(r));
               const now = performance.now();
               dts.push(now - last);
+              after.push(now - last);
               last = now;
+              if (appliedMs === null && !eng.live.filtersPending) appliedMs = now - applyAt;
             }
+            const first = after[0];
+            // Where the worst frame of the read fell: its index from the end of the read.
+            const during = dts.length - after.length;
+            let worst = 0;
+            for (let k = 1; k < during; k++) if (dts[k] > dts[worst]) worst = k;
+            const worstFromEnd = during - worst;
+            after.sort((a, b) => a - b);
             s.patchTimeline({ playing: false });
             const e = cs.useColumnStore.getState().entries.m0;
             dts.sort((a, b) => a - b);
-            return { state: e?.state ?? 'in memory at load', error: e?.error, s: (performance.now() - t0) / 1000, dts };
+            return { state: e?.state ?? 'in memory at load', error: e?.error, s: (performance.now() - t0) / 1000, dts, first, worstFromEnd, afterP99: after[Math.min(after.length - 1, Math.floor(after.length * 0.99))], afterMax: after[after.length - 1], appliedMs };
           });
     const heap = await page.evaluate(() => performance.memory?.usedJSHeapSize ?? null);
     return {
@@ -235,7 +268,19 @@ async function attempt(rows) {
       max: frames[frames.length - 1],
       frames: frames.length,
       heapGB: heap ? heap / 1024 ** 3 : null,
-      read: read && { state: read.state, error: read.error, s: read.s, p99: quantile(read.dts, 0.99), max: read.dts[read.dts.length - 1], frames: read.dts.length },
+      read: read && {
+        state: read.state,
+        error: read.error,
+        s: read.s,
+        p99: quantile(read.dts, 0.99),
+        max: read.dts[read.dts.length - 1],
+        frames: read.dts.length,
+        first: read.first,
+        worstFromEnd: read.worstFromEnd,
+        afterP99: read.afterP99,
+        afterMax: read.afterMax,
+        appliedMs: read.appliedMs,
+      },
       s: (Date.now() - t0) / 1000,
     };
   } catch (e) {
@@ -252,10 +297,21 @@ for (let rows = from; rows <= to; rows += step) {
   const f = (v) => (v === undefined || v === null ? '-' : v.toFixed(1));
   console.log(
     `${(r.rows / 1e6).toFixed(0)}M: ${r.survived ? 'ok' : 'DIED'}` +
-      (r.survived ? ` resident ${(r.loaded.resident / 1e6).toFixed(0)}M, frames p50 ${f(r.p50)} p99 ${f(r.p99)} max ${f(r.max)} ms (${r.frames}), heap ${f(r.heapGB)} GB` : ` (${r.why})`) +
+      (r.survived
+        ? ` ${r.loaded.backend}, resident ${(r.loaded.resident / 1e6).toFixed(0)}M of ${(r.loaded.rows / 1e6).toFixed(0)}M` +
+          ` (GPU ${f(r.loaded.gpuBytes / 1024 ** 3)} of ${f(r.loaded.gpuBudget / 1024 ** 3)} GiB, max ${f(r.loaded.gpuMax / 1024 ** 3)}), frames p50 ${f(r.p50)} p99 ${f(r.p99)} max ${f(r.max)} ms (${r.frames}), heap ${f(r.heapGB)} GB`
+        : ` (${r.why})`) +
       `, ${r.s.toFixed(0)} s`,
   );
+  if (r.loaded && r.loaded.rows < r.rows) console.log(`  loaded ${r.loaded.rows} of ${r.rows} rows from ${r.loaded.files} files: ${r.loaded.said.join(' | ')}`);
   if (r.read)
-    console.log(`  filter on m0: ${r.read.state}${r.read.error ? ` (${r.read.error})` : ''} in ${r.read.s.toFixed(1)} s, frames p99 ${f(r.read.p99)} max ${f(r.read.max)} ms (${r.read.frames})`);
+    console.log(`  filter on m0: ${r.read.state}${r.read.error ? ` (${r.read.error})` : ''} in ${r.read.s.toFixed(1)} s, frames p99 ${f(r.read.p99)} max ${f(r.read.max)} ms (${r.read.frames})` +
+        ` (worst ${r.read.worstFromEnd} frames before the column landed)` +
+        `; once it applies: first frame ${f(r.read.first)} ms, p99 ${f(r.read.afterP99)} max ${f(r.read.afterMax)} ms, heat shows it after ${f(r.read.appliedMs)} ms`,
+    );
+  if (r.read && maxFilterMs > 0 && r.read.max > maxFilterMs) {
+    console.log(`  FAIL: a frame around applying the filter took ${f(r.read.max)} ms (gate ${maxFilterMs} ms)`);
+    process.exitCode = 1;
+  }
   if (!r.survived) break;
 }

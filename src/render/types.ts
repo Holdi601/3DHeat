@@ -923,6 +923,15 @@ export interface Renderer {
    * complete one, which is the worst possible failure for an analysis tool.
    */
   readonly droppedRows: number;
+  /**
+   * The filters this frame's heat draws, given the ones asked for. A filter
+   * whose column is not yet on the GPU for every chunk is uploaded a slice a
+   * frame meanwhile, and until all of it is there the previous filters are
+   * drawn: the heat never mixes chunks filtered two ways (`filterStaging.ts`).
+   */
+  prepareFilters?(filters: ActiveFilter[]): ActiveFilter[];
+  /** Whether `prepareFilters` is still drawing older filters than those asked for. */
+  readonly filtersPending?: boolean;
   /** Driver's renderer string, when it will say. */
   readonly gpuName: string | null;
   /**

@@ -13,6 +13,7 @@ import { CURVE_LUT_SIZE } from '../../state/curve';
 import type { Bounds, Dataset } from '../../state/types';
 import { LUT_HEIGHT, LUT_WIDTH, teamPaletteIndex } from '../colors';
 import { filterColumnData, packSignTables } from '../filterTables';
+import { FilterStaging, type StageOps } from '../filterStaging';
 import { halfToFloat } from '../half';
 import {
   BLOCK_TEX_WIDTH,
@@ -288,6 +289,53 @@ export class Webgl2Renderer implements Renderer {
    * 10M-row dataset — and most retained columns are never actually filtered on.
    */
   private readonly filterTextures = new Map<string, WebGLTexture>();
+  /** Filter columns on their way to the GPU a slice a frame, and the filters drawn meanwhile (`prepareFilters`). */
+  private readonly filterStaging = new FilterStaging<WebGLTexture>();
+  private filterScratch = new Float32Array(0);
+  private readonly filterOps: StageOps<WebGLTexture> = {
+    chunkCount: () => this.chunks.length,
+    chunkRows: (c) => this.filterRows(c),
+    resident: (c, column) => this.filterTextures.has(`${c}:${column}`),
+    source: (column) => (this.dataset ? filterColumnData(this.dataset, column) : null),
+    reserve: (c) => {
+      const cost = ROW_TEX_WIDTH * Math.ceil(this.filterRows(c) / ROW_TEX_WIDTH) * 4;
+      if (this.gpuBytesUsed + cost > this.gpuBudgetBytes) this.evictFilterTextures(new Set(), cost);
+      if (this.gpuBytesUsed + cost > this.gpuBudgetBytes) return false;
+      this.gpuBytesUsed += cost;
+      return true;
+    },
+    allocate: (c) => {
+      const gl = this.gl;
+      const tex = createTexture(gl, { width: ROW_TEX_WIDTH, height: Math.ceil(this.filterRows(c) / ROW_TEX_WIDTH), internalFormat: gl.R32F, format: gl.RED, type: gl.FLOAT });
+      gl.bindTexture(gl.TEXTURE_2D, null);
+      return tex;
+    },
+    write: (tex, c, src, from, to) => {
+      // `from` is always a whole texture row: the slices are whole rows.
+      const gl = this.gl;
+      const start = c * CHUNK_ROWS + from;
+      const n = to - from;
+      const height = Math.ceil(n / ROW_TEX_WIDTH);
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      if (src instanceof Float32Array && n === height * ROW_TEX_WIDTH) {
+        gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, from / ROW_TEX_WIDTH, ROW_TEX_WIDTH, height, gl.RED, gl.FLOAT, src, start);
+      } else {
+        if (this.filterScratch.length < height * ROW_TEX_WIDTH) this.filterScratch = new Float32Array(height * ROW_TEX_WIDTH);
+        const data = this.filterScratch;
+        for (let i = 0; i < n; i++) data[i] = src[start + i];
+        data.fill(0, n, height * ROW_TEX_WIDTH);
+        gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, from / ROW_TEX_WIDTH, ROW_TEX_WIDTH, height, gl.RED, gl.FLOAT, data, 0);
+      }
+      gl.bindTexture(gl.TEXTURE_2D, null);
+    },
+    land: (c, column, tex) => {
+      this.filterTextures.set(`${c}:${column}`, tex);
+    },
+    discard: (c, _column, tex) => {
+      if (tex) this.gl.deleteTexture(tex);
+      this.gpuBytesUsed -= ROW_TEX_WIDTH * Math.ceil(this.filterRows(c) / ROW_TEX_WIDTH) * 4;
+    },
+  };
   /** One filter's category mask while the pass bytes are built; see `ensurePassMasks`. */
   private filterMaskTex: WebGLTexture | null = null;
   /**
@@ -656,6 +704,7 @@ export class Webgl2Renderer implements Renderer {
       this.teamSignTex = null;
       this.teamSignWidth = 0;
     }
+    this.filterStaging.reset(this.filterOps);
     for (const t of this.filterTextures.values()) gl.deleteTexture(t);
     this.filterTextures.clear();
     this.dropPassMasks();
@@ -3035,6 +3084,8 @@ export class Webgl2Renderer implements Renderer {
     const key = `${chunkIndex}:${column}`;
     const hit = this.filterTextures.get(key);
     if (hit) return hit;
+    // On its way: finished now, since a pass needs it this frame.
+    if (this.filterStaging.finishNow(chunkIndex, column, this.filterOps)) return this.filterTextures.get(key) ?? null;
 
     const ds = this.dataset;
     if (!ds) return null;
@@ -3087,13 +3138,28 @@ export class Webgl2Renderer implements Renderer {
     for (const [key, tex] of this.filterTextures) {
       if (this.gpuBytesUsed + need <= this.gpuBudgetBytes) return;
       const column = key.slice(key.indexOf(':') + 1);
-      if (keep.has(column)) continue;
+      if (keep.has(column) || this.filterStaging.keeps(column)) continue;
       const chunkIndex = Number(key.slice(0, key.indexOf(':')));
       const rows = Math.min(CHUNK_ROWS, (this.dataset?.count ?? 0) - chunkIndex * CHUNK_ROWS);
       gl.deleteTexture(tex);
       this.filterTextures.delete(key);
       this.gpuBytesUsed -= ROW_TEX_WIDTH * Math.ceil(Math.max(0, rows) / ROW_TEX_WIDTH) * 4;
     }
+  }
+
+  /** A chunk's rows as its filter textures hold them. */
+  private filterRows(chunkIndex: number): number {
+    return Math.max(0, Math.min(CHUNK_ROWS, (this.dataset?.count ?? 0) - chunkIndex * CHUNK_ROWS));
+  }
+
+  /** The filters this frame draws; see `Renderer.prepareFilters` and `FilterStaging`. */
+  prepareFilters(filters: ActiveFilter[]): ActiveFilter[] {
+    return this.filterStaging.choose(filters, this.filterOps);
+  }
+
+  /** Whether the heat still draws older filters while the new ones' columns arrive. */
+  get filtersPending(): boolean {
+    return this.filterStaging.pending;
   }
 
   /**

@@ -21,6 +21,7 @@ import { buildEdgeList, type Level } from '../level';
 import { boxOutsideFrustum, diffWorldTiles, frustumPlanes, textureBytes } from '../worldTiles';
 import type { WorldTile } from '../../world/tileSet';
 import { filterColumnData, packFilterTable, packSignTables } from '../filterTables';
+import { FilterStaging, type StageOps } from '../filterStaging';
 import {
   CHUNK_ROWS,
   FILTER_MASK_WIDTH,
@@ -306,6 +307,47 @@ export class WebgpuRenderer implements Renderer {
    * built, so the budget may take them back.
    */
   private readonly filterColumns = new Map<string, GPUBuffer>();
+  /** Filter columns on their way to the GPU a slice a frame, and the filters drawn meanwhile (`prepareFilters`). */
+  private readonly filterStaging = new FilterStaging<GPUBuffer>();
+  private filterScratch = new Float32Array(0);
+  private readonly filterOps: StageOps<GPUBuffer> = {
+    chunkCount: () => this.chunks.length,
+    chunkRows: (c) => this.chunks[c].rows,
+    resident: (c, column) => this.filterColumns.has(`${c}:${column}`),
+    source: (column) => (this.dataset ? filterColumnData(this.dataset, column) : null),
+    reserve: (c) => {
+      const bytes = Math.max(4, this.chunks[c].rows * 4);
+      if (this.gpuBytesUsed + bytes > this.gpuBudgetBytes) this.evictFilterColumns(new Set(), bytes);
+      if (this.gpuBytesUsed + bytes > this.gpuBudgetBytes) return false;
+      this.gpuBytesUsed += bytes;
+      return true;
+    },
+    allocate: (c, column) =>
+      this.device.createBuffer({
+        label: `filter column ${column}`,
+        size: Math.max(4, this.chunks[c].rows * 4),
+        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+      }),
+    write: (buf, c, src, from, to) => {
+      const start = this.chunks[c].start + from;
+      const n = to - from;
+      if (src instanceof Float32Array) {
+        this.device.queue.writeBuffer(buf, from * 4, src.buffer, src.byteOffset + start * 4, n * 4);
+        return;
+      }
+      if (this.filterScratch.length < n) this.filterScratch = new Float32Array(n);
+      const data = this.filterScratch;
+      for (let i = 0; i < n; i++) data[i] = src[start + i];
+      this.device.queue.writeBuffer(buf, from * 4, data.buffer, 0, n * 4);
+    },
+    land: (c, column, buf) => {
+      this.filterColumns.set(`${c}:${column}`, buf);
+    },
+    discard: (c, _column, buf) => {
+      buf?.destroy();
+      this.gpuBytesUsed -= Math.max(4, (this.chunks[c]?.rows ?? 0) * 4);
+    },
+  };
   private filterPassPipeline: GPUComputePipeline | null = null;
   /** Per filter two 256-byte slots of `{ k, first }`, for the pass-bit dispatches. */
   private filterPassParams: GPUBuffer | null = null;
@@ -1193,6 +1235,8 @@ export class WebgpuRenderer implements Renderer {
     // Only the heat passes' groups hold them; the rest stay, rather than all
     // being made again on the frame a dataset arrives.
     this.dropChunkBindGroups();
+    // Before the chunks go: what is staged is sized by them.
+    this.filterStaging.reset(this.filterOps);
     for (const c of this.chunks) {
       c.positions.destroy();
       c.times?.destroy();
@@ -3537,11 +3581,23 @@ export class WebgpuRenderer implements Renderer {
     pass.end();
   }
 
+  /** The filters this frame draws; see `Renderer.prepareFilters` and `FilterStaging`. */
+  prepareFilters(filters: ActiveFilter[]): ActiveFilter[] {
+    return this.filterStaging.choose(filters, this.filterOps);
+  }
+
+  /** Whether the heat still draws older filters while the new ones' columns arrive. */
+  get filtersPending(): boolean {
+    return this.filterStaging.pending;
+  }
+
   /** One filter column's per-row values for one chunk, uploaded on first use; null when it does not fit. */
   private filterColumn(chunkIndex: number, column: string, inUse: readonly ActiveFilter[]): GPUBuffer | null {
     const key = `${chunkIndex}:${column}`;
     const hit = this.filterColumns.get(key);
     if (hit) return hit;
+    // On its way: finished now, since a pass needs it this frame.
+    if (this.filterStaging.finishNow(chunkIndex, column, this.filterOps)) return this.filterColumns.get(key) ?? null;
     const ds = this.dataset;
     const chunk = this.chunks[chunkIndex];
     if (!ds || !chunk) return null;
@@ -3567,7 +3623,8 @@ export class WebgpuRenderer implements Renderer {
   private evictFilterColumns(keep: ReadonlySet<string>, need: number): void {
     for (const [key, buf] of this.filterColumns) {
       if (this.gpuBytesUsed + need <= this.gpuBudgetBytes) return;
-      if (keep.has(key.slice(key.indexOf(':') + 1))) continue;
+      const column = key.slice(key.indexOf(':') + 1);
+      if (keep.has(column) || this.filterStaging.keeps(column)) continue;
       this.gpuBytesUsed -= buf.size;
       buf.destroy();
       this.filterColumns.delete(key);

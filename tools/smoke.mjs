@@ -3482,6 +3482,76 @@ await step('a column left in the file is read when a filter first needs it', asy
   return `read in ${r.frames} frames, ${r.count} rows in order, filter applied, evicted and read again`;
 });
 
+await step('a new filter reaches the GPU a slice a frame and applies whole', async () => {
+  /**
+   * The frame after a filter is applied (`render/filterStaging.ts`): its column
+   * goes to the GPU for a few milliseconds a frame, not for every chunk at once,
+   * and until every chunk has it the heat draws the previous filters - never a
+   * frame of some chunks filtered and some not.
+   */
+  const r = await page.evaluate(async () => {
+    const h = globalThis.__3dheat;
+    const s = h.useStore.getState();
+    s.setFilters([]);
+    s.setLevel(null);
+    const ds = h.generateSynthetic({ ...h.DEFAULT_SYNTH, rows: 20_000_000 });
+    const data = new Float32Array(ds.count);
+    for (let i = 0; i < ds.count; i++) data[i] = i % 100;
+    ds.attrs.push({ name: 'stage', kind: 'number', data, min: 0, max: 99 });
+    s.setDataset(ds);
+    s.setMode('heat-simple');
+    s.patchTimeline({ mode: 'all' });
+    const eng = globalThis.__3dheat_engine;
+    const frame = () => new Promise((res) => requestAnimationFrame(res));
+    const until = performance.now() + 60_000;
+    // Resident counts the rows queued; the chunks land a slice a frame after.
+    while (performance.now() < until && (eng.live.residentRows < ds.count || eng.renderer.dataPending)) await frame();
+    for (let k = 0; k < 10; k++) await frame();
+    const renderer = eng.renderer;
+    const original = renderer.prepareFilters.bind(renderer);
+    const calls = [];
+    let mixed = 0;
+    renderer.prepareFilters = (asked) => {
+      const t0 = performance.now();
+      const drawn = original(asked);
+      calls.push(performance.now() - t0);
+      // Drawn with the new filter: every chunk must have its column.
+      if (drawn.length > 0)
+        for (let c = 0; c < renderer.filterOps.chunkCount(); c++) if (!renderer.filterOps.resident(c, 'stage')) mixed++;
+      return drawn;
+    };
+    let pendingFrames = 0;
+    const dts = [];
+    let last = performance.now();
+    try {
+      s.setFilters([{ kind: 'range', column: 'stage', min: 0, max: 49 }]);
+      const until2 = performance.now() + 60_000;
+      for (let k = 0; performance.now() < until2 && (k < 3 || eng.live.filtersPending); k++) {
+        eng.camera.setOrientationDegrees(eng.camera.yawDegrees + 0.3, eng.camera.pitchDegrees);
+        await frame();
+        const now = performance.now();
+        dts.push(now - last);
+        last = now;
+        if (eng.live.filtersPending) pendingFrames++;
+      }
+    } finally {
+      renderer.prepareFilters = original;
+    }
+    const stillPending = eng.live.filtersPending;
+    h.useStore.getState().setFilters([]);
+    calls.sort((a, b) => b - a);
+    return { chunks: renderer.filterOps.chunkCount(), pendingFrames, stillPending, mixed, worstCall: calls[0], nextCall: calls[1] ?? 0, calls: calls.length, worstFrame: Math.max(...dts) };
+  });
+  if (r.chunks < 2) throw new Error(`only ${r.chunks} chunk(s): nothing to spread`);
+  if (r.stillPending) throw new Error(`the filter never applied (${r.pendingFrames} frames pending)`);
+  if (r.pendingFrames < 2) throw new Error(`the column went up in ${r.pendingFrames} frame(s): not spread`);
+  if (r.mixed > 0) throw new Error(`${r.mixed} chunk-frames drew the new filter without its column`);
+  // Times are reported, not judged: on the software rasteriser an upload waits
+  // for the GPU process to finish its frame. The real GPU's frame times are
+  // judged by `tools/probe-row-ceiling.mjs --max-filter-ms`.
+  return `${r.chunks} chunks over ${r.pendingFrames} frames, worst frame's upload ${r.worstCall.toFixed(1)} ms, worst frame ${r.worstFrame.toFixed(0)} ms, never mixed`;
+});
+
 await step('no console errors', () => {
   if (errors.length) throw new Error(errors.slice(0, 6).join('\n         '));
   return `${logs.length} log lines`;
