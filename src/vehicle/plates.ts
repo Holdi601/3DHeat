@@ -131,11 +131,32 @@ export function hitPartName(h: Pick<VehicleHit, 'part'>, list: string[] | null |
 }
 
 /**
- * Whether a hit's point as sent can be trusted: a War Thunder hit whose part number fits the first byte sends its
- * point a byte earlier than the converter read it (`hitPart`'s bit 7 clear), so the point is not where it struck.
+ * Whether a hit's point can be trusted: a War Thunder hit whose part number fits the first byte (`hitPart`'s bit 7
+ * clear) had its point read a byte late by converters before 0.2.3, so it is not where it struck. `oneByte`: the
+ * file's one-byte points were found to lie on the parts they name (`oneBytePointsHold`), as 0.2.3 reads them.
  */
-export function pointSent(h: Pick<VehicleHit, 'part'>): boolean {
-  return h.part === null || !Number.isFinite(h.part) || (h.part & 0x80) !== 0;
+export function pointSent(h: Pick<VehicleHit, 'part'>, oneByte = false): boolean {
+  return oneByte || h.part === null || !Number.isFinite(h.part) || (h.part & 0x80) !== 0;
+}
+
+/**
+ * Whether the one-byte hits' points lie on the plates they name (median within 5 cm of the plate's box): read by a
+ * converter that places them right (0.2.3 on, median 1 mm), whatever version the file does not say.
+ */
+export function oneBytePointsHold(hits: readonly VehicleHit[], list: Plate[], hitNames: string[] | null | undefined): boolean {
+  const byName = new Map<string, Plate>();
+  for (const p of list) byName.set(p.name.replace(/_dm$/, ''), p);
+  const d: number[] = [];
+  for (const h of hits) {
+    if (!h.local || h.part === null || !Number.isFinite(h.part) || h.part & 0x80) continue;
+    const named = hitPartName(h, hitNames);
+    const p = named !== null ? byName.get(named) : undefined;
+    if (p) d.push(boxDistance(h.local, p));
+    if (d.length >= 200) break;
+  }
+  if (d.length < 5) return false;
+  d.sort((a, b) => a - b);
+  return d[d.length >> 1] <= 0.05;
 }
 
 /** Which way a part name lies for the hit marks (`HitPart`): on the turret (or its gun), on the hull, or not known. */
@@ -160,10 +181,11 @@ export function platesOfHits(hits: readonly VehicleHit[], list: Plate[], hitName
   const byName = new Map<string, number>();
   list.forEach((p, i) => byName.set(p.name.replace(/_dm$/, ''), i));
   const out = new Map<number, number>();
+  const oneByte = oneBytePointsHold(hits, list, hitNames);
   for (const h of hits) {
     const named = hitPartName(h, hitNames);
     let at = named !== null ? (byName.get(named) ?? -1) : -1;
-    if (at < 0 && h.local && pointSent(h)) {
+    if (at < 0 && h.local && pointSent(h, oneByte)) {
       let best = 0.25;
       for (let i = 0; i < list.length; i++) {
         const d = boxDistance(h.local, list[i]);
