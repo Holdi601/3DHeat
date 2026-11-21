@@ -111,8 +111,8 @@ class Runs {
 
 /**
  * A unit's propellers' and rotors' power from its row (`spinPitch`): its throttle (0-1 or per cent) above an idle of
- * 0.3 while the engine turns, none when its rpm says it stands; null for data without a throttle column (they spin
- * at full power).
+ * 0.3 while the engine turns, none when its rpm says it stands or the unit is dead (`alive` 0); null for data with
+ * neither a throttle nor an alive column (they spin at full power).
  */
 const spinCache = new WeakMap<Dataset, ((row: number) => number) | null>();
 function spinOf(d: Dataset): ((row: number) => number) | null {
@@ -121,13 +121,16 @@ function spinOf(d: Dataset): ((row: number) => number) | null {
   const col = (re: RegExp) => d.attrs.find((a) => a.kind !== 'category' && re.test(a.name.trim()))?.data as Float32Array | undefined;
   const thr = col(/^throttle$/i);
   const rpm = col(/^rpm$/i);
-  f = thr
-    ? (row: number) => {
-        if (rpm && rpm[row] <= 0) return spinPitch(0);
-        const t = thr[row];
-        return Number.isFinite(t) ? spinPitch(0.3 + 0.7 * Math.min(1, Math.max(0, t > 1.5 ? t / 100 : t))) : NO_PITCH;
-      }
-    : null;
+  // A dead unit's rotors stand still, whatever its last throttle said.
+  const alive = col(/^alive$/i);
+  f =
+    thr || alive
+      ? (row: number) => {
+          if ((alive && alive[row] < 0.5) || (rpm && rpm[row] <= 0)) return spinPitch(0);
+          const t = thr ? thr[row] : NaN;
+          return Number.isFinite(t) ? spinPitch(0.3 + 0.7 * Math.min(1, Math.max(0, t > 1.5 ? t / 100 : t))) : NO_PITCH;
+        }
+      : null;
   spinCache.set(d, f);
   return f;
 }

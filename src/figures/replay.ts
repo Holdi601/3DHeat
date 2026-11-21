@@ -22,7 +22,7 @@ import { CUBE_STRIDE } from '../data/tracks';
 import { CATALOG } from './catalog';
 import { placeFrame, poseFrame, TemplateCache, type Template } from './kit';
 import { packFigurePending } from './figurepack';
-import { gearUpPitch, hasJoints, InstanceBatches, meshOf, NO_PITCH } from './instances';
+import { gearUpPitch, hasJoints, InstanceBatches, meshOf, NO_PITCH, spinPitch } from './instances';
 import { gearUpRows } from './gearstate';
 import { aimOf, type AimNow } from './aim';
 import { cameraTracks } from '../render/lookAids';
@@ -561,7 +561,11 @@ export class FigureReplay {
         aim.at(row, o.time, aimNow);
         const pitch = Number.isFinite(aimNow.pitch) ? aimNow.pitch : NO_PITCH;
         this.batches.add(meshOf(drawn), relativeFrame(fr, o.origin), scale, team, alpha, Number.isFinite(aimNow.yaw) ? aimNow.yaw : 0, gearUpAt(d, drawn, row) ? gearUpPitch(pitch) : pitch);
-      } else this.batches.add(meshOf(drawn), relativeFrame(fr, o.origin), scale, team, alpha, 0, gearUpAt(d, drawn, row) ? gearUpPitch(NO_PITCH) : NO_PITCH);
+      } else {
+        // A wreck's propellers and rotors stand still.
+        const still = dead ? spinPitch(0) : NO_PITCH;
+        this.batches.add(meshOf(drawn), relativeFrame(fr, o.origin), scale, team, alpha, 0, gearUpAt(d, drawn, row) ? gearUpPitch(still) : still);
+      }
       this.placed.push({ box: i, row, kind: kind!, fr, scale, min: t.min, max: t.max });
     }
     // A close-quarters table's placed gadgets, each from its own rows until its round ends.

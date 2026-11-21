@@ -1,6 +1,7 @@
 import { useStore } from '../../state/store';
 import { useRaceStore } from '../../state/raceStore';
 import { usePlateHover, useVehicleStore } from '../../state/vehicleStore';
+import { useColumnStore } from '../../data/columnStore';
 import { vehicleView } from '../../vehicle/view';
 import { useVolumeStore } from '../../volumes/store';
 import { categoryColours, OUTCOME_COLOURS } from '../../vehicle/scene';
@@ -35,12 +36,13 @@ export function VehicleOverlay() {
   const s = useVehicleStore();
   useVolumeStore((v) => v.volumes);
   useVolumeStore((v) => v.filter);
+  useColumnStore((c) => c.version);
   const view = vehicleView(dataset, s);
   if (!dataset || !view.vehicle) {
     return (
       <div className="empty-state">
         <h2>{t('vehicle.empty.title')}</h2>
-        <div>{dataset ? t('vehicle.empty.noHits') : t('vehicle.empty.noData')}</div>
+        <div>{!dataset ? t('vehicle.empty.noData') : view.reading ? t('vehicle.hint.reading') : t('vehicle.empty.noHits')}</div>
       </div>
     );
   }

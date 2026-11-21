@@ -45,7 +45,7 @@
 
 import type { VertexBuffer } from '../race/geometry';
 import type { Dataset } from '../state/types';
-import { drain, explosiveAmmo, hitsOfSteps, OUTCOMES, type HitSet, type VehicleHit } from '../vehicle/hits';
+import { drain, explosiveAmmo, hitsFull, hitsOfSteps, hitsReady, OUTCOMES, type HitSet, type VehicleHit } from '../vehicle/hits';
 import { placesOf, placesSteps, type HitPlaces } from '../vehicle/places';
 import { figureOfVehicle, OUTCOME_COLOURS, templateOfFigure } from '../vehicle/scene';
 import { hitPartName, hitPartSide, namesOf, packUnitOf, platesHere } from '../vehicle/plates';
@@ -171,7 +171,8 @@ const NONE = empty(0);
 /** The working out's steps so far: how many, the longest (ms) and which it was - for the frame time check. */
 export const stepStats = { steps: 0, longest: 0, at: 0 };
 
-const cache = new WeakMap<Dataset, HitMarks>();
+/** A dataset's marks, and whether they were made from hits read with every hit column (`hitsFull`). */
+const cache = new WeakMap<Dataset, { marks: HitMarks; full: boolean }>();
 const jobs = new WeakMap<Dataset, Generator<void, HitMarks, void>>();
 
 /** The hit marks of a dataset (`HitMarks`), worked out once: all at once (tests, tools). */
@@ -186,9 +187,12 @@ export function hitMarksOf(d: Dataset): HitMarks {
  */
 export function hitMarksStep(d: Dataset, budgetMs: number): HitMarks | null {
   const done = cache.get(d);
-  if (done) return done;
+  // Made again once the hits' columns they were made without are here (the columns on demand).
+  if (done && (done.full || !hitsReady(d))) return done.marks;
   let g = jobs.get(d);
   if (!g) {
+    // The hits' columns still in the files: asked for, no marks until they are here.
+    if (!hitsReady(d)) return done?.marks ?? null;
     g = marksSteps(d);
     jobs.set(d, g);
   }
@@ -203,7 +207,7 @@ export function hitMarksStep(d: Dataset, budgetMs: number): HitMarks | null {
       stepStats.at = stepStats.steps;
     }
     if (r.done) {
-      cache.set(d, r.value);
+      cache.set(d, { marks: r.value, full: hitsFull(d) });
       jobs.delete(d);
       // Every vehicle's marks put onto its figure in the worker now, before they are drawn.
       if (markWorker()) for (let v = 0; v < r.value.vehicles.length; v++) placeOnFigure(r.value, v);

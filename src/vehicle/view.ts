@@ -8,7 +8,7 @@
 
 import type { Dataset } from '../state/types';
 import type { VehicleState } from '../state/vehicleStore';
-import { filterList, hitsOf, type HitSet, type VehicleHit, type VehicleInfo } from './hits';
+import { filterList, hitsHeld, hitsOf, hitsReady, type HitSet, type VehicleHit, type VehicleInfo } from './hits';
 import { figureOfVehicle, templateOfFigure } from './scene';
 import { placeBoxHits } from './boxes';
 import { CATALOG } from '../figures/catalog';
@@ -40,9 +40,11 @@ export interface VehicleView {
   beforeArea: VehicleHit[];
   /** Whether any hit of the vehicle has a point or a body part to show on the figure. */
   anyPoint: boolean;
+  /** The columns the hits are read from are still being read from the files: nothing to show yet. */
+  reading: boolean;
 }
 
-const EMPTY: VehicleView = { set: null, vehicle: null, figure: null, hits: [], all: [], placed: [], unplaced: 0, fits: false, area: false, areaOut: 0, beforeArea: [], anyPoint: false };
+const EMPTY: VehicleView = { set: null, vehicle: null, figure: null, hits: [], all: [], placed: [], unplaced: 0, fits: false, area: false, areaOut: 0, beforeArea: [], anyPoint: false, reading: false };
 
 const vehicleCache = new WeakMap<HitSet, Map<string, { all: VehicleHit[]; placed: VehicleHit[] }>>();
 
@@ -64,14 +66,18 @@ function hitsOfVehicle(set: HitSet, vehicle: string, figure: string): { all: Veh
 
 type Choice = Pick<VehicleState, 'vehicle' | 'matches' | 'shooters' | 'weapons' | 'layer' | 'outcomes' | 'areaBy'>;
 const KEYS: (keyof Choice)[] = ['vehicle', 'matches', 'shooters', 'weapons', 'layer', 'outcomes', 'areaBy'];
-let last: { d: Dataset | null; s: Choice; keep: ReturnType<typeof areaKeep>; packs: number; out: VehicleView } | null = null;
+let last: { d: Dataset | null; s: Choice; keep: ReturnType<typeof areaKeep>; packs: number; held: number; ready: boolean; out: VehicleView } | null = null;
 
 export function vehicleView(d: Dataset | null, s: Choice): VehicleView {
   const keep = areaKeep();
   const packs = packFiguresVersion();
-  if (last && last.d === d && last.keep === keep && last.packs === packs && KEYS.every((k) => last!.s[k] === s[k])) return last.out;
+  // The hits' columns may wait in the files: asked for, and the view made again once they are here.
+  const ready = !d || hitsReady(d);
+  const held = d ? hitsHeld(d) : -1;
+  if (last && last.d === d && last.keep === keep && last.packs === packs && last.ready === ready && last.held === held && KEYS.every((k) => last!.s[k] === s[k])) return last.out;
   let out = EMPTY;
-  if (d) {
+  if (d && !ready) out = { ...EMPTY, reading: true };
+  else if (d) {
     const set = hitsOf(d);
     const list = [...set.vehicles.values()].sort((a, b) => b.hits + b.modules - (a.hits + a.modules));
     const vehicle = (s.vehicle ? set.vehicles.get(s.vehicle) : undefined) ?? list[0] ?? null;
@@ -91,9 +97,9 @@ export function vehicleView(d: Dataset | null, s: Choice): VehicleView {
       const person = CATALOG[figure]?.domain === 'person';
       const fits = !person && !own.all.some((h) => h.box !== null);
       const anyPoint = own.all.some((h) => h.local !== null || h.box !== null || h.region !== null);
-      out = { set, vehicle, figure, hits, all, placed: own.placed, unplaced: set.unplacedBy.get(vehicle.id) ?? 0, fits, area: !!keep, areaOut: layer.length - all.length, beforeArea: layer, anyPoint };
+      out = { set, vehicle, figure, hits, all, placed: own.placed, unplaced: set.unplacedBy.get(vehicle.id) ?? 0, fits, area: !!keep, areaOut: layer.length - all.length, beforeArea: layer, anyPoint, reading: false };
     } else out = { ...EMPTY, set };
   }
-  last = { d, keep, packs, s: { vehicle: s.vehicle, matches: s.matches, shooters: s.shooters, weapons: s.weapons, layer: s.layer, outcomes: s.outcomes, areaBy: s.areaBy }, out };
+  last = { d, keep, packs, held: d ? hitsHeld(d) : -1, ready, s: { vehicle: s.vehicle, matches: s.matches, shooters: s.shooters, weapons: s.weapons, layer: s.layer, outcomes: s.outcomes, areaBy: s.areaBy }, out };
   return out;
 }

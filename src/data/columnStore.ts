@@ -4,6 +4,7 @@ import { chooseEvictions, rowMapBytes, sourceBuffers } from './columnSource';
 import type { ColumnWorkerRequest, ColumnWorkerResponse } from './columnWorker';
 import { say, type Msg } from './msg';
 import { residentBytes, stringBytes } from './resident';
+import { setColumnAsk } from './columnWant';
 
 /**
  * The page's side of the columns on demand (`columnSource.ts`): which columns
@@ -326,12 +327,35 @@ function receive(res: ColumnWorkerResponse): void {
   p.resolve();
 }
 
+/** The entries by lower-case name, for the readers that ask in any case (`columnWant.ts`); kept per entries object. */
+let lowerOf: { entries: Record<string, ColumnEntry>; byLower: Map<string, string> } | null = null;
+
+/**
+ * The column store's answer to a reader asking for columns (`columnWant.ts`):
+ * those of `names` not in memory are read; true while any is still to arrive.
+ */
+function askColumns(names: readonly string[]): boolean {
+  const entries = useColumnStore.getState().entries;
+  if (!lowerOf || lowerOf.entries !== entries) lowerOf = { entries, byLower: new Map(Object.keys(entries).map((k) => [k.toLowerCase(), k])) };
+  const want: string[] = [];
+  for (const n of names) {
+    const name = lowerOf.byLower.get(n.toLowerCase());
+    const e = name ? entries[name] : undefined;
+    if (e && e.state !== 'resident' && e.state !== 'error') want.push(e.name);
+  }
+  if (!want.length) return false;
+  // Not in the asker's own turn: a panel asks while it renders, and the read changes the store.
+  queueMicrotask(() => void ensureColumns(want));
+  return true;
+}
+
 /**
  * Follow the view: read what it pins, keep the entries to the dataset they
  * were built for. Once, at startup.
  */
 export function installColumnDemand(store: ColumnHost & { subscribe: (fn: () => void) => () => void }): () => void {
   host = store;
+  setColumnAsk(askColumns);
   let seen: unknown[] = [];
   return store.subscribe(() => {
     const s = store.getState();

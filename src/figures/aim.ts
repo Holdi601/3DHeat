@@ -34,12 +34,15 @@
 
 import type { AttributeColumn, Dataset } from '../state/types';
 import { personRowsSteps } from '../data/flight';
+import { columnsPending } from '../data/columnWant';
 
 const YAW_NAMES = ['turretYaw', 'turret_yaw', 'TurretYaw', 'turretHeading'];
 const PITCH_NAMES = ['gunPitch', 'gun_pitch', 'GunPitch', 'gunElevation', 'gun_elevation'];
 const STEP_NAMES = ['gunStep'];
 const VIEW_YAW_NAMES = ['viewYaw', 'viewHeading', 'aimHeading'];
 const VIEW_PITCH_NAMES = ['viewPitch', 'aimPitch'];
+/** Every column the aim is read from: a load may leave them in the files until asked for (`columnWant.ts`). */
+const AIM_COLUMNS: readonly string[] = [...YAW_NAMES, ...PITCH_NAMES, ...STEP_NAMES, ...VIEW_YAW_NAMES, ...VIEW_PITCH_NAMES, 'alive'];
 /** A World of Tanks gun step's range: step 0 the most it raises, 63 the most it dips, degrees. */
 const STEP_UP = 20;
 const STEP_DOWN = -8;
@@ -160,7 +163,8 @@ export function lerpAngle(a: number, b: number, f: number): number {
   return a + d * f;
 }
 
-const cache = new WeakMap<Dataset, Aim | null>();
+/** A dataset's aim, and whether it was worked out with every column of `AIM_COLUMNS` the data has (none waiting in the files). */
+const cache = new WeakMap<Dataset, { aim: Aim | null; full: boolean }>();
 /** Rows a step of the working out goes through: well under a millisecond. */
 const STEP = 1 << 15;
 
@@ -232,6 +236,78 @@ function* fillFromView(
   return { yaw: y, pitch: pt, derived: any ? derived : null };
 }
 
+/** Events that end a life. */
+const DEATH = /^(death|dead|destroyed|killed|player_death)$/i;
+
+/**
+ * Per row, whether its unit is dead then: its `alive` column says 0, or the
+ * row is at or after its track's first death event. Null when the data says
+ * neither.
+ */
+export function* deadRows(d: Dataset): Generator<void, Uint8Array | null, void> {
+  const alive = column(d, ['alive']);
+  const ev = d.attrs.find((a) => a.kind === 'category' && /^(event|events)$/i.test(a.name.trim()));
+  const deathWord = ev?.categories ? Uint8Array.from(ev.categories, (c) => (DEATH.test((c ?? '').trim()) ? 1 : 0)) : null;
+  const deaths = deathWord && deathWord.includes(1) ? (ev!.data as Uint32Array) : null;
+  if (!alive && !deaths) return null;
+  const out = new Uint8Array(d.count);
+  const a = alive ? (alive.data as Float32Array) : null;
+  if (a) {
+    for (let r = 0; r < d.count; r++) {
+      if ((r & (STEP - 1)) === STEP - 1) yield;
+      if (a[r] < 0.5) out[r] = 1;
+    }
+  }
+  if (deaths && d.time && d.personId) {
+    // Each track's first death, then every row of it from then on.
+    const at = new Float64Array(d.personLabels.length).fill(Infinity);
+    for (let r = 0; r < d.count; r++) {
+      if ((r & (STEP - 1)) === STEP - 1) yield;
+      if (deathWord![deaths[r]] && d.time[r] < at[d.personId[r]]) at[d.personId[r]] = d.time[r];
+    }
+    for (let r = 0; r < d.count; r++) {
+      if ((r & (STEP - 1)) === STEP - 1) yield;
+      if (d.time[r] >= at[d.personId[r]]) out[r] = 1;
+    }
+  }
+  return out;
+}
+
+/**
+ * The turret and gun with every dead row given its track's last living
+ * aim (NaN where it had none): War Thunder goes on sending a wreck's turret
+ * yaw, wandering round and round, and a figure turned by it spun on after
+ * the tank died. New arrays where a row changes; the given ones otherwise.
+ */
+export function* freezeDead(d: Dataset, yaw: Float32Array | null, pitch: Float32Array | null): Generator<void, { yaw: Float32Array | null; pitch: Float32Array | null }, void> {
+  if (!yaw && !pitch) return { yaw, pitch };
+  const dead = yield* deadRows(d);
+  if (!dead || !dead.includes(1)) return { yaw, pitch };
+  const idx = yield* personRowsSteps(d);
+  if (!idx) return { yaw, pitch };
+  const y = yaw ? yaw.slice() : null;
+  const p = pitch ? pitch.slice() : null;
+  let n = 0;
+  for (let k = 0; k + 1 < idx.start.length; k++) {
+    let ly = NaN, lp = NaN;
+    for (let i = idx.start[k]; i < idx.start[k + 1]; i++) {
+      if (++n === STEP) {
+        n = 0;
+        yield;
+      }
+      const r = idx.rows[i];
+      if (!dead[r]) {
+        if (y && Number.isFinite(y[r])) ly = y[r];
+        if (p && Number.isFinite(p[r])) lp = p[r];
+        continue;
+      }
+      if (y) y[r] = ly;
+      if (p) p[r] = lp;
+    }
+  }
+  return { yaw: y, pitch: p };
+}
+
 /** A unit kind that flies (`kind` column): no turret from its view. */
 const AIRBORNE = /^(aircraft|air|plane|airplane|jet|fighter|bomber|helicopter|heli|drone|uav)$/i;
 /** Rows the turret is compared with the view on, at most. */
@@ -279,7 +355,9 @@ export function aimOf(d: Dataset): Aim | null {
  */
 export function* aimSteps(d: Dataset): Generator<void, Aim | null, void> {
   const hit = cache.get(d);
-  if (hit !== undefined) return hit;
+  // Worked out again once every column asked for has come from the files (not once per column as they arrive).
+  if (hit !== undefined && (hit.full || columnsPending(AIM_COLUMNS))) return hit.aim;
+  const full = !columnsPending(AIM_COLUMNS);
   const yc = column(d, YAW_NAMES);
   const pc = column(d, PITCH_NAMES);
   const sc = pc ? null : column(d, STEP_NAMES);
@@ -310,7 +388,9 @@ export function* aimSteps(d: Dataset): Generator<void, Aim | null, void> {
     pitch = null;
   }
   const filled = yield* fillFromView(d, yaw, pitch, vy, vp);
-  const out = filled.yaw || filled.pitch ? yield* Aim.build(d, filled.yaw, filled.pitch) : null;
+  // A wreck's turret stays where it was when the unit died, whatever the rows after say.
+  const frozen = yield* freezeDead(d, filled.yaw, filled.pitch);
+  const out = frozen.yaw || frozen.pitch ? yield* Aim.build(d, frozen.yaw, frozen.pitch) : null;
   if (out) {
     out.turretDropped = dropped;
     out.derived = filled.derived;
@@ -318,7 +398,7 @@ export function* aimSteps(d: Dataset): Generator<void, Aim | null, void> {
   }
   // Another caller may have worked it out meanwhile: one aim per dataset.
   const again = cache.get(d);
-  if (again !== undefined) return again;
-  cache.set(d, out);
+  if (again !== undefined && (again.full || !full)) return again.aim;
+  cache.set(d, { aim: out, full });
   return out;
 }

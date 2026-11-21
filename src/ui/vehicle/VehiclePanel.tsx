@@ -17,6 +17,7 @@ import { HitArea, HitBreakdown } from './HitArea';
 import { SortControl } from '../sort/SortControl';
 import { useSort, useSorted } from '../sort/useSort';
 import { TaskGroup } from '../shell/Shell';
+import { useColumnStore } from '../../data/columnStore';
 
 /** The values of one field over the hits, most frequent first. */
 function tally(hits: VehicleHit[], key: (h: VehicleHit) => string): [string, number][] {
@@ -41,6 +42,8 @@ export function VehiclePanel() {
   // The volumes drawn on the level restrict the hits: a change shows at once.
   useVolumeStore((v) => v.volumes);
   useVolumeStore((v) => v.filter);
+  // The hits' columns arriving from the files (the columns on demand) show at once.
+  useColumnStore((c) => c.version);
   const view = vehicleView(dataset, s);
   const set = view.set;
   const vehicles = useMemo(() => (set ? [...set.vehicles.values()].sort((a, b) => b.hits + b.modules - (a.hits + a.modules)) : []), [set]);
@@ -117,6 +120,15 @@ export function VehiclePanel() {
       <TaskGroup task="explore" className="vehicle-panel">
         <Section title={t('vehicle.panel.title')} defaultOpen>
           <div className="hint">{t('vehicle.empty.noData')}</div>
+        </Section>
+      </TaskGroup>
+    );
+  }
+  if (view.reading) {
+    return (
+      <TaskGroup task="explore" className="vehicle-panel">
+        <Section title={t('vehicle.panel.title')} defaultOpen>
+          <div className="hint">{t('vehicle.hint.reading')}</div>
         </Section>
       </TaskGroup>
     );

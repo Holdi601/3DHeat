@@ -6,6 +6,7 @@
   "vehicle.empty.noData": "Load a match with hits on vehicles - a War Thunder, World of Tanks or World of Warships replay converted by its converter, or a CS2 demo table. Drop the files here or use the source panel.",
   "vehicle.empty.noHits": "The loaded data has no hits with a place on a vehicle. Convert the replay again with the current converter: War Thunder and World of Warships write hitLocalX/Y/Z, World of Tanks hitComponent and hitU/V/W, CS2 hitgroup and hitLocalX/Y/Z.",
   "vehicle.hint.unplaced": "{n, plural, one {# hit has} other {# hits have}} no point on the vehicle: converted before the converter wrote one, or sent by the game in another frame.",
+  "vehicle.hint.reading": "Reading the hits' columns from the files...",
   "vehicle.hint.regions": "CS2: each hit is placed where the shot's ray met the body part the game names. A table converted before that only names the part: the whole part is coloured.",
   "vehicle.layer.all": "All hits",
   "vehicle.layer.allTitle": "Every hit on the vehicle",

@@ -49,6 +49,7 @@ import type { Vec3 } from '../race/geometry';
 import { regionOf } from './regions';
 import { acmiHitsSteps, isAcmiData } from './acmiHits';
 import { localFromWorld } from './places';
+import { columnsPending } from '../data/columnWant';
 
 export type HitKind = 'hit' | 'module';
 
@@ -840,21 +841,62 @@ function findLife(byLife: Map<string, VehicleHit[]>, lifeId: string, victim: str
   return undefined;
 }
 
-const cache = new WeakMap<Dataset, HitSet>();
+/**
+ * The number columns the hits are read from. A load may leave them in the
+ * files until they are needed (the columns on demand): the hits ask for them
+ * (`columnWant.ts`) and are worked out again once they are here. Without
+ * them a War Thunder recording's shots have no point, and only the aircraft
+ * whose modules were destroyed were left to pick.
+ */
+export const HIT_COLUMNS: readonly string[] = [
+  'hitLocalX', 'hitLocalY', 'hitLocalZ', 'hitDirX', 'hitDirY', 'hitDirZ', 'hitPart', 'hitFlag', 'calibre',
+  'hitComponent', 'hitU', 'hitV', 'hitW', 'hitExitU', 'hitExitV', 'hitExitW', 'turretYaw',
+  'damage', 'value', 'armorDamage', 'health', 'Distance', 'local_x', 'local_y', 'local_z', 'force', 'force_x', 'force_y', 'force_z',
+];
 
-/** `hitsFromDataset`, once per dataset. */
+/**
+ * A dataset's hits, and whether they were read with every hit column the
+ * data has (none of them waiting in the files then): hits read while some
+ * were still there, or after they were given back to make room, are read
+ * again once they are here.
+ */
+const cache = new WeakMap<Dataset, { set: HitSet; full: boolean; version: number }>();
+let versions = 0;
+
+/**
+ * Whether the hits can be worked out with every column they are read from:
+ * asks for those still in the files, false while they are read. True once
+ * the hits are worked out with all of them.
+ */
+export function hitsReady(d: Dataset): boolean {
+  if (cache.get(d)?.full) return true;
+  return !columnsPending(HIT_COLUMNS);
+}
+
+/** `hitsFromDataset`, once per dataset (again once columns it was read without are here). */
 export function hitsOf(d: Dataset): HitSet {
   return drain(hitsOfSteps(d));
 }
 
 /** `hitsOf` in steps (`hitsSteps`): the dataset's hits, worked out once whichever way they are asked for. */
 export function* hitsOfSteps(d: Dataset): Generator<void, HitSet, void> {
-  let s = cache.get(d);
-  if (!s) {
-    s = yield* hitsSteps(d);
-    cache.set(d, s);
-  }
-  return s;
+  const c = cache.get(d);
+  // Worked out again only once every column asked for is here: not once per column as they arrive.
+  if (c && (c.full || columnsPending(HIT_COLUMNS))) return c.set;
+  const full = !columnsPending(HIT_COLUMNS);
+  const set = yield* hitsSteps(d);
+  cache.set(d, { set, full, version: ++versions });
+  return set;
+}
+
+/** Which working out of the hits the dataset holds now, -1 when none: a key for what is made from them. */
+export function hitsHeld(d: Dataset): number {
+  return cache.get(d)?.version ?? -1;
+}
+
+/** Whether the hits held now were read with every hit column (`hitsReady`). */
+export function hitsFull(d: Dataset): boolean {
+  return !!cache.get(d)?.full;
 }
 
 /** What the view shows of the hits: one vehicle, and the filters. */

@@ -198,3 +198,51 @@ describe('aim from the data', () => {
     expect(now.yaw).toBeCloseTo((40 * Math.PI) / 180);
   });
 });
+
+describe('a turret turns exactly as the replay recorded it', () => {
+  const deg = (r: number) => (r * 180) / Math.PI;
+  const yawAt = (d: Dataset, row: number, t: number) => {
+    const now = { yaw: NaN, pitch: NaN };
+    aimOf(d)!.at(row, t, now);
+    return deg(now.yaw);
+  };
+
+  it('holds a held angle, follows a slow traverse, and never runs on past the last sample', () => {
+    const held = tanks({ turretYaw: [40, 40, 40, 40] }, [0, 1, 2, 3]);
+    for (const [r, t] of [[0, 0.5], [1, 1.7], [3, 3], [3, 60]]) expect(yawAt(held, r, t)).toBeCloseTo(40, 3);
+    const slow = tanks({ turretYaw: [0, 5, 10, 15] }, [0, 1, 2, 3]);
+    expect(yawAt(slow, 1, 1.5)).toBeCloseTo(7.5, 3);
+    expect(yawAt(slow, 2, 2.2)).toBeCloseTo(11, 3);
+    // Past the last sample: where it was last, not on at the rate before.
+    expect(yawAt(slow, 3, 10)).toBeCloseTo(15, 3);
+  });
+
+  it('crosses the wrap at 180 degrees the short way: 179 to -179 is 2 degrees', () => {
+    const d = tanks({ turretYaw: [179, -179] }, [0, 1]);
+    const mid = yawAt(d, 0, 0.5);
+    // Half way is the back (±180), never through 0.
+    expect(Math.abs(Math.abs(mid) - 180)).toBeLessThan(0.01);
+    const quarter = yawAt(d, 0, 0.25);
+    expect(quarter).toBeCloseTo(179.5, 2);
+  });
+
+  it('holds the last living pose once the unit is dead, whatever the wreck rows say', () => {
+    // A wreck whose rows go on turning (as War Thunder sends them): frozen at the pose it died with.
+    const d = tanks({ turretYaw: [10, 20, 30, 120, -150, 60], gunPitch: [1, 2, 3, 9, -9, 4], alive: [1, 1, 1, 0, 0, 0] }, [0, 1, 2, 3, 4, 5]);
+    for (const [r, t] of [[3, 3], [4, 4.5], [5, 5], [5, 30]]) {
+      expect(yawAt(d, r, t)).toBeCloseTo(30, 3);
+      const now = { yaw: NaN, pitch: NaN };
+      aimOf(d)!.at(r, t, now);
+      expect(deg(now.pitch)).toBeCloseTo(3, 3);
+    }
+    // Alive it still follows its rows.
+    expect(yawAt(d, 1, 1.5)).toBeCloseTo(25, 3);
+  });
+
+  it('holds it from a death event where the data has no alive column', () => {
+    const d = tanks({ turretYaw: [10, 20, 90, 170] }, [0, 1, 2, 3]);
+    const ev = { name: 'event', kind: 'category', data: Uint32Array.of(0, 0, 1, 0), categories: ['position', 'dead'] } as unknown as AttributeColumn;
+    const withDeath = { ...d, attrs: [...d.attrs, ev] } as Dataset;
+    expect(yawAt(withDeath, 3, 3)).toBeCloseTo(20, 3);
+  });
+});
