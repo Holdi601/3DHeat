@@ -11,10 +11,13 @@ import { VIEW_PRESETS } from './render/camera';
 import { mixTeamColor, teamHeatColor } from './render/colors';
 import { CURVE_PRESETS, evalCurve } from './state/curve';
 import { installColumnDemand } from './data/columnStore';
+import { installGroundFit } from './data/groundFitRun';
 import './app.css';
 
 // The columns on demand follow the view: read what it uses, evict what it does not (data/columnStore).
 installColumnDemand(useStore);
+// Each match's ground units against the 3D level: a match off by one height lifted onto it, and said (data/groundFit).
+installGroundFit(useStore);
 
 const el = document.getElementById('root');
 if (!el) throw new Error('#root missing');
@@ -62,6 +65,9 @@ if (import.meta.env.DEV) {
       'figures/unitcatalog': () => import('./figures/unitcatalog'),
       'figures/hitmarks': () => import('./figures/hitmarks'),
       'vehicle/hits': () => import('./vehicle/hits'),
+      'data/groundFitRun': () => import('./data/groundFitRun'),
+      'ui/heatInspect/jump': () => import('./ui/heatInspect/jump'),
+      'state/raceStore': () => import('./state/raceStore'),
       'mass/client': () => import('./mass/client'),
       'mass/outcomeClient': () => import('./mass/outcomeClient'),
       'data/sourcePreview': () => import('./data/sourcePreview'),

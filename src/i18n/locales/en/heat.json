@@ -907,5 +907,9 @@
   "heat.diffBar.sidesWon": "<b>+ won</b>: {plus} rows{matches, select, yes { in {plusMatches} matches} other {}}; <b>− lost</b>: {minus} rows{matches, select, yes { in {minusMatches} matches} other {}}.",
   "heat.diffBar.scaled.counts": "Not scaled: the half with more rows is hotter by that alone.",
   "heat.diffBar.scaled.rows": "Each half scaled to its own rows.",
-  "heat.diffBar.scaled.matches": "Each half scaled to its own matches: a match against a match."
+  "heat.diffBar.scaled.matches": "Each half scaled to its own matches: a match against a match.",
+  "heat.groundFit.metres": "{v} m",
+  "heat.groundFit.toastOne": "Height of match {match} corrected by {metres} to the level: its ground units sat off the terrain",
+  "heat.groundFit.toastMany": "Heights of {n} matches corrected to the level: their ground units sat off the terrain (see the source panel)",
+  "heat.groundFit.fixed": "Height corrected by {metres} to the level: {match} (its ground units all sat that far off the terrain, spread {spread} m; converted with a wrong height offset - convert it again to fix the file)"
 }
