@@ -14,6 +14,7 @@ import { personAt, sortUnits, unitsInPlay, unitsOf, vehicleOf, type Unit, type U
 import { teamName } from './replayView';
 import { selectAndFollow } from './ReplayOverlay';
 import { clearLook, lookAtUnit } from './pair';
+import { NoteBadge } from '../notes/NoteBadge';
 
 /** Rows a section lists before asking for a search. */
 const MAX_ROWS = 400;
@@ -117,6 +118,7 @@ export function UnitList() {
       >
         <span className="swatch" style={{ background: color }} />
         <span className="who">{u.name}</span>
+        <NoteBadge anchor={`unit:${u.key}`} />
         {(() => {
           // The vehicle the player is in at the playhead: a respawn in another vehicle shows the new one.
           const v = vehicleOf(u, personAt(u, now));

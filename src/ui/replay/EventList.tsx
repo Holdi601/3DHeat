@@ -17,6 +17,8 @@ import { useObjectivesStore } from '../../state/objectivesStore';
 import { captureMarks, objectiveSources, type CaptureMark } from '../../render/objectives';
 import { SortControl } from '../sort/SortControl';
 import { useSort, useSorted } from '../sort/useSort';
+import { NoteBadge } from '../notes/NoteBadge';
+import { dataKey } from '../../notes/anchors';
 
 /** The chip of the battles' captures (`objectives.ts`), apart from the data's own event kinds. */
 const CAPTURE = '@capture';
@@ -74,6 +76,7 @@ export function EventList() {
   // The battles' captures: zone, side, moment, of the matches played.
   const captures = useMemo(() => (dataset ? captureMarks(dataset, objectiveSources(dataset, games, timelines, filters, session)) : []), [dataset, games, timelines, filters, session]);
   const index = useMemo(() => (dataset ? unitsOf(dataset) : null), [dataset]);
+  const dkey = useMemo(() => (dataset ? dataKey(dataset) : ''), [dataset]);
 
   // Every kind and how often it happens, for the chips.
   const counts = useMemo(() => {
@@ -278,6 +281,7 @@ export function EventList() {
                 {b.count > 1 && <span className="burst"> ×{int(b.count)}</span>}
                 {u ? ` · ${u.name}` : ''}
                 {extra.length ? <span className="dim"> · {extra.join(' · ')}</span> : null}
+                <NoteBadge anchor={`row:${dkey}:${row}`} still />
               </span>
             </button>
           );

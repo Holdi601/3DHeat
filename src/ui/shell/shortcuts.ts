@@ -3,7 +3,7 @@
  * the command palette writes a command's key from it, and
  * docs/keyboard-reference.md lists the same. The handlers stay where they are
  * (App.tsx, render/camera.ts, ui/replay/ReplayExtras.tsx,
- * ui/tactics/boardKeys.ts, ui/shell/keys.ts); a test checks the shell's own
+ * ui/tactics/boardKeys.ts, ui/shell/keys.ts, ui/notes/keys.ts); a test checks the shell's own
  * entries against its handler.
  *
  * A key is written as its parts: modifiers first, then the key as printed on
@@ -52,6 +52,8 @@ export const SHORTCUTS: Shortcut[] = [
   k('cullOut', 'view', [']']),
   k('cullIn', 'view', ['[']),
   k('cullToggle', 'view', ['\\']),
+  k('noteHere', 'view', ['N']),
+  k('notesPanel', 'view', ['Shift', 'N']),
   // The figure replay.
   k('bookmark', 'replay', ['B']),
   k('map', 'replay', ['M']),

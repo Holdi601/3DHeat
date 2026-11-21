@@ -70,6 +70,8 @@ import { PickCard } from './ui/PickCard';
 import { HeatLabels } from './ui/heatInspect/HeatLabels';
 import { CasterCinema } from './ui/insights/CasterCinema';
 import { ViewsPanel } from './ui/panels/ViewsPanel';
+import { NotesPanel } from './ui/notes/NotesPanel';
+import { NotesLayer } from './ui/notes/NotesLayer';
 import { BreakdownWindow } from './ui/breakdown/BreakdownPanel';
 import { VersusWindow } from './ui/versus/VersusPanel';
 import { MassPanel, MassWindow } from './ui/mass/MassPanel';
@@ -500,6 +502,7 @@ export function App() {
               </TaskGroup>
               <TaskGroup task="present">
                 <ViewsPanel />
+                <NotesPanel />
                 <CameraPanel />
               </TaskGroup>
             </>
@@ -566,6 +569,7 @@ export function App() {
           </TaskGroup>
           <TaskGroup task="present">
             <ViewsPanel />
+            <NotesPanel />
             <PathPanel />
             <CameraPanel />
             <More id="heat.present">
@@ -636,6 +640,7 @@ export function App() {
               <StatsOverlay />
               <SpeedOverlay />
               <InspectHud />
+              <NotesLayer />
               {!dataset && (
                 <div className="empty-state">
                   <h2>{t('app.empty.heat.title')}</h2>

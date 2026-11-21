@@ -35,10 +35,14 @@ import { toast } from './kit';
 import { addChartTo } from '../signs/addChart';
 import { useSignStore } from '../../volumes/signs/store';
 import { useVolumeStore } from '../../volumes/store';
+import { useNotes } from '../../notes/store';
+import { anchorSubject } from '../../notes/anchors';
+import { newAnalysis, noteHere, showNotesPanel } from '../notes/actions';
+import { goToNote } from '../notes/links';
 
 export { score } from './match';
 
-export type CommandGroup = 'action' | 'workspace' | 'mode' | 'camera' | 'section' | 'setting' | 'view';
+export type CommandGroup = 'action' | 'workspace' | 'mode' | 'camera' | 'section' | 'setting' | 'view' | 'note';
 
 export interface Command {
   id: string;
@@ -323,6 +327,9 @@ export function buildCommands(engine: Engine | null): Command[] {
     const hidden = useSignStore.getState().hidden;
     if (useSignStore.getState().signs.length) action('chart.toggle', hidden ? t('charts.cmd.show') : t('charts.cmd.hide'), () => useSignStore.getState().setHidden(!hidden), undefined, 'chart diagram sign');
   }
+  action('noteHere', t('shell.cmd.noteHere'), () => noteHere(engine), keysOf('noteHere'), t('shell.cmd.noteWords'));
+  action('newAnalysis', t('shell.cmd.newAnalysis'), () => newAnalysis(), undefined, t('shell.cmd.analysisWords'));
+  action('notes', t('shell.cmd.notes'), () => showNotesPanel(), keysOf('notesPanel'), t('shell.cmd.noteWords'));
   action(
     'sidebar',
     shell.sidebarHidden ? t('shell.cmd.sidebarShow') : t('shell.cmd.sidebarHide'),
@@ -393,6 +400,20 @@ export function buildCommands(engine: Engine | null): Command[] {
       words: v.note,
       run: () => void (engine && applyView(engine, v.view)),
     });
+
+  // Data notes and analyses, by title and words.
+  const book = useNotes.getState().book;
+  for (const n of book.notes)
+    out.push({
+      id: `note.${n.id}`,
+      label: n.title || anchorSubject(n.anchor),
+      group: 'note',
+      hint: t(`notes.kind.${n.anchor.kind}`),
+      words: `${n.tags.join(' ')} ${n.text.slice(0, 200)}`,
+      run: () => void (engine && goToNote(engine, n.id)),
+    });
+  for (const d of book.docs)
+    out.push({ id: `doc.${d.id}`, label: d.title, group: 'note', hint: t('notes.docs'), words: d.body.slice(0, 200), run: () => useNotes.getState().set({ docOpen: d.id }) });
 
   // Sections and settings: this workspace's from the page, every workspace's from the index.
   const seen = new Set<string>();

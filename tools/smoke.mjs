@@ -3679,6 +3679,72 @@ await step('the task bar shows one group and keeps every section in the page', a
   return `${all} sections, Compare shows Volumes and hides Source`;
 });
 
+await step('data notes: on a unit and a heat spot, a jump back, an analysis with a view, exported as HTML', async () => {
+  await onHeatView();
+  const mod = (name) => `globalThis.__3dheat.modules['${name}']()`;
+  void mod;
+  // A note on a unit, through the editor.
+  await page.evaluate(async () => {
+    const m = globalThis.__3dheat.modules;
+    const [{ useNotes }, units, capture, actions] = await Promise.all([m['notes/store'](), m['ui/replay/units'](), m['notes/capture'](), m['ui/notes/actions']()]);
+    useNotes.setState({ book: { notes: [], docs: [] }, log: [] });
+    const ds = globalThis.__3dheat.useStore.getState().dataset;
+    const u = units.unitsOf(ds).units[0];
+    const engine = globalThis.__3dheat_engine;
+    actions.noteAbout(engine, capture.unitAnchorOf(u.key, engine, u.name));
+  });
+  await page.locator('.note-editor input[type="text"]').first().fill('A player');
+  await page.locator('.note-editor textarea').fill('Holds **mid** early');
+  await page.locator('.note-editor .dialog-actions .primary').click();
+  // A note on a heat spot: a click on the heat, then the pick card's Note button.
+  const box = await page.locator(VIEWPORT).boundingBox();
+  await page.locator(VIEWPORT).click({ position: { x: box.width / 2, y: box.height / 2 } });
+  await page.locator('.pick-card button', { hasText: /^Note$/ }).waitFor({ timeout: 8000 });
+  await page.locator('.pick-card button', { hasText: /^Note$/ }).click();
+  await page.locator('.note-editor').waitFor({ timeout: 20_000 });
+  await page.locator('.note-editor input[type="text"]').first().fill('Hot corner');
+  await page.locator('.note-editor .dialog-actions .primary').click();
+  const made = await page.evaluate(async () => {
+    const { useNotes } = await globalThis.__3dheat.modules['notes/store']();
+    return useNotes.getState().book.notes.map((n) => ({ kind: n.anchor.kind, title: n.title, cam: n.view?.camera?.position ?? null }));
+  });
+  const kinds = made.map((n) => n.kind);
+  if (kinds[0] !== 'unit') throw new Error(`first note is about ${kinds[0]}`);
+  if (!['heat', 'row', 'event', 'place'].includes(kinds[1])) throw new Error(`second note is about ${kinds[1]}`);
+  // Away, then back by the notes panel.
+  await page.keyboard.press('Escape');
+  await page.evaluate(() => globalThis.__3dheat_engine.setCameraPose({ x: 9999, y: 9999, z: 9999 }, { x: 0, y: -1, z: 0 }));
+  await openSection('Notes and analyses');
+  await page.locator('.notes-list .note-title', { hasText: 'Hot corner' }).click();
+  await page.waitForTimeout(400);
+  const back = await page.evaluate(() => globalThis.__3dheat_engine.cameraPose().position);
+  const want = made[1].cam;
+  const off = Math.hypot(back.x - want.x, back.y - want.y, back.z - want.z);
+  if (!(off < 1)) throw new Error(`the camera is ${off.toFixed(1)} from the note's view`);
+  const pins = await page.evaluate(() => globalThis.__3dheat_engine.notePins.pins.length);
+  // An analysis with the view in it, then its HTML.
+  await page.locator('.section[data-section="notes.title"] button', { hasText: 'New analysis' }).click();
+  await page.locator('.analysis-window').waitFor({ timeout: 10_000 });
+  await page.locator('.analysis-insert').selectOption('viewNow');
+  await page.locator('.analysis-preview figure.block.view').waitFor({ timeout: 30_000 });
+  const thumb = await page.locator('.analysis-preview figure.block.view img').count();
+  await page.locator('.analysis-preview figure.block.view button', { hasText: 'Show in 3D' }).click();
+  const [download] = await Promise.all([
+    page.waitForEvent('download', { timeout: 8000 }),
+    (async () => {
+      await page.locator('.analysis-export > button').click();
+      await page.locator('.analysis-export-menu button', { hasText: /^HTML/ }).click();
+    })(),
+  ]);
+  const html = await (await download.createReadStream()).toArray().then((b) => Buffer.concat(b).toString('utf8'));
+  if (!html.startsWith('<!doctype html>')) throw new Error('the export is not an HTML file');
+  if (!/class="block view"/.test(html)) throw new Error('the view block is not in the export');
+  const outside = [...html.matchAll(/\b(?:src|href)="([^"]*)"/g)].map((m) => m[1]).filter((u) => !u.startsWith('data:') && !u.startsWith('#'));
+  if (outside.length) throw new Error(`the export reaches outside: ${outside[0]}`);
+  await page.locator('.analysis-window .analysis-head button[aria-label="Close"]').click();
+  return `notes on a ${kinds[0]} and a ${kinds[1]}, ${pins} pins, jumped back, analysis with a view (${thumb ? 'thumbnail' : 'no thumbnail'}), HTML ${Math.round(html.length / 1024)} kB`;
+});
+
 await step('no console errors', () => {
   if (errors.length) throw new Error(errors.slice(0, 6).join('\n         '));
   return `${logs.length} log lines`;

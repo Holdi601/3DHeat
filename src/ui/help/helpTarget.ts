@@ -29,7 +29,8 @@ export type HelpTarget =
   | 'raceLabel'
   | 'figure'
   | 'chartButton'
-  | 'chartSign';
+  | 'chartSign'
+  | 'note';
 
 /** Selectors for each kind, most specific first: the first whose box holds the point wins. */
 export const HELP_TARGETS: ReadonlyArray<[string, HelpTarget]> = [

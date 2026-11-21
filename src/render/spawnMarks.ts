@@ -26,6 +26,8 @@ import { zoneAt } from '../match/objectives';
 
 export const SPAWN_INSTANCE_FLOATS = 12;
 export const NO_HEADING = -1000;
+/** The glyph kind of a data note's pin (`notes/pins.ts`): three lines of text on the marker. */
+export const NOTE_GLYPH = 9;
 /** Uniform floats: viewProj, view (w, h, pixel ratio, -), camera (xyz, -). */
 export const SPAWN_UNIFORM_FLOATS = 16 + 4 + 4;
 /** A marker's half size in CSS pixels: soldiers', vehicles'. */
@@ -149,7 +151,7 @@ function shapes(g: boolean): string {
     fn('sdBox', `p : ${v2}, b : ${v2}`, `${let_} d = abs(p) - b; return length(max(d, ${v2}(0.0))) + min(max(d.x, d.y), 0.0);`),
     fn('sdSeg', `p : ${v2}, a : ${v2}, b : ${v2}`, `${let_} pa = p - a; ${let_} ba = b - a; ${letf} h = clamp(dot(pa, ba) / max(dot(ba, ba), 1e-6), 0.0, 1.0); return length(pa - ba * h);`),
     fn('sdTri', `p : ${v2}`, `${letf} k = 1.7320508; ${g ? 'vec2' : 'var'} q = ${v2}(abs(p.x) - 0.36, p.y + 0.2); if (q.x + k * q.y > 0.0) { q = ${v2}(q.x - k * q.y, -k * q.x - q.y) / 2.0; } q.x = q.x - clamp(q.x, -0.72, 0.0); return -length(q) * sign(q.y);`),
-    // A vehicle's glyph by kind (VEHICLE_KINDS): tank, jet, helicopter, boat, gun, car, horse, plane; a dot for any other.
+    // A vehicle's glyph by kind (VEHICLE_KINDS): tank, jet, helicopter, boat, gun, car, horse, plane; a note's lines (NOTE_GLYPH); a dot for any other.
     fn(
       'glyph',
       `p : ${v2}, kind : ${g ? 'uint' : 'u32'}`,
@@ -162,6 +164,7 @@ function shapes(g: boolean): string {
   if (kind == 6u) { return sdBox(p, ${v2}(0.42, 0.18)) - 0.06; }
   if (kind == 7u) { return abs(length(p) - 0.26) - 0.08; }
   if (kind == 8u) { return min(sdBox(p - ${v2}(0.0, 0.06), ${v2}(0.5, 0.08)), sdBox(p, ${v2}(0.08, 0.44))); }
+  if (kind == 9u) { return min(min(sdBox(p - ${v2}(0.0, 0.26), ${v2}(0.4, 0.06)), sdBox(p, ${v2}(0.4, 0.06))), sdBox(p - ${v2}(-0.12, -0.26), ${v2}(0.28, 0.06))); }
   return length(p) - 0.16;`,
     ),
   ].join('\n');

@@ -15,6 +15,7 @@ import { flyTo } from '../replay/replayView';
 import { clock } from '../replay/hooks';
 import { eventRows } from '../replay/replayData';
 import type { Dataset } from '../../state/types';
+import { NoteBadge } from '../notes/NoteBadge';
 
 function duration(seconds: number): string {
   if (!Number.isFinite(seconds) || seconds <= 0) return '';
@@ -122,7 +123,9 @@ export function MatchPicker() {
                 />
               )}
               <div>
-                <div className="match-name">{d.name}</div>
+                <div className="match-name">
+                  {d.name} <NoteBadge anchor={`match:${e.id}`} />
+                </div>
                 <div className="match-sub mono">
                   {[d.sub, duration(e.end - e.start), t('match.picker.rows', { count: e.rows })].filter(Boolean).join(' · ')}
                 </div>

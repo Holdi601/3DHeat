@@ -75,6 +75,8 @@ From [`App.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/App.tsx).
 | `]` | Far cull bound out ×1.12 (`Shift`: ×1.35) |
 | `[` | Far cull bound in ÷1.12 (`Shift`: ÷1.35) |
 | `\` | Far cull bound off / back on where it was ([Depth and culling](depth-and-culling.md#keyboard)) |
+| `N` | A [data note](notes-and-analyses.md) on what is in sight: the pick card's heat spot or row, else the selected unit, else the place in the middle of the view |
+| `Shift`+`N` | The [notes panel](notes-and-analyses.md#the-notes-panel) |
 
 The **Figure overlay** mode has no number key; pick it in the mode bar or open the Match tab. The number keys go through the same check as the mode bar: a key for a mode the bar shows as unavailable for the loaded data does nothing.
 

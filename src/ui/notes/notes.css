@@ -1,0 +1,378 @@
+/* Data notes and analysis documents (ui/notes): the panel's list, the editor,
+   the pins' hover and card, the timeline marks and the analysis window. All
+   from the design tokens (app.css), in both themes. */
+
+.notes-list {
+  list-style: none;
+  margin: var(--sp-1) 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.notes-list li {
+  display: flex;
+  gap: var(--sp-2);
+  align-items: flex-start;
+  padding: 5px 6px;
+  border-radius: var(--r-sm);
+}
+.notes-list li:hover {
+  background: var(--surface-hover);
+}
+.notes-list li.unresolved .note-title {
+  color: var(--text-faint);
+}
+.note-dot {
+  flex: 0 0 auto;
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  margin-top: 4px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+}
+.note-main {
+  flex: 1;
+  min-width: 0;
+}
+.note-title {
+  text-align: left;
+  font-weight: var(--fw-medium);
+  overflow-wrap: anywhere;
+}
+.note-meta,
+.note-snippet {
+  font-size: var(--fs-xs);
+  overflow-wrap: anywhere;
+}
+.note-snippet {
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+.note-actions {
+  display: flex;
+  gap: 2px;
+}
+.notes-sub {
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+  margin: var(--sp-2) 0 2px;
+}
+.notes-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: var(--sp-1) 0;
+}
+.notes-filters select {
+  flex: 1 1 40%;
+  min-width: 0;
+}
+.note-unresolved-line {
+  color: var(--warn);
+}
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-top: 3px;
+}
+.tag {
+  font-size: var(--fs-xs);
+  padding: 0 6px;
+  border-radius: var(--r-pill);
+  background: var(--surface-3);
+  color: var(--text-dim);
+  border: 0;
+  min-height: 0;
+  line-height: 1.6;
+}
+.field-line {
+  display: flex;
+  gap: var(--sp-2);
+  align-items: center;
+  margin: var(--sp-1) 0;
+}
+.field-line > span:first-child {
+  flex: 0 0 92px;
+  color: var(--text-dim);
+  font-size: var(--fs-sm);
+}
+.field-line > input,
+.field-line > select {
+  flex: 1;
+  min-width: 0;
+}
+.field-line > input.narrow {
+  flex: 0 0 80px;
+}
+
+/* The badge beside a thing with notes, in the lists and on the cards. */
+.note-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  min-height: 0;
+  padding: 0 5px;
+  font-size: var(--fs-xs);
+  line-height: 1.5;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--accent);
+  background: var(--accent-fill);
+  color: var(--text);
+  cursor: pointer;
+}
+
+/* The editor dialog. */
+.note-editor-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  padding: 0 var(--sp-4) var(--sp-2);
+  max-height: min(70vh, 720px);
+  overflow: auto;
+}
+.note-anchor {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  align-items: baseline;
+  padding: 6px 8px;
+  border-radius: var(--r-sm);
+  background: var(--panel-2);
+  font-size: var(--fs-sm);
+}
+.note-kind {
+  font-weight: var(--fw-bold);
+  color: var(--accent);
+}
+.note-subject {
+  overflow-wrap: anywhere;
+}
+.note-unresolved {
+  color: var(--warn);
+}
+.note-text-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-dim);
+  font-size: var(--fs-sm);
+}
+.note-text,
+.analysis-text {
+  width: 100%;
+  font-family: var(--mono);
+  font-size: var(--fs-md);
+  line-height: 1.5;
+  resize: vertical;
+}
+.note-preview {
+  min-height: 120px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+}
+.note-colors {
+  display: flex;
+  gap: 6px;
+}
+.note-colors button {
+  width: 20px;
+  height: 20px;
+  min-height: 0;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4);
+}
+.note-colors button.on {
+  border-color: var(--text);
+}
+.note-shot {
+  max-width: 100%;
+  border-radius: var(--r-sm);
+}
+
+/* The pins' hover line and click card, over the view. */
+.note-tip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 30;
+  pointer-events: none;
+  max-width: 280px;
+  padding: 3px 8px;
+  border-radius: var(--r-sm);
+  background: var(--glass);
+  color: var(--text);
+  font-size: var(--fs-sm);
+  box-shadow: var(--shadow-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.note-pin-card {
+  position: absolute;
+  z-index: 31;
+  width: 300px;
+  max-height: 360px;
+  overflow: auto;
+  padding: 10px 12px;
+  border-radius: var(--r-md);
+  border-top: 3px solid var(--accent);
+  background: var(--panel);
+  color: var(--text);
+  box-shadow: var(--shadow-3);
+  font-size: var(--fs-sm);
+}
+.note-pin-card .note-card-head {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.note-pin-text {
+  font-size: var(--fs-sm);
+  max-height: 180px;
+  overflow: auto;
+}
+
+/* The timeline's note marks, under the replay's. */
+.note-marks {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 8px;
+  width: 100%;
+  display: block;
+}
+
+/* The analysis window. */
+.analysis-window {
+  position: absolute;
+  inset: 12px 12px 12px 12px;
+  z-index: 40;
+  display: flex;
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-3);
+  overflow: hidden;
+  --doc-ink: var(--text);
+  --doc-dim: var(--text-dim);
+  --doc-line: var(--line);
+  --doc-code: var(--panel-2);
+  --doc-link: var(--accent);
+}
+.analysis-outline {
+  flex: 0 0 200px;
+  padding: var(--sp-3);
+  border-right: 1px solid var(--line);
+  background: var(--panel-2);
+  overflow: auto;
+  font-size: var(--fs-sm);
+}
+.analysis-outline ul {
+  list-style: none;
+  margin: 0 0 var(--sp-2);
+  padding: 0;
+}
+.analysis-outline li {
+  padding: 2px 0;
+}
+.analysis-outline li.on button {
+  color: var(--accent);
+  font-weight: var(--fw-bold);
+}
+.analysis-outline button {
+  text-align: left;
+}
+.analysis-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.analysis-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  align-items: center;
+  padding: var(--sp-2) var(--sp-3);
+  border-bottom: 1px solid var(--line);
+}
+.analysis-title {
+  flex: 1 1 220px;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
+}
+.analysis-insert {
+  max-width: 200px;
+}
+.analysis-export {
+  position: relative;
+}
+.analysis-export-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  min-width: 220px;
+  padding: 4px;
+  border-radius: var(--r-md);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-2);
+}
+.analysis-export-menu button {
+  text-align: left;
+  border: 0;
+  background: none;
+}
+.analysis-export-menu button:hover {
+  background: var(--surface-hover);
+}
+.analysis-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+.analysis-body > * {
+  flex: 1 1 50%;
+  min-width: 0;
+  overflow: auto;
+}
+.analysis-text {
+  border: 0;
+  border-right: 1px solid var(--line);
+  border-radius: 0;
+  padding: var(--sp-3) var(--sp-4);
+  resize: none;
+  background: var(--panel);
+}
+.analysis-preview {
+  padding: var(--sp-3) var(--sp-5);
+}
+.analysis-preview .chart-svg {
+  --chart-ink: var(--text-dim);
+  --chart-grid: var(--line-soft);
+}
+:root[data-theme='dark'] .doc-render .chart-svg {
+  --chart-1: #1f95cf;
+  --chart-2: #e0612f;
+}
+@media (max-width: 760px) {
+  .analysis-outline {
+    display: none;
+  }
+  .analysis-body.split {
+    flex-direction: column;
+  }
+}

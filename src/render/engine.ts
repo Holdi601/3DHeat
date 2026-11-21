@@ -62,6 +62,8 @@ import { CURVE_LUT_SIZE, bakeCurveLut, curveSignature } from '../state/curve';
 import { buildColorLut, isUnassignedLabel, teamHueCount, teamMemberColor } from './colors';
 import { levelIdOfLevel, levelLayoutSource } from './levelLayoutSource';
 import { SpawnMarkLayer, type SpawnMarkDraw } from './spawnMarks';
+import { MarkMerge, NotePinLayer } from '../notes/pins';
+import { useNotes } from '../notes/store';
 import { useSpawnDisplay } from '../state/spawnDisplayStore';
 import { shownLayout, wantLayouts } from '../state/levelLayoutsStore';
 import type { Projection } from './camera';
@@ -721,6 +723,11 @@ export class Engine {
   readonly objectiveDraw = new ObjectiveLayerDraw();
   /** The level layout's spawn points one by one (`spawnMarks.ts`), and what the last frame drew of them. */
   private readonly spawnLayer = new SpawnMarkLayer();
+  /** The data notes' pins (`notes/pins.ts`), drawn with the spawn markers. */
+  readonly notePins = new NotePinLayer();
+  /** Answers a click on the view at (x, y) CSS pixels when it lands on a note's pin; set by the notes layer. */
+  notePinClick: ((x: number, y: number) => boolean) | null = null;
+  private readonly markMerge = new MarkMerge();
   private spawnDrawn: SpawnMarkDraw | null = null;
   /** The objectives' lines over the heat, between frames that build them. */
   private objectiveTop: { data: Float32Array; count: number } | null = null;
@@ -1162,6 +1169,8 @@ export class Engine {
         if (p) this.measure.points.push({ ...p });
         return;
       }
+      // A click on a note's pin opens the note (ui/notes/NotesLayer.tsx), ahead of the volumes and the pick.
+      if (this.notePinClick?.(from.x, from.y)) return;
       // A click on a volume selects it, for its handles; elsewhere it deselects.
       if (this.volumesLive() && this.volumeGestures.click(from.x, from.y)) return;
       if (useInspectStore.getState().pickOnClick) this.pickAt(from.x, from.y);
@@ -2362,6 +2371,15 @@ export class Engine {
     });
   }
 
+  /** The notes' pins at the playhead (every pin in All mode); null when off or none. */
+  private frameNotePins(s: ReturnType<typeof snapshot>): SpawnMarkDraw | null {
+    const n = useNotes.getState();
+    if (!n.pins || !n.book.notes.length) return null;
+    this.notePins.onReady ??= () => this.invalidate(2);
+    const all = s.timeline.mode === 'all' || !this.dataset?.time;
+    return this.notePins.build(n.book.notes, n.rev, this.dataset, all ? null : this.playhead);
+  }
+
   private frameObjectives(s: ReturnType<typeof snapshot>, sources: ObjectiveSource[], base: Float32Array | null, baseCount: number): { data: Float32Array | null; count: number } {
     const d = this.dataset;
     const level = s.level;
@@ -3251,7 +3269,8 @@ export class Engine {
     }
     if (!objectiveSrc.length) this.objectiveDraw.clear();
     // The layout's spawn points one by one, wherever a level is drawn; made again only when they change.
-    const spawnDraw = vehicleTab || (raceTab && !boardTab) ? null : this.frameSpawns(s, objectiveSrc);
+    // The data notes' pins (notes/pins.ts) beside them, in the same draw: in the heat and the replay.
+    const spawnDraw = this.markMerge.merge(vehicleTab || (raceTab && !boardTab) ? null : this.frameSpawns(s, objectiveSrc), raceTab ? null : this.frameNotePins(s));
     if (spawnDraw !== this.spawnDrawn) {
       this.spawnDrawn = spawnDraw;
       this.invalidate(2);

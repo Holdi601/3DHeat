@@ -10,7 +10,7 @@ import { resolvedTheme, useShell } from './shellStore';
 
 const english: Record<string, string> = {};
 const dir = join(__dirname, '../../i18n/locales/en');
-for (const f of ['app.json', 'shell.json', 'heat.json']) Object.assign(english, JSON.parse(readFileSync(join(dir, f), 'utf8')));
+for (const f of ['app.json', 'shell.json', 'heat.json', 'notes.json']) Object.assign(english, JSON.parse(readFileSync(join(dir, f), 'utf8')));
 
 const key = (code: string, k: string, mods: { ctrl?: boolean; shift?: boolean; alt?: boolean; tag?: string; type?: string } = {}) =>
   ({

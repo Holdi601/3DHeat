@@ -31,6 +31,9 @@ import { InsightLens, LensMetricsView, LensPicker } from './LensView';
 import { useEngine } from '../EngineContext';
 import { SortControl } from '../sort/SortControl';
 import { useSort, useSorted } from '../sort/useSort';
+import { NoteBadge } from '../notes/NoteBadge';
+import { insertBlock, noteAbout } from '../notes/actions';
+import { insightAnchor, insightBlock } from '../notes/from';
 import './insights.css';
 
 type Tab = 'findings' | 'debrief' | 'caster' | 'maneuvers';
@@ -250,6 +253,7 @@ const fmtP = (p: number) => (p <= 0 ? '< 1e-300' : p < 1e-4 ? p.toExponential(1)
 
 function Details({ ins, samples }: { ins: Insight; samples: boolean }) {
   const report = useInsights((s) => s.report);
+  const engine = useEngine();
   const e = ins.effect;
   const c = ins.confidence;
   const plain = plainInsight(ins, report, samples);
@@ -285,6 +289,15 @@ function Details({ ins, samples }: { ins: Insight; samples: boolean }) {
           {t('insights.volume')}
         </button>
       )}
+      <div className="row wrap" style={{ gap: 4, marginTop: 4 }}>
+        <button onClick={() => noteAbout(engine, insightAnchor(ins, report))} title={t('notes.noteOnInsightTitle')}>
+          {t('notes.noteShort')}
+        </button>
+        <button onClick={() => insertBlock(insightBlock(ins, report))} title={t('notes.toAnalysisTitle')}>
+          {t('notes.toAnalysis')}
+        </button>
+        <NoteBadge anchor={`insight:${ins.id}`} />
+      </div>
       {report && <InsightLens ins={ins} report={report} />}
     </div>
   );

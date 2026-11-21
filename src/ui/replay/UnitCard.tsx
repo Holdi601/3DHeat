@@ -18,6 +18,9 @@ import { RELATIVE_FIELDS } from './relative';
 import { clearLook, lookAtUnit, lookTargets } from './pair';
 import { usePlayhead } from './hooks';
 import { personRows } from '../../data/flight';
+import { NoteBadge } from '../notes/NoteBadge';
+import { noteAbout } from '../notes/actions';
+import { unitAnchorOf } from '../../notes/capture';
 
 /**
  * The selected unit's live data, top left of the view: the fields the viewer
@@ -182,6 +185,10 @@ function UnitCardView({ unitKey, second }: { unitKey: string; second: boolean })
               {following ? t('replay.card.following') : t('replay.card.follow')}
             </button>
           )}
+          <NoteBadge anchor={`unit:${unit.key}`} />
+          <button className="small" onClick={() => noteAbout(engine, unitAnchorOf(unit.key, engine, unit.name)!, '', null)} title={t('notes.noteOnUnitTitle')}>
+            {t('notes.noteShort')}
+          </button>
           <button className={`small${raw ? ' on' : ''}`} onClick={() => setRaw(!raw)} title={t('replay.card.rawTitle')}>
             {t('replay.card.raw')}
           </button>

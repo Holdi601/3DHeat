@@ -5,6 +5,7 @@ import type { TimelineMode, WindowMode } from '../state/store';
 import { useAnimationFrame, useEngine } from './EngineContext';
 import { num, t } from '../i18n';
 import { ReplayMarks } from './replay/ReplayMarks';
+import { NoteMarks } from './notes/NoteMarks';
 import { MAX_SPEED, MIN_SPEED, parseSpeed, saveSpeed, speedDigits, speedOptions } from '../state/playbackSpeed';
 import { NumberBox } from './NumberBox';
 import { realDate, seriesAt } from '../data/series';
@@ -170,6 +171,7 @@ export function Timeline() {
           onChange={(e) => seek(Number(e.target.value))}
         />
         <ReplayMarks range={range} />
+        <NoteMarks range={range} />
       </div>
       <div className="tl-controls">
         <div className="seg" style={{ flex: '0 0 auto' }}>

@@ -12,6 +12,10 @@ import { useUnits } from '../state/unitsStore';
 import { DirectionSpot } from './DirectionSpot';
 import { BreakdownButton } from './breakdown/BreakdownPanel';
 import { HeatHere } from './heatInspect/HeatHere';
+import { NoteBadge } from './notes/NoteBadge';
+import { noteHere } from './notes/actions';
+import { heatToAnalysis } from './notes/from';
+import { dataKey } from '../notes/anchors';
 
 /**
  * Eye height for "stand here" on a surface, in world units (metres): standing
@@ -34,6 +38,7 @@ export function PickCard() {
   const convention = useInspectStore((s) => s.yawConvention);
   const axes = useStore((s) => s.dataset?.axes ?? null);
   const dataset = useStore((s) => s.dataset);
+  const mode = useStore((s) => s.mode);
   useLang();
   useUnits();
   const ring = useRef<HTMLDivElement>(null);
@@ -180,6 +185,17 @@ export function PickCard() {
             {t('heat.inspect.standHere')}
           </button>
           {pick.point && <BreakdownButton region="pick" label={t('breakdown.here')} />}
+          {engine && pick.point && (
+            <button onClick={() => void noteHere(engine)} title={t('notes.noteOnPickTitle')}>
+              {t('notes.noteShort')}
+            </button>
+          )}
+          {engine && pick.point && dataset && mode !== 'team' && (
+            <button onClick={() => void heatToAnalysis(engine)} title={t('notes.toAnalysisTitle')}>
+              {t('notes.toAnalysis')}
+            </button>
+          )}
+          {pick.kind === 'data' && pick.dataset && pick.row !== undefined && <NoteBadge anchor={`row:${dataKey(pick.dataset)}:${pick.row}`} />}
         </div>
       </div>
     </>

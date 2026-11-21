@@ -22,6 +22,7 @@ const GROUP_ICON: Record<CommandGroup, IconName> = {
   section: 'all',
   setting: 'settings',
   view: 'bookmark',
+  note: 'note',
 };
 
 function recent(): string[] {

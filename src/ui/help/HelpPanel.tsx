@@ -12,6 +12,7 @@ import { lastPointer, useHelpStore } from '../../state/helpStore';
 import { useMatchStore } from '../../state/matchStore';
 import { useEngine } from '../EngineContext';
 import { targetInPage, type HelpTarget } from './helpTarget';
+import { notePinAt } from '../notes/NotesLayer';
 import { useRaceStore } from '../../state/raceStore';
 import { heatModeFor } from '../../data/lines';
 import { useStore } from '../../state/store';
@@ -194,10 +195,17 @@ function AtPointer() {
       if (x < r.left || y < r.top || x > r.right || y > r.bottom) return false;
       return engine.figureAt(x - r.left, y - r.top, true) !== null;
     };
+    // A data note's pin, drawn by the GPU: asked of the notes layer (ui/notes/NotesLayer.tsx).
+    const pinAt = (x: number, y: number) => {
+      if (!engine) return false;
+      const r = engine.canvas.getBoundingClientRect();
+      if (x < r.left || y < r.top || x > r.right || y > r.bottom) return false;
+      return notePinAt(engine, x - r.left, y - r.top) !== null;
+    };
     const read = () => {
       const c = controlAt(lastPointer.x, lastPointer.y);
       setControl(c);
-      setTarget(c ? null : targetInPage(lastPointer.x, lastPointer.y, figureAt));
+      setTarget(c ? null : (targetInPage(lastPointer.x, lastPointer.y, null) ?? (pinAt(lastPointer.x, lastPointer.y) ? 'note' : figureAt(lastPointer.x, lastPointer.y) ? 'figure' : null)));
     };
     read();
     let timer = 0;
@@ -243,7 +251,7 @@ const words = (el: Element | null | undefined) => el?.textContent?.replace(/\s+/
 function controlAt(x: number, y: number): ControlHelp | null {
   if (x < 0 || typeof document.elementFromPoint !== 'function') return null;
   const el = document.elementFromPoint(x, y) as HTMLElement | null;
-  if (!el || !el.closest('.sidebar, .timeline-bar, .quick-bar, .settings-popover, .help-panel, .vsign-panel, .vsign-head')) return null;
+  if (!el || !el.closest('.sidebar, .timeline-bar, .quick-bar, .settings-popover, .help-panel, .vsign-panel, .vsign-head, .analysis-window, .note-editor, .chart-editor, .note-pin-card')) return null;
   if (el.closest('.help-panel')) return null;
   const ctl = el.closest<HTMLElement>('button, select, input, textarea, label, [role="button"], [role="tab"], .field, summary');
   if (!ctl) return null;
