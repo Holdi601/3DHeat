@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { residentColumns } from '../../data/resident';
 import { evictColumn, useColumnStore } from '../../data/columnStore';
-import { formatBytes } from '../../data/memory';
+import { currentHeld, formatBytes, gpuReading, ramMargin } from '../../data/memory';
+import { RECHECK_MS, useLiveMemory } from '../../data/liveBudget';
+import { effectiveGpuBudget } from '../../render/budget';
 import { formatCount } from '../../data/synth';
 import { useStore } from '../../state/store';
 import { useAnimationFrame, useEngine } from '../EngineContext';
@@ -101,6 +103,7 @@ export function MemoryPanel() {
           })}
         </div>
         <div className="hint" ref={gpuLine} />
+        <LiveBudget />
         {/* The tab's heap and every column's bytes are for debugging the viewer:
             with the developer tools only. The totals above, the columns on
             demand and the room to spare are what a user acts on. */}
@@ -147,6 +150,71 @@ export function MemoryPanel() {
         )}
       </div>
     </Section>
+  );
+}
+
+/**
+ * How the budgets were made from the machine's own reading: the card, what the
+ * system allows, what other programs and 3DHeat hold, what is kept free; and
+ * when it was read. In the native app it is read again every few seconds
+ * (`liveBudget.ts`); elsewhere once, when a host answered at all.
+ */
+function LiveBudget() {
+  const host = useLiveMemory((s) => s.host);
+  const at = useLiveMemory((s) => s.at);
+  const budgets = useStore((s) => s.budgets);
+  const live = useStore((s) => s.budget.gpuBudgetLive);
+  const ago = useRef<HTMLDivElement>(null);
+  const periodic = typeof globalThis !== 'undefined' && '__TAURI_INTERNALS__' in globalThis;
+
+  // The age straight into the DOM once a second: no render for a number.
+  useEffect(() => {
+    if (!at) return;
+    const write = () => {
+      if (!ago.current) return;
+      const seconds = Math.max(0, Math.round((Date.now() - at) / 1000));
+      const text = periodic
+        ? t('heat.memoryPanel.live.checked', { seconds, every: Math.round(RECHECK_MS / 1000) })
+        : t('heat.memoryPanel.live.checkedOnce', { seconds });
+      if (ago.current.textContent !== text) ago.current.textContent = text;
+    };
+    write();
+    const h = setInterval(write, 1000);
+    return () => clearInterval(h);
+  }, [at, periodic]);
+
+  if (!host) return null;
+  const gpu = gpuReading(host, currentHeld());
+  const chosen = budgets.gpu;
+  const capped = live != null && chosen > live * 1.001 && effectiveGpuBudget(chosen, budgets.gpuCeiling, live) < chosen;
+  return (
+    <div data-testid="memory-live">
+      {gpu && (
+        <>
+          <div className="hint">
+            {gpu.osBudget !== null
+              ? t('heat.memoryPanel.live.gpu', { card: formatBytes(gpu.card), budget: formatBytes(gpu.osBudget) })
+              : t('heat.memoryPanel.live.gpuCard', { card: formatBytes(gpu.card) })}
+          </div>
+          {gpu.others !== null && gpu.own !== null && (
+            <div className="hint">{t('heat.memoryPanel.live.use', { others: formatBytes(gpu.others), own: formatBytes(gpu.own) })}</div>
+          )}
+          <div className="hint">{t('heat.memoryPanel.live.rows', { rows: formatBytes(gpu.rows), headroom: formatBytes(gpu.headroom) })}</div>
+          {capped && <div className="hint" style={{ color: 'var(--warn)' }}>{t('heat.memoryPanel.live.capped', { chosen: formatBytes(chosen), live: formatBytes(live!) })}</div>}
+        </>
+      )}
+      {host.freeBytes !== null && (
+        <div className="hint">
+          {t('heat.memoryPanel.live.ram', {
+            total: formatBytes(host.totalBytes),
+            free: formatBytes(host.freeBytes),
+            margin: formatBytes(ramMargin(host.totalBytes)),
+            budget: formatBytes(budgets.ramMax),
+          })}
+        </div>
+      )}
+      <div className="hint" ref={ago} />
+    </div>
   );
 }
 

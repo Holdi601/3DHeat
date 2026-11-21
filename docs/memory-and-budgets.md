@@ -136,7 +136,7 @@ The merge order is the order of the selection, whatever order the files finish i
 
 [`detectBudgets`](https://github.com/Holdi601/3DHeat/blob/main/src/data/memory.ts) runs at start-up, again once the renderer exists, and on **Re-detect**.
 
-**RAM, with the dev server.** `start.bat` and `npm run dev` serve the page from a process that can read the machine's memory, at `/__host/memory` (answered within 1.5 s or ignored). The default is the smaller of 60% of installed RAM and 80% of currently free RAM; the ceiling is 60% of installed. When free memory is what holds the default down, the panel says so and suggests closing programs and pressing **Re-detect**.
+**RAM, with the dev server.** `start.bat` and `npm run dev` serve the page from a process that can read the machine's memory, at `/__host/memory` (answered within 1.5 s or ignored). The default is what is free now less a margin of 5% of installed RAM (at least 2 GiB, at most 4 GiB), the rows already loaded counted as free; the ceiling is installed RAM less the same margin. When free memory is what holds the default down, the panel says so and suggests closing programs and pressing **Re-detect**. The native app reads it again every five seconds ([The native app](native-app.md#memory-budget)).
 
 **RAM, without it** (a static deployment): no browser API reports free memory, and `navigator.deviceMemory` is rounded down to a power of two and capped at 8 GiB by Chrome and Edge. The default is 60% of `deviceMemory`, further capped at 4 × the tab's free JS heap where the browser reports one, or 4 GiB when nothing is reported. When `deviceMemory` reads exactly 8 (the cap), the figure is flagged as *capped* and the ceiling is 4 × the default, with a note that past the default the number is your assertion, not a measurement.
 
@@ -146,7 +146,8 @@ The merge order is the order of the selection, whatever order the files finish i
 
 **GPU memory.** No web API reports it at all.
 
-- With the dev server, the card's memory is read by `nvidia-smi` (the largest adapter) or, on Windows, from the display adapter's registry value `HardwareInformation.qwMemorySize`. The default is 70% of it, the ceiling 90%.
+- With the dev server, the card's memory is read by `nvidia-smi` (the largest adapter) or, on Windows, from the display adapter's registry value `HardwareInformation.qwMemorySize`. The default and the ceiling are all of it but 1 GiB or 5% (whichever is more), less the level's GPU memory.
+- In the native app, the OS's live budget and what other programs hold on the card decide it, read every five seconds, and a drop gives rows back ([The native app](native-app.md#memory-budget)).
 - Without a reading, it is inferred: 2 GiB by default; 4 GiB when the largest texture is 16,384 px or more (a discrete card), 1 GiB when smaller; or 8 × WebGPU's `maxBufferSize` when that is larger. The ceiling is then 8 × the inferred figure, because the inference tells an integrated part from a discrete one and nothing finer. The panel says the figure is inferred.
 - Never below 128 MiB.
 

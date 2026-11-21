@@ -124,6 +124,8 @@ const SLICE_MS = 5;
 
 /** Milliseconds a frame may spend working out the hit marks until they are ready. */
 const HIT_MARK_BUDGET_MS = 2;
+/** How often the GPU budget is applied, and a chunk given back while the rows are over it (`applyGpuBudget`). */
+const BUDGET_TICK_MS = 200;
 /** The replay's objectives over the picture, where the ground hides them: this much of their alpha. */
 const OBJECTIVE_XRAY = 0.4;
 /** The replay's objective lines (areas, targets), over the picture only: this much of their alpha. */
@@ -1055,6 +1057,7 @@ export class Engine {
       this.live.backend = created.backend;
       this.live.gpuName = created.renderer.gpuName;
       useStore.getState().reportStats({ backend: created.backend });
+      this.budgetTimer = setInterval(() => this.applyGpuBudget(), BUDGET_TICK_MS);
     } catch (err) {
       this.initError = err instanceof Error ? err.message : String(err);
     }
@@ -1543,8 +1546,34 @@ export class Engine {
     this.raf = 0;
   }
 
+  /** The GPU budget's timer (`applyGpuBudget`), between frames. */
+  private budgetTimer: ReturnType<typeof setInterval> | null = null;
+
+  /**
+   * The GPU budget as the store has it now, handed to the renderer; and while the
+   * rows hold more than it allows (the system's budget dropped because another
+   * program took memory, or the user lowered it), one chunk given back.
+   *
+   * On a timer, never in a frame: a chunk a tick, so a large drop is given back
+   * over a few seconds while every frame stays as it was.
+   */
+  private applyGpuBudget(): void {
+    const renderer = this.renderer;
+    if (!renderer) return;
+    const b = useStore.getState().budget;
+    renderer.gpuBudgetBytes = effectiveGpuBudget(b.gpuBudgetBytes, b.gpuBudgetMax, b.gpuBudgetLive);
+    if (renderer.shrinkToBudget?.()) {
+      this.live.residentRows = renderer.residentRows;
+      this.live.droppedRows = renderer.droppedRows;
+      this.invalidate(2);
+    }
+    this.live.gpuBytes = renderer.gpuBytesUsed;
+  }
+
   dispose(): void {
     this.disposed = true;
+    if (this.budgetTimer) clearInterval(this.budgetTimer);
+    this.budgetTimer = null;
     this.directions.dispose();
     this.stop();
     this.detachInput?.();
@@ -2746,7 +2775,7 @@ export class Engine {
       // approved is a load that ends up resident. A figure above the detected one
       // is the user's deliberate choice and applies; only the ceiling the slider
       // stops at caps it, so a value set from the console cannot exceed that.
-      renderer.gpuBudgetBytes = effectiveGpuBudget(s.budget.gpuBudgetBytes, s.budget.gpuBudgetMax);
+      renderer.gpuBudgetBytes = effectiveGpuBudget(s.budget.gpuBudgetBytes, s.budget.gpuBudgetMax, s.budget.gpuBudgetLive);
       renderer.setDataset(s.dataset);
       if (s.dataset) {
         // Cleared only once the upload is actually done, so the panel does not

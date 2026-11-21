@@ -5,6 +5,8 @@ import { UsageHost } from './ui/usage/UsageUI';
 import { filesFromDataTransfer } from './data/filePick';
 import { probeHostMemory } from './data/hostMemory';
 import { detectBudgets } from './data/memory';
+import { startLiveBudgets, useLiveMemory } from './data/liveBudget';
+import { residentColumns } from './data/resident';
 import { datasetCapabilities, modeBlockedReason, splitHasTwoSides } from './data/validate';
 import { t, useLang } from './i18n';
 import type { BackendPreference } from './render/createRenderer';
@@ -234,8 +236,22 @@ export function App() {
    */
   useEffect(() => {
     let cancelled = false;
+    const gpuHint = () => {
+      const r = engine?.rendererInfo() ?? null;
+      return r ? { gpuName: r.gpuName, maxTextureSize: r.maxTextureSize, maxBufferBytes: r.maxBufferBytes } : null;
+    };
+    // What this viewer holds, which a reading of the machine counts as taken.
+    const stopLive = startLiveBudgets(gpuHint, () => {
+      const ds = useStore.getState().dataset;
+      return {
+        gpuRows: engine?.live.gpuBytes ?? 0,
+        gpuOther: engine?.live.levelBytes ?? 0,
+        ram: ds ? residentColumns(ds).reduce((a, c) => a + c.bytes, 0) : 0,
+      };
+    });
     void probeHostMemory().then((host) => {
       if (cancelled || !host) return;
+      useLiveMemory.setState({ host, at: Date.now() });
       // With the renderer's own limits when there is a renderer, and this is not
       // optional: passing null here re-derived the GPU ceiling from nothing and
       // wrote back the 2GB fallback, undoing the figure the resource panel had
@@ -258,6 +274,7 @@ export function App() {
     });
     return () => {
       cancelled = true;
+      stopLive();
     };
   }, [engine]);
 

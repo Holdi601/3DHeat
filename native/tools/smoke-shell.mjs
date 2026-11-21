@@ -178,6 +178,42 @@ try {
   report.litPixels = { before, after: heat };
   check(heat > before + 2000, `the heat draws: ${before} lit pixels before, ${heat} after`);
 
+  // The budgets follow the machine (on Windows the DXGI budget and the GPU memory
+  // counters), and a lower GPU budget gives chunks back between frames, not in one.
+  const b0 = await page.evaluate(() => globalThis.__heat3dNative.budget());
+  report.budget = b0;
+  const h = b0.host ?? {};
+  check(h.vramBytes > 0 && (process.platform !== 'win32' || h.vramBudgetBytes > 0), `the card is read live: ${b0.gpuSource}`);
+  const MIN_GPU = 128 * 2 ** 20;
+  if (b0.gpuBytes > MIN_GPU * 1.5) {
+    const target = Math.max(MIN_GPU, Math.floor(b0.gpuBytes / 2));
+    await page.evaluate(() => {
+      globalThis.__smokeFrames = [];
+      let last = performance.now();
+      const tick = (t) => {
+        globalThis.__smokeFrames.push(t - last);
+        last = t;
+        if (globalThis.__smokeFrames.length < 100000) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+    await page.evaluate(() => globalThis.__heat3dNative.play(true));
+    await page.evaluate((g) => globalThis.__heat3dNative.budget(g), target);
+    let b1 = b0;
+    for (let i = 0; i < 100 && b1.gpuBytes > target; i++) {
+      await sleep(200);
+      b1 = await page.evaluate(() => globalThis.__heat3dNative.budget());
+    }
+    await sleep(1000);
+    const frames = await page.evaluate(() => globalThis.__smokeFrames.slice(5).sort((a, b) => a - b));
+    await page.evaluate(() => globalThis.__heat3dNative.play(false));
+    const p99 = frames[Math.floor(frames.length * 0.99)] ?? 0;
+    report.budgetShrink = { before: b0.gpuBytes, target, after: b1.gpuBytes, dropped: b1.droppedRows, frames: frames.length, p99, max: frames.at(-1) ?? 0 };
+    check(b1.gpuBytes <= target && b1.droppedRows > 0, `a lower GPU budget gives rows back: ${(b0.gpuBytes / 2 ** 20).toFixed(0)} -> ${(b1.gpuBytes / 2 ** 20).toFixed(0)} MiB (budget ${(target / 2 ** 20).toFixed(0)}), ${b1.droppedRows} rows not resident`);
+    console.log(`info frames while giving back: ${frames.length}, p99 ${p99.toFixed(1)} ms, max ${(frames.at(-1) ?? 0).toFixed(1)} ms`);
+    await page.evaluate((g) => globalThis.__heat3dNative.budget(g), b0.gpu);
+  } else console.log(`info the load holds ${(b0.gpuBytes / 2 ** 20).toFixed(0)} MiB on the GPU: too little to give back from (--rows 30000000 does)`);
+
   // Transfer from the core to the page.
   const echo = [];
   for (let i = 0; i < 4; i++) echo.push(await page.evaluate((b) => globalThis.__heat3dNative.echo(b), echoMb * 2 ** 20));

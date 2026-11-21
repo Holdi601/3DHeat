@@ -12,6 +12,8 @@ import type { NativeFileRef } from './native/files';
 import { nativeRefs } from './native/files';
 import type { NativeLoad } from './native/readers';
 import { expandContainerFiles, isContainer } from './container';
+import { knownHostMemory } from './hostMemory';
+import { nativePageRowsFor } from './memory';
 
 /** How a load may parse: files at once, and the RAM budget they share. */
 export interface ParseBudget {
@@ -301,7 +303,7 @@ export class NativeDataSource extends Loader {
         return here(files);
       }
       try {
-        const ds = await nativeBuild({ core, files, refs: refs as NativeFileRef[], mapping, name, stride, expectedRows, onProgress, pageRows: nativePageRows(NATIVE_PAGE_ROWS) });
+        const ds = await nativeBuild({ core, files, refs: refs as NativeFileRef[], mapping, name, stride, expectedRows, onProgress, pageRows: nativePageRows(nativePageRowsFor(knownHostMemory(), expectedRows, NATIVE_PAGE_ROWS)) });
         this.hold(ds, core);
         return ds;
       } catch (err) {
@@ -337,7 +339,10 @@ function nativeBuildOff(): boolean {
   }
 }
 
-/** The page's row ceiling for a core-built load (`NATIVE_PAGE_ROWS`, or `heat3d.nativePageRows`). */
+/**
+ * The page's row ceiling for a core-built load: `heat3d.nativePageRows` when set,
+ * else what free memory allows (`nativePageRowsFor`, at most `NATIVE_PAGE_ROWS`).
+ */
 function nativePageRows(fallback: number): number {
   try {
     const v = Number(globalThis.localStorage?.getItem('heat3d.nativePageRows'));

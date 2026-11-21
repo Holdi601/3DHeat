@@ -15,11 +15,15 @@ import {
   MAX_TAB_ARRAY_BYTES,
   MIN_GPU_BUDGET,
   MIN_RAM_BUDGET,
+  RAM_MARGIN_MAX,
+  RAM_MARGIN_MIN,
   bytesPerRow,
   checkFit,
   clampBudgets,
   detectBudgets,
   estimateFootprint,
+  ramMargin,
+  setHeldProvider,
 } from './memory';
 import { MAX_SORTABLE_ROWS } from './sort';
 import { emptyColumnMapping, type ColumnMapping, type Dataset } from '../state/types';
@@ -527,7 +531,7 @@ describe('a RAM ceiling that came from the browser cap', () => {
     expect(b.ramCapped).toBe(false);
     expect(b.ramCeiling).toBe(b.ramMax);
     expect(b.ramMax).toBeGreaterThan(8 * 1024 ** 3);
-    expect(b.ramSource).toMatch(/dev server/);
+    expect(b.ramSource).toMatch(/48\.00 GB free/);
   });
 
   it('says the budget is a browser cap when a load comes out tight', () => {
@@ -574,7 +578,8 @@ describe('the GPU budget', () => {
     const inferred = detectBudgets({ maxTextureSize: 8192 });
     const measured = detectBudgets({ maxTextureSize: 8192 }, gpuHost(16));
     expect(measured.vramBytes).toBe(16 * 1024 ** 3);
-    expect(measured.gpuMax).toBeCloseTo(16 * 1024 ** 3 * 0.7, -6);
+    // All of the card but the headroom (1 GiB, or 5 % where more): no share of it.
+    expect(measured.gpuMax).toBeCloseTo(15 * 1024 ** 3, -6);
     expect(measured.gpuMax).toBeGreaterThan(inferred.gpuMax * 8);
     expect(measured.gpuSource).toMatch(/on the card/);
   });
@@ -583,9 +588,11 @@ describe('the GPU budget', () => {
     // Row textures are not the only GPU allocation: the scene and depth targets,
     // the heat accumulator (four-channel float in team mode), the level geometry.
     const b = detectBudgets(null, gpuHost(16));
-    expect(b.gpuMax).toBeLessThan(16 * 1024 ** 3);
-    expect(b.gpuCeiling).toBeLessThan(16 * 1024 ** 3);
-    expect(b.gpuCeiling).toBeGreaterThan(b.gpuMax);
+    expect(b.gpuMax).toBeLessThanOrEqual(15 * 1024 ** 3);
+    expect(b.gpuCeiling).toBeLessThanOrEqual(15 * 1024 ** 3);
+    expect(b.gpuCeiling).toBeGreaterThanOrEqual(b.gpuMax);
+    // 5 % where that is more than 1 GiB: 2.4 GiB of a 48 GiB card.
+    expect(detectBudgets(null, { ...gpuHost(48), totalBytes: 128 * 1024 ** 3 }).gpuMax).toBeCloseTo(48 * 1024 ** 3 * 0.95, -6);
   });
 
   it('opens the ceiling well above an inferred figure', () => {
@@ -721,7 +728,7 @@ describe('a RAM budget from the host', () => {
   });
 
   it('scales with installed memory, well past the browser cap', () => {
-    const small = detectBudgets(null, host(16, 14));
+    const small = detectBudgets(null, host(16, 10));
     const large = detectBudgets(null, host(256, 200));
     // Scaling holds until the tab's own wall, which is where it must stop: a
     // 256GiB machine cannot spend 153GB in a renderer that tops out near 12.
@@ -738,7 +745,7 @@ describe('a RAM budget from the host', () => {
     // through a load, which is the one failure this whole module exists to avoid.
     const b = detectBudgets(null, host(64, 4));
     expect(b.ramMax).toBeLessThan(4 * 1024 ** 3);
-    expect(b.ramSource).toMatch(/of free/);
+    expect(b.ramSource).toMatch(/4\.00 GB free/);
   });
 
   it('but free memory decides the default, never the maximum', () => {
@@ -750,21 +757,23 @@ describe('a RAM budget from the host', () => {
     // prompted this both figures now land on the tab's 12GB wall and collapse
     // into each other, which would make the test pass while checking nothing.
     // Under the wall the two shares stay distinct and the rule is visible.
+    // Free less the margin (2 GiB on a 16 GiB machine); the ceiling all of it but
+    // the margin, here at the tab's wall.
     const b = detectBudgets(null, host(16, 6));
-    expect(b.ramMax).toBeCloseTo(6 * 1024 ** 3 * 0.8, -6);
-    expect(b.ramCeiling).toBeCloseTo(16 * 1024 ** 3 * 0.6, -6);
+    expect(b.ramMax).toBeCloseTo(4 * 1024 ** 3, -6);
+    expect(b.ramCeiling).toBeCloseTo(Math.min(14 * 1024 ** 3, MAX_TAB_ARRAY_BYTES), -6);
     expect(b.ramCeiling).toBeGreaterThan(b.ramMax);
     // And raising it by hand has to stick.
     expect(clampBudgets({ ...b, ram: b.ramCeiling }).ram).toBe(b.ramCeiling);
   });
 
-  it('and the ceiling stops at the hardware share, not above it', () => {
-    // Opening the ceiling is not removing it: 60% of installed leaves the browser,
-    // the decoder and the OS the rest. Asking for 64GB of a 64GB machine is not a
-    // preference, it is a crash.
+  it('and the ceiling keeps the margin free, not above it', () => {
+    // Opening the ceiling is not removing it: the margin (5 %, 2 to 4 GiB) stays
+    // for the browser, the decoder and the OS. Asking for 64GB of a 64GB machine
+    // is not a preference, it is a crash.
     const b = detectBudgets(null, host(64, 24));
     expect(clampBudgets({ ...b, ram: 64 * 1024 ** 3 }).ram).toBeCloseTo(
-      Math.min(64 * 1024 ** 3 * 0.6, MAX_TAB_ARRAY_BYTES),
+      Math.min(64 * 1024 ** 3 - ramMargin(64 * 1024 ** 3), MAX_TAB_ARRAY_BYTES),
       -6,
     );
   });
@@ -813,12 +822,23 @@ describe('a RAM budget from the host', () => {
     expect(text).toMatch(/in use/);
   });
 
-  it('and by installed memory when free memory is the larger figure', () => {
-    // A freshly booted machine reports nearly all of its RAM free, and taking 80%
-    // of that would leave the browser, the decoder and the OS sharing the rest.
-    const b = detectBudgets(null, host(32, 31));
-    expect(b.ramMax).toBeCloseTo(Math.min(32 * 1024 ** 3 * 0.6, MAX_TAB_ARRAY_BYTES), -6);
-    expect(b.ramSource).toMatch(/of installed/);
+  it('takes what is free less a margin, not a share of what is installed', () => {
+    // The margin is 5 % of the machine, at least 2 and at most 4 GiB.
+    expect(ramMargin(8 * 1024 ** 3)).toBe(RAM_MARGIN_MIN);
+    expect(ramMargin(64 * 1024 ** 3)).toBeCloseTo(3.2 * 1024 ** 3, -6);
+    expect(ramMargin(256 * 1024 ** 3)).toBe(RAM_MARGIN_MAX);
+    const b = detectBudgets(null, host(12, 11));
+    expect(b.ramMax).toBeCloseTo(9 * 1024 ** 3, -6);
+    expect(b.ramSource).toMatch(/2\.00 GB kept free/);
+  });
+
+  it('counts the rows it holds as free again, so a reading does not shrink it by its own load', () => {
+    setHeldProvider(() => ({ gpuRows: 0, gpuOther: 0, ram: 3 * 1024 ** 3 }));
+    try {
+      expect(detectBudgets(null, host(12, 5)).ramMax).toBeCloseTo(6 * 1024 ** 3, -6);
+    } finally {
+      setHeldProvider(null);
+    }
   });
 
   it('works with total alone when free memory is unavailable', () => {
@@ -871,7 +891,7 @@ describe('a RAM budget from the host', () => {
   it('ignores a nonsensical reading rather than budgeting from it', () => {
     // Free above total is not a reading, it is a bug somewhere upstream.
     const b = detectBudgets(null, { totalBytes: 8 * 1024 ** 3, freeBytes: 99 * 1024 ** 3, cpus: 8, platform: 'linux', vramBytes: null, vramSource: null });
-    expect(b.ramMax).toBeLessThanOrEqual(8 * 1024 ** 3);
+    expect(b.ramMax).toBeLessThanOrEqual(8 * 1024 ** 3 - RAM_MARGIN_MIN);
   });
 
   it('lets a big load fit that the capped guess would have strided', () => {

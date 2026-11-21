@@ -419,6 +419,11 @@ export interface RenderBudget {
    * check — both go through `effectiveGpuBudget` (render/budget.ts).
    */
   gpuBudgetMax: number;
+  /**
+   * What the system allows right now (`Budgets.gpuLive`, the native app's live
+   * reading), which caps the two above; absent or null where nothing live was read.
+   */
+  gpuBudgetLive?: number | null;
 }
 
 export interface AxisMirror {
@@ -685,6 +690,12 @@ interface AppState {
    * have to agree on one set of numbers.
    */
   setBudgets: (b: Budgets) => void;
+  /**
+   * A fresh reading of the machine (the native app's re-check every few seconds):
+   * a budget the user left at the detected figure follows it, one they chose stays,
+   * and the live GPU figure caps either. Nothing is set when nothing moved.
+   */
+  refreshBudgets: (b: Budgets) => void;
   seek: (t: number) => void;
   setPlaying: (p: boolean) => void;
   patchTimeline: (p: Partial<Omit<TimelineSettings, 'seekNonce'>>) => void;
@@ -694,6 +705,16 @@ interface AppState {
   toggleTeam: (index: number, visible: boolean) => void;
   reportStats: (s: Partial<LiveStats>) => void;
   toggle: (key: 'showGrid' | 'showAxes') => void;
+}
+
+/** Whether a budget sits at the detected figure (the user has not moved it). */
+function atDetected(value: number, detected: number): boolean {
+  return Math.abs(value - detected) <= Math.max(1, detected * 0.001);
+}
+
+/** Within 64 MB or 1 %: a re-reading that moved less is not worth a render. */
+function near(a: number, b: number): boolean {
+  return Math.abs(a - b) <= Math.max(64 * 1024 ** 2, Math.abs(b) * 0.01);
 }
 
 /**
@@ -1042,6 +1063,36 @@ export const useStore = create<AppState>((set) => ({
           ...s.budget,
           gpuBudgetBytes: clamped.gpu,
           gpuBudgetMax: clamped.gpuCeiling,
+          gpuBudgetLive: clamped.gpuLive ?? null,
+        },
+      };
+    }),
+  refreshBudgets: (b) =>
+    set((s) => {
+      const prev = s.budgets;
+      const next = clampBudgets({
+        ...b,
+        ram: atDetected(prev.ram, prev.ramMax) ? b.ram : prev.ram,
+        gpu: atDetected(prev.gpu, prev.gpuMax) ? b.gpu : prev.gpu,
+        cpu: prev.cpu,
+      });
+      // Panels read these: no new object, and no render, for a reading that changed nothing that shows.
+      const same =
+        near(next.ram, prev.ram) &&
+        near(next.gpu, prev.gpu) &&
+        near(next.ramMax, prev.ramMax) &&
+        near(next.gpuMax, prev.gpuMax) &&
+        near(next.ramCeiling, prev.ramCeiling) &&
+        near(next.gpuCeiling, prev.gpuCeiling) &&
+        near(next.gpuLive ?? 0, prev.gpuLive ?? 0);
+      if (same) return {};
+      return {
+        budgets: next,
+        budget: {
+          ...s.budget,
+          gpuBudgetBytes: next.gpu,
+          gpuBudgetMax: next.gpuCeiling,
+          gpuBudgetLive: next.gpuLive ?? null,
         },
       };
     }),

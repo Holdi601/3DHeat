@@ -921,6 +921,13 @@ export interface Renderer {
   /** GPU memory ceiling for row data, in bytes. */
   gpuBudgetBytes: number;
   /**
+   * Give back GPU memory while more is held than `gpuBudgetBytes` allows: filter
+   * columns first, then one chunk of rows, the least recently drawn (a chunk not
+   * yet on the GPU before any that is). Called between frames, never in one.
+   * True when something was given back. Absent: the backend keeps what it has.
+   */
+  shrinkToBudget?(): boolean;
+  /**
    * The largest storage buffer the GPU tracks may use, bytes; 0 where the
    * backend cannot place units on the GPU (WebGL2).
    */

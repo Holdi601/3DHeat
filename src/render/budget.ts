@@ -6,13 +6,18 @@
  * the check approves and the renderer then partly leaves "Not resident". The
  * choice applies as made, above the detected figure too — past that figure it is
  * the user's judgement, which the Resources panel says in so many words — and is
- * capped only at `ceiling`, the highest the slider goes (`Budgets.gpuCeiling`).
+ * capped only at `ceiling`, the highest the slider goes (`Budgets.gpuCeiling`),
+ * and at `live`, what the system allows right now (`Budgets.gpuLive`).
  *
  * No floor: the slider has one of its own, and a smaller figure set from the
  * console is a deliberate way to see what residency limits do.
  */
-export function effectiveGpuBudget(requested: number, ceiling: number): number {
+export function effectiveGpuBudget(requested: number, ceiling: number, live?: number | null): number {
   if (!Number.isFinite(requested) || requested < 0) return 0;
-  if (!Number.isFinite(ceiling) || ceiling <= 0) return requested;
-  return Math.min(requested, ceiling);
+  // What the system allows right now (the native app's live reading) caps any
+  // choice, the user's too: a choice above it stays and applies again when the
+  // other programs give their memory back.
+  const cap = live != null && Number.isFinite(live) && live > 0 ? live : Infinity;
+  if (!Number.isFinite(ceiling) || ceiling <= 0) return Math.min(requested, cap);
+  return Math.min(requested, ceiling, cap);
 }

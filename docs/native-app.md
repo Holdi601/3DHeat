@@ -64,7 +64,22 @@ The core's own share: at 100 million rows reading 2.1 s, merging 0.8 s, sorting 
 
 Moving bytes from the core into the page: about 0.6 GB/s through the app's loopback server, 1.1 to 1.3 GB/s through WebView2 shared memory (what the app uses for columns and chunks), 0.1 GB/s through a custom URL scheme. A shared buffer holds at most 2 GiB, which is one reason the page's copy stops at 200 million rows.
 
-What limits a load now: the core's memory (about 40 bytes a row at its peak), and the GPU budget, 70 % of the card's memory (12 bytes a row of chunks; the app reads the card's size itself). The page no longer does.
+What limits a load now: the core's memory (about 40 bytes a row at its peak), and the GPU budget (12 bytes a row of chunks), both of them what the machine has free (see below). The page no longer does.
+
+## Memory budget
+
+The app budgets what the machine has free, not a fixed share of it, and reads it again every five seconds:
+
+| | What the app reads | The budget |
+|---|---|---|
+| Graphics card | Windows: the OS's budget for one program (DXGI `QueryVideoMemoryInfo`), and what every program and the app itself hold on the card (the "GPU Adapter Memory" and "GPU Process Memory" counters). Linux: the Vulkan driver's budget (`VK_EXT_memory_budget`), else the card's size | the card, or the OS's budget where lower, less what other programs hold, less 1 GB or 5 % of the card (whichever is more), less what the app holds besides its rows (the level, the render targets) |
+| System memory | installed, and available now | what is free less 5 % of the machine (at least 2 GB, at most 4 GB); the rows already loaded count as free |
+
+A budget you left at the detected figure follows the machine; one you chose under Resource budgets stays. The GPU figure the system allows now caps either: when another program takes memory on the card, the budget drops within seconds, and the app gives rows back, one chunk at a time between frames (the least recently drawn first: those outside the time window, then the latest), never in a frame. Those rows then show as not resident, as for a load larger than the budget; loading again brings them back. A choice above what the system allows applies again once the other program gives its memory back.
+
+The page's copy of a load the core built follows free memory too: about 30 bytes a row for the page beside about 40 for the core, at most 200 million rows (`heat3d.nativePageRows` sets it by hand).
+
+The Memory panel shows the reading: the card, what the system allows, what other programs and 3DHeat hold, what is kept free, what the rows may use, the system memory, and how long ago it was read. In the browser the dev server reports the system memory and the card's size once; Re-detect reads them again.
 
 ## Letting others in: `3dheat serve`
 

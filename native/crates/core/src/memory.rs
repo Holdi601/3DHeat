@@ -15,6 +15,12 @@ pub fn total_bytes() -> u64 {
     imp::total()
 }
 
+/// Physical memory available now (free, plus what the system would give back
+/// at once, such as file caches), bytes.
+pub fn available_bytes() -> u64 {
+    imp::available()
+}
+
 #[cfg(windows)]
 mod imp {
     #[repr(C)]
@@ -73,11 +79,19 @@ mod imp {
         counters().pagefile_usage as u64
     }
 
-    pub fn total() -> u64 {
+    fn status() -> MemoryStatusEx {
         let mut s = MemoryStatusEx { length: std::mem::size_of::<MemoryStatusEx>() as u32, ..Default::default() };
         // SAFETY: as above.
         unsafe { GlobalMemoryStatusEx(&mut s) };
-        s.total_phys
+        s
+    }
+
+    pub fn total() -> u64 {
+        status().total_phys
+    }
+
+    pub fn available() -> u64 {
+        status().avail_phys
     }
 }
 
@@ -101,13 +115,21 @@ mod imp {
         status("VmRSS:")
     }
 
-    pub fn total() -> u64 {
+    fn meminfo(key: &str) -> u64 {
         let s = std::fs::read_to_string("/proc/meminfo").unwrap_or_default();
         s.lines()
-            .find(|l| l.starts_with("MemTotal:"))
+            .find(|l| l.starts_with(key))
             .and_then(|l| l.split_whitespace().nth(1))
             .and_then(|v| v.parse::<u64>().ok())
             .map(|kb| kb * 1024)
             .unwrap_or(0)
+    }
+
+    pub fn total() -> u64 {
+        meminfo("MemTotal:")
+    }
+
+    pub fn available() -> u64 {
+        meminfo("MemAvailable:")
     }
 }

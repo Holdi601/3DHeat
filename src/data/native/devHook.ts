@@ -10,6 +10,7 @@
  *   uploading()             whether rows are still on their way to the GPU
  *   play(on)                the timeline playing or not
  *   parity(files, mapping)  the same load built by the core and by the page, every column compared
+ *   budget(gpu?)            the budgets, the live reading and the rows on the GPU; with `gpu`, that GPU budget chosen
  */
 
 import { call, coreEndpoint } from './core';
@@ -75,6 +76,28 @@ export function installNativeHook(): void {
     uploading() {
       const eng = (globalThis as unknown as { __3dheat_engine?: { renderer?: { dataPending?: boolean } } }).__3dheat_engine;
       return !!eng?.renderer?.dataPending;
+    },
+
+    async budget(gpu?: number) {
+      const { useStore } = await import('../../state/store');
+      const { useLiveMemory } = await import('../liveBudget');
+      if (typeof gpu === 'number') useStore.getState().setBudgets({ ...useStore.getState().budgets, gpu });
+      const b = useStore.getState().budgets;
+      const l = (globalThis as unknown as { __3dheat_engineLive?: { gpuBytes: number; residentRows: number; droppedRows: number } }).__3dheat_engineLive;
+      return {
+        gpu: b.gpu,
+        gpuMax: b.gpuMax,
+        gpuCeiling: b.gpuCeiling,
+        gpuLive: b.gpuLive ?? null,
+        ram: b.ram,
+        gpuSource: b.gpuSource,
+        ramSource: b.ramSource,
+        host: useLiveMemory.getState().host,
+        at: useLiveMemory.getState().at,
+        gpuBytes: l?.gpuBytes ?? 0,
+        residentRows: l?.residentRows ?? 0,
+        droppedRows: l?.droppedRows ?? 0,
+      };
     },
 
     async play(on: boolean) {

@@ -308,6 +308,14 @@ export interface Budgets {
   /** The card memory the host reported, when it could read it. */
   vramBytes: number | null;
   /**
+   * The GPU budget for rows the system allows right now, which caps any choice
+   * (`effectiveGpuBudget`); null where nothing live was read (a browser).
+   */
+  gpuLive?: number | null;
+  /** How the GPU and RAM budgets were made from the host's reading, for the Memory panel. */
+  gpuReading?: GpuReading | null;
+  ramReading?: RamReading | null;
+  /**
    * Logical cores available, and the number this machine should actually use.
    *
    * `cpu` is the parser threads: how many files a load parses at once, each in
@@ -347,29 +355,153 @@ const DEVICE_MEMORY_CAP_GIB = 8;
 const RAM_SHARE = 0.6;
 
 /**
- * Share of *currently free* memory spent on row data.
+ * What is left free on the card for the rest of the machine: 1 GiB, or 5 % of
+ * the card where that is more.
  *
- * Higher than the share of total, because free memory is already net of whatever
- * else is running — taking 60% of it as well would be discounting twice. Not all
- * of it, because the browser's own overhead for these arrays (page tables, the
- * decoder's working set, the GPU driver's staging copies) is real and is not
- * counted in the per-row model.
+ * Not a share of the card any more (it was 70 %): the budget is the system's
+ * own, read live, so what stays back only has to cover what the reading does
+ * not see coming - another program starting, the window growing its render
+ * targets (four-channel float at 4K is hundreds of megabytes), a level loading.
  */
-const FREE_SHARE = 0.8;
+export const VRAM_HEADROOM_MIN = 1024 ** 3;
+const VRAM_HEADROOM_SHARE = 0.05;
 
 /**
- * Share of the card's memory spent on row textures, and the most the slider
- * allows.
- *
- * Row data is not the only thing on the GPU: the scene, depth and heat targets
- * (the last of which is four-channel float in team mode, and at 4K that is
- * hundreds of megabytes), the level's geometry, and the browser's own
- * compositing. 70% leaves those room while being four times what the old
- * inference allowed on a 16GB card. The ceiling goes higher because a person who
- * knows their card is idle knows more than this constant does.
+ * What is left free in system memory: 5 % of it, at least 2 GiB and at most
+ * 4 GiB. The budget is what is free now minus this, not a share of what is
+ * installed: on a 64 GB machine with 40 GB free that is 37 GB, not 38 GB of 60 %.
  */
-const VRAM_SHARE = 0.7;
-const VRAM_CEILING_SHARE = 0.9;
+export const RAM_MARGIN_MIN = 2 * 1024 ** 3;
+export const RAM_MARGIN_MAX = 4 * 1024 ** 3;
+const RAM_MARGIN_SHARE = 0.05;
+
+export function vramHeadroom(card: number): number {
+  return Math.max(VRAM_HEADROOM_MIN, card * VRAM_HEADROOM_SHARE);
+}
+
+export function ramMargin(total: number): number {
+  return Math.min(RAM_MARGIN_MAX, Math.max(RAM_MARGIN_MIN, total * RAM_MARGIN_SHARE));
+}
+
+/**
+ * What this viewer holds now: its rows' and its other GPU bytes (the level, the
+ * world tiles) and its rows' system memory. Added back to a live reading, which
+ * counts them as taken: without that, every chunk uploaded would lower the
+ * budget, and the next reading would take it back by evicting it.
+ */
+export interface Held {
+  gpuRows: number;
+  gpuOther: number;
+  ram: number;
+}
+
+const NOTHING_HELD: Held = { gpuRows: 0, gpuOther: 0, ram: 0 };
+let heldNow: () => Held = () => NOTHING_HELD;
+
+/** Where `detectBudgets` learns what is held: the app registers the engine's counters. */
+export function setHeldProvider(fn: (() => Held) | null): void {
+  heldNow = fn ?? (() => NOTHING_HELD);
+}
+
+export function currentHeld(): Held {
+  try {
+    return heldNow();
+  } catch {
+    return NOTHING_HELD;
+  }
+}
+
+/** How the GPU budget was made from a reading of the card, for the Memory panel. */
+export interface GpuReading {
+  /** The card's own memory. */
+  card: number;
+  /** The OS's budget for one process, when it says. */
+  osBudget: number | null;
+  /** Held by other programs, when the system counts it. */
+  others: number | null;
+  /** Held by this app's processes, when the system counts it. */
+  own: number | null;
+  headroom: number;
+  /** What this app may hold in all: rows, level, targets. */
+  forUs: number;
+  /** What its rows may: the budget. */
+  rows: number;
+  /** The most the slider allows. */
+  ceiling: number;
+  /** Whether the reading moves with the machine (a budget or usage was read), so it caps any choice. */
+  live: boolean;
+}
+
+/**
+ * The GPU budget for rows from a reading of the card.
+ *
+ * - With what every program and this app hold (Windows' counters): the card,
+ *   or the OS's budget where lower, less what the others hold.
+ * - With a budget that already leaves out what other processes hold (Vulkan's,
+ *   on Linux), which counts the window's own GPU process among them: that, plus
+ *   what this viewer holds.
+ * - With the OS's budget alone, or only the card's size: that.
+ *
+ * Then less the headroom and less what this app holds besides its rows (the
+ * level and the world tiles).
+ */
+export function gpuReading(host: HostMemory, held: Held = NOTHING_HELD): GpuReading | null {
+  const card = host.vramBytes;
+  if (!card) return null;
+  const osBudget = host.vramBudgetBytes ?? null;
+  const used = host.vramUsedBytes ?? null;
+  const own = host.vramOwnBytes ?? null;
+  const headroom = vramHeadroom(card);
+  const limit = Math.min(card, osBudget ?? card);
+  const others = used !== null && own !== null ? Math.max(0, used - own) : null;
+  let forUs = limit;
+  // What this app holds is not taken from the counters' figure for it: memory a
+  // chunk gave back may stay with the window's GPU process a while (or in its
+  // allocator's pool), and counting that would lower the budget, give back
+  // another chunk, and so on. Its targets and compositing are what the headroom is for.
+  const besides = held.gpuOther;
+  if (others !== null) {
+    forUs = Math.min(limit, card - others);
+  } else if (osBudget !== null && host.vramBudgetNet) {
+    forUs = Math.min(card, osBudget + held.gpuRows + held.gpuOther);
+  }
+  const rows = Math.max(0, forUs - headroom - besides);
+  return {
+    card,
+    osBudget,
+    others,
+    own,
+    headroom,
+    forUs,
+    rows,
+    ceiling: Math.max(rows, limit - headroom - held.gpuOther),
+    live: osBudget !== null || others !== null,
+  };
+}
+
+/** How the RAM budget was made from a reading of the machine, for the Memory panel. */
+export interface RamReading {
+  total: number;
+  free: number;
+  margin: number;
+  /** This viewer's rows, counted as free again. */
+  held: number;
+}
+
+/**
+ * Rows the page keeps of a load the core builds, from what is free: the core
+ * needs about 40 bytes a row at its peak, the page's copy about 30 (shared with
+ * the core). At most `cap`, at least 10 million.
+ */
+export const CORE_BYTES_PER_ROW = 40;
+export const PAGE_BYTES_PER_ROW = 30;
+const MIN_PAGE_ROWS = 10_000_000;
+
+export function nativePageRowsFor(host: HostMemory | null, expectedRows: number, cap: number, held: Held = currentHeld()): number {
+  if (!host || host.freeBytes === null) return cap;
+  const spare = host.freeBytes + held.ram - ramMargin(host.totalBytes) - CORE_BYTES_PER_ROW * Math.max(0, expectedRows);
+  return Math.max(MIN_PAGE_ROWS, Math.min(cap, Math.floor(spare / PAGE_BYTES_PER_ROW)));
+}
 
 /**
  * How far past an *inferred* GPU ceiling the slider may go.
@@ -481,26 +613,27 @@ export function detectBudgets(hint?: GpuHint | null, host?: HostMemory | null): 
    * installed and 3GB free, 60% of total is a promise the OS cannot keep, and
    * finding that out means an out-of-memory crash partway through a long load.
    */
+  const held = currentHeld();
+  let ramReading: RamReading | null = null;
   if (host && host.totalBytes > 0) {
-    const fromTotal = host.totalBytes * RAM_SHARE;
-    const fromFree = host.freeBytes !== null ? host.freeBytes * FREE_SHARE : Infinity;
-    ramMax = Math.min(fromTotal, fromFree);
-    // The hardware bound, which is what the slider may be raised to. Free memory
-    // decides the *default* because it is what is safe this second; it must not
-    // decide the maximum, because closing an editor changes it and no measurement
-    // of a moment should stand in the way of that.
-    hostCeiling = fromTotal;
+    const margin = ramMargin(host.totalBytes);
+    if (host.freeBytes !== null) {
+      // Free above installed is not a reading: no more than installed, then.
+      const free = Math.min(host.freeBytes, host.totalBytes);
+      // What is free now, this viewer's own rows counted as free again, less the margin.
+      ramMax = Math.max(0, Math.min(host.totalBytes, free + held.ram) - margin);
+      // The slider may go to all but the margin of what is installed: free memory
+      // decides the *default* because it is what is safe this second; closing an
+      // editor changes it, and no measurement of a moment should stand in the way.
+      hostCeiling = Math.max(ramMax, host.totalBytes - margin);
+      ramReading = { total: host.totalBytes, free, margin, held: held.ram };
+      notes.push(t('data.memory.ram.live', { total: formatBytes(host.totalBytes), free: formatBytes(free), margin: formatBytes(margin) }));
+    } else {
+      ramMax = host.totalBytes * RAM_SHARE;
+      hostCeiling = ramMax;
+      notes.push(t('data.memory.ram.hostTotal', { total: formatBytes(host.totalBytes), percent: int(RAM_SHARE * 100) }));
+    }
     detected = true;
-    notes.push(
-      host.freeBytes !== null
-        ? t('data.memory.ram.host', {
-            total: formatBytes(host.totalBytes),
-            free: formatBytes(host.freeBytes),
-            basis: fromFree < fromTotal ? 'free' : 'installed',
-            percent: int((fromFree < fromTotal ? FREE_SHARE : RAM_SHARE) * 100),
-          })
-        : t('data.memory.ram.hostTotal', { total: formatBytes(host.totalBytes), percent: int(RAM_SHARE * 100) }),
-    );
   } else if (typeof nav.deviceMemory === 'number' && nav.deviceMemory > 0) {
     // Reported in GiB, rounded down to a power of two and capped at 8. Spend at
     // most 60% on row data.
@@ -610,21 +743,29 @@ export function detectBudgets(hint?: GpuHint | null, host?: HostMemory | null): 
    * 2GB inferred ceiling refused a 2.32GB load on a 16GB card.
    */
   let gpuCeiling = 0;
-  if (host?.vramBytes) {
-    gpuMax = host.vramBytes * VRAM_SHARE;
-    gpuCeiling = host.vramBytes * VRAM_CEILING_SHARE;
-    gpuSource = t('data.memory.gpu.card', {
-      vram: formatBytes(host.vramBytes),
+  const reading = host ? gpuReading(host, held) : null;
+  if (reading && host) {
+    gpuMax = reading.rows;
+    gpuCeiling = reading.ceiling;
+    const values = {
+      vram: formatBytes(reading.card),
       source: host.vramSource ?? t('data.memory.gpu.host'),
-      percent: int(VRAM_SHARE * 100),
-    });
+      headroom: formatBytes(reading.headroom),
+      rows: formatBytes(reading.rows),
+    };
+    gpuSource =
+      reading.others !== null
+        ? t('data.memory.gpu.live', { ...values, others: formatBytes(reading.others) })
+        : reading.osBudget !== null
+          ? t('data.memory.gpu.liveBudget', { ...values, budget: formatBytes(reading.osBudget) })
+          : t('data.memory.gpu.total', values);
   }
   gpuMax = Math.max(MIN_GPU_BUDGET, gpuMax);
   // With no measurement, the ceiling has to be well above the inference, because
   // the inference is not a fact about the card: the texture-size heuristic
   // separates integrated from discrete and stops there, so 2GB and 24GB read
   // alike. Eight times the 2GB default reaches 16GB, which is an ordinary card.
-  gpuCeiling = Math.max(gpuCeiling, host?.vramBytes ? gpuMax : gpuMax * INFERRED_VRAM_HEADROOM);
+  gpuCeiling = Math.max(gpuCeiling, reading ? gpuMax : gpuMax * INFERRED_VRAM_HEADROOM);
 
   // ---- CPU
   const cores = typeof nav.hardwareConcurrency === 'number' ? nav.hardwareConcurrency : 0;
@@ -650,6 +791,9 @@ export function detectBudgets(hint?: GpuHint | null, host?: HostMemory | null): 
     ramFreeBytes: host?.freeBytes ?? null,
     gpuCeiling,
     vramBytes: host?.vramBytes ?? null,
+    gpuLive: reading?.live ? Math.max(MIN_GPU_BUDGET, reading.rows) : null,
+    gpuReading: reading,
+    ramReading,
     cpu,
     cpuMax,
     ramSource: notes.join('; '),
@@ -728,6 +872,11 @@ function budgetNote(b: Budgets, limitedBy: 'ram' | 'gpu' | 'sort'): string {
     // it invites closing programs to free memory that was never short. That is
     // exactly what happened — a 2GB GPU ceiling refused a load and the message
     // underneath it talked about 63GB of RAM.
+    // Measured: no guess to correct. Only other programs' share is worth saying.
+    if (b.vramBytes) {
+      const others = b.gpuReading?.others ?? 0;
+      return others >= VRAM_HEADROOM_MIN ? t('data.memory.note.gpuBusy', { others: formatBytes(others) }) : '';
+    }
     return t('data.memory.note.gpu', { source: b.gpuSource, max: formatBytes(b.gpuMax) });
   }
   if (b.ramCapped) {
@@ -764,7 +913,7 @@ export function checkFit(fp: Footprint, budgets: Budgets): FitCheck {
   const ramRows = Math.floor(budgets.ram / Math.max(1, fp.peakPerRow));
   // The figure the renderer will be handed, decided the same way, so a load this
   // approves is a load that ends up resident.
-  const gpuBudget = effectiveGpuBudget(budgets.gpu, budgets.gpuCeiling ?? budgets.gpuMax);
+  const gpuBudget = effectiveGpuBudget(budgets.gpu, budgets.gpuCeiling ?? budgets.gpuMax, budgets.gpuLive);
   const gpuRows = Math.floor(gpuBudget / Math.max(1, fp.gpuPerRow));
   // The sort's ceiling counts as a third constraint, and it is a hard one: past
   // it the load cannot succeed at any budget, so it has to bound `maxRows` and be

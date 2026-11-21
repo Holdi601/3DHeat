@@ -71,6 +71,7 @@ import {
 import { t } from '../../i18n';
 import type { LevelIndexSets } from '../levelIndices';
 import type { NativeChunk } from '../../state/types';
+import { leastUsedChunk } from '../evict';
 
 /** Largest block index texture we size the per-frame buffer for. */
 const MAX_BLOCKS = MAX_PLAN_BLOCKS;
@@ -168,6 +169,13 @@ interface GpuChunk {
    */
   passBits: GPUBuffer | null;
   passKeys: string[];
+  /** The frame it was last drawn in (`leastUsedChunk`). */
+  drawnFrame: number;
+  /**
+   * Given back to a budget that dropped (`shrinkToBudget`): its buffers are gone
+   * and nothing draws it; it keeps its place, since chunks are known by index.
+   */
+  evicted: boolean;
 }
 
 /** The scene pass's background; the tactical display swaps exactly this for its own. */
@@ -360,7 +368,8 @@ export class WebgpuRenderer implements Renderer {
   private readonly filterOps: StageOps<GPUBuffer> = {
     chunkCount: () => this.chunks.length,
     chunkRows: (c) => this.chunks[c].rows,
-    resident: (c, column) => this.filterColumns.has(`${c}:${column}`),
+    // A chunk given back has nothing to stage.
+    resident: (c, column) => !!this.chunks[c]?.evicted || this.filterColumns.has(`${c}:${column}`),
     source: (column) => (this.dataset ? filterColumnData(this.dataset, column) : null),
     ready: (c, column) => !this.fullNative || this.coreColumnReady(c, column),
     reserve: (c) => {
@@ -398,6 +407,12 @@ export class WebgpuRenderer implements Renderer {
       this.device.queue.writeBuffer(buf, from * 4, data.buffer, 0, n * 4);
     },
     land: (c, column, buf) => {
+      if (this.chunks[c]?.evicted) {
+        // Given back while its column was on its way.
+        buf.destroy();
+        this.gpuBytesUsed -= Math.max(4, this.chunks[c].rows * 4);
+        return;
+      }
       this.filterColumns.set(`${c}:${column}`, buf);
       // On the GPU: the core's bytes of it go back.
       const e = this.coreColumns.get(`${c}:${column}`);
@@ -1566,6 +1581,7 @@ export class WebgpuRenderer implements Renderer {
     }
     this.lines = lines;
     for (const c of this.chunks) {
+      if (c.evicted) continue;
       // Three u32 per row: x | y<<16, z | flags<<16, the segment's seconds.
       const packed = packLineStarts(dataset, lines, c.start, c.rows, 3);
       c.lineStarts = this.makeBuffer(packed, GPUBufferUsage.STORAGE, `chunk ${c.start} line starts`);
@@ -1818,6 +1834,8 @@ export class WebgpuRenderer implements Renderer {
       filterSlots: 0,
       splitSlot: -1,
       weightSlot: -1,
+      drawnFrame: this.drawFrame,
+      evicted: false,
     };
     // Routes set while it was on its way get their starts now.
     if (this.lines) {
@@ -2407,6 +2425,7 @@ export class WebgpuRenderer implements Renderer {
 
   render(params: FrameParams): FrameResult {
     this.debug.frames++;
+    this.drawFrame++;
     this.ensureTargets(
       params.width,
       params.height,
@@ -3204,10 +3223,11 @@ export class WebgpuRenderer implements Renderer {
     let splitSkipped = 0;
     params.plan.forEach((plan, index) => {
       const chunk = this.chunks[plan.chunk];
-      if (!chunk || plan.blockCount === 0) {
+      if (!chunk || chunk.evicted || plan.blockCount === 0) {
         uniformOffsets.push(-1);
         return;
       }
+      chunk.drawnFrame = this.drawFrame;
       // The split's and the weight's columns only; the filters read pass bits.
       const { splitSlot } = this.ensureFilterValues(
         plan.chunk,
@@ -3926,7 +3946,7 @@ export class WebgpuRenderer implements Renderer {
     const stale: number[] = [];
     for (const plan of params.plan) {
       const chunk = this.chunks[plan.chunk];
-      if (!chunk || plan.blockCount === 0 || stale.includes(plan.chunk)) continue;
+      if (!chunk || chunk.evicted || plan.blockCount === 0 || stale.includes(plan.chunk)) continue;
       const have = chunk.passKeys;
       if (have.length === keys.length && have.every((k, i) => k === keys[i])) continue;
       stale.push(plan.chunk);
@@ -4034,6 +4054,81 @@ export class WebgpuRenderer implements Renderer {
     this.filterColumns.set(key, buf);
     this.gpuBytesUsed += buf.size;
     return buf;
+  }
+
+  /** Frames rendered, for each chunk's `drawnFrame`. */
+  private drawFrame = 0;
+
+  /** See `Renderer.shrinkToBudget`: called by the engine's budget timer, between frames. */
+  shrinkToBudget(): boolean {
+    if (this.gpuBytesUsed <= this.gpuBudgetBytes) return false;
+    const before = this.gpuBytesUsed;
+    // Filter columns first: made again when wanted, and nothing drawn goes.
+    this.evictFilterColumns(new Set(), 0);
+    if (this.gpuBytesUsed < before) return true;
+    // Then a chunk still on its way: nothing is drawn from it yet. Its core bytes
+    // go back when they arrive (`askNative` finds it gone).
+    const j = this.pendingChunks.pop();
+    if (j) {
+      j.positions?.destroy();
+      j.times?.destroy();
+      j.native?.positions?.done();
+      j.native?.times?.done();
+      this.gpuBytesUsed -= j.rows * (8 + (j.hasTime ? 4 : 0));
+      this.residentRows -= j.rows;
+      this.droppedRows += j.rows;
+      this.dataGeneration++;
+      return true;
+    }
+    const i = leastUsedChunk(this.chunks);
+    if (i < 0) return false;
+    this.evictChunk(i);
+    return true;
+  }
+
+  /** Give one landed chunk's GPU memory back; it stays in place, drawn by nothing. */
+  private evictChunk(i: number): void {
+    const c = this.chunks[i];
+    // Cached bind groups hold its buffers (see `setDataset`).
+    this.dropChunkBindGroups();
+    const job = this.dirJobs.get(c);
+    if (job) {
+      job.buf.destroy();
+      this.gpuBytesUsed -= align4(Math.max(4, c.rows));
+      this.dirJobs.delete(c);
+    }
+    this.gpuBytesUsed -= c.rows * (8 + (c.times ? 4 : 0));
+    if (c.lineStarts) this.gpuBytesUsed -= c.rows * 12;
+    if (c.dirs) this.gpuBytesUsed -= align4(Math.max(4, c.rows));
+    if (c.filterValues) this.gpuBytesUsed -= c.filterValues.size;
+    if (c.passBits) this.gpuBytesUsed -= c.passBits.size;
+    c.positions.destroy();
+    c.times?.destroy();
+    c.lineStarts?.destroy();
+    c.dirs?.destroy();
+    c.filterValues?.destroy();
+    c.passBits?.destroy();
+    c.lineStarts = null;
+    c.dirs = null;
+    c.filterValues = null;
+    c.passBits = null;
+    c.passKeys = [];
+    c.filterKey = '';
+    for (const [key, buf] of this.filterColumns) {
+      if (!key.startsWith(`${i}:`)) continue;
+      this.gpuBytesUsed -= buf.size;
+      buf.destroy();
+      this.filterColumns.delete(key);
+    }
+    for (const [key, e] of this.coreColumns) {
+      if (!key.startsWith(`${i}:`)) continue;
+      e.got?.done();
+      this.coreColumns.delete(key);
+    }
+    c.evicted = true;
+    this.residentRows -= c.rows;
+    this.droppedRows += c.rows;
+    this.dataGeneration++;
   }
 
   /** Free filter columns outside `keep` until `need` more bytes fit in the budget. */

@@ -163,6 +163,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "ash"
+version = "0.38.0+1.3.281"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0bb44936d800fea8f016d7f2311c6a4f97aebd5dc86f09906139ec848cf3a46f"
+dependencies = [
+ "libloading 0.8.9",
+]
+
+[[package]]
 name = "atk"
 version = "0.18.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1703,6 +1712,7 @@ name = "heat3d-app"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "ash",
  "getrandom 0.3.4",
  "heat3d-core",
  "heat3d-server",
