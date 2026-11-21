@@ -3,9 +3,12 @@ import { usePlanStore } from '../../state/planStore';
 import { useAnimationFrame, useEngine } from '../EngineContext';
 import { AXES, closestOnAxis, gimbalAxes, pivotOf, rayPlane, ringAngle, snapTo, type Axis, type Ray, type Transform } from '../../tactics/gizmo';
 import { keyAt, type Vec3 } from '../../tactics/plan';
-import { moveClassOf } from '../../tactics/speeds';
+import { modeSpeed, moveClassOf, speedTable } from '../../tactics/speeds';
 import { clock, planTimings, stepStart, unitsPerMetre } from '../../tactics/timing';
 import type { Engine } from '../../render/engine';
+import { num, t } from '../../i18n';
+
+const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 const COLORS: Record<Axis, string> = { x: '#e5484d', y: '#46a758', z: '#3e82f7' };
 const PLANES: { id: string; a: Axis; b: Axis; n: Axis }[] = [
@@ -220,6 +223,23 @@ function render(engine: Engine): string {
       if (s.tool === 'select') out.push(`<circle class="wp${sel.has(ref) || sel.has(a.id) ? ' on' : ''}" data-ref="${ref}" cx="${f1(q.x)}" cy="${f1(q.y)}" r="5"/>`);
       if (t && i > 0) out.push(`<text class="eta" x="${f1(q.x + 8)}" y="${f1(q.y - 8)}">+${(t.arrive[i] - t.depart[i - 1]).toFixed(1)} s · ${clock(t0 + t.arrive[i])}</text>`);
     });
+  }
+  // What is being drawn: how many points, and how to end it, by its last point.
+  const d = s.draft;
+  if (d && d.kind === 'arrow') {
+    const q = P(d.points[d.points.length - 1]);
+    if (q) out.push(`<text class="draft" x="${f1(q.x + 10)}" y="${f1(q.y + 18)}">${esc(t('tactics.draft.finish', { n: d.points.length - 1, group: d.group?.length ?? 1 }))}</text>`);
+  }
+  // The ruler's length, and the time it takes on foot.
+  const m = s.measure;
+  if (m && m.points.length >= 2) {
+    const upm = unitsPerMetre(plan);
+    let len = 0;
+    for (let i = 1; i < m.points.length; i++) len += Math.hypot(m.points[i].x - m.points[i - 1].x, m.points[i].y - m.points[i - 1].y, m.points[i].z - m.points[i - 1].z);
+    const metres = len / upm;
+    const run = modeSpeed(speedTable(plan.game), 'soldier', 'run');
+    const q = P(m.points[m.points.length - 1]);
+    if (q) out.push(`<text class="draft" x="${f1(q.x + 10)}" y="${f1(q.y - 10)}">${esc(t('tactics.measure.label', { m: num(metres, metres < 100 ? 1 : 0), run: run ? num(metres / run, 1) : '-' }))}</text>`);
   }
   const b = engine.boardBox;
   if (b) out.push(`<rect class="box" x="${f1(Math.min(b.x0, b.x1))}" y="${f1(Math.min(b.y0, b.y1))}" width="${f1(Math.abs(b.x1 - b.x0))}" height="${f1(Math.abs(b.y1 - b.y0))}"/>`);

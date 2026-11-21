@@ -165,9 +165,10 @@ export function planTimings(plan: Plan): Map<string, RouteTiming> {
   const hit = cache.get(plan);
   if (hit && hit.stamp === terrainStamp) return hit.byArrow;
   const byArrow = new Map<string, RouteTiming>();
+  const figures = new Map(plan.figures.map((f) => [f.id, f]));
   for (const a of plan.arrows) {
     if (a.style !== 'move' || !a.figure) continue;
-    const f = plan.figures.find((x) => x.id === a.figure);
+    const f = figures.get(a.figure);
     const t = f ? timeArrow(plan, a, f) : null;
     if (t) byArrow.set(a.id, t);
   }
@@ -177,13 +178,17 @@ export function planTimings(plan: Plan): Map<string, RouteTiming> {
 
 /** How long a step plays: its set seconds, or longer when a route in it takes longer. */
 export function stepDuration(plan: Plan, step: number): number {
-  const set = Math.max(0.1, plan.steps[step]?.seconds ?? 4);
-  if (plan.realTime === false) return set;
-  let longest = 0;
+  const hit = durations.get(plan);
+  if (hit && hit.stamp === terrainStamp) return hit.byStep[step] ?? Math.max(0.1, plan.steps[step]?.seconds ?? 4);
   const timings = planTimings(plan);
-  for (const a of plan.arrows) if (a.step === step) longest = Math.max(longest, timings.get(a.id)?.total ?? 0);
-  return Math.max(set, longest);
+  const longest = plan.steps.map(() => 0);
+  if (plan.realTime !== false) for (const a of plan.arrows) if (longest[a.step] !== undefined) longest[a.step] = Math.max(longest[a.step], timings.get(a.id)?.total ?? 0);
+  const byStep = plan.steps.map((s, i) => Math.max(Math.max(0.1, s.seconds ?? 4), longest[i]));
+  durations.set(plan, { stamp: terrainStamp, byStep });
+  return byStep[step] ?? Math.max(0.1, plan.steps[step]?.seconds ?? 4);
 }
+/** Each step's length, per plan and level: playback asks for them every frame. */
+const durations = new WeakMap<Plan, { stamp: number; byStep: number[] }>();
 
 /** Seconds from the plan's start to the start of a step. */
 export function stepStart(plan: Plan, step: number): number {

@@ -1034,7 +1034,17 @@ export class Engine {
       const p = toCanvas(e);
       this.boardBox = { ...this.boardBox, x1: p.x, y1: p.y };
     };
+    /** The board's last click, for telling a double click itself: the camera's pointer lock on each press can eat the browser's. */
+    let boardLast: { t: number; x: number; y: number } | null = null;
     const onUp = (e: MouseEvent) => {
+      // On the board a right click (not a right drag, which looks) ends what is being drawn.
+      if (e.button === 2 && downAt && useRaceStore.getState().tab === 'plan') {
+        const at = toCanvas(e);
+        const moved = Math.max(travel, Math.hypot(at.x - downAt.x, at.y - downAt.y));
+        downAt = null;
+        if (moved <= 4) usePlanStore.getState().finish();
+        return;
+      }
       if (e.button !== 0 || !downAt) return;
       const from = downAt;
       const at = toCanvas(e);
@@ -1050,6 +1060,16 @@ export class Engine {
       if (moved > 4) return;
       // The tactics board owns clicks on its tab.
       if (useRaceStore.getState().tab === 'plan') {
+        const now = performance.now();
+        const board = usePlanStore.getState();
+        const drawing = !!board.draft || (board.tool === 'measure' && !!board.measure && !board.measure.done);
+        if (drawing && boardLast && now - boardLast.t < 450 && Math.hypot(from.x - boardLast.x, from.y - boardLast.y) < 8) {
+          // The second click of a double click: the first put the last point down; this ends it.
+          boardLast = null;
+          board.finish();
+          return;
+        }
+        boardLast = { t: now, x: from.x, y: from.y };
         this.boardClick(from.x, from.y, e.shiftKey);
         return;
       }
@@ -1070,12 +1090,9 @@ export class Engine {
       if (useInspectStore.getState().pickOnClick) this.pickAt(from.x, from.y);
     };
     const onContext = (e: MouseEvent) => {
-      // On the board a right click ends what is being drawn.
+      // On the board a right click ends what is being drawn: on its button's release (above), as under the camera's pointer lock no menu event may come.
       if (useRaceStore.getState().tab === 'plan') {
         e.preventDefault();
-        const board = usePlanStore.getState();
-        if (board.draft) board.finish();
-        else board.cancel();
         return;
       }
       if (!this.measureEnabled) return;
@@ -1239,29 +1256,49 @@ export class Engine {
     const time = this.boardPlayTime ?? board.playTime;
     const at = board.playing ? playbackAt(board.plan, time) : { step: board.step, u: 0 };
     const c = this.boardCursor;
-    const key = [
-      boardIds.of(board.plan),
-      at.step,
-      at.u.toFixed(4),
-      board.selection.join(','),
-      boardIds.of(heat),
-      boardIds.of(board.draft),
-      c ? `${c.x.toFixed(3)},${c.y.toFixed(3)},${c.z.toFixed(3)}` : '',
-      board.tool === 'place' ? `${board.kind}|${board.team}|${board.yaw}` : '',
-    ].join('/');
-    if (this.boardFrame && key === this.boardKey) return [this.boardFrame, false];
-    this.boardKey = key;
-    this.boardFrame = this.boardScene.build(board.plan, {
+    // The figures are GPU instances, placed every frame (`boardFigures`); the
+    // rest is rebuilt only when it changes - with the moment shown only while
+    // something drawn follows a figure (a selection ring).
+    const followsTime = board.selection.length > 0;
+    const view = {
       step: at.step,
       u: at.u,
       selected: board.selected,
       selection: board.selection,
       heat,
       draft: board.draft,
+      measure: board.measure,
+      formation: board.formation,
       cursor: c,
       placing: board.tool === 'place' ? { kind: board.kind, team: board.team, yaw: board.yaw } : null,
-    });
+      instanced: true,
+    };
+    this.boardView = { plan: board.plan, view };
+    const key = [
+      boardIds.of(board.plan),
+      at.step,
+      followsTime ? at.u.toFixed(4) : '',
+      board.selection.join(','),
+      boardIds.of(heat),
+      boardIds.of(board.draft),
+      boardIds.of(board.measure),
+      board.formation,
+      c ? `${c.x.toFixed(3)},${c.y.toFixed(3)},${c.z.toFixed(3)}` : '',
+    ].join('/');
+    // While it plays the figures move every frame, so the frame is never one to skip.
+    if (this.boardFrame && key === this.boardKey) return [this.boardFrame, board.playing];
+    this.boardKey = key;
+    this.boardFrame = this.boardScene.build(board.plan, view);
     return [this.boardFrame, true];
+  }
+
+  /** What `buildBoard` showed this frame, for placing the figures once the frame's origin is known. */
+  private boardView: { plan: import('../tactics/plan').Plan; view: import('../tactics/scene').BoardView } | null = null;
+
+  /** The board's figures as GPU instances, relative to this frame's origin. */
+  private boardFigures(): FigureBatch[] | null {
+    const v = this.boardView;
+    return v ? this.boardScene.figures(v.plan, v.view, this.originArr) : null;
   }
 
   clearMeasure(): void {
@@ -3903,7 +3940,7 @@ export class Engine {
       trailVertCount,
       sceneTris,
       sceneTriVertCount,
-      figureBatches: !raceBuilt && s.mode === 'team' ? this.figureBatches : null,
+      figureBatches: boardTab ? this.boardFigures() : !raceBuilt && s.mode === 'team' ? this.figureBatches : null,
       gpuTracks: !raceBuilt && s.mode === 'team' ? this.gpuTracksParams : null,
       symbols: !raceBuilt && s.mode === 'team' && s.team.figures ? this.symbolParams(s) : null,
       overlayVerts,

@@ -226,3 +226,17 @@
   background: linear-gradient(90deg, rgb(26, 217, 64), rgb(242, 217, 51), rgb(242, 64, 51));
   margin: 4px 0 2px;
 }
+.board-gizmo .draft {
+  fill: #ffd84f;
+  font-size: 12px;
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: rgba(0, 0, 0, 0.8);
+  stroke-width: 3px;
+  pointer-events: none;
+}
+.tactics-tools button kbd {
+  font-size: 0.75em;
+  opacity: 0.6;
+  margin-left: 0.3em;
+}

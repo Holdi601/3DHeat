@@ -8,7 +8,8 @@
 
 import { VertexBuffer, type Rgb } from '../race/geometry';
 import { CATALOG } from '../figures/catalog';
-import { place, TemplateCache, type Template } from '../figures/kit';
+import { place, poseFrame, TemplateCache, type Template } from '../figures/kit';
+import { InstanceBatches, meshOf, NO_PITCH, type FigureBatch } from '../figures/instances';
 import { keyAt, onBoard, posesAt, throwArc, type Plan, type PlanArrow, type Vec3 } from './plan';
 import { gamePreset } from './games';
 import type { ArrivalGrid } from './telemetry';
@@ -23,10 +24,16 @@ export interface BoardView {
   /** The earliest-arrival overlay from telemetry, when shown. */
   heat?: ArrivalGrid | null;
   /** Points of an arrow or area being drawn, and where the cursor is. */
-  draft: { kind: 'arrow' | 'throw' | 'area'; style?: PlanArrow['style']; points: Vec3[]; team: string } | null;
+  draft: { kind: 'arrow' | 'throw' | 'area'; style?: PlanArrow['style']; points: Vec3[]; team: string; group?: string[] } | null;
+  /** The Measure tool's ruler. */
+  measure?: { points: Vec3[]; done: boolean } | null;
   cursor: Vec3 | null;
   /** The figure about to be placed, shown at the cursor. */
   placing: { kind: string; team: string; yaw: number } | null;
+  /** A group route keeps its shape (the store's `formation`); absent: it does. */
+  formation?: boolean;
+  /** The figures are drawn as GPU instances (`BoardScene.figures`), not into the triangles. */
+  instanced?: boolean;
 }
 
 export interface BoardFrame {
@@ -49,6 +56,7 @@ export function figureHeading(yaw: number): number {
 
 export class BoardScene {
   private readonly frame: BoardFrame = { tris: new VertexBuffer(), lines: new VertexBuffer() };
+  private readonly batches = new InstanceBatches();
 
   build(plan: Plan, view: BoardView): BoardFrame {
     const { tris, lines } = this.frame;
@@ -73,17 +81,22 @@ export class BoardScene {
       const here = a.step === view.step;
       if (!here && a.step !== view.step - 1) continue;
       arrow(tris, lines, a, color(a.team), width, here ? 0.85 : 0.22, preset.throwApex);
-      if (here) a.points.forEach((p, i) => (sel.has(a.id) || sel.has(`${a.id}#${i}`)) && ring(lines, p, width * 0.9, white));
+      if (here) {
+        a.points.forEach((p, i) => (sel.has(a.id) || sel.has(`${a.id}#${i}`)) && ring(lines, p, width * 0.9, white));
+        // A route's end: a ring round its last waypoint, so where it stops reads at a glance.
+        if (a.style !== 'throw' && a.points.length >= 2) endMark(lines, a.points[a.points.length - 1], width, color(a.team));
+      }
     }
-    // Figures where they are at this moment.
+    // Figures where they are at this moment: here on the CPU, or (`instanced`) by the GPU from `figures`.
     const poses = posesAt(plan, view.step, view.u);
     for (const f of plan.figures) {
       const p = poses.get(f.id);
       const t = templateOf(f.kind);
       if (!p || !t) continue;
       const col = color(f.team);
-      place(tris, t, { x: p.x, y: p.y, z: p.z, yaw: figureHeading(p.yaw), pitch: p.pitch, roll: p.roll, scale }, col);
       if (sel.has(f.id)) ring(lines, p, Math.max(t.max[0] - t.min[0], t.max[2] - t.min[2]) * 0.65 * scale + 0.3, white);
+      if (view.instanced) continue;
+      place(tris, t, { x: p.x, y: p.y, z: p.z, yaw: figureHeading(p.yaw), pitch: p.pitch, roll: p.roll, scale }, col);
       // Where the figure goes next, as a ghost, while editing.
       if (view.u === 0 && onBoard(f, view.step + 1)) {
         const next = f.keys[view.step + 1];
@@ -108,15 +121,68 @@ export class BoardScene {
       if (d.kind === 'area' && pts.length >= 2) {
         disc(tris, lines, pts[0], Math.hypot(pts[1].x - pts[0].x, pts[1].z - pts[0].z), col, 0.12);
       } else if (pts.length >= 2) {
-        arrow(tris, lines, { id: 'draft', step: view.step, team: d.team, style: d.kind === 'throw' ? 'throw' : (d.style ?? 'move'), points: pts }, col, width, 0.55, preset.throwApex);
+        const style = d.kind === 'throw' ? 'throw' : (d.style ?? 'move');
+        arrow(tris, lines, { id: 'draft', step: view.step, team: d.team, style, points: pts }, col, width, 0.55, preset.throwApex);
+        // A group route: each figure's own way, faintly, from where it stands.
+        if (d.group && d.group.length > 1) {
+          const c = d.points[0];
+          for (const fid of d.group) {
+            const f = plan.figures.find((x) => x.id === fid);
+            const k = f && keyAt(f, view.step);
+            if (!k) continue;
+            const off = view.formation === false ? { x: 0, z: 0 } : { x: k.x - c.x, z: k.z - c.z };
+            arrow(tris, lines, { id: 'draft', step: view.step, team: d.team, style, points: [k, ...pts.slice(1).map((p) => ({ x: p.x + off.x, y: p.y, z: p.z + off.z }))] }, col, width * 0.6, 0.3, preset.throwApex);
+          }
+        }
       }
       for (const p of d.points) ring(lines, p, width * 0.6, col);
     }
-    if (view.placing && view.cursor) {
+    // The ruler: a white line through its points, a ring at each.
+    const m = view.measure;
+    if (m && m.points.length) {
+      const pts = !m.done && view.cursor ? [...m.points, view.cursor] : m.points;
+      for (let i = 0; i + 1 < pts.length; i++) lines.line([pts[i].x, pts[i].y + 0.1, pts[i].z], [pts[i + 1].x, pts[i + 1].y + 0.1, pts[i + 1].z], white, 1);
+      for (const p of m.points) ring(lines, p, width * 0.5, white);
+    }
+    if (view.placing && view.cursor && !view.instanced) {
       const t = templateOf(view.placing.kind);
       if (t) place(tris, t, { x: view.cursor.x, y: view.cursor.y, z: view.cursor.z, yaw: figureHeading(view.placing.yaw), scale }, color(view.placing.team), 0.55);
     }
     return this.frame;
+  }
+
+  /**
+   * The figures as GPU instances (`figures/instances.ts`): where each stands
+   * at this moment, its ghost in the next step while editing, and the one
+   * about to be placed - 16 floats a figure a frame instead of every vertex.
+   * Positions relative to `origin` (FrameParams.viewProjRel), so it is called
+   * once the frame's origin is known.
+   */
+  figures(plan: Plan, view: BoardView, origin: ArrayLike<number>): FigureBatch[] {
+    const out = this.batches;
+    out.reset();
+    const scale = Math.max(0.05, plan.figureScale);
+    const color = (team: string): Rgb => plan.teams.find((t) => t.id === team)?.color ?? [0.8, 0.8, 0.8];
+    const [ox, oy, oz] = [origin[0], origin[1], origin[2]];
+    const put = (kind: string, p: { x: number; y: number; z: number; yaw: number; pitch?: number; roll?: number }, col: Rgb, alpha: number, turret = 0, gun = NO_PITCH) => {
+      const t = templateOf(kind);
+      if (!t) return;
+      out.add(meshOf(t), poseFrame({ x: p.x - ox, y: p.y - oy, z: p.z - oz, yaw: figureHeading(p.yaw), pitch: p.pitch, roll: p.roll }), scale, col, alpha, turret, gun);
+    };
+    const poses = posesAt(plan, view.step, view.u);
+    for (const f of plan.figures) {
+      const p = poses.get(f.id);
+      if (!p) continue;
+      const col = color(f.team);
+      put(f.kind, p, col, 1, p.turret ?? 0, p.gun ?? NO_PITCH);
+      if (view.u === 0 && onBoard(f, view.step + 1)) {
+        const next = f.keys[view.step + 1];
+        const now = keyAt(f, view.step);
+        if (next && now && (next.x !== now.x || next.z !== now.z)) put(f.kind, next, col, 0.3);
+      }
+    }
+    if (view.placing && view.cursor) put(view.placing.kind, { ...view.cursor, yaw: view.placing.yaw }, color(view.placing.team), 0.55);
+    return out.list;
   }
 }
 
@@ -151,6 +217,16 @@ function ring(lines: VertexBuffer, p: Vec3, r: number, col: Rgb): void {
     const a1 = ((i + 1) / n) * Math.PI * 2;
     lines.line([p.x + Math.cos(a0) * r, p.y + 0.08, p.z + Math.sin(a0) * r], [p.x + Math.cos(a1) * r, p.y + 0.08, p.z + Math.sin(a1) * r], col, 1);
   }
+}
+
+/** A route's end: two rings and a cross through them, in its colour. */
+function endMark(lines: VertexBuffer, p: Vec3, width: number, col: Rgb): void {
+  const r = width * 1.6;
+  ring(lines, p, r, col);
+  ring(lines, p, r * 0.6, col);
+  const y = p.y + 0.1;
+  lines.line([p.x - r, y, p.z], [p.x + r, y, p.z], col, 1);
+  lines.line([p.x, y, p.z - r], [p.x, y, p.z + r], col, 1);
 }
 
 function disc(tris: VertexBuffer, lines: VertexBuffer, c: Vec3, r: number, col: Rgb, alpha: number): void {

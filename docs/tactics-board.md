@@ -13,7 +13,7 @@ The **Tactics** tab is a drawing board for a team plan: you put little figures o
 1. Open the **Tactics** tab. Pick the **Game** (for example Counter-Strike 2) and, for Valorant, press **Load Valorant maps** and pick a **Map**. Or load a [level](levels.md) first.
 2. Pick a **Side** (it sets the colour) and press **Top view**.
 3. Choose **Place**, pick a figure in **Figures** (use **Search figures** to find one) and click on the map. Place two or three.
-4. Choose **Arrow**, click on a figure, click along the way it should go, and press **Enter** to end the arrow.
+4. Choose **Waypoints** (`3`), click on a figure, click each waypoint along the way it should go, and finish the route with **Enter**, a double click, a right click or **Esc**. A ring with a cross marks where it ends.
 5. Press **+** under the view to add step 2. Each figure starts where its arrow ended. Draw more arrows there.
 6. Press **▶** (or `K`) to play the plan from the shown step to the end.
 7. Name the plan in **Plan name** and press **Save**.
@@ -33,17 +33,36 @@ Without a level the board is the flat ground plane. Load a level under **Level**
 
 ## Tools
 
-| Tool | Click | Notes |
-|---|---|---|
-| **Select** | A figure, a waypoint, an arrow, an area or a note selects it. | Shift+click adds or removes; Shift+drag draws a box round what to add. The selection gets a transform gizmo (see below); `Delete` or `Backspace` removes it. `M` moves the selected figure to the next click. |
-| **Place** | Puts the chosen figure down. | A figure is chosen in the **Figures** palette (with **Search figures**). With nothing selected, `R` turns the next figure by 15° before it is placed (`Shift+R` the other way). |
-| **Arrow** | Each click adds a point; Enter, a double click or a right click ends it, Esc drops it. | **Move**, **Attack** (wider head) or **Watch** (a thin line at eye height). An arrow begun on a figure is that figure's route in this step: played back, the figure walks it, and the next step starts where it ended. |
-| **Throw** | The thrower, then where it lands. | A dashed arc from the one to the other, and the chosen utility (smoke, flash, molotov, ...) appears where it lands and stays from this step on. |
-| **Area** | The middle, then the edge. | A disc in the side's colour. |
-| **Note** | Where the note goes; asks for its text. | Shown as a pin, and its text over it. |
-| **Erase** | A figure, arrow, area or note. | Removes it from this step on; on its first step, removes it. |
+Every tool has a key: a digit, and a letter the camera does not fly with. Each button shows its digit; its tooltip shows both.
 
-**Undo** and **Redo** (`Ctrl+Z`; `Ctrl+Y` or `Ctrl+Shift+Z`) step through every change. A line under the plan shows how many figures, arrows and steps it has. **Top view** looks straight down (orthographic), **3D view** returns to perspective, **Frame** fits the plan, or the level when the plan is empty.
+| Tool | Keys | Click | Notes |
+|---|---|---|---|
+| **Select** | `1`, `V` | A figure, a waypoint, a route, an area or a note selects it. | Shift+click adds or removes; Shift+drag draws a box round what to add; `Ctrl+A` takes everything in the step. The selection gets a transform gizmo (see below), so several figures move, turn and scale together. `Delete` or `Backspace` removes the selection after asking. `M` moves the selected figure to the next click. |
+| **Place** | `2`, `P` | Puts the chosen figure down. | A figure is chosen in the **Figures** palette (with **Search figures**). With nothing selected, `R` turns the next figure by 15° before it is placed (`Shift+R` the other way). |
+| **Waypoints** | `3`, `L` | A figure, then each waypoint. | **Move**, **Attack** (wider head) or **Watch** (a thin line at eye height). A route begun on a figure is that figure's way in this step: played back, the figure walks it, and the next step starts where it ended. Begun off every figure, it is a free arrow. |
+| **Throw** | `4`, `H` | The thrower, then where it lands. | A dashed arc from the one to the other, and the chosen utility (smoke, flash, molotov, ...) appears where it lands and stays from this step on. |
+| **Area** | `5`, `O` | The middle, then the edge. | A disc in the side's colour. |
+| **Note** | `6`, `N` | Where the note goes; asks for its text. | Shown as a pin, and its text over it. |
+| **Erase** | `8`, `X` | A figure, route, area or note. | Removes it from this step on; on its first step, removes it. |
+| **Measure** | `9`, `U` | Each point of the way to measure. | A white line through the points, with its length in metres and the time it takes running in the plan's game. Finished like a route; it stays until the next click or `Esc`. |
+
+### Finishing a route
+
+While a route (or a ruler) is being drawn, its last point shows how many waypoints it has and how to finish it, and the sidebar shows **Finish**, **Last point back** and **Drop**. Each of these finishes it:
+
+- **Enter**;
+- a **double click**: the first click puts the last waypoint down, the second finishes;
+- a **right click** without dragging (a right drag still turns the camera);
+- **Esc**: it keeps the route when it has at least one waypoint, and drops it when it has only its start;
+- picking another tool, which keeps what was drawn.
+
+**Backspace** takes the last point back. A finished route ends in a ring with a cross in its side's colour.
+
+### Group routes
+
+Select several figures (Shift+click or Shift+drag) and draw with **Waypoints**, starting on one of them or off every figure: each figure gets its own route through the clicked points, from where it stands. With **Keep the group's shape** (on by default) each route is the clicked one moved by where the figure stood in the group, so the group keeps its formation; off, every figure walks to the same points. While drawing, each figure's way shows faintly. Each new route replaces the figure's route in that step.
+
+**Undo** and **Redo** (`Ctrl+Z`; `Ctrl+Y` or `Ctrl+Shift+Z`) step through every change; removing a selection of many things is one step. A line under the plan shows how many figures, routes and steps it has. **Top view** looks straight down (orthographic), **3D view** returns to perspective, **Frame** fits the plan, or the level when the plan is empty.
 
 **Figure size** scales every figure on the board; 1× is true size, which from far above is a few pixels for a person.
 

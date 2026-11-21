@@ -24,6 +24,7 @@ import { ObjectiveLabels } from './ui/match/ObjectiveLabels';
 import { MatchPanel } from './ui/match/MatchPanel';
 import { BoardBar, TacticsPanel } from './ui/tactics/TacticsPanel';
 import { BoardLabels } from './ui/tactics/BoardLabels';
+import { boardKeyDown } from './ui/tactics/boardKeys';
 import { ReplayOverlay } from './ui/replay/ReplayOverlay';
 import { HitMarkTip } from './ui/replay/HitMarkTip';
 import { ReplayExtras } from './ui/replay/ReplayExtras';
@@ -287,60 +288,8 @@ export function App() {
       }
       const race = useRaceStore.getState();
       if (race.tab === 'plan') {
-        const board = usePlanStore.getState();
-        const ctrl = ev.ctrlKey || ev.metaKey;
-        if (ctrl && ev.code === 'KeyZ') {
-          ev.preventDefault();
-          if (ev.shiftKey) board.redo();
-          else board.undo();
-          return;
-        }
-        if (ctrl && ev.code === 'KeyY') {
-          ev.preventDefault();
-          board.redo();
-          return;
-        }
-        if (ev.code === 'Enter') {
-          board.finish();
-          return;
-        }
-        if (ev.code === 'Escape') {
-          if (board.dragBase) board.cancelDrag();
-          else if (board.draft || board.moving) board.cancel();
-          else board.select(null);
-          return;
-        }
-        if ((ev.code === 'Delete' || ev.code === 'Backspace') && board.selection.length) {
-          ev.preventDefault();
-          // Whole things first; a point of an arrow being removed with it is gone already.
-          const whole = board.selection.filter((r) => !r.includes('#'));
-          for (const r of whole.length ? whole : board.selection.slice(-1)) usePlanStore.getState().remove(r);
-          return;
-        }
-        // The gizmo's keys: W/E/R as in Unity and Unreal, or G/R/S as in Blender.
-        const gizmoKeys: Record<string, Record<string, 'move' | 'rotate' | 'scale'>> = {
-          editor: { KeyW: 'move', KeyE: 'rotate', KeyR: 'scale' },
-          blender: { KeyG: 'move', KeyR: 'rotate', KeyS: 'scale' },
-        };
-        const gm = !ctrl && !ev.altKey && board.selection.length ? gizmoKeys[board.keyScheme][ev.code] : undefined;
-        if (gm) {
-          board.setGizmo(gm);
-          return;
-        }
-        if (ev.code === 'KeyR' && !ctrl) {
-          board.rotateSelected(ev.shiftKey ? -Math.PI / 12 : Math.PI / 12);
-          return;
-        }
-        if (ev.code === 'KeyM' && !ctrl && board.selected) {
-          board.startMove();
-          return;
-        }
-        if (ev.code === 'KeyK') {
-          ev.preventDefault();
-          board.play(!board.playing);
-          return;
-        }
-        if (ev.code.startsWith('Digit')) return;
+        // The board's own keys (ui/tactics/boardKeys.ts); the heat modes' number keys do nothing here.
+        if (boardKeyDown(ev) || ev.code.startsWith('Digit')) return;
       }
       // The vehicle heatmap has no timeline and no heat modes: only framing (F) and the help keys reach it.
       if (race.tab === 'vehicle' && ev.code !== 'KeyF') return;

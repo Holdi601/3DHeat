@@ -12,6 +12,7 @@ import { figureLabel } from '../../tactics/names';
 import { num, t } from '../../i18n';
 import { expandContainerFiles } from '../../data/container';
 import { NumberBox } from '../NumberBox';
+import { confirmRemoveSelection } from './boardKeys';
 import { SortControl, SortTh } from '../sort/SortControl';
 import { useSort, useSorted } from '../sort/useSort';
 
@@ -128,7 +129,7 @@ export function SelectionInspector() {
             {t('tactics.move')}
           </button>
         )}
-        <button onClick={() => selection.forEach((r) => usePlanStore.getState().remove(r))} title="Del">
+        <button onClick={() => confirmRemoveSelection()} title="Delete">
           {t('tactics.remove')}
         </button>
       </div>

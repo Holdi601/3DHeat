@@ -17,15 +17,35 @@ import { applyTransform, type GizmoMode, type Transform } from '../tactics/gizmo
 import type { Mode } from '../tactics/speeds';
 import { routeModes, stepStart } from '../tactics/timing';
 
-export type BoardTool = 'select' | 'place' | 'arrow' | 'throw' | 'area' | 'note' | 'erase';
+export type BoardTool = 'select' | 'place' | 'waypoints' | 'throw' | 'area' | 'note' | 'draw' | 'erase' | 'measure';
+
+/** The board's tools in toolbar order, with their keys: a digit each, and a letter where one is free of the camera's. */
+export const BOARD_TOOLS: { id: BoardTool; digit: string; letter: string }[] = [
+  { id: 'select', digit: '1', letter: 'V' },
+  { id: 'place', digit: '2', letter: 'P' },
+  { id: 'waypoints', digit: '3', letter: 'L' },
+  { id: 'throw', digit: '4', letter: 'H' },
+  { id: 'area', digit: '5', letter: 'O' },
+  { id: 'note', digit: '6', letter: 'N' },
+  { id: 'erase', digit: '8', letter: 'X' },
+  { id: 'measure', digit: '9', letter: 'U' },
+];
 
 interface Draft {
   kind: 'arrow' | 'throw' | 'area';
   style?: ArrowStyle;
   points: Vec3[];
   team: string;
-  /** The figure an arrow starts at, when it was begun on one. */
+  /** The figure a route starts at, when it was begun on one. */
   figure?: string;
+  /** A group route: every figure that gets it, each from where it stands (`figure` is the first). */
+  group?: string[];
+}
+
+/** A ruler on the board: points clicked with the Measure tool; `done` once finished, kept on screen until the next. */
+export interface BoardMeasure {
+  points: Vec3[];
+  done: boolean;
 }
 
 export interface PlanState {
@@ -53,6 +73,9 @@ export interface PlanState {
   /** The plan as a gizmo drag began, while one is under way. */
   dragBase: Plan | null;
   draft: Draft | null;
+  /** A group route keeps the group's shape (each figure offset from the clicked points), or sends all along the same points. */
+  formation: boolean;
+  measure: BoardMeasure | null;
   /** Moving a selected figure: the next click puts it there. */
   moving: boolean;
   playing: boolean;
@@ -95,9 +118,15 @@ export interface PlanState {
   setSpeedOverride: (figure: string, mode: Mode, metresPerSecond: number | null) => void;
   setUnitsPerMetre: (k: number | null) => void;
   setRealTime: (on: boolean) => void;
-  /** Ends the arrow or area being drawn (double click, Enter, right click). */
+  /** Ends the route, arrow, area or ruler being drawn (Enter, double click, right click, Esc). */
   finish: () => void;
+  /** Takes back the last point of what is being drawn (Backspace); drops it when only its start is left. */
+  undoPoint: () => void;
+  setFormation: (on: boolean) => void;
   cancel: () => void;
+  /** Removes every selected thing in one undo step. */
+  removeSelection: () => void;
+  selectAll: () => void;
   rotateSelected: (by: number) => void;
   setLabel: (id: string, label: string) => void;
   remove: (id: string) => void;
@@ -159,6 +188,8 @@ export const usePlanStore = create<PlanState>((set, get) => ({
   angleStep: 15,
   dragBase: null,
   draft: null,
+  formation: true,
+  measure: null,
   moving: false,
   playing: false,
   playTime: 0,
@@ -174,10 +205,14 @@ export const usePlanStore = create<PlanState>((set, get) => ({
     if (!plan.figures.length && !plan.arrows.length) plan.teams = preset.teams;
     set({ ...edit(s, plan), team: plan.teams[0].id, kind: preset.palette[0].items[0] ?? 'soldier' });
   },
-  setTool: (tool) => set({ tool, draft: null, moving: false }),
+  setTool: (tool) => {
+    // A route half drawn is kept, not lost, when the tool changes.
+    if (get().draft) get().finish();
+    set({ tool, draft: null, moving: false, measure: tool === 'measure' ? get().measure : null });
+  },
   setKind: (kind) => set({ kind, tool: 'place', draft: null }),
   setTeam: (team) => set({ team }),
-  setArrowStyle: (arrowStyle) => set({ arrowStyle, tool: 'arrow', draft: null }),
+  setArrowStyle: (arrowStyle) => set({ arrowStyle, tool: 'waypoints', draft: null }),
   setStep: (step) => set({ step: Math.max(0, Math.min(get().plan.steps.length - 1, step)), draft: null, playing: false }),
   addStep: () => {
     const s = get();
@@ -268,14 +303,25 @@ export const usePlanStore = create<PlanState>((set, get) => ({
         set({ ...edit(s, plan), selected: id, selection: [id] });
         return;
       }
-      case 'arrow':
+      case 'waypoints':
       case 'throw': {
         if (!s.draft) {
+          const kind = s.tool === 'throw' ? 'throw' : 'arrow';
+          const style = s.tool === 'throw' ? 'throw' : s.arrowStyle;
+          // Several figures selected and the click on one of them, or off every figure: one route for the group.
+          const group = s.tool === 'waypoints' && style === 'move' ? movableSelection(s.plan, step, s.selection) : [];
+          if (group.length > 1 && (!hit || group.includes(hit))) {
+            const keys = group.map((id) => keyAt(s.plan.figures.find((f) => f.id === id)!, step)!);
+            const c = keys.reduce((a, k) => ({ x: a.x + k.x / keys.length, y: a.y + k.y / keys.length, z: a.z + k.z / keys.length }), { x: 0, y: 0, z: 0 });
+            const lead = s.plan.figures.find((f) => f.id === group[0])!;
+            set({ draft: { kind, style, points: [c], team: lead.team, figure: group[0], group } });
+            return;
+          }
           // Begun on a figure: the arrow starts at it and becomes its route (or its throw).
           const f = hit ? s.plan.figures.find((x) => x.id === hit) : null;
           const k = f ? keyAt(f, step) : null;
           const start = k ? { x: k.x, y: k.y, z: k.z } : at;
-          set({ draft: { kind: s.tool, style: s.tool === 'throw' ? 'throw' : s.arrowStyle, points: [start], team: f?.team ?? s.team, figure: f?.id } });
+          set({ draft: { kind, style, points: [start], team: f?.team ?? s.team, figure: f?.id } });
           return;
         }
         // A double click to finish delivers two clicks on the same spot first:
@@ -315,14 +361,48 @@ export const usePlanStore = create<PlanState>((set, get) => ({
         if (id) get().remove(id);
         return;
       }
+      case 'measure': {
+        const m = s.measure;
+        if (!m || m.done) {
+          set({ measure: { points: [at], done: false } });
+          return;
+        }
+        const last = m.points[m.points.length - 1];
+        if (Math.hypot(at.x - last.x, at.y - last.y, at.z - last.z) < 1e-3) return;
+        set({ measure: { points: [...m.points, at], done: false } });
+        return;
+      }
+      case 'draw':
+        return;
     }
   },
 
   finish: () => {
     const s = get();
+    if (s.tool === 'measure' && s.measure && !s.measure.done) {
+      set({ measure: s.measure.points.length >= 2 ? { ...s.measure, done: true } : null });
+      return;
+    }
     const d = s.draft;
     if (!d) return;
     const plan = clone(s.plan);
+    if (d.group && d.points.length >= 2) {
+      // Each figure of the group its own route: from where it stands, through
+      // the clicked points (offset by where it stood in the group, to keep the
+      // shape), replacing its route in this step.
+      const c = d.points[0];
+      for (const fid of d.group) {
+        const f = plan.figures.find((x) => x.id === fid);
+        const k = f && keyAt(f, s.step);
+        if (!f || !k) continue;
+        const off = s.formation ? { x: k.x - c.x, z: k.z - c.z } : { x: 0, z: 0 };
+        const points = [{ x: k.x, y: k.y, z: k.z }, ...d.points.slice(1).map((p) => ({ x: p.x + off.x, y: p.y, z: p.z + off.z }))];
+        plan.arrows = plan.arrows.filter((a) => !(a.step === s.step && a.figure === fid && a.style === 'move'));
+        plan.arrows.push({ id: newId('r'), step: s.step, team: f.team, style: 'move', points, figure: fid });
+      }
+      set({ ...edit(s, plan), draft: null });
+      return;
+    }
     if (d.kind === 'area' && d.points.length >= 2) {
       const [c, e] = d.points;
       plan.areas.push({ id: newId('a'), step: s.step, team: d.team, centre: c, radius: Math.max(0.5, Math.hypot(e.x - c.x, e.z - c.z)), label: '' });
@@ -346,7 +426,34 @@ export const usePlanStore = create<PlanState>((set, get) => ({
     }
     set({ ...edit(s, plan), draft: null });
   },
-  cancel: () => set({ draft: null, moving: false }),
+  undoPoint: () => {
+    const s = get();
+    if (s.tool === 'measure' && s.measure && !s.measure.done) {
+      set({ measure: s.measure.points.length > 1 ? { ...s.measure, points: s.measure.points.slice(0, -1) } : null });
+      return;
+    }
+    if (!s.draft) return;
+    set({ draft: s.draft.points.length > 1 ? { ...s.draft, points: s.draft.points.slice(0, -1) } : null });
+  },
+  setFormation: (formation) => set({ formation }),
+  cancel: () => set({ draft: null, moving: false, measure: null }),
+  removeSelection: () => {
+    const s = get();
+    if (!s.selection.length) return;
+    const start = s.plan;
+    // Whole things first; a point of an arrow removed with it is gone already.
+    const whole = s.selection.filter((r) => !r.includes('#'));
+    const points = s.selection.filter((r) => r.includes('#')).sort((a, b) => Number(b.split('#')[1]) - Number(a.split('#')[1]));
+    for (const r of [...whole, ...points]) get().remove(r);
+    // One undo step for the lot.
+    const after = get();
+    if (after.plan !== start) set({ past: [...s.past.slice(-99), start], future: [], selection: [], selected: null });
+  },
+  selectAll: () => {
+    const s = get();
+    const refs = [...s.plan.figures.filter((f) => onBoard(f, s.step)).map((f) => f.id), ...s.plan.arrows.filter((a) => a.step === s.step).map((a) => a.id), ...s.plan.areas.filter((a) => a.step === s.step).map((a) => a.id), ...s.plan.notes.filter((n) => n.step === s.step).map((n) => n.id)];
+    set({ selection: refs, selected: refs[refs.length - 1] ?? null, tool: 'select', draft: null });
+  },
   rotateSelected: (by) => {
     const s = get();
     if (!s.selected) {
@@ -555,6 +662,17 @@ export const usePlanStore = create<PlanState>((set, get) => ({
     set({ ...edit(s, emptyPlan(preset.id, preset.teams, s.plan.level)), step: 0, selected: null, selection: [], draft: null });
   },
 }));
+
+// Handle for the board's smoke test (tools/smoke-tactics.mjs); dev only.
+if (import.meta.env?.DEV && typeof window !== 'undefined') (window as unknown as Record<string, unknown>).__3dheat_plan = usePlanStore;
+
+/** The selected figures that move by themselves and stand on the board in `step`: who a group route is for. */
+export function movableSelection(plan: Plan, step: number, selection: string[]): string[] {
+  return selection.filter((id) => {
+    const f = plan.figures.find((x) => x.id === id);
+    return !!f && onBoard(f, step) && !!keyAt(f, step) && CATALOG[f.kind]?.domain !== 'marker' && CATALOG[f.kind]?.domain !== 'missile';
+  });
+}
 
 /** The arrow, area or note nearest a point, for the eraser. */
 function nearestThing(plan: Plan, step: number, at: Vec3): string | null {

@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react';
 import { Section, Select, Slider } from '../controls';
-import { usePlanStore, type BoardTool } from '../../state/planStore';
+import { BOARD_TOOLS, movableSelection, usePlanStore, type BoardTool } from '../../state/planStore';
+import { toolKeys } from './boardKeys';
 import { useStore } from '../../state/store';
 import { GAMES, gamePreset } from '../../tactics/games';
 import { figureLabel } from '../../tactics/names';
@@ -93,15 +94,10 @@ export function TacticsPanel() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [preset, search, sort.by, sort.dir, language]);
 
-  const tools: { id: BoardTool; label: string }[] = [
-    { id: 'select', label: t('tactics.tool.select') },
-    { id: 'place', label: t('tactics.tool.place') },
-    { id: 'arrow', label: t('tactics.tool.arrow') },
-    { id: 'throw', label: t('tactics.tool.throw') },
-    { id: 'area', label: t('tactics.tool.area') },
-    { id: 'note', label: t('tactics.tool.note') },
-    { id: 'erase', label: t('tactics.tool.erase') },
-  ];
+  const tools: { id: BoardTool; label: string; keys: string }[] = BOARD_TOOLS.map((x) => ({ id: x.id, label: t(`tactics.tool.${x.id}`), keys: toolKeys(x.id) }));
+  const measuring = usePlanStore((s) => s.measure);
+  const formation = usePlanStore((s) => s.formation);
+  const groupSize = usePlanStore((s) => movableSelection(s.plan, s.step, s.selection).length);
   const styles: { id: ArrowStyle; label: string }[] = [
     { id: 'move', label: t('tactics.arrow.move') },
     { id: 'attack', label: t('tactics.arrow.attack') },
@@ -172,22 +168,45 @@ export function TacticsPanel() {
         </div>
         <div className="tactics-tools" role="toolbar" aria-label={t('tactics.tools')}>
           {tools.map((x) => (
-            <button key={x.id} className={tool === x.id ? 'on' : ''} onClick={() => store().setTool(x.id)}>
+            <button key={x.id} className={tool === x.id ? 'on' : ''} onClick={() => store().setTool(x.id)} title={`${x.label} (${x.keys})`} aria-keyshortcuts={x.keys.replace(' / ', ' ')}>
               {x.label}
+              <kbd>{x.keys.split(' / ')[0]}</kbd>
             </button>
           ))}
         </div>
-        {tool === 'arrow' && (
-          <div className="tactics-tools">
-            {styles.map((x) => (
-              <button key={x.id} className={arrowStyle === x.id ? 'on' : ''} onClick={() => store().setArrowStyle(x.id)}>
-                {x.label}
-              </button>
-            ))}
-          </div>
+        {tool === 'waypoints' && (
+          <>
+            <div className="tactics-tools">
+              {styles.map((x) => (
+                <button key={x.id} className={arrowStyle === x.id ? 'on' : ''} onClick={() => store().setArrowStyle(x.id)}>
+                  {x.label}
+                </button>
+              ))}
+            </div>
+            {groupSize > 1 && (
+              <label className="field" style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <input type="checkbox" checked={formation} onChange={(e) => store().setFormation(e.target.checked)} />
+                <span>{t('tactics.formation', { n: groupSize })}</span>
+              </label>
+            )}
+          </>
         )}
         {tool === 'select' && <GizmoControls />}
-        <div className="hint">{t(`tactics.hint.${moving ? 'moving' : tool}`)}{draft ? ` ${t('tactics.hint.finish')}` : ''}</div>
+        <div className="hint">
+          {t(`tactics.hint.${moving ? 'moving' : tool}`)}
+          {draft || (tool === 'measure' && measuring && !measuring.done) ? ` ${t('tactics.hint.finish')}` : ''}
+        </div>
+        {draft && (
+          <div className="tactics-tools">
+            <button className="on" onClick={() => store().finish()} title="Enter">
+              {t('tactics.finishRoute')}
+            </button>
+            <button onClick={() => store().undoPoint()} title="Backspace">
+              {t('tactics.undoPoint')}
+            </button>
+            <button onClick={() => store().cancel()}>{t('tactics.dropRoute')}</button>
+          </div>
+        )}
         <div className="tactics-tools">
           <button disabled={!canUndo} onClick={() => store().undo()} title="Ctrl+Z">
             {t('tactics.undo')}

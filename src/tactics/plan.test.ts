@@ -36,7 +36,7 @@ describe('the board', () => {
     usePlanStore.getState().click(at(0, 0), null);
     const id = usePlanStore.getState().selected!;
     expect(usePlanStore.getState().plan.figures).toHaveLength(1);
-    usePlanStore.getState().setTool('arrow');
+    usePlanStore.getState().setTool('waypoints');
     usePlanStore.getState().click(at(0.2, 0.1), id);
     usePlanStore.getState().click(at(10, 0), null);
     usePlanStore.getState().click(at(10, 10), null);
@@ -113,7 +113,7 @@ describe('the board', () => {
   it('draws figures, arrows and a draft', () => {
     usePlanStore.getState().setKind('soldier');
     usePlanStore.getState().click(at(0, 0), null);
-    usePlanStore.getState().setTool('arrow');
+    usePlanStore.getState().setTool('waypoints');
     usePlanStore.getState().click(at(0, 0), null);
     usePlanStore.getState().click(at(5, 0), null);
     const s = usePlanStore.getState();

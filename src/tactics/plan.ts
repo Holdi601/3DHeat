@@ -32,6 +32,17 @@ export interface PlanKey extends Vec3 {
   roll?: number;
 }
 
+/** Where a figure is at a moment of playback, and where its turret, gun, eyes and sensor point (`keyframes.ts`). */
+export interface BoardPose extends PlanKey {
+  /** Turret yaw from the hull's forward, radians, right positive. */
+  turret?: number;
+  /** Gun elevation, radians, up positive. */
+  gun?: number;
+  /** Where it looks, and where its sensor points: yaw from the hull's forward (right positive) and pitch, radians. */
+  view?: { yaw: number; pitch: number };
+  sensor?: { yaw: number; pitch: number };
+}
+
 export interface PlanFigure {
   id: string;
   /** A catalogue name (`figures/catalog.ts`). */
@@ -167,13 +178,17 @@ export function routeOf(plan: Plan, figure: string, step: number): PlanArrow | u
  * the next step without a route slides there in a straight line; the rest
  * stand.
  */
-export function posesAt(plan: Plan, step: number, u: number): Map<string, PlanKey> {
-  const out = new Map<string, PlanKey>();
+export function posesAt(plan: Plan, step: number, u: number): Map<string, BoardPose> {
+  // The board's figures and labels ask for the same moment in a frame: the last answer is kept.
+  const hit = lastPoses.get(plan);
+  if (hit && hit.step === step && hit.u === u) return hit.poses;
+  const out = new Map<string, BoardPose>();
+  const routes = routesIn(plan, step);
   for (const f of plan.figures) {
     if (!onBoard(f, step)) continue;
     const here = keyAt(f, step);
     if (!here) continue;
-    const route = routeOf(plan, f.id, step);
+    const route = routes.get(f.id);
     if (route && route.points.length >= 2 && u > 0) {
       const timing = plan.realTime === false ? undefined : planTimings(plan).get(route.id);
       if (timing && timing.total > 0) {
@@ -195,7 +210,24 @@ export function posesAt(plan: Plan, step: number, u: number): Map<string, PlanKe
     }
     out.set(f.id, here);
   }
+  lastPoses.set(plan, { step, u, poses: out });
   return out;
+}
+
+const lastPoses = new WeakMap<Plan, { step: number; u: number; poses: Map<string, BoardPose> }>();
+const routeIndex = new WeakMap<Plan, Map<number, Map<string, PlanArrow>>>();
+
+/** Every figure's route in a step, by figure: built once per plan, so a crowded plan is not searched per figure. */
+export function routesIn(plan: Plan, step: number): Map<string, PlanArrow> {
+  let byStep = routeIndex.get(plan);
+  if (!byStep) routeIndex.set(plan, (byStep = new Map()));
+  let m = byStep.get(step);
+  if (!m) {
+    m = new Map();
+    for (const a of plan.arrows) if (a.step === step && a.figure && a.style === 'move' && !m.has(a.figure)) m.set(a.figure, a);
+    byStep.set(step, m);
+  }
+  return m;
 }
 
 /** Total playback seconds, and the step and share at a playback time. */
