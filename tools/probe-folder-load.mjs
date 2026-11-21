@@ -10,7 +10,7 @@
  * load does not finish, or if p99 of the frames during the load is above
  * `--p99` ms.
  *
- *   node tools/probe-folder-load.mjs <folder> [--url URL] [--edge] [--synthetic N]
+ *   node tools/probe-folder-load.mjs <folder> [--url URL] [--synthetic N] [--long] [--profile] [--shots DIR]
  *
  * `--synthetic N` writes N synthetic matches of the same shape (one `.3dheat`
  * container per match, a Parquet table of ~300k rows with a wide schema) to a
@@ -41,6 +41,8 @@ if (synthetic > 0) {
   const { writeSyntheticMatches } = await import('./synthetic-matches.mjs');
   await writeSyntheticMatches(folder, synthetic, Number(opt('--rows', 300_000)));
   cleanup = () => rmSync(folder, { recursive: true, force: true });
+  // However the run ends: a browser that never started too.
+  process.on('exit', () => cleanup());
 }
 if (!folder) {
   console.log('usage: node tools/probe-folder-load.mjs <folder> | --synthetic N');
@@ -53,11 +55,13 @@ const files = readdirSync(folder)
 const mb = files.reduce((a, p) => a + statSync(p).size, 0) / 1024 ** 2;
 console.log(`${files.length} files, ${mb.toFixed(0)} MB`);
 
-const browser = await chromium.launch(
-  args.includes('--edge')
-    ? { channel: 'msedge', headless: true, args: ['--headless=new', '--enable-unsafe-webgpu', ...(args.includes('--log') ? ['--enable-logging=stderr', '--v=0'] : [])] }
-    : { args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] },
-);
+// The real GPU (Edge, as people use it): a long load on a software adapter measures the adapter.
+const browser = await chromium.launch({
+  channel: 'msedge',
+  headless: true,
+  args: ['--headless=new', '--enable-unsafe-webgpu', ...(args.includes('--log') ? ['--enable-logging=stderr', '--v=0'] : [])],
+});
+try {
 const page = await browser.newPage({ viewport: { width: 1600, height: 950 } });
 let crashed = false;
 page.on('crash', () => {
@@ -236,8 +240,11 @@ if (!crashed && args.includes('--long')) {
   for (const l of long) console.log('  long task', l);
 }
 if (shots && !crashed) await page.screenshot({ path: join(shots, 'loaded.png') }).catch(() => {});
-await Promise.race([browser.close(), new Promise((r) => setTimeout(r, 10_000))]);
-cleanup?.();
 const ok = done && !crashed && worstStall <= STALL_MS && p99 <= P99_MS;
 console.log(ok ? 'PASS' : 'FAIL');
-process.exit(ok ? 0 : 1);
+process.exitCode = ok ? 0 : 1;
+} finally {
+  // Closed however the run ends, a page that stopped answering too.
+  await Promise.race([browser.close(), new Promise((r) => setTimeout(r, 10_000))]);
+}
+process.exit(process.exitCode ?? 1);

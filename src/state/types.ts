@@ -437,6 +437,8 @@ export interface Dataset {
    * their starts. Absent when the files kept their own clock.
    */
   recordingsAligned?: number;
+  /** The outcome columns were worked out already (`deriveOutcome`), in the load's worker. */
+  outcomeDerived?: boolean;
   /**
    * Sessions of one campaign round played one after another (`DatasetBuilder`,
    * `alignRecordings`): files that all name the same `campaign` and each its

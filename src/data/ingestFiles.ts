@@ -10,6 +10,7 @@ import { errorMsg, msg, MsgError, say, sayDataset, type Msg } from './msg';
 import { asyncBufferFromFile } from './parquet';
 import { detectFormat } from './sourcePreview';
 import { onDemandOf } from './columnSource';
+import { deriveOutcome } from './outcome';
 import type { ColumnMapping, Dataset } from '../state/types';
 
 /** Parse one file into a block, wherever that happens: this thread or a worker. */
@@ -319,6 +320,9 @@ export async function ingestFiles(opts: IngestFilesOptions): Promise<IngestFiles
   }
   if (stride > 1) said.notes.push(msg('data.ingestFiles.stride', { stride: { int: stride }, ord: { ordinal: stride } }));
   if (failures.length > 0) said.notes.push(msg('data.ingestFiles.skipped', { count: failures.length }));
+  // Who won, worked out here and not in the page's hand-over (`deriveOutcome`).
+  onProgress?.({ label: say(msg('data.ingestFiles.outcome')), msg: msg('data.ingestFiles.outcome'), fraction: null, rows: loaded });
+  deriveOutcome(dataset);
   sayDataset(dataset);
   return { dataset, failures };
 }

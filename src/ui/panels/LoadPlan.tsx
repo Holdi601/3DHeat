@@ -37,6 +37,13 @@ export interface LoadPlanResult {
   exact: boolean;
   /** Category label bytes the kept text columns add (see `labelBytes`). */
   labels: number;
+  /**
+   * The columns are profiled and the columns to read later proposed: what the
+   * load will cost is settled. Before, the fit check sees every column loaded
+   * and proposes a stride the plan then makes unnecessary; a Load pressed in
+   * that moment read every second row for no reason.
+   */
+  ready: boolean;
 }
 
 /** Column names that usually hold what a quick filter is for. */
@@ -72,6 +79,8 @@ export const LoadPlan = memo(function LoadPlan({
   const [counting, setCounting] = useState(false);
   const [adding, setAdding] = useState('');
   const key = useMemo(() => sourceKey(preview.columns), [preview.columns]);
+  /** The source the columns to read later were last proposed for. */
+  const proposedFor = useRef<string | null>(null);
 
   // The profile: the footer and the first rows of the first file, or the preview's sample.
   const first = files[0];
@@ -124,9 +133,10 @@ export const LoadPlan = memo(function LoadPlan({
   const expected = active.length && count ? expectedMatches(count, totalRows) : totalRows;
   const exact = !active.length || (count?.exact ?? false);
   const labels = labelBytes(profile, mapping, expected);
+  const ready = !!profile && (preview.format !== 'parquet' || mapping.onDemand !== undefined || proposedFor.current === key);
   useEffect(() => {
-    onPlan({ rows: expected, exact, labels });
-  }, [expected, exact, labels, onPlan]);
+    onPlan({ rows: expected, exact, labels, ready });
+  }, [expected, exact, labels, ready, onPlan]);
 
   const setClauses = (next: RowFilterClause[]) => setMapping({ ...mapping, rowFilter: next });
   const byName = (name: string) => profile?.find((p) => p.name === name) ?? null;
@@ -160,10 +170,9 @@ export const LoadPlan = memo(function LoadPlan({
   const later = canLater ? (mapping.onDemand ?? []) : [];
   // Proposed once a source's columns are known and nothing was chosen for it
   // yet: the ordinary measures wait in the files.
-  const proposed = useRef<string | null>(null);
   useEffect(() => {
-    if (!profile || !canLater || mapping.onDemand !== undefined || proposed.current === key) return;
-    proposed.current = key;
+    if (!profile || !canLater || mapping.onDemand !== undefined || proposedFor.current === key) return;
+    proposedFor.current = key;
     const wait = defaultOnDemand(profile, mapping);
     setMapping({ ...mapping, extra: mapping.extra.filter((n) => !wait.includes(n)), onDemand: wait });
   }, [profile, canLater, mapping, key, setMapping]);

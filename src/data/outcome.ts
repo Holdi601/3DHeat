@@ -297,10 +297,15 @@ const derived = new WeakSet<object>();
  * empty (events, often) take their side's outcome in that match and round.
  * In place, once per dataset (`setDataset`); returns the names of the columns
  * added or changed.
+ *
+ * A load does it in its worker (`ingestFiles`) and marks the dataset, so the
+ * page does not: over millions of rows it is half a second, and on the page it
+ * fell in the one task that hands the dataset over, beside the first render.
  */
 export function deriveOutcome(ds: Dataset): string[] {
-  if (derived.has(ds)) return [];
+  if (derived.has(ds) || ds.outcomeDerived) return [];
   derived.add(ds);
+  ds.outcomeDerived = true;
   const changed: string[] = [];
   // `won` as words: true/false, yes/no, won/lost.
   ds.attrs.forEach((a, i) => {

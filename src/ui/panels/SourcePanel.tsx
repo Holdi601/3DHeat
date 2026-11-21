@@ -308,7 +308,8 @@ export function SourcePanel() {
   const excessBytes = fullFootprint ? Math.max(0, fullFootprint.peakBytes - budgets.ram) : 0;
   // The rows a parse reads are every row, a stride thins them only afterwards; the kept columns are what each costs.
   const loadSeconds = mapping ? estimateLoadSeconds(keptRows, 6 + mapping.extra.length, Math.min(budgets.cpu, picked.length)) : 0;
-  const canLoad = !!validation?.ok && !loadActive && fit?.verdict !== 'too-big';
+  // Not before the load plan has settled what the load reads (`LoadPlanResult.ready`).
+  const canLoad = !!validation?.ok && !loadActive && fit?.verdict !== 'too-big' && !!plan?.ready;
   /**
    * Whether the columns want a look before loading: no reading instructions came
    * with the files, or the guess left something to check. Only then is the
@@ -351,7 +352,8 @@ export function SourcePanel() {
         // The converter's own name for its game where its hints give one (`"game": "War Thunder"`).
         game: hintedGame(preview?.hints) ?? identity?.game ?? null,
         map: identity?.map ?? null,
-        columns: columnsState,
+        // Still reading until the load plan has looked at every column.
+        columns: columnsState === 'bad' || plan?.ready ? columnsState : null,
         verdict: fit?.verdict ?? null,
         stride,
         seconds: size ? loadSeconds : null,
@@ -360,7 +362,7 @@ export function SourcePanel() {
       () => goRef.current(),
       () => dismissRef.current(),
     );
-  }, [picked.length, loadedPick, pickName, pickBytes, identity, size, loadRows, loadSeconds, preview, columnsState, fit?.verdict, stride, canLoad]);
+  }, [picked.length, loadedPick, pickName, pickBytes, identity, size, loadRows, loadSeconds, preview, columnsState, plan?.ready, fit?.verdict, stride, canLoad]);
   // The card goes with the panel's pick.
   useEffect(() => () => setPendingLoad(null), []);
   useEffect(() => {
