@@ -11,7 +11,7 @@ import { useMemo, useState, type ReactNode } from 'react';
 import { t } from '../../i18n';
 import { dashClient } from '../../dashboards/client';
 import type { Catalog, FieldInfo } from '../../dashboards/fields';
-import { AGG_KINDS, newId, TILE_KINDS, type AggKind, type Dashboard, type FilterDef, type FilterOp, type MeasureDef, type Page, type Tile, type TileKind, type TileOpts, type ValueRef } from '../../dashboards/model';
+import { AGG_KINDS, newId, TILE_KINDS, type AggKind, type CiDef, type Dashboard, type FilterDef, type FilterOp, type MeasureDef, type Page, type Tile, type TileKind, type TileOpts, type ValueRef } from '../../dashboards/model';
 import { defaultInteract, measureName } from '../../dashboards/plan';
 import { dashboardSources } from '../../dashboards/sources';
 import { useDash } from '../../dashboards/store';
@@ -161,6 +161,27 @@ function SlotBox({ label, tip, items, onDrop, testId }: { label: string; tip: st
 
 const fieldName = (cat: Catalog | null, id: string | undefined) => (id ? (cat?.byId.get(id)?.name ?? id) : '');
 
+/** A rate's confidence interval: the method (or none), its level, the minimum rows below which values are greyed. */
+function CiEditor({ ci, onChange }: { ci: CiDef | undefined; onChange: (ci: CiDef | undefined) => void }) {
+  return (
+    <div className="dash-range" title={t('dash.ci.tip')}>
+      <select aria-label={t('dash.ci.label')} title={t('dash.ci.tip')} value={ci?.method ?? 'none'} onChange={(e) => onChange(e.target.value === 'none' ? undefined : { ...(ci ?? {}), method: e.target.value as CiDef['method'] })}>
+        {(['none', 'wilson', 'bootstrap'] as const).map((k) => (
+          <option key={k} value={k}>
+            {t(`dash.ci.method.${k}`)}
+          </option>
+        ))}
+      </select>
+      {ci && (
+        <>
+          <input type="number" aria-label={t('dash.ci.level')} title={t('dash.ci.levelTip')} min={50} max={99.9} step={0.5} value={Math.round((ci.level ?? 0.95) * 1000) / 10} style={{ width: 56 }} onChange={(e) => onChange({ ...ci, level: Math.max(0.5, Math.min(0.999, (Number(e.target.value) || 95) / 100)) })} />
+          <input type="number" aria-label={t('dash.ci.minN')} title={t('dash.ci.minNTip')} placeholder={t('dash.ci.minN')} min={0} step={1} value={ci.minN ?? ''} style={{ width: 72 }} onChange={(e) => onChange({ ...ci, minN: e.target.value ? Math.max(0, Math.round(Number(e.target.value))) : undefined })} />
+        </>
+      )}
+    </div>
+  );
+}
+
 /** One value of a tile: its measure (saved or quick), with the aggregation to change. */
 function ValueItem({ v, dash, cat, onChange, onRemove }: { v: ValueRef; dash: Dashboard; cat: Catalog | null; onChange: (v: ValueRef) => void; onRemove: () => void }) {
   if ('m' in v) {
@@ -192,6 +213,7 @@ function ValueItem({ v, dash, cat, onChange, onRemove }: { v: ValueRef; dash: Da
       {(v.agg === 'rate' || v.where !== undefined) && (
         <input type="text" aria-label={t('dash.slot.where')} title={t('dash.slot.whereTip')} placeholder={t('dash.slot.wherePh')} value={v.where ?? ''} style={{ width: '100%' }} onChange={(e) => onChange({ ...v, where: e.target.value })} />
       )}
+      {v.agg === 'rate' && <CiEditor ci={v.ci} onChange={(ci) => onChange({ ...v, ci })} />}
     </div>
   );
 }
@@ -572,6 +594,7 @@ function MeasuresEditor({ dash, cat }: { dash: Dashboard; cat: Catalog | null })
             ) : (
               m.agg !== 'ratio' && <input type="text" aria-label={t('dash.slot.where')} title={t('dash.slot.whereTip')} placeholder={t('dash.slot.wherePh')} value={m.where ?? ''} onChange={(e) => put({ ...m, where: e.target.value || undefined })} />
             )}
+            {m.agg === 'rate' && <CiEditor ci={m.ci} onChange={(ci) => put({ ...m, ci })} />}
           </div>
         </div>
       ))}

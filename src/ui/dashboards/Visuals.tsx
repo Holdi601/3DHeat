@@ -8,13 +8,14 @@
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { ChartView, fillTooltip } from '../../charts/ChartView';
+import { ciText, isLow } from '../../charts/draw';
 import { fmtValue } from '../../charts/format';
 import { colorChart, mix, readTheme, type ChartTheme } from '../../charts/palette';
 import type { ChartData, ValueFormat } from '../../charts/types';
 import { t } from '../../i18n';
 import { dashClient } from '../../dashboards/client';
 import { colorFn, sayChart, sayDash } from '../../dashboards/export';
-import type { BandsData, BoxData, BubbleData, ItemsData, KpiData, MapData, PivotData, SlicerData, TableData, TileData } from '../../dashboards/finish';
+import type { BandsData, BoxData, BubbleData, CiInfo, ItemsData, KpiData, MapData, PivotData, SlicerData, TableData, TileData } from '../../dashboards/finish';
 import type { FieldInfo } from '../../dashboards/fields';
 import { fieldValueText } from '../../dashboards/fields';
 import type { FilterDef, Tile } from '../../dashboards/model';
@@ -146,7 +147,13 @@ function ChartVisual({ tile, data, w, h, selected, onPick, onMenu, table, colorM
           colorChart(d, th, colorMemory);
           return paintColumns(ctx, d, th, w, h, stacked, hover, selected ? (g) => selected(g) : null);
         }}
-        tip={(hh) => ({ title: `${said.groups[hh.i]?.label ?? ''}${said.series.length > 1 && hh.s !== undefined ? ` · ${said.series[hh.s]?.label}` : ''}`, value: fmtValue(said.values[hh.s ?? 0]?.[hh.i], said.format) })}
+        tip={(hh) => {
+          const s = hh.s ?? 0;
+          const ci = ciText(said, s, hh.i, said.format);
+          const n = said.counts?.[s]?.[hh.i];
+          const more = [ci, n !== undefined && Number.isFinite(n) && said.format !== 'int' ? t('charts.tip.rows', { n: fmtValue(n, 'int', true) }) : '', isLow(said, s, hh.i) && said.minN ? t('charts.tip.lowN', { n: fmtValue(said.minN, 'int', true) }) : ''].filter(Boolean);
+          return { title: `${said.groups[hh.i]?.label ?? ''}${said.series.length > 1 && hh.s !== undefined ? ` · ${said.series[hh.s]?.label}` : ''}${more.length ? ` · ${more.join(' · ')}` : ''}`, value: fmtValue(said.values[s]?.[hh.i], said.format) };
+        }}
         onPick={onPick}
         onMenu={onMenu}
       />
@@ -166,17 +173,30 @@ function ChartVisual({ tile, data, w, h, selected, onPick, onMenu, table, colorM
   );
 }
 
+/** "95 % CI 38 %–52 % (Wilson)". */
+function ciWords(c: CiInfo & { lo: number; hi: number }, f: ValueFormat): string {
+  const l = c.level * 100;
+  return t('charts.tip.ci', { level: `${Number.isInteger(l) ? l : l.toFixed(1)} %`, lo: fmtValue(c.lo, f), hi: fmtValue(c.hi, f), method: t(`charts.ci.${c.method}`) });
+}
+
 /** The numbers a KPI card leads with: the value, the change against the comparison, a sparkline. */
 function KpiCard({ data, w, h }: { data: KpiData; w: number; h: number }) {
   const { value, compare, format, spark } = data;
   const delta = compare && Number.isFinite(compare.value) && Number.isFinite(value) ? value - compare.value : null;
   const rel = delta !== null && compare && compare.value !== 0 ? delta / Math.abs(compare.value) : null;
   const big = Math.max(18, Math.min(40, h * 0.3, w / 6));
+  const ci = data.ci;
   return (
-    <div className="dash-kpi">
+    <div className={`dash-kpi${ci?.low ? ' low' : ''}`}>
       <div className="dash-kpi-value" style={{ fontSize: big }}>
         {fmtValue(value, format, true)}
       </div>
+      {ci && (
+        <div className="dash-kpi-ci" title={ci.low ? t('charts.tip.lowN', { n: fmtValue(ci.minN, 'int', true) }) : undefined}>
+          {ciWords(ci, format)} · {t('charts.tip.rows', { n: fmtValue(ci.n, 'int', true) })}
+          {ci.low ? ` · ${t('charts.tip.lowN', { n: fmtValue(ci.minN, 'int', true) })}` : ''}
+        </div>
+      )}
       {compare && data.additive && compare.label === 'dash.kpi.vsBaseline' && (
         <div className="dash-kpi-delta">{t('dash.kpi.share', { share: fmtValue(compare.value ? value / compare.value : NaN, 'pct'), label: sayDash(compare.label), value: fmtValue(compare.value, format, true) })}</div>
       )}
@@ -227,11 +247,16 @@ function TableVisual({ tile, data, selected, onPick, onMenu }: VisualProps & { d
       <table className="dash-table">
         <thead>
           <tr>
-            {data.head.map((x, i) => (
-              <th key={i} className={i >= n ? 'num' : ''}>
-                {x}
-              </th>
-            ))}
+            {data.head.map((x, i) => {
+              const info = i >= n ? data.ci?.[i - n] : null;
+              const l = info ? info.level * 100 : 0;
+              return (
+                <th key={i} className={i >= n ? 'num' : ''} title={info ? t('charts.table.ci', { level: `${Number.isInteger(l) ? l : l.toFixed(1)} %`, method: t(`charts.ci.${info.method}`) }) + (info.minN ? ` · ${t('charts.table.lowN', { n: fmtValue(info.minN, 'int', true) })}` : '') : undefined}>
+                  {x}
+                  {info && <small className="dash-ci"> {t('dash.table.ciHead', { level: `${Number.isInteger(l) ? l : l.toFixed(1)} %` })}</small>}
+                </th>
+              );
+            })}
           </tr>
         </thead>
         <tbody>
@@ -256,10 +281,18 @@ function TableVisual({ tile, data, selected, onPick, onMenu }: VisualProps & { d
                   const [lo, hi] = data.ranges[i];
                   const c = scale ? scaleColor(th, v, lo, hi) : null;
                   const pct = bars && hi > 0 && Number.isFinite(v) ? Math.max(0, Math.min(100, (v / hi) * 100)) : 0;
+                  const info = data.ci?.[i];
+                  const iv = r.ci?.[i];
+                  const tip = info && iv ? `${ciWords({ ...info, ...iv }, data.formats[i])} · ${t('charts.tip.rows', { n: fmtValue(iv.n, 'int', true) })}${iv.low ? ` · ${t('charts.tip.lowN', { n: fmtValue(info.minN, 'int', true) })}` : ''}` : undefined;
                   return (
-                    <td key={`v${i}`} className={`num${bars ? ' dash-bar-cell' : ''}`} style={c ? { background: c.bg, color: c.ink } : undefined}>
+                    <td key={`v${i}`} className={`num${bars ? ' dash-bar-cell' : ''}${iv?.low ? ' low' : ''}`} style={c ? { background: c.bg, color: c.ink } : undefined} title={tip}>
                       {bars && <i style={{ width: `${pct}%` }} />}
                       <span>{fmtValue(v, data.formats[i], true)}</span>
+                      {iv && (
+                        <small className="dash-ci">
+                          {fmtValue(iv.lo, data.formats[i], true)}–{fmtValue(iv.hi, data.formats[i], true)}
+                        </small>
+                      )}
                     </td>
                   );
                 })}

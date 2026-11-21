@@ -16,6 +16,7 @@ import type { AggScope } from '../charts/aggregate';
 import type { ValueFormat } from '../charts/types';
 import { ExprError, bindPredicate, findColumn, parse, type Ast, type RNode } from '../versus/expr';
 import type { Volume } from '../volumes/volume';
+import { clampLevel, rateInterval, type CiMethod } from './ci';
 import { dimLabel, dimOf, type Catalog, type FieldInfo } from './fields';
 import type { AggKind, Dashboard, FieldRef, FilterDef, Interact, MeasureDef, Page, Tile, TileKind, ValueRef } from './model';
 import { MAX_CELLS, MAX_HIST, cellsOf, histQuantile, type AccSpec, type Clause, type DimSpec, type Merged, type QuerySpec } from './query';
@@ -57,6 +58,8 @@ export interface LinkInputs {
   volume: Volume | null;
   /** Minutes of data time the view shows (rates), else the data's own. */
   minutes: number;
+  /** A registered source's view (`DashSource.viewMask`): the workers' column key of its row mask. */
+  mask?: string | null;
 }
 
 export const NO_LINK: LinkInputs = { view: null, volume: null, minutes: 0 };
@@ -201,6 +204,8 @@ export function linkClauses(dash: Dashboard, link: LinkInputs): Clause[] {
   const out: Clause[] = [];
   if (dash.link.followView && link.view) out.push({ k: 'view', scope: link.view });
   if (dash.link.volume && link.volume) out.push({ k: 'volume', volume: link.volume });
+  // A registered source's own view: the rows its mask keeps (set only while Follow the view or Selected volume is on).
+  if (link.mask) out.push({ k: 'in', key: link.mask, values: [1] });
   return out;
 }
 
@@ -238,6 +243,8 @@ export interface MeasureCtx {
   /** Per acc index, its sum over every cell (shares). */
   totals: number[];
   minutes: number;
+  /** Rows each counted row stands for (a sampled pool's stride): intervals use the rows actually read. */
+  weight?: number;
 }
 
 export interface MeasureOut {
@@ -246,7 +253,19 @@ export interface MeasureOut {
   /** Sums over cells mean something (counts, sums): "Other" and highlights can add up. */
   additive: boolean;
   value: (m: Merged, cell: number, ctx: MeasureCtx) => number;
+  /** A rate's confidence interval and the rows behind each value. */
+  ci?: MeasureCi;
   error?: string;
+}
+
+export interface MeasureCi {
+  method: CiMethod;
+  level: number;
+  /** 0: no greying. */
+  minN: number;
+  interval: (m: Merged, cell: number, ctx: MeasureCtx) => [number, number] | null;
+  /** The rows behind a value (read rows, not weighted). */
+  n: (m: Merged, cell: number, ctx: MeasureCtx) => number;
 }
 
 /** Collects a query's accumulators, each once. */
@@ -270,7 +289,7 @@ const and = (a: RNode | null, b: RNode | null): RNode | null => (a && b ? { k: '
 /** The measure a value slot holds: a saved one by id, or the quick one written there. */
 export function measureOf(dash: Dashboard, v: ValueRef): MeasureDef | null {
   if ('m' in v) return dash.measures?.find((m) => m.id === v.m) ?? null;
-  return { id: '', name: v.name ?? '', agg: v.agg, field: v.field, p: v.p, where: v.where };
+  return { id: '', name: v.name ?? '', agg: v.agg, field: v.field, p: v.p, where: v.where, ci: v.ci };
 }
 
 const AGG_WORD: Record<AggKind, string> = {
@@ -331,7 +350,19 @@ export function compileMeasure(cat: Catalog, dash: Dashboard, m: MeasureDef, set
       if (!where) return fail('dash.err.rateWhere');
       const i = set.add({ k: 'count', where });
       const all = set.add({ k: 'count' });
-      return { name, format: m.format ?? 'pct', additive: false, value: (r, c) => (r.accs[all][c] > 0 ? r.accs[i][c] / r.accs[all][c] : NaN) };
+      const out: MeasureOut = { name, format: m.format ?? 'pct', additive: false, value: (r, c) => (r.accs[all][c] > 0 ? r.accs[i][c] / r.accs[all][c] : NaN) };
+      if (m.ci) {
+        const method = m.ci.method;
+        const level = clampLevel(m.ci.level);
+        out.ci = {
+          method,
+          level,
+          minN: Math.max(0, m.ci.minN ?? 0),
+          interval: (r, c, x) => rateInterval(method, r.accs[i][c], r.accs[all][c], level, x.weight),
+          n: (r, c, x) => r.accs[all][c] / (x.weight && x.weight > 0 ? x.weight : 1),
+        };
+      }
+      return out;
     }
     case 'distinct': {
       if (!key) return fail('dash.err.field');

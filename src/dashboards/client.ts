@@ -38,7 +38,7 @@ import { finishTile, type TileData } from './finish';
 import type { Dashboard, Tile } from './model';
 import { planTile, type LinkInputs, type TilePlan } from './plan';
 import { mergePartials, words, type ColArr, type Merged, type Partial, type QuerySpec } from './query';
-import { dashboardSource, onSourcesChanged, VIEW_SOURCE } from './sources';
+import { dashboardSource, dashboardSources, onSourcesChanged, registeredSource, VIEW_SOURCE, type DashSource, type SourceMask } from './sources';
 import { interOf, useDash, pageShown } from './store';
 import type { FromDashWorker, ToDashWorker } from './worker';
 
@@ -85,6 +85,8 @@ class Pool {
   ranges = new Map<string, [number, number]>();
   /** Each calculated column's expression as it was worked out. */
   calcSrc = new Map<string, string>();
+  /** Columns that are not the dataset's: a registered source's view masks (`@mask:<key>`). */
+  extra = new Map<string, ColArr>();
   private pending: { seq: number; parts: (Partial[] | null)[]; resolve: (p: Partial[][]) => void; ms: number[] } | null = null;
   private seq = 0;
   private acks: number[] = [];
@@ -165,7 +167,7 @@ class Pool {
   async send(keys: readonly string[], slow: () => boolean): Promise<void> {
     for (const key of keys) {
       if (this.have.has(key)) continue;
-      const src = datasetColumn(this.ds, key);
+      const src = this.extra.get(key) ?? datasetColumn(this.ds, key);
       if (!src) continue;
       const kind = kindOf(src);
       for (let s = 0; s < this.shards.length; s++) {
@@ -272,14 +274,20 @@ export class DashClient {
       useVolumeStore.subscribe((s, p) => {
         if (s.selected !== p.selected || s.volumes !== p.volumes) this.schedule(60);
       }),
-      onSourcesChanged(go),
+      onSourcesChanged(() => {
+        this.syncViewSubs();
+        go();
+      }),
     );
+    this.syncViewSubs();
     this.playTimer = setInterval(() => this.tickPlay(), DASH_PLAY_EVERY);
   }
 
   stop(): void {
     for (const u of this.unsub) u();
     this.unsub = [];
+    for (const s of this.viewSubs.values()) s.off();
+    this.viewSubs.clear();
     if (this.playTimer) clearInterval(this.playTimer);
     for (const p of this.pools.values()) p.stop();
     this.pools.clear();
@@ -366,9 +374,75 @@ export class DashClient {
     return false;
   }
 
+  /** Per source, the view masks this run's dashboards read, by their column key. */
+  private masks = new Map<string, Map<string, Uint16Array>>();
+  /** Masks made into columns before, by key (a mask asked for again is not copied again). */
+  private maskCols = new Map<string, Uint16Array>();
+  private viewSubs = new Map<string, { src: DashSource; off: () => void }>();
+
+  /** Listen to every registered source's view changes (Follow the view, Selected volume on its own view). */
+  private syncViewSubs(): void {
+    const live = new Set<string>();
+    for (const src of dashboardSources()) {
+      if (src.id === VIEW_SOURCE || !src.onViewChange) continue;
+      live.add(src.id);
+      const cur = this.viewSubs.get(src.id);
+      if (cur?.src === src) continue;
+      cur?.off();
+      this.viewSubs.set(src.id, { src, off: src.onViewChange(() => this.followsSource(src.id) && this.schedule(40)) });
+    }
+    for (const [id, s] of this.viewSubs)
+      if (!live.has(id)) {
+        s.off();
+        this.viewSubs.delete(id);
+      }
+  }
+
+  /** Whether a shown dashboard reads a source's view. */
+  private followsSource(source: string): boolean {
+    const st = useDash.getState();
+    for (const w of this.watches.values()) {
+      const d = st.dashboards.find((x) => x.id === w.dashId);
+      if (d && d.source === source && (d.link.followView || d.link.volume)) return true;
+    }
+    return false;
+  }
+
+  /** A registered source's view, through its `viewMask`: the mask's column key (its array kept for the run), or null for every row. */
+  private sourceLink(dash: Dashboard, src: DashSource, ds: Dataset): LinkInputs {
+    const none: LinkInputs = { view: null, volume: null, minutes: 0, mask: null };
+    if (!src.viewMask || (!dash.link.followView && !dash.link.volume)) return none;
+    const vs = useVolumeStore.getState();
+    const volume = dash.link.volume && vs.selected ? (vs.volumes.find((v) => v.id === vs.selected) ?? null) : null;
+    if (!dash.link.followView && !volume) return none;
+    let m: SourceMask | null = null;
+    try {
+      m = src.viewMask({ followView: dash.link.followView, volume });
+    } catch (e) {
+      console.warn(`dashboards: the ${src.id} source's viewMask failed`, e);
+    }
+    if (!m || m.mask.length !== ds.count) {
+      if (m) console.warn(`dashboards: the ${src.id} source's view mask has ${m.mask.length} rows, its data ${ds.count}: ignored`);
+      return none;
+    }
+    const key = `@mask:${m.key}`;
+    let col = this.maskCols.get(key);
+    if (!col) {
+      col = Uint16Array.from(m.mask, (v) => (v ? 1 : 0));
+      this.maskCols.set(key, col);
+    }
+    let per = this.masks.get(src.id);
+    if (!per) this.masks.set(src.id, (per = new Map()));
+    per.set(key, col);
+    return { ...none, mask: key };
+  }
+
   /** What the 3D view adds: its rows (without the filters the dashboards set on it) and the selected volume. */
   private linkFor(dash: Dashboard, ds: Dataset): LinkInputs {
-    if ((dash.source ?? VIEW_SOURCE) !== VIEW_SOURCE) return { view: null, volume: null, minutes: 0 };
+    if ((dash.source ?? VIEW_SOURCE) !== VIEW_SOURCE) {
+      const src = registeredSource(dash.source);
+      return src ? this.sourceLink(dash, src, ds) : { view: null, volume: null, minutes: 0 };
+    }
     const s = useStore.getState();
     const owned = new Set(this.owned.map((f) => JSON.stringify(f)));
     const filters = owned.size ? s.filters.filter((f) => !owned.has(JSON.stringify(f))) : s.filters;
@@ -440,6 +514,7 @@ export class DashClient {
     try {
       const t0 = performance.now();
       const st = useDash.getState();
+      this.masks.clear();
       // Per source: the tiles, their plans and queries.
       const bySource = new Map<string, { ds: Dataset; items: { tile: Tile; plan: TilePlan; cat: Catalog }[]; calc: Map<string, RNode> }>();
       const live = new Set<string>();
@@ -474,7 +549,11 @@ export class DashClient {
         }
       }
       for (const id of [...this.results.keys()]) if (!live.has(id)) this.results.delete(id);
+      for (const id of [...this.plans.keys()]) if (!live.has(id)) this.plans.delete(id);
       this.stats.plans = live.size;
+      // Mask columns no dashboard reads any more are let go.
+      const usedMasks = new Set([...this.masks.values()].flatMap((m) => [...m.keys()]));
+      for (const k of [...this.maskCols.keys()]) if (!usedMasks.has(k)) this.maskCols.delete(k);
       timed(t0);
       for (const [source, g] of bySource) {
         const queries = g.items.flatMap((x) => x.plan.queries);
@@ -483,6 +562,12 @@ export class DashClient {
         this.stats.rows = pool.rows;
         this.stats.stride = pool.stride;
         this.stats.workers = pool.shards.length;
+        // The source's view masks as columns: new ones sent like any column, old ones dropped from the workers.
+        const want = this.masks.get(source) ?? new Map<string, Uint16Array>();
+        const stale = [...pool.extra.keys()].filter((k) => !want.has(k));
+        for (const k of stale) pool.extra.delete(k);
+        if (stale.length) pool.drop(stale);
+        for (const [k, col] of want) pool.extra.set(k, col);
         const need = queryColumns(queries);
         // Derived columns: their sources first.
         const derived: string[] = [];
@@ -493,7 +578,7 @@ export class DashClient {
             for (const x of d) need.add(x);
           }
         }
-        const plain = [...need].filter((k) => !derived.includes(k) && datasetColumn(g.ds, k));
+        const plain = [...need].filter((k) => !derived.includes(k) && (pool.extra.has(k) || datasetColumn(g.ds, k)));
         const missing = plain.filter((k) => !pool.have.has(k));
         const newDerived = derived.filter((k) => !pool.have.has(k) || (k.startsWith('k:') && pool.calcSrc.get(k) !== JSON.stringify(g.calc.get(k))));
         if (missing.length || newDerived.length) {
@@ -523,7 +608,7 @@ export class DashClient {
         const dirty = new Set<string>();
         for (const it of g.items) {
           try {
-            this.results.set(it.tile.id, finishTile(it.cat, it.tile, it.plan, merged));
+            this.results.set(it.tile.id, finishTile(it.cat, it.tile, it.plan, merged, pool.stride));
           } catch (e) {
             this.results.set(it.tile.id, { kind: 'empty', message: 'dash.err.tile', values: { error: String(e) } });
           }

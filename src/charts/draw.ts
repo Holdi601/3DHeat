@@ -113,6 +113,57 @@ function legend(ctx: CanvasRenderingContext2D, d: ChartData, th: ChartTheme, w: 
   return y + 10;
 }
 
+/** The top of the value axis: the values, and their intervals' upper ends where drawn. */
+function maxWithCi(d: ChartData): number {
+  let m = maxOf(d.values);
+  if (d.ci) for (const row of d.ci.hi) for (const v of row) if (finite(v)) m = Math.max(m, v);
+  return m;
+}
+
+/** A value from fewer rows than its measure asks for: drawn faint. */
+export function isLow(d: ChartData, s: number, g: number): boolean {
+  return !!d.low?.[s]?.[g];
+}
+
+/** A value's interval, when it has one. */
+export function ciOf(d: ChartData, s: number, g: number): [number, number] | null {
+  const lo = d.ci?.lo[s]?.[g];
+  const hi = d.ci?.hi[s]?.[g];
+  return lo !== undefined && hi !== undefined && finite(lo) && finite(hi) ? [lo, hi] : null;
+}
+
+/** An interval's words: "95 % CI 38 %–52 % (Wilson)". */
+export function ciText(d: ChartData, s: number, g: number, f: ValueFormat): string {
+  const iv = ciOf(d, s, g);
+  if (!iv || !d.ci) return '';
+  const l = d.ci.level * 100;
+  return t('charts.tip.ci', { level: `${Number.isInteger(l) ? l : l.toFixed(1)} %`, lo: fmtValue(iv[0], f), hi: fmtValue(iv[1], f), method: t(`charts.ci.${d.ci.method}`) });
+}
+
+/** An error bar: a hairline between two points with short caps across it. */
+function whisker(ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, cap: number): void {
+  ctx.beginPath();
+  ctx.moveTo(x0, y0);
+  ctx.lineTo(x1, y1);
+  if (cap > 0) {
+    if (y0 === y1) {
+      ctx.moveTo(x0, y0 - cap);
+      ctx.lineTo(x0, y0 + cap);
+      ctx.moveTo(x1, y1 - cap);
+      ctx.lineTo(x1, y1 + cap);
+    } else {
+      ctx.moveTo(x0 - cap, y0);
+      ctx.lineTo(x0 + cap, y0);
+      ctx.moveTo(x1 - cap, y1);
+      ctx.lineTo(x1 + cap, y1);
+    }
+  }
+  ctx.stroke();
+}
+
+/** Faint for a mark from too few rows. */
+export const LOW_ALPHA = 0.32;
+
 function maxOf(values: number[][], stacked = false, groups = 0): number {
   let m = 0;
   if (stacked) {
@@ -187,7 +238,7 @@ function drawBars(ctx: CanvasRenderingContext2D, d: ChartData, th: ChartTheme, w
   const axisH = 14;
   const y0 = top;
   const y1 = h - axisH;
-  const max = stacked && d.format === 'pct' ? 1 : maxOf(d.values, stacked, G) || 1;
+  const max = stacked && d.format === 'pct' ? 1 : (stacked ? maxOf(d.values, stacked, G) : maxWithCi(d)) || 1;
   const ticks = niceTicks(0, max, Math.max(2, Math.floor((x1 - x0) / 60)));
   const hi = Math.max(max, ticks[ticks.length - 1] ?? max);
   const sx = (v: number) => x0 + ((x1 - x0) * Math.max(0, v)) / hi;
@@ -246,17 +297,32 @@ function drawBars(ctx: CanvasRenderingContext2D, d: ChartData, th: ChartTheme, w
         const y = gy + s * (thick + GAP);
         hits.push({ s, g, x: x0, y: S === 1 ? by : y - GAP / 2, w: x1 - x0 + tipW, h: S === 1 ? band : thick + GAP });
         if (!finite(v) && v !== Infinity) continue;
-        ctx.globalAlpha = dimmed(o, s, g) ? 0.45 : 1;
+        const low = isLow(d, s, g);
+        const base = (dimmed(o, s, g) ? 0.45 : 1) * (low ? LOW_ALPHA : 1);
+        ctx.globalAlpha = base;
         ctx.fillStyle = d.series[s].color ?? th.series[0];
         const len = sx(v === Infinity ? hi : v) - x0;
         bar(ctx, x0, y, len, thick, 'right');
-        ctx.globalAlpha = 1;
+        // The interval across the bar's end, in the text ink.
+        const iv = ciOf(d, s, g);
+        let end = x0 + len;
+        if (iv) {
+          ctx.globalAlpha = base * 0.85;
+          ctx.strokeStyle = th.text;
+          ctx.lineWidth = 1.25;
+          const a = sx(iv[0]);
+          const b = sx(iv[1]);
+          whisker(ctx, a, y + thick / 2, b, y + thick / 2, Math.min(4, thick / 2));
+          end = Math.max(end, b);
+        }
+        ctx.globalAlpha = low ? 0.7 : 1;
         if (S === 1 && thick >= 7) {
-          ctx.fillStyle = th.text;
+          ctx.fillStyle = low ? th.faint : th.text;
           ctx.textAlign = 'left';
           ctx.font = font(th, FS, 550);
-          ctx.fillText(fmtValue(v, d.format, true), x0 + len + 4, y + thick / 2);
+          ctx.fillText(fmtValue(v, d.format, true), Math.min(end + 4, x1 + tipW - ctx.measureText(fmtValue(v, d.format, true)).width - 1), y + thick / 2);
         }
+        ctx.globalAlpha = 1;
       }
     }
   }
@@ -330,7 +396,7 @@ function drawLines(ctx: CanvasRenderingContext2D, d: ChartData, th: ChartTheme, 
   const S = d.series.length;
   const G = d.groups.length;
   const top = S > 1 ? legend(ctx, d, th, w, d.series, d.kind === 'line') + 4 : 4;
-  const max = maxOf(d.values) || 1;
+  const max = maxWithCi(d) || 1;
   const x0 = yLabelWidth(ctx, th, max, d.format);
   const x1 = w - 6;
   const y0 = top;
@@ -338,6 +404,7 @@ function drawLines(ctx: CanvasRenderingContext2D, d: ChartData, th: ChartTheme, 
   const sy = valueAxis(ctx, th, max, x0, x1, y0, y1, d.format);
   const ax = d.axis ?? { lo: 0, hi: G, label: '' };
   const bx = (g: number) => x0 + ((g + 0.5) / G) * (x1 - x0);
+  const colW = (x1 - x0) / Math.max(1, G);
   if (d.axis) axisTicks(ctx, th, ax.lo, ax.hi, x0, x1, y1 + 3, !!ax.time, d.format);
   else labelTicks(ctx, th, d, x0, x1, y1 + 3);
   if (o.now !== null && o.now !== undefined && o.now >= ax.lo && o.now <= ax.hi) {
@@ -378,21 +445,61 @@ function drawLines(ctx: CanvasRenderingContext2D, d: ChartData, th: ChartTheme, 
       }
       ctx.globalAlpha = o.hover && o.hover.s >= 0 && o.hover.s !== s ? 0.45 : 1;
     }
+    const alpha = ctx.globalAlpha;
+    // Intervals first, under the line: a hairline per point in the series' colour.
+    if (d.ci) {
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.25;
+      for (let g = 0; g < G; g++) {
+        const iv = ciOf(d, s, g);
+        if (!iv || !finite(row[g])) continue;
+        ctx.globalAlpha = alpha * (isLow(d, s, g) ? LOW_ALPHA : 0.7);
+        whisker(ctx, bx(g), sy(iv[0]), bx(g), sy(iv[1]), colW >= 10 ? Math.min(4, colW / 4) : 0);
+      }
+      ctx.globalAlpha = alpha;
+    }
     ctx.strokeStyle = color;
     ctx.lineWidth = 2;
-    ctx.beginPath();
-    let pen = false;
-    for (let g = 0; g < G; g++) {
-      const v = row[g];
-      if (!finite(v)) {
-        pen = false;
-        continue;
+    if (d.low) {
+      // Segment by segment: a stretch touching a value from too few rows is faint.
+      let prev = -1;
+      for (let g = 0; g < G; g++) {
+        const v = row[g];
+        if (!finite(v)) {
+          prev = -1;
+          continue;
+        }
+        if (prev >= 0) {
+          ctx.globalAlpha = alpha * (isLow(d, s, prev) || isLow(d, s, g) ? LOW_ALPHA : 1);
+          ctx.beginPath();
+          ctx.moveTo(bx(prev), sy(row[prev]));
+          ctx.lineTo(bx(g), sy(v));
+          ctx.stroke();
+        } else if (g + 1 >= G || !finite(row[g + 1])) {
+          // A lone point: a dot, so it shows at all.
+          ctx.globalAlpha = alpha * (isLow(d, s, g) ? LOW_ALPHA : 1);
+          ctx.fillStyle = color;
+          ctx.beginPath();
+          ctx.arc(bx(g), sy(v), 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        prev = g;
       }
-      if (pen) ctx.lineTo(bx(g), sy(v));
-      else ctx.moveTo(bx(g), sy(v));
-      pen = true;
+    } else {
+      ctx.beginPath();
+      let pen = false;
+      for (let g = 0; g < G; g++) {
+        const v = row[g];
+        if (!finite(v)) {
+          pen = false;
+          continue;
+        }
+        if (pen) ctx.lineTo(bx(g), sy(v));
+        else ctx.moveTo(bx(g), sy(v));
+        pen = true;
+      }
+      ctx.stroke();
     }
-    ctx.stroke();
     ctx.globalAlpha = 1;
   }
   // The crosshair at the hovered bin: a hairline and every series' dot, ringed by the surface.
@@ -726,7 +833,10 @@ export function tooltipOf(d: ChartData, hit: Hit): { title: string; rows: { colo
   const rows = which.map((s) => {
     const v = d.values[s]?.[hit.g] ?? NaN;
     const n = d.counts?.[s]?.[hit.g];
-    const extra = n !== undefined && d.format !== 'int' && d.kind !== 'tiles' ? ` · ${t('charts.tip.rows', { n: fmtValue(n, 'int', true) })}` : '';
+    const ci = ciText(d, s, hit.g, f);
+    let extra = ci ? ` · ${ci}` : '';
+    if (n !== undefined && finite(n) && d.format !== 'int' && d.kind !== 'tiles') extra += ` · ${t('charts.tip.rows', { n: fmtValue(n, 'int', true) })}`;
+    if (isLow(d, s, hit.g) && d.minN) extra += ` · ${t('charts.tip.lowN', { n: fmtValue(d.minN, 'int', true) })}`;
     return { color: d.kind === 'pie' ? (g?.color ?? '') : (d.series[s]?.color ?? ''), label: d.kind === 'pie' || d.kind === 'matrix' ? d.valueLabel : d.series.length > 1 ? d.series[s].label : d.valueLabel, value: fmtValue(v, f) + extra };
   });
   return { title, rows };
@@ -742,7 +852,23 @@ export function tableOf(d: ChartData): { head: string[]; rows: string[][] } {
       const a = d.axis.lo + ((d.axis.hi - d.axis.lo) * j) / G;
       name = d.axis.time ? clock(a) : fmtValue(a, 'dec');
     }
-    return [name, ...d.series.map((_, s) => fmtValue(d.values[s]?.[j] ?? NaN, d.formats?.[j] ?? d.format))];
+    return [
+      name,
+      ...d.series.map((_, s) => {
+        const f = d.formats?.[j] ?? d.format;
+        const iv = ciOf(d, s, j);
+        const text = fmtValue(d.values[s]?.[j] ?? NaN, f);
+        return `${text}${iv ? ` (${fmtValue(iv[0], f)}–${fmtValue(iv[1], f)})` : ''}${isLow(d, s, j) ? ' *' : ''}`;
+      }),
+    ];
   });
+  if (d.ci) head[0] = head[0] ? `${head[0]} · ${ciHead(d)}` : ciHead(d);
   return { head, rows };
+}
+
+/** A table's note on its intervals and greyed rows. */
+function ciHead(d: ChartData): string {
+  const l = (d.ci?.level ?? 0.95) * 100;
+  const base = t('charts.table.ci', { level: `${Number.isInteger(l) ? l : l.toFixed(1)} %`, method: t(`charts.ci.${d.ci?.method ?? 'wilson'}`) });
+  return d.minN ? `${base} · ${t('charts.table.lowN', { n: fmtValue(d.minN, 'int', true) })}` : base;
 }

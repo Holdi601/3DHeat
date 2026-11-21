@@ -77,10 +77,16 @@ export function paintTileData(ctx: CanvasRenderingContext2D, tile: Tile, d: Tile
       ctx.fillStyle = th.text;
       ctx.font = `650 ${Math.min(40, h * 0.42)}px ${th.font}`;
       ctx.fillText(fmtValue(d.value, d.format, true), 0, 4);
+      ctx.font = `400 11px ${th.font}`;
+      ctx.fillStyle = th.dim;
+      let line = Math.min(52, h * 0.5) + 6;
       if (d.compare) {
-        ctx.font = `400 11px ${th.font}`;
-        ctx.fillStyle = th.dim;
-        ctx.fillText(`${sayDash(d.compare.label)} ${fmtValue(d.compare.value, d.format, true)}`, 0, Math.min(52, h * 0.5) + 6);
+        ctx.fillText(`${sayDash(d.compare.label)} ${fmtValue(d.compare.value, d.format, true)}`, 0, line);
+        line += 14;
+      }
+      if (d.ci) {
+        const l = d.ci.level * 100;
+        ctx.fillText(`${t('charts.tip.ci', { level: `${Number.isInteger(l) ? l : l.toFixed(1)} %`, lo: fmtValue(d.ci.lo, d.format), hi: fmtValue(d.ci.hi, d.format), method: t(`charts.ci.${d.ci.method}`) })} · ${t('charts.tip.rows', { n: fmtValue(d.ci.n, 'int', true) })}`, 0, line);
       }
       return;
     }
@@ -289,8 +295,12 @@ export async function canvasPdf(c: HTMLCanvasElement): Promise<Uint8Array> {
 export function csvRows(d: TileData): string[][] {
   const v = (x: number, f: Parameters<typeof fmtValue>[1]) => (Number.isFinite(x) ? String(Number(x.toPrecision(10))) : fmtValue(x, f));
   switch (d.kind) {
-    case 'table':
-      return [d.head, ...d.rows.map((r) => [...r.labels, ...r.values.map((x, i) => v(x, d.formats[i]))])];
+    case 'table': {
+      // A value with an interval: its low and high end and its rows beside it.
+      const withCi = (i: number) => !!d.ci?.[i];
+      const head = [...d.head.slice(0, d.axisCount), ...d.head.slice(d.axisCount).flatMap((h, i) => (withCi(i) ? [h, `${h} low`, `${h} high`, `${h} n`] : [h]))];
+      return [head, ...d.rows.map((r) => [...r.labels, ...r.values.flatMap((x, i) => (withCi(i) ? [v(x, d.formats[i]), v(r.ci?.[i]?.lo ?? NaN, d.formats[i]), v(r.ci?.[i]?.hi ?? NaN, d.formats[i]), v(r.ci?.[i]?.n ?? NaN, 'int')] : [v(x, d.formats[i])]))])];
+    }
     case 'pivot': {
       const out: string[][] = [[...d.rowHead, ...d.cols.map((c) => c.label), 'Total']];
       d.rows.forEach((r, i) => out.push([...r.labels, ...d.values[0][i].map((x) => v(x, d.measures[0].format)), v(d.rowTotals[0][i], d.measures[0].format)]));
@@ -298,12 +308,21 @@ export function csvRows(d: TileData): string[][] {
     }
     case 'chart': {
       const c = sayChart(d.chart);
+      const ci = c.ci;
+      if (ci)
+        return [
+          ['', ...c.series.flatMap((s) => [s.label, `${s.label} low`, `${s.label} high`, `${s.label} n`])],
+          ...c.groups.map((g, gi) => [g.label, ...c.series.flatMap((_s, si) => [v(c.values[si][gi], c.format), v(ci.lo[si]?.[gi] ?? NaN, c.format), v(ci.hi[si]?.[gi] ?? NaN, c.format), v(c.counts?.[si]?.[gi] ?? NaN, 'int')])]),
+        ];
       return [['', ...c.series.map((s) => s.label)], ...c.groups.map((g, gi) => [g.label, ...c.series.map((_s, si) => v(c.values[si][gi], c.format))])];
     }
     case 'items':
       return [['', d.name], ...d.items.map((x) => [sayDash(x.label), v(x.value, d.format)])];
     case 'kpi':
-      return [[d.name, ...(d.compare ? [sayDash(d.compare.label)] : [])], [v(d.value, d.format), ...(d.compare ? [v(d.compare.value, d.format)] : [])]];
+      return [
+        [d.name, ...(d.compare ? [sayDash(d.compare.label)] : []), ...(d.ci ? ['low', 'high', 'n'] : [])],
+        [v(d.value, d.format), ...(d.compare ? [v(d.compare.value, d.format)] : []), ...(d.ci ? [v(d.ci.lo, d.format), v(d.ci.hi, d.format), v(d.ci.n, 'int')] : [])],
+      ];
     case 'box':
       return [['', 'p5', 'p25', 'median', 'p75', 'p95', 'rows'], ...d.groups.map((g) => [g.label, ...g.q.map((x) => v(x, d.format)), String(g.n)])];
     case 'bands':

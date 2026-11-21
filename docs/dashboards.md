@@ -94,6 +94,17 @@ Each chosen by the data's job, drawn by the shared chart module and the same rul
 
 Every measure can carry **Only rows where** (a Compare predicate). Save measures under the dashboard's settings to reuse them by name.
 
+### Confidence intervals on a rate
+
+A **Rate** (saved or dropped on a tile) can carry an **Interval**:
+
+- **Wilson** (the default): Wilson's score interval. It stays inside 0-100 %, gives a sensible upper bound at 0 % and a lower one at 100 %, and keeps close to its level at small n.
+- **Bootstrap (percentile)**: the interval of the rate over the rows resampled with replacement. For a rate the resampled count is binomial, so its percentiles are taken from that distribution exactly - the limit of endless resamples, the same numbers every time. At 0 % or 100 % every resample is the same, so the interval is the point itself; take Wilson there.
+- **Level**: two-sided, 50-99.9 % (95 % by default).
+- **Grey below n**: values from fewer rows than this are drawn faint, and the tooltip, the table and the KPI card say so.
+
+Where it shows: whiskers across **bars** and **columns** and on each point of a **line** or **area** (the value axis reaches the whiskers' ends); the tooltip (*95 % CI 38 %–52 % (Wilson) · 120 rows*); a **table**'s cell beside the value, its column head saying the level; a **KPI card** under its number; the CSV (a *low*, *high* and *n* column beside the value). Stacked marks, 100 % stacks and a highlighted selection draw no whiskers (their parts are not the rate's own). On a sampled dashboard (*From a sample*) the interval is the one of the rows actually read, not of the rows they stand for, so it is honestly wider.
+
 **Calculated columns** are Compare row expressions (`speed * 3.6`, `alt > 1000`) worked out per row in the workers; they appear in the field list like any column. **Bins** group a numeric field into equal bins (a width, or a count over its range). **Hierarchies** are fields to drill down through, top first.
 
 ## Slicers and filters
@@ -124,6 +135,8 @@ Filters stack: the **dashboard's** (every page), the **page's**, a **drill-throu
 - **Selected volume**: only the rows inside the volume selected in the view.
 - **Drive the view**: the dashboard's selection and slicers become the view's filters - a team, players, a category's values, a numeric range - so the heat and the replay show what the dashboard looks at. Those filters are the dashboard's own: they change with the selection, go when the link or the window closes, a column you filter by hand keeps your filter, and they are left out of what the dashboard follows (the two never feed each other).
 
+A dashboard over a workspace's **own rows** (a source other than the loaded data, picked under **Data**) links to that workspace's view the same three ways where the workspace offers it: its view says which of its rows it shows (and which lie in the selected volume), and the dashboard's selection and slicers go to that view as its filters.
+
 ## Save and share
 
 - Dashboards are kept in this browser (all of them, whatever data is loaded: they read whatever columns the data has), in the **session file**, and in a **shared session** they sync to everyone: each edit is an operation on a dashboard, a page or a tile by its id, so two people editing different tiles never overwrite each other.
@@ -149,7 +162,11 @@ Frame drops are the worst failure; nothing of a dashboard runs per frame.
 
 - `model.ts` - `Dashboard`, `Page`, `Tile`, `MeasureDef`, `FilterDef`, `CalcColumn`, `BinDef`, `Hierarchy`; `makeDashboard`, `makeTile`, `parseBundle` (every file and peer's entity read again, clamped).
 - `store.ts` - `useDash`: the op-log document `dashboards` (collections `dashboards`, `pages`, `tiles`, registered with `state/sharedDocs.ts`), undo / redo per dashboard, the interaction (selection, drills, drill-through).
-- `sources.ts` - `registerDashboardSource({ id, label, dataset, subscribe })`: a workspace's own rows (any `Dataset`-shaped table) for dashboards whose `source` names it.
+- `sources.ts` - `registerDashboardSource({ id, label, dataset, subscribe })`: a workspace's own rows (any `Dataset`-shaped table) for dashboards whose `source` names it. Its link to its own 3D view, all optional:
+  - `viewMask({ followView, volume })` returns `{ key, mask }` - a `Uint8Array` over the source's rows (non-zero = shown) and a key that changes with it - or null for every row. Called on each count while **Follow the view** or **Selected volume** is on; the mask goes to the row workers as a column (`@mask:<key>`, sent once per key) and is ANDed into every tile, the KPI baseline too. Leave out what `applySelection` set, so the two never feed each other.
+  - `onViewChange(cb)` calls back when the mask would change (playback, filters, the volume); the tiles count again 40 ms later.
+  - `applySelection(sel)` receives `{ dashId, filters, picked }` for **Drive the view**: `filters` are view-filter specs (`teams`, `persons`, `categories` / `range` by column name) from the dashboard's and the page's filters, its slicers and its selection; `picked` the marks in words; `null` takes them off (link, window or dashboard closed).
+- `ci.ts` - `wilson`, `bootstrap`, `rateInterval` (weighted rows), `normalQuantile`; on a rate, `MeasureDef.ci` (or a quick value's `ci`) is `{ method: 'wilson' | 'bootstrap', level?, minN? }`.
 - `templates.ts` - `registerTemplate({ id, name, workspaces, build(catalog) })`.
 - `fields.ts` - the field catalogue (`catalogOf`) over the Compare engine's column keys, roles found by name.
 - `plan.ts` - a tile to its queries: the filter layers, cross-filter and highlight, drill, measures (`compileMeasure`, calculated ones over the Compare parser).

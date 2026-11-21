@@ -8,6 +8,8 @@ import { makeDashboard, makeTile, parseBundle, reid, type Dashboard, type Filter
 import { drillDown, drillFilters, drillTargets, drillUp, expandDown, planTile, throughFilters, tileClauses, toggleSelection, type Interaction, type Selection, NO_LINK } from './plan';
 import { Engine, mergePartials, popcount, runAll, type Merged, type QuerySpec } from './query';
 import { queryColumns } from './columns';
+import { wilson } from './ci';
+import { csvRows } from './export';
 
 /** Synthetic rows: 4 teams of 3, three matches, an event, a weapon, a speed, a won flag. */
 function data(rows = 24_000): Dataset {
@@ -308,6 +310,102 @@ describe('drilling', () => {
     const targets = drillTargets(pages, s.fields, 'a');
     expect(targets.map((p) => p.id)).toEqual(['b']);
     expect(throughFilters(targets[0], s, r.cat)).toEqual([{ id: 'thr0', field: 'team', op: 'in', values: [DS.teamLabels[3]] }]);
+  });
+});
+
+describe('rate intervals on tiles', () => {
+  const r = rig();
+  const weapon = DS.attrs.find((a) => a.name === 'weapon')!.data as Uint32Array;
+  const rate = { agg: 'rate' as const, where: 'weapon == "rifle"', ci: { method: 'wilson' as const, minN: 6000 } };
+  const byTeam = () => {
+    const k = [0, 0, 0, 0];
+    const n = [0, 0, 0, 0];
+    for (let i = 0; i < DS.count; i++) {
+      n[DS.teamId![i]]++;
+      if (weapon[i] === 0) k[DS.teamId![i]]++;
+    }
+    return { k, n };
+  };
+  it('bars: each mark with its Wilson interval, its rows, greyed below the minimum n', () => {
+    const d = run(r, tile(r, 'bar', { axis: ['team'], values: [rate], opts: { sort: 'label' } })).data;
+    if (d.kind !== 'chart') throw new Error(d.kind);
+    const c = d.chart;
+    expect(c.ci?.method).toBe('wilson');
+    expect(c.ci?.level).toBe(0.95);
+    const { k, n } = byTeam();
+    c.groups.forEach((g, gi) => {
+      const team = DS.teamLabels.indexOf(g.label);
+      const iv = wilson(k[team], n[team])!;
+      expect(c.values[0][gi]).toBeCloseTo(k[team] / n[team], 9);
+      expect(c.ci!.lo[0][gi]).toBeCloseTo(iv[0], 9);
+      expect(c.ci!.hi[0][gi]).toBeCloseTo(iv[1], 9);
+      expect(c.counts![0][gi]).toBe(n[team]);
+      expect(c.low![0][gi]).toBe(n[team] < 6000);
+    });
+    expect(c.minN).toBe(6000);
+  });
+  it('KPI cards, tables and their CSV carry the interval', () => {
+    const k = kpi(run(r, tile(r, 'kpi', { values: [{ ...rate, ci: { method: 'bootstrap', level: 0.9 } }], opts: { compare: 'none', spark: false } })).data);
+    const rifles = weapon.reduce((s, w) => s + (w === 0 ? 1 : 0), 0);
+    expect(k.ci?.method).toBe('bootstrap');
+    expect(k.ci?.n).toBe(DS.count);
+    expect(k.ci!.lo).toBeLessThan(rifles / DS.count);
+    expect(k.ci!.hi).toBeGreaterThan(rifles / DS.count);
+    expect(k.ci?.low).toBe(false);
+    const tb = run(r, tile(r, 'table', { axis: ['team'], values: [{ agg: 'count' }, rate] })).data;
+    if (tb.kind !== 'table') throw new Error(tb.kind);
+    expect(tb.ci?.[0]).toBeNull();
+    expect(tb.ci?.[1]?.method).toBe('wilson');
+    expect(tb.rows[0].ci?.[1]?.n).toBe(tb.rows[0].values[0]);
+    const csv = csvRows(tb);
+    expect(csv[0].slice(-4)).toEqual([csv[0].at(-4), `${csv[0].at(-4)} low`, `${csv[0].at(-4)} high`, `${csv[0].at(-4)} n`]);
+  });
+  it('a sampled pool: the interval of the rows read, not the rows they stand for', () => {
+    const t = tile(r, 'kpi', { values: [rate], opts: { compare: 'none', spark: false } });
+    const page = { id: r.pageId, dashId: r.dash.id, name: 'P', order: 0, filters: [] as FilterDef[] };
+    const plan = planTile(r.cat, r.dash, page, t, inter(r), NO_LINK)!;
+    const { results } = run(r, t);
+    const one = kpi(finishTile(r.cat, t, plan, results, 1));
+    const four = kpi(finishTile(r.cat, t, plan, results, 4));
+    expect(four.ci!.n).toBe(one.ci!.n / 4);
+    expect(four.ci!.hi - four.ci!.lo).toBeGreaterThan(one.ci!.hi - one.ci!.lo);
+  });
+  it('the interval is kept in the file, clamped', () => {
+    const b = makeDashboard('CI');
+    b.dashboard.measures = [{ id: 'm1', name: 'Rifle rate', agg: 'rate', where: 'weapon == "rifle"', ci: { method: 'bootstrap', level: 2, minN: 30 } }];
+    b.tiles.push(makeTile(b.pages[0].id, 'bar', { x: 0, y: 0 }, { axis: ['team'], values: [{ agg: 'rate', where: 'x > 0', ci: { method: 'wilson' } }] }));
+    const back = parseBundle(JSON.parse(JSON.stringify(b)))!;
+    expect(back.dashboard.measures?.[0].ci).toEqual({ method: 'bootstrap', level: 0.999, minN: 30 });
+    expect(back.tiles[0].values?.[0]).toMatchObject({ ci: { method: 'wilson' } });
+    const bad = JSON.parse(JSON.stringify(b));
+    bad.dashboard.measures[0].ci = { method: 'magic' };
+    expect(parseBundle(bad)!.dashboard.measures?.[0].ci).toBeUndefined();
+  });
+});
+
+describe('a registered source linked to its own view', () => {
+  it('its view mask narrows every tile, by the mask column the workers keep', () => {
+    const r = rig({ source: 'hits' });
+    const dash = { ...r.dash, link: { followView: true, driveView: false, volume: false } };
+    const page = { id: r.pageId, dashId: dash.id, name: 'P', order: 0, filters: [] as FilterDef[] };
+    const t = tile(r, 'kpi', { values: [{ agg: 'count' }], opts: { compare: 'baseline', spark: false } });
+    const plan = planTile(r.cat, dash, page, t, inter(r), { ...NO_LINK, mask: '@mask:v1' })!;
+    expect(plan.queries.every((q) => q.clauses.some((c) => c.k === 'in' && c.key === '@mask:v1'))).toBe(true);
+    const keys = queryColumns(plan.queries);
+    expect(keys.has('@mask:v1')).toBe(true);
+    const store = storeOf(DS, keys);
+    const mask = new Uint16Array(DS.count);
+    let kept = 0;
+    for (let i = 0; i < DS.count; i++) if (i % 3 === 0) (mask[i] = 1), kept++;
+    store.cols['@mask:v1'] = mask;
+    const e = new Engine(store);
+    const parts = runAll(e.run(plan.queries));
+    const results = new Map<string, Merged>();
+    plan.queries.forEach((q, i) => results.set(q.id, mergePartials(q, [parts[i]])));
+    const d = kpi(finishTile(r.cat, t, plan, results));
+    expect(d.value).toBe(kept);
+    // The baseline (every slicer off) still keeps to the view: the link is not the user's to switch off on the page.
+    expect(d.compare?.value).toBe(kept);
   });
 });
 

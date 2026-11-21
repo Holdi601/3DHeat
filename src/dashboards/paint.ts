@@ -10,7 +10,7 @@
  * never per frame. Each returns its marks' hit boxes.
  */
 
-import { ellipsize } from '../charts/draw';
+import { ciOf, ellipsize, isLow, LOW_ALPHA } from '../charts/draw';
 import { fmtValue, niceTicks, clock } from '../charts/format';
 import { inkOn, mix, type ChartTheme } from '../charts/palette';
 import type { ChartData, ValueFormat } from '../charts/types';
@@ -86,6 +86,8 @@ export function paintColumns(ctx: CanvasRenderingContext2D, d: ChartData, th: Ch
       const v = d.values[s][g];
       if (!Number.isFinite(v)) continue;
       acc = stacked ? acc + Math.max(0, v) : Math.max(acc, v);
+      const upper = !stacked ? ciOf(d, s, g)?.[1] : undefined;
+      if (upper !== undefined) acc = Math.max(acc, upper);
     }
     max = Math.max(max, acc);
   }
@@ -129,7 +131,8 @@ export function paintColumns(ctx: CanvasRenderingContext2D, d: ChartData, th: Ch
     for (let s = 0; s < S; s++) {
       const v = d.values[s][g];
       if (!Number.isFinite(v) || v <= 0) continue;
-      ctx.globalAlpha = dim ? 0.45 : 1;
+      const low = isLow(d, s, g);
+      ctx.globalAlpha = (dim ? 0.45 : 1) * (low ? LOW_ALPHA : 1);
       ctx.fillStyle = d.series[s].color ?? th.series[0];
       if (stacked) {
         const yTop = sy(acc + v);
@@ -143,6 +146,25 @@ export function paintColumns(ctx: CanvasRenderingContext2D, d: ChartData, th: Ch
         const x = gx + s * (thick + 2);
         const y = sy(v);
         roundTop(ctx, x, y, thick, bottom - y, 4);
+        // The interval over the column's end, in the text ink.
+        const iv = ciOf(d, s, g);
+        if (iv) {
+          const a = ctx.globalAlpha;
+          ctx.globalAlpha = a * 0.85;
+          ctx.strokeStyle = th.text;
+          ctx.lineWidth = 1.25;
+          const cx = x + thick / 2;
+          const cap = Math.min(4, thick / 2);
+          ctx.beginPath();
+          ctx.moveTo(cx, sy(iv[0]));
+          ctx.lineTo(cx, sy(iv[1]));
+          ctx.moveTo(cx - cap, sy(iv[0]));
+          ctx.lineTo(cx + cap, sy(iv[0]));
+          ctx.moveTo(cx - cap, sy(iv[1]));
+          ctx.lineTo(cx + cap, sy(iv[1]));
+          ctx.stroke();
+          ctx.globalAlpha = a;
+        }
         hits.push({ x: x - 1, y: top, w: thick + 2, h: bottom - top, i: g, s });
       }
     }

@@ -137,6 +137,24 @@ export interface ChartData {
   sampleRows?: number;
   /** A message key saying why there is nothing to draw. */
   empty?: string;
+  /**
+   * Confidence intervals of the values: lo[series][group] and hi[series][group]
+   * (NaN where there is none), drawn as whiskers on bars, columns and lines and
+   * said in the tooltip and the table.
+   */
+  ci?: ChartCi;
+  /** Values from fewer rows than the measure's minimum n: low[series][group], drawn faint. */
+  low?: boolean[][];
+  /** The minimum n `low` is judged by. */
+  minN?: number;
+}
+
+export interface ChartCi {
+  method: 'wilson' | 'bootstrap';
+  /** Two-sided, 0.5-0.999. */
+  level: number;
+  lo: number[][];
+  hi: number[][];
 }
 
 export const DEFAULT_SPEC: ChartSpec = {

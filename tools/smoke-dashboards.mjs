@@ -98,7 +98,17 @@ try {
 
   /** Until the dashboards have counted every shown tile for the newest change. */
   async function settle(timeout = 120_000) {
-    await page.waitForFunction(() => globalThis.__dc.isIdle && globalThis.__dc.painted && [...globalThis.__dc.plans.keys()].every((id) => globalThis.__dc.results.has(id)), null, { timeout, polling: 100 });
+    try {
+      await page.waitForFunction(() => globalThis.__dc.isIdle && globalThis.__dc.painted && [...globalThis.__dc.plans.keys()].every((id) => globalThis.__dc.results.has(id)), null, { timeout, polling: 100 });
+    } catch (e) {
+      const why = await page.evaluate(() => {
+        const dc = globalThis.__dc;
+        const missing = [...dc.plans.keys()].filter((id) => !dc.results.has(id));
+        const tiles = globalThis.__ds.getState().tiles.filter((t) => missing.includes(t.id)).map((t) => `${t.kind}:${t.title}`);
+        return { idle: dc.isIdle, running: dc.running, again: dc.again, painted: dc.painted, missing: tiles };
+      });
+      throw new Error(`settle: ${JSON.stringify(why)} (${e.message.split('\n')[0]})`);
+    }
   }
   const tileData = (id) => page.evaluate((id) => {
     const d = globalThis.__dc.results.get(id);
@@ -281,6 +291,88 @@ try {
     await page.evaluate((d) => globalThis.__ds.getState().redoEdit(d), dashId);
     expect((await tiles()).length === 3, 'gone again');
     await page.evaluate((d) => globalThis.__ds.getState().undoEdit(d), dashId);
+  });
+
+  await step('rate intervals (whiskers, tooltips, table, KPI, greyed below n) on a registered source linked to its view both ways', async () => {
+    // A source over the same rows whose "view" shows only the rifle rows; it records what the dashboard drives.
+    const made = await page.evaluate(async () => {
+      const src = await import('/src/dashboards/sources.ts');
+      const m = await import('/src/dashboards/model.ts');
+      const ds = globalThis.__3dheat.useStore.getState().dataset;
+      const weapon = ds.attrs.find((a) => a.name === 'weapon').data;
+      const mask = new Uint8Array(ds.count);
+      let kept = 0;
+      for (let i = 0; i < ds.count; i++) if (weapon[i] === 0) (mask[i] = 1), kept++;
+      globalThis.__applied = [];
+      globalThis.__unregSmoke = src.registerDashboardSource({
+        id: 'smoke-hits',
+        label: 'Smoke hits',
+        dataset: () => ds,
+        subscribe: () => () => {},
+        viewMask: (inp) => (inp.followView ? { key: 'rifles', mask } : null),
+        onViewChange: () => () => {},
+        applySelection: (sel) => globalThis.__applied.push(sel),
+      });
+      const b = m.makeDashboard('Intervals', { source: 'smoke-hits', link: { followView: true, driveView: true, volume: false } });
+      const p = b.pages[0].id;
+      // A rate whose groups (teams of the rifle rows) all have fewer rows than the minimum: every mark greyed.
+      const rate = { agg: 'rate', where: 'speed > 12', ci: { method: 'wilson', minN: 1_000_000 } };
+      b.tiles.push(
+        m.makeTile(p, 'kpi', { x: 0, y: 0 }, { w: 6, h: 4, title: 'Rows', values: [{ agg: 'count' }], opts: { compare: 'none', spark: false } }),
+        m.makeTile(p, 'kpi', { x: 6, y: 0 }, { w: 6, h: 4, title: 'Fast share', values: [{ agg: 'rate', where: 'speed > 12', ci: { method: 'bootstrap' } }], opts: { compare: 'none', spark: false } }),
+        m.makeTile(p, 'bar', { x: 0, y: 4 }, { w: 6, h: 8, title: 'Fast share by team', axis: ['team'], values: [{ ...rate, ci: { method: 'wilson' } }] }),
+        m.makeTile(p, 'column', { x: 6, y: 4 }, { w: 6, h: 8, title: 'Greyed below n', axis: ['team'], values: [rate] }),
+        m.makeTile(p, 'line', { x: 0, y: 12 }, { w: 6, h: 8, title: 'Over time', values: [{ ...rate, ci: { method: 'wilson' } }] }),
+        m.makeTile(p, 'table', { x: 6, y: 12 }, { w: 6, h: 8, title: 'Table', axis: ['team'], values: [{ agg: 'count' }, rate] }),
+      );
+      const st = globalThis.__ds.getState();
+      const id = st.create('Intervals', b, 'heat');
+      st.openDash(id);
+      st.setEdit(false);
+      const now = globalThis.__ds.getState();
+      const pg = now.pages.find((x) => x.dashId === id);
+      const ts = now.tiles.filter((t) => t.pageId === pg.id);
+      return { id, kept, tiles: ts.map((t) => ({ id: t.id, kind: t.kind, title: t.title })) };
+    });
+    await wait(500);
+    await settle();
+    const byTitle = (t) => made.tiles.find((x) => x.title === t).id;
+    const rows = await tileData(byTitle('Rows'));
+    expect(rows.value === made.kept, `Follow the view: ${rows.value} rows, the view shows ${made.kept}`);
+    const fast = await tileData(byTitle('Fast share'));
+    expect(fast.ci && fast.ci.method === 'bootstrap' && fast.ci.lo <= fast.value && fast.value <= fast.ci.hi && fast.ci.n === made.kept, `KPI ${JSON.stringify(fast)}`);
+    const bar = await tileData(byTitle('Fast share by team'));
+    const c = bar.chart;
+    expect(c.ci && c.ci.lo[0].every((lo, g) => lo <= c.values[0][g] && c.values[0][g] <= c.ci.hi[0][g]), `bar CI ${JSON.stringify(c.ci)}`);
+    expect(c.counts[0].reduce((a, b) => a + b, 0) === made.kept, 'bar rows add up to the view');
+    const col = await tileData(byTitle('Greyed below n'));
+    expect(col.chart.low && col.chart.low[0].every(Boolean) && col.chart.minN === 1_000_000, `low ${JSON.stringify(col.chart.low)}`);
+    const line = await tileData(byTitle('Over time'));
+    expect(line.chart.ci && line.chart.ci.hi[0].some(Number.isFinite), 'line CI');
+    const tb = await tileData(byTitle('Table'));
+    expect(tb.ci && tb.ci[1] && tb.rows.every((r) => r.ci[1] && r.ci[1].low), `table ${JSON.stringify(tb).slice(0, 300)}`);
+    // The tooltip says the interval.
+    const barCanvas = page.locator(`.dash-tile[data-tile="${byTitle('Fast share by team')}"] canvas`).first();
+    const box = await barCanvas.boundingBox();
+    await barCanvas.hover({ position: { x: box.width * 0.5, y: ((box.height - 14) / c.groups.length) * 0.5 + 2 } });
+    await wait(300);
+    const tip = await page.evaluate(() => [...document.querySelectorAll('.chart-tip, .dash-tip')].map((e) => e.textContent).join(' | '));
+    expect(/CI .*Wilson/.test(tip), `tooltip ${tip}`);
+    await page.screenshot({ path: `${OUT}/dashboards-ci.png` });
+    // Drive the view: a click on a bar hands the source its team.
+    await barCanvas.click({ position: { x: box.width * 0.5, y: ((box.height - 14) / c.groups.length) * 0.5 + 2 } });
+    await settle();
+    const applied = await page.evaluate(() => globalThis.__applied.at(-1));
+    expect(applied && applied.picked[0]?.labels.length === 1 && applied.filters.some((f) => f.kind === 'teams'), `applied ${JSON.stringify(applied)}`);
+    await page.evaluate((d) => globalThis.__ds.getState().patchDash(d, { link: { followView: true, driveView: false, volume: false } }), made.id);
+    await wait(200);
+    const off = await page.evaluate(() => globalThis.__applied.at(-1));
+    expect(off === null, 'Drive the view off: the selection taken back');
+    await page.evaluate((d) => {
+      globalThis.__unregSmoke();
+      globalThis.__ds.getState().openDash(d);
+    }, dashId);
+    return `view ${made.kept} rows; KPI ${fast.value.toFixed(3)} [${fast.ci.lo.toFixed(3)}, ${fast.ci.hi.toFixed(3)}]; drove ${applied.picked[0].labels[0]}`;
   });
 
   /** Frame intervals over a few seconds, ms: p50, p99, max. */

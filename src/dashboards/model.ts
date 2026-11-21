@@ -77,10 +77,22 @@ export interface MeasureDef {
   /** Calc: arithmetic over other measures by name (`` `Kills` / `Deaths` ``) and Compare aggregates (`countIf(...)`). */
   expr?: string;
   format?: ValueFormat;
+  /** Rate: a confidence interval (whiskers, tooltips, tables, KPI cards) and the minimum rows below which a value is greyed. */
+  ci?: CiDef;
+}
+
+/** A rate's confidence interval (`ci.ts`). */
+export interface CiDef {
+  /** Wilson's score interval (the default), or the bootstrap's percentile interval. */
+  method: 'wilson' | 'bootstrap';
+  /** Two-sided level, 0.5-0.999 (default 0.95). */
+  level?: number;
+  /** Values from fewer rows than this are drawn faint and said to be so. */
+  minN?: number;
 }
 
 /** A tile's value: a saved measure by id, or a quick one (a field dropped on the slot). */
-export type ValueRef = { m: string } | { agg: AggKind; field?: FieldRef; p?: number; where?: string; name?: string };
+export type ValueRef = { m: string } | { agg: AggKind; field?: FieldRef; p?: number; where?: string; name?: string; ci?: CiDef };
 
 export type FilterOp = 'in' | 'out' | 'range' | 'search' | 'relative' | 'expr';
 
@@ -311,11 +323,18 @@ export function parseFilter(v: unknown): FilterDef | null {
 
 const filters = (v: unknown) => (Array.isArray(v) ? v.map(parseFilter).filter((f): f is FilterDef => !!f).slice(0, 200) : undefined);
 
+export function parseCi(v: unknown): CiDef | undefined {
+  if (!isObj(v) || (v.method !== 'wilson' && v.method !== 'bootstrap')) return undefined;
+  const level = num(v.level);
+  const minN = num(v.minN);
+  return strip({ method: v.method as CiDef['method'], level: level === undefined ? undefined : Math.max(0.5, Math.min(0.999, level)), minN: minN === undefined ? undefined : Math.max(0, Math.min(1e9, Math.round(minN))) });
+}
+
 function parseValueRef(v: unknown): ValueRef | null {
   if (!isObj(v)) return null;
   if (typeof v.m === 'string') return { m: v.m.slice(0, 64) };
   if (!AGG_KINDS.includes(v.agg as AggKind)) return null;
-  return strip({ agg: v.agg as AggKind, field: str(v.field), p: num(v.p), where: str(v.where, 2000), name: str(v.name) });
+  return strip({ agg: v.agg as AggKind, field: str(v.field), p: num(v.p), where: str(v.where, 2000), name: str(v.name), ci: parseCi(v.ci) });
 }
 
 export function parseMeasure(v: unknown): MeasureDef | null {
@@ -331,6 +350,7 @@ export function parseMeasure(v: unknown): MeasureDef | null {
     den: str(v.den, 64),
     expr: str(v.expr, 4000),
     format: ['int', 'pct', 'dec', 'rate', 'ratio', 'seconds'].includes(v.format as string) ? (v.format as ValueFormat) : undefined,
+    ci: parseCi(v.ci),
   });
 }
 

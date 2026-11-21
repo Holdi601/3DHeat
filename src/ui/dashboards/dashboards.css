@@ -329,6 +329,24 @@
 .dash-spark {
   margin-top: 4px;
 }
+/* A rate's interval, and values from fewer rows than the measure's minimum n. */
+.dash-kpi-ci {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+.dash-kpi.low .dash-kpi-value {
+  color: var(--text-faint);
+}
+.dash-ci {
+  position: relative;
+  margin-left: 6px;
+  color: var(--text-faint);
+  font-size: 10.5px;
+  font-weight: 400;
+}
+.dash-table td.low > span {
+  color: var(--text-faint);
+}
 .dash-table-wrap {
   overflow: auto;
   height: 100%;

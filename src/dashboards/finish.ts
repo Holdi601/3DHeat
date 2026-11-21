@@ -12,6 +12,7 @@
  */
 
 import type { ChartData, ChartEntity, ValueFormat } from '../charts/types';
+import type { CiMethod } from './ci';
 import type { Catalog } from './fields';
 import { dimLabel } from './fields';
 import type { Tile } from './model';
@@ -24,6 +25,21 @@ export interface MarkMap {
   sLegend: number[];
 }
 
+/** How a measure's interval was made, and the rows below which its values are greyed (0: none). */
+export interface CiInfo {
+  method: CiMethod;
+  level: number;
+  minN: number;
+}
+
+/** One value's interval, the rows behind it, and whether they are fewer than the minimum. */
+export interface CiValue {
+  lo: number;
+  hi: number;
+  n: number;
+  low: boolean;
+}
+
 export interface KpiData {
   kind: 'kpi';
   name: string;
@@ -34,6 +50,8 @@ export interface KpiData {
   compare: { value: number; label: string } | null;
   spark: number[] | null;
   rows: number;
+  /** A rate's interval. */
+  ci?: (CiInfo & CiValue) | null;
 }
 
 export interface TableRow {
@@ -42,6 +60,8 @@ export interface TableRow {
   cell: number;
   labels: string[];
   values: number[];
+  /** Per value column with an interval, its interval (null for the others). */
+  ci?: (CiValue | null)[];
 }
 
 export interface TableData {
@@ -49,6 +69,8 @@ export interface TableData {
   head: string[];
   axisCount: number;
   formats: ValueFormat[];
+  /** Per value column, how its interval is made (null: none). */
+  ci?: (CiInfo | null)[];
   rows: TableRow[];
   /** Per value column, its range over the rows (data bars, colour scales). */
   ranges: [number, number][];
@@ -151,8 +173,21 @@ export function combine(m: Merged, accs: readonly AccSpec[], cells: readonly num
   return out;
 }
 
-export function ctxOf(plan: TilePlan, m: Merged): MeasureCtx {
-  return { totals: totalsOf(m), minutes: plan.minutes };
+export function ctxOf(plan: TilePlan, m: Merged, weight = 1): MeasureCtx {
+  return { totals: totalsOf(m), minutes: plan.minutes, weight };
+}
+
+export function ciInfo(m: MeasureOut | undefined): CiInfo | null {
+  return m?.ci ? { method: m.ci.method, level: m.ci.level, minN: m.ci.minN } : null;
+}
+
+/** A measure's interval at a cell; null without one or without rows. */
+export function ciValue(m: MeasureOut | undefined, src: Merged, cell: number, ctx: MeasureCtx): CiValue | null {
+  if (!m?.ci) return null;
+  const n = m.ci.n(src, cell, ctx);
+  const iv = m.ci.interval(src, cell, ctx);
+  if (!iv) return null;
+  return { lo: iv[0], hi: iv[1], n, low: m.ci.minN > 0 && n < m.ci.minN };
 }
 
 function countIdx(accs: readonly AccSpec[]): number {
@@ -204,7 +239,7 @@ function entityOf(plan: TilePlan, axisCell: number): ChartEntity {
 const DEFAULT_TOP: Partial<Record<Tile['kind'], number>> = { bar: 12, column: 12, pie: 5, treemap: 24, topn: 10, matrix: 12, scatter: 60, box: 12, table: 500, pivot: 60 };
 
 /** Everything a tile draws, from its plan and its queries' merged numbers. */
-export function finishTile(cat: Catalog, tile: Tile, plan: TilePlan, results: Map<string, Merged>): TileData {
+export function finishTile(cat: Catalog, tile: Tile, plan: TilePlan, results: Map<string, Merged>, weight = 1): TileData {
   catRef = cat;
   if (plan.error) return { kind: 'empty', message: plan.error };
   const main = results.get(`${tile.id}:main`);
@@ -221,7 +256,7 @@ export function finishTile(cat: Catalog, tile: Tile, plan: TilePlan, results: Ma
   }
   if (main!.rows === 0 && kind !== 'kpi') return { kind: 'empty', message: 'dash.empty.noRows' };
   const m = main!;
-  const ctx = ctxOf(plan, m);
+  const ctx = ctxOf(plan, m, weight);
   const ms = plan.measures;
   if (kind === 'kpi') {
     const meas = ms[0];
@@ -234,15 +269,18 @@ export function finishTile(cat: Catalog, tile: Tile, plan: TilePlan, results: Ma
       sparkVals = Array.from({ length: spark.cells }, (_, c) => plan.spark!.value(spark, c, sctx));
     }
     const mode = tile.opts?.compare ?? 'baseline';
+    const info = ciInfo(meas);
+    const civ = info ? ciValue(meas, m, 0, ctx) : null;
     return {
       kind: 'kpi',
       name: meas.name,
       value,
       format: meas.format,
       additive: meas.additive,
-      compare: cmp ? { value: meas.value(cmp, 0, ctxOf(plan, cmp)), label: mode === 'set' ? (tile.opts?.compareLabel || 'dash.kpi.vsSet') : 'dash.kpi.vsBaseline' } : null,
+      compare: cmp ? { value: meas.value(cmp, 0, ctxOf(plan, cmp, weight)), label: mode === 'set' ? (tile.opts?.compareLabel || 'dash.kpi.vsSet') : 'dash.kpi.vsBaseline' } : null,
       spark: sparkVals,
       rows: m.rows,
+      ...(info ? { ci: civ ? { ...info, ...civ } : null } : {}),
     };
   }
   const hl = plan.highlight ? (results.get(`${tile.id}:hl`) ?? null) : null;
@@ -257,11 +295,14 @@ export function finishTile(cat: Catalog, tile: Tile, plan: TilePlan, results: Ma
 
   if (kind === 'table') {
     const ci = countIdx(accs);
+    const anyCi = ms.some((x) => x.ci);
     const rows: TableRow[] = [];
     for (let c = 0; c < m.cells; c++) {
       if (!(m.accs[ci][c] > 0)) continue;
       const parts = cellParts(plan.dims, c);
-      rows.push({ parts, cell: c, labels: plan.dims.map((d, i) => dimLabel(d.field, d.dim, parts[i], cat.epochMs)), values: ms.map((x) => x.value(m, c, ctx)) });
+      const row: TableRow = { parts, cell: c, labels: plan.dims.map((d, i) => dimLabel(d.field, d.dim, parts[i], cat.epochMs)), values: ms.map((x) => x.value(m, c, ctx)) };
+      if (anyCi) row.ci = ms.map((x) => ciValue(x, m, c, ctx));
+      rows.push(row);
     }
     const sort = tile.opts?.sort ?? 'value-desc';
     if (sort === 'value-desc') rows.sort((a, b) => (b.values[0] || 0) - (a.values[0] || 0));
@@ -281,6 +322,7 @@ export function finishTile(cat: Catalog, tile: Tile, plan: TilePlan, results: Ma
       head: [...plan.dims.map((d) => d.field.name), ...ms.map((x) => x.name)],
       axisCount: plan.dims.length,
       formats: ms.map((x) => x.format),
+      ...(anyCi ? { ci: ms.map(ciInfo) } : {}),
       rows: shown,
       ranges,
       totals: ms.map((x) => x.value(all, 0, ctx)),
@@ -442,9 +484,46 @@ export function finishTile(cat: Catalog, tile: Tile, plan: TilePlan, results: Ma
     sLegend = ms.map(() => -1);
     values = ms.map((x) => groups.map((_g, gi) => valueAt(x, m, gi, null)));
   }
+  // A rate's intervals and its rows per mark (Other has none: a rate does not add up).
+  const serMeas = series.map((_s, i) => (lg.length ? (sLegend[i] >= 0 ? meas : undefined) : ms[i]));
+  let ciOut: ChartData['ci'];
+  let low: boolean[][] | undefined;
+  let counts: number[][] | undefined;
+  let minN = 0;
+  const firstCi = serMeas.find((x) => x?.ci)?.ci;
+  if (firstCi) {
+    const lo: number[][] = [];
+    const hi: number[][] = [];
+    low = [];
+    counts = [];
+    minN = firstCi.minN;
+    series.forEach((_s, si) => {
+      const mm = serMeas[si];
+      const l = lg.length ? sLegend[si] : null;
+      const rl: number[] = [];
+      const rh: number[] = [];
+      const rw: boolean[] = [];
+      const rn: number[] = [];
+      groups.forEach((_g, gi) => {
+        const a = gCell[gi];
+        let v: CiValue | null = null;
+        if (mm?.ci && a >= 0) v = l === null ? (L === 1 ? ciValue(mm, m, a, ctx) : ciValue(mm, combine(m, accs, legendCells(a)), 0, ctx)) : ciValue(mm, m, a + A * l, ctx);
+        rl.push(v ? v.lo : NaN);
+        rh.push(v ? v.hi : NaN);
+        rw.push(!!v?.low);
+        rn.push(v ? v.n : NaN);
+      });
+      lo.push(rl);
+      hi.push(rh);
+      low!.push(rw);
+      counts!.push(rn);
+    });
+    ciOut = { method: firstCi.method, level: firstCi.level, lo, hi };
+  }
   let outKind = chartKind;
   // 100 %: each bar's parts as shares of the bar.
   if (tile.opts?.stack === 'percent' && (chartKind === 'stacked' || kind === 'column' || kind === 'area')) {
+    ciOut = undefined;
     for (let g = 0; g < groups.length; g++) {
       let s = 0;
       for (const row of values) if (Number.isFinite(row[g])) s += row[g];
@@ -454,6 +533,10 @@ export function finishTile(cat: Catalog, tile: Tile, plan: TilePlan, results: Ma
   // A highlight: the selected part of each mark solid, the rest faint (one series only).
   if (hl && series.length === 1 && (chartKind === 'bar' || chartKind === 'stacked' || chartKind === 'histogram' || chartKind === 'line' || chartKind === 'area')) {
     const sel = groups.map((_g, gi) => valueAt(meas, hl, gi, null));
+    // The marks are now the selection and the whole: their intervals are not drawn.
+    ciOut = undefined;
+    low = undefined;
+    counts = undefined;
     if (chartKind === 'line' || chartKind === 'area') {
       series = [{ key: 'other', label: '@all' }, { ...series[0], key: 'hl', label: 'dash.hl.selected' }];
       values = [values[0], sel];
@@ -469,6 +552,13 @@ export function finishTile(cat: Catalog, tile: Tile, plan: TilePlan, results: Ma
   }
   const fmt: ValueFormat = tile.opts?.stack === 'percent' ? 'pct' : meas.format;
   const chart: ChartData = { kind: outKind, groups, series, values, format: fmt, valueLabel: meas.name, rows: m.rows };
+  // Stacked marks have no interval of their own to draw; the tooltip still says the rows.
+  if (ciOut && outKind !== 'stacked' && !(kind === 'column' && tile.opts?.stack && tile.opts.stack !== 'none')) chart.ci = ciOut;
+  if (counts) chart.counts = counts;
+  if (low && minN > 0) {
+    chart.low = low;
+    chart.minN = minN;
+  }
   const d0 = ax[0];
   if ((chartKind === 'line' || chartKind === 'area' || chartKind === 'histogram') && d0 && d0.dim.k === 'bin') chart.axis = { lo: d0.dim.lo, hi: d0.dim.lo + d0.dim.step * d0.dim.count, label: d0.field.name, time: !!d0.field.time };
   return { kind: 'chart', chart, marks: { gCell, sLegend } };

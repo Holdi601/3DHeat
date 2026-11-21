@@ -10,7 +10,10 @@
  *                  browser), the one open, the page shown, edit mode, undo /
  *                  redo, and the interaction (selection, drills, drill-through).
  * - `sources.ts`   `registerDashboardSource`: a workspace's own rows (any
- *                  `Dataset`-shaped table) for dashboards that name it.
+ *                  `Dataset`-shaped table) for dashboards that name it, and
+ *                  its link to its own 3D view (`viewMask` / `onViewChange`,
+ *                  `applySelection`).
+ * - `ci.ts`        a rate's confidence interval: Wilson, bootstrap.
  * - `templates.ts` `registerTemplate`: a ready-made dashboard, built from the
  *                  data's field catalogue.
  * - `fields.ts`    the field catalogue of a dataset (roles, columns,
@@ -29,9 +32,11 @@
 export * from './model';
 export { useDash, pageShown, interOf, bundleOf, onLocalDashBatch, DASH_DOC, type DashDoc, type DashState } from './store';
 export { dashClient, DASH_PLAY_EVERY } from './client';
-export { registerDashboardSource, dashboardSource, dashboardSources, VIEW_SOURCE, type DashSource } from './sources';
+export { registerDashboardSource, dashboardSource, dashboardSources, registeredSource, VIEW_SOURCE, type DashSource, type SourceMask, type SourceSelection, type SourceViewInputs } from './sources';
+export { wilson, bootstrap, rateInterval, normalQuantile, type CiMethod } from './ci';
+export { wantedSelection } from './link';
 export { TEMPLATES, templatesFor, registerTemplate, type Template } from './templates';
 export { catalogOf, fieldWithRole, roleOf, dimOf, type Catalog, type FieldInfo, type FieldRole } from './fields';
 export { planTile, tileClauses, toggleSelection, drillDown, drillUp, expandDown, drillTargets, throughFilters, type Selection, type DrillState, type Interaction, type TilePlan } from './plan';
-export type { TileData } from './finish';
+export type { TileData, CiInfo, CiValue } from './finish';
 export { csvRows, toCsv, jpegPdf } from './export';
