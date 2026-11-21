@@ -1,22 +1,54 @@
 import type { Engine } from '../../render/engine';
 import { useStore } from '../../state/store';
+import { useRaceStore } from '../../state/raceStore';
+import { useReplayStore } from '../../state/replayStore';
 import type { Dataset } from '../../state/types';
-import { goToMark } from '../replay/BookmarkPanel';
+import { isOverlay } from '../../match/overlay';
+import { followMetres, keyOfRow, rowIn } from './rowKey';
+import { unitsOf } from '../replay/units';
+import { flyTo } from '../replay/replayView';
+import { selectAndFollow } from '../replay/ReplayOverlay';
 
 let timer = 0;
 
 /**
- * Into the match replay at a row: the playhead a few seconds before it, the
- * camera behind whoever it is about (or flown to it), as the replay's own
- * marks do. From a heat mode the replay opens first, which settles its session
- * and playhead, and the jump follows.
+ * Into the match replay at a row: its own match played alone (not the figure
+ * overlay of every match), the playhead at the row's time and paused there,
+ * its own track (that life, in that match) selected and followed close
+ * behind. From the heatmap tab the match tab opens first, which puts back the
+ * data the replay plays (an overlay's own), and the jump follows.
  */
 export function jumpToRow(engine: Engine, d: Dataset, row: number): void {
-  if (!d.time) return;
+  if (!d.time || row < 0 || row >= d.count) return;
   clearTimeout(timer);
-  const go = () => goToMark(engine, d, { kind: 'kill', time: d.time![row], row, label: '' });
-  if (useStore.getState().mode !== 'team') {
-    useStore.getState().setMode('team');
+  const key = keyOfRow(d, row);
+  const go = () => {
+    const st = useStore.getState();
+    const ds = st.dataset;
+    if (!ds?.time) return;
+    const r = ds === d && !isOverlay(d) ? row : rowIn(ds, key);
+    if (r < 0) return;
+    const session = ds.sessionId ? ds.sessionId[r] : -1;
+    if (session >= 0 && st.team.session !== session) st.patchTeam({ session });
+    st.patchTimeline({ mode: 'play' });
+    st.setPlaying(false);
+    st.seek(ds.time[r]);
+    const p = ds.personId ? ds.personId[r] : -1;
+    const index = unitsOf(ds);
+    const u = p >= 0 ? index.units[index.personUnit[p]] : undefined;
+    const replay = useReplayStore.getState();
+    if (u) {
+      if (replay.followMode !== 'chase') replay.patchSaved({ followMode: 'chase' });
+      replay.setFollowDistance(followMetres(ds, r));
+      // The row's own track: a player's unit spans every match, and its life by the time alone could be another match's.
+      selectAndFollow(u, p);
+    } else flyTo(engine, ds, { x: ds.px[r], y: ds.py[r], z: ds.pz[r] }, 60);
+  };
+  const race = useRaceStore.getState();
+  if (race.tab !== 'match' || useStore.getState().mode !== 'team') {
+    race.setTab('match');
+    if (useStore.getState().mode !== 'team') useStore.getState().setMode('team');
+    // The tab's own effects first: the overlay put back, the replay's mode set.
     timer = window.setTimeout(go, 150);
     return;
   }
