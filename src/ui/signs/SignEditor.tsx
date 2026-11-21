@@ -33,7 +33,8 @@ export async function sendSign(sign: Sign, volume: Volume): Promise<void> {
     id: `c${Date.now().toString(36)}`,
     title: signTitle(sign),
     spec: sign.spec,
-    source: { kind: 'volume', volumeId: volume.id, volumeName: volume.name, dataset: ds?.name ?? '', scope: scopeText() },
+    // The filters and time window it was counted under go with it: a refresh in the document counts the same rows.
+    source: { kind: 'volume', volumeId: volume.id, volumeName: volume.name, dataset: ds?.name ?? '', scope: scopeText(), rows: 'saved', view: signClient.rowsNow(sign.upToNow) },
     data: structuredClone(d),
     at: Date.now(),
   };

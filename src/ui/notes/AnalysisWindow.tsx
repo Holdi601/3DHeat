@@ -18,7 +18,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { ChartView } from '../../charts/ChartView';
-import { colorChart, readTheme } from '../../charts/palette';
 import { applyMarkFilter } from '../signs/markFilter';
 import { EngineContext } from '../EngineContext';
 import { t, useLang } from '../../i18n';
@@ -122,11 +121,11 @@ function Window({ doc }: { doc: AnalysisDoc }) {
       if (!d) continue;
       let mem = chartMemory.current.get(id);
       if (!mem) chartMemory.current.set(id, (mem = new Map()));
-      colorChart(d, readTheme(slot), mem);
       const root = createRoot(slot);
+      // Coloured by the view in the panel's theme, and again on a theme switch (no re-render of the document).
       root.render(
         <EngineContext.Provider value={engine}>
-          <ChartView data={d} width={Math.max(240, Math.min(640, slot.clientWidth || 560))} height={260} onPick={(e) => e.filter && applyMarkFilter(e.filter, e.label)} />
+          <ChartView data={d} colorMemory={mem} width={Math.max(240, Math.min(640, slot.clientWidth || 560))} height={260} onPick={(e) => e.filter && applyMarkFilter(e.filter, e.label)} />
         </EngineContext.Provider>,
       );
       chartRoots.current.push(root);

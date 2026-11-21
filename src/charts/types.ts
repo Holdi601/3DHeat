@@ -133,6 +133,8 @@ export interface ChartData {
   rows: number;
   /** Part of it estimated from a sample (outside the volume, on big data). */
   sampled?: boolean;
+  /** With `sampled`: the rows actually read, of the `rows` they stand for. */
+  sampleRows?: number;
   /** A message key saying why there is nothing to draw. */
   empty?: string;
 }

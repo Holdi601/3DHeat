@@ -67,7 +67,8 @@
   "charts.sign.building": "Reading the rows inside…",
   "charts.sign.counting": "Counting…",
   "charts.sign.sampled": "from a sample",
-  "charts.sign.sampledTitle": "Part of this chart is estimated from an even sample of the rows, each standing for the rows it skips: the rows outside the volume (at most a million sampled), and inside the volumes past 16 million rows.",
+  "charts.sign.sampledN": "from a sample of {n} rows",
+  "charts.sign.sampledTitle": "Part of this chart is counted from an even sample of the rows, each standing for the rows it skips. The rows are kept exactly up to the memory the tab can spare; past it the rows outside the volumes are thinned first, then the rows inside.",
   "charts.sign.sizeTitle": "Drag to size the chart",
   "charts.kind.bar": "Bars",
   "charts.kind.stacked": "Stacked",
@@ -161,6 +162,7 @@
   "charts.doc.rows": "Rows",
   "charts.doc.rowsAll": "All the data",
   "charts.doc.rowsView": "The rows the view shows",
+  "charts.doc.rowsSaved": "The rows it was sent with (its filters and time window)",
   "charts.doc.volume": "Inside volume",
   "charts.doc.volumeNone": "Anywhere",
   "charts.doc.volumeGone": "Its volume is gone: counted over the data instead."

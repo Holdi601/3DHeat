@@ -43,6 +43,7 @@ export function readChartData(v: unknown): ChartData | null {
   if (o.axis && typeof o.axis === 'object') out.axis = o.axis;
   if (o.yAxis && typeof o.yAxis === 'object') out.yAxis = o.yAxis;
   if (o.sampled) out.sampled = true;
+  if (typeof o.sampleRows === 'number') out.sampleRows = o.sampleRows;
   if (typeof o.empty === 'string') out.empty = o.empty;
   return out;
 }

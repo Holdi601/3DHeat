@@ -10,6 +10,7 @@
  */
 
 import type { ChartData, ChartSpec } from './types';
+import type { SavedRows } from '../volumes/scope';
 
 export interface ChartBlock {
   schema: 'heat3d.chartBlock/1';
@@ -17,8 +18,13 @@ export interface ChartBlock {
   id: string;
   title: string;
   spec: ChartSpec;
-  /** The rows behind it: the volume (by id and name), the dataset by name, the scope said in words. */
-  source: { kind: 'volume'; volumeId: string; volumeName: string; dataset: string; scope: string };
+  /**
+   * The rows behind it: the volume (by id and name), the dataset by name, the
+   * scope said in words - and, as rules (`rows: 'saved'`, `view`), the
+   * filters, teams, match and time window it was counted under, so a refresh
+   * in the document counts the same rows again.
+   */
+  source: { kind: 'volume'; volumeId: string; volumeName: string; dataset: string; scope: string; rows?: 'all' | 'view' | 'saved'; view?: SavedRows };
   /** The data as it was drawn, labels already in words and colours set. */
   data: ChartData;
   /** Milliseconds since 1970. */

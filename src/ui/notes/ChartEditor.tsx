@@ -22,7 +22,7 @@ import { specTitle } from '../signs/signText';
 import { exprChartProblem, computeExprChart } from '../../charts/exprRun';
 import { DEFAULT_EXPR_CHART, type ExprChartGroupBy, type ExprChartSpec } from '../../charts/exprSpec';
 import { useStore } from '../../state/store';
-import { currentScope } from '../../volumes/scope';
+import { currentScope, isSavedRows, scopeOfSaved, type SavedRows } from '../../volumes/scope';
 import { useNotes } from '../../notes/store';
 import type { DocBlock } from '../../notes/model';
 import { useEngine } from '../EngineContext';
@@ -32,38 +32,53 @@ import { insertBlock } from './actions';
 
 const MEASURES = ['count()', 'kills()', 'deaths()', 'kills() / deaths()', 'presence()', 'players()', 'avg(speed)'];
 
-/** Where a module chart block's rows come from: all the data or the rows the view shows, inside a volume or not. */
+/**
+ * Where a module chart block's rows come from: all the data, the rows the view
+ * shows, or the rows it was made with (`saved`: a sign's filters and time
+ * window, kept as rules in `view`) - inside a volume or not.
+ */
 interface ModuleSource {
   kind: 'data' | 'volume';
-  rows: 'all' | 'view';
+  rows: Rows;
   volumeId?: string;
   volumeName?: string;
   dataset: string;
   scope: string;
+  view?: SavedRows;
 }
+
+type Rows = 'all' | 'view' | 'saved';
 
 type ModuleBlock = Extract<DocBlock, { type: 'chartBlock' }>['block'];
 const EXPR_KINDS: ChartKind[] = ['bar', 'line', 'tiles'];
 
 /** Counts a module chart over its rows (`charts/run.ts`), its labels said in words. */
-async function countModule(spec: ChartSpec, rows: 'all' | 'view', volumeId: string | null, playhead: number) {
+async function countModule(spec: ChartSpec, rows: Rows, volumeId: string | null, playhead: number, saved: SavedRows | null = null) {
   const ds = useStore.getState().dataset!;
   const volume = volumeId ? (useVolumeStore.getState().volumes.find((v) => v.id === volumeId) ?? null) : null;
-  const data = await runChart(ds, spec, { scope: rows === 'view' ? currentScope(useStore.getState(), playhead) : null, volume });
+  const scope = rows === 'saved' && saved ? scopeOfSaved(ds, saved) : rows === 'view' ? currentScope(useStore.getState(), playhead) : null;
+  const data = await runChart(ds, spec, { scope, volume });
   return { data: localizeChart(data), volume };
 }
 
 /** A module chart block as a document keeps it: the shared block (`charts/block.ts`) and where its rows came from. */
-function moduleBlock(spec: ChartSpec, title: string, data: ChartBlock['data'], rows: 'all' | 'view', volume: { id: string; name: string } | null, dataset: string): ModuleBlock {
+function moduleBlock(spec: ChartSpec, title: string, data: ChartBlock['data'], rows: Rows, volume: { id: string; name: string } | null, dataset: string, saved: { view: SavedRows; scope: string } | null = null): ModuleBlock {
+  const keep = rows === 'saved' && saved;
   const source: ModuleSource = {
     kind: volume ? 'volume' : 'data',
-    rows,
+    rows: keep ? 'saved' : rows === 'saved' ? 'view' : rows,
     ...(volume ? { volumeId: volume.id, volumeName: volume.name } : {}),
     dataset,
-    scope: rows === 'view' ? t('charts.doc.rowsView') : t('charts.doc.rowsAll'),
+    scope: keep ? saved.scope : rows === 'all' ? t('charts.doc.rowsAll') : t('charts.doc.rowsView'),
+    ...(keep ? { view: saved.view } : {}),
   };
   const block = { schema: 'heat3d.chartBlock/1', type: 'chart', id: `c${Date.now().toString(36)}`, title, spec, source, data, at: Date.now() };
   return block as unknown as ModuleBlock;
+}
+
+/** The rules a block's rows were counted under, when it keeps them. */
+function savedOf(src: Partial<ModuleSource>): SavedRows | null {
+  return isSavedRows(src.view) ? src.view : null;
 }
 
 /** Counts a chart block again and keeps its numbers in the document. */
@@ -75,12 +90,13 @@ export async function refreshChart(docId: string, blockId: string, playhead: num
     // A module chart (made here or sent from a sign): over its volume while it is there, else over the data.
     const src = (b.block.source ?? {}) as Partial<ModuleSource>;
     const spec = normalizeSpec(b.block.spec as Partial<ChartSpec>);
-    const rows = src.rows === 'view' ? 'view' : 'all';
+    const saved = savedOf(src);
+    const rows: Rows = src.rows === 'saved' && saved ? 'saved' : src.rows === 'view' || src.rows === 'saved' ? 'view' : 'all';
     try {
-      const { data, volume } = await countModule(spec, rows, src.volumeId ?? null, playhead);
+      const { data, volume } = await countModule(spec, rows, src.volumeId ?? null, playhead, saved);
       const now = useNotes.getState().book.docs.find((d) => d.id === docId);
       if (!now) return;
-      const block = { ...moduleBlock(spec, b.block.title, data, rows, volume, ds.name), id: b.block.id ?? blockId };
+      const block = { ...moduleBlock(spec, b.block.title, data, rows, volume, ds.name, saved ? { view: saved, scope: src.scope ?? '' } : null), id: b.block.id ?? blockId };
       useNotes.getState().updateDoc(docId, { blocks: { ...now.blocks, [blockId]: { ...b, block } } });
       if (src.volumeId && !volume) toast(t('charts.doc.volumeGone'), 'info');
     } catch (e) {
@@ -125,7 +141,8 @@ export function ChartEditor({ docId, blockId, onClose }: { docId: string; blockI
   const [useModule, setUseModule] = useState(!!existingModule);
   const [mspec, setMspec] = useState<ChartSpec>(() => normalizeSpec((existingModule?.block.spec as Partial<ChartSpec> | undefined) ?? { kind: 'bar', group: dataset?.teamId ? 'team' : 'none' }));
   const [mtitle, setMtitle] = useState(existingModule?.block.title ?? '');
-  const [rows, setRows] = useState<'all' | 'view'>(msrc.rows === 'view' ? 'view' : 'all');
+  const msaved = savedOf(msrc);
+  const [rows, setRows] = useState<Rows>(msrc.rows === 'saved' && msaved ? 'saved' : msrc.rows === 'view' ? 'view' : 'all');
   const [volumeId, setVolumeId] = useState<string | null>(msrc.volumeId || null);
   const kind: ChartKind = useModule ? mspec.kind : EXPR_KINDS.includes(spec.kind as ChartKind) ? (spec.kind as ChartKind) : 'bar';
   const nums = useMemo(() => (dataset?.attrs ?? []).filter((a) => a.kind === 'number' && a.max > a.min).map((a) => a.name), [dataset]);
@@ -155,8 +172,8 @@ export function ChartEditor({ docId, blockId, onClose }: { docId: string; blockI
     if (!dataset || !useNotes.getState().book.docs.some((d) => d.id === docId)) return onClose();
     setBusy(true);
     try {
-      const { data, volume } = await countModule(mspec, rows, volumeId, engine?.live.playhead ?? 0);
-      const block = moduleBlock(mspec, mtitle.trim() || specTitle(mspec), data, rows, volume, dataset.name);
+      const { data, volume } = await countModule(mspec, rows, volumeId, engine?.live.playhead ?? 0, msaved);
+      const block = moduleBlock(mspec, mtitle.trim() || specTitle(mspec), data, rows, volume, dataset.name, msaved ? { view: msaved, scope: msrc.scope ?? '' } : null);
       const now = useNotes.getState().book.docs.find((d) => d.id === docId);
       // An expression chart made a module chart keeps its place in the text.
       if (blockId && now) useNotes.getState().updateDoc(docId, { blocks: { ...now.blocks, [blockId]: { id: blockId, type: 'chartBlock', block } } });
@@ -225,9 +242,10 @@ export function ChartEditor({ docId, blockId, onClose }: { docId: string; blockI
             <ChartSpecFields spec={mspec} onChange={setMspec} allowInout={!!volumeId} />
             <label className="field-line">
               <span>{t('charts.doc.rows')}</span>
-              <select value={rows} onChange={(e) => setRows(e.target.value === 'view' ? 'view' : 'all')} aria-label={t('charts.doc.rows')}>
+              <select value={rows} onChange={(e) => setRows(e.target.value === 'view' || e.target.value === 'saved' ? e.target.value : 'all')} aria-label={t('charts.doc.rows')}>
                 <option value="all">{t('charts.doc.rowsAll')}</option>
                 <option value="view">{t('charts.doc.rowsView')}</option>
+                {msaved && <option value="saved">{t('charts.doc.rowsSaved')}</option>}
               </select>
             </label>
             <label className="field-line">

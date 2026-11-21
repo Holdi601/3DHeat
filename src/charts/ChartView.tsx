@@ -8,7 +8,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { drawChart, hitAt, tableOf, tooltipOf, type Hit } from './draw';
-import { readTheme, type ChartTheme } from './palette';
+import { colorChart, readTheme, type ChartTheme } from './palette';
 import type { ChartData, ChartEntity } from './types';
 import './charts.css';
 
@@ -108,10 +108,17 @@ export function ChartView({
   onPick,
   table = false,
   now = null,
+  colorMemory,
 }: {
   data: ChartData;
   width: number;
   height: number;
+  /**
+   * Colour the series here, in the theme the chart is drawn in, keeping each
+   * entity's slot in this memory: a theme switch then recolours the chart
+   * without its owner drawing it again. Without it the data's own colours.
+   */
+  colorMemory?: Map<string, number>;
   /** A mark clicked: its group or series, which carries the filter it stands for. */
   onPick?: (e: ChartEntity, hit: Hit) => void;
   table?: boolean;
@@ -120,6 +127,8 @@ export function ChartView({
   const canvas = useRef<HTMLCanvasElement>(null);
   const tip = useRef<HTMLDivElement>(null);
   const hits = useRef<Hit[]>([]);
+  /** The data as drawn (coloured here when `colorMemory` is given), for the tooltip and clicks. */
+  const shown = useRef(data);
   const [hover, setHover] = useState<Hit | null>(null);
   const [themeTick, setThemeTick] = useState(0);
   // A theme switch redraws: the tokens change on the root.
@@ -131,8 +140,15 @@ export function ChartView({
   useLayoutEffect(() => {
     const c = canvas.current;
     if (!c || table) return;
-    hits.current = paintChart(c, data, readTheme(c), width, height, hover ? { s: hover.s, g: hover.g } : null, now);
-  }, [data, width, height, hover, table, themeTick, now]);
+    const theme = readTheme(c);
+    let d = data;
+    if (colorMemory) {
+      d = structuredClone(data);
+      colorChart(d, theme, colorMemory);
+    }
+    shown.current = d;
+    hits.current = paintChart(c, d, theme, width, height, hover ? { s: hover.s, g: hover.g } : null, now);
+  }, [data, width, height, hover, table, themeTick, now, colorMemory]);
   if (table) return <ChartTable data={data} />;
   return (
     <div className="chart-view" style={{ width, height }}>
@@ -151,7 +167,7 @@ export function ChartView({
             el.style.display = 'none';
             return;
           }
-          fillTooltip(el, data, h);
+          fillTooltip(el, shown.current, h);
           el.style.display = '';
           el.style.left = `${Math.min(width - 120, e.clientX - r.left + 12)}px`;
           el.style.top = `${e.clientY - r.top + 12}px`;
@@ -163,7 +179,7 @@ export function ChartView({
         onClick={(e) => {
           const r = e.currentTarget.getBoundingClientRect();
           const h = hitAt(hits.current, e.clientX - r.left, e.clientY - r.top);
-          const ent = h ? entityOf(data, h) : null;
+          const ent = h ? entityOf(shown.current, h) : null;
           if (h && ent && onPick) onPick(ent, h);
         }}
       />

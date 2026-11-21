@@ -20,6 +20,7 @@ import { ChartTable, paintChart, fillTooltip, entityOf } from '../../charts/Char
 import type { ChartData } from '../../charts/types';
 import { hitAt, type Hit } from '../../charts/draw';
 import { readTheme } from '../../charts/palette';
+import { fmtValue } from '../../charts/format';
 import { t, useLang } from '../../i18n';
 import type { Engine } from '../../render/engine';
 import { useStore } from '../../state/store';
@@ -56,6 +57,13 @@ interface Placed {
 }
 
 /** The projective transform mapping a w x h element onto four screen points (top left, top right, bottom right, bottom left). */
+
+/** "from a sample of 1.2M rows": a chart read partly from a sample says so, with the rows it read. */
+function sampleNote(d: ChartData): string {
+  if (!d.sampled) return '';
+  return d.sampleRows !== undefined ? t('charts.sign.sampledN', { n: fmtValue(d.sampleRows, 'int', true) }) : t('charts.sign.sampled');
+}
+
 export function quadMatrix(w: number, h: number, q: { x: number; y: number }[]): string | null {
   const [p0, p1, p2, p3] = q;
   const dx1 = p1.x - p2.x;
@@ -137,7 +145,7 @@ export function VolumeSigns() {
     for (const id of ids) {
       dirty.current.add(id);
       const d = signClient.results.get(id);
-      const f = d ? `${!!d.sampled}` : '';
+      const f = d ? sampleNote(d) : '';
       if (flags.current.get(id) !== f) {
         flags.current.set(id, f);
         render = true;
@@ -549,7 +557,7 @@ function SignBoard({
             <canvas ref={canvasRef} style={{ width: w, height: bodyH }} onPointerMove={onMove} onPointerLeave={onLeave} onClick={onClick} />
           )}
           {building && <div className="vsign-wait">{signClient.isBuilding ? t('charts.sign.building') : t('charts.sign.counting')}</div>}
-          {result?.sampled && <div className="vsign-note" title={t('charts.sign.sampledTitle')}>{t('charts.sign.sampled')}</div>}
+          {result?.sampled && <div className="vsign-note" title={t('charts.sign.sampledTitle')}>{sampleNote(result)}</div>}
           <div className="vsign-grip" onPointerDown={onGripDown} title={t('charts.sign.sizeTitle')} />
         </div>
       )}

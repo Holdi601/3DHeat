@@ -1,70 +1,70 @@
 /**
- * The chart signs' worker: it keeps the rows inside each volume that has a
- * sign, and aggregates every sign's chart from them (`charts/aggregate.ts`),
- * off the main thread.
+ * A chart signs' row worker: it keeps its share of the rows inside each
+ * volume that has a sign (and, when a sign compares inside with outside, of
+ * the rest), and folds every sign's chart over them (`charts/aggregate.ts`),
+ * off the main thread. The page runs several (`client.ts`), each given every
+ * so-many-th chunk of rows, so a scope's work is spread over the cores; each
+ * sends its share of every sign's accumulators to the merging worker
+ * (`mergeWorker.ts`), which adds them up into the chart.
  *
- * The rows arrive once per build, a chunk at a time (`client.ts`): each
- * chunk's positions are tested against the volumes and the rows inside any
- * of them are kept once, with a bit per volume saying which hold it, and
- * just the columns the signs and the view's filters read - the dataset
- * itself is never copied whole. Past `KEEP_CAP` rows inside, every other
- * kept row is let go and each that stays stands for two (and so on), so a
- * volume round most of a huge dataset costs a bounded amount of memory and
- * is charted from an even sample of its rows. A sample of every row (one in
- * `stride`) is kept too, for "inside against outside".
+ * The rows arrive once per build, a chunk at a time, every column of a chunk
+ * packed into one buffer that goes back with the ack to be filled again -
+ * nothing is allocated per chunk on either side. Each chunk's positions are
+ * tested against the volumes; the rows inside any of them are kept once, with
+ * a bit per volume saying which hold each, and just the columns the signs and
+ * the view's filters read - the dataset itself is never copied whole. Every
+ * row is kept, exactly, up to the budget the page gives (its free share of the
+ * tab's memory); past it the rest are thinned first and then the rows inside,
+ * to an even sample whose rows each stand for the ones skipped, and the charts
+ * say "from a sample" with its size.
  *
- * Then every scope (filters, time window, playhead) is a recompute of the
- * signs whose rows it changes, newest scope first: a window that only slid
- * forward folds in the rows it gained and out those it lost (`advanceAgg`),
- * anything else starts that sign over. A result goes back only when it
- * differs from the last one sent.
+ * Then a scope (filters, time window, playhead) is one shared pass per table
+ * (`scan.ts`): the rows shown kept as a mask beside the mask before, and every
+ * sign folds the rows that changed out and in, or starts over from the rows
+ * shown. Signs of one spec (the same chart on several volumes) are worked
+ * together, in one fold over the rows any of them takes. The jobs run in steps
+ * of at most `pace.run` ms with `pace.rest` ms between (the page slows the
+ * workers while its frames come late); a newer scope is read between jobs, and
+ * a share goes out only when it changed.
  */
 
-import { addRows, advanceAgg, canAdvance, createAgg, finishAgg, type Agg, type AggMeta, type AggScope, type AggSource, type RowTable } from '../../charts/aggregate';
-import type { ChartData, ChartSpec } from '../../charts/types';
+import { accBuffers, accOf, type AggMeta, type AggScope, type RowTable } from '../../charts/aggregate';
 import { compiled, compiledContains, type CompiledVolume, type Volume } from '../volume';
-
-export interface SignJob {
-  id: string;
-  volumeId: string;
-  spec: ChartSpec;
-  upToNow: boolean;
-}
-
-export type ChunkCols = {
-  x: Float32Array;
-  y: Float32Array;
-  z: Float32Array;
-  time?: Float32Array;
-  life?: Float32Array;
-  team?: Uint16Array;
-  person?: Uint32Array;
-  session?: Uint32Array;
-  cols: Record<string, Float32Array | Uint32Array>;
-};
-
-export type ToWorker =
-  | { type: 'meta'; meta: AggMeta }
-  | { type: 'build'; build: number; volumes: Volume[]; columns: string[]; stride: number; sorted: boolean; total: number }
-  | { type: 'chunk'; build: number; lo: number; n: number; data: ChunkCols }
-  | { type: 'built'; build: number }
-  | { type: 'signs'; signs: SignJob[] }
-  | { type: 'scope'; seq: number; scope: AggScope; upTo: AggScope };
-
-export type FromWorker =
-  | { type: 'ack'; build: number }
-  | { type: 'ready'; build: number; rows: Record<string, number>; sample: number; kept: number; keep: number }
-  | { type: 'result'; id: string; data: ChartData; seq: number; ms: number }
-  | { type: 'idle'; seq: number; ms: number };
+import { chunkViews, type ChunkField, type FromWorker, type SignJob, type ToMerge, type ToWorker } from './protocol';
+import { feedsOf, scopeId, SignAgg, Slot, updateSteps, type Feed, type KeptTable } from './scan';
 
 type Arr = Float32Array | Uint32Array | Uint16Array;
 
-/** A column that grows as rows are appended. */
+/** A column that grows as rows are appended, never past `max` (the budget and a chunk). */
 class Grow<T extends Arr> {
   a: T;
   n = 0;
-  constructor(private readonly make: (n: number) => T) {
-    this.a = make(1024);
+  constructor(
+    private readonly make: (n: number) => T,
+    private readonly max: number,
+  ) {
+    this.a = make(Math.min(1 << 16, max));
+  }
+  private room(k: number): void {
+    const need = this.n + k;
+    if (need <= this.a.length) return;
+    const b = this.make(Math.max(need, Math.min(this.max, this.a.length * 2)));
+    b.set(this.a.subarray(0, this.n));
+    this.a = b;
+  }
+  /** Append `src[idx[0..k)]`. */
+  gather(src: ArrayLike<number>, idx: Uint32Array, k: number): void {
+    this.room(k);
+    const a = this.a;
+    let n = this.n;
+    for (let j = 0; j < k; j++) a[n++] = src[idx[j]];
+    this.n = n;
+  }
+  /** Append `src[0..k)`. */
+  append(src: Arr, k: number): void {
+    this.room(k);
+    this.a.set(src.subarray(0, k), this.n);
+    this.n += k;
   }
   /** Keep every other value (the even positions): the sample thinned by half. */
   halve(): void {
@@ -74,279 +74,378 @@ class Grow<T extends Arr> {
     for (let i = 0; i < n; i += 2) a[j++] = a[i];
     this.n = j;
   }
-  push(v: number): void {
-    if (this.n === this.a.length) {
-      const b = this.make(this.a.length * 2);
-      b.set(this.a);
-      this.a = b;
-    }
-    this.a[this.n++] = v;
-  }
   done(): T {
-    return this.a.subarray(0, this.n) as T;
+    // Trimmed to its length when much of it is spare (the room goes back), else a view: no second copy.
+    return this.a.length - this.n > this.n >> 2 ? (this.a.slice(0, this.n) as T) : (this.a.subarray(0, this.n) as T);
   }
 }
 
-interface Builder {
+const maker = (type: ChunkField['type']): ((n: number) => Arr) => (type === 'f32' ? (n) => new Float32Array(n) : type === 'u32' ? (n) => new Uint32Array(n) : (n) => new Uint16Array(n));
+
+/** Rows kept for one table while a build runs. */
+interface Keep {
+  cols: (Grow<Arr> | null)[];
+  member: Grow<Uint32Array> | null;
   n: number;
-  time: Grow<Float32Array> | null;
-  life: Grow<Float32Array> | null;
-  team: Grow<Uint16Array> | null;
-  person: Grow<Uint32Array> | null;
-  session: Grow<Uint32Array> | null;
-  cols: Record<string, Grow<Float32Array> | Grow<Uint32Array>>;
-  xyz: Grow<Float32Array> | null;
+  /** Rows of this table seen, and one in how many of them is kept. */
+  seen: number;
+  keep: number;
 }
 
-/** Most rows kept inside the volumes before the kept rows are thinned to an even sample. */
-export const KEEP_CAP = 16_000_000;
-/** Most volumes with signs one build serves (a bit each). */
-export const MAX_VOLUMES = 32;
-
-const f32 = (n: number) => new Float32Array(n);
-const u32 = (n: number) => new Uint32Array(n);
-const u16 = (n: number) => new Uint16Array(n);
-
-function builder(c: ChunkCols, columns: string[], withXyz: boolean): Builder {
-  const cols: Builder['cols'] = {};
-  for (const name of columns) if (c.cols[name]) cols[name] = c.cols[name] instanceof Uint32Array ? new Grow(u32) : new Grow(f32);
+function keeper(fields: readonly ChunkField[], withMember: boolean, max: number): Keep {
   return {
+    cols: fields.map((f) => (f.key === 'x' || f.key === 'y' || f.key === 'z' ? null : new Grow<Arr>(maker(f.type), max))),
+    member: withMember ? new Grow((n) => new Uint32Array(n), max) : null,
     n: 0,
-    time: c.time ? new Grow(f32) : null,
-    life: c.life ? new Grow(f32) : null,
-    team: c.team ? new Grow(u16) : null,
-    person: c.person ? new Grow(u32) : null,
-    session: c.session ? new Grow(u32) : null,
-    cols,
-    xyz: withXyz ? new Grow(f32) : null,
+    seen: 0,
+    keep: 1,
   };
 }
 
-function append(b: Builder, c: ChunkCols, i: number): void {
-  b.n++;
-  b.time?.push(c.time![i]);
-  b.life?.push(c.life![i]);
-  b.team?.push(c.team![i]);
-  b.person?.push(c.person![i]);
-  b.session?.push(c.session![i]);
-  for (const k in b.cols) b.cols[k].push(c.cols[k][i]);
-  if (b.xyz) {
-    b.xyz.push(c.x[i]);
-    b.xyz.push(c.y[i]);
-    b.xyz.push(c.z[i]);
-  }
+function halveKeep(k: Keep): void {
+  for (const c of k.cols) c?.halve();
+  k.member?.halve();
+  k.n = Math.ceil(k.n / 2);
+  k.keep *= 2;
 }
 
-function halveAll(b: Builder): void {
-  b.time?.halve();
-  b.life?.halve();
-  b.team?.halve();
-  b.person?.halve();
-  b.session?.halve();
-  for (const k in b.cols) b.cols[k].halve();
-  b.n = b.time?.n ?? b.team?.n ?? Math.ceil(b.n / 2);
-}
-
-function finish(b: Builder, weight: number, sorted: boolean): RowTable {
+function table(k: Keep, fields: readonly ChunkField[], sorted: boolean): KeptTable {
+  const col = (key: string) => {
+    const i = fields.findIndex((f) => f.key === key);
+    return i >= 0 ? (k.cols[i]?.done() ?? null) : null;
+  };
   const cols: RowTable['cols'] = {};
-  for (const k in b.cols) cols[k] = b.cols[k].done();
-  return { n: b.n, weight, time: b.time?.done() ?? null, life: b.life?.done() ?? null, team: b.team?.done() ?? null, person: b.person?.done() ?? null, session: b.session?.done() ?? null, cols, sorted };
+  fields.forEach((f, i) => {
+    if (f.key.startsWith('c:')) cols[f.key.slice(2)] = k.cols[i]!.done() as Float32Array | Uint32Array;
+  });
+  const life = col('life') as Float32Array | null;
+  let maxLife = life ? 0 : Infinity;
+  if (life) for (let i = 0; i < life.length; i++) if (life[i] > maxLife) maxLife = life[i];
+  return {
+    t: { n: k.n, weight: k.keep, time: col('time') as Float32Array | null, life, team: col('team') as Uint16Array | null, person: col('person') as Uint32Array | null, session: col('session') as Uint32Array | null, cols, sorted },
+    member: k.member ? k.member.done() : null,
+    maxLife,
+  };
 }
+
+/** Most volumes with signs one build serves (a bit each). */
+export const MAX_VOLUMES = 32;
 
 let meta: AggMeta | null = null;
 let build: {
   id: number;
   volumes: { v: Volume; c: CompiledVolume }[];
-  columns: string[];
-  stride: number;
+  fields: ChunkField[];
   sorted: boolean;
-  inside: Builder | null;
-  member: Grow<Uint32Array>;
-  /** Rows inside seen, and one in how many of them is kept. */
-  seen: number;
-  keep: number;
-  sample: Builder | null;
+  cap: number;
+  inside: Keep;
+  rest: Keep | null;
+  restRows: number;
 } | null = null;
-/** The rows inside any signed volume, which volumes hold each (a bit per volume), and each volume's bit. */
-let inside: RowTable | null = null;
-let member: Uint32Array | null = null;
+
+/** Scratch for a chunk: each row's volume bits, the rows kept inside and in the rest. */
+let bitsOf = new Uint32Array(0);
+let inIdx = new Uint32Array(0);
+let restIdx = new Uint32Array(0);
+
+let inside: KeptTable | null = null;
+let rest: KeptTable | null = null;
 let bits = new Map<string, number>();
-let sample: RowTable | null = null;
-let sampleXyz: Float32Array | null = null;
-/** Per volume, which sampled rows are inside it (left out of "outside"). */
-let sampleInside = new Map<string, Uint8Array>();
+let slots: { inside: Slot; rest: Slot | null; insideUp: Slot | null; restUp: Slot | null } | null = null;
 
 interface SignRun {
   job: SignJob;
-  agg: Agg | null;
-  scope: AggScope | null;
-  last: string;
+  agg: SignAgg | null;
+  /** Whether the merging worker has this sign's share as it is now (for this build). */
+  sent: boolean;
 }
 const runs = new Map<string, SignRun>();
 let scope: AggScope | null = null;
 let upTo: AggScope | null = null;
+let fresh = false;
 let seq = 0;
 let queue: string[] = [];
 let timer: ReturnType<typeof setTimeout> | null = null;
 let busy = 0;
+let scanMs = 0;
+let folded = 0;
+let fulls = 0;
 
-const post = (m: FromWorker) => (self as unknown as Worker).postMessage(m);
+const post = (m: FromWorker, transfer: Transferable[] = []) => (self as unknown as Worker).postMessage(m, transfer);
+/** The merging worker, and this build's id (the shares say which rows they are of). */
+let merge: MessagePort | null = null;
+let builtId = 0;
+const toMerge = (m: ToMerge, transfer: Transferable[] = []) => merge?.postMessage(m, transfer);
 
-function sourcesOf(r: SignRun): AggSource[] | null {
-  const bit = bits.get(r.job.volumeId);
-  if (!inside || bit === undefined) return null;
-  const out: AggSource[] = [{ table: inside, side: r.job.spec.diff === 'inout' ? 0 : -1, skip: null, member, bit }];
-  if (r.job.spec.diff === 'inout' && sample) out.push({ table: sample, side: 1, skip: sampleInside.get(r.job.volumeId) ?? null });
-  return out;
+/** Signs folded together: one spec, the same kind of rows (up to now or the window). */
+const groupKey = (j: SignJob) => `${j.upToNow ? 1 : 0}${JSON.stringify(j.spec)}`;
+
+/** The job under way - a scan of the slots or a group of signs - in steps, and what to do when it ends. */
+let job: { kind: 'scan' | 'fold'; steps: Generator<void, unknown>; done: () => void } | null = null;
+/** The scope the slots show now (the shares are of it). */
+let slotSeq = 0;
+/**
+ * How long a step may run, ms, and how long to rest after it: the page asks
+ * for rest while its frames come late (a busy machine), so these workers take
+ * less of it then.
+ */
+let pace = { run: 12, rest: 0 };
+
+function schedule(delay = 0): void {
+  if (timer === null) timer = setTimeout(step, delay);
 }
 
-/** Everything again: every sign's queued. */
-function queueAll(): void {
-  queue = [...runs.keys()];
-  schedule();
+/** The slots moved to a scope: one pass per table, for every sign. */
+function* scanSteps(sc: AggScope, up: AggScope | null): Generator<void, void> {
+  if (!slots || !inside) return;
+  const ups = [...runs.values()].some((r) => r.job.upToNow);
+  yield* slots.inside.steps(sc);
+  if (slots.rest) yield* slots.rest.steps(sc);
+  // "Up to now" signs read their own slots only while it differs from the view's (in playback).
+  if (ups && up && scopeId(up) !== scopeId(sc)) {
+    slots.insideUp ??= new Slot(inside);
+    yield* slots.insideUp.steps(up);
+    if (rest) {
+      slots.restUp ??= new Slot(rest);
+      yield* slots.restUp.steps(up);
+    }
+  } else {
+    slots.insideUp = null;
+    slots.restUp = null;
+  }
 }
 
-function schedule(): void {
-  if (timer === null) timer = setTimeout(step, 0);
-}
-
-/** One sign per step, so a newer scope (a message waiting) is read between signs. */
-function step(): void {
-  timer = null;
-  if (!meta || !scope) return;
+/** The next job: the slots to a newer scope first, then the signs a group at a time; null when all is done. */
+function nextJob(): typeof job {
+  if (!meta || !scope || !slots) return null;
+  if (fresh) {
+    fresh = false;
+    const s = seq;
+    return {
+      kind: 'scan',
+      steps: scanSteps(scope, upTo),
+      done: () => {
+        slotSeq = s;
+        queue = [...runs.keys()];
+      },
+    };
+  }
   const id = queue.shift();
   if (id === undefined) {
-    post({ type: 'idle', seq, ms: busy });
+    toMerge({ type: 'idle', build: builtId, seq: slotSeq, ms: busy, scan: scanMs, folded, full: fulls });
     busy = 0;
-    return;
+    scanMs = 0;
+    folded = 0;
+    fulls = 0;
+    return null;
   }
-  const r = runs.get(id);
-  const srcs = r ? sourcesOf(r) : null;
-  if (r && srcs) {
-    const t0 = performance.now();
-    const sc = r.job.upToNow && upTo ? upTo : scope;
-    if (r.agg && r.scope && canAdvance(r.scope, sc, srcs)) advanceAgg(r.agg, srcs, r.scope, sc);
-    else {
-      r.agg = createAgg(meta, r.job.spec);
-      for (const s of srcs) addRows(r.agg, s, 0, s.table.n, sc, 1);
+  // The signs of this one's spec and kind of rows, still queued: one fold for all of them.
+  const first = runs.get(id);
+  const key = first ? groupKey(first.job) : '';
+  const ids = [id];
+  if (first) {
+    queue = queue.filter((q) => {
+      const r = runs.get(q);
+      if (r && groupKey(r.job) === key) {
+        ids.push(q);
+        return false;
+      }
+      return true;
+    });
+  }
+  const work: { r: SignRun; sign: SignAgg; feeds: Feed[] }[] = [];
+  for (const sid of ids) {
+    const r = runs.get(sid);
+    const bit = r ? bits.get(r.job.volumeId) : undefined;
+    if (!r || bit === undefined) continue;
+    const up = r.job.upToNow && slots.insideUp;
+    r.agg ??= new SignAgg(meta, r.job.spec);
+    work.push({ r, sign: r.agg, feeds: feedsOf(r.job.spec, bit, up ? slots.insideUp! : slots.inside, up ? slots.restUp : slots.rest) });
+  }
+  const s = slotSeq;
+  const b = builtId;
+  return {
+    kind: 'fold',
+    steps: updateSteps(work),
+    done: () => {
+      if (!work.length) return;
+      folded += work[0].sign.last.rows;
+      if (work[0].sign.last.how === 'full') fulls += work.length;
+      // Each sign's share, or word that it is as before.
+      for (const { r, sign } of work) {
+        if (r.sent && sign.last.how === 'same') toMerge({ type: 'partial', build: b, seq: s, id: r.job.id, acc: null });
+        else {
+          const acc = accOf(sign.agg!);
+          toMerge({ type: 'partial', build: b, seq: s, id: r.job.id, acc }, accBuffers(acc));
+          r.sent = true;
+        }
+      }
+    },
+  };
+}
+
+/** Jobs in steps for at most `pace.run` ms, then a rest: newer messages (a scope, the pace) are read between. */
+function step(): void {
+  timer = null;
+  const t0 = performance.now();
+  while (performance.now() - t0 < pace.run) {
+    if (!job) {
+      job = nextJob();
+      if (!job) return;
     }
-    r.scope = sc;
-    const data = finishAgg(r.agg, sc);
-    const json = JSON.stringify(data);
-    const ms = performance.now() - t0;
-    busy += ms;
-    if (json !== r.last) {
-      r.last = json;
-      post({ type: 'result', id, data, seq, ms });
+    const s0 = performance.now();
+    const r = job.steps.next();
+    const ms = performance.now() - s0;
+    if (job.kind === 'scan') scanMs += ms;
+    else busy += ms;
+    if (r.done) {
+      const j = job;
+      job = null;
+      j.done();
     }
   }
+  schedule(pace.rest);
+}
+
+function onChunk(m: Extract<ToWorker, { type: 'chunk' }>): void {
+  const b = build;
+  if (!b || b.id !== m.build) return;
+  const n = m.n;
+  const views = chunkViews(m.buf, b.fields, n);
+  const at = (key: string) => views[b.fields.findIndex((f) => f.key === key)] as Float32Array;
+  const x = at('x');
+  const y = at('y');
+  const z = at('z');
+  if (bitsOf.length < n) {
+    bitsOf = new Uint32Array(n);
+    inIdx = new Uint32Array(n);
+    restIdx = new Uint32Array(n);
+  }
+  const vols = b.volumes;
+  const ins = b.inside;
+  const rs = b.rest;
+  let ni = 0;
+  let nr = 0;
+  for (let i = 0; i < n; i++) {
+    const px = x[i];
+    const py = y[i];
+    const pz = z[i];
+    let here = 0;
+    if (px === px && py === py && pz === pz)
+      for (let k = 0; k < vols.length; k++) {
+        const cv = vols[k].c;
+        if (px < cv.min[0] || px > cv.max[0] || py < cv.min[1] || py > cv.max[1] || pz < cv.min[2] || pz > cv.max[2]) continue;
+        if (compiledContains(cv, px, py, pz)) here |= 1 << k;
+      }
+    if (here !== 0) {
+      if (ins.seen++ % ins.keep === 0) {
+        bitsOf[ni] = here >>> 0;
+        inIdx[ni++] = i;
+      }
+    } else if (rs) {
+      b.restRows++;
+      if (rs.seen++ % rs.keep === 0) restIdx[nr++] = i;
+    }
+  }
+  // Column by column: a tight gather each.
+  for (let f = 0; f < views.length; f++) {
+    ins.cols[f]?.gather(views[f], inIdx, ni);
+    rs?.cols[f]?.gather(views[f], restIdx, nr);
+  }
+  ins.member!.append(bitsOf, ni);
+  ins.n += ni;
+  if (rs) rs.n += nr;
+  // Past the budget: the rest thinned first (down to an eighth of it), then the rows inside.
+  while (ins.n + (rs?.n ?? 0) > b.cap) {
+    if (rs && rs.n > b.cap / 8) halveKeep(rs);
+    else halveKeep(ins);
+  }
+  post({ type: 'ack', build: m.build, buf: m.buf }, [m.buf]);
+}
+
+function onBuilt(id: number): void {
+  const b = build;
+  if (!b || b.id !== id) return;
+  inside = table(b.inside, b.fields, b.sorted);
+  rest = b.rest ? table(b.rest, b.fields, b.sorted) : null;
+  bits = new Map(b.volumes.map(({ v }, k) => [v.id, (1 << k) >>> 0]));
+  const member = inside.member!;
+  const rows: Record<string, number> = {};
+  for (const { v } of b.volumes) {
+    const bit = bits.get(v.id)!;
+    let n = 0;
+    for (let i = 0; i < member.length; i++) if (member[i] & bit) n++;
+    rows[v.id] = n * b.inside.keep;
+  }
+  slots = { inside: new Slot(inside), rest: rest ? new Slot(rest) : null, insideUp: null, restUp: null };
+  build = null;
+  builtId = id;
+  for (const r of runs.values()) {
+    r.agg = null;
+    r.sent = false;
+  }
+  post({ type: 'ready', build: id, rows, kept: { inside: inside.t.n, keepInside: b.inside.keep, rest: rest?.t.n ?? 0, keepRest: b.rest?.keep ?? 1, restRows: b.restRows, budget: b.cap } });
+  fresh = true;
   schedule();
 }
 
 self.onmessage = (e: MessageEvent<ToWorker>) => {
   const m = e.data;
   switch (m.type) {
+    case 'port':
+      merge = m.port;
+      break;
+    case 'pace':
+      pace = { run: m.run, rest: m.rest };
+      break;
     case 'meta':
       meta = m.meta;
+      job = null;
+      fresh = true;
       for (const r of runs.values()) {
         r.agg = null;
-        r.last = '';
+        r.sent = false;
       }
       break;
-    case 'build':
+    case 'build': {
+      const cap = Math.max(1 << 16, Math.floor(m.keepRows));
+      const max = cap + (1 << 17);
+      // The old rows go first: the new ones need the room.
+      job = null;
+      inside = null;
+      rest = null;
+      slots = null;
       build = {
         id: m.build,
         volumes: m.volumes.slice(0, MAX_VOLUMES).map((v) => ({ v, c: compiled(v) })),
-        columns: m.columns,
-        stride: Math.max(1, m.stride),
+        fields: m.fields,
         sorted: m.sorted,
-        inside: null,
-        member: new Grow(u32),
-        seen: 0,
-        keep: 1,
-        sample: null,
+        cap,
+        inside: keeper(m.fields, true, max),
+        rest: m.rest ? keeper(m.fields, false, max) : null,
+        restRows: 0,
       };
       break;
-    case 'chunk': {
-      const b = build;
-      if (!b || b.id !== m.build) break;
-      const c = m.data;
-      if (!b.inside) b.inside = builder(c, b.columns, false);
-      if (!b.sample) b.sample = builder(c, b.columns, true);
-      const vols = b.volumes;
-      const ins = b.inside;
-      // The sample keeps every row whose index is a multiple of the stride.
-      let next = Math.ceil(m.lo / b.stride) * b.stride - m.lo;
-      for (let i = 0; i < m.n; i++) {
-        const x = c.x[i];
-        const y = c.y[i];
-        const z = c.z[i];
-        if (i === next) {
-          append(b.sample, c, i);
-          next += b.stride;
-        }
-        if (!(x === x && y === y && z === z)) continue;
-        let bitsHere = 0;
-        for (let k = 0; k < vols.length; k++) {
-          const cv = vols[k].c;
-          if (x < cv.min[0] || x > cv.max[0] || y < cv.min[1] || y > cv.max[1] || z < cv.min[2] || z > cv.max[2]) continue;
-          if (compiledContains(cv, x, y, z)) bitsHere |= 1 << k;
-        }
-        if (bitsHere === 0) continue;
-        if (b.seen++ % b.keep !== 0) continue;
-        append(ins, c, i);
-        b.member.push(bitsHere >>> 0);
-        if (ins.n >= KEEP_CAP) {
-          // Too many: keep every other one, each now standing for twice as many.
-          halveAll(ins);
-          b.member.halve();
-          ins.n = b.member.n;
-          b.keep *= 2;
-        }
-      }
-      post({ type: 'ack', build: m.build });
-      break;
     }
-    case 'built': {
-      const b = build;
-      if (!b || b.id !== m.build) break;
-      inside = b.inside ? finish(b.inside, b.keep, b.sorted) : { n: 0, weight: 1, time: null, life: null, team: null, person: null, session: null, cols: {}, sorted: true };
-      member = b.member.done();
-      bits = new Map(b.volumes.map(({ v }, k) => [v.id, (1 << k) >>> 0]));
-      const rows: Record<string, number> = {};
-      for (const { v } of b.volumes) {
-        const bit = bits.get(v.id)!;
-        let n = 0;
-        for (let i = 0; i < member.length; i++) if (member[i] & bit) n++;
-        rows[v.id] = n * b.keep;
-      }
-      sample = b.sample ? finish(b.sample, b.stride, b.sorted) : null;
-      sampleXyz = b.sample?.xyz?.done() ?? null;
-      sampleInside = new Map();
-      if (sample && sampleXyz) {
-        for (const { v, c } of b.volumes) {
-          const mask = new Uint8Array(sample.n);
-          for (let i = 0; i < sample.n; i++) if (compiledContains(c, sampleXyz[i * 3], sampleXyz[i * 3 + 1], sampleXyz[i * 3 + 2])) mask[i] = 1;
-          sampleInside.set(v.id, mask);
-        }
-      }
-      build = null;
-      for (const r of runs.values()) r.agg = null;
-      post({ type: 'ready', build: m.build, rows, sample: sample?.n ?? 0, kept: inside.n, keep: b.keep });
-      queueAll();
+    case 'chunk':
+      onChunk(m);
       break;
-    }
+    case 'built':
+      onBuilt(m.build);
+      break;
     case 'signs': {
       const keep = new Map<string, SignRun>();
       for (const job of m.signs) {
         const old = runs.get(job.id);
         const same = old && JSON.stringify(old.job) === JSON.stringify(job);
-        keep.set(job.id, same ? old : { job, agg: null, scope: null, last: '' });
+        keep.set(job.id, same ? old : { job, agg: null, sent: false });
         if (!same && !queue.includes(job.id)) queue.push(job.id);
       }
       runs.clear();
       for (const [k, v] of keep) runs.set(k, v);
       queue = queue.filter((id) => runs.has(id));
+      // An "up to now" sign added: its slot is made at the next scan.
+      if ([...runs.values()].some((r) => r.job.upToNow) && slots && !slots.insideUp) fresh = true;
       schedule();
       break;
     }
@@ -354,7 +453,8 @@ self.onmessage = (e: MessageEvent<ToWorker>) => {
       scope = m.scope;
       upTo = m.upTo;
       seq = m.seq;
-      queueAll();
+      fresh = true;
+      schedule();
       break;
   }
 };
