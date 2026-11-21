@@ -43,6 +43,8 @@ export const ROUTE_POINTS = 8;
 const ROUTE_SEED = 6000;
 /** A life's share of a route's lives below which a route is folded into "none". */
 const ROUTE_MIN_SHARE = 0.03;
+/** Classes that fly. */
+const AIR = new Set<string>(['fighter', 'attack', 'bomber', 'otherAir', 'helicopter', 'weapon', 'decoy']);
 /** Classes a line-up is told by: what is driven, not weapons, decoys or buildings. */
 const FIELDED = new Set<string>(VEHICLE_CLASSES.filter((c) => !['weapon', 'decoy', 'structure', 'other'].includes(c)));
 /** Share of a side's lives that must be in a zone (two samples or more) for the side to hold it. */
@@ -264,6 +266,42 @@ function twoMeans(p: [number, number][]): { c: [[number, number], [number, numbe
   return { c, of };
 }
 
+/**
+ * The two ends of a map from each round's spawns: 2-means where a round's two
+ * sides always go to different ends (whichever way round costs less), so a map
+ * played on two layouts is not split by layout instead of by end.
+ */
+function pairedEnds(sp: { r: number; p: [number, number] }[]): { c: [[number, number], [number, number]]; of: number[] } {
+  let { c } = twoMeans(sp.map((s) => s.p));
+  const byRound = new Map<number, number[]>();
+  sp.forEach((s, i) => {
+    const l = byRound.get(s.r);
+    if (l) l.push(i);
+    else byRound.set(s.r, [i]);
+  });
+  const d2 = (p: [number, number], q: [number, number]) => (p[0] - q[0]) ** 2 + (p[1] - q[1]) ** 2;
+  const of = new Array<number>(sp.length).fill(0);
+  for (let it = 0; it < 10; it++) {
+    for (const l of byRound.values()) {
+      if (l.length === 2) {
+        const [a, b] = l;
+        const straight = d2(sp[a].p, c[0]) + d2(sp[b].p, c[1]);
+        const swapped = d2(sp[a].p, c[1]) + d2(sp[b].p, c[0]);
+        of[a] = straight <= swapped ? 0 : 1;
+        of[b] = 1 - of[a];
+      } else for (const i of l) of[i] = d2(sp[i].p, c[0]) <= d2(sp[i].p, c[1]) ? 0 : 1;
+    }
+    const sum = [[0, 0, 0], [0, 0, 0]];
+    sp.forEach((s, i) => {
+      sum[of[i]][0] += s.p[0];
+      sum[of[i]][1] += s.p[1];
+      sum[of[i]][2]++;
+    });
+    c = [sum[0][2] ? [sum[0][0] / sum[0][2], sum[0][1] / sum[0][2]] : c[0], sum[1][2] ? [sum[1][0] / sum[1][2], sum[1][1] / sum[1][2]] : c[1]];
+  }
+  return { c, of };
+}
+
 /** A life's first `span` seconds as `ROUTE_POINTS` points evenly in time (null when it moved too little to say). */
 function routeOf(l: LifeW, span: number): number[] | null {
   if (l.t.length < 3) return null;
@@ -388,7 +426,7 @@ export function buildGroup(key: string, matches: OutcomeMatch[]): OutcomeGroup |
     }
   });
   if (sp.length < 8) return null;
-  const km = twoMeans(sp.map((s) => s.p));
+  const km = pairedEnds(sp);
   const agree = sp.filter((s, i) => km.of[i] === s.name).length / sp.length;
   const spread = Math.hypot(km.c[0][0] - km.c[1][0], km.c[0][1] - km.c[1][1]);
   // The names keep to their ends (or the ends are not apart): sides are the names; else the two ends.
@@ -405,11 +443,6 @@ export function buildGroup(key: string, matches: OutcomeMatch[]): OutcomeGroup |
       const a1 = sideOfSp.get(`${ri}|1`);
       if (a0 === undefined && a1 !== undefined) sideOfSp.set(`${ri}|0`, 1 - a1);
       else if (a1 === undefined && a0 !== undefined) sideOfSp.set(`${ri}|1`, 1 - a0);
-      // Both at one end: the spawns say nothing this round; neither is kept.
-      else if (a0 !== undefined && a0 === a1) {
-        sideOfSp.delete(`${ri}|0`);
-        sideOfSp.delete(`${ri}|1`);
-      }
     });
   const sides = byName ? [...names] : ['A', 'B'];
   const spawnSum = [[0, 0, 0], [0, 0, 0]];
@@ -425,9 +458,17 @@ export function buildGroup(key: string, matches: OutcomeMatch[]): OutcomeGroup |
   const xs: number[] = [];
   const zs: number[] = [];
   const lens: number[] = [];
+  // The map's span from the ground lives where most are on the ground: aircraft range far wider.
+  let ground = 0, all = 0;
+  for (const r of raw) for (const l of r.lives) {
+    all++;
+    if (!(l.cls >= 0 && AIR.has(VEHICLE_CLASSES[l.cls]))) ground++;
+  }
+  const groundOnly = ground >= all * 0.5;
   for (const r of raw) {
     lens.push(r.len);
     for (const l of r.lives) for (let j = 0; j < l.t.length; j += 3) {
+      if (groundOnly && l.cls >= 0 && AIR.has(VEHICLE_CLASSES[l.cls])) break;
       xs.push(l.x[j]);
       zs.push(l.z[j]);
     }
@@ -661,9 +702,11 @@ export function buildGroup(key: string, matches: OutcomeMatch[]): OutcomeGroup |
       for (const s of owner.values()) ol += s === w.slot ? 1 : s >= 0 ? -1 : 0;
       sr.objLead.push(ol);
     }
-    // Objectives: the round's first capture, the side's first and how soon.
-    const mine = r.caps.find((c) => c.slot === w.slot);
-    const first = r.caps.find((c) => c.slot >= 0);
+    // Objectives: the round's first capture, the side's first and how soon. With one objective on the map, taking
+    // it is how the round is won: no pattern.
+    const many = objectives.length > 1;
+    const mine = many ? r.caps.find((c) => c.slot === w.slot) : undefined;
+    const first = many ? r.caps.find((c) => c.slot >= 0) : undefined;
     if (first && first.slot === w.slot) sr.feats.add(feat(`capFirst|${sr.side}`, { kind: 'capFirst', side: sr.side, at: 0 }));
     if (mine) {
       firstCap[wi] = mine.t;
