@@ -49,3 +49,9 @@ A model loaded from the library has no part list, and its bounds and ground heig
 ## Where it lives
 
 In the browser's IndexedDB, database `3dheat`, object store `levels`, for the page's origin (the address in the browser's address bar). It is local to that browser profile: another browser, another profile or another address (for example `localhost` instead of `127.0.0.1`) sees a different, empty library. Clearing the site's data in the browser deletes it. Entries saved by older versions without structures, colours or water still load.
+
+## The levels folder
+
+Run from a checkout (the dev or preview server), the panel also lists everything the map tools wrote into your levels folder: `HEAT3D_LEVELS`, or the `levels` entry of the git-ignored `tools/local-data.json`. Without a server, **Pick folder…** indexes a folder you choose. Levels and race courses are grouped by game; a click loads one, with its game-mode layouts when a `<Level>.layouts.json` sits beside it (marked ◆). Data whose `map` column names a level in the folder gets that level by itself while no level is loaded; a name two games share is left for you to pick.
+
+Every file in the folder gets a fingerprint: the SHA-256 of its bytes, with the tool and version that wrote it and the game's build where the file says them. The server hashes the files in the background, one at a time, and keeps the hashes in the folder's `.3dheat-index.json`, so a file is hashed again only when it changes. Two copies with the same fingerprint are the same extract ([`catalogIndex.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/catalogIndex.ts)).
