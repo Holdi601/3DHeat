@@ -18,7 +18,8 @@ const SERIES = ['var(--chart-1, #0b6fb8)', 'var(--chart-2, #c2491f)'];
 const INK = 'var(--chart-ink, #3f4a5a)';
 const GRID = 'var(--chart-grid, #d3dae3)';
 
-const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+/** Text or a double-quoted attribute value; anything (a shared block's title may be no string at all) as words. */
+const esc = (s: unknown) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 /** A number short: 12.3k, 4.56, 0.0123. */
 export function shortNumber(v: number): string {

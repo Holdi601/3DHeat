@@ -24,7 +24,7 @@ import type { ChartData } from '../charts/types';
 import { int, num, t } from '../i18n';
 import { anchorSubject, type Anchor } from './anchors';
 import { esc, inline, markdownToHtml, plainText } from './markdown';
-import type { AnalysisDoc, DataNote, DocBlock, NotesBook } from './model';
+import { IMAGE_DATA_URL, NOTE_COLORS, type AnalysisDoc, type DataNote, type DocBlock, type NotesBook } from './model';
 import { dataUrlBytes, zip, type ZipFile } from './zip';
 import { sharedChartData, sharedChartKind } from './sharedChart';
 
@@ -78,11 +78,20 @@ export function heatLines(a: Extract<Anchor, { kind: 'heat' }>): [string, string
   return rows;
 }
 
+/**
+ * A picture: only a raster data URL (`IMAGE_DATA_URL`, as notes and blocks are
+ * read) goes into `src`, nothing else is drawn; a note or block from a session
+ * or a file is someone else's, and a quote in its address would be markup.
+ */
+const img = (src: unknown, alt = '', cls = '') => (typeof src === 'string' && IMAGE_DATA_URL.test(src) ? `<img${cls ? ` class="${cls}"` : ''} src="${src}" alt="${esc(alt)}">` : '');
+/** A note's colour as CSS: one of #rrggbb, never words that end the declaration. */
+const noteColor = (c: unknown) => (typeof c === 'string' && /^#[0-9a-f]{6}$/i.test(c) ? c : NOTE_COLORS[0]);
+
 const table = (rows: [string, string][]) => `<table class="kv">${rows.map(([k, v]) => `<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`).join('')}</table>`;
 
 /** A note's card: its colour, title, anchor and text. */
 export function noteCardHtml(n: DataNote, ctx: RenderContext): string {
-  return `<div class="note-card" style="border-left-color:${esc(n.color)}"><div class="note-card-head"><b>${esc(n.title || t('notes.untitled'))}</b> <span class="dim">${esc(t(`notes.kind.${n.anchor.kind}`))} · ${esc(anchorSubject(n.anchor))}</span>${button(ctx, 'jump-note', n.id, t('notes.jump'))}</div>${n.text ? `<div class="note-card-body">${markdownToHtml(n.text, { title: titler(ctx.book) })}</div>` : ''}${n.shot ? `<img class="shot" src="${n.shot}" alt="">` : ''}${n.tags.length ? `<div class="tags">${n.tags.map((x) => `<span class="tag">${esc(x)}</span>`).join(' ')}</div>` : ''}</div>`;
+  return `<div class="note-card" style="border-left-color:${noteColor(n.color)}"><div class="note-card-head"><b>${esc(n.title || t('notes.untitled'))}</b> <span class="dim">${esc(t(`notes.kind.${n.anchor.kind}`))} · ${esc(anchorSubject(n.anchor))}</span>${button(ctx, 'jump-note', n.id, t('notes.jump'))}</div>${n.text ? `<div class="note-card-body">${markdownToHtml(n.text, { title: titler(ctx.book) })}</div>` : ''}${img(n.shot, '', 'shot')}${n.tags.length ? `<div class="tags">${n.tags.map((x) => `<span class="tag">${esc(x)}</span>`).join(' ')}</div>` : ''}</div>`;
 }
 
 /** A block of a document, drawn. */
@@ -90,7 +99,7 @@ export function blockHtml(b: DocBlock | undefined, ctx: RenderContext): string {
   if (!b) return `<div class="block missing">${esc(t('notes.block.missing'))}</div>`;
   switch (b.type) {
     case 'view':
-      return `<figure class="block view">${b.thumb ? `<img src="${b.thumb}" alt="${esc(b.name)}">` : `<div class="thumb-none">${esc(t('notes.block.noThumb'))}</div>`}<figcaption>${esc(t('notes.block.view'))}: <b>${esc(b.name)}</b> ${button(ctx, 'view', b.id, t('notes.block.restore'))}</figcaption></figure>`;
+      return `<figure class="block view">${img(b.thumb, b.name) || `<div class="thumb-none">${esc(t('notes.block.noThumb'))}</div>`}<figcaption>${esc(t('notes.block.view'))}: <b>${esc(b.name)}</b> ${button(ctx, 'view', b.id, t('notes.block.restore'))}</figcaption></figure>`;
     case 'insight': {
       const a = b.anchor as Extract<Anchor, { kind: 'insight' }>;
       const ev = b.evidence ? Object.entries(b.evidence).slice(0, 8).map(([k, v]) => [k, typeof v === 'number' ? shortNumber(v) : String(v)] as [string, string]) : [];
@@ -98,13 +107,13 @@ export function blockHtml(b: DocBlock | undefined, ctx: RenderContext): string {
     }
     case 'heat': {
       const a = b.anchor as Extract<Anchor, { kind: 'heat' }>;
-      return `<div class="block heat"><div class="block-head">${esc(t('notes.block.heat'))}${button(ctx, 'jump-block', b.id, t('notes.jump'))}</div>${b.thumb ? `<img src="${b.thumb}" alt="">` : ''}${table(heatLines(a))}</div>`;
+      return `<div class="block heat"><div class="block-head">${esc(t('notes.block.heat'))}${button(ctx, 'jump-block', b.id, t('notes.jump'))}</div>${img(b.thumb)}${table(heatLines(a))}</div>`;
     }
     case 'chart': {
       const title = b.spec.title || b.spec.measure.name || b.spec.measure.expr;
       const png = ctx.interactive ? null : chartPicture(blockChartData(b));
       const body = b.data
-        ? `${ctx.interactive ? chartSlot(b.id) : png ? `<img class="chart-img" src="${png}" alt="${esc(title)}">` : exprChartSvg(b.spec, b.data, { other: t('notes.chart.other'), empty: t('notes.chart.empty') })}<details><summary>${esc(t('notes.chart.table'))}</summary>${markdownToHtml(exprChartTable(b.data, t('notes.chart.other')))}</details><div class="dim">${esc(t('notes.chart.counted', { rows: int(b.data.rows), dataset: b.data.dataset || '–', when: new Date(b.data.at).toLocaleString() }))}</div>`
+        ? `${ctx.interactive ? chartSlot(b.id) : png ? img(png, title, 'chart-img') : exprChartSvg(b.spec, b.data, { other: t('notes.chart.other'), empty: t('notes.chart.empty') })}<details><summary>${esc(t('notes.chart.table'))}</summary>${markdownToHtml(exprChartTable(b.data, t('notes.chart.other')))}</details><div class="dim">${esc(t('notes.chart.counted', { rows: int(b.data.rows), dataset: b.data.dataset || '–', when: new Date(b.data.at).toLocaleString() }))}</div>`
         : `<div class="dim">${esc(t('notes.chart.notCounted'))}</div>`;
       return `<figure class="block chart"><figcaption><b>${esc(title)}</b> <code>${esc(b.spec.measure.expr)}</code>${button(ctx, 'chart-refresh', b.id, t('notes.chart.refresh'))}${button(ctx, 'chart-edit', b.id, t('notes.chart.edit'))}</figcaption>${body}</figure>`;
     }
@@ -120,18 +129,18 @@ export function blockHtml(b: DocBlock | undefined, ctx: RenderContext): string {
         [t('notes.plan.level'), a.level || '–'],
         [t('notes.plan.contents'), t('notes.plan.counts', { figures: int(p.figures?.length ?? 0), arrows: int(p.arrows?.length ?? 0), areas: int(p.areas?.length ?? 0), steps: int(p.steps?.length ?? 1) })],
       ];
-      return `<div class="block plan"><div class="block-head">${esc(t('notes.block.plan'))}: <b>${esc(a.title || t('notes.untitled'))}</b>${button(ctx, 'plan', b.id, t('notes.plan.open'))}</div>${b.thumb ? `<img src="${b.thumb}" alt="">` : ''}${table(rows)}</div>`;
+      return `<div class="block plan"><div class="block-head">${esc(t('notes.block.plan'))}: <b>${esc(a.title || t('notes.untitled'))}</b>${button(ctx, 'plan', b.id, t('notes.plan.open'))}</div>${img(b.thumb)}${table(rows)}</div>`;
     }
     case 'chartBlock': {
       const data = sharedChartData(b.block);
       const src = b.block.source;
       const from = [src?.volumeName, src?.dataset, src?.scope].filter(Boolean).join(' · ');
       const png = ctx.interactive ? null : chartPicture(blockChartData(b));
-      const pic = ctx.interactive ? chartSlot(b.id) : png ? `<img class="chart-img" src="${png}" alt="${esc(b.block.title)}">` : exprChartSvg({ kind: sharedChartKind(b.block), title: b.block.title }, data, { other: t('notes.chart.other'), empty: t('notes.chart.empty') });
+      const pic = ctx.interactive ? chartSlot(b.id) : png ? img(png, b.block.title, 'chart-img') : exprChartSvg({ kind: sharedChartKind(b.block), title: b.block.title }, data, { other: t('notes.chart.other'), empty: t('notes.chart.empty') });
       return `<figure class="block chart"><figcaption><b>${esc(b.block.title || t('notes.untitled'))}</b>${from ? ` <span class="dim">${esc(from)}</span>` : ''}${button(ctx, 'chart-refresh', b.id, t('notes.chart.refresh'))}${button(ctx, 'chart-edit', b.id, t('notes.chart.edit'))}</figcaption>${pic}<details><summary>${esc(t('notes.chart.table'))}</summary>${markdownToHtml(exprChartTable(data, t('notes.chart.other')))}</details></figure>`;
     }
     case 'image':
-      return `<figure class="block image"><img src="${b.src}" alt="${esc(b.caption)}">${b.caption ? `<figcaption>${inline(b.caption)}</figcaption>` : ''}</figure>`;
+      return `<figure class="block image">${img(b.src, b.caption)}${b.caption ? `<figcaption>${inline(b.caption)}</figcaption>` : ''}</figure>`;
   }
 }
 
@@ -207,6 +216,7 @@ export function docToHtml(doc: AnalysisDoc, book: NotesBook): string {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="generator" content="3DHeat">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data:; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
 <title>${esc(doc.title || t('notes.untitled'))}</title>
 <style>
 body{margin:0;padding:32px 16px;background:#fff}

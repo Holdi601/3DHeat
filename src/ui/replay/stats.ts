@@ -413,6 +413,8 @@ export function computeStats(
 /** A CSV field, quoted where it has to be. */
 export function csvField(v: string | number): string {
   if (typeof v === 'number') return Number.isFinite(v) ? String(Math.round(v * 1000) / 1000) : '';
+  // A text that starts like a formula (a unit named "=HYPERLINK(...)") is kept as text: a spreadsheet would run it. A number stays one.
+  if (/^[=+\-@\t\r](?![\d.]+(?:e[+-]?\d+)?$)/i.test(v)) v = `'${v}`;
   return /[",\n\r;]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
 }
 

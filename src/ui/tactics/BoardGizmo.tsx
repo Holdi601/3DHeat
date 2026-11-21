@@ -8,7 +8,8 @@ import { clock, planTimings, stepStart, unitsPerMetre } from '../../tactics/timi
 import type { Engine } from '../../render/engine';
 import { num, t } from '../../i18n';
 
-const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+/** Text or a double-quoted attribute value: a board's ids and words come from the session's other members. */
+const esc = (s: unknown) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 const COLORS: Record<Axis, string> = { x: '#e5484d', y: '#46a758', z: '#3e82f7' };
 const PLANES: { id: string; a: Axis; b: Axis; n: Axis }[] = [
@@ -220,7 +221,7 @@ function render(engine: Engine): string {
       const q = P(p);
       if (!q) return;
       const ref = `${a.id}#${i}`;
-      if (s.tool === 'select') out.push(`<circle class="wp${sel.has(ref) || sel.has(a.id) ? ' on' : ''}" data-ref="${ref}" cx="${f1(q.x)}" cy="${f1(q.y)}" r="5"/>`);
+      if (s.tool === 'select') out.push(`<circle class="wp${sel.has(ref) || sel.has(a.id) ? ' on' : ''}" data-ref="${esc(ref)}" cx="${f1(q.x)}" cy="${f1(q.y)}" r="5"/>`);
       if (t && i > 0) out.push(`<text class="eta" x="${f1(q.x + 8)}" y="${f1(q.y - 8)}">+${(t.arrive[i] - t.depart[i - 1]).toFixed(1)} s · ${clock(t0 + t.arrive[i])}</text>`);
     });
   }

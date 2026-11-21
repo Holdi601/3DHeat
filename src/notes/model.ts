@@ -18,6 +18,7 @@
 
 import { readExprChartData, readExprChartSpec, type ExprChartData, type ExprChartSpec } from '../charts/exprSpec';
 import { readAnchor, type Anchor } from './anchors';
+import { blockLine, heading } from './markdown';
 import { isSharedChartBlock, type SharedChartBlock } from './sharedChart';
 
 export const NOTES_SCHEMA = 'heat3d.notes/1';
@@ -89,7 +90,14 @@ export function newId(prefix: string): string {
 
 const str = (v: unknown, max: number, fallback = '') => (typeof v === 'string' ? v.slice(0, max) : fallback);
 const time = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : Date.now());
-const image = (v: unknown) => (typeof v === 'string' && /^data:image\/(png|jpeg|webp|svg\+xml);base64,/.test(v) && v.length < 8_000_000 ? v : undefined);
+/**
+ * A picture as it is kept and shared: a raster data URL and nothing after its
+ * base64 - it goes into `src="..."` as it is, so a quote in it would be
+ * markup. No SVG: one is a document that runs script when its exported file
+ * is opened (the viewer's own charts are drawn as SVG at export, not kept).
+ */
+export const IMAGE_DATA_URL = /^data:image\/(png|jpeg|webp|gif);base64,[A-Za-z0-9+/]*={0,2}$/;
+const image = (v: unknown) => (typeof v === 'string' && v.length < 8_000_000 && IMAGE_DATA_URL.test(v) ? v : undefined);
 const color = (v: unknown) => (typeof v === 'string' && /^#[0-9a-f]{6}$/i.test(v) ? v.toLowerCase() : NOTE_COLORS[0]);
 
 export function readNote(v: unknown): DataNote | null {
@@ -181,9 +189,12 @@ export function readBook(v: unknown): NotesBook {
   return { notes: uniq(notes), docs: uniq(docs) };
 }
 
-/** The block ids a document's text places, in order. */
+/** The block ids a document's text places, in order (line by line: a multi-line pattern would start again at every line of a long run of line breaks). */
 export function blockRefs(body: string): string[] {
-  return [...body.matchAll(/^\s*\{\{block:([\w-]+)\}\}\s*$/gm)].map((m) => m[1]);
+  return body
+    .split(/\r\n?|\n/)
+    .map(blockLine)
+    .filter((id): id is string => id !== null);
 }
 
 /** The headings of a document's text: the outline. */
@@ -193,8 +204,8 @@ export function outline(body: string): { level: number; text: string; line: numb
   body.split('\n').forEach((l, i) => {
     if (/^```/.test(l)) fence = !fence;
     if (fence) return;
-    const m = /^(#{1,4})\s+(.+?)\s*#*\s*$/.exec(l);
-    if (m) out.push({ level: m[1].length, text: m[2], line: i });
+    const h = heading(l);
+    if (h && h.level <= 4) out.push({ level: h.level, text: h.text, line: i });
   });
   return out;
 }

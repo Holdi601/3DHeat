@@ -992,7 +992,11 @@ function diffSplit(ds: Dataset, view: View, model: Model): (() => void) | null {
 }
 
 function tableCsv(model: Model): string {
-  const esc = (s: string) => (/[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s);
+  // A label that starts like a formula is kept as text: a spreadsheet would run it.
+  const esc = (s: string) => {
+    const x = /^[=+\-@\t\r](?![\d.]+(?:e[+-]?\d+)?$)/i.test(s) ? `'${s}` : s;
+    return /[",\n\r]/.test(x) ? `"${x.replace(/"/g, '""')}"` : x;
+  };
   const head = ['group', 'split', ...model.metrics.flatMap((m) => [m.label, `${m.label} low`, `${m.label} high`, `${m.label} diff`, `${m.label} diff low`, `${m.label} diff high`])];
   if (model.nD) for (const m of model.metrics) for (const d of model.dEnts) head.push(`${m.label} @ ${d.label}`);
   const lines = [head.map(esc).join(',')];

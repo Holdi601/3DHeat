@@ -133,7 +133,8 @@ export function exportColumns(ds: Dataset, volumes: readonly Volume[]): OutColum
 }
 
 function csvField(v: string | number): string {
-  const s = typeof v === 'number' ? (Number.isFinite(v) ? String(Number(v.toPrecision(9))) : '') : v;
+  // A text that starts like a formula (a unit named "=HYPERLINK(...)") is kept as text: a spreadsheet would run it. A number stays one.
+  const s = typeof v === 'number' ? (Number.isFinite(v) ? String(Number(v.toPrecision(9))) : '') : /^[=+\-@\t\r](?![\d.]+(?:e[+-]?\d+)?$)/i.test(v) ? `'${v}` : v;
   return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 
