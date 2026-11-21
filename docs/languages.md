@@ -13,7 +13,7 @@ English is the source every other language is translated from, and what a missin
 
 ## Change the language
 
-1. Open the drop-down beside the name at the top of the sidebar. Its first entry is **Automatic - <language>** (the browser's, as detected now); then every language by its own name, so you can find yours even when you cannot read the one shown.
+1. Open the settings (the gear at the top of the sidebar) and the **Language** drop-down. Its first entry is **Automatic - <language>** (the browser's, as detected now); then every language by its own name, so you can find yours even when you cannot read the one shown.
 2. Pick one. It switches at once and is kept in this browser. Pick *Automatic* to forget the choice.
 
 In a private window or with storage blocked, the choice lasts until the page is closed.

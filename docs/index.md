@@ -28,7 +28,7 @@ Also: the [Race analysis](race-analysis.md) tab for laps of racing games, the [M
 
 ## The tabs
 
-The tabs sit at the top of the sidebar, under the name, the units and the language menu.
+The tabs sit at the top of the sidebar, under the name, the command search, help and the settings. How the interface is laid out, and how to reach anything fast: [Interface guide](ui-guide.md).
 
 | Tab | What it is for |
 |---|---|

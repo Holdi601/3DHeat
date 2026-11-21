@@ -20,17 +20,26 @@ What the viewer keeps in your browser (`localStorage`) between visits. Nothing o
 | `heat3d.ai` | external AI: provider, address, model, options (not the key) | `src/insights/ai/settings.ts` |
 | `heat3d.ai.key` | the external AI key, only when *Remember the key* is ticked | `src/insights/ai/settings.ts` |
 | `heat3d.bookmarks.…` | bookmarks, per recording | `src/ui/replay/bookmarks.ts` |
+| `heat3d.cameraPaths` |  | `src/render/pathLibrary.ts` |
 | `heat3d.carNames` | car names in the race tab | `src/race/carNames.ts` |
+| `heat3d.casterCinema` |  | `src/ui/insights/cinemaStore.ts` |
 | `heat3d.descendKey` | the key besides Q that flies the camera down | `src/state/store.ts` |
 | `heat3d.far` | figures at a distance, symbols, hit marks, aim lines | `src/state/store.ts` |
 | `heat3d.help` | help mode on or off | `src/state/helpStore.ts` |
 | `heat3d.inspect` | the pick card and camera readout | `src/state/inspectStore.ts` |
 | `heat3d.language` | the language picked | `src/i18n/index.ts` |
 | `heat3d.mirror` | the axis mirroring | `src/state/store.ts` |
+| `heat3d.palette.recent` | the last commands run from the command palette | `src/ui/shell/CommandPalette.tsx` |
 | `heat3d.replay` | replay labels, tactical display, 2D map, charts, head-up display, look, buildings, follow camera | `src/state/replayStore.ts` |
+| `heat3d.savedViews` |  | `src/state/savedViews.ts` |
+| `heat3d.sections` | which side panel sections are open | `src/ui/shell/sections.ts` |
+| `heat3d.shell` | the theme, the side panel hidden or shown, the task group per workspace, the More folds | `src/ui/shell/shellStore.ts` |
 | `heat3d.speed` | the playback speed | `src/state/playbackSpeed.ts` |
+| `heat3d.tactics.author` |  | `src/tactics/autosave.ts` |
+| `heat3d.tactics.autosave` |  | `src/tactics/autosave.ts` |
 | `heat3d.teamPalette` |  | `src/render/colors.ts` |
 | `heat3d.teamSides` |  | `src/data/teamSides.ts` |
 | `heat3d.units` | the units preset and single units | `src/state/unitsStore.ts` |
+| `heat3d.volumeContours` |  | `src/render/volumeContours.ts` |
 
 Heat settings, filters and the view mode are not kept: they start fresh with each load.

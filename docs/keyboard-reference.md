@@ -6,7 +6,7 @@ nav_order: 2
 
 # Keyboard and mouse reference
 
-Every key and mouse action in one place, so you can find the one you need. Click the view first so it has the keyboard. Keys are ignored while a text box or a drop-down has focus. The short version is also printed at the bottom left of the view.
+Every key and mouse action in one place, so you can find the one you need. Click the view first so it has the keyboard. Keys are ignored while a text box or a drop-down has focus. In the viewer, `?` shows the same list (the key sheet), and `Ctrl+K` finds any action or setting by name with its key ([Interface guide](ui-guide.md)). One table in the code drives the key sheet: [`shortcuts.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/shell/shortcuts.ts).
 
 Quick finder:
 
@@ -16,8 +16,24 @@ Quick finder:
 | see everything | `F` |
 | play or pause | `K` |
 | play backwards | `J` (press again to pause), forwards `L` |
-| see what the colours mean | `?` or `F1` |
+| find any action or setting | `Ctrl+K` |
+| see every key | `?` |
+| see what the colours mean | `F1` |
+| hide the side panel | `Ctrl+B` |
 | undo in the Tactics tab | `Ctrl+Z` |
+
+## Everywhere
+
+From [`keys.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/shell/keys.ts). These work on every tab, ahead of the tab's own keys.
+
+| Key | Effect |
+|---|---|
+| `Ctrl+K` | Command palette: search every action, workspace, mode, camera view, panel and setting by name ([Interface guide](ui-guide.md#command-palette)). Works with the focus in a box too. |
+| `?` | Key sheet: every key, grouped by where it works (not while typing in a box) |
+| `F1` | Help mode: what the colours mean, and what the label, figure or control under the pointer is ([Settings, units and keys](settings.md#help-mode)). Works with the focus in a slider or a list too. |
+| `Ctrl+B` | Hide or show the side panel: the view takes the whole width |
+| `Ctrl+Shift+1` … `Ctrl+Shift+5` | Heatmap, Race analysis, Match, Tactics, Vehicles |
+| `Esc` | Close the palette, the key sheet or the settings (before anything else `Esc` does) |
 
 ## Camera
 
@@ -52,7 +68,6 @@ From [`App.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/App.tsx).
 | `G` | Go to a typed point: opens the box under the camera readout |
 | `Esc` | Close the pick card; then stop looking at the second unit; then stop following a unit |
 | `T` | Tactical display look on or off ([Match replay](match-replay.md#display-style)) |
-| `?` / `F1` | Help mode: what the colours mean, and what the label or figure under the pointer is ([Settings, units and keys](settings.md#help-mode)) |
 | `1` | [Heat](heat.md) |
 | `2` | [Difference](difference.md) |
 | `3` | [Team heat](team-heat.md) |

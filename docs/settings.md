@@ -5,7 +5,7 @@ nav_order: 16
 
 # Settings, units and keys
 
-The small controls at the top of the sidebar change how the viewer talks to you: the language, the units (metres or feet, km/h or knots) and a help mode that explains the colours. Your choices are remembered in your browser.
+The small controls at the top of the sidebar change how the viewer talks to you: the theme, the language, the units (metres or feet, km/h or knots) and a help mode that explains the colours. Your choices are remembered in your browser. How the whole interface is laid out: [Interface guide](ui-guide.md).
 
 ## The header
 
@@ -13,7 +13,16 @@ At the top of the sidebar:
 
 | Control | What it does |
 |---|---|
-| **?** | Help mode: what every colour means (also `?` or `F1`) |
+| **Search…** | The [command palette](ui-guide.md#command-palette): every action, panel and setting by name (also `Ctrl+K`) |
+| **?** | Help mode: what every colour means, and what the control or label under the pointer does (also `F1`) |
+| Gear | Settings: **Theme**, **Animations**, **Units** and **Language** |
+
+In the settings:
+
+| Control | What it does |
+|---|---|
+| **Theme** | **Dark** (the default), **Light**, or **System** (follows the operating system). The 3D view and what is drawn over it stay dark in every theme. |
+| **Animations** | **Auto** (off while the frame rate is under 30 fps), **On**, **Off** |
 | **Units** menu | Metric, Imperial, Aviation or Nautical |
 | **...** button beside **Units** | Opens "Choose a unit for each quantity": one drop-down per quantity |
 | **Language** menu | The viewer's language: [40 languages](languages.md), or the browser's |
@@ -24,7 +33,7 @@ Numbers you type into a box may use either a point or a comma (`0.35` or `0,35`)
 
 ## Units
 
-1. Pick a preset in the **Units** menu. All quantities switch together.
+1. Open the settings (the gear at the top of the sidebar) and pick a preset in the **Units** menu. All quantities switch together.
 2. To change one quantity only, click the **...** button beside it and pick a unit for that quantity. The menu then shows a `*` after the preset.
 3. A quantity you did not set follows the preset. Choose "As preset" to go back.
 
@@ -45,7 +54,7 @@ Other units you can pick for one quantity: distance km, mi, NM; speed km/h, m/s,
 
 ![Help mode: what the colours mean](assets/img/en/help.webp)
 
-Press `?` or `F1`, or click the **?** button. It shows *What the colours mean*: legends for the 3D view, the heat ramps, team colours, the level's colours, the panels' status colours, the match panel and the race view. It stays on until you switch it off. At its top, *Under the pointer* says what the label or figure under the mouse is - a capture zone, a map marker, a unit's label, an event, a lock or engagement readout, a place name, a grid mark, a unit's figure - and it follows the pointer while the help is open. In the Match tab it explains the match panel's colours too: Counter-Strike's sides and rounds when a Counter-Strike scoreboard is loaded, the teams' colours otherwise.
+Press `F1`, or click the **?** button. `F1` works with the keyboard focus anywhere, in a slider or a list too. It shows *What the colours mean*: legends for the 3D view, the heat ramps, team colours, the level's colours, the panels' status colours, the match panel and the race view. It stays on until you switch it off. At its top, *Under the pointer* says what the label or figure under the mouse is - a capture zone, a map marker, a unit's label, an event, a lock or engagement readout, a place name, a grid mark, a unit's figure - and it follows the pointer while the help is open. Over a control in the side panel, the bars or the settings it names the control and says what its tooltip or hint says. In the Match tab it explains the match panel's colours too: Counter-Strike's sides and rounds when a Counter-Strike scoreboard is loaded, the teams' colours otherwise.
 
 ![Help mode in the Match tab](assets/img/en/settings-help-match.webp)
 
@@ -53,7 +62,8 @@ Press `?` or `F1`, or click the **?** button. It shows *What the colours mean*: 
 
 These settings are kept in your browser between visits (nothing is sent anywhere):
 
-- the language, the units and help mode;
+- the language, the units, the theme and help mode;
+- which side panel sections are open, the task group picked on each tab, the **More** folds, whether the side panel is hidden, and the last commands run from the palette;
 - the replay's figure, symbol, label, camera and tactical display settings;
 - the playback speed and mirroring;
 - bookmarks per recording, volumes per dataset, objective layers;

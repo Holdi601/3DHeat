@@ -8,7 +8,7 @@ nav_order: 3
 
 # Language list
 
-The viewer speaks 40 languages. It starts in the browser's language when it has it, and the language menu at the top of the sidebar changes it. How to change it, and how translations are made: [Languages](languages.md).
+The viewer speaks 40 languages. It starts in the browser's language when it has it, and the language menu in the settings (the gear at the top of the sidebar) changes it. How to change it, and how translations are made: [Languages](languages.md).
 
 | Code | Language |
 |---|---|

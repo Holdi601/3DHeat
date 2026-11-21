@@ -174,7 +174,7 @@ passes the moment of a hit, a shock ring spreads from it for 0.8 s.
 
 ## Help mode
 
-**?** beside the language picker, or the **?** or **F1** key, turns on a key to
+The **?** button at the top of the sidebar, or the **F1** key, turns on a key to
 every colour on screen, on all three tabs ([`HelpPanel.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/help/HelpPanel.tsx),
 [`RaceHelp.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/race/RaceHelp.tsx)). The choice stays in this browser.
 
