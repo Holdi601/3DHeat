@@ -258,6 +258,36 @@ await step('Import mission… reads a DCS .miz onto a layer per coalition', asyn
   expect(s.game === 'air' && s.layers.includes('Blue') && s.layers.includes('Red') && s.figures.includes('f-16c') && s.routes === 1, `imported ${JSON.stringify(s)}`);
 });
 
+await step('I opens the task picker: a patrol drawn on the map, Shift+5 overwatch, the legend', async () => {
+  await page.evaluate(() => window.__3dheat_plan.getState().clear());
+  await page.evaluate(() => window.__3dheat_plan.getState().setKind('soldier'));
+  await canvas.focus();
+  await page.keyboard.press('Digit2');
+  await click(cx, cy);
+  await page.keyboard.press('Digit1');
+  await canvas.focus();
+  await page.keyboard.press('KeyI');
+  expect(await page.evaluate(() => window.__3dheat_plan.getState().taskPicker), 'picker not open');
+  await page.locator('.task-picker input[type=search]').fill('patrol');
+  await page.locator('.task-picker input[type=search]').press('Enter');
+  const drawing = await page.evaluate(() => window.__3dheat_plan.getState().taskDraft);
+  expect(drawing && drawing.points.length === 0, `no task being drawn: ${JSON.stringify(drawing)}`);
+  await click(cx + 120, cy);
+  await click(cx + 120, cy + 120);
+  await click(cx, cy + 120);
+  await canvas.focus();
+  await page.keyboard.press('Enter');
+  await page.keyboard.press('Shift+Digit5');
+  const s = await page.evaluate(() => {
+    const st = window.__3dheat_plan.getState();
+    return { tasks: st.plan.tasks.map((t) => ({ kind: t.kind, n: t.points?.length ?? 0, figures: t.figures.length })), draft: st.taskDraft };
+  });
+  expect(s.tasks.length === 2 && s.tasks[0].kind === 'patrol' && s.tasks[0].n === 3 && s.tasks[1].kind === 'overwatch' && s.tasks.every((t) => t.figures === 1) && !s.draft, `tasks ${JSON.stringify(s)}`);
+  await page.locator('.tactics-panel').getByText('Legend').first().click();
+  expect(await page.locator('.task-legend .task-legend-row').count() >= 30, 'legend incomplete');
+  await page.keyboard.press('Escape');
+});
+
 /** Frame intervals over a few seconds, sorted. */
 const frameTimes = async (ms = 5000) => {
   const t = await page.evaluate(
@@ -288,17 +318,23 @@ if (GPU) {
     await page.evaluate(() => window.__3dheat_plan.getState().clear());
     const idle = await frameTimes(2000);
     console.log(`     empty board: ${idle.n} frames, p50 ${idle.p50.toFixed(1)} ms, p99 ${idle.p99.toFixed(1)} ms, max ${idle.max.toFixed(1)} ms`);
-    await page.evaluate((N) => {
+    await page.evaluate(([N, withTasks]) => {
       const plan = structuredClone(window.__3dheat_plan.getState().plan);
       for (let i = 0; i < N; i++) {
         const x = (i % 20) * 6 - 60;
         const z = Math.floor(i / 20) * 6 - 60;
         plan.figures.push({ id: `p${i}`, kind: i % 5 ? 'soldier' : 'mbt', team: plan.teams[i % 2].id, label: `U${i}`, keys: { 0: { x, y: 0, z, yaw: 0 } }, from: 0 });
         plan.arrows.push({ id: `r${i}`, step: 0, team: plan.teams[i % 2].id, style: 'move', figure: `p${i}`, points: [{ x, y: 0, z }, { x: x + 30, y: 0, z: z + 10 }, { x: x + 40, y: 0, z: z + 40 }] });
+        // Two or three tasks each (TACTICS_TASKS=0 leaves them out): a sector while it moves, a weapons state, every third a patrol at its route's end.
+        if (!withTasks) continue;
+        const team = plan.teams[i % 2].id;
+        plan.tasks.push({ id: `o${i}`, kind: i % 2 ? 'overwatch' : 'recon', team, figures: [`p${i}`], step: 0, start: 0, bearing: (i % 8) * 0.8, arc: 0.6, range: 15 });
+        plan.tasks.push({ id: `w${i}`, kind: 'roe', team, figures: [`p${i}`], step: 0, start: 2, state: 'free' });
+        if (i % 3 === 0) plan.tasks.push({ id: `t${i}`, kind: 'patrol', team, figures: [`p${i}`], step: 0, on: { step: 0, from: 2 }, loops: 1, points: [{ x: x + 40, y: 0, z: z + 40 }, { x: x + 46, y: 0, z: z + 40 }, { x: x + 46, y: 0, z: z + 46 }] });
       }
       window.__3dheat_plan.setState({ plan });
       window.__3dheat_plan.getState().play(true);
-    }, N);
+    }, [N, process.env.TACTICS_TASKS !== '0']);
     if (process.env.TACTICS_PROFILE === '1') {
       // Where the time goes: the top functions by own time over two seconds.
       const cdp = await page.context().newCDPSession(page);
@@ -316,6 +352,8 @@ if (GPU) {
       });
       for (const [k, v] of [...self].sort((a, b) => b[1] - a[1]).slice(0, 15)) console.log(`     ${v.toFixed(0).padStart(6)} ms  ${k}`);
     }
+    // The plan's routes and tasks are worked out once, as it starts: a load, not playback (TACTICS_WARM=0 counts it).
+    if (process.env.TACTICS_WARM !== '0') await page.waitForTimeout(1500);
     const r = await frameTimes(5000);
     console.log(`     playing: ${r.n} frames, p50 ${r.p50.toFixed(1)} ms, p99 ${r.p99.toFixed(1)} ms, max ${r.max.toFixed(1)} ms, ${r.over25} over 25 ms`);
     // No worse than the empty board's frames, give or take a frame's jitter.

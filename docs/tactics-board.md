@@ -137,6 +137,10 @@ With a figure selected, **Keyframes at ...** in the **Selected** section sets wh
 
 Type a value in degrees to key it at the moment shown; **×** takes the key there out. **Aim turret at…**, **Look at…** and **Point sensor at…** key both angles at once from the next click on the level (`Esc` stops). The times the figure has keys at are listed as buttons that jump there. Between two keys a value turns the short way round; before the first key and after the last it holds. Played back, turrets turn and guns rise on the figures themselves, and the fans follow.
 
+## Tasks
+
+What a unit does while it moves or stands - attack, defend, patrol a route for a while, sweep an area, overwatch a sector, hold until a go-code, fly a CAP - is a task: select units and press `I`. Tasks run alongside routes, keyframes and each other, show as symbols on the units and the map, and play back. See [Unit tasks](tactics-tasks.md).
+
 ## Compare with match data
 
 **Load match files…** reads CS2 match tables of the map (the CS2 tool's Parquet files, as many as wanted; only the columns needed, in the background); **Use loaded data** takes the data loaded in the viewer. Then:

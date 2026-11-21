@@ -124,6 +124,10 @@ In the Tactics tab ([Tactics board](tactics-board.md)). `F`, `C`, `G` and `T` wo
 | `R` | With nothing selected: turn the next figure to place by 15°. `Shift+R` turns it back. |
 | `M` | With a figure selected: move it to the next click |
 | `K` | Play or pause the plan |
+| `I` | Task picker for the selected units ([Unit tasks](tactics-tasks.md)); `Enter` takes the first match |
+| `Shift+I` | Legend of the task symbols |
+| `Shift+1` … `Shift+9` | Give the selection a task: attack, defend, patrol, sweep, overwatch, suppress, recon, hold until, CAP / orbit |
+| `Enter` / `Esc` while drawing a task's points | Finish them / keep what is drawn if it is enough, else drop the drawing |
 | Shift+click | Add to or remove from the selection |
 | Shift+drag | Draw a box round what to select (adds to the selection) |
 | `Ctrl` while dragging a handle | Snap to the grid or the angle step |
