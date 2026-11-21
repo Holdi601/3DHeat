@@ -4,7 +4,8 @@ import { int, t } from '../../i18n';
 import { useStore } from '../../state/store';
 import { useFrostbiteMaps } from '../../data/frostbiteLevel';
 import { byGame, classify, fingerprint, levelFor, linkLayouts, type CatalogIndex, type CatalogItem } from '../../data/catalogIndex';
-import { armaLevelFor, armaWorldsOfLabels, type ArmaWorld } from '../../data/armaWorlds';
+import { armaLevelFor, armaWorldOf, armaWorldsOfLabels, type ArmaWorld } from '../../data/armaWorlds';
+import { previewedWorlds } from '../../data/ingestOcap';
 import type { Dataset } from '../../state/types';
 import { loadLayoutFiles } from '../../state/levelLayoutsStore';
 
@@ -68,10 +69,21 @@ async function fileOf(item: CatalogItem | string): Promise<File | null> {
   return new File([await r.blob()], path.split('/').pop() ?? path);
 }
 
-/** The worlds of a dataset's Arma recordings (OCAP), by its World and Game columns. */
+/**
+ * The worlds of a dataset's Arma recordings (OCAP): by its World and Game
+ * columns, and by the recordings previewed for it (a column the same on every
+ * row may have been left out of a large load).
+ */
 function armaWantedOf(dataset: Dataset | null): ArmaWorld[] {
-  const labels = (name: string) => dataset?.attrs.find((a) => a.name === name && a.kind === 'category')?.categories ?? [];
-  return armaWorldsOfLabels(labels('World'), labels('Game'));
+  if (!dataset) return [];
+  const labels = (name: string) => dataset.attrs.find((a) => a.name === name && a.kind === 'category')?.categories ?? [];
+  const out = armaWorldsOfLabels(labels('World'), labels('Game'));
+  for (const s of dataset.sessionLabels) {
+    const p = previewedWorlds.get(s);
+    const w = p ? armaWorldOf(p.world, p.reforger) : null;
+    if (w && !out.some((o) => o.game === w.game && o.id === w.id)) out.push(w);
+  }
+  return out;
 }
 
 /**

@@ -48,8 +48,11 @@ ctx.onmessage = async (ev: MessageEvent<SummarizeRequest>) => {
       const name = stem.replace(/\.jsonl?(\.gz)?$/i, '');
       const t = parseOcap(await ocapText(file), name);
       const started = (t.data[t.columns.indexOf('Date')] as string[] | undefined)?.[0] || null;
-      const info = { id: name, manifest: { game: t.game, map: t.map, mode: null, started, match: name }, doc: { mission: t.title }, by: 'viewer' };
+      const info = { id: name, manifest: { game: t.game, map: t.map, mode: null, started, match: name }, by: 'viewer' };
       const summary = summarizeColumns(t, info, JSON.stringify(ocapHints(t)));
+      // Arma missions are mostly played once (a community's evening, a new scenario each week): the mass analysis
+      // groups them by their map, not by a mission name no other recording shares.
+      if (summary) summary.mission = null;
       ctx.postMessage({ id, ok: true, summary, ms: performance.now() - t0 } satisfies SummarizeResponse);
       return;
     }

@@ -14,6 +14,13 @@ import type { ColumnMapping } from '../state/types';
 
 const tables = new WeakMap<Blob, Promise<OcapTable>>();
 
+/**
+ * The world of each recording previewed (the first of a pick), by its session
+ * label: a large load may keep a column that is the same on every row (World,
+ * Game) out of the dataset, and the level panel still has to know the world.
+ */
+export const previewedWorlds = new Map<string, { world: string; reforger: boolean }>();
+
 /** The recording's table, parsed once per file. */
 export function ocapTableOf(file: File): Promise<OcapTable> {
   let t = tables.get(file);
@@ -35,6 +42,8 @@ export async function previewOcap(file: File): Promise<TablePreview> {
   // Not kept for the load: a long mission's table is a gigabyte, the load runs in a parser thread of its own, and a
   // picked file stays referenced for the whole session.
   tables.delete(file);
+  const session = (t.data[t.columns.indexOf('Recording')] as string[] | undefined)?.[0];
+  if (session) previewedWorlds.set(session, { world: t.world, reforger: t.reforger });
   return previewTable(t, ocapHints(t) as MappingHints);
 }
 

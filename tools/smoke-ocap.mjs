@@ -1,9 +1,9 @@
 /**
  * Arma recordings (docs/ocap.md) in a real browser against the dev server:
- * a folder of made-up OCAP recordings (Arma 3 on Livonia, a winner each, and
+ * a folder of made-up OCAP recordings (Arma 3 on a community terrain with no level, a winner each, and
  * one of OCAP2's Reforger recorder on Arland) is loaded as one dataset through
  * the viewer's own preview, mapping and load; its outcome and level columns
- * must be there, the level panel must say Livonia has no level, the Reforger
+ * must be there, the level panel must say that world has no level, the Reforger
  * one must get its level from the levels folder where there is one; the
  * folder opens in the Mass analysis with a winner per match; a recording goes
  * onto the tactics board. Frame intervals are measured with the camera turning
@@ -73,7 +73,7 @@ function synthA3(k, n = 40, frames = 600) {
   const winner = k % 3 === 0 ? 'EAST' : 'WEST';
   return {
     missionName: `Synthetic op ${k}`,
-    worldName: 'Enoch',
+    worldName: 'lythium',
     captureDelay: 1,
     endFrame: frames - 1,
     extensionBuild: 'synthetic',
@@ -267,7 +267,25 @@ try {
     await page.waitForTimeout(1500);
     const n = await page.locator('[data-arma-missing]').count();
     const text = n ? await page.locator('[data-arma-missing]').first().innerText() : '';
-    expect(!REAL ? /Livonia/.test(text) : n > 0, `hint: "${text}" (${n})`);
+    const attrs = n
+      ? ''
+      : await page.evaluate(() =>
+          globalThis.__3dheat.useStore
+            .getState()
+            .dataset?.attrs.map((a) => a.name)
+            .join(','),
+        );
+    // A real set's world may have its level in the folder: then no hint, the level loads instead.
+    if (REAL && !n) {
+      const has = await page.evaluate(async () => {
+        const worlds = globalThis.__3dheat.useStore.getState().dataset?.attrs.find((a) => a.name === 'World')?.categories ?? [];
+        const ix = await (await fetch('/__heat3d/catalog')).json().catch(() => null);
+        const norm = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+        return (ix?.items ?? []).filter((i) => i.kind === 'level' && /^arma/i.test(i.game) && worlds.some((w) => norm(w) === norm(i.name))).map((i) => i.path);
+      });
+      if (has.length) return `no hint: the world's level is in the levels folder (${has.join(', ')})`;
+    }
+    expect(!REAL ? /Lythium/.test(text) : n > 0, `hint: "${text}" (${n}) attrs ${attrs}`);
     return text.slice(0, 80);
   });
 
@@ -309,6 +327,25 @@ try {
     await page.screenshot({ path: path.join(OUT, 'ocap-mass.png') });
     return `${r.matches} matches in ${(r.ms / 1000).toFixed(1)} s`;
   });
+  // Fifty matches of a map at least: a real set's (OCAP_SET); the made-up one is too small to say anything.
+  if (REAL)
+    await step('the Outcome lens on the folder: what goes with winning', async () => {
+      await page.evaluate(async () => {
+        globalThis.__oc = (await globalThis.__3dheat.modules['mass/outcomeClient']()).useOutcome;
+      });
+      const t0 = Date.now();
+      await page.click('[data-testid=outcome-run]');
+      await page.waitForFunction(() => !globalThis.__oc.getState().running && !!globalThis.__oc.getState().result, null, { timeout: 1_800_000 });
+      const r = await page.evaluate(() => {
+        const x = globalThis.__oc.getState().result;
+        return { matches: x.matches, read: x.read, tests: x.report.tests, groups: x.report.groups.length, findings: x.report.findings.length };
+      });
+      result.outcome = { ...r, ms: Date.now() - t0 };
+      await page.waitForTimeout(1000);
+      await page.screenshot({ path: path.join(OUT, 'ocap-outcome.png') });
+      expect(r.read > 0, 'no match read');
+      return `${r.read} of ${r.matches} matches read, ${r.groups} groups, ${r.tests} tests, ${r.findings} findings, ${((Date.now() - t0) / 1000).toFixed(1)} s`;
+    });
   await page.evaluate(() => globalThis.__3dheat.modules['mass/client']().then((m) => m.useMass.getState().set({ open: false })));
 
   await step('a recording onto the tactics board', async () => {

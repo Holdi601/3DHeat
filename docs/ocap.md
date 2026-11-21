@@ -49,7 +49,7 @@ The table has OCAP's own columns (`Time`, `Frame`, `X` east, `Y` north, `Z` heig
 
 The team is the side (`WEST`, `EAST`, `GUER`, `CIV`); the faction is a column of its own. The session is the mission and its date, so two evenings of the same mission stay apart.
 
-`Won` feeds the [outcome](data-formats.md#outcome-columns) analysis: the Outcome lens and the won-versus-lost comparisons work on OCAP recordings like on any table with a winner. A recording whose end names no side (many older ones) has no `Won`.
+`Won` feeds the [outcome](data-formats.md#outcome-columns) analysis: the Outcome lens and the won-versus-lost comparisons work on OCAP recordings like on any table with a winner. A recording whose end names no side (many older ones) has no `Won`. In the **Mass analysis** recordings are grouped by their map, not by their mission: a community's missions are mostly played once, and the Outcome lens needs fifty or more matches of a group to say anything.
 
 ## Coordinates and levels
 
@@ -61,7 +61,8 @@ Positions are the game's own metres from the map's south-west corner.
 The level is picked by the world's name from the levels folder (the **Levels folder** list in the **Background / level** panel), by itself while no other level is loaded:
 
 - Reforger worlds (Everon, Arland, Kolguyev) use the levels in the folder's `arma-reforger` section, named after the world's terrain (`Eden`, `Arland`, `Cain`) or after the island.
-- Arma 3 worlds (Altis, Stratis, Tanoa, Malden, Livonia and the rest) have no level extractor yet. The recording shows without a level, at its own heights, and the level panel says which world it is waiting for.
+- Arma 3 worlds use the levels in the folder's `arma3` section, named after the world's config class as the recording gives it (`Altis`, `Stratis`, `Tanoa`, `Malden`, `Enoch` for Livonia, `VR`), in the frame OCAP uses (north up).
+- A world with no level in the folder (a community terrain not extracted yet) shows without one, at its own heights, and the level panel says which world it is waiting for.
 
 ## Figures
 
