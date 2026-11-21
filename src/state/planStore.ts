@@ -9,7 +9,9 @@
  */
 
 import { create } from 'zustand';
-import { emptyPlan, keyAt, newId, onBoard, playbackAt, readPlan, type ArrowStyle, type Plan, type PlanFigure, type Vec3 } from '../tactics/plan';
+import { BASE_LAYER, editable, shown, emptyPlan, keyAt, layerOf, newId, onBoard, playbackAt, readPlan, type ArrowStyle, type Plan, type PlanFigure, type Vec3 } from '../tactics/plan';
+import { applyOps, diffPlans, isOpBatch, type OpBatch } from '../tactics/ops';
+import { loadAuthor, loadLocal, saveAuthor, saveLocal } from '../tactics/autosave';
 import { gamePreset } from '../tactics/games';
 import { CATALOG } from '../figures/catalog';
 import { figureLabel } from '../tactics/names';
@@ -83,6 +85,18 @@ export interface PlanState {
   playTime: number;
   past: Plan[];
   future: Plan[];
+  /** The layer new things go on. */
+  activeLayer: string;
+  /** Draw only the active layer's routes and arrows; the other shown layers' routes still play. */
+  routesActiveOnly: boolean;
+  /** Who this viewer's edits are signed with. */
+  author: string;
+  /** Every edit of this session as operations (`tactics/ops.ts`), oldest first; at most `LOG_KEEP`. */
+  log: OpBatch[];
+  /** Counts the batches, never reset: what a peer asks "since" in a shared session. */
+  rev: number;
+  /** The browser copy: when it was last written or read back, and whether it failed for want of room. */
+  autosave: { at: string | null; restored: boolean; full: boolean };
 
   setGame: (game: string) => void;
   setTool: (tool: BoardTool) => void;
@@ -138,10 +152,49 @@ export interface PlanState {
   setPlayTime: (t: number) => void;
   load: (text: string, level: string) => void;
   clear: () => void;
+
+  addLayer: (name?: string) => string;
+  renameLayer: (id: string, name: string) => void;
+  setLayerVisible: (id: string, on: boolean) => void;
+  setLayerLocked: (id: string, on: boolean) => void;
+  setActiveLayer: (id: string) => void;
+  /** Up (+1, over the next) or down (-1) the stack. */
+  moveLayer: (id: string, by: -1 | 1) => void;
+  /** A copy of a layer: its routes, areas, notes, drawings and figures, the routes of figures on other layers still theirs - an alternative plan for the same figures. */
+  duplicateLayer: (id: string) => string | null;
+  /** Removes a layer and what is on it (not the base layer). */
+  removeLayer: (id: string) => void;
+  moveSelectionToLayer: (id: string) => void;
+  setRoutesActiveOnly: (on: boolean) => void;
+  setAuthor: (name: string) => void;
+  /** A batch from elsewhere (a peer, a file of operations): applied, logged, not undoable here. */
+  applyRemote: (batch: OpBatch) => void;
+}
+
+/** Batches the session log keeps. */
+export const LOG_KEEP = 2000;
+
+/** The log entry for a change from one plan to the next; nothing when nothing changed. */
+function logged(state: PlanState, from: Plan, to: Plan): Partial<PlanState> {
+  if (from === to) return {};
+  const ops = diffPlans(from, to);
+  if (!ops.length) return {};
+  const batch: OpBatch = { id: newId('o'), author: state.author || 'local', at: Date.now(), ops };
+  return { log: [...(state.log.length >= LOG_KEEP ? state.log.slice(-LOG_KEEP + 1) : state.log), batch], rev: state.rev + 1 };
 }
 
 function edit(state: PlanState, next: Plan): Partial<PlanState> {
-  return { plan: next, past: [...state.past.slice(-99), state.plan], future: [] };
+  return { plan: next, past: [...state.past.slice(-99), state.plan], future: [], ...logged(state, state.plan, next) };
+}
+
+/** What a new thing on the board carries for the layer it goes on. */
+function onLayer(s: PlanState): { layer?: string } {
+  return s.activeLayer !== BASE_LAYER && s.plan.layers.some((l) => l.id === s.activeLayer) ? { layer: s.activeLayer } : {};
+}
+
+/** Whether new things can go on the active layer (it is not locked). */
+function canDraw(s: PlanState): boolean {
+  return !s.plan.layers.find((l) => l.id === s.activeLayer)?.locked;
 }
 
 function clone(p: Plan): Plan {
@@ -157,7 +210,8 @@ export function figureNear(plan: Plan, step: number, at: Vec3, reachOf: (f: Plan
   let best: PlanFigure | null = null;
   let bestD = Infinity;
   for (const f of plan.figures) {
-    if (!onBoard(f, step)) continue;
+    // A figure on a locked layer still starts a route or a throw (on the active layer); a hidden one does not.
+    if (!onBoard(f, step) || !shown(plan, f)) continue;
     const k = keyAt(f, step);
     if (!k) continue;
     const d = Math.hypot(k.x - at.x, k.z - at.z);
@@ -170,12 +224,21 @@ export function figureNear(plan: Plan, step: number, at: Vec3, reachOf: (f: Plan
 }
 
 const first = gamePreset('cs2');
+// The board as it was left, when the browser kept it (`tactics/autosave.ts`).
+const restored = loadLocal();
+const startPlan = restored?.plan ?? emptyPlan(first.id, first.teams);
 
 export const usePlanStore = create<PlanState>((set, get) => ({
-  plan: emptyPlan(first.id, first.teams),
+  plan: startPlan,
   tool: 'select',
   kind: 'soldier',
-  team: first.teams[0].id,
+  team: startPlan.teams[0].id,
+  activeLayer: BASE_LAYER,
+  routesActiveOnly: false,
+  author: loadAuthor(),
+  log: [],
+  rev: 0,
+  autosave: { at: restored?.at ?? null, restored: !!restored, full: false },
   arrowStyle: 'move',
   yaw: 0,
   step: 0,
@@ -241,6 +304,7 @@ export const usePlanStore = create<PlanState>((set, get) => ({
     plan.arrows = shift(plan.arrows);
     plan.areas = shift(plan.areas);
     plan.notes = shift(plan.notes);
+    plan.drawings = plan.drawings.filter((d) => d.always || d.step !== step).map((d) => (d.step > step ? { ...d, step: d.step - 1 } : d.step === step ? { ...d, step: Math.max(0, step - 1) } : d));
     for (const f of plan.figures) {
       const keys: PlanFigure['keys'] = {};
       for (const [k, v] of Object.entries(f.keys)) {
@@ -268,15 +332,21 @@ export const usePlanStore = create<PlanState>((set, get) => ({
     const s = get();
     const plan = clone(s.plan);
     plan.figureScale = Math.max(0.1, Math.min(200, k));
-    set({ plan });
+    set({ plan, ...logged(s, s.plan, plan) });
   },
-  setTitle: (title) => set({ plan: { ...get().plan, title } }),
+  setTitle: (title) => {
+    const s = get();
+    const plan = { ...s.plan, title };
+    set({ plan, ...logged(s, s.plan, plan) });
+  },
 
   click: (at, ref, additive) => {
     const s = get();
     // Placing and drawing start from figures only.
     const hit = s.tool === 'select' || s.tool === 'erase' ? ref : ref && s.plan.figures.some((f) => f.id === ref) ? ref : null;
     const step = s.step;
+    // Nothing new goes on a locked layer.
+    if ((s.tool === 'place' || s.tool === 'waypoints' || s.tool === 'throw' || s.tool === 'area' || s.tool === 'note' || s.tool === 'draw') && !canDraw(s)) return;
     switch (s.tool) {
       case 'select': {
         if (s.moving && s.selected) {
@@ -299,7 +369,7 @@ export const usePlanStore = create<PlanState>((set, get) => ({
         const plan = clone(s.plan);
         const id = newId('f');
         const n = plan.figures.filter((f) => f.kind === s.kind && f.team === s.team).length + 1;
-        plan.figures.push({ id, kind: s.kind, team: s.team, label: `${figureLabel(s.kind)} ${n}`, keys: { [step]: { ...at, yaw: s.yaw } }, from: step });
+        plan.figures.push({ id, kind: s.kind, team: s.team, label: `${figureLabel(s.kind)} ${n}`, keys: { [step]: { ...at, yaw: s.yaw } }, from: step, ...onLayer(s) });
         set({ ...edit(s, plan), selected: id, selection: [id] });
         return;
       }
@@ -352,12 +422,13 @@ export const usePlanStore = create<PlanState>((set, get) => ({
         const text = typeof window !== 'undefined' && typeof window.prompt === 'function' ? window.prompt('Note') : '';
         if (!text) return;
         const plan = clone(s.plan);
-        plan.notes.push({ id: newId('n'), step, at, text });
+        plan.notes.push({ id: newId('n'), step, at, text, ...onLayer(s) });
         set(edit(s, plan));
         return;
       }
       case 'erase': {
-        const id = hit ?? nearestThing(s.plan, step, at);
+        const f = hit ? s.plan.figures.find((x) => x.id === hit) : undefined;
+        const id = (f && !editable(s.plan, f) ? null : hit) ?? nearestThing(s.plan, step, at);
         if (id) get().remove(id);
         return;
       }
@@ -397,28 +468,28 @@ export const usePlanStore = create<PlanState>((set, get) => ({
         if (!f || !k) continue;
         const off = s.formation ? { x: k.x - c.x, z: k.z - c.z } : { x: 0, z: 0 };
         const points = [{ x: k.x, y: k.y, z: k.z }, ...d.points.slice(1).map((p) => ({ x: p.x + off.x, y: p.y, z: p.z + off.z }))];
-        plan.arrows = plan.arrows.filter((a) => !(a.step === s.step && a.figure === fid && a.style === 'move'));
-        plan.arrows.push({ id: newId('r'), step: s.step, team: f.team, style: 'move', points, figure: fid });
+        plan.arrows = plan.arrows.filter((a) => !(a.step === s.step && a.figure === fid && a.style === 'move' && layerOf(a) === s.activeLayer));
+        plan.arrows.push({ id: newId('r'), step: s.step, team: f.team, style: 'move', points, figure: fid, ...onLayer(s) });
       }
       set({ ...edit(s, plan), draft: null });
       return;
     }
     if (d.kind === 'area' && d.points.length >= 2) {
       const [c, e] = d.points;
-      plan.areas.push({ id: newId('a'), step: s.step, team: d.team, centre: c, radius: Math.max(0.5, Math.hypot(e.x - c.x, e.z - c.z)), label: '' });
+      plan.areas.push({ id: newId('a'), step: s.step, team: d.team, centre: c, radius: Math.max(0.5, Math.hypot(e.x - c.x, e.z - c.z)), label: '', ...onLayer(s) });
     } else if (d.kind !== 'area' && d.points.length >= 2) {
       const id = newId('r');
-      const arrow = { id, step: s.step, team: d.team, style: d.style ?? 'move', points: d.points, ...(d.figure ? { figure: d.figure } : {}) } as Plan['arrows'][number];
+      const arrow = { id, step: s.step, team: d.team, style: d.style ?? 'move', points: d.points, ...(d.figure ? { figure: d.figure } : {}), ...onLayer(s) } as Plan['arrows'][number];
       if (d.kind === 'throw') {
         // The utility lands at the end and stays from this step on.
         const kind = CATALOG[s.kind]?.domain === 'marker' ? s.kind : 'cs2-smoke';
         const lands = newId('f');
         const end = d.points[d.points.length - 1];
-        plan.figures.push({ id: lands, kind, team: d.team, label: figureLabel(kind), keys: { [s.step]: { ...end, yaw: 0 } }, from: s.step });
+        plan.figures.push({ id: lands, kind, team: d.team, label: figureLabel(kind), keys: { [s.step]: { ...end, yaw: 0 } }, from: s.step, ...onLayer(s) });
         arrow.lands = lands;
       }
-      // A figure's new route replaces its old one in this step.
-      if (arrow.figure && arrow.style === 'move') plan.arrows = plan.arrows.filter((a) => !(a.step === s.step && a.figure === arrow.figure && a.style === 'move'));
+      // A figure's new route replaces its old one in this step on this layer (another layer's is an alternative).
+      if (arrow.figure && arrow.style === 'move') plan.arrows = plan.arrows.filter((a) => !(a.step === s.step && a.figure === arrow.figure && a.style === 'move' && layerOf(a) === s.activeLayer));
       plan.arrows.push(arrow);
     } else {
       set({ draft: null });
@@ -451,7 +522,15 @@ export const usePlanStore = create<PlanState>((set, get) => ({
   },
   selectAll: () => {
     const s = get();
-    const refs = [...s.plan.figures.filter((f) => onBoard(f, s.step)).map((f) => f.id), ...s.plan.arrows.filter((a) => a.step === s.step).map((a) => a.id), ...s.plan.areas.filter((a) => a.step === s.step).map((a) => a.id), ...s.plan.notes.filter((n) => n.step === s.step).map((n) => n.id)];
+    const p = s.plan;
+    const ok = (e: { layer?: string }) => editable(p, e);
+    const refs = [
+      ...p.figures.filter((f) => onBoard(f, s.step) && ok(f)).map((f) => f.id),
+      ...p.arrows.filter((a) => a.step === s.step && ok(a)).map((a) => a.id),
+      ...p.areas.filter((a) => a.step === s.step && ok(a)).map((a) => a.id),
+      ...p.notes.filter((n) => n.step === s.step && ok(n)).map((n) => n.id),
+      ...(p.drawings ?? []).filter((x) => (x.always || x.step === s.step) && ok(x)).map((x) => x.id),
+    ];
     set({ selection: refs, selected: refs[refs.length - 1] ?? null, tool: 'select', draft: null });
   },
   rotateSelected: (by) => {
@@ -502,6 +581,7 @@ export const usePlanStore = create<PlanState>((set, get) => ({
     plan.arrows = plan.arrows.filter((a) => a.id !== id);
     plan.areas = plan.areas.filter((a) => a.id !== id);
     plan.notes = plan.notes.filter((n) => n.id !== id);
+    plan.drawings = plan.drawings.filter((d) => d.id !== id);
     const selection = s.selection.filter((r) => r !== id && !r.startsWith(`${id}#`));
     set({ ...edit(s, plan), selection, selected: selection[selection.length - 1] ?? null });
   },
@@ -532,7 +612,7 @@ export const usePlanStore = create<PlanState>((set, get) => ({
   endDrag: () => {
     const s = get();
     if (!s.dragBase) return;
-    if (s.dragBase !== s.plan) set({ past: [...s.past.slice(-99), s.dragBase], future: [] });
+    if (s.dragBase !== s.plan) set({ past: [...s.past.slice(-99), s.dragBase], future: [], ...logged(s, s.dragBase, s.plan) });
     set({ dragBase: null });
   },
   cancelDrag: () => {
@@ -629,13 +709,13 @@ export const usePlanStore = create<PlanState>((set, get) => ({
     const s = get();
     const prev = s.past[s.past.length - 1];
     if (!prev) return;
-    set({ plan: prev, past: s.past.slice(0, -1), future: [s.plan, ...s.future], draft: null, dragBase: null, step: Math.min(s.step, prev.steps.length - 1) });
+    set({ plan: prev, past: s.past.slice(0, -1), future: [s.plan, ...s.future], draft: null, dragBase: null, step: Math.min(s.step, prev.steps.length - 1), ...logged(s, s.plan, prev) });
   },
   redo: () => {
     const s = get();
     const next = s.future[0];
     if (!next) return;
-    set({ plan: next, past: [...s.past, s.plan], future: s.future.slice(1), draft: null, step: Math.min(s.step, next.steps.length - 1) });
+    set({ plan: next, past: [...s.past, s.plan], future: s.future.slice(1), draft: null, step: Math.min(s.step, next.steps.length - 1), ...logged(s, s.plan, next) });
   },
   play: (on) => {
     const s = get();
@@ -654,14 +734,154 @@ export const usePlanStore = create<PlanState>((set, get) => ({
     const s = get();
     const plan = readPlan(text);
     if (!plan.level) plan.level = level;
-    set({ ...edit(s, plan), step: 0, selected: null, selection: [], draft: null, team: plan.teams[0].id });
+    set({ ...edit(s, plan), step: 0, selected: null, selection: [], draft: null, team: plan.teams[0].id, activeLayer: BASE_LAYER });
   },
   clear: () => {
     const s = get();
     const preset = gamePreset(s.plan.game);
-    set({ ...edit(s, emptyPlan(preset.id, preset.teams, s.plan.level)), step: 0, selected: null, selection: [], draft: null });
+    set({ ...edit(s, emptyPlan(preset.id, preset.teams, s.plan.level)), step: 0, selected: null, selection: [], draft: null, activeLayer: BASE_LAYER });
+  },
+
+  addLayer: (name) => {
+    const s = get();
+    const plan = clone(s.plan);
+    const id = newId('l');
+    plan.layers.push({ id, name: name || `Layer ${plan.layers.length + 1}`, visible: true, locked: false });
+    set({ ...edit(s, plan), activeLayer: id });
+    return id;
+  },
+  renameLayer: (id, name) => {
+    const s = get();
+    const plan = clone(s.plan);
+    const l = plan.layers.find((x) => x.id === id);
+    if (!l || !name.trim() || l.name === name.trim()) return;
+    l.name = name.trim();
+    set(edit(s, plan));
+  },
+  setLayerVisible: (id, on) => layerFlag(id, 'visible', on),
+  setLayerLocked: (id, on) => layerFlag(id, 'locked', on),
+  setActiveLayer: (id) => {
+    const s = get();
+    const l = s.plan.layers.find((x) => x.id === id);
+    if (!l) return;
+    set({ activeLayer: id, draft: null });
+    // The layer drawn on is shown.
+    if (!l.visible) get().setLayerVisible(id, true);
+  },
+  moveLayer: (id, by) => {
+    const s = get();
+    const plan = clone(s.plan);
+    const i = plan.layers.findIndex((l) => l.id === id);
+    const j = i + by;
+    // The base layer stays at the bottom.
+    if (i <= 0 || j <= 0 || j >= plan.layers.length) return;
+    [plan.layers[i], plan.layers[j]] = [plan.layers[j], plan.layers[i]];
+    set(edit(s, plan));
+  },
+  duplicateLayer: (id) => {
+    const s = get();
+    const plan = clone(s.plan);
+    const src = plan.layers.find((l) => l.id === id);
+    if (!src) return null;
+    const nid = newId('l');
+    plan.layers.splice(plan.layers.indexOf(src) + 1, 0, { id: nid, name: `${src.name} (2)`, visible: true, locked: false });
+    const on = (e: { layer?: string }) => layerOf(e) === id;
+    // Figures on the layer are copied; routes of figures on other layers stay theirs.
+    const figureIds = new Map<string, string>();
+    for (const f of plan.figures.filter(on)) {
+      const nf = { ...structuredClone(f), id: newId('f'), layer: nid };
+      figureIds.set(f.id, nf.id);
+      plan.figures.push(nf);
+    }
+    for (const a of plan.arrows.filter(on)) {
+      plan.arrows.push({ ...structuredClone(a), id: newId('r'), layer: nid, ...(a.figure ? { figure: figureIds.get(a.figure) ?? a.figure } : {}), ...(a.lands ? { lands: figureIds.get(a.lands) ?? a.lands } : {}) });
+    }
+    for (const a of plan.areas.filter(on)) plan.areas.push({ ...structuredClone(a), id: newId('a'), layer: nid });
+    for (const n of plan.notes.filter(on)) plan.notes.push({ ...structuredClone(n), id: newId('n'), layer: nid });
+    for (const x of plan.drawings.filter(on)) plan.drawings.push({ ...structuredClone(x), id: newId('d'), layer: nid });
+    // The copy is the one worked on: the original hidden, so its routes do not play under it.
+    src.visible = false;
+    set({ ...edit(s, plan), activeLayer: nid, selection: [], selected: null });
+    return nid;
+  },
+  removeLayer: (id) => {
+    const s = get();
+    if (id === BASE_LAYER || !s.plan.layers.some((l) => l.id === id)) return;
+    const plan = clone(s.plan);
+    const on = (e: { layer?: string }) => layerOf(e) === id;
+    const gone = new Set(plan.figures.filter(on).map((f) => f.id));
+    plan.layers = plan.layers.filter((l) => l.id !== id);
+    plan.figures = plan.figures.filter((f) => !on(f));
+    plan.arrows = plan.arrows.filter((a) => !on(a) && !(a.figure && gone.has(a.figure)) && !(a.lands && gone.has(a.lands)));
+    plan.areas = plan.areas.filter((a) => !on(a));
+    plan.notes = plan.notes.filter((n) => !on(n));
+    plan.drawings = plan.drawings.filter((x) => !on(x));
+    set({ ...edit(s, plan), activeLayer: s.activeLayer === id ? BASE_LAYER : s.activeLayer, selection: [], selected: null });
+  },
+  moveSelectionToLayer: (id) => {
+    const s = get();
+    if (!s.plan.layers.some((l) => l.id === id) || !s.selection.length) return;
+    const plan = clone(s.plan);
+    const ids = new Set(s.selection.map((r) => r.split('#')[0]));
+    for (const coll of [plan.figures, plan.arrows, plan.areas, plan.notes, plan.drawings] as { id: string; layer?: string }[][]) {
+      for (const e of coll) {
+        if (!ids.has(e.id)) continue;
+        if (id === BASE_LAYER) delete e.layer;
+        else e.layer = id;
+      }
+    }
+    set(edit(s, plan));
+  },
+  setRoutesActiveOnly: (routesActiveOnly) => set({ routesActiveOnly }),
+  setAuthor: (author) => {
+    saveAuthor(author);
+    set({ author });
+  },
+  applyRemote: (batch) => {
+    const s = get();
+    if (!isOpBatch(batch) || s.log.some((b) => b.id === batch.id)) return;
+    const plan = applyOps(s.plan, batch.ops);
+    set({
+      plan,
+      log: [...(s.log.length >= LOG_KEEP ? s.log.slice(-LOG_KEEP + 1) : s.log), batch],
+      rev: s.rev + 1,
+      step: Math.min(s.step, Math.max(0, plan.steps.length - 1)),
+      activeLayer: plan.layers.some((l) => l.id === s.activeLayer) ? s.activeLayer : BASE_LAYER,
+    });
   },
 }));
+
+/** Shows or hides, locks or unlocks a layer; what can no longer be changed leaves the selection. */
+function layerFlag(id: string, flag: 'visible' | 'locked', on: boolean): void {
+  const s = usePlanStore.getState();
+  const plan = clone(s.plan);
+  const l = plan.layers.find((x) => x.id === id);
+  if (!l || l[flag] === on) return;
+  l[flag] = on;
+  const keep = s.selection.filter((r) => {
+    const e = entityOf(plan, r.split('#')[0]);
+    return !e || editable(plan, e);
+  });
+  usePlanStore.setState({ ...edit(s, plan), selection: keep, selected: keep[keep.length - 1] ?? null });
+}
+
+/** A figure, arrow, area, note or drawing by id. */
+export function entityOf(plan: Plan, id: string): { id: string; layer?: string } | undefined {
+  return plan.figures.find((x) => x.id === id) ?? plan.arrows.find((x) => x.id === id) ?? plan.areas.find((x) => x.id === id) ?? plan.notes.find((x) => x.id === id) ?? plan.drawings?.find((x) => x.id === id);
+}
+
+// The browser copy (`tactics/autosave.ts`): written a moment after the plan last changed, never on the frame path.
+let saveTimer: ReturnType<typeof setTimeout> | null = null;
+usePlanStore.subscribe((s, prev) => {
+  if (s.plan === prev.plan || s.dragBase) return;
+  if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    saveTimer = null;
+    const st = usePlanStore.getState();
+    const r = saveLocal(st.plan);
+    if (r !== 'off') usePlanStore.setState({ autosave: { at: r === 'ok' ? new Date().toISOString() : st.autosave.at, restored: false, full: r === 'full' } });
+  }, 800);
+});
 
 // Handle for the board's smoke test (tools/smoke-tactics.mjs); dev only.
 if (import.meta.env?.DEV && typeof window !== 'undefined') (window as unknown as Record<string, unknown>).__3dheat_plan = usePlanStore;
@@ -686,8 +906,10 @@ function nearestThing(plan: Plan, step: number, at: Vec3): string | null {
     }
   };
   const w = gamePreset(plan.game).arrowWidth;
-  for (const a of plan.arrows) if (a.step === step) for (const p of a.points) consider(a.id, p, w * 4);
-  for (const a of plan.areas) if (a.step === step) consider(a.id, a.centre, a.radius);
-  for (const n of plan.notes) if (n.step === step) consider(n.id, n.at, w * 4);
+  const ok = (e: { layer?: string }) => editable(plan, e);
+  for (const a of plan.arrows) if (a.step === step && ok(a)) for (const p of a.points) consider(a.id, p, w * 4);
+  for (const a of plan.areas) if (a.step === step && ok(a)) consider(a.id, a.centre, a.radius);
+  for (const n of plan.notes) if (n.step === step && ok(n)) consider(n.id, n.at, w * 4);
+  for (const d of plan.drawings ?? []) if ((d.always || d.step === step) && ok(d)) for (const p of d.points) consider(d.id, p, Math.max(w * 2, d.width * 3));
   return best;
 }

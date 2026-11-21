@@ -6,7 +6,7 @@
  * a plan plays in real time.
  */
 
-import type { Plan, PlanArrow, PlanFigure, Vec3 } from './plan';
+import { routesIn, type Plan, type PlanArrow, type PlanFigure, type Vec3 } from './plan';
 import { DEFAULT_MODE, modeSpeed, moveClassOf, speedTable, defaultUnitsPerMetre, type Mode, type SlopeModel } from './speeds';
 
 /** The floor near a point: the level's surface height below `y` (within `reach`), or null. */
@@ -182,7 +182,10 @@ export function stepDuration(plan: Plan, step: number): number {
   if (hit && hit.stamp === terrainStamp) return hit.byStep[step] ?? Math.max(0.1, plan.steps[step]?.seconds ?? 4);
   const timings = planTimings(plan);
   const longest = plan.steps.map(() => 0);
-  if (plan.realTime !== false) for (const a of plan.arrows) if (longest[a.step] !== undefined) longest[a.step] = Math.max(longest[a.step], timings.get(a.id)?.total ?? 0);
+  // The routes that play: shown layers', the upper one's where two route a figure.
+  if (plan.realTime !== false) plan.steps.forEach((_, i) => {
+    for (const a of routesIn(plan, i).values()) longest[i] = Math.max(longest[i], timings.get(a.id)?.total ?? 0);
+  });
   const byStep = plan.steps.map((s, i) => Math.max(Math.max(0.1, s.seconds ?? 4), longest[i]));
   durations.set(plan, { stamp: terrainStamp, byStep });
   return byStep[step] ?? Math.max(0.1, plan.steps[step]?.seconds ?? 4);

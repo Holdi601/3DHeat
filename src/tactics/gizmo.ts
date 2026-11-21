@@ -7,7 +7,7 @@
  */
 
 import { poseFrame } from '../figures/kit';
-import { keyAt, routeOf, type Plan, type PlanKey, type Vec3 } from './plan';
+import { editable, keyAt, routeOf, type Plan, type PlanKey, type Vec3 } from './plan';
 
 export type GizmoMode = 'move' | 'rotate' | 'scale';
 export type Axis = 'x' | 'y' | 'z';
@@ -114,7 +114,7 @@ export function gimbalAxes(k: { yaw: number; pitch?: number; roll?: number }): R
 // ------------------------------------------------------------------ selection
 
 /** What a selection reference names: a figure, an arrow, one point of an arrow (`<arrow>#<i>`), an area or a note. */
-export type RefKind = 'figure' | 'arrow' | 'point' | 'area' | 'note';
+export type RefKind = 'figure' | 'arrow' | 'point' | 'area' | 'note' | 'drawing';
 
 export function refKind(plan: Plan, ref: string): RefKind | null {
   if (ref.includes('#')) return 'point';
@@ -122,6 +122,7 @@ export function refKind(plan: Plan, ref: string): RefKind | null {
   if (plan.arrows.some((a) => a.id === ref)) return 'arrow';
   if (plan.areas.some((a) => a.id === ref)) return 'area';
   if (plan.notes.some((n) => n.id === ref)) return 'note';
+  if (plan.drawings?.some((d) => d.id === ref)) return 'drawing';
   return null;
 }
 
@@ -142,7 +143,9 @@ export function refPoints(plan: Plan, step: number, ref: string): Vec3[] {
   const ar = plan.areas.find((x) => x.id === id);
   if (ar) return [ar.centre];
   const n = plan.notes.find((x) => x.id === id);
-  return n ? [n.at] : [];
+  if (n) return [n.at];
+  const d = plan.drawings?.find((x) => x.id === id);
+  return d ? (d.kind === 'circle' ? d.points.slice(0, 1) : d.points) : [];
 }
 
 /** The middle of a selection: where the gizmo sits. */
@@ -206,7 +209,18 @@ export function applyTransform(base: Plan, step: number, refs: string[], t: Tran
       continue;
     }
     const n = plan.notes.find((x) => x.id === id);
-    if (n) n.at = movePoint(n.at, ref);
+    if (n) {
+      n.at = movePoint(n.at, ref);
+      continue;
+    }
+    const dr = plan.drawings?.find((x) => x.id === id);
+    if (dr) {
+      // A circle's edge point moves with its middle under a move and a turn; a scale spreads it.
+      if (dr.kind === 'circle' && t.kind === 'move' && dr.points.length >= 2) {
+        const c = movePoint(dr.points[0], ref);
+        dr.points = [c, { x: dr.points[1].x + (c.x - dr.points[0].x), y: c.y, z: dr.points[1].z + (c.z - dr.points[0].z) }];
+      } else dr.points = dr.points.map((p) => movePoint(p, ref));
+    }
   }
   for (const [id, idx] of points) {
     const a = plan.arrows.find((x) => x.id === id);
@@ -227,21 +241,28 @@ export function pickRef(plan: Plan, step: number, at: Vec3, figureReach: (kind: 
       best = ref;
     }
   };
-  for (const a of plan.arrows) if (a.step === step) a.points.forEach((p, i) => take(`${a.id}#${i}`, flat(p), width * 1.5));
+  // Only what can be changed: on a shown, unlocked layer.
+  const ok = (e: { layer?: string }) => editable(plan, e);
+  for (const a of plan.arrows) if (a.step === step && ok(a)) a.points.forEach((p, i) => take(`${a.id}#${i}`, flat(p), width * 1.5));
   if (best) return best;
   for (const f of plan.figures) {
-    if (step < f.from || (f.to !== undefined && step > f.to)) continue;
+    if (step < f.from || (f.to !== undefined && step > f.to) || !ok(f)) continue;
     const k = keyAt(f, step);
     if (k) take(f.id, flat(k), figureReach(f.kind));
   }
   if (best) return best;
   for (const a of plan.arrows) {
-    if (a.step !== step) continue;
+    if (a.step !== step || !ok(a)) continue;
     for (let i = 0; i + 1 < a.points.length; i++) take(a.id, segDist(at, a.points[i], a.points[i + 1]), width * 1.5);
   }
-  for (const n of plan.notes) if (n.step === step) take(n.id, flat(n.at), width * 3);
+  for (const n of plan.notes) if (n.step === step && ok(n)) take(n.id, flat(n.at), width * 3);
+  for (const d of plan.drawings ?? []) {
+    if ((!d.always && d.step !== step) || !ok(d)) continue;
+    if (d.kind === 'circle' && d.points.length >= 2) take(d.id, Math.abs(flat(d.points[0]) - Math.hypot(d.points[1].x - d.points[0].x, d.points[1].z - d.points[0].z)), Math.max(width * 1.5, d.width * 2));
+    else for (let i = 0; i < d.points.length; i++) take(d.id, i + 1 < d.points.length ? segDist(at, d.points[i], d.points[i + 1]) : flat(d.points[i]), Math.max(width * 1.5, d.width * 2));
+  }
   if (best) return best;
-  for (const a of plan.areas) if (a.step === step) take(a.id, flat(a.centre), a.radius);
+  for (const a of plan.areas) if (a.step === step && ok(a)) take(a.id, flat(a.centre), a.radius);
   return best;
 }
 

@@ -10,7 +10,7 @@ import { VertexBuffer, type Rgb } from '../race/geometry';
 import { CATALOG } from '../figures/catalog';
 import { place, poseFrame, TemplateCache, type Template } from '../figures/kit';
 import { InstanceBatches, meshOf, NO_PITCH, type FigureBatch } from '../figures/instances';
-import { keyAt, onBoard, posesAt, throwArc, type Plan, type PlanArrow, type Vec3 } from './plan';
+import { BASE_LAYER, keyAt, layerOf, onBoard, posesAt, shown, throwArc, type Plan, type PlanArrow, type PlanNote, type Vec3 } from './plan';
 import { gamePreset } from './games';
 import type { ArrivalGrid } from './telemetry';
 
@@ -34,6 +34,19 @@ export interface BoardView {
   formation?: boolean;
   /** The figures are drawn as GPU instances (`BoardScene.figures`), not into the triangles. */
   instanced?: boolean;
+  /** The layer being drawn on, and whether only its routes and arrows are drawn. */
+  activeLayer?: string;
+  routesActiveOnly?: boolean;
+  /** Playback seconds from the plan's start, when playing (time-bound notes); absent while editing. */
+  time?: number | null;
+}
+
+/** Whether a note shows now: in its step, always, or (time-bound) while playback is in its window. */
+export function noteShown(n: PlanNote, view: { step: number; time?: number | null }): boolean {
+  const show = n.show ?? 'step';
+  if (show === 'always') return true;
+  if (show === 'timed') return view.time !== undefined && view.time !== null ? view.time >= (n.start ?? 0) && view.time <= (n.start ?? 0) + (n.duration ?? 5) : n.step === view.step;
+  return n.step === view.step;
 }
 
 export interface BoardFrame {
@@ -72,14 +85,17 @@ export class BoardScene {
     if (view.heat) heatGrid(tris, view.heat);
     // Areas, under everything else.
     for (const a of plan.areas) {
-      if (a.step !== view.step) continue;
+      if (a.step !== view.step || !shown(plan, a)) continue;
       disc(tris, lines, a.centre, a.radius, color(a.team), 0.18);
       if (sel.has(a.id)) ring(lines, a.centre, a.radius * 1.02, white);
     }
-    // Arrows of this step, and the last step's faintly, so a phase reads as following on.
+    // Arrows of this step, and the last step's faintly, so a phase reads as following on:
+    // shown layers' (the active layer's only, when the others' routes are to stay out of the way).
+    const only = view.routesActiveOnly ? (view.activeLayer ?? BASE_LAYER) : null;
     for (const a of plan.arrows) {
       const here = a.step === view.step;
       if (!here && a.step !== view.step - 1) continue;
+      if (!shown(plan, a) || (only !== null && layerOf(a) !== only)) continue;
       arrow(tris, lines, a, color(a.team), width, here ? 0.85 : 0.22, preset.throwApex);
       if (here) {
         a.points.forEach((p, i) => (sel.has(a.id) || sel.has(`${a.id}#${i}`)) && ring(lines, p, width * 0.9, white));
@@ -108,7 +124,7 @@ export class BoardScene {
     const pin = templateOf('waypoint');
     if (pin)
       for (const n of plan.notes) {
-        if (n.step !== view.step) continue;
+        if (!noteShown(n, view) || !shown(plan, n)) continue;
         place(tris, pin, { x: n.at.x, y: n.at.y, z: n.at.z, yaw: 0, scale: Math.max(0.3, width) }, [0.95, 0.95, 0.95], 0.9);
         if (sel.has(n.id)) ring(lines, n.at, width * 2, white);
       }

@@ -2,12 +2,18 @@ import { useMemo, useRef } from 'react';
 import { usePlanStore } from '../../state/planStore';
 import { useAnimationFrame, useEngine } from '../EngineContext';
 import { CATALOG } from '../../figures/catalog';
-import { playbackAt, posesAt } from '../../tactics/plan';
-import { templateOf } from '../../tactics/scene';
+import { playbackAt, posesAt, shown as shownOn, type PlanNote } from '../../tactics/plan';
+import { noteShown, templateOf } from '../../tactics/scene';
 import { useStore } from '../../state/store';
 import { RIOT_NOTICE } from '../../tactics/valorantMaps';
 import { BoardGizmo } from './BoardGizmo';
 import './tactics.css';
+
+/** A note's own colour and size. */
+function noteStyle(n: PlanNote): React.CSSProperties | undefined {
+  if (!n.color && !n.size) return undefined;
+  return { ...(n.color ? { color: `rgb(${n.color.map((c) => Math.round(c * 255)).join(',')})` } : {}), ...(n.size ? { fontSize: `${n.size}px` } : {}) };
+}
 
 /** Figure names on screen at most: past this many they cover the view, and each costs a style write a frame. */
 const LABEL_CAP = 250;
@@ -25,9 +31,10 @@ export function BoardLabels() {
 
   const labels = [
     ...plan.figures
-      .filter((f) => f.label && CATALOG[f.kind]?.domain !== 'marker')
-      .map((f) => ({ key: f.id, text: f.label, figure: f.id, note: null as null | { x: number; y: number; z: number } })),
-    ...plan.notes.filter((n) => n.step === step).map((n) => ({ key: n.id, text: n.text, figure: null as string | null, note: n.at })),
+      .filter((f) => f.label && CATALOG[f.kind]?.domain !== 'marker' && shownOn(plan, f))
+      .map((f) => ({ key: f.id, text: f.label, figure: f.id, note: null as PlanNote | null })),
+    // Every shown layer's notes: which of them show is decided each frame (a time-bound one comes and goes while it plays).
+    ...plan.notes.filter((n) => shownOn(plan, n) && (n.show === 'always' || n.show === 'timed' || n.step === step)).map((n) => ({ key: n.id, text: n.text, figure: null as string | null, note: n })),
   ];
 
   const kinds = useMemo(() => new Map(plan.figures.map((f) => [f.id, f.kind])), [plan]);
@@ -36,7 +43,8 @@ export function BoardLabels() {
     if (!engine) return;
     const s = usePlanStore.getState();
     // The engine's playback clock: the store's is written only a few times a second.
-    const at = s.playing ? playbackAt(s.plan, engine.boardPlayTime ?? s.playTime) : { step: s.step, u: 0 };
+    const time = s.playing ? (engine.boardPlayTime ?? s.playTime) : null;
+    const at = time !== null ? playbackAt(s.plan, time) : { step: s.step, u: 0 };
     const poses = posesAt(s.plan, at.step, at.u);
     const scale = Math.max(0.05, s.plan.figureScale);
     // Every place first, then every write: a read of the layout between writes would lay the page out each time.
@@ -52,7 +60,7 @@ export function BoardLabels() {
         const kind = kinds.get(l.figure);
         const t = kind ? templateOf(kind) : null;
         if (pose && t) p = engine.project(pose.x, pose.y + t.max[1] * scale + 0.4, pose.z);
-      } else if (l.note) p = engine.project(l.note.x, l.note.y + 2.5, l.note.z);
+      } else if (l.note && noteShown(l.note, { step: at.step, time })) p = engine.project(l.note.at.x, l.note.at.y + 2.5, l.note.at.z);
       // Off screen, or past the most a view can read: hidden.
       const on = !!p && p.x > -50 && p.y > -20 && p.x < w + 50 && p.y < h + 40 && (n < LABEL_CAP || !l.figure);
       if (on && l.figure) n++;
@@ -85,7 +93,8 @@ export function BoardLabels() {
             if (el) nodes.current.set(l.key, el);
             else nodes.current.delete(l.key);
           }}
-          className={`race-label ${l.note ? 'stat' : 'corner'}`}
+          className={`race-label ${l.note ? 'stat board-note' : 'corner'}`}
+          style={l.note ? noteStyle(l.note) : undefined}
         >
           {l.text}
         </div>

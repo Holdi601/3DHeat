@@ -135,6 +135,34 @@ await step('Delete asks, then removes the selection', async () => {
   expect((await plan()).figures === 0, 'figures left after Delete');
 });
 
+await step('a new layer takes what is placed next; hidden, it leaves the selection out', async () => {
+  await page.getByRole('button', { name: 'New layer' }).click();
+  await canvas.focus();
+  await page.keyboard.press('Digit2');
+  await click(cx + 60, cy + 60);
+  const s = await page.evaluate(() => {
+    const st = window.__3dheat_plan.getState();
+    return { active: st.activeLayer, layer: st.plan.figures[st.plan.figures.length - 1].layer, layers: st.plan.layers.length };
+  });
+  expect(s.layers === 2 && s.layer === s.active, `figure on ${s.layer}, active ${s.active}`);
+  await page.locator('.tactics-layer.on input[type=checkbox]').first().uncheck();
+  await canvas.focus();
+  await page.keyboard.press('Control+KeyA');
+  const sel = await plan();
+  expect(sel.selection.length === 0, `hidden figure selected: ${sel.selection}`);
+});
+
+await step('the board is kept in the browser and comes back after a reload', async () => {
+  await page.waitForTimeout(1500);
+  const kept = await page.evaluate(() => JSON.parse(localStorage.getItem('heat3d.tactics.autosave') ?? 'null')?.plan?.figures?.length ?? -1);
+  expect(kept === 1, `kept ${kept} figures`);
+  await page.reload();
+  await page.waitForFunction(() => !!window.__3dheat_plan, null, { timeout: 60_000 });
+  const back = await page.evaluate(() => window.__3dheat_plan.getState().plan.layers.length);
+  expect(back === 2, `${back} layers after the reload`);
+  await page.getByRole('tab', { name: 'Tactics' }).or(page.getByRole('button', { name: 'Tactics' })).first().click();
+});
+
 /** Frame intervals over a few seconds, sorted. */
 const frameTimes = async (ms = 5000) => {
   const t = await page.evaluate(

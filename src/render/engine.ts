@@ -48,7 +48,7 @@ import { TacticalLayer, axesOfTrack, cockpitClip } from './tactical';
 import { RangeLayer } from '../ranges/layer';
 import { aimOf } from '../figures/aim';
 import { figureNear, usePlanStore } from '../state/planStore';
-import { playbackAt } from '../tactics/plan';
+import { editable, playbackAt } from '../tactics/plan';
 import { pickRef, refPoints } from '../tactics/gizmo';
 import { setTerrain } from '../tactics/timing';
 import { useTelemetry } from '../tactics/telemetryClient';
@@ -1186,10 +1186,13 @@ export class Engine {
     };
     const p = b.plan;
     const refs: string[] = [];
-    for (const f of p.figures) if (refPoints(p, b.step, f.id).some(inside)) refs.push(f.id);
-    for (const a of p.arrows) if (a.step === b.step) a.points.forEach((q, i) => inside(q) && refs.push(`${a.id}#${i}`));
-    for (const a of p.areas) if (a.step === b.step && inside(a.centre)) refs.push(a.id);
-    for (const n of p.notes) if (n.step === b.step && inside(n.at)) refs.push(n.id);
+    // What can be changed: on a shown, unlocked layer.
+    const ok = (e: { layer?: string }) => editable(p, e);
+    for (const f of p.figures) if (ok(f) && refPoints(p, b.step, f.id).some(inside)) refs.push(f.id);
+    for (const a of p.arrows) if (a.step === b.step && ok(a)) a.points.forEach((q, i) => inside(q) && refs.push(`${a.id}#${i}`));
+    for (const a of p.areas) if (a.step === b.step && ok(a) && inside(a.centre)) refs.push(a.id);
+    for (const n of p.notes) if (n.step === b.step && ok(n) && inside(n.at)) refs.push(n.id);
+    for (const d of p.drawings ?? []) if ((d.always || d.step === b.step) && ok(d) && d.points.some(inside)) refs.push(d.id);
     b.selectRefs([...new Set([...b.selection, ...refs])], false);
   }
 
@@ -1272,6 +1275,9 @@ export class Engine {
       cursor: c,
       placing: board.tool === 'place' ? { kind: board.kind, team: board.team, yaw: board.yaw } : null,
       instanced: true,
+      activeLayer: board.activeLayer,
+      routesActiveOnly: board.routesActiveOnly,
+      time: board.playing ? time : null,
     };
     this.boardView = { plan: board.plan, view };
     const key = [
@@ -1283,6 +1289,9 @@ export class Engine {
       boardIds.of(board.draft),
       boardIds.of(board.measure),
       board.formation,
+      board.routesActiveOnly ? board.activeLayer : '',
+      // Time-bound notes come and go while it plays: a tenth of a second is fine enough.
+      board.playing && board.plan.notes.some((n) => n.show === 'timed') ? Math.floor(time * 10) : '',
       c ? `${c.x.toFixed(3)},${c.y.toFixed(3)},${c.z.toFixed(3)}` : '',
     ].join('/');
     // While it plays the figures move every frame, so the frame is never one to skip.

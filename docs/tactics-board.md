@@ -100,9 +100,32 @@ Each waypoint shows the time from the last one and the time since the plan's sta
 
 The bar below the view holds the steps. A plan starts with one; **+** adds one, and each figure starts it where its route in the last step ended; **−** removes the one shown. **Seconds** is how long the shown step takes when played. **▶** (K) plays from the shown step to the end: figures with a route walk it, figures moved to a new place in the next step slide there, the rest stand. While a step is shown, each figure's place in the next step is drawn as a faint ghost, and the last step's arrows faintly under this one's.
 
+## Layers
+
+The **Layers** section lists the board's layers, the top one first. Everything on the board - figures, routes and arrows, throws, areas, notes and drawings - is on a layer; a board starts with one, **Base**.
+
+| Control | What it does |
+|---|---|
+| The round button, or a click on the name | Makes the layer the active one: whatever is placed or drawn next goes on it. Activating a hidden layer shows it. |
+| Double click on the name, **Rename** | Renames the layer. |
+| **Shown** | Off, nothing on the layer is drawn, played or picked: a plan left out of the view. |
+| **Locked** | On, the layer is drawn and played but nothing on it can be selected, moved, erased or added to. A route can still start on one of its figures; the route goes on the active layer. |
+| **New layer** | Adds a layer on top and makes it active. |
+| **Copy as alternative** | Copies the active layer - its routes, throws, areas, notes, drawings and the figures on it - as a new layer and hides the original. Routes of figures on other layers stay those figures' routes, so the copy is a second plan for the same figures. |
+| **↑** / **↓** | Moves the active layer up or down the stack (the base layer stays at the bottom). |
+| **Remove layer** | Removes the active layer and everything on it, after asking; the routes of its figures on other layers go with them. Undo brings it back. |
+| **Move the selection to ...** | Puts the selected things on the active layer. |
+| **Draw only the active layer's routes** | Leaves the other layers' routes and arrows out of the view while they still play: see every figure move, and only the routes of the squad being worked on. |
+
+Where two shown layers both give a figure a route in the same step, the route on the upper layer is the one it walks; the panel says how many figures that is in the shown step. To compare alternatives, keep them on separate layers and show one at a time: playback, timing and arrivals follow what is shown.
+
 ## Saving
 
-The **File** section holds **Save**, **Open** and **Clear**. **Save** writes the plan as `<name>.h3dplan.json` (plain JSON: sides, steps, figures with a place per step, arrows, areas, notes); **Open** reads one back. A file of another version, or one that is not a plan, is refused with the reason. **Clear** empties the plan; Undo brings it back.
+The **File** section holds **Save**, **Open** and **Clear**. **Save** writes the whole board as `<name>.h3dplan.json`: plain JSON with a `version` (2), the sides, steps, layers, figures with a place per step and their keyframes, routes and arrows with their modes, pauses and arrival times, throws, areas, notes and drawings. **Your name** is written into the file with the time it was saved (shown when it is opened again), so boards from several people can be told apart. **Open** reads a board back; boards saved before layers existed (version 1) open with everything on the base layer. A file of a newer version, or one that is not a board, is refused with the reason. **Clear** empties the board; Undo brings it back.
+
+The board is also kept in the browser a moment after each change and comes back when the viewer is opened again; the **File** section says when it was last kept. Where the browser does not allow it (a private window, blocked site data) or has no room for a large board, the board works the same and only the file keeps it.
+
+Every change to the board is also recorded as a list of operations - add, change or remove one thing by its id, or change the board's own settings - signed with **Your name**. Two people's changes to different things never overwrite each other, which is what a shared session will exchange.
 
 ## Figures
 

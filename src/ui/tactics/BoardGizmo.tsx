@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { usePlanStore } from '../../state/planStore';
 import { useAnimationFrame, useEngine } from '../EngineContext';
 import { AXES, closestOnAxis, gimbalAxes, pivotOf, rayPlane, ringAngle, snapTo, type Axis, type Ray, type Transform } from '../../tactics/gizmo';
-import { keyAt, type Vec3 } from '../../tactics/plan';
+import { editable, keyAt, layerOf, type Vec3 } from '../../tactics/plan';
 import { modeSpeed, moveClassOf, speedTable } from '../../tactics/speeds';
 import { clock, planTimings, stepStart, unitsPerMetre } from '../../tactics/timing';
 import type { Engine } from '../../render/engine';
@@ -213,7 +213,7 @@ function render(engine: Engine): string {
   const timings = planTimings(plan);
   const sel = new Set(s.selection);
   for (const a of plan.arrows) {
-    if (a.step !== s.step) continue;
+    if (a.step !== s.step || !editable(plan, a) || (s.routesActiveOnly && layerOf(a) !== s.activeLayer)) continue;
     const t = timings.get(a.id);
     const t0 = t ? stepStart(plan, a.step) : 0;
     a.points.forEach((p, i) => {

@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { Section, Select, Slider } from '../controls';
 import { BOARD_TOOLS, movableSelection, usePlanStore, type BoardTool } from '../../state/planStore';
 import { toolKeys } from './boardKeys';
+import { LayersPanel } from './LayersPanel';
 import { useStore } from '../../state/store';
 import { GAMES, gamePreset } from '../../tactics/games';
 import { figureLabel } from '../../tactics/names';
@@ -96,6 +97,8 @@ export function TacticsPanel() {
 
   const tools: { id: BoardTool; label: string; keys: string }[] = BOARD_TOOLS.map((x) => ({ id: x.id, label: t(`tactics.tool.${x.id}`), keys: toolKeys(x.id) }));
   const measuring = usePlanStore((s) => s.measure);
+  const author = usePlanStore((s) => s.author);
+  const autosave = usePlanStore((s) => s.autosave);
   const formation = usePlanStore((s) => s.formation);
   const groupSize = usePlanStore((s) => movableSelection(s.plan, s.step, s.selection).length);
   const styles: { id: ArrowStyle; label: string }[] = [
@@ -106,7 +109,9 @@ export function TacticsPanel() {
 
   const save = () => {
     const name = (plan.title || 'plan').replace(/[^\w\- ]+/g, '_');
-    const blob = new Blob([JSON.stringify(plan, null, 1)], { type: 'application/json' });
+    const author = usePlanStore.getState().author;
+    const out = { ...plan, ...(author ? { savedBy: author } : {}), savedAt: new Date().toISOString() };
+    const blob = new Blob([JSON.stringify(out, null, 1)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = `${name}.h3dplan.json`;
@@ -238,6 +243,8 @@ export function TacticsPanel() {
         />
       </Section>
 
+      <LayersPanel />
+
       <SelectionInspector />
 
       <Section title={t('tactics.timing.title')}>
@@ -282,6 +289,18 @@ export function TacticsPanel() {
         />
         {error && <div className="hint" style={{ color: 'var(--warm)' }}>{error}</div>}
         <div className="hint">{t('tactics.counts', { figures: plan.figures.length, arrows: plan.arrows.length, steps: plan.steps.length })}</div>
+        <label className="field">
+          <span>{t('tactics.author')}</span>
+          <input type="text" value={author} placeholder={t('tactics.authorPlaceholder')} onChange={(e) => store().setAuthor(e.target.value)} />
+        </label>
+        {plan.savedAt && <div className="hint">{t('tactics.savedBy', { who: plan.savedBy ?? '-', at: new Date(plan.savedAt).toLocaleString() })}</div>}
+        <div className="hint">
+          {autosave.full
+            ? t('tactics.autosave.full')
+            : autosave.at
+              ? t(autosave.restored ? 'tactics.autosave.restored' : 'tactics.autosave.kept', { at: new Date(autosave.at).toLocaleTimeString() })
+              : t('tactics.autosave.none')}
+        </div>
       </Section>
     </div>
   );
