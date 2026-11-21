@@ -1,5 +1,6 @@
 import { fieldName } from './fields';
 import { RELATIVE_FIELDS } from './relative';
+import { isVehicleField } from './kindFields';
 import { useMemo } from 'react';
 import { t, useLang } from '../../i18n';
 import { SortControl } from '../sort/SortControl';
@@ -13,6 +14,7 @@ const GROUPS: { id: string; fields: (f: string) => boolean }[] = [
   { id: 'place', fields: (f) => ['position', 'mgrs', 'magHeading'].includes(f) },
   { id: 'flight', fields: (f) => ['alt', 'agl', 'tas', 'ias', 'cas', 'gs', 'mach', 'vs', 'heading', 'hdm', 'course', 'pitch', 'roll', 'aoa', 'aos'].includes(f) },
   { id: 'energy', fields: (f) => ['g', 'gLong', 'gLat', 'turnRate', 'turnRadius', 'energy', 'energyRate'].includes(f) },
+  { id: 'vehicle', fields: (f) => isVehicleField(f) },
   { id: 'systems', fields: () => true },
 ];
 

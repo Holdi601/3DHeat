@@ -8,6 +8,7 @@
  * written with "~".
  */
 
+import { domainOfWord, isVehicleField, VEHICLE_FIELDS, vehicleFieldText } from './kindFields';
 import { flightSeries, PARAM_BY_ID, PARAMS, valueAt, type FlightSeries, type ParamKind } from '../../data/flight';
 import { num, t } from '../../i18n';
 import type { Dataset } from '../../state/types';
@@ -69,7 +70,7 @@ export function magneticText(heading: number, units: UnitSystem): string {
 
 /** Every field, in the order lists show them. */
 export function allFields(): string[] {
-  return [...INFO_FIELDS, ...PARAMS.map((p) => p.id)];
+  return [...INFO_FIELDS, ...VEHICLE_FIELDS, ...PARAMS.map((p) => p.id)];
 }
 
 /** A field's name in the viewer's language. */
@@ -251,6 +252,18 @@ export function fieldText(c: FieldContext, id: string, teamLabel: (team: number)
       return b ? `${formatValue('heading', b.bearing, c.units)} / ${formatValue('distance', b.range, c.units)}` : '';
     }
   }
+  if (isVehicleField(id))
+    return vehicleFieldText(
+      {
+        d: c.d,
+        person: c.person,
+        time: c.time,
+        hull: () => paramValue(c, 'heading').v,
+        heading: (v) => headingText(c, v),
+        angle: (v) => (v > 0 ? '+' : '') + formatValue('angle', v, c.units),
+      },
+      id,
+    );
   const def = PARAM_BY_ID[id];
   if (!def) return '';
   const { v, estimate } = paramValue(c, id);
@@ -275,7 +288,25 @@ export function datasetFields(d: Dataset): string[] {
   ).map((p) => p.id);
   const placed = !!geoFrame(d);
   const info = INFO_FIELDS.filter((f) => (f !== 'bullseye' || bullseyes(d).size > 0) && (placed || !GEO_FIELDS.has(f)));
-  return [...info, ...params];
+  // A tank's and a ship's own: where the data has units that drive or sail.
+  const vehicle = drivesOrSails(d) ? [...VEHICLE_FIELDS] : [];
+  return [...info, ...vehicle, ...params];
+}
+
+const driving = new WeakMap<Dataset, boolean>();
+
+/** Whether the data has ground units or ships (its `kind` or `type` words), or turrets. */
+function drivesOrSails(d: Dataset): boolean {
+  const had = driving.get(d);
+  if (had !== undefined) return had;
+  const words = d.attrs.filter((a) => a.kind === 'category' && /^(kind|type)$/i.test(a.name.trim())).flatMap((a) => a.categories ?? []);
+  const out =
+    words.some((w) => {
+      const dom = domainOfWord(w);
+      return dom === 'ground' || dom === 'sea';
+    }) || d.attrs.some((a) => /^(turretYaw|turret_yaw|gunPitch|gunStep)$/i.test(a.name.trim()));
+  driving.set(d, out);
+  return out;
 }
 
 /** `ids` in the order the field lists use. */

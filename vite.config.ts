@@ -475,7 +475,7 @@ const UNIT_CATALOG_ROUTE = '/__heat3d/unit-catalogs';
  * The games' unit catalogues the ext tools write (`catalog` verb) to
  * `<levels>/<game>/catalog.json`, kept on this machine only: every game's
  * items, cut to what the viewer uses (id, name, kind, class, nation, the real
- * vehicle's name and its further names, domain), as `{ version: 1, games: [{ game, items }] }`. Read
+ * vehicle's name and its further names, domain; type, rank and battle rating where given), as `{ version: 1, games: [{ game, items }] }`. Read
  * again when a file changes; 204 without any.
  */
 function unitCatalogs(): Plugin {
@@ -503,6 +503,13 @@ function unitCatalogs(): Plugin {
               // Further names of the vehicle (a short form, another designation), for matching across games.
               const names = [...(Array.isArray(it.names) ? it.names : []), it.short].filter((n): n is string => typeof n === 'string' && n !== '' && n !== it.name);
               if (names.length) out.names = [...new Set(names)];
+              // Its type, rank and battle rating by difficulty (War Thunder), for the unit card.
+              if (typeof it.type === 'string' && it.type) out.type = it.type;
+              if (typeof it.rank === 'number' && Number.isFinite(it.rank)) out.rank = it.rank;
+              if (it.br && typeof it.br === 'object') {
+                const br = Object.fromEntries(Object.entries(it.br as Record<string, unknown>).filter(([, v]) => typeof v === 'number' && Number.isFinite(v)));
+                if (Object.keys(br).length) out.br = br;
+              }
               return out;
             });
           hit = { key, game: String(doc.game ?? d.name), items };

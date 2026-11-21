@@ -25,6 +25,10 @@ export const DEFAULT_LABEL_FIELDS_LAND = ['name', 'vehicle', 'gs'];
 export const DEFAULT_LABEL_FIELDS_SEA = ['name', 'vehicle', 'gs', 'heading'];
 /** What the selected unit's card shows. */
 export const DEFAULT_CARD_FIELDS = ['vehicle', 'team', 'range', 'bearing', 'aspect', 'alt', 'agl', 'tas', 'ias', 'mach', 'gs', 'vs', 'heading', 'pitch', 'roll', 'aoa', 'g', 'turnRate', 'energy', 'throttle', 'rpm', 'fuel', 'health'];
+/** A ground unit's card as it opens (`ui/replay/kindFields.ts`): who, how it moves, where its turret and gun point, what it fired and what struck it. */
+export const GROUND_CARD_FIELDS = ['vehicle', 'team', 'vehicleInfo', 'range', 'bearing', 'gs', 'heading', 'turretHeading', 'gunElevation', 'ammo', 'shots', 'reloads', 'hitsTaken', 'hitsDealt', 'lastPlate', 'health'];
+/** A ship's: the same, its course beside its heading. */
+export const SEA_CARD_FIELDS = ['vehicle', 'team', 'vehicleInfo', 'range', 'bearing', 'gs', 'heading', 'course', 'turretHeading', 'gunElevation', 'ammo', 'shots', 'hitsTaken', 'hitsDealt', 'lastPlate', 'health'];
 export const DEFAULT_GRAPH = ['alt', 'tas'];
 
 /** The units values are written in: the viewer's one choice for everything (`state/unitsStore.ts`). */
@@ -175,6 +179,9 @@ interface Saved {
   /** Null: the default for the data (`labelFieldsFor`). */
   labelFields: string[] | null;
   cardFields: string[];
+  /** A ground unit's card and a ship's (`ui/replay/kindFields.ts`): the aircraft's is `cardFields`. */
+  cardFieldsGround: string[];
+  cardFieldsSea: string[];
   graph: string[];
   declutter: boolean;
   followMode: FollowMode;
@@ -212,6 +219,8 @@ function saved(): Saved {
     labels: true,
     labelFields: null,
     cardFields: DEFAULT_CARD_FIELDS,
+    cardFieldsGround: GROUND_CARD_FIELDS,
+    cardFieldsSea: SEA_CARD_FIELDS,
     graph: DEFAULT_GRAPH,
     declutter: true,
     followMode: 'chase',
@@ -241,6 +250,8 @@ function saved(): Saved {
       labels: v.labels !== false,
       labelFields: Array.isArray(v.labelFields) && !isOldDefault(strings(v.labelFields, [])) ? strings(v.labelFields, []) : null,
       cardFields: strings(v.cardFields, fallback.cardFields),
+      cardFieldsGround: strings(v.cardFieldsGround, fallback.cardFieldsGround),
+      cardFieldsSea: strings(v.cardFieldsSea, fallback.cardFieldsSea),
       graph: strings(v.graph, fallback.graph),
       declutter: v.declutter !== false,
       followMode: FOLLOW_MODES.includes(v.followMode) ? v.followMode : 'chase',
@@ -429,6 +440,8 @@ export const useReplayStore = create<ReplayState>((set, get) => {
       labels: s.labels,
       labelFields: s.labelFields,
       cardFields: s.cardFields,
+      cardFieldsGround: s.cardFieldsGround,
+      cardFieldsSea: s.cardFieldsSea,
       graph: s.graph,
       declutter: s.declutter,
       followMode: s.followMode,

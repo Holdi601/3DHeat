@@ -21,6 +21,7 @@ import { personRows } from '../../data/flight';
 import { NoteBadge } from '../notes/NoteBadge';
 import { noteAbout } from '../notes/actions';
 import { unitAnchorOf } from '../../notes/capture';
+import { domainOf, wrongForDomain, type Domain } from './kindFields';
 
 /**
  * The selected unit's live data, top left of the view: the fields the viewer
@@ -51,6 +52,14 @@ function liveTrackOf(engine: Engine, unit: Unit, now: number) {
 }
 
 const isRelative = (f: string) => (RELATIVE_FIELDS as readonly string[]).includes(f);
+
+/** The card's fields for a unit of `domain`: an aircraft's flight data, a tank's turret, gun and hits, a ship's. */
+function cardFieldsOf(domain: Domain, s: { cardFields: string[]; cardFieldsGround: string[]; cardFieldsSea: string[] }): string[] {
+  return domain === 'ground' ? s.cardFieldsGround : domain === 'sea' ? s.cardFieldsSea : s.cardFields;
+}
+
+/** The store's key for a domain's card fields. */
+const CARD_KEY = { air: 'cardFields', ground: 'cardFieldsGround', sea: 'cardFieldsSea' } as const;
 
 /**
  * A unit's card. The first is the selected unit's; `second` is B's, compact,
@@ -84,7 +93,9 @@ function UnitCardView({ unitKey, second }: { unitKey: string; second: boolean })
   const mode = useStore((s) => s.mode);
   const followUnit = useReplayStore((s) => s.followUnit);
   const target = useReplayStore((s) => s.target);
-  const cardFields = useReplayStore((s) => s.cardFields);
+  const cardFieldsAir = useReplayStore((s) => s.cardFields);
+  const cardFieldsGround = useReplayStore((s) => s.cardFieldsGround);
+  const cardFieldsSea = useReplayStore((s) => s.cardFieldsSea);
   const [config, setConfig] = useState(false);
   const [raw, setRaw] = useState(false);
   const body = useRef<HTMLDivElement>(null);
@@ -98,6 +109,9 @@ function UnitCardView({ unitKey, second }: { unitKey: string; second: boolean })
   // The look-at list, renewed now and then for the weapons that fly.
   const now = usePlayhead(1000);
   const on = !!engine && !!dataset && !!unit && mode === 'team';
+  // Air, ground or sea, by the life on show: a player who swaps a tank for an aircraft gets the aircraft's card.
+  const domain: Domain = dataset && unit ? domainOf(dataset, personAt(unit, now)) : 'air';
+  const cardFields = cardFieldsOf(domain, { cardFields: cardFieldsAir, cardFieldsGround, cardFieldsSea });
 
   useAnimationFrame(() => {
     if (!engine || !dataset || !unit || !body.current) return;
@@ -120,9 +134,10 @@ function UnitCardView({ unitKey, second }: { unitKey: string; second: boolean })
         ref: refTr ? { person: refTr.person, pos: refTr } : null,
         groundAt: groundProbe(engine, dataset),
       };
-      for (const f of inFieldOrder(r.cardFields)) {
-        // Only what this data can have: no row of dashes for a recording without fuel.
-        if (f === 'name' || !fields.includes(f)) continue;
+      const dom = domainOf(dataset, tr.person);
+      for (const f of inFieldOrder(cardFieldsOf(dom, r))) {
+        // Only what this data can have: no row of dashes for a recording without fuel, no Mach number for a tank.
+        if (f === 'name' || !fields.includes(f) || wrongForDomain(f, dom)) continue;
         // Range, bearing and aspect are from the followed unit: nothing to say without one.
         if (!c.ref && isRelative(f)) continue;
         const v = fieldText(c, f, (i) => teamName(dataset, i));
@@ -235,9 +250,9 @@ function UnitCardView({ unitKey, second }: { unitKey: string; second: boolean })
       {raw && <div className="uc-grid uc-raw" ref={rawBody} />}
       {config && (
         <FieldPicker
-          available={fields.filter((f) => f !== 'name')}
+          available={fields.filter((f) => f !== 'name' && !wrongForDomain(f, domain))}
           chosen={cardFields}
-          onChange={(next) => useReplayStore.getState().patchSaved({ cardFields: inFieldOrder(next) })}
+          onChange={(next) => useReplayStore.getState().patchSaved({ [CARD_KEY[domain]]: inFieldOrder(next) })}
         />
       )}
     </div>

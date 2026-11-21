@@ -32,6 +32,10 @@ export interface CatalogUnit {
   /** More names of the same vehicle (a short form, another army's designation). */
   names?: string[];
   domain?: string;
+  /** The game's type word, its rank and its battle rating by difficulty (`ab`, `rb`, `sb`), where given (War Thunder). */
+  type?: string;
+  rank?: number;
+  br?: Record<string, number>;
 }
 
 export interface UnitCatalogIndex {
