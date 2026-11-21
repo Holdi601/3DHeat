@@ -13,7 +13,6 @@ import { figureOfVehicle, templateOfFigure } from './scene';
 import { placeBoxHits } from './boxes';
 import { CATALOG } from '../figures/catalog';
 import { loadPackFigures, packFigurePending, packFiguresVersion } from '../figures/figurepack';
-import { isOwnModel } from '../figures/modelpack';
 import { areaKeep, inArea } from './area';
 
 export interface VehicleView {
@@ -31,7 +30,7 @@ export interface VehicleView {
   /**
    * Whether the hits are moved onto the figure (`fit.ts`): for points in a
    * game model's own frame, not for those already in the figure's (CS2's
-   * body, World of Tanks' component boxes, the unit's own model in a local pack).
+   * body, World of Tanks' component boxes).
    */
   fits: boolean;
   /** Whether the volumes drawn on the level restrict the hits, and how many of the vehicle's hits of the layer they leave out. */
@@ -90,9 +89,7 @@ export function vehicleView(d: Dataset | null, s: Choice): VehicleView {
       const all = keep ? inArea(d, set, layer, keep, s.areaBy) : layer;
       const hits = filterList(all, { vehicle: null, matches: s.matches, shooters: s.shooters, weapons: s.weapons, outcomes: s.outcomes, layer: s.layer });
       const person = CATALOG[figure]?.domain === 'person';
-      // The unit's own model in a local pack stands about the unit's own origin, as the game's hit points do: they are
-      // not moved (another game's model of the vehicle is fitted like any figure).
-      const fits = !person && !isOwnModel(figure, vehicle.id) && !own.all.some((h) => h.box !== null);
+      const fits = !person && !own.all.some((h) => h.box !== null);
       const anyPoint = own.all.some((h) => h.local !== null || h.box !== null || h.region !== null);
       out = { set, vehicle, figure, hits, all, placed: own.placed, unplaced: set.unplacedBy.get(vehicle.id) ?? 0, fits, area: !!keep, areaOut: layer.length - all.length, beforeArea: layer, anyPoint };
     } else out = { ...EMPTY, set };
