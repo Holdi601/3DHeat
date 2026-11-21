@@ -49,6 +49,7 @@ import { FRESH, sliceBudget, sliced, WAIT, type SliceJob } from '../../data/slic
 import type { ModelAnswer } from '../../figures/modelWorker';
 import { deadInSpan, deathsOf, lastDeadSpan, packDeadSpan } from '../../data/deaths';
 import { aimOf, type AimNow } from '../../figures/aim';
+import { gearColumns, gearUpKeys } from '../../figures/gearstate';
 import { CHUNK_KEYS, CHUNK_SHIFT, CHUNK_U32 } from './chunks';
 import { dartIndex, dartMeshes } from '../symbols/darts';
 import { classify, Domain, isEffectDomain, isWeaponDomain, packWord } from '../../figures/symbolClass';
@@ -89,10 +90,16 @@ export const FLAG_GAPS = 16;
 export const GAP_BIT = 0x80000000;
 /** A packed aim half that is not there. */
 export const AIM_NONE = 0xffff;
+/**
+ * A key's aim word with no turret or gun whose landing gear is up (`figures/gearstate.ts`): the yaw half (a yaw never
+ * packs to it: a full turn is 0) this, the pitch half `AIM_NONE`.
+ */
+export const AIM_GEAR_UP = 0xfffe;
+export const GEAR_UP_WORD = ((AIM_NONE << 16) | AIM_GEAR_UP) >>> 0;
 
 /** A turret yaw (radians) and gun elevation (radians) in one u32: 16 bits each across a turn and a half turn; `AIM_NONE` for either missing. */
 export function packAim(yaw: number, pitch: number): number {
-  const y = Number.isFinite(yaw) ? Math.round(((((yaw + Math.PI) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)) / (2 * Math.PI) * 65534) : AIM_NONE;
+  const y = Number.isFinite(yaw) ? Math.round(((((yaw + Math.PI) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)) / (2 * Math.PI) * 65534) % 65534 : AIM_NONE;
   const p = Number.isFinite(pitch) ? Math.round((Math.max(-Math.PI / 2, Math.min(Math.PI / 2, pitch)) + Math.PI / 2) / Math.PI * 65534) : AIM_NONE;
   return (y | (p << 16)) >>> 0;
 }
@@ -101,7 +108,7 @@ export function packAim(yaw: number, pitch: number): number {
 export function unpackAim(v: number): [number, number] {
   const y = v & 0xffff;
   const p = v >>> 16;
-  return [y === AIM_NONE ? NaN : (y / 65534) * 2 * Math.PI - Math.PI, p === AIM_NONE ? NaN : (p / 65534) * Math.PI - Math.PI / 2];
+  return [y >= AIM_GEAR_UP ? NaN : (y / 65534) * 2 * Math.PI - Math.PI, p === AIM_NONE ? NaN : (p / 65534) * Math.PI - Math.PI / 2];
 }
 
 /**
@@ -678,7 +685,7 @@ function* buildSteps(d: Dataset, o: BuildOptions): SliceJob<GpuTrackStore | null
     keysA: keysA.subarray(0, key * KEY_U32),
     keysB: keysB.subarray(0, key),
     keyRow: keyRow.subarray(0, key),
-    keysAim: aimKeys(d, keyRow.subarray(0, key), table, tracks),
+    keysAim: aimKeys(d, keyRow.subarray(0, key), table, tracks, units),
     keys: key,
     meshes: figures.meshes,
     meshTracks: figures.meshTracks.slice(0, figures.meshes.length),
@@ -692,16 +699,39 @@ function* buildSteps(d: Dataset, o: BuildOptions): SliceJob<GpuTrackStore | null
   };
 }
 
-/** The turret and gun at each key, where the data has them; marks the tracks that have them. */
-function aimKeys(d: Dataset, keyRow: Int32Array, trackData: Uint32Array, tracks: number): Uint32Array | null {
+/**
+ * The turret and gun at each key, where the data has them, and an aircraft's landing gear up where it is
+ * (`GEAR_UP_WORD` on a key with no aim); marks the tracks that have them.
+ */
+function aimKeys(d: Dataset, keyRow: Int32Array, trackData: Uint32Array, tracks: number, units: number): Uint32Array | null {
   const aim = aimOf(d);
-  if (!aim || !d.time) return null;
+  if (!d.time) return null;
+  const gc = gearColumns(d);
+  // Gear only for the aircraft and helicopters among the tracks.
+  const flying: number[] = [];
+  for (let i = 0; gc && i < tracks; i++) {
+    const dom = (trackData[i * TRACK_U32 + 15] >>> 16) & 15;
+    if (dom === Domain.Air || dom === Domain.Heli) flying.push(i);
+  }
+  if (!aim && !flying.length) return null;
   const out = new Uint32Array(keyRow.length);
   const now: AimNow = { yaw: NaN, pitch: NaN };
-  for (let k = 0; k < keyRow.length; k++) {
-    const r = keyRow[k];
-    aim.at(r, d.time[r], now);
-    out[k] = packAim(now.yaw, now.pitch);
+  if (aim)
+    for (let k = 0; k < keyRow.length; k++) {
+      const r = keyRow[k];
+      aim.at(r, d.time[r], now);
+      out[k] = packAim(now.yaw, now.pitch);
+    }
+  else out.fill(0xffffffff);
+  if (gc && flying.length) {
+    const up = new Uint8Array(keyRow.length);
+    for (const i of flying) {
+      const first = trackData[i * TRACK_U32];
+      const n = trackData[i * TRACK_U32 + 1];
+      const heli = ((trackData[i * TRACK_U32 + 15] >>> 16) & 15) === Domain.Heli;
+      gearUpKeys(d, gc, keyRow.subarray(first, first + n), units, heli, up, first);
+    }
+    for (let k = 0; k < keyRow.length; k++) if (up[k] && out[k] === 0xffffffff) out[k] = GEAR_UP_WORD;
   }
   for (let i = 0; i < tracks; i++) trackData[i * TRACK_U32 + 5] |= FLAG_AIM;
   return out;

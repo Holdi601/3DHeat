@@ -22,7 +22,8 @@ import { CUBE_STRIDE } from '../data/tracks';
 import { CATALOG } from './catalog';
 import { placeFrame, poseFrame, TemplateCache, type Template } from './kit';
 import { packFigurePending } from './figurepack';
-import { hasJoints, InstanceBatches, meshOf, NO_PITCH } from './instances';
+import { gearUpPitch, hasJoints, InstanceBatches, meshOf, NO_PITCH } from './instances';
+import { gearUpRows } from './gearstate';
 import { aimOf, type AimNow } from './aim';
 import { cameraTracks } from '../render/lookAids';
 import type { Frame3, Vec3 } from '../race/geometry';
@@ -558,8 +559,9 @@ export class FigureReplay {
       } else if (aim && o.time !== undefined && hasJoints(drawn)) {
         // Its turret turned and its gun raised as the data has them now.
         aim.at(row, o.time, aimNow);
-        this.batches.add(meshOf(drawn), relativeFrame(fr, o.origin), scale, team, alpha, Number.isFinite(aimNow.yaw) ? aimNow.yaw : 0, Number.isFinite(aimNow.pitch) ? aimNow.pitch : NO_PITCH);
-      } else this.batches.add(meshOf(drawn), relativeFrame(fr, o.origin), scale, team, alpha);
+        const pitch = Number.isFinite(aimNow.pitch) ? aimNow.pitch : NO_PITCH;
+        this.batches.add(meshOf(drawn), relativeFrame(fr, o.origin), scale, team, alpha, Number.isFinite(aimNow.yaw) ? aimNow.yaw : 0, gearUpAt(d, drawn, row) ? gearUpPitch(pitch) : pitch);
+      } else this.batches.add(meshOf(drawn), relativeFrame(fr, o.origin), scale, team, alpha, 0, gearUpAt(d, drawn, row) ? gearUpPitch(NO_PITCH) : NO_PITCH);
       this.placed.push({ box: i, row, kind: kind!, fr, scale, min: t.min, max: t.max });
     }
     // A close-quarters table's placed gadgets, each from its own rows until its round ends.
@@ -630,4 +632,10 @@ function entry(p: { fr: Frame3; scale: number; min: Vec3; max: Vec3 }, origin: V
 /** A swing-wing figure's name in a state. */
 function named(kind: string, state: Sweep | null): string {
   return state === 'spread' || state === 'swept' ? `${kind}@${state}` : kind;
+}
+
+/** Whether a figure with landing gear that folds (a `gear` joint: a model pack's aircraft) has it up at a row. */
+function gearUpAt(d: Dataset, t: Template, row: number): boolean {
+  if (row < 0 || !t.joints?.some((j) => j.kind === 'gear')) return false;
+  return gearUpRows(d)?.[row] === 1;
 }

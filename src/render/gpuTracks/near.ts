@@ -13,10 +13,10 @@
 import type { Dataset } from '../../state/types';
 import { fallbackWord } from '../../figures/symbolClass';
 import { FADE_FROM, farLook, WEAPON_PX } from '../symbols/lod';
-import { INSTANCE_STRIDE, NO_PITCH, spinPitch, type FigureBatch } from '../../figures/instances';
+import { gearUpPitch, INSTANCE_STRIDE, NO_PITCH, spinPitch, type FigureBatch } from '../../figures/instances';
 import { aimOf, type AimNow } from '../../figures/aim';
 import { emptyPose, evaluateTrack } from './evaluate';
-import { keyTime, TRACK_U32, trackDeadAt, type GpuTrackStore } from './store';
+import { GEAR_UP_WORD, keyTime, TRACK_U32, trackDeadAt, type GpuTrackStore } from './store';
 import { wreckColour } from '../../figures/wreck';
 import { isGreyed, isShown, visWords } from './visibility';
 import type { SliceJob } from '../../data/slices';
@@ -219,6 +219,8 @@ export function nearFigures(s: GpuTrackStore, f: NearFrame, limit = 20000): Figu
       out[14] = -w[2];
     }
     out[15] = aim && Number.isFinite(aimNow.pitch) ? aimNow.pitch : spin ? spin(s.keyRow![pose.key]) : NO_PITCH;
+    // Its landing gear up at the key (`figures/gearstate.ts`), as the place pass has it.
+    if (s.keysAim && s.keysAim[pose.key] === GEAR_UP_WORD) out[15] = gearUpPitch(out[15]);
     n++;
   }
   return runs.batches(s);

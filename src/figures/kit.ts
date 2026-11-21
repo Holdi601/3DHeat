@@ -160,8 +160,11 @@ export interface Kit {
  * turret (`parent`, -1 for a hull or casemate gun).
  */
 export interface Joint {
-  /** `spin`: a propeller or rotor, turning on its own about `axis` through `pivot` (`SPIN` in instances.ts). */
-  kind: 'yaw' | 'pitch' | 'spin';
+  /**
+   * `spin`: a propeller or rotor, turning on its own about `axis` through `pivot` (`SPIN` in instances.ts). `gear`: an
+   * aircraft's landing gear, folded into `pivot` while the instance's gear is up (`GEAR_UP` in instances.ts).
+   */
+  kind: 'yaw' | 'pitch' | 'spin' | 'gear';
   /** In the template frame (x forward, y up, z right), metres. */
   pivot: Vec3;
   /**

@@ -10,15 +10,19 @@
  * `name` is the real vehicle's name, neutral over games ("T-80UD", "M1A2
  * SEP"), `aliases` further ids that share the file. A unit's file holds a
  * root node `unit` and, under it, `lod0`, `lod1` and `lod2` (full, coarse and
- * far), each with a mesh node per part: `hull`, `gear` (running gear, drawn
- * in the track colour), `turret` (extras `{ joint: 'yaw', pivot }`) and `gun`
+ * far), each with a mesh node per part: `hull`, `aerial` (antennas and other
+ * thin parts: drawn, left out of the figure's size), `gear` (running gear,
+ * drawn in the track colour; an aircraft's landing gear with extras
+ * `{ retract: true, pivot }`, down on the ground and when slow and low, folded
+ * away in flight), `turret` (extras `{ joint: 'yaw', pivot }`) and `gun`
  * (extras `{ joint: 'pitch', pivot, parent }`); numbered ones for units with
  * several (`turret.2`, its `gun.2` with `parent: 'turret.2'`, a turret's
  * `rest`: the yaw it was built facing) and `rotor.N` (a propeller or rotor:
  * extras `{ spin: 'rotor', pivot, axis, diameter }`). Positions are float32 metres
  * in the figure frame (x forward, y up, z right) about the unit's own origin,
  * where the game puts it. A `dm` node may hold further parts (damage-model
- * parts with their armour in extras); they are not drawn.
+ * parts with their armour in extras); they are not drawn. A unit whose `kind`
+ * is `static` (a barrier, building or container) stands for no unit.
  *
  * The dev and preview servers hand out every pack at `MODEL_PACK_ROUTE`, from
  * `HEAT3D_MODEL_PACK` or the `modelPack` entry of the git-ignored
@@ -41,7 +45,7 @@ type Vec3 = [number, number, number];
 export interface ModelPart {
   name: string;
   pivot: Vec3;
-  joint?: 'yaw' | 'pitch' | 'spin';
+  joint?: 'yaw' | 'pitch' | 'spin' | 'gear';
   parent?: number;
   /** A spinning part's shaft and turns, radians a second at full power. */
   axis?: Vec3;
@@ -63,6 +67,8 @@ export interface ModelFigure {
   lods: Uint16Array[];
   /** An aircraft's propeller: drawn with the faint disc of a turning one. */
   prop?: { at: Vec3; diameter: number };
+  /** The box of the body without its `aerial` parts (antennas, whips): what the figure's size is taken from. */
+  bounds?: number[];
 }
 
 /** Where the servers serve the model packs' index (204 when there is none); a unit's model is at `/u/<game>/<unit>?v=<tag>` under it. */
@@ -82,6 +88,47 @@ export interface ModelPackUnit {
   aliases?: string[];
 }
 
+/**
+ * What a pack unit or a figure is, as far as one may stand for the other: a helicopter's model never sits on a
+ * fighter's figure, a drone's never on a crewed aircraft's, a ship's never on a tank's. `static` (a game's barriers,
+ * buildings, containers) stands for no unit at all.
+ */
+export type UnitSide = 'air' | 'heli' | 'drone' | 'ground' | 'sea' | 'person' | 'item' | 'static' | 'other';
+
+const DRONE = /\b(uav|ucav|drones?|quadcopter|multicopter)\b|drone-/i;
+
+/** A pack unit's side from its domain, its tool's kind word and its type word. */
+export function packSide(info: Pick<ModelPackUnit, 'domain' | 'kind' | 'type'>): UnitSide {
+  // A pack without domains is of ground vehicles, as packs began.
+  const d = (info.domain ?? 'ground').toLowerCase();
+  const words = `${info.kind ?? ''} ${info.type ?? ''}`.toLowerCase();
+  if (d === 'static' || /(^|\s)static(\s|$)/.test(words)) return 'static';
+  if (d === 'heli' || d === 'air') {
+    if (DRONE.test(words)) return 'drone';
+    return d === 'heli' || /heli|rotorcraft/.test(words) ? 'heli' : 'air';
+  }
+  if (d === 'ground' || d === 'sea' || d === 'person' || d === 'item') return d;
+  return 'other';
+}
+
+/** A catalogue figure's side from its domain and class. */
+export function figureSide(e: { domain?: string; cls?: string } | undefined): UnitSide {
+  if (!e) return 'other';
+  const cls = e.cls ?? '';
+  if (e.domain === 'heli') return /drone/.test(cls) ? 'drone' : 'heli';
+  if (e.domain === 'air') return /drone/.test(cls) ? 'drone' : 'air';
+  if (e.domain === 'ground') return cls === 'building' ? 'static' : 'ground';
+  if (e.domain === 'sea' || e.domain === 'person') return e.domain;
+  return 'other';
+}
+
+/** Whether a model of one side may be drawn on a figure of the other: the same side, or a tiltrotor's either way. */
+export function sidesMeet(model: UnitSide, figure: UnitSide, figureCls = ''): boolean {
+  if (model === 'static' || model === 'item' || model === 'other' || figure === 'other') return false;
+  if (model === figure) return true;
+  return /tiltrotor|vtol/.test(figureCls) && (model === 'air' || model === 'heli');
+}
+
 export interface ModelPackIndex {
   version: 1;
   /** In order of precedence where two packs could stand for the same vehicle. */
@@ -94,8 +141,8 @@ export function vehicleKey(name: string): string {
 }
 
 /** The parts a pack model may have, by their name before any number (`turret.2`), in the order they are packed. */
-const PARTS = ['hull', 'gear', 'turret', 'gun', 'rotor'] as const;
-const PART_NAME = /^(hull|gear|turret|gun|rotor)(?:\.(\d+))?$/;
+const PARTS = ['hull', 'aerial', 'gear', 'turret', 'gun', 'rotor'] as const;
+const PART_NAME = /^(hull|aerial|gear|turret|gun|rotor)(?:\.(\d+))?$/;
 
 /** The order parts are packed in: unnumbered first, then by number, a turret before its gun. */
 function partRank(name: string): [number, number] {
@@ -188,7 +235,12 @@ export function figureFromModelGlb(bytes: Uint8Array, scale = 1): ModelFigure {
     const x = extrasOf(name) ?? {};
     const pivot = vec3(x.pivot);
     const unnumbered = name === base;
-    if (base === 'gear') parts.push({ name, pivot: [0, 0, 0], track: true });
+    // An aircraft's landing gear (`retract`) is down on the ground and when slow and low, up in flight (`GEAR_UP`
+    // in instances.ts): drawn in its own colour, folded into its pivot when up. A ground unit's is running gear.
+    if (base === 'gear' && x.retract === true && pivot) {
+      jointIndex.set(name, jointIndex.size);
+      parts.push({ name, pivot, joint: 'gear' });
+    } else if (base === 'gear') parts.push({ name, pivot: [0, 0, 0], track: true });
     else if (base === 'turret' && pivot && (x.joint === 'yaw' || unnumbered)) {
       jointIndex.set(name, jointIndex.size);
       parts.push({ name, pivot, joint: 'yaw', ...(typeof x.rest === 'number' && Number.isFinite(x.rest) ? { rest: x.rest } : {}) });
@@ -220,6 +272,22 @@ export function figureFromModelGlb(bytes: Uint8Array, scale = 1): ModelFigure {
           if (p[v + a] > hi[a]) hi[a] = p[v + a];
         }
   if (!Number.isFinite(lo[0])) throw new Error('no geometry');
+  // The body's box without the thin parts that stand off it (antennas): what the figure's size is taken from.
+  const blo = [Infinity, Infinity, Infinity];
+  const bhi = [-Infinity, -Infinity, -Infinity];
+  let aerials = false;
+  for (const [name, { p }] of lods[0]) {
+    if (name.startsWith('aerial')) {
+      aerials = true;
+      continue;
+    }
+    for (let v = 0; v < p.length; v += 3)
+      for (let a = 0; a < 3; a++) {
+        if (p[v + a] < blo[a]) blo[a] = p[v + a];
+        if (p[v + a] > bhi[a]) bhi[a] = p[v + a];
+      }
+  }
+  const bounds = aerials && Number.isFinite(blo[0]) ? [...blo, ...bhi].map((x) => x * scale) : undefined;
   for (let a = 0; a < 3; a++) if (hi[a] - lo[a] < 1e-3) hi[a] = lo[a] + 1e-3;
   const words = lods.map((l) => {
     const counts: number[] = [order.length];
@@ -261,21 +329,34 @@ export function figureFromModelGlb(bytes: Uint8Array, scale = 1): ModelFigure {
     crease: 50,
     lods: words.slice(0, 3),
     ...(prop ? { prop } : {}),
+    ...(bounds ? { bounds } : {}),
   };
 }
 
 /** One damage-model part of a pack model (`dm:<name>` under its `dm` node): its triangles and its armour. */
 export interface ModelPlate {
   name: string;
-  /** The model part it moves with (`hull`, `turret`, `gun`, `turret.2`...). */
+  /** The model part it moves with (`hull`, `turret`, `gun`, `turret.2`...); `hull` when the pack names none of them. */
   part: string;
-  /** Thickness, mm, where the game gives one. */
+  /** Thickness, mm, where the game gives one (`mm`, or `thickness`). */
   mm?: number;
   /** The armour or material class. */
   cls?: string;
+  /**
+   * What kind of region it is, where the pack says (`group`): `zone` (a part's face toward one side: Battlefield's
+   * direction zones), `piece` (a destructible piece), `shell` (a collision shell), `armour`, `engine`, `fuel`...
+   */
+  group?: string;
+  /** A direction zone's side: `front`, `rear`, `left`, `right`, `top`, `bottom`. */
+  zone?: string;
+  /** Its hit points, where the game gives them. */
+  hp?: number;
   pos: Float32Array;
   idx: Uint16Array | Uint32Array;
 }
+
+const num = (x: unknown): number | undefined => (typeof x === 'number' && Number.isFinite(x) ? x : undefined);
+const str = (x: unknown): string | undefined => (typeof x === 'string' && x ? x : undefined);
 
 /** A pack model's damage-model parts (none when it has no `dm` node). */
 export function platesFromModelGlb(bytes: Uint8Array): ModelPlate[] {
@@ -287,11 +368,17 @@ export function platesFromModelGlb(bytes: Uint8Array): ModelPlate[] {
     if (n.mesh === undefined || !n.name?.startsWith('dm:')) continue;
     const prim = g.meshes[n.mesh].primitives[0];
     const x = n.extras ?? {};
+    // A region's `part` is the model part it moves with where it names one (Reforger's names the hit zone itself).
+    const part = str(x.part);
+    const mm = num(x.mm) ?? num(x.thickness);
     out.push({
       name: n.name.slice(3),
-      part: typeof x.part === 'string' ? x.part : 'hull',
-      ...(typeof x.mm === 'number' && Number.isFinite(x.mm) ? { mm: x.mm } : {}),
-      ...(typeof x.class === 'string' && x.class ? { cls: x.class } : {}),
+      part: part && PART_NAME.test(part) ? part : 'hull',
+      ...(mm !== undefined ? { mm } : {}),
+      ...(str(x.class) ? { cls: str(x.class) } : str(x.material) ? { cls: str(x.material) } : {}),
+      ...(str(x.group) ? { group: str(x.group) } : {}),
+      ...(str(x.zone) ? { zone: str(x.zone) } : {}),
+      ...(num(x.hp) !== undefined ? { hp: num(x.hp) } : {}),
       pos: accessor(g, bin, prim.attributes.POSITION) as Float32Array,
       idx: accessor(g, bin, prim.indices) as Uint16Array | Uint32Array,
     });
@@ -310,35 +397,75 @@ export function isOwnModel(figure: string, unit: string): boolean {
   return figure.includes('@model:') && figure.endsWith(`:${unit.toLowerCase()}`);
 }
 
-/** The figure a unit without an alias stands in for: by the game's type word, within its domain. */
+/**
+ * The figures a pack unit without an alias stands in for, by its side and its kind and type words: figure names or
+ * classes (the class's first figure), the first the catalogue has.
+ */
 const TYPE_KIN: Record<string, [RegExp, string[]][]> = {
   ground: [
-    [/spaa|anti.?air/i, ['spaa']],
+    [/static|stationary|emplacement|fortif/i, ['emplacement-gun']],
+    [/spaa|anti.?air|\baaa?\b|flak/i, ['spaa']],
+    [/\bsam\b|missile/i, ['sam']],
     [/light|destroyer/i, ['light-tank', 'mbt']],
+    [/\bifv\b/i, ['ifv']],
+    [/\bapc\b|armou?red.?car/i, ['apc-wheeled', 'apc-tracked']],
+    [/artillery|howitzer/i, ['sp-artillery']],
+    [/mlrs|rocket/i, ['mlrs']],
+    [/horse|cavalry/i, ['horse']],
+    [/\b(car|jeep|buggy)\b/i, ['jeep']],
+    [/truck|vehicle|trailer|rail/i, ['truck']],
     [/./, ['mbt']],
   ],
   air: [
-    [/helicopter/i, ['heli-attack', 'heli-transport']],
     [/bomber/i, ['ww2-bomber', 'bomber']],
-    [/assault|attack/i, ['ww2-attack', 'attack']],
+    [/assault|attack|stormovik/i, ['ww2-attack', 'attack']],
+    [/transport|cargo|tanker|awacs|patrol/i, ['transport']],
+    [/airship|zeppelin|blimp/i, ['zeppelin']],
     [/./, ['ww2-fighter', 'fighter', 'multirole']],
   ],
+  heli: [
+    [/attack|gunship/i, ['attack-helicopter', 'heli-attack']],
+    [/scout|light|recon/i, ['scout-helicopter', 'heli-scout']],
+    [/./, ['transport-helicopter', 'heli-transport']],
+  ],
+  drone: [
+    [/heli|rotor|copter/i, ['quadcopter', 'drone-rotary']],
+    [/./, ['drone-fixed']],
+  ],
   sea: [
-    [/boat/i, ['patrol-boat', 'rhib']],
+    [/carrier/i, ['carrier']],
+    [/submarine/i, ['submarine']],
+    [/boat|launch/i, ['patrol-boat', 'rhib']],
     [/./, ['destroyer', 'patrol-boat']],
   ],
   // A game's people (CS2's agents) stand in for the soldier; its weapons and items stand in for nothing.
   person: [[/./, ['soldier']]],
-  item: [],
 };
 
-/** The catalogue figure a pack unit is a variant of: its alias, else the first figure its type word names. */
-export function kinFor(unit: string, info: ModelPackUnit, has: (name: string) => boolean, aliases: Record<string, string>): string | null {
+/**
+ * The catalogue figure a pack unit is a variant of: its alias when that figure is of the unit's side, else the
+ * first figure its side and kind and type words name. A static object (a game's barrier, building, container) and an
+ * item is none: they stand for no unit. `entry` looks a figure up, `byClass` a class's first figure.
+ */
+export function kinFor(
+  unit: string,
+  info: ModelPackUnit,
+  entry: (name: string) => { domain?: string; cls?: string } | undefined,
+  aliases: Record<string, string>,
+  byClass: (cls: string) => string | null = () => null,
+): string | null {
+  const side = packSide(info);
+  if (side === 'static' || side === 'item' || side === 'other') return null;
   const a = aliases[unit.toLowerCase()];
-  if (a && has(a.indexOf('@') > 0 ? a.slice(0, a.indexOf('@')) : a)) return a;
-  for (const [re, names] of TYPE_KIN[info.domain ?? 'ground'] ?? TYPE_KIN.ground) {
-    if (!re.test(info.type ?? '')) continue;
-    for (const n of names) if (has(n)) return n;
+  const ae = a ? entry(a.indexOf('@') > 0 ? a.slice(0, a.indexOf('@')) : a) : undefined;
+  if (a && ae && sidesMeet(side, figureSide(ae), ae.cls)) return a;
+  const words = `${info.kind ?? ''} ${info.type ?? ''}`;
+  for (const [re, names] of TYPE_KIN[side] ?? []) {
+    if (!re.test(words)) continue;
+    for (const n of names) {
+      const f = entry(n) ? n : byClass(n);
+      if (f && sidesMeet(side, figureSide(entry(f)), entry(f)?.cls)) return f;
+    }
   }
   return null;
 }

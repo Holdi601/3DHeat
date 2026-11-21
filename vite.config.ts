@@ -361,8 +361,9 @@ function modelPack(): Plugin {
       if (hp) {
         const k = all.find((q) => q.game === decodeURIComponent(hp[1]).toLowerCase());
         const file = k ? `${k.dir}/hit-parts.json` : '';
+        // A pack without hit part names (every game's but War Thunder's): 204, no console error per vehicle shown.
         if (!k || !existsSync(file)) {
-          res.statusCode = 404;
+          res.statusCode = k ? 204 : 404;
           res.end();
           return;
         }
@@ -382,14 +383,14 @@ function modelPack(): Plugin {
           plates = [];
         }
         if (!k || !plates.length) {
-          res.statusCode = 404;
+          res.statusCode = k ? 204 : 404;
           res.end();
           return;
         }
         const b64 = (a: ArrayBufferView) => Buffer.from(a.buffer, a.byteOffset, a.byteLength).toString('base64');
         const body = JSON.stringify({
           version: 1,
-          plates: plates.map((p) => ({ name: p.name, part: p.part, mm: p.mm, cls: p.cls, v: b64(p.pos), i: b64(p.idx), wide: p.idx instanceof Uint32Array })),
+          plates: plates.map((p) => ({ name: p.name, part: p.part, mm: p.mm, cls: p.cls, group: p.group, zone: p.zone, hp: p.hp, v: b64(p.pos), i: b64(p.idx), wide: p.idx instanceof Uint32Array })),
         });
         const raw = Buffer.from(body);
         const gz = /\bgzip\b/.test(String(req.headers['accept-encoding'] ?? ''));

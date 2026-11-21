@@ -34,6 +34,18 @@ export const INSTANCE_STRIDE = 16;
 export const NO_PITCH = -100;
 /** Below this an instance's gun elevation means `NO_PITCH`. */
 export const NO_PITCH_BELOW = -50;
+/**
+ * Taken off an instance's gun elevation slot (`NO_PITCH`, or a spinning part's power) when its landing gear is up:
+ * the gear (a `gear` joint) is folded into its pivot. Gear is down unless the slot says up.
+ */
+export const GEAR_UP = 200;
+/** Below this (and above a dart's word) an instance's gun elevation slot says the gear is up. */
+export const GEAR_UP_BELOW = -250;
+
+/** An instance's gun elevation slot with its landing gear up: `NO_PITCH` or a spinning part's power, lowered. */
+export function gearUpPitch(pitch: number): number {
+  return pitch <= NO_PITCH_BELOW && pitch > GEAR_UP_BELOW ? pitch - GEAR_UP : pitch;
+}
 
 export interface FigureMesh {
   /** Stable for the life of the template: what a renderer keys its upload on. */
@@ -189,6 +201,14 @@ export function spinPitch(f: number): number {
 
 /** A vertex's movement (the 12 floats after its tint) for the joint it moves with. */
 function writeJoint(out: Float32Array, o: number, j: Joint, parent: Joint | undefined, joints: Joint[]): void {
+  if (j.kind === 'gear') {
+    // Kind 5: the pivot the gear folds into while it is up (`GEAR_UP`).
+    out[o] = 5;
+    out[o + 1] = j.pivot[0];
+    out[o + 2] = j.pivot[1];
+    out[o + 3] = j.pivot[2];
+    return;
+  }
   if (j.kind === 'spin') {
     // Kind 4: the pivot, the shaft and the turns a second; the GPU turns it by the scene's clock (`figureShaders.ts`).
     const a = j.axis ?? [1, 0, 0];
@@ -233,6 +253,14 @@ function writeJoint(out: Float32Array, o: number, j: Joint, parent: Joint | unde
  */
 export function articulate(m: Float32Array, p: number, x: number, y: number, z: number, yaw: number, pitch: number, point: boolean, out: number[]): void {
   const kind = m[p + 12];
+  const up = pitch < GEAR_UP_BELOW && pitch > -999;
+  if (up) pitch += GEAR_UP;
+  if (kind > 4.5) {
+    out[0] = up && point ? m[p + 13] : x;
+    out[1] = up && point ? m[p + 14] : y;
+    out[2] = up && point ? m[p + 15] : z;
+    return;
+  }
   if (kind >= 1.5 && kind < 3.5 && pitch > NO_PITCH_BELOW) {
     const gr = m[p + 19];
     const dx = Math.cos(gr);

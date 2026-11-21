@@ -29,7 +29,7 @@
 
 import { decodePackFigure } from './figurepackBin';
 import { buildMeshFigure, type MeshFigureData } from './meshfig';
-import { kinFor, MODEL_PACK_ROUTE, modelVariantName, vehicleKey, type ModelPackIndex } from './modelpack';
+import { figureSide, kinFor, MODEL_PACK_ROUTE, modelVariantName, packSide, sidesMeet, vehicleKey, type ModelPackIndex, type UnitSide } from './modelpack';
 import { VehicleNames, vehicleSide } from './vehiclenames';
 import type { Template } from './kit';
 
@@ -63,9 +63,20 @@ const aliased = new Map<string, string | undefined>();
 let aliasTable: Record<string, string> | undefined;
 /** An installed index's figures: name -> tag, and where the figure is fetched (a figure pack's or a model pack's route). */
 const indexed = new Map<string, { tag: string; at: string }>();
-/** Figures fetched for an installed index, and fetches under way. */
+/**
+ * Figures fetched for an installed index, and fetches under way, by where they come from and their tag: one model
+ * drawn under several names (another game's units of the same vehicle, each on its own figure) is fetched once.
+ */
 const fetched = new Map<string, MeshFigureData>();
 const fetching = new Map<string, Promise<void>>();
+const source = (name: string): string | undefined => {
+  const ix = indexed.get(name);
+  return ix ? `${ix.at}?v=${ix.tag}` : undefined;
+};
+const dataOf = (name: string): MeshFigureData | undefined => {
+  const k = source(name);
+  return k ? fetched.get(k) : undefined;
+};
 /** Counts every change of what the packs draw (an index installed or removed, a figure's data arrived): for views that keep what they built. */
 let version = 0;
 
@@ -80,7 +91,7 @@ export function packFiguresVersion(): number {
  * has moved on.
  */
 export function packFigurePending(name: string): boolean {
-  return indexed.has(name) && !fetched.has(name);
+  return indexed.has(name) && !dataOf(name);
 }
 
 function valid(m: unknown): m is MeshFigureData {
@@ -134,7 +145,7 @@ export function installFigurePackIndex<E extends Entry>(
 
 /** A pack figure's builder: from its data once `loadPackFigures` has it, until then as `own` (and the data is asked for). */
 const lazyBuilder = (name: string, own: () => Template) => () => {
-  const m = fetched.get(name);
+  const m = dataOf(name);
   if (m) return buildMeshFigure(m, own);
   void loadPackFigures([name]);
   return own();
@@ -154,7 +165,7 @@ const lazyBuilder = (name: string, own: () => Template) => () => {
  * Install it after a figure pack, so a model takes precedence over the pack's figure. Pack units with no figure to
  * stand in for are skipped. Returns how many pack units it installed.
  */
-export function installModelPackIndex<E extends Entry>(
+export function installModelPackIndex<E extends Entry & { domain?: string; cls?: string }>(
   catalog: Record<string, E>,
   index: ModelPackIndex,
   builders: Record<string, () => Template> | undefined,
@@ -163,45 +174,74 @@ export function installModelPackIndex<E extends Entry>(
   if (!index || index.version !== 1 || !Array.isArray(index.packs)) return 0;
   const names: string[] = [];
   const units: Record<string, string> = {};
-  const byFigure = new Map<string, { name: string; id: string; pack: number }>();
-  const byName = new Map<string, string>();
-  const sameVehicle = new VehicleNames<string>();
+  /** A pack unit as it may be lent: its own variant, where its model is, its side. */
+  type Lent = { name: string; game: string; id: string; side: UnitSide; ix: { tag: string; at: string } };
+  const byFigure = new Map<string, Lent & { pack: number }>();
+  const byName = new Map<string, Lent>();
+  const sameVehicle = new VehicleNames<Lent>();
   const base = (f: string) => (f.indexOf('@') > 0 ? f.slice(0, f.indexOf('@')) : f);
+  // A class's first figure (a generic one where the catalogue has it under the class's name).
+  const classes = new Map<string, string>();
+  for (const [n, e] of Object.entries(catalog)) if (e.cls && !n.includes('@') && !classes.has(e.cls)) classes.set(e.cls, n);
+  const entry = (n: string) => catalog[n];
+  const byClass = (cls: string) => (catalog[cls] ? cls : (classes.get(cls) ?? null));
   for (const [pi, pack] of index.packs.entries()) {
     if (!pack || typeof pack.game !== 'string' || typeof pack.units !== 'object') continue;
     for (const [unit, info] of Object.entries(pack.units)) {
       const id = unit.toLowerCase();
       if (!info || typeof info.tag !== 'string' || units[id]) continue;
-      const kin = kinFor(id, info, (n) => !!catalog[n], aliases);
+      // A static object (a barrier, a building, a container) and an item stand for no unit: `kinFor` gives none.
+      const kin = kinFor(id, info, entry, aliases, byClass);
       if (!kin) continue;
       const name = modelVariantName(kin, pack.game, id);
-      indexed.set(name, { tag: info.tag, at: `${MODEL_PACK_ROUTE}/u/${encodeURIComponent(pack.game)}/${encodeURIComponent(id)}` });
+      const ix = { tag: info.tag, at: `${MODEL_PACK_ROUTE}/u/${encodeURIComponent(pack.game)}/${encodeURIComponent(id)}` };
+      indexed.set(name, ix);
       names.push(name);
       for (const k of [id, ...(info.aliases ?? []).map((a) => a.toLowerCase())]) units[k] ??= name;
+      const lent: Lent = { name, game: pack.game, id, side: packSide(info), ix };
       // Only an id the catalogue knows by name speaks for its figure's vehicle (not one placed by its type word).
       const known = aliases[id];
-      if (known) {
+      if (known && sidesMeet(lent.side, figureSide(catalog[base(known)]), catalog[base(known)]?.cls)) {
         const had = byFigure.get(base(known));
-        if (!had || (had.pack === pi && id.length < had.id.length)) byFigure.set(base(known), { name, id, pack: pi });
+        if (!had || (had.pack === pi && id.length < had.id.length)) byFigure.set(base(known), { ...lent, pack: pi });
       }
-      for (const n of [info.name, ...(info.names ?? [])]) if (typeof n === 'string' && vehicleKey(n) && !byName.has(vehicleKey(n))) byName.set(vehicleKey(n), name);
-      sameVehicle.add([info.name, ...(info.names ?? [])], name, vehicleSide(info.domain, `${info.kind ?? ''} ${info.type ?? ''}`));
+      for (const n of [info.name, ...(info.names ?? [])]) if (typeof n === 'string' && vehicleKey(n) && !byName.has(vehicleKey(n))) byName.set(vehicleKey(n), lent);
+      sameVehicle.add([info.name, ...(info.names ?? [])], lent, vehicleSide(info.domain, `${info.kind ?? ''} ${info.type ?? ''}`));
     }
   }
   install(catalog, names, lazyBuilder, units, builders, aliases);
-  // Other games' units of the same vehicles: aliases left on a figure a pack model stands for, and real names.
-  const lend = (key: string, name: string) => {
-    if (!catalog[name] || aliases[key] === name) return;
+  // Other games' units of the same vehicles: aliases left on a figure a pack model stands for, and real names. A
+  // lent model sits on the borrowing unit's own figure (a DCS Mi-8MT on the Mi-8MTV2's, not on whatever figure the
+  // lending game's unit stands in for), and only where the two are of one side: a helicopter's model never on a
+  // fighter's figure, a drone's never on a crewed aircraft's.
+  const extra: string[] = [];
+  const lend = (key: string, l: Lent, onFigure: string | null) => {
+    let name = l.name;
+    if (onFigure && base(l.name) !== onFigure) {
+      name = modelVariantName(onFigure, l.game, l.id);
+      if (!indexed.has(name)) {
+        indexed.set(name, l.ix);
+        extra.push(name);
+      }
+    }
+    if (aliases[key] === name) return;
     if (!aliased.has(key)) aliased.set(key, aliases[key]);
     aliases[key] = name;
   };
   aliasTable = aliases;
   for (const [key, fig] of Object.entries(aliases)) {
     if (units[key] || fig.includes('@model:')) continue;
-    const v = byFigure.get(base(fig))?.name ?? byName.get(vehicleKey(key)) ?? sameVehicle.find([key], '', ['same'])?.value;
-    if (v) lend(key, v);
+    const kin = base(fig);
+    const e = catalog[kin];
+    if (!e) continue;
+    const side = figureSide(e);
+    const meets = (l: Lent | undefined) => (l && sidesMeet(l.side, side, e.cls) ? l : undefined);
+    const l = meets(byFigure.get(kin)) ?? meets(byName.get(vehicleKey(key))) ?? meets(sameVehicle.find([key], side === 'drone' ? '' : side, ['same'])?.value);
+    if (l) lend(key, l, kin);
   }
-  for (const [key, v] of byName) if (!aliases[key] && !catalog[key]) lend(key, v);
+  // A real vehicle name the catalogue has no figure or alias of: the lending unit's own variant.
+  for (const [key, l] of byName) if (!aliases[key] && !catalog[key] && catalog[l.name]) lend(key, l, null);
+  if (extra.length) install(catalog, extra, lazyBuilder, undefined, builders);
   return names.length;
 }
 
@@ -214,17 +254,18 @@ export function loadPackFigures(names: Iterable<string>): Promise<void> {
   const waits: Promise<void>[] = [];
   for (const name of names) {
     const ix = indexed.get(name);
-    if (ix === undefined || fetched.has(name)) continue;
-    let w = fetching.get(name);
+    const key = source(name);
+    if (ix === undefined || key === undefined || fetched.has(key)) continue;
+    let w = fetching.get(key);
     if (!w) {
       w = fetchPackFigure(ix.at, ix.tag).then((m) => {
-        if (m && indexed.get(name)?.tag === ix.tag) {
-          fetched.set(name, m);
+        if (m && fetching.has(key)) {
+          fetched.set(key, m);
           version++;
         }
-        fetching.delete(name);
+        fetching.delete(key);
       });
-      fetching.set(name, w);
+      fetching.set(key, w);
     }
     waits.push(w);
   }
@@ -233,7 +274,7 @@ export function loadPackFigures(names: Iterable<string>): Promise<void> {
 
 /** Whether an installed index's figure has its data here (`loadPackFigures`). */
 export function packFigureLoaded(name: string): boolean {
-  return fetched.has(name);
+  return !!dataOf(name);
 }
 
 async function fetchPackFigure(at: string, tag: string): Promise<MeshFigureData | null> {

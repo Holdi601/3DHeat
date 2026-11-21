@@ -13,7 +13,7 @@
  * lit colour and the triangle's feature edges (`figureEdge`).
  */
 
-import { MESH_STRIDE, NO_PITCH_BELOW } from '../figures/instances';
+import { GEAR_UP, GEAR_UP_BELOW, MESH_STRIDE, NO_PITCH_BELOW } from '../figures/instances';
 import { WRECK_BASE, WRECK_GAIN } from '../figures/wreck';
 import { AMBIENT, GROUND_COLOR, KNEE, SHEEN_BASE, SHEEN_COLOR, SHEEN_UP, SKY_COLOR, SUN_COLOR, SUN_DIR, UNLIT } from '../figures/light';
 
@@ -167,6 +167,10 @@ function glslArticulate(): string {
   return `
 vec3 articulate(vec3 v, float yaw, float pitch, bool point) {
   float kind = aArt0.x;
+  // Landing gear up (GEAR_UP off the slot): a gear part folds into its pivot.
+  bool gearUp = pitch < ${f(GEAR_UP_BELOW)} && pitch > -999.0;
+  if (gearUp) pitch += ${f(GEAR_UP)};
+  if (kind > 4.5) return gearUp && point ? aArt0.yzw : v;
   if (kind > 3.5) {
     // A propeller or rotor: turned about its shaft by the clock, at the power the gun elevation slot carries.
     float power = pitch < -100.5 ? clamp((-101.0 - pitch) / 98.0, 0.0, 1.0) : 1.0;
@@ -202,9 +206,17 @@ vec3 articulate(vec3 v, float yaw, float pitch, bool point) {
 /** `articulate` in WGSL. */
 function wgslArticulate(): string {
   return `
-fn articulate(v0 : vec3<f32>, yaw : f32, pitch : f32, point : bool, art0 : vec4<f32>, art1 : vec4<f32>, art2 : vec4<f32>) -> vec3<f32> {
+fn articulate(v0 : vec3<f32>, yaw : f32, pitch0 : f32, point : bool, art0 : vec4<f32>, art1 : vec4<f32>, art2 : vec4<f32>) -> vec3<f32> {
   var v = v0;
   let kind = art0.x;
+  // Landing gear up (GEAR_UP off the slot): a gear part folds into its pivot.
+  let gearUp = pitch0 < ${f(GEAR_UP_BELOW)} && pitch0 > -999.0;
+  var pitch = pitch0;
+  if (gearUp) { pitch = pitch0 + ${f(GEAR_UP)}; }
+  if (kind > 4.5) {
+    if (gearUp && point) { return art0.yzw; }
+    return v;
+  }
   if (kind > 3.5) {
     var power = 1.0;
     if (pitch < -100.5) { power = clamp((-101.0 - pitch) / 98.0, 0.0, 1.0); }

@@ -15,6 +15,7 @@ import { CHUNK_SHIFT, CHUNK_U32, FLAG_GAPS, KEYS_PER_BUFFER, TRACK_U32 } from '.
 import { GAP_FADE_WGSL } from '../../data/gaps';
 import { dartIndex as dartIndexOf } from '../symbols/darts';
 import { WRECK_GREY, WRECK_TINT } from '../../figures/wreck';
+import { GEAR_UP, NO_PITCH } from '../../figures/instances';
 import { C_AGM, C_SAM, C_SHIP, D_BOMB, D_CHAFF, D_FLARE, D_GROUND, D_HELI, D_MARKER, D_MISC, D_MISSILE, D_ROCKET, D_SHELL, D_STATIC, FADE_FROM_F, FALLBACK_AIR, FALLBACK_GROUND, WEAPON_PX_F, WORD_BASE, WORD_DEAD, WORD_MOVING } from '../symbols/shaderConsts';
 
 const f = (x: number) => (Number.isInteger(x) ? `${x}.0` : `${x}`);
@@ -410,10 +411,10 @@ fn place(@builtin(global_invocation_id) gid : vec3<u32>, @builtin(num_workgroups
         if (ib < arrayLength(&tracks)) {
           let wa = tracks[ia];
           let wb = tracks[ib];
-          if ((wa & 0xffffu) != 0xffffu) {
+          if ((wa & 0xffffu) < 0xfffeu) {
             let ya = f32(wa & 0xffffu) / 65534.0 * 6.2831853 - 3.14159265;
             var yb = ya;
-            if ((wb & 0xffffu) != 0xffffu) { yb = f32(wb & 0xffffu) / 65534.0 * 6.2831853 - 3.14159265; }
+            if ((wb & 0xffffu) < 0xfffeu) { yb = f32(wb & 0xffffu) / 65534.0 * 6.2831853 - 3.14159265; }
             var dy = yb - ya;
             if (dy > 3.14159265) { dy = dy - 6.2831853; }
             if (dy < -3.14159265) { dy = dy + 6.2831853; }
@@ -425,6 +426,8 @@ fn place(@builtin(global_invocation_id) gid : vec3<u32>, @builtin(num_workgroups
             if ((wb >> 16u) != 0xffffu) { pb = f32(wb >> 16u) / 65534.0 * 3.14159265 - 1.57079633; }
             gPitch = pa + (pb - pa) * sP;
           }
+          // Landing gear up at the key (store.ts GEAR_UP_WORD): figures/instances.ts GEAR_UP off the slot.
+          if ((wa & 0xffffu) == 0xfffeu) { gPitch = ${f(NO_PITCH - GEAR_UP)}; }
         }
       }
       inst[o] = vec4<f32>(P, scale);

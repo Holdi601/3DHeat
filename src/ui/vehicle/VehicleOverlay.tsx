@@ -8,7 +8,7 @@ import { sectorOf, weaponOf, type Outcome, type VehicleHit } from '../../vehicle
 import { regionOf } from '../../vehicle/regions';
 import { stopToCss } from '../../render/colors';
 import { rgbCss } from '../../race/geometry';
-import { int, num, t } from '../../i18n';
+import { has, int, num, t } from '../../i18n';
 import { VehicleSheet } from './VehicleSheet';
 import { plateView } from '../../vehicle/stage';
 import { useEngine } from '../EngineContext';
@@ -83,6 +83,9 @@ export function VehicleOverlay() {
   );
 }
 
+/** A word the messages have, else the pack's own. */
+const word = (key: string, own: string): string => (has(key) ? t(key) : own);
+
 /** The plate under the pointer: its name, thickness and class, and what struck it over the hits shown. */
 function PlateCard() {
   const index = usePlateHover((h) => h.plate);
@@ -91,7 +94,11 @@ function PlateCard() {
   if (!pv || !plate) return null;
   const c = pv.counts[index];
   const rows: [string, string][] = [];
+  if (plate.group) rows.push([t('vehicle.plate.region'), word(`vehicle.region.${plate.group}`, plate.group)]);
+  if (plate.zone) rows.push([t('vehicle.plate.side'), word(`vehicle.zone.${plate.zone}`, plate.zone)]);
+  if (plate.part !== 'hull' || plate.group === 'zone') rows.push([t('vehicle.plate.part'), word(`vehicle.part.${plate.part.split('.')[0]}`, plate.part)]);
   if (plate.mm !== null) rows.push([t('vehicle.plate.thickness'), `${num(plate.mm, plate.mm < 10 ? 1 : 0)} mm`]);
+  if (plate.hp !== null) rows.push([t('vehicle.plate.hp'), num(plate.hp, 0)]);
   if (plate.cls) rows.push([t('vehicle.plate.class'), plate.cls]);
   rows.push([t('vehicle.plate.hits'), int(c.hits)]);
   if (c.through) rows.push([t('vehicle.plate.through'), int(c.through)]);

@@ -25,7 +25,7 @@ export interface MeshPart {
   name: string;
   /** A turret's ring centre, a gun's trunnion; template frame, metres. */
   pivot: Vec3;
-  joint?: 'yaw' | 'pitch' | 'spin';
+  joint?: 'yaw' | 'pitch' | 'spin' | 'gear';
   /** A spinning part's shaft and turns (radians a second at full power). */
   axis?: Vec3;
   rate?: number;
@@ -50,6 +50,8 @@ export interface MeshFigureData {
   prop?: { at: Vec3; diameter: number };
   /** Crease angle for the normals, degrees. */
   crease?: number;
+  /** The body's box without its thin parts (antennas): the figure's bounds where they would stand far off the body. */
+  bounds?: number[];
   /**
    * `built`: a hybrid - the built figure's hull and running gear (its road wheels, return rollers and track, which a
    * few thousand triangles of a free model lose) with this model's turret and gun, set on the built turret's ring;
@@ -271,6 +273,10 @@ function buildLod(m: MeshFigureData, lod: number, base?: Template): Template {
 export function buildMeshFigure(m: MeshFigureData, built?: () => Template): Template {
   const base = m.hull === 'built' && built ? built() : undefined;
   const t = buildLod(m, 0, base);
+  if (m.bounds?.length === 6 && m.bounds.every(Number.isFinite)) {
+    t.min = [m.bounds[0], m.bounds[1], m.bounds[2]];
+    t.max = [m.bounds[3], m.bounds[4], m.bounds[5]];
+  }
   let c: Template | undefined;
   let f: Template | undefined;
   const lod = (i: number): Template => {
