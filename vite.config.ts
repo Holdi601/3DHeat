@@ -7,6 +7,7 @@ import { closeSync, createReadStream, existsSync, openSync, readdirSync, readFil
 import { createHash } from 'node:crypto';
 import { brotliCompressSync, constants as zlibConstants, gzipSync } from 'node:zlib';
 import { encodePackFigure, type PackFigure } from './src/figures/figurepackBin.ts';
+import { figureFromModelGlb } from './src/figures/modelpack.ts';
 import { classify, glbExtras, jsonExtras, linkLayouts, type CatalogIndex, type CatalogItem } from './src/data/catalogIndex.ts';
 
 /**
@@ -240,6 +241,176 @@ function figurePack(): Plugin {
     });
   };
   return { name: 'heat3d-figure-pack', configureServer: handler, configurePreviewServer: handler };
+}
+
+/** Where the page asks for the local model pack (src/figures/modelpack.ts). */
+const MODEL_PACK_ROUTE = '/__heat3d/model-pack';
+
+/**
+ * The local model packs: per-unit vehicle models kept on this machine only
+ * (never in the repository), one pack per game, drawn in place of the figure
+ * each unit would get. Where they are comes from the `HEAT3D_MODEL_PACK`
+ * environment variable (paths separated by `;`) or the `modelPack` entry of the
+ * git-ignored `tools/local-data.json`: one path, a list, or `{ <game>: path }`;
+ * each path a pack's `model-pack.json` or the folder holding it. Without any the
+ * route answers 204 and nothing changes.
+ *
+ * The route answers with an index (per pack its game and, per unit, a tag, the
+ * domain, the type word, the real vehicle's names and the unit's further ids), in the
+ * order the packs are given, and, at `/u/<game>/<unit>?v=<tag>`, with one unit's
+ * model converted to a pack figure (`figureFromModelGlb`, then the figure pack's
+ * binary form), compressed, made once and kept for the most recent units asked
+ * for. A unit's tag changes when its file does, so the browser keeps a model
+ * until it is rebuilt.
+ */
+function modelPack(): Plugin {
+  const where = (): string[] => {
+    let given: unknown = process.env.HEAT3D_MODEL_PACK ? process.env.HEAT3D_MODEL_PACK.split(';') : undefined;
+    if (!given) {
+      try {
+        const local = fileURLToPath(new URL('./tools/local-data.json', import.meta.url));
+        given = existsSync(local) ? (JSON.parse(readFileSync(local, 'utf8')) as { modelPack?: unknown }).modelPack : undefined;
+      } catch {
+        given = undefined;
+      }
+    }
+    const list = typeof given === 'string' ? [given] : Array.isArray(given) ? given : given && typeof given === 'object' ? Object.values(given) : [];
+    return list
+      .filter((p): p is string => typeof p === 'string' && p.trim() !== '')
+      .map((p) => (/\.json$/i.test(p) ? p : `${p.replace(/[\\/]+$/, '')}/model-pack.json`));
+  };
+  interface PackUnit {
+    tag: string;
+    domain?: string;
+    type?: string;
+    name?: string;
+    names?: string[];
+    aliases?: string[];
+  }
+  interface Pack {
+    key: string;
+    game: string;
+    dir: string;
+    files: Record<string, string>;
+    units: Record<string, PackUnit>;
+  }
+  const packs = new Map<string, Pack>();
+  const bodies = new Map<string, Buffer>();
+  const load = (p: string): Pack | null => {
+    const st = statSync(p);
+    const key = `${p}|${st.size}|${st.mtimeMs}`;
+    const had = packs.get(p);
+    if (had?.key === key) return had;
+    packs.delete(p);
+    type Entry = { file?: string; domain?: string; type?: string; name?: string; names?: unknown; aliases?: unknown; key?: string; gameBuild?: string; source?: string };
+    const pack = JSON.parse(readFileSync(p, 'utf8')) as { format?: string; version?: number; game?: string; units?: Record<string, Entry> };
+    if (!pack || pack.format !== '3dheat-model-pack' || pack.version !== 1 || typeof pack.units !== 'object') return null;
+    const game = String(pack.game ?? 'game').toLowerCase().replace(/[^a-z0-9_-]/g, '');
+    const files: Record<string, string> = {};
+    const units: Record<string, PackUnit> = {};
+    for (const [id, e] of Object.entries(pack.units)) {
+      if (!e || typeof e.file !== 'string' || /[\\/]|\.\./.test(e.file)) continue;
+      const unit = id.toLowerCase();
+      files[unit] = e.file;
+      const tag = createHash('sha1').update(`${e.file}|${e.key ?? ''}|${e.gameBuild ?? ''}|${e.source ?? ''}`).digest('hex').slice(0, 16);
+      const strings = (x: unknown) => (Array.isArray(x) ? x.filter((a): a is string => typeof a === 'string') : []);
+      const aliases = strings(e.aliases);
+      const names = strings(e.names);
+      units[unit] = {
+        tag,
+        ...(e.domain ? { domain: e.domain } : {}),
+        ...(e.type ? { type: e.type } : {}),
+        ...(e.name ? { name: e.name } : {}),
+        ...(names.length ? { names } : {}),
+        ...(aliases.length ? { aliases } : {}),
+      };
+    }
+    const out = { key, game, dir: p.replace(/[\\/][^\\/]+$/, ''), files, units };
+    packs.set(p, out);
+    return out;
+  };
+  const current = (): Pack[] => {
+    const out: Pack[] = [];
+    for (const p of where()) {
+      try {
+        const k = existsSync(p) ? load(p) : null;
+        if (k) out.push(k);
+      } catch {
+        // A pack that does not read is left out.
+      }
+    }
+    return out;
+  };
+  const handler = (server: ViteDevServer | { middlewares: ViteDevServer['middlewares'] }) => {
+    server.middlewares.use(MODEL_PACK_ROUTE, (req, res) => {
+      const all = current();
+      const url = new URL(req.url ?? '/', 'http://pack');
+      const m = /^\/u\/([^/]+)\/(.+)$/.exec(url.pathname);
+      const unit = m ? decodeURIComponent(m[2]).toLowerCase() : null;
+      const pack = m ? all.find((k) => k.game === decodeURIComponent(m[1]).toLowerCase() && unit! in k.files) : undefined;
+      if (url.pathname !== '/' && !pack) {
+        res.statusCode = 404;
+        res.end();
+        return;
+      }
+      // No pack: 204 for the index (no console error at every page load).
+      if (!all.length) {
+        res.statusCode = 204;
+        res.end();
+        return;
+      }
+      const fresh = (tag: string) => {
+        res.setHeader('ETag', tag);
+        if (req.headers['if-none-match'] !== tag) return false;
+        res.statusCode = 304;
+        res.end();
+        return true;
+      };
+      if (!pack || unit === null) {
+        const index = JSON.stringify({ version: 1, packs: all.map((k) => ({ game: k.game, units: k.units })) });
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Cache-Control', 'no-cache');
+        if (fresh(`"${createHash('sha1').update(index).digest('hex').slice(0, 20)}"`)) return;
+        res.end(index);
+        return;
+      }
+      const tag = pack.units[unit].tag;
+      res.setHeader('Cache-Control', url.searchParams.get('v') === tag ? 'public, max-age=31536000, immutable' : 'no-cache');
+      res.setHeader('Content-Type', 'application/octet-stream');
+      res.setHeader('Vary', 'Accept-Encoding');
+      if (fresh(`"${tag}"`)) return;
+      const accept = String(req.headers['accept-encoding'] ?? '');
+      const enc = /\bbr\b/.test(accept) ? 'br' : /\bgzip\b/.test(accept) ? 'gzip' : '';
+      const bodyKey = `${enc}|${pack.game}|${unit}|${tag}`;
+      let body = bodies.get(bodyKey);
+      if (!body) {
+        let raw: Buffer;
+        try {
+          raw = Buffer.from(encodePackFigure(figureFromModelGlb(readFileSync(`${pack.dir}/${pack.files[unit]}`))));
+        } catch {
+          res.statusCode = 404;
+          res.end();
+          return;
+        }
+        body =
+          enc === 'br'
+            ? brotliCompressSync(raw, { params: { [zlibConstants.BROTLI_PARAM_QUALITY]: 9, [zlibConstants.BROTLI_PARAM_SIZE_HINT]: raw.length } })
+            : enc === 'gzip'
+              ? gzipSync(raw, { level: 9 })
+              : raw;
+        // Kept for the most recent units asked for: packs of thousands are never all in memory.
+        if (bodies.size >= 400) bodies.delete(bodies.keys().next().value!);
+        bodies.set(bodyKey, body);
+      } else {
+        bodies.delete(bodyKey);
+        bodies.set(bodyKey, body);
+      }
+      if (enc) res.setHeader('Content-Encoding', enc);
+      res.setHeader('Content-Length', body.length);
+      res.end(body);
+    });
+  };
+  return { name: 'heat3d-model-pack', configureServer: handler, configurePreviewServer: handler };
 }
 
 /** Where the page asks for the catalogue folder's index (src/ui/panels/CatalogSection.tsx). */
@@ -657,7 +828,7 @@ function selfUpdate(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [react(), hostMemory(), selfUpdate(), figurePack(), localRanges(), levelLayouts(), catalogFolder(), campaignFiles()],
+  plugins: [react(), hostMemory(), selfUpdate(), figurePack(), modelPack(), localRanges(), levelLayouts(), catalogFolder(), campaignFiles()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

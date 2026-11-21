@@ -74,3 +74,18 @@ The **Figures** section of the replay sidebar sets the size, the smallest size o
 ## An optional local figure pack
 
 You can keep an optional pack of your own figures on your own machine. Its figures take the place of catalogue figures of the same names. It is never part of the repository or a published build; without one, nothing changes.
+
+## Optional local model packs
+
+You can also keep packs of per-unit vehicle models on your own machine, one per game. A unit in a pack is drawn as its own model, at its true size and about its own origin, instead of the figure it would otherwise get. Its turret and gun turn and raise with the data, as on the figures, and hit marks and the vehicle heatmap land on its surface. The packs are never part of the repository or a published build; without one, nothing changes.
+
+A unit is drawn as the first of:
+
+1. its own model: a unit of its id in a pack;
+2. another pack's model of the same vehicle: a unit that stands for the same catalogue figure, or whose real vehicle name matches the unit's;
+3. its figure.
+
+The viewer loads the packs from `HEAT3D_MODEL_PACK` (paths separated by `;`), or the `modelPack` entry of `tools/local-data.json`: one path, a list, or `{ "<game>": path }`, earlier packs first where two have the same vehicle. A pack is a folder with `model-pack.json` and one `.glb` per unit:
+
+- `model-pack.json`: `{ "format": "3dheat-model-pack", "version": 1, "game": "...", "units": { "<unit id>": { "file": "<unit id>.glb", "name": "T-80UD", "names": [...], "aliases": [...], "domain": "ground", "type": "..." } } }`. `name` is the real vehicle's name, the same in every game's pack; `aliases` are further unit ids drawn with the same file.
+- Each `.glb` has a root node `unit`; under it `lod0`, `lod1` and `lod2` (full, coarse, far), each with mesh nodes `hull`, `gear`, `turret` (extras `joint: "yaw"`, `pivot`) and `gun` (extras `joint: "pitch"`, `pivot`). Positions are metres, x forward, y up, z right, about the unit's origin. A `dm` node may hold further parts with data in their extras; they are not drawn.

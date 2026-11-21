@@ -12,6 +12,8 @@ import { filterList, hitsOf, type HitSet, type VehicleHit, type VehicleInfo } fr
 import { figureOfVehicle, templateOfFigure } from './scene';
 import { placeBoxHits } from './boxes';
 import { CATALOG } from '../figures/catalog';
+import { loadPackFigures, packFigurePending, packFiguresVersion } from '../figures/figurepack';
+import { isOwnModel } from '../figures/modelpack';
 import { areaKeep, inArea } from './area';
 
 export interface VehicleView {
@@ -29,7 +31,7 @@ export interface VehicleView {
   /**
    * Whether the hits are moved onto the figure (`fit.ts`): for points in a
    * game model's own frame, not for those already in the figure's (CS2's
-   * body, World of Tanks' component boxes).
+   * body, World of Tanks' component boxes, the unit's own model in a local pack).
    */
   fits: boolean;
   /** Whether the volumes drawn on the level restrict the hits, and how many of the vehicle's hits of the layer they leave out. */
@@ -63,29 +65,38 @@ function hitsOfVehicle(set: HitSet, vehicle: string, figure: string): { all: Veh
 
 type Choice = Pick<VehicleState, 'vehicle' | 'matches' | 'shooters' | 'weapons' | 'layer' | 'outcomes' | 'areaBy'>;
 const KEYS: (keyof Choice)[] = ['vehicle', 'matches', 'shooters', 'weapons', 'layer', 'outcomes', 'areaBy'];
-let last: { d: Dataset | null; s: Choice; keep: ReturnType<typeof areaKeep>; out: VehicleView } | null = null;
+let last: { d: Dataset | null; s: Choice; keep: ReturnType<typeof areaKeep>; packs: number; out: VehicleView } | null = null;
 
 export function vehicleView(d: Dataset | null, s: Choice): VehicleView {
   const keep = areaKeep();
-  if (last && last.d === d && last.keep === keep && KEYS.every((k) => last!.s[k] === s[k])) return last.out;
+  const packs = packFiguresVersion();
+  if (last && last.d === d && last.keep === keep && last.packs === packs && KEYS.every((k) => last!.s[k] === s[k])) return last.out;
   let out = EMPTY;
   if (d) {
     const set = hitsOf(d);
     const list = [...set.vehicles.values()].sort((a, b) => b.hits + b.modules - (a.hits + a.modules));
     const vehicle = (s.vehicle ? set.vehicles.get(s.vehicle) : undefined) ?? list[0] ?? null;
     if (vehicle) {
-      const figure = figureOfVehicle(vehicle);
+      let figure = figureOfVehicle(vehicle);
+      // A local pack's model of the vehicle (`figurepack.ts`) once its data is here; until then the figure it stands in for.
+      if (packFigurePending(figure)) {
+        void loadPackFigures([figure]);
+        const at = figure.indexOf('@');
+        if (at > 0 && CATALOG[figure.slice(0, at)]) figure = figure.slice(0, at);
+      }
       const own = hitsOfVehicle(set, vehicle.id, figure);
       const layer = filterList(own.all, { vehicle: null, matches: null, shooters: null, weapons: null, layer: s.layer });
       // The area first: the filter lists offer what is in it.
       const all = keep ? inArea(d, set, layer, keep, s.areaBy) : layer;
       const hits = filterList(all, { vehicle: null, matches: s.matches, shooters: s.shooters, weapons: s.weapons, outcomes: s.outcomes, layer: s.layer });
       const person = CATALOG[figure]?.domain === 'person';
-      const fits = !person && !own.all.some((h) => h.box !== null);
+      // The unit's own model in a local pack stands about the unit's own origin, as the game's hit points do: they are
+      // not moved (another game's model of the vehicle is fitted like any figure).
+      const fits = !person && !isOwnModel(figure, vehicle.id) && !own.all.some((h) => h.box !== null);
       const anyPoint = own.all.some((h) => h.local !== null || h.box !== null || h.region !== null);
       out = { set, vehicle, figure, hits, all, placed: own.placed, unplaced: set.unplacedBy.get(vehicle.id) ?? 0, fits, area: !!keep, areaOut: layer.length - all.length, beforeArea: layer, anyPoint };
     } else out = { ...EMPTY, set };
   }
-  last = { d, keep, s: { vehicle: s.vehicle, matches: s.matches, shooters: s.shooters, weapons: s.weapons, layer: s.layer, outcomes: s.outcomes, areaBy: s.areaBy }, out };
+  last = { d, keep, packs, s: { vehicle: s.vehicle, matches: s.matches, shooters: s.shooters, weapons: s.weapons, layer: s.layer, outcomes: s.outcomes, areaBy: s.areaBy }, out };
   return out;
 }

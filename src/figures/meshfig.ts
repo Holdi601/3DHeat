@@ -30,6 +30,8 @@ export interface MeshPart {
   parent?: number;
   /** The team colour's shade on this part (default `HULL_TONE`). */
   tone?: number;
+  /** Running gear: the whole part in the track colour. */
+  track?: boolean;
 }
 
 export interface MeshFigureData {
@@ -190,7 +192,7 @@ function buildLod(m: MeshFigureData, lod: number, base?: Template): Template {
       const a = idx[t],
         b = idx[t + 1],
         c = idx[t + 2];
-      const dst = gear && (p[a * 3 + 1] + p[b * 3 + 1] + p[c * 3 + 1]) / 3 < gear.top && Math.abs(p[a * 3 + 2] + p[b * 3 + 2] + p[c * 3 + 2]) / 3 > gear.inner ? fixed : team;
+      const dst = part.track || (gear && (p[a * 3 + 1] + p[b * 3 + 1] + p[c * 3 + 1]) / 3 < gear.top && Math.abs(p[a * 3 + 2] + p[b * 3 + 2] + p[c * 3 + 2]) / 3 > gear.inner) ? fixed : team;
       dst.tri(a, b, c);
     }
     const crease = m.crease ?? CREASE;

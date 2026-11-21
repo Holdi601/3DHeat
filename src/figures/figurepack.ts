@@ -29,6 +29,7 @@
 
 import { decodePackFigure } from './figurepackBin';
 import { buildMeshFigure, type MeshFigureData } from './meshfig';
+import { kinFor, MODEL_PACK_ROUTE, modelVariantName, vehicleKey, type ModelPackIndex } from './modelpack';
 import type { Template } from './kit';
 
 export interface FigurePack {
@@ -59,11 +60,27 @@ const added = new Set<string>();
 /** Aliases a pack's units set, with what each was before (to put back; undefined = none). */
 const aliased = new Map<string, string | undefined>();
 let aliasTable: Record<string, string> | undefined;
-/** An installed index's figures: name -> tag. */
-const indexed = new Map<string, string>();
+/** An installed index's figures: name -> tag, and where the figure is fetched (a figure pack's or a model pack's route). */
+const indexed = new Map<string, { tag: string; at: string }>();
 /** Figures fetched for an installed index, and fetches under way. */
 const fetched = new Map<string, MeshFigureData>();
 const fetching = new Map<string, Promise<void>>();
+/** Counts every change of what the packs draw (an index installed or removed, a figure's data arrived): for views that keep what they built. */
+let version = 0;
+
+/** Changes whenever a pack figure's data arrives or a pack is installed or removed (`packFigurePending`). */
+export function packFiguresVersion(): number {
+  return version;
+}
+
+/**
+ * Whether `name` is a pack figure whose data is not here yet: built now it would be the figure it stands in for. A
+ * view on the main thread that keeps its builds asks `loadPackFigures` for it and builds it once `packFiguresVersion`
+ * has moved on.
+ */
+export function packFigurePending(name: string): boolean {
+  return indexed.has(name) && !fetched.has(name);
+}
 
 function valid(m: unknown): m is MeshFigureData {
   const d = m as MeshFigureData;
@@ -110,20 +127,78 @@ export function installFigurePackIndex<E extends Entry>(
 ): number {
   if (!index || index.version !== 1 || typeof index.figures !== 'object') return 0;
   const names = Object.keys(index.figures).filter((n) => typeof index.figures[n] === 'string');
-  for (const n of names) indexed.set(n, index.figures[n]);
-  return install(
-    catalog,
-    names,
-    (name, own) => () => {
-      const m = fetched.get(name);
-      if (m) return buildMeshFigure(m, own);
-      void loadPackFigures([name]);
-      return own();
-    },
-    index.units,
-    builders,
-    aliases,
-  );
+  for (const n of names) indexed.set(n, { tag: index.figures[n], at: `${FIGURE_PACK_ROUTE}/f/${encodeURIComponent(n)}` });
+  return install(catalog, names, lazyBuilder, index.units, builders, aliases);
+}
+
+/** A pack figure's builder: from its data once `loadPackFigures` has it, until then as `own` (and the data is asked for). */
+const lazyBuilder = (name: string, own: () => Template) => () => {
+  const m = fetched.get(name);
+  if (m) return buildMeshFigure(m, own);
+  void loadPackFigures([name]);
+  return own();
+};
+
+/**
+ * Installs the local model packs' index (`modelpack.ts`) over whatever figure each unit had. Each pack unit becomes a
+ * variant of that figure (`modelVariantName`), drawn from its model once fetched, and a unit is drawn as, in turn:
+ *
+ * 1. its own model: a pack unit of that id (or one of its `aliases`), the first pack in the index order that has it;
+ * 2. another game's model of the same vehicle: an alias whose catalogue figure some pack unit's id also stands for
+ *    (two games' T-72B3 both drawn as `t-72b3`), from the first pack that has one, the unit with the
+ *    shortest id there; or whose name, letters and digits only, is one of a pack unit's real vehicle names (`name`, `names`);
+ * 3. its figure, as before.
+ *
+ * Install it after a figure pack, so a model takes precedence over the pack's figure. Pack units with no figure to
+ * stand in for are skipped. Returns how many pack units it installed.
+ */
+export function installModelPackIndex<E extends Entry>(
+  catalog: Record<string, E>,
+  index: ModelPackIndex,
+  builders: Record<string, () => Template> | undefined,
+  aliases: Record<string, string>,
+): number {
+  if (!index || index.version !== 1 || !Array.isArray(index.packs)) return 0;
+  const names: string[] = [];
+  const units: Record<string, string> = {};
+  const byFigure = new Map<string, { name: string; id: string; pack: number }>();
+  const byName = new Map<string, string>();
+  const base = (f: string) => (f.indexOf('@') > 0 ? f.slice(0, f.indexOf('@')) : f);
+  for (const [pi, pack] of index.packs.entries()) {
+    if (!pack || typeof pack.game !== 'string' || typeof pack.units !== 'object') continue;
+    for (const [unit, info] of Object.entries(pack.units)) {
+      const id = unit.toLowerCase();
+      if (!info || typeof info.tag !== 'string' || units[id]) continue;
+      const kin = kinFor(id, info, (n) => !!catalog[n], aliases);
+      if (!kin) continue;
+      const name = modelVariantName(kin, pack.game, id);
+      indexed.set(name, { tag: info.tag, at: `${MODEL_PACK_ROUTE}/u/${encodeURIComponent(pack.game)}/${encodeURIComponent(id)}` });
+      names.push(name);
+      for (const k of [id, ...(info.aliases ?? []).map((a) => a.toLowerCase())]) units[k] ??= name;
+      // Only an id the catalogue knows by name speaks for its figure's vehicle (not one placed by its type word).
+      const known = aliases[id];
+      if (known) {
+        const had = byFigure.get(base(known));
+        if (!had || (had.pack === pi && id.length < had.id.length)) byFigure.set(base(known), { name, id, pack: pi });
+      }
+      for (const n of [info.name, ...(info.names ?? [])]) if (typeof n === 'string' && vehicleKey(n) && !byName.has(vehicleKey(n))) byName.set(vehicleKey(n), name);
+    }
+  }
+  install(catalog, names, lazyBuilder, units, builders, aliases);
+  // Other games' units of the same vehicles: aliases left on a figure a pack model stands for, and real names.
+  const lend = (key: string, name: string) => {
+    if (!catalog[name] || aliases[key] === name) return;
+    if (!aliased.has(key)) aliased.set(key, aliases[key]);
+    aliases[key] = name;
+  };
+  aliasTable = aliases;
+  for (const [key, fig] of Object.entries(aliases)) {
+    if (units[key] || fig.includes('@model:')) continue;
+    const v = byFigure.get(base(fig))?.name ?? byName.get(vehicleKey(key));
+    if (v) lend(key, v);
+  }
+  for (const [key, v] of byName) if (!aliases[key] && !catalog[key]) lend(key, v);
+  return names.length;
 }
 
 /**
@@ -134,12 +209,15 @@ export function installFigurePackIndex<E extends Entry>(
 export function loadPackFigures(names: Iterable<string>): Promise<void> {
   const waits: Promise<void>[] = [];
   for (const name of names) {
-    const tag = indexed.get(name);
-    if (tag === undefined || fetched.has(name)) continue;
+    const ix = indexed.get(name);
+    if (ix === undefined || fetched.has(name)) continue;
     let w = fetching.get(name);
     if (!w) {
-      w = fetchPackFigure(name, tag).then((m) => {
-        if (m && indexed.get(name) === tag) fetched.set(name, m);
+      w = fetchPackFigure(ix.at, ix.tag).then((m) => {
+        if (m && indexed.get(name)?.tag === ix.tag) {
+          fetched.set(name, m);
+          version++;
+        }
         fetching.delete(name);
       });
       fetching.set(name, w);
@@ -154,9 +232,9 @@ export function packFigureLoaded(name: string): boolean {
   return fetched.has(name);
 }
 
-async function fetchPackFigure(name: string, tag: string): Promise<MeshFigureData | null> {
+async function fetchPackFigure(at: string, tag: string): Promise<MeshFigureData | null> {
   try {
-    const r = await fetch(`${FIGURE_PACK_ROUTE}/f/${encodeURIComponent(name)}?v=${encodeURIComponent(tag)}`);
+    const r = await fetch(`${at}?v=${encodeURIComponent(tag)}`);
     if (!r.ok) return null;
     const m = decodePackFigure(await r.arrayBuffer());
     return valid(m) ? m : null;
@@ -174,6 +252,7 @@ function install<E extends Entry>(
   aliases?: Record<string, string>,
 ): number {
   let n = 0;
+  version++;
   const have = new Set<string>();
   for (const name of names) {
     const at = name.indexOf('@');
@@ -231,6 +310,7 @@ export function removeFigurePack<E extends Entry>(catalog: Record<string, E>, bu
   indexed.clear();
   fetched.clear();
   fetching.clear();
+  version++;
 }
 
 /**
