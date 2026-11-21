@@ -58,6 +58,9 @@ function part(deck: number, plan: P2[], top: P2[], bottom: P2[] | number, round 
   return { x: 0, up: -deck, side, ...size(plan, top, b), outline: { plan, top, bottom: b, round, stations: 6 } };
 }
 
+/** A gun mount's pivot post from the open compartment's floor up into the mount (reaching `up` below its base), turning with it. */
+const post = (up: number, r = 0.18): AddOn => ({ on: 'turret', kind: 'drum', at: [0, 0, 0.05 - up / 2], size: [2 * r, 2 * r, up + 0.1] });
+
 /** A part on a turret, in the turret's frame (forward from its centre, up from its base): mantlets, cupolas, bins, skirts. */
 function on(t: TurretSpec, plan: P2[], top: P2[], bottom: P2[] | number, round = 8, side = 0): TurretSpec {
   const xs = plan.map((p) => p[0]);
@@ -1694,14 +1697,16 @@ const S251: GroundSpec = {
   halftrack: { axleTrack: 1.6 },
   roadWheelRadius: 0.27,
   turrets: [
-    // The long fenders and the stowage boxes on them, the full length of the vehicle; the machine gun's shield.
+    // The long fenders and the stowage boxes on them, the full length of the vehicle; the machine gun's shield on the
+    // open compartment's front edge, over the driver's visor plate.
     ...[-1, 1].map((s) => part(1.75, [[-2.35, 0.08], [2.85, 0.08]], [[-2.35, 0.86], [0.7, 0.86], [1.7, 0.98], [2.85, 0.92]], [[-2.35, 0.72], [0.7, 0.72], [1.7, 0.86], [2.85, 0.8]], 16, s * 0.97)),
     // The front axle's beam and leaf springs between the wheels.
     part(1.75, [[2.22, 0.8], [2.48, 0.8]], [[2.22, 0.48], [2.48, 0.48]], 0.32, 16),
-    part(1.75, [[-0.24, 0.3], [-0.12, 0.28]], [[-0.24, 1.98], [-0.12, 1.95]], 1.7, 12),
+    part(1.75, [[0.34, 0.3], [0.48, 0.28]], [[0.34, 1.98], [0.48, 1.95]], 1.6, 12),
   ],
 };
-G['sdkfz-251'] = { ...S251, cls: 'halftrack', guns: [{ mount: 'hull', length: 1.2, calibre: 0.008, x: -0.1, up: 0.1 }] };
+// The MG 34 through its shield, its axis 1.87 m up.
+G['sdkfz-251'] = { ...S251, cls: 'halftrack', guns: [{ mount: 'hull', length: 1.2, calibre: 0.008, x: 0.25, at: 1.07 }] };
 // Ausf. D (1943-45): the same running gear and bonnet, the simplified body of fewer, larger plates - the rear one flat
 // across, leaning back from the floor to the roof - 5.98 m long.
 const S251D = ((): GroundSpec => {
@@ -1717,19 +1722,20 @@ const S251D = ((): GroundSpec => {
   };
 })();
 // Sd.Kfz. 251/9 (late, on the Ausf. D): the short 7.5 cm K 51 L/24 on its mount on the fighting compartment's front edge
-// behind a small shield, 2.07 m high over it; the barrel 1.8 m.
+// behind a small shield, 2.07 m high over it; the barrel 1.8 m. The mount stands on its pivot post from the
+// compartment's floor (0.8 m up), the shield traversing with the gun.
 G['sdkfz-251-9'] = {
   ...S251D, cls: 'assault-gun',
   turret: { x: -0.25, length: 0.9, width: 0.9, height: 0.3, shape: 'box', ring: false },
-  turrets: [...S251D.turrets!, part(1.75, [[0.05, 0.12], [0.15, 0.45], [0.25, 0.45]], [[0.05, 2.07], [0.25, 2.07]], 1.7, 12)],
+  addOns: [post(1.2), { on: 'turret', kind: 'box', at: [0.4, 0, 0.135], size: [0.2, 0.9, 0.37] }],
   guns: [{ mount: 'turret', length: 1.45, calibre: 0.075, at: 0.45, up: 0.15, elevation: 0 }],
 };
 // Sd.Kfz. 251/21 (Ausf. D): the Drilling - three 15 mm or 20 mm MG 151 side by side on a pedestal in the troop
-// compartment behind a three-part shield.
+// compartment behind a three-part shield, which traverses with them.
 G['sdkfz-251-21'] = {
   ...S251D, cls: 'spaa',
   turret: { x: -0.7, length: 0.8, width: 0.95, height: 0.35, shape: 'box', ring: false },
-  turrets: [...S251D.turrets!, part(1.75, [[-0.45, 0.2], [-0.35, 0.55], [-0.25, 0.55]], [[-0.45, 2.15], [-0.25, 2.15]], 1.65, 12)],
+  addOns: [post(1.3), { on: 'turret', kind: 'box', at: [0.35, 0, 0.15], size: [0.2, 1.1, 0.5] }],
   guns: [{ mount: 'turret', count: 3, length: 1.6, calibre: 0.02, at: 0.4, up: 0.25, spread: 0.16, elevation: 0.15 }],
 };
 G['sdkfz-251-wurfrahmen'] = { ...G['sdkfz-251'], cls: 'mlrs', missiles: [{ mount: 'hull', rows: 3, cols: 1, length: 1.2, diameter: 0.32, elevation: 0.5, x: -0.6, up: 0.2, side: 1.15 }, { mount: 'hull', rows: 3, cols: 1, length: 1.2, diameter: 0.32, elevation: 0.5, x: -0.6, up: 0.2, side: -1.15 }] };
@@ -1755,8 +1761,8 @@ G['m3-halftrack'] = {
 };
 G['m2a1-halftrack'] = { ...G['m3-halftrack'], length: 5.96 };
 // M3 GMC: the 75 mm on its pedestal in the body behind the cab, inside the box-shaped gun shield whose top stands
-// 0.65 m over the body (8 ft 2 in = 2.5 m overall).
-G['m3-gmc'] = { ...G['m3-halftrack'], cls: 'tank-destroyer', turrets: [...G['m3-halftrack'].turrets!, part(1.85, [[-0.85, 0.6], [-0.1, 0.62]], [[-0.85, 2.38], [-0.1, 2.5]], 1.55, 16)], guns: [{ mount: 'hull', length: 2.6, calibre: 0.075, x: -0.2, at: 1.15 }] };
+// 0.65 m over the body (8 ft 2 in = 2.5 m overall); the pedestal from the body's floor up into the shield.
+G['m3-gmc'] = { ...G['m3-halftrack'], cls: 'tank-destroyer', turrets: [...G['m3-halftrack'].turrets!, part(1.85, [[-0.85, 0.6], [-0.1, 0.62]], [[-0.85, 2.38], [-0.1, 2.5]], 1.55, 16), part(1.85, [[-0.7, 0.3], [-0.25, 0.3]], [[-0.7, 1.62], [-0.25, 1.62]], 0.9, 12)], guns: [{ mount: 'hull', length: 2.6, calibre: 0.075, x: -0.2, at: 1.15 }] };
 // T48 GMC (the Soviet SU-57): the M3 GMC's layout with the 57 mm M1 (50 calibres, 2.85 m) behind the shield.
 G['t48-gmc'] = { ...G['m3-gmc'], guns: [{ mount: 'hull', length: 2.85, calibre: 0.057, x: -0.2, at: 1.15 }] };
 // M16: the M45 quad mount in the back of the body, its shields 0.6 m over the body's top (FM 30-40, "Multiple Gun
@@ -2714,8 +2720,8 @@ G['m-51'] = sherman({ L: 5.84, W: 2.99, glacisX: 0.7, cast: true, hvss: true, bo
 // the 76 mm 29-K gun on its pedestal, raised.
 G['yag-10-29k'] = { ...truck('spaa', 7.0, 2.5, 0.5, [0.65, -0.35, -0.68], 1.9, 1.6, 0.85, 2.3, 1.45, 0), turret: { x: -1.5, length: 1.3, width: 1.3, height: 0.7, shape: 'cylinder', up: -0.85 }, guns: [{ mount: 'turret', length: 4.0, calibre: 0.076, elevation: 0.55, at: 0.8 }] };
 // TCM-20 (1960s; the M3 half-track, 6.18 x 2.22 m): the M45-type power mount in the open body with a 20 mm HS.404 in
-// place of each pair of .50s, its armoured shields either side.
-G['tcm-20'] = { ...G['m3-halftrack'], cls: 'spaa', turret: { ...turret(-1.25, [[-0.55, 0.6], [0.55, 0.6]], [[-0.55, 0.9], [0.55, 0.85]], 10, 0.55), up: -0.55 }, guns: [{ mount: 'turret', count: 2, spread: 1.0, length: 1.7, calibre: 0.02, elevation: 0.3, at: 0.6 }] };
+// place of each pair of .50s, its armoured shields either side; the mount turns on its base on the body's floor.
+G['tcm-20'] = { ...G['m3-halftrack'], cls: 'spaa', turret: { ...turret(-1.25, [[-0.55, 0.6], [0.55, 0.6]], [[-0.55, 0.9], [0.55, 0.85]], 10, 0.55), up: -0.55 }, addOns: [post(0.6, 0.35)], guns: [{ mount: 'turret', count: 2, spread: 1.0, length: 1.7, calibre: 0.02, elevation: 0.3, at: 0.6 }] };
 // Type 2 Ho-I (1944; the Chi-He's hull, 5.73 x 2.33 m, 2.58 m): the bigger, taller turret with the short 75 mm Type 99
 // and its cupola.
 G['ho-i'] = ww2({ ...CHIHE, turret: turret(0.15, [[-1.2, 0.65], [-1.0, 0.86], [0.6, 0.9], [0.95, 0.66]], [[-1.2, 0.75], [0.95, 0.78]], 8, 0.95, 0.15), gun: { length: 1.55, calibre: 0.075, at: 0.45 }, turretParts: (t) => [cupola(t, -0.35, 0.15, 0.3, 0.18)] });

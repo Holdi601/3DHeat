@@ -275,8 +275,9 @@ G['challenger-1'] = { ...CR2, cupola: false, guns: [{ mount: 'turret', length: 5
 G['challenger-2'] = { ...CR2, addOns: [{ on: 'turret', kind: 'drum', at: [0.9, -0.62, 0.99], size: [0.42, 0.42, 0.4] }, tb(1.35, 0.62, 0.88, 0.5, 0.4, 0.2)] };
 // Challenger 2 TES "Megatron" (2008; 4.2 m wide with the armour): the Dorchester packs hung along the hull's sides over the
 // skirts and on the turret's sides, reactive armour across the nose, slat armour round the engine bay, the jammers' "bird
-// table" over the turret's back with its four aerials, the remote weapon station on the loader's side.
-const BIRD_TABLE: AddOn[] = [tb(-2.45, 0, 1.2, 1.0, 1.1, 0.08, DARK), ...[[-2.85, -0.42], [-2.85, 0.42], [-2.05, -0.42], [-2.05, 0.42]].map(([x, s]) => ({ on: 'turret', kind: 'tube', at: [x, s, 1.2], to: [x, s, 2.0], size: [0.04, 0.03, 0], metal: true } as AddOn))];
+// table" over the turret's back on its four posts, which carry the aerials above it, the remote weapon station on the
+// loader's side.
+const BIRD_TABLE: AddOn[] = [tb(-2.45, 0, 1.2, 1.0, 1.1, 0.08, DARK), ...[[-2.85, -0.42], [-2.85, 0.42], [-2.05, -0.42], [-2.05, 0.42]].map(([x, s]) => ({ on: 'turret', kind: 'tube', at: [x, s, 0.7], to: [x, s, 2.0], size: [0.04, 0.03, 0], metal: true } as AddOn))];
 G['challenger-2-tes'] = { ...CR2, addOns: [...G['challenger-2'].addOns!, hb(0.6, 1.93, 0.98, 6.2, 0.32, 0.78, M), tb(-0.1, 1.78, 0.42, 2.4, 0.26, 0.58, M), hb(4.06, 0, 0.8, 0.24, 3.3, 0.48, { pitch: 0.35 }), ...slats(-4.3, -2.5, 1.95, 1.25, 0.95), ...BIRD_TABLE, tb(0.45, 0.72, 0.99, 0.55, 0.45, 0.36, DARK)] };
 // Challenger 3 (2027): the L55A1 smoothbore, the Orion commander's sight raised high, Trophy on the turret's sides, a remote station.
 G['challenger-3'] = { ...CR2, guns: [{ mount: 'turret', length: 6.6, calibre: 0.12, sleeve: 0.85, at: 0.45 }], addOns: [{ on: 'turret', kind: 'drum', at: [0.9, -0.62, 1.09], size: [0.45, 0.45, 0.6] }, tb(1.35, 0.62, 0.91, 0.55, 0.45, 0.26), tb(0.7, 1.85, 0.5, 0.9, 0.42, 0.55, M), tb(-1.3, 0.6, 0.98, 0.6, 0.45, 0.4, DARK)] };
@@ -855,9 +856,6 @@ G['buk-m3-9a317m'] = { ...BUK, missiles: [{ mount: 'turret-top', rows: 2, cols: 
 const OSA = { ...AD('9a33-osa'), axleAt: [0.55, 0.0, -0.55], hullOutline: { top: [[-4.57, 1.7], [-4.3, 2.0], [1.8, 2.0], [4.57, 1.1]], bottom: [[-4.57, 1.0], [-3.8, 0.6], [3.6, 0.6], [4.57, 1.1]], plan: [[-4.57, 0.9], [-3.8, 1.37], [3.4, 1.37], [4.57, 0.8]], round: 6, stations: 14 } as GroundSpec['hullOutline'] };
 G['9a33-osa'] = { ...OSA };
 G['9a33bm2-osa'] = { ...OSA, missiles: [{ mount: 'turret-side', rows: 2, cols: 1, length: 3.15, diameter: 0.21, rail: true, elevation: 0.2, up: 0.55 }] };
-// Pantsir-SM (2019): the S1 with a bigger, taller search radar face.
-const PANTSIR = AD('pantsir-s1');
-G['pantsir-sm'] = { ...PANTSIR, radars: [{ kind: 'panel', x: -0.4, up: 0.6, size: 2.6, height: 1.6, depth: 0.35 }, ...(PANTSIR.radars ?? []).slice(1)] };
 // Tornado-G: the Grad's 40 tubes on a KamAZ-5350; Tornado-S: the Smerch's twelve on the MAZ-543M.
 G['tornado-g'] = { cls: 'mlrs', ...KAMAZ_43101, bed: 'flat', hullHeight: 1.45, missiles: [{ mount: 'hull', rows: 4, cols: 10, length: 3.0, diameter: 0.122, elevation: 0.28, x: -1.7, up: 1.1 }] };
 G['tornado-s'] = { ...GM('bm-30-smerch'), missiles: [{ mount: 'hull', rows: 3, cols: 4, length: 7.6, diameter: 0.3, pod: true, elevation: 0.1, x: -2.2, up: 0.8 }] };
@@ -1054,12 +1052,13 @@ G['s-75-launcher'] = { cls: 'sam', chassis: 'pedestal', bare: true, length: 6.5,
   ...missile(along(S75_PIVOT, S75_E, -0.7, 0.62), S75_E, V750),
 ] };
 // SNR-75 Fan Song (antenna sizes est): the antenna cabin on a two-axle trailer; on its roof the antenna group turning on its
-// ring - the horizontal trough (UV-10) in the middle, the upright trough (UV-11) at its left end, two small LORO dishes above.
+// ring - the horizontal trough (UV-10) in the middle, carried on the turntable's housing, the upright trough (UV-11) at
+// its left end, two small LORO dishes above on an arm across their mast.
 G['snr-75-fan-song'] = { cls: 'radar', chassis: 'trailer', length: 8.0, width: 2.7, hullHeight: 1.3, axles: 2, axleAt: [0.45, -0.55], wheelRadius: 0.5, addOns: [
-  kung(-3.7, 2.4, 2.5, 1.3, 3.5), hd(1.0, 0, 3.65, 1.4, 0.3, DARK), bx(0.4, 1.3, 0, 3.7, 4.2, 1.2),
+  kung(-3.7, 2.4, 2.5, 1.3, 3.5), hd(1.0, 0, 3.65, 1.4, 0.3, DARK), bx(0.4, 1.6, 0, 3.7, 4.4, 1.2),
   sl([1.4, 0.2, 4.7], rect(0.45, 1.8), 0.08, 'front', { ...LT, roll: Math.PI / 2, pitch: 0.3, curve: 0.3 }), rod([2.15, -1.4, 4.45], [2.15, 1.8, 4.45], 0.12, DK),
   sl([1.4, -1.95, 4.9], rect(0.45, 1.5), 0.08, 'front', { ...LT, pitch: 0.3, curve: 0.3 }), rod([2.05, -1.95, 3.6], [2.05, -1.95, 6.2], 0.12, DK),
-  ...[-0.3, 0.9].map((s) => sl([1.25, s, 5.75], ellipse(0.42, 0.42, 14), 0.06, 'front', { ...LT, curve: 0.12 })), rod([0.9, 0.3, 4.2], [0.9, 0.3, 5.6], 0.14, MT),
+  ...[-0.3, 0.9].map((s) => sl([1.0, s, 5.75], ellipse(0.42, 0.42, 14), 0.06, 'front', { ...LT, curve: 0.12 })), rod([0.9, 0.3, 4.2], [0.9, 0.3, 5.6], 0.14, MT), rod([0.95, -0.3, 5.6], [0.95, 0.9, 5.6], 0.1, MT),
 ] };
 // RD-75 Amazonka (est): the range-finding radar's dish on a mast over its cabin on a small trailer.
 G['rd-75-amazonka'] = { cls: 'radar', chassis: 'trailer', length: 5.0, width: 2.2, hullHeight: 1.2, axles: 1, wheelRadius: 0.45, addOns: [
@@ -1135,10 +1134,11 @@ G['s-200-launcher'] = { cls: 'sam', chassis: 'pedestal', bare: true, length: 7.0
   ...missile(along(S200_PIVOT, S200_E, -0.5, 0.95), S200_E, V5V21), ...strapOns(along(S200_PIVOT, S200_E, -0.5, 0.95), S200_E, 0.68, 4.9, 0.48),
 ] };
 // 5N62 Square Pair (est): the antenna cabin on its turntable over a round base, the big main dish on its front left and the
-// smaller dish on the right, the feeds on their tripods.
+// smaller dish on the right, the feeds on their tripods; each dish held on its arm out of the cabin's front.
 G['5n62-square-pair'] = { cls: 'radar', chassis: 'static', bare: true, length: 6.5, width: 6.0, hullHeight: 2.6, addOns: [
   hd(0, 0, 0.6, 6.0, 1.2), hd(0, 0, 1.35, 4.2, 0.3, DARK), kung(-2.0, 1.4, 3.4, 1.5, 3.3),
-  sl([1.9, -0.7, 4.3], ellipse(2.6, 2.6, 28), 0.12, 'front', { ...LT, pitch: 0.2, curve: 0.7 }), rod([1.6, -0.7, 2.6], [1.9, -0.7, 3.0], 0.3, MT),
+  sl([1.9, -0.7, 4.3], ellipse(2.6, 2.6, 28), 0.12, 'front', { ...LT, pitch: 0.2, curve: 0.7 }), rod([1.6, -0.7, 2.6], [1.9, -0.7, 3.0], 0.3, MT), rod([1.0, -0.7, 2.9], [2.4, -0.7, 4.2], 0.3, MT),
+  rod([1.2, 1.5, 2.8], [1.6, 2.4, 3.5], 0.2, MT),
   ...[[-1.6, 3.2], [0.2, 2.4], [-0.7, 6.0]].map(([s, u]) => rod([2.0, s, u], [3.8, -0.7, 4.6], 0.07, DK)), hb(3.9, -0.7, 4.6, 0.4, 0.4, 0.4, DARK),
   sl([1.6, 2.4, 3.6], ellipse(0.9, 0.9, 18), 0.08, 'front', { ...LT, pitch: 0.2, curve: 0.25 }), rod([1.6, 2.4, 3.6], [2.5, 2.4, 3.8], 0.06, DK),
 ] };
@@ -1211,6 +1211,9 @@ G['pantsir-s1'] = { ...AD('pantsir-s1'), cab: { length: 2.4, height: 3.0, outlin
     { on: 'turret', kind: 'box', at: [-0.7, 0, 1.6], size: [0.6, 0.5, 0.6], metal: true },
     { on: 'turret', kind: 'slab', at: [-0.8, 0, 2.3], size: [0.3, 0, 0], poly: rect(1.1, 0.75), plane: 'front', pitch: -0.35, paint: 'light' },
   ] };
+// Pantsir-SM (2019; array est): the S1's vehicle and combat module with a bigger, taller search array (2.6 x 1.6 m) on
+// the turret's back.
+G['pantsir-sm'] = { ...G['pantsir-s1'], addOns: [...G['pantsir-s1'].addOns!.slice(0, -1), { on: 'turret', kind: 'slab', at: [-0.8, 0, 2.3], size: [0.35, 0, 0], poly: rect(1.3, 0.8), plane: 'front', pitch: -0.35, paint: 'light' }] };
 // HQ-7 TELAR (est 7.2 x 3.0 m): the boat-nosed 6x6, its turret with two missile boxes on each side and the tracking dish
 // and TV between them; the STR the same carrier with the search antenna turning on a low turret.
 const HQ7: GroundSpec = { chassis: 'wheeled', length: 7.2, width: 3.0, hullHeight: 1.9, axles: 3, axleAt: [0.62, -0.05, -0.62], wheelRadius: 0.55, hullOutline: wheeledHull(7.2, 1.9, 1.1, 1.45, 1.8, 0.6) };
@@ -1356,7 +1359,7 @@ G['nasams-cp'] = { cls: 'sam-cp', chassis: 'trailer', length: 5.0, width: 2.2, h
 // IRIS-T SLM launcher on a MAN 6x6 (est): eight canisters, two rows of four, raised upright over the back on their frame,
 // the jacks down.
 G['iris-t-slm-launcher'] = { cls: 'sam', ...MAN_HX, bed: 'none', outriggers: true, addOns: [
-  ...cargo(-4.2, 1.75, 2.45, 1.25, 0), bx(0.6, 1.7, 0, 1.25, 2.6, 2.4), beam([-4.0, 0, 1.6], 1.45, 3.6, 2.1, 1.0), sl(along([-4.0, 0, 1.6], 1.45, 3.62), rect(1.02, 0.47), 0.05, 'front', { ...DK, pitch: 1.45 }),
+  ...cargo(-4.2, 1.75, 2.45, 1.25, 0), bx(0.6, 1.7, 0, 1.25, 2.6, 2.4), bx(-4.2, -3.3, 0, 1.2, 1.75, 1.6), beam([-4.0, 0, 1.6], 1.45, 3.6, 2.1, 1.0), sl(along([-4.0, 0, 1.6], 1.45, 3.62), rect(1.02, 0.47), 0.05, 'front', { ...DK, pitch: 1.45 }),
   ...[-1, 1].map((s) => rod([-3.8, s * 1.1, 1.2], [-4.2, s * 1.5, 0.1], 0.16, MT)),
 ] };
 // TRML-4D radar on a MAN truck (est): the shelter, and the large flat array raised on its turntable on top, leaning back.
@@ -1379,21 +1382,22 @@ const yagis = (x: number, u: number, w: number, h: number, cols: number, rows: n
   const z = u - h / 2 + (h * (Math.floor(i / cols) + 0.5)) / rows;
   return rod([x, s, z], [x + len, s, z], 0.12, LT, 0.04);
 });
-/** An open frame of `w` by `h` about (x, 0, u): its edges and `n` uprights. */
-const frame = (x: number, u: number, w: number, h: number, n: number): AddOn[] => [
+/** An open frame of `w` by `h` about (x, 0, u): its edges and `n` uprights, and a boom across at each of `rows` rows of yagis. */
+const frame = (x: number, u: number, w: number, h: number, n: number, rows = 0): AddOn[] => [
   ...[u - h / 2, u, u + h / 2].map((z) => rod([x, -w / 2, z], [x, w / 2, z], 0.14, MT)),
+  ...Array.from({ length: rows }, (_, r) => u - h / 2 + (h * (r + 0.5)) / rows).filter((z) => Math.abs(z - u) > 0.01).map((z) => rod([x, -w / 2, z], [x, w / 2, z], 0.1, MT)),
   ...Array.from({ length: n }, (_, i) => -w / 2 + (w * i) / (n - 1)).map((s) => rod([x, s, u - h / 2], [x, s, u + h / 2], 0.1, MT)),
 ];
-// 1L13 Nebo-SV (array est 11 x 5 m): the frame of yagi antennas, three rows of six, on its turning mast over the cabin
-// on its semitrailer.
+// 1L13 Nebo-SV (array est 11 x 5 m): the frame of yagi antennas, three rows of six on their booms, on its turning mast
+// over the cabin on its semitrailer.
 G['1l13-nebo-sv'] = { cls: 'radar', chassis: 'trailer', bare: true, length: 11.0, width: 2.7, hullHeight: 1.4, axles: 2, axleAt: [-0.5, -0.7], wheelRadius: 0.5, addOns: [
   ...semiFrame(-5.5, 5.5, 2.6, 1.4, 1.55, 2.0), kung(-5.3, -1.2, 2.5, 1.4, 3.5), ...tower(1.2, 0, 1.55, 3.4, 0.9, 0.5, 1), hd(1.2, 0, 3.5, 1.2, 0.3, DARK),
-  ...frame(1.0, 6.1, 11, 5, 7), ...yagis(1.0, 6.1, 11, 5, 6, 3, 2.4),
+  ...frame(1.0, 6.1, 11, 5, 7, 3), ...yagis(1.0, 6.1, 11, 5, 6, 3, 2.4),
 ] };
 // 55Zh6 Nebo-U (array est 30 x 10 m): the great yagi array on its ground truss, its cabin underneath.
 G['55g6-nebo'] = { cls: 'radar', chassis: 'static', bare: true, length: 8.0, width: 8.0, hullHeight: 1.2, addOns: [
   hd(0, 0, 0.3, 6.0, 0.6, DARK), kung(-3.0, 1.5, 2.5, 0.6, 3.0), ...tower(0, 0, 0.6, 4.0, 3.0, 1.0, 1, 0.2),
-  ...frame(0.4, 9.2, 30, 10, 9), ...yagis(0.4, 9.2, 30, 10, 12, 4, 2.6), ...[-10, 10].map((s) => rod([0, s * 0.3, 1.0], [0.4, s, 4.2], 0.2, MT)),
+  ...frame(0.4, 9.2, 30, 10, 9, 4), ...yagis(0.4, 9.2, 30, 10, 12, 4, 2.6), ...[-10, 10].map((s) => rod([0, s * 0.3, 1.0], [0.4, s, 4.2], 0.2, MT)),
 ] };
 // AN/FPS-117 (est): the flat array and its IFF bar turning on a pedestal over its building; the radome version on a taller
 // building; and its equipment shelter.
@@ -1591,12 +1595,12 @@ G['ztd-05'] = { cls: 'tank-destroyer', chassis: 'tracked', length: 9.5, width: 3
   turret: turret(-0.6, [[-1.7, 1.1], [-1.4, 1.3], [0.9, 1.35], [1.6, 0.95], [1.8, 0.5]], [[-1.7, 0.72], [-1.4, 0.85], [1.0, 0.85], [1.8, 0.5]], 10, 1.75),
   guns: [{ mount: 'turret', length: 5.5, calibre: 0.105, muzzle: true, extractor: 0.55, sleeve: 0.6, at: 0.45 }], addOns: [sl([4.4, 0, 1.25], rect(1.55, 0.25), 0.08, 'front', { pitch: 0.6 }), tb(-0.6, 0.65, 0.95, 0.4, 0.4, 0.25, DARK)] };
 // PGZ-95 (2001): a six-wheeled tracked hull (6.71 x 3.24 m), the tall turret with two 25 mm stacked on each side and a
-// pair of QW-2 tubes above them, the search radar folded on the turret's back.
+// pair of QW-2 tubes above them on their brackets, the search radar folded on the turret's back.
 G['pgz-95'] = { cls: 'spaa', chassis: 'tracked', length: 6.71, width: 3.24, hullHeight: 1.6, roadWheels: 6, roadWheelRadius: 0.32, trackProfile: run(6.5, 0.9, [3.25, 0.62], [-3.25, 0.65], -2.7, 2.65), running: { wheels: [-2.45, -1.5, -0.55, 0.4, 1.35, 2.3], rollers: [-1.5, 0, 1.5] },
   hullOutline: { top: [[-3.35, 1.5], [-3.2, 1.6], [1.3, 1.6], [3.35, 0.95]], bottom: [[-3.35, 0.9], [3.1, 0.9], [3.35, 0.95]], plan: [[-3.35, 1.55], [3.35, 1.5]], round: 10, stations: 12 },
   turret: turret(-0.4, [[-1.3, 0.95], [-1.1, 1.05], [0.9, 1.05], [1.3, 0.85]], [[-1.3, 1.0], [-1.0, 1.15], [0.8, 1.15], [1.3, 0.7]], 10, 1.2), guns: undefined, radars: undefined, addOns: [
     ...[0.35, 0.65].flatMap((u) => [tb(0.2, 1.22, u, 1.0, 0.22, 0.22, { ...M, ...DARK }), ...[-1, 1].map((s) => ({ on: 'turret', kind: 'tube', at: [0.6, s * 1.22, u], to: [3.0, s * 1.22, u + 0.25], size: [0.08, 0.08, 0], metal: true } as AddOn))]),
-    ...[-1, 1].map((s) => ({ on: 'turret', kind: 'tube', at: [-0.4, s * 1.25, 1.05], to: [1.1, s * 1.25, 1.15], size: [0.13, 0.13, 0], paint: 'light' } as AddOn)),
+    ...[-1, 1].map((s) => ({ on: 'turret', kind: 'tube', at: [-0.4, s * 1.25, 1.05], to: [1.1, s * 1.25, 1.15], size: [0.13, 0.13, 0], paint: 'light' } as AddOn)), tb(0.35, 1.06, 1.08, 0.35, 0.3, 0.1, { ...M, ...DARK }),
     tb(-1.1, 0, 1.3, 0.4, 0.4, 0.3, DARK), { on: 'turret', kind: 'slab', at: [-1.2, 0, 1.75], size: [0.12, 0, 0], poly: rect(0.85, 0.3), plane: 'front', pitch: -0.4, paint: 'light' },
   ] };
 // PGZ-09 (2009; 6.7 x 3.2 m, 3.4 m with the radar down): the big tracked hull of the PLZ-05 family on six road wheels, the
@@ -1661,8 +1665,8 @@ G['ural-4320-flatbed'] = { cls: 'truck', ...URAL_4320, bed: 'none', addOns: carg
 G['zil-131-kung'] = { cls: 'truck', ...ZIL_131, bed: 'none', addOns: [ZIL_KUNG, sl([-3.54, -0.5, 1.95], rect(0.4, 0.85), 0.03, 'front', DK), bx(-3.75, -3.52, -0.5, 0.6, 0.95, 0.8, DARK)] };
 G['zil-131-covered'] = { cls: 'truck', ...ZIL_131, bed: 'none', addOns: cargo(-3.52, 0.22, 2.45, 1.4, 0.5, 2.98) };
 // ZiL-4331 (1986; 7.0 x 2.5 m, 2.65 m cab est): a 4x2 with a square cab behind a flat-fronted bonnet, the dual rear wheels,
-// the cargo bed under its tilt.
-G['zil-4331'] = { cls: 'truck', chassis: 'wheeled', length: 7.0, width: 2.5, hullHeight: 2.9, axles: 2, axleAt: [0.66, -0.44], wheelRadius: 0.5, hull: 'truck', bed: 'none', cab: { length: 1.8, height: 2.65, bonnet: 1.5, outline: bonnetCab(7.0, 2.5, 0.5, 1.8, 2.65, 1.5, 1.65, 0.08, 0.95, 0.15) }, addOns: cargo(-3.5, 0.0, 2.45, 1.35, 0.5, 2.95) };
+// the cargo bed under its tilt on the sub-frame over the chassis.
+G['zil-4331'] = { cls: 'truck', chassis: 'wheeled', length: 7.0, width: 2.5, hullHeight: 2.9, axles: 2, axleAt: [0.66, -0.44], wheelRadius: 0.5, hull: 'truck', bed: 'none', cab: { length: 1.8, height: 2.65, bonnet: 1.5, outline: bonnetCab(7.0, 2.5, 0.5, 1.8, 2.65, 1.5, 1.65, 0.08, 0.95, 0.15) }, addOns: [...cargo(-3.5, 0.0, 2.45, 1.35, 0.5, 2.95), bx(-3.4, -0.1, 0, 0.75, 1.23, 1.0, DARK)] };
 // ZiL-135 8x8 cargo (9.3 x 2.8 m, 2.6 m): the wide forward cab ahead of the first axle, the twin engines' compartment
 // behind it, the axles evenly spread, the long bed under its tilt.
 G['zil-135'] = { cls: 'truck', chassis: 'wheeled', length: 9.3, width: 2.8, hullHeight: 2.95, axles: 4, axleAt: [0.677, 0.158, -0.165, -0.684], wheelRadius: 0.62, hull: 'truck', bed: 'none', cab: { length: 1.9, height: 2.6, outline: forwardCab(9.3, 2.8, 0.62, 1.9, 2.6, 0.55, 0.5, 8) }, addOns: [bx(1.05, 2.7, 0, 0.99, 2.3, 2.6), ...cargo(-4.65, 0.9, 2.75, 1.5, 0.55, 2.95)] };
@@ -1721,7 +1725,7 @@ G['larc-v'] = { cls: 'truck', chassis: 'wheeled', length: 10.6, width: 3.05, hul
   bx(2.6, 4.0, 0, 1.95, 3.1, 2.2), sl([4.02, 0, 2.75], rect(1.0, 0.25), 0.03, 'front', GL), sl([-0.8, 0, 2.01], rect(2.9, 1.3), 0.03, 'plan', DK), bx(-5.0, -3.6, 0, 1.95, 2.45, 2.6),
 ] };
 // A van shelter on a ZiL-131 with a dish on its roof; a shelter on a two-wheeled trailer standing on its corner jacks.
-G['van-shelter'] = { cls: 'truck', ...ZIL_131, bed: 'none', radars: undefined, addOns: [ZIL_KUNG, rod([-2.6, 0, 2.95], [-2.6, 0, 3.6], 0.2, MT), sl([-2.4, 0, 4.1], ellipse(0.8, 0.8, 18), 0.07, 'front', { ...LT, pitch: 0.5, curve: 0.22 })] };
+G['van-shelter'] = { cls: 'truck', ...ZIL_131, bed: 'none', radars: undefined, addOns: [ZIL_KUNG, rod([-2.6, 0, 2.95], [-2.6, 0, 3.95], 0.2, MT), rod([-2.62, 0, 3.9], [-2.42, 0, 4.08], 0.14, MT), sl([-2.4, 0, 4.1], ellipse(0.8, 0.8, 18), 0.07, 'front', { ...LT, pitch: 0.5, curve: 0.22 })] };
 G['trailer-shelter'] = { cls: 'truck', ...TRAILER, outriggers: true, addOns: [kung(-2.2, 1.0, 2.1, 1.2, 3.2), sl([-2.22, 0, 2.1], rect(0.4, 0.8), 0.03, 'front', DK)] };
 // A flatbed semitrailer (est 13.0 x 2.5 m): the flat deck on its three rear axles and landing legs.
 G['flatbed-semitrailer'] = { cls: 'truck', chassis: 'trailer', bare: true, length: 13.0, width: 2.5, hullHeight: 1.45, axles: 3, axleAt: [-0.62, -0.75, -0.88], wheelRadius: 0.5, addOns: [...semiFrame(-6.5, 6.5, 2.5, 1.45, 1.45, 1.6), ...[-1, 1].map((s) => bx(-6.5, 6.5, s * 1.22, 1.45, 1.55, 0.06, DARK))] };
@@ -1758,21 +1762,21 @@ G['trolleybus'] = { cls: 'bus', ...car(11.8, 2.55, [[-5.9, 2.95], [-5.75, 3.1], 
   bx(-1.0, 2.6, 0, 3.1, 3.45, 2.0), ...[-0.3, 0.3].map((s) => rod([1.6, s, 3.5], [-5.6, s * 1.6, 5.6], 0.06, MT)), ...[-0.3, 0.3].map((s) => hb(1.6, s, 3.5, 0.3, 0.2, 0.15, DARK)),
 ] };
 // Chenowth DPV (4.08 x 2.11 m, 2.01 m): the low tub and its tubular roll cage, the engine at the back, the gun on its pintle
-// over the cage; Flyer 72 (est 5.3 x 2.0 m) longer with a rack behind the cage; Growler ITV (4.32 x 1.52 m, 1.63 m) a
-// narrow open body with a roll bar.
+// on a bar across the cage's roof; Flyer 72 (est 5.3 x 2.0 m) longer with a rack behind the cage; Growler ITV (4.32 x
+// 1.52 m, 1.63 m) a narrow open body with a roll bar, the gun's pintle on a bar across its rear braces.
 const cage = (x0: number, x1: number, w: number, u0: number, u1: number): AddOn[] => [
   ...[-1, 1].flatMap((s) => [rod([x1, s * w, u0], [x1 - 0.5, s * w, u1], 0.06, MT), rod([x1 - 0.5, s * w, u1], [x0 + 0.3, s * w, u1], 0.06, MT), rod([x0 + 0.3, s * w, u1], [x0, s * w, u0], 0.06, MT), rod([(x0 + x1) / 2, s * w, u0], [(x0 + x1) / 2, s * w, u1], 0.05, MT)]),
   rod([x1 - 0.5, -w, u1], [x1 - 0.5, w, u1], 0.06, MT), rod([x0 + 0.3, -w, u1], [x0 + 0.3, w, u1], 0.06, MT),
 ];
 G['dpv-buggy'] = { cls: 'light-strike', chassis: 'wheeled', length: 4.08, width: 2.11, hullHeight: 1.1, axles: 2, axleAt: [0.62, -0.65], wheelRadius: 0.4, hullOutline: { top: [[-2.04, 0.85], [1.6, 0.85], [2.04, 0.6]], bottom: [[-2.04, 0.4], [2.04, 0.45]], plan: [[-2.04, 0.6], [2.04, 0.45]], round: 8, stations: 8 }, addOns: [
-  ...cage(-1.4, 1.0, 0.65, 0.85, 1.75), bx(-2.0, -1.2, 0, 0.6, 1.1, 1.0, DARK), rod([-0.4, 0, 1.75], [-0.4, 0, 2.0], 0.06, MT), rod([-0.6, 0, 2.0], [0.7, 0, 2.0], 0.07, MT),
+  ...cage(-1.4, 1.0, 0.65, 0.85, 1.75), bx(-2.0, -1.2, 0, 0.6, 1.1, 1.0, DARK), rod([-0.4, -0.65, 1.75], [-0.4, 0.65, 1.75], 0.06, MT), rod([-0.4, 0, 1.75], [-0.4, 0, 2.0], 0.06, MT), rod([-0.6, 0, 2.0], [0.7, 0, 2.0], 0.07, MT),
 ] };
 G['flyer-72'] = { cls: 'light-strike', chassis: 'wheeled', length: 5.3, width: 2.0, hullHeight: 1.1, axles: 2, axleAt: [0.65, -0.6], wheelRadius: 0.45, hullOutline: { top: [[-2.65, 0.95], [1.9, 0.95], [2.65, 0.75]], bottom: [[-2.65, 0.5], [2.65, 0.55]], plan: [[-2.65, 0.9], [2.65, 0.8]], round: 8, stations: 8 }, addOns: [
   ...cage(-0.9, 1.4, 0.85, 0.95, 1.9), bx(-2.6, -1.0, 0, 0.95, 1.3, 1.8), ...[-1, 1].map((s) => rod([-2.6, s * 0.85, 1.3], [-1.0, s * 0.85, 1.3], 0.05, MT)), rod([0.0, 0, 1.9], [0.0, 0, 2.15], 0.06, MT), rod([-0.2, 0, 2.15], [1.1, 0, 2.15], 0.07, MT),
 ] };
 G['growler-itv'] = { cls: 'light-strike', chassis: 'wheeled', length: 4.32, width: 1.52, hullHeight: 1.0, axles: 2, axleAt: [0.62, -0.6], wheelRadius: 0.4, hullOutline: { top: [[-2.16, 0.95], [-0.2, 0.95], [0.4, 1.05], [2.0, 0.95], [2.16, 0.75]], bottom: [[-2.16, 0.45], [2.16, 0.45]], plan: [[-2.16, 0.74], [2.16, 0.68]], round: 8, stations: 10 }, addOns: [
   ...[-1, 1].map((s) => rod([-0.4, s * 0.7, 0.95], [-0.4, s * 0.7, 1.63], 0.06, MT)), rod([-0.4, -0.7, 1.63], [-0.4, 0.7, 1.63], 0.06, MT), ...[-1, 1].map((s) => rod([-0.4, s * 0.7, 1.63], [-1.4, s * 0.7, 0.95], 0.05, MT)),
-  sl([0.45, 0, 1.3], rect(0.7, 0.25), 0.03, 'front', { ...GL, pitch: 0.3 }), rod([-1.0, 0, 1.63], [-1.0, 0, 1.9], 0.05, MT), rod([-1.1, 0, 1.9], [0.0, 0, 1.9], 0.06, MT),
+  sl([0.45, 0, 1.3], rect(0.7, 0.25), 0.03, 'front', { ...GL, pitch: 0.3 }), rod([-1.0, -0.7, 1.22], [-1.0, 0.7, 1.22], 0.05, MT), rod([-1.0, 0, 1.22], [-1.0, 0, 1.9], 0.05, MT), rod([-1.1, 0, 1.9], [0.0, 0, 1.9], 0.06, MT),
 ] };
 // Land Rover 101 Forward Control (4.13 x 1.84 m, 2.14 m): the cab over the front axle with its short, low flat nose, the
 // cargo body under a canvas tilt.

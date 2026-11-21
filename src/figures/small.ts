@@ -127,6 +127,8 @@ function buildRideAt(spec: RideSpec): Template {
       const r = 0.3;
       for (const x of [half - r - 0.05, -half + r + 0.05]) for (const s of [-1, 1]) wheelAt(k, x, s * (W / 2 - 0.12), r, 0.24);
       block(k.team, k.fr, [0, 0, r + 0.3], L * 0.75, W * 0.55, 0.35, grey(0.86));
+      // The handlebar on its steering column, up from the body.
+      tube(k.fixed, k.fr, [half * 0.45 + 0.08, 0, r + 0.4], [half * 0.45, 0, r + 0.76], 0.03, 0.03, PAINT.dark, 4);
       tube(k.fixed, k.fr, [half * 0.45, -0.35, r + 0.75], [half * 0.45, 0.35, r + 0.75], 0.025, 0.025, PAINT.dark, 4);
       rider(k, -0.15, r + 0.55);
       break;

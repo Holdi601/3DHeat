@@ -51,7 +51,8 @@ const G: Record<string, GroundSpec & { cls: string }> = {
   spaa: { cls: 'spaa', chassis: 'tracked', length: 6.5, width: 3.2, hullHeight: 1.6, roadWheels: 6, turret: { x: 0, length: 2.6, width: 2.4, height: 0.9, shape: 'box' }, guns: [{ mount: 'turret-side', count: 1, length: 3.0, calibre: 0.035, elevation: 0.35 }], radars: [{ kind: 'dish', x: -1.0, up: 0.7, size: 1.4, back: true }] },
   'sp-artillery': { cls: 'sp-artillery', chassis: 'tracked', length: 6.8, width: 3.2, hullHeight: 1.6, roadWheels: 7, turret: { x: -0.9, length: 3.9, width: 3.0, height: 1.5, shape: 'tall' }, guns: [{ mount: 'turret', length: 6.0, calibre: 0.155, elevation: 0.12, at: 0.45 }] },
   mlrs: { cls: 'mlrs', chassis: 'wheeled', length: 7.4, width: 2.4, hullHeight: 1.4, axles: 3, wheelRadius: 0.55, hull: 'truck', cab: { length: 2.2, height: 2.5 }, bed: 'flat', missiles: [{ mount: 'hull', rows: 4, cols: 10, length: 3.0, diameter: 0.12, elevation: 0.3, x: -1.4, up: 1.0 }] },
-  'towed-gun': { cls: 'towed-gun', chassis: 'towed', length: 5.5, width: 2.1, hullHeight: 1.0, axles: 1, wheelRadius: 0.45, guns: [{ mount: 'hull', length: 3.6, calibre: 0.1, elevation: 0.1, at: 1.0 }] },
+  // The gun's breech and cradle over the axle, behind the shield.
+  'towed-gun': { cls: 'towed-gun', chassis: 'towed', length: 5.5, width: 2.1, hullHeight: 1.0, axles: 1, wheelRadius: 0.45, guns: [{ mount: 'hull', length: 3.6, calibre: 0.1, elevation: 0.1, at: 1.0, x: -0.2 }] },
 
   // Named types: the four that must not be confused.
   'zsu-23-4-shilka': { cls: 'spaa', chassis: 'tracked', length: 6.5, width: 3.1, hullHeight: 1.45, roadWheels: 6, hull: 'low', turret: { x: 0.35, length: 3.1, width: 2.9, height: 0.75, shape: 'flat' }, guns: [{ mount: 'turret', count: 4, length: 2.0, calibre: 0.023, spread: 0.18, elevation: 0.25, at: 0.45 }], radars: [{ kind: 'dish', x: -1.0, up: 0.75, size: 1.25 }] },

@@ -140,10 +140,11 @@ export function buildGadget(kind: GadgetKind): Template {
       break;
     }
     case 'breach-charge': {
-      // A frame of explosive cord about 0.6 m by 1 m on the wall, its detonator in the middle.
+      // A frame of explosive cord about 0.6 m by 1 m on the wall, its detonator in the middle on a cord across.
       const W = 0.6;
       const H = 1.0;
       const r = 0.018;
+      tube(F, fr, [0, -W / 2, 0], [0, W / 2, 0], r, r, CHARGE, 5);
       tube(F, fr, [0, -W / 2, -H / 2], [0, W / 2, -H / 2], r, r, CHARGE, 5);
       tube(F, fr, [0, -W / 2, H / 2], [0, W / 2, H / 2], r, r, CHARGE, 5);
       tube(F, fr, [0, -W / 2, -H / 2], [0, -W / 2, H / 2], r, r, CHARGE, 5);

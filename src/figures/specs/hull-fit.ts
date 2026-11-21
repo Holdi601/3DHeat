@@ -11,7 +11,7 @@
  * to the WT reference.
  */
 
-import type { GroundSpec } from '../ground';
+import type { GroundSpec, TurretSpec } from '../ground';
 import type { Outline, P2, SectionShape } from '../parts';
 
 /** A hull's fitted height and length scale. */
@@ -313,6 +313,10 @@ export function scaleHull(s: GroundSpec, kl: number, ky: number): GroundSpec {
   const px = (p: P2[]): P2[] => p.map(([x, y]): P2 => [x * kl, y]);
   const xs = (a?: number[]) => a?.map((x) => x * kl);
   const o = s.hullOutline;
+  // A part drawn in the vehicle's own frame (its `up` down to the ground: fenders, an axle beam, a casemate's mantlet)
+  // rides the new deck as the fit measured it, and stays in the hull's frame: lifted with the deck, it would else turn
+  // as a turret of its own or with the main one.
+  const keep = (t: TurretSpec): TurretSpec => ({ ...t, x: t.x * kl, ...(s.hullHeight + (t.up ?? 0) < 0.15 ? { hullFrame: true } : {}) });
   return {
     ...s,
     length: s.length * kl,
@@ -321,8 +325,8 @@ export function scaleHull(s: GroundSpec, kl: number, ky: number): GroundSpec {
     ...(s.trackProfile ? { trackProfile: px(s.trackProfile) } : {}),
     ...(s.running ? { running: { ...s.running, wheels: s.running.wheels.map((x) => x * kl), rollers: xs(s.running.rollers) } } : {}),
     ...(s.skirt ? { skirt: pt(s.skirt) } : {}),
-    ...(s.turret ? { turret: { ...s.turret, x: s.turret.x * kl } } : {}),
-    ...(s.turrets ? { turrets: s.turrets.map((t) => ({ ...t, x: t.x * kl })) } : {}),
+    ...(s.turret ? { turret: keep(s.turret) } : {}),
+    ...(s.turrets ? { turrets: s.turrets.map(keep) } : {}),
     ...(s.guns ? { guns: s.guns.map((g) => (g.x !== undefined && (g.mount === 'hull' || g.mount === 'sponson') ? { ...g, x: g.x * kl } : g)) } : {}),
     ...(s.boxes ? { boxes: s.boxes.map((b) => ({ ...b, x: b.x * kl, length: b.length * kl })) } : {}),
     ...(s.addOns ? { addOns: s.addOns.map((a) => (a.on === 'hull' ? { ...a, at: [a.at[0] * kl, a.at[1], a.at[2] * ky], size: [a.size[0] * kl, a.size[1], a.size[2] * ky] } : a)) } : {}),

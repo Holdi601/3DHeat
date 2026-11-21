@@ -89,6 +89,11 @@ export interface TurretSpec {
    * turret.
    */
   wedge?: number;
+  /**
+   * A part drawn in the vehicle's own frame (its `up` down to the ground) whose fitted hull's deck lifted it: it stays
+   * with the hull as it did before the fit, neither turning on its own nor with the main turret (set by `scaleHull`).
+   */
+  hullFrame?: boolean;
 }
 
 export interface GunSpec {
@@ -1394,7 +1399,7 @@ function dedupe(points: P2[]): P2[] {
 function truck(k: Kit, spec: GroundSpec): void {
   const cab = spec.cab!;
   const half = spec.length / 2;
-  const floor = Math.max(0.6, (spec.wheelRadius ?? 0.5) * 1.6);
+  const floor = truckFloor(spec);
   const w = spec.width / 2 - 0.05;
   const bonnet = cab.bonnet ?? 0;
   const x1 = half - bonnet;
@@ -1429,6 +1434,11 @@ function truck(k: Kit, spec: GroundSpec): void {
     tube(k.team, k.fr, [bx0 + 0.2, 0, (floor + spec.hullHeight) / 2], [bx1 - 0.1, 0, (floor + spec.hullHeight) / 2], (spec.hullHeight - floor) / 2, (spec.hullHeight - floor) / 2, grey(0.75), 12);
   } else block(k.team, k.fr, [(bx0 + bx1) / 2, 0, floor + 0.12], bx1 - bx0, spec.width - 0.1, 0.24, grey(0.7));
   block(k.fixed, k.fr, [0, 0, floor - 0.1], spec.length - 0.3, 0.6, 0.2, PAINT.dark);
+}
+
+/** A lorry's frame height, its body's floor. */
+function truckFloor(spec: GroundSpec): number {
+  return Math.max(0.6, (spec.wheelRadius ?? 0.5) * 1.6);
 }
 
 /** A steam locomotive's boiler and chimney ahead of its cab. */
@@ -1513,7 +1523,7 @@ function pedestal(k: Kit, spec: GroundSpec): void {
  * gun mount) has its base on the ground, lowered by the whole deck height (`top`); a mount on a truck's bed below
  * the cab's roof is lowered too, but not to the ground.
  */
-const inHullFrame = (t: TurretSpec, top: number) => top + (t.up ?? 0) < 0.15;
+const inHullFrame = (t: TurretSpec, top: number) => !!t.hullFrame || top + (t.up ?? 0) < 0.15;
 
 /** A part of the main turret given as an extra turret: a cupola, a mantlet, skirts, the ring under a casting, an oscillating turret's top. */
 function onTurret(main: TurretSpec, t: TurretSpec): boolean {
@@ -1610,8 +1620,9 @@ function turret(k: Kit, spec: GroundSpec, t: TurretSpec, base: number): void {
   } else if (shape === 'cylinder') {
     tube(k.team, k.fr, [x, s, base], [x, s, base + h], l / 2, w / 2, grey(0.88), 14);
   } else facetBody(k.team, k.fr, profileOutline(profile, w / 2, 12, s), grey(0.9), lean);
-  if (spec.cupola && main) {
-    // The commander's cupola: a low drum on the roof, its hatch a shallow dome, the vision blocks round its rim dark.
+  if (spec.cupola && main && shape !== 'open') {
+    // The commander's cupola: a low drum on the roof, its hatch a shallow dome, the vision blocks round its rim dark
+    // (none on an open turret, which has no roof to stand it on).
     const cx = x - l * 0.15;
     const cs = s + w * 0.22;
     const roof = t.outline ? base + lerpPoly(t.outline.top, cx - x) - 0.04 : base + h - 0.04;
@@ -1862,16 +1873,31 @@ function missiles(k: Kit, spec: GroundSpec, m: MissileSpec, base: number): void 
       }
     }
   };
+  // A pack raised clear of what it is mounted on stands on its cradle: a post from there up under its middle.
+  const prop = (cx: number, cs: number, cu: number, foot: number) => {
+    const half = m.pod ? (m.rows * d * 1.15 + 0.12) / 2 : ((m.rows - 1) / 2) * d * (m.rail ? 1.9 : 1.15) + (m.rail ? d * 0.75 + 0.07 : d / 2);
+    const under = cu - half / ce;
+    if (under - foot < 0.1) return;
+    const w = Math.min(1.0, (m.cols * d * (m.rail ? 1.6 : 1.15)) * 0.6 + 0.1);
+    block(k.team, k.fr, [cx, cs, (foot + under) / 2], Math.min(1.2, m.length * 0.3), w, under - foot + 0.1, grey(0.7));
+  };
   if (m.mount === 'turret-side' && t) {
     const up = tBase + (m.up ?? t.height * 0.7);
     const span = (m.cols * d * 1.15) / 2 + 0.1;
     for (const side of [-1, 1]) pack(t.x + (m.x ?? 0), (t.side ?? 0) + side * (t.width / 2 + span), up);
   } else if (m.mount === 'turret-top' && t) {
-    pack(t.x + (m.x ?? 0), t.side ?? 0, tBase + t.height + (m.up ?? (m.rows * d * 1.15) / 2 + 0.1));
+    const at: [number, number, number] = [t.x + (m.x ?? 0), t.side ?? 0, tBase + t.height + (m.up ?? (m.rows * d * 1.15) / 2 + 0.1)];
+    pack(...at);
+    prop(...at, tBase + t.height - 0.05);
   } else if (m.mount === 'turret-front' && t) {
     pack(t.x + t.length / 2 + (m.x ?? 0), t.side ?? 0, tBase + (m.up ?? t.height * 0.5));
   } else {
-    pack(m.x ?? -spec.length * 0.15, m.side ?? 0, base + (m.up ?? (m.rows * d * 1.15) / 2 + 0.15));
+    const at: [number, number, number] = [m.x ?? -spec.length * 0.15, m.side ?? 0, base + (m.up ?? (m.rows * d * 1.15) / 2 + 0.15)];
+    pack(...at);
+    // On a lorry, from its flat bed or bare frame (under the deck height its body would have).
+    const bed = spec.cab ? (spec.bed ?? 'covered') : '';
+    const floor = truckFloor(spec);
+    prop(...at, (bed === 'flat' ? floor + 0.24 : bed === 'none' ? floor : base) - 0.05);
   }
 }
 

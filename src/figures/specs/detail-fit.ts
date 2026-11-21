@@ -565,7 +565,9 @@ export function detailGround(s: GroundSpec, f: GroundDetailFit): GroundSpec {
     const roof = t.outline ? Math.max(...t.outline.top.map((p) => p[1])) : t.height;
     const front = t.outline ? Math.max(...t.outline.top.map((p) => p[0])) : t.length / 2;
     const add: AddOn[] = [];
-    if ((f.cu ?? 0) > 0) add.push({ on: 'turret', kind: 'drum', at: [t.length * (f.cx ?? -0.15), 0, roof + f.cu! / 2 - 0.03], size: [0.7, 0.7, f.cu! + 0.06] });
+    // In an open turret, which has no roof, it stands up from the floor (the gun mount's sights and seats).
+    const lo = t.shape === 'open' ? 0 : roof - 0.06;
+    if ((f.cu ?? 0) > 0) add.push({ on: 'turret', kind: 'drum', at: [t.length * (f.cx ?? -0.15), 0, (lo + roof + f.cu!) / 2], size: [0.7, 0.7, roof + f.cu! - lo] });
     if ((f.ma ?? 0) > 0) {
       const g = r.guns?.find((x) => x.mount === 'turret' && !x.turret);
       const up = t.height * (g?.at ?? 0.48);

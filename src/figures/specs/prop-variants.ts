@@ -1316,6 +1316,9 @@ function ww1(o: WW1): Spec {
   const ground = -d / 2 - Math.max(0.85, o.height * 0.32);
   const wr = o.crew && o.crew > 1 ? 0.38 : 0.32;
   if (!o.retract) extra.push(...wheel(wx, 0.8, -d / 2, ground, wr, o.spats), { top: [[wx + 0.05, ground + wr + 0.03], [wx - 0.05, ground + wr + 0.03]], bottom: [[wx + 0.05, ground + wr - 0.03], [wx - 0.05, ground + wr - 0.03]], plan: [[wx + 0.05, 0.85], [wx - 0.05, 0.85]], round: 2, stations: 2 });
+  // With no lower wing for the legs to meet (a monoplane's wing high on the body), a cross tube under the body carries
+  // them.
+  if (!o.retract && layout === 'mono') extra.push({ top: [[wx + 0.05, -d / 2 + 0.03], [wx - 0.05, -d / 2 + 0.03]], bottom: [[wx + 0.05, -d / 2 - 0.03], [wx - 0.05, -d / 2 - 0.03]], plan: [[wx + 0.05, 0.85], [wx - 0.05, 0.85]], round: 2, stations: 2 });
   // The tail: fin and rudder by kind, the tailplane on the top longeron.
   const z0 = d * 0.16;
   const fh = Math.min(1.35, o.height * 0.36);
@@ -1400,14 +1403,18 @@ A['gladiator'] = ww1({ length: 8.36, span: 9.83, height: 3.53, chord: 1.55, gap:
 // Watts' CC0 three-view (sources.md).
 A['cr-42'] = ww1({ length: 8.25, span: 9.7, height: 3.06, lower: 6.5, lowerChord: 1.05, chord: 1.65, gap: 1.47, stagger: 0.16, wingX: 2.35, engine: 'rotary', rudder: 'round', half: 0.5, depth: 1.1, spats: true, prop: 2.9, cowl: 0.6, cylinders: 7 });
 A['swordfish'] = ww1({ cls: 'biplane-two-seat', length: 10.87, span: 13.87, height: 3.76, chord: 1.75, gap: 1.9, stagger: 0.4, engine: 'rotary', rudder: 'round', crew: 2, bays: 2, depth: 1.25, half: 0.5, prop: 3.2, blades: 3, cowl: 0.74 });
-// Float biplanes: the main float on the centre line `up` metres under the body's axis from `x0` back to `x1`, and a
-// small float under each lower wing `side` metres out; struts not drawn.
-function onFloats(s: Spec, x0: number, x1: number, r: number, up: number, side: number, tipUp: number): Spec {
-  return { ...s, bodies: [...(s.bodies ?? []), pod(x0, x1, r, 0, up, 0.25), pod(0.9, -0.9, 0.18, side, tipUp, 0.3)] };
+// Float biplanes: the main float on the centre line `up` metres under the body's axis from `x0` back to `x1`, on two
+// pairs of struts from the body's underside (`belly` high), and a small float under each lower wing `side` metres out,
+// `tipX` forward of the middle, on two struts up to the wing's underside (`wing` high there).
+function onFloats(s: Spec, x0: number, x1: number, r: number, up: number, side: number, tipUp: number, tipX: number, belly: number, wing: number): Spec {
+  const L = x0 - x1;
+  const struts = [x0 - L * 0.3, x0 - L * 0.6].map((x) => post(x + 0.05, x - 0.05, belly, up + r * 0.6, 0.04, 0.3));
+  const tip = [tipX + 0.35, tipX - 0.3].map((x) => post(x + 0.04, x - 0.04, wing, tipUp + 0.08, 0.03, side));
+  return { ...s, bodies: [...(s.bodies ?? []), pod(x0, x1, r, 0, up, 0.25), pod(tipX + 0.9, tipX - 0.9, 0.18, side, tipUp, 0.3), ...struts, ...tip] };
 }
 // E8N2 (8.81 x 10.98 x 3.84 m, 26.5 m2): a two-seat float biplane with a radial, the main float under the body and a
-// float under each wingtip; chords from the wing area, floats estimated.
-A['e8n2'] = onFloats(ww1({ cls: 'biplane-two-seat', length: 8.81, span: 10.98, height: 3.84, chord: 1.2, gap: 1.5, stagger: 0.4, engine: 'rotary', rudder: 'round', crew: 2, bays: 1, depth: 1.1, half: 0.45, prop: 2.9, blades: 2, cowl: 0.6, retract: true }), 3.3, -2.8, 0.4, -1.9, 4.3, -1.0);
+// float under each wingtip; chords from the wing area, floats and their struts estimated.
+A['e8n2'] = onFloats(ww1({ cls: 'biplane-two-seat', length: 8.81, span: 10.98, height: 3.84, chord: 1.2, gap: 1.5, stagger: 0.4, engine: 'rotary', rudder: 'round', crew: 2, bays: 1, depth: 1.1, half: 0.45, prop: 2.9, blades: 2, cowl: 0.6, retract: true }), 3.3, -2.8, 0.4, -1.9, 4.3, -1.0, 1.4, -0.4, -0.27);
 A['he-51'] = ww1({ length: 8.4, span: 11.0, height: 3.2, chord: 1.6, gap: 1.6, stagger: 0.4, engine: 'inline', rudder: 'round', bays: 2, depth: 1.05, prop: 2.9 });
 
 // ---------------------------------------------------------------- more War Thunder types with their own silhouettes

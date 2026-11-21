@@ -627,7 +627,21 @@ export function reshapeAircraft(s: FixedWingSpec, f: AirOutlineFit): FixedWingSp
     r = { ...r, wingPlan: plan };
   }
   if (s.tailPlan && (f.ts || f.tx)) r = { ...r, tailPlan: s.tailPlan.map(([x, y]): P2 => [x + (f.tx ?? 0) * L, y * (1 + (f.ts ?? 0))]) };
-  if (s.finPlan && f.fh) r = { ...r, finPlan: s.finPlan.map(([x, y]): P2 => [x, y > 0 ? y * (1 + f.fh!) : y]) };
+  if (s.finPlan && f.fh) {
+    r = { ...r, finPlan: s.finPlan.map(([x, y]): P2 => [x, y > 0 ? y * (1 + f.fh!) : y]) };
+    // A body on the fin's upper half (a fin-tip pod or fairing) rides it to its new height.
+    const fb = s.tail.finBase ?? 0;
+    const fy = Math.max(...s.finPlan.map((p) => p[1]));
+    const fx = s.finPlan.map((p) => p[0]);
+    const onFin = (b: Outline) => Math.min(...b.bottom.map((p) => p[1])) > fb + fy * 0.5 && Math.max(...b.top.map((p) => p[0])) > Math.min(...fx) && Math.min(...b.top.map((p) => p[0])) < Math.max(...fx);
+    if (r.bodies?.some(onFin)) {
+      const lift = (b: Outline): Outline => {
+        const d = (Math.min(...b.bottom.map((p) => p[1])) - fb) * f.fh!;
+        return { ...b, top: b.top.map(([x, y]): P2 => [x, y + d]), bottom: b.bottom.map(([x, y]): P2 => [x, y + d]) };
+      };
+      r = { ...r, bodies: r.bodies.map((b) => (onFin(b) ? { ...b, ...lift(b) } : b)) };
+    }
+  }
   const fu = s.fuselage;
   if (fu && (f.nl || f.tl || f.fd || f.rd || f.cn)) {
     const xw = s.wing.x;
@@ -642,7 +656,7 @@ export function reshapeAircraft(s: FixedWingSpec, f: AirOutlineFit): FixedWingSp
     const deep = (o: Outline): Outline => ({ ...o, top: o.top.map(([x, y]): P2 => [x, y * ky(x)]), bottom: o.bottom.map(([x, y]): P2 => [x, y * ky(x)]) });
     r = { ...r, fuselage: mapX(deep(fu), sx) };
     if (s.glass) r = { ...r, glass: s.glass.map((g) => ({ ...g, ...mapX({ ...g, top: g.top.map(([x, y]): P2 => [x, y * ky(x) * (1 + (f.cn ?? 0))]) }, sx) })) };
-    if (s.bodies) r = { ...r, bodies: s.bodies.map((b) => (b.side ? b : { ...b, ...mapX(deep(b), sx) })) };
+    if (r.bodies) r = { ...r, bodies: r.bodies.map((b) => (b.side ? b : { ...b, ...mapX(deep(b), sx) })) };
     if (s.canopy) r = { ...r, canopy: { ...s.canopy, x: sx(s.canopy.x) } };
     // The tail rides the end of the fuselage, its plan kept.
     const ride = (p: P2[]): P2[] => {

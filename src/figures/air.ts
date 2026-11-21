@@ -1264,7 +1264,14 @@ export function buildHeli(spec: HeliSpec): Template {
       }
     }
   } else if (spec.skids) {
-    for (const side of [-1, 1]) tube(k.fixed, k.fr, [cabinFront - 0.2, side * bw * 1.1, -bh - 0.45], [cabinBack - 0.2, side * bw * 1.1, -bh - 0.45], 0.05, 0.05, PAINT.dark, 5);
+    for (const side of [-1, 1]) {
+      tube(k.fixed, k.fr, [cabinFront - 0.2, side * bw * 1.1, -bh - 0.45], [cabinBack - 0.2, side * bw * 1.1, -bh - 0.45], 0.05, 0.05, PAINT.dark, 5);
+      // The two cross tubes up to the belly.
+      for (const f of [0.3, 0.75]) {
+        const x = cabinFront - 0.2 + (cabinBack - cabinFront) * f;
+        tube(k.fixed, k.fr, [x, side * bw * 1.1, -bh - 0.45], [x, side * bw * 0.45, -bh * 0.85], 0.04, 0.04, PAINT.dark, 4);
+      }
+    }
   }
   return finish(k, 'centre');
 }

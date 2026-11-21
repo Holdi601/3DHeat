@@ -208,7 +208,8 @@ export function personInto(k: Kit, spec: PersonSpec = {}): PersonAnchors {
     const [sw, sh] = kind === 'tall' ? [0.72, crouch ? 1.2 : 1.6] : kind === 'riot' ? [0.66, crouch ? 1.1 : 1.4] : [0.6, 1.0];
     const mid = kind === 'standard' ? (crouch ? 0.55 : 0.98) : sh / 2 + 0.02;
     block(o ? F : T, fr, v(0.42, -0.04, mid), 0.05 * s, sw * s, sh * s, SHIELD);
-    block(F, fr, v(0.45, -0.04, chest + 0.1), 0.02 * s, 0.26 * s, 0.08 * s, PAINT.glass);
+    // The view port at eye height, or near the top of a shield held low in a crouch (the eyes over it).
+    block(F, fr, v(0.45, -0.04, Math.min(chest + 0.1, mid + sh / 2 - 0.07)), 0.02 * s, 0.26 * s, 0.08 * s, PAINT.glass);
     block(F, fr, v(0.52, 0.38, shoulder - 0.08), 0.18 * s, 0.035 * s, 0.13 * s, PAINT.dark);
   }
   if (spec.band) {

@@ -7,49 +7,10 @@ import { T72 } from './specs/tanks';
 /**
  * Figures with a part standing clear of the rest by more than three times the touching distance (about 2.4 % of the
  * figure's size), as built or with the turrets turned and the guns raised: known defects still to be fixed, with how
- * many such parts each has. Fix one and take it off; a figure not listed here must have none.
+ * many such parts each has. None left; a figure listed here must be fixed and taken off, and one not listed must
+ * have none.
  */
-const KNOWN_FLOATING: Record<string, number> = {
-  mlrs: 1,
-  'towed-gun': 1,
-  'snr-75-fan-song': 1,
-  '5n62-square-pair': 2,
-  'iris-t-slm-launcher': 1,
-  '1l13-nebo-sv': 12,
-  '55g6-nebo': 10,
-  'brdm-2-malyutka': 1,
-  'dpv-buggy': 1,
-  'zil-4331': 1,
-  'van-shelter': 1,
-  'pgz-95': 1,
-  'growler-itv': 1,
-  'sdkfz-251': 1,
-  'sdkfz-251-wurfrahmen': 1,
-  'm4-calliope': 1,
-  'm3-gmc': 1,
-  'm42-duster': 1,
-  'challenger-2-tes': 1,
-  'pantsir-sm': 1,
-  'tornado-g': 1,
-  'type-65-spaa': 1,
-  'sdkfz-251-9': 1,
-  'sdkfz-251-21': 1,
-  't48-gmc': 1,
-  'tcm-20': 2,
-  'fokker-e3': 1,
-  e8n2: 3,
-  'd-371': 1,
-  'jaguar-gr1': 1,
-  gyrocopter: 2,
-  'quad-bike': 1,
-  'operator-shield-crouch': 1,
-  'operator-shield-crouch-attack': 1,
-  'operator-shield-crouch-defense': 1,
-  'op-blitz-shield-crouch-attack': 1,
-  'op-fuze-shield-crouch-attack': 1,
-  'op-clash-shield-defense': 1,
-  'breach-charge': 1,
-};
+const KNOWN_FLOATING: Record<string, number> = {};
 
 /** The T-72 / T-90 and Leopard 2 families: every add-on on its hull or turret, as built and turned, to the touching distance itself. */
 const FAMILIES = ['t-72a', 't-72av', 't-72b', 't-72b-1989', 't-72b3', 't-72b3m', 't-72b3-arena-m', 't-90', 't-90a', 't-90m', 'leopard-2a4', 'leopard-2a5', 'leopard-2a6', 'leopard-2a7', 'leopard-2e', 'strv-122', 'leopard-2pl', 'leopard-2a4m-can'];
