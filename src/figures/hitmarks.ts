@@ -48,6 +48,7 @@ import type { Dataset } from '../state/types';
 import { drain, explosiveAmmo, hitsOfSteps, OUTCOMES, type HitSet, type VehicleHit } from '../vehicle/hits';
 import { placesOf, placesSteps, type HitPlaces } from '../vehicle/places';
 import { figureOfVehicle, OUTCOME_COLOURS, templateOfFigure } from '../vehicle/scene';
+import { hitPartName, hitPartSide, namesOf, packUnitOf } from '../vehicle/plates';
 import { turretOf, type TurretBox } from './turret';
 import { fitScale, reachOf, snapToFigure, SNAP_STRIDE } from './snap';
 import { aimOf, aimSteps, type AimNow } from './aim';
@@ -279,6 +280,10 @@ function* marksFromSteps(d: Dataset, set: HitSet, places: HitPlaces): Generator<
     }
     out.vehicle[k] = v;
     out.vehicles[v].marks.push(k);
+    // The part the hit names (a local model pack's hit part names, `vehicle/plates.ts`): on the turret or the hull.
+    const unit = packUnitOf(out.vehicles[v].figure);
+    const side = unit ? hitPartSide(hitPartName(h, namesOf(unit.game))) : 0;
+    if (side) (out.on ??= new Uint8Array(keep.length))[k] = side;
     out.local.set(h.local!, k * 3);
     if (h.dir) out.dir.set(h.dir, k * 3);
   }

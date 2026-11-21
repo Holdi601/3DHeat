@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Ζημιά",
   "vehicle.breakdown.kills": "Εξουδετερώσεις",
   "vehicle.breakdown.unknown": "(χωρίς όνομα)",
-  "vehicle.breakdown.distance": "Απόσταση: διάμεσος {median}, μέγιστη {max} ({n} χτυπήματα)"
+  "vehicle.breakdown.distance": "Απόσταση: διάμεσος {median}, μέγιστη {max} ({n} χτυπήματα)",
+  "vehicle.look.plates": "Πλάκες θωράκισης",
+  "vehicle.look.platesTitle": "Κάθε πλάκα θωράκισης στο χρώμα των χτυπημάτων της σε όλους τους αγώνες· δείξτε μια πλάκα για το πάχος της",
+  "vehicle.plate.thickness": "Πάχος",
+  "vehicle.plate.class": "Κατηγορία",
+  "vehicle.plate.hits": "Χτυπήματα",
+  "vehicle.plate.through": "Διαπερασμένα",
+  "vehicle.plate.stopped": "Μη διαπερασμένα",
+  "vehicle.plate.bounced": "Εξοστρακισμοί",
+  "vehicle.plate.kills": "Καταστροφές"
 }

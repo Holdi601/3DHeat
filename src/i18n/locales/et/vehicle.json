@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Kahju",
   "vehicle.breakdown.kills": "Tapmised",
   "vehicle.breakdown.unknown": "(nimeta)",
-  "vehicle.breakdown.distance": "Kaugus: mediaan {median}, kõige kaugemal {max} ({n} tabamust)"
+  "vehicle.breakdown.distance": "Kaugus: mediaan {median}, kõige kaugemal {max} ({n} tabamust)",
+  "vehicle.look.plates": "Soomusplaadid",
+  "vehicle.look.platesTitle": "Iga soomusplaat oma tabamuste värvi kõigi mängude peale; osutage plaadile, et näha selle paksust",
+  "vehicle.plate.thickness": "Paksus",
+  "vehicle.plate.class": "Klass",
+  "vehicle.plate.hits": "Tabamused",
+  "vehicle.plate.through": "Läbistatud",
+  "vehicle.plate.stopped": "Läbistamata",
+  "vehicle.plate.bounced": "Rikošetid",
+  "vehicle.plate.kills": "Hävitamised"
 }

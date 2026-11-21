@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Daune",
   "vehicle.breakdown.kills": "Eliminări",
   "vehicle.breakdown.unknown": "(fără nume)",
-  "vehicle.breakdown.distance": "Distanță: mediană {median}, cea mai mare {max} ({n} lovituri)"
+  "vehicle.breakdown.distance": "Distanță: mediană {median}, cea mai mare {max} ({n} lovituri)",
+  "vehicle.look.plates": "Plăci de blindaj",
+  "vehicle.look.platesTitle": "Fiecare placă de blindaj în culoarea loviturilor sale din toate meciurile; indicați o placă pentru grosimea ei",
+  "vehicle.plate.thickness": "Grosime",
+  "vehicle.plate.class": "Clasă",
+  "vehicle.plate.hits": "Lovituri",
+  "vehicle.plate.through": "Penetrate",
+  "vehicle.plate.stopped": "Nepenetrate",
+  "vehicle.plate.bounced": "Ricoșeuri",
+  "vehicle.plate.kills": "Distrugeri"
 }

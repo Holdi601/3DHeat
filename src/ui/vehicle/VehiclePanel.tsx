@@ -224,6 +224,7 @@ export function VehiclePanel() {
         )}
         <Check label={t('vehicle.look.points')} title={t('vehicle.look.pointsTitle')} checked={s.showPoints} onChange={(showPoints) => s.patch({ showPoints })} />
         <Check label={t('vehicle.look.heat')} checked={s.showHeat} onChange={(showHeat) => s.patch({ showHeat })} />
+        <Check label={t('vehicle.look.plates')} title={t('vehicle.look.platesTitle')} checked={s.plates} onChange={(plates) => s.patch({ plates })} />
         <Check label={t('vehicle.look.arrows')} title={t('vehicle.look.arrowsTitle')} checked={s.showArrows} onChange={(showArrows) => s.patch({ showArrows })} />
         <Select label={t('vehicle.colour.label')} value={s.colourBy} options={colourOptions} onChange={(v) => s.patch({ colourBy: v ?? 'none' })} />
         <Check label={t('vehicle.look.turntable')} checked={s.turntable} onChange={(turntable) => s.patch({ turntable })} />

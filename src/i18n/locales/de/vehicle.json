@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Schaden",
   "vehicle.breakdown.kills": "Abschüsse",
   "vehicle.breakdown.unknown": "(ohne Namen)",
-  "vehicle.breakdown.distance": "Entfernung: Median {median}, am weitesten {max} ({n} Treffer)"
+  "vehicle.breakdown.distance": "Entfernung: Median {median}, am weitesten {max} ({n} Treffer)",
+  "vehicle.look.plates": "Panzerplatten",
+  "vehicle.look.platesTitle": "Jede Panzerplatte in der Farbe ihrer Treffer über alle Partien; auf eine Platte zeigen für ihre Stärke",
+  "vehicle.plate.thickness": "Stärke",
+  "vehicle.plate.class": "Klasse",
+  "vehicle.plate.hits": "Treffer",
+  "vehicle.plate.through": "Durchschlagen",
+  "vehicle.plate.stopped": "Nicht durchschlagen",
+  "vehicle.plate.bounced": "Abpraller",
+  "vehicle.plate.kills": "Abschüsse"
 }

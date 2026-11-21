@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Šteta",
   "vehicle.breakdown.kills": "Ubojstva",
   "vehicle.breakdown.unknown": "(bez imena)",
-  "vehicle.breakdown.distance": "Udaljenost: medijan {median}, najdalje {max} ({n} pogodaka)"
+  "vehicle.breakdown.distance": "Udaljenost: medijan {median}, najdalje {max} ({n} pogodaka)",
+  "vehicle.look.plates": "Oklopne ploče",
+  "vehicle.look.platesTitle": "Svaka oklopna ploča u boji svojih pogodaka iz svih mečeva; pokažite na ploču za njezinu debljinu",
+  "vehicle.plate.thickness": "Debljina",
+  "vehicle.plate.class": "Klasa",
+  "vehicle.plate.hits": "Pogoci",
+  "vehicle.plate.through": "Probijeno",
+  "vehicle.plate.stopped": "Nije probijeno",
+  "vehicle.plate.bounced": "Rikošeti",
+  "vehicle.plate.kills": "Uništenja"
 }

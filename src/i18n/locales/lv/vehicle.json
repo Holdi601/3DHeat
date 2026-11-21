@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Bojājumi",
   "vehicle.breakdown.kills": "Nogalinājumi",
   "vehicle.breakdown.unknown": "(bez nosaukuma)",
-  "vehicle.breakdown.distance": "Attālums: mediāna {median}, tālākais {max} ({n} trāpījumi)"
+  "vehicle.breakdown.distance": "Attālums: mediāna {median}, tālākais {max} ({n} trāpījumi)",
+  "vehicle.look.plates": "Bruņu plātnes",
+  "vehicle.look.platesTitle": "Katra bruņu plātne savu trāpījumu krāsā visās spēlēs; norādiet uz plātni, lai redzētu tās biezumu",
+  "vehicle.plate.thickness": "Biezums",
+  "vehicle.plate.class": "Klase",
+  "vehicle.plate.hits": "Trāpījumi",
+  "vehicle.plate.through": "Caursisti",
+  "vehicle.plate.stopped": "Nav caursisti",
+  "vehicle.plate.bounced": "Rikošeti",
+  "vehicle.plate.kills": "Iznīcināšanas"
 }

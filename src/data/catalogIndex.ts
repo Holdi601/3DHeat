@@ -26,7 +26,7 @@
  * page, which can index a folder picked by hand without one.
  */
 
-export type CatalogKind = 'level' | 'layouts' | 'course' | 'ranges' | 'cars' | 'figure-pack' | 'other';
+export type CatalogKind = 'level' | 'layouts' | 'course' | 'ranges' | 'cars' | 'figure-pack' | 'model-pack' | 'catalog' | 'other';
 
 export interface CatalogItem {
   /** The path under the root, with forward slashes: the item's id. */
@@ -59,7 +59,7 @@ export interface CatalogIndex {
 }
 
 /** Folders that are not a game's. */
-const NOT_GAMES = new Set(['figure-packs']);
+const NOT_GAMES = new Set(['figure-packs', 'model-packs']);
 
 const KNOWN = /\.(glb|gltf|json|h3dcars|parquet|3dheat|csv|png|jpg|webp)$/i;
 
@@ -75,7 +75,10 @@ export function classify(path: string): Pick<CatalogItem, 'game' | 'kind' | 'nam
     if (/^figures.*\.json$/i.test(file)) return { game: '', kind: 'figure-pack', name: parts.length > 2 ? parts[1] : stem };
     return null;
   }
+  // A game's model pack is one item, its index: the unit models and side files under it are its own.
+  if (top === 'model-packs') return parts.length === 3 && file === 'model-pack.json' ? { game: parts[1], kind: 'model-pack', name: parts[1] } : null;
   const game = NOT_GAMES.has(top) ? '' : top;
+  if (parts.length === 2 && file === 'catalog.json') return { game, kind: 'catalog', name: game };
   if (/\.layouts\.json$/i.test(file)) return { game, kind: 'layouts', name: stem };
   if (/^ranges\.json$/i.test(file)) return { game, kind: 'ranges', name: game || stem };
   if (/\.h3dcars$/i.test(file)) return { game, kind: 'cars', name: stem };
@@ -129,7 +132,7 @@ export function jsonExtras(text: string): { extractor: string | null; gameBuild:
 
 /** The items grouped by game, games in name order, levels first within each. */
 export function byGame(items: readonly CatalogItem[]): { game: string; items: CatalogItem[] }[] {
-  const order: CatalogKind[] = ['level', 'course', 'figure-pack', 'ranges', 'cars', 'layouts', 'other'];
+  const order: CatalogKind[] = ['level', 'course', 'model-pack', 'catalog', 'figure-pack', 'ranges', 'cars', 'layouts', 'other'];
   const groups = new Map<string, CatalogItem[]>();
   for (const it of items) {
     const g = groups.get(it.game);

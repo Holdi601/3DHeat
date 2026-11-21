@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Vahinko",
   "vehicle.breakdown.kills": "Tapot",
   "vehicle.breakdown.unknown": "(nimetön)",
-  "vehicle.breakdown.distance": "Etäisyys: mediaani {median}, kaukaisin {max} ({n} osumaa)"
+  "vehicle.breakdown.distance": "Etäisyys: mediaani {median}, kaukaisin {max} ({n} osumaa)",
+  "vehicle.look.plates": "Panssarilevyt",
+  "vehicle.look.platesTitle": "Jokainen panssarilevy osumiensa värissä kaikista otteluista; osoita levyä nähdäksesi sen paksuuden",
+  "vehicle.plate.thickness": "Paksuus",
+  "vehicle.plate.class": "Luokka",
+  "vehicle.plate.hits": "Osumat",
+  "vehicle.plate.through": "Läpäisty",
+  "vehicle.plate.stopped": "Ei läpäisty",
+  "vehicle.plate.bounced": "Kimmokkeet",
+  "vehicle.plate.kills": "Tuhoamiset"
 }

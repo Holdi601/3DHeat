@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Damáiste",
   "vehicle.breakdown.kills": "Maruithe",
   "vehicle.breakdown.unknown": "(gan ainm)",
-  "vehicle.breakdown.distance": "Fad: airmheán {median}, is faide {max} ({n} buille)"
+  "vehicle.breakdown.distance": "Fad: airmheán {median}, is faide {max} ({n} buille)",
+  "vehicle.look.plates": "Plátaí armúir",
+  "vehicle.look.platesTitle": "Gach pláta armúir i ndath a bhuillí thar gach cluiche; dírigh ar phláta chun a thiús a fheiceáil",
+  "vehicle.plate.thickness": "Tiús",
+  "vehicle.plate.class": "Aicme",
+  "vehicle.plate.hits": "Buillí",
+  "vehicle.plate.through": "Pollta",
+  "vehicle.plate.stopped": "Gan polladh",
+  "vehicle.plate.bounced": "Preabanna",
+  "vehicle.plate.kills": "Scriosta"
 }

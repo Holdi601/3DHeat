@@ -1,6 +1,6 @@
 import { useStore } from '../../state/store';
 import { useRaceStore } from '../../state/raceStore';
-import { useVehicleStore } from '../../state/vehicleStore';
+import { usePlateHover, useVehicleStore } from '../../state/vehicleStore';
 import { vehicleView } from '../../vehicle/view';
 import { useVolumeStore } from '../../volumes/store';
 import { categoryColours, OUTCOME_COLOURS } from '../../vehicle/scene';
@@ -10,6 +10,7 @@ import { stopToCss } from '../../render/colors';
 import { rgbCss } from '../../race/geometry';
 import { int, num, t } from '../../i18n';
 import { VehicleSheet } from './VehicleSheet';
+import { plateView } from '../../vehicle/stage';
 import { useEngine } from '../EngineContext';
 import { flyTo } from '../replay/replayView';
 import { unitsPerMetre } from '../replay/replayData';
@@ -76,8 +77,41 @@ export function VehicleOverlay() {
         {view.hits.length === 0 && <div className="vehicle-hud-sub">{t('vehicle.hud.none', { n: int(view.all.length) })}</div>}
       </div>
       {s.selected && <HitCard hit={s.selected} dataset={dataset} />}
+      {!s.selected && s.plates && <PlateCard />}
       {s.sheetOpen && <VehicleSheet />}
     </>
+  );
+}
+
+/** The plate under the pointer: its name, thickness and class, and what struck it over the hits shown. */
+function PlateCard() {
+  const index = usePlateHover((h) => h.plate);
+  const pv = plateView();
+  const plate = pv?.list[index];
+  if (!pv || !plate) return null;
+  const c = pv.counts[index];
+  const rows: [string, string][] = [];
+  if (plate.mm !== null) rows.push([t('vehicle.plate.thickness'), `${num(plate.mm, plate.mm < 10 ? 1 : 0)} mm`]);
+  if (plate.cls) rows.push([t('vehicle.plate.class'), plate.cls]);
+  rows.push([t('vehicle.plate.hits'), int(c.hits)]);
+  if (c.through) rows.push([t('vehicle.plate.through'), int(c.through)]);
+  if (c.stopped) rows.push([t('vehicle.plate.stopped'), int(c.stopped)]);
+  if (c.ricochet) rows.push([t('vehicle.plate.bounced'), int(c.ricochet)]);
+  if (c.kills) rows.push([t('vehicle.plate.kills'), int(c.kills)]);
+  return (
+    <div className="vehicle-card">
+      <div className="vehicle-card-head">
+        <strong>{plate.name.replace(/_dm$/, '').replace(/_/g, ' ')}</strong>
+      </div>
+      <dl>
+        {rows.map(([k, v]) => (
+          <div key={k}>
+            <dt>{k}</dt>
+            <dd>{v}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
   );
 }
 

@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Damage",
   "vehicle.breakdown.kills": "Kills",
   "vehicle.breakdown.unknown": "(not named)",
-  "vehicle.breakdown.distance": "Distance: median {median}, farthest {max} ({n} hits)"
+  "vehicle.breakdown.distance": "Distance: median {median}, farthest {max} ({n} hits)",
+  "vehicle.look.plates": "Armour plates",
+  "vehicle.look.platesTitle": "Each armour plate in the colour of its hits over all matches; point at a plate for its thickness",
+  "vehicle.plate.thickness": "Thickness",
+  "vehicle.plate.class": "Class",
+  "vehicle.plate.hits": "Hits",
+  "vehicle.plate.through": "Penetrated",
+  "vehicle.plate.stopped": "Not penetrated",
+  "vehicle.plate.bounced": "Ricochets",
+  "vehicle.plate.kills": "Kills"
 }

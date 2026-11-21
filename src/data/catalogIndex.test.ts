@@ -10,6 +10,10 @@ describe('catalogue folder index', () => {
     expect(classify('forza/courses/cedar_run.glb')?.kind).toBe('course');
     expect(classify('warthunder/ranges.json')?.kind).toBe('ranges');
     expect(classify('figure-packs/local-pack/figures-r39i.json')).toEqual({ game: '', kind: 'figure-pack', name: 'local-pack' });
+    expect(classify('model-packs/warthunder/model-pack.json')).toEqual({ game: 'warthunder', kind: 'model-pack', name: 'warthunder' });
+    expect(classify('model-packs/warthunder/us_m1a2_sep.glb')).toBeNull();
+    expect(classify('model-packs/warthunder/hit-parts.json')).toBeNull();
+    expect(classify('warthunder/catalog.json')).toEqual({ game: 'warthunder', kind: 'catalog', name: 'warthunder' });
     expect(classify('figure-packs/local-pack/decisions.tsv')).toBeNull();
     expect(classify('r6/export.log')).toBeNull();
     expect(classify('.3dheat-index.json')).toBeNull();

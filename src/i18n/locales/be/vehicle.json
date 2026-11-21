@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Шкода",
   "vehicle.breakdown.kills": "Забойствы",
   "vehicle.breakdown.unknown": "(без імя)",
-  "vehicle.breakdown.distance": "Адлегласць: медыяна {median}, найдалей {max} ({n} трапленняў)"
+  "vehicle.breakdown.distance": "Адлегласць: медыяна {median}, найдалей {max} ({n} трапленняў)",
+  "vehicle.look.plates": "Броневыя лісты",
+  "vehicle.look.platesTitle": "Кожны броневы ліст у колеры сваіх трапленняў за ўсе матчы; навядзіце на ліст, каб убачыць таўшчыню",
+  "vehicle.plate.thickness": "Таўшчыня",
+  "vehicle.plate.class": "Клас",
+  "vehicle.plate.hits": "Трапленні",
+  "vehicle.plate.through": "Прабіта",
+  "vehicle.plate.stopped": "Не прабіта",
+  "vehicle.plate.bounced": "Рыкашэты",
+  "vehicle.plate.kills": "Знішчэнні"
 }

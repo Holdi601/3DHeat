@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Шкода",
   "vehicle.breakdown.kills": "Вбивства",
   "vehicle.breakdown.unknown": "(без імені)",
-  "vehicle.breakdown.distance": "Відстань: медіана {median}, найдалі {max} ({n} влучань)"
+  "vehicle.breakdown.distance": "Відстань: медіана {median}, найдалі {max} ({n} влучань)",
+  "vehicle.look.plates": "Броньові листи",
+  "vehicle.look.platesTitle": "Кожен броньовий лист у кольорі своїх влучань за всі матчі; наведіть на лист, щоб побачити товщину",
+  "vehicle.plate.thickness": "Товщина",
+  "vehicle.plate.class": "Клас",
+  "vehicle.plate.hits": "Влучання",
+  "vehicle.plate.through": "Пробито",
+  "vehicle.plate.stopped": "Не пробито",
+  "vehicle.plate.bounced": "Рикошети",
+  "vehicle.plate.kills": "Знищення"
 }

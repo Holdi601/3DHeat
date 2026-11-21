@@ -12,7 +12,10 @@
  * root node `unit` and, under it, `lod0`, `lod1` and `lod2` (full, coarse and
  * far), each with a mesh node per part: `hull`, `gear` (running gear, drawn
  * in the track colour), `turret` (extras `{ joint: 'yaw', pivot }`) and `gun`
- * (extras `{ joint: 'pitch', pivot, parent }`). Positions are float32 metres
+ * (extras `{ joint: 'pitch', pivot, parent }`); numbered ones for units with
+ * several (`turret.2`, its `gun.2` with `parent: 'turret.2'`, a turret's
+ * `rest`: the yaw it was built facing) and `rotor.N` (a propeller or rotor:
+ * extras `{ spin: 'rotor', pivot, axis, diameter }`). Positions are float32 metres
  * in the figure frame (x forward, y up, z right) about the unit's own origin,
  * where the game puts it. A `dm` node may hold further parts (damage-model
  * parts with their armour in extras); they are not drawn.
@@ -40,6 +43,8 @@ export interface ModelPart {
   pivot: Vec3;
   joint?: 'yaw' | 'pitch';
   parent?: number;
+  /** A turret's yaw as built, radians, right positive (PI: a ship's after turret). */
+  rest?: number;
   track?: boolean;
 }
 
@@ -53,6 +58,8 @@ export interface ModelFigure {
   parts: ModelPart[];
   crease?: number;
   lods: Uint16Array[];
+  /** An aircraft's propeller: drawn with the faint disc of a turning one. */
+  prop?: { at: Vec3; diameter: number };
 }
 
 /** Where the servers serve the model packs' index (204 when there is none); a unit's model is at `/u/<game>/<unit>?v=<tag>` under it. */
@@ -81,8 +88,15 @@ export function vehicleKey(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '');
 }
 
-/** The parts a pack model may have, in the order they are packed. */
+/** The parts a pack model may have, by their name before any number (`turret.2`), in the order they are packed. */
 const PARTS = ['hull', 'gear', 'turret', 'gun', 'rotor'] as const;
+const PART_NAME = /^(hull|gear|turret|gun|rotor)(?:\.(\d+))?$/;
+
+/** The order parts are packed in: unnumbered first, then by number, a turret before its gun. */
+function partRank(name: string): [number, number] {
+  const m = PART_NAME.exec(name)!;
+  return [m[2] ? Number(m[2]) : 0, PARTS.indexOf(m[1] as (typeof PARTS)[number])];
+}
 
 interface GltfNode {
   name?: string;
@@ -145,26 +159,44 @@ export function figureFromModelGlb(bytes: Uint8Array): ModelFigure {
     const parts = new Map<string, { p: Float32Array; idx: Uint16Array | Uint32Array; extras?: Record<string, unknown> }>();
     for (const ci of ln.children ?? []) {
       const n = g.nodes[ci];
-      if (n.mesh === undefined || !PARTS.includes(n.name as (typeof PARTS)[number])) continue;
+      if (n.mesh === undefined || !PART_NAME.test(n.name ?? '')) continue;
       const prim = g.meshes[n.mesh].primitives[0];
       parts.set(n.name!, { p: accessor(g, bin, prim.attributes.POSITION) as Float32Array, idx: accessor(g, bin, prim.indices) as Uint16Array, extras: n.extras });
     }
     return parts;
   });
-  const present = PARTS.filter((name) => lods.some((l) => l.has(name)));
+  const present = [...new Set(lods.flatMap((l) => [...l.keys()]))].sort((a, b) => {
+    const [ka, pa] = partRank(a);
+    const [kb, pb] = partRank(b);
+    return ka - kb || pa - pb;
+  });
   const extrasOf = (name: string) => lods.map((l) => l.get(name)?.extras).find((e) => e);
-  // Joints: the turret turns about its ring when it has a pivot; the gun raises about its trunnion, on the turret when there is one.
-  const turret = vec3(extrasOf('turret')?.pivot);
-  const gun = vec3(extrasOf('gun')?.pivot);
+  // Joints: a turret turns about its ring when it has a pivot; a gun raises about its trunnion, on its turret when
+  // there is one (`parent` counts jointed parts). Rotors are drawn where they stand (figures have no spinning joint);
+  // a propeller gets the faint disc of a turning one.
   const parts: ModelPart[] = [];
   const order: string[] = [];
+  const jointIndex = new Map<string, number>();
+  let prop: ModelFigure['prop'];
   for (const name of present) {
-    if (name === 'hull') parts.push({ name, pivot: [0, 0, 0] });
-    else if (name === 'gear') parts.push({ name, pivot: [0, 0, 0], track: true });
-    else if (name === 'turret') parts.push(turret ? { name, pivot: turret, joint: 'yaw' } : { name, pivot: [0, 0, 0] });
-    // A helicopter's main rotor: drawn where it stands (figures have no spinning joint).
-    else if (name === 'rotor') parts.push({ name, pivot: [0, 0, 0] });
-    else parts.push(gun ? { name, pivot: gun, joint: 'pitch', ...(turret && present.includes('turret') ? { parent: 0 } : {}) } : { name, pivot: [0, 0, 0] });
+    const base = PART_NAME.exec(name)![1];
+    const x = extrasOf(name) ?? {};
+    const pivot = vec3(x.pivot);
+    const unnumbered = name === base;
+    if (base === 'gear') parts.push({ name, pivot: [0, 0, 0], track: true });
+    else if (base === 'turret' && pivot && (x.joint === 'yaw' || unnumbered)) {
+      jointIndex.set(name, jointIndex.size);
+      parts.push({ name, pivot, joint: 'yaw', ...(typeof x.rest === 'number' && Number.isFinite(x.rest) ? { rest: x.rest } : {}) });
+    } else if (base === 'gun' && pivot && (x.joint === 'pitch' || unnumbered)) {
+      const on = typeof x.parent === 'string' ? x.parent : unnumbered && present.includes('turret') ? 'turret' : null;
+      const parent = on !== null ? jointIndex.get(on) : undefined;
+      jointIndex.set(name, jointIndex.size);
+      parts.push({ name, pivot, joint: 'pitch', ...(parent !== undefined ? { parent } : {}) });
+    } else {
+      parts.push({ name, pivot: [0, 0, 0] });
+      const axis = vec3(x.axis);
+      if (base === 'rotor' && !prop && pivot && axis && axis[0] > 0.9 && typeof x.diameter === 'number') prop = { at: pivot, diameter: x.diameter };
+    }
     order.push(name);
   }
   const lo = [Infinity, Infinity, Infinity];
@@ -211,7 +243,43 @@ export function figureFromModelGlb(bytes: Uint8Array): ModelFigure {
     parts,
     crease: 50,
     lods: words.slice(0, 3),
+    ...(prop ? { prop } : {}),
   };
+}
+
+/** One damage-model part of a pack model (`dm:<name>` under its `dm` node): its triangles and its armour. */
+export interface ModelPlate {
+  name: string;
+  /** The model part it moves with (`hull`, `turret`, `gun`, `turret.2`...). */
+  part: string;
+  /** Thickness, mm, where the game gives one. */
+  mm?: number;
+  /** The armour or material class. */
+  cls?: string;
+  pos: Float32Array;
+  idx: Uint16Array | Uint32Array;
+}
+
+/** A pack model's damage-model parts (none when it has no `dm` node). */
+export function platesFromModelGlb(bytes: Uint8Array): ModelPlate[] {
+  const { json: g, bin } = readGlb(bytes);
+  const dm = g.nodes.find((n) => n.name === 'dm');
+  const out: ModelPlate[] = [];
+  for (const ci of dm?.children ?? []) {
+    const n = g.nodes[ci];
+    if (n.mesh === undefined || !n.name?.startsWith('dm:')) continue;
+    const prim = g.meshes[n.mesh].primitives[0];
+    const x = n.extras ?? {};
+    out.push({
+      name: n.name.slice(3),
+      part: typeof x.part === 'string' ? x.part : 'hull',
+      ...(typeof x.mm === 'number' && Number.isFinite(x.mm) ? { mm: x.mm } : {}),
+      ...(typeof x.class === 'string' && x.class ? { cls: x.class } : {}),
+      pos: accessor(g, bin, prim.attributes.POSITION) as Float32Array,
+      idx: accessor(g, bin, prim.indices) as Uint16Array | Uint32Array,
+    });
+  }
+  return out;
 }
 
 /** The variant name a pack unit is drawn as: the figure it would have been, marked as this game's unit's model. */

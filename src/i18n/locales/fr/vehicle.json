@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Dégâts",
   "vehicle.breakdown.kills": "Éliminations",
   "vehicle.breakdown.unknown": "(sans nom)",
-  "vehicle.breakdown.distance": "Distance : médiane {median}, la plus grande {max} ({n} impacts)"
+  "vehicle.breakdown.distance": "Distance : médiane {median}, la plus grande {max} ({n} impacts)",
+  "vehicle.look.plates": "Plaques de blindage",
+  "vehicle.look.platesTitle": "Chaque plaque de blindage dans la couleur de ses impacts sur toutes les parties ; pointez une plaque pour son épaisseur",
+  "vehicle.plate.thickness": "Épaisseur",
+  "vehicle.plate.class": "Classe",
+  "vehicle.plate.hits": "Impacts",
+  "vehicle.plate.through": "Perforés",
+  "vehicle.plate.stopped": "Non perforés",
+  "vehicle.plate.bounced": "Ricochets",
+  "vehicle.plate.kills": "Destructions"
 }

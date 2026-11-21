@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Daño",
   "vehicle.breakdown.kills": "Bajas",
   "vehicle.breakdown.unknown": "(sin nombre)",
-  "vehicle.breakdown.distance": "Distancia: mediana {median}, la mayor {max} ({n} impactos)"
+  "vehicle.breakdown.distance": "Distancia: mediana {median}, la mayor {max} ({n} impactos)",
+  "vehicle.look.plates": "Placas de blindaje",
+  "vehicle.look.platesTitle": "Cada placa de blindaje del color de sus impactos en todas las partidas; señala una placa para ver su espesor",
+  "vehicle.plate.thickness": "Espesor",
+  "vehicle.plate.class": "Clase",
+  "vehicle.plate.hits": "Impactos",
+  "vehicle.plate.through": "Penetrados",
+  "vehicle.plate.stopped": "No penetrados",
+  "vehicle.plate.bounced": "Rebotes",
+  "vehicle.plate.kills": "Destrucciones"
 }

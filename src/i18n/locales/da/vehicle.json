@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Skade",
   "vehicle.breakdown.kills": "Drab",
   "vehicle.breakdown.unknown": "(uden navn)",
-  "vehicle.breakdown.distance": "Afstand: median {median}, længst {max} ({n} træffere)"
+  "vehicle.breakdown.distance": "Afstand: median {median}, længst {max} ({n} træffere)",
+  "vehicle.look.plates": "Panserplader",
+  "vehicle.look.platesTitle": "Hver panserplade i farven på dens træffere over alle kampe; peg på en plade for dens tykkelse",
+  "vehicle.plate.thickness": "Tykkelse",
+  "vehicle.plate.class": "Klasse",
+  "vehicle.plate.hits": "Træffere",
+  "vehicle.plate.through": "Gennemtrængt",
+  "vehicle.plate.stopped": "Ikke gennemtrængt",
+  "vehicle.plate.bounced": "Rikochetter",
+  "vehicle.plate.kills": "Ødelæggelser"
 }

@@ -12,6 +12,7 @@
  * point on the ground grid (an aircraft too, so it can be walked round).
  */
 
+import { paintPlates, type Plate, type PlateCount } from './plates';
 import { lapColor, VertexBuffer, type Rgb, type Vec3 } from '../race/geometry';
 import { CATALOG } from '../figures/catalog';
 import { TemplateCache, type Template } from '../figures/kit';
@@ -226,6 +227,8 @@ export interface VehicleInput {
   /** Changes when the colour ramp does. */
   lutKey: number;
   selected: VehicleHit | null;
+  /** The armour plates drawn in place of the figure's surface, each coloured by its hits (`plates.ts`); null: the figure. */
+  plates?: { list: Plate[]; counts: PlateCount[]; picked: number } | null;
 }
 
 /**
@@ -243,6 +246,9 @@ export class VehicleScene {
   private paintKey: unknown[] = [];
   private markKey: unknown[] = [];
   result: HeatResult | null = null;
+  /** Each plate's first vertex and vertex count in the surface (plates drawn), and the plate lit now. */
+  private plateRanges: [number, number][] | null = null;
+  private lit = -1;
   /** The figure's lift onto the grid. */
   lift = 0;
 
@@ -290,11 +296,13 @@ export class VehicleScene {
     }
     const result = this.result!;
     const saturation = result.auto * Math.pow(2, -input.look.exposure);
-    const pk = [result, saturation, input.lutKey, input.look.showHeat];
+    const pl = input.plates ?? null;
+    const pk = [result, saturation, input.lutKey, input.look.showHeat, pl?.list, pl?.counts];
     if (!same(pk, this.paintKey)) {
       this.paintKey = pk;
       this.surface.reset();
-      paint(mesh, input.look.showHeat ? result.heat : ZERO(mesh.count), saturation, rampOfLut(input.lut), this.surface, [0, lift, 0]);
+      this.plateRanges = pl ? paintPlates(pl.list, pl.counts, rampOfLut(input.lut), this.surface, lift, input.look.showHeat) : null;
+      if (!pl) paint(mesh, input.look.showHeat ? result.heat : ZERO(mesh.count), saturation, rampOfLut(input.lut), this.surface, [0, lift, 0]);
       this.markKey = [];
       changed = true;
     }
@@ -308,6 +316,19 @@ export class VehicleScene {
       tris.count = this.surface.count;
       lines.reset();
       drawMarks(tris, lines, result, input.look, mesh, lift, input.selected);
+      this.lit = -1;
+      changed = true;
+    }
+    // The plate under the pointer, lit: only its own vertices change (and the one lit before goes back).
+    const picked = pl && this.plateRanges ? pl.picked : -1;
+    if (picked !== this.lit) {
+      const r = this.plateRanges;
+      if (r && this.lit >= 0 && this.lit < r.length) tris.data.set(this.surface.data.subarray(r[this.lit][0] * 7, (r[this.lit][0] + r[this.lit][1]) * 7), r[this.lit][0] * 7);
+      if (r && picked >= 0 && picked < r.length) {
+        const d = tris.data;
+        for (let v = r[picked][0], end = v + r[picked][1]; v < end; v++) for (let c = 3; c < 6; c++) d[v * 7 + c] = d[v * 7 + c] * 0.5 + 0.5;
+      }
+      this.lit = picked;
       changed = true;
     }
     return [this.frame, changed];

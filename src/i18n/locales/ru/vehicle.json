@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Урон",
   "vehicle.breakdown.kills": "Убийства",
   "vehicle.breakdown.unknown": "(без имени)",
-  "vehicle.breakdown.distance": "Дистанция: медиана {median}, дальше всего {max} ({n} попаданий)"
+  "vehicle.breakdown.distance": "Дистанция: медиана {median}, дальше всего {max} ({n} попаданий)",
+  "vehicle.look.plates": "Бронелисты",
+  "vehicle.look.platesTitle": "Каждый бронелист в цвете своих попаданий за все матчи; наведите на лист, чтобы увидеть толщину",
+  "vehicle.plate.thickness": "Толщина",
+  "vehicle.plate.class": "Класс",
+  "vehicle.plate.hits": "Попадания",
+  "vehicle.plate.through": "Пробито",
+  "vehicle.plate.stopped": "Не пробито",
+  "vehicle.plate.bounced": "Рикошеты",
+  "vehicle.plate.kills": "Уничтожения"
 }

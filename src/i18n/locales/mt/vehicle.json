@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Ħsara",
   "vehicle.breakdown.kills": "Qtil",
   "vehicle.breakdown.unknown": "(bla isem)",
-  "vehicle.breakdown.distance": "Distanza: medjan {median}, l-iktar 'il bogħod {max} ({n} sabta)"
+  "vehicle.breakdown.distance": "Distanza: medjan {median}, l-iktar 'il bogħod {max} ({n} sabta)",
+  "vehicle.look.plates": "Pjanċi tal-armatura",
+  "vehicle.look.platesTitle": "Kull pjanċa tal-armatura fil-kulur tad-daqqiet tagħha fuq il-logħbiet kollha; ipponta lejn pjanċa għall-ħxuna tagħha",
+  "vehicle.plate.thickness": "Ħxuna",
+  "vehicle.plate.class": "Klassi",
+  "vehicle.plate.hits": "Daqqiet",
+  "vehicle.plate.through": "Penetrati",
+  "vehicle.plate.stopped": "Mhux penetrati",
+  "vehicle.plate.bounced": "Rikoxetti",
+  "vehicle.plate.kills": "Qerdiet"
 }

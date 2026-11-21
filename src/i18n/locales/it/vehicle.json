@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Danno",
   "vehicle.breakdown.kills": "Uccisioni",
   "vehicle.breakdown.unknown": "(senza nome)",
-  "vehicle.breakdown.distance": "Distanza: mediana {median}, massima {max} ({n} colpi)"
+  "vehicle.breakdown.distance": "Distanza: mediana {median}, massima {max} ({n} colpi)",
+  "vehicle.look.plates": "Piastre corazzate",
+  "vehicle.look.platesTitle": "Ogni piastra corazzata nel colore dei suoi colpi su tutte le partite; indica una piastra per il suo spessore",
+  "vehicle.plate.thickness": "Spessore",
+  "vehicle.plate.class": "Classe",
+  "vehicle.plate.hits": "Colpi",
+  "vehicle.plate.through": "Penetrati",
+  "vehicle.plate.stopped": "Non penetrati",
+  "vehicle.plate.bounced": "Rimbalzi",
+  "vehicle.plate.kills": "Distruzioni"
 }

@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Щети",
   "vehicle.breakdown.kills": "Убийства",
   "vehicle.breakdown.unknown": "(без име)",
-  "vehicle.breakdown.distance": "Разстояние: медиана {median}, най-далеч {max} ({n} попадения)"
+  "vehicle.breakdown.distance": "Разстояние: медиана {median}, най-далеч {max} ({n} попадения)",
+  "vehicle.look.plates": "Бронеплочи",
+  "vehicle.look.platesTitle": "Всяка бронеплоча в цвета на попаденията ѝ от всички мачове; посочете плоча за дебелината ѝ",
+  "vehicle.plate.thickness": "Дебелина",
+  "vehicle.plate.class": "Клас",
+  "vehicle.plate.hits": "Попадения",
+  "vehicle.plate.through": "Пробити",
+  "vehicle.plate.stopped": "Непробити",
+  "vehicle.plate.bounced": "Рикошети",
+  "vehicle.plate.kills": "Унищожения"
 }

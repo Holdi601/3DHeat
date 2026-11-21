@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Žala",
   "vehicle.breakdown.kills": "Nukauti",
   "vehicle.breakdown.unknown": "(be pavadinimo)",
-  "vehicle.breakdown.distance": "Atstumas: mediana {median}, toliausiai {max} ({n} pataikymai)"
+  "vehicle.breakdown.distance": "Atstumas: mediana {median}, toliausiai {max} ({n} pataikymai)",
+  "vehicle.look.plates": "Šarvo plokštės",
+  "vehicle.look.platesTitle": "Kiekviena šarvo plokštė savo pataikymų spalva per visas rungtynes; nurodykite plokštę, kad matytumėte jos storį",
+  "vehicle.plate.thickness": "Storis",
+  "vehicle.plate.class": "Klasė",
+  "vehicle.plate.hits": "Pataikymai",
+  "vehicle.plate.through": "Pramušta",
+  "vehicle.plate.stopped": "Nepramušta",
+  "vehicle.plate.bounced": "Rikošetai",
+  "vehicle.plate.kills": "Sunaikinimai"
 }

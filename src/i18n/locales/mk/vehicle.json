@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Штета",
   "vehicle.breakdown.kills": "Убиства",
   "vehicle.breakdown.unknown": "(без име)",
-  "vehicle.breakdown.distance": "Растојание: медијана {median}, најдалеку {max} ({n} погодоци)"
+  "vehicle.breakdown.distance": "Растојание: медијана {median}, најдалеку {max} ({n} погодоци)",
+  "vehicle.look.plates": "Оклопни плочи",
+  "vehicle.look.platesTitle": "Секоја оклопна плоча во бојата на нејзините погодоци од сите натпревари; покажете плоча за нејзината дебелина",
+  "vehicle.plate.thickness": "Дебелина",
+  "vehicle.plate.class": "Класа",
+  "vehicle.plate.hits": "Погодоци",
+  "vehicle.plate.through": "Пробиени",
+  "vehicle.plate.stopped": "Непробиени",
+  "vehicle.plate.bounced": "Рикошети",
+  "vehicle.plate.kills": "Уништувања"
 }

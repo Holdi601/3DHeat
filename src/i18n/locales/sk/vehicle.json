@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Poškodenie",
   "vehicle.breakdown.kills": "Zabitia",
   "vehicle.breakdown.unknown": "(bez mena)",
-  "vehicle.breakdown.distance": "Vzdialenosť: medián {median}, najďalej {max} ({n} zásahov)"
+  "vehicle.breakdown.distance": "Vzdialenosť: medián {median}, najďalej {max} ({n} zásahov)",
+  "vehicle.look.plates": "Pancierové pláty",
+  "vehicle.look.platesTitle": "Každý pancierový plát vo farbe svojich zásahov zo všetkých zápasov; ukážte na plát pre jeho hrúbku",
+  "vehicle.plate.thickness": "Hrúbka",
+  "vehicle.plate.class": "Trieda",
+  "vehicle.plate.hits": "Zásahy",
+  "vehicle.plate.through": "Prebité",
+  "vehicle.plate.stopped": "Neprebité",
+  "vehicle.plate.bounced": "Odrazy",
+  "vehicle.plate.kills": "Zničenia"
 }

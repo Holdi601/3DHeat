@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Škoda",
   "vehicle.breakdown.kills": "Uboji",
   "vehicle.breakdown.unknown": "(brez imena)",
-  "vehicle.breakdown.distance": "Razdalja: mediana {median}, najdlje {max} ({n} zadetkov)"
+  "vehicle.breakdown.distance": "Razdalja: mediana {median}, najdlje {max} ({n} zadetkov)",
+  "vehicle.look.plates": "Oklepne plošče",
+  "vehicle.look.platesTitle": "Vsaka oklepna plošča v barvi svojih zadetkov iz vseh tekem; pokažite na ploščo za njeno debelino",
+  "vehicle.plate.thickness": "Debelina",
+  "vehicle.plate.class": "Razred",
+  "vehicle.plate.hits": "Zadetki",
+  "vehicle.plate.through": "Prebito",
+  "vehicle.plate.stopped": "Ni prebito",
+  "vehicle.plate.bounced": "Odboji",
+  "vehicle.plate.kills": "Uničenja"
 }

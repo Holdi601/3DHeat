@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "ダメージ",
   "vehicle.breakdown.kills": "撃破",
   "vehicle.breakdown.unknown": "（名前なし）",
-  "vehicle.breakdown.distance": "距離：中央値 {median}、最遠 {max}（{n} 件）"
+  "vehicle.breakdown.distance": "距離：中央値 {median}、最遠 {max}（{n} 件）",
+  "vehicle.look.plates": "装甲板",
+  "vehicle.look.platesTitle": "各装甲板を全試合の命中数の色で表示。板を指すと厚さを表示",
+  "vehicle.plate.thickness": "厚さ",
+  "vehicle.plate.class": "種別",
+  "vehicle.plate.hits": "命中",
+  "vehicle.plate.through": "貫通",
+  "vehicle.plate.stopped": "非貫通",
+  "vehicle.plate.bounced": "跳弾",
+  "vehicle.plate.kills": "撃破"
 }

@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Skade",
   "vehicle.breakdown.kills": "Drap",
   "vehicle.breakdown.unknown": "(uten navn)",
-  "vehicle.breakdown.distance": "Avstand: median {median}, lengst {max} ({n} treff)"
+  "vehicle.breakdown.distance": "Avstand: median {median}, lengst {max} ({n} treff)",
+  "vehicle.look.plates": "Panserplater",
+  "vehicle.look.platesTitle": "Hver panserplate i fargen på treffene sine over alle kamper; pek på en plate for tykkelsen",
+  "vehicle.plate.thickness": "Tykkelse",
+  "vehicle.plate.class": "Klasse",
+  "vehicle.plate.hits": "Treff",
+  "vehicle.plate.through": "Gjennomslått",
+  "vehicle.plate.stopped": "Ikke gjennomslått",
+  "vehicle.plate.bounced": "Rikosjetter",
+  "vehicle.plate.kills": "Ødeleggelser"
 }

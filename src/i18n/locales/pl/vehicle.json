@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Obrażenia",
   "vehicle.breakdown.kills": "Zabójstwa",
   "vehicle.breakdown.unknown": "(bez nazwy)",
-  "vehicle.breakdown.distance": "Odległość: mediana {median}, najdalej {max} ({n} trafień)"
+  "vehicle.breakdown.distance": "Odległość: mediana {median}, najdalej {max} ({n} trafień)",
+  "vehicle.look.plates": "Płyty pancerza",
+  "vehicle.look.platesTitle": "Każda płyta pancerza w kolorze swoich trafień ze wszystkich meczów; wskaż płytę, by zobaczyć jej grubość",
+  "vehicle.plate.thickness": "Grubość",
+  "vehicle.plate.class": "Klasa",
+  "vehicle.plate.hits": "Trafienia",
+  "vehicle.plate.through": "Przebite",
+  "vehicle.plate.stopped": "Nieprzebite",
+  "vehicle.plate.bounced": "Rykoszety",
+  "vehicle.plate.kills": "Zniszczenia"
 }

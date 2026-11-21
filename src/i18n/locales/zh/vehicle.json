@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "伤害",
   "vehicle.breakdown.kills": "击杀",
   "vehicle.breakdown.unknown": "（未命名）",
-  "vehicle.breakdown.distance": "距离：中位数 {median}，最远 {max}（{n} 次命中）"
+  "vehicle.breakdown.distance": "距离：中位数 {median}，最远 {max}（{n} 次命中）",
+  "vehicle.look.plates": "装甲板",
+  "vehicle.look.platesTitle": "每块装甲板按其在所有对局中的命中着色；指向装甲板可查看厚度",
+  "vehicle.plate.thickness": "厚度",
+  "vehicle.plate.class": "类别",
+  "vehicle.plate.hits": "命中",
+  "vehicle.plate.through": "击穿",
+  "vehicle.plate.stopped": "未击穿",
+  "vehicle.plate.bounced": "跳弹",
+  "vehicle.plate.kills": "击毁"
 }

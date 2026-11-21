@@ -2922,6 +2922,8 @@ export class Engine {
     this.viewMirrored.multiplyMatrices(cam.matrixWorldInverse, this.mirrorMat);
     this.viewProj.multiplyMatrices(cam.projectionMatrix, this.viewMirrored);
     this.pickViewProj.set(this.viewProj.elements);
+    // The vehicle heatmap's plates name the one under the pointer.
+    if (vehicleTab) this.vehicleStage.hover(this.cursorPx, this.canvas.clientWidth, this.canvas.clientHeight, this.pickViewProj);
     if (renderer.reverseZ) this.viewProj.premultiply(this.depthRemap);
     this.viewProjArr.set(this.viewProj.elements);
     this.viewArr.set(this.viewMirrored.elements);

@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Sebzés",
   "vehicle.breakdown.kills": "Kilövések",
   "vehicle.breakdown.unknown": "(név nélkül)",
-  "vehicle.breakdown.distance": "Távolság: medián {median}, legtávolabb {max} ({n} találat)"
+  "vehicle.breakdown.distance": "Távolság: medián {median}, legtávolabb {max} ({n} találat)",
+  "vehicle.look.plates": "Páncéllemezek",
+  "vehicle.look.platesTitle": "Minden páncéllemez a találatai színében az összes meccsből; mutasson egy lemezre a vastagságáért",
+  "vehicle.plate.thickness": "Vastagság",
+  "vehicle.plate.class": "Osztály",
+  "vehicle.plate.hits": "Találatok",
+  "vehicle.plate.through": "Átütött",
+  "vehicle.plate.stopped": "Nem ütött át",
+  "vehicle.plate.bounced": "Lepattanások",
+  "vehicle.plate.kills": "Megsemmisítések"
 }

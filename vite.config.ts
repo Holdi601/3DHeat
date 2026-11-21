@@ -7,7 +7,7 @@ import { closeSync, createReadStream, existsSync, openSync, readdirSync, readFil
 import { createHash } from 'node:crypto';
 import { brotliCompressSync, constants as zlibConstants, gzipSync } from 'node:zlib';
 import { encodePackFigure, type PackFigure } from './src/figures/figurepackBin.ts';
-import { figureFromModelGlb } from './src/figures/modelpack.ts';
+import { figureFromModelGlb, platesFromModelGlb } from './src/figures/modelpack.ts';
 import { classify, glbExtras, jsonExtras, linkLayouts, type CatalogIndex, type CatalogItem } from './src/data/catalogIndex.ts';
 
 /**
@@ -345,6 +345,50 @@ function modelPack(): Plugin {
     server.middlewares.use(MODEL_PACK_ROUTE, (req, res) => {
       const all = current();
       const url = new URL(req.url ?? '/', 'http://pack');
+      // A game's hit part names (`/hit-parts/<game>`) and a unit's damage-model parts (`/dm/<game>/<unit>`): asked
+      // for when the vehicle heatmap shows plates, never with the figures.
+      const hp = /^\/hit-parts\/([^/]+)$/.exec(url.pathname);
+      if (hp) {
+        const k = all.find((q) => q.game === decodeURIComponent(hp[1]).toLowerCase());
+        const file = k ? `${k.dir}/hit-parts.json` : '';
+        if (!k || !existsSync(file)) {
+          res.statusCode = 404;
+          res.end();
+          return;
+        }
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Cache-Control', 'no-cache');
+        res.end(readFileSync(file));
+        return;
+      }
+      const dmAt = /^\/dm\/([^/]+)\/(.+)$/.exec(url.pathname);
+      if (dmAt) {
+        const u = decodeURIComponent(dmAt[2]).toLowerCase();
+        const k = all.find((q) => q.game === decodeURIComponent(dmAt[1]).toLowerCase() && u in q.files);
+        let plates: ReturnType<typeof platesFromModelGlb> = [];
+        try {
+          if (k) plates = platesFromModelGlb(readFileSync(`${k.dir}/${k.files[u]}`));
+        } catch {
+          plates = [];
+        }
+        if (!k || !plates.length) {
+          res.statusCode = 404;
+          res.end();
+          return;
+        }
+        const b64 = (a: ArrayBufferView) => Buffer.from(a.buffer, a.byteOffset, a.byteLength).toString('base64');
+        const body = JSON.stringify({
+          version: 1,
+          plates: plates.map((p) => ({ name: p.name, part: p.part, mm: p.mm, cls: p.cls, v: b64(p.pos), i: b64(p.idx), wide: p.idx instanceof Uint32Array })),
+        });
+        const raw = Buffer.from(body);
+        const gz = /\bgzip\b/.test(String(req.headers['accept-encoding'] ?? ''));
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Cache-Control', 'no-cache');
+        if (gz) res.setHeader('Content-Encoding', 'gzip');
+        res.end(gz ? gzipSync(raw, { level: 6 }) : raw);
+        return;
+      }
       const m = /^\/u\/([^/]+)\/(.+)$/.exec(url.pathname);
       const unit = m ? decodeURIComponent(m[2]).toLowerCase() : null;
       const pack = m ? all.find((k) => k.game === decodeURIComponent(m[1]).toLowerCase() && unit! in k.files) : undefined;

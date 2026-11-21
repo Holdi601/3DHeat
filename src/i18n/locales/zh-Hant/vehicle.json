@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "傷害",
   "vehicle.breakdown.kills": "擊殺",
   "vehicle.breakdown.unknown": "（未命名）",
-  "vehicle.breakdown.distance": "距離：中位數 {median}，最遠 {max}（{n} 次命中）"
+  "vehicle.breakdown.distance": "距離：中位數 {median}，最遠 {max}（{n} 次命中）",
+  "vehicle.look.plates": "裝甲板",
+  "vehicle.look.platesTitle": "每塊裝甲板按其在所有對局中的命中著色；指向裝甲板可查看厚度",
+  "vehicle.plate.thickness": "厚度",
+  "vehicle.plate.class": "類別",
+  "vehicle.plate.hits": "命中",
+  "vehicle.plate.through": "擊穿",
+  "vehicle.plate.stopped": "未擊穿",
+  "vehicle.plate.bounced": "跳彈",
+  "vehicle.plate.kills": "擊毀"
 }

@@ -28,6 +28,8 @@ export interface MeshPart {
   joint?: 'yaw' | 'pitch';
   /** The joint (index among the jointed parts) a gun rides on. */
   parent?: number;
+  /** A turret's yaw as built, radians, right positive: PI for a ship's after turret (default 0). */
+  rest?: number;
   /** The team colour's shade on this part (default `HULL_TONE`). */
   tone?: number;
   /** Running gear: the whole part in the track colour. */
@@ -222,7 +224,7 @@ function buildLod(m: MeshFigureData, lod: number, base?: Template): Template {
         kind: part.joint,
         pivot: [part.pivot[0] + shift[0], part.pivot[1] + shift[1], part.pivot[2] + shift[2]],
         parent,
-        rest: 0,
+        rest: part.rest ?? 0,
         ...(part.joint === 'pitch' ? { pitch: 0 } : {}),
       });
       joints.push(j);

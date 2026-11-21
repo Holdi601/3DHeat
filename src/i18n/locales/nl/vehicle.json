@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Schade",
   "vehicle.breakdown.kills": "Kills",
   "vehicle.breakdown.unknown": "(zonder naam)",
-  "vehicle.breakdown.distance": "Afstand: mediaan {median}, verst {max} ({n} treffers)"
+  "vehicle.breakdown.distance": "Afstand: mediaan {median}, verst {max} ({n} treffers)",
+  "vehicle.look.plates": "Pantserplaten",
+  "vehicle.look.platesTitle": "Elke pantserplaat in de kleur van haar treffers over alle potjes; wijs een plaat aan voor haar dikte",
+  "vehicle.plate.thickness": "Dikte",
+  "vehicle.plate.class": "Klasse",
+  "vehicle.plate.hits": "Treffers",
+  "vehicle.plate.through": "Doorboord",
+  "vehicle.plate.stopped": "Niet doorboord",
+  "vehicle.plate.bounced": "Ketsers",
+  "vehicle.plate.kills": "Vernietigingen"
 }

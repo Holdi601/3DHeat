@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Skada",
   "vehicle.breakdown.kills": "Dödade",
   "vehicle.breakdown.unknown": "(utan namn)",
-  "vehicle.breakdown.distance": "Avstånd: median {median}, längst {max} ({n} träffar)"
+  "vehicle.breakdown.distance": "Avstånd: median {median}, längst {max} ({n} träffar)",
+  "vehicle.look.plates": "Pansarplåtar",
+  "vehicle.look.platesTitle": "Varje pansarplåt i färgen på sina träffar över alla matcher; peka på en plåt för dess tjocklek",
+  "vehicle.plate.thickness": "Tjocklek",
+  "vehicle.plate.class": "Klass",
+  "vehicle.plate.hits": "Träffar",
+  "vehicle.plate.through": "Genomslag",
+  "vehicle.plate.stopped": "Inget genomslag",
+  "vehicle.plate.bounced": "Rikoschetter",
+  "vehicle.plate.kills": "Förstörda"
 }

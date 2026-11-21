@@ -33,6 +33,8 @@ export interface VehicleState {
   showArrows: boolean;
   /** The hit clicked: its card is open and it is ringed. */
   selected: VehicleHit | null;
+  /** The armour plates in place of the surface, each coloured by its hits, where a local model pack has them. */
+  plates: boolean;
   /** Move the hits to where they lie best on the figure (`vehicle/fit.ts`). */
   fit: boolean;
   /** Gaussian radius, m; 0 is automatic. */
@@ -62,6 +64,7 @@ export const useVehicleStore = create<VehicleState>((set, get) => ({
   showHeat: true,
   showArrows: false,
   selected: null,
+  plates: true,
   fit: true,
   radius: 0,
   exposure: 0,
@@ -78,3 +81,9 @@ export const useVehicleStore = create<VehicleState>((set, get) => ({
     set({ [list]: next.length === all.length ? null : next } as Partial<VehicleState>);
   },
 }));
+
+/**
+ * The plate under the pointer (an index into the unit's plates, -1 for none): a store of its own, so the pointer
+ * moving over the vehicle re-renders only the plate's card.
+ */
+export const usePlateHover = create<{ plate: number }>(() => ({ plate: -1 }));

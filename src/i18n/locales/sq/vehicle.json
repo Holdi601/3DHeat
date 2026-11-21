@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Dëmi",
   "vehicle.breakdown.kills": "Vrasje",
   "vehicle.breakdown.unknown": "(pa emër)",
-  "vehicle.breakdown.distance": "Distanca: mediana {median}, më e largëta {max} ({n} goditje)"
+  "vehicle.breakdown.distance": "Distanca: mediana {median}, më e largëta {max} ({n} goditje)",
+  "vehicle.look.plates": "Pllaka blindimi",
+  "vehicle.look.platesTitle": "Çdo pllakë blindimi në ngjyrën e goditjeve të saj në të gjitha ndeshjet; drejtojuni një pllake për trashësinë e saj",
+  "vehicle.plate.thickness": "Trashësia",
+  "vehicle.plate.class": "Klasa",
+  "vehicle.plate.hits": "Goditje",
+  "vehicle.plate.through": "Të shpuara",
+  "vehicle.plate.stopped": "Të pashpuara",
+  "vehicle.plate.bounced": "Rikoshete",
+  "vehicle.plate.kills": "Shkatërrime"
 }

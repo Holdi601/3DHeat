@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Dany",
   "vehicle.breakdown.kills": "Baixes",
   "vehicle.breakdown.unknown": "(sense nom)",
-  "vehicle.breakdown.distance": "Distància: mediana {median}, la més gran {max} ({n} impactes)"
+  "vehicle.breakdown.distance": "Distància: mediana {median}, la més gran {max} ({n} impactes)",
+  "vehicle.look.plates": "Plaques de blindatge",
+  "vehicle.look.platesTitle": "Cada placa de blindatge del color dels seus impactes en totes les partides; assenyaleu una placa per veure'n el gruix",
+  "vehicle.plate.thickness": "Gruix",
+  "vehicle.plate.class": "Classe",
+  "vehicle.plate.hits": "Impactes",
+  "vehicle.plate.through": "Penetrats",
+  "vehicle.plate.stopped": "No penetrats",
+  "vehicle.plate.bounced": "Rebots",
+  "vehicle.plate.kills": "Destruccions"
 }

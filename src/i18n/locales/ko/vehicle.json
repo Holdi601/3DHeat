@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "피해",
   "vehicle.breakdown.kills": "처치",
   "vehicle.breakdown.unknown": "(이름 없음)",
-  "vehicle.breakdown.distance": "거리: 중앙값 {median}, 최대 {max} ({n}건)"
+  "vehicle.breakdown.distance": "거리: 중앙값 {median}, 최대 {max} ({n}건)",
+  "vehicle.look.plates": "장갑판",
+  "vehicle.look.platesTitle": "각 장갑판을 모든 경기의 명중 색으로 표시합니다. 판을 가리키면 두께가 보입니다",
+  "vehicle.plate.thickness": "두께",
+  "vehicle.plate.class": "등급",
+  "vehicle.plate.hits": "명중",
+  "vehicle.plate.through": "관통",
+  "vehicle.plate.stopped": "비관통",
+  "vehicle.plate.bounced": "도탄",
+  "vehicle.plate.kills": "격파"
 }

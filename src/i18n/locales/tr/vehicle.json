@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Hasar",
   "vehicle.breakdown.kills": "Öldürmeler",
   "vehicle.breakdown.unknown": "(adsız)",
-  "vehicle.breakdown.distance": "Mesafe: medyan {median}, en uzak {max} ({n} isabet)"
+  "vehicle.breakdown.distance": "Mesafe: medyan {median}, en uzak {max} ({n} isabet)",
+  "vehicle.look.plates": "Zırh plakaları",
+  "vehicle.look.platesTitle": "Her zırh plakası tüm maçlardaki isabetlerinin renginde; kalınlığı için bir plakanın üzerine gelin",
+  "vehicle.plate.thickness": "Kalınlık",
+  "vehicle.plate.class": "Sınıf",
+  "vehicle.plate.hits": "İsabetler",
+  "vehicle.plate.through": "Delindi",
+  "vehicle.plate.stopped": "Delinmedi",
+  "vehicle.plate.bounced": "Seken",
+  "vehicle.plate.kills": "İmhalar"
 }

@@ -154,5 +154,14 @@
   "vehicle.breakdown.damage": "Schued",
   "vehicle.breakdown.kills": "Ofschëss",
   "vehicle.breakdown.unknown": "(ouni Numm)",
-  "vehicle.breakdown.distance": "Distanz: Median {median}, am wäitsten {max} ({n} Treffer)"
+  "vehicle.breakdown.distance": "Distanz: Median {median}, am wäitsten {max} ({n} Treffer)",
+  "vehicle.look.plates": "Panzerplacken",
+  "vehicle.look.platesTitle": "All Panzerplack an der Faarf vun hiren Treffer iwwer all Partien; weist op eng Plack fir hir Déckt",
+  "vehicle.plate.thickness": "Déckt",
+  "vehicle.plate.class": "Klass",
+  "vehicle.plate.hits": "Treffer",
+  "vehicle.plate.through": "Duerchgeschloen",
+  "vehicle.plate.stopped": "Net duerchgeschloen",
+  "vehicle.plate.bounced": "Ofpraller",
+  "vehicle.plate.kills": "Ofschëss"
 }

@@ -9,13 +9,24 @@
 
 import { Vector3 } from 'three';
 import type { Dataset, HeatColorScheme } from '../state/types';
-import { useVehicleStore } from '../state/vehicleStore';
+import { usePlateHover, useVehicleStore } from '../state/vehicleStore';
 import { buildColorLut } from '../render/colors';
 import type { FlyCamera } from '../render/camera';
 import { templateOfFigure, VehicleScene, type VehicleFrame } from './scene';
 import { offsetFor, shiftHits } from './fit';
 import type { Vec3 } from '../race/geometry';
 import { vehicleView } from './view';
+import { namesOf, packUnitOf, plateAt, plateCounts, platesOf, platesOfHits, platesVersion, type Plate, type PlateCount } from './plates';
+
+/** What the plate view shows now (the stage's last build), for the overlay's card: the unit's plates and their hits. */
+export interface PlateView {
+  list: Plate[];
+  counts: PlateCount[];
+}
+let shownPlates: PlateView | null = null;
+export function plateView(): PlateView | null {
+  return shownPlates;
+}
 
 export type Box = { minX: number; minY: number; minZ: number; maxX: number; maxY: number; maxZ: number };
 
@@ -31,6 +42,11 @@ export class VehicleStage {
   /** How far the hits were moved to lie on the figure (m, figure frame). */
   offset: Vec3 = [0, 0, 0];
   private readonly fwd = new Vector3();
+  private plateKey: unknown[] = [];
+  private plateAtHit: Map<number, number> = new Map();
+  private plateCounts: PlateCount[] = [];
+  private hoverAt: { x: number; y: number } | null = null;
+  private hoverT = 0;
 
   build(d: Dataset | null, scheme: HeatColorScheme): [VehicleFrame, boolean] {
     const s = useVehicleStore.getState();
@@ -47,7 +63,25 @@ export class VehicleStage {
     this.box = view.figure ? this.scene.bounds(view.figure) : null;
     const tpl = view.figure ? templateOfFigure(view.figure) : null;
     this.offset = tpl && s.fit && view.fits ? offsetFor(tpl, view.placed) : [0, 0, 0];
+    // The plates, when asked for and the pack has them: which plate each hit struck (once per hit list), what struck each.
+    let plates: { list: Plate[]; counts: PlateCount[]; picked: number } | null = null;
+    const list = s.plates ? platesOf(view.figure) : null;
+    shownPlates = null;
+    if (list && list.length) {
+      const unit = packUnitOf(view.figure)!;
+      const names = namesOf(unit.game);
+      const key = [list, view.all, names, view.hits, platesVersion()];
+      if (!same(key, this.plateKey)) {
+        if (this.plateKey[0] !== list || this.plateKey[1] !== view.all || this.plateKey[2] !== names) this.plateAtHit = platesOfHits(view.all, list, names);
+        this.plateCounts = plateCounts(view.hits, list, this.plateAtHit);
+        this.plateKey = key;
+      }
+      const hover = usePlateHover.getState().plate;
+      plates = { list, counts: this.plateCounts, picked: hover < list.length ? hover : -1 };
+      shownPlates = { list, counts: this.plateCounts };
+    }
     return this.scene.build({
+      plates,
       figure: view.figure ?? '',
       hits: shiftHits(view.hits, this.offset),
       look: { radius: s.radius, exposure: s.exposure, showPoints: s.showPoints, showHeat: s.showHeat, showArrows: s.showArrows, colourBy: s.colourBy },
@@ -72,6 +106,37 @@ export class VehicleStage {
       return [((cx + 1) / 2) * w, ((1 - cy) / 2) * h];
     };
     useVehicleStore.getState().patch({ selected: this.scene.pick(project, [x, y]) });
+  }
+
+  /**
+   * The pointer at canvas pixel (x, y) (null: off the canvas): the plate under it is the one the overlay names and the
+   * view lights. Only while plates are shown, and only when the pointer moved.
+   */
+  hover(at: { x: number; y: number } | null, w: number, h: number, viewProj: Float32Array): void {
+    const shown = shownPlates;
+    const was = usePlateHover.getState().plate;
+    if (!shown || !at) {
+      this.hoverAt = null;
+      if (was !== -1) usePlateHover.setState({ plate: -1 });
+      return;
+    }
+    // Asked again when the pointer moved two pixels or more, at most every 40 ms.
+    const now = performance.now();
+    if (this.hoverAt && (Math.abs(this.hoverAt.x - at.x) + Math.abs(this.hoverAt.y - at.y) < 2 || now - this.hoverT < 40)) return;
+    this.hoverAt = { x: at.x, y: at.y };
+    this.hoverT = now;
+    const m = viewProj;
+    const lift = this.scene.lift;
+    const project = (px: number, py: number, pz: number): [number, number, number] | null => {
+      py += lift;
+      const cw = m[3] * px + m[7] * py + m[11] * pz + m[15];
+      if (cw <= 1e-6) return null;
+      const cx = (m[0] * px + m[4] * py + m[8] * pz + m[12]) / cw;
+      const cy = (m[1] * px + m[5] * py + m[9] * pz + m[13]) / cw;
+      return [((cx + 1) / 2) * w, ((1 - cy) / 2) * h, cw];
+    };
+    const i = plateAt(shown.list, project, [at.x, at.y]);
+    if (i !== was) usePlateHover.setState({ plate: i });
   }
 
   /** Whether the view should frame the vehicle (a new one is shown); asked once. */
@@ -135,4 +200,8 @@ export class VehicleStage {
     }
     return moved;
   }
+}
+
+function same(a: unknown[], b: unknown[]): boolean {
+  return a.length === b.length && a.every((x, i) => x === b[i]);
 }
