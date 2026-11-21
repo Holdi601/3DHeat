@@ -117,6 +117,8 @@ export interface OutcomeFinding {
   point: [number, number] | null;
   /** The matches (callers' indices) with it, and example side-rounds won and lost. */
   matches: number[];
+  /** Per match of `matches`: 1 where the side won most of its rounds with the pattern there. */
+  matchWins: number[];
   examples: { match: number; round: number; at: number; t0: number; won: number }[];
 }
 
@@ -406,7 +408,16 @@ export async function analyseOutcome(
         flank: !!route?.flank,
         routeEnd: route ? endOf(g, f.side, route.path) : null,
         point: obj ? [obj.x, obj.z] : null,
-        matches: [...new Set(withRows.map((r) => r.match))],
+        ...(() => {
+          const per = new Map<number, [number, number]>();
+          for (const r of withRows) {
+            const a = per.get(r.match) ?? [0, 0];
+            a[0] += r.won;
+            a[1]++;
+            per.set(r.match, a);
+          }
+          return { matches: [...per.keys()], matchWins: [...per.values()].map(([w, n]) => (w * 2 > n ? 1 : 0)) };
+        })(),
         examples: [...pick(1), ...pick(0)].map((r) => ({ match: r.match, round: r.roundNo, at: f.at, t0: r.t0, won: r.won })),
       });
       pvals.push(p);

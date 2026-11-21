@@ -160,18 +160,42 @@ export const COMPARE_MATCHES = 60;
 export async function compareFinding(engine: Engine | null, f: OutcomeFinding): Promise<number> {
   const step = Math.max(1, f.matches.length / COMPARE_MATCHES);
   const pick: number[] = [];
-  for (let k = 0; k < f.matches.length && pick.length < COMPARE_MATCHES; k += step) pick.push(f.matches[Math.floor(k)]);
+  const won = new Set<number>();
+  for (let k = 0; k < f.matches.length && pick.length < COMPARE_MATCHES; k += step) {
+    const j = Math.floor(k);
+    pick.push(f.matches[j]);
+    if (f.matchWins[j]) won.add(f.matches[j]);
+  }
   const g = useOutcome.getState().result?.report.groups.find((x) => x.key === f.group);
-  const n = await drillDown(engine, { drill: { matches: pick, ...(g?.sidesBy === 'team' ? { team: f.sideName } : {}) } });
+  const drill = { matches: pick, ...(g?.sidesBy === 'team' ? { team: f.sideName } : {}) };
+  // The files' names, in the drill's order, to tell the won matches in the loaded data.
+  const names = await askMass<{ files: File[] }>({ type: 'drill', filter: useMass.getState().filter, drill: { matches: pick } }, 'drill');
+  const n = await drillDown(engine, { drill });
   const ds = useStore.getState().dataset;
   if (ds) {
+    const st = useStore.getState();
     const o = outcomeColumns(ds);
     const col = o.match ?? o.round;
-    if (col) {
-      const st = useStore.getState();
-      st.setSplit({ kind: 'range', column: col.name, positive: [1, 1], negative: [0, 0] });
+    const matchCol = ds.attrs.find((a) => a.kind === 'category' && /^(match|session|match.?id)$/i.test(a.name) && a.categories);
+    if (col) st.setSplit({ kind: 'range', column: col.name, positive: [1, 1], negative: [0, 0] });
+    else if (matchCol?.categories) {
+      // Without an outcome column in the loaded rows: the matches the side won (most of its rounds with the pattern) on +.
+      const stems = names.files.map((file) => file.name.replace(/\.(3dheat|parquet)$/i, ''));
+      const wonStem = new Set(stems.filter((_, k) => won.has(pick[k])));
+      const pos: number[] = [];
+      const neg: number[] = [];
+      matchCol.categories.forEach((label, id) => {
+        if (!label) return;
+        const s = stems.find((x) => x === label || x.startsWith(label) || label.startsWith(x));
+        if (s) (wonStem.has(s) ? pos : neg).push(id);
+      });
+      if (pos.length && neg.length) st.setSplit({ kind: 'categories', column: matchCol.name, positive: pos, negative: neg });
+    }
+    if (col || (matchCol && useStore.getState().split.kind === 'categories')) {
       st.patchHeat({ splitRate: false });
       st.setMode('heat-difference');
+      // The whole of every match at once: winners against losers, not a moment of them.
+      st.patchTimeline({ mode: 'all' });
     }
   }
   frameFinding(engine, f);

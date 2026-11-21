@@ -24,7 +24,7 @@ A made-up example of a finding:
 4. **By window** colours the zones for one part of the round (for example 1:00–2:00). **At a moment** gives a time slider: what the winners held at that moment.
 5. Read the **Patterns** list. Each pattern has:
    - **Show**: draws it and puts the camera on it.
-   - **Won vs lost**: loads up to 60 matches with the pattern and shows the side's winning matches against its losing ones as the difference split.
+   - **Won vs lost**: loads up to 60 matches with the pattern and shows the side's winners against its losers as the difference split, the whole matches at once: by the rows' own outcome column where the loaded rows have one, else match by match (a match counts as won where the side won most of its rounds with the pattern).
    - **Examples**: loads one match and jumps to the moment.
    - **To document**: sends the pattern, with a chart of the two win rates, to the open [analysis document](notes-and-analyses.md).
    - **Chart sign**: loads the matches, puts a volume on the pattern's place and a [chart sign](volume-charts.md) of won against lost beside it.
