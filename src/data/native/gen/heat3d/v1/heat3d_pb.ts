@@ -29,7 +29,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file heat3d/v1/heat3d.proto.
  */
 export const file_heat3d_v1_heat3d: GenFile = /*@__PURE__*/
-  fileDesc("ChZoZWF0M2QvdjEvaGVhdDNkLnByb3RvEgloZWF0M2QudjEi8wcKCEVudmVsb3BlEhAKCHByb3RvY29sGAEgASgNEgoKAmlkGAIgASgEEhAKCHJlcGx5X3RvGAMgASgEEg8KB3Nlc3Npb24YBCABKAkSIQoFaGVsbG8YCiABKAsyEC5oZWF0M2QudjEuSGVsbG9IABIsCgtoZWxsb19yZXBseRgLIAEoCzIVLmhlYXQzZC52MS5IZWxsb1JlcGx5SAASIQoFZXJyb3IYDCABKAsyEC5oZWF0M2QudjEuRXJyb3JIABInCghwcm9ncmVzcxgNIAEoCzITLmhlYXQzZC52MS5Qcm9ncmVzc0gAEiMKBmNhbmNlbBgOIAEoCzIRLmhlYXQzZC52MS5DYW5jZWxIABIuCgxvcGVuX2RhdGFzZXQYFCABKAsyFi5oZWF0M2QudjEuT3BlbkRhdGFzZXRIABIuCgxkYXRhc2V0X2luZm8YFSABKAsyFi5oZWF0M2QudjEuRGF0YXNldEluZm9IABIwCg1jbG9zZV9kYXRhc2V0GBYgASgLMhcuaGVhdDNkLnYxLkNsb3NlRGF0YXNldEgAEiMKBmNsb3NlZBgXIAEoCzIRLmhlYXQzZC52MS5DbG9zZWRIABIuCgxyZWFkX2NvbHVtbnMYHiABKAsyFi5oZWF0M2QudjEuUmVhZENvbHVtbnNIABIlCgdjb2x1bW5zGB8gASgLMhIuaGVhdDNkLnYxLkNvbHVtbnNIABIqCgpyZWFkX3RhYmxlGCAgASgLMhQuaGVhdDNkLnYxLlJlYWRUYWJsZUgAEiEKBXRhYmxlGCEgASgLMhAuaGVhdDNkLnYxLlRhYmxlSAASJgoIc2Nhbl9jc3YYIiABKAsyEi5oZWF0M2QudjEuU2NhbkNzdkgAEiwKC2Nzdl9jb2x1bW5zGCMgASgLMhUuaGVhdDNkLnYxLkNzdkNvbHVtbnNIABIuCgxidWlsZF9jaHVua3MYKCABKAsyFi5oZWF0M2QudjEuQnVpbGRDaHVua3NIABIoCgljaHVua19zZXQYKSABKAsyEy5oZWF0M2QudjEuQ2h1bmtTZXRIABIqCgpyZWFkX2NodW5rGCogASgLMhQuaGVhdDNkLnYxLlJlYWRDaHVua0gAEioKCmNodW5rX2RhdGEYKyABKAsyFC5oZWF0M2QudjEuQ2h1bmtEYXRhSAASIQoFcXVlcnkYMiABKAsyEC5oZWF0M2QudjEuUXVlcnlIABIsCgtxdWVyeV9yZXBseRgzIAEoCzIVLmhlYXQzZC52MS5RdWVyeVJlcGx5SAASHwoEZWNobxg8IAEoCzIPLmhlYXQzZC52MS5FY2hvSABCBgoEYm9keUoFCGQQyAEiFwoFSGVsbG8SDgoGY2xpZW50GAEgASgJIsoBCgpIZWxsb1JlcGx5EgwKBGNvcmUYASABKAkSFAoMY29yZV92ZXJzaW9uGAIgASgJEg8KB3RocmVhZHMYAyABKA0SFAoMbWVtb3J5X2J5dGVzGAQgASgEEg8KB2Zvcm1hdHMYBSADKAkSMQoGc2VydmVkGAYgAygLMiEuaGVhdDNkLnYxLkhlbGxvUmVwbHkuU2VydmVkRW50cnkaLQoLU2VydmVkRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgEOgI4ASI8CgVFcnJvchIiCgRjb2RlGAEgASgOMhQuaGVhdDNkLnYxLkVycm9yQ29kZRIPCgdtZXNzYWdlGAIgASgJIpcBCghQcm9ncmVzcxILCgNrZXkYASABKAkSLwoGcGFyYW1zGAIgAygLMh8uaGVhdDNkLnYxLlByb2dyZXNzLlBhcmFtc0VudHJ5EhAKCGZyYWN0aW9uGAMgASgBEgwKBHJvd3MYBCABKAQaLQoLUGFyYW1zRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASIZCgZDYW5jZWwSDwoHcmVxdWVzdBgBIAEoBCIdCgRFY2hvEhUKDXBheWxvYWRfYnl0ZXMYASABKAQiRAoHRmlsZVJlZhIOCgRwYXRoGAEgASgJSAASDwoFdG9rZW4YAiABKAlIABIOCgZtZW1iZXIYAyABKAlCCAoGc291cmNlIjAKC09wZW5EYXRhc2V0EiEKBWZpbGVzGAEgAygLMhIuaGVhdDNkLnYxLkZpbGVSZWYiQQoLRGF0YXNldEluZm8SDgoGaGFuZGxlGAEgASgEEiIKBWZpbGVzGAIgAygLMhMuaGVhdDNkLnYxLkZpbGVJbmZvIoACCghGaWxlSW5mbxIMCgRuYW1lGAEgASgJEiEKBmZvcm1hdBgCIAEoDjIRLmhlYXQzZC52MS5Gb3JtYXQSDQoFYnl0ZXMYAyABKAQSDAoEcm93cxgEIAEoBBISCgpyb3dzX2V4YWN0GAUgASgIEiYKB2NvbHVtbnMYBiADKAsyFS5oZWF0M2QudjEuQ29sdW1uSW5mbxISCgpyb3dfZ3JvdXBzGAcgASgNEhIKCmhpbnRzX2pzb24YCCABKAkSFQoNbWFuaWZlc3RfanNvbhgJIAEoCRIrCgdtZW1iZXJzGAogAygLMhouaGVhdDNkLnYxLkNvbnRhaW5lck1lbWJlciJeCgpDb2x1bW5JbmZvEgwKBG5hbWUYASABKAkSEAoIcGh5c2ljYWwYAiABKAkSDwoHbG9naWNhbBgDIAEoCRIMCgR0ZXh0GAQgASgIEhEKCXRpbWVzdGFtcBgFIAEoCCJ7Cg9Db250YWluZXJNZW1iZXISDAoEbmFtZRgBIAEoCRIMCgRyb2xlGAIgASgJEg4KBm1ldGhvZBgDIAEoDRIYChBjb21wcmVzc2VkX2J5dGVzGAQgASgEEg0KBWJ5dGVzGAUgASgEEhMKC2RhdGFfb2Zmc2V0GAYgASgEIh4KDENsb3NlRGF0YXNldBIOCgZoYW5kbGUYASABKAQiCAoGQ2xvc2VkIj8KCkNvbHVtblNwZWMSDAoEbmFtZRgBIAEoCRIjCgRraW5kGAIgASgOMhUuaGVhdDNkLnYxLkNvbHVtbktpbmQicwoPUm93RmlsdGVyQ2xhdXNlEg4KBmNvbHVtbhgBIAEoCRIhCgNzZXQYAiABKAsyEi5oZWF0M2QudjEuU2V0VGVzdEgAEiUKBXJhbmdlGAMgASgLMhQuaGVhdDNkLnYxLlJhbmdlVGVzdEgAQgYKBHRlc3QiGQoHU2V0VGVzdBIOCgZ2YWx1ZXMYASADKAkiPwoJUmFuZ2VUZXN0EhAKA21pbhgBIAEoAUgAiAEBEhAKA21heBgCIAEoAUgBiAEBQgYKBF9taW5CBgoEX21heCKWAQoLUmVhZENvbHVtbnMSIAoEZmlsZRgBIAEoCzISLmhlYXQzZC52MS5GaWxlUmVmEiYKB2NvbHVtbnMYAiADKAsyFS5oZWF0M2QudjEuQ29sdW1uU3BlYxIqCgZmaWx0ZXIYAyADKAsyGi5oZWF0M2QudjEuUm93RmlsdGVyQ2xhdXNlEhEKCWtlcHRfcm93cxgEIAEoCCLGAQoHQ29sdW1ucxISCgpyb3dzX3RvdGFsGAEgASgEEgwKBHJvd3MYAiABKAQSKAoIZmlsdGVyZWQYAyABKAsyFi5oZWF0M2QudjEuRmlsdGVyU3RhdHMSJgoHY29sdW1ucxgEIAMoCzIVLmhlYXQzZC52MS5Db2x1bW5EYXRhEiQKCWtlcHRfcm93cxgFIAEoCzIRLmhlYXQzZC52MS5CdWZmZXISIQoGdGltaW5nGAYgASgLMhEuaGVhdDNkLnYxLlRpbWluZyJnCgtGaWx0ZXJTdGF0cxIMCgRyb3dzGAEgASgEEgwKBGtlcHQYAiABKAQSFAoMcm93c19za2lwcGVkGAMgASgEEg4KBmdyb3VwcxgEIAEoBBIWCg5ncm91cHNfc2tpcHBlZBgFIAEoBCJyCgpDb2x1bW5EYXRhEgwKBG5hbWUYASABKAkSIwoEa2luZBgCIAEoDjIVLmhlYXQzZC52MS5Db2x1bW5LaW5kEiEKBnZhbHVlcxgDIAEoCzIRLmhlYXQzZC52MS5CdWZmZXISDgoGbGFiZWxzGAQgAygJIigKBkJ1ZmZlchIOCgZvZmZzZXQYASABKAQSDgoGbGVuZ3RoGAIgASgEInEKBlRpbWluZxIPCgdyZWFkX21zGAEgASgBEhEKCWZpbHRlcl9tcxgCIAEoARIPCgdzb3J0X21zGAMgASgBEg8KB3BhY2tfbXMYBCABKAESEAoIdG90YWxfbXMYBSABKAESDwoHdGhyZWFkcxgGIAEoDSItCglSZWFkVGFibGUSIAoEZmlsZRgBIAEoCzISLmhlYXQzZC52MS5GaWxlUmVmIlAKBVRhYmxlEgwKBHJvd3MYASABKAQSJgoHY29sdW1ucxgCIAMoCzIVLmhlYXQzZC52MS5Db2x1bW5EYXRhEhEKCWluZm9fanNvbhgDIAEoCSL1AQoHU2NhbkNzdhIgCgRmaWxlGAEgASgLMhIuaGVhdDNkLnYxLkZpbGVSZWYSEQoJZGVsaW1pdGVyGAIgASgNEhYKDm51bWJlcl9jb2x1bW5zGAMgAygFEhEKCXdpZGVfc2xvdBgEIAEoBRIUCgx0ZXh0X2NvbHVtbnMYBSADKAUSEgoKYXhpc19zbG90cxgGIAMoBRIoCgxudW1iZXJfdGVzdHMYByADKAsyEi5oZWF0M2QudjEuQ3N2VGVzdBImCgp0ZXh0X3Rlc3RzGAggAygLMhIuaGVhdDNkLnYxLkNzdlRlc3QSDgoGc3RyaWRlGAkgASgNIkMKB0NzdlRlc3QSDAoEc2xvdBgBIAEoDRIqCgZjbGF1c2UYAiABKAsyGi5oZWF0M2QudjEuUm93RmlsdGVyQ2xhdXNlIscBCgpDc3ZDb2x1bW5zEgwKBHJvd3MYASABKAQSEAoIcmVqZWN0ZWQYAiABKAQSKAoIZmlsdGVyZWQYAyABKAsyFi5oZWF0M2QudjEuRmlsdGVyU3RhdHMSJgoHbnVtYmVycxgEIAMoCzIVLmhlYXQzZC52MS5Db2x1bW5EYXRhEiQKBXRleHRzGAUgAygLMhUuaGVhdDNkLnYxLkNvbHVtbkRhdGESIQoGdGltaW5nGAYgASgLMhEuaGVhdDNkLnYxLlRpbWluZyLiAQoLQnVpbGRDaHVua3MSIQoFZmlsZXMYASADKAsyEi5oZWF0M2QudjEuRmlsZVJlZhIJCgF4GAIgASgJEgkKAXkYAyABKAkSCQoBehgEIAEoCRIMCgR0aW1lGAUgASgJEg4KBnBlcnNvbhgGIAEoCRINCgVncm91cBgHIAEoCRISCgp0aW1lX3NjYWxlGAggASgBEioKBmZpbHRlchgJIAMoCzIaLmhlYXQzZC52MS5Sb3dGaWx0ZXJDbGF1c2USDgoGc3RyaWRlGAogASgNEhIKCmNodW5rX3Jvd3MYCyABKA0i8wEKCENodW5rU2V0Eg4KBmhhbmRsZRgBIAEoBBIMCgRyb3dzGAIgASgEEhEKCXJvd3NfcmVhZBgDIAEoBBIQCgh0aW1lX21pbhgEIAEoARIQCgh0aW1lX21heBgFIAEoARIYChBtYXhfbGlmZXRpbWVfZ2FwGAYgASgCEiQKBmNodW5rcxgHIAMoCzIULmhlYXQzZC52MS5DaHVua0luZm8SIQoGdGltaW5nGAggASgLMhEuaGVhdDNkLnYxLlRpbWluZxIZChFwZWFrX21lbW9yeV9ieXRlcxgJIAEoBBIUCgxncm91cF9sYWJlbHMYCiADKAkilgEKCUNodW5rSW5mbxINCgVpbmRleBgBIAEoDRINCgVzdGFydBgCIAEoBBIMCgRyb3dzGAMgASgNEhAKCGFhYmJfbWluGAQgAygCEhEKCWFhYmJfc2l6ZRgFIAMoAhIQCgh0aW1lX21pbhgGIAEoAhISCgp0aW1lX3NjYWxlGAcgASgCEhIKCmxpZmVfc2NhbGUYCCABKAIiTgoJUmVhZENodW5rEg4KBmhhbmRsZRgBIAEoBBINCgVpbmRleBgCIAEoDRIiCgRwYXJ0GAMgASgOMhQuaGVhdDNkLnYxLkNodW5rUGFydCJfCglDaHVua0RhdGESDQoFaW5kZXgYASABKA0SIgoEcGFydBgCIAEoDjIULmhlYXQzZC52MS5DaHVua1BhcnQSHwoEZGF0YRgDIAEoCzIRLmhlYXQzZC52MS5CdWZmZXIiNgoFUXVlcnkSJQoFY291bnQYASABKAsyFC5oZWF0M2QudjEuQ291bnRSb3dzSABCBgoEa2luZCJaCglDb3VudFJvd3MSIQoFZmlsZXMYASADKAsyEi5oZWF0M2QudjEuRmlsZVJlZhIqCgZmaWx0ZXIYAiADKAsyGi5oZWF0M2QudjEuUm93RmlsdGVyQ2xhdXNlIjoKClF1ZXJ5UmVwbHkSJAoFY291bnQYASABKAsyEy5oZWF0M2QudjEuUm93Q291bnRIAEIGCgRraW5kIoYBCghSb3dDb3VudBIPCgdtYXRjaGVkGAEgASgEEhQKDHNjYW5uZWRfcm93cxgCIAEoBBIVCg1zY2FubmVkX2ZpbGVzGAMgASgNEhQKDHJvd3Nfc2tpcHBlZBgEIAEoBBIOCgZncm91cHMYBSABKAQSFgoOZ3JvdXBzX3NraXBwZWQYBiABKAQqUQoPUHJvdG9jb2xWZXJzaW9uEiAKHFBST1RPQ09MX1ZFUlNJT05fVU5TUEVDSUZJRUQQABIcChhQUk9UT0NPTF9WRVJTSU9OX0NVUlJFTlQQASrVAQoJRXJyb3JDb2RlEhoKFkVSUk9SX0NPREVfVU5TUEVDSUZJRUQQABIaChZFUlJPUl9DT0RFX1VOU1VQUE9SVEVEEAESGAoURVJST1JfQ09ERV9OT1RfRk9VTkQQAhIWChJFUlJPUl9DT0RFX0lOVkFMSUQQAxIRCg1FUlJPUl9DT0RFX0lPEAQSGAoURVJST1JfQ09ERV9DQU5DRUxMRUQQBRIXChNFUlJPUl9DT0RFX0lOVEVSTkFMEAYSGAoURVJST1JfQ09ERV9OT19NRU1PUlkQByprCgZGb3JtYXQSFgoSRk9STUFUX1VOU1BFQ0lGSUVEEAASEgoORk9STUFUX1BBUlFVRVQQARIOCgpGT1JNQVRfQ1NWEAISDwoLRk9STUFUX0FDTUkQAxIUChBGT1JNQVRfQ09OVEFJTkVSEAQqaQoKQ29sdW1uS2luZBIbChdDT0xVTU5fS0lORF9VTlNQRUNJRklFRBAAEhMKD0NPTFVNTl9LSU5EX0YzMhABEhMKD0NPTFVNTl9LSU5EX0Y2NBACEhQKEENPTFVNTl9LSU5EX0RJQ1QQAypXCglDaHVua1BhcnQSGgoWQ0hVTktfUEFSVF9VTlNQRUNJRklFRBAAEhgKFENIVU5LX1BBUlRfUE9TSVRJT05TEAESFAoQQ0hVTktfUEFSVF9USU1FUxACYgZwcm90bzM");
+  fileDesc("ChZoZWF0M2QvdjEvaGVhdDNkLnByb3RvEgloZWF0M2QudjEivwoKCEVudmVsb3BlEhAKCHByb3RvY29sGAEgASgNEgoKAmlkGAIgASgEEhAKCHJlcGx5X3RvGAMgASgEEg8KB3Nlc3Npb24YBCABKAkSIQoFaGVsbG8YCiABKAsyEC5oZWF0M2QudjEuSGVsbG9IABIsCgtoZWxsb19yZXBseRgLIAEoCzIVLmhlYXQzZC52MS5IZWxsb1JlcGx5SAASIQoFZXJyb3IYDCABKAsyEC5oZWF0M2QudjEuRXJyb3JIABInCghwcm9ncmVzcxgNIAEoCzITLmhlYXQzZC52MS5Qcm9ncmVzc0gAEiMKBmNhbmNlbBgOIAEoCzIRLmhlYXQzZC52MS5DYW5jZWxIABIuCgxvcGVuX2RhdGFzZXQYFCABKAsyFi5oZWF0M2QudjEuT3BlbkRhdGFzZXRIABIuCgxkYXRhc2V0X2luZm8YFSABKAsyFi5oZWF0M2QudjEuRGF0YXNldEluZm9IABIwCg1jbG9zZV9kYXRhc2V0GBYgASgLMhcuaGVhdDNkLnYxLkNsb3NlRGF0YXNldEgAEiMKBmNsb3NlZBgXIAEoCzIRLmhlYXQzZC52MS5DbG9zZWRIABIuCgxyZWFkX2NvbHVtbnMYHiABKAsyFi5oZWF0M2QudjEuUmVhZENvbHVtbnNIABIlCgdjb2x1bW5zGB8gASgLMhIuaGVhdDNkLnYxLkNvbHVtbnNIABIqCgpyZWFkX3RhYmxlGCAgASgLMhQuaGVhdDNkLnYxLlJlYWRUYWJsZUgAEiEKBXRhYmxlGCEgASgLMhAuaGVhdDNkLnYxLlRhYmxlSAASJgoIc2Nhbl9jc3YYIiABKAsyEi5oZWF0M2QudjEuU2NhbkNzdkgAEiwKC2Nzdl9jb2x1bW5zGCMgASgLMhUuaGVhdDNkLnYxLkNzdkNvbHVtbnNIABIuCgxidWlsZF9jaHVua3MYKCABKAsyFi5oZWF0M2QudjEuQnVpbGRDaHVua3NIABIoCgljaHVua19zZXQYKSABKAsyEy5oZWF0M2QudjEuQ2h1bmtTZXRIABIqCgpyZWFkX2NodW5rGCogASgLMhQuaGVhdDNkLnYxLlJlYWRDaHVua0gAEioKCmNodW5rX2RhdGEYKyABKAsyFC5oZWF0M2QudjEuQ2h1bmtEYXRhSAASMAoNYnVpbGRfZGF0YXNldBgsIAEoCzIXLmhlYXQzZC52MS5CdWlsZERhdGFzZXRIABIwCg1kYXRhc2V0X2J1aWx0GC0gASgLMhcuaGVhdDNkLnYxLkRhdGFzZXRCdWlsdEgAEj0KFHJlYWRfZGF0YXNldF9jb2x1bW5zGC4gASgLMh0uaGVhdDNkLnYxLlJlYWREYXRhc2V0Q29sdW1uc0gAEjQKD2RhdGFzZXRfY29sdW1ucxgvIAEoCzIZLmhlYXQzZC52MS5EYXRhc2V0Q29sdW1uc0gAEjIKDmJ1aWxkX3Byb2dyZXNzGDAgASgLMhguaGVhdDNkLnYxLkJ1aWxkUHJvZ3Jlc3NIABI9ChRidWlsZF9wcm9ncmVzc19yZXBseRgxIAEoCzIdLmhlYXQzZC52MS5CdWlsZFByb2dyZXNzUmVwbHlIABIhCgVxdWVyeRgyIAEoCzIQLmhlYXQzZC52MS5RdWVyeUgAEiwKC3F1ZXJ5X3JlcGx5GDMgASgLMhUuaGVhdDNkLnYxLlF1ZXJ5UmVwbHlIABIfCgRlY2hvGDwgASgLMg8uaGVhdDNkLnYxLkVjaG9IAEIGCgRib2R5SgUIZBDIASIXCgVIZWxsbxIOCgZjbGllbnQYASABKAkiygEKCkhlbGxvUmVwbHkSDAoEY29yZRgBIAEoCRIUCgxjb3JlX3ZlcnNpb24YAiABKAkSDwoHdGhyZWFkcxgDIAEoDRIUCgxtZW1vcnlfYnl0ZXMYBCABKAQSDwoHZm9ybWF0cxgFIAMoCRIxCgZzZXJ2ZWQYBiADKAsyIS5oZWF0M2QudjEuSGVsbG9SZXBseS5TZXJ2ZWRFbnRyeRotCgtTZXJ2ZWRFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAQ6AjgBIjwKBUVycm9yEiIKBGNvZGUYASABKA4yFC5oZWF0M2QudjEuRXJyb3JDb2RlEg8KB21lc3NhZ2UYAiABKAkilwEKCFByb2dyZXNzEgsKA2tleRgBIAEoCRIvCgZwYXJhbXMYAiADKAsyHy5oZWF0M2QudjEuUHJvZ3Jlc3MuUGFyYW1zRW50cnkSEAoIZnJhY3Rpb24YAyABKAESDAoEcm93cxgEIAEoBBotCgtQYXJhbXNFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBIhkKBkNhbmNlbBIPCgdyZXF1ZXN0GAEgASgEIh0KBEVjaG8SFQoNcGF5bG9hZF9ieXRlcxgBIAEoBCJECgdGaWxlUmVmEg4KBHBhdGgYASABKAlIABIPCgV0b2tlbhgCIAEoCUgAEg4KBm1lbWJlchgDIAEoCUIICgZzb3VyY2UiMAoLT3BlbkRhdGFzZXQSIQoFZmlsZXMYASADKAsyEi5oZWF0M2QudjEuRmlsZVJlZiJBCgtEYXRhc2V0SW5mbxIOCgZoYW5kbGUYASABKAQSIgoFZmlsZXMYAiADKAsyEy5oZWF0M2QudjEuRmlsZUluZm8igAIKCEZpbGVJbmZvEgwKBG5hbWUYASABKAkSIQoGZm9ybWF0GAIgASgOMhEuaGVhdDNkLnYxLkZvcm1hdBINCgVieXRlcxgDIAEoBBIMCgRyb3dzGAQgASgEEhIKCnJvd3NfZXhhY3QYBSABKAgSJgoHY29sdW1ucxgGIAMoCzIVLmhlYXQzZC52MS5Db2x1bW5JbmZvEhIKCnJvd19ncm91cHMYByABKA0SEgoKaGludHNfanNvbhgIIAEoCRIVCg1tYW5pZmVzdF9qc29uGAkgASgJEisKB21lbWJlcnMYCiADKAsyGi5oZWF0M2QudjEuQ29udGFpbmVyTWVtYmVyIl4KCkNvbHVtbkluZm8SDAoEbmFtZRgBIAEoCRIQCghwaHlzaWNhbBgCIAEoCRIPCgdsb2dpY2FsGAMgASgJEgwKBHRleHQYBCABKAgSEQoJdGltZXN0YW1wGAUgASgIInsKD0NvbnRhaW5lck1lbWJlchIMCgRuYW1lGAEgASgJEgwKBHJvbGUYAiABKAkSDgoGbWV0aG9kGAMgASgNEhgKEGNvbXByZXNzZWRfYnl0ZXMYBCABKAQSDQoFYnl0ZXMYBSABKAQSEwoLZGF0YV9vZmZzZXQYBiABKAQiHgoMQ2xvc2VEYXRhc2V0Eg4KBmhhbmRsZRgBIAEoBCIICgZDbG9zZWQiPwoKQ29sdW1uU3BlYxIMCgRuYW1lGAEgASgJEiMKBGtpbmQYAiABKA4yFS5oZWF0M2QudjEuQ29sdW1uS2luZCJzCg9Sb3dGaWx0ZXJDbGF1c2USDgoGY29sdW1uGAEgASgJEiEKA3NldBgCIAEoCzISLmhlYXQzZC52MS5TZXRUZXN0SAASJQoFcmFuZ2UYAyABKAsyFC5oZWF0M2QudjEuUmFuZ2VUZXN0SABCBgoEdGVzdCIZCgdTZXRUZXN0Eg4KBnZhbHVlcxgBIAMoCSI/CglSYW5nZVRlc3QSEAoDbWluGAEgASgBSACIAQESEAoDbWF4GAIgASgBSAGIAQFCBgoEX21pbkIGCgRfbWF4IpYBCgtSZWFkQ29sdW1ucxIgCgRmaWxlGAEgASgLMhIuaGVhdDNkLnYxLkZpbGVSZWYSJgoHY29sdW1ucxgCIAMoCzIVLmhlYXQzZC52MS5Db2x1bW5TcGVjEioKBmZpbHRlchgDIAMoCzIaLmhlYXQzZC52MS5Sb3dGaWx0ZXJDbGF1c2USEQoJa2VwdF9yb3dzGAQgASgIIsYBCgdDb2x1bW5zEhIKCnJvd3NfdG90YWwYASABKAQSDAoEcm93cxgCIAEoBBIoCghmaWx0ZXJlZBgDIAEoCzIWLmhlYXQzZC52MS5GaWx0ZXJTdGF0cxImCgdjb2x1bW5zGAQgAygLMhUuaGVhdDNkLnYxLkNvbHVtbkRhdGESJAoJa2VwdF9yb3dzGAUgASgLMhEuaGVhdDNkLnYxLkJ1ZmZlchIhCgZ0aW1pbmcYBiABKAsyES5oZWF0M2QudjEuVGltaW5nImcKC0ZpbHRlclN0YXRzEgwKBHJvd3MYASABKAQSDAoEa2VwdBgCIAEoBBIUCgxyb3dzX3NraXBwZWQYAyABKAQSDgoGZ3JvdXBzGAQgASgEEhYKDmdyb3Vwc19za2lwcGVkGAUgASgEInIKCkNvbHVtbkRhdGESDAoEbmFtZRgBIAEoCRIjCgRraW5kGAIgASgOMhUuaGVhdDNkLnYxLkNvbHVtbktpbmQSIQoGdmFsdWVzGAMgASgLMhEuaGVhdDNkLnYxLkJ1ZmZlchIOCgZsYWJlbHMYBCADKAkiKAoGQnVmZmVyEg4KBm9mZnNldBgBIAEoBBIOCgZsZW5ndGgYAiABKAQicQoGVGltaW5nEg8KB3JlYWRfbXMYASABKAESEQoJZmlsdGVyX21zGAIgASgBEg8KB3NvcnRfbXMYAyABKAESDwoHcGFja19tcxgEIAEoARIQCgh0b3RhbF9tcxgFIAEoARIPCgd0aHJlYWRzGAYgASgNIi0KCVJlYWRUYWJsZRIgCgRmaWxlGAEgASgLMhIuaGVhdDNkLnYxLkZpbGVSZWYiUAoFVGFibGUSDAoEcm93cxgBIAEoBBImCgdjb2x1bW5zGAIgAygLMhUuaGVhdDNkLnYxLkNvbHVtbkRhdGESEQoJaW5mb19qc29uGAMgASgJIvUBCgdTY2FuQ3N2EiAKBGZpbGUYASABKAsyEi5oZWF0M2QudjEuRmlsZVJlZhIRCglkZWxpbWl0ZXIYAiABKA0SFgoObnVtYmVyX2NvbHVtbnMYAyADKAUSEQoJd2lkZV9zbG90GAQgASgFEhQKDHRleHRfY29sdW1ucxgFIAMoBRISCgpheGlzX3Nsb3RzGAYgAygFEigKDG51bWJlcl90ZXN0cxgHIAMoCzISLmhlYXQzZC52MS5Dc3ZUZXN0EiYKCnRleHRfdGVzdHMYCCADKAsyEi5oZWF0M2QudjEuQ3N2VGVzdBIOCgZzdHJpZGUYCSABKA0iQwoHQ3N2VGVzdBIMCgRzbG90GAEgASgNEioKBmNsYXVzZRgCIAEoCzIaLmhlYXQzZC52MS5Sb3dGaWx0ZXJDbGF1c2UixwEKCkNzdkNvbHVtbnMSDAoEcm93cxgBIAEoBBIQCghyZWplY3RlZBgCIAEoBBIoCghmaWx0ZXJlZBgDIAEoCzIWLmhlYXQzZC52MS5GaWx0ZXJTdGF0cxImCgdudW1iZXJzGAQgAygLMhUuaGVhdDNkLnYxLkNvbHVtbkRhdGESJAoFdGV4dHMYBSADKAsyFS5oZWF0M2QudjEuQ29sdW1uRGF0YRIhCgZ0aW1pbmcYBiABKAsyES5oZWF0M2QudjEuVGltaW5nIuIBCgtCdWlsZENodW5rcxIhCgVmaWxlcxgBIAMoCzISLmhlYXQzZC52MS5GaWxlUmVmEgkKAXgYAiABKAkSCQoBeRgDIAEoCRIJCgF6GAQgASgJEgwKBHRpbWUYBSABKAkSDgoGcGVyc29uGAYgASgJEg0KBWdyb3VwGAcgASgJEhIKCnRpbWVfc2NhbGUYCCABKAESKgoGZmlsdGVyGAkgAygLMhouaGVhdDNkLnYxLlJvd0ZpbHRlckNsYXVzZRIOCgZzdHJpZGUYCiABKA0SEgoKY2h1bmtfcm93cxgLIAEoDSLzAQoIQ2h1bmtTZXQSDgoGaGFuZGxlGAEgASgEEgwKBHJvd3MYAiABKAQSEQoJcm93c19yZWFkGAMgASgEEhAKCHRpbWVfbWluGAQgASgBEhAKCHRpbWVfbWF4GAUgASgBEhgKEG1heF9saWZldGltZV9nYXAYBiABKAISJAoGY2h1bmtzGAcgAygLMhQuaGVhdDNkLnYxLkNodW5rSW5mbxIhCgZ0aW1pbmcYCCABKAsyES5oZWF0M2QudjEuVGltaW5nEhkKEXBlYWtfbWVtb3J5X2J5dGVzGAkgASgEEhQKDGdyb3VwX2xhYmVscxgKIAMoCSKWAQoJQ2h1bmtJbmZvEg0KBWluZGV4GAEgASgNEg0KBXN0YXJ0GAIgASgEEgwKBHJvd3MYAyABKA0SEAoIYWFiYl9taW4YBCADKAISEQoJYWFiYl9zaXplGAUgAygCEhAKCHRpbWVfbWluGAYgASgCEhIKCnRpbWVfc2NhbGUYByABKAISEgoKbGlmZV9zY2FsZRgIIAEoAiJeCglSZWFkQ2h1bmsSDgoGaGFuZGxlGAEgASgEEg0KBWluZGV4GAIgASgNEiIKBHBhcnQYAyABKA4yFC5oZWF0M2QudjEuQ2h1bmtQYXJ0Eg4KBnNoYXJlZBgEIAEoCCJyCglDaHVua0RhdGESDQoFaW5kZXgYASABKA0SIgoEcGFydBgCIAEoDjIULmhlYXQzZC52MS5DaHVua1BhcnQSHwoEZGF0YRgDIAEoCzIRLmhlYXQzZC52MS5CdWZmZXISEQoJc2hhcmVkX2lkGAQgASgEIo0DCg5EYXRhc2V0TWFwcGluZxIJCgF4GAEgASgJEgkKAXkYAiABKAkSCQoBehgDIAEoCRIMCgR0aW1lGAQgASgJEhEKCXRpbWVfdW5pdBgFIAEoCRIRCglsb29rX21vZGUYBiABKAkSCwoDeWF3GAcgASgJEg0KBXBpdGNoGAggASgJEg0KBWRpcl94GAkgASgJEg0KBWRpcl95GAogASgJEg0KBWRpcl96GAsgASgJEg8KB2RlZ3JlZXMYDCABKAgSDgoGcGVyc29uGA0gASgJEgwKBHRlYW0YDiABKAkSDwoHc2Vzc2lvbhgPIAEoCRIlCgVleHRyYRgQIAMoCzIWLmhlYXQzZC52MS5FeHRyYUNvbHVtbhIpCglvbl9kZW1hbmQYESADKAsyFi5oZWF0M2QudjEuRXh0cmFDb2x1bW4SDAoEdXBfehgSIAEoCBIOCgZmbGlwX3gYEyABKAgSDgoGZmxpcF95GBQgASgIEg4KBmZsaXBfehgVIAEoCBINCgVzY2FsZRgWIAEoASIsCgtFeHRyYUNvbHVtbhIMCgRuYW1lGAEgASgJEg8KB251bWVyaWMYAiABKAgi5wEKDEJ1aWxkRGF0YXNldBIhCgVmaWxlcxgBIAMoCzISLmhlYXQzZC52MS5GaWxlUmVmEg0KBW5hbWVzGAIgAygJEioKB21hcHBpbmcYAyABKAsyGS5oZWF0M2QudjEuRGF0YXNldE1hcHBpbmcSKgoGZmlsdGVyGAQgAygLMhouaGVhdDNkLnYxLlJvd0ZpbHRlckNsYXVzZRIOCgZzdHJpZGUYBSABKA0SEQoJcGFnZV9yb3dzGAYgASgEEhIKCmNodW5rX3Jvd3MYByABKA0SFgoOcHJvZ3Jlc3NfdG9rZW4YCCABKAkiogIKCUJ1aWx0RmlsZRIMCgRyb3dzGAEgASgEEhAKCHJlamVjdGVkGAIgASgEEigKCGZpbHRlcmVkGAMgASgLMhYuaGVhdDNkLnYxLkZpbHRlclN0YXRzEhMKC2ZhaWx1cmVfa2V5GAQgASgJEj8KDmZhaWx1cmVfcGFyYW1zGAUgAygLMicuaGVhdDNkLnYxLkJ1aWx0RmlsZS5GYWlsdXJlUGFyYW1zRW50cnkSFAoMZmFpbHVyZV90ZXh0GAYgASgJEhIKCmhpbnRzX2pzb24YByABKAkSFQoNdGltZV9hYnNvbHV0ZRgIIAEoCBo0ChJGYWlsdXJlUGFyYW1zRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASJYCglCdWlsdEF0dHISDAoEbmFtZRgBIAEoCRIPCgdudW1lcmljGAIgASgIEgsKA21pbhgDIAEoARILCgNtYXgYBCABKAESEgoKY2F0ZWdvcmllcxgFIAMoCSIsCg1Ecm9wcGVkQ29sdW1uEgwKBG5hbWUYASABKAkSDQoFY291bnQYAiABKAQimQEKDERhdGFzZXRDaHVuaxINCgVpbmRleBgBIAEoDRINCgVzdGFydBgCIAEoBBIMCgRyb3dzGAMgASgNEhAKCGFhYmJfbWluGAQgAygBEhEKCWFhYmJfc2l6ZRgFIAMoARIQCgh0aW1lX21pbhgGIAEoARISCgp0aW1lX3NjYWxlGAcgASgBEhIKCmxpZmVfc2NhbGUYCCABKAEi5gUKDERhdGFzZXRCdWlsdBIOCgZoYW5kbGUYASABKAQSDAoEcm93cxgCIAEoBBIjCgVmaWxlcxgDIAMoCzIULmhlYXQzZC52MS5CdWlsdEZpbGUSDwoHc291cmNlcxgEIAEoDRIQCghyZWplY3RlZBgFIAEoBBIQCghoYXNfdGltZRgGIAEoCBIVCghlcG9jaF9tcxgHIAEoAUgAiAEBEhMKC3RpbWVfb3JpZ2luGAggASgBEhIKCnRpbWVfcmFuZ2UYCSADKAESFQoNcGVyc29uX2xhYmVscxgKIAMoCRITCgt0ZWFtX2xhYmVscxgLIAMoCRIVCg10ZWFtc19kcm9wcGVkGAwgASgEEhYKDnNlc3Npb25fbGFiZWxzGA0gAygJEhgKEHNlc3Npb25zX2Ryb3BwZWQYDiABKAQSGAoQbWF4X2xpZmV0aW1lX2dhcBgPIAEoARIUCgxzaGFyZWRfY291bnQYECABKAQSIwoFYXR0cnMYESADKAsyFC5oZWF0M2QudjEuQnVpbHRBdHRyEjEKD2Ryb3BwZWRfY29sdW1ucxgSIAMoCzIYLmhlYXQzZC52MS5Ecm9wcGVkQ29sdW1uEg4KBmJvdW5kcxgTIAMoARIPCgdhbGlnbmVkGBQgASgEEhMKC3Nlcmllc19qc29uGBUgASgJEicKBmNodW5rcxgWIAMoCzIXLmhlYXQzZC52MS5EYXRhc2V0Q2h1bmsSEQoJcGFnZV9yb3dzGBcgASgEEhEKCXBhZ2Vfc3RlcBgYIAEoDRIdChVwYWdlX21heF9saWZldGltZV9nYXAYGSABKAESDwoHY29sdW1ucxgaIAMoCRIRCglvbl9kZW1hbmQYGyADKAkSIQoGdGltaW5nGBwgASgLMhEuaGVhdDNkLnYxLlRpbWluZxIZChFwZWFrX21lbW9yeV9ieXRlcxgdIAEoBBIOCgZzaGFyZWQYHiABKAhCCwoJX2Vwb2NoX21zImQKElJlYWREYXRhc2V0Q29sdW1ucxIOCgZoYW5kbGUYASABKAQSDQoFbmFtZXMYAiADKAkSEAoIYnlfY2h1bmsYAyABKAgSDQoFY2h1bmsYBCABKA0SDgoGc2hhcmVkGAUgASgIIrIBCg1EYXRhc2V0Q29sdW1uEgwKBG5hbWUYASABKAkSDwoHZWxlbWVudBgCIAEoCRIhCgZ2YWx1ZXMYAyABKAsyES5oZWF0M2QudjEuQnVmZmVyEhEKCXNoYXJlZF9pZBgEIAEoBBISCgpjYXRlZ29yaWVzGAUgAygJEg8KB251bWVyaWMYBiABKAgSCwoDbWluGAcgASgBEgsKA21heBgIIAEoARINCgVjb3VudBgJIAEoBCI7Cg5EYXRhc2V0Q29sdW1ucxIpCgdjb2x1bW5zGAEgAygLMhguaGVhdDNkLnYxLkRhdGFzZXRDb2x1bW4iHgoNQnVpbGRQcm9ncmVzcxINCgV0b2tlbhgBIAEoCSI1ChJCdWlsZFByb2dyZXNzUmVwbHkSDQoFcGhhc2UYASABKAkSEAoIZnJhY3Rpb24YAiABKAEiNgoFUXVlcnkSJQoFY291bnQYASABKAsyFC5oZWF0M2QudjEuQ291bnRSb3dzSABCBgoEa2luZCJaCglDb3VudFJvd3MSIQoFZmlsZXMYASADKAsyEi5oZWF0M2QudjEuRmlsZVJlZhIqCgZmaWx0ZXIYAiADKAsyGi5oZWF0M2QudjEuUm93RmlsdGVyQ2xhdXNlIjoKClF1ZXJ5UmVwbHkSJAoFY291bnQYASABKAsyEy5oZWF0M2QudjEuUm93Q291bnRIAEIGCgRraW5kIoYBCghSb3dDb3VudBIPCgdtYXRjaGVkGAEgASgEEhQKDHNjYW5uZWRfcm93cxgCIAEoBBIVCg1zY2FubmVkX2ZpbGVzGAMgASgNEhQKDHJvd3Nfc2tpcHBlZBgEIAEoBBIOCgZncm91cHMYBSABKAQSFgoOZ3JvdXBzX3NraXBwZWQYBiABKAQqUQoPUHJvdG9jb2xWZXJzaW9uEiAKHFBST1RPQ09MX1ZFUlNJT05fVU5TUEVDSUZJRUQQABIcChhQUk9UT0NPTF9WRVJTSU9OX0NVUlJFTlQQASrVAQoJRXJyb3JDb2RlEhoKFkVSUk9SX0NPREVfVU5TUEVDSUZJRUQQABIaChZFUlJPUl9DT0RFX1VOU1VQUE9SVEVEEAESGAoURVJST1JfQ09ERV9OT1RfRk9VTkQQAhIWChJFUlJPUl9DT0RFX0lOVkFMSUQQAxIRCg1FUlJPUl9DT0RFX0lPEAQSGAoURVJST1JfQ09ERV9DQU5DRUxMRUQQBRIXChNFUlJPUl9DT0RFX0lOVEVSTkFMEAYSGAoURVJST1JfQ09ERV9OT19NRU1PUlkQByprCgZGb3JtYXQSFgoSRk9STUFUX1VOU1BFQ0lGSUVEEAASEgoORk9STUFUX1BBUlFVRVQQARIOCgpGT1JNQVRfQ1NWEAISDwoLRk9STUFUX0FDTUkQAxIUChBGT1JNQVRfQ09OVEFJTkVSEAQqaQoKQ29sdW1uS2luZBIbChdDT0xVTU5fS0lORF9VTlNQRUNJRklFRBAAEhMKD0NPTFVNTl9LSU5EX0YzMhABEhMKD0NPTFVNTl9LSU5EX0Y2NBACEhQKEENPTFVNTl9LSU5EX0RJQ1QQAypXCglDaHVua1BhcnQSGgoWQ0hVTktfUEFSVF9VTlNQRUNJRklFRBAAEhgKFENIVU5LX1BBUlRfUE9TSVRJT05TEAESFAoQQ0hVTktfUEFSVF9USU1FUxACYgZwcm90bzM");
 
 /**
  * @generated from message heat3d.v1.Envelope
@@ -181,6 +181,42 @@ export type Envelope = Message<"heat3d.v1.Envelope"> & {
      */
     value: ChunkData;
     case: "chunkData";
+  } | {
+    /**
+     * @generated from field: heat3d.v1.BuildDataset build_dataset = 44;
+     */
+    value: BuildDataset;
+    case: "buildDataset";
+  } | {
+    /**
+     * @generated from field: heat3d.v1.DatasetBuilt dataset_built = 45;
+     */
+    value: DatasetBuilt;
+    case: "datasetBuilt";
+  } | {
+    /**
+     * @generated from field: heat3d.v1.ReadDatasetColumns read_dataset_columns = 46;
+     */
+    value: ReadDatasetColumns;
+    case: "readDatasetColumns";
+  } | {
+    /**
+     * @generated from field: heat3d.v1.DatasetColumns dataset_columns = 47;
+     */
+    value: DatasetColumns;
+    case: "datasetColumns";
+  } | {
+    /**
+     * @generated from field: heat3d.v1.BuildProgress build_progress = 48;
+     */
+    value: BuildProgress;
+    case: "buildProgress";
+  } | {
+    /**
+     * @generated from field: heat3d.v1.BuildProgressReply build_progress_reply = 49;
+     */
+    value: BuildProgressReply;
+    case: "buildProgressReply";
   } | {
     /**
      * @generated from field: heat3d.v1.Query query = 50;
@@ -1339,6 +1375,9 @@ export const ChunkInfoSchema: GenMessage<ChunkInfo> = /*@__PURE__*/
   messageDesc(file_heat3d_v1_heat3d, 32);
 
 /**
+ * A chunk of a `BuildChunks` set, or of a built dataset (`BuildDataset`), packed
+ * on request.
+ *
  * @generated from message heat3d.v1.ReadChunk
  */
 export type ReadChunk = Message<"heat3d.v1.ReadChunk"> & {
@@ -1356,6 +1395,13 @@ export type ReadChunk = Message<"heat3d.v1.ReadChunk"> & {
    * @generated from field: heat3d.v1.ChunkPart part = 3;
    */
   part: ChunkPart;
+
+  /**
+   * Hand the bytes over in shared memory (the app's window): `ChunkData.shared_id`.
+   *
+   * @generated from field: bool shared = 4;
+   */
+  shared: boolean;
 };
 
 /**
@@ -1383,6 +1429,13 @@ export type ChunkData = Message<"heat3d.v1.ChunkData"> & {
    * @generated from field: heat3d.v1.Buffer data = 3;
    */
   data?: Buffer | undefined;
+
+  /**
+   * The shared buffer the bytes went out in, when asked for (`SharedBuffer`).
+   *
+   * @generated from field: uint64 shared_id = 4;
+   */
+  sharedId: bigint;
 };
 
 /**
@@ -1391,6 +1444,746 @@ export type ChunkData = Message<"heat3d.v1.ChunkData"> & {
  */
 export const ChunkDataSchema: GenMessage<ChunkData> = /*@__PURE__*/
   messageDesc(file_heat3d_v1_heat3d, 34);
+
+/**
+ * The roles and columns of a load, as the viewer's `ColumnMapping` gives them.
+ *
+ * @generated from message heat3d.v1.DatasetMapping
+ */
+export type DatasetMapping = Message<"heat3d.v1.DatasetMapping"> & {
+  /**
+   * @generated from field: string x = 1;
+   */
+  x: string;
+
+  /**
+   * @generated from field: string y = 2;
+   */
+  y: string;
+
+  /**
+   * @generated from field: string z = 3;
+   */
+  z: string;
+
+  /**
+   * @generated from field: string time = 4;
+   */
+  time: string;
+
+  /**
+   * `TimeUnit`: "seconds", "milliseconds", "unix_milliseconds", ...
+   *
+   * @generated from field: string time_unit = 5;
+   */
+  timeUnit: string;
+
+  /**
+   * "none", "yawPitch" or "vector".
+   *
+   * @generated from field: string look_mode = 6;
+   */
+  lookMode: string;
+
+  /**
+   * @generated from field: string yaw = 7;
+   */
+  yaw: string;
+
+  /**
+   * @generated from field: string pitch = 8;
+   */
+  pitch: string;
+
+  /**
+   * @generated from field: string dir_x = 9;
+   */
+  dirX: string;
+
+  /**
+   * @generated from field: string dir_y = 10;
+   */
+  dirY: string;
+
+  /**
+   * @generated from field: string dir_z = 11;
+   */
+  dirZ: string;
+
+  /**
+   * @generated from field: bool degrees = 12;
+   */
+  degrees: boolean;
+
+  /**
+   * @generated from field: string person = 13;
+   */
+  person: string;
+
+  /**
+   * @generated from field: string team = 14;
+   */
+  team: string;
+
+  /**
+   * @generated from field: string session = 15;
+   */
+  session: string;
+
+  /**
+   * Columns loaded with the rows, in order.
+   *
+   * @generated from field: repeated heat3d.v1.ExtraColumn extra = 16;
+   */
+  extra: ExtraColumn[];
+
+  /**
+   * Columns left in the files until asked for (`ReadDatasetColumns`).
+   *
+   * @generated from field: repeated heat3d.v1.ExtraColumn on_demand = 17;
+   */
+  onDemand: ExtraColumn[];
+
+  /**
+   * @generated from field: bool up_z = 18;
+   */
+  upZ: boolean;
+
+  /**
+   * @generated from field: bool flip_x = 19;
+   */
+  flipX: boolean;
+
+  /**
+   * @generated from field: bool flip_y = 20;
+   */
+  flipY: boolean;
+
+  /**
+   * @generated from field: bool flip_z = 21;
+   */
+  flipZ: boolean;
+
+  /**
+   * @generated from field: double scale = 22;
+   */
+  scale: number;
+};
+
+/**
+ * Describes the message heat3d.v1.DatasetMapping.
+ * Use `create(DatasetMappingSchema)` to create a new message.
+ */
+export const DatasetMappingSchema: GenMessage<DatasetMapping> = /*@__PURE__*/
+  messageDesc(file_heat3d_v1_heat3d, 35);
+
+/**
+ * @generated from message heat3d.v1.ExtraColumn
+ */
+export type ExtraColumn = Message<"heat3d.v1.ExtraColumn"> & {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name: string;
+
+  /**
+   * @generated from field: bool numeric = 2;
+   */
+  numeric: boolean;
+};
+
+/**
+ * Describes the message heat3d.v1.ExtraColumn.
+ * Use `create(ExtraColumnSchema)` to create a new message.
+ */
+export const ExtraColumnSchema: GenMessage<ExtraColumn> = /*@__PURE__*/
+  messageDesc(file_heat3d_v1_heat3d, 36);
+
+/**
+ * Reads a Parquet selection and builds the viewer's dataset of it: everything the
+ * viewer's own build does after reading (`ingestFiles`, `DatasetBuilder`), held
+ * by the core under a handle until closed (`CloseDataset`). The columns are then
+ * read with `ReadDatasetColumns`, the engine's chunks with `ReadChunk`. A load the
+ * core does not build (ISO-8601 text times, a person's objects) is answered
+ * UNSUPPORTED, and the viewer builds it itself.
+ *
+ * @generated from message heat3d.v1.BuildDataset
+ */
+export type BuildDataset = Message<"heat3d.v1.BuildDataset"> & {
+  /**
+   * @generated from field: repeated heat3d.v1.FileRef files = 1;
+   */
+  files: FileRef[];
+
+  /**
+   * Each file's name as the viewer shows it (the `Source file` column).
+   *
+   * @generated from field: repeated string names = 2;
+   */
+  names: string[];
+
+  /**
+   * @generated from field: heat3d.v1.DatasetMapping mapping = 3;
+   */
+  mapping?: DatasetMapping | undefined;
+
+  /**
+   * @generated from field: repeated heat3d.v1.RowFilterClause filter = 4;
+   */
+  filter: RowFilterClause[];
+
+  /**
+   * @generated from field: uint32 stride = 5;
+   */
+  stride: number;
+
+  /**
+   * The most rows the viewer keeps: past it, its copy is every k-th row, and the
+   * chunks still hold every row. 0 for no limit.
+   *
+   * @generated from field: uint64 page_rows = 6;
+   */
+  pageRows: bigint;
+
+  /**
+   * Rows per chunk; 0 for the engine's 2^23.
+   *
+   * @generated from field: uint32 chunk_rows = 7;
+   */
+  chunkRows: number;
+
+  /**
+   * A token the viewer polls `BuildProgress` with.
+   *
+   * @generated from field: string progress_token = 8;
+   */
+  progressToken: string;
+};
+
+/**
+ * Describes the message heat3d.v1.BuildDataset.
+ * Use `create(BuildDatasetSchema)` to create a new message.
+ */
+export const BuildDatasetSchema: GenMessage<BuildDataset> = /*@__PURE__*/
+  messageDesc(file_heat3d_v1_heat3d, 37);
+
+/**
+ * @generated from message heat3d.v1.BuiltFile
+ */
+export type BuiltFile = Message<"heat3d.v1.BuiltFile"> & {
+  /**
+   * @generated from field: uint64 rows = 1;
+   */
+  rows: bigint;
+
+  /**
+   * @generated from field: uint64 rejected = 2;
+   */
+  rejected: bigint;
+
+  /**
+   * @generated from field: heat3d.v1.FilterStats filtered = 3;
+   */
+  filtered?: FilterStats | undefined;
+
+  /**
+   * Why the file gave nothing: a message key of the viewer and its values, or text.
+   *
+   * @generated from field: string failure_key = 4;
+   */
+  failureKey: string;
+
+  /**
+   * @generated from field: map<string, string> failure_params = 5;
+   */
+  failureParams: { [key: string]: string };
+
+  /**
+   * @generated from field: string failure_text = 6;
+   */
+  failureText: string;
+
+  /**
+   * The footer's `heat3d` entry, as written.
+   *
+   * @generated from field: string hints_json = 7;
+   */
+  hintsJson: string;
+
+  /**
+   * The file's time is wall-clock (TIMESTAMP, unix units).
+   *
+   * @generated from field: bool time_absolute = 8;
+   */
+  timeAbsolute: boolean;
+};
+
+/**
+ * Describes the message heat3d.v1.BuiltFile.
+ * Use `create(BuiltFileSchema)` to create a new message.
+ */
+export const BuiltFileSchema: GenMessage<BuiltFile> = /*@__PURE__*/
+  messageDesc(file_heat3d_v1_heat3d, 38);
+
+/**
+ * @generated from message heat3d.v1.BuiltAttr
+ */
+export type BuiltAttr = Message<"heat3d.v1.BuiltAttr"> & {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name: string;
+
+  /**
+   * @generated from field: bool numeric = 2;
+   */
+  numeric: boolean;
+
+  /**
+   * @generated from field: double min = 3;
+   */
+  min: number;
+
+  /**
+   * @generated from field: double max = 4;
+   */
+  max: number;
+
+  /**
+   * @generated from field: repeated string categories = 5;
+   */
+  categories: string[];
+};
+
+/**
+ * Describes the message heat3d.v1.BuiltAttr.
+ * Use `create(BuiltAttrSchema)` to create a new message.
+ */
+export const BuiltAttrSchema: GenMessage<BuiltAttr> = /*@__PURE__*/
+  messageDesc(file_heat3d_v1_heat3d, 39);
+
+/**
+ * @generated from message heat3d.v1.DroppedColumn
+ */
+export type DroppedColumn = Message<"heat3d.v1.DroppedColumn"> & {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name: string;
+
+  /**
+   * @generated from field: uint64 count = 2;
+   */
+  count: bigint;
+};
+
+/**
+ * Describes the message heat3d.v1.DroppedColumn.
+ * Use `create(DroppedColumnSchema)` to create a new message.
+ */
+export const DroppedColumnSchema: GenMessage<DroppedColumn> = /*@__PURE__*/
+  messageDesc(file_heat3d_v1_heat3d, 40);
+
+/**
+ * One chunk of the engine's layout, as `WebgpuRenderer.landChunk` keeps it.
+ *
+ * @generated from message heat3d.v1.DatasetChunk
+ */
+export type DatasetChunk = Message<"heat3d.v1.DatasetChunk"> & {
+  /**
+   * @generated from field: uint32 index = 1;
+   */
+  index: number;
+
+  /**
+   * @generated from field: uint64 start = 2;
+   */
+  start: bigint;
+
+  /**
+   * @generated from field: uint32 rows = 3;
+   */
+  rows: number;
+
+  /**
+   * @generated from field: repeated double aabb_min = 4;
+   */
+  aabbMin: number[];
+
+  /**
+   * @generated from field: repeated double aabb_size = 5;
+   */
+  aabbSize: number[];
+
+  /**
+   * @generated from field: double time_min = 6;
+   */
+  timeMin: number;
+
+  /**
+   * @generated from field: double time_scale = 7;
+   */
+  timeScale: number;
+
+  /**
+   * @generated from field: double life_scale = 8;
+   */
+  lifeScale: number;
+};
+
+/**
+ * Describes the message heat3d.v1.DatasetChunk.
+ * Use `create(DatasetChunkSchema)` to create a new message.
+ */
+export const DatasetChunkSchema: GenMessage<DatasetChunk> = /*@__PURE__*/
+  messageDesc(file_heat3d_v1_heat3d, 41);
+
+/**
+ * @generated from message heat3d.v1.DatasetBuilt
+ */
+export type DatasetBuilt = Message<"heat3d.v1.DatasetBuilt"> & {
+  /**
+   * @generated from field: uint64 handle = 1;
+   */
+  handle: bigint;
+
+  /**
+   * Every row the build kept; the chunks hold them all.
+   *
+   * @generated from field: uint64 rows = 2;
+   */
+  rows: bigint;
+
+  /**
+   * @generated from field: repeated heat3d.v1.BuiltFile files = 3;
+   */
+  files: BuiltFile[];
+
+  /**
+   * Files that gave a block (read, even if every row was filtered out).
+   *
+   * @generated from field: uint32 sources = 4;
+   */
+  sources: number;
+
+  /**
+   * @generated from field: uint64 rejected = 5;
+   */
+  rejected: bigint;
+
+  /**
+   * @generated from field: bool has_time = 6;
+   */
+  hasTime: boolean;
+
+  /**
+   * @generated from field: optional double epoch_ms = 7;
+   */
+  epochMs?: number | undefined;
+
+  /**
+   * @generated from field: double time_origin = 8;
+   */
+  timeOrigin: number;
+
+  /**
+   * @generated from field: repeated double time_range = 9;
+   */
+  timeRange: number[];
+
+  /**
+   * @generated from field: repeated string person_labels = 10;
+   */
+  personLabels: string[];
+
+  /**
+   * @generated from field: repeated string team_labels = 11;
+   */
+  teamLabels: string[];
+
+  /**
+   * Teams before the ceiling dropped the team column; 0 when kept.
+   *
+   * @generated from field: uint64 teams_dropped = 12;
+   */
+  teamsDropped: bigint;
+
+  /**
+   * @generated from field: repeated string session_labels = 13;
+   */
+  sessionLabels: string[];
+
+  /**
+   * @generated from field: uint64 sessions_dropped = 14;
+   */
+  sessionsDropped: bigint;
+
+  /**
+   * @generated from field: double max_lifetime_gap = 15;
+   */
+  maxLifetimeGap: number;
+
+  /**
+   * @generated from field: uint64 shared_count = 16;
+   */
+  sharedCount: bigint;
+
+  /**
+   * @generated from field: repeated heat3d.v1.BuiltAttr attrs = 17;
+   */
+  attrs: BuiltAttr[];
+
+  /**
+   * @generated from field: repeated heat3d.v1.DroppedColumn dropped_columns = 18;
+   */
+  droppedColumns: DroppedColumn[];
+
+  /**
+   * minX, minY, minZ, maxX, maxY, maxZ.
+   *
+   * @generated from field: repeated double bounds = 19;
+   */
+  bounds: number[];
+
+  /**
+   * @generated from field: uint64 aligned = 20;
+   */
+  aligned: bigint;
+
+  /**
+   * `Dataset.series` as JSON, or empty.
+   *
+   * @generated from field: string series_json = 21;
+   */
+  seriesJson: string;
+
+  /**
+   * @generated from field: repeated heat3d.v1.DatasetChunk chunks = 22;
+   */
+  chunks: DatasetChunk[];
+
+  /**
+   * The viewer's copy: its rows, and the step between them (1: every row).
+   *
+   * @generated from field: uint64 page_rows = 23;
+   */
+  pageRows: bigint;
+
+  /**
+   * @generated from field: uint32 page_step = 24;
+   */
+  pageStep: number;
+
+  /**
+   * The copy's own largest lifetime, when it is every k-th row.
+   *
+   * @generated from field: double page_max_lifetime_gap = 25;
+   */
+  pageMaxLifetimeGap: number;
+
+  /**
+   * Columns `ReadDatasetColumns` gives: "@px", "@time", ... and the attributes by name.
+   *
+   * @generated from field: repeated string columns = 26;
+   */
+  columns: string[];
+
+  /**
+   * Columns left in the files, read when asked.
+   *
+   * @generated from field: repeated string on_demand = 27;
+   */
+  onDemand: string[];
+
+  /**
+   * @generated from field: heat3d.v1.Timing timing = 28;
+   */
+  timing?: Timing | undefined;
+
+  /**
+   * @generated from field: uint64 peak_memory_bytes = 29;
+   */
+  peakMemoryBytes: bigint;
+
+  /**
+   * Whether the core hands columns over in shared memory (the app's window).
+   *
+   * @generated from field: bool shared = 30;
+   */
+  shared: boolean;
+};
+
+/**
+ * Describes the message heat3d.v1.DatasetBuilt.
+ * Use `create(DatasetBuiltSchema)` to create a new message.
+ */
+export const DatasetBuiltSchema: GenMessage<DatasetBuilt> = /*@__PURE__*/
+  messageDesc(file_heat3d_v1_heat3d, 42);
+
+/**
+ * Columns of a built dataset: the viewer's copy of them, or one chunk's rows of
+ * them as the GPU's filter columns take them (float32).
+ *
+ * @generated from message heat3d.v1.ReadDatasetColumns
+ */
+export type ReadDatasetColumns = Message<"heat3d.v1.ReadDatasetColumns"> & {
+  /**
+   * @generated from field: uint64 handle = 1;
+   */
+  handle: bigint;
+
+  /**
+   * @generated from field: repeated string names = 2;
+   */
+  names: string[];
+
+  /**
+   * One chunk's rows, as float32; otherwise the viewer's copy.
+   *
+   * @generated from field: bool by_chunk = 3;
+   */
+  byChunk: boolean;
+
+  /**
+   * @generated from field: uint32 chunk = 4;
+   */
+  chunk: number;
+
+  /**
+   * Hand the bytes over in shared memory (`DatasetColumn.shared_id`).
+   *
+   * @generated from field: bool shared = 5;
+   */
+  shared: boolean;
+};
+
+/**
+ * Describes the message heat3d.v1.ReadDatasetColumns.
+ * Use `create(ReadDatasetColumnsSchema)` to create a new message.
+ */
+export const ReadDatasetColumnsSchema: GenMessage<ReadDatasetColumns> = /*@__PURE__*/
+  messageDesc(file_heat3d_v1_heat3d, 43);
+
+/**
+ * @generated from message heat3d.v1.DatasetColumn
+ */
+export type DatasetColumn = Message<"heat3d.v1.DatasetColumn"> & {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name: string;
+
+  /**
+   * "f32", "u32", "u16" or "u8".
+   *
+   * @generated from field: string element = 2;
+   */
+  element: string;
+
+  /**
+   * @generated from field: heat3d.v1.Buffer values = 3;
+   */
+  values?: Buffer | undefined;
+
+  /**
+   * @generated from field: uint64 shared_id = 4;
+   */
+  sharedId: bigint;
+
+  /**
+   * A column read on demand: its categories, or its range.
+   *
+   * @generated from field: repeated string categories = 5;
+   */
+  categories: string[];
+
+  /**
+   * @generated from field: bool numeric = 6;
+   */
+  numeric: boolean;
+
+  /**
+   * @generated from field: double min = 7;
+   */
+  min: number;
+
+  /**
+   * @generated from field: double max = 8;
+   */
+  max: number;
+
+  /**
+   * Elements in the column (a shared buffer may be longer).
+   *
+   * @generated from field: uint64 count = 9;
+   */
+  count: bigint;
+};
+
+/**
+ * Describes the message heat3d.v1.DatasetColumn.
+ * Use `create(DatasetColumnSchema)` to create a new message.
+ */
+export const DatasetColumnSchema: GenMessage<DatasetColumn> = /*@__PURE__*/
+  messageDesc(file_heat3d_v1_heat3d, 44);
+
+/**
+ * @generated from message heat3d.v1.DatasetColumns
+ */
+export type DatasetColumns = Message<"heat3d.v1.DatasetColumns"> & {
+  /**
+   * @generated from field: repeated heat3d.v1.DatasetColumn columns = 1;
+   */
+  columns: DatasetColumn[];
+};
+
+/**
+ * Describes the message heat3d.v1.DatasetColumns.
+ * Use `create(DatasetColumnsSchema)` to create a new message.
+ */
+export const DatasetColumnsSchema: GenMessage<DatasetColumns> = /*@__PURE__*/
+  messageDesc(file_heat3d_v1_heat3d, 45);
+
+/**
+ * @generated from message heat3d.v1.BuildProgress
+ */
+export type BuildProgress = Message<"heat3d.v1.BuildProgress"> & {
+  /**
+   * @generated from field: string token = 1;
+   */
+  token: string;
+};
+
+/**
+ * Describes the message heat3d.v1.BuildProgress.
+ * Use `create(BuildProgressSchema)` to create a new message.
+ */
+export const BuildProgressSchema: GenMessage<BuildProgress> = /*@__PURE__*/
+  messageDesc(file_heat3d_v1_heat3d, 46);
+
+/**
+ * @generated from message heat3d.v1.BuildProgressReply
+ */
+export type BuildProgressReply = Message<"heat3d.v1.BuildProgressReply"> & {
+  /**
+   * The build's step: "count", "read", "time", "sort", "extent", "lifetimes", "chunks", or empty.
+   *
+   * @generated from field: string phase = 1;
+   */
+  phase: string;
+
+  /**
+   * @generated from field: double fraction = 2;
+   */
+  fraction: number;
+};
+
+/**
+ * Describes the message heat3d.v1.BuildProgressReply.
+ * Use `create(BuildProgressReplySchema)` to create a new message.
+ */
+export const BuildProgressReplySchema: GenMessage<BuildProgressReply> = /*@__PURE__*/
+  messageDesc(file_heat3d_v1_heat3d, 47);
 
 /**
  * @generated from message heat3d.v1.Query
@@ -1413,7 +2206,7 @@ export type Query = Message<"heat3d.v1.Query"> & {
  * Use `create(QuerySchema)` to create a new message.
  */
 export const QuerySchema: GenMessage<Query> = /*@__PURE__*/
-  messageDesc(file_heat3d_v1_heat3d, 35);
+  messageDesc(file_heat3d_v1_heat3d, 48);
 
 /**
  * Rows the filter keeps across files, read from the filter's columns alone.
@@ -1437,7 +2230,7 @@ export type CountRows = Message<"heat3d.v1.CountRows"> & {
  * Use `create(CountRowsSchema)` to create a new message.
  */
 export const CountRowsSchema: GenMessage<CountRows> = /*@__PURE__*/
-  messageDesc(file_heat3d_v1_heat3d, 36);
+  messageDesc(file_heat3d_v1_heat3d, 49);
 
 /**
  * @generated from message heat3d.v1.QueryReply
@@ -1460,7 +2253,7 @@ export type QueryReply = Message<"heat3d.v1.QueryReply"> & {
  * Use `create(QueryReplySchema)` to create a new message.
  */
 export const QueryReplySchema: GenMessage<QueryReply> = /*@__PURE__*/
-  messageDesc(file_heat3d_v1_heat3d, 37);
+  messageDesc(file_heat3d_v1_heat3d, 50);
 
 /**
  * @generated from message heat3d.v1.RowCount
@@ -1502,7 +2295,7 @@ export type RowCount = Message<"heat3d.v1.RowCount"> & {
  * Use `create(RowCountSchema)` to create a new message.
  */
 export const RowCountSchema: GenMessage<RowCount> = /*@__PURE__*/
-  messageDesc(file_heat3d_v1_heat3d, 38);
+  messageDesc(file_heat3d_v1_heat3d, 51);
 
 /**
  * @generated from enum heat3d.v1.ProtocolVersion

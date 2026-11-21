@@ -2,10 +2,13 @@
 //!
 //!   heat3d-ingest <file|folder>... [--rows N] [--x x --y y --z z --time time --person player --group team]
 //!                 [--range col:min:max]... [--set col:a,b]... [--stride N] [--no-chunks]
+//!                 [--dataset [--page-rows N]]
 //!
 //! `--rows N` takes files (repeating them when there are too few) until N rows,
 //! for measuring loads larger than the folder. Prints one JSON object: rows,
-//! seconds per phase and peak memory.
+//! seconds per phase and peak memory. `--dataset` builds the viewer's whole
+//! dataset the way the app does (`build`, `dataset`: merge, time, sort, extent,
+//! roster, lifetimes) and packs every chunk, instead of the bare chunk layout.
 
 use std::path::PathBuf;
 use std::time::Instant;
@@ -33,6 +36,8 @@ fn main() -> Result<()> {
         ..Default::default()
     };
     let mut chunks = true;
+    let mut dataset = false;
+    let mut page_rows = 0usize;
     while let Some(a) = args.next() {
         let mut val = || args.next().ok_or_else(|| anyhow::anyhow!("{a} needs a value"));
         match a.as_str() {
@@ -45,6 +50,8 @@ fn main() -> Result<()> {
             "--group" => spec.group = Some(val()?),
             "--stride" => spec.stride = val()?.parse()?,
             "--no-chunks" => chunks = false,
+            "--dataset" => dataset = true,
+            "--page-rows" => page_rows = val()?.parse()?,
             "--range" => {
                 let v = val()?;
                 let p: Vec<&str> = v.split(':').collect();
@@ -93,6 +100,9 @@ fn main() -> Result<()> {
         }
     }
     let open_ms = t0.elapsed().as_secs_f64() * 1e3;
+    if dataset {
+        return build_dataset(files, &spec, open_ms, t0, page_rows);
+    }
     let bulk = load(&files, &spec)?;
     let after_read = memory::peak_bytes();
     let n = bulk.rows.len();
@@ -122,6 +132,76 @@ fn main() -> Result<()> {
     o.insert("totalMs".into(), (t0.elapsed().as_secs_f64() * 1e3).into());
     o.insert("peakBytes".into(), memory::peak_bytes().into());
     o.insert("memoryBytes".into(), memory::total_bytes().into());
+    println!("{}", serde_json::to_string_pretty(&out)?);
+    Ok(())
+}
+
+/// The viewer's dataset, built and packed as the app builds it.
+fn build_dataset(files: Vec<ParquetFile>, spec: &heat3d_core::bulk::BulkSpec, open_ms: f64, t0: Instant, page_rows: usize) -> Result<()> {
+    use heat3d_core::build::{build, BuildSpec, Mapping};
+    use heat3d_core::dataset::Dataset;
+    let names: Vec<String> = (0..files.len()).map(|i| format!("file{i}.parquet")).collect();
+    let bs = BuildSpec {
+        mapping: Mapping {
+            x: spec.x.clone(),
+            y: spec.y.clone(),
+            z: spec.z.clone(),
+            time: spec.time.clone(),
+            time_unit: "seconds".into(),
+            person: spec.person.clone(),
+            team: spec.group.clone(),
+            up_z: true,
+            scale: 1.0,
+            ..Default::default()
+        },
+        filter: spec.filter.clone(),
+        stride: spec.stride.max(1),
+        names,
+        max_sessions: 0,
+    };
+    let count = files.len();
+    let b = build(&files, &bs, &|_, _| {})?;
+    let timing = b.timing.clone();
+    let (rows, people) = (b.rows, b.person_labels.len());
+    let after_build = memory::peak_bytes();
+    let t1 = Instant::now();
+    let (ds, _, _) = Dataset::new(b, files, bs, CHUNK_ROWS, page_rows);
+    let infos_ms = t1.elapsed().as_secs_f64() * 1e3;
+    // Every chunk packed once, as the window asks for them, one at a time.
+    let t2 = Instant::now();
+    let mut bytes = 0usize;
+    let mut buf: Vec<u32> = Vec::new();
+    for i in 0..ds.chunks.len() {
+        for times in [false, true] {
+            let Ok(n) = ds.chunk_bytes(i, times) else { continue };
+            buf.resize(n / 4, 0);
+            ds.pack(i, times, &mut buf)?;
+            bytes += n;
+        }
+    }
+    let pack_ms = t2.elapsed().as_secs_f64() * 1e3;
+    let out = serde_json::json!({
+        "mode": "dataset",
+        "files": count,
+        "rows": rows,
+        "people": people,
+        "threads": rayon::current_num_threads(),
+        "openMs": open_ms,
+        "readMs": timing.read_ms,
+        "mergeMs": timing.merge_ms,
+        "sortMs": timing.sort_ms,
+        "lifetimeMs": timing.lifetime_ms,
+        "buildMs": timing.total_ms,
+        "chunkInfoMs": infos_ms,
+        "packMs": pack_ms,
+        "chunks": ds.chunks.len(),
+        "chunkBytes": bytes,
+        "pageRows": ds.page_rows(),
+        "peakAfterBuildBytes": after_build,
+        "totalMs": t0.elapsed().as_secs_f64() * 1e3,
+        "peakBytes": memory::peak_bytes(),
+        "memoryBytes": memory::total_bytes(),
+    });
     println!("{}", serde_json::to_string_pretty(&out)?);
     Ok(())
 }

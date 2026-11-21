@@ -275,8 +275,8 @@ export function App() {
       }
       e.start();
       setEngine(e);
-      if (import.meta.env.DEV) {
-        // Handle for the smoke test and console poking; dev only.
+      if (import.meta.env.DEV || '__TAURI_INTERNALS__' in globalThis) {
+        // Handle for the smoke test and console poking: dev, and the native app's probes.
         (window as unknown as Record<string, unknown>).__3dheat_engine = e;
         (window as unknown as Record<string, unknown>).__3dheat_engineLive = e.live;
       }

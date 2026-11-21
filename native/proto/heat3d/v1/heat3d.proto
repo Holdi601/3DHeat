@@ -55,6 +55,12 @@ message Envelope {
     ChunkSet chunk_set = 41;
     ReadChunk read_chunk = 42;
     ChunkData chunk_data = 43;
+    BuildDataset build_dataset = 44;
+    DatasetBuilt dataset_built = 45;
+    ReadDatasetColumns read_dataset_columns = 46;
+    DatasetColumns dataset_columns = 47;
+    BuildProgress build_progress = 48;
+    BuildProgressReply build_progress_reply = 49;
 
     Query query = 50;
     QueryReply query_reply = 51;
@@ -392,16 +398,204 @@ enum ChunkPart {
   CHUNK_PART_TIMES = 2;
 }
 
+// A chunk of a `BuildChunks` set, or of a built dataset (`BuildDataset`), packed
+// on request.
 message ReadChunk {
   uint64 handle = 1;
   uint32 index = 2;
   ChunkPart part = 3;
+  // Hand the bytes over in shared memory (the app's window): `ChunkData.shared_id`.
+  bool shared = 4;
 }
 
 message ChunkData {
   uint32 index = 1;
   ChunkPart part = 2;
   Buffer data = 3;
+  // The shared buffer the bytes went out in, when asked for (`SharedBuffer`).
+  uint64 shared_id = 4;
+}
+
+// ---------------------------------------------------------------- datasets
+
+// The roles and columns of a load, as the viewer's `ColumnMapping` gives them.
+message DatasetMapping {
+  string x = 1;
+  string y = 2;
+  string z = 3;
+  string time = 4;
+  // `TimeUnit`: "seconds", "milliseconds", "unix_milliseconds", ...
+  string time_unit = 5;
+  // "none", "yawPitch" or "vector".
+  string look_mode = 6;
+  string yaw = 7;
+  string pitch = 8;
+  string dir_x = 9;
+  string dir_y = 10;
+  string dir_z = 11;
+  bool degrees = 12;
+  string person = 13;
+  string team = 14;
+  string session = 15;
+  // Columns loaded with the rows, in order.
+  repeated ExtraColumn extra = 16;
+  // Columns left in the files until asked for (`ReadDatasetColumns`).
+  repeated ExtraColumn on_demand = 17;
+  bool up_z = 18;
+  bool flip_x = 19;
+  bool flip_y = 20;
+  bool flip_z = 21;
+  double scale = 22;
+}
+
+message ExtraColumn {
+  string name = 1;
+  bool numeric = 2;
+}
+
+// Reads a Parquet selection and builds the viewer's dataset of it: everything the
+// viewer's own build does after reading (`ingestFiles`, `DatasetBuilder`), held
+// by the core under a handle until closed (`CloseDataset`). The columns are then
+// read with `ReadDatasetColumns`, the engine's chunks with `ReadChunk`. A load the
+// core does not build (ISO-8601 text times, a person's objects) is answered
+// UNSUPPORTED, and the viewer builds it itself.
+message BuildDataset {
+  repeated FileRef files = 1;
+  // Each file's name as the viewer shows it (the `Source file` column).
+  repeated string names = 2;
+  DatasetMapping mapping = 3;
+  repeated RowFilterClause filter = 4;
+  uint32 stride = 5;
+  // The most rows the viewer keeps: past it, its copy is every k-th row, and the
+  // chunks still hold every row. 0 for no limit.
+  uint64 page_rows = 6;
+  // Rows per chunk; 0 for the engine's 2^23.
+  uint32 chunk_rows = 7;
+  // A token the viewer polls `BuildProgress` with.
+  string progress_token = 8;
+}
+
+message BuiltFile {
+  uint64 rows = 1;
+  uint64 rejected = 2;
+  FilterStats filtered = 3;
+  // Why the file gave nothing: a message key of the viewer and its values, or text.
+  string failure_key = 4;
+  map<string, string> failure_params = 5;
+  string failure_text = 6;
+  // The footer's `heat3d` entry, as written.
+  string hints_json = 7;
+  // The file's time is wall-clock (TIMESTAMP, unix units).
+  bool time_absolute = 8;
+}
+
+message BuiltAttr {
+  string name = 1;
+  bool numeric = 2;
+  double min = 3;
+  double max = 4;
+  repeated string categories = 5;
+}
+
+message DroppedColumn {
+  string name = 1;
+  uint64 count = 2;
+}
+
+// One chunk of the engine's layout, as `WebgpuRenderer.landChunk` keeps it.
+message DatasetChunk {
+  uint32 index = 1;
+  uint64 start = 2;
+  uint32 rows = 3;
+  repeated double aabb_min = 4;
+  repeated double aabb_size = 5;
+  double time_min = 6;
+  double time_scale = 7;
+  double life_scale = 8;
+}
+
+message DatasetBuilt {
+  uint64 handle = 1;
+  // Every row the build kept; the chunks hold them all.
+  uint64 rows = 2;
+  repeated BuiltFile files = 3;
+  // Files that gave a block (read, even if every row was filtered out).
+  uint32 sources = 4;
+  uint64 rejected = 5;
+  bool has_time = 6;
+  optional double epoch_ms = 7;
+  double time_origin = 8;
+  repeated double time_range = 9;
+  repeated string person_labels = 10;
+  repeated string team_labels = 11;
+  // Teams before the ceiling dropped the team column; 0 when kept.
+  uint64 teams_dropped = 12;
+  repeated string session_labels = 13;
+  uint64 sessions_dropped = 14;
+  double max_lifetime_gap = 15;
+  uint64 shared_count = 16;
+  repeated BuiltAttr attrs = 17;
+  repeated DroppedColumn dropped_columns = 18;
+  // minX, minY, minZ, maxX, maxY, maxZ.
+  repeated double bounds = 19;
+  uint64 aligned = 20;
+  // `Dataset.series` as JSON, or empty.
+  string series_json = 21;
+  repeated DatasetChunk chunks = 22;
+  // The viewer's copy: its rows, and the step between them (1: every row).
+  uint64 page_rows = 23;
+  uint32 page_step = 24;
+  // The copy's own largest lifetime, when it is every k-th row.
+  double page_max_lifetime_gap = 25;
+  // Columns `ReadDatasetColumns` gives: "@px", "@time", ... and the attributes by name.
+  repeated string columns = 26;
+  // Columns left in the files, read when asked.
+  repeated string on_demand = 27;
+  Timing timing = 28;
+  uint64 peak_memory_bytes = 29;
+  // Whether the core hands columns over in shared memory (the app's window).
+  bool shared = 30;
+}
+
+// Columns of a built dataset: the viewer's copy of them, or one chunk's rows of
+// them as the GPU's filter columns take them (float32).
+message ReadDatasetColumns {
+  uint64 handle = 1;
+  repeated string names = 2;
+  // One chunk's rows, as float32; otherwise the viewer's copy.
+  bool by_chunk = 3;
+  uint32 chunk = 4;
+  // Hand the bytes over in shared memory (`DatasetColumn.shared_id`).
+  bool shared = 5;
+}
+
+message DatasetColumn {
+  string name = 1;
+  // "f32", "u32", "u16" or "u8".
+  string element = 2;
+  Buffer values = 3;
+  uint64 shared_id = 4;
+  // A column read on demand: its categories, or its range.
+  repeated string categories = 5;
+  bool numeric = 6;
+  double min = 7;
+  double max = 8;
+  // Elements in the column (a shared buffer may be longer).
+  uint64 count = 9;
+}
+
+message DatasetColumns {
+  repeated DatasetColumn columns = 1;
+}
+
+message BuildProgress {
+  string token = 1;
+}
+
+message BuildProgressReply {
+  // The build's step: "count", "read", "time", "sort", "extent", "lifetimes", "chunks", or empty.
+  string phase = 1;
+  double fraction = 2;
 }
 
 // ---------------------------------------------------------------- queries

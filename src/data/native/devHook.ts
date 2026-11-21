@@ -6,6 +6,10 @@
  *   loadFiles(files)        a load of picked files, mapped automatically, shown
  *   echo(bytes)             one reply of `bytes` from the core: the transfer rate
  *   chunks(paths, roles)    the engine's chunk layout built by the core, then read over
+ *   buildStats()            timings of the last dataset the core built (`nativeBuild`)
+ *   uploading()             whether rows are still on their way to the GPU
+ *   play(on)                the timeline playing or not
+ *   parity(files, mapping)  the same load built by the core and by the page, every column compared
  */
 
 import { call, coreEndpoint } from './core';
@@ -61,6 +65,44 @@ export function installNativeHook(): void {
         useStore.getState().setDataset(dataset);
       }
       return { rows: dataset.count, people: dataset.personLabels.length, groups: dataset.teamLabels.length, previewMs: t1 - t0, ingestMs: t2 - t1 };
+    },
+
+    async buildStats() {
+      const { nativeBuildStats } = await import('./build');
+      return nativeBuildStats.last;
+    },
+
+    uploading() {
+      const eng = (globalThis as unknown as { __3dheat_engine?: { renderer?: { dataPending?: boolean } } }).__3dheat_engine;
+      return !!eng?.renderer?.dataPending;
+    },
+
+    async play(on: boolean) {
+      const { useStore } = await import('../../state/store');
+      useStore.getState().patchTimeline({ playing: on });
+    },
+
+    /** Builds `files` both ways and names what differs (`describeBuilt`); empty when nothing does. */
+    async parity(files: File[], mapping: Record<string, unknown>) {
+      const { loader } = await import('../loader');
+      const { emptyColumnMapping } = await import('../../state/types');
+      const { describeBuilt } = await import('./build');
+      const m = { ...emptyColumnMapping(), ...mapping } as import('../../state/types').ColumnMapping;
+      const was = localStorage.getItem('heat3d.nativeBuild');
+      const build = async (how: 'on' | 'off') => {
+        localStorage.setItem('heat3d.nativeBuild', how);
+        const ds = await loader.ingest(files, m, [], 'parity', 1, 0);
+        return { native: !!ds.native, d: JSON.parse(JSON.stringify(describeBuilt(ds, []))) as Record<string, unknown> };
+      };
+      try {
+        const core = await build('on');
+        const page = await build('off');
+        const differs = Object.keys(page.d).filter((k) => k !== 'failed' && JSON.stringify(page.d[k]) !== JSON.stringify(core.d[k]));
+        return { coreBuilt: core.native, rows: core.d.count, differs };
+      } finally {
+        if (was === null) localStorage.removeItem('heat3d.nativeBuild');
+        else localStorage.setItem('heat3d.nativeBuild', was);
+      }
     },
 
     async echo(bytes: number) {

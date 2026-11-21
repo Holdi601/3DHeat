@@ -22,7 +22,7 @@ import { forcedHeatPrecision } from '../webgl2/glutil';
 import { buildEdgeList, type Level } from '../level';
 import { boxOutsideFrustum, diffWorldTiles, frustumPlanes, textureBytes } from '../worldTiles';
 import type { WorldTile } from '../../world/tileSet';
-import { filterColumnData, packFilterTable, packSignTables } from '../filterTables';
+import { filterColumnData, packFilterTable, packSignTables, PERSON_FILTER_COLUMN } from '../filterTables';
 import { FilterStaging, type StageOps } from '../filterStaging';
 import {
   CHUNK_ROWS,
@@ -70,6 +70,7 @@ import {
 } from './shaders';
 import { t } from '../../i18n';
 import type { LevelIndexSets } from '../levelIndices';
+import type { NativeChunk } from '../../state/types';
 
 /** Largest block index texture we size the per-frame buffer for. */
 const MAX_BLOCKS = MAX_PLAN_BLOCKS;
@@ -107,7 +108,29 @@ interface PendingChunk {
   max: [number, number, number];
   positions: GPUBuffer | null;
   times: GPUBuffer | null;
+  /**
+   * A chunk the native core packed (`Dataset.native`): its bytes are fetched,
+   * then written a slice a frame as they are, with nothing packed here.
+   */
+  native?: NativePending;
 }
+
+/** A packed chunk on its way from the core to the GPU. */
+interface NativePending {
+  chunk: NativeChunk;
+  /** The parts as they arrive; `done` gives their CPU bytes back once written. */
+  positions: { words: Uint32Array; done: () => void } | null;
+  times: { words: Uint32Array; done: () => void } | null;
+  asked: boolean;
+  failed: boolean;
+  /** Bytes of both parts written so far. */
+  written: number;
+}
+
+/** Bytes written to the GPU between checks of the clock, for a chunk the core packed. */
+const NATIVE_SLICE_BYTES = 8 * 1024 * 1024;
+/** Chunks fetched from the core ahead of the one being written. */
+const NATIVE_AHEAD = 2;
 
 interface GpuChunk {
   positions: GPUBuffer;
@@ -331,18 +354,24 @@ export class WebgpuRenderer implements Renderer {
   private readonly filterColumns = new Map<string, GPUBuffer>();
   /** Filter columns on their way to the GPU a slice a frame, and the filters drawn meanwhile (`prepareFilters`). */
   private readonly filterStaging = new FilterStaging<GPUBuffer>();
+  /** The column the stager is writing now (`StageOps.write` names the chunk, not the column). */
+  private stagingColumn = '';
   private filterScratch = new Float32Array(0);
   private readonly filterOps: StageOps<GPUBuffer> = {
     chunkCount: () => this.chunks.length,
     chunkRows: (c) => this.chunks[c].rows,
     resident: (c, column) => this.filterColumns.has(`${c}:${column}`),
     source: (column) => (this.dataset ? filterColumnData(this.dataset, column) : null),
+    ready: (c, column) => !this.fullNative || this.coreColumnReady(c, column),
     reserve: (c) => {
       const bytes = Math.max(4, this.chunks[c].rows * 4);
       if (this.gpuBytesUsed + bytes > this.gpuBudgetBytes) this.evictFilterColumns(new Set(), bytes);
       if (this.gpuBytesUsed + bytes > this.gpuBudgetBytes) return false;
       this.gpuBytesUsed += bytes;
       return true;
+    },
+    select: (column) => {
+      this.stagingColumn = column;
     },
     allocate: (c, column) =>
       this.device.createBuffer({
@@ -351,8 +380,14 @@ export class WebgpuRenderer implements Renderer {
         usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
       }),
     write: (buf, c, src, from, to) => {
-      const start = this.chunks[c].start + from;
       const n = to - from;
+      if (this.fullNative) {
+        // The core's rows of this chunk, as floats already.
+        const v = this.coreColumns.get(`${c}:${this.stagingColumn}`)?.got?.values;
+        if (v) this.device.queue.writeBuffer(buf, from * 4, v.buffer, v.byteOffset + from * 4, n * 4);
+        return;
+      }
+      const start = this.chunks[c].start + from;
       if (src instanceof Float32Array) {
         this.device.queue.writeBuffer(buf, from * 4, src.buffer, src.byteOffset + start * 4, n * 4);
         return;
@@ -364,6 +399,12 @@ export class WebgpuRenderer implements Renderer {
     },
     land: (c, column, buf) => {
       this.filterColumns.set(`${c}:${column}`, buf);
+      // On the GPU: the core's bytes of it go back.
+      const e = this.coreColumns.get(`${c}:${column}`);
+      if (e) {
+        e.got?.done();
+        this.coreColumns.delete(`${c}:${column}`);
+      }
     },
     discard: (c, _column, buf) => {
       buf?.destroy();
@@ -1294,6 +1335,8 @@ export class WebgpuRenderer implements Renderer {
     for (const j of this.pendingChunks) {
       j.positions?.destroy();
       j.times?.destroy();
+      j.native?.positions?.done();
+      j.native?.times?.done();
     }
     this.pendingChunks = [];
     this.dataGeneration++;
@@ -1305,12 +1348,21 @@ export class WebgpuRenderer implements Renderer {
     this.residentRows = 0;
     this.droppedRows = 0;
     this.dataset = dataset;
+    this.fullNative = false;
+    for (const c of this.coreColumns.values()) c.got?.done();
+    this.coreColumns.clear();
     if (!dataset || dataset.count === 0) return;
+    if (dataset.native && dataset.native.pageStep > 1) {
+      this.planNativeChunks(dataset);
+      return;
+    }
 
     const hasTime = !!(dataset.time && dataset.lifetime);
     const bytesPerRow = 8 + (hasTime ? 4 : 0);
     const chunkCount = Math.ceil(dataset.count / CHUNK_ROWS);
     const maxBinding = this.device.limits.maxStorageBufferBindingSize;
+    // Chunks the core packed, taken as they are; one that does not fit whole is packed here from the page's rows.
+    const packed = dataset.native && dataset.native.pageStep === 1 && dataset.native.chunks.length === chunkCount ? dataset.native.chunks : null;
 
     for (let ci = 0; ci < chunkCount; ci++) {
       const start = ci * CHUNK_ROWS;
@@ -1325,6 +1377,8 @@ export class WebgpuRenderer implements Renderer {
         break;
       }
       if (affordable < rows) rows = affordable;
+      const pre = packed?.[ci];
+      const whole = !!pre && pre.start === start && pre.rows === rows;
 
       // Queued rather than packed here: packing and writing 100 million rows in
       // one go held the page for two seconds. See `flushDataUpload`.
@@ -1338,6 +1392,7 @@ export class WebgpuRenderer implements Renderer {
         max: [-Infinity, -Infinity, -Infinity],
         positions: null,
         times: null,
+        ...(whole ? { native: { chunk: pre!, positions: null, times: null, asked: false, failed: false, written: 0 } } : {}),
       });
       this.gpuBytesUsed += rows * bytesPerRow;
       this.residentRows += rows;
@@ -1346,6 +1401,88 @@ export class WebgpuRenderer implements Renderer {
         break;
       }
     }
+  }
+
+  /**
+   * Every row of a load the core built, when the page keeps only every k-th
+   * (`Dataset.native.pageStep`): the GPU holds them all, whole chunks as the
+   * core packed them, as far as the budget goes. The page's rows then index
+   * nothing here; what a chunk needs per row (a filter's column) comes from the
+   * core too (`coreColumns`).
+   */
+  private planNativeChunks(dataset: Dataset): void {
+    const info = dataset.native!;
+    const hasTime = !!(dataset.time && dataset.lifetime);
+    const bytesPerRow = 8 + (hasTime ? 4 : 0);
+    const bindingCap = Math.floor(this.device.limits.maxStorageBufferBindingSize / 8);
+    this.fullNative = true;
+    for (const c of info.chunks) {
+      const bytes = c.rows * bytesPerRow;
+      if (c.rows > bindingCap || this.gpuBytesUsed + bytes > this.gpuBudgetBytes) {
+        this.droppedRows += c.rows;
+        continue;
+      }
+      this.pendingChunks.push({
+        start: c.start,
+        rows: c.rows,
+        hasTime,
+        cursor: c.start,
+        packing: false,
+        min: [Infinity, Infinity, Infinity],
+        max: [-Infinity, -Infinity, -Infinity],
+        positions: null,
+        times: null,
+        native: { chunk: c, positions: null, times: null, asked: false, failed: false, written: 0 },
+      });
+      this.gpuBytesUsed += bytes;
+      this.residentRows += c.rows;
+    }
+  }
+
+  /**
+   * Whether the chunks hold every row of a load the core built while the page
+   * holds every k-th: rows here are then the core's, not the page's.
+   */
+  fullNative = false;
+
+  /** Filter columns of the core's rows, a chunk at a time, on their way (`fullNative`). */
+  private readonly coreColumns = new Map<string, { asked: boolean; got: { values: Float32Array; done: () => void } | null; failed: boolean }>();
+
+  /** The core's name for a filter column. */
+  private coreName(column: string): string {
+    return column === PERSON_FILTER_COLUMN ? '@person' : column;
+  }
+
+  /** Whether chunk `c`'s rows of `column` have come from the core, asking for them if not. */
+  private coreColumnReady(c: number, column: string): boolean {
+    const key = `${c}:${column}`;
+    let e = this.coreColumns.get(key);
+    if (!e) {
+      e = { asked: false, got: null, failed: false };
+      this.coreColumns.set(key, e);
+    }
+    if (e.got) return true;
+    if (e.asked || e.failed) return false;
+    const ds = this.dataset;
+    const info = ds?.native;
+    const chunk = this.chunks[c];
+    if (!info || !chunk) return false;
+    e.asked = true;
+    const index = info.chunks.findIndex((x) => x.start === chunk.start);
+    const entry = e;
+    void (async () => {
+      const [{ readChunkColumn }, { coreEndpoint }] = await Promise.all([import('../../data/native/build'), import('../../data/native/core')]);
+      const got = await readChunkColumn(await coreEndpoint(), info, index, this.coreName(column));
+      if (this.dataset !== ds || this.coreColumns.get(key) !== entry) {
+        got?.done();
+        return;
+      }
+      if (got) entry.got = got;
+      else entry.failed = true;
+    })().catch(() => {
+      entry.failed = true;
+    });
+    return false;
   }
 
   /** Each row's bearing, or null; see `Renderer.setDirections`. */
@@ -1359,7 +1496,8 @@ export class WebgpuRenderer implements Renderer {
       c.dirs = null;
     }
     this.dropDirJobs();
-    this.dirAngles = angles && this.dataset && angles.length === this.dataset.count ? angles : null;
+    // Bearings are the page's rows: none while the chunks hold the core's (`fullNative`).
+    this.dirAngles = angles && this.dataset && !this.fullNative && angles.length === this.dataset.count ? angles : null;
   }
 
   private dirAngles: Uint8Array | null = null;
@@ -1418,7 +1556,8 @@ export class WebgpuRenderer implements Renderer {
       c.lineStarts = null;
     }
     const dataset = this.dataset;
-    if (!lines || !dataset || lines.flags.length !== dataset.count) {
+    // Routes are the page's rows: none while the chunks hold the core's (`fullNative`).
+    if (!lines || !dataset || this.fullNative || lines.flags.length !== dataset.count) {
       this.lines = null;
       return;
     }
@@ -1464,8 +1603,20 @@ export class WebgpuRenderer implements Renderer {
     }
     const { px, py, pz, teamId } = ds;
     const until = performance.now() + DATA_UPLOAD_MS;
+    this.askNative(ds);
     while (this.pendingChunks.length > 0 && performance.now() < until) {
       const j = this.pendingChunks[0];
+      if (j.native && !j.native.failed) {
+        if (!this.writeNative(ds, j, until)) break;
+        continue;
+      }
+      if (this.fullNative) {
+        // A chunk of the core's rows that could not be read: the page has no rows to pack it from.
+        this.pendingChunks.shift();
+        this.residentRows -= j.rows;
+        this.droppedRows += j.rows;
+        continue;
+      }
       const end = j.start + j.rows;
       const stop = Math.min(end, j.cursor + DATA_SLICE_ROWS);
       if (!j.packing) {
@@ -1535,6 +1686,92 @@ export class WebgpuRenderer implements Renderer {
         this.dataGeneration++;
       }
     }
+  }
+
+  /** Asks the core for the next few packed chunks, so their bytes are there when their turn comes. */
+  private askNative(ds: Dataset): void {
+    const info = ds.native;
+    if (!info) return;
+    let ahead = 0;
+    for (const j of this.pendingChunks) {
+      if (!j.native || j.native.failed) continue;
+      if (++ahead > NATIVE_AHEAD) return;
+      const n = j.native;
+      if (n.asked) continue;
+      n.asked = true;
+      const index = info.chunks.indexOf(n.chunk);
+      void (async () => {
+        const [{ readChunk }, { coreEndpoint }] = await Promise.all([import('../../data/native/build'), import('../../data/native/core')]);
+        const core = await coreEndpoint();
+        const pos = await readChunk(core, info, index, 'positions');
+        const times = j.hasTime ? await readChunk(core, info, index, 'times') : null;
+        // A dataset set meanwhile has dropped this chunk: its bytes go straight back.
+        if (!this.pendingChunks.includes(j)) {
+          pos.done();
+          times?.done();
+          return;
+        }
+        n.positions = pos;
+        n.times = times;
+      })().catch((err) => {
+        // Packed here instead, from the page's rows, as any chunk the core did not pack.
+        console.warn(`[3dheat native] chunk ${index} packed in the page: ${err instanceof Error ? err.message : String(err)}`);
+        n.failed = true;
+      });
+    }
+  }
+
+  /**
+   * Writes slices of a chunk the core packed until `until`. Returns false when
+   * its bytes have not arrived yet: the frame goes on without it.
+   */
+  private writeNative(ds: Dataset, j: PendingChunk, until: number): boolean {
+    const n = j.native!;
+    if (!n.positions || (j.hasTime && !n.times)) return false;
+    const posBytes = j.rows * 8;
+    const timeBytes = j.hasTime ? j.rows * 4 : 0;
+    if (!j.positions) {
+      j.positions = this.device.createBuffer({ label: `chunk ${j.start} pos`, size: Math.max(4, posBytes), usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
+      if (j.hasTime) j.times = this.device.createBuffer({ label: `chunk ${j.start} time`, size: Math.max(4, timeBytes), usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
+      return true;
+    }
+    const total = posBytes + timeBytes;
+    while (n.written < total && performance.now() < until) {
+      const at = n.written;
+      if (at < posBytes) {
+        const len = Math.min(NATIVE_SLICE_BYTES, posBytes - at);
+        const w = n.positions.words;
+        this.device.queue.writeBuffer(j.positions, at, w.buffer, w.byteOffset + at, len);
+        n.written += len;
+      } else {
+        const off = at - posBytes;
+        const len = Math.min(NATIVE_SLICE_BYTES, timeBytes - off);
+        const w = n.times!.words;
+        this.device.queue.writeBuffer(j.times!, off, w.buffer, w.byteOffset + off, len);
+        n.written += len;
+      }
+    }
+    if (n.written < total) return true;
+    // On the GPU: the CPU bytes go back now, not when collected.
+    n.positions.done();
+    n.times?.done();
+    n.positions = null;
+    n.times = null;
+    const c = n.chunk;
+    j.min = [c.aabbMin[0], c.aabbMin[1], c.aabbMin[2]];
+    j.max = [c.aabbMin[0] + c.aabbSize[0], c.aabbMin[1] + c.aabbSize[1], c.aabbMin[2] + c.aabbSize[2]];
+    this.pendingChunks.shift();
+    const landed = this.landChunk(ds, j);
+    // The core's own quanta, exactly as it packed with them.
+    landed.aabbSize = [c.aabbSize[0], c.aabbSize[1], c.aabbSize[2]];
+    if (j.times) {
+      landed.timeMin = c.timeMin;
+      landed.timeScale = c.timeScale;
+      landed.lifeScale = c.lifeScale;
+    }
+    this.chunks.push(landed);
+    this.dataGeneration++;
+    return true;
   }
 
   /** How a chunk's times and lifetimes are quantised: from its first and last row. */
@@ -1612,6 +1849,8 @@ export class WebgpuRenderer implements Renderer {
     const chunk = this.chunks[chunkIndex];
     const ds = this.dataset;
     if (!chunk || !ds) return { slots: 0, splitSlot: -1 };
+    // The split's and the weight's columns are the page's rows: not while the chunks hold the core's.
+    if (this.fullNative) return { slots: 0, splitSlot: -1 };
 
     const columns = filters.map((f) => f.column);
     const key = `${columns.join('|')}#${splitColumn ?? ''}#${weightColumn ?? ''}`;
@@ -3775,7 +4014,7 @@ export class WebgpuRenderer implements Renderer {
     if (this.filterStaging.finishNow(chunkIndex, column, this.filterOps)) return this.filterColumns.get(key) ?? null;
     const ds = this.dataset;
     const chunk = this.chunks[chunkIndex];
-    if (!ds || !chunk) return null;
+    if (!ds || !chunk || this.fullNative) return null;
     const src = filterColumnData(ds, column);
     if (!src) return null;
     const bytes = Math.max(4, chunk.rows * 4);

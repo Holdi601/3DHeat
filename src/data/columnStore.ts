@@ -119,9 +119,51 @@ export function adoptColumnSource(ds: Dataset): void {
   useColumnStore.setState((s) => ({ source, entries, mapBytes: rowMapBytes(src), evicted: 0, version: s.version + 1 }));
 }
 
+/**
+ * The entries of a dataset the native core built (`Dataset.native`): its
+ * columns left in the files are read by the core when asked, and given back
+ * here like any other. The core keeps what it read; an eviction frees the
+ * page's copy only.
+ */
+function adoptNative(ds: Dataset): void {
+  const info = ds.native!;
+  const prev = useColumnStore.getState().source;
+  if (prev && !isNativeSource(prev)) post({ kind: 'drop', source: prev });
+  const source = `native-${info.handle}`;
+  fingerprint = rowFingerprint(ds);
+  const now = performance.now();
+  const entries: Record<string, ColumnEntry> = {};
+  for (const c of info.onDemand) {
+    entries[c.name] = { name: c.name, kind: c.kind, state: 'deferred', bytes: ds.count * 4, lastUsed: now, onDemand: true, fraction: 0, error: null, evictions: 0 };
+  }
+  useColumnStore.setState((s) => ({ source, entries, mapBytes: 0, evicted: 0, version: s.version + 1 }));
+}
+
+const isNativeSource = (s: string) => s.startsWith('native-');
+
+/** A column of a core-built dataset, read by the core. */
+function readNative(e: ColumnEntry, ds: Dataset, source: string): Promise<void> {
+  const handle = ds.native!.handle;
+  return (async () => {
+    try {
+      const [{ readOnDemand }, { coreEndpoint }] = await Promise.all([import('./native/build'), import('./native/core')]);
+      const col = await readOnDemand(await coreEndpoint(), handle, e.name);
+      const st = host?.getState();
+      const cur = st?.dataset;
+      if (!st || !cur || cur.native?.handle !== handle || useColumnStore.getState().source !== source) return;
+      if (!col) throw new Error(`the core has no column ${e.name}`);
+      if (!cur.attrs.some((a) => a.name === col.name)) cur.attrs.push(col);
+      patch(e.name, { state: 'resident', bytes: columnBytes(col), fraction: 1, lastUsed: performance.now() }, true);
+      st.setFilters([...st.filters]);
+    } catch (err) {
+      patch(e.name, { state: 'error', error: err instanceof Error ? err.message : String(err) }, true);
+    }
+  })();
+}
+
 function reset(): void {
   const prev = useColumnStore.getState().source;
-  if (prev) post({ kind: 'drop', source: prev });
+  if (prev && !isNativeSource(prev)) post({ kind: 'drop', source: prev });
   fingerprint = '';
   for (const [id, p] of pending) {
     pending.delete(id);
@@ -212,6 +254,11 @@ function read(e: ColumnEntry): Promise<void> {
   if (!source || !ds || !host) return Promise.resolve();
   makeRoom(e.bytes, new Set([...pinnedColumns(host.getState()), e.name]));
   patch(e.name, { state: 'loading', fraction: 0, error: null, lastUsed: performance.now() }, true);
+  if (isNativeSource(source)) {
+    const done = readNative(e, ds, source).finally(() => inflight.delete(e.name));
+    inflight.set(e.name, done);
+    return done;
+  }
   const id = nextId++;
   const done = new Promise<void>((resolve) => {
     pending.set(id, { name: e.name, source, resolve });
@@ -297,6 +344,7 @@ export function installColumnDemand(store: ColumnHost & { subscribe: (fn: () => 
       // arrives: a load made for something else (a comparison, a mass run)
       // must not take the place of the one on screen.
       if (s.dataset?.columnSource) adoptColumnSource(s.dataset);
+      else if (s.dataset?.native?.onDemand.length && useColumnStore.getState().source !== `native-${s.dataset.native.handle}`) adoptNative(s.dataset);
       else if (useColumnStore.getState().source) {
         // A copy of the same rows (the sides lined up, an outcome added) keeps
         // its columns; different rows, or the same in another order, do not.

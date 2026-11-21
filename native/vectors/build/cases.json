@@ -1,0 +1,177 @@
+[
+ {
+  "name": "single file, axes, bad rows, extras",
+  "files": [
+   "a.parquet"
+  ],
+  "mapping": {
+   "x": "x",
+   "y": "y",
+   "z": "z",
+   "time": "time",
+   "personId": "player",
+   "teamId": "team",
+   "extra": [
+    "speed",
+    "gear"
+   ],
+   "extraNumeric": {
+    "speed": true,
+    "gear": false
+   },
+   "axes": {
+    "up": "z",
+    "flipX": true,
+    "flipY": false,
+    "flipZ": false,
+    "scale": 2
+   }
+  },
+  "stride": 1
+ },
+ {
+  "name": "single file, Y-up, stride and a row filter",
+  "files": [
+   "a.parquet"
+  ],
+  "mapping": {
+   "x": "x",
+   "y": "z",
+   "z": "y",
+   "time": "time",
+   "personId": "player",
+   "teamId": "team",
+   "extra": [
+    "gear"
+   ],
+   "extraNumeric": {
+    "gear": false
+   },
+   "axes": {
+    "up": "y",
+    "flipX": false,
+    "flipY": false,
+    "flipZ": true,
+    "scale": 1
+   },
+   "rowFilter": [
+    {
+     "column": "speed",
+     "kind": "range",
+     "min": 3,
+     "max": 25
+    },
+    {
+     "column": "gear",
+     "kind": "set",
+     "values": [
+      "low",
+      "mid",
+      ""
+     ]
+    }
+   ]
+  },
+  "stride": 3
+ },
+ {
+  "name": "files with extras in some, wall clock, one failing",
+  "files": [
+   "b1.parquet",
+   "b2.parquet",
+   "b3.parquet",
+   "b4.parquet"
+  ],
+  "mapping": {
+   "x": "x",
+   "y": "y",
+   "z": "z",
+   "time": "time",
+   "timeUnit": "unix_milliseconds",
+   "personId": "player",
+   "teamId": "team",
+   "extra": [
+    "speed",
+    "gear"
+   ],
+   "extraNumeric": {
+    "speed": true,
+    "gear": false
+   }
+  },
+  "stride": 1
+ },
+ {
+  "name": "recordings far apart, sessions, yaw and pitch",
+  "files": [
+   "c1.parquet",
+   "c2.parquet"
+  ],
+  "mapping": {
+   "x": "x",
+   "y": "y",
+   "z": "z",
+   "time": "time",
+   "personId": "player",
+   "teamId": "team",
+   "sessionId": "session",
+   "lookMode": "yawPitch",
+   "yaw": "heading",
+   "pitch": "elev",
+   "angleUnit": "degrees"
+  },
+  "stride": 1
+ },
+ {
+  "name": "a campaign round in three sessions",
+  "files": [
+   "d1.parquet",
+   "d2.parquet",
+   "d3.parquet"
+  ],
+  "mapping": {
+   "x": "x",
+   "y": "y",
+   "z": "z",
+   "time": "time",
+   "personId": "player",
+   "teamId": "team",
+   "sessionId": "session",
+   "extra": [
+    "campaign",
+    "sessionStart"
+   ],
+   "extraNumeric": {
+    "campaign": false,
+    "sessionStart": true
+   }
+  },
+  "stride": 1
+ },
+ {
+  "name": "look vectors, a category past the ceiling, names worn twice",
+  "files": [
+   "e.parquet"
+  ],
+  "mapping": {
+   "x": "x",
+   "y": "y",
+   "z": "z",
+   "time": "time",
+   "personId": "player",
+   "teamId": "team",
+   "sessionId": "round",
+   "lookMode": "vector",
+   "dirX": "dx",
+   "dirY": "dy",
+   "dirZ": "dz",
+   "extra": [
+    "serial"
+   ],
+   "extraNumeric": {
+    "serial": false
+   }
+  },
+  "stride": 1
+ }
+]

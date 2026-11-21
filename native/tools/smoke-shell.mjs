@@ -106,7 +106,8 @@ const t0 = Date.now();
 
 let browser;
 try {
-  for (let i = 0; i < 300 && !browser; i++) {
+  // A loaded machine may take a minute to start the app and its WebView2.
+    for (const until = Date.now() + 120_000; !browser && Date.now() < until; ) {
     try {
       browser = await chromium.connectOverCDP(`http://127.0.0.1:${PORT}`);
     } catch {
@@ -155,6 +156,7 @@ try {
     const input = document.createElement('input');
     input.type = 'file';
     input.id = '__smoke_native_file';
+    input.multiple = true;
     input.style.display = 'none';
     document.body.appendChild(input);
   });
@@ -170,7 +172,7 @@ try {
   report.load = load;
   check(load.rows === rows, `loaded ${load.rows} rows in ${(load.ingestMs / 1000).toFixed(2)} s`);
   const after = await page.evaluate(() => globalThis.__heat3dNative.hello());
-  check((after.served.read_columns ?? 0) >= 1, `the core read the columns (${JSON.stringify(after.served)})`);
+  check((after.served.build_dataset ?? 0) + (after.served.read_columns ?? 0) >= 1, `the core read the file (${JSON.stringify(after.served)})`);
   await sleep(4000);
   const heat = await lit();
   report.litPixels = { before, after: heat };
@@ -187,6 +189,18 @@ try {
   for (let i = 0; i < 4; i++) shared.push(await page.evaluate((b) => globalThis.__heat3dNative.sharedEcho(b), echoMb * 2 ** 20));
   report.shared = shared;
   if (shared[0]) console.log(`info transfer core -> page through shared memory: ${shared.map((e) => e.gbPerS.toFixed(2)).join(', ')} GB/s for ${echoMb} MiB`);
+
+  // Stage 2c: the core builds the dataset, and builds what the page would. The
+  // shared vectors' files, picked as a person picks them, built both ways.
+  const vectors = resolve(import.meta.dirname, '..', 'vectors', 'build');
+  for (const c of [
+    { files: ['b1.parquet', 'b2.parquet', 'b4.parquet'], mapping: { x: 'x', y: 'y', z: 'z', time: 'time', timeUnit: 'unix_milliseconds', personId: 'player', teamId: 'team', extra: ['speed', 'gear'], extraNumeric: { speed: true, gear: false } } },
+    { files: ['c1.parquet', 'c2.parquet'], mapping: { x: 'x', y: 'y', z: 'z', time: 'time', personId: 'player', teamId: 'team', sessionId: 'session', lookMode: 'yawPitch', yaw: 'heading', pitch: 'elev', angleUnit: 'degrees' } },
+  ]) {
+    await cdp.send('DOM.setFileInputFiles', { nodeId, files: c.files.map((f) => join(vectors, f)) });
+    const p = await page.evaluate((m) => globalThis.__heat3dNative.parity([...document.getElementById('__smoke_native_file').files], m), c.mapping);
+    check(p.coreBuilt && p.differs.length === 0, `core-built dataset of ${c.files.join(', ')} (${p.rows} rows) is the page's: ${p.differs.length ? `differs in ${p.differs.join(', ')}` : 'every column the same'}`);
+  }
 
   const chunkFiles = many('chunks').map((f) => resolve(f));
   if (chunkFiles.length) {

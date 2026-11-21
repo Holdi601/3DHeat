@@ -95,6 +95,9 @@ fn main() {
                 .disable_drag_drop_handler()
                 .build()?;
             files::attach(&window, core.clone());
+            // Columns and chunks into the page with no copy on the way (Windows).
+            #[cfg(windows)]
+            shared::sink::attach(&window, &core);
             window_layer::attach(&window);
             if let Some(rest) = host_args.clone() {
                 // A session hosted beside the window, on the same core.

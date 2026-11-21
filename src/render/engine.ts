@@ -1573,7 +1573,7 @@ export class Engine {
     // divided by the new one, and the two errors cancel the change exactly. The
     // slider would appear to do nothing.
     const peak = estimateSaturation(
-      this.dataset.count,
+      (renderer as { fullNative?: boolean }).fullNative && this.dataset.native ? this.dataset.native.rows : this.dataset.count,
       h.radius,
       h.centerIntensity,
       this.dataset.bounds,
@@ -3450,7 +3450,7 @@ export class Engine {
     // the buffer's contents wrong and forces a fresh estimate.
     const rowRange =
       this.dataset && s.mode !== 'team'
-        ? candidateRange(this.dataset, timeLo, rowsHi)
+        ? gpuRange(this.dataset, candidateRange(this.dataset, timeLo, rowsHi), renderer)
         : ([0, 0] as [number, number]);
     // Not with a moving head: a segment drawn part-way last frame is drawn
     // further this one, so adding to what is there would count it twice.
@@ -4902,4 +4902,20 @@ export { CUBE_STRIDE };
 /** Whether the level is a world backdrop: a model level placed on the earth. */
 function onEarth(level: Level | null): boolean {
   return level?.kind === 'model' && !!level.placement;
+}
+
+/**
+ * The rows a frame draws, in the renderer's rows. They are the page's, except
+ * when the renderer holds every row of a load the core built while the page
+ * keeps every k-th (`fullNative`): page row `p` is then the core's row `p * k`,
+ * so the range widens to the core rows between, which may reach up to k - 1
+ * rows past the window at either end.
+ */
+function gpuRange(ds: Dataset, r: [number, number], renderer: unknown): [number, number] {
+  const info = ds.native;
+  if (!info || info.pageStep <= 1 || !(renderer as { fullNative?: boolean }).fullNative) return r;
+  const k = info.pageStep;
+  const lo = r[0] <= 0 ? 0 : (r[0] - 1) * k + 1;
+  const hi = r[1] >= ds.count ? info.rows : Math.min(info.rows, r[1] * k);
+  return [lo, hi];
 }

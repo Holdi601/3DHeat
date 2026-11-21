@@ -20,6 +20,12 @@ export interface StageOps<T> {
   /** Chunks drawn now. */
   chunkCount(): number;
   chunkRows(chunk: number): number;
+  /**
+   * Whether the chunk's rows of the column can be written now; a renderer whose
+   * rows come from elsewhere (the native core) says no until they are there.
+   * Absent: always.
+   */
+  ready?(chunk: number, column: string): boolean;
   /** Whether the chunk's column is on the GPU already. */
   resident(chunk: number, column: string): boolean;
   /** The column's rows in the dataset, or null when it has none (nothing to upload). */
@@ -28,6 +34,8 @@ export interface StageOps<T> {
   reserve(chunk: number, column: string): boolean;
   /** Make the GPU resource, written later. */
   allocate(chunk: number, column: string): T;
+  /** The column the next `write` calls are for. */
+  select?(column: string): void;
   /** Write rows [from, to) of the chunk's column. */
   write(res: T, chunk: number, src: ArrayLike<number>, from: number, to: number): void;
   /** The column is all there: the renderer keeps it as resident. */
@@ -146,6 +154,7 @@ export class FilterStaging<T> {
     let made = false;
     for (const [k, f] of this.fills) {
       if (now() >= until) return;
+      if (ops.ready && !ops.ready(f.chunk, f.column)) continue;
       if (!f.res) {
         if (made) return;
         f.res = ops.allocate(f.chunk, f.column);
@@ -160,6 +169,7 @@ export class FilterStaging<T> {
       }
       while (f.cursor < f.rows && now() < until) {
         const to = Math.min(f.rows, f.cursor + FILTER_SLICE_ROWS);
+        ops.select?.(f.column);
         ops.write(f.res, f.chunk, src, f.cursor, to);
         f.cursor = to;
       }
@@ -177,6 +187,7 @@ export class FilterStaging<T> {
     const k = `${chunk}:${column}`;
     const f = this.fills.get(k);
     if (!f) return false;
+    if (ops.ready && !ops.ready(chunk, column)) return false;
     const src = ops.source(column);
     this.fills.delete(k);
     if (!src) {
@@ -184,6 +195,7 @@ export class FilterStaging<T> {
       return true;
     }
     f.res ??= ops.allocate(chunk, column);
+    ops.select?.(column);
     if (f.cursor < f.rows) ops.write(f.res, chunk, src, f.cursor, f.rows);
     ops.land(chunk, column, f.res);
     return true;

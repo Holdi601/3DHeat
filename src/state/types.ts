@@ -443,6 +443,38 @@ export interface Dataset {
     breakSeconds: number;
     sessions: { session: number; start: number; end: number; realStart: number }[];
   };
+  /**
+   * Built by the native app's core, which holds it (`data/native/build.ts`):
+   * the engine takes its GPU chunks from the core, already packed, and columns
+   * left in the files are read there. Absent for every dataset the page built.
+   */
+  native?: NativeDatasetInfo;
+}
+
+/** A dataset the native core built and holds (`Dataset.native`). Plain data, so it clones. */
+export interface NativeDatasetInfo {
+  /** The core's handle for it. */
+  handle: number;
+  /** Every row the core holds, and the chunks draw. */
+  rows: number;
+  /** The page's copy is every `pageStep`-th row of those: 1 for all of them. */
+  pageStep: number;
+  /** The engine's chunks, packed by the core, as `WebgpuRenderer.landChunk` keeps them. */
+  chunks: NativeChunk[];
+  /** Whether the core hands bytes over in shared memory (the app's window). */
+  shared: boolean;
+  /** Columns left in the files, which the core reads when the view asks (`data/columnStore.ts`). */
+  onDemand: Array<{ name: string; kind: 'number' | 'category' }>;
+}
+
+export interface NativeChunk {
+  start: number;
+  rows: number;
+  aabbMin: [number, number, number];
+  aabbSize: [number, number, number];
+  timeMin: number;
+  timeScale: number;
+  lifeScale: number;
 }
 
 /**

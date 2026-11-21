@@ -7,7 +7,8 @@ import type { SynthOptions } from './synth';
 import type { ColumnProfile } from './columnProfile';
 import type { MatchCount, RowFilterClause } from './rowFilter';
 import type { DataSource } from './dataSource';
-import { coreEndpoint, inNativeApp } from './native/core';
+import { coreEndpoint, inNativeApp, type CoreEndpoint } from './native/core';
+import type { NativeFileRef } from './native/files';
 import { nativeRefs } from './native/files';
 import type { NativeLoad } from './native/readers';
 import { expandContainerFiles, isContainer } from './container';
@@ -263,10 +264,92 @@ export class Loader implements DataSource {
  */
 export class NativeDataSource extends Loader {
   override readonly kind: DataSource['kind'] = 'native';
+  /** The dataset the core holds for the view, given back when another replaces it. */
+  private held: { handle: number; core: CoreEndpoint } | null = null;
+  private watching = false;
 
   protected override withCore(files: File[]): Promise<NativeLoad | undefined> {
     return Promise.all([nativeRefs(files), coreEndpoint()]).then(([refs, core]) => (refs.some((r) => r) ? { core, refs } : undefined));
   }
+
+  /**
+   * A Parquet selection the core can build is built there whole (`nativeBuild`):
+   * the page takes the finished columns and the engine the finished chunks.
+   * Anything else - a load the core turns down, a file it cannot open - goes
+   * the way it always went: the worker builds it, the core reading the files.
+   */
+  override ingest(
+    picked: File[],
+    mapping: ColumnMapping,
+    columns: string[],
+    name: string,
+    stride: number,
+    expectedRows: number,
+    onProgress?: (p: LoaderProgress) => void,
+    budget?: ParseBudget,
+  ): Promise<Dataset> {
+    const here = (files: File[]) => super.ingest(files, mapping, columns, name, stride, expectedRows, onProgress, budget);
+    if (!sharedOrServer() || nativeBuildOff()) return here(picked);
+    return (async () => {
+      const files = await tablesOf(picked);
+      // Loaded with the app only: the browser's bundle never carries it.
+      const { isRefusal, nativeBuild, nativeBuildRefusal, NATIVE_PAGE_ROWS } = await import('./native/build');
+      const [refs, core] = await Promise.all([nativeRefs(files), coreEndpoint()]);
+      const why = nativeBuildRefusal(files, refs, mapping);
+      if (why) {
+        console.info(`[3dheat native] built in the page: ${why}`);
+        return here(files);
+      }
+      try {
+        const ds = await nativeBuild({ core, files, refs: refs as NativeFileRef[], mapping, name, stride, expectedRows, onProgress, pageRows: nativePageRows(NATIVE_PAGE_ROWS) });
+        this.hold(ds, core);
+        return ds;
+      } catch (err) {
+        if (!isRefusal(err)) throw err;
+        console.info(`[3dheat native] built in the page: ${(err as Error).message}`);
+        return here(files);
+      }
+    })();
+  }
+
+  /** Gives the core's copy back once the view shows another dataset. */
+  private hold(ds: Dataset, core: CoreEndpoint): void {
+    if (!this.watching) {
+      this.watching = true;
+      useStore.subscribe((s, prev) => {
+        if (s.dataset === prev.dataset || !this.held) return;
+        if (s.dataset?.native?.handle === this.held.handle) return;
+        const { core, handle } = this.held;
+        void import('./native/build').then((m) => m.closeNative(core, handle));
+        this.held = null;
+      });
+    }
+    if (ds.native) this.held = { handle: ds.native.handle, core };
+  }
+}
+
+/** Builds in the core unless switched off (`localStorage['heat3d.nativeBuild'] = 'off'`, for comparing). */
+function nativeBuildOff(): boolean {
+  try {
+    return globalThis.localStorage?.getItem('heat3d.nativeBuild') === 'off';
+  } catch {
+    return false;
+  }
+}
+
+/** The page's row ceiling for a core-built load (`NATIVE_PAGE_ROWS`, or `heat3d.nativePageRows`). */
+function nativePageRows(fallback: number): number {
+  try {
+    const v = Number(globalThis.localStorage?.getItem('heat3d.nativePageRows'));
+    return v > 0 ? v : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+/** The core build runs on the page's main thread (where shared buffers arrive). */
+function sharedOrServer(): boolean {
+  return typeof document !== 'undefined';
 }
 
 /** Where the viewer's data comes from: this page's worker, or in the native app its core. */
