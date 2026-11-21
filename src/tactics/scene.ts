@@ -11,7 +11,7 @@ import { CATALOG } from '../figures/catalog';
 import { place, poseFrame, TemplateCache, type Template } from '../figures/kit';
 import { InstanceBatches, meshOf, NO_PITCH, type FigureBatch } from '../figures/instances';
 import { directionOf } from './keyframes';
-import { BASE_LAYER, keyAt, layerOf, onBoard, posesAt, shown, throwArc, type Plan, type PlanArrow, type PlanNote, type Vec3 } from './plan';
+import { BASE_LAYER, keyAt, layerOf, onBoard, posesAt, shown, throwArc, type Plan, type PlanArrow, type PlanDrawing, type PlanNote, type Vec3 } from './plan';
 import { gamePreset } from './games';
 import type { ArrivalGrid } from './telemetry';
 
@@ -25,7 +25,10 @@ export interface BoardView {
   /** The earliest-arrival overlay from telemetry, when shown. */
   heat?: ArrivalGrid | null;
   /** Points of an arrow or area being drawn, and where the cursor is. */
-  draft: { kind: 'arrow' | 'throw' | 'area'; style?: PlanArrow['style']; points: Vec3[]; team: string; group?: string[] } | null;
+  draft: { kind: 'arrow' | 'throw' | 'area' | 'circle'; style?: PlanArrow['style']; points: Vec3[]; team: string; group?: string[] } | null;
+  /** The Draw tool's pen while it is in hand, and the freehand stroke being drawn with it. */
+  pen?: { kind: PlanDrawing['kind']; color: Rgb; width: number } | null;
+  stroke?: Vec3[] | null;
   /** The Measure tool's ruler. */
   measure?: { points: Vec3[]; done: boolean } | null;
   cursor: Vec3 | null;
@@ -90,6 +93,13 @@ export class BoardScene {
       disc(tris, lines, a.centre, a.radius, color(a.team), 0.18);
       if (sel.has(a.id)) ring(lines, a.centre, a.radius * 1.02, white);
     }
+    // Drawings: freehand strokes, highlighter marks and circles on the level, in their step or in all.
+    for (const d of plan.drawings ?? []) {
+      if ((!d.always && d.step !== view.step) || !shown(plan, d)) continue;
+      drawing(tris, d.kind, d.points, d.color, d.width);
+      if (sel.has(d.id)) for (const p of d.kind === 'circle' ? d.points.slice(0, 1) : [d.points[0], d.points[d.points.length - 1]]) ring(lines, p, Math.max(d.width, width) * 1.5, white);
+    }
+    if (view.pen && view.stroke && view.stroke.length) drawing(tris, view.pen.kind, view.stroke, view.pen.color, view.pen.width);
     // Arrows of this step, and the last step's faintly, so a phase reads as following on:
     // shown layers' (the active layer's only, when the others' routes are to stay out of the way).
     const only = view.routesActiveOnly ? (view.activeLayer ?? BASE_LAYER) : null;
@@ -141,6 +151,8 @@ export class BoardScene {
       const col = color(d.team);
       if (d.kind === 'area' && pts.length >= 2) {
         disc(tris, lines, pts[0], Math.hypot(pts[1].x - pts[0].x, pts[1].z - pts[0].z), col, 0.12);
+      } else if (d.kind === 'circle' && pts.length >= 2) {
+        drawing(tris, 'circle', pts, view.pen?.color ?? white, view.pen?.width ?? width * 0.5);
       } else if (pts.length >= 2) {
         const style = d.kind === 'throw' ? 'throw' : (d.style ?? 'move');
         arrow(tris, lines, { id: 'draft', step: view.step, team: d.team, style, points: pts }, col, width, 0.55, preset.throwApex);
@@ -258,6 +270,47 @@ function fan(lines: VertexBuffer, from: Vec3, yaw: number, dir: { yaw: number; p
   lines.line(o, r, col, 0.5);
   lines.line(l, c, col, 0.5);
   lines.line(c, r, col, 0.5);
+}
+
+/**
+ * A drawing as flat ribbons a little above the level: a stroke solid, a
+ * highlighter mark wide and see-through, a circle a ribbon round its middle
+ * through the edge point. A single point is a dot.
+ */
+function drawing(tris: VertexBuffer, kind: PlanDrawing['kind'], points: Vec3[], col: Rgb, w: number): void {
+  const half = Math.max(0.01, w / 2);
+  const alpha = kind === 'highlight' ? 0.35 : 0.92;
+  const lift = Math.max(0.04, w * 0.1);
+  let pts = points;
+  if (kind === 'circle') {
+    if (points.length < 2) return;
+    const c = points[0];
+    const r = Math.hypot(points[1].x - c.x, points[1].z - c.z);
+    const n = Math.max(24, Math.min(96, Math.round(r / Math.max(half, 1e-3))));
+    pts = Array.from({ length: n + 1 }, (_, i) => {
+      const a = (i / n) * Math.PI * 2;
+      return { x: c.x + Math.cos(a) * r, y: c.y, z: c.z + Math.sin(a) * r };
+    });
+  }
+  if (pts.length === 1) {
+    const p = pts[0];
+    for (let j = 0; j < 12; j++) {
+      const a0 = (j / 12) * Math.PI * 2;
+      const a1 = ((j + 1) / 12) * Math.PI * 2;
+      tris.triangle([p.x, p.y + lift, p.z], [p.x + Math.cos(a1) * half, p.y + lift, p.z + Math.sin(a1) * half], [p.x + Math.cos(a0) * half, p.y + lift, p.z + Math.sin(a0) * half], col, alpha);
+    }
+    return;
+  }
+  for (let i = 0; i + 1 < pts.length; i++) {
+    const p = pts[i];
+    const q = pts[i + 1];
+    const dx = q.x - p.x;
+    const dz = q.z - p.z;
+    const l = Math.hypot(dx, dz) || 1;
+    const nx = (-dz / l) * half;
+    const nz = (dx / l) * half;
+    tris.quad([p.x + nx, p.y + lift, p.z + nz], [q.x + nx, q.y + lift, q.z + nz], [q.x - nx, q.y + lift, q.z - nz], [p.x - nx, p.y + lift, p.z - nz], col, alpha);
+  }
 }
 
 /** A route's end: two rings and a cross through them, in its colour. */

@@ -22,7 +22,7 @@ const errors = [];
 // A missing optional file (a local catalogue, a figure pack) is a 404 the app expects.
 page.on('console', (m) => m.type() === 'error' && !/Failed to load resource/.test(m.text()) && errors.push(m.text()));
 page.on('pageerror', (e) => errors.push(String(e)));
-page.on('dialog', (d) => void d.accept());
+page.on('dialog', (d) => void (d.type() === 'prompt' ? d.accept('Smoke note') : d.accept()));
 
 let failed = 0;
 async function step(name, fn) {
@@ -133,6 +133,31 @@ await step('Delete asks, then removes the selection', async () => {
   await page.keyboard.press('Delete');
   await page.waitForTimeout(200);
   expect((await plan()).figures === 0, 'figures left after Delete');
+});
+
+await step('7 picks Draw: a drag draws a stroke and leaves the camera where it was', async () => {
+  await canvas.focus();
+  await page.keyboard.press('Digit7');
+  const cam = () => page.evaluate(() => window.__3dheat_engine.camera.position.toArray());
+  const before = await cam();
+  await page.mouse.move(cx - 80, cy + 120);
+  await page.mouse.down();
+  for (let i = 1; i <= 12; i++) await page.mouse.move(cx - 80 + i * 20, cy + 120 + i * 4);
+  await page.mouse.up();
+  await page.waitForTimeout(300);
+  const d = await page.evaluate(() => window.__3dheat_plan.getState().plan.drawings.map((x) => x.points.length));
+  expect(d.length === 1 && d[0] >= 3, `drawings ${JSON.stringify(d)}`);
+  const after = await cam();
+  expect(after.every((v, i) => Math.abs(v - before[i]) < 1e-6), `camera moved ${before} -> ${after}`);
+});
+
+await step('6 picks Note: a click asks for the text and puts the note down in the note style', async () => {
+  await page.keyboard.press('Digit6');
+  await page.evaluate(() => window.__3dheat_plan.getState().setNoteStyle({ size: 20, show: 'always' }));
+  await click(cx - 150, cy - 150);
+  const n = await page.evaluate(() => window.__3dheat_plan.getState().plan.notes.at(-1));
+  expect(n && n.text === 'Smoke note' && n.size === 20 && n.show === 'always', `note ${JSON.stringify(n)}`);
+  await page.keyboard.press('Digit1');
 });
 
 await step('a tank keyed by aiming its turret, and the time slider moves the moment shown', async () => {

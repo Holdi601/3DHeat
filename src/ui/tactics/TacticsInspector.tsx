@@ -16,6 +16,7 @@ import { num, t } from '../../i18n';
 import { expandContainerFiles } from '../../data/container';
 import { NumberBox } from '../NumberBox';
 import { confirmRemoveSelection } from './boardKeys';
+import { DrawingEditor, NoteEditor } from './PenOptions';
 import { SortControl, SortTh } from '../sort/SortControl';
 import { useSort, useSorted } from '../sort/useSort';
 
@@ -87,6 +88,8 @@ export function SelectionInspector() {
   const kind = single ? refKind(plan, single) : null;
   const figure = kind === 'figure' ? plan.figures.find((f) => f.id === single)! : null;
   const area = kind === 'area' ? plan.areas.find((a) => a.id === single)! : null;
+  const note = kind === 'note' ? plan.notes.find((n) => n.id === single)! : null;
+  const drawing = kind === 'drawing' ? plan.drawings.find((d) => d.id === single)! : null;
   const key = figure ? keyAt(figure, step) : null;
   const moveTo = (axis: 'x' | 'y' | 'z', v: number) => {
     if (!pivot) return;
@@ -124,6 +127,8 @@ export function SelectionInspector() {
           <NumField label={t('tactics.inspector.radius')} value={area.radius / upm} onCommit={(v) => store().setAreaRadius(area.id, v * upm)} />
         </div>
       )}
+      {note && <NoteEditor note={note} />}
+      {drawing && <DrawingEditor drawing={drawing} />}
       {figure && moveClassOf(figure.kind) && <FigureSpeeds plan={plan} figure={figure} />}
       {figure && moveClassOf(figure.kind) && <Keyframes plan={plan} figure={figure} />}
       {arrow && routeFigure && <RouteTable plan={plan} arrow={arrow} figure={routeFigure} />}

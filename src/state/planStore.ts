@@ -9,7 +9,7 @@
  */
 
 import { create } from 'zustand';
-import { BASE_LAYER, editable, shown, emptyPlan, keyAt, layerOf, newId, onBoard, playbackAt, posesAt, readPlan, type ArrowStyle, type Plan, type PlanFigure, type TrackChannel, type Vec3 } from '../tactics/plan';
+import { BASE_LAYER, editable, shown, emptyPlan, keyAt, layerOf, newId, onBoard, playbackAt, posesAt, readPlan, type ArrowStyle, type NoteShow, type Plan, type PlanDrawing, type PlanFigure, type PlanNote, type TrackChannel, type Vec3 } from '../tactics/plan';
 import { aimAt, withKey } from '../tactics/keyframes';
 import { templateOf } from '../tactics/scene';
 import { applyOps, diffPlans, isOpBatch, type OpBatch } from '../tactics/ops';
@@ -19,7 +19,7 @@ import { CATALOG } from '../figures/catalog';
 import { figureLabel } from '../tactics/names';
 import { applyTransform, type GizmoMode, type Transform } from '../tactics/gizmo';
 import type { Mode } from '../tactics/speeds';
-import { routeModes, stepStart } from '../tactics/timing';
+import { routeModes, stepStart, unitsPerMetre } from '../tactics/timing';
 
 export type BoardTool = 'select' | 'place' | 'waypoints' | 'throw' | 'area' | 'note' | 'draw' | 'erase' | 'measure';
 
@@ -31,12 +31,14 @@ export const BOARD_TOOLS: { id: BoardTool; digit: string; letter: string }[] = [
   { id: 'throw', digit: '4', letter: 'H' },
   { id: 'area', digit: '5', letter: 'O' },
   { id: 'note', digit: '6', letter: 'N' },
+  { id: 'draw', digit: '7', letter: 'B' },
   { id: 'erase', digit: '8', letter: 'X' },
   { id: 'measure', digit: '9', letter: 'U' },
 ];
 
 interface Draft {
-  kind: 'arrow' | 'throw' | 'area';
+  /** A route or arrow, a throw, an area, or a drawn circle. */
+  kind: 'arrow' | 'throw' | 'area' | 'circle';
   style?: ArrowStyle;
   points: Vec3[];
   team: string;
@@ -109,6 +111,20 @@ export interface PlanState {
   /** When a route is to be at one of its points, seconds from its step's start; null: by its modes. */
   setArrival: (arrow: string, point: number, seconds: number | null) => void;
   startAim: (what: 'turret' | 'view' | 'sensor' | null) => void;
+  /** The Draw tool: what it draws, in which colour and width (metres; 0 the game's usual), shown in its step or in all. */
+  drawStyle: { kind: PlanDrawing['kind']; color: [number, number, number]; width: number; always: boolean };
+  /** A freehand stroke being drawn (the button is down). */
+  stroke: Vec3[] | null;
+  /** How the next note looks and when it shows. */
+  noteStyle: { color: [number, number, number]; size: number; show: NoteShow; duration: number };
+  setDrawStyle: (s: Partial<PlanState['drawStyle']>) => void;
+  setNoteStyle: (s: Partial<PlanState['noteStyle']>) => void;
+  beginStroke: (at: Vec3) => void;
+  extendStroke: (at: Vec3) => void;
+  endStroke: () => void;
+  /** A note's text, colour, size and when it shows. */
+  setNote: (id: string, patch: Partial<Pick<PlanNote, 'text' | 'color' | 'size' | 'show' | 'start' | 'duration'>>) => void;
+  setDrawing: (id: string, patch: Partial<Pick<PlanDrawing, 'color' | 'width' | 'always'>>) => void;
 
   setGame: (game: string) => void;
   setTool: (tool: BoardTool) => void;
@@ -199,6 +215,13 @@ function edit(state: PlanState, next: Plan): Partial<PlanState> {
   return { plan: next, past: [...state.past.slice(-99), state.plan], future: [], ...logged(state, state.plan, next) };
 }
 
+/** The Draw tool's line width, plan units: its own, else half the game's arrow (wider for a highlighter). */
+export function drawWidth(s: Pick<PlanState, 'drawStyle' | 'plan'>): number {
+  const st = s.drawStyle;
+  const metres = st.width > 0 ? st.width : gamePreset(s.plan.game).arrowWidth * (st.kind === 'highlight' ? 2 : 0.5);
+  return metres * unitsPerMetre(s.plan);
+}
+
 /** What a new thing on the board carries for the layer it goes on. */
 function onLayer(s: PlanState): { layer?: string } {
   return s.activeLayer !== BASE_LAYER && s.plan.layers.some((l) => l.id === s.activeLayer) ? { layer: s.activeLayer } : {};
@@ -284,6 +307,58 @@ export const usePlanStore = create<PlanState>((set, get) => ({
     set(edit(s, plan));
   },
   startAim: (aiming) => set({ aiming: aiming && get().selected ? aiming : null, draft: null }),
+  drawStyle: { kind: 'stroke', color: [1, 0.85, 0.25], width: 0, always: false },
+  stroke: null,
+  noteStyle: { color: [1, 1, 1], size: 13, show: 'step', duration: 5 },
+  setDrawStyle: (p) => set({ drawStyle: { ...get().drawStyle, ...p }, tool: 'draw', draft: null }),
+  setNoteStyle: (p) => set({ noteStyle: { ...get().noteStyle, ...p } }),
+  beginStroke: (at) => {
+    const s = get();
+    if (s.tool !== 'draw' || s.drawStyle.kind === 'circle' || !canDraw(s)) return;
+    set({ stroke: [at], scrub: null });
+  },
+  extendStroke: (at) => {
+    const s = get();
+    if (!s.stroke) return;
+    const last = s.stroke[s.stroke.length - 1];
+    // A point every so often along the way, not one per pointer event.
+    if (Math.hypot(at.x - last.x, at.z - last.z) < drawWidth(s) * 0.5) return;
+    set({ stroke: [...s.stroke, at] });
+  },
+  endStroke: () => {
+    const s = get();
+    const pts = s.stroke;
+    if (!pts) return;
+    const plan = clone(s.plan);
+    const st = s.drawStyle;
+    plan.drawings.push({ id: newId('d'), step: s.step, kind: st.kind === 'highlight' ? 'highlight' : 'stroke', points: pts, color: st.color, width: drawWidth(s), ...(st.always ? { always: true } : {}), ...onLayer(s) });
+    set({ ...edit(s, plan), stroke: null });
+  },
+  setNote: (id, patch) => {
+    const s = get();
+    const plan = clone(s.plan);
+    const n = plan.notes.find((x) => x.id === id);
+    if (!n) return;
+    Object.assign(n, patch);
+    if (n.show !== 'timed') {
+      delete n.start;
+      delete n.duration;
+    } else {
+      n.start = Math.max(0, n.start ?? momentOf(s).time);
+      n.duration = Math.max(0.1, n.duration ?? s.noteStyle.duration);
+    }
+    if (n.show === 'step') delete n.show;
+    set(edit(s, plan));
+  },
+  setDrawing: (id, patch) => {
+    const s = get();
+    const plan = clone(s.plan);
+    const d = plan.drawings.find((x) => x.id === id);
+    if (!d) return;
+    Object.assign(d, patch);
+    if (!d.always) delete d.always;
+    set(edit(s, plan));
+  },
   arrowStyle: 'move',
   yaw: 0,
   step: 0,
@@ -486,7 +561,19 @@ export const usePlanStore = create<PlanState>((set, get) => ({
         const text = typeof window !== 'undefined' && typeof window.prompt === 'function' ? window.prompt('Note') : '';
         if (!text) return;
         const plan = clone(s.plan);
-        plan.notes.push({ id: newId('n'), step, at, text, ...onLayer(s) });
+        const ns = s.noteStyle;
+        const white = ns.color.every((c) => c >= 0.999);
+        plan.notes.push({
+          id: newId('n'),
+          step,
+          at,
+          text,
+          ...(white ? {} : { color: ns.color }),
+          ...(ns.size !== 13 ? { size: ns.size } : {}),
+          ...(ns.show !== 'step' ? { show: ns.show } : {}),
+          ...(ns.show === 'timed' ? { start: momentOf(s).time, duration: ns.duration } : {}),
+          ...onLayer(s),
+        });
         set(edit(s, plan));
         return;
       }
@@ -507,8 +594,17 @@ export const usePlanStore = create<PlanState>((set, get) => ({
         set({ measure: { points: [...m.points, at], done: false } });
         return;
       }
-      case 'draw':
+      case 'draw': {
+        // Freehand strokes come from a drag (`beginStroke`); a click draws a circle: the middle, then the edge.
+        if (s.drawStyle.kind !== 'circle') return;
+        if (!s.draft) {
+          set({ draft: { kind: 'circle', points: [at], team: s.team } });
+          return;
+        }
+        set({ draft: { ...s.draft, points: [s.draft.points[0], at] } });
+        get().finish();
         return;
+      }
     }
   },
 
@@ -538,10 +634,13 @@ export const usePlanStore = create<PlanState>((set, get) => ({
       set({ ...edit(s, plan), draft: null });
       return;
     }
-    if (d.kind === 'area' && d.points.length >= 2) {
+    if (d.kind === 'circle' && d.points.length >= 2) {
+      const st = s.drawStyle;
+      plan.drawings.push({ id: newId('d'), step: s.step, kind: 'circle', points: d.points.slice(0, 2), color: st.color, width: drawWidth(s), ...(st.always ? { always: true } : {}), ...onLayer(s) });
+    } else if (d.kind === 'area' && d.points.length >= 2) {
       const [c, e] = d.points;
       plan.areas.push({ id: newId('a'), step: s.step, team: d.team, centre: c, radius: Math.max(0.5, Math.hypot(e.x - c.x, e.z - c.z)), label: '', ...onLayer(s) });
-    } else if (d.kind !== 'area' && d.points.length >= 2) {
+    } else if (d.kind !== 'area' && d.kind !== 'circle' && d.points.length >= 2) {
       const id = newId('r');
       const arrow = { id, step: s.step, team: d.team, style: d.style ?? 'move', points: d.points, ...(d.figure ? { figure: d.figure } : {}), ...onLayer(s) } as Plan['arrows'][number];
       if (d.kind === 'throw') {

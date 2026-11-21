@@ -3,6 +3,7 @@ import { Section, Select, Slider } from '../controls';
 import { BOARD_TOOLS, momentOf, movableSelection, usePlanStore, type BoardTool } from '../../state/planStore';
 import { toolKeys } from './boardKeys';
 import { LayersPanel } from './LayersPanel';
+import { DrawOptions, NoteOptions } from './PenOptions';
 import { useStore } from '../../state/store';
 import { GAMES, gamePreset } from '../../tactics/games';
 import { figureLabel } from '../../tactics/names';
@@ -198,6 +199,8 @@ export function TacticsPanel() {
           </>
         )}
         {tool === 'select' && <GizmoControls />}
+        {tool === 'draw' && <DrawOptions />}
+        {tool === 'note' && <NoteOptions />}
         <div className="hint">
           {t(`tactics.hint.${moving ? 'moving' : tool}`)}
           {draft || (tool === 'measure' && measuring && !measuring.done) ? ` ${t('tactics.hint.finish')}` : ''}

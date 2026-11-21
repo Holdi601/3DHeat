@@ -108,6 +108,7 @@ In the Tactics tab ([Tactics board](tactics-board.md)). `F`, `C`, `G` and `T` wo
 | `4` or `H` | Throw tool |
 | `5` or `O` | Area tool |
 | `6` or `N` | Note tool |
+| `7` or `B` | Draw tool (pen, highlighter, circle) |
 | `8` or `X` | Erase tool |
 | `9` or `U` | Measure tool |
 | `Ctrl+Z` | Undo |

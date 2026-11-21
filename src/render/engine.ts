@@ -48,7 +48,7 @@ import type { SymbolParams } from './types';
 import { TacticalLayer, axesOfTrack, cockpitClip } from './tactical';
 import { RangeLayer } from '../ranges/layer';
 import { aimOf } from '../figures/aim';
-import { figureNear, momentOf, usePlanStore } from '../state/planStore';
+import { drawWidth, figureNear, momentOf, usePlanStore } from '../state/planStore';
 import { editable, playbackAt } from '../tactics/plan';
 import { pickRef, refPoints } from '../tactics/gizmo';
 import { setTerrain } from '../tactics/timing';
@@ -767,7 +767,12 @@ export class Engine {
       const b = usePlanStore.getState();
       return b.selection.length > 0 && boardKeys[b.keyScheme].includes(e.code);
     };
-    this.camera.pressFilter = (e) => e.button === 0 && e.shiftKey && useRaceStore.getState().tab === 'plan' && usePlanStore.getState().tool === 'select';
+    // ... and the left button for the Draw tool, whose drags draw rather than look.
+    this.camera.pressFilter = (e) => {
+      if (e.button !== 0 || useRaceStore.getState().tab !== 'plan') return false;
+      const tool = usePlanStore.getState().tool;
+      return (e.shiftKey && tool === 'select') || tool === 'draw';
+    };
     setTerrain((x, y, z, reach) => this.surfaceBelow(x, y, z, reach), 0);
     this.detachVolumes = this.attachVolumeInput(canvas);
   }
@@ -1017,20 +1022,43 @@ export class Engine {
     const onMove = (e: MouseEvent) => {
       this.cursorPx = toCanvas(e);
     };
+    /** Whether the pointer was locked at the last movement: the first event after the lock comes or goes can carry the jump to where the lock parks it, which is no movement of the hand. */
+    let wasLocked = false;
     const onTravel = (e: MouseEvent) => {
-      if (downAt) travel += Math.abs(e.movementX) + Math.abs(e.movementY);
+      const locked = document.pointerLockElement === canvas;
+      const jump = locked !== wasLocked;
+      wasLocked = locked;
+      if (downAt && !jump) travel += Math.abs(e.movementX) + Math.abs(e.movementY);
     };
     const onLeave = () => {
       this.cursorPx = null;
       this.measure.cursor = null;
       this.measure.heat = null;
     };
+    /** A freehand stroke under way on the board (the Draw tool, button down). */
+    let stroking = false;
     const onDown = (e: MouseEvent) => {
       downAt = toCanvas(e);
       travel = 0;
-      this.boardBox = this.camera.pressFilter?.(e) ? { x0: downAt.x, y0: downAt.y, x1: downAt.x, y1: downAt.y } : null;
+      const board = usePlanStore.getState();
+      const drawing = e.button === 0 && useRaceStore.getState().tab === 'plan' && board.tool === 'draw';
+      this.boardBox = !drawing && this.camera.pressFilter?.(e) ? { x0: downAt.x, y0: downAt.y, x1: downAt.x, y1: downAt.y } : null;
+      stroking = false;
+      if (drawing && board.drawStyle.kind !== 'circle') {
+        const at = this.worldAt(downAt.x, downAt.y);
+        if (at) {
+          board.beginStroke(at);
+          stroking = !!usePlanStore.getState().stroke;
+        }
+      }
     };
     const onBoxMove = (e: MouseEvent) => {
+      if (stroking) {
+        const p = toCanvas(e);
+        const at = this.worldAt(p.x, p.y);
+        if (at) usePlanStore.getState().extendStroke(at);
+        return;
+      }
       if (!this.boardBox) return;
       const p = toCanvas(e);
       this.boardBox = { ...this.boardBox, x1: p.x, y1: p.y };
@@ -1047,6 +1075,12 @@ export class Engine {
         return;
       }
       if (e.button !== 0 || !downAt) return;
+      if (stroking) {
+        stroking = false;
+        downAt = null;
+        usePlanStore.getState().endStroke();
+        return;
+      }
       const from = downAt;
       const at = toCanvas(e);
       // Anything past a few pixels was a camera drag, not a click.
@@ -1274,6 +1308,8 @@ export class Engine {
       draft: board.draft,
       measure: board.measure,
       formation: board.formation,
+      pen: board.tool === 'draw' ? { kind: board.drawStyle.kind, color: board.drawStyle.color, width: drawWidth(board) } : null,
+      stroke: board.stroke,
       cursor: c,
       placing: board.tool === 'place' ? { kind: board.kind, team: board.team, yaw: board.yaw } : null,
       instanced: true,
@@ -1290,6 +1326,8 @@ export class Engine {
       boardIds.of(heat),
       boardIds.of(board.draft),
       boardIds.of(board.measure),
+      boardIds.of(board.stroke),
+      board.tool === 'draw' ? boardIds.of(board.drawStyle) : '',
       board.formation,
       board.routesActiveOnly ? board.activeLayer : '',
       // Time-bound notes come and go while it plays: a tenth of a second is fine enough.

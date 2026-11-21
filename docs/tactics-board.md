@@ -42,8 +42,9 @@ Every tool has a key: a digit, and a letter the camera does not fly with. Each b
 | **Waypoints** | `3`, `L` | A figure, then each waypoint. | **Move**, **Attack** (wider head) or **Watch** (a thin line at eye height). A route begun on a figure is that figure's way in this step: played back, the figure walks it, and the next step starts where it ended. Begun off every figure, it is a free arrow. |
 | **Throw** | `4`, `H` | The thrower, then where it lands. | A dashed arc from the one to the other, and the chosen utility (smoke, flash, molotov, ...) appears where it lands and stays from this step on. |
 | **Area** | `5`, `O` | The middle, then the edge. | A disc in the side's colour. |
-| **Note** | `6`, `N` | Where the note goes; asks for its text. | Shown as a pin, and its text over it. |
-| **Erase** | `8`, `X` | A figure, route, area or note. | Removes it from this step on; on its first step, removes it. |
+| **Note** | `6`, `N` | Where the note goes; asks for its text. | Shown as a pin, and its text over it, in the note's colour and size (see [Notes](#notes)). |
+| **Draw** | `7`, `B` | Drag on the level; for a circle, the middle, then the edge. | **Pen**, **Highlighter** (wide and see-through) or **Circle**, in a **Colour** and a **Width** in metres (0: the game's usual), in its step or **In every step**. While Draw is in hand the left button draws instead of turning the camera; fly with the keys, or turn with the right button. |
+| **Erase** | `8`, `X` | A figure, route, area, note or drawing. | Removes it from this step on; on its first step, removes it. |
 | **Measure** | `9`, `U` | Each point of the way to measure. | A white line through the points, with its length in metres and the time it takes running in the plan's game. Finished like a route; it stays until the next click or `Esc`. |
 
 ### Finishing a route
@@ -57,6 +58,16 @@ While a route (or a ruler) is being drawn, its last point shows how many waypoin
 - picking another tool, which keeps what was drawn.
 
 **Backspace** takes the last point back. A finished route ends in a ring with a cross in its side's colour.
+
+### Notes
+
+A note is text placed in the world. With **Note** in hand, set the next note's **Colour**, **Size (px)** and when it **Shows**, then click where it goes and type its text:
+
+- **In its step**: shown while its step is shown, as before.
+- **Always**: shown in every step and all through playback - a label that stays, such as a site name or a callout.
+- **For a while of playback**: shown from **From (s)** for **For (s)** seconds of the plan's time while it plays or while the time slider is in that window, and in its own step while editing. A new one starts at the moment shown.
+
+A selected note can be changed in **Selected**: its text, colour, size, when it shows, and **From** the moment shown. Notes and drawings are on layers like everything else, can be selected, moved with the gizmo and erased.
 
 ### Group routes
 
