@@ -160,6 +160,8 @@ const BIN_MIN_ROWS_PER_TEXEL = 0.25;
  * resolution, and binning folds 16 at most (BIN_RMAX).
  */
 const BIN_TYPICAL_MAX = 12;
+/** Drawn heat frames without binning after which its grid is given back. */
+const BIN_RELEASE_FRAMES = 120;
 
 /** `?heatbin=0` / `?heatbin=1`, for comparing the two heat paths. */
 function heatBinForced(): 'auto' | 'on' | 'off' {
@@ -435,6 +437,7 @@ export class WebgpuRenderer implements Renderer {
   heatBinMode: 'auto' | 'on' | 'off' = heatBinForced();
   /** Whether the last heat pass was binned: its cost then does not grow with the sprites' size. */
   heatBinned = false;
+  private binIdle = 0;
   /** GPU time a pass, with ?gpuprof where the device can. */
   private profiler: GpuProfiler | null | undefined;
   private get prof(): GpuProfiler | null {
@@ -2943,7 +2946,12 @@ export class WebgpuRenderer implements Renderer {
     const binFrame = this.binFrame(params, field !== null, lines, format, weight);
     const bin = binFrame ? this.heatBin! : null;
     const binBases = bin ? bin.begin(encoder, binFrame!, params.plan.map((p) => Math.min(p.blockCount, MAX_BLOCKS) * SAMPLE_BLOCK)) : null;
-    if (!field) this.heatBinned = bin !== null;
+    if (!field) {
+      this.heatBinned = bin !== null;
+      // Not binned for a couple of seconds of drawn frames: its memory goes back.
+      this.binIdle = bin ? 0 : this.binIdle + 1;
+      if (this.binIdle === BIN_RELEASE_FRAMES) this.heatBin?.release();
+    }
 
     const uniformOffsets: number[] = [];
     let splitSkipped = 0;

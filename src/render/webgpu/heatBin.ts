@@ -691,7 +691,7 @@ export class GpuHeatBin {
     if (!this.bins || this.bins.size < binBytes) {
       this.bins?.destroy();
       // Grown only, with room: a change of mode or level should not reallocate each time.
-      this.bins = this.device.createBuffer({ label: 'heat bins', size: Math.ceil(binBytes * 1.25 / 256) * 256, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
+      this.bins = this.device.createBuffer({ label: 'heat bins', size: Math.ceil(binBytes / 256) * 256, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
       this.binsId++;
     }
     if (gw !== this.gridW || gh !== this.gridH || !this.sums) {
@@ -711,7 +711,7 @@ export class GpuHeatBin {
         };
       }
       this.grids.set(key, grid);
-      while (this.grids.size > 4) {
+      while (this.grids.size > 2) {
         const [oldest, g] = this.grids.entries().next().value!;
         g.sums.destroy();
         g.radii.destroy();
@@ -906,6 +906,31 @@ export class GpuHeatBin {
     } finally {
       buf.destroy();
     }
+  }
+
+  /**
+   * Give the grid back: the sums, the counts, the sparse rows and every level's
+   * float copy. Called once the heat has not been binned for a while (a switch
+   * to line heat, a small load), so the memory is not held for a path not in
+   * use; a software adapter ran out of it with line heat on top.
+   */
+  release(): void {
+    if (!this.bins && !this.grids.size) return;
+    this.bins?.destroy();
+    this.bins = null;
+    for (const g of this.grids.values()) {
+      g.sums.destroy();
+      g.radii.destroy();
+      g.tiles.destroy();
+      g.reach.destroy();
+    }
+    this.grids.clear();
+    this.groupCache.clear();
+    this.sums = this.radii = null;
+    this.tiles = this.reach = null;
+    this.gridW = this.gridH = 0;
+    this.binsId++;
+    this.bytes = this.lut.size + this.list.size + this.args.size;
   }
 
   dispose(): void {

@@ -78,7 +78,7 @@ Binned, zooming, changing the radius and playing back cost the same as orbiting 
 
 Frame times from `requestAnimationFrame` are reported too. On a loaded machine they show 33-35 ms spikes even with no data loaded, so the probe also gives the engine's own CPU time per frame and the GPU time of all passes. Those two say whether the app can hold 60 fps.
 
-The GPU memory is about 130-200 bytes per heat texel, depending on the mode: the sums, the counts, the sparse cells' rows, and the grid's float copy. At 1920×1080 that is 290-430 MB, outside the GPU budget for row data. It is allocated on first use and grows only, and the grids of the last four heat levels are kept so that a level change allocates nothing.
+The GPU memory is about 130-200 bytes per heat texel, depending on the mode: the sums, the counts, the sparse cells' rows, and the grid's float copy. At 1920×1080 that is 290-430 MB, outside the GPU budget for row data. It is allocated on first use, and the grids of the last two heat levels are kept, so a step of the level allocates nothing. After 120 drawn frames without binning (line heat, a small load) all of it is given back.
 
 ## The regulator's reserve
 
