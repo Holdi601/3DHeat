@@ -1000,7 +1000,12 @@ function turret(k: Kit, t: NavalTurret, fb: number, deckAt: (x: number, s?: numb
     const w = z * 0.45;
     const run = Math.min(0.3, (0.55 * h) / l);
     loftPoly(team, k.fr, t.x, s, up, dir, [[-0.5 * l, 0.97, 1], [-0.42 * l, 1, 1], [(0.5 - run) * l, 0.86, 1], [0.5 * l, 0.8, 0.36]], BOX_SECTION, w, h, HOUSE);
-    if (z >= 9) spin(team, at(k.fr, t.x - dir * l * 0.3, s - w * 1.18, up + h * 0.62), at(k.fr, t.x - dir * l * 0.3, s + w * 1.18, up + h * 0.62), [[0, z * 0.04], [1, z * 0.04]], 8, HOUSE);
+    if (z >= 9) {
+      // The rangefinder's tube, through the turret and out to its ears: a closed body of its own, lit from outside.
+      const rf = new Mesh();
+      spin(rf, at(k.fr, t.x - dir * l * 0.3, s - w * 1.18, up + h * 0.62), at(k.fr, t.x - dir * l * 0.3, s + w * 1.18, up + h * 0.62), [[0, z * 0.04], [1, z * 0.04]], 8, HOUSE);
+      rf.emit(k.team, { crease: 35 });
+    }
     face = l * (0.5 - run * 0.6);
     gunUp = up + Math.min(h * 0.42, z * 0.22 + 0.4);
     profile = t.calibre >= 0.2 ? [[0, 1.7], [0.06, 1.7], [0.085, 1.15], [0.96, 0.82], [1, 0.92]] : [[0, 1.4], [0.08, 1.4], [0.1, 1], [1, 0.82]];
@@ -1051,7 +1056,10 @@ function radar(k: Kit, r: NavalRadar, deck: number, side: number, boxes: Box[], 
       const d = z * 0.18;
       const ref = sub3(at(k.fr, 0, 0, 1), at(k.fr, 0, 0, 0));
       sweep(m, at(k.fr, r.x - d, side, up), sub3(at(k.fr, 1, 0, 0), at(k.fr, 0, 0, 0)), ref, [[0.02, 0], [z * 0.25, d * 0.3], [z * 0.5, d], [z * 0.48, d], [z * 0.23, d * 0.35], [0.02, d * 0.1]], 0, Math.PI * 2, detail(14, 8), PAINT.light);
-      spin(m, at(k.fr, r.x - d, side, up - z * 0.5), at(k.fr, r.x - d, side, up), [[0, z * 0.05], [1, z * 0.05]], 6, PAINT.metal);
+      // The stalk a closed body of its own (the bowl is open, its volume says nothing of the stalk's outside).
+      const stalk = new Mesh();
+      spin(stalk, at(k.fr, r.x - d, side, up - z * 0.5), at(k.fr, r.x - d, side, up), [[0, z * 0.05], [1, z * 0.05]], 6, PAINT.metal);
+      stalk.emit(k.fixed);
       break;
     }
     case 'dome':

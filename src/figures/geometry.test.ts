@@ -22,8 +22,8 @@ describe('figure geometry', () => {
       const t = e.build();
       const r = checkGeometry(t, { tol: tolFor(t) * 3 });
       const n = Math.max(r.floating.length, r.floatingPosed.length);
-      // Lit from inside or squashed flat: a part's faces turned in, or triangles with no area, more than a few.
-      if (r.inverted > r.triangles * 0.1) bad.push(`${name}: ${r.inverted} of ${r.triangles} triangles lit from inside`);
+      // Lit from inside: none. Squashed flat: triangles with no area, no more than a few.
+      if (r.inverted > 0) bad.push(`${name}: ${r.inverted} of ${r.triangles} triangles lit from inside`);
       if (r.degenerate > r.triangles * 0.08) bad.push(`${name}: ${r.degenerate} of ${r.triangles} triangles without area`);
       if (n > (KNOWN_FLOATING[name] ?? 0)) {
         const p = [...r.floating, ...r.floatingPosed][0];

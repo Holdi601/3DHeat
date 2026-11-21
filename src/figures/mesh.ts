@@ -148,8 +148,9 @@ export class Mesh {
     const col: Rgb = [0, 0, 0];
     for (let t = 0; t < nt; t++) {
       if (fu[t * 3] === 0 && fu[t * 3 + 1] === 0 && fu[t * 3 + 2] === 0) continue;
+      // Wound with its front outward, as its normals face: turned round where outward is the other way.
       for (let k = 0; k < 3; k++) {
-        const v = idx[t * 3 + k];
+        const v = idx[t * 3 + (sign < 0 ? (3 - k) % 3 : k)];
         if (unlit) {
           n[0] = n[1] = n[2] = 0;
         } else {
