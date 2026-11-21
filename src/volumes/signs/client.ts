@@ -5,7 +5,7 @@
  * - A build when the data, a signed volume's shape or the columns the signs
  *   read change (after a short quiet): the rows go over a chunk at a time,
  *   copied from the dataset's columns (a native copy, no per-row script) and
- *   transferred, two chunks in flight, a pause between them so the page keeps
+ *   transferred, three chunks in flight, a pause between them so the page keeps
  *   painting.
  * - A scope when the filters, the time window, the groups or the match
  *   change, and during playback at most every `PLAY_EVERY` ms - never per
@@ -34,8 +34,8 @@ import { liveSigns, useSignStore } from './store';
 import type { ChunkCols, FromWorker, SignJob, ToWorker } from './worker';
 
 /** Rows a chunk. */
-export const SIGN_CHUNK = 1 << 17;
-const IN_FLIGHT = 2;
+export const SIGN_CHUNK = 1 << 16;
+const IN_FLIGHT = 3;
 /** Quiet before a build, ms: a volume dragged rebuilds once it is let go. */
 const BUILD_QUIET = 400;
 /** Most often the scope is sent during playback, ms. */
@@ -109,6 +109,30 @@ export function aggScopes(ds: Dataset, sc: Scope, playhead: number | null): { sc
   if (playhead === null || hi === Infinity) return { scope, upTo: scope };
   const upTo: AggScope = { ...scope, timeLo: -Infinity, timeHi: playhead, lifetimeNow: null, minutes: windowMinutes(ds, -Infinity, playhead, sc.session), key: key.replace('|L|', '|W|') };
   return { scope, upTo };
+}
+
+/**
+ * What the signs cost the main thread, for the probes (tools/smoke-signs.mjs):
+ * the longest a frame's sign work took (placing, painting), the longest a
+ * message from the worker or a scope sent took, and their sums.
+ */
+export const signTiming = { frameMax: 0, frameSum: 0, frames: 0, taskMax: 0, taskSum: 0, tasks: 0, frameMs: [] as number[], taskMs: [] as number[] };
+
+export function resetSignTiming(): void {
+  Object.assign(signTiming, { frameMax: 0, frameSum: 0, frames: 0, taskMax: 0, taskSum: 0, tasks: 0, frameMs: [], taskMs: [] });
+}
+
+/** Keep a duration for the probes' percentiles (the most recent few thousand). */
+export function noteSignMs(list: number[], ms: number): void {
+  if (list.length < 8192) list.push(ms);
+}
+
+function timedTask(t0: number): void {
+  const ms = performance.now() - t0;
+  signTiming.taskMax = Math.max(signTiming.taskMax, ms);
+  signTiming.taskSum += ms;
+  signTiming.tasks++;
+  noteSignMs(signTiming.taskMs, ms);
 }
 
 class SignClient {
@@ -265,6 +289,11 @@ class SignClient {
     this.progress = 0;
     const attrs = columns.map((c) => [c, ds.attrs.find((a) => a.name === c)!.data] as const);
     const pump = () => {
+      const t0 = performance.now();
+      pumpOnce();
+      timedTask(t0);
+    };
+    const pumpOnce = () => {
       if (id !== this.buildId || this.ds !== ds) return;
       while (inFlight < IN_FLIGHT && next < ds.count) {
         const n = Math.min(SIGN_CHUNK, ds.count - next);
@@ -304,6 +333,12 @@ class SignClient {
   private onAck: ((build: number) => void) | null = null;
 
   private onMessage(m: FromWorker): void {
+    const t0 = performance.now();
+    this.handle(m);
+    timedTask(t0);
+  }
+
+  private handle(m: FromWorker): void {
     if (m.type === 'ack') this.onAck?.(m.build);
     else if (m.type === 'ready') {
       if (m.build !== this.buildId) return;
@@ -346,6 +381,12 @@ class SignClient {
   }
 
   private sendScope(force: boolean): void {
+    const t0 = performance.now();
+    this.postScope(force);
+    timedTask(t0);
+  }
+
+  private postScope(force: boolean): void {
     const ds = this.ds;
     if (!ds || !this.ready || this.building) return;
     const s = useStore.getState();

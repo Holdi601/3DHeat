@@ -25,7 +25,7 @@ import type { Engine } from '../../render/engine';
 import { useStore } from '../../state/store';
 import { useVolumeStore } from '../../volumes/store';
 import type { Vec3, Volume } from '../../volumes/volume';
-import { signClient } from '../../volumes/signs/client';
+import { noteSignMs, signClient, signTiming } from '../../volumes/signs/client';
 import { signAnchor, volumeWidth, SIGN_H, SIGN_HEAD, SIGN_W, type Sign } from '../../volumes/signs/sign';
 import { liveSigns, useSignStore } from '../../volumes/signs/store';
 import { useAnimationFrame, useEngine } from '../EngineContext';
@@ -36,7 +36,7 @@ import { diffText, signTitle } from './signText';
 import './signs.css';
 
 /** Most milliseconds a frame spends painting sign canvases. */
-const PAINT_BUDGET_MS = 4;
+const PAINT_BUDGET_MS = 2;
 /** How often signs are tested against the level for being hidden, ms, and how many per test. */
 const OCCLUDE_EVERY = 160;
 const OCCLUDE_BATCH = 6;
@@ -161,6 +161,17 @@ export function VolumeSigns() {
   const live = useMemo(() => (dataset && !hidden ? liveSigns(signs, volumes) : []), [dataset, hidden, signs, volumes]);
 
   useAnimationFrame(() => {
+    const f0 = performance.now();
+    place();
+    const ms = performance.now() - f0;
+    signTiming.frameMax = Math.max(signTiming.frameMax, ms);
+    signTiming.frameSum += ms;
+    signTiming.frames++;
+    noteSignMs(signTiming.frameMs, ms);
+  }, !!engine && shown.length > 0);
+
+  /** A frame's sign work: buttons and signs moved, a few hidden-by-the-level tests, dirty canvases painted. */
+  function place(): void {
     if (!engine || !root.current) return;
     const w = root.current.clientWidth;
     const h = root.current.clientHeight;
@@ -265,7 +276,7 @@ export function VolumeSigns() {
         paintSign(id);
       }
     }
-  }, !!engine && shown.length > 0);
+  }
 
   const paintSign = (id: string) => {
     const pl = placed.current.get(id);
