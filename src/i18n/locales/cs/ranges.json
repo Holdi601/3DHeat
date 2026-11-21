@@ -57,5 +57,7 @@
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Nejmenší – nejlepší – největší dosah. * odhad, ne hodnota ze hry ani z publikace. Najetím na zbraň zobrazíte zdroj.",
   "ranges.game": "Hodnoty pro {game}, pokud jsou známy, jinak obecné.",
-  "ranges.gameNone": "Hra nebyla rozpoznána: obecné hodnoty."
+  "ranges.gameNone": "Hra nebyla rozpoznána: obecné hodnoty.",
+  "ranges.recording.noColumn": "No {columns} column in this recording.",
+  "ranges.recording.olderConverter": "No {columns} column: this file was converted before heat3d-wt-replay wrote it (its build of 2026-11-17). Convert the replay again to get it."
 }

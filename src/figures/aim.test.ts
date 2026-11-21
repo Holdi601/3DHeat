@@ -158,4 +158,43 @@ describe('aim from the data', () => {
     v.view!.at(1, 0, now);
     expect(now.yaw).toBeCloseTo(deg(10));
   });
+
+  it('takes the turret from the view where the turret column goes its own way (read a bit off)', () => {
+    // 400 rows of one tank heading north: its player aims at 30 degrees right, its turret column all over the place.
+    const n = 400;
+    const turret = Array.from({ length: n }, (_, i) => ((i * 137) % 360) - 180);
+    const d = {
+      ...tanks({ turretYaw: turret, gunPitch: turret.map(() => 0), viewYaw: turret.map(() => 30), viewPitch: turret.map(() => 2) }, Array.from({ length: n }, (_, i) => i)),
+      yaw: new Float32Array(n),
+      pitch: new Float32Array(n),
+    } as Dataset;
+    const aim = aimOf(d)!;
+    expect(aim.turretDropped).toBe(true);
+    const now = { yaw: 0, pitch: 0 };
+    aim.at(10, 10, now);
+    expect(now.yaw).toBeCloseTo((30 * Math.PI) / 180);
+    expect(Array.from(aim.derived!)).toEqual([1]);
+    // A turret that only lags its view (here 5 degrees) is kept.
+    const lag = { ...d, attrs: d.attrs.map((a) => (a.name === 'turretYaw' ? { ...a, data: new Float32Array(n).fill(25) } : a)) } as Dataset;
+    expect(aimOf(lag)!.turretDropped).toBe(false);
+  });
+
+  it('turns no turret by where an aircraft player looks', () => {
+    const d = {
+      ...tanks({ viewYaw: [40, 40], viewPitch: [0, 0] }, [0, 0]),
+      personId: Uint32Array.of(0, 1),
+      personLabels: ['tank', 'drone'],
+      yaw: new Float32Array(2),
+      pitch: new Float32Array(2),
+    } as Dataset;
+    d.attrs.push({ name: 'kind', kind: 'category', data: Uint32Array.of(0, 1), categories: ['tank', 'aircraft'] } as unknown as AttributeColumn);
+    const aim = aimOf(d)!;
+    expect(Array.from(aim.derived!)).toEqual([1, 0]);
+    const now = { yaw: 0, pitch: 0 };
+    aim.at(1, 0, now);
+    expect(Number.isNaN(now.yaw)).toBe(true);
+    // Its view stays: the view cone turns with it.
+    aim.view!.at(1, 0, now);
+    expect(now.yaw).toBeCloseTo((40 * Math.PI) / 180);
+  });
 });

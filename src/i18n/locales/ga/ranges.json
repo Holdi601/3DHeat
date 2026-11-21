@@ -57,5 +57,7 @@
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "An raon is giorra – is fearr – is faide. * meastachán, ní figiúr ón gcluiche ná ó fhoilseachán. Cuir an cúrsóir ar arm chun a fhoinse a fheiceáil.",
   "ranges.game": "Figiúirí do {game} nuair is eol iad, ginearálta ar shlí eile.",
-  "ranges.gameNone": "Níor aithníodh an cluiche: figiúirí ginearálta."
+  "ranges.gameNone": "Níor aithníodh an cluiche: figiúirí ginearálta.",
+  "ranges.recording.noColumn": "No {columns} column in this recording.",
+  "ranges.recording.olderConverter": "No {columns} column: this file was converted before heat3d-wt-replay wrote it (its build of 2026-11-17). Convert the replay again to get it."
 }

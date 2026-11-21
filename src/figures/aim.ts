@@ -21,7 +21,15 @@
  * (`Aim.derived`): War Thunder's server replays converted so far write the
  * view for every vehicle and the turret for a few. One that has turret rows
  * turns its turret by them only, never by the view, which runs ahead of a
- * turret that traverses at its own speed.
+ * turret that traverses at its own speed. An aircraft or helicopter (its
+ * `kind`) takes no turret from where its player looks.
+ *
+ * A turret column that has nothing to do with the view is not taken
+ * (`Aim.turretDropped`): the turrets of War Thunder's server replays of game
+ * version 101421 on, converted before heat3d-wt-replay 0.2.1, were read a bit
+ * off - angles as unrelated to where the players aim as random ones (a
+ * median of about 88 degrees apart, against about 1 for a turret read right),
+ * which made every turret turn on and on. The turrets then come from the view.
  */
 
 import type { AttributeColumn, Dataset } from '../state/types';
@@ -69,6 +77,8 @@ export class Aim {
   view: Aim | null = null;
   /** Per person: 1 where its turret is taken from the view (it has no turret rows); null for none so taken. */
   derived: Uint8Array | null = null;
+  /** The turret column was left out: it lies as far from the view as random angles (`turretOffView`). */
+  turretDropped = false;
   /** Per row, the person's last row at or before it with an aim, and the next one after it (-1: none). */
   private readonly prev: Int32Array;
   private readonly next: Int32Array;
@@ -194,6 +204,10 @@ function* fillFromView(
   const n = Math.max(d.personLabels.length, 1);
   const own = new Uint8Array(n);
   const pid = d.personId;
+  // Aircraft and helicopters look about; they have no turret to turn with it.
+  const kind = d.attrs.find((a) => a.kind === 'category' && /^kind$/i.test(a.name.trim()));
+  const flies = kind?.categories ? Uint8Array.from(kind.categories, (c) => (AIRBORNE.test((c ?? '').trim()) ? 1 : 0)) : null;
+  const kinds = flies && flies.includes(1) ? (kind!.data as Uint32Array) : null;
   if (yaw || pitch) {
     for (let r = 0; r < d.count; r++) {
       if ((r & (STEP - 1)) === STEP - 1) yield;
@@ -207,7 +221,7 @@ function* fillFromView(
   for (let r = 0; r < d.count; r++) {
     if ((r & (STEP - 1)) === STEP - 1) yield;
     const p = pid ? pid[r] : 0;
-    if (own[p]) continue;
+    if (own[p] || (kinds && flies![kinds[r]])) continue;
     const a = vy ? vy[r] : NaN, b = vp ? vp[r] : NaN;
     if (!Number.isFinite(a) && !Number.isFinite(b)) continue;
     if (y) y[r] = a;
@@ -216,6 +230,38 @@ function* fillFromView(
     any = true;
   }
   return { yaw: y, pitch: pt, derived: any ? derived : null };
+}
+
+/** A unit kind that flies (`kind` column): no turret from its view. */
+const AIRBORNE = /^(aircraft|air|plane|airplane|jet|fighter|bomber|helicopter|heli|drone|uav)$/i;
+/** Rows the turret is compared with the view on, at most. */
+const CHECK_ROWS = 20000;
+/** A turret further from the view than this (median, radians) is not a turret: random angles lie 90 degrees apart. */
+const OFF_VIEW = (45 * Math.PI) / 180;
+
+/**
+ * Whether a turret column lies as far from the view as random angles do: the median of how far apart they are
+ * (both relative to the hull, radians) over up to `CHECK_ROWS` rows with both, above `OFF_VIEW`. A turret read
+ * right follows its player's aim within a degree or two (median): it turns slower, not elsewhere.
+ */
+export function* turretOffView(yaw: Float32Array, view: Float32Array): Generator<void, boolean, void> {
+  let both = 0;
+  for (let r = 0; r < yaw.length; r++) {
+    if ((r & (STEP - 1)) === STEP - 1) yield;
+    if (Number.isFinite(yaw[r]) && Number.isFinite(view[r])) both++;
+  }
+  if (both < 200) return false;
+  const every = Math.max(1, Math.floor(both / CHECK_ROWS));
+  const apart: number[] = [];
+  for (let r = 0, k = 0; r < yaw.length; r++) {
+    if ((r & (STEP - 1)) === STEP - 1) yield;
+    if (!Number.isFinite(yaw[r]) || !Number.isFinite(view[r]) || k++ % every) continue;
+    let a = Math.abs(yaw[r] - view[r]) % (2 * Math.PI);
+    if (a > Math.PI) a = 2 * Math.PI - a;
+    apart.push(a);
+  }
+  apart.sort((a, b) => a - b);
+  return apart[apart.length >> 1] > OFF_VIEW;
 }
 
 /** The aim of a dataset's vehicles, or null where it has no turret or gun column. Worked out once. */
@@ -257,9 +303,16 @@ export function* aimSteps(d: Dataset): Generator<void, Aim | null, void> {
   const vy = vh && d.yaw ? yield* fromWorld(vh.data as Float32Array, d.yaw) : null;
   const vpc = column(d, VIEW_PITCH_NAMES);
   const vp = vpc && d.pitch ? yield* fromWorld(vpc.data as Float32Array, d.pitch) : null;
+  // A turret that goes its own way, unrelated to the view, is not one (see the top): taken from the view instead.
+  const dropped = !!(yaw && vy && (yield* turretOffView(yaw, vy)));
+  if (dropped) {
+    yaw = null;
+    pitch = null;
+  }
   const filled = yield* fillFromView(d, yaw, pitch, vy, vp);
   const out = filled.yaw || filled.pitch ? yield* Aim.build(d, filled.yaw, filled.pitch) : null;
   if (out) {
+    out.turretDropped = dropped;
     out.derived = filled.derived;
     if (vy || vp) out.view = yield* Aim.build(d, vy, vp);
   }

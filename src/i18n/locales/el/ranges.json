@@ -57,5 +57,7 @@
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Ελάχιστο – βέλτιστο – μέγιστο βεληνεκές. * εκτίμηση, όχι τιμή από το παιχνίδι ή δημοσίευση. Περάστε το δείκτη πάνω από ένα όπλο για την πηγή.",
   "ranges.game": "Τιμές για το {game} όπου είναι γνωστές, αλλιώς γενικές.",
-  "ranges.gameNone": "Το παιχνίδι δεν αναγνωρίστηκε: γενικές τιμές."
+  "ranges.gameNone": "Το παιχνίδι δεν αναγνωρίστηκε: γενικές τιμές.",
+  "ranges.recording.noColumn": "No {columns} column in this recording.",
+  "ranges.recording.olderConverter": "No {columns} column: this file was converted before heat3d-wt-replay wrote it (its build of 2026-11-17). Convert the replay again to get it."
 }

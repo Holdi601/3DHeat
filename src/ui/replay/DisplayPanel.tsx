@@ -8,7 +8,7 @@ import {
   type MapView,
   type Scope,
 } from '../../state/replayStore';
-import { tacticalColumns } from '../../render/tactical';
+import { tacticalColumns, type AidMissing } from '../../render/tactical';
 import { num, t } from '../../i18n';
 import { useUnits } from '../../state/unitsStore';
 import { formatLong } from '../../units/format';
@@ -29,14 +29,19 @@ function ScopeSelect({
   title: string;
   value: Scope;
   onChange: (s: Scope) => void;
-  missing?: boolean;
+  /** True, or what the recording lacks (the columns, and whether a newer conversion writes them). */
+  missing?: boolean | AidMissing;
 }) {
+  const why = typeof missing === 'object' ? missing : null;
+  // Which columns are missing, and for a file converted before its converter wrote them, that converting it again adds them.
+  const detail = why ? t(why.olderConverter ? 'ranges.recording.olderConverter' : 'ranges.recording.noColumn', { columns: why.columns }) : '';
   return (
-    <div className="field scope-field" title={title}>
+    <div className="field scope-field" title={detail ? `${title}\n\n${detail}` : title}>
       <div className="label">
         <span>{label}</span>
         {missing && <span className="dim">{t('replay.aids.notInData')}</span>}
       </div>
+      {detail && <div className="hint">{detail}</div>}
       <select value={value} onChange={(e) => onChange(e.target.value as Scope)}>
         {SCOPES.map((s) => (
           <option key={s} value={s}>
@@ -110,35 +115,35 @@ export function DisplayPanel() {
         title={t('replay.aids.radarTitle')}
         value={aids.radar}
         onChange={(v) => set({ radar: v })}
-        missing={!has.radar}
+        missing={has.missing.radar}
       />
       <ScopeSelect
         label={t('replay.aids.locks')}
         title={t('replay.aids.locksTitle')}
         value={aids.locks}
         onChange={(v) => set({ locks: v })}
-        missing={!has.locks}
+        missing={has.missing.locks}
       />
       <ScopeSelect
         label={t('replay.aids.links')}
         title={t('replay.aids.linksTitle')}
         value={aids.links}
         onChange={(v) => set({ links: v })}
-        missing={!has.links}
+        missing={has.missing.links}
       />
       <ScopeSelect
         label={t('replay.aids.engagement')}
         title={t('replay.aids.engagementTitle')}
         value={aids.engagement}
         onChange={(v) => set({ engagement: v })}
-        missing={!has.engagement}
+        missing={has.missing.engagement}
       />
       <ScopeSelect
         label={t('replay.aids.sight')}
         title={t('replay.aids.sightTitle')}
         value={aids.pilotSight}
         onChange={(v) => set({ pilotSight: v })}
-        missing={!has.sight}
+        missing={has.missing.sight}
       />
       <Check
         label={t('replay.aids.lockLabels')}

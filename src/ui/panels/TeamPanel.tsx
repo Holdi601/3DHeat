@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import {
   isUnassignedLabel,
   rgbToCss,
@@ -16,6 +16,7 @@ import { useReplayStore } from '../../state/replayStore';
 import { FigureControls } from './FigureControls';
 import { SortControl } from '../sort/SortControl';
 import { useSort, useSorted } from '../sort/useSort';
+import { lineUpSides, saveTeamSides, sideCheckOf, teamSidesSaved, withTeamSides } from '../../data/teamSides';
 
 export function TeamPanel() {
   useUnits();
@@ -150,8 +151,19 @@ export function TeamsList() {
     'name',
   );
   const order = useSorted(indices, sort);
+  const [sides, setSides] = useState(teamSidesSaved);
 
   if (!dataset || dataset.teamLabels.length === 0) return null;
+  const sideCheck = sideCheckOf(dataset);
+  /** Each match's teams numbered by their side of the map (`data/teamSides.ts`), or the data's own back. */
+  const lineUp = (on: boolean) => {
+    setSides(on);
+    saveTeamSides(on);
+    const d = useStore.getState().dataset;
+    if (!d) return;
+    const next = on ? lineUpSides(d) : (withTeamSides(d, false)?.dataset ?? d);
+    if (next !== d) useStore.setState({ dataset: next });
+  };
   // Under a column split the groups decide only what is drawn, so their +/−
   // buttons would offer a choice that does nothing - and look like the group
   // split were still the one in force.
@@ -223,6 +235,12 @@ export function TeamsList() {
           </button>
         )}
       </div>
+      {dataset.teamLabels.length >= 2 && dataset.personId && (
+        <Check label={t('heat.teamsList.sides')} checked={sides} onChange={lineUp} title={t('heat.teamsList.sidesTitle')} />
+      )}
+      {sides && sideCheck && (
+        <div className="hint">{t('heat.teamsList.sidesDone', { swapped: int(sideCheck.swapped), sessions: int(sideCheck.sessions) })}</div>
+      )}
       {indices.length > 1 && <SortControl sort={sort} />}
       <div className="team-list">
         {order.map((i) => {

@@ -57,5 +57,7 @@
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Least – best – most range. * an estimate, not a figure from the game or a publication. Hover a weapon for its source.",
   "ranges.game": "Figures for {game} where known, else general ones.",
-  "ranges.gameNone": "Game not recognised: general figures."
+  "ranges.gameNone": "Game not recognised: general figures.",
+  "ranges.recording.noColumn": "No {columns} column in this recording.",
+  "ranges.recording.olderConverter": "No {columns} column: this file was converted before heat3d-wt-replay wrote it (its build of 2026-11-17). Convert the replay again to get it."
 }

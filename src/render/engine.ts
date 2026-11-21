@@ -3645,8 +3645,8 @@ export class Engine {
         if (rs.targetPerson !== null) selected.add(rs.targetPerson);
         if (rs.pair) for (const p of rs.pair) selected.add(p);
         const fr = this.figureReplay;
-        // Where each looks for the view cone: the data's view (a player's camera, a sight) on top of the hull's heading.
-        const view = rs.ranges.view ? (aimOf(d)?.view ?? null) : null;
+        // Where each looks for the view cone and a drone's camera: the data's view (a player's camera, a sight) on top of the hull's heading.
+        const view = rs.ranges.view || rs.ranges.sensors ? (aimOf(d)?.view ?? null) : null;
         // Where turrets and guns point, for the sensors and sights that turn with them.
         const turret = rs.ranges.sensors ? aimOf(d) : null;
         const now = { yaw: NaN, pitch: NaN };

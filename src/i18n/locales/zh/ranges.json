@@ -57,5 +57,7 @@
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "最小 – 最佳 – 最大射程。* 估计值，并非游戏或出版物中的数据。将鼠标悬停在武器上可查看来源。",
   "ranges.game": "已知时使用 {game} 的数据，否则使用通用数据。",
-  "ranges.gameNone": "未识别游戏：使用通用数据。"
+  "ranges.gameNone": "未识别游戏：使用通用数据。",
+  "ranges.recording.noColumn": "No {columns} column in this recording.",
+  "ranges.recording.olderConverter": "No {columns} column: this file was converted before heat3d-wt-replay wrote it (its build of 2026-11-17). Convert the replay again to get it."
 }

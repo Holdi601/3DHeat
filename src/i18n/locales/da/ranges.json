@@ -57,5 +57,7 @@
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Mindste – bedste – største rækkevidde. * et skøn, ikke et tal fra spillet eller en publikation. Hold musen over et våben for at se kilden.",
   "ranges.game": "Tal for {game}, hvor de kendes, ellers generelle.",
-  "ranges.gameNone": "Spillet blev ikke genkendt: generelle tal."
+  "ranges.gameNone": "Spillet blev ikke genkendt: generelle tal.",
+  "ranges.recording.noColumn": "No {columns} column in this recording.",
+  "ranges.recording.olderConverter": "No {columns} column: this file was converted before heat3d-wt-replay wrote it (its build of 2026-11-17). Convert the replay again to get it."
 }

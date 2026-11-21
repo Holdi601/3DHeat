@@ -57,5 +57,7 @@
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Mazākais – labākais – lielākais darbības rādiuss. * novērtējums, nevis vērtība no spēles vai publikācijas. Virziet kursoru uz ieroci, lai redzētu avotu.",
   "ranges.game": "Vērtības spēlei {game}, kur zināmas, citādi vispārīgas.",
-  "ranges.gameNone": "Spēle netika atpazīta: vispārīgas vērtības."
+  "ranges.gameNone": "Spēle netika atpazīta: vispārīgas vērtības.",
+  "ranges.recording.noColumn": "No {columns} column in this recording.",
+  "ranges.recording.olderConverter": "No {columns} column: this file was converted before heat3d-wt-replay wrote it (its build of 2026-11-17). Convert the replay again to get it."
 }

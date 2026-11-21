@@ -1,5 +1,6 @@
 import { resolveTeamPalette, saveTeamPalettePref, savedTeamPalettePref, setTeamPaletteId, teamPaletteId, type TeamPaletteId, type TeamPalettePref } from '../render/colors';
 import { deriveOutcome } from '../data/outcome';
+import { lineUpSides, teamSidesSaved } from '../data/teamSides';
 import { create } from 'zustand';
 import { calibrate, cameraForExtent } from '../data/calibrate';
 import { clampBudgets, detectBudgets, type Budgets } from '../data/memory';
@@ -853,6 +854,8 @@ export const useStore = create<AppState>((set) => ({
     // (a winner column, words, empty event rows): the outcome filters, the
     // win-rate map and the won-vs-lost split then read it like any `won`.
     if (d) deriveOutcome(d);
+    // Each match's teams numbered by their side of the map, where this viewer is set to (`data/teamSides.ts`).
+    if (d && teamSidesSaved()) d = lineUpSides(d);
     // The jump limit is measured off the frame and filled in when it is known,
     // unless it was set by hand meanwhile; see `suggestMaxJumpAsync`.
     if (d) {

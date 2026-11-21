@@ -57,5 +57,7 @@
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Найменша – найкраща – найбільша дальність. * оцінка, а не значення з гри чи публікації. Наведіть курсор на зброю, щоб побачити джерело.",
   "ranges.game": "Значення для {game}, де вони відомі, інакше загальні.",
-  "ranges.gameNone": "Гру не розпізнано: загальні значення."
+  "ranges.gameNone": "Гру не розпізнано: загальні значення.",
+  "ranges.recording.noColumn": "No {columns} column in this recording.",
+  "ranges.recording.olderConverter": "No {columns} column: this file was converted before heat3d-wt-replay wrote it (its build of 2026-11-17). Convert the replay again to get it."
 }

@@ -57,5 +57,7 @@
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Portée minimale – optimale – maximale. * estimation, ni valeur du jeu ni d'une publication. Survolez une arme pour voir sa source.",
   "ranges.game": "Valeurs pour {game} lorsqu'elles sont connues, sinon générales.",
-  "ranges.gameNone": "Jeu non reconnu : valeurs générales."
+  "ranges.gameNone": "Jeu non reconnu : valeurs générales.",
+  "ranges.recording.noColumn": "No {columns} column in this recording.",
+  "ranges.recording.olderConverter": "No {columns} column: this file was converted before heat3d-wt-replay wrote it (its build of 2026-11-17). Convert the replay again to get it."
 }

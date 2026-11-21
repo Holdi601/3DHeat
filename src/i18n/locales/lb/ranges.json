@@ -57,5 +57,7 @@
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Klengst – bescht – gréisst Reechwäit. * eng Schätzung, keng Zuel aus dem Spill oder enger Verëffentlechung. Fuer mam Mauszeiger iwwer eng Waff fir d'Quell ze gesinn.",
   "ranges.game": "Zuelen fir {game}, wou bekannt, soss allgemeng.",
-  "ranges.gameNone": "Spill net erkannt: allgemeng Zuelen."
+  "ranges.gameNone": "Spill net erkannt: allgemeng Zuelen.",
+  "ranges.recording.noColumn": "No {columns} column in this recording.",
+  "ranges.recording.olderConverter": "No {columns} column: this file was converted before heat3d-wt-replay wrote it (its build of 2026-11-17). Convert the replay again to get it."
 }

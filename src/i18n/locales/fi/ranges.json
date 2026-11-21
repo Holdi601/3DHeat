@@ -57,5 +57,7 @@
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Pienin – paras – suurin kantama. * arvio, ei pelin tai julkaisun arvo. Vie osoitin aseen päälle nähdäksesi lähteen.",
   "ranges.game": "Arvot pelille {game}, jos tiedossa, muuten yleiset.",
-  "ranges.gameNone": "Peliä ei tunnistettu: yleiset arvot."
+  "ranges.gameNone": "Peliä ei tunnistettu: yleiset arvot.",
+  "ranges.recording.noColumn": "No {columns} column in this recording.",
+  "ranges.recording.olderConverter": "No {columns} column: this file was converted before heat3d-wt-replay wrote it (its build of 2026-11-17). Convert the replay again to get it."
 }

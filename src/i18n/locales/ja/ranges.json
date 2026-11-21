@@ -57,5 +57,7 @@
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "最小 – 最適 – 最大射程。* 推定値であり、ゲームや公表資料の値ではありません。兵装にカーソルを合わせると出典が表示されます。",
   "ranges.game": "{game} の値（判明している場合）。それ以外は一般的な値。",
-  "ranges.gameNone": "ゲームを認識できません：一般的な値を使用します。"
+  "ranges.gameNone": "ゲームを認識できません：一般的な値を使用します。",
+  "ranges.recording.noColumn": "No {columns} column in this recording.",
+  "ranges.recording.olderConverter": "No {columns} column: this file was converted before heat3d-wt-replay wrote it (its build of 2026-11-17). Convert the replay again to get it."
 }

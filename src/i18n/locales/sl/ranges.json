@@ -57,5 +57,7 @@
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Najmanjši – najboljši – največji domet. * ocena, ne vrednost iz igre ali publikacije. Z miško pokažite na orožje, da vidite vir.",
   "ranges.game": "Vrednosti za {game}, kjer so znane, sicer splošne.",
-  "ranges.gameNone": "Igra ni prepoznana: splošne vrednosti."
+  "ranges.gameNone": "Igra ni prepoznana: splošne vrednosti.",
+  "ranges.recording.noColumn": "No {columns} column in this recording.",
+  "ranges.recording.olderConverter": "No {columns} column: this file was converted before heat3d-wt-replay wrote it (its build of 2026-11-17). Convert the replay again to get it."
 }

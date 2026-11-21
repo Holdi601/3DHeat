@@ -27,6 +27,9 @@ import { unitShape } from '../ui/replay/objectType';
 import { useStore } from '../state/store';
 import { aimOf, type AimNow } from '../figures/aim';
 import { cameraGlyph, cameraTracks, fovAt, viewCone, type LookFrame } from './lookAids';
+import { pointAt, recordedColumns, slotsAt, withSlots } from '../ranges/recorded';
+import { detectRangeGame, type GameCatalogue } from '../ranges/catalog';
+import { gameSensors, sensorsFor, type SensorSpec } from '../ranges/sensors';
 
 export type Vec3 = [number, number, number];
 
@@ -268,6 +271,7 @@ function columnsOf(d: Dataset): Columns {
         vertical: num(`VerticalEngagementRange${suffix}`),
       });
   }
+  const worldView = !!num('aimHeading');
   const byId = new Map<string, number>();
   d.personLabels.forEach((l, p) => {
     const m = /#([0-9a-f]+)$/i.exec(l ?? '');
@@ -296,32 +300,71 @@ function columnsOf(d: Dataset): Columns {
     parent: cat('Parent'),
     next: cat('Next'),
     engage,
-    headYaw: num('PilotHeadYaw') ?? num('HeadYaw') ?? num('ViewYaw') ?? num('LookYaw'),
-    headPitch: num('PilotHeadPitch') ?? num('HeadPitch') ?? num('ViewPitch') ?? num('LookPitch'),
+    // A view angle against the unit's axes; War Thunder's `viewYaw` is a compass heading in the world (it writes
+    // `aimHeading` beside it), not a head's turn.
+    headYaw: num('PilotHeadYaw') ?? num('HeadYaw') ?? (worldView ? null : num('ViewYaw')) ?? num('LookYaw'),
+    headPitch: num('PilotHeadPitch') ?? num('HeadPitch') ?? (worldView ? null : num('ViewPitch')) ?? num('LookPitch'),
     byId,
     any: false,
   };
-  c.any = !!(c.radarRange || c.lockAz || locked.length || c.focused || engage.length || c.headYaw || c.parent || c.next);
+  c.any = !!(c.radarRange || c.lockAz || locked.length || c.focused || engage.length || c.headYaw || c.parent || c.next || recordedColumns(d).any);
   colCache.set(d, c);
   return c;
 }
 
+/** Why an aid has nothing to draw: the columns it reads that the recording lacks, and whether a newer conversion writes them. */
+export interface AidMissing {
+  /** The columns looked for, as the recording would name them. */
+  columns: string;
+  /** War Thunder: heat3d-wt-replay writes them since its 2026-11-17 build, so this file was converted before it. */
+  olderConverter: boolean;
+}
+
+/** The game catalogue and its sensors a dataset is from (for War Thunder's recorded sensor slots), found once. */
+const sensorGames = new WeakMap<Dataset, { game: GameCatalogue | null; list: SensorSpec[] }>();
+function sensorGame(d: Dataset): { game: GameCatalogue | null; list: SensorSpec[] } {
+  let g = sensorGames.get(d);
+  if (!g) {
+    const game = detectRangeGame(d.name ?? '', d.attrs.map((a) => a.name), []);
+    g = { game, list: gameSensors(game) };
+    sensorGames.set(d, g);
+  }
+  return g;
+}
+
+/** A War Thunder table (its converter writes `aimHeading`, `hitOutcome`, `ammoName`, `turretYaw`): one a newer conversion adds sensor columns to. */
+function isWarThunder(d: Dataset): boolean {
+  return d.attrs.some((a) => /^(aimHeading|hitOutcome|ammoName|turretYaw)$/.test(a.name)) || /\.wrpl\b|war ?thunder/i.test(d.name ?? '');
+}
+
 /** What a recording has of the aids: radar, locks, engagement ranges. */
-export function tacticalColumns(d: Dataset): {
-  radar: boolean;
-  locks: boolean;
-  links: boolean;
-  engagement: boolean;
-  sight: boolean;
+export type TacticalAid = 'radar' | 'locks' | 'links' | 'engagement' | 'sight';
+
+export function tacticalColumns(d: Dataset): Record<TacticalAid, boolean> & {
+  /** For each aid it lacks, what is missing (`AidMissing`). */
+  missing: Partial<Record<TacticalAid, AidMissing>>;
 } {
   const c = columnsOf(d);
-  return {
-    radar: !!c.radarRange,
-    locks: !!(c.locked.length || c.focused || c.lockAz),
+  const rec = recordedColumns(d);
+  const wt = isWarThunder(d);
+  const has: Record<TacticalAid, boolean> = {
+    radar: !!c.radarRange || !!rec.sensors,
+    locks: !!(c.locked.length || c.focused || c.lockAz || rec.lock),
     links: !!(c.parent || c.next),
     engagement: c.engage.length > 0,
-    sight: !!c.headYaw,
+    sight: !!c.headYaw || !!rec.sight || !!rec.optic,
   };
+  const missing: Partial<Record<TacticalAid, AidMissing>> = {};
+  const why = (aid: TacticalAid, acmi: string, warThunder: string | null) => {
+    if (has[aid]) return;
+    missing[aid] = wt && warThunder ? { columns: warThunder, olderConverter: true } : { columns: acmi, olderConverter: false };
+  };
+  why('radar', 'RadarRange', 'sensors');
+  why('locks', 'LockedTarget, LockedTargetAzimuth', 'lockX/Y/Z');
+  why('links', 'Parent, Next', null);
+  why('engagement', 'EngagementRange', null);
+  why('sight', 'PilotHeadYaw', 'sightX/Y/Z, opticX/Y/Z');
+  return { ...has, missing };
 }
 
 /**
@@ -532,6 +575,49 @@ export class TacticalLayer {
   }
 
   /**
+   * A unit's radar (or IRST) the recording has on (`sensors`, `ranges/recorded.ts`): its sector as the catalogue
+   * has it (the user's own installation's, else the game catalogue's) - as wide and as high as its limits, as long
+   * as its reach. A detecting sensor in the first slot with no catalogue entry: its axis along the nose, 10 km.
+   */
+  private recordedRadar(
+    d: Dataset,
+    tr: TacticalTrack,
+    row: number,
+    p: Vec3,
+    k: number,
+    index: ReturnType<typeof unitsOf>,
+    axesNow: () => { fwd: Vec3; up: Vec3; right: Vec3 },
+  ): void {
+    const slots = slotsAt(d, row);
+    if (!slots || !slots.some((s) => s.on && !s.optical)) return;
+    const g = sensorGame(d);
+    const u = index.units[index.personUnit[tr.person]];
+    const vehicle = u ? (u.vehicles[u.persons.indexOf(tr.person)] ?? u.vehicle) : '';
+    const on = withSlots(sensorsFor(g.list, vehicle, null, g.game), slots).filter((s) => s.recorded && (s.kind === 'radar' || s.kind === 'irst'));
+    const rc = [0.45, 1, 0.55];
+    const a = axesNow();
+    if (!on.length) {
+      if (!slots.some((s) => s.on && !s.optical && s.slot === 0)) return;
+      const R = 10000 * k;
+      this.line(p, [p[0] + a.fwd[0] * R, p[1] + a.fwd[1] * R, p[2] + a.fwd[2] * R], rc, 0.6, 0.15);
+      return;
+    }
+    for (const sn of on) {
+      const az = (sn.az[0] + sn.az[1]) / 2;
+      const el = (sn.el[0] + sn.el[1]) / 2;
+      const hb = Math.min(178, Math.abs(sn.az[1] - sn.az[0]));
+      const vb = Math.min(178, Math.abs(sn.el[1] - sn.el[0]));
+      const rim = beamRim(a, az, el, 0, hb, vb, sn.range * k, 32);
+      for (let j = 0; j < rim.length; j++) {
+        const q0 = rim[j];
+        const q1 = rim[(j + 1) % rim.length];
+        this.line([p[0] + q0[0], p[1] + q0[1], p[2] + q0[2]], [p[0] + q1[0], p[1] + q1[1], p[2] + q1[2]], rc, 0.55);
+      }
+      for (let j = 0; j < rim.length; j += 8) this.line(p, [p[0] + rim[j][0], p[1] + rim[j][1], p[2] + rim[j][2]], rc, 0.45, 0.2);
+    }
+  }
+
+  /**
    * The aids for this frame, after the `baseCount` vertices of `base`; null
    * when none is drawn (the caller keeps its own buffer).
    * `colorOf(i)` is the i-th track's colour.
@@ -580,6 +666,7 @@ export class TacticalLayer {
       return !!u && unitCategory(d, u) === s;
     };
     const motion = motionAids ? MotionModel.of(d) : null;
+    const rec = recordedColumns(d);
     const s = this.sample;
     const white = [0.92, 0.94, 0.97];
 
@@ -736,6 +823,21 @@ export class TacticalLayer {
             }
           }
         }
+      }
+
+      // ---- War Thunder's recorded sensors: a radar the recording has on, drawn as the catalogue has it
+      if (rec.sensors && inScope(aids.radar, tr)) this.recordedRadar(d, tr, row, p, k, index, axesNow);
+      // ---- where its sight, pod or drone camera looks, and the point its optical sensor tracks
+      if ((rec.sight || rec.optic) && inScope(aids.pilotSight, tr)) {
+        const sight = pointAt(d, 'sight', row);
+        if (sight) this.dashed(p, sight, [0.4, 0.95, 1], 0.85, Math.max(5 * k, Math.hypot(sight[0] - p[0], sight[1] - p[1], sight[2] - p[2]) / 40));
+        const optic = pointAt(d, 'optic', row);
+        if (optic) this.dashed(p, optic, [1, 0.75, 0.3], 0.8, Math.max(5 * k, Math.hypot(optic[0] - p[0], optic[1] - p[1], optic[2] - p[2]) / 40));
+      }
+      // ---- the point its sensors track as their target
+      if (rec.lock && inScope(aids.locks, tr)) {
+        const q = pointAt(d, 'lock', row);
+        if (q) this.line(p, q, [1, 0.3, 0.25], 0.9, 0.6);
       }
 
       // ---- links: a weapon to its launcher (Parent, dashed), a waypoint to the next (Next), where both are there now

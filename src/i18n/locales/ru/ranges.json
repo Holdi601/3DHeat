@@ -57,5 +57,7 @@
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Наименьшая – наилучшая – наибольшая дальность. * оценка, а не значение из игры или публикации. Наведите курсор на оружие, чтобы увидеть источник.",
   "ranges.game": "Значения для {game}, где они известны, иначе общие.",
-  "ranges.gameNone": "Игра не распознана: общие значения."
+  "ranges.gameNone": "Игра не распознана: общие значения.",
+  "ranges.recording.noColumn": "No {columns} column in this recording.",
+  "ranges.recording.olderConverter": "No {columns} column: this file was converted before heat3d-wt-replay wrote it (its build of 2026-11-17). Convert the replay again to get it."
 }

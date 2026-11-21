@@ -57,5 +57,7 @@
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Geringste – beste – größte Reichweite. * eine Schätzung, kein Wert aus dem Spiel oder einer Veröffentlichung. Fahre über eine Waffe, um die Quelle zu sehen.",
   "ranges.game": "Werte für {game}, wo bekannt, sonst allgemeine.",
-  "ranges.gameNone": "Spiel nicht erkannt: allgemeine Werte."
+  "ranges.gameNone": "Spiel nicht erkannt: allgemeine Werte.",
+  "ranges.recording.noColumn": "No {columns} column in this recording.",
+  "ranges.recording.olderConverter": "No {columns} column: this file was converted before heat3d-wt-replay wrote it (its build of 2026-11-17). Convert the replay again to get it."
 }

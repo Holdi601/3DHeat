@@ -57,5 +57,7 @@
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Kortaste – bästa – längsta räckvidd. * en uppskattning, inte en siffra från spelet eller en publikation. Håll muspekaren över ett vapen för källan.",
   "ranges.game": "Siffror för {game} där de är kända, annars allmänna.",
-  "ranges.gameNone": "Spelet kändes inte igen: allmänna siffror."
+  "ranges.gameNone": "Spelet kändes inte igen: allmänna siffror.",
+  "ranges.recording.noColumn": "No {columns} column in this recording.",
+  "ranges.recording.olderConverter": "No {columns} column: this file was converted before heat3d-wt-replay wrote it (its build of 2026-11-17). Convert the replay again to get it."
 }

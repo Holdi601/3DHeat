@@ -57,5 +57,7 @@
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Най-малък – най-добър – най-голям обхват. * оценка, а не стойност от играта или публикация. Посочете оръжие с мишката, за да видите източника.",
   "ranges.game": "Стойности за {game}, където са известни, иначе общи.",
-  "ranges.gameNone": "Играта не е разпозната: общи стойности."
+  "ranges.gameNone": "Играта не е разпозната: общи стойности.",
+  "ranges.recording.noColumn": "No {columns} column in this recording.",
+  "ranges.recording.olderConverter": "No {columns} column: this file was converted before heat3d-wt-replay wrote it (its build of 2026-11-17). Convert the replay again to get it."
 }

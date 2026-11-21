@@ -57,5 +57,7 @@
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "L-iqsar – l-aħjar – l-itwal firxa. * stima, mhux figura mill-logħba jew minn pubblikazzjoni. Poġġi l-kursur fuq arma biex tara s-sors.",
   "ranges.game": "Figuri għal {game} fejn magħrufa, inkella ġenerali.",
-  "ranges.gameNone": "Logħba mhux rikonoxxuta: figuri ġenerali."
+  "ranges.gameNone": "Logħba mhux rikonoxxuta: figuri ġenerali.",
+  "ranges.recording.noColumn": "No {columns} column in this recording.",
+  "ranges.recording.olderConverter": "No {columns} column: this file was converted before heat3d-wt-replay wrote it (its build of 2026-11-17). Convert the replay again to get it."
 }

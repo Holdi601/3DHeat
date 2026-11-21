@@ -57,5 +57,7 @@
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Abast mínim – òptim – màxim. * una estimació, no una xifra del joc ni d'una publicació. Passa el cursor per sobre d'una arma per veure'n la font.",
   "ranges.game": "Xifres per a {game} quan es coneixen; si no, generals.",
-  "ranges.gameNone": "Joc no reconegut: xifres generals."
+  "ranges.gameNone": "Joc no reconegut: xifres generals.",
+  "ranges.recording.noColumn": "No {columns} column in this recording.",
+  "ranges.recording.olderConverter": "No {columns} column: this file was converted before heat3d-wt-replay wrote it (its build of 2026-11-17). Convert the replay again to get it."
 }

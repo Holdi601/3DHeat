@@ -1,0 +1,5 @@
+{
+  "heat.teamsList.sides": "Number teams by map side",
+  "heat.teamsList.sidesTitle": "Gives each match's teams the same numbers by the side of the map they start on, so team 1 is the same side in every match of a map: side A is the spawn further west (or south) along the line the map's spawns lie on. The team the data gave each row stays in the teamRaw column.",
+  "heat.teamsList.sidesDone": "Lined up {sessions} matches by map side, {swapped} of them with their teams swapped."
+}

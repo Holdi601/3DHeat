@@ -57,5 +57,7 @@
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Најмал – најдобар – најголем дострел. * проценка, а не вредност од играта или публикација. Поминете со глушецот преку оружје за извор.",
   "ranges.game": "Вредности за {game} каде што се познати, инаку општи.",
-  "ranges.gameNone": "Играта не е препознаена: општи вредности."
+  "ranges.gameNone": "Играта не е препознаена: општи вредности.",
+  "ranges.recording.noColumn": "No {columns} column in this recording.",
+  "ranges.recording.olderConverter": "No {columns} column: this file was converted before heat3d-wt-replay wrote it (its build of 2026-11-17). Convert the replay again to get it."
 }

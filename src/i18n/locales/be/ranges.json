@@ -57,5 +57,7 @@
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Найменшая – найлепшая – найбольшая далёкасць. * ацэнка, а не значэнне з гульні ці публікацыі. Навядзіце на зброю, каб убачыць крыніцу.",
   "ranges.game": "Значэнні для {game}, дзе яны вядомыя, інакш агульныя.",
-  "ranges.gameNone": "Гульня не распазнана: агульныя значэнні."
+  "ranges.gameNone": "Гульня не распазнана: агульныя значэнні.",
+  "ranges.recording.noColumn": "No {columns} column in this recording.",
+  "ranges.recording.olderConverter": "No {columns} column: this file was converted before heat3d-wt-replay wrote it (its build of 2026-11-17). Convert the replay again to get it."
 }

@@ -57,5 +57,7 @@
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Rrezja më e vogël – më e mira – më e madhja. * një vlerësim, jo shifër nga loja apo nga një botim. Vendose kursorin mbi një armë për burimin.",
   "ranges.game": "Shifra për {game} aty ku njihen, përndryshe të përgjithshme.",
-  "ranges.gameNone": "Loja nuk u njoh: shifra të përgjithshme."
+  "ranges.gameNone": "Loja nuk u njoh: shifra të përgjithshme.",
+  "ranges.recording.noColumn": "No {columns} column in this recording.",
+  "ranges.recording.olderConverter": "No {columns} column: this file was converted before heat3d-wt-replay wrote it (its build of 2026-11-17). Convert the replay again to get it."
 }

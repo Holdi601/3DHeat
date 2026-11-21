@@ -57,5 +57,7 @@
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "최소 – 최적 – 최대 사거리. * 추정치이며 게임이나 공개 자료의 수치가 아닙니다. 무기에 마우스를 올리면 출처가 표시됩니다.",
   "ranges.game": "알려진 경우 {game}의 수치, 아니면 일반 수치.",
-  "ranges.gameNone": "게임을 인식하지 못함: 일반 수치."
+  "ranges.gameNone": "게임을 인식하지 못함: 일반 수치.",
+  "ranges.recording.noColumn": "No {columns} column in this recording.",
+  "ranges.recording.olderConverter": "No {columns} column: this file was converted before heat3d-wt-replay wrote it (its build of 2026-11-17). Convert the replay again to get it."
 }

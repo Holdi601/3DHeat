@@ -20,6 +20,7 @@ import type { RangeView } from './viewshed';
 import { VIEW_ASPECT, VIEW_REACH, ViewFov, gameViewDistance } from './view';
 import { PASSIVE_SENSOR, RecordedRadars, gameSensors, sectorShape, sensorBands, sensorsFor, type SensorSpec } from './sensors';
 import { localRangesReady, localSight } from './local';
+import { slotsAt, withSlots } from './recorded';
 
 /** Counts the local catalogues' arrivals (`local.ts`): the units' weapons and sensors are worked out again. */
 let localStamp = 0;
@@ -64,6 +65,8 @@ export interface RangeContext {
   floorY: number;
 }
 
+/** Sensors that look where the unit's player looks: a drone's camera, a camera. */
+const LOOKS_ABOUT = /^(drone|camera)$/;
 /** Eye above the unit's position, metres, by figure domain. */
 const EYE: Record<string, number> = { person: 1.6, ground: 2.5, sea: 10, air: 0, heli: 0 };
 /** Faces of the views retaken a frame at most (a setting for probes; 3 by default). */
@@ -86,10 +89,15 @@ export class RangeLayer {
   /** The local catalogues' arrival this layer has taken in (`local.ts`). */
   private localSeen = -1;
 
-  /** A unit's sensors now: the recorded radar where the recording has it on (over the specification's radar), and the specified others. */
+  /**
+   * A unit's sensors now: the recorded radar where the recording has it on (over the specification's radar), and
+   * the specified others - those whose sensor the recording says is off (`sensors`, `recorded.ts`) left out.
+   */
   private sensorsNow(d: Dataset, row: number, vehicle: string, figure: string | null): SensorSpec[] {
     if (this.gameSensorList.game !== this.game) this.gameSensorList = { game: this.game, list: gameSensors(this.game) };
-    const spec = sensorsFor(this.gameSensorList.list, vehicle, figure, this.game);
+    const listed = sensorsFor(this.gameSensorList.list, vehicle, figure, this.game);
+    const slots = slotsAt(d, row);
+    const spec = slots ? withSlots(listed, slots) : listed;
     const rec = this.radars.at(d, row);
     if (!rec) return spec;
     const radar = spec.find((s) => s.kind === 'radar');
@@ -197,8 +205,9 @@ export class RangeLayer {
       }
       // The sensors' sectors about the nose, each in a pale shade of the side's colour.
       const sectors: NonNullable<RangeUnit['sectors']> = u.sensors.map((sn, i) => {
-        // A turret's or a gun's sensor (a sight's rangefinder, a turret radar) turns with it where the data says.
-        const base = (sn.mount === 'gun' ? (tr.gun ?? tr.turret) : sn.mount === 'turret' ? (tr.turret ?? tr.gun) : null) ?? tr.fwd;
+        // A turret's or a gun's sensor (a sight's rangefinder, a turret radar) turns with it where the data says; a
+        // drone's or a camera's looks where its player looks (War Thunder: the targeting camera's own direction).
+        const base = (sn.mount === 'gun' ? (tr.gun ?? tr.turret) : sn.mount === 'turret' ? (tr.turret ?? tr.gun) : LOOKS_ABOUT.test(sn.kind) ? tr.look : null) ?? tr.fwd;
         const shape = sectorShape(base, sn.az, sn.el);
         const b = sensorBands(sn);
         const col = weaponColour(c.colourOf(tr.person), 5 + i);

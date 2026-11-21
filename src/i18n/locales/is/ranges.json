@@ -57,5 +57,7 @@
   "ranges.weaponLine": "{min} – {opt} – {max}",
   "ranges.estimateNote": "Minnsta – besta – mesta drægi. * áætlun, ekki tala úr leiknum eða riti. Færðu bendilinn yfir vopn til að sjá heimildina.",
   "ranges.game": "Tölur fyrir {game} þar sem þær eru þekktar, annars almennar.",
-  "ranges.gameNone": "Leikur þekktist ekki: almennar tölur."
+  "ranges.gameNone": "Leikur þekktist ekki: almennar tölur.",
+  "ranges.recording.noColumn": "No {columns} column in this recording.",
+  "ranges.recording.olderConverter": "No {columns} column: this file was converted before heat3d-wt-replay wrote it (its build of 2026-11-17). Convert the replay again to get it."
 }
