@@ -543,5 +543,8 @@
   "replay.card.hidden": "Oculto pela gravação neste momento (não destruído).",
   "replay.card.disabled": "Fora de combate (desativado), não destruído.",
   "replay.aids.links": "Ligações",
-  "replay.aids.linksTitle": "Uma arma até ao seu lançador (tracejada) e um ponto de passagem até ao seguinte, a partir de Parent e Next"
+  "replay.aids.linksTitle": "Uma arma até ao seu lançador (tracejada) e um ponto de passagem até ao seguinte, a partir de Parent e Next",
+  "replay.look.part.feedAll": "Eventos de todas as unidades",
+  "replay.look.part.feedAllTitle": "Registo de abates e eventos de todas as unidades. Desligado: só os da unidade seguida ou, sem unidade seguida, os das visíveis",
+  "replay.look.resume": "Retomar realização"
 }

@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{zone} verloren door {team}",
   "objectives.legend.neutral": "neutraal",
   "objectives.legend.capturing": "wordt veroverd",
+  "objectives.allModes": "Doelen van alle modi samen",
+  "objectives.allModesTitle": "Worden gevechten van meerdere modi tegelijk getoond, dan blijven hun doelen verborgen: zones van verschillende modi overlappen op hetzelfde terrein. Vink aan om ze toch allemaal te tekenen",
   "objectives.layer.bounds": "Buiten bereik",
   "objectives.layer.boundsTitle": "Gearceerd waar een team buiten bereik is: binnen het speelgebied van de andere kant maar buiten het eigen",
   "objectives.layout": "Indeling",

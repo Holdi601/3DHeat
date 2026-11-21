@@ -543,5 +543,8 @@
   "replay.card.hidden": "この時点では記録により非表示(撃破されていません)。",
   "replay.card.disabled": "戦闘不能(無効)、撃破されていません。",
   "replay.aids.links": "リンク",
-  "replay.aids.linksTitle": "兵装から発射母機へ(破線)、ウェイポイントから次へ(Parent と Next より)"
+  "replay.aids.linksTitle": "兵装から発射母機へ(破線)、ウェイポイントから次へ(Parent と Next より)",
+  "replay.look.part.feedAll": "全ユニットのイベント",
+  "replay.look.part.feedAllTitle": "全ユニットの撃破とイベントの一覧。オフ：注視中のユニットのみ、注視中のユニットがなければ画面内のユニット",
+  "replay.look.resume": "ディレクターを再開"
 }

@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{zone} förlorad av {team}",
   "objectives.legend.neutral": "neutral",
   "objectives.legend.capturing": "intas",
+  "objectives.allModes": "Mål för alla lägen tillsammans",
+  "objectives.allModesTitle": "När strider från flera lägen visas samtidigt döljs deras mål: zoner från olika lägen överlappar på samma terräng. Kryssa i för att rita alla ändå",
   "objectives.layer.bounds": "Utanför området",
   "objectives.layer.boundsTitle": "Skrafferat där ett lag är utanför området: inom andra sidans spelområde men utanför sitt eget",
   "objectives.layout": "Layout",

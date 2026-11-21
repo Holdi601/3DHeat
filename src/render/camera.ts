@@ -36,6 +36,37 @@ export const MIN_FLY_SPEED = 0.02;
  * wheel handler.
  */
 export const WHEEL_PER_NOTCH = 1.5;
+/**
+ * Parallel-view zoom per wheel notch: a quarter, so a whole map comes down to
+ * a building in about fifteen notches.
+ */
+export const ORTHO_ZOOM_PER_NOTCH = 1.25;
+/**
+ * Pan speed in a parallel view, in view heights per second: the picture moves
+ * at the same pace on screen however far it is zoomed, where the fly speed (a
+ * world speed) crawled across a whole map and leapt across a room.
+ */
+export const ORTHO_PAN_PER_SECOND = 0.6;
+
+/** The key besides Q that flies the camera down: left Ctrl (default), Z, or none. */
+export type DescendKey = 'ctrl' | 'z' | 'none';
+
+/** When a camera was last flown (a movement key held, a drag), `performance.now()` ms. */
+let flownAt = -Infinity;
+
+/**
+ * Whether a camera is being flown, or was within `within` ms: the page asks
+ * before closing then (ui/browserKeys.ts), as Ctrl+W is a fly key to the hand.
+ */
+export function cameraFlying(now = performance.now(), within = 3000): boolean {
+  return now - flownAt < within;
+}
+
+/** The keys that fly the camera, for "is the camera being flown". */
+const FLY_KEYS = new Set([
+  'KeyW', 'KeyA', 'KeyS', 'KeyD', 'KeyQ', 'KeyE', 'Space', 'ControlLeft', 'KeyZ',
+  'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ShiftLeft', 'ShiftRight',
+]);
 
 export interface ViewPreset {
   /** Degrees. */
@@ -205,6 +236,7 @@ export class FlyCamera {
 
   speed = 120;
   private readonly keys = new Set<string>();
+  private readonly deltas = new MouseDeltaFilter();
   private pointerLocked = false;
   private dragging = false;
   /** Set whenever the view changed enough to invalidate progressive accumulation. */
@@ -243,6 +275,8 @@ export class FlyCamera {
     speed: number;
   } | null = null;
 
+  /** The last pose with every number finite, for `update` to fall back to. */
+  private readonly good = { position: new Vector3(0, 200, 400), yaw: 0, pitch: -0.35, roll: 0, orthoHeight: 1000 };
   private readonly euler = new Euler(0, 0, 0, 'YXZ');
   private readonly tmp = new Vector3();
   private readonly tmp2 = new Vector3();
@@ -259,6 +293,7 @@ export class FlyCamera {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
       if (!this.dragging && this.keyFilter?.(e)) return;
       this.keys.add(e.code);
+      if (FLY_KEYS.has(e.code)) flownAt = performance.now();
       // Don't let space scroll the page while flying.
       if (e.code === 'Space') e.preventDefault();
     };
@@ -273,11 +308,25 @@ export class FlyCamera {
         this.dragging = true;
         lastX = e.clientX;
         lastY = e.clientY;
+        this.deltas.reset();
         // Chromium answers with a promise, and refuses - rejects - when clicks
         // come faster than it allows locks. Dragging then works unlocked, so a
         // refusal is nothing to report.
-        const lock = canvas.requestPointerLock?.() as unknown;
-        if (lock instanceof Promise) lock.catch(() => undefined);
+        //
+        // Raw (unadjusted) movement where the browser has it: on Windows the
+        // accelerated deltas under a lock are where the spikes come from that
+        // threw the view up into the sky (`MouseDeltaFilter`). A browser that
+        // does not know the option rejects it, and is asked again without.
+        const request = (opts?: { unadjustedMovement: boolean }) =>
+          (canvas.requestPointerLock as (o?: { unadjustedMovement: boolean }) => unknown)?.call(canvas, opts);
+        const lock = request({ unadjustedMovement: true });
+        if (lock instanceof Promise) {
+          lock.catch((err: unknown) => {
+            if ((err as { name?: string })?.name !== 'NotSupportedError' || !this.dragging) return;
+            const again = request();
+            if (again instanceof Promise) again.catch(() => undefined);
+          });
+        }
       }
     };
     const onMouseUp = () => {
@@ -286,6 +335,9 @@ export class FlyCamera {
     };
     const onPointerLockChange = () => {
       this.pointerLocked = document.pointerLockElement === canvas;
+      // The first locked event can carry the jump from where the pointer was to
+      // where the lock parks it; it is not a movement of the hand.
+      this.deltas.reset(this.pointerLocked);
       if (!this.pointerLocked) this.dragging = false;
       // The lock is granted asynchronously, so on a quick click it can arrive
       // after the button has already come up - and the release on mouse-up,
@@ -317,6 +369,8 @@ export class FlyCamera {
         lastY = e.clientY;
       }
       if (dx === 0 && dy === 0) return;
+      // A finite, plausible movement only: see `MouseDeltaFilter`.
+      if (!this.deltas.accept(dx, dy, e.timeStamp)) return;
       const s = 0.0022;
       this.yaw -= dx * s;
       this.pitch -= dy * s * (this.invertY ? -1 : 1);
@@ -326,10 +380,19 @@ export class FlyCamera {
     };
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
+      const perNotch = e.deltaMode === 1 ? 3 : e.deltaMode === 2 ? 1 : 100;
+      const notches = Math.max(-4, Math.min(4, e.deltaY / perNotch));
       if (this.projection === 'orthographic') {
         // Orthographic has no forward motion that changes apparent size, so the
-        // wheel has to drive the frustum extent instead.
-        this.zoomOrtho(Math.exp(e.deltaY * 0.0012));
+        // wheel has to drive the frustum extent instead - by notches, as the fly
+        // speed is, and about the pointer. The old 12% a notch centred on the
+        // middle needed some forty notches from a whole map to a building, and
+        // the building drifted out of the picture on the way.
+        const r = canvas.getBoundingClientRect();
+        const aspect = r.width > 0 && r.height > 0 ? r.width / r.height : 1;
+        const nx = r.width > 0 ? ((e.clientX - r.left) / r.width) * 2 - 1 : 0;
+        const ny = r.height > 0 ? 1 - ((e.clientY - r.top) / r.height) * 2 : 0;
+        this.zoomOrthoAt(ORTHO_ZOOM_PER_NOTCH ** notches, nx, ny, aspect);
         return;
       }
       // In perspective the wheel tunes fly speed; a fly camera has no zoom.
@@ -345,8 +408,6 @@ export class FlyCamera {
       // `deltaY` per notch is not portable — a hundred or so in pixel mode, low
       // single digits in line mode — hence the normalisation, and the clamp so
       // one fast flick of an inertial trackpad cannot skip four decades.
-      const perNotch = e.deltaMode === 1 ? 3 : e.deltaMode === 2 ? 1 : 100;
-      const notches = Math.max(-4, Math.min(4, e.deltaY / perNotch));
       this.speed *= WHEEL_PER_NOTCH ** -notches;
       this.speed = Math.max(MIN_FLY_SPEED, Math.min(200_000, this.speed));
     };
@@ -376,10 +437,29 @@ export class FlyCamera {
   }
 
   invertY = false;
+  /** The key that flies down besides Q (`DescendKey`). */
+  descendKey: DescendKey = 'ctrl';
+  /**
+   * How far behind its position the parallel view still draws, in world units:
+   * set by the engine to the scene's reach, and put into the orthographic
+   * near plane as a negative distance. A parallel projection has no
+   * foreshortening, so what lies behind the camera's position can be drawn
+   * like anything else - and must be: without it, flying down or zooming in an
+   * isometric view sliced the ground off at the camera.
+   */
+  orthoBack = 0;
+
+  /** Whether a movement key is held: the page guards against closing then (browserKeys.ts). */
+  get flying(): boolean {
+    for (const code of this.keys) if (FLY_KEYS.has(code)) return true;
+    return this.dragging;
+  }
 
   /** Advance by `dt` seconds of wall clock. */
   update(dt: number, aspect: number, fov: number, near: number, far: number): void {
     const k = this.keys;
+    if (k.size && this.flying) flownAt = performance.now();
+    else if (this.dragging) flownAt = performance.now();
     let fwd = 0;
     let strafe = 0;
     let rise = 0;
@@ -388,7 +468,15 @@ export class FlyCamera {
     if (k.has('KeyD') || k.has('ArrowRight')) strafe += 1;
     if (k.has('KeyA') || k.has('ArrowLeft')) strafe -= 1;
     if (k.has('Space') || k.has('KeyE')) rise += 1;
-    if (k.has('KeyQ') || k.has('ControlLeft')) rise -= 1;
+    // Down: Q always, and left Ctrl or Z as the View panel's choice says. Ctrl
+    // is the default from the games, but Ctrl+W is the browser's "close tab"
+    // and a page cannot always stop it (browserKeys.ts), so it can be moved.
+    if (
+      k.has('KeyQ') ||
+      (this.descendKey === 'ctrl' && k.has('ControlLeft')) ||
+      (this.descendKey === 'z' && k.has('KeyZ'))
+    )
+      rise -= 1;
 
     // The pad adds to the keyboard rather than replacing it, so both can be used
     // at once and neither has to be "the" input device.
@@ -413,15 +501,14 @@ export class FlyCamera {
 
     const boost = k.has('ShiftLeft') || k.has('ShiftRight') ? 6 : 1;
     const slow = k.has('AltLeft') ? 0.15 : 1;
-    const v = this.speed * boost * slow * (pad.connected ? pad.speedScale : 1) * dt;
+    const scale = boost * slow * (pad.connected ? pad.speedScale : 1) * dt;
 
     // Clamp so keyboard and pad together cannot exceed full speed on an axis.
-    this.move(
-      Math.max(-1, Math.min(1, fwd)),
-      Math.max(-1, Math.min(1, strafe)),
-      Math.max(-1, Math.min(1, rise)),
-      v,
-    );
+    const f1 = Math.max(-1, Math.min(1, fwd));
+    const s1 = Math.max(-1, Math.min(1, strafe));
+    const r1 = Math.max(-1, Math.min(1, rise));
+    if (this.projection === 'orthographic') this.moveOrtho(f1, s1, r1, this.orthoHeight * ORTHO_PAN_PER_SECOND * scale);
+    else this.move(f1, s1, r1, this.speed * scale);
 
     const persp = this.perspective;
     if (
@@ -441,19 +528,41 @@ export class FlyCamera {
     const ortho = this.orthographic;
     const halfH = Math.max(1e-3, this.orthoHeight * 0.5);
     const halfW = halfH * aspect;
+    const back = Number.isFinite(this.orthoBack) ? Math.max(0, this.orthoBack) : 0;
+    const oNear = near - back;
     if (
       ortho.left !== -halfW ||
       ortho.top !== halfH ||
-      ortho.near !== near ||
+      ortho.near !== oNear ||
       ortho.far !== far
     ) {
       ortho.left = -halfW;
       ortho.right = halfW;
       ortho.top = halfH;
       ortho.bottom = -halfH;
-      ortho.near = near;
+      ortho.near = oNear;
       ortho.far = far;
       ortho.updateProjectionMatrix();
+      this.moved = true;
+    }
+
+    // A pose that went non-finite - a jump to a point with no height, a
+    // division by a zero length somewhere upstream - would leave the view
+    // empty or, as NaN compares false against every clamp, wherever the
+    // matrices happen to put it. The last good pose stands instead.
+    const p = this.position;
+    if (Number.isFinite(p.x + p.y + p.z + this.yaw + this.pitch + this.roll + this.orthoHeight)) {
+      this.good.position.copy(p);
+      this.good.yaw = this.yaw;
+      this.good.pitch = this.pitch;
+      this.good.roll = this.roll;
+      this.good.orthoHeight = this.orthoHeight;
+    } else {
+      p.copy(this.good.position);
+      this.yaw = this.good.yaw;
+      this.pitch = this.good.pitch;
+      this.roll = this.good.roll;
+      this.orthoHeight = this.good.orthoHeight;
       this.moved = true;
     }
 
@@ -516,6 +625,44 @@ export class FlyCamera {
     this.position.y += (dir.y * forward + rise) * distance;
     this.position.z += (dir.z * forward + side.z * strafe) * distance;
     this.moved = true;
+  }
+
+  /**
+   * Translate in a parallel view: forward and back move along the screen's up,
+   * sideways along its right, rise along world up - each -1..1, scaled by
+   * `distance`.
+   *
+   * Flying along the view axis, which is what forward means in perspective,
+   * changes nothing on screen in a parallel projection: W and S did nothing in
+   * an isometric view but walk the near plane through the ground. Screen-up
+   * pans the picture the way every map and isometric game pans it.
+   */
+  moveOrtho(forward: number, strafe: number, rise: number, distance: number): void {
+    if (!forward && !strafe && !rise) return;
+    const side = this.right(this.tmp2);
+    // Screen up: cross(right, forward), for the YXZ orientation the view has.
+    const sp = Math.sin(this.pitch);
+    const cp = Math.cos(this.pitch);
+    const ux = -Math.sin(this.yaw) * -sp;
+    const uz = -Math.cos(this.yaw) * -sp;
+    this.position.x += (ux * forward + side.x * strafe) * distance;
+    this.position.y += (cp * forward + rise) * distance;
+    this.position.z += (uz * forward + side.z * strafe) * distance;
+    this.moved = true;
+  }
+
+  /**
+   * Zoom the parallel view by `factor` about a point of the picture, in
+   * normalised device coordinates (0, 0 the middle): the world under that point
+   * stays under it, as maps zoom to the pointer.
+   */
+  zoomOrthoAt(factor: number, ndcX: number, ndcY: number, aspect: number): void {
+    const before = this.orthoHeight;
+    this.zoomOrtho(factor);
+    const k = 1 - this.orthoHeight / before;
+    if (!k || !Number.isFinite(ndcX + ndcY)) return;
+    const half = before * 0.5;
+    this.moveOrtho(ndcY * half * k, ndcX * half * aspect * k, 0, 1);
   }
 
   /**
@@ -642,6 +789,62 @@ export class FlyCamera {
   }
   get pitchDegrees(): number {
     return (this.pitch * 180) / Math.PI;
+  }
+}
+
+/**
+ * Mouse-look deltas with the browser's spikes taken out.
+ *
+ * Under pointer lock Chromium on Windows now and then reports one movement
+ * event of hundreds or thousands of pixels that no hand made: on the first
+ * event after the lock is granted (the pointer's jump to where the lock parks
+ * it), and at random with accelerated, high-polling mice. At the camera's
+ * 0.0022 rad a pixel, a single upward spike of 700 px is ninety degrees - the
+ * view snapped straight up into the sky and stayed there against the pitch
+ * clamp. A real flick does not arrive as one event out of nowhere: it builds
+ * over the events before it. So an event is dropped when it is large in
+ * absolute terms *and* many times what the recent events were, and the first
+ * locked event is dropped outright. Non-finite deltas are dropped too.
+ */
+export class MouseDeltaFilter {
+  /** Below this many pixels an event is always believed. */
+  static readonly FLOOR = 200;
+  /** How many times the recent movement an event may be before it is a spike. */
+  static readonly RATIO = 8;
+  /** Recent movement per event, decaying. */
+  private recent = 0;
+  private lastAt = -Infinity;
+  private skipNext = false;
+  /** Rejected events in a row: a run of them is the hand after all. */
+  private rejected = 0;
+
+  /** Start afresh: a new drag, or the lock just came (`skipFirst`). */
+  reset(skipFirst = false): void {
+    this.recent = 0;
+    this.lastAt = -Infinity;
+    this.skipNext = skipFirst;
+    this.rejected = 0;
+  }
+
+  /** Whether to turn the camera by this movement. `at` is the event's time in ms. */
+  accept(dx: number, dy: number, at: number): boolean {
+    if (!Number.isFinite(dx) || !Number.isFinite(dy)) return false;
+    const mag = Math.hypot(dx, dy);
+    if (this.skipNext) {
+      this.skipNext = false;
+      if (mag > MouseDeltaFilter.FLOOR / 4) return false;
+    }
+    // A pause forgets the pace of the movement before it.
+    if (at - this.lastAt > 250) this.recent = 0;
+    this.lastAt = at;
+    const spike = mag > MouseDeltaFilter.FLOOR && mag > MouseDeltaFilter.RATIO * Math.max(this.recent, 4);
+    if (spike && this.rejected < 2) {
+      this.rejected++;
+      return false;
+    }
+    this.rejected = 0;
+    this.recent = this.recent === 0 ? mag : this.recent * 0.6 + mag * 0.4;
+    return true;
   }
 }
 

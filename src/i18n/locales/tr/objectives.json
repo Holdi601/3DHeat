@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{zone}, {team} tarafından kaybedildi",
   "objectives.legend.neutral": "tarafsız",
   "objectives.legend.capturing": "ele geçiriliyor",
+  "objectives.allModes": "Tüm modların hedefleri birlikte",
+  "objectives.allModesTitle": "Birden çok modun savaşları birlikte gösterildiğinde hedefleri gizlenir: farklı modların bölgeleri aynı arazide üst üste biner. Yine de hepsini çizmek için işaretleyin",
   "objectives.layer.bounds": "Sınır dışı",
   "objectives.layer.boundsTitle": "Bir takımın sınır dışında olduğu yerler taralı: karşı tarafın oyun alanında ama kendi alanının dışında",
   "objectives.layout": "Düzen",

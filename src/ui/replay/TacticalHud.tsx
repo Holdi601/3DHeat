@@ -9,7 +9,7 @@ import { unitsOf } from './units';
 import { unitCategory } from './objectType';
 import { defaultEventKinds, eventRows, unitsPerMetre } from './replayData';
 import { eventWords } from './EventList';
-import { classifyEvent, isCut, nextShot, type DirectorEvent, type Shot } from './director';
+import { classifyEvent, feedFilter, isCut, latestEvents, nextShot, type DirectorEvent, type Shot } from './director';
 import { unitPrefs } from '../../state/unitsStore';
 import { int, t } from '../../i18n';
 import type { Dataset } from '../../state/types';
@@ -139,7 +139,8 @@ export function TacticalHud() {
   const mode = useStore((s) => s.mode);
   const look = useReplayStore((s) => s.look);
   const follow = useReplayStore((s) => s.follow);
-  const on = !!engine && !!dataset && mode === 'team' && look.on;
+  const held = useReplayStore((s) => s.directorHeld);
+  const on =!!engine && !!dataset && mode === 'team' && look.on;
   const events = useMemo(() => (dataset ? hudEvents(dataset) : []), [dataset]);
   const [upTo, setUpTo] = useState(0);
   const [shot, setShot] = useState<Shot | null>(null);
@@ -148,7 +149,10 @@ export function TacticalHud() {
     shot: Shot | null;
     from: { x: number; y: number; z: number };
   }>({ shot: null, from: { x: 0, y: 0, z: 0 } });
-  const timing = useRef({ last: performance.now(), eval: 0 });
+  const timing = useRef({ last: performance.now(), eval: 0, view: 0 });
+  // The units on screen, for the feed with nobody watched: their persons, and a key that changes with them.
+  const inView = useRef<Set<number>>(new Set());
+  const [inViewKey, setInViewKey] = useState('');
   const shown = useRef<Record<string, number>>({});
   const values = useRef<Record<string, HTMLSpanElement | null>>({});
   const gBar = useRef<HTMLDivElement>(null);
@@ -160,12 +164,13 @@ export function TacticalHud() {
     if (on) ensureFont();
   }, [on]);
   // The director let go: the camera is the viewer's again, where it was left.
+  // Held, likewise: resumed, it starts with a new shot from where the viewer left the camera.
   useEffect(() => {
-    if (!look.director) {
+    if (!look.director || held) {
       shotRef.current = null;
       setShot(null);
     }
-  }, [look.director]);
+  }, [look.director, held]);
 
   // Whether a person flies, worked out the first time the director asks: for every unit at once it held the frame a load ends in.
   const air = useMemo(() => {
@@ -204,9 +209,11 @@ export function TacticalHud() {
     const dt = Math.min(0.1, (wall - timing.current.last) / 1000);
     timing.current.last = wall;
     const now = engine.live.playhead;
-    const look = useReplayStore.getState().look;
+    const rs = useReplayStore.getState();
+    const look = rs.look;
 
-    if (look.director) {
+    // Held while the viewer has the camera (`directorHeld`): no shots until resumed.
+    if (look.director && !rs.directorHeld) {
       if (wall - timing.current.eval > 250 || !shotRef.current) {
         timing.current.eval = wall;
         const m = MotionModel.of(dataset);
@@ -232,6 +239,22 @@ export function TacticalHud() {
 
     const n = countUpTo(events, now);
     if (n !== upTo) setUpTo(n);
+    // Who is in view, four times a second: only needed while the feed is of the units in view.
+    if (look.panels && !look.feedAll && (shotRef.current?.person ?? rs.follow) === null && wall - timing.current.view > 250) {
+      timing.current.view = wall;
+      const w = engine.canvas.clientWidth;
+      const h = engine.canvas.clientHeight;
+      const seen = new Set<number>();
+      for (const tr of engine.liveTracks) {
+        const p = engine.toScreen(tr.x, tr.y, tr.z);
+        if (p && p[0] >= 0 && p[1] >= 0 && p[0] <= w && p[1] <= h) seen.add(tr.person);
+      }
+      const key = [...seen].sort((a, b) => a - b).join(',');
+      if (key !== inViewKey) {
+        inView.current = seen;
+        setInViewKey(key);
+      }
+    }
     if (clockEl.current) clockEl.current.textContent = `T+${clock(now - dataset.timeRange[0])}`;
     if (head.current) {
       const [t0, t1] = dataset.timeRange;
@@ -239,7 +262,7 @@ export function TacticalHud() {
     }
 
     // Telemetry, each counter easing to its value so the digits run.
-    const who = shotRef.current?.person ?? useReplayStore.getState().follow;
+    const who = shotRef.current?.person ?? rs.follow;
     const series = who !== null ? flightSeries(dataset, who, useStore.getState().team.session) : null;
     const prefs = unitPrefs();
     for (const id of TELEMETRY) {
@@ -300,10 +323,12 @@ export function TacticalHud() {
   const index = unitsOf(dataset);
   const unitName = (p: number) => index.units[index.personUnit[p]]?.name ?? `#${p}`;
   const sub = subject !== null ? index.units[index.personUnit[subject]] : undefined;
-  const kills: number[] = [];
-  for (let i = upTo - 1; i >= 0 && kills.length < 5; i--) if (events[i].kind === 'kill') kills.push(i);
-  const ticker: number[] = [];
-  for (let i = upTo - 1; i >= 0 && ticker.length < 7; i--) ticker.push(i);
+  // The feed of the watched unit, or of those in view; every unit's when asked (`feedAll`).
+  const mine = feedFilter(look.feedAll, subject, inView.current);
+  const kills = latestEvents(events, upTo, 5, (e) => e.kind === 'kill' && mine(e.person));
+  const ticker = latestEvents(events, upTo, 7, (e) => mine(e.person));
+  let killCount = 0;
+  for (let i = 0; i < upTo; i++) if (events[i].kind === 'kill' && mine(events[i].person)) killCount++;
   const t0 = dataset.timeRange[0];
   const seek = (e: MouseEvent<HTMLDivElement>) => {
     const b = e.currentTarget.getBoundingClientRect();
@@ -317,7 +342,12 @@ export function TacticalHud() {
       <div className="tac-top">
         <span className="tac-title">{t('replay.look.hudTitle')}</span>
         <span ref={clockEl} className="tac-clock" />
-        {look.director && shot && (
+        {look.director && held && (
+          <button className="tac-shot tac-resume" onClick={() => useReplayStore.getState().holdDirector(false)} title={t('replay.look.part.directorTitle')}>
+            {t('replay.look.resume')}
+          </button>
+        )}
+        {look.director && !held && shot && (
           <span className="tac-shot" key={`${shot.person}:${shot.kind}`}>
             {t('replay.look.director')} · {t(`replay.look.shot.${shot.kind}`)} · {unitName(shot.person)}
           </span>
@@ -358,7 +388,7 @@ export function TacticalHud() {
             <div className="tac-panel tac-feed">
               <div className="tac-head">
                 <span>{t('replay.look.killFeed')}</span>
-                <span className="tac-dim">{int(events.slice(0, upTo).filter((e) => e.kind === 'kill').length)}</span>
+                <span className="tac-dim">{int(killCount)}</span>
               </div>
               {kills.length === 0 && <div className="tac-dim">{t('replay.look.none')}</div>}
               {kills.map((i) => (

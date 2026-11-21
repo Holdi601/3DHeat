@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{zone} je izgubila ekipa {team}",
   "objectives.legend.neutral": "nevtralna",
   "objectives.legend.capturing": "se zavzema",
+  "objectives.allModes": "Cilji vseh načinov skupaj",
+  "objectives.allModesTitle": "Ko so hkrati prikazane bitke več načinov, so njihovi cilji skriti: območja različnih načinov se prekrivajo na istem terenu. Označite, da se vseeno narišejo vsi",
   "objectives.layer.bounds": "Izven meja",
   "objectives.layer.boundsTitle": "Šrafirano, kjer je ekipa izven meja: v igralnem območju druge strani, a zunaj svojega",
   "objectives.layout": "Postavitev",

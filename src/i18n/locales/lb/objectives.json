@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{zone} vun {team} verluer",
   "objectives.legend.neutral": "neutral",
   "objectives.legend.capturing": "gëtt eruewert",
+  "objectives.allModes": "Ziler vun alle Modi zesummen",
+  "objectives.allModesTitle": "Ginn Schluechte vu méi Modi gläichzäiteg gewisen, bleiwen hir Ziler verstoppt: Zonen vu verschiddene Modi iwwerlappe sech um selwechten Terrain. Ukräizen, fir se trotzdem all ze zeechnen",
   "objectives.layer.bounds": "Ausserhalb",
   "objectives.layer.boundsTitle": "Schrafféiert, wou eng Equipe ausserhalb ass: am Spillberäich vun der anerer Säit, mee net am eegenen",
   "objectives.layout": "Layout",

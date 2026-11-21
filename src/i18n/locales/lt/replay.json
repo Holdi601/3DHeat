@@ -543,5 +543,8 @@
   "replay.card.hidden": "Įrašas jį šiuo metu slepia (nesunaikintas).",
   "replay.card.disabled": "Išvestas iš kovos (išjungtas), nesunaikintas.",
   "replay.aids.links": "Ryšiai",
-  "replay.aids.linksTitle": "Ginklas iki jo nešėjo (punktyru) ir maršruto taškas iki kito, pagal Parent ir Next"
+  "replay.aids.linksTitle": "Ginklas iki jo nešėjo (punktyru) ir maršruto taškas iki kito, pagal Parent ir Next",
+  "replay.look.part.feedAll": "Visų vienetų įvykiai",
+  "replay.look.part.feedAllTitle": "Visų vienetų sunaikinimų ir įvykių srautas. Išjungta: tik stebimo vieneto, o nestebint jokio – matomų",
+  "replay.look.resume": "Tęsti režisieriaus darbą"
 }

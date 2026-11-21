@@ -543,5 +543,8 @@
   "replay.card.hidden": "A felvétel most elrejti (nem semmisült meg).",
   "replay.card.disabled": "Harcképtelen (letiltva), nem semmisült meg.",
   "replay.aids.links": "Kapcsolatok",
-  "replay.aids.linksTitle": "Fegyver az indítójáig (szaggatott) és útpont a következőig, a Parent és Next alapján"
+  "replay.aids.linksTitle": "Fegyver az indítójáig (szaggatott) és útpont a következőig, a Parent és Next alapján",
+  "replay.look.part.feedAll": "Minden egység eseményei",
+  "replay.look.part.feedAllTitle": "Minden egység kilövései és eseményei. Ki: csak a követett egységé, vagy ha egyiket sem követi, a látható egységeké",
+  "replay.look.resume": "Rendező folytatása"
 }

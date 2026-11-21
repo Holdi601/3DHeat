@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{zone} u humb nga {team}",
   "objectives.legend.neutral": "neutrale",
   "objectives.legend.capturing": "po kapet",
+  "objectives.allModes": "Objektivat e të gjitha mënyrave së bashku",
+  "objectives.allModesTitle": "Kur shfaqen njëherësh beteja të disa mënyrave, objektivat e tyre fshihen: zonat e mënyrave të ndryshme mbivendosen në të njëjtin terren. Shënojeni për t'i vizatuar të gjitha gjithsesi",
   "objectives.layer.bounds": "Jashtë kufijve",
   "objectives.layer.boundsTitle": "I vizatuar me viza ku një ekip është jashtë kufijve: brenda zonës së lojës së palës tjetër por jashtë së vetës",
   "objectives.layout": "Paraqitja",

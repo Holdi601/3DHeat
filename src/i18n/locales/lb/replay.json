@@ -543,5 +543,8 @@
   "replay.card.hidden": "Vun der Opnam elo verstoppt (net zerstéiert).",
   "replay.card.disabled": "Ausser Gefecht (desaktivéiert), net zerstéiert.",
   "replay.aids.links": "Verbindungen",
-  "replay.aids.linksTitle": "Eng Waff bei hiren Dréier (gestréchelt) an e Wee-Punkt bei deen nächsten, aus Parent an Next"
+  "replay.aids.linksTitle": "Eng Waff bei hiren Dréier (gestréchelt) an e Wee-Punkt bei deen nächsten, aus Parent an Next",
+  "replay.look.part.feedAll": "Evenementer vun allen Eenheeten",
+  "replay.look.part.feedAllTitle": "Ofschoss- an Evenementslëscht vun allen Eenheeten. Aus: nëmmen déi vun der observéierter Eenheet, oder ouni observéiert Eenheet déi vun de sichtbaren",
+  "replay.look.resume": "Regie weiderféieren"
 }

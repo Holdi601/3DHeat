@@ -6,6 +6,7 @@
  * counters; nothing per unit.
  */
 
+import { GPU_DEPTH_TEST } from '../depth';
 import { INSTANCE_STRIDE } from '../../figures/instances';
 import { KEY_U32, KEYS_PER_BUFFER, sameKeys, type GpuTrackStore } from '../gpuTracks/store';
 import { FINISH_WGSL, MARKS_WGSL, PLACE_WGSL, TRAIL_WGSL } from '../gpuTracks/shader';
@@ -131,7 +132,7 @@ export class GpuTracks {
       vertex: { module: tm, entryPoint: 'vsTrail', buffers: [{ arrayStride: 32, attributes: [{ shaderLocation: 0, offset: 0, format: 'float32x4' }, { shaderLocation: 1, offset: 16, format: 'float32x4' }] }] },
       fragment: { module: tm, entryPoint: 'fsTrail', targets: [{ format: colorFormat, blend: { color: { srcFactor: 'src-alpha', dstFactor: 'one-minus-src-alpha', operation: 'add' }, alpha: { srcFactor: 'one', dstFactor: 'one-minus-src-alpha', operation: 'add' } } }] },
       primitive: { topology: 'line-list' },
-      depthStencil: { format: depthFormat, depthWriteEnabled: false, depthCompare: 'less-equal' },
+      depthStencil: { format: depthFormat, depthWriteEnabled: false, depthCompare: GPU_DEPTH_TEST },
     });
   }
 

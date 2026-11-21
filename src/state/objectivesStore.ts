@@ -20,6 +20,8 @@ export interface ObjectivesState {
   on: boolean;
   layers: Record<ObjectiveLayer, boolean>;
   labels: boolean;
+  /** Battles of several modes shown together: every mode's objectives, rather than none (`objectivesOfOneMode`). */
+  allModes: boolean;
   /** Each battle's capture zones over time, by match name. */
   timelines: Record<string, ObjectiveTimeline>;
   /**
@@ -34,6 +36,7 @@ export interface ObjectivesState {
   setOn: (on: boolean) => void;
   setLayer: (layer: ObjectiveLayer, on: boolean) => void;
   setLabels: (on: boolean) => void;
+  setAllModes: (on: boolean) => void;
   addTimelines: (list: ObjectiveTimeline[]) => void;
   addLite: (list: { match: string; objectives: Objective[]; ownerLabels?: Record<number, string> }[]) => void;
 }
@@ -44,14 +47,16 @@ function saved(): {
   on: boolean;
   layers: Record<ObjectiveLayer, boolean>;
   labels: boolean;
+  allModes: boolean;
 } {
   const layers = Object.fromEntries(OBJECTIVE_LAYERS.map((l) => [l, true])) as Record<ObjectiveLayer, boolean>;
-  const out = { on: true, layers, labels: true };
+  const out = { on: true, layers, labels: true, allModes: false };
   try {
     const v = JSON.parse(localStorage.getItem(KEY) ?? 'null');
     if (v && typeof v === 'object') {
       if (typeof v.on === 'boolean') out.on = v.on;
       if (typeof v.labels === 'boolean') out.labels = v.labels;
+      if (typeof v.allModes === 'boolean') out.allModes = v.allModes;
       for (const l of OBJECTIVE_LAYERS) if (typeof v.layers?.[l] === 'boolean') layers[l] = v.layers[l];
     }
   } catch {
@@ -62,7 +67,7 @@ function saved(): {
 
 function save(s: ObjectivesState): void {
   try {
-    localStorage.setItem(KEY, JSON.stringify({ on: s.on, layers: s.layers, labels: s.labels }));
+    localStorage.setItem(KEY, JSON.stringify({ on: s.on, layers: s.layers, labels: s.labels, allModes: s.allModes }));
   } catch {
     // The choice lasts this session only.
   }
@@ -84,6 +89,10 @@ export const useObjectivesStore = create<ObjectivesState>((set, get) => ({
   },
   setLabels: (labels) => {
     set({ labels, rev: get().rev + 1 });
+    save(get());
+  },
+  setAllModes: (allModes) => {
+    set({ allModes, rev: get().rev + 1 });
     save(get());
   },
   addTimelines: (list) => {

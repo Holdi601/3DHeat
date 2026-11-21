@@ -400,6 +400,14 @@ interface ReplayState extends Saved {
   setGeo: (p: Partial<GeoSettings>) => void;
   setLimits: (p: Partial<AltitudeLimits>) => void;
   setLook: (p: Partial<TacticalLook>) => void;
+  /**
+   * The viewer took the camera (a jump to an event, a moment, a kill): the
+   * tactical display's director stops filming until it is resumed, so the
+   * jump is not undone by its next shot. Switching the director on again
+   * resumes it.
+   */
+  directorHeld: boolean;
+  holdDirector: (held: boolean) => void;
   setRanges: (p: Partial<RangeSettings>) => void;
 }
 
@@ -462,7 +470,14 @@ export const useReplayStore = create<ReplayState>((set, get) => {
     setChart: (p) => keep({ chart: { ...get().chart, ...p } }),
     setGeo: (p) => keep({ geo: { ...get().geo, ...p } }),
     setLimits: (p) => keep({ limits: { ...get().limits, ...p } }),
-    setLook: (p) => keep({ look: { ...get().look, ...p } }),
+    setLook: (p) => {
+      keep({ look: { ...get().look, ...p } });
+      if (p.director !== undefined && get().directorHeld) set({ directorHeld: false });
+    },
+    directorHeld: false,
+    holdDirector: (directorHeld) => {
+      if (get().directorHeld !== directorHeld) set({ directorHeld });
+    },
     setRanges: (p) => keep({ ranges: { ...get().ranges, ...p } }),
     setOverlay: (p) => set({ overlay: { ...get().overlay, ...p } }),
     setDropLines: (dropLines) => set({ dropLines }),

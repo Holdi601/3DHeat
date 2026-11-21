@@ -4,11 +4,14 @@
  * explained is what is drawn, and a ramp the user edited shows as edited.
  */
 
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { t } from '../../i18n';
 import type { Rgb } from '../../race/geometry';
 import { rgbCss } from '../../race/geometry';
-import { useHelpStore } from '../../state/helpStore';
+import { lastPointer, useHelpStore } from '../../state/helpStore';
+import { useMatchStore } from '../../state/matchStore';
+import { useEngine } from '../EngineContext';
+import { targetInPage, type HelpTarget } from './helpTarget';
 import { useRaceStore } from '../../state/raceStore';
 import { heatModeFor } from '../../data/lines';
 import { useStore } from '../../state/store';
@@ -147,21 +150,65 @@ function PanelKey() {
 }
 
 function MatchKey() {
+  // Counter-Strike's sides, rounds and their reasons only where a Counter-Strike
+  // scoreboard is loaded: a War Thunder or DCS battle has none of them, and
+  // explaining its labels with them was wrong.
+  const cs = useMatchStore((s) => s.docs.length > 0);
   return (
     <>
       <KeyGroup title={t('help.match.title')}>
-        <KeyRow color="#e0a43c">{t('help.match.t')}</KeyRow>
-        <KeyRow color="#5d9be0">{t('help.match.ct')}</KeyRow>
-        <KeyRow color="#8d96a5">{t('help.match.none')}</KeyRow>
-        <KeyRow>{t('help.match.notIn3d')}</KeyRow>
-        <KeyRow>{t('help.match.rounds')}</KeyRow>
-        <KeyRow>{t('help.match.reasons')}</KeyRow>
-        <KeyRow>{t('help.match.after')}</KeyRow>
-        <KeyRow color="#4ade80">{t('help.match.plus')}</KeyRow>
-        <KeyRow color="#ef4444">{t('help.match.minus')}</KeyRow>
+        {cs ? (
+          <>
+            <KeyRow color="#e0a43c">{t('help.match.t')}</KeyRow>
+            <KeyRow color="#5d9be0">{t('help.match.ct')}</KeyRow>
+            <KeyRow color="#8d96a5">{t('help.match.none')}</KeyRow>
+            <KeyRow>{t('help.match.notIn3d')}</KeyRow>
+            <KeyRow>{t('help.match.rounds')}</KeyRow>
+            <KeyRow>{t('help.match.reasons')}</KeyRow>
+            <KeyRow>{t('help.match.after')}</KeyRow>
+            <KeyRow color="#4ade80">{t('help.match.plus')}</KeyRow>
+            <KeyRow color="#ef4444">{t('help.match.minus')}</KeyRow>
+          </>
+        ) : (
+          <KeyRow>{t('help.match.teams')}</KeyRow>
+        )}
       </KeyGroup>
       <ViewKey />
     </>
+  );
+}
+
+/**
+ * What is under the pointer, explained: the label or figure F1 was pressed
+ * over, and whatever the pointer moves onto while the key is open - read a few
+ * times a second at most (`helpTarget.ts`).
+ */
+function AtPointer() {
+  const engine = useEngine();
+  const [target, setTarget] = useState<HelpTarget | null>(null);
+  useEffect(() => {
+    const figureAt = (x: number, y: number) => {
+      if (!engine) return false;
+      const r = engine.canvas.getBoundingClientRect();
+      if (x < r.left || y < r.top || x > r.right || y > r.bottom) return false;
+      return engine.figureAt(x - r.left, y - r.top, true) !== null;
+    };
+    const read = () => setTarget(targetInPage(lastPointer.x, lastPointer.y, figureAt));
+    read();
+    let timer = 0;
+    const onMove = () => {
+      if (!timer) timer = window.setTimeout(() => ((timer = 0), read()), 150);
+    };
+    window.addEventListener('pointermove', onMove, { passive: true });
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      window.clearTimeout(timer);
+    };
+  }, [engine]);
+  return (
+    <KeyGroup title={t('help.at.title')}>
+      <KeyRow>{target ? t(`help.at.${target}`) : t('help.at.none')}</KeyRow>
+    </KeyGroup>
   );
 }
 
@@ -179,6 +226,7 @@ export function HelpPanel() {
           ×
         </button>
       </div>
+      <AtPointer />
       {tab === 'race' ? (
         <RaceKey />
       ) : tab === 'match' ? (

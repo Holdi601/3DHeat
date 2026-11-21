@@ -543,5 +543,8 @@
   "replay.card.hidden": "Ieraksts to šobrīd slēpj (nav iznīcināts).",
   "replay.card.disabled": "Ārpus kaujas (atspējots), nav iznīcināts.",
   "replay.aids.links": "Saites",
-  "replay.aids.linksTitle": "Ierocis līdz tā nesējam (raustīta) un maršruta punkts līdz nākamajam, no Parent un Next"
+  "replay.aids.linksTitle": "Ierocis līdz tā nesējam (raustīta) un maršruta punkts līdz nākamajam, no Parent un Next",
+  "replay.look.part.feedAll": "Visu vienību notikumi",
+  "replay.look.part.feedAllTitle": "Visu vienību iznīcināšanas un notikumu plūsma. Izslēgts: tikai vērotās vienības vai, ja neviena netiek vērota, redzamo",
+  "replay.look.resume": "Atsākt režisoru"
 }

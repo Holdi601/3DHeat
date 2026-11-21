@@ -75,5 +75,20 @@
   "help.race.lost": "izgubljeno",
   "help.race.why": "Karta uzroka i numerirane značke: na što je otišlo vrijeme",
   "help.race.mistakes": "Karta pogrešaka: koliko je krugova ovdje pogriješilo",
-  "help.race.strips": "Dvije trake iznad grafikona su karta vremena i karta uzroka, duž kruga."
+  "help.race.strips": "Dvije trake iznad grafikona su karta vremena i karta uzroka, duž kruga.",
+  "help.match.teams": "Each side keeps its colour from the 3D view in the scoreboard.",
+  "help.at.title": "Under the pointer",
+  "help.at.none": "Point at a label or a figure to have it explained here.",
+  "help.at.zone": "Capture zone: its letter on the colour of the side holding it (grey: nobody). The ring fills in the colour of the side capturing it.",
+  "help.at.site": "Bomb site (Counter-Strike): its name, in amber while its round is shown.",
+  "help.at.marker": "Map marker: a spawn, airfield, helipad, base or target, in the colour of the side it belongs to. A spawn's number is how many began there.",
+  "help.at.unit": "Unit label: its name and the values the label rules ask for. The stripe is its team's colour; a yellow edge marks the unit you picked, blue the one followed.",
+  "help.at.event": "Event: something that happened here in the last ten seconds (a kill, a hit, a launch), fading as it ages.",
+  "help.at.lock": "Lock: a radar or sensor holding a target, with its range.",
+  "help.at.engage": "Engagement: who is aiming at or shooting at whom, with the range.",
+  "help.at.braa": "Between the two units in question: bearing, range, altitude and aspect from the first to the second.",
+  "help.at.place": "Place name from the world map: a city, a village or an airfield.",
+  "help.at.grid": "Map grid: the square's name, or a glideslope's mark.",
+  "help.at.raceLabel": "Course label: a corner, a finding or a statistic of the course; click it for more.",
+  "help.at.figure": "A unit's figure: its type's shape at its true size, in its team's colour."
 }

@@ -543,5 +543,8 @@
   "replay.card.hidden": "Снимак га тренутно скрива (није уништен).",
   "replay.card.disabled": "Ван борбе (онемогућен), није уништен.",
   "replay.aids.links": "Везе",
-  "replay.aids.linksTitle": "Оружје до лансера (испрекидано) и тачка руте до следеће, из Parent и Next"
+  "replay.aids.linksTitle": "Оружје до лансера (испрекидано) и тачка руте до следеће, из Parent и Next",
+  "replay.look.part.feedAll": "Догађаји свих јединица",
+  "replay.look.part.feedAllTitle": "Приказ уништења и догађаја свих јединица. Искључено: само праћене јединице, а кад ниједна није праћена, оних у видном пољу",
+  "replay.look.resume": "Настави режисера"
 }

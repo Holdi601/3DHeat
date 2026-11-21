@@ -1,7 +1,8 @@
 /**
- * The near plane a followed unit needs. A streamed world's views keep the
- * near plane out at up to 10 m for depth precision over a 1,500 km reach
- * (`STREAM_NEAR_CAP`), which cuts away a 4 m missile or a 15 m jet the chase
+ * The near plane a followed unit needs. In the classic depth layout a
+ * streamed world's views keep the near plane out at up to 10 m for depth
+ * precision over a 1,500 km reach (`CLASSIC_STREAM_NEAR_CAP`, depth.ts; under
+ * reverse-Z it is centimetres anyway), which cuts away a 4 m missile or a 15 m jet the chase
  * camera follows from closer than that: it simply vanishes. While a unit is
  * followed the plane comes in to a tenth of the camera's distance to it, so
  * however close the camera zooms the unit stays whole, and only as far in as

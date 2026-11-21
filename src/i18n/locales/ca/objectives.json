@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{zone} perduda per {team}",
   "objectives.legend.neutral": "neutral",
   "objectives.legend.capturing": "en captura",
+  "objectives.allModes": "Objectius de tots els modes alhora",
+  "objectives.allModesTitle": "Quan es mostren batalles de diversos modes alhora, els seus objectius queden amagats: les zones de modes diferents se superposen al mateix terreny. Marqueu-ho per dibuixar-los tots igualment",
   "objectives.layer.bounds": "Fora de límits",
   "objectives.layer.boundsTitle": "Ratllat on un equip és fora de límits: dins l'àrea de joc de l'altre bàndol però fora de la seva",
   "objectives.layout": "Disposició",

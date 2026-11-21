@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{zone} tabt af {team}",
   "objectives.legend.neutral": "neutral",
   "objectives.legend.capturing": "indtages",
+  "objectives.allModes": "Mål for alle tilstande samlet",
+  "objectives.allModesTitle": "Når slag fra flere tilstande vises samtidig, skjules deres mål: zoner fra forskellige tilstande overlapper på samme terræn. Sæt flueben for at tegne dem alle alligevel",
   "objectives.layer.bounds": "Uden for området",
   "objectives.layer.boundsTitle": "Skraveret hvor et hold er uden for området: inden for den anden sides spilleområde, men uden for sit eget",
   "objectives.layout": "Layout",

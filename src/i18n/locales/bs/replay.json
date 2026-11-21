@@ -543,5 +543,8 @@
   "replay.card.hidden": "Snimak ga trenutno skriva (nije uništen).",
   "replay.card.disabled": "Izvan borbe (onemogućen), nije uništen.",
   "replay.aids.links": "Veze",
-  "replay.aids.linksTitle": "Oružje do lansera (isprekidano) i tačka rute do sljedeće, iz Parent i Next"
+  "replay.aids.linksTitle": "Oružje do lansera (isprekidano) i tačka rute do sljedeće, iz Parent i Next",
+  "replay.look.part.feedAll": "Događaji svih jedinica",
+  "replay.look.part.feedAllTitle": "Prikaz uništenja i događaja svih jedinica. Isključeno: samo praćene jedinice, a kad nijedna nije praćena, onih u vidnom polju",
+  "replay.look.resume": "Nastavi reditelja"
 }

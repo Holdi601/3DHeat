@@ -543,5 +543,8 @@
   "replay.card.hidden": "Masqué par l'enregistrement en ce moment (pas détruit).",
   "replay.card.disabled": "Hors de combat (désactivé), pas détruit.",
   "replay.aids.links": "Liens",
-  "replay.aids.linksTitle": "Une arme vers son lanceur (en tirets) et un point de passage vers le suivant, d'après Parent et Next"
+  "replay.aids.linksTitle": "Une arme vers son lanceur (en tirets) et un point de passage vers le suivant, d'après Parent et Next",
+  "replay.look.part.feedAll": "Événements de toutes les unités",
+  "replay.look.part.feedAllTitle": "Fil des destructions et des événements de toutes les unités. Désactivé : seulement ceux de l'unité suivie ou, sans unité suivie, ceux des unités visibles",
+  "replay.look.resume": "Reprendre la réalisation"
 }

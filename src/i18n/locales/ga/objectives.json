@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{zone} caillte ag {team}",
   "objectives.legend.neutral": "neodrach",
   "objectives.legend.capturing": "á ghabháil",
+  "objectives.allModes": "Cuspóirí gach mód le chéile",
+  "objectives.allModesTitle": "Nuair a thaispeántar cathanna roinnt mód le chéile, folaítear a gcuspóirí: forluíonn criosanna mód éagsúil ar an talamh céanna. Ticeáil chun iad uile a tharraingt mar sin féin",
   "objectives.layer.bounds": "Lasmuigh de theorainn",
   "objectives.layer.boundsTitle": "Línithe áit a bhfuil foireann lasmuigh de theorainn: laistigh de limistéar imeartha an taobh eile ach lasmuigh dá cheann féin",
   "objectives.layout": "Leagan amach",

@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{zone} ztratil(a) {team}",
   "objectives.legend.neutral": "neutrální",
   "objectives.legend.capturing": "obsazuje se",
+  "objectives.allModes": "Cíle všech režimů najednou",
+  "objectives.allModesTitle": "Bitvy více režimů zobrazené najednou mají cíle skryté: zóny různých režimů se překrývají na stejném terénu. Zaškrtněte pro zobrazení všech i tak",
   "objectives.layer.bounds": "Mimo hranice",
   "objectives.layer.boundsTitle": "Šrafováno tam, kde je tým mimo hranice: v hracím prostoru druhé strany, ale mimo vlastní",
   "objectives.layout": "Rozložení",

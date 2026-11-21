@@ -5,6 +5,7 @@
  * same blending, the same depth writes, the same scene uniforms.
  */
 
+import { GPU_DEPTH_TEST } from '../depth';
 import type { FigureBatch, FigureMesh } from '../../figures/instances';
 import { INSTANCE_STRIDE, MESH_STRIDE } from '../../figures/instances';
 import { figureWgsl, seeThrough } from '../figureShaders';
@@ -95,7 +96,7 @@ export class GpuFigures {
       },
       fragment: { module, entryPoint: 'fsFigure', constants: { alphaPass }, targets: [{ format: colorFormat, blend }] },
       primitive: { topology: 'triangle-list' },
-      depthStencil: { format: depthFormat, depthWriteEnabled, depthCompare: 'less-equal' },
+      depthStencil: { format: depthFormat, depthWriteEnabled, depthCompare: GPU_DEPTH_TEST },
     });
     this.pipeline = pipeline(1, true);
     this.seePipeline = pipeline(2, false);

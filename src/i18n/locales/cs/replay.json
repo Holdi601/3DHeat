@@ -543,5 +543,8 @@
   "replay.card.hidden": "Záznam jej teď skrývá (nezničen).",
   "replay.card.disabled": "Vyřazen z boje (neaktivní), nezničen.",
   "replay.aids.links": "Vazby",
-  "replay.aids.linksTitle": "Zbraň k jejímu nosiči (čárkovaně) a bod trasy k dalšímu, podle Parent a Next"
+  "replay.aids.linksTitle": "Zbraň k jejímu nosiči (čárkovaně) a bod trasy k dalšímu, podle Parent a Next",
+  "replay.look.part.feedAll": "Události všech jednotek",
+  "replay.look.part.feedAllTitle": "Přehled zničení a událostí všech jednotek. Vypnuto: jen sledované jednotky, a když žádná sledovaná není, těch v záběru",
+  "replay.look.resume": "Obnovit režiséra"
 }

@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{team}이(가) {zone} 상실",
   "objectives.legend.neutral": "중립",
   "objectives.legend.capturing": "점령 중",
+  "objectives.allModes": "모든 모드의 목표 함께 표시",
+  "objectives.allModesTitle": "여러 모드의 전투를 함께 표시하면 목표가 숨겨집니다. 서로 다른 모드의 구역이 같은 지형에 겹치기 때문입니다. 그래도 모두 그리려면 선택하세요",
   "objectives.layer.bounds": "경계 밖",
   "objectives.layer.boundsTitle": "팀이 경계 밖인 곳을 빗금으로 표시: 상대편 플레이 영역 안이지만 자기 영역 밖",
   "objectives.layout": "레이아웃",

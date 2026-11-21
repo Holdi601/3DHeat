@@ -239,6 +239,26 @@ export function battleMode(j: Record<string, unknown>): {
   return { mode, modeName: str(battle.missionModeName) || mode };
 }
 
+/**
+ * The battles whose objectives are drawn: all of them while they are of one
+ * mode, none when battles of several modes are shown together - a Conquest's
+ * zones over a Domination's are on the same ground and say nothing of either -
+ * unless `allModes` asks for every one. A battle whose name says no mode
+ * counts as of the others'. Cheap: it runs every frame.
+ */
+export function objectivesOfOneMode<T extends { match: string }>(sources: T[], allModes: boolean): T[] {
+  if (allModes || sources.length < 2) return sources;
+  let mode = '';
+  for (const s of sources) {
+    const m = modeFromName(s.match);
+    if (!m) continue;
+    if (!mode) mode = m;
+    else if (m.toLowerCase() !== mode.toLowerCase()) return NONE;
+  }
+  return sources;
+}
+const NONE: never[] = [];
+
 /** A battle's mode from its file or match name: `<map>_<difficulty>_<Mode>_<date>...` ("Conq1", "Dom"); '' when it does not say. */
 export function modeFromName(name: string): string {
   const m = /_(?:AB|RB|SB|EC|arcade|realistic|simulator)_([A-Za-z]+\d*)_\d{4}-\d{2}-\d{2}/i.exec(name);

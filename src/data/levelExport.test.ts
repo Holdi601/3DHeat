@@ -2,6 +2,7 @@ import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { cameraForExtent, horizontalExtent } from './calibrate';
+import { viewNearFor } from '../render/depth';
 import { classifyParts, splitByClass } from './classify';
 import { parseGlb } from './modelParse';
 import { simplifyMesh } from './simplify';
@@ -145,8 +146,9 @@ suite('exported Unreal levels', { timeout: PARSE_BUDGET }, () => {
       const framing = extent / 2 / Math.tan(((65 / 2) * Math.PI) / 180);
       expect(widened.far).toBeGreaterThan(framing);
       // ...without giving up so much depth precision that the occlusion test
-      // cannot tell a wall from what is behind it.
-      expect(widened.far / widened.near).toBeLessThanOrEqual(100_000);
+      // cannot tell a wall from what is behind it, where the depth buffer's
+      // layout depends on the ratio (render/depth.ts).
+      expect(widened.far / viewNearFor({ near: widened.near, far: widened.far, reverse: false, grow: false, outside: 0, above: 0, streamed: false })).toBeLessThanOrEqual(100_000);
     });
 
     it(`${name} points its ground upward`, () => {

@@ -7,7 +7,7 @@
 
 import type { Bounds } from '../../state/types';
 import type { FrameParams, RangeDraw } from '../types';
-import { compileProgram, UniformCache } from './glutil';
+import { CLIP_NEGATIVE_ONE_TO_ONE, CLIP_LOWER_LEFT, CLIP_ZERO_TO_ONE, compileProgram, UniformCache, type ClipControl } from './glutil';
 import { SHELL_FLOATS, shellMesh } from '../../ranges/shells';
 import { SHELL_GLSL_FS, SHELL_GLSL_VS } from '../../ranges/shellShaders';
 import { CAPTURE_GLSL_FS, CAPTURE_GLSL_VS, FACES, GROUND_GLSL_FS, GROUND_GLSL_VS, MAX_VIEWS, VIEW_FACE, VIEW_LAYERS } from '../../ranges/viewshedShaders';
@@ -54,7 +54,15 @@ export class GlRanges {
   private readonly groundCol = new Float32Array(MAX_VIEWS * 4);
   private readonly groundDir = new Float32Array(MAX_VIEWS * 4);
 
-  constructor(private readonly gl: WebGL2RenderingContext) {
+  /**
+   * `clip`: the clip control a reverse-Z context draws with (render/depth.ts). The
+   * views are taken the classic way round, in a depth array of their own, so it is
+   * turned back for them; the scene's ground and shells test the scene's way.
+   */
+  constructor(
+    private readonly gl: WebGL2RenderingContext,
+    private readonly clip: ClipControl | null = null,
+  ) {
     const make = (vs: string, fs: string, label: string) => {
       const prog = compileProgram(gl, vs, fs, label);
       return { prog, u: new UniformCache(gl, prog) };
@@ -160,6 +168,7 @@ export class GlRanges {
     gl.enable(gl.DEPTH_TEST);
     gl.depthMask(true);
     gl.depthFunc(gl.LESS);
+    this.clip?.clipControlEXT(CLIP_LOWER_LEFT, CLIP_NEGATIVE_ONE_TO_ONE);
     gl.viewport(0, 0, VIEW_FACE, VIEW_FACE);
     for (const layer of todo) {
       const v = r.views[Math.floor(layer / 6)]!;
@@ -177,7 +186,13 @@ export class GlRanges {
     }
     gl.bindVertexArray(null);
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    gl.depthFunc(gl.LEQUAL);
+    this.clip?.clipControlEXT(CLIP_LOWER_LEFT, CLIP_ZERO_TO_ONE);
+    gl.depthFunc(this.sceneTest);
+  }
+
+  /** The scene's depth test: greater-or-equal under reverse-Z. */
+  private get sceneTest(): number {
+    return this.clip ? this.gl.GEQUAL : this.gl.LEQUAL;
   }
 
   private bindViews(u: UniformCache, params: FrameParams, r: RangeDraw): void {
@@ -222,9 +237,11 @@ export class GlRanges {
     gl.enable(gl.BLEND);
     gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     gl.depthMask(false);
-    gl.depthFunc(gl.LEQUAL);
+    gl.depthFunc(this.sceneTest);
     gl.enable(gl.POLYGON_OFFSET_FILL);
-    gl.polygonOffset(-1, -4);
+    // Pulled towards the camera, which is up under reverse-Z.
+    if (this.clip) gl.polygonOffset(1, 4);
+    else gl.polygonOffset(-1, -4);
     for (const m of near) this.drawMesh(m);
     gl.disable(gl.POLYGON_OFFSET_FILL);
     gl.bindVertexArray(null);
@@ -255,7 +272,7 @@ export class GlRanges {
     gl.enable(gl.BLEND);
     gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE, gl.ZERO, gl.ONE);
     gl.depthMask(false);
-    gl.depthFunc(gl.LEQUAL);
+    gl.depthFunc(this.sceneTest);
     gl.bindVertexArray(this.vao);
     gl.bindBuffer(gl.ARRAY_BUFFER, this.instBuf);
     this.instPointers(0);

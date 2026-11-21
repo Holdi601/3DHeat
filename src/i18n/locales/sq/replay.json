@@ -543,5 +543,8 @@
   "replay.card.hidden": "I fshehur nga regjistrimi në këtë moment (jo i shkatërruar).",
   "replay.card.disabled": "Jashtë luftimit (i çaktivizuar), jo i shkatërruar.",
   "replay.aids.links": "Lidhjet",
-  "replay.aids.linksTitle": "Një armë te lëshuesi i saj (me vija) dhe një pikë rruge te tjetra, nga Parent dhe Next"
+  "replay.aids.linksTitle": "Një armë te lëshuesi i saj (me vija) dhe një pikë rruge te tjetra, nga Parent dhe Next",
+  "replay.look.part.feedAll": "Ngjarjet e të gjitha njësive",
+  "replay.look.part.feedAllTitle": "Lista e shkatërrimeve dhe ngjarjeve të të gjitha njësive. Joaktive: vetëm e njësisë së ndjekur, ose pa njësi të ndjekur, e atyre që duken",
+  "replay.look.resume": "Rifillo regjisorin"
 }

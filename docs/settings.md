@@ -45,7 +45,7 @@ Other units you can pick for one quantity: distance km, mi, NM; speed km/h, m/s,
 
 ![Help mode: what the colours mean](assets/img/en/help.webp)
 
-Press `?` or `F1`, or click the **?** button. It shows *What the colours mean*: legends for the 3D view, the heat ramps, team colours, the level's colours, the panels' status colours, the match panel and the race view. It stays on until you switch it off. In the Match tab it explains the match panel's colours too.
+Press `?` or `F1`, or click the **?** button. It shows *What the colours mean*: legends for the 3D view, the heat ramps, team colours, the level's colours, the panels' status colours, the match panel and the race view. It stays on until you switch it off. At its top, *Under the pointer* says what the label or figure under the mouse is - a capture zone, a map marker, a unit's label, an event, a lock or engagement readout, a place name, a grid mark, a unit's figure - and it follows the pointer while the help is open. In the Match tab it explains the match panel's colours too: Counter-Strike's sides and rounds when a Counter-Strike scoreboard is loaded, the teams' colours otherwise.
 
 ![Help mode in the Match tab](assets/img/en/settings-help-match.webp)
 

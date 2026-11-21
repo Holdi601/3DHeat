@@ -543,5 +543,8 @@
   "replay.card.hidden": "此刻被記錄隱藏(未被摧毀)。",
   "replay.card.disabled": "退出戰鬥(已停用),未被摧毀。",
   "replay.aids.links": "關聯",
-  "replay.aids.linksTitle": "武器到其發射平台(虛線)以及航路點到下一個航路點,來自 Parent 和 Next"
+  "replay.aids.linksTitle": "武器到其發射平台(虛線)以及航路點到下一個航路點,來自 Parent 和 Next",
+  "replay.look.part.feedAll": "所有單位的事件",
+  "replay.look.part.feedAllTitle": "所有單位的擊殺與事件列表。關閉：只顯示正在觀看的單位的；沒有觀看單位時，顯示視野內單位的",
+  "replay.look.resume": "恢復導演"
 }

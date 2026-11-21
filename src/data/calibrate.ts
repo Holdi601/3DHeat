@@ -1,4 +1,5 @@
 import type { Bounds, Dataset } from '../state/types';
+import { REVERSE_Z_NEAR_M } from '../render/depth';
 
 export interface Calibration {
   radius: number;
@@ -40,7 +41,10 @@ export function calibrate(dataset: Dataset): Calibration {
     lookLength: dataset.entitySize ? dataset.entitySize * 4 : extent / 200,
     flySpeed: extent / 12,
     far: extent * 12,
-    near: Math.max(0.05, extent / 20000),
+    // Five centimetres in the data's own units (render/depth.ts): under reverse-Z
+    // the depth precision does not depend on it, and the classic layout's engine
+    // keeps it at far / 10^5 at least wherever it does.
+    near: REVERSE_Z_NEAR_M * (dataset.entitySize ? dataset.entitySize / 0.8 : 1),
   };
 }
 
@@ -54,25 +58,16 @@ export function calibrate(dataset: Dataset): Calibration {
  * many times the 40k default far plane, so the entire map renders behind it and
  * the viewport is simply empty.
  *
- * Near moves with far rather than staying put, because it is the *ratio* that
- * sets depth precision, and the heat occlusion test compares window depths. A
- * near plane of half a unit against a far plane of a million leaves nothing
- * behind the decimal point to compare.
+ * The near plane stays where it is. It used to move out with far, because it is
+ * the *ratio* that sets a classic depth buffer's precision - and a near plane
+ * metres out cut the ground in front of the camera. Reverse-Z (render/depth.ts)
+ * needs no such ratio, and the engine keeps the classic layout's floor itself
+ * (`viewNearFor`), so what is set here is only what a reverse-Z view draws with.
  *
  * Returns the same object when nothing needs to change, so this can sit in a
  * store update without causing a re-render.
  */
-export function cameraForExtent<T extends { near: number; far: number; flySpeed: number }>(
-  camera: T,
-  bounds: Bounds,
-  /**
-   * Furthest the near plane is pushed. A streamed world's box reaches 1,500 km
-   * past its theatre, which would put the near plane 140 m out and cut a
-   * figure followed from 60 m; its views cap it (the per-view near still moves
-   * out from high above or outside the scene).
-   */
-  nearCap = Infinity,
-): T {
+export function cameraForExtent<T extends { near: number; far: number; flySpeed: number }>(camera: T, bounds: Bounds): T {
   const extent = horizontalExtent(bounds);
   // Three times the extent: enough to hold the framing distance for any field
   // of view the UI offers, plus the depth of the level behind the focal point.
@@ -81,7 +76,6 @@ export function cameraForExtent<T extends { near: number; far: number; flySpeed:
   return {
     ...camera,
     far,
-    near: Math.max(camera.near, Math.min(far / 100_000, nearCap)),
     flySpeed: Math.max(camera.flySpeed, extent / 12),
   };
 }

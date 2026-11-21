@@ -32,7 +32,7 @@ The level is shared by all three tabs: a course loaded in the Race analysis tab 
 - It **occludes**: datapoints behind it are dimmed per surface, and datapoints behind the terrain are hidden ([Depth and culling](depth-and-culling.md)). With no level, there is no occlusion.
 - It is **cut** by the [Slice](slice.md) and, with *Cut the level too*, by [distance culling](depth-and-culling.md#distance-culling), together with the heat.
 - It is the only thing [depth of field](camera.md#depth-of-field) blurs, besides the grid and the boxes.
-- A 3D level **widens the camera's far plane** when it is larger than the data: near and far are calibrated from the dataset, and an exported map several kilometres across would otherwise sit entirely behind the far plane and leave an empty view. The far plane becomes 3 × the level's horizontal extent when that is larger, the near plane moves with it (at least far / 100,000) to keep the depth precision occlusion depends on, and the fly speed is raised to at least extent / 12. It is only ever widened, never narrowed.
+- A 3D level **widens the camera's far plane** when it is larger than the data: near and far are calibrated from the dataset, and an exported map several kilometres across would otherwise sit entirely behind the far plane and leave an empty view. The far plane becomes 3 × the level's horizontal extent when that is larger, and the fly speed is raised to at least extent / 12. The near plane stays where it is: the reverse-Z depth buffer needs no ratio between the two (on the classic fallback the near plane actually used is kept at far / 100,000 or more, [Camera](camera.md#near-and-far)). It is only ever widened, never narrowed.
 
 ## The panel, top to bottom
 

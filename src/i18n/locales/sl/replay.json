@@ -543,5 +543,8 @@
   "replay.card.hidden": "Posnetek ga ta trenutek skriva (ni uničen).",
   "replay.card.disabled": "Izven boja (onemogočen), ni uničen.",
   "replay.aids.links": "Povezave",
-  "replay.aids.linksTitle": "Orožje do izstrelišča (črtkano) in točka poti do naslednje, iz Parent in Next"
+  "replay.aids.linksTitle": "Orožje do izstrelišča (črtkano) in točka poti do naslednje, iz Parent in Next",
+  "replay.look.part.feedAll": "Dogodki vseh enot",
+  "replay.look.part.feedAllTitle": "Seznam uničenj in dogodkov vseh enot. Izklopljeno: samo spremljane enote ali, brez spremljane enote, vidnih",
+  "replay.look.resume": "Nadaljuj režiserja"
 }

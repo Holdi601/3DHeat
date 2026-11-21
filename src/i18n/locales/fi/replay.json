@@ -543,5 +543,8 @@
   "replay.card.hidden": "Tallenne piilottaa tämän juuri nyt (ei tuhottu).",
   "replay.card.disabled": "Poissa taistelusta (pois käytöstä), ei tuhottu.",
   "replay.aids.links": "Linkit",
-  "replay.aids.linksTitle": "Ase laukaisijaansa (katkoviiva) ja reittipiste seuraavaan, Parent- ja Next-tiedoista"
+  "replay.aids.linksTitle": "Ase laukaisijaansa (katkoviiva) ja reittipiste seuraavaan, Parent- ja Next-tiedoista",
+  "replay.look.part.feedAll": "Kaikkien yksiköiden tapahtumat",
+  "replay.look.part.feedAllTitle": "Kaikkien yksiköiden tuhoamis- ja tapahtumasyöte. Pois: vain seurattavan yksikön, tai jos mitään ei seurata, näkyvissä olevien",
+  "replay.look.resume": "Jatka ohjaajaa"
 }

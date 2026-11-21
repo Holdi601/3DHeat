@@ -543,5 +543,8 @@
   "replay.card.hidden": "Von der Aufzeichnung gerade ausgeblendet (nicht zerstört).",
   "replay.card.disabled": "Außer Gefecht (deaktiviert), nicht zerstört.",
   "replay.aids.links": "Verknüpfungen",
-  "replay.aids.linksTitle": "Eine Waffe zu ihrem Träger (gestrichelt) und ein Wegpunkt zum nächsten, aus Parent und Next"
+  "replay.aids.linksTitle": "Eine Waffe zu ihrem Träger (gestrichelt) und ein Wegpunkt zum nächsten, aus Parent und Next",
+  "replay.look.part.feedAll": "Ereignisse aller Einheiten",
+  "replay.look.part.feedAllTitle": "Abschussliste und Ereignisticker aller Einheiten. Aus: nur die der beobachteten Einheit, oder ohne beobachtete Einheit die der sichtbaren",
+  "replay.look.resume": "Regie fortsetzen"
 }

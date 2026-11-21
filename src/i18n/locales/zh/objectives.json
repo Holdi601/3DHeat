@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{team} 失去 {zone}",
   "objectives.legend.neutral": "中立",
   "objectives.legend.capturing": "占领中",
+  "objectives.allModes": "同时显示所有模式的目标",
+  "objectives.allModesTitle": "同时显示多种模式的战斗时会隐藏其目标：不同模式的区域在同一地形上相互重叠。勾选可仍然全部绘制",
   "objectives.layer.bounds": "界外",
   "objectives.layer.boundsTitle": "以斜线标出队伍界外区域：在对方游戏区域内但在己方区域外",
   "objectives.layout": "布局",

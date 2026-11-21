@@ -2,9 +2,14 @@
  * The capture zones' discs in WebGPU (`zoneShaders.ts`): the vertices
  * uploaded when they are a new array, the zones' state written into a small
  * uniform buffer a frame. On the ground in the scene pass (depth tested, not
- * written), or over the finished picture without depth (`xray`).
+ * written), or without depth (`xray`): over the finished picture, or in the
+ * scene under the units (`FrameParams.objectivesUnder`).
  */
 
+/** Where a draw goes: on the ground, through it under the units, or over the picture. */
+export type ZoneSlot = 'ground' | 'under' | 'top';
+
+import { GPU_DEPTH_TEST } from '../depth';
 import type { FrameParams } from '../types';
 import { MAX_ZONES, ZONE_MIN_PX, ZONE_UNIFORM_BYTES, ZONE_VERTEX_FLOATS, ZONE_WGSL } from '../zoneShaders';
 
@@ -19,8 +24,7 @@ interface Slot {
 export class GpuZones {
   private buffer: GPUBuffer | null = null;
   private data: Float32Array | null = null;
-  private readonly ground: Slot;
-  private readonly top: Slot;
+  private readonly slots: Record<ZoneSlot, Slot>;
   private readonly staging = new Float32Array(ZONE_UNIFORM_BYTES / 4);
 
   constructor(
@@ -30,7 +34,7 @@ export class GpuZones {
     canvasFormat: GPUTextureFormat,
   ) {
     const module = device.createShaderModule({ label: 'zones', code: ZONE_WGSL });
-    const make = (label: string, format: GPUTextureFormat, depth: boolean): Slot => {
+    const make = (label: string, format: GPUTextureFormat, depth: GPUCompareFunction | null): Slot => {
       const pipeline = device.createRenderPipeline({
         label,
         layout: 'auto',
@@ -62,18 +66,22 @@ export class GpuZones {
           ],
         },
         primitive: { topology: 'triangle-list' },
-        ...(depth ? { depthStencil: { format: depthFormat, depthWriteEnabled: false, depthCompare: 'less-equal' as GPUCompareFunction } } : {}),
+        // In the scene pass the depth attachment is there either way; under the units it is not tested.
+        ...(depth ? { depthStencil: { format: depthFormat, depthWriteEnabled: false, depthCompare: depth } } : {}),
       });
       const uniforms = device.createBuffer({ label: `${label} uniforms`, size: ZONE_UNIFORM_BYTES, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
       const group = device.createBindGroup({ layout: pipeline.getBindGroupLayout(0), entries: [{ binding: 0, resource: { buffer: uniforms } }] });
       return { pipeline, uniforms, group };
     };
-    this.ground = make('zones on the ground', sceneFormat, true);
-    this.top = make('zones over the picture', canvasFormat, false);
+    this.slots = {
+      ground: make('zones on the ground', sceneFormat, GPU_DEPTH_TEST),
+      under: make('zones under the units', sceneFormat, 'always'),
+      top: make('zones over the picture', canvasFormat, null),
+    };
   }
 
   /** Uploads what the draw needs; call before the pass that draws (`draw`). */
-  prepare(params: FrameParams, z: ZoneDraw, ground: boolean): void {
+  prepare(params: FrameParams, z: ZoneDraw, slot: ZoneSlot): void {
     if (!z.count) return;
     if (this.data !== z.verts || !this.buffer) {
       const bytes = z.count * ZONE_VERTEX_FLOATS * 4;
@@ -88,15 +96,15 @@ export class GpuZones {
     u.set(params.viewProj, 0);
     u[16] = (params.proj[5] * params.height) / 2;
     u[17] = ZONE_MIN_PX * (globalThis.devicePixelRatio || 1);
-    u[18] = ground ? 0 : z.xray;
+    u[18] = slot === 'ground' ? 0 : z.xray;
     u[19] = 0;
     u.set(z.state.subarray(0, MAX_ZONES * 8), 20);
-    this.device.queue.writeBuffer((ground ? this.ground : this.top).uniforms, 0, u);
+    this.device.queue.writeBuffer(this.slots[slot].uniforms, 0, u);
   }
 
-  draw(pass: GPURenderPassEncoder, z: ZoneDraw, ground: boolean): void {
+  draw(pass: GPURenderPassEncoder, z: ZoneDraw, slot: ZoneSlot): void {
     if (!z.count || !this.buffer) return;
-    const s = ground ? this.ground : this.top;
+    const s = this.slots[slot];
     pass.setPipeline(s.pipeline);
     pass.setBindGroup(0, s.group);
     pass.setVertexBuffer(0, this.buffer);
@@ -105,7 +113,6 @@ export class GpuZones {
 
   dispose(): void {
     this.buffer?.destroy();
-    this.ground.uniforms.destroy();
-    this.top.uniforms.destroy();
+    for (const s of Object.values(this.slots)) s.uniforms.destroy();
   }
 }

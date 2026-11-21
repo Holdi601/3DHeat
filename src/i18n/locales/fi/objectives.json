@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{team} menetti alueen {zone}",
   "objectives.legend.neutral": "neutraali",
   "objectives.legend.capturing": "valloitetaan",
+  "objectives.allModes": "Kaikkien tilojen tavoitteet yhdessä",
+  "objectives.allModesTitle": "Kun useamman tilan taisteluita näytetään yhtä aikaa, niiden tavoitteet piilotetaan: eri tilojen alueet menevät päällekkäin samassa maastossa. Valitse, jos haluat piirtää ne silti kaikki",
   "objectives.layer.bounds": "Alueen ulkopuolella",
   "objectives.layer.boundsTitle": "Viivoitettu, missä joukkue on alueen ulkopuolella: toisen puolen pelialueella mutta oman ulkopuolella",
   "objectives.layout": "Asettelu",

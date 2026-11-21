@@ -42,12 +42,15 @@ export function ObjectivesPanel() {
   const on = useObjectivesStore((s) => s.on);
   const layers = useObjectivesStore((s) => s.layers);
   const labels = useObjectivesStore((s) => s.labels);
+  const allModes = useObjectivesStore((s) => s.allModes);
   const timelines = useObjectivesStore((s) => s.timelines);
   const error = useObjectivesStore((s) => s.error);
   const store = useObjectivesStore.getState();
   const modes = useMemo(() => (dataset ? matchModes(dataset, games) : []), [dataset, games]);
+  const lite = useObjectivesStore((s) => s.lite);
+  // A many-match load's objectives come on their own (`objectivesLazy.ts`), without the match documents.
   const layoutShown = useLevelLayoutShown();
-  const any = games.some((g) => g.objectives && g.objectives.length) || layoutShown;
+  const any = games.some((g) => g.objectives && g.objectives.length) || lite.some((l) => l.objectives.length > 0) || layoutShown;
   // The modes loaded, how many matches each.
   const byMode = useMemo(() => {
     const out = new Map<string, { mode: string; name: string; indices: number[] }>();
@@ -178,6 +181,10 @@ export function ObjectivesPanel() {
       )}
       {byMode.length > 1 && (
         <div className="field">
+          {any && on && (
+            // Battles of several modes shown at once draw no objectives (`objectivesOfOneMode`) unless asked.
+            <Check label={t('objectives.allModes')} checked={allModes} onChange={(v) => store.setAllModes(v)} title={t('objectives.allModesTitle')} />
+          )}
           <div className="label">
             <span>{t('objectives.mode')}</span>
           </div>

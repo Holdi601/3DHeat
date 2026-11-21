@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{zone} persa da {team}",
   "objectives.legend.neutral": "neutrale",
   "objectives.legend.capturing": "in conquista",
+  "objectives.allModes": "Obiettivi di tutte le modalità insieme",
+  "objectives.allModesTitle": "Le battaglie di più modalità mostrate insieme nascondono i loro obiettivi: le zone di modalità diverse si sovrappongono sullo stesso terreno. Spunta per disegnarli comunque tutti",
   "objectives.layer.bounds": "Fuori area",
   "objectives.layer.boundsTitle": "Tratteggiato dove una squadra è fuori area: nell'area di gioco dell'altra parte ma fuori dalla propria",
   "objectives.layout": "Disposizione",

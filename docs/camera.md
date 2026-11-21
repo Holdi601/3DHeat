@@ -23,12 +23,12 @@ The camera is a free-fly camera with a perspective and a parallel projection, pr
 |---|---|
 | `W` `A` `S` `D` or the arrow keys | Forward (along the view, including its pitch), left, back, right |
 | `Space` or `E` | Up (world up) |
-| `Q` or left `Ctrl` | Down |
+| `Q` or left `Ctrl` | Down. Left `Ctrl` can be swapped for `Z`, or left out, under **Fly down with** - `Ctrl+W` closes the tab in most browsers ([why](keyboard-reference.md#ctrl-w)) |
 | `Shift` (held) | 6× faster |
 | left `Alt` (held) | 15% speed |
-| Drag with the left or right mouse button | Look around. The pointer is locked while dragging. |
-| Mouse wheel | Fly speed ×1.5 per notch (perspective); zoom (parallel) |
-| `F` | Frame the data |
+| Drag with the left or right mouse button | Look around. The pointer is locked while dragging, with the mouse's raw movement where the browser offers it. A single movement event far larger than the ones before it - the browser's own glitch under pointer lock, which used to throw the view straight up into the sky - is ignored, as is the jump the pointer makes when the lock begins. |
+| Mouse wheel | Fly speed ×1.5 per notch (perspective); zoom about the pointer, ×1.25 per notch (parallel) |
+| `F` | Frame the data (not with `Ctrl`, `Alt` or `Cmd` held) |
 | Click (without dragging) | Show what is under the pointer ([Inspecting the view](#inspecting-the-view)) |
 | `C` | Copy the camera's position, yaw and pitch |
 | `G` | Go to a typed point |
@@ -56,7 +56,7 @@ Moving keys add up with a [gamepad](gamepad.md); see the [keyboard reference](ke
 
 **Projection**: *Perspective* (default) or *Parallel*.
 
-*Parallel* (orthographic) removes foreshortening, so two hotspots of equal density read as the same size anywhere in the frame - the comparison a map heatmap exists to support - and it is what makes an isometric view isometric. In parallel mode the mouse wheel zooms (there is no forward motion that changes scale) and the [speed display](#fly-speed) is hidden.
+*Parallel* (orthographic) removes foreshortening, so two hotspots of equal density read as the same size anywhere in the frame - the comparison a map heatmap exists to support - and it is what makes an isometric view isometric. In parallel mode the mouse wheel zooms about the pointer, a quarter per notch (there is no forward motion that changes scale), and the [speed display](#fly-speed) is hidden. `W` `A` `S` `D` pan the picture (forward is up the screen, not along the view axis, which would change nothing you can see) and `Space`/`E`/`Q` move up and down, at 0.6 view heights a second whatever the zoom; `Shift` and `Alt` still speed up and slow down. The parallel view also draws what lies behind the camera's position, as far back as the scene reaches, so flying down or zooming in never slices the ground off at the camera.
 
 **Switching keeps the subject the same size.** A parallel projection has no field of view, so its frustum height is unrelated to the camera's distance; flipping naively either zooms wildly or shows nothing. Going to parallel sets the frustum height to what the perspective camera covers at the focus distance (2 × distance × tan(fov / 2), the focus distance being the distance of the last framing). Going back restores the perspective pose you left, at the same apparent scale, rather than wherever the parallel view wandered.
 
@@ -83,7 +83,7 @@ The same value is shown at the bottom right of the view (perspective only): the 
 
 ### Near and far
 
-**Near** (default 0.5) and **Far** (default 40,000) clip distances. Both are recalculated from the data on every load (near = max(0.05, extent / 20,000), far = extent × 12) and widened, never narrowed, by a 3D level that is larger ([Levels](levels.md#what-a-level-does-for-the-heat)). Their ratio sets the depth precision occlusion relies on, so a tiny near with a huge far weakens [occlusion](depth-and-culling.md). Seen from outside the scene or high above its ground, the near plane actually used moves out to 2% of that distance, so a map seen from far above keeps enough depth precision that water and shore do not flicker; the box still shows the value set.
+**Near** (default 0.05) and **Far** (default 40,000) clip distances. Both are recalculated from the data on every load (near = 5 cm in the data's units, far = extent × 12), and far is widened, never narrowed, by a 3D level that is larger ([Levels](levels.md#what-a-level-does-for-the-heat)). The depth buffer is **reverse-Z** in 32-bit float ([Depth and culling](depth-and-culling.md#the-depth-buffer)): its precision does not depend on the near plane, so the near plane stays centimetres from the eye and the ground or a wall right in front of the camera is never cut, while two surfaces a metre apart 20 km away still do not fight. That is every WebGPU view, and WebGL2 wherever the browser offers clip control (`EXT_clip_control`, current Chrome and Edge among others). Without it WebGL2 falls back to the classic layout, whose precision goes with the ratio of far to near: there the near plane actually used is at least far / 100,000 (at most 10 m for a streamed world), and seen from outside the scene or high above its ground it moves out to 2% of that distance, so water and shore do not flicker. The box shows the value set either way.
 
 ### Other controls
 
@@ -174,7 +174,7 @@ A collapsible section in Camera & scene, titled *Depth of field - on* while enab
 | **Enabled** | off | | |
 | **Focus on what was framed** | on | | Focus at the distance the last framing used (*Focused at N m.*). |
 | **Focus distance** | 1000 | 1-200,000, logarithmic (10,000,000) | Shown when the focus is manual. |
-| **Aperture** | ±35% | ±2% to ±200%, logarithmic (±3200%) | The depth kept sharp, as a fraction of the focus distance - relative rather than an f-number, because scenes range from a room to an eight-kilometre map. |
+| **Aperture** | ±35% | ±0.2% to ±2000%, logarithmic (±200000%) | The depth kept sharp, as a fraction of the focus distance - relative rather than an f-number, because scenes range from a room to an eight-kilometre map. |
 | **Maximum blur** | 12 px | 1-48 (256) | The largest blur radius; the cost scales with it. |
 
 It blurs the **level, grid and boxes** - *not the heat*. Heat at a pixel is the sum of sprites at many depths, so it has no single depth to be out of focus at; blurring it by whatever geometry sits behind it would be wrong wherever it floats in front. Sharp data over softened context is also the more useful of the two. The blur is a 24-tap golden-angle gather in the composite pass, weighted so a sharp foreground is not smeared outward by the blurry background behind it. Changing it redraws without restarting the heat accumulation.

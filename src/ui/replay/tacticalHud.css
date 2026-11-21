@@ -199,6 +199,14 @@
   padding: 1px 8px;
   animation: tac-blink 700ms steps(2, end) 2;
 }
+.tac-resume {
+  pointer-events: auto;
+  cursor: pointer;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 11px;
+}
 @keyframes tac-blink {
   50% {
     opacity: 0.2;

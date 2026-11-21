@@ -31,7 +31,7 @@ import { useReplayStore } from '../state/replayStore';
 import { useMatchStore } from '../state/matchStore';
 import { useObjectivesStore } from '../state/objectivesStore';
 import { wantObjectives, wantTimeline } from '../state/objectivesLazy';
-import type { Objective } from '../match/objectives';
+import { objectivesOfOneMode, type Objective } from '../match/objectives';
 import { ObjectiveLayerDraw, objectiveSources, stateKey, type ObjectiveSource } from './objectives';
 import { withPlaceLines } from '../mass/placeLines';
 import { withManeuverLines } from '../insights/maneuver/lines';
@@ -39,6 +39,7 @@ import { DirectionController } from './directionController';
 import { dropLinesOn, unitsPerMetre } from '../ui/replay/replayData';
 import { FollowRig, type RigMode } from './followRig';
 import { nearForFollow } from './followNear';
+import { REVERSE_Z_REMAP, viewNearFor } from './depth';
 import { FAR_MODE_ID, symbolThreshold } from './symbols/lod';
 import { Domain, isEffectDomain, isWeaponDomain } from '../figures/symbolClass';
 import { sideTable, SYMBOL_STYLE_ID } from './symbols/affiliation';
@@ -452,22 +453,17 @@ export class Engine {
   private readonly mirrorMat = new Matrix4();
   private readonly viewMirrored = new Matrix4();
   /**
-   * Maps clip-space depth from OpenGL's [-1, 1] to WebGPU's [0, 1].
+   * Maps clip-space depth from OpenGL's [-1, 1] to the renderer's layout.
    *
-   * three.js builds projection matrices in the OpenGL convention. WebGPU clips
-   * anything with z < 0, so without this correction a perspective view merely
-   * loses depth precision — most of the scene happens to land near z = +1 — while
-   * an orthographic view, whose depth is linear, lands almost entirely at
-   * negative z and is clipped away in its entirety. The symptom is an empty
-   * frame with no error, which is why it is applied explicitly here rather than
-   * left to chance.
+   * three.js builds projection matrices in the OpenGL convention. A renderer that
+   * draws reverse-Z (render/depth.ts: WebGPU, and WebGL2 with clip control) wants
+   * [1, 0], near to far; without a remap WebGPU clips anything with z < 0, and an
+   * orthographic view, whose depth is linear, lands almost entirely there and is
+   * clipped away in its entirety - an empty frame with no error, which is why it
+   * is applied explicitly here rather than left to chance. A WebGL2 context
+   * without clip control keeps OpenGL's own range and needs none.
    */
-  private readonly depthRemap = new Matrix4().set(
-    1, 0, 0, 0,
-    0, 1, 0, 0,
-    0, 0, 0.5, 0.5,
-    0, 0, 0, 1,
-  );
+  private readonly depthRemap = new Matrix4().set(...(REVERSE_Z_REMAP as Parameters<Matrix4['set']>));
   private readonly viewProjArr = new Float32Array(16);
   private readonly viewArr = new Float32Array(16);
   private readonly projArr = new Float32Array(16);
@@ -1576,33 +1572,32 @@ export class Engine {
   }
 
   /**
-   * The near plane this view can afford.
+   * The near plane this view can afford (`viewNearFor`, render/depth.ts).
    *
-   * Depth precision goes with the square of the distance over the near plane: a near
-   * calibrated for standing in the data leaves steps of several metres at a map seen
-   * from far above, and water and the shore under it then fight for each pixel,
-   * flickering as the camera moves. So from outside the scene, or high over its ground,
-   * the plane moves out with the distance to the nearest thing it could cut.
-   *
-   * Outside means outside the level and the data together: a small level under wider
-   * data still has data to cut. High means past a tenth of the level's width over its
-   * ground, which leaves a person flying inside a tall building their near plane. The
-   * race tab's cars are in neither box, and its camera sits metres from one.
+   * Under reverse-Z the one set, centimetres from the eye by default: its depth
+   * precision does not depend on it. In the classic layout (WebGL2 without clip
+   * control) depth precision goes with the square of the distance over the near
+   * plane, so it never comes nearer than far / 10⁵, and from outside the scene, or
+   * high over its ground, it moves out with the distance to the nearest thing it
+   * could cut. Outside means outside the level and the data together: a small
+   * level under wider data still has data to cut. The race tab's cars are in
+   * neither box, and its camera sits metres from one.
    */
-  private nearForView(near: number, s: ReturnType<typeof snapshot>, raceTab: boolean): number {
-    if (raceTab || this.camera.projection !== 'perspective') return near;
+  private nearForView(near: number, far: number, s: ReturnType<typeof snapshot>, raceTab: boolean): number {
+    const reverse = this.renderer?.reverseZ ?? false;
     const level = s.level?.kind === 'model' ? s.level : null;
+    const query = { near, far, reverse, grow: false, outside: 0, above: 0, streamed: !!level?.stream };
+    if (reverse || raceTab || this.camera.projection !== 'perspective') return viewNearFor(query);
     const boxes = [level?.bounds, s.dataset?.bounds].filter((b) => b !== undefined);
-    if (!boxes.length) return near;
+    if (!boxes.length) return viewNearFor(query);
     const p = this.mirrorPoint(this.camera.position.x, this.camera.position.y, this.camera.position.z);
     const dx = Math.max(Math.min(...boxes.map((b) => b.minX)) - p.x, 0, p.x - Math.max(...boxes.map((b) => b.maxX)));
     const dy = Math.max(Math.min(...boxes.map((b) => b.minY)) - p.y, 0, p.y - Math.max(...boxes.map((b) => b.maxY)));
     const dz = Math.max(Math.min(...boxes.map((b) => b.minZ)) - p.z, 0, p.z - Math.max(...boxes.map((b) => b.maxZ)));
-    const outside = Math.hypot(dx, dy, dz);
     const top = level?.relief?.highY;
     const above =
       top === undefined || !level ? 0 : p.y - top - 0.1 * Math.max(level.bounds.maxX - level.bounds.minX, level.bounds.maxZ - level.bounds.minZ);
-    return Math.max(near, 0.02 * Math.max(outside, above));
+    return viewNearFor({ ...query, grow: true, outside: Math.hypot(dx, dy, dz), above });
   }
 
   /**
@@ -2643,6 +2638,7 @@ export class Engine {
 
     const { width, height } = this.resizeCanvas();
     this.camera.invertY = s.camera.invertY;
+    this.camera.descendKey = s.camera.descendKey ?? 'ctrl';
     const mirror = s.camera.mirror;
     const want: [number, number, number] = [mirror.x ? -1 : 1, mirror.y ? -1 : 1, mirror.z ? -1 : 1];
     if (want.some((v, i) => v !== this.mirror[i])) this.setMirror(want);
@@ -2667,12 +2663,15 @@ export class Engine {
       if (this.vehicleStage.takeFrameRequest()) this.frameDataset(false);
       this.vehicleStage.orbit(this.camera, dt, this.mirror);
     }
-    this.viewNear = this.nearForView(s.camera.near, s, raceTab);
+    this.viewFar = this.farForView(s.camera.far, s, raceTab);
+    this.viewNear = this.nearForView(s.camera.near, this.viewFar, s, raceTab);
     // A followed unit is never cut by the near plane, however close the camera comes (`followNear.ts`).
     if (!raceTab) this.viewNear = nearForFollow(this.viewNear, [this.camera.position.x, this.camera.position.y, this.camera.position.z], this.followedPoint(s), this.dataset ? unitsPerMetre(this.dataset) : 1);
     // Out of a cockpit the unit's own figure is clipped away, as Tacview hides it.
     if (this.rigNear > 0) this.viewNear = Math.max(this.viewNear, this.rigNear);
-    this.viewFar = this.farForView(s.camera.far, s, raceTab);
+    // A parallel view draws what lies behind the camera's position too, as far
+    // back as the scene reaches (`FlyCamera.orthoBack`).
+    this.camera.orthoBack = this.camera.projection === 'orthographic' && !raceTab ? this.viewFar : 0;
     this.camera.update(dt, width / height, s.camera.fov, this.viewNear, this.viewFar);
     // The pad's "frame" button is a request rather than an action, so the camera
     // does not need to know about the dataset.
@@ -2692,7 +2691,7 @@ export class Engine {
     this.viewMirrored.multiplyMatrices(cam.matrixWorldInverse, this.mirrorMat);
     this.viewProj.multiplyMatrices(cam.projectionMatrix, this.viewMirrored);
     this.pickViewProj.set(this.viewProj.elements);
-    if (this.live.backend === 'webgpu') this.viewProj.premultiply(this.depthRemap);
+    if (renderer.reverseZ) this.viewProj.premultiply(this.depthRemap);
     this.viewProjArr.set(this.viewProj.elements);
     this.viewArr.set(this.viewMirrored.elements);
     this.projArr.set(cam.projectionMatrix.elements);
@@ -2984,7 +2983,10 @@ export class Engine {
     // (every frame while they are being laid on the ground).
     const objectives = useObjectivesStore.getState();
     let objectiveSrc: ObjectiveSource[] =
-      !raceTab && objectives.on && this.dataset ? objectiveSources(this.dataset, this.objectiveGames(objectives.lite), objectives.timelines, s.filters, s.team.session) : [];
+      !raceTab && objectives.on && this.dataset
+        ? // Battles of several modes shown at once: none of their objectives, unless all are asked for.
+          objectivesOfOneMode(objectiveSources(this.dataset, this.objectiveGames(objectives.lite), objectives.timelines, s.filters, s.team.session), objectives.allModes)
+        : [];
     // A many-match load's objectives, and the shown battle's capture zones, read when first wanted (`objectivesLazy.ts`).
     if (!raceTab && objectives.on && this.dataset) {
       wantObjectives();
@@ -3731,6 +3733,9 @@ export class Engine {
       sceneTriVertCount = this.figureTris.count;
     }
     const objGround = !raceBuilt && s.mode === 'team' && objectiveSrc.length ? this.objectiveDraw.ground : null;
+    // In the replay every objective mark goes under the units, none over the picture (`FrameParams.objectivesUnder`).
+    const objectivesUnder =
+      !raceBuilt && s.mode === 'team' && objectiveSrc.length ? { lines: this.objectiveTop?.data ?? null, lineCount: this.objectiveTop?.count ?? 0 } : null;
     if (raceBuilt) {
       plan = EMPTY_PLAN;
       submitted = 0;
@@ -3903,8 +3908,8 @@ export class Engine {
       symbols: !raceBuilt && s.mode === 'team' && s.team.figures ? this.symbolParams(s) : null,
       overlayVerts,
       overlayVertCount,
-      topVerts: this.directions.top(this.objectiveTop)?.data ?? null,
-      topVertCount: this.directions.top(this.objectiveTop)?.count ?? 0,
+      topVerts: this.directions.top(objectivesUnder ? null : this.objectiveTop)?.data ?? null,
+      topVertCount: this.directions.top(objectivesUnder ? null : this.objectiveTop)?.count ?? 0,
       topStatic: this.staticTop(),
       topTris: this.objectiveTopTris?.data ?? null,
       groundTris: objGround?.data ?? null,
@@ -3913,6 +3918,7 @@ export class Engine {
           ? { ...this.objectiveDraw.zones, ground: s.mode === 'team', xray: s.mode === 'team' ? OBJECTIVE_XRAY : 1 }
           : null,
       groundTriCount: objGround?.count ?? 0,
+      objectivesUnder,
       topTriCount: this.objectiveTopTris?.count ?? 0,
       direction: raceTab || s.mode === 'team' ? null : this.directions.frame(window.devicePixelRatio || 1, now),
       level: vehicleTab ? null : lookOn ? tacticalLevel(buildLevelDraw(s.level)) : buildLevelDraw(s.level),
@@ -3925,11 +3931,12 @@ export class Engine {
               focus: s.camera.dof.autoFocus
                 ? this.camera.focusDistance
                 : Math.max(1e-3, s.camera.dof.focusDistance),
-              aperture: Math.max(0.01, s.camera.dof.aperture),
+              aperture: Math.max(1e-3, s.camera.dof.aperture),
               maxBlur: s.camera.dof.maxBlur,
             }
           : null,
-      near: this.viewNear,
+      // The projection's own: a parallel view's reaches behind the camera (`orthoBack`).
+      near: this.camera.camera.near,
       far: this.viewFar,
       slice: s.slice.enabled
         ? {

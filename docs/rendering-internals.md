@@ -30,7 +30,7 @@ The frame loop is [`Engine.frame`](https://github.com/Holdi601/3DHeat/blob/main/
 
 1. **New data?** A new dataset is announced (*Uploading N rows to the GPU*) on one frame and uploaded on the next, so the message is painted before the work blocks the thread. A new level is handed to the renderer; line heat routes are built or freed.
 2. **Playhead** advances (capped at 0.1 s of wall time per frame), loops or stops.
-3. **Camera** reads keys, mouse and gamepad; the axis mirror is folded into the view matrix; on WebGPU a depth-remap matrix converts three.js's OpenGL-style depth range to WebGPU's.
+3. **Camera** reads keys, mouse and gamepad; the axis mirror is folded into the view matrix; a depth-remap matrix turns three.js's OpenGL-style depth range into reverse-Z (near 1, far 0) wherever the renderer draws so: always on WebGPU, on WebGL2 with `EXT_clip_control` (see [`depth.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/depth.ts)).
 4. **What is visible**: the time range from the timeline and history; the group sign table (visibility only under a split by a column); every active filter - column filters and the Entities selection - read as one pass flag per row; the difference split.
 5. **Colour and curve tables** are rebuilt if their settings changed.
 6. **Budget**: the adaptive controller sets this frame's sprite budget and heat resolution; with *Draw every row each frame* the budget is raised to cover every candidate row.

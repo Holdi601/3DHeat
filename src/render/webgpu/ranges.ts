@@ -5,6 +5,7 @@
  * it, cut by them. Nothing is read back.
  */
 
+import { GPU_DEPTH_TEST } from '../depth';
 import type { Bounds } from '../../state/types';
 import type { FrameParams, RangeDraw } from '../types';
 import { SHELL_FLOATS, shellMesh } from '../../ranges/shells';
@@ -81,7 +82,7 @@ export class GpuRanges {
         ],
       },
       primitive: { topology: 'triangle-list', cullMode: 'none' },
-      depthStencil: { format: depthFormat, depthWriteEnabled: false, depthCompare: 'less-equal' },
+      depthStencil: { format: depthFormat, depthWriteEnabled: false, depthCompare: GPU_DEPTH_TEST },
     });
     const pos: GPUVertexBufferLayout = { arrayStride: 24, attributes: [{ shaderLocation: 0, offset: 0, format: 'float32x3' }] };
     this.groundPipe = device.createRenderPipeline({
@@ -102,7 +103,7 @@ export class GpuRanges {
         ],
       },
       primitive: { topology: 'triangle-list', cullMode: 'none' },
-      depthStencil: { format: depthFormat, depthWriteEnabled: false, depthCompare: 'less-equal', depthBias: -4, depthBiasSlopeScale: -1 },
+      depthStencil: { format: depthFormat, depthWriteEnabled: false, depthCompare: GPU_DEPTH_TEST, depthBias: 4, depthBiasSlopeScale: 1 },
     });
     this.capturePipe = device.createRenderPipeline({
       label: 'range views',

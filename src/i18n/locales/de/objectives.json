@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{zone} von {team} verloren",
   "objectives.legend.neutral": "neutral",
   "objectives.legend.capturing": "wird erobert",
+  "objectives.allModes": "Ziele aller Modi zusammen",
+  "objectives.allModesTitle": "Werden Gefechte mehrerer Modi gleichzeitig gezeigt, bleiben ihre Ziele verborgen: Zonen verschiedener Modi überlagern sich auf demselben Gelände. Anhaken, um trotzdem alle zu zeichnen",
   "objectives.layer.bounds": "Außerhalb",
   "objectives.layer.boundsTitle": "Schraffiert, wo ein Team außerhalb ist: Gelände im Spielbereich der anderen Seite, aber nicht im eigenen",
   "objectives.layout": "Layout",

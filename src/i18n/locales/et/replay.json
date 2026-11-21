@@ -543,5 +543,8 @@
   "replay.card.hidden": "Salvestis peidab selle praegu (pole hävitatud).",
   "replay.card.disabled": "Lahingust väljas (keelatud), pole hävitatud.",
   "replay.aids.links": "Seosed",
-  "replay.aids.linksTitle": "Relv selle kandjani (katkendjoon) ja teekonnapunkt järgmiseni, Parent ja Next järgi"
+  "replay.aids.linksTitle": "Relv selle kandjani (katkendjoon) ja teekonnapunkt järgmiseni, Parent ja Next järgi",
+  "replay.look.part.feedAll": "Kõigi üksuste sündmused",
+  "replay.look.part.feedAllTitle": "Kõigi üksuste hävitamiste ja sündmuste voog. Väljas: ainult jälgitava üksuse omad või, kui ühtki ei jälgita, nähtaval olevate omad",
+  "replay.look.resume": "Jätka režissööriga"
 }

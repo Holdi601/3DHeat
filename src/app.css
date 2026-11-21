@@ -1107,17 +1107,17 @@ button.link:disabled {
   top: 0;
   white-space: nowrap;
   color: #f2f0ea;
-  font-size: 11px;
+  font-size: calc(11px * var(--label-scale, 1));
   text-shadow: 0 0 3px #000, 0 0 2px #000;
 }
 
 .world-label.city {
-  font-size: 13px;
+  font-size: calc(13px * var(--label-scale, 1));
   font-weight: 600;
 }
 
 .world-label.village {
-  font-size: 10px;
+  font-size: calc(10px * var(--label-scale, 1));
   color: #d8d6d0;
 }
 

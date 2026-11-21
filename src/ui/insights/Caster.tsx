@@ -39,6 +39,9 @@ interface CastState {
   set: (p: Partial<Omit<CastState, 'set'>>) => void;
 }
 
+/** Milliseconds after going to a moment before the playing list checks whether it has ended. */
+const SETTLE_MS = 500;
+
 const useCast = create<CastState>((set) => ({ key: null, src: null, moments: [], current: -1, playing: false, set: (p) => set(p) }));
 
 /** A moment's line in the viewer's language. */
@@ -61,14 +64,24 @@ export function momentLine(m: Moment, src: CastSource, d: Dataset): string {
   return typeof p.result === 'string' && m.kind !== 'clutch' ? `${line.replace(/[.!。]\s*$/, '')} ${t('insights.cast.result', { result: p.result })}` : line;
 }
 
-/** Go to a moment: its round played, the playhead before it, the camera on it, then following its player. */
+/**
+ * Go to a moment: its round played, the playhead before it, the camera on it
+ * - and, while the list plays (`follow`), then following its player. A moment
+ * picked by hand stays where the camera was flown: following the player
+ * afterwards carried the camera off to wherever the player was (a long shot's
+ * shooter is far from its victim), which read as the jump being undone. The
+ * flight also holds the tactical display's director (`flyTo`).
+ */
 let followTimer = 0;
-export function goToMoment(m: Moment, src: CastSource, d: Dataset, engine: Engine | null): void {
+/** When the last moment was gone to: the playhead is the old one until the engine takes the seek. */
+let wentAt = 0;
+export function goToMoment(m: Moment, src: CastSource, d: Dataset, engine: Engine | null, follow = true): void {
+  wentAt = performance.now();
   if (useStore.getState().mode !== 'team') {
     // Into the replay first: it settles its own session and playhead as it opens, then the moment.
     useStore.getState().setMode('team');
     clearTimeout(followTimer);
-    followTimer = window.setTimeout(() => goToMoment(m, src, d, engine), 150);
+    followTimer = window.setTimeout(() => goToMoment(m, src, d, engine, follow), 150);
     return;
   }
   const st = useStore.getState();
@@ -83,7 +96,7 @@ export function goToMoment(m: Moment, src: CastSource, d: Dataset, engine: Engin
   st.seek(m.from);
   clearTimeout(followTimer);
   if (engine) flyTo(engine, d, { x: m.x, y: m.y, z: m.z }, 120);
-  if (m.actor >= 0) {
+  if (follow && m.actor >= 0) {
     const at = trackAt(src, m.actor, m.time);
     // After the flight: following straight away would cut it short.
     if (at) followTimer = window.setTimeout(() => selectAndFollow(src.units.units[at.unit], at.track), engine ? 650 : 0);
@@ -120,6 +133,8 @@ export function Caster() {
       const s = useCast.getState();
       const m = s.moments[s.current];
       if (!m || !s.src) return;
+      // Just gone to it: the engine may not have taken the seek yet, and its old playhead is past this one's end.
+      if (performance.now() - wentAt < SETTLE_MS) return;
       if (engine.live.playhead >= m.to) {
         const next = s.current + 1;
         if (next >= s.moments.length) {
@@ -174,9 +189,10 @@ export function Caster() {
   if (!src || cast.key !== key) return null;
   if (!cast.moments.length) return <div className="hint">{t('insights.cast.none')}</div>;
 
+  // Playing the list, each moment then follows its player; a moment picked by hand keeps the camera where it went.
   const go = (i: number, play = cast.playing) => {
     cast.set({ current: i, playing: play });
-    goToMoment(cast.moments[i], src, dataset, engine);
+    goToMoment(cast.moments[i], src, dataset, engine, play);
     if (play) useStore.getState().setPlaying(true);
   };
   const mine = stream.about === key;

@@ -84,6 +84,8 @@ A tank's turret turns as the recording has it, whatever the look and aim aids sh
 
 `T` (or the **Show as tactical display** toggle) switches the look to a radar-screen style: glow, outlines, contour lines, a measurement grid, scan lines, range rings, altitude ladders, panels with kills and events, and a **Director** that moves the camera to events by itself.
 
+The kill and event panels list the watched unit's events (the Director's shot, or the unit you follow); with no unit watched, those of the units in view. **Events of all units** lists everyone's. When you jump the camera yourself (an event, a kill, a caster moment), the Director stops so it does not fly the camera back; **Resume director** at the top hands the camera back to it.
+
 ![The same air fight in the normal look](assets/img/en/replay-air.webp)
 
 ## Engagement ranges
@@ -112,13 +114,13 @@ The line of sight is worked out on the graphics card from the level itself, a fe
 
 ## Objectives
 
-When a match comes with its objectives, the **Objectives** section draws them on the level: capture zones (with owner and capture progress), spawns, airfields, areas and bombing targets, each layer switchable, with labels. They are seen through the ground. With several game modes loaded, **Mode** filters the matches by mode. Objectives come from a converter's match file beside the recording or inside a [`.3dheat`](container.md) container.
+When a match comes with its objectives, the **Objectives** section draws them on the level: capture zones (with owner and capture progress), spawns, airfields, areas and bombing targets, each layer switchable, with labels. They are seen through the ground, and the units are always drawn over them: a unit standing in a zone stays whole, never sunk into its disc or under its bands. With several game modes loaded, **Mode** filters the matches by mode. While matches of more than one mode are shown together, their objectives are hidden: zones of different modes lie on the same ground and would only confuse. Pick one mode (or one match), or tick **Objectives of every mode together** to draw them all. Objectives come from a converter's match file beside the recording or inside a [`.3dheat`](container.md) container.
 
 Rainbow Six Siege matches bring their bomb sites: each site's two rooms are drawn on their floor as outlines with their names, worked out from where the players stood while the game named the room; a site of the map not played in the match comes from the converter's table of sites as a circle. In the replay the site of the round at the playhead lights in amber, the others stay grey. They are part of the capture-zone layer.
 
 ## Labels and statistics
 
-- **Labels**: rules per kind (**Selected**, **Aircraft**, **Ground**, **Ships**, **Weapons**, **AI**): shown or not, which values, and a **Priority** for who gets the space when labels overlap. **Keep labels apart** moves a label beside its unit when it would cover another, and leaves it out where there is no room. **Label size** is 60 to 250 %. **Back to name, vehicle, altitude and speed** resets the rules.
+- **Labels**: rules per kind (**Selected**, **Aircraft**, **Ground**, **Ships**, **Weapons**, **AI**): shown or not, which values, and a **Priority** for who gets the space when labels overlap. **Keep labels apart** moves a label beside its unit when it would cover another, and leaves it out where there is no room. **Label size** is 60 to 250 %, and sizes every label over the view: units, events, lock and engagement readouts, objectives, the map grid, place names, and the race and tactics board labels. **Back to name, vehicle, altitude and speed** resets the rules.
   - Ground units start with name, vehicle and speed.
   - Aircraft start with name, vehicle, altitude and speed.
   - Ships start with name, vehicle, speed and heading.

@@ -1,4 +1,5 @@
 import { useStore } from '../state/store';
+import { cameraFlying } from '../render/camera';
 
 /**
  * Browser shortcuts that only get in the way while flying the camera with the
@@ -29,6 +30,35 @@ export function swallows(e: Pick<KeyboardEvent, 'key' | 'ctrlKey' | 'metaKey' | 
   return SWALLOWED.has(e.key.toLowerCase());
 }
 
+type KeyboardApi = { lock?: (keys?: string[]) => Promise<void>; unlock?: () => void };
+
+function keyboardApi(): KeyboardApi | undefined {
+  return typeof navigator === 'undefined' ? undefined : (navigator as Navigator & { keyboard?: KeyboardApi }).keyboard;
+}
+
+/** Whether the viewer runs as an installed app, in a window of its own. */
+function installedApp(): boolean {
+  try {
+    return ['standalone', 'fullscreen', 'window-controls-overlay'].some((m) => matchMedia(`(display-mode: ${m})`).matches);
+  } catch {
+    return false;
+  }
+}
+
+/** Whether the camera is being flown, or was a moment ago: closing then is a stray Ctrl+W. */
+export function shouldGuardClose(now = performance.now()): boolean {
+  return cameraFlying(now);
+}
+
+/**
+ * Full screen with the browser keys locked to the viewer (Keyboard Lock API),
+ * so Ctrl+W flies rather than closes the tab. Off again when already on.
+ */
+export function toggleLockedFullscreen(): void {
+  if (document.fullscreenElement) void document.exitFullscreen().catch(() => undefined);
+  else void document.documentElement.requestFullscreen?.().catch(() => undefined);
+}
+
 /** Installs the guards; returns their removal. */
 export function guardBrowserKeys(): () => void {
   const onKey = (e: KeyboardEvent) => {
@@ -36,15 +66,20 @@ export function guardBrowserKeys(): () => void {
   };
   const onUnload = (e: BeforeUnloadEvent) => {
     const s = useStore.getState();
-    if (!s.dataset && !s.level) return;
+    // While the camera is being flown too, data or not: Ctrl+W is forward and
+    // down to the hand, and "close tab" to the browser.
+    if (!s.dataset && !s.level && !shouldGuardClose()) return;
     e.preventDefault();
     e.returnValue = '';
   };
   const onFullscreen = () => {
-    const kb = (navigator as Navigator & { keyboard?: { lock?: (keys?: string[]) => Promise<void>; unlock?: () => void } }).keyboard;
+    const kb = keyboardApi();
     if (document.fullscreenElement) kb?.lock?.(LOCKED).catch(() => undefined);
-    else kb?.unlock?.();
+    else if (!installedApp()) kb?.unlock?.();
   };
+  // An installed app's own window may lock the keyboard outside full screen;
+  // where the browser does not allow it the request is refused, which is fine.
+  if (installedApp()) keyboardApi()?.lock?.(LOCKED).catch(() => undefined);
   window.addEventListener('keydown', onKey, { capture: true });
   window.addEventListener('beforeunload', onUnload);
   document.addEventListener('fullscreenchange', onFullscreen);

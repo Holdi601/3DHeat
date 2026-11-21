@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{zone} utracona przez {team}",
   "objectives.legend.neutral": "neutralna",
   "objectives.legend.capturing": "przejmowana",
+  "objectives.allModes": "Cele wszystkich trybów razem",
+  "objectives.allModesTitle": "Bitwy kilku trybów pokazane naraz mają ukryte cele: strefy różnych trybów nakładają się na tym samym terenie. Zaznacz, aby mimo to narysować wszystkie",
   "objectives.layer.bounds": "Poza obszarem",
   "objectives.layer.boundsTitle": "Zakreskowane tam, gdzie drużyna jest poza obszarem: w obszarze gry drugiej strony, ale poza własnym",
   "objectives.layout": "Układ",

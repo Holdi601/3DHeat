@@ -543,5 +543,8 @@
   "replay.card.hidden": "Ukryty przez nagranie w tej chwili (nie zniszczony).",
   "replay.card.disabled": "Wyłączony z walki, nie zniszczony.",
   "replay.aids.links": "Powiązania",
-  "replay.aids.linksTitle": "Uzbrojenie do wyrzutni (przerywana) i punkt trasy do następnego, z Parent i Next"
+  "replay.aids.linksTitle": "Uzbrojenie do wyrzutni (przerywana) i punkt trasy do następnego, z Parent i Next",
+  "replay.look.part.feedAll": "Zdarzenia wszystkich jednostek",
+  "replay.look.part.feedAllTitle": "Lista zestrzeleń i zdarzeń wszystkich jednostek. Wyłączone: tylko obserwowanej jednostki, a bez obserwowanej — widocznych",
+  "replay.look.resume": "Wznów reżysera"
 }

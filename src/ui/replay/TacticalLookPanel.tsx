@@ -3,7 +3,7 @@ import { useReplayStore } from '../../state/replayStore';
 import { LOOK_COLOURS, LOOK_QUALITIES, type TacticalLook } from '../../render/tacticalLook';
 import { t } from '../../i18n';
 
-const SWITCHES: Array<keyof TacticalLook> = ['bloom', 'edges', 'contours', 'grid', 'scan', 'rings', 'ladders', 'panels', 'director'];
+const SWITCHES: Array<keyof TacticalLook> = ['bloom', 'edges', 'contours', 'grid', 'scan', 'rings', 'ladders', 'panels', 'feedAll', 'director'];
 
 /**
  * The tactical display: the replay redrawn as a debrief telemetry screen

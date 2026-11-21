@@ -106,7 +106,7 @@ On every load ([`calibrate`](https://github.com/Holdi601/3DHeat/blob/main/src/da
 | Saturation point | analytic estimate (then metered) | same |
 | Fly speed | extent / 12 | same |
 | Far plane | extent × 12 | same |
-| Near plane | max(0.05, extent / 20,000) | same |
+| Near plane | 5 cm (0.05 × units per metre) | 0.05 |
 
 ## The Dataset panel
 

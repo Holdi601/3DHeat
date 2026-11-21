@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{team} missti {zone}",
   "objectives.legend.neutral": "hlutlaust",
   "objectives.legend.capturing": "verið að taka",
+  "objectives.allModes": "Markmið allra hama saman",
+  "objectives.allModesTitle": "Þegar bardagar úr fleiri en einum ham eru sýndir saman eru markmið þeirra falin: svæði ólíkra hama skarast á sama landi. Hakaðu við til að teikna þau öll samt",
   "objectives.layer.bounds": "Utan svæðis",
   "objectives.layer.boundsTitle": "Skástrikað þar sem lið er utan svæðis: innan leiksvæðis hinnar hliðarinnar en utan síns eigin",
   "objectives.layout": "Uppsetning",

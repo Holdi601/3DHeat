@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{zone}: χάθηκε από {team}",
   "objectives.legend.neutral": "ουδέτερη",
   "objectives.legend.capturing": "καταλαμβάνεται",
+  "objectives.allModes": "Στόχοι όλων των λειτουργιών μαζί",
+  "objectives.allModesTitle": "Όταν εμφανίζονται μάχες πολλών λειτουργιών μαζί, οι στόχοι τους κρύβονται: οι ζώνες διαφορετικών λειτουργιών επικαλύπτονται στο ίδιο έδαφος. Επιλέξτε για να σχεδιαστούν όλοι παρ' όλα αυτά",
   "objectives.layer.bounds": "Εκτός ορίων",
   "objectives.layer.boundsTitle": "Γραμμοσκιασμένο όπου μια ομάδα είναι εκτός ορίων: μέσα στην περιοχή της άλλης πλευράς αλλά έξω από τη δική της",
   "objectives.layout": "Διάταξη",

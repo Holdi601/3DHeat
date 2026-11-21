@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{team} prarado {zone}",
   "objectives.legend.neutral": "neutrali",
   "objectives.legend.capturing": "užimama",
+  "objectives.allModes": "Visų režimų tikslai kartu",
+  "objectives.allModesTitle": "Kai kartu rodomi kelių režimų mūšiai, jų tikslai paslepiami: skirtingų režimų zonos persidengia toje pačioje vietovėje. Pažymėkite, kad vis tiek būtų nupiešti visi",
   "objectives.layer.bounds": "Už ribų",
   "objectives.layer.boundsTitle": "Užbrūkšniuota ten, kur komanda už ribų: kitos pusės žaidimo zonoje, bet už savosios",
   "objectives.layout": "Išdėstymas",

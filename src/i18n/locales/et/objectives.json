@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{team} kaotas ala {zone}",
   "objectives.legend.neutral": "neutraalne",
   "objectives.legend.capturing": "vallutatakse",
+  "objectives.allModes": "Kõigi režiimide eesmärgid koos",
+  "objectives.allModesTitle": "Mitme režiimi lahingute korraga näitamisel on nende eesmärgid peidetud: eri režiimide tsoonid kattuvad samal maastikul. Märgi, et need siiski kõik joonistada",
   "objectives.layer.bounds": "Piiridest väljas",
   "objectives.layer.boundsTitle": "Viirutatud, kus meeskond on piiridest väljas: teise poole mängualal, kuid omast väljas",
   "objectives.layout": "Paigutus",

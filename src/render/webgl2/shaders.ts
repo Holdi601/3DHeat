@@ -12,6 +12,7 @@ import {
 import { VOLUME_GLSL } from '../../volumes/gpu';
 import { SEE_THROUGH_BELOW } from '../figureShaders';
 import { WEDGE_DISC_PX, WEDGE_FULL_PX, WEDGE_TIGHT_MAX } from '../direction';
+import { DEPTH_GLSL, PEEL_EPSILON_REVERSE } from '../depth';
 
 
 /**
@@ -183,18 +184,24 @@ ${VOLUME_GLSL}
  * The bias converts the one tolerance that is genuinely in world units — the
  * sprite radius, standing for how far the level's approximation of a surface can
  * be from where the datapoint actually stood — into window units at this depth,
- * using dz/ddistance. Plus a few least-significant bits of a 24-bit buffer, so a
- * datapoint resting exactly on a surface does not shadow itself.
+ * using dz/ddistance. Plus a few least-significant bits of the buffer, so a
+ * datapoint resting exactly on a surface does not shadow itself. Towards the
+ * camera is up under reverse-Z and down otherwise (render/depth.ts).
  */
+${DEPTH_GLSL}
 float occlusionThreshold(float windowZ, float viewDist) {
   float near = uNearFar.x;
   float far = uNearFar.y;
-  // Rate of change of window depth per world unit at this distance.
+  // Rate of change of window depth per world unit at this distance. Clip control
+  // stores z/w as it is; without it the [-1, 1] range is halved into [0, 1] - the
+  // classic form keeps the factor of two it always had, a bias of two radii.
   float dzdd = (uPerspective == 1)
     ? (2.0 * near * far) / max(1e-9, viewDist * viewDist * (far - near))
     : 1.0 / max(1e-9, far - near);
-  float bias = max(uRadius * dzdd, 8.0 / 16777216.0);
-  return windowZ - bias;
+#ifdef REVERSE_Z
+  dzdd *= uPerspective == 1 ? 0.5 : 1.0;
+#endif
+  return towardCamera(windowZ, uRadius * dzdd);
 }
 
 uniform usampler2D uPosTex;      // xyz quantised to the chunk AABB, w = teamId
@@ -429,7 +436,11 @@ void main() {
   // Under perspective, clip.w *is* the view-space distance, so it needs no
   // reconstruction from depth — which is the other half of avoiding the precision
   // trap described in occlusionThreshold.
+#ifdef REVERSE_Z
+  float windowZ = clip.w > 0.0 ? clip.z / clip.w : 0.0;
+#else
   float windowZ = clip.w > 0.0 ? (clip.z / clip.w) * 0.5 + 0.5 : 1.0;
+#endif
   vOccludeAt = occlusionThreshold(windowZ, uPerspective == 1 ? max(1e-6, clip.w) : 1.0);
   vVisible = visible;
 
@@ -614,7 +625,11 @@ uniform usampler2D uPosTex;`,
     return;
   }
   vec4 clip = atB ? clipB : clipA;
+#ifdef REVERSE_Z
+  float windowZ = clip.z / clip.w;
+#else
   float windowZ = (clip.z / clip.w) * 0.5 + 0.5;
+#endif
   vOccludeAt = occlusionThreshold(windowZ, uPerspective == 1 ? max(1e-6, clip.w) : 1.0);
 
   // The width at each end is a sprite's radius at that end's distance.
@@ -711,6 +726,7 @@ uniform int   uRate;            // 1: the rate map's three sums, see render/rate
 // a depth texture returns nothing useful on some drivers, and because a sprite
 // crossing a wall's edge should be partly hidden rather than entirely.
 uniform sampler2D uSceneDepth;
+${DEPTH_GLSL}
 uniform float uOcclusion;      // 0 = show through walls, 1 = drop entirely
 uniform float uOccludedExtra;  // dimming per surface beyond the first
 uniform float uOcclusionFloor; // least visibility any occluded point keeps
@@ -782,7 +798,7 @@ void main() {
   }
   if (uOcclusion > 90.0) {
     float sz = texture(uSceneDepth, gl_FragCoord.xy / uViewport).r;
-    float dbg = uOcclusion > 98.5 ? sz : (uOcclusion > 97.5 ? vOccludeAt : ((vOccludeAt > sz) ? 1.0 : 0.0));
+    float dbg = uOcclusion > 98.5 ? sz : (uOcclusion > 97.5 ? vOccludeAt : (DEPTH_BEHIND(vOccludeAt, sz) ? 1.0 : 0.0));
     outHeat = vec4(dbg, 0.0, 0.0, 0.0);
     return;
   }
@@ -795,14 +811,14 @@ void main() {
   // reading of a heatmap in which the far side of a hill is wanted, and the
   // dimmer cannot be turned up far enough to suppress it without also erasing
   // the building interior it exists to reveal.
-  if (uGroundCull == 1 && vOccludeAt > texture(uSceneDepth, uv).r
-      && vOccludeAt <= texture(uStructDepth, uv).r) {
+  if (uGroundCull == 1 && DEPTH_BEHIND(vOccludeAt, texture(uSceneDepth, uv).r)
+      && !DEPTH_BEHIND(vOccludeAt, texture(uStructDepth, uv).r)) {
     discard;
   }
   if (uOcclusion > 0.0) {
     // How many surfaces stand between this sprite and the camera. The scene's
     // own depth is the first; the peeled layers are the rest.
-    int walls = vOccludeAt > texture(uSceneDepth, uv).r ? 1 : 0;
+    int walls = DEPTH_BEHIND(vOccludeAt, texture(uSceneDepth, uv).r) ? 1 : 0;
     if (walls > 0) {
       // Unrolled, and it has to be. GLSL ES 3.00 only permits a sampler array to
       // be indexed by a constant expression, and a loop counter is not one — the
@@ -810,7 +826,7 @@ void main() {
       // failing to initialise rather than as a shader error.
 ${Array.from(
   { length: HEAT_DEPTH_LAYERS },
-  (_, i) => `      if (${i} < uLayerCount && vOccludeAt > texture(uDepthLayers[${i}], uv).r) walls++;`,
+  (_, i) => `      if (${i} < uLayerCount && DEPTH_BEHIND(vOccludeAt, texture(uDepthLayers[${i}], uv).r)) walls++;`,
 ).join('\n')}
       // The first surface dims hard; each one after it dims by a gentler,
       // separate factor. Two different numbers on purpose.
@@ -930,16 +946,10 @@ vec3 oklabToSrgb(float L, float a, float b) {
              step(lin, vec3(0.0031308)));
 }
 
-/** Depth sample -> distance from the camera along the view axis. */
+${DEPTH_GLSL}
+/** Depth sample -> distance from the camera along the view axis (either layout: render/depth.ts). */
 float viewDistance(float depth) {
-  if (uPerspectiveDepth == 1) {
-    float ndc = depth * 2.0 - 1.0;
-    float n = uDepthRange.x;
-    float f = uDepthRange.y;
-    return (2.0 * n * f) / max(1e-6, f + n - ndc * (f - n));
-  }
-  // Parallel projection: depth is linear in distance already.
-  return mix(uDepthRange.x, uDepthRange.y, depth);
+  return depthToDistance(depth, uDepthRange.x, uDepthRange.y, uPerspectiveDepth == 1);
 }
 
 // Blur radius in pixels for a pixel at distance d from the camera.
@@ -1450,7 +1460,12 @@ void main() {
   // the UV's derivatives. A vertex with no texture carries -1, which the clamp
   // keeps a legal read; its result is simply not used.
   float alpha = sampleAtlas(uAtlas, vUv, vTile).a;
+#ifdef REVERSE_Z
+  // Nearer is larger: at or in front of the last layer is at or above it, by a share of its depth (render/depth.ts).
+  if (gl_FragCoord.z >= prev * (1.0 - ${PEEL_EPSILON_REVERSE})) discard;
+#else
   if (gl_FragCoord.z <= prev + ${PEEL_EPSILON}) discard;
+#endif
   if (uTexture > 0.0 && (vTile.z != 0.0 || vUv.x >= 0.0) && alpha < 0.5) discard;
 }
 `;

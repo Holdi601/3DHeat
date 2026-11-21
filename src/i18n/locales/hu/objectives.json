@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{zone} – elvesztette: {team}",
   "objectives.legend.neutral": "semleges",
   "objectives.legend.capturing": "foglalás alatt",
+  "objectives.allModes": "Minden mód céljai együtt",
+  "objectives.allModesTitle": "Ha több mód csatái látszanak egyszerre, céljaik rejtve maradnak: a különböző módok zónái ugyanazon a terepen fedik egymást. Jelölje be, hogy mégis mind megjelenjen",
   "objectives.layer.bounds": "Pályán kívül",
   "objectives.layer.boundsTitle": "Vonalkázva, ahol egy csapat pályán kívül van: a másik fél játékterén belül, de a sajátján kívül",
   "objectives.layout": "Elrendezés",

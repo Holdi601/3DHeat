@@ -89,10 +89,14 @@ export function clearView(engine: Engine, at: { x: number; y: number; z: number 
 /**
  * Fly the camera to a world point (data units) and look at it from `metres`
  * away: along the current line of sight, so the view turns toward it rather
- * than jumping, over half a second. Stops following.
+ * than jumping, over half a second. Stops following, and holds the tactical
+ * display's director: the viewer has taken the camera, and its next shot would
+ * fly it straight back.
  */
 export function flyTo(engine: Engine, d: Dataset, at: { x: number; y: number; z: number }, metres: number): void {
-  useReplayStore.getState().stopFollow();
+  const r = useReplayStore.getState();
+  r.stopFollow();
+  if (r.look.on && r.look.director) r.holdDirector(true);
   const k = unitsPerMetre(d);
   const from = engine.cameraPose();
   let dx = at.x - from.position.x;

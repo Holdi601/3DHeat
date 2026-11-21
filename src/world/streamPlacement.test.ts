@@ -48,15 +48,20 @@ describe('a streamed theatre put under data loaded after it', () => {
 describe("a streamed world's camera", () => {
   it('widens the far plane over the whole reach but keeps the near plane close enough to follow a figure', async () => {
     const { cameraForExtent } = await import('../data/calibrate');
+    const { viewNearFor } = await import('../render/depth');
     const th = theatreById('Caucasus')!;
     const pl: GeoPlacement = { geo: { lat0: 38, lon0: 36, projection: 'tangent-plane' }, axes: AXES };
     const { bounds } = streamBounds(pl, th.box);
     const data = { near: 2, far: 2_000_000, flySpeed: 100 };
-    const plain = cameraForExtent(data, bounds);
-    expect(plain.near).toBeGreaterThan(100); // what cut the followed E-3A at 60 m
-    const streamed = cameraForExtent(data, bounds, 10);
-    expect(streamed.far).toBe(plain.far);
-    expect(streamed.near).toBe(10);
-    expect(cameraForExtent({ ...data, near: 20 }, bounds, 10).near).toBe(20);
+    const widened = cameraForExtent(data, bounds);
+    expect(widened.far).toBeGreaterThan(data.far);
+    expect(widened.near).toBe(2);
+    const q = { near: widened.near, far: widened.far, grow: false, outside: 0, above: 0 };
+    // Reverse-Z draws with the near plane set.
+    expect(viewNearFor({ ...q, reverse: true, streamed: true })).toBe(2);
+    // The classic layout's floor: far / 10^5 - what cut the followed E-3A at 60 m - capped for a streamed world.
+    expect(viewNearFor({ ...q, reverse: false, streamed: false })).toBeGreaterThan(100);
+    expect(viewNearFor({ ...q, reverse: false, streamed: true })).toBe(10);
+    expect(viewNearFor({ ...q, near: 20, reverse: false, streamed: true })).toBe(20);
   });
 });

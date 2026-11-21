@@ -30,12 +30,14 @@ From [`camera.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/camer
 | `A` / `←` | Strafe left |
 | `D` / `→` | Strafe right |
 | `Space` / `E` | Up |
-| `Q` / left `Ctrl` | Down |
+| `Q` / left `Ctrl` | Down (Ctrl can be swapped for `Z`, or left out: View panel, **Fly down with**) |
 | `Shift` (either) | Hold: 6× speed |
 | left `Alt` | Hold: 15% speed |
 | Left or right drag on the view | Look (pointer locked while the button is held) |
 | Wheel (perspective) | Fly speed ×1.5 per notch (at most 4 notches per wheel event) |
-| Wheel (parallel) | Zoom |
+| Wheel (parallel) | Zoom about the pointer, a quarter per notch |
+| `W` `A` `S` `D` (parallel) | Pan the picture: up, left, down, right, at the same pace on screen at any zoom |
+| `Space` `E` / `Q` (parallel) | Move up and down; nothing behind the camera is cut away |
 | Right-click | Opens no context menu over the view |
 
 ## Global
@@ -45,12 +47,12 @@ From [`App.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/App.tsx).
 | Key | Effect |
 |---|---|
 | `K` | Play / pause the [timeline](timeline.md) |
-| `F` | Frame the data |
+| `F` | Frame the data (not with `Ctrl`, `Alt` or `Cmd` held, and not by a held key repeating) |
 | `C` | Copy the camera's position, yaw and pitch ([camera readout](camera.md#camera-readout)) |
 | `G` | Go to a typed point: opens the box under the camera readout |
 | `Esc` | Close the pick card; then stop looking at the second unit; then stop following a unit |
 | `T` | Tactical display look on or off ([Match replay](match-replay.md#display-style)) |
-| `?` / `F1` | Help mode: what the colours mean ([Settings, units and keys](settings.md#help-mode)) |
+| `?` / `F1` | Help mode: what the colours mean, and what the label or figure under the pointer is ([Settings, units and keys](settings.md#help-mode)) |
 | `1` | [Heat](heat.md) |
 | `2` | [Difference](difference.md) |
 | `3` | [Team heat](team-heat.md) |
@@ -96,25 +98,36 @@ While the camera follows a unit, the wheel and the flying keys steer around the 
 
 ## Tactics board
 
-In the Tactics tab ([Tactics board](tactics-board.md)). `F`, `C`, `G` and `T` work as above; the number keys do nothing.
+In the Tactics tab ([Tactics board](tactics-board.md)). `F`, `C`, `G` and `T` work as above; the number keys pick the board's tools instead of heat modes.
 
 | Key | Effect |
 |---|---|
+| `1` or `V` | Select tool |
+| `2` or `P` | Place tool |
+| `3` or `L` | Waypoints tool |
+| `4` or `H` | Throw tool |
+| `5` or `O` | Area tool |
+| `6` or `N` | Note tool |
+| `8` or `X` | Erase tool |
+| `9` or `U` | Measure tool |
 | `Ctrl+Z` | Undo |
 | `Ctrl+Y` or `Ctrl+Shift+Z` | Redo |
-| `Enter` | End the arrow being drawn (a double click or a right click does the same) |
-| `Esc` | Cancel a drag; else drop the arrow or the move in progress; else deselect |
-| `Delete` or `Backspace` | Delete the selection |
+| `Ctrl+A` | Select everything in the shown step |
+| `Enter` | Finish the route, arrow or ruler being drawn |
+| Double click, right click (without dragging) | Finish it too: the double click puts the last waypoint down first |
+| `Esc` | Cancel a drag; else finish what is being drawn (or drop it when it has only its start point); else stop a move; else deselect |
+| `Backspace` while drawing | Take the last point back |
+| `Delete` or `Backspace` | Remove the selection, after a confirmation |
 | `W` / `E` / `R` | Move / Rotate / Scale gizmo for the selection (key scheme **W / E / R**) |
 | `G` / `R` / `S` | Move / Rotate / Scale gizmo for the selection (key scheme **G / R / S**) |
 | `R` | With nothing selected: turn the next figure to place by 15°. `Shift+R` turns it back. |
 | `M` | With a figure selected: move it to the next click |
 | `K` | Play or pause the plan |
 | Shift+click | Add to or remove from the selection |
-| Shift+drag | Draw a box round what to select |
+| Shift+drag | Draw a box round what to select (adds to the selection) |
 | `Ctrl` while dragging a handle | Snap to the grid or the angle step |
 
-The gizmo keys work only while something is selected; with nothing selected, `W A S D` fly the camera as usual.
+The gizmo keys work only while something is selected; with nothing selected, `W A S D` fly the camera as usual. The tool letters are ones the camera does not fly with. Each tool button shows its digit, and its tooltip both keys.
 
 ## Click-to-pick
 
@@ -153,3 +166,13 @@ Some browser shortcuts would close or reload the page and lose a loaded session;
 ## Gamepad
 
 See [Gamepad and HOTAS](gamepad.md).
+
+## Ctrl+W and other browser keys {#ctrl-w}
+
+Left `Ctrl` flies down, so `Ctrl+W` is "forward and down" to the hand - and "close the tab" to the browser. A web page cannot stop `Ctrl+W`, `Ctrl+T` or `Ctrl+N` in a normal browser window. The viewer does what a page can:
+
+- In full screen (the **Full screen** button in the View panel's camera section) it locks these keys with the Keyboard Lock API, so they reach the viewer and fly the camera. Browser full screen with `F11` is not the same and does not lock them. An installed app window may lock them too, where the browser allows it.
+- Outside full screen, the browser asks before it closes or reloads the tab while data or a level is loaded, or while the camera is being flown (and for three seconds after).
+- To keep `Ctrl` out of it, set **Fly down with** to `Q / Z` or `Q` in the View panel. The choice is kept in this browser.
+
+Which keys the viewer keeps from the browser: [Browser keys](ref-browser-keys.md).

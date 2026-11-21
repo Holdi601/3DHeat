@@ -20,7 +20,7 @@
   left: 0;
   top: 0;
   white-space: nowrap;
-  font-size: 11px;
+  font-size: calc(11px * var(--label-scale, 1));
   line-height: 1.3;
   padding: 1px 5px;
   border-radius: 3px;
@@ -713,7 +713,7 @@
   left: 0;
   top: 0;
   white-space: nowrap;
-  font-size: 10px;
+  font-size: calc(10px * var(--label-scale, 1));
   padding: 0 4px;
   border-radius: 3px;
   font-variant-numeric: tabular-nums;
@@ -769,7 +769,7 @@
 .geo-grid-label,
 .geo-gs-label,
 .geo-grid-zone {
-  font-size: 10px;
+  font-size: calc(10px * var(--label-scale, 1));
   paint-order: stroke;
   stroke: rgba(0, 0, 0, 0.75);
   stroke-width: 3px;
@@ -779,7 +779,7 @@
 }
 .geo-grid-zone {
   fill: #ffffff;
-  font-size: 12px;
+  font-size: calc(12px * var(--label-scale, 1));
 }
 .geo-gs-label {
   fill: #b8ffc6;

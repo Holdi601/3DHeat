@@ -16,6 +16,7 @@ import { shownMatch, useManeuvers, type Level } from '../../insights/maneuver/st
 import { sideColor } from '../../insights/maneuver/lines';
 import type { Maneuver } from '../../insights/maneuver/types';
 import { analysisScope } from '../../insights/run';
+import { toggledSelection } from '../../insights/store';
 import type { Engine } from '../../render/engine';
 import { useStore } from '../../state/store';
 import type { Dataset } from '../../state/types';
@@ -175,7 +176,7 @@ export function Maneuvers() {
               {list.length > 1 && <SortControl sort={sort} />}
               <ol className="ins-list mv-list">
                 {sorted.map((m) => (
-                  <ManeuverRow key={m.id} m={m} teams={dataset.teamLabels} open={st.selected === m.id} onPick={() => pick(m)} />
+                  <ManeuverRow key={m.id} m={m} teams={dataset.teamLabels} open={st.selected === m.id} onPick={() => (toggledSelection(st.selected, m.id) === null ? st.set({ selected: null }) : pick(m))} />
                 ))}
               </ol>
               <PaidTable list={list} teams={dataset.teamLabels} />

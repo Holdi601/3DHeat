@@ -20,6 +20,14 @@ export interface InsightsState {
   set: (p: Partial<Omit<InsightsState, 'set'>>) => void;
 }
 
+/**
+ * What a click on a row's title leaves open: the row, or nothing when it was
+ * the open one - the title opens and closes it, as a disclosure does.
+ */
+export function toggledSelection(selected: string | null, id: string): string | null {
+  return selected === id ? null : id;
+}
+
 export const useInsights = create<InsightsState>((set) => ({
   report: null,
   key: null,

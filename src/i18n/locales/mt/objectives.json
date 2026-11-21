@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{zone} mitlufa minn {team}",
   "objectives.legend.neutral": "newtrali",
   "objectives.legend.capturing": "qed tinqabad",
+  "objectives.allModes": "Għanijiet tal-modalitajiet kollha flimkien",
+  "objectives.allModesTitle": "Meta jintwerew battalji ta' diversi modalitajiet flimkien, l-għanijiet tagħhom jinħbew: iż-żoni ta' modalitajiet differenti jirkbu fuq xulxin fuq l-istess art. Immarka biex jinġibdu kollha xorta waħda",
   "objectives.layer.bounds": "Barra mil-limiti",
   "objectives.layer.boundsTitle": "Immarkat fejn tim huwa barra mil-limiti: ġewwa ż-żona tal-logħob tan-naħa l-oħra imma barra minn tiegħu",
   "objectives.layout": "Tqassim",

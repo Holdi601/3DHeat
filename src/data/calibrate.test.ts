@@ -31,13 +31,13 @@ describe('cameraForExtent', () => {
     expect(widened.flySpeed).toBeGreaterThan(START.flySpeed);
   });
 
-  it('moves near with far, to keep the depth buffer usable', () => {
-    // Depth precision is set by the ratio, and the heat occlusion test compares
-    // window depths. Pinning near at half a unit against a million-unit far
-    // plane would leave a wall and the ground behind it indistinguishable.
+  it('keeps the near plane where it was set: reverse-Z needs no ratio', () => {
+    // A near plane moved out with a million-unit far plane cut the ground in
+    // front of the camera. The classic depth layout's floor is the engine's
+    // (viewNearFor), applied only where the depth buffer needs it.
     const widened = cameraForExtent(START, bounds(3_000_000));
-    expect(widened.far / widened.near).toBeLessThanOrEqual(100_000);
-    expect(widened.near).toBeGreaterThan(START.near);
+    expect(widened.near).toBe(START.near);
+    expect(widened.far).toBeGreaterThan(START.far);
   });
 
   it('never narrows a frustum a dataset already widened', () => {

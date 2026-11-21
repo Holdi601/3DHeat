@@ -839,5 +839,8 @@
   "heat.memoryPanel.all": "All {count} columns",
   "heat.memoryPanel.fewer": "Fewer",
   "heat.memoryPanel.roomy": "Plenty of room left: finer heat and more sprites per frame would fit.",
-  "heat.memoryPanel.finer": "Use more fidelity"
+  "heat.memoryPanel.finer": "Use more fidelity",
+  "heat.viewPanel.camera.descendKey": "Вниз клавишей",
+  "heat.viewPanel.camera.fullscreen": "Полный экран",
+  "heat.viewPanel.camera.descendKeyHint": "Ctrl+W (forward and down) closes the tab in most browsers, and a page can only ask first. In full screen the viewer locks those keys; otherwise fly down with Z or Q."
 }

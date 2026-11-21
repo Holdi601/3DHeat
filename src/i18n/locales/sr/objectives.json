@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{zone} изгубио {team}",
   "objectives.legend.neutral": "неутрална",
   "objectives.legend.capturing": "осваја се",
+  "objectives.allModes": "Циљеви свих режима заједно",
+  "objectives.allModesTitle": "Када су приказане битке више режима одједном, њихови циљеви су сакривени: зоне различитих режима преклапају се на истом терену. Означите да се ипак сви нацртају",
   "objectives.layer.bounds": "Van granica",
   "objectives.layer.boundsTitle": "Šrafirano gde je tim van granica: unutar oblasti igre druge strane, a van svoje",
   "objectives.layout": "Raspored",

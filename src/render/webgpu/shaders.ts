@@ -4,6 +4,7 @@ import { FILTER_MASK_CAPACITY } from '../types';
 import { volumeWgsl } from '../../volumes/gpu';
 import { SEE_THROUGH_BELOW } from '../figureShaders';
 import { WEDGE_DISC_PX, WEDGE_FULL_PX, WEDGE_TIGHT_MAX } from '../direction';
+import { DEPTH_WGSL } from '../depth';
 
 /**
  * The team palettes (render/colors.ts TEAM_PALETTES) in Oklab, end to end,
@@ -172,7 +173,8 @@ fn fsPeel(in : PeelOut) {
   // keeps an untextured vertex's -1 a legal read; its result is not used.
   let alpha = sampleAtlas(in.uv, in.tile).a;
   let prev = textureLoad(prevDepth, vec2<i32>(in.pos.xy), 0);
-  if (in.pos.z <= prev + u.cfg.z) { discard; }
+  // Reverse-Z: at or in front of the last layer is at or above it, by a share of its depth (render/depth.ts).
+  if (in.pos.z >= prev * (1.0 - u.cfg.z)) { discard; }
   if (u.cfg.w > 0.5 && (in.tile.z != 0.0 || in.uv.x >= 0.0) && alpha < 0.5) { discard; }
 }
 `;
@@ -184,6 +186,7 @@ export const PEEL_UNIFORM_BYTES = 80;
 export const COMPOSITE_UNIFORM_BYTES = 80;
 
 const POINT_HEAT_WGSL = /* wgsl */ `
+${DEPTH_WGSL}
 struct HeatUniforms {
   viewProj      : mat4x4<f32>,
   // viewport.xy, pixel clamp min/max
@@ -589,7 +592,8 @@ fn vsHeat(@builtin(vertex_index) vid : u32) -> VsOut {
   // Under perspective clip.w is the view-space distance, so the bias — one
   // sprite radius, standing for how far the level's approximation of a surface
   // can be from where the datapoint stood — converts into window units exactly.
-  // WebGPU clips depth to [0, 1], so clip.z / clip.w already *is* window depth.
+  // WebGPU clips depth to [0, 1], so clip.z / clip.w already *is* window depth,
+  // reverse-Z: towards the camera is up (render/depth.ts).
   let near = u.depthCfg.y;
   let far = u.depthCfg.z;
   var dzdd = 1.0 / max(1e-9, far - near);
@@ -597,7 +601,7 @@ fn vsHeat(@builtin(vertex_index) vid : u32) -> VsOut {
     let dist = max(1e-6, clip.w);
     dzdd = (near * far) / max(1e-9, dist * dist * (far - near));
   }
-  out.occludeAt = clip.z / clip.w - max(u.shape.x * dzdd, 8.0 / 16777216.0);
+  out.occludeAt = towardCamera(clip.z / clip.w, u.shape.x * dzdd);
 
   // Under perspective clip.w is the view-space depth, so size falls off with
   // distance. Orthographic has no falloff, which is the point of offering it.
@@ -682,13 +686,13 @@ fn fsHeat(in : VsOut) -> @location(0) vec4<f32> {
   // different question. Cut rather than dimmed: there is no reading of a heatmap
   // in which the far side of a hill is wanted.
   if (u.occlusionCfg.w > 0.5
-      && in.occludeAt > textureLoad(sceneDepth, depthCoord, 0)
-      && in.occludeAt <= textureLoad(structDepth, depthCoord, 0)) {
+      && depthBehind(in.occludeAt, textureLoad(sceneDepth, depthCoord, 0))
+      && !depthBehind(in.occludeAt, textureLoad(structDepth, depthCoord, 0))) {
     discard;
   }
   if (u.depthCfg.x > 0.0) {
     let coord = depthCoord;
-    if (in.occludeAt > textureLoad(sceneDepth, coord, 0)) {
+    if (depthBehind(in.occludeAt, textureLoad(sceneDepth, coord, 0))) {
       // Count the surfaces in front, then dim per surface. The first costs
       // depthCfg.x; each one after it costs occlusionCfg.x — two different
       // numbers, because one factor compounded either barely dims a single wall
@@ -697,9 +701,9 @@ fn fsHeat(in : VsOut) -> @location(0) vec4<f32> {
       // literal and one would end the shader source mid-string.)
       var walls = 1.0;
       let layers = u.occlusionCfg.z;
-      if (layers > 0.5 && in.occludeAt > textureLoad(depthLayer0, coord, 0)) { walls += 1.0; }
-      if (layers > 1.5 && in.occludeAt > textureLoad(depthLayer1, coord, 0)) { walls += 1.0; }
-      if (layers > 2.5 && in.occludeAt > textureLoad(depthLayer2, coord, 0)) { walls += 1.0; }
+      if (layers > 0.5 && depthBehind(in.occludeAt, textureLoad(depthLayer0, coord, 0))) { walls += 1.0; }
+      if (layers > 1.5 && depthBehind(in.occludeAt, textureLoad(depthLayer1, coord, 0))) { walls += 1.0; }
+      if (layers > 2.5 && depthBehind(in.occludeAt, textureLoad(depthLayer2, coord, 0))) { walls += 1.0; }
       var gain = 1.0 - u.depthCfg.x;
       if (walls > 1.5) { gain = gain * pow(u.occlusionCfg.x, walls - 1.0); }
       visible = visible * max(gain, u.occlusionCfg.y);
@@ -884,7 +888,7 @@ function lineHeatWgsl(): string {
     let dist = max(1e-6, clip.w);
     dzdd = (near * far) / max(1e-9, dist * dist * (far - near));
   }
-  out.occludeAt = clip.z / clip.w - max(u.shape.x * dzdd, 8.0 / 16777216.0);
+  out.occludeAt = towardCamera(clip.z / clip.w, u.shape.x * dzdd);
 
   // The width at each end is a sprite's radius at that end's distance.
   var denom = 1.0;
@@ -1029,16 +1033,10 @@ struct CompositeUniforms {
 @group(0) @binding(4) var samp : sampler;
 @group(0) @binding(5) var depthTex : texture_depth_2d;
 
-/** Depth sample -> distance from the camera along the view axis. */
+${DEPTH_WGSL}
+/** Depth sample -> distance from the camera along the view axis (reverse-Z: render/depth.ts). */
 fn viewDistance(depth : f32) -> f32 {
-  let n = u.cfg3.x;
-  let f = u.cfg3.y;
-  if (u.cfg4.x > 0.5) {
-    // WebGPU depth is already 0..1, and the projection was remapped to match, so
-    // this is the standard reverse of a perspective divide on that range.
-    return (n * f) / max(1e-6, f - depth * (f - n));
-  }
-  return mix(n, f, depth);
+  return depthToDistance(depth, u.cfg3.x, u.cfg3.y, u.cfg4.x > 0.5);
 }
 
 // Blur radius in pixels for a pixel at distance dist from the camera.

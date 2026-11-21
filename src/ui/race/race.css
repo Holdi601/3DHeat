@@ -642,7 +642,7 @@ button.finding.on {
   left: 0;
   top: 0;
   will-change: transform;
-  font-size: 11px;
+  font-size: calc(11px * var(--label-scale, 1));
   font-weight: 600;
   white-space: nowrap;
 }

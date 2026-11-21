@@ -1,4 +1,5 @@
 import { GpuZones } from './zones';
+import { GPU_DEPTH_CLEAR, GPU_DEPTH_FORMAT, GPU_DEPTH_TEST, PEEL_EPSILON_REVERSE } from '../depth';
 import { GpuRanges } from './ranges';
 import { GpuPost } from './post';
 import { GpuDirField } from './dirField';
@@ -24,7 +25,6 @@ import {
   FILTER_MASK_WIDTH,
   GpuInitError,
   HEAT_DEPTH_LAYERS,
-  PEEL_EPSILON_F,
   MAX_PLAN_BLOCKS,
   SAMPLE_BLOCK,
   type ActiveFilter,
@@ -81,7 +81,8 @@ const UPLOAD_SLICE_BYTES = 8 * 1024 * 1024;
 /** Heat target sets kept across resolution changes: the levels in use and their neighbours. */
 const HEAT_SETS_KEPT = 8;
 const SCENE_FORMAT: GPUTextureFormat = 'rgba8unorm';
-const DEPTH_FORMAT: GPUTextureFormat = 'depth24plus';
+/** Reverse-Z (render/depth.ts). */
+const DEPTH_FORMAT: GPUTextureFormat = GPU_DEPTH_FORMAT;
 /** Bytes in a scene uniform buffer: mat4 + 2 vec4. */
 // mat4 + camera vec4 + cfg vec4 + tint vec4 + relief vec4 + elevation vec4 +
 // slice vec4 + the distance cull's axis and bounds. Shared by the line, cube,
@@ -184,6 +185,8 @@ export class WebgpuRenderer implements Renderer {
   readonly gpuName: string | null;
   readonly gpuLimits: GpuLimits;
   readonly heatPrecision: 'f16' | 'f32';
+  /** Always: depth32float is core WebGPU (render/depth.ts). */
+  readonly reverseZ = true;
 
   gpuBudgetBytes = 2 * 1024 ** 3;
   gpuBytesUsed = 0;
@@ -338,6 +341,13 @@ export class WebgpuRenderer implements Renderer {
   private topTriCount = 0;
   /** The capture zones' discs (`FrameParams.objectiveZones`), made on first use. */
   private zones: GpuZones | null = null;
+  /**
+   * The replay's objectives under the units (`FrameParams.objectivesUnder`): triangles
+   * through the ground in the scene, not tested nor written, made when first asked
+   * for; and their lines' buffer.
+   */
+  private underTriPipeline: GPURenderPipeline | null = null;
+  private underLineBuffer: GPUBuffer | null = null;
   /** The engagement ranges (`FrameParams.ranges`), made on first use. */
   private ranges: GpuRanges | null = null;
   /** The see-through triangles on the ground (`FrameParams.groundTris`) and which array they last were. */
@@ -613,8 +623,8 @@ export class WebgpuRenderer implements Renderer {
     this.compositePipeline = this.buildCompositePipeline();
     this.linePipeline = this.buildLinePipeline();
     this.overlayPipeline = this.buildLinePipeline('line-list', 'always');
-    this.triPipeline = this.buildLinePipeline('triangle-list', 'less-equal', 1);
-    this.triSeePipeline = this.buildLinePipeline('triangle-list', 'less-equal', 2);
+    this.triPipeline = this.buildLinePipeline('triangle-list', GPU_DEPTH_TEST, 1);
+    this.triSeePipeline = this.buildLinePipeline('triangle-list', GPU_DEPTH_TEST, 2);
     this.cubePipeline = this.buildCubePipeline();
     this.lookPipeline = this.buildLookPipeline();
     this.mapPipeline = this.buildMapPipeline();
@@ -923,8 +933,10 @@ export class WebgpuRenderer implements Renderer {
    */
   private buildLinePipeline(
     topology: GPUPrimitiveTopology = 'line-list',
-    depthCompare: GPUCompareFunction = 'less-equal',
+    depthCompare: GPUCompareFunction = GPU_DEPTH_TEST,
     alphaPass = 0,
+    /** Triangles write depth unless they are the see-through pass; false keeps any from writing. */
+    depthWrite = true,
   ): GPURenderPipeline {
     const module = this.device.createShaderModule({ label: 'line', code: LINE_WGSL });
     const tris = topology === 'triangle-list';
@@ -951,7 +963,7 @@ export class WebgpuRenderer implements Renderer {
         targets: [{ format: SCENE_FORMAT, blend: alphaBlend() }],
       },
       primitive: { topology },
-      depthStencil: { format: DEPTH_FORMAT, depthWriteEnabled: tris && alphaPass !== 2, depthCompare },
+      depthStencil: { format: DEPTH_FORMAT, depthWriteEnabled: depthWrite && tris && alphaPass !== 2, depthCompare },
     });
   }
 
@@ -984,7 +996,7 @@ export class WebgpuRenderer implements Renderer {
       },
       fragment: { module, entryPoint: 'fsCube', targets: [{ format: SCENE_FORMAT }] },
       primitive: { topology: 'triangle-list' },
-      depthStencil: { format: DEPTH_FORMAT, depthWriteEnabled: true, depthCompare: 'less-equal' },
+      depthStencil: { format: DEPTH_FORMAT, depthWriteEnabled: true, depthCompare: GPU_DEPTH_TEST },
     });
   }
 
@@ -1018,7 +1030,7 @@ export class WebgpuRenderer implements Renderer {
         targets: [{ format: SCENE_FORMAT, blend: alphaBlend() }],
       },
       primitive: { topology: 'line-list' },
-      depthStencil: { format: DEPTH_FORMAT, depthWriteEnabled: false, depthCompare: 'less-equal' },
+      depthStencil: { format: DEPTH_FORMAT, depthWriteEnabled: false, depthCompare: GPU_DEPTH_TEST },
     });
   }
 
@@ -1034,7 +1046,7 @@ export class WebgpuRenderer implements Renderer {
         targets: [{ format: SCENE_FORMAT, blend: alphaBlend() }],
       },
       primitive: { topology: 'triangle-list' },
-      depthStencil: { format: DEPTH_FORMAT, depthWriteEnabled: true, depthCompare: 'less-equal' },
+      depthStencil: { format: DEPTH_FORMAT, depthWriteEnabled: true, depthCompare: GPU_DEPTH_TEST },
     });
   }
 
@@ -1096,7 +1108,7 @@ export class WebgpuRenderer implements Renderer {
       depthStencil: {
         format: DEPTH_FORMAT,
         depthWriteEnabled: depthWrite,
-        depthCompare: 'less-equal',
+        depthCompare: GPU_DEPTH_TEST,
       },
     });
   }
@@ -1139,7 +1151,7 @@ export class WebgpuRenderer implements Renderer {
       depthStencil: {
         format: DEPTH_FORMAT,
         depthWriteEnabled: true,
-        depthCompare: 'less-equal',
+        depthCompare: GPU_DEPTH_TEST,
       },
     });
   }
@@ -1165,7 +1177,7 @@ export class WebgpuRenderer implements Renderer {
         targets: [{ format: SCENE_FORMAT, blend: alphaBlend() }],
       },
       primitive: { topology: 'line-list' },
-      depthStencil: { format: DEPTH_FORMAT, depthWriteEnabled: false, depthCompare: 'less-equal' },
+      depthStencil: { format: DEPTH_FORMAT, depthWriteEnabled: false, depthCompare: GPU_DEPTH_TEST },
     });
   }
 
@@ -2187,7 +2199,7 @@ export class WebgpuRenderer implements Renderer {
       ],
       depthStencilAttachment: {
         view: this.depthView!,
-        depthClearValue: 1,
+        depthClearValue: GPU_DEPTH_CLEAR,
         depthLoadOp: 'clear',
         depthStoreOp: 'store',
       },
@@ -2204,6 +2216,10 @@ export class WebgpuRenderer implements Renderer {
         pass.draw(this.lineVertexCount);
       }
     }
+
+    // The replay's objectives, before anything stands on them (`FrameParams.objectivesUnder`).
+    const under = params.objectivesUnder ?? null;
+    if (under) this.drawObjectivesUnder(pass, params, under, plainOffset);
 
     if (params.cubeCount > 0 && params.cubes) {
       const instances = this.uploadInstances(params.cubes, params.cubeCount);
@@ -2271,22 +2287,7 @@ export class WebgpuRenderer implements Renderer {
       pass.setVertexBuffer(0, this.triBuffer);
       pass.draw(params.sceneTriVertCount);
     }
-    if (params.groundTris && params.groundTriCount) {
-      if (!this.groundTriBuffer || this.groundTriData !== params.groundTris || this.groundTriCount !== params.groundTriCount) {
-        this.groundTriBuffer = this.uploadLines(this.groundTriBuffer, params.groundTris, params.groundTriCount, 'ground triangles');
-        this.groundTriData = params.groundTris;
-        this.groundTriCount = params.groundTriCount;
-      }
-      pass.setPipeline(this.triSeePipeline);
-      pass.setBindGroup(0, this.sceneBindGroup(this.triSeePipeline, 'trisSee', plainOffset));
-      pass.setVertexBuffer(0, this.groundTriBuffer);
-      pass.draw(params.groundTriCount);
-    }
-    if (params.objectiveZones?.ground) {
-      this.zones ??= new GpuZones(this.device, SCENE_FORMAT, DEPTH_FORMAT, this.canvasFormat);
-      this.zones.prepare(params, params.objectiveZones, true);
-      this.zones.draw(pass, params.objectiveZones, true);
-    }
+    if (!under) this.drawObjectivesOnGround(pass, params, plainOffset);
     // The engagement ranges: the ground each unit sees within reach, then the shells over everything solid.
     if (params.ranges && this.ranges) {
       this.ranges.drawGround(pass, params.ranges, this.frameMeshes);
@@ -2659,7 +2660,7 @@ export class WebgpuRenderer implements Renderer {
       timestampWrites: this.prof?.writes('structdepth'),
       depthStencilAttachment: {
         view: this.structDepthView,
-        depthClearValue: 1,
+        depthClearValue: GPU_DEPTH_CLEAR,
         depthLoadOp: 'clear',
         depthStoreOp: 'store',
       },
@@ -2706,7 +2707,7 @@ export class WebgpuRenderer implements Renderer {
         timestampWrites: i === 0 || i === layers - 1 ? this.prof?.writes('peel', i === 0, i === layers - 1) : undefined,
         depthStencilAttachment: {
           view: this.peelViews[i],
-          depthClearValue: 1,
+          depthClearValue: GPU_DEPTH_CLEAR,
           depthLoadOp: 'clear',
           depthStoreOp: 'store',
         },
@@ -2746,7 +2747,7 @@ export class WebgpuRenderer implements Renderer {
     u.set(params.viewProj, 0);
     u[16] = this.width;
     u[17] = this.height;
-    u[18] = PEEL_EPSILON_F;
+    u[18] = PEEL_EPSILON_REVERSE;
     // The cut-out test, whenever the mesh's texture has arrived: foliage never
     // occludes heat, whether or not the structures are drawn from it.
     u[19] = textured ? 1 : 0;
@@ -3035,11 +3036,12 @@ export class WebgpuRenderer implements Renderer {
     // Lines over the picture, the heat included (`FrameParams.topVerts`): in the same pass, after it.
     const top = params.topVerts && params.topVertCount ? this.topLines(params, params.topVerts, params.topVertCount) : null;
     const topStatic = params.topStatic && params.topStatic.count ? this.topStaticLines(params, params.topStatic) : null;
-    const topTris = params.topTris && params.topTriCount ? this.topTriangles(params, params.topTris, params.topTriCount) : null;
-    const zones = params.objectiveZones;
+    // Not when they went under the units, in the scene (`FrameParams.objectivesUnder`).
+    const topTris = params.topTris && params.topTriCount && !params.objectivesUnder ? this.topTriangles(params, params.topTris, params.topTriCount) : null;
+    const zones = params.objectivesUnder ? null : params.objectiveZones;
     if (zones) {
       this.zones ??= new GpuZones(this.device, SCENE_FORMAT, DEPTH_FORMAT, this.canvasFormat);
-      this.zones.prepare(params, zones, false);
+      this.zones.prepare(params, zones, 'top');
     }
 
     const target = this.context.getCurrentTexture();
@@ -3074,7 +3076,7 @@ export class WebgpuRenderer implements Renderer {
           pass.setVertexBuffer(0, topTris.buffer);
           pass.draw(topTris.count);
         }
-        if (zones && this.zones) this.zones.draw(pass, zones, false);
+        if (zones && this.zones) this.zones.draw(pass, zones, 'top');
         for (const l of [top, topStatic]) {
           if (!l) continue;
           pass.setPipeline(l.pipeline);
@@ -3710,6 +3712,61 @@ export class WebgpuRenderer implements Renderer {
     return { ...base, buffer: this.topStaticBuffer, count: s.count };
   }
 
+  /** The objectives' see-through triangles and the zones' discs laid on the ground: depth tested, not written. */
+  private drawObjectivesOnGround(pass: GPURenderPassEncoder, params: FrameParams, plainOffset: number): void {
+    if (params.groundTris && params.groundTriCount) {
+      if (!this.groundTriBuffer || this.groundTriData !== params.groundTris || this.groundTriCount !== params.groundTriCount) {
+        this.groundTriBuffer = this.uploadLines(this.groundTriBuffer, params.groundTris, params.groundTriCount, 'ground triangles');
+        this.groundTriData = params.groundTris;
+        this.groundTriCount = params.groundTriCount;
+      }
+      pass.setPipeline(this.triSeePipeline);
+      pass.setBindGroup(0, this.sceneBindGroup(this.triSeePipeline, 'trisSee', plainOffset));
+      pass.setVertexBuffer(0, this.groundTriBuffer);
+      pass.draw(params.groundTriCount);
+    }
+    if (params.objectiveZones?.ground) {
+      this.zones ??= new GpuZones(this.device, SCENE_FORMAT, DEPTH_FORMAT, this.canvasFormat);
+      this.zones.prepare(params, params.objectiveZones, 'ground');
+      this.zones.draw(pass, params.objectiveZones, 'ground');
+    }
+  }
+
+  /**
+   * The replay's objectives under the units (`FrameParams.objectivesUnder`): the
+   * marks laid on the ground depth tested, then those that show through it -
+   * edges, the zones' bands, the lines - without depth, all before the figures,
+   * which paint over every one of them. None writes depth.
+   */
+  private drawObjectivesUnder(pass: GPURenderPassEncoder, params: FrameParams, under: NonNullable<FrameParams['objectivesUnder']>, plainOffset: number): void {
+    this.drawObjectivesOnGround(pass, params, plainOffset);
+    if (params.topTris && params.topTriCount) {
+      if (!this.topTriBuffer || this.topTriData !== params.topTris || this.topTriCount !== params.topTriCount) {
+        this.topTriBuffer = this.uploadLines(this.topTriBuffer, params.topTris, params.topTriCount, 'top triangles');
+        this.topTriData = params.topTris;
+        this.topTriCount = params.topTriCount;
+      }
+      this.underTriPipeline ??= this.buildLinePipeline('triangle-list', 'always', 0, false);
+      pass.setPipeline(this.underTriPipeline);
+      pass.setBindGroup(0, this.sceneBindGroup(this.underTriPipeline, 'trisUnder', plainOffset));
+      pass.setVertexBuffer(0, this.topTriBuffer);
+      pass.draw(params.topTriCount);
+    }
+    const z = params.objectiveZones;
+    if (z) {
+      this.zones ??= new GpuZones(this.device, SCENE_FORMAT, DEPTH_FORMAT, this.canvasFormat);
+      this.zones.prepare(params, z, 'under');
+      this.zones.draw(pass, z, 'under');
+    }
+    if (under.lines && under.lineCount) {
+      this.underLineBuffer = this.uploadLines(this.underLineBuffer, under.lines, under.lineCount, 'objective lines');
+      pass.setPipeline(this.overlayPipeline);
+      pass.setBindGroup(0, this.sceneBindGroup(this.overlayPipeline, 'overlay', plainOffset));
+      pass.setVertexBuffer(0, this.underLineBuffer);
+      pass.draw(under.lineCount);
+    }
+  }
+
   /** `topLines` for triangles, uploaded only when they are a new array. */
   private topTriangles(params: FrameParams, data: Float32Array, count: number): { pipeline: GPURenderPipeline; group: GPUBindGroup; buffer: GPUBuffer; count: number } {
     if (!this.topTriPipeline) {
@@ -4150,6 +4207,7 @@ export class WebgpuRenderer implements Renderer {
     this.lineBuffer?.destroy();
     this.trailBuffer?.destroy();
     this.overlayBuffer?.destroy();
+    this.underLineBuffer?.destroy();
     this.topBuffer?.destroy();
     this.topStaticBuffer?.destroy();
     this.triBuffer?.destroy();

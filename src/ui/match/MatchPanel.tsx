@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useRef, type ReactNode } from 'react';
+import { Fragment, useEffect, useMemo, useRef, type ReactNode } from 'react';
 import { int, list, num, t } from '../../i18n';
 import type { Values } from '../../i18n/message';
 import { applyFocus, clearFocus, type Focus } from '../../match/focus';
@@ -20,7 +20,9 @@ import {
   type Rate,
   type Side,
 } from '../../match/matchDoc';
-import { ALL, useMatchStore } from '../../state/matchStore';
+import { matchesOf, pickedMatches } from '../../match/matches';
+import { ALL, ALL_FILES, useMatchStore, wantMatch } from '../../state/matchStore';
+import { SummaryCard } from './SummaryCard';
 import { loadObjectiveFiles } from '../../state/objectivesStore';
 import { useStore } from '../../state/store';
 import { Section } from '../controls';
@@ -88,6 +90,9 @@ function rich(key: string, nodes: Record<string, ReactNode>, values: Values = {}
     .map((part, i) => (i % 2 === 1 && part in nodes ? <Fragment key={i}>{nodes[part]}</Fragment> : part));
 }
 
+/** Matches of a many-match load whose files the match tab reads when they are the ones shown. */
+const MAX_READ = 4;
+
 /** The command that converts demos, as the hints name it. */
 const COMMAND = 'python -m heat3d_cs2 demos';
 
@@ -111,9 +116,30 @@ function focus(f: Focus, replay = false) {
 function MatchesSection() {
   const docs = useMatchStore((s) => s.docs);
   const games = useMatchStore((s) => s.games);
+  const summaries = useMatchStore((s) => s.summaries);
+  const reading = useMatchStore((s) => s.reading);
   const open = useMatchStore((s) => s.open);
   const error = useMatchStore((s) => s.error);
+  const dataset = useStore((s) => s.dataset);
+  const filters = useStore((s) => s.filters);
+  const session = useStore((s) => s.team.session);
   const store = useMatchStore.getState();
+  // Of a many-match load, the matches shown, a few at most: what their files say, read now (`wantMatch`).
+  const shownIds = useMemo(() => {
+    if (!dataset) return '';
+    const set = matchesOf(dataset);
+    if (set.via === 'whole') return ALL_FILES;
+    const picked = pickedMatches(set, filters, session);
+    const ids = set.entries.filter((e) => picked === null || picked.includes(e.index)).map((e) => e.id);
+    return ids.length <= MAX_READ ? ids.join('\n') : '';
+  }, [dataset, filters, session]);
+  useEffect(() => {
+    for (const id of shownIds.split('\n')) if (id) wantMatch(id);
+  }, [shownIds]);
+  // The summaries of the matches shown, where they have no scoreboard of their own (a load of one match: its own,
+  // whatever the data calls the match).
+  const single = !!dataset && matchesOf(dataset).entries.length <= 1;
+  const shownSummaries = single || !shownIds ? summaries : summaries.filter((s) => shownIds.split('\n').some((id) => id === s.id || id.startsWith(s.id) || s.id.startsWith(id)));
   const input = useRef<HTMLInputElement>(null);
   const recent = useRecent('match.list');
   const sort = useSort<MatchDoc>(
@@ -128,16 +154,21 @@ function MatchesSection() {
     'order',
   );
   const sorted = useSorted(docs, sort, [recent.at]);
+  // Loaded data brings its own scoreboard or summary (every `.3dheat` holds one, or a table to work one out
+  // from): nothing to load by hand then, and nothing to show while there is nothing.
+  if (dataset && docs.length + games.length + shownSummaries.length === 0 && !reading && !error) return null;
   return (
-    <Section title={t('match.matches.title')} defaultOpen={docs.length > 0 || games.length === 0} right={<span className="count">{docs.length + games.length || ''}</span>}>
+    <Section title={t('match.matches.title')} defaultOpen={docs.length > 0 || shownSummaries.length > 0 || games.length === 0} right={<span className="count">{docs.length + games.length + shownSummaries.length || ''}</span>}>
       <div className="row wrap" style={{ gap: 6 }}>
-        <button
-          className="primary"
-          onClick={() => input.current?.click()}
-          title={t('match.matches.loadTitle', { matchJson: '.match.json', command: COMMAND, parquet: '.parquet' })}
-        >
-          {t('match.matches.load')}
-        </button>
+        {!dataset && (
+          <button
+            className="primary"
+            onClick={() => input.current?.click()}
+            title={t('match.matches.loadTitle', { matchJson: '.match.json', command: COMMAND, parquet: '.parquet' })}
+          >
+            {t('match.matches.load')}
+          </button>
+        )}
         {docs.length + games.length > 0 && (
           <button className="link" onClick={() => store.clear()}>
             {t('match.matches.clear')}
@@ -159,10 +190,14 @@ function MatchesSection() {
         />
       </div>
       {error && <pre className="hint race-error">{error}</pre>}
+      {reading > 0 && <div className="hint">{t('mass.working')}</div>}
+      {shownSummaries.map((s) => (
+        <SummaryCard key={s.id} s={s} />
+      ))}
       {games.length > 0 && docs.length === 0 && (
         <div className="hint">{t('match.matches.gamesLoaded', { count: games.length })}</div>
       )}
-      {docs.length === 0 && games.length === 0 && (
+      {!dataset && docs.length === 0 && games.length === 0 && (
         <div className="hint">
           {rich('match.matches.hint', {
             command: <span className="mono">{COMMAND}</span>,

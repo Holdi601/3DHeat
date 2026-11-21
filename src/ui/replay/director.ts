@@ -137,6 +137,24 @@ export function nextShot(now: number, current: Shot | null, events: DirectorEven
   };
 }
 
+/**
+ * Whose events the display's kill feed and ticker list: everyone's with
+ * `all`; else the watched unit's (the director's shot, the followed unit);
+ * else, with none watched, those of the units in view.
+ */
+export function feedFilter(all: boolean, subject: number | null, inView: ReadonlySet<number>): (person: number) => boolean {
+  if (all) return () => true;
+  if (subject !== null) return (p) => p === subject;
+  return (p) => inView.has(p);
+}
+
+/** Indices of the newest `max` of `events[0, upTo)` that `keep` lets through, newest first. */
+export function latestEvents<E extends { person: number }>(events: E[], upTo: number, max: number, keep: (e: E) => boolean): number[] {
+  const out: number[] = [];
+  for (let i = Math.min(upTo, events.length) - 1; i >= 0 && out.length < max; i--) if (keep(events[i])) out.push(i);
+  return out;
+}
+
 /** Whether going from one shot to the other is a cut the display marks. */
 export function isCut(a: Shot | null, b: Shot | null): boolean {
   return !!b && (!a || a.person !== b.person || a.kind !== b.kind);

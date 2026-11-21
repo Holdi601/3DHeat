@@ -75,5 +75,20 @@
   "help.race.lost": "verloren",
   "help.race.why": "Ursachenkarte und die nummerierten Marken: woran die Zeit lag",
   "help.race.mistakes": "Fehlerkarte: wie viele Runden hier einen gemacht haben",
-  "help.race.strips": "Die zwei Streifen über den Diagrammen sind die Zeit- und die Ursachenkarte, entlang der Runde."
+  "help.race.strips": "Die zwei Streifen über den Diagrammen sind die Zeit- und die Ursachenkarte, entlang der Runde.",
+  "help.match.teams": "Jede Seite behält in der Anzeigetafel ihre Farbe aus der 3D-Ansicht.",
+  "help.at.title": "Unter dem Mauszeiger",
+  "help.at.none": "Auf ein Label oder eine Figur zeigen, um es hier erklärt zu bekommen.",
+  "help.at.zone": "Eroberungszone: ihr Buchstabe in der Farbe der haltenden Seite (grau: niemand). Der Ring füllt sich in der Farbe der erobernden Seite.",
+  "help.at.site": "Bombenplatz (Counter-Strike): sein Name, bernsteinfarben, solange seine Runde gezeigt wird.",
+  "help.at.marker": "Kartenmarke: Spawn, Flugplatz, Hubschrauberlandeplatz, Basis oder Ziel, in der Farbe der zugehörigen Seite. Die Zahl am Spawn: wie viele dort begannen.",
+  "help.at.unit": "Einheitenlabel: Name und die Werte aus den Label-Regeln. Der Streifen ist die Teamfarbe; ein gelber Rand markiert die gewählte Einheit, ein blauer die verfolgte.",
+  "help.at.event": "Ereignis: etwas, das hier in den letzten zehn Sekunden geschah (Abschuss, Treffer, Start), verblasst mit dem Alter.",
+  "help.at.lock": "Aufschaltung: ein Radar oder Sensor hält ein Ziel, mit Entfernung.",
+  "help.at.engage": "Gefecht: wer auf wen zielt oder schießt, mit Entfernung.",
+  "help.at.braa": "Zwischen den beiden betrachteten Einheiten: Peilung, Entfernung, Höhe und Aspekt von der ersten zur zweiten.",
+  "help.at.place": "Ortsname aus der Weltkarte: Stadt, Dorf oder Flugplatz.",
+  "help.at.grid": "Kartengitter: der Name des Quadrats oder eine Gleitpfadmarke.",
+  "help.at.raceLabel": "Streckenlabel: eine Kurve, ein Befund oder eine Statistik der Strecke; anklicken für mehr.",
+  "help.at.figure": "Figur einer Einheit: die Form ihres Typs in echter Größe, in der Teamfarbe."
 }

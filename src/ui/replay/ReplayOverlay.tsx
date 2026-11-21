@@ -218,7 +218,7 @@ export function ReplayOverlay() {
     const H = host.clientHeight;
     // The labels' size, as the viewer set it; the layout below is in the same scale.
     const scale = r.labelScale;
-    if (host.style.getPropertyValue('--label-scale') !== String(scale)) host.style.setProperty('--label-scale', String(scale));
+    // The CSS side (--label-scale) is set on the document by App, for every kind of label.
     const limits = r.limits.on && (r.limits.floor !== null || r.limits.ceiling !== null) ? r.limits : null;
     // One label a unit: its newest track. A track that has just ended can still be drawn beside the next for a moment.
     const newest = new Map<Unit, number>();

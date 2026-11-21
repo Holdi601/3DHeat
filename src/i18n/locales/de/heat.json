@@ -839,5 +839,8 @@
   "heat.memoryPanel.all": "All {count} columns",
   "heat.memoryPanel.fewer": "Fewer",
   "heat.memoryPanel.roomy": "Plenty of room left: finer heat and more sprites per frame would fit.",
-  "heat.memoryPanel.finer": "Use more fidelity"
+  "heat.memoryPanel.finer": "Use more fidelity",
+  "heat.viewPanel.camera.descendKey": "Abwärts mit",
+  "heat.viewPanel.camera.fullscreen": "Vollbild",
+  "heat.viewPanel.camera.descendKeyHint": "Strg+W (vorwärts und abwärts) schließt in den meisten Browsern den Tab, und eine Seite kann nur nachfragen. Im Vollbild sperrt der Viewer diese Tasten; sonst mit Z oder Q abwärts fliegen."
 }

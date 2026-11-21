@@ -9,7 +9,7 @@ import { int, lang, num, onLanguageChange, t } from '../i18n';
 import { datasetCapabilities, defaultColumnSplit, splitHasTwoSides } from '../data/validate';
 import { suggestLineSettings, suggestMaxJumpAsync, type LineSettings } from '../data/lines';
 import { DEFAULT_CURVE, normaliseCurve, type CurvePoint } from './curve';
-import type { Projection } from '../render/camera';
+import type { DescendKey, Projection } from '../render/camera';
 import type { DirSource } from '../render/direction';
 import type { Keyframe, PathEasing } from '../render/campath';
 import { DEFAULT_GAMEPAD, type GamepadSettings } from '../render/gamepad';
@@ -426,10 +426,8 @@ export interface AxisMirror {
   z: boolean;
 }
 
-/** Furthest a streamed world level pushes the near plane, metres (see cameraForExtent). */
-const STREAM_NEAR_CAP = 10;
-
 const MIRROR_KEY = 'heat3d.mirror';
+const DESCEND_KEY = 'heat3d.descendKey';
 /** The team palette a pick means for a dataset, made the one in use (render/colors.ts). */
 function paletteFor(pref: TeamPalettePref, d: Dataset): TeamPaletteId {
   const active = resolveTeamPalette(pref, d.teamLabels);
@@ -488,6 +486,17 @@ function savedMirror(): AxisMirror {
   return { x: false, y: false, z: false };
 }
 
+/** The key this viewer last flew down with besides Q: a per-browser convenience. */
+function savedDescendKey(): DescendKey {
+  try {
+    const v = localStorage.getItem(DESCEND_KEY);
+    if (v === 'ctrl' || v === 'z' || v === 'none') return v;
+  } catch {
+    // No storage: the default.
+  }
+  return 'ctrl';
+}
+
 export function saveMirror(m: AxisMirror): void {
   try {
     localStorage.setItem(MIRROR_KEY, JSON.stringify(m));
@@ -503,6 +512,12 @@ export interface CameraSettings {
   near: number;
   far: number;
   invertY: boolean;
+  /**
+   * The key besides Q that flies down. Left Ctrl by default, as in the games -
+   * but Ctrl+W, forward and down at once, is the browser's "close tab", which a
+   * page cannot stop outside full screen. Z, or Q alone, keeps Ctrl free.
+   */
+  descendKey: DescendKey;
   /**
    * World axes drawn reversed. A game that keeps a left-handed world (Forza,
    * Unreal) comes out mirrored in this right-handed view - a right-hand bend
@@ -815,9 +830,11 @@ export const useStore = create<AppState>((set) => ({
   camera: {
     fov: 65,
     flySpeed: 120,
-    near: 0.5,
+    // Reverse-Z needs no near plane further out (render/depth.ts).
+    near: 0.05,
     far: 40_000,
     invertY: false,
+    descendKey: savedDescendKey(),
     mirror: savedMirror(),
     projection: 'perspective',
     gamepad: { ...DEFAULT_GAMEPAD },
@@ -953,7 +970,7 @@ export const useStore = create<AppState>((set) => ({
       // Model levels only. An image level is placed by anchors derived from the
       // data it sits under, so the dataset's own calibration already covers it.
       const camera =
-        level?.kind === 'model' ? cameraForExtent(s.camera, level.bounds, level.stream ? STREAM_NEAR_CAP : Infinity) : s.camera;
+        level?.kind === 'model' ? cameraForExtent(s.camera, level.bounds) : s.camera;
       return { level, camera };
     }),
   patchLevel: (p) =>
@@ -981,6 +998,13 @@ export const useStore = create<AppState>((set) => ({
   patchBudget: (p) => set((s) => ({ budget: { ...s.budget, ...p } })),
   patchCamera: (p) => {
     if (p.mirror) saveMirror(p.mirror);
+    if (p.descendKey) {
+      try {
+        localStorage.setItem(DESCEND_KEY, p.descendKey);
+      } catch {
+        // Blocked storage: the choice lasts this session only.
+      }
+    }
     set((s) => ({ camera: { ...s.camera, ...p } }));
   },
   setRamp: (which, stops) =>

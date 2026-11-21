@@ -543,5 +543,8 @@
   "replay.card.hidden": "Hidden by the recording at this moment (not destroyed).",
   "replay.card.disabled": "Out of combat (disabled), not destroyed.",
   "replay.aids.links": "Links",
-  "replay.aids.linksTitle": "A weapon to its launcher (dashed) and a waypoint to the next, from Parent and Next"
+  "replay.aids.linksTitle": "A weapon to its launcher (dashed) and a waypoint to the next, from Parent and Next",
+  "replay.look.part.feedAll": "Events of all units",
+  "replay.look.part.feedAllTitle": "Kill feed and event ticker of every unit. Off: only the watched unit's, or with no unit watched, those in view",
+  "replay.look.resume": "Resume director"
 }

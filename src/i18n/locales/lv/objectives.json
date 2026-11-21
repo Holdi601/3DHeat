@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{team} zaudēja {zone}",
   "objectives.legend.neutral": "neitrāla",
   "objectives.legend.capturing": "tiek ieņemta",
+  "objectives.allModes": "Visu režīmu mērķi kopā",
+  "objectives.allModesTitle": "Ja vienlaikus rāda vairāku režīmu kaujas, to mērķi ir paslēpti: dažādu režīmu zonas pārklājas tajā pašā apvidū. Atzīmējiet, lai tomēr zīmētu visus",
   "objectives.layer.bounds": "Ārpus robežām",
   "objectives.layer.boundsTitle": "Svītrots, kur komanda ir ārpus robežām: otras puses spēles zonā, bet ārpus savējās",
   "objectives.layout": "Izkārtojums",

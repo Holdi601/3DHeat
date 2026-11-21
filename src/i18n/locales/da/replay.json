@@ -543,5 +543,8 @@
   "replay.card.hidden": "Skjult af optagelsen lige nu (ikke ødelagt).",
   "replay.card.disabled": "Ude af kamp (deaktiveret), ikke ødelagt.",
   "replay.aids.links": "Forbindelser",
-  "replay.aids.linksTitle": "Et våben til dets affyrer (stiplet) og et rutepunkt til det næste, fra Parent og Next"
+  "replay.aids.linksTitle": "Et våben til dets affyrer (stiplet) og et rutepunkt til det næste, fra Parent og Next",
+  "replay.look.part.feedAll": "Hændelser for alle enheder",
+  "replay.look.part.feedAllTitle": "Nedskydninger og hændelser for alle enheder. Fra: kun den fulgte enheds, eller uden fulgt enhed, dem der er i billedet",
+  "replay.look.resume": "Genoptag instruktøren"
 }

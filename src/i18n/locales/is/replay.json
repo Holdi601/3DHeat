@@ -543,5 +543,8 @@
   "replay.card.hidden": "Falið af upptökunni núna (ekki eyðilagt).",
   "replay.card.disabled": "Úr leik (óvirkt), ekki eyðilagt.",
   "replay.aids.links": "Tengingar",
-  "replay.aids.linksTitle": "Vopn að skotpalli sínum (brotalína) og leiðarpunktur að þeim næsta, úr Parent og Next"
+  "replay.aids.linksTitle": "Vopn að skotpalli sínum (brotalína) og leiðarpunktur að þeim næsta, úr Parent og Next",
+  "replay.look.part.feedAll": "Atburðir allra eininga",
+  "replay.look.part.feedAllTitle": "Fellingar og atburðir allra eininga. Af: aðeins einingarinnar sem fylgst er með, eða ef engin er, þeirra sem sjást",
+  "replay.look.resume": "Halda áfram með leikstjóra"
 }

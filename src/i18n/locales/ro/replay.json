@@ -543,5 +543,8 @@
   "replay.card.hidden": "Ascuns de înregistrare în acest moment (nu distrus).",
   "replay.card.disabled": "Scos din luptă (dezactivat), nu distrus.",
   "replay.aids.links": "Legături",
-  "replay.aids.linksTitle": "O armă către lansatorul ei (punctat) și un punct de rută către următorul, din Parent și Next"
+  "replay.aids.linksTitle": "O armă către lansatorul ei (punctat) și un punct de rută către următorul, din Parent și Next",
+  "replay.look.part.feedAll": "Evenimentele tuturor unităților",
+  "replay.look.part.feedAllTitle": "Fluxul de distrugeri și evenimente al tuturor unităților. Oprit: doar al unității urmărite sau, fără unitate urmărită, al celor vizibile",
+  "replay.look.resume": "Reia regizorul"
 }

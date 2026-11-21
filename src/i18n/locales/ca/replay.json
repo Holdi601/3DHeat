@@ -543,5 +543,8 @@
   "replay.card.hidden": "Amagat per l'enregistrament en aquest moment (no destruït).",
   "replay.card.disabled": "Fora de combat (desactivat), no destruït.",
   "replay.aids.links": "Enllaços",
-  "replay.aids.linksTitle": "Una arma cap al seu llançador (discontínua) i un punt de ruta cap al següent, segons Parent i Next"
+  "replay.aids.linksTitle": "Una arma cap al seu llançador (discontínua) i un punt de ruta cap al següent, segons Parent i Next",
+  "replay.look.part.feedAll": "Esdeveniments de totes les unitats",
+  "replay.look.part.feedAllTitle": "Registre de baixes i d'esdeveniments de totes les unitats. Desactivat: només els de la unitat seguida o, si no se'n segueix cap, els de les que es veuen",
+  "replay.look.resume": "Reprèn el director"
 }

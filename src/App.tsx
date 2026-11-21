@@ -146,6 +146,16 @@ export function App() {
   const heatTabMode = useRef<ViewMode>('heat-simple');
   // Browser shortcuts (Ctrl+S, Ctrl+P, F5...) don't fire while flying, and closing the tab with data loaded asks first.
   useEffect(() => guardBrowserKeys(), []);
+  // The label size on the document, so every kind of label over the view takes
+  // it - units, events, objectives, the grid, place names, race and board labels
+  // - and not only the units' own (`--label-scale` in the stylesheets).
+  useEffect(() => {
+    const apply = (v: number) => document.documentElement.style.setProperty('--label-scale', String(v));
+    apply(useReplayStore.getState().labelScale);
+    return useReplayStore.subscribe((s, prev) => {
+      if (s.labelScale !== prev.labelScale) apply(s.labelScale);
+    });
+  }, []);
   useEffect(() => {
     if (mode !== 'team') lastHeat.current = mode;
     if (useRaceStore.getState().tab === 'heat') heatTabMode.current = mode;
@@ -350,7 +360,10 @@ export function App() {
       if (ev.code === 'KeyK') {
         ev.preventDefault();
         setPlaying(!useStore.getState().timeline.playing);
-      } else if (ev.code === 'KeyF') {
+      } else if (ev.code === 'KeyF' && !ev.ctrlKey && !ev.metaKey && !ev.altKey && !ev.repeat) {
+        // Not with a modifier held: Ctrl is the fly camera's down key, and a
+        // Ctrl+F (or a held F repeating) threw the camera out to frame the
+        // whole map in the middle of a flight.
         engine?.frameDataset();
       } else if (ev.code === 'KeyT' && !ev.ctrlKey && !ev.metaKey && !ev.altKey) {
         // The tactical display, on and off.

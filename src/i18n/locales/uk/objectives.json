@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{zone} втрачено командою {team}",
   "objectives.legend.neutral": "нейтральна",
   "objectives.legend.capturing": "захоплюється",
+  "objectives.allModes": "Цілі всіх режимів разом",
+  "objectives.allModesTitle": "Коли показано бої кількох режимів одночасно, їхні цілі приховано: зони різних режимів накладаються на одній місцевості. Позначте, щоб усе одно показати всі",
   "objectives.layer.bounds": "За межею",
   "objectives.layer.boundsTitle": "Заштриховано там, де команда за межею: в ігровій зоні іншої сторони, але поза своєю",
   "objectives.layout": "Розкладка",

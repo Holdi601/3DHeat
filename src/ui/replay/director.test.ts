@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { classifyEvent, eventInView, isCut, nextShot, type DirectorEvent, type DirectorUnit, type Shot } from './director';
+import { classifyEvent, eventInView, feedFilter, isCut, latestEvents, nextShot, type DirectorEvent, type DirectorUnit, type Shot } from './director';
 
 const units: DirectorUnit[] = [
   { person: 1, air: true, speed: 200 },
@@ -71,5 +71,29 @@ describe('director', () => {
       event: null,
     };
     expect(nextShot(5.5, cur, [], units)!.person).not.toBe(7);
+  });
+});
+
+describe('the display feed', () => {
+  const events: DirectorEvent[] = [
+    { time: 1, person: 1, kind: 'kill' },
+    { time: 2, person: 2, kind: 'hit' },
+    { time: 3, person: 3, kind: 'kill' },
+    { time: 4, person: 1, kind: 'launch' },
+    { time: 5, person: 2, kind: 'kill' },
+  ];
+
+  it("lists the watched unit's events only, unless every unit's is asked for", () => {
+    const mine = feedFilter(false, 1, new Set([2, 3]));
+    expect(latestEvents(events, 5, 7, (e) => mine(e.person))).toEqual([3, 0]);
+    const all = feedFilter(true, 1, new Set());
+    expect(latestEvents(events, 5, 7, (e) => all(e.person))).toEqual([4, 3, 2, 1, 0]);
+  });
+
+  it('with nobody watched, lists the units in view', () => {
+    const seen = feedFilter(false, null, new Set([2]));
+    expect(latestEvents(events, 5, 7, (e) => seen(e.person))).toEqual([4, 1]);
+    // Kills only, up to the playhead, newest first and no more than asked.
+    expect(latestEvents(events, 4, 1, (e) => e.kind === 'kill')).toEqual([2]);
   });
 });

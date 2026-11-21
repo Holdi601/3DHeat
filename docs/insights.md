@@ -18,7 +18,7 @@ The **Insights** section is in the sidebar of the Heatmap and Match tabs. It has
 
 1. Load data and open **Insights**. Press **Find insights** ("Counting… n%" shows the progress).
 2. Read the list. Each finding has a strength bar, a sentence, how good the evidence is (*Strong evidence*, *Good evidence* or *Some evidence*), which detector found it, and the vehicle class where that matters.
-3. **Click a finding**: the viewer applies its filters, flies the camera to the place and jumps to the time, and opens the details: the effect with its 95% interval, the p and q values, the counted evidence, and **Volume here**, which draws a [volume](volumes.md) round the place.
+3. **Click a finding**: the viewer applies its filters, flies the camera to the place and jumps to the time, and opens the details: the effect with its 95% interval, the p and q values, the counted evidence, and **Volume here**, which draws a [volume](volumes.md) round the place. Click the open finding's title again to close it.
 4. **Restore filters** puts your filters back. **Copy JSON** copies the whole report.
 
 Counting uses the current filters, hidden groups and picked match over the whole time range. When you change the filters afterwards, a note says so; press **Count again**.
@@ -113,8 +113,8 @@ Where the data says who won each round, every moment says it: *"Anna takes down 
 
 ![The caster's moments for one round of the shooter demo](assets/img/en/caster.webp)
 
-- Click a moment: the view switches to the replay, jumps to just before it, flies there and follows the player.
-- **Play the moments** plays each one to its end and moves on; **Previous** / **Next** step through them.
+- Click a moment: the view switches to the replay, jumps to just before it and flies there. The camera stays where it went: your jump is not undone by following a player or by the tactical display's **Director** (which waits until you press **Resume director**).
+- **Play the moments** plays each one to its end and moves on, and there the camera follows each moment's player; **Previous** / **Next** step through them.
 - With an external AI on, **Commentary by AI** writes a commentary from the moment list (kinds, times, names or pseudonyms, teams, classes, distances).
 
 It needs persons and kill/death (or capture) events; an `other`/`victim` column makes trades and long shots possible.

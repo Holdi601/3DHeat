@@ -83,6 +83,14 @@ How ([`engine.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/engin
 
 Structures are drawn translucent, but they are drawn into the depth that occlusion reads; a level whose structures did not reach the depth texture would occlude only against terrain.
 
+### The depth buffer
+
+**Reverse-Z** ([`depth.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/render/depth.ts)): the projection is remapped so the near plane lands at depth 1 and the far plane at 0, stored as a 32-bit float. A classic 0-to-1 buffer in 24-bit fixed point steps by about z² / (near · 2²⁴) at distance z, which forced the near plane metres out on a large map - and that cut the ground and walls right in front of the camera - while still letting a water surface and the shore under it flicker far off. Turned round into a float, the step is about z · 2⁻²³ at every distance whatever the near plane, so the near plane sits 5 cm from the eye: on a 60 km level a wall half a metre ahead is drawn and two walls a metre apart 20 km away do not fight (`tools/probe-near.mjs`).
+
+Under reverse-Z nearer is *larger*: the depth test is greater-or-equal, the buffer clears to 0, the occlusion bias moves a sprite's depth up rather than down (with its floor a share of the depth), a peeled layer must be below the last one by a share of its depth (2·10⁻⁵, `PEEL_EPSILON_REVERSE`), and polygon offsets are positive. The shaders say it through one set of helpers (`DEPTH_GLSL`, `DEPTH_WGSL`), so the comparisons cannot drift apart between them.
+
+WebGPU always draws reverse-Z (`depth32float` is core). WebGL2 does with `EXT_clip_control` (clip depth 0 to 1); without it OpenGL's -1 to 1 range adds 0.5 to every depth and a float's precision near 0 is lost again, so that context keeps the classic layout, `DEPTH_COMPONENT24`, and a near plane of at least far / 100,000 (see [Camera](camera.md#near-and-far)). `?depth=classic` forces that fallback, to test it anywhere. The engagement ranges' own views are taken the classic way round, in a depth array of their own, with clip control turned back for them.
+
 ### Distance culling
 
 Both bounds are evaluated in the vertex shader, so a culled row costs one vertex and no fragments.

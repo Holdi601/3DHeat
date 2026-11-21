@@ -543,5 +543,8 @@
   "replay.card.hidden": "Nascosto dalla registrazione in questo momento (non distrutto).",
   "replay.card.disabled": "Fuori combattimento (disattivato), non distrutto.",
   "replay.aids.links": "Collegamenti",
-  "replay.aids.linksTitle": "Un'arma verso il suo lanciatore (tratteggiata) e un waypoint verso il successivo, da Parent e Next"
+  "replay.aids.linksTitle": "Un'arma verso il suo lanciatore (tratteggiata) e un waypoint verso il successivo, da Parent e Next",
+  "replay.look.part.feedAll": "Eventi di tutte le unità",
+  "replay.look.part.feedAllTitle": "Elenco abbattimenti ed eventi di tutte le unità. Disattivato: solo quelli dell'unità seguita o, senza unità seguita, di quelle in vista",
+  "replay.look.resume": "Riprendi la regia"
 }

@@ -27,13 +27,48 @@ export function warmPrograms(gl: WebGL2RenderingContext, build: () => void): voi
   }
 }
 
+/** Contexts that draw reverse-Z (render/depth.ts): their programs compile with `REVERSE_Z` defined. */
+const reverseZ = new WeakSet<WebGL2RenderingContext>();
+
+/** `EXT_clip_control`, as far as it is used here. */
+export interface ClipControl {
+  clipControlEXT(origin: number, depth: number): void;
+}
+export const CLIP_LOWER_LEFT = 0x8ca1;
+export const CLIP_NEGATIVE_ONE_TO_ONE = 0x935e;
+export const CLIP_ZERO_TO_ONE = 0x935f;
+
+/**
+ * Turn reverse-Z on for a context when it can: clip control to [0, 1], and its
+ * programs compiled for it. Before any program is compiled. `?depth=classic`
+ * keeps the classic layout, so the fallback a browser without the extension gets
+ * can be exercised anywhere. Returns the extension when reverse-Z is on.
+ */
+export function enableReverseZ(gl: WebGL2RenderingContext): ClipControl | null {
+  const classic = typeof location !== 'undefined' && new URLSearchParams(location.search).get('depth') === 'classic';
+  const ext = classic ? null : (gl.getExtension('EXT_clip_control') as ClipControl | null);
+  if (!ext) return null;
+  ext.clipControlEXT(CLIP_LOWER_LEFT, CLIP_ZERO_TO_ONE);
+  reverseZ.add(gl);
+  return ext;
+}
+
+/** A source with `REVERSE_Z` defined after its version line, for a reverse-Z context. */
+function withDepthDefine(gl: WebGL2RenderingContext, src: string): string {
+  if (!reverseZ.has(gl)) return src;
+  const nl = src.indexOf('\n');
+  return nl < 0 ? src : `${src.slice(0, nl + 1)}#define REVERSE_Z 1\n${src.slice(nl + 1)}`;
+}
+
 export function compileProgram(
   gl: WebGL2RenderingContext,
-  vsSource: string,
-  fsSource: string,
+  vsIn: string,
+  fsIn: string,
   label: string,
   varyings?: string[],
 ): WebGLProgram {
+  const vsSource = withDepthDefine(gl, vsIn);
+  const fsSource = withDepthDefine(gl, fsIn);
   const key = `${label}\u0000${vsSource}\u0000${fsSource}\u0000${varyings?.join(',') ?? ''}`;
   const pool = warmed.get(gl);
   const ready = pool?.get(key);

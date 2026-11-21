@@ -543,5 +543,8 @@
   "replay.card.hidden": "Moħbi mir-reġistrazzjoni f'dan il-mument (mhux meqrud).",
   "replay.card.disabled": "Barra mill-ġlieda (diżattivat), mhux meqrud.",
   "replay.aids.links": "Rabtiet",
-  "replay.aids.linksTitle": "Arma lejn il-lanċjatur tagħha (bi strixxi) u punt tar-rotta lejn li jmiss, minn Parent u Next"
+  "replay.aids.linksTitle": "Arma lejn il-lanċjatur tagħha (bi strixxi) u punt tar-rotta lejn li jmiss, minn Parent u Next",
+  "replay.look.part.feedAll": "Avvenimenti tal-unitajiet kollha",
+  "replay.look.part.feedAllTitle": "Lista ta' qtil u avvenimenti tal-unitajiet kollha. Mitfi: dawk tal-unità segwita biss, jew mingħajr unità segwita, dawk li jidhru",
+  "replay.look.resume": "Kompli d-direttur"
 }

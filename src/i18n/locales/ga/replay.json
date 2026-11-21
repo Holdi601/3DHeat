@@ -543,5 +543,8 @@
   "replay.card.hidden": "I bhfolach ag an taifeadadh faoi láthair (níl sé scriosta).",
   "replay.card.disabled": "As an gcomhrac (díchumasaithe), níl sé scriosta.",
   "replay.aids.links": "Naisc",
-  "replay.aids.linksTitle": "Arm go dtí a lainseálaí (briste) agus pointe slí go dtí an chéad cheann eile, ó Parent agus Next"
+  "replay.aids.linksTitle": "Arm go dtí a lainseálaí (briste) agus pointe slí go dtí an chéad cheann eile, ó Parent agus Next",
+  "replay.look.part.feedAll": "Imeachtaí gach aonaid",
+  "replay.look.part.feedAllTitle": "Fotha marfaí agus imeachtaí gach aonaid. As: an t-aonad atá á leanúint amháin, nó gan aonad á leanúint, iad siúd atá le feiceáil",
+  "replay.look.resume": "Atosaigh an stiúrthóir"
 }

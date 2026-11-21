@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { useAnimationFrame, useEngine } from '../EngineContext';
 import { useObjectivesStore } from '../../state/objectivesStore';
+import { useReplayStore } from '../../state/replayStore';
 import { t } from '../../i18n';
 import type { ObjectiveLabel } from '../../render/objectives';
 import './objectives.css';
@@ -54,10 +55,12 @@ export function ObjectiveLabels() {
       const p = engine.project(l.x, l.y, l.z);
       if (!p || p.x < -40 || p.y < -40 || p.x > W + 40 || p.y > H + 40) continue;
       const s = textOf(l);
-      const w = l.kind === 'zone' ? 30 : 26 + s.length * 6.5;
-      const h = l.kind === 'zone' ? 30 : 18;
+      // In the label size set in the replay panel, as the stylesheet draws them.
+      const k = useReplayStore.getState().labelScale;
+      const w = (l.kind === 'zone' ? 30 : 26 + s.length * 6.5) * k;
+      const h = (l.kind === 'zone' ? 30 : 18) * k;
       // A zone's letter sits on it; the rest a little above their place.
-      const y = l.kind === 'zone' ? p.y : p.y - 12;
+      const y = l.kind === 'zone' ? p.y : p.y - 12 * k;
       const hit = placed.some((q) => Math.abs(q.x - p.x) * 2 < q.w + w + GAP * 2 && Math.abs(q.y - y) * 2 < q.h + h + GAP * 2);
       if (hit) continue;
       placed.push({ x: p.x, y, w, h, l, s });

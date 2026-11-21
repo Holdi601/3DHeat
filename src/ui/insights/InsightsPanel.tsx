@@ -13,7 +13,7 @@ import { CANON } from '../../data/canonical';
 import { insightText, labelOf } from './say';
 import { showInsight, volumeFor } from '../../insights/apply';
 import { analysisScope, runInsights } from '../../insights/run';
-import { useInsights } from '../../insights/store';
+import { toggledSelection, useInsights } from '../../insights/store';
 import type { Insight } from '../../insights/types';
 import { int, num, t, useLang } from '../../i18n';
 import { useStore } from '../../state/store';
@@ -137,7 +137,9 @@ function InsightsBody() {
     'importance',
   );
   const findings = useSorted(r?.insights ?? NONE, sort);
-  const pick = (ins: Insight) => pickInsight(ins, engine);
+  // The open one's title closes it again; the camera and filters it set stay.
+  const pick = (ins: Insight) =>
+    toggledSelection(useInsights.getState().selected, ins.id) === null ? st.set({ selected: null }) : pickInsight(ins, engine);
   const restore = () => {
     const s = useInsights.getState();
     if (s.before) useStore.getState().setFilters(s.before);
@@ -200,7 +202,7 @@ function InsightRow({ ins, samples, open, onPick }: { ins: Insight; samples: boo
   const c = ins.confidence;
   return (
     <li className={`ins-item${open ? ' open' : ''}`}>
-      <button className="ins-head" onClick={onPick} title={t('insights.showTitle')}>
+      <button className="ins-head" onClick={onPick} title={t('insights.showTitle')} aria-expanded={open}>
         <span className="ins-bar" aria-hidden>
           <span style={{ width: `${Math.round(ins.strength * 100)}%` }} />
         </span>

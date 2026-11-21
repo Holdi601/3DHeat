@@ -37,10 +37,12 @@ import {
   checkFramebuffer,
   compileProgram,
   createTexture,
+  enableReverseZ,
   GlError,
   probeFloatSupport,
   UniformCache,
   warmPrograms,
+  type ClipControl,
   type FloatTargetSupport,
 } from './glutil';
 import {
@@ -243,6 +245,10 @@ export class Webgl2Renderer implements Renderer {
   private readonly peelProg: Prog;
 
   private chunks: GpuChunk[] = [];
+  /** Whether depth is drawn reverse-Z: with `EXT_clip_control` (render/depth.ts). */
+  readonly reverseZ: boolean;
+  /** The clip control extension when reverse-Z is on, for passes that draw the classic way (the ranges' views). */
+  private readonly clipControl: ClipControl | null;
   /** Ceiling on row-texture memory; overshooting it is what kills a context. */
   gpuBudgetBytes = 2 * 1024 ** 3;
   gpuBytesUsed = 0;
@@ -320,6 +326,8 @@ export class Webgl2Renderer implements Renderer {
   private overlayCapacity = 0;
   /** The lines over the picture (`FrameParams.topVerts`), made when first asked for. */
   private top: { buf: WebGLBuffer; vao: WebGLVertexArrayObject; capacity: number } | null = null;
+  /** The replay's objective lines under the units (`FrameParams.objectivesUnder`), a buffer of their own. */
+  private underTop: { buf: WebGLBuffer; vao: WebGLVertexArrayObject; capacity: number } | null = null;
   /** `FrameParams.topStatic` on the GPU, and the version uploaded. */
   private topStatic: { buf: WebGLBuffer; vao: WebGLVertexArrayObject; capacity: number; version: number } | null = null;
   /** The triangles over the picture (`FrameParams.topTris`) and which array they last were. */
@@ -440,6 +448,9 @@ export class Webgl2Renderer implements Renderer {
     // silently dropped, so fall back to 16-bit rather than render nothing.
     this.heatInternalFormat = this.float.blendF32 ? gl.R32F : gl.R16F;
     this.heatPrecision = this.float.blendF32 ? 'f32' : 'f16';
+    // Reverse-Z where clip control allows it (render/depth.ts), before any program compiles.
+    this.clipControl = enableReverseZ(gl);
+    this.reverseZ = this.clipControl !== null;
 
     const maxTex = gl.getParameter(gl.MAX_TEXTURE_SIZE) as number;
     const neededHeight = Math.ceil(CHUNK_ROWS / ROW_TEX_WIDTH);
@@ -1606,10 +1617,18 @@ export class Webgl2Renderer implements Renderer {
     // drawn into while this frame's shells may still be reading them.
     if (params.ranges && !params.compositeOnly && params.level?.kind === 'model' && this.levelMesh) {
       const meshes = [this.levelMesh, ...this.tileMeshes.values()];
-      (this.ranges ??= new GlRanges(gl)).takeViews(params.ranges, meshes, this.levelMesh);
+      (this.ranges ??= new GlRanges(gl, this.clipControl)).takeViews(params.ranges, meshes, this.levelMesh);
     }
 
     return { gpuMs: null };
+  }
+
+  /** The depth targets' format: a float under reverse-Z (render/depth.ts), 24-bit fixed point otherwise. */
+  private depthTexFormat(): { internalFormat: number; format: number; type: number } {
+    const gl = this.gl;
+    return this.reverseZ
+      ? { internalFormat: gl.DEPTH_COMPONENT32F, format: gl.DEPTH_COMPONENT, type: gl.FLOAT }
+      : { internalFormat: gl.DEPTH_COMPONENT24, format: gl.DEPTH_COMPONENT, type: gl.UNSIGNED_INT };
   }
 
   private drawScene(params: FrameParams): void {
@@ -1619,9 +1638,9 @@ export class Webgl2Renderer implements Renderer {
     gl.disable(gl.BLEND);
     gl.enable(gl.DEPTH_TEST);
     gl.depthMask(true);
-    gl.depthFunc(gl.LEQUAL);
+    gl.depthFunc(this.reverseZ ? gl.GEQUAL : gl.LEQUAL);
     gl.clearColor(SCENE_CLEAR[0], SCENE_CLEAR[1], SCENE_CLEAR[2], 1);
-    gl.clearDepth(1);
+    gl.clearDepth(this.reverseZ ? 0 : 1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     this.frameMeshes = this.meshesInView(params);
@@ -1646,6 +1665,10 @@ export class Webgl2Renderer implements Renderer {
         gl.disable(gl.BLEND);
       }
     }
+
+    // The replay's objectives, before anything stands on them (`FrameParams.objectivesUnder`).
+    const under = params.objectivesUnder ?? null;
+    if (under) this.drawObjectivesUnder(params, under);
 
     if (params.cubeCount > 0 && params.cubes) {
       this.uploadCubeInstances(params.cubes, params.cubeCount);
@@ -1698,11 +1721,13 @@ export class Webgl2Renderer implements Renderer {
     }
     if (params.gpuTracks && this.tracks && this.figures) this.tracks.drawSeeThrough(this.figures);
     if (params.sceneTris && params.sceneTriVertCount > 0) this.drawSceneTris(params, params.sceneTris, params.sceneTriVertCount, 2);
-    if (params.groundTris && params.groundTriCount) this.drawTopTris(params, params.groundTris, params.groundTriCount, true);
-    if (params.objectiveZones?.ground) (this.zones ??= new GlZones(this.gl)).draw(params, params.objectiveZones, true);
+    if (!under) {
+      if (params.groundTris && params.groundTriCount) this.drawTopTris(params, params.groundTris, params.groundTriCount, true);
+      if (params.objectiveZones?.ground) (this.zones ??= new GlZones(this.gl)).draw(params, params.objectiveZones, true);
+    }
     // The engagement ranges: the ground each unit sees within reach, then the shells over everything solid.
     if (params.ranges) {
-      const r = (this.ranges ??= new GlRanges(this.gl));
+      const r = (this.ranges ??= new GlRanges(this.gl, this.clipControl));
       r.drawGround(params, params.ranges, this.frameMeshes);
       r.drawShells(params, params.ranges);
     }
@@ -1734,6 +1759,21 @@ export class Webgl2Renderer implements Renderer {
     this.peelDepthLayers(params);
 
     gl.bindVertexArray(null);
+  }
+
+  /**
+   * The replay's objectives under the units (`FrameParams.objectivesUnder`): the
+   * marks laid on the ground depth tested, then those that show through it
+   * without depth, all before the figures, which paint over every one of them.
+   * None writes depth. The scene's own depth state is back as it was after.
+   */
+  private drawObjectivesUnder(params: FrameParams, under: NonNullable<FrameParams['objectivesUnder']>): void {
+    const z = params.objectiveZones;
+    if (params.groundTris && params.groundTriCount) this.drawTopTris(params, params.groundTris, params.groundTriCount, true);
+    if (z?.ground) (this.zones ??= new GlZones(this.gl)).draw(params, z, true);
+    if (params.topTris && params.topTriCount) this.drawTopTris(params, params.topTris, params.topTriCount);
+    if (z) (this.zones ??= new GlZones(this.gl)).draw(params, z, false);
+    if (under.lines && under.lineCount) this.drawTop(params, under.lines, under.lineCount, true);
   }
 
   /**
@@ -1774,7 +1814,7 @@ export class Webgl2Renderer implements Renderer {
     for (let i = 0; i < this.peelFbo.length; i++) {
       gl.bindFramebuffer(gl.FRAMEBUFFER, this.peelFbo[i]);
       gl.viewport(0, 0, this.width, this.height);
-      gl.clearDepth(1);
+      gl.clearDepth(this.reverseZ ? 0 : 1);
       gl.clear(gl.DEPTH_BUFFER_BIT);
       // Every mesh's structures into the one layer: a wall on a tile is as much
       // a surface to count as a wall on the level.
@@ -1816,7 +1856,7 @@ export class Webgl2Renderer implements Renderer {
     if (!this.structDepthFbo) return;
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.structDepthFbo);
     gl.viewport(0, 0, this.width, this.height);
-    gl.clearDepth(1);
+    gl.clearDepth(this.reverseZ ? 0 : 1);
     gl.clear(gl.DEPTH_BUFFER_BIT);
     const meshes =
       params.level?.kind === 'model' ? this.frameMeshes.filter((m) => m.structIbo && m.structCount > 0) : [];
@@ -2815,8 +2855,11 @@ export class Webgl2Renderer implements Renderer {
     // leave behind — black on some, the previous frame on others, the right
     // answer often enough to look correct in testing.
     if (params.mode !== 'team') this.dirField?.draw(params, this.width, this.height, this.emptyVao);
-    if (params.topTris && params.topTriCount) this.drawTopTris(params, params.topTris, params.topTriCount);
-    if (params.objectiveZones) (this.zones ??= new GlZones(this.gl)).draw(params, params.objectiveZones, false);
+    // Not when they went under the units, in the scene (`FrameParams.objectivesUnder`).
+    if (!params.objectivesUnder) {
+      if (params.topTris && params.topTriCount) this.drawTopTris(params, params.topTris, params.topTriCount);
+      if (params.objectiveZones) (this.zones ??= new GlZones(this.gl)).draw(params, params.objectiveZones, false);
+    }
     if (params.topVerts && params.topVertCount) this.drawTop(params, params.topVerts, params.topVertCount);
     if (params.topStatic && params.topStatic.count) this.drawTopStatic(params, params.topStatic);
     if (!target) this.readCapture();
@@ -2867,14 +2910,19 @@ export class Webgl2Renderer implements Renderer {
     gl.depthMask(true);
   }
 
-  /** Lines over the composited picture, heat and all, without depth (`FrameParams.topVerts`). */
-  private drawTop(params: FrameParams, data: Float32Array, count: number): void {
+  /**
+   * Lines over the composited picture, heat and all, without depth (`FrameParams.topVerts`);
+   * `under`, the replay's objective lines into the scene under the units, from a buffer of their own.
+   */
+  private drawTop(params: FrameParams, data: Float32Array, count: number, under = false): void {
     const gl = this.gl;
-    if (!this.top) {
+    let top = under ? this.underTop : this.top;
+    if (!top) {
       const buf = mustBuffer(gl);
-      this.top = { buf, vao: this.buildLineVao(buf), capacity: 0 };
+      top = { buf, vao: this.buildLineVao(buf), capacity: 0 };
+      if (under) this.underTop = top;
+      else this.top = top;
     }
-    const top = this.top;
     gl.bindBuffer(gl.ARRAY_BUFFER, top.buf);
     if (top.capacity < count * 7) {
       top.capacity = Math.max(count * 7 * 2, 8192 * 7);
@@ -3514,9 +3562,7 @@ export class Webgl2Renderer implements Renderer {
     this.sceneDepth = createTexture(gl, {
       width,
       height,
-      internalFormat: gl.DEPTH_COMPONENT24,
-      format: gl.DEPTH_COMPONENT,
-      type: gl.UNSIGNED_INT,
+      ...this.depthTexFormat(),
     });
     this.sceneFbo = gl.createFramebuffer();
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.sceneFbo);
@@ -3531,9 +3577,7 @@ export class Webgl2Renderer implements Renderer {
       const tex = createTexture(gl, {
         width,
         height,
-        internalFormat: gl.DEPTH_COMPONENT24,
-        format: gl.DEPTH_COMPONENT,
-        type: gl.UNSIGNED_INT,
+        ...this.depthTexFormat(),
       });
       const fbo = gl.createFramebuffer();
       gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
@@ -3547,9 +3591,7 @@ export class Webgl2Renderer implements Renderer {
     this.structDepth = createTexture(gl, {
       width,
       height,
-      internalFormat: gl.DEPTH_COMPONENT24,
-      format: gl.DEPTH_COMPONENT,
-      type: gl.UNSIGNED_INT,
+      ...this.depthTexFormat(),
     });
     this.structDepthFbo = gl.createFramebuffer();
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.structDepthFbo);

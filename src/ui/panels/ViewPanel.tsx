@@ -59,6 +59,7 @@ function presetLabel(name: string): string {
 import { useStore } from '../../state/store';
 import { Check, NumberField, Rich, Section, Segmented, Slider } from '../controls';
 import { useEngine } from '../EngineContext';
+import { toggleLockedFullscreen } from '../browserKeys';
 import { CameraPose } from './CameraPose';
 import { JumpTo } from './JumpTo';
 import { num, t } from '../../i18n';
@@ -226,6 +227,24 @@ export function CameraPanel() {
         checked={camera.invertY}
         onChange={(invertY) => patchCamera({ invertY })}
       />
+      <div className="field">
+        <div className="label">
+          <span>{t('heat.viewPanel.camera.descendKey')}</span>
+        </div>
+        <div className="row wrap">
+          <Segmented
+            value={camera.descendKey}
+            options={[
+              { value: 'ctrl', label: 'Q / Ctrl' },
+              { value: 'z', label: 'Q / Z' },
+              { value: 'none', label: 'Q' },
+            ]}
+            onChange={(descendKey) => patchCamera({ descendKey })}
+          />
+          <button onClick={toggleLockedFullscreen}>{t('heat.viewPanel.camera.fullscreen')}</button>
+        </div>
+        <div className="hint">{t('heat.viewPanel.camera.descendKeyHint')}</div>
+      </div>
 
       <DepthOfField />
 
@@ -316,10 +335,15 @@ function DepthOfField() {
           <Slider
             label={t('heat.viewPanel.dof.aperture')}
             value={dof.aperture}
-            min={0.02}
-            max={2}
-            ceiling={32}
+            // Four decades, on a logarithmic handle: from a sliver of sharp
+            // depth around the focus to everything but the far horizon sharp.
+            // The two decades this had were too few for scenes from a room to
+            // a whole theatre.
+            min={0.002}
+            max={20}
+            ceiling={2000}
             logarithmic
+            proportional
             onChange={(aperture) => patch({ aperture })}
             format={(v) => t('heat.viewPanel.dof.plusMinusPercent', { value: num(v * 100, 0) })}
             hint={t('heat.viewPanel.dof.apertureHint')}

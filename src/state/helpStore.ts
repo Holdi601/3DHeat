@@ -32,3 +32,20 @@ export const useHelpStore = create<HelpState>((set, get) => ({
     }
   },
 }));
+
+/**
+ * Where the pointer last was over the page, for the help to explain what lies
+ * under it when F1 is pressed (ui/help/helpTarget.ts). Two numbers written on
+ * a move: nothing that could cost a frame.
+ */
+export const lastPointer = { x: -1, y: -1 };
+if (typeof window !== 'undefined') {
+  window.addEventListener(
+    'pointermove',
+    (e) => {
+      lastPointer.x = e.clientX;
+      lastPointer.y = e.clientY;
+    },
+    { passive: true, capture: true },
+  );
+}

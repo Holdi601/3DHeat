@@ -3,6 +3,7 @@ import { existsSync, readFileSync, mkdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { cameraForExtent, horizontalExtent } from './calibrate';
+import { viewNearFor } from '../render/depth';
 import { classifyParts, splitByClass } from './classify';
 import { compactGeometry } from './simplify';
 import { parseGlb } from './modelParse';
@@ -116,7 +117,8 @@ suite('game-capture GLB round-trips through the viewer parser', () => {
     const widened = cameraForExtent({ near: 0.5, far: 40_000, flySpeed: 120 }, m.bounds);
     const framing = horizontalExtent(m.bounds) / 2 / Math.tan(((65 / 2) * Math.PI) / 180);
     expect(widened.far).toBeGreaterThan(framing);
-    expect(widened.far / widened.near).toBeLessThanOrEqual(100_000);
+    // The classic depth layout keeps its precision floor (render/depth.ts).
+    expect(widened.far / viewNearFor({ near: widened.near, far: widened.far, reverse: false, grow: false, outside: 0, above: 0, streamed: false })).toBeLessThanOrEqual(100_000);
   });
 
   it('indexes only vertices that exist', () => {

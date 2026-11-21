@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{zone} perdida por {team}",
   "objectives.legend.neutral": "neutra",
   "objectives.legend.capturing": "em captura",
+  "objectives.allModes": "Objetivos de todos os modos em conjunto",
+  "objectives.allModesTitle": "Batalhas de vários modos mostradas em conjunto escondem os seus objetivos: zonas de modos diferentes sobrepõem-se no mesmo terreno. Assinale para os desenhar todos mesmo assim",
   "objectives.layer.bounds": "Fora dos limites",
   "objectives.layer.boundsTitle": "Tracejado onde uma equipa está fora dos limites: dentro da área de jogo do outro lado mas fora da sua",
   "objectives.layout": "Disposição",

@@ -30,6 +30,8 @@ export interface TacticalLook {
   ladders: boolean;
   panels: boolean;
   director: boolean;
+  /** The kill feed and event ticker of every unit; off, of the watched unit, or with none watched of those in view. */
+  feedAll: boolean;
 }
 
 export const DEFAULT_LOOK: TacticalLook = {
@@ -45,6 +47,7 @@ export const DEFAULT_LOOK: TacticalLook = {
   ladders: true,
   panels: true,
   director: false,
+  feedAll: false,
 };
 
 /** A saved look, each field checked; what is missing or wrong is the default. */

@@ -16,6 +16,7 @@
  */
 
 import type { FrameParams, PostDraw } from '../types';
+import { DEPTH_GLSL, DEPTH_WGSL } from '../depth';
 
 /** vec4s in the uniform block: 10 shared, 1 per pass. */
 export const POST_VEC4S = 11;
@@ -80,19 +81,14 @@ uniform vec4 uP[${POST_VEC4S}];
 uniform sampler2D uSrc;
 uniform sampler2D uDepth;
 uniform sampler2D uGlow;
+${DEPTH_GLSL}
 float viewDistance(float d) {
-  float n = uP[4].z;
-  float f = uP[4].w;
-  if (uP[3].w > 0.5) {
-    float ndc = d * 2.0 - 1.0;
-    return (2.0 * n * f) / max(1e-6, f + n - ndc * (f - n));
-  }
-  return mix(n, f, d);
+  return depthToDistance(d, uP[4].z, uP[4].w, uP[3].w > 0.5);
 }
 // Inverse distance: affine across a plane on screen, so its Laplacian finds creases and silhouettes, not slopes.
 float invDist(vec2 uv) {
   float d = texture(uDepth, uv).r;
-  return d >= 0.999999 ? 0.0 : 1.0 / max(1e-6, viewDistance(d));
+  return DEPTH_SKY(d) ? 0.0 : 1.0 / max(1e-6, viewDistance(d));
 }
 float edgeAt(vec2 uv, vec2 t) {
   float w0 = invDist(uv);
@@ -162,7 +158,7 @@ void main() {
     col = texture(uSrc, uv).rgb;
   }
   float dep = texture(uDepth, uv).r;
-  bool sky = dep >= 0.999999;
+  bool sky = DEPTH_SKY(dep);
   float z = sky ? uP[4].w : viewDistance(dep);
   vec2 ndc = uv * 2.0 - 1.0;
   vec3 ray;
@@ -175,7 +171,7 @@ void main() {
     world = uP[0].xyz + ndc.x * uP[1].xyz + ndc.y * uP[2].xyz + ray * z;
   }
   // Far off the depth buffer cannot place a pixel to within a line's spacing; the lines fade before they turn to noise.
-  float err = z * z / max(uP[4].z * 4194304.0, 1e-9);
+  float err = depthError(z, uP[4].z);
   float cl = levelLine(world.y / uP[1].w, 1.0) * (1.0 - smoothstep(0.1, 0.4, err / uP[1].w));
   float ci = levelLine(world.y / (uP[1].w * 5.0), 1.6) * (1.0 - smoothstep(0.1, 0.4, err / (uP[1].w * 5.0)));
   float gl = gridLine(world.xz / uP[2].w) * (1.0 - smoothstep(0.1, 0.4, err / uP[2].w));
@@ -239,14 +235,9 @@ struct PostUniforms { p : array<vec4<f32>, ${POST_VEC4S}>, };
 @group(0) @binding(2) var depthTex : texture_depth_2d;
 @group(0) @binding(3) var glowTex : texture_2d<f32>;
 @group(0) @binding(4) var samp : sampler;
-
+${DEPTH_WGSL}
 fn viewDistance(d : f32) -> f32 {
-  let n = u.p[4].z;
-  let f = u.p[4].w;
-  if (u.p[3].w > 0.5) {
-    return (n * f) / max(1e-6, f - d * (f - n));
-  }
-  return mix(n, f, d);
+  return depthToDistance(d, u.p[4].z, u.p[4].w, u.p[3].w > 0.5);
 }
 fn depthAt(uv : vec2<f32>) -> f32 {
   let size = vec2<i32>(textureDimensions(depthTex));
@@ -255,7 +246,7 @@ fn depthAt(uv : vec2<f32>) -> f32 {
 }
 fn invDist(uv : vec2<f32>) -> f32 {
   let d = depthAt(uv);
-  if (d >= 0.999999) { return 0.0; }
+  if (depthSky(d)) { return 0.0; }
   return 1.0 / max(1e-6, viewDistance(d));
 }
 fn edgeAt(uv : vec2<f32>, t : vec2<f32>) -> f32 {
@@ -325,7 +316,7 @@ fn fsFinal(in : FsOut) -> @location(0) vec4<f32> {
     col = vec3<f32>(textureSample(srcTex, samp, uv + o).r, base.g, textureSample(srcTex, samp, uv - o).b);
   }
   let dep = depthAt(uv);
-  let sky = dep >= 0.999999;
+  let sky = depthSky(dep);
   var z = u.p[4].w;
   if (!sky) { z = viewDistance(dep); }
   // The shader's uv runs top down; the camera basis wants y up.
@@ -336,7 +327,7 @@ fn fsFinal(in : FsOut) -> @location(0) vec4<f32> {
     ray = normalize(u.p[3].xyz + ndc.x * u.p[1].xyz + ndc.y * u.p[2].xyz);
     world = u.p[0].xyz + ray * (z / max(1e-4, dot(ray, u.p[3].xyz)));
   }
-  let err = z * z / max(u.p[4].z * 4194304.0, 1e-9);
+  let err = depthError(z, u.p[4].z);
   let cl = levelLine(world.y / u.p[1].w, 1.0) * (1.0 - smoothstep(0.1, 0.4, err / u.p[1].w));
   let ci = levelLine(world.y / (u.p[1].w * 5.0), 1.6) * (1.0 - smoothstep(0.1, 0.4, err / (u.p[1].w * 5.0)));
   let gl = gridLine(world.xz / u.p[2].w) * (1.0 - smoothstep(0.1, 0.4, err / u.p[2].w));

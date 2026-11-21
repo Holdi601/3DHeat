@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{zone} perdue par {team}",
   "objectives.legend.neutral": "neutre",
   "objectives.legend.capturing": "en cours de capture",
+  "objectives.allModes": "Objectifs de tous les modes ensemble",
+  "objectives.allModesTitle": "Les batailles de plusieurs modes affichées ensemble masquent leurs objectifs : les zones de modes différents se superposent sur le même terrain. Cochez pour les dessiner tous quand même",
   "objectives.layer.bounds": "Hors limites",
   "objectives.layer.boundsTitle": "Hachuré là où une équipe est hors limites : dans la zone de jeu de l'autre camp mais hors de la sienne",
   "objectives.layout": "Disposition",

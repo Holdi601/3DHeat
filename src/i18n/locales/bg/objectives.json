@@ -32,6 +32,8 @@
   "objectives.events.neutralised": "{zone} загубена от {team}",
   "objectives.legend.neutral": "неутрална",
   "objectives.legend.capturing": "превзема се",
+  "objectives.allModes": "Целите на всички режими заедно",
+  "objectives.allModesTitle": "Когато са показани битки от няколко режима наведнъж, целите им са скрити: зоните на различните режими се застъпват на същия терен. Отметнете, за да ги покажете всички въпреки това",
   "objectives.layer.bounds": "Извън границите",
   "objectives.layer.boundsTitle": "Щриховано, където отбор е извън границите: в зоната на другата страна, но извън своята",
   "objectives.layout": "Оформление",

@@ -543,5 +543,8 @@
   "replay.card.hidden": "Kayıt şu anda gizliyor (imha edilmedi).",
   "replay.card.disabled": "Savaş dışı (devre dışı), imha edilmedi.",
   "replay.aids.links": "Bağlantılar",
-  "replay.aids.linksTitle": "Bir silahtan atıcısına (kesikli) ve bir yol noktasından bir sonrakine, Parent ve Next'ten"
+  "replay.aids.linksTitle": "Bir silahtan atıcısına (kesikli) ve bir yol noktasından bir sonrakine, Parent ve Next'ten",
+  "replay.look.part.feedAll": "Tüm birimlerin olayları",
+  "replay.look.part.feedAllTitle": "Tüm birimlerin imha ve olay akışı. Kapalı: yalnızca izlenen birimin, izlenen birim yoksa görünenlerin",
+  "replay.look.resume": "Yönetmene devam et"
 }

@@ -575,6 +575,19 @@ export interface FrameParams {
    * triangles as well; always over the finished picture at `xray` of their alpha.
    */
   objectiveZones?: { verts: Float32Array; count: number; state: Float32Array; ground: boolean; xray: number } | null;
+  /**
+   * The replay's objectives under the units. Set, the renderers draw every
+   * objective mark in the scene after the level and before the figures - the
+   * ground-laid ones (`groundTris`, the zones' discs) depth tested, the ones
+   * that show through the ground (`topTris`, the zones' bands at `xray`, and
+   * these lines, seven floats a vertex) without depth - and none over the
+   * finished picture. A disc lies a couple of metres over the ground and a
+   * tank is barely taller, so drawn after the figures it covered their lower
+   * half, and the marks over the picture covered all of them: units sank into
+   * the objectives. Drawn first, every figure paints over them, and a figure
+   * behind a hill still hides behind it while the zone shows through.
+   */
+  objectivesUnder?: { lines: Float32Array | null; lineCount: number } | null;
   /** Directional heat: wedge sprites and the direction field. Null or absent draws neither. */
   direction?: DirectionDraw | null;
   /** Engagement ranges (`ranges/`): the shells and the units' lines of sight. Null or absent: none. */
@@ -687,11 +700,10 @@ export const HEAT_DEPTH_LAYERS = 3;
  * Large enough to clear the surface already recorded despite depth being
  * distributed non-linearly, small enough not to skip a wall standing right
  * behind another one. Written as a GLSL literal, so it needs the decimal point.
+ * The classic depth layout's (WebGL2 without clip control); reverse-Z's is a
+ * share of the depth instead (`PEEL_EPSILON_REVERSE` in depth.ts).
  */
 export const PEEL_EPSILON = '0.0000005';
-
-/** The same value as a number, for WebGPU, which passes it in a uniform. */
-export const PEEL_EPSILON_F = 5e-7;
 
 export interface LevelDraw {
   kind: 'image' | 'model';
@@ -854,6 +866,12 @@ export interface FrameResult {
 
 export interface Renderer {
   readonly kind: BackendKind;
+  /**
+   * Whether depth is drawn reverse-Z (render/depth.ts): clip depth in [0, 1] with
+   * the near plane at 1, into a float buffer. The engine remaps the projection to
+   * match and lets the near plane come in to centimetres when it is.
+   */
+  readonly reverseZ: boolean;
   setDataset(dataset: Dataset | null): void;
   /**
    * The routes for line heat, one link per row of the current dataset (see

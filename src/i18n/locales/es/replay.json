@@ -543,5 +543,8 @@
   "replay.card.hidden": "Oculto por la grabación en este momento (no destruido).",
   "replay.card.disabled": "Fuera de combate (desactivado), no destruido.",
   "replay.aids.links": "Enlaces",
-  "replay.aids.linksTitle": "Un arma hacia su lanzador (discontinua) y un punto de ruta hacia el siguiente, según Parent y Next"
+  "replay.aids.linksTitle": "Un arma hacia su lanzador (discontinua) y un punto de ruta hacia el siguiente, según Parent y Next",
+  "replay.look.part.feedAll": "Eventos de todas las unidades",
+  "replay.look.part.feedAllTitle": "Registro de bajas y eventos de todas las unidades. Desactivado: solo los de la unidad seguida o, si no se sigue ninguna, los de las visibles",
+  "replay.look.resume": "Reanudar el director"
 }

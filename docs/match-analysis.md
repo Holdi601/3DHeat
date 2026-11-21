@@ -13,7 +13,7 @@ The Match tab plays any recording as figures: a War Thunder or Tacview recording
 
 1. Convert the demo ([below](#where-the-data-comes-from)) to a `.parquet` and a `.match.json` file.
 2. In the **Heatmap** tab, load the `.parquet` file under **Source**.
-3. Open the **Match** tab and click **Load match files…**, or drop the `.match.json` file on the view.
+3. Open the **Match** tab. A `.3dheat` container brings its match file with it; for loose files, drop the `.match.json` file on the view (or, before loading data, click **Load match files…**).
 4. Click a match in **Match summaries**, then a cell of the round strip to open that round.
 5. Click **Show round** to see that round in the heatmap, or **Replay round** to watch it as figures.
 
@@ -64,9 +64,18 @@ whatever Parquet is loaded in the Heatmap tab.
 
 ### Match summaries
 
+Loaded data brings its own: a [`.3dheat`](container.md) container holds its
+match document, and where it has none (a DCS recording, a Siege match) its
+summary, or a table to work one out from. So with data loaded there is
+nothing to load here by hand: the section shows the match's scoreboard, or
+its summary - the map, mode and length, each side's units or players, kills
+and deaths and who won, and the players with the most kills. Of a load of
+many matches, the summaries of the shown ones (up to four) are read when
+they are shown.
+
 | Control | Does |
 |---|---|
-| **Load match files…** | picks `.json` files (several at once): the `.match.json` summaries |
+| **Load match files…** | with no data loaded: picks `.json` files (several at once): the `.match.json` summaries |
 | drop on the view | JSON files dropped on the view while the Match tab is open load the same way (other files are ignored) |
 | **Clear** | removes every match |
 | **All matches** (with two or more) | "N matches, M rounds": the statistics across all of them |
