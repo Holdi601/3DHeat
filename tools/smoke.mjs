@@ -85,7 +85,9 @@ const logs = [];
 /** Anything Vite said, kept apart: it is how a mid-run reload identifies itself. */
 const viteNotes = [];
 page.on('console', (m) => {
-  const text = `[${m.type()}] ${m.text()}`;
+  // A failed resource says only its status; the URL is what makes it fixable.
+  const where = m.type() === 'error' && m.location()?.url ? ` (${m.location().url})` : '';
+  const text = `[${m.type()}] ${m.text()}${where}`;
   logs.push(text);
   if (m.type() === 'error') errors.push(text);
   if (/^\[vite\]/.test(m.text())) viteNotes.push(m.text());
@@ -139,6 +141,13 @@ const step = async (name, fn) => {
   }
 };
 const SKIP = Symbol('skip');
+/**
+ * The viewport, and only the viewport. A bare `canvas` stopped being one
+ * element once the replay's timeline marks (an 8-pixel strip under the
+ * scrubber) became a canvas of their own, and Playwright's strict locator
+ * refuses to guess between them.
+ */
+const VIEWPORT = '.stage > canvas';
 
 const setState = (fn, arg) => page.evaluate(fn, arg);
 const store = () => page.evaluate(() => globalThis.__3dheat.useStore.getState());
@@ -289,7 +298,7 @@ const shot = async (label) => {
   // scene under software rendering takes seconds per frame. The default thirty
   // seconds expired mid-capture and reported it as a failure of the upload path
   // it was standing next to.
-  const png = await page.locator('canvas').screenshot({ timeout: 180_000 });
+  const png = await page.locator(VIEWPORT).screenshot({ timeout: 180_000 });
   writeFileSync(`${OUT}/${label}.png`, png);
   return analyse(page);
 };
@@ -396,7 +405,7 @@ await step('lifetime window shows one position per person', async () => {
     0.6,
   );
   const cumulative = await measureCoverage(page, { mode: 'play', window: 'cumulative' }, 0.6);
-  writeFileSync(`${OUT}/timeline-lifetime.png`, await page.locator('canvas').screenshot());
+  writeFileSync(`${OUT}/timeline-lifetime.png`, await page.locator(VIEWPORT).screenshot());
   if (!(lifetime < cumulative)) {
     throw new Error(`lifetime=${lifetime} should be well under cumulative=${cumulative}`);
   }
@@ -647,7 +656,7 @@ await step('real parquet loads through the worker', async () => {
   }
   if (!info.hasTime) throw new Error('time column not detected');
   if (!info.hasLifetime) throw new Error('lifetime not computed');
-  writeFileSync(`${OUT}/real-heat.png`, await page.locator('canvas').screenshot());
+  writeFileSync(`${OUT}/real-heat.png`, await page.locator(VIEWPORT).screenshot());
   return `${info.rows} rows, ${info.entities} entities, ${info.groups} groups from ${realFiles.length} files`;
 });
 
@@ -1234,7 +1243,7 @@ await step('heat probe reads the accumulated field', async () => {
 
     // Sample a grid; the peak is what proves the field is being read, and the
     // spread proves it is a field rather than one constant.
-    const canvas = document.querySelector('canvas');
+    const canvas = document.querySelector('.stage > canvas');
     const w = canvas.clientWidth;
     const h = canvas.clientHeight;
     let peak = -Infinity;
@@ -2719,7 +2728,7 @@ await step('the canvas takes keyboard focus', async () => {
   });
   await page.waitForTimeout(400);
   // Click the canvas so key events are not swallowed by a focused panel input.
-  await page.locator('canvas').click({ position: { x: 640, y: 400 } });
+  await page.locator(VIEWPORT).click({ position: { x: 640, y: 400 } });
   // The click starts a drag; release it so it does not colour the next test.
   await page.mouse.up();
   return 'focused';
@@ -2839,7 +2848,7 @@ await step('real keyboard: Shift boosts and Alt slows the same key', async () =>
 
 await step('real mouse drag looks around', async () => {
   const before = await pose();
-  const box = await page.locator('canvas').boundingBox();
+  const box = await page.locator(VIEWPORT).boundingBox();
   const cx = box.x + box.width / 2;
   const cy = box.y + box.height / 2;
   await page.mouse.move(cx, cy);
@@ -2863,7 +2872,7 @@ await step('real mouse drag looks around', async () => {
 
 await step('mouse movement is ignored when no button is held', async () => {
   const before = await pose();
-  const box = await page.locator('canvas').boundingBox();
+  const box = await page.locator(VIEWPORT).boundingBox();
   for (let i = 0; i < 8; i++) {
     await page.mouse.move(box.x + 100 + i * 40, box.y + 100 + i * 30);
   }
@@ -2876,7 +2885,7 @@ await step('mouse movement is ignored when no button is held', async () => {
 });
 
 await step('real wheel tunes fly speed, and zooms in orthographic', async () => {
-  const box = await page.locator('canvas').boundingBox();
+  const box = await page.locator(VIEWPORT).boundingBox();
   const cx = box.x + box.width / 2;
   const cy = box.y + box.height / 2;
   await page.mouse.move(cx, cy);
@@ -2946,7 +2955,7 @@ await step('flying re-renders continuously rather than showing one frame', async
     globalThis.__3dheat.useStore.getState().patchCamera({ flySpeed: extent / 20 });
   });
   await page.waitForTimeout(900);
-  await page.locator('canvas').click({ position: { x: 400, y: 300 } });
+  await page.locator(VIEWPORT).click({ position: { x: 400, y: 300 } });
   await page.mouse.up();
 
   const samples = [];
@@ -3155,15 +3164,28 @@ await step('adaptive budget throttles to protect the frame rate', async () => {
     // A large radius makes each sprite expensive, forcing the controller to act.
     const extent = s.dataset ? s.dataset.bounds.maxX - s.dataset.bounds.minX : 1000;
     s.patchHeat({ radius: extent / 25 });
+    // Under motion, because that is the case the throttle exists for and the
+    // only one in which the engine takes up a new resolution: a change of it
+    // throws the field away, so a still view keeps the one it has rather than
+    // redrawing for nothing (see `heatScaleUsed` in engine.ts). A still camera
+    // here measured that rule, not the controller.
+    const eng = globalThis.__3dheat_engine;
+    const nudge = extent * 1e-4;
     const samples = [];
     for (let i = 0; i < 24; i++) {
-      await new Promise((r) => setTimeout(r, 250));
-      const l = globalThis.__3dheat_engine.live;
+      const until = performance.now() + 250;
+      for (let k = 0; performance.now() < until; k++) {
+        eng.camera.move(0, k % 2 ? nudge : -nudge, 0, 1);
+        await new Promise((r) => requestAnimationFrame(r));
+      }
+      const l = eng.live;
       samples.push({
         budget: l.budget,
         frameMs: l.frameMs,
         splats: l.splats,
         heatScale: l.heatScale,
+        budgetScale: l.budgetScale,
+        heatLevel: l.heatLevel,
       });
     }
     return {
@@ -3172,6 +3194,8 @@ await step('adaptive budget throttles to protect the frame rate', async () => {
       minBudget: Math.min(...samples.map((x) => x.budget)),
       maxBudget: Math.max(...samples.map((x) => x.budget)),
       minHeatScale: Math.min(...samples.map((x) => x.heatScale)),
+      minBudgetScale: Math.min(...samples.map((x) => x.budgetScale)),
+      minHeatLevel: Math.min(...samples.map((x) => x.heatLevel)),
     };
   });
 
@@ -3190,12 +3214,24 @@ await step('adaptive budget throttles to protect the frame rate', async () => {
   if (!(result.minHeatScale < 1)) {
     throw new Error('resolution throttle never engaged despite a pinned sprite budget');
   }
-  if (result.minHeatScale < 0.24) {
-    throw new Error(`resolution fell below its floor: ${result.minHeatScale}`);
+  // Each factor of the resolution against its own floor: the budget's second
+  // stage stops at a quarter, the level for the sprites' size at a sixteenth
+  // (`HeatLevel`). The product goes below a quarter by design when the sprites
+  // are as wide as here - a smooth kernel loses nothing at a coarse level - so
+  // a floor of a quarter on the product failed a controller doing its job.
+  if (result.minBudgetScale < 0.24) {
+    throw new Error(`the budget's resolution stage fell below its floor: ${result.minBudgetScale}`);
+  }
+  if (result.minHeatLevel < 1 / 16 - 1e-6) {
+    throw new Error(`the sprite-size level fell below its floor: ${result.minHeatLevel}`);
+  }
+  if (result.minHeatScale < 0.25 / 16 - 1e-6) {
+    throw new Error(`resolution fell below its floors' product: ${result.minHeatScale}`);
   }
   return (
     `budget ${(result.first.budget / 1e6).toFixed(2)}M -> ${(result.last.budget / 1e6).toFixed(2)}M, ` +
-    `heat res -> ${(result.minHeatScale * 100).toFixed(0)}%, frame ${result.last.frameMs.toFixed(0)}ms`
+    `heat res -> ${(result.minHeatScale * 100).toFixed(1)}% (budget ${(result.minBudgetScale * 100).toFixed(0)}%, ` +
+    `sprite level ${(result.minHeatLevel * 100).toFixed(1)}%), frame ${result.last.frameMs.toFixed(0)}ms`
   );
 });
 
@@ -3325,12 +3361,15 @@ await step('capabilities disable modes the data cannot support', async () => {
     s.setDataset({ ...ds, personId: null, personLabels: [], time: null, timeRange: [0, 0] });
   });
   await page.waitForTimeout(600);
-  // Anchored, not a substring. Both mode buttons' labels contain
-  // "Team" — "Box replay" (the cube view, which needs a person column) and "Team heat" (the
-  // group-coloured heat, which needs only a group column) — and they have
-  // deliberately different requirements. A substring match took the wrong one and
-  // reported the product broken when it was doing exactly the right thing.
-  const teamBtn = page.locator('.seg button', { hasText: /^Box replay$/ }).first();
+  // Anchored, not a substring. Two mode buttons' labels contain a word in
+  // common with the team view's - "Figure overlay" (the figures, which need a
+  // person column) and "Team heat" (the group-coloured heat, which needs only a
+  // group column) - and they have deliberately different requirements. A
+  // substring match took the wrong one and reported the product broken when it
+  // was doing exactly the right thing. (The figure view was called "Box
+  // replay" before the figures replaced the boxes; a label that no longer
+  // exists made this step wait out its timeout.)
+  const teamBtn = page.locator('.seg button', { hasText: /^Figure overlay$/ }).first();
   // The other one must be *enabled* on this dataset, which has groups and no
   // people. Asserted rather than left implied, because the failure that brought
   // this comment about looked identical either way from the outside.
@@ -3346,7 +3385,17 @@ await step('capabilities disable modes the data cannot support', async () => {
   if (!teamDisabled) throw new Error('team mode offered without a person column');
   if (teamsHeatDisabled) throw new Error('teams heat blocked despite having groups');
   if (!timelineDisabled) throw new Error('timeline offered without a time column');
-  return 'team + timeline disabled, teams heat still offered';
+  // The Match tab reaches the same view by a switch of its own, and opening the
+  // tab selects it. Neither may land on an empty viewport here.
+  await page.locator('[role=tab]', { hasText: /^Match$/ }).first().click();
+  await page.waitForTimeout(400);
+  const replayDisabled = await page.locator('.seg button', { hasText: /^Figure replay$/ }).first().isDisabled();
+  const matchMode = await page.evaluate(() => globalThis.__3dheat.useStore.getState().mode);
+  await page.locator('[role=tab]', { hasText: /^Heatmap$/ }).first().click();
+  await page.waitForTimeout(400);
+  if (!replayDisabled) throw new Error('the Match tab offers the figure replay without a person column');
+  if (matchMode === 'team') throw new Error('opening the Match tab entered the figure view without a person column');
+  return 'team (both tabs) + timeline disabled, teams heat still offered';
 });
 
 await step('no console errors', () => {
@@ -3485,7 +3534,7 @@ async function analyse(page) {
       }
     }
 
-    const src = document.querySelector('canvas');
+    const src = document.querySelector('.stage > canvas');
     const c = document.createElement('canvas');
     c.width = 200;
     c.height = 125;
@@ -3525,7 +3574,7 @@ async function tone(page) {
       if (frame) return count(frame.rgba);
     }
 
-    const src = document.querySelector('canvas');
+    const src = document.querySelector('.stage > canvas');
     const c = document.createElement('canvas');
     c.width = 320;
     c.height = 200;

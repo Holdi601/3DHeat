@@ -403,7 +403,7 @@ const LAYOUTS_ROUTE = '/__heat3d/layouts';
  * A level's `<Level>.layouts.json` from the levels folder: `/<game>/<level>`
  * answers `<levels>/<game>/<Level>.layouts.json` (the level's name matched
  * without case), where `<levels>` is `HEAT3D_LEVELS` or the `levels` entry of
- * the git-ignored `tools/local-data.json`; 404 when there is none. The viewer
+ * the git-ignored `tools/local-data.json`; 204 when there is none. The viewer
  * asks once for each level it loads and draws the layout of the data's mode.
  */
 function levelLayouts(): Plugin {
@@ -430,7 +430,9 @@ function levelLayouts(): Plugin {
         }
       }
       if (!file) {
-        res.statusCode = 404;
+        // No content, not 404: the viewer asks for every level it loads, and
+        // a level without layouts is the normal case, not a console error.
+        res.statusCode = 204;
         res.end();
         return;
       }
@@ -458,8 +460,8 @@ const LOCAL_RANGES_ROUTE = '/__heat3d/ranges';
  * reader (`heat3d-wt-ranges`, `heat3d-dcs-maps ranges`): `/<game>` answers
  * the file named by the `ranges` entry of the git-ignored
  * `tools/local-data.json` (`{ "wt": "<path>", "dcs": "<path>" }`), with an
- * ETag so an unchanged file costs a bodiless 304; without one, 404, and the
- * viewer keeps its public catalogue.
+ * ETag so an unchanged file costs a bodiless 304; without one, 204 (no
+ * content), and the viewer keeps its public catalogue.
  */
 function localRanges(): Plugin {
   const where = (game: string): string | null => {
@@ -477,7 +479,10 @@ function localRanges(): Plugin {
       const game = /^\/([a-z0-9]+)$/i.exec(new URL(req.url ?? '/', 'http://ranges').pathname)?.[1];
       const p = game ? where(game) : null;
       if (!p || !existsSync(p)) {
-        res.statusCode = 404;
+        // No content rather than not found: the page asks for every game at
+        // startup, and each 404 is a console error about a catalogue that is
+        // simply not installed.
+        res.statusCode = 204;
         res.end();
         return;
       }

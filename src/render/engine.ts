@@ -163,6 +163,13 @@ export interface LiveReadout {
   gpuName: string | null;
   /** Heat buffer resolution actually in use, after the auto throttle. */
   heatScale: number;
+  /**
+   * Its two automatic factors, as taken up with it: the frame budget's second
+   * stage (at least a quarter) and the level for the sprites' size
+   * (`HeatLevel`, at least a sixteenth).
+   */
+  budgetScale: number;
+  heatLevel: number;
   /** Line heat's routes, while it has them: begun, reaching an end, segments. */
   lines: { routes: number; ended: number; segments: number; jumps: number } | null;
 }
@@ -560,6 +567,8 @@ export class Engine {
     levelBytes: 0,
     gpuName: null,
     heatScale: 1,
+    budgetScale: 1,
+    heatLevel: 1,
     lines: null,
   };
 
@@ -3038,6 +3047,8 @@ export class Engine {
     if (this.heatScaleUsed === 0 || this.camera.moved || this.heatScaleUserSet !== s.budget.heatScale) {
       this.heatScaleUsed = wantHeatScale;
       this.heatScaleUserSet = s.budget.heatScale;
+      this.live.budgetScale = budgetScale;
+      this.live.heatLevel = level;
     }
     const effectiveHeatScale = this.heatScaleUsed;
     this.live.heatScale = effectiveHeatScale;

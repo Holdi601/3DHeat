@@ -165,7 +165,10 @@ export function App() {
     if (useRaceStore.getState().tab === 'heat') heatTabMode.current = mode;
   }, [mode]);
   useEffect(() => {
-    if (tab === 'match') setMode('team');
+    // The figures need a person column: without one the Match tab opens on its heat.
+    const st = useStore.getState();
+    const figures = !st.dataset || !modeBlockedReason('team', datasetCapabilities(st.dataset));
+    if (tab === 'match') setMode(figures ? 'team' : lastHeat.current);
     else if (tab === 'heat') setMode(heatTabMode.current);
     // A level's painted buildings: solid in the replay (as chosen there), see-through over the heat.
     if (tab === 'match') applyBuildings(useReplayStore.getState().buildings === 'solid');
@@ -193,6 +196,7 @@ export function App() {
     // `lang`: the labels are words, looked up again in a new language.
     [dataset, capabilities, columnSplit, lang],
   );
+  const figuresOption = modeOptions.find((m) => m.value === 'team');
 
   /**
    * Ask the host its real memory, once, at startup.
@@ -442,7 +446,13 @@ export function App() {
                 <Segmented<MatchView>
                   value={matchView}
                   options={[
-                    { value: 'replay', label: t('app.matchView.replay'), title: t('app.matchView.replayTitle') },
+                    {
+                      value: 'replay',
+                      label: t('app.matchView.replay'),
+                      // As the heat tab's figure overlay: unavailable, and why, when the data cannot support it.
+                      title: figuresOption?.disabled ? figuresOption.title : t('app.matchView.replayTitle'),
+                      disabled: figuresOption?.disabled,
+                    },
                     { value: 'heat', label: t('app.matchView.heat'), title: t('app.matchView.heatTitle') },
                   ]}
                   onChange={(v) => setMode(v === 'replay' ? 'team' : lastHeat.current)}

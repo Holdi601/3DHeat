@@ -25,7 +25,7 @@
 import { GAMES, RANGES, readWeapon, type GameCatalogue, type RangeCatalogue, type WeaponRange } from './catalog';
 import { readSensor, type SensorMount, type SensorSpec } from './sensors';
 
-/** Where the dev and preview servers serve a game's local catalogue (404 when there is none). */
+/** Where the dev and preview servers serve a game's local catalogue (204, no content, when there is none). */
 export const LOCAL_RANGES_ROUTE = '/__heat3d/ranges';
 
 export interface LocalOptic {
@@ -135,7 +135,7 @@ export async function loadLocalRanges(games: Map<string, GameCatalogue> = GAMES)
     [...games.keys()].map(async (id) => {
       try {
         const res = await fetch(`${LOCAL_RANGES_ROUTE}/${id}`);
-        if (!res.ok) return;
+        if (!res.ok || res.status === 204) return;
         const got = installLocal(await res.json(), games);
         if (got) out.push(got);
       } catch {

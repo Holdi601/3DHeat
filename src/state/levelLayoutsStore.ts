@@ -98,7 +98,7 @@ export function wantLayouts(game: string, level: string): void {
   if (layoutsDoc(game, level) || st.asked[key] || typeof fetch !== 'function') return;
   useLevelLayouts.setState({ asked: { ...st.asked, [key]: true } });
   void fetch(`${LAYOUTS_ROUTE}/${encodeURIComponent(game || '_')}/${encodeURIComponent(level)}`)
-    .then((r) => (r.ok ? r.json() : null))
+    .then((r) => (r.ok && r.status !== 204 ? r.json() : null))
     .then((j) => {
       const doc = j ? parseLevelLayouts(j) : null;
       if (doc) useLevelLayouts.getState().add(doc);
