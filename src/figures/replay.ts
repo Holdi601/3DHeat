@@ -38,7 +38,7 @@ import { drawPlacedGadgets } from './gadgetLayer';
 import { LEAN_MAX, leanFrom, posed, stanceFrom } from './posture';
 import { motionOn } from '../ui/motion';
 
-const NAME_COLUMN = /^(name|vehicle|vehicle.?name|unit|unit.?type|model|aircraft|plane|tank|ship|craft|loadout|kit|figure)$/i;
+const NAME_COLUMN = /^(name|hero|vehicle|vehicle.?name|unit|unit.?type|model|aircraft|plane|tank|ship|craft|loadout|kit|figure)$/i;
 const TYPE_COLUMN = /^(type|class|kind|category|icon|role|domain|vehicle.?type|vehicle.?class)$/i;
 const MACH_COLUMN = /^mach(.?number)?$/i;
 const TAS_COLUMN = /^(tas|true.?air.?speed)$/i;

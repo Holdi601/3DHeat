@@ -155,7 +155,7 @@ export function vehicleClassOf(names: string[], types: string[]): VehicleClass {
   return own ?? BY_SYMBOL[classify(kind, types.filter(Boolean).join('+')).cls] ?? 'other';
 }
 
-const NAME_COLUMN = /^(name|vehicle|vehicle.?name|unit|unit.?type|model|aircraft|plane|tank|ship|craft|loadout|kit|figure)$/i;
+const NAME_COLUMN = /^(name|hero|vehicle|vehicle.?name|unit|unit.?type|model|aircraft|plane|tank|ship|craft|loadout|kit|figure)$/i;
 const TYPE_COLUMN = /^(type|class|kind|category|icon|role|domain|vehicle.?type|vehicle.?class)$/i;
 const EVENT_COLUMN = /^(events?|event.?type|event.?name)$/i;
 

@@ -18,7 +18,7 @@ const TIME_SCALE: Partial<Record<TimeUnit, number>> = {
   unix_milliseconds: 1e-3,
 };
 
-const NAME_COLUMN = /^(name|vehicle|vehicle.?name|unit|unit.?type|model|aircraft|plane|tank|ship|craft|loadout|kit|figure)$/i;
+const NAME_COLUMN = /^(name|hero|vehicle|vehicle.?name|unit|unit.?type|model|aircraft|plane|tank|ship|craft|loadout|kit|figure)$/i;
 const TYPE_COLUMN = /^(type|class|kind|category|icon|role|domain|vehicle.?type|vehicle.?class)$/i;
 const WHO_COLUMN = /^(player|pilot|callsign|side|coalition|country|faction|ai|actor|is.?player|squad|clan|group|user.?id)$/i;
 /** Most columns kept per unit. */
