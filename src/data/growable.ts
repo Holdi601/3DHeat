@@ -230,3 +230,110 @@ export class Dictionary {
     return this.labels.length;
   }
 }
+
+/** Rows in one segment of a `SegmentedF64`: 128 MiB of doubles. */
+const SEG_SHIFT = 24;
+const SEG_ROWS = 1 << SEG_SHIFT;
+const SEG_MASK = SEG_ROWS - 1;
+
+/**
+ * Doubles in segments of 128 MiB, for the absolute time a load merges in.
+ *
+ * Chromium will not allocate one ArrayBuffer of 2 GiB or more, however much
+ * memory is free: past 268 million rows a single Float64Array cannot exist, and
+ * every file after that point was reported unreadable. In segments the column
+ * has no such ceiling, grows without a copy and without slack, and a segment is
+ * only made when rows reach it.
+ */
+export class SegmentedF64 {
+  private readonly segs: Float64Array[] = [];
+  private n = 0;
+
+  get length(): number {
+    return this.n;
+  }
+
+  /** Grow to `min` rows; new rows are zero. */
+  extend(min: number): void {
+    while (this.segs.length * SEG_ROWS < min) this.segs.push(new Float64Array(SEG_ROWS));
+    if (min > this.n) this.n = min;
+  }
+
+  get(i: number): number {
+    return this.segs[i >>> SEG_SHIFT][i & SEG_MASK];
+  }
+
+  /** Write `count` values of `src` from row `at`, growing as needed. */
+  write(src: ArrayLike<number>, count: number, at: number): void {
+    this.extend(at + count);
+    let done = 0;
+    while (done < count) {
+      const r = at + done;
+      const seg = this.segs[r >>> SEG_SHIFT];
+      const off = r & SEG_MASK;
+      const take = Math.min(count - done, SEG_ROWS - off);
+      if (src instanceof Float64Array) seg.set(src.subarray(done, done + take), off);
+      else for (let k = 0; k < take; k++) seg[off + k] = src[done + k];
+      done += take;
+    }
+  }
+
+  /** Add `delta` to rows [lo, hi). */
+  addRange(lo: number, hi: number, delta: number): void {
+    for (let r = lo; r < hi; ) {
+      const seg = this.segs[r >>> SEG_SHIFT];
+      const off = r & SEG_MASK;
+      const end = Math.min(hi - r, SEG_ROWS - off) + off;
+      for (let k = off; k < end; k++) seg[k] += delta;
+      r += end - off;
+    }
+  }
+
+  /** Smallest and largest of rows [lo, hi), NaN skipped; [Infinity, -Infinity] when none. */
+  minMax(lo: number, hi: number): [number, number] {
+    let mn = Infinity;
+    let mx = -Infinity;
+    for (let r = lo; r < hi; ) {
+      const seg = this.segs[r >>> SEG_SHIFT];
+      const off = r & SEG_MASK;
+      const end = Math.min(hi - r, SEG_ROWS - off) + off;
+      for (let k = off; k < end; k++) {
+        const v = seg[k];
+        if (v < mn) mn = v;
+        if (v > mx) mx = v;
+      }
+      r += end - off;
+    }
+    return [mn, mx];
+  }
+
+  /** Rows [0, count) less `origin`, as float32; a value that is not finite becomes 0. */
+  relativeF32(count: number, origin: number): Float32Array {
+    const out = new Float32Array(count);
+    for (let r = 0; r < count; ) {
+      const seg = this.segs[r >>> SEG_SHIFT];
+      const take = Math.min(count - r, SEG_ROWS);
+      for (let k = 0; k < take; k++) {
+        const v = seg[k];
+        out[r + k] = Number.isFinite(v) ? v - origin : 0;
+      }
+      r += take;
+    }
+    return out;
+  }
+
+  /** The smallest finite value of rows [0, count), or Infinity. */
+  finiteMin(count: number): number {
+    let min = Infinity;
+    for (let r = 0; r < count; ) {
+      const seg = this.segs[r >>> SEG_SHIFT];
+      const take = Math.min(count - r, SEG_ROWS);
+      for (let k = 0; k < take; k++) {
+        const v = seg[k];
+        if (Number.isFinite(v) && v < min) min = v;
+      }
+      r += take;
+    }
+    return min;
+  }
+}

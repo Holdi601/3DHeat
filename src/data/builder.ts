@@ -1,5 +1,5 @@
 import { TrackTable } from './trackTable';
-import { Dictionary, GrowableF32, GrowableU32 } from './growable';
+import { Dictionary, GrowableF32, GrowableU32, SegmentedF64 } from './growable';
 import { msg, MsgError, sayDataset, type Msg } from './msg';
 import { radixSortIndices } from './sort';
 import { CANON, canonicalColumns, type CategoryInput } from './canonical';
@@ -118,7 +118,8 @@ export class DatasetBuilder {
   private readonly px: GrowableF32;
   private readonly py: GrowableF32;
   private readonly pz: GrowableF32;
-  private time: Float64Array | null = null;
+  /** In segments: one array of 2 GiB or more is refused (`SegmentedF64`). */
+  private time: SegmentedF64 | null = null;
   private timeLen = 0;
   private timeAbsolute = false;
   private yaw: GrowableF32 | null = null;
@@ -201,14 +202,14 @@ export class DatasetBuilder {
     appendF32(this.pz, block.pz, n);
 
     if (block.time) {
-      this.time = growF64(this.time, base + n, this.expected);
-      this.time.set(block.time.subarray(0, n), base);
+      this.time ??= new SegmentedF64();
+      this.time.write(block.time, n, base);
       this.timeLen = base + n;
       this.timeAbsolute = this.timeAbsolute || block.timeIsAbsolute;
     } else if (this.time) {
       // A file with no time column among files that have one: pad so the arrays
       // stay aligned rather than silently shifting every later row.
-      this.time = growF64(this.time, base + n, this.expected);
+      this.time.extend(base + n);
       this.timeLen = base + n;
     }
 
@@ -353,11 +354,7 @@ export class DatasetBuilder {
     const hi = new Float64Array(B).fill(-Infinity);
     for (let b = 0; b < B; b++) {
       const end = b + 1 < B ? this.blockStarts[b + 1] : n;
-      for (let i = this.blockStarts[b]; i < end; i++) {
-        const v = this.time[i];
-        if (v < lo[b]) lo[b] = v;
-        if (v > hi[b]) hi[b] = v;
-      }
+      [lo[b], hi[b]] = this.time.minMax(this.blockStarts[b], end);
     }
     // Sessions of one campaign round: one after another in real order, the time between cut to a short break.
     const camp = this.blockCampaign[0];
@@ -368,7 +365,7 @@ export class DatasetBuilder {
       for (const b of order) {
         const shift = at - lo[b];
         const end = b + 1 < B ? this.blockStarts[b + 1] : n;
-        for (let i = this.blockStarts[b]; i < end; i++) this.time[i] += shift;
+        this.time.addRange(this.blockStarts[b], end, shift);
         sessions.push({ session: this.blockSession[b], start: at, end: at + (hi[b] - lo[b]), realStart: this.blockRealStart[b] });
         at += hi[b] - lo[b] + SERIES_BREAK_S;
       }
@@ -388,7 +385,7 @@ export class DatasetBuilder {
     for (let b = 0; b < B; b++) {
       if (!(hi[b] >= lo[b])) continue;
       const end = b + 1 < B ? this.blockStarts[b + 1] : n;
-      for (let i = this.blockStarts[b]; i < end; i++) this.time[i] -= lo[b];
+      this.time.addRange(this.blockStarts[b], end, -lo[b]);
     }
     return B;
   }
@@ -430,17 +427,9 @@ export class DatasetBuilder {
     let timeOrigin = 0;
     const aligned = this.time && this.timeLen === n ? this.alignRecordings(n) : 0;
     if (this.time && this.timeLen === n) {
-      let min = Infinity;
-      for (let i = 0; i < n; i++) {
-        const v = this.time[i];
-        if (Number.isFinite(v) && v < min) min = v;
-      }
+      const min = this.time.finiteMin(n);
       if (Number.isFinite(min)) {
-        time = new Float32Array(n);
-        for (let i = 0; i < n; i++) {
-          const v = this.time[i];
-          time[i] = Number.isFinite(v) ? v - min : 0;
-        }
+        time = this.time.relativeF32(n, min);
         if (this.timeAbsolute && !aligned) epochMs = min * 1000;
         else timeOrigin = min;
       }
@@ -975,25 +964,6 @@ function zeroFilledU32(backfill: number, capacity?: number): GrowableU32 {
   const g = new GrowableU32(Math.max(capacity ?? 0, backfill, 1));
   g.pad(backfill);
   return g;
-}
-
-/**
- * Sized once from the rows expected, like the other columns. Growing by 1.6 from nothing
- * failed outright past 220M rows: the step to 353M is 2.8 GB in one array, more than a
- * tab will allocate at once, and every file after that was reported unreadable.
- */
-function growF64(cur: Float64Array | null, min: number, expected = 0): Float64Array {
-  if (cur && cur.length >= min) return cur;
-  const grown = Math.max(min, Math.ceil((cur?.length ?? 1 << 16) * 1.6));
-  let next: Float64Array;
-  try {
-    next = new Float64Array(Math.max(grown, expected));
-  } catch {
-    // The rows expected may be an overestimate: what is really needed may still fit.
-    next = new Float64Array(grown);
-  }
-  if (cur) next.set(cur);
-  return next;
 }
 
 export function isAscending(a: Float32Array): boolean {

@@ -623,3 +623,36 @@ describe('DatasetBuilder', () => {
     expect(ds.warnings).toEqual([]);
   });
 });
+
+describe('SegmentedF64', () => {
+  it('holds rows across segments as one column', async () => {
+    const { SegmentedF64 } = await import('./growable');
+    const t = new SegmentedF64();
+    const seg = 1 << 24;
+    const block = Float64Array.from({ length: 1000 }, (_, i) => i + 0.5);
+    t.write(block, 1000, seg - 500);
+    expect(t.length).toBe(seg + 500);
+    expect(t.get(seg - 500)).toBe(0.5);
+    expect(t.get(seg + 499)).toBe(999.5);
+    expect(t.get(0)).toBe(0);
+    t.addRange(seg - 10, seg + 10, 1);
+    expect(t.get(seg - 10)).toBe(491.5);
+    expect(t.get(seg + 9)).toBe(510.5);
+    expect(t.get(seg + 10)).toBe(510.5);
+    expect(t.minMax(seg - 500, seg + 500)).toEqual([0.5, 999.5]);
+    expect(t.finiteMin(seg + 500)).toBe(0);
+    const rel = t.relativeF32(seg + 500, -1);
+    expect(rel[seg + 499]).toBe(1000.5);
+  });
+});
+
+describe('radixSortIndices in place', () => {
+  it('leaves the values exactly as they were', () => {
+    const v = new Float32Array([3.5, -1, 0, -0, NaN, Infinity, -Infinity, 2, -7.25, 1e-40]);
+    const copy = new Uint32Array(v.slice().buffer);
+    const order = radixSortIndices(v);
+    expect(Array.from(new Uint32Array(v.buffer))).toEqual(Array.from(copy));
+    const sorted = Array.from(order, (i) => v[i]).filter((x) => !Number.isNaN(x));
+    for (let i = 1; i < sorted.length; i++) expect(sorted[i]).toBeGreaterThanOrEqual(sorted[i - 1]);
+  });
+});

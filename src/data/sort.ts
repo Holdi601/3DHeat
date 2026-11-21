@@ -12,7 +12,7 @@ import { msg, MsgError } from './msg';
 
 /**
  * Above this, sorting in a browser tab is the wrong tool. The largest load run is
- * 264M rows, where the sort was not what bound but the RAM budget. This limit is above
+ * 350M rows, where the sort was not what bound but the tab's memory. This limit is above
  * that and has not itself been run: it is there to stop a refusal the RAM budget would
  * not make, not because 400M rows are known to work.
  */
@@ -39,9 +39,24 @@ export function radixSortIndices(values: Float32Array, subset?: Uint32Array): Ui
     throw new MsgError(msg('data.sort.tooMany', { count: n, rows: { int: n } }));
   }
 
-  const bits = new Uint32Array(values.buffer, values.byteOffset, values.length);
-  const keys = new Uint32Array(values.length);
-  for (let i = 0; i < values.length; i++) keys[i] = floatKeyToSortableUint(bits[i]);
+  // The keys are made in the values' own memory and turned back into the values
+  // at the end: a separate key array was 4 bytes a row at the load's peak, and
+  // at 350 million rows the one allocation that no longer fitted in a tab.
+  const keys = new Uint32Array(values.buffer, values.byteOffset, values.length);
+  for (let i = 0; i < keys.length; i++) keys[i] = floatKeyToSortableUint(keys[i]);
+  try {
+    return sortKeys(keys, n, subset);
+  } finally {
+    for (let i = 0; i < keys.length; i++) keys[i] = sortableUintToFloatKey(keys[i]);
+  }
+}
+
+/** The inverse of `floatKeyToSortableUint`. */
+export function sortableUintToFloatKey(k: number): number {
+  return k & 0x80000000 ? k & 0x7fffffff : ~k;
+}
+
+function sortKeys(keys: Uint32Array, n: number, subset?: Uint32Array): Uint32Array {
 
   let src = new Uint32Array(n);
   if (subset) src.set(subset);
