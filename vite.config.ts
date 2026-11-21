@@ -3,10 +3,11 @@ import react from '@vitejs/plugin-react';
 import { fileURLToPath } from 'node:url';
 import { execFile, execFileSync } from 'node:child_process';
 import os from 'node:os';
-import { createReadStream, existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
+import { closeSync, createReadStream, existsSync, openSync, readdirSync, readFileSync, readSync, statSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { brotliCompressSync, constants as zlibConstants, gzipSync } from 'node:zlib';
 import { encodePackFigure, type PackFigure } from './src/figures/figurepackBin.ts';
+import { classify, glbExtras, jsonExtras, linkLayouts, type CatalogIndex, type CatalogItem } from './src/data/catalogIndex.ts';
 
 /**
  * The GPU's memory, which no web API will report at any precision.
@@ -241,6 +242,160 @@ function figurePack(): Plugin {
   return { name: 'heat3d-figure-pack', configureServer: handler, configurePreviewServer: handler };
 }
 
+/** Where the page asks for the catalogue folder's index (src/ui/panels/CatalogSection.tsx). */
+const CATALOG_ROUTE = '/__heat3d/catalog';
+
+/** The levels folder the extractors write into: `HEAT3D_LEVELS`, else `levels` in the git-ignored `tools/local-data.json`. */
+function levelsRoot(): string | null {
+  if (process.env.HEAT3D_LEVELS) return process.env.HEAT3D_LEVELS;
+  try {
+    const local = fileURLToPath(new URL('./tools/local-data.json', import.meta.url));
+    const l = existsSync(local) ? (JSON.parse(readFileSync(local, 'utf8')) as { levels?: unknown }).levels : undefined;
+    return typeof l === 'string' ? l : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * The catalogue folder index (src/data/catalogIndex.ts): `GET /` lists every
+ * extract under the levels folder with its fingerprint, `GET /file?path=`
+ * sends one. Files are hashed in the background, one at a time, and the hashes
+ * kept in `<levels>/.3dheat-index.json` by size and time, so a file is hashed
+ * again only when it changes; until then its `sha256` is null and `pending`
+ * counts it. Nothing outside the folder is served.
+ */
+function catalogFolder(): Plugin {
+  type Known = { bytes: number; mtime: number; sha256: string; extractor: string | null; gameBuild: string | null };
+  let known: Record<string, Known> | null = null;
+  let hashing = false;
+  const cacheFile = (root: string) => `${root}/.3dheat-index.json`;
+  const loadKnown = (root: string) => {
+    if (known) return known;
+    try {
+      known = existsSync(cacheFile(root)) ? (JSON.parse(readFileSync(cacheFile(root), 'utf8')) as Record<string, Known>) : {};
+    } catch {
+      known = {};
+    }
+    return known;
+  };
+  const walk = (root: string, rel = '', depth = 0, out: { path: string; bytes: number; mtime: number }[] = []) => {
+    if (depth > 5) return out;
+    for (const name of readdirSync(`${root}/${rel}`)) {
+      if (name.startsWith('.')) continue;
+      const path = rel ? `${rel}/${name}` : name;
+      const st = statSync(`${root}/${path}`);
+      if (st.isDirectory()) walk(root, path, depth + 1, out);
+      else out.push({ path, bytes: st.size, mtime: Math.round(st.mtimeMs) });
+    }
+    return out;
+  };
+  const extrasOf = (root: string, path: string) => {
+    try {
+      if (/\.glb$/i.test(path)) {
+        const fd = openSync(`${root}/${path}`, 'r');
+        try {
+          const head = Buffer.alloc(65536);
+          const n = readSync(fd, head, 0, head.length, 0);
+          return glbExtras(new Uint8Array(head.buffer, head.byteOffset, n));
+        } finally {
+          closeSync(fd);
+        }
+      }
+      if (/\.json$/i.test(path)) {
+        const fd = openSync(`${root}/${path}`, 'r');
+        try {
+          const head = Buffer.alloc(4096);
+          const n = readSync(fd, head, 0, head.length, 0);
+          return jsonExtras(head.subarray(0, n).toString('utf8'));
+        } finally {
+          closeSync(fd);
+        }
+      }
+    } catch {
+      // Unreadable: said nothing.
+    }
+    return { extractor: null, gameBuild: null };
+  };
+  const hashNext = (root: string, todo: { path: string; bytes: number; mtime: number }[]) => {
+    if (hashing) return;
+    const next = todo.shift();
+    if (!next) {
+      try {
+        writeFileSync(cacheFile(root), JSON.stringify(known));
+      } catch {
+        // A read-only folder: hashed again next time.
+      }
+      return;
+    }
+    hashing = true;
+    const h = createHash('sha256');
+    createReadStream(`${root}/${next.path}`)
+      .on('data', (b) => h.update(b))
+      .on('error', () => {
+        hashing = false;
+        hashNext(root, todo);
+      })
+      .on('end', () => {
+        known![next.path] = { bytes: next.bytes, mtime: next.mtime, sha256: h.digest('hex'), ...extrasOf(root, next.path) };
+        hashing = false;
+        if (todo.length % 20 === 0) {
+          try {
+            writeFileSync(cacheFile(root), JSON.stringify(known));
+          } catch {
+            // Kept in memory.
+          }
+        }
+        hashNext(root, todo);
+      });
+  };
+  let todo: { path: string; bytes: number; mtime: number }[] = [];
+  const handler = (server: ViteDevServer | { middlewares: ViteDevServer['middlewares'] }) => {
+    server.middlewares.use(CATALOG_ROUTE, (req, res) => {
+      const root = levelsRoot();
+      const url = new URL(req.url ?? '/', 'http://x');
+      if (!root || !existsSync(root)) {
+        res.statusCode = 404;
+        res.end();
+        return;
+      }
+      if (url.pathname === '/file') {
+        const path = (url.searchParams.get('path') ?? '').replace(/\\/g, '/');
+        if (!path || path.split('/').some((p) => p === '..' || p.startsWith('.')) || !classify(path) || !existsSync(`${root}/${path}`)) {
+          res.statusCode = 404;
+          res.end();
+          return;
+        }
+        res.setHeader('Content-Type', /\.json$/i.test(path) ? 'application/json' : 'application/octet-stream');
+        res.setHeader('Content-Length', statSync(`${root}/${path}`).size);
+        createReadStream(`${root}/${path}`).pipe(res);
+        return;
+      }
+      const have = loadKnown(root);
+      const files = walk(root).filter((f) => classify(f.path));
+      const items: CatalogItem[] = files.map((f) => {
+        const k = have[f.path];
+        const fresh = k && k.bytes === f.bytes && k.mtime === f.mtime;
+        return {
+          ...f,
+          ...classify(f.path)!,
+          sha256: fresh ? k.sha256 : null,
+          extractor: fresh ? k.extractor : null,
+          gameBuild: fresh ? k.gameBuild : null,
+        };
+      });
+      todo = files.filter((f) => !(have[f.path] && have[f.path].bytes === f.bytes && have[f.path].mtime === f.mtime));
+      // The index first; the hashing follows, a file at a time.
+      setTimeout(() => hashNext(root, todo), 0);
+      const index: CatalogIndex = { version: 1, root, items: linkLayouts(items), pending: todo.length };
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Cache-Control', 'no-cache');
+      res.end(JSON.stringify(index));
+    });
+  };
+  return { name: 'heat3d-catalog-folder', configureServer: handler, configurePreviewServer: handler };
+}
+
 /** Where the page asks for a level's layouts (src/state/levelLayoutsStore.ts). */
 const LAYOUTS_ROUTE = '/__heat3d/layouts';
 
@@ -252,16 +407,7 @@ const LAYOUTS_ROUTE = '/__heat3d/layouts';
  * asks once for each level it loads and draws the layout of the data's mode.
  */
 function levelLayouts(): Plugin {
-  const root = (): string | null => {
-    if (process.env.HEAT3D_LEVELS) return process.env.HEAT3D_LEVELS;
-    try {
-      const local = fileURLToPath(new URL('./tools/local-data.json', import.meta.url));
-      const l = existsSync(local) ? (JSON.parse(readFileSync(local, 'utf8')) as { levels?: unknown }).levels : undefined;
-      return typeof l === 'string' ? l : null;
-    } catch {
-      return null;
-    }
-  };
+  const root = levelsRoot;
   const handler = (server: ViteDevServer | { middlewares: ViteDevServer['middlewares'] }) => {
     server.middlewares.use(LAYOUTS_ROUTE, (req, res) => {
       const m = /^[/]([a-z0-9-]+|_)[/]([A-Za-z0-9_.-]+)$/.exec(decodeURIComponent(new URL(req.url ?? '/', 'http://x').pathname));
@@ -506,7 +652,7 @@ function selfUpdate(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [react(), hostMemory(), selfUpdate(), figurePack(), localRanges(), levelLayouts(), campaignFiles()],
+  plugins: [react(), hostMemory(), selfUpdate(), figurePack(), localRanges(), levelLayouts(), catalogFolder(), campaignFiles()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

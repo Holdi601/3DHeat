@@ -50,6 +50,7 @@ import { useRaceStore } from '../../state/raceStore';
 import { useReplayStore } from '../../state/replayStore';
 import { buildingsLook } from '../replay/buildings';
 import { NumberBox } from '../NumberBox';
+import { CatalogSection } from './CatalogSection';
 
 /** Longest edge we upload; larger maps are downscaled to fit the GPU. */
 const MAX_MAP_EDGE = 8192;
@@ -449,8 +450,8 @@ export function LevelPanel() {
     }
   };
 
-  const loadModel = async () => {
-    const file = await pick(MODEL_EXTENSIONS);
+  const loadModel = async (fileArg?: File) => {
+    const file = fileArg ?? (await pick(MODEL_EXTENSIONS));
     if (!file) return;
     setError(null);
     setNote(null);
@@ -739,6 +740,7 @@ export function LevelPanel() {
   return (
     <Section title={t('heat.levelPanel.title')}>
       {!level && <div className="hint">{t('heat.levelPanel.nothingLoaded')}</div>}
+      <CatalogSection loadModel={(f) => loadModel(f)} />
 
       <div className="row">
         <button disabled={!!busy} onClick={() => void loadImage()}>

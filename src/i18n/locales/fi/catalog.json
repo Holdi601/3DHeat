@@ -1,0 +1,6 @@
+{
+  "catalog.title": "Tasokansio",
+  "catalog.pick": "Valitse kansio…",
+  "catalog.pickTitle": "Indeksoi kansio, jossa on puretut tasot, asettelut ja paketit (ilman paikallista palvelinta)",
+  "catalog.hashing": "{count} tiedostoa odottaa vielä sormenjälkeä"
+}

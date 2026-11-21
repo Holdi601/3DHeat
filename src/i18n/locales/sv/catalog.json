@@ -1,0 +1,6 @@
+{
+  "catalog.title": "Banmapp",
+  "catalog.pick": "Välj mapp…",
+  "catalog.pickTitle": "Indexera en mapp med extraherade banor, layouter och paket (utan den lokala servern)",
+  "catalog.hashing": "{count} filer får fortfarande fingeravtryck"
+}

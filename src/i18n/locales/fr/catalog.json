@@ -1,0 +1,6 @@
+{
+  "catalog.title": "Dossier des niveaux",
+  "catalog.pick": "Choisir un dossier…",
+  "catalog.pickTitle": "Indexer un dossier de niveaux, dispositions et paquets extraits (sans le serveur local)",
+  "catalog.hashing": "{count} fichiers encore en cours d'empreinte"
+}

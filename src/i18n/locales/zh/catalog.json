@@ -1,0 +1,6 @@
+{
+  "catalog.title": "关卡文件夹",
+  "catalog.pick": "选择文件夹…",
+  "catalog.pickTitle": "为提取的关卡、布局和资源包文件夹建立索引（无需本地服务器）",
+  "catalog.hashing": "还有 {count} 个文件正在生成指纹"
+}

@@ -1,0 +1,6 @@
+{
+  "catalog.title": "Level-Ordner",
+  "catalog.pick": "Ordner wählen…",
+  "catalog.pickTitle": "Einen Ordner mit extrahierten Levels, Layouts und Paketen erfassen (ohne lokalen Server)",
+  "catalog.hashing": "{count} Dateien werden noch mit Fingerabdruck versehen"
+}
