@@ -41,7 +41,8 @@ export function baseDebrief(r: InsightReport, say: (i: Insight) => string, lens:
   const ps: DebriefParagraph[] = [];
   const p = (text: string, cites: string[] = []) => ps.push({ text, cites });
   const sentence = (i: Insight) => say(i).replace(/[.!。]\s*$/, '');
-  const ins = [...r.insights].sort((a, b) => b.strength - a.strength);
+  // Most useful first (`curate.ts`): the evidence, the place's scope, the kind, the events behind it.
+  const ins = [...r.insights].sort((a, b) => (b.usefulness ?? b.strength) - (a.usefulness ?? a.strength));
   if (!ins.length) {
     p(t('insights.debrief.nothing', { fdr: `${num(r.fdr * 100)}%` }));
     for (const op of outcomeParagraphs(r)) p(op.text, op.cites);

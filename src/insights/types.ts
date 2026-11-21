@@ -98,6 +98,14 @@ export interface Insight {
   time: { from: number; to: number } | null;
   filters: InsightFilter[];
   subject: InsightSubject;
+  /**
+   * The rank the list goes by (`curate.ts`): the evidence times how specific
+   * the place is, what the kind of finding is worth and how many events it
+   * rests on. Absent on findings merged in after curation (outcome).
+   */
+  usefulness?: number;
+  /** A variant of the kind's wording: `target` for a hot zone hardly anyone stands in. */
+  variant?: string;
 }
 
 export interface DetectorRun {
@@ -143,6 +151,8 @@ export interface InsightReport {
   values?: InsightValue[];
   detectors: DetectorRun[];
   insights: Insight[];
+  /** Findings that passed their test and were left out as saying nothing, with why (`curate.ts`). */
+  dropped?: { id: string; kind: string; reason: string }[];
   /** Measures of operations analysis over the same rows (`lensMetrics.ts`), for the knowledge lens. */
   lens?: LensMetrics;
   /** Was the false discovery rate controlled at. */

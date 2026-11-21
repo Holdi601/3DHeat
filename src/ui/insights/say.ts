@@ -14,7 +14,7 @@ export function labelOf(column: string, value: string): string {
   return valueLabel(column, value);
 }
 
-function secs(s: number): string {
+export function secs(s: number): string {
   if (!Number.isFinite(s)) return '—';
   if (s <= 90) return `${num(s, s < 10 ? 1 : 0)} s`;
   if (s < 3600) return `${num(s / 60, s < 600 ? 1 : 0)} min`;

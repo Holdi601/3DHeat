@@ -17,8 +17,15 @@ The **Insights** section is in the sidebar of the Heatmap and Match tabs. It has
 ## Findings
 
 1. Load data and open **Insights**. Press **Find insights** ("Counting… n%" shows the progress).
-2. Read the list. Each finding has a strength bar, a sentence, how good the evidence is (*Strong evidence*, *Good evidence* or *Some evidence*), which detector found it, and the vehicle class where that matters.
-3. **Click a finding**: the viewer applies its filters, flies the camera to the place and jumps to the time, and opens the details: the effect with its 95% interval, the p and q values, the counted evidence, and **Volume here**, which draws a [volume](volumes.md) round the place. Click the open finding's title again to close it.
+2. Read the list. Each finding has a usefulness bar, what happened in plain words (with the size of the place and the events it rests on), how good the evidence is (*Strong evidence*, *Good evidence* or *Some evidence*), which detector found it, and the vehicle class where that matters.
+3. **Click a finding**: the viewer applies its filters, jumps to the time and fits the place to the finding's own events (below). The place is outlined in the view - a ring at its floor and at its ceiling, joined at four corners, with a mast - a pulse runs out from its centre three times, each event it is about gets a small cross, and the camera frames it. The details open:
+   - the comparison: how unusual it is and against what (*Players spent 0.2% of their time here, so about 0.7 would be expected...*);
+   - **Why it matters** and **What to do**;
+   - the events it rests on, the matches, and the evidence (q over the number of tests);
+   - **The numbers** (folded): the effect with its 95% interval, the p and q values and the counted evidence;
+   - **Volume here**, which draws a [volume](volumes.md) fitted to the finding.
+
+   Click the open finding's title again to close it and remove the outline.
 4. **Restore filters** puts your filters back. **Copy JSON** copies the whole report.
 
 Counting uses the current filters, hidden groups and picked match over the whole time range. When you change the filters afterwards, a note says so; press **Count again**.
@@ -46,6 +53,31 @@ Detectors that cannot run on the data are listed at the bottom with the reason.
 ### How findings are ranked
 
 Every place or group is tested against the rest of the map (exact binomial or rate tests). The false discovery rate is held at 5% (Benjamini-Hochberg). Chance can look like a pattern; this keeps false alarms low: among the findings shown, at most about one in twenty is expected to be chance. Effects from few events are pulled toward "no effect" before ranking. At most 60 findings are listed, and every detector gets a few places near the top.
+
+A connected area of significant cells is split into its peaks: the best cell and its neighbours that score at least 30% of it (the score is the excess of events over what the time spent predicts). So one hot spot is one finding a few cells across, never a sprawl over half the map.
+
+A finding that passes its test can still say nothing. These are left out, and a line under the list counts them by reason:
+
+| Left out | When |
+|---|---|
+| covered most of the map | the place is wider than 35% of the map (60% for a flank route); spawn areas are exempt |
+| only reflected where everyone spends their time | a quiet zone or safe ground that holds over 25% of all time spent (the rear, a base) |
+| rested on a handful of events | a hot zone with fewer than 10 events where less than 1 was expected |
+| were explained by a spawn nearby | a quiet zone or safe ground overlapping a spawn finding |
+| were spawns or joins | hot or quiet zones of spawn, join, leave and similar events, which happen where the game puts them |
+
+The rest are ordered by **usefulness**: the evidence strength times how specific the place is (smaller against the map is better), what the kind of finding tells a player or a designer (rounds and power positions most, quiet zones least) and how many events it rests on.
+
+A hot zone where players spend less than 2% of their time is told for what it is: for effects (explosions, hits, impacts) *where they land, not where the people causing them stand*; for actions (shots, launches, drops) *a spot people stop at to fire and move on*.
+
+### Fitted places
+
+A finding's place comes from the analysis grid. When a finding is clicked, or **Volume here** pressed, its place is fitted to its own events - the rows its filters select (event kinds, team, player) within reach of the place:
+
+- the footprint is re-centred on their median position, with the radius that holds 85% of them (at least half a cell, at most the grid place);
+- the height band is their 5th to 95th height percentile with a margin of 15% (at least 1 m), never more than half a metre below the lowest of them, so the volume does not reach into the sky or under the ground.
+
+With fewer than four rows the grid place is kept, a few cells high around its height. The scan runs a few milliseconds at a time between frames ([`fit.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/insights/fit.ts), [`curate.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/insights/curate.ts), [`highlight.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/insights/highlight.ts), [`plain.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/insights/plain.ts)).
 
 ### Who won: what decided the rounds
 

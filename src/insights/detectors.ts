@@ -171,6 +171,40 @@ function components(cells: number[], w: number, reach = 1): number[][] {
   return out;
 }
 
+/**
+ * The peaks of a group of cells: a found area can sprawl over half a map when
+ * its neighbouring cells all pass the test, and a volume that size says
+ * nothing. Each peak is the best remaining cell and its neighbours (within
+ * `reach` cells) that score at least `keep` of it, so each place is one hot
+ * spot, a few cells across at most. Strongest first, at most `cap`.
+ */
+export function peaks(cells: number[], w: number, score: (c: number) => number, cap = 4, reach = 1, keep = 0.3): number[][] {
+  const left = new Set(cells.filter((c) => score(c) > 0));
+  const out: number[][] = [];
+  while (left.size && out.length < cap) {
+    let seed = -1;
+    let best = -Infinity;
+    for (const c of left) {
+      const v = score(c);
+      if (v > best) {
+        best = v;
+        seed = c;
+      }
+    }
+    const sx = seed % w;
+    const sz = Math.floor(seed / w);
+    const region: number[] = [];
+    for (const c of left) {
+      if (Math.abs((c % w) - sx) <= reach && Math.abs(Math.floor(c / w) - sz) <= reach && (c === seed || score(c) >= keep * best)) region.push(c);
+    }
+    for (const c of region) left.delete(c);
+    // The ring round a peak is its own slope, not a second hot spot.
+    for (const c of [...left]) if (Math.abs((c % w) - sx) <= reach + 1 && Math.abs(Math.floor(c / w) - sz) <= reach + 1) left.delete(c);
+    out.push(region);
+  }
+  return out;
+}
+
 /** A group of mid cells as one place: presence-weighted centre, radius over them all. */
 function groupPlace(ctx: DetectContext, cells: number[], weight: (c: number) => number): InsightPlace {
   let sw = 0;
@@ -351,7 +385,13 @@ const zones: Detector = {
     for (const gr of groups.values()) {
       const kindName = names.events[gr.kind];
       const tot = job.events[gr.kind];
-      const zs = components(gr.cells, g.mx).map((cells) => {
+      // Each connected area split into its peaks: the excess over what the time spent predicts, per cell.
+      const excess = (c: number) => {
+        const e = (tot * job.mPres[c]) / T;
+        const a = eventsAt(ctx, gr.kind, c);
+        return gr.hot ? a - e : e - a;
+      };
+      const zs = components(gr.cells, g.mx).flatMap((comp) => peaks(comp, g.mx, excess)).map((cells) => {
         let a = 0;
         let pres = 0;
         let qq = 1;
@@ -373,7 +413,7 @@ const zones: Detector = {
           measure: 'rateRatio',
           method: 'exact Poisson rate ratio per presence vs rest of map, BH; adjacent cells merged',
           params: { kind: kindName, count: a, expected: round(r.expected, 1) },
-          evidence: { count: a, expected: round(r.expected, 1), presence: round(pres, 1), cells: cells.length, mapCount: tot },
+          evidence: { count: a, expected: round(r.expected, 1), presence: round(pres, 1), cells: cells.length, mapCount: tot, mapPresence: round(T, 1) },
           place,
           filters: [evFilter(ctx, kindName)],
           subject: { eventKind: kindName },
@@ -955,7 +995,8 @@ const value: Detector = {
       const tg = targets[t];
       const tot = job.valRows[tg.c];
       const sum = job.valTotal[tg.c];
-      const found = components(gr.cells, g.mx).map((cells) => {
+      const over = (c: number) => job.mValN[tg.c * M + c] - (tot * job.mPres[c]) / T;
+      const found = components(gr.cells, g.mx).flatMap((comp) => peaks(comp, g.mx, over)).map((cells) => {
         let a = 0;
         let pres = 0;
         let v = 0;

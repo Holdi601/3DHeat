@@ -10,11 +10,14 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { create } from 'zustand';
 import { CANON } from '../../data/canonical';
-import { insightText, labelOf } from './say';
+import { labelOf } from './say';
 import { showInsight, volumeFor } from '../../insights/apply';
+import { fitInsight } from '../../insights/fit';
+import { clearHighlight, showHighlight } from '../../insights/highlight';
+import { droppedLine, plainInsight } from './plain';
 import { analysisScope, runInsights } from '../../insights/run';
 import { toggledSelection, useInsights } from '../../insights/store';
-import type { Insight } from '../../insights/types';
+import type { Insight, InsightReport } from '../../insights/types';
 import { int, num, t, useLang } from '../../i18n';
 import { useStore } from '../../state/store';
 import { currentScope, scopeKey } from '../../volumes/scope';
@@ -64,12 +67,27 @@ export function InsightsPanel() {
   );
 }
 
-/** Show an insight: its filters over those from before the first one shown, the camera on it. */
+/**
+ * Show an insight: its filters over those from before the first one shown;
+ * its place fitted to its events, outlined and pulsed in the view with its
+ * events marked, and the camera framed on it (`insights/highlight.ts`).
+ */
 function pickInsight(ins: Insight, engine: ReturnType<typeof useEngine>) {
   const s = useInsights.getState();
   const before = s.before ?? useStore.getState().filters;
   s.set({ selected: ins.id, before });
-  showInsight(ins, engine, before);
+  const ds = useStore.getState().dataset;
+  showInsight(ins, engine, before, !ins.place || !ds);
+  const redraw = () => engine?.invalidate(2);
+  if (!ins.place || !ds) {
+    clearHighlight(redraw);
+    return;
+  }
+  void fitInsight(ds, ins).then((f) => {
+    if (!f || useInsights.getState().selected !== ins.id) return;
+    engine?.frameAround(f.x, (f.floor + f.ceil) / 2, f.z, Math.max(f.radius * 1.8, (f.ceil - f.floor) * 0.8, 2));
+    showHighlight(ins.id, f, ds, redraw);
+  });
 }
 
 function DebriefTab() {
@@ -108,7 +126,10 @@ function InsightsBody() {
     const k = key;
     useInsights.getState().set({ running: true, progress: 0, error: null });
     runInsights(ds, currentScope(s, 0), s.level, { signal: c.signal, onProgress: (f) => useInsights.getState().set({ progress: f }) })
-      .then((report) => useInsights.getState().set({ report, key: k, running: false, selected: null }))
+      .then((report) => {
+        clearHighlight(() => engine?.invalidate(2));
+        useInsights.getState().set({ report, key: k, running: false, selected: null });
+      })
       .catch((e) => {
         if ((e as Error).name !== 'AbortError') useInsights.getState().set({ running: false, error: String((e as Error).message ?? e) });
       });
@@ -129,7 +150,7 @@ function InsightsBody() {
   const sort = useSort<Insight>(
     'insights.findings',
     [
-      { id: 'importance', label: t('ui.sort.importance'), key: (ins) => ins.strength, kind: 'number' },
+      { id: 'importance', label: t('ui.sort.importance'), key: (ins) => ins.usefulness ?? ins.strength, kind: 'number' },
       { id: 'kind', label: t('ui.sort.kind'), key: (ins) => t(`insights.det.${ins.detector}`) },
       { id: 'vehicle', label: t('ui.sort.vehicle'), key: (ins) => (ins.subject.vehicleClass ? labelOf(CANON.vehicleClass, ins.subject.vehicleClass) : null) },
       { id: 'time', label: t('ui.sort.time'), key: (ins) => ins.time?.from, kind: 'number', dir: 'asc' },
@@ -138,9 +159,13 @@ function InsightsBody() {
   );
   const findings = useSorted(r?.insights ?? NONE, sort);
   // The open one's title closes it again; the camera and filters it set stay.
-  const pick = (ins: Insight) =>
-    toggledSelection(useInsights.getState().selected, ins.id) === null ? st.set({ selected: null }) : pickInsight(ins, engine);
+  const pick = (ins: Insight) => {
+    if (toggledSelection(useInsights.getState().selected, ins.id) !== null) return pickInsight(ins, engine);
+    st.set({ selected: null });
+    clearHighlight(() => engine?.invalidate(2));
+  };
   const restore = () => {
+    clearHighlight(() => engine?.invalidate(2));
     const s = useInsights.getState();
     if (s.before) useStore.getState().setFilters(s.before);
     s.set({ before: null, selected: null });
@@ -185,9 +210,10 @@ function InsightsBody() {
           {r.insights.length > 1 && <SortControl sort={sort} />}
           <ol className="ins-list">
             {findings.map((ins) => (
-              <InsightRow key={ins.id} ins={ins} samples={r.dataset.exposure === 'samples'} open={st.selected === ins.id} onPick={() => pick(ins)} />
+              <InsightRow key={ins.id} ins={ins} report={r} samples={r.dataset.exposure === 'samples'} open={st.selected === ins.id} onPick={() => pick(ins)} />
             ))}
           </ol>
+          {droppedLine(r) && <div className="hint ins-dropped">{droppedLine(r)}</div>}
           <Skipped />
           <LensPicker />
           <LensMetricsView report={r} />
@@ -197,14 +223,15 @@ function InsightsBody() {
   );
 }
 
-function InsightRow({ ins, samples, open, onPick }: { ins: Insight; samples: boolean; open: boolean; onPick: () => void }) {
-  const text = insightText(ins, samples);
+function InsightRow({ ins, report, samples, open, onPick }: { ins: Insight; report: InsightReport; samples: boolean; open: boolean; onPick: () => void }) {
+  const plain = plainInsight(ins, report, samples);
+  const text = plain.what;
   const c = ins.confidence;
   return (
     <li className={`ins-item${open ? ' open' : ''}`}>
       <button className="ins-head" onClick={onPick} title={t('insights.showTitle')} aria-expanded={open}>
         <span className="ins-bar" aria-hidden>
-          <span style={{ width: `${Math.round(ins.strength * 100)}%` }} />
+          <span style={{ width: `${Math.round((ins.usefulness ?? ins.strength) * 100)}%` }} />
         </span>
         <span className="ins-text">{text}</span>
         <span className="ins-tags">
@@ -213,7 +240,7 @@ function InsightRow({ ins, samples, open, onPick }: { ins: Insight; samples: boo
           {ins.subject.vehicleClass && <span>{labelOf(CANON.vehicleClass, ins.subject.vehicleClass)}</span>}
         </span>
       </button>
-      {open && <Details ins={ins} />}
+      {open && <Details ins={ins} samples={samples} />}
     </li>
   );
 }
@@ -221,12 +248,27 @@ function InsightRow({ ins, samples, open, onPick }: { ins: Insight; samples: boo
 const fmtRatio = (v: number | null) => (v !== null && Number.isFinite(v) ? `${num(v, v >= 10 ? 1 : 2)}×` : '∞');
 const fmtP = (p: number) => (p <= 0 ? '< 1e-300' : p < 1e-4 ? p.toExponential(1) : num(p, p < 0.01 ? 4 : 3));
 
-function Details({ ins }: { ins: Insight }) {
+function Details({ ins, samples }: { ins: Insight; samples: boolean }) {
   const report = useInsights((s) => s.report);
   const e = ins.effect;
   const c = ins.confidence;
+  const plain = plainInsight(ins, report, samples);
   return (
     <div className="ins-details">
+      <p className="ins-compare">{plain.compare}</p>
+      {plain.why && (
+        <p className="ins-why">
+          <b>{t('analysis.ins.why')}:</b> {plain.why}
+        </p>
+      )}
+      {plain.todo && (
+        <p className="ins-do">
+          <b>{t('analysis.ins.do')}:</b> {plain.todo}
+        </p>
+      )}
+      <p className="hint">{plain.evidence}</p>
+      <details className="ins-numbers">
+        <summary>{t('analysis.ins.numbers')}</summary>
       <div>{t('insights.effect', { value: fmtRatio(e.value), raw: fmtRatio(e.raw), lo: fmtRatio(e.lo), hi: fmtRatio(e.hi) })}</div>
       <div>{t('insights.test', { p: fmtP(c.p), q: fmtP(c.q), tests: int(c.tests) })}</div>
       <dl>
@@ -237,6 +279,7 @@ function Details({ ins }: { ins: Insight }) {
           </div>
         ))}
       </dl>
+      </details>
       {ins.place && (
         <button onClick={() => volumeFor(ins)} title={t('insights.volumeTitle')}>
           {t('insights.volume')}

@@ -10,6 +10,7 @@ import { useStore } from '../state/store';
 import type { Dataset, FilterSpec } from '../state/types';
 import { useVolumeStore } from '../volumes/store';
 import type { Insight, InsightFilter } from './types';
+import { fitInsight } from './fit';
 
 interface Framer {
   frameAround(x: number, y: number, z: number, radius: number): void;
@@ -38,14 +39,14 @@ const sameSlot = (a: FilterSpec, b: FilterSpec) =>
  * keeps clicking from one insight to the next from stacking them), the camera
  * on its place and the playhead at its time.
  */
-export function showInsight(ins: Insight, engine: Framer | null, base: FilterSpec[]): void {
+export function showInsight(ins: Insight, engine: Framer | null, base: FilterSpec[], frame = true): void {
   const st = useStore.getState();
   const ds = st.dataset;
   if (!ds) return;
   const specs = ins.filters.map((f) => toFilterSpec(ds, f)).filter((f): f is FilterSpec => !!f);
   st.setFilters([...base.filter((f) => !specs.some((s) => sameSlot(f, s))), ...specs]);
   const p = ins.place;
-  if (p && engine) engine.frameAround(p.x, p.y, p.z, Math.max(p.radius * 1.6, p.cell * 2));
+  if (p && engine && frame) engine.frameAround(p.x, p.y, p.z, Math.max(p.radius * 1.6, p.cell * 2));
   if (ins.time && ds.time) {
     const ss = ds.sessionStart;
     const s = st.team.session;
@@ -54,14 +55,17 @@ export function showInsight(ins: Insight, engine: Framer | null, base: FilterSpe
   }
 }
 
-/** A volume round an insight's place, ground to sky. */
-export function volumeFor(ins: Insight): void {
-  const p = ins.place;
+/**
+ * A volume round an insight's place, fitted to the events it is about: their
+ * footprint and their height band, not the grid cells and the whole data's
+ * height (`fit.ts`).
+ */
+export async function volumeFor(ins: Insight): Promise<void> {
   const ds = useStore.getState().dataset;
-  if (!p || !ds) return;
-  const b = ds.bounds;
-  const pad = Math.max(1, (b.maxY - b.minY) * 0.05);
+  if (!ins.place || !ds) return;
+  const f = await fitInsight(ds, ins);
+  if (!f || useStore.getState().dataset !== ds) return;
   const vs = useVolumeStore.getState();
-  const v = vs.add({ kind: 'cylinder', x: p.x, z: p.z, radius: p.radius, floor: b.minY - pad, ceil: b.maxY + pad });
+  const v = vs.add({ kind: 'cylinder', x: f.x, z: f.z, radius: f.radius, floor: f.floor, ceil: f.ceil });
   vs.select(v.id);
 }

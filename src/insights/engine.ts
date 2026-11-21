@@ -5,6 +5,7 @@
 
 import { DETECTOR_LIST, type DetectContext, type InsightNames } from './detectors';
 import { COARSE, MID, type InsightJob } from './pass';
+import { curateInsights } from './curate';
 import type { DetectorRun, Insight, InsightReport, InsightValue } from './types';
 
 /** False discovery rate every detector holds its findings to. */
@@ -60,7 +61,10 @@ export function finishInsights(job: InsightJob, names: InsightNames, info: Repor
     all.push(...r.insights);
     runs.push({ id: d.id, ran: true, tests: r.tests, found: r.insights.length, ms: Math.round(now() - s) });
   }
-  all.sort((a, b) => b.strength - a.strength);
+  // Left out: findings that say nothing (whole-map places, the rear, the spawns); the rest by usefulness.
+  const { kept, dropped } = curateInsights(all, { mapExtent: Math.max(g.nx, g.nz) * g.f, presence: job.presence });
+  all.length = 0;
+  all.push(...kept);
   // A few of each kind of finding first, then the rest: the top of the list shows every detector's best.
   const seen = new Map<string, number>();
   const first: Insight[] = [];
@@ -100,6 +104,7 @@ export function finishInsights(job: InsightJob, names: InsightNames, info: Repor
     ...(m.values?.length ? { values: valuesOf(job, names) } : {}),
     detectors: runs,
     insights: ranked.slice(0, MAX_INSIGHTS),
+    dropped,
     fdr: FDR,
     elapsedMs: Math.round(now() - t0),
   };

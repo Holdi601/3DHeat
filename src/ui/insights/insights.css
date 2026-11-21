@@ -256,3 +256,17 @@
   margin: 2px 0;
   overflow-wrap: anywhere;
 }
+
+/* A finding in plain words (plain.ts): against what, why it matters, what to do. */
+.ins-details .ins-compare,
+.ins-details .ins-why,
+.ins-details .ins-do {
+  margin: 0 0 4px;
+}
+.ins-details .ins-numbers summary {
+  cursor: pointer;
+  opacity: 0.8;
+}
+.ins-dropped {
+  font-style: italic;
+}

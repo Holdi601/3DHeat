@@ -36,6 +36,7 @@ import { objectivesOfOneMode, type Objective } from '../match/objectives';
 import { ObjectiveLayerDraw, objectiveSources, stateKey, type ObjectiveSource } from './objectives';
 import { withPlaceLines } from '../mass/placeLines';
 import { withManeuverLines } from '../insights/maneuver/lines';
+import { withInsightLines } from '../insights/highlight';
 import { DirectionController } from './directionController';
 import { dropLinesOn, unitsPerMetre } from '../ui/replay/replayData';
 import { FollowRig, type RigMode } from './followRig';
@@ -2246,7 +2247,7 @@ export class Engine {
   /** The objectives' vertices (`from` to `to` of `data`) at a fraction of their alpha, to draw over the picture. */
   /** The top lines that change on a click, not a frame: the renderer uploads them only when their version moves. */
   private staticTop(): { data: Float32Array; count: number; version: number } | null {
-    const lines = withManeuverLines(withPlaceLines(null));
+    const lines = withInsightLines(withManeuverLines(withPlaceLines(null)));
     const c = this.staticTopCache;
     if ((lines?.data ?? null) === c.lines) return c.out;
     c.lines = lines?.data ?? null;

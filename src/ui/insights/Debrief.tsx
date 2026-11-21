@@ -12,13 +12,17 @@ import { useAi } from '../../insights/ai/settings';
 import { baseDebrief } from '../../insights/narrate';
 import type { Insight, InsightReport } from '../../insights/types';
 import { AiSettingsButton } from './AiSettings';
-import { insightText } from './say';
+import { plainInsight } from './plain';
 import { useAiStream } from './useAiStream';
 import { LensPicker, References, useLens } from './LensView';
 
 export function Debrief({ report, onPick }: { report: InsightReport; onPick: (ins: Insight) => void }) {
   const samples = report.dataset.exposure === 'samples';
-  const say = (i: Insight) => insightText(i, samples);
+  // In plain words: what happened, and against what.
+  const say = (i: Insight) => {
+    const p = plainInsight(i, report, samples);
+    return `${p.what.replace(/[.!]\s*$/, '')}: ${p.compare}`;
+  };
   const lens = useLens((s) => s.lens);
   const d = useMemo(() => baseDebrief(report, say, lens), [report, lang(), lens]); // eslint-disable-line react-hooks/exhaustive-deps
   const byId = useMemo(() => new Map(report.insights.map((i) => [i.id, i])), [report]);

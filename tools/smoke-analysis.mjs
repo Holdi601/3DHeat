@@ -206,6 +206,93 @@ await step('difference mode labels the most negative places too', async () => {
   return `${n[0]} hot, ${n[1]} cold`;
 });
 
+// ------------------------------------------------------------------ insights
+
+/** A module of the app, the instance the app loaded (after an edit the dev server adds a version query). */
+const mod = (path, fn, a) =>
+  page.evaluate(
+    async ([p, src, arg]) => {
+      const seen = performance.getEntriesByType('resource').map((e) => e.name).filter((n) => new URL(n).pathname === p);
+      const u = seen.length ? seen[seen.length - 1] : p;
+      return new Function('m', 'arg', `return (${src})(m, arg)`)(await import(u), arg);
+    },
+    [path, fn.toString(), a],
+  );
+const DEMO = '/tools/.shots/demo';
+
+await step('insights: plain words, tight places, no whole-map findings', async () => {
+  await page.evaluate(async (u) => {
+    await globalThis.__3dheat.loadUrls([u]);
+    globalThis.__3dheat.useStore.getState().setMode('heat-simple');
+  }, `${DEMO}/tanks.parquet`);
+  await wait(1500);
+  const report = await mod('/src/insights/run.ts', async (m) => {
+    const s = globalThis.__3dheat.useStore.getState();
+    const scope = await import('/src/volumes/scope.ts');
+    const r = await m.runInsights(s.dataset, scope.currentScope(s, 0), s.level, {});
+    const store = await import('/src/insights/store.ts');
+    store.useInsights.getState().set({ report: r, key: null, running: false, selected: null });
+    const g = r.grid;
+    const extent = Math.max(g.nx, g.nz) * g.fine;
+    return {
+      n: r.insights.length,
+      dropped: (r.dropped ?? []).length,
+      wide: r.insights.filter((i) => i.place && !i.kind.startsWith('spawn.') && i.kind !== 'flow.flank' && (2 * i.place.radius) / extent > 0.35).length,
+      ranked: r.insights.every((i, k, a) => k === 0 || (a[k - 1].usefulness ?? 1) >= (i.usefulness ?? 0) || !i.usefulness),
+      firstPlace: r.insights.findIndex((i) => !!i.place),
+      height: s.dataset.bounds.maxY - s.dataset.bounds.minY,
+    };
+  });
+  expect(report.n > 0, 'no findings on the tank demo');
+  expect(report.wide === 0, `${report.wide} findings cover most of the map`);
+  expect(report.firstPlace >= 0, 'no finding with a place');
+  return `${report.n} findings, ${report.dropped} left out as trivial`;
+});
+
+await step('insights: a click outlines the fitted place, marks its events and frames it', async () => {
+  const head = page.locator('.section > header').filter({ hasText: /Insights\s*$/ }).first();
+  if (!(await page.locator('.ins').count())) await head.click();
+  await page.waitForSelector('.ins-item', { timeout: 20_000 });
+  const item = page.locator('.ins-item').filter({ hasText: /across/ }).first();
+  const what = await item.locator('.ins-text').textContent();
+  expect(!/were expected for the time spent/.test(what), `old wording: ${what}`);
+  const before = await page.evaluate(() => globalThis.__3dheat_engine.cameraPose().position);
+  await item.locator('.ins-head').click();
+  await page.waitForFunction(() => document.querySelector('.ins-item.open .ins-compare'), null, { timeout: 10_000 });
+  const lit = await mod('/src/insights/highlight.ts', async (m) => {
+    for (let i = 0; i < 100 && !m.useInsightHighlight.getState().lines; i++) await new Promise((r) => setTimeout(r, 100));
+    const l = m.useInsightHighlight.getState().lines;
+    return l ? l.count : 0;
+  });
+  expect(lit > 100, `highlight has ${lit} vertices`);
+  const after = await page.evaluate(() => globalThis.__3dheat_engine.cameraPose().position);
+  expect(Math.hypot(after.x - before.x, after.y - before.y, after.z - before.z) > 1, 'the camera did not move to the finding');
+  const parts = await page.evaluate(() => ['.ins-compare', '.ins-why', '.ins-do'].map((s) => document.querySelector(`.ins-item.open ${s}`)?.textContent ?? ''));
+  expect(parts[0].length > 20, 'no comparison line');
+  const t = await orbitTiming(2);
+  judge(t);
+  return `"${what.slice(0, 90)}..." / ${parts[0].slice(0, 80)}; ${timingText(t)}`;
+});
+
+await step('insights: "Volume here" fits the events, not the map height', async () => {
+  const n0 = await mod('/src/volumes/store.ts', (m) => m.useVolumeStore.getState().volumes.length);
+  await page.locator('.ins-item.open').getByRole('button', { name: 'Volume here' }).click();
+  await wait(1000);
+  const v = await mod('/src/volumes/store.ts', (m) => {
+    const vs = m.useVolumeStore.getState().volumes;
+    return { n: vs.length, last: vs[vs.length - 1]?.shape };
+  });
+  const height = await page.evaluate(() => {
+    const b = globalThis.__3dheat.useStore.getState().dataset.bounds;
+    return b.maxY - b.minY;
+  });
+  expect(v.n === n0 + 1, 'no volume added');
+  const h = v.last.ceil - v.last.floor;
+  expect(h < height, `volume height ${h} vs data height ${height}`);
+  await mod('/src/volumes/store.ts', (m) => m.useVolumeStore.getState().clear());
+  return `volume r ${v.last.radius.toFixed(0)}, ${v.last.floor.toFixed(0)}..${v.last.ceil.toFixed(0)} (data ${height.toFixed(0)} high)`;
+});
+
 // The stages that follow add their steps above this line.
 
 await browser.close();
