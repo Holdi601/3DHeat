@@ -29,8 +29,6 @@
   "app.fatal": "Ekki tókst að frumstilla teiknivélina.",
   "app.empty.heat.title": "Ekkert gagnasafn hlaðið",
   "app.empty.heat.hint": "Búðu til gervigagnasafn í hliðarstikunni til að byrja.",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> fljúga · <kbd>Space</kbd>/<kbd>Q</kbd> upp/niður · dragðu til að líta í kring · skrunhjól = hraði",
-  "app.help.keys": "<kbd>Shift</kbd> hraðar · <kbd>Alt</kbd> hægar · <kbd>F</kbd> ramma inn gögnin · <kbd>K</kbd> spila/hlé · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> hitahamir · <kbd>?</kbd> litir",
   "app.empty.race.title": "Engir hringir hlaðnir",
   "app.empty.race.hint": "Slepptu tveimur eða fleiri hringjaskrám hér, eða hladdu sýnishringjunum úr hliðarstikunni.",
   "app.tab.plan": "Leikfræði",

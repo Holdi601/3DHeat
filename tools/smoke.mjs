@@ -3552,6 +3552,133 @@ await step('a new filter reaches the GPU a slice a frame and applies whole', asy
   return `${r.chunks} chunks over ${r.pendingFrames} frames, worst frame's upload ${r.worstCall.toFixed(1)} ms, worst frame ${r.worstFrame.toFixed(0)} ms, never mixed`;
 });
 
+// ------------------------------------------------------------------- shell
+
+/** Back on the heatmap, plain heat, with the keyboard on the view. */
+async function onHeatView() {
+  await page.locator('[role=tab]', { hasText: /^Heatmap$/ }).first().click();
+  await setState(() => globalThis.__3dheat.useStore.getState().setMode('heat-simple'));
+  await page.waitForTimeout(400);
+  await page.locator(VIEWPORT).click({ position: { x: 40, y: 300 } });
+}
+
+await step('the command palette opens with Ctrl+K and reveals a setting in its section', async () => {
+  await onHeatView();
+  // Closed first, so the palette has to open it.
+  await page.evaluate(() => {
+    const s = document.querySelector('.section[data-section="heat.heatPanel.shape"]');
+    if (s?.classList.contains('open')) s.querySelector('header').click();
+  });
+  await page.keyboard.press('Control+k');
+  await page.locator('.palette input').waitFor({ timeout: 3000 });
+  await page.keyboard.type('Sprite radius');
+  await page.waitForTimeout(200);
+  const first = await page.locator('.palette-item').first().innerText();
+  if (!/Sprite radius/.test(first)) throw new Error(`first match is "${first.replace(/\s+/g, ' ')}"`);
+  await page.keyboard.press('Enter');
+  await page
+    .waitForFunction(() => document.querySelector('.section[data-section="heat.heatPanel.shape"]')?.contains(document.activeElement), null, { timeout: 10_000 })
+    .catch(() => {});
+  const r = await page.evaluate(() => {
+    const s = document.querySelector('.section[data-section="heat.heatPanel.shape"]');
+    return { palette: !!document.querySelector('.palette'), open: !!s?.classList.contains('open'), focused: !!s && s.contains(document.activeElement) };
+  });
+  if (r.palette) throw new Error('the palette stayed open');
+  if (!r.open) throw new Error('the Heat shape section was not opened');
+  if (!r.focused) throw new Error('the focus is not on the setting');
+  return 'Sprite radius found, section opened, control focused';
+});
+
+await step('the command palette reaches every workspace and a setting on another one', async () => {
+  await onHeatView();
+  await page.keyboard.press('Control+k');
+  await page.keyboard.type('Go to Match');
+  await page.waitForTimeout(200);
+  await page.keyboard.press('Enter');
+  await page.waitForFunction(() => document.querySelector('[role=tab][aria-selected=true]')?.textContent === 'Match', null, { timeout: 10_000 }).catch(() => {});
+  const tab = await page.evaluate(() => document.querySelector('[role=tab][aria-selected=true]')?.textContent);
+  if (tab !== 'Match') throw new Error(`on ${tab}`);
+  // A section of the heatmap from the match: the palette switches back and opens it.
+  await page.locator(VIEWPORT).click({ position: { x: 40, y: 300 } });
+  await page.keyboard.press('Control+k');
+  await page.keyboard.type('Camera path');
+  await page.waitForTimeout(200);
+  const items = await page.locator('.palette-item').count();
+  if (!items) throw new Error('nothing found for "Camera path"');
+  const top = (await page.locator('.palette-item').first().innerText()).replace(/\s+/g, ' ');
+  await page.keyboard.press('Enter');
+  // The reveal takes a few renders; a heavy scene on the software rasteriser makes them slow.
+  await page
+    .waitForFunction(() => !!document.querySelector('.section.open[data-section="heat.pathPanel.title"]'), null, { timeout: 10_000 })
+    .catch(() => {});
+  const back = await page.evaluate(() => ({
+    tab: document.querySelector('[role=tab][aria-selected=true]')?.textContent,
+    open: !!document.querySelector('.section.open[data-section="heat.pathPanel.title"]'),
+  }));
+  if (!back.open) back.top = top;
+  if (back.tab !== 'Heatmap' || !back.open) throw new Error(`landed on ${back.tab}, section open: ${back.open} (ran "${back.top}")`);
+  return `${items} matches; Match reached, then Camera path opened on Heatmap`;
+});
+
+await step('the key sheet opens with ? and lists the shortcuts; Esc closes it', async () => {
+  await onHeatView();
+  await page.keyboard.press('Shift+Slash');
+  await page.locator('.key-sheet').waitFor({ timeout: 3000 }).catch(() => {});
+  // `?` is Shift+/ on a US layout only: send the character itself where it is not.
+  if (!(await page.locator('.key-sheet').count())) {
+    await page.evaluate(() => window.dispatchEvent(new KeyboardEvent('keydown', { key: '?', code: 'Slash', shiftKey: true, bubbles: true })));
+    await page.waitForTimeout(300);
+  }
+  const rows = await page.locator('.key-sheet .key-row').count();
+  if (rows < 40) throw new Error(`only ${rows} keys listed`);
+  for (const id of ['palette', 'sheet', 'help', 'frame', 'play', 'taskPicker', 'quickTask']) {
+    if (!(await page.locator(`.key-sheet .key-row[data-key="${id}"]`).count())) throw new Error(`no row for ${id}`);
+  }
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(200);
+  if (await page.locator('.key-sheet').count()) throw new Error('Esc left it open');
+  return `${rows} keys`;
+});
+
+await step('F1 toggles help with the focus in a slider; Ctrl+B hides and shows the side panel', async () => {
+  await onHeatView();
+  const before = await page.evaluate(() => !!document.querySelector('.help-panel'));
+  await page.locator('.sidebar input[type="range"]').first().focus();
+  await page.keyboard.press('F1');
+  await page.waitForTimeout(200);
+  const after = await page.evaluate(() => !!document.querySelector('.help-panel'));
+  if (after === before) throw new Error('F1 did nothing from a slider');
+  await page.keyboard.press('F1');
+  await page.locator(VIEWPORT).click({ position: { x: 40, y: 300 } });
+  await page.keyboard.press('Control+b');
+  await page.waitForTimeout(300);
+  const hidden = await page.evaluate(() => getComputedStyle(document.querySelector('.sidebar')).display === 'none');
+  await page.keyboard.press('Control+b');
+  await page.waitForTimeout(300);
+  const shown = await page.evaluate(() => getComputedStyle(document.querySelector('.sidebar')).display !== 'none');
+  if (!hidden || !shown) throw new Error(`hidden ${hidden}, shown again ${shown}`);
+  return 'help from a slider; side panel off and on';
+});
+
+await step('the task bar shows one group and keeps every section in the page', async () => {
+  await onHeatView();
+  const all = await page.locator('.sidebar .section').count();
+  await page.locator('.task-bar button', { hasText: 'Compare' }).click();
+  await page.waitForTimeout(200);
+  const r = await page.evaluate(() => {
+    const vis = (el) => !!el && el.getClientRects().length > 0;
+    return {
+      count: document.querySelectorAll('.sidebar .section').length,
+      volumesShown: vis(document.querySelector('.section[data-section="volumes.title"]')),
+      sourceShown: vis(document.querySelector('.section[data-section="heat.sourcePanel.title"]')),
+    };
+  });
+  await page.locator('.task-bar button', { hasText: 'All' }).click();
+  if (r.count !== all) throw new Error(`${all} sections became ${r.count}`);
+  if (!r.volumesShown || r.sourceShown) throw new Error(`volumes shown ${r.volumesShown}, source shown ${r.sourceShown}`);
+  return `${all} sections, Compare shows Volumes and hides Source`;
+});
+
 await step('no console errors', () => {
   if (errors.length) throw new Error(errors.slice(0, 6).join('\n         '));
   return `${logs.length} log lines`;

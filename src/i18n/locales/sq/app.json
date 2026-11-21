@@ -29,8 +29,6 @@
   "app.fatal": "Renderuesi nuk mund të inicializohet.",
   "app.empty.heat.title": "Asnjë grup të dhënash i ngarkuar",
   "app.empty.heat.hint": "Për të filluar, krijo një grup sintetik nga shiriti anësor.",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> fluturo · <kbd>Space</kbd>/<kbd>Q</kbd> lart/poshtë · tërhiq për të parë · rrota = shpejtësia",
-  "app.help.keys": "<kbd>Shift</kbd> përshpejto · <kbd>Alt</kbd> ngadalë · <kbd>F</kbd> përqendro të dhënat · <kbd>K</kbd> luaj/ndalo · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> mënyrat e nxehtësisë · <kbd>?</kbd> ngjyra",
   "app.empty.race.title": "Asnjë xhiro e ngarkuar",
   "app.empty.race.hint": "Lësho këtu dy ose më shumë skedarë xhiroje, ose ngarko xhirot demo nga shiriti anësor.",
   "app.tab.plan": "Taktika",

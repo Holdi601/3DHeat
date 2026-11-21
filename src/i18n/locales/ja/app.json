@@ -29,8 +29,6 @@
   "app.fatal": "レンダラーを初期化できません。",
   "app.empty.heat.title": "データセットが読み込まれていません",
   "app.empty.heat.hint": "まずはサイドバーから合成データを生成してください。",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> 移動 · <kbd>Space</kbd>/<kbd>Q</kbd> 上昇/下降 · ドラッグで視点操作 · ホイール = 速度",
-  "app.help.keys": "<kbd>Shift</kbd> 加速 · <kbd>Alt</kbd> 減速 · <kbd>F</kbd> データ全体を表示 · <kbd>K</kbd> 再生/一時停止 · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> ヒートモード · <kbd>?</kbd> 色",
   "app.empty.race.title": "ラップが読み込まれていません",
   "app.empty.race.hint": "ここにラップファイルを2つ以上ドロップするか、サイドバーからデモラップを読み込んでください。",
   "app.tab.plan": "作戦",

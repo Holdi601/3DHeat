@@ -29,8 +29,6 @@
   "app.fatal": "Рендерерот не може да се иницијализира.",
   "app.empty.heat.title": "Нема вчитано збир на податоци",
   "app.empty.heat.hint": "За почеток, генерирајте синтетички од страничната лента.",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> летање · <kbd>Space</kbd>/<kbd>Q</kbd> горе/долу · влечете за гледање · тркалце = брзина",
-  "app.help.keys": "<kbd>Shift</kbd> забрзување · <kbd>Alt</kbd> бавно · <kbd>F</kbd> врами ги податоците · <kbd>K</kbd> пушти/пауза · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> режими на топлина · <kbd>?</kbd> бои",
   "app.empty.race.title": "Нема вчитани кругови",
   "app.empty.race.hint": "Пуштете тука две или повеќе датотеки со кругови или вчитајте ги демо-круговите од страничната лента.",
   "app.tab.plan": "Тактика",

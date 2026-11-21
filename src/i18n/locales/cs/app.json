@@ -29,8 +29,6 @@
   "app.fatal": "Renderer nelze inicializovat.",
   "app.empty.heat.title": "Není načtena žádná datová sada",
   "app.empty.heat.hint": "Pro začátek vygenerujte syntetickou datovou sadu na postranním panelu.",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> let · <kbd>Space</kbd>/<kbd>Q</kbd> nahoru/dolů · tažením se rozhlížíte · kolečko = rychlost",
-  "app.help.keys": "<kbd>Shift</kbd> zrychlení · <kbd>Alt</kbd> zpomalení · <kbd>F</kbd> zaměřit data · <kbd>K</kbd> přehrát/pozastavit · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> režimy tepla · <kbd>?</kbd> barvy",
   "app.empty.race.title": "Nejsou načtena žádná kola",
   "app.empty.race.hint": "Přetáhněte sem dva nebo více souborů kol, nebo načtěte ukázková kola z postranního panelu.",
   "app.tab.plan": "Taktika",

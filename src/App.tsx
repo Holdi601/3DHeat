@@ -11,7 +11,7 @@ import { useHelpStore } from './state/helpStore';
 import { raceClock, useRaceStore } from './state/raceStore';
 import { loadLapFiles } from './ui/race/actions';
 import { RaceBar } from './ui/race/RaceBar';
-import { HelpButton, HelpPanel } from './ui/help/HelpPanel';
+import { HelpPanel } from './ui/help/HelpPanel';
 import { RaceWheelLabels } from './ui/race/RaceHelp';
 import { RaceHud } from './ui/race/RaceHud';
 import { RaceLabels } from './ui/race/RaceLabels';
@@ -41,8 +41,6 @@ import './ui/match/match.css';
 import type { ViewMode } from './state/types';
 import { Rich, Segmented } from './ui/controls';
 import { EngineContext } from './ui/EngineContext';
-import { LanguagePicker } from './ui/LanguagePicker';
-import { UnitsPicker } from './ui/UnitsPicker';
 import { applyBuildings } from './ui/replay/buildings';
 import { SessionPicker } from './ui/SessionPicker';
 import { SoftwareRenderingWarning } from './ui/SoftwareRenderingWarning';
@@ -80,6 +78,13 @@ import { UpdateBanner } from './ui/UpdateBanner';
 import { VehiclePanel } from './ui/vehicle/VehiclePanel';
 import { VehicleOverlay } from './ui/vehicle/VehicleOverlay';
 import { guardBrowserKeys } from './ui/browserKeys';
+import { Brand, More, TaskBar, TaskGroup, WorkspaceBar } from './ui/shell/Shell';
+import { CommandPalette } from './ui/shell/CommandPalette';
+import { ShortcutSheet } from './ui/shell/ShortcutSheet';
+import { QuickBar } from './ui/shell/QuickBar';
+import { ConfirmHost, ToastHost } from './ui/shell/kit';
+import { installShellKeys } from './ui/shell/keys';
+import { useShell } from './ui/shell/shellStore';
 
 /** The view modes, in the viewer's language: a function, so the words are looked up when shown. */
 const modes = (): Array<{ value: ViewMode; label: string; title: string }> => [
@@ -131,12 +136,13 @@ export function App() {
   const dataset = useStore((s) => s.dataset);
   const setPlaying = useStore((s) => s.setPlaying);
   const tab = useRaceStore((s) => s.tab);
-  const setTab = useRaceStore((s) => s.setTab);
   const raceTab = tab === 'race';
   const matchTab = tab === 'match';
   const planTab = tab === 'plan';
   const vehicleTab = tab === 'vehicle';
   const raceCharts = useRaceStore((s) => s.view.charts);
+  const sidebarHidden = useShell((s) => s.sidebarHidden);
+  const sidebarTask = useShell((s) => s.task[tab] ?? 'all');
   const lang = useLang();
 
   /**
@@ -150,6 +156,8 @@ export function App() {
   const heatTabMode = useRef<ViewMode>('heat-simple');
   // Browser shortcuts (Ctrl+S, Ctrl+P, F5...) don't fire while flying, and closing the tab with data loaded asks first.
   useEffect(() => guardBrowserKeys(), []);
+  // The shell's keys (palette, key sheet, side panel, workspaces), ahead of every other handler.
+  useEffect(() => installShellKeys(), []);
   // The label size on the document, so every kind of label over the view takes
   // it - units, events, objectives, the grid, place names, race and board labels
   // - and not only the units' own (`--label-scale` in the stylesheets).
@@ -286,13 +294,14 @@ export function App() {
   // Global shortcuts that don't belong to the camera.
   useEffect(() => {
     const onKey = (ev: KeyboardEvent) => {
-      if (ev.target instanceof HTMLInputElement || ev.target instanceof HTMLSelectElement) return;
-      // By the character: which key makes a ? depends on the keyboard's language.
-      if (ev.key === '?' || ev.code === 'F1') {
+      // Help works with the focus anywhere, a slider or a list too: F1 never types.
+      // (`?` is the key sheet's now: ui/shell/keys.ts.)
+      if (ev.code === 'F1') {
         ev.preventDefault();
         useHelpStore.getState().toggle();
         return;
       }
+      if (ev.target instanceof HTMLInputElement || ev.target instanceof HTMLSelectElement) return;
       const race = useRaceStore.getState();
       if (race.tab === 'plan') {
         // The board's own keys (ui/tactics/boardKeys.ts); the heat modes' number keys do nothing here.
@@ -383,40 +392,11 @@ export function App() {
 
   return (
     <EngineContext.Provider value={engine}>
-      <div className={`app${raceTab ? ' race' : ''}${matchTab ? ' match' : ''}${vehicleTab ? ' vehicle' : ''}${raceTab && !raceCharts ? ' no-charts' : ''}`}>
-        <aside className="sidebar">
-          <div className="brand">
-            <h1>3DHeat</h1>
-            <span className="sub">{t('app.brand.sub')}</span>
-            <HelpButton />
-            <UnitsPicker />
-            <LanguagePicker />
-          </div>
+      <div className={`app${sidebarHidden ? ' no-sidebar' : ''}${raceTab ? ' race' : ''}${matchTab ? ' match' : ''}${vehicleTab ? ' vehicle' : ''}${raceTab && !raceCharts ? ' no-charts' : ''}`}>
+        <aside className="sidebar" data-task={raceTab || planTab || vehicleTab ? 'all' : sidebarTask}>
+          <Brand />
           <UpdateBanner />
-
-          <div className="tabs" role="tablist">
-            <button role="tab" aria-selected={tab === 'heat'} className={tab === 'heat' ? 'on' : ''} onClick={() => setTab('heat')}>
-              {t('app.tab.heat')}
-            </button>
-            <button role="tab" aria-selected={raceTab} className={raceTab ? 'on' : ''} onClick={() => setTab('race')}>
-              {t('app.tab.race')}
-            </button>
-            <button
-              role="tab"
-              aria-selected={matchTab}
-              className={matchTab ? 'on' : ''}
-              onClick={() => setTab('match')}
-              title={t('app.tab.matchTitle')}
-            >
-              {t('app.tab.match')}
-            </button>
-            <button role="tab" aria-selected={planTab} className={planTab ? 'on' : ''} onClick={() => setTab('plan')} title={t('app.tab.planTitle')}>
-              {t('app.tab.plan')}
-            </button>
-            <button role="tab" aria-selected={vehicleTab} className={vehicleTab ? 'on' : ''} onClick={() => setTab('vehicle')} title={t('vehicle.tab.title')}>
-              {t('vehicle.tab.label')}
-            </button>
-          </div>
+          <WorkspaceBar />
 
           {vehicleTab ? (
             <>
@@ -465,31 +445,40 @@ export function App() {
                 {/* Rounds (CS2): the matches themselves are picked below. */}
                 {dataset && !matchesAreSessions(dataset) && <SessionPicker />}
               </div>
-              {/* The level first: it is loaded before the data, then the rest is done on top of both. */}
-              <LevelPanel />
-              {!dataset && <SourcePanel />}
-              <MatchPicker />
-              <SeriesPanel />
-              <GameOverview />
-              {matchView === 'replay' ? (
-                <>
-                  <ReplayPanel />
-                  <ObjectivesPanel />
-                  <TeamPanel />
-                </>
-              ) : (
-                <>
-                  <HeatPanel />
-                  <ObjectivesPanel />
-                </>
-              )}
-              <MatchPanel />
-              {dataset && <SourcePanel />}
-              <FilterPanel />
-              <VolumePanel />
-              <InsightsPanel />
-              <ViewsPanel />
-              <CameraPanel />
+              <TaskBar tab="match" />
+              {/* Grouped by task (ui/shell/Shell.tsx); the level first: it is loaded before the data. */}
+              <TaskGroup task="load">
+                <LevelPanel />
+                {!dataset && <SourcePanel />}
+                <MatchPicker />
+                <SeriesPanel />
+                <GameOverview />
+                {dataset && <SourcePanel />}
+              </TaskGroup>
+              <TaskGroup task="explore">
+                {matchView === 'replay' ? (
+                  <>
+                    <ReplayPanel />
+                    <ObjectivesPanel />
+                    <TeamPanel />
+                  </>
+                ) : (
+                  <>
+                    <HeatPanel />
+                    <ObjectivesPanel />
+                  </>
+                )}
+                <MatchPanel />
+                <FilterPanel />
+              </TaskGroup>
+              <TaskGroup task="compare">
+                <VolumePanel />
+                <InsightsPanel />
+              </TaskGroup>
+              <TaskGroup task="present">
+                <ViewsPanel />
+                <CameraPanel />
+              </TaskGroup>
             </>
           ) : (
           <>
@@ -520,33 +509,46 @@ export function App() {
             )}
           </div>
 
-          {/* The level first: it is loaded before the data, then the rest is done on top of both. */}
-          <LevelPanel />
-          <SourcePanel />
-          <LeanOverlayPanel />
-          <DatasetPanel />
-          {mode === 'heat-lines' && <LinePanel />}
-          {mode === 'team' ? (
-            <>
-              <OverlayPanel />
-              <TeamPanel />
-            </>
-          ) : (
-            <HeatPanel />
-          )}
-          <SplitPanel />
-          <TeamsList />
-          <EntityPanel />
-          <FilterPanel />
-          <SlicePanel />
-          <VolumePanel />
-          <InsightsPanel />
-          <ViewsPanel />
-          <MassPanel />
-          <MeasurePanel />
-          <PathPanel />
-          <PerfPanel />
-          <CameraPanel />
+          <TaskBar tab="heat" />
+          {/* Grouped by task (ui/shell/Shell.tsx); the level first: it is loaded before the data. */}
+          <TaskGroup task="load">
+            <LevelPanel />
+            <SourcePanel />
+            <DatasetPanel />
+            <More id="heat.load">
+              <LeanOverlayPanel />
+            </More>
+          </TaskGroup>
+          <TaskGroup task="explore">
+            {mode === 'heat-lines' && <LinePanel />}
+            {mode === 'team' ? (
+              <>
+                <OverlayPanel />
+                <TeamPanel />
+              </>
+            ) : (
+              <HeatPanel />
+            )}
+            <TeamsList />
+            <EntityPanel />
+            <FilterPanel />
+            <SlicePanel />
+          </TaskGroup>
+          <TaskGroup task="compare">
+            <SplitPanel />
+            <VolumePanel />
+            <InsightsPanel />
+            <MassPanel />
+            <MeasurePanel />
+          </TaskGroup>
+          <TaskGroup task="present">
+            <ViewsPanel />
+            <PathPanel />
+            <CameraPanel />
+            <More id="heat.present">
+              <PerfPanel />
+            </More>
+          </TaskGroup>
           </>
           )}
         </aside>
@@ -587,7 +589,12 @@ export function App() {
             </div>
           ) : (
             <>
-              {vehicleTab ? <VehicleOverlay /> : planTab ? <BoardLabels /> : raceTab ? (
+              {vehicleTab ? <VehicleOverlay /> : planTab ? (
+                <>
+                  <ObjectiveLabels />
+                  <BoardLabels />
+                </>
+              ) : raceTab ? (
                 <>
                   <RaceLabels />
                   <RaceWheelLabels />
@@ -616,15 +623,18 @@ export function App() {
               <HelpPanel />
               <WorldOverlay />
               <WorldCredits />
+              <QuickBar />
+              <ToastHost />
               <div className="help">
-                <Rich text={t('app.help.move')} />
-                <br />
-                <Rich text={t('app.help.keys')} />
+                <Rich text={t('shell.hint')} />
               </div>
             </>
           )}
         </div>
 
+        <CommandPalette />
+        <ShortcutSheet />
+        <ConfirmHost />
         <div className="timeline-bar">{vehicleTab ? null : planTab ? <BoardBar /> : raceTab ? <RaceBar /> : <Timeline />}</div>
       </div>
     </EngineContext.Provider>

@@ -13,6 +13,7 @@ import { RampEditor } from '../RampEditor';
 import { int, num, t } from '../../i18n';
 import { lengthText, useUnits } from '../../state/unitsStore';
 import { useInspectStore } from '../../state/inspectStore';
+import { More } from '../shell/Shell';
 
 /** A distance in metres, as the sliders show it. */
 const metres = (v: number) => lengthText(v);
@@ -331,32 +332,6 @@ export function HeatPanel() {
         )}
       </Section>
 
-      <Section title={t('heat.heatPanel.clamps')}>
-        <div className="hint">{t('heat.heatPanel.clampsHint')}</div>
-        <Slider
-          label={t('heat.heatPanel.minPixelRadius')}
-          value={heat.minPixelRadius}
-          min={0}
-          max={16}
-          ceiling={512}
-          step={0.1}
-          onChange={(minPixelRadius) => patchHeat({ minPixelRadius })}
-          hint={t('heat.heatPanel.minPixelRadiusHint')}
-        />
-        <Slider
-          label={t('heat.heatPanel.maxPixelRadius')}
-          value={heat.maxPixelRadius}
-          min={2}
-          max={1024}
-          // Past the height of the viewport the clamp stops clamping anything,
-          // so this is the point where the setting ceases to exist.
-          ceiling={8192}
-          logarithmic
-          onChange={(maxPixelRadius) => patchHeat({ maxPixelRadius })}
-          format={(v) => t('heat.heatPanel.pixels', { value: int(v) })}
-        />
-      </Section>
-
       <Section title={t('heat.heatPanel.depth')} defaultOpen>
         <div className="hint">{t('heat.heatPanel.depthHint')}</div>
         <Check
@@ -388,48 +363,77 @@ export function HeatPanel() {
         )}
       </Section>
 
-      <Section title={t('heat.heatPanel.culling')}>
-        <div className="hint">{t('heat.heatPanel.cullingHint')}</div>
-        <Slider
-          label={t('heat.heatPanel.near')}
-          value={heat.cullNear}
-          min={0.5}
-          max={5000}
-          // Up to the far track's end, so the near bound can be walked past
-          // anything the far one can reach.
-          ceiling={200_000}
-          logarithmic
-          zeroAt={0}
-          onChange={(cullNear) => patchHeat({ cullNear })}
-          format={(v) => (v <= 0 ? t('heat.heatPanel.off') : metres(v))}
-        />
-        <Slider
-          label={t('heat.heatPanel.far')}
-          value={heat.cullFar}
-          min={1}
-          max={200000}
-          ceiling={1e7}
-          logarithmic
-          zeroAt={0}
-          onChange={(cullFar) => patchHeat({ cullFar })}
-          format={(v) => (v <= 0 ? t('heat.heatPanel.off') : metres(v))}
-        />
-        <Check
-          label={t('heat.heatPanel.cutPlane')}
-          checked={heat.cullPlanar}
-          onChange={(cullPlanar) => patchHeat({ cullPlanar })}
-          title={t('heat.heatPanel.cutPlaneTitle')}
-        />
-        <Check
-          label={t('heat.heatPanel.cutLevel')}
-          checked={heat.cullGeometry}
-          onChange={(cullGeometry) => patchHeat({ cullGeometry })}
-          title={t('heat.heatPanel.cutLevelTitle')}
-        />
-        <div className="hint">
-          <Rich text={t('heat.heatPanel.cullKeys', { closer: '[', further: ']', toggle: '\\' })} />
-        </div>
-      </Section>
+      {/* Used now and then: folded away (ui/shell/Shell.tsx). */}
+      <More id="heat.rare">
+        <Section title={t('heat.heatPanel.clamps')}>
+          <div className="hint">{t('heat.heatPanel.clampsHint')}</div>
+          <Slider
+            label={t('heat.heatPanel.minPixelRadius')}
+            value={heat.minPixelRadius}
+            min={0}
+            max={16}
+            ceiling={512}
+            step={0.1}
+            onChange={(minPixelRadius) => patchHeat({ minPixelRadius })}
+            hint={t('heat.heatPanel.minPixelRadiusHint')}
+          />
+          <Slider
+            label={t('heat.heatPanel.maxPixelRadius')}
+            value={heat.maxPixelRadius}
+            min={2}
+            max={1024}
+            // Past the height of the viewport the clamp stops clamping anything,
+            // so this is the point where the setting ceases to exist.
+            ceiling={8192}
+            logarithmic
+            onChange={(maxPixelRadius) => patchHeat({ maxPixelRadius })}
+            format={(v) => t('heat.heatPanel.pixels', { value: int(v) })}
+          />
+        </Section>
+
+        <Section title={t('heat.heatPanel.culling')}>
+          <div className="hint">{t('heat.heatPanel.cullingHint')}</div>
+          <Slider
+            label={t('heat.heatPanel.near')}
+            value={heat.cullNear}
+            min={0.5}
+            max={5000}
+            // Up to the far track's end, so the near bound can be walked past
+            // anything the far one can reach.
+            ceiling={200_000}
+            logarithmic
+            zeroAt={0}
+            onChange={(cullNear) => patchHeat({ cullNear })}
+            format={(v) => (v <= 0 ? t('heat.heatPanel.off') : metres(v))}
+          />
+          <Slider
+            label={t('heat.heatPanel.far')}
+            value={heat.cullFar}
+            min={1}
+            max={200000}
+            ceiling={1e7}
+            logarithmic
+            zeroAt={0}
+            onChange={(cullFar) => patchHeat({ cullFar })}
+            format={(v) => (v <= 0 ? t('heat.heatPanel.off') : metres(v))}
+          />
+          <Check
+            label={t('heat.heatPanel.cutPlane')}
+            checked={heat.cullPlanar}
+            onChange={(cullPlanar) => patchHeat({ cullPlanar })}
+            title={t('heat.heatPanel.cutPlaneTitle')}
+          />
+          <Check
+            label={t('heat.heatPanel.cutLevel')}
+            checked={heat.cullGeometry}
+            onChange={(cullGeometry) => patchHeat({ cullGeometry })}
+            title={t('heat.heatPanel.cutLevelTitle')}
+          />
+          <div className="hint">
+            <Rich text={t('heat.heatPanel.cullKeys', { closer: '[', further: ']', toggle: '\\' })} />
+          </div>
+        </Section>
+      </More>
     </>
   );
 }

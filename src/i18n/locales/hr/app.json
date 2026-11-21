@@ -29,8 +29,6 @@
   "app.fatal": "Nije moguće inicijalizirati renderer.",
   "app.empty.heat.title": "Nije učitan skup podataka",
   "app.empty.heat.hint": "Za početak generirajte sintetički skup na bočnoj traci.",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> letenje · <kbd>Space</kbd>/<kbd>Q</kbd> gore/dolje · povlačenje za razgledavanje · kotačić = brzina",
-  "app.help.keys": "<kbd>Shift</kbd> ubrzanje · <kbd>Alt</kbd> usporavanje · <kbd>F</kbd> uokviri podatke · <kbd>K</kbd> reprodukcija/pauza · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> načini topline · <kbd>?</kbd> boje",
   "app.empty.race.title": "Nema učitanih krugova",
   "app.empty.race.hint": "Ispustite ovdje dvije ili više datoteka krugova ili učitajte demo krugove s bočne trake.",
   "app.tab.plan": "Taktika",

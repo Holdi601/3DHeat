@@ -29,8 +29,6 @@
   "app.fatal": "Renderdajat ei saa lähtestada.",
   "app.empty.heat.title": "Andmestikku pole laaditud",
   "app.empty.heat.hint": "Alustamiseks genereeri külgribalt sünteetiline andmestik.",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> lenda · <kbd>Space</kbd>/<kbd>Q</kbd> üles/alla · lohista ringi vaatamiseks · ratas = kiirus",
-  "app.help.keys": "<kbd>Shift</kbd> kiiremini · <kbd>Alt</kbd> aeglasemalt · <kbd>F</kbd> andmed kaadrisse · <kbd>K</kbd> esita/peata · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> soojusrežiimid · <kbd>?</kbd> värvid",
   "app.empty.race.title": "Ühtegi ringi pole laaditud",
   "app.empty.race.hint": "Lohista siia kaks või enam ringifaili või laadi külgribalt demoringid.",
   "app.tab.plan": "Taktika",

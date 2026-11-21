@@ -2,6 +2,7 @@ import { createRoot } from 'react-dom/client';
 import { App } from './App';
 import { startLanguage } from './i18n';
 import { applyMotionVars } from './ui/motion';
+import { applyTheme } from './ui/shell/shellStore';
 import { useVersus } from './ui/versus/VersusPanel';
 import { useStore } from './state/store';
 import { useInspectStore } from './state/inspectStore';
@@ -125,5 +126,6 @@ void startLanguage()
   .catch(() => undefined)
   .then(() => {
     applyMotionVars();
+    applyTheme();
     createRoot(el).render(<App />);
   });

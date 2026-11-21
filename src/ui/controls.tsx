@@ -1,4 +1,5 @@
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { rememberSection, registerSection, sectionId, wasOpen } from './shell/sections';
 import { Jog } from './Jog';
 import { num, t } from '../i18n';
 import { NumberBox } from './NumberBox';
@@ -14,12 +15,39 @@ export function Section({
   defaultOpen?: boolean;
   right?: ReactNode;
 }) {
-  const [open, setOpen] = useState(defaultOpen);
+  // Kept by the key of the title, so a section left open is open again next
+  // time and in any language. A section the panel opens by itself (it has
+  // something to show) is open whatever was kept: memory never hides it.
+  const id = useMemo(() => sectionId(title), [title]);
+  const [open, setOpenState] = useState(() => defaultOpen || wasOpen(id));
+  const setOpen = (v: boolean) => {
+    setOpenState(v);
+    rememberSection(id, v);
+  };
+  // The command palette opens a section by its id (ui/shell/sections.ts).
+  useEffect(
+    () =>
+      registerSection(id, () => {
+        setOpenState(true);
+        rememberSection(id, true);
+      }),
+    [id],
+  );
   return (
-    <div className={`section${open ? ' open' : ''}`}>
-      <header onClick={() => setOpen((v) => !v)}>
+    <div className={`section${open ? ' open' : ''}`} data-section={id}>
+      <header
+        role="button"
+        tabIndex={0}
+        aria-expanded={open}
+        onClick={() => setOpen(!open)}
+        onKeyDown={(e) => {
+          if (e.target !== e.currentTarget || (e.key !== 'Enter' && e.key !== ' ')) return;
+          e.preventDefault();
+          setOpen(!open);
+        }}
+      >
         <span>
-          <span className="chev">▶</span> {title}
+          <span className="chev" aria-hidden="true">▶</span> {title}
         </span>
         {right}
       </header>

@@ -29,8 +29,6 @@
   "app.fatal": "Не вдається ініціалізувати рендерер.",
   "app.empty.heat.title": "Набір даних не завантажено",
   "app.empty.heat.hint": "Для початку згенеруйте синтетичний набір на бічній панелі.",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> політ · <kbd>Space</kbd>/<kbd>Q</kbd> вгору/вниз · перетягування — огляд · коліщатко = швидкість",
-  "app.help.keys": "<kbd>Shift</kbd> прискорення · <kbd>Alt</kbd> уповільнення · <kbd>F</kbd> показати дані повністю · <kbd>K</kbd> пуск/пауза · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> режими тепла · <kbd>?</kbd> кольори",
   "app.empty.race.title": "Кола не завантажено",
   "app.empty.race.hint": "Перетягніть сюди два або більше файлів кіл чи завантажте демо-кола з бічної панелі.",
   "app.tab.plan": "Тактика",

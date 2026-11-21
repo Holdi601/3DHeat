@@ -29,8 +29,6 @@
   "app.fatal": "A renderelő nem inicializálható.",
   "app.empty.heat.title": "Nincs betöltött adatkészlet",
   "app.empty.heat.hint": "Kezdésként generálj egy szintetikusat az oldalsávon.",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> repülés · <kbd>Space</kbd>/<kbd>Q</kbd> fel/le · húzás = körülnézés · görgő = sebesség",
-  "app.help.keys": "<kbd>Shift</kbd> gyorsítás · <kbd>Alt</kbd> lassítás · <kbd>F</kbd> adatok bekeretezése · <kbd>K</kbd> lejátszás/szünet · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> hő módok · <kbd>?</kbd> színek",
   "app.empty.race.title": "Nincsenek betöltött körök",
   "app.empty.race.hint": "Húzz ide két vagy több körfájlt, vagy töltsd be a demóköröket az oldalsávról.",
   "app.tab.plan": "Taktika",

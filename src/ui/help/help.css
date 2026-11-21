@@ -10,9 +10,9 @@
 }
 
 .help-button.on {
-  background: #2a7be0;
-  border-color: #2a7be0;
-  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
 }
 
 .help-panel {
@@ -150,4 +150,11 @@
   width: 8px;
   height: 8px;
   border-radius: 2px;
+}
+
+/* A control under the pointer: its name, then what it does. */
+.help-control .help-about {
+  display: block;
+  margin-top: 2px;
+  color: var(--text-dim);
 }

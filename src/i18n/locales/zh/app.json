@@ -29,8 +29,6 @@
   "app.fatal": "无法初始化渲染器。",
   "app.empty.heat.title": "未加载数据集",
   "app.empty.heat.hint": "从侧边栏生成一个合成数据集即可开始。",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> 飞行 · <kbd>Space</kbd>/<kbd>Q</kbd> 上升/下降 · 拖动以环视 · 滚轮 = 速度",
-  "app.help.keys": "<kbd>Shift</kbd> 加速 · <kbd>Alt</kbd> 减速 · <kbd>F</kbd> 聚焦数据 · <kbd>K</kbd> 播放/暂停 · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> 热度模式 · <kbd>?</kbd> 颜色",
   "app.empty.race.title": "未加载任何圈",
   "app.empty.race.hint": "将两个或更多圈文件拖放到这里，或从侧边栏加载演示圈。",
   "app.tab.plan": "战术",

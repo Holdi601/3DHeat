@@ -29,8 +29,6 @@
   "app.fatal": "Izrisovalnika ni mogoče inicializirati.",
   "app.empty.heat.title": "Ni naloženega nabora podatkov",
   "app.empty.heat.hint": "Za začetek v stranski vrstici ustvarite sintetičnega.",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> letenje · <kbd>Space</kbd>/<kbd>Q</kbd> gor/dol · vlecite za pogled · kolesce = hitrost",
-  "app.help.keys": "<kbd>Shift</kbd> pospešitev · <kbd>Alt</kbd> počasi · <kbd>F</kbd> uokviri podatke · <kbd>K</kbd> predvajaj/premor · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> načini toplote · <kbd>?</kbd> barve",
   "app.empty.race.title": "Ni naloženih krogov",
   "app.empty.race.hint": "Sem spustite dve ali več datotek s krogi ali pa v stranski vrstici naložite demo kroge.",
   "app.tab.plan": "Taktika",

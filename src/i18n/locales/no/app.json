@@ -29,8 +29,6 @@
   "app.fatal": "Kan ikke initialisere rendereren.",
   "app.empty.heat.title": "Ingen datasett lastet inn",
   "app.empty.heat.hint": "Generer et syntetisk datasett fra sidepanelet for å komme i gang.",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> fly · <kbd>Space</kbd>/<kbd>Q</kbd> opp/ned · dra for å se rundt · hjul = fart",
-  "app.help.keys": "<kbd>Shift</kbd> raskere · <kbd>Alt</kbd> saktere · <kbd>F</kbd> ramme inn data · <kbd>K</kbd> spill av/pause · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> varmemoduser · <kbd>?</kbd> farger",
   "app.empty.race.title": "Ingen runder lastet inn",
   "app.empty.race.hint": "Slipp to eller flere rundefiler her, eller last inn demorundene fra sidepanelet.",
   "app.tab.plan": "Taktikk",

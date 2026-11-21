@@ -29,8 +29,6 @@
   "app.fatal": "Ir-renderer ma jistax jiġi inizjalizzat.",
   "app.empty.heat.title": "Ebda dataset mgħobbi",
   "app.empty.heat.hint": "Ġenera wieħed sintetiku mis-sidebar biex tibda.",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> tir · <kbd>Space</kbd>/<kbd>Q</kbd> 'il fuq/'l isfel · kaxkar biex tħares · rota tal-maws = veloċità",
-  "app.help.keys": "<kbd>Shift</kbd> aktar malajr · <kbd>Alt</kbd> bil-mod · <kbd>F</kbd> daħħal id-dejta fil-qafas · <kbd>K</kbd> ħaddem/pawża · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> modi tas-sħana · <kbd>?</kbd> kuluri",
   "app.empty.race.title": "Ebda dawra mgħobbija",
   "app.empty.race.hint": "Itfa' żewġ fajls ta' dawriet jew aktar hawn, jew għabbi d-dawriet tad-demo mis-sidebar.",
   "app.tab.plan": "Tattika",

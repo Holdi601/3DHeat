@@ -29,8 +29,6 @@
   "app.fatal": "Није могуће покренути рендерер.",
   "app.empty.heat.title": "Није учитан ниједан скуп података",
   "app.empty.heat.hint": "За почетак генеришите синтетички скуп у бочној траци.",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> летење · <kbd>Space</kbd>/<kbd>Q</kbd> горе/доле · превлачење за поглед · точкић = брзина",
-  "app.help.keys": "<kbd>Shift</kbd> убрзање · <kbd>Alt</kbd> успоравање · <kbd>F</kbd> уоквири податке · <kbd>K</kbd> пусти/паузирај · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> режими топлоте · <kbd>?</kbd> боје",
   "app.empty.race.title": "Нису учитани кругови",
   "app.empty.race.hint": "Превуците овде две или више датотека кругова или учитајте демо кругове из бочне траке.",
   "app.tab.plan": "Тактика",

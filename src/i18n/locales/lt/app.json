@@ -29,8 +29,6 @@
   "app.fatal": "Nepavyko inicijuoti atvaizdavimo variklio.",
   "app.empty.heat.title": "Neįkeltas joks duomenų rinkinys",
   "app.empty.heat.hint": "Norėdami pradėti, sugeneruokite sintetinį rinkinį šoninėje juostoje.",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> skrydis · <kbd>Space</kbd>/<kbd>Q</kbd> aukštyn/žemyn · vilkite, kad apsidairytumėte · ratukas = greitis",
-  "app.help.keys": "<kbd>Shift</kbd> greičiau · <kbd>Alt</kbd> lėčiau · <kbd>F</kbd> kadruoti duomenis · <kbd>K</kbd> groti / pristabdyti · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> šilumos režimai · <kbd>?</kbd> spalvos",
   "app.empty.race.title": "Neįkelta jokių ratų",
   "app.empty.race.hint": "Nutempkite čia du ar daugiau ratų failų arba įkelkite demonstracinius ratus šoninėje juostoje.",
   "app.tab.plan": "Taktika",

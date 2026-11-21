@@ -29,8 +29,6 @@
   "app.fatal": "No es pot inicialitzar el renderitzador.",
   "app.empty.heat.title": "No hi ha cap conjunt de dades carregat",
   "app.empty.heat.hint": "Genera'n un de sintètic des de la barra lateral per començar.",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> volar · <kbd>Space</kbd>/<kbd>Q</kbd> amunt/avall · arrossega per mirar · roda = velocitat",
-  "app.help.keys": "<kbd>Shift</kbd> accelerar · <kbd>Alt</kbd> alentir · <kbd>F</kbd> enquadrar les dades · <kbd>K</kbd> reproduir/pausa · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> modes de calor · <kbd>?</kbd> colors",
   "app.empty.race.title": "No hi ha cap volta carregada",
   "app.empty.race.hint": "Deixa anar aquí dos o més fitxers de volta, o carrega les voltes de demostració des de la barra lateral.",
   "app.tab.plan": "Tàctica",

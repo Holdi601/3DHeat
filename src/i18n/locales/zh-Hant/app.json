@@ -29,8 +29,6 @@
   "app.fatal": "無法初始化渲染器。",
   "app.empty.heat.title": "尚未載入資料集",
   "app.empty.heat.hint": "從側邊欄產生一個合成資料集即可開始。",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> 飛行 · <kbd>Space</kbd>／<kbd>Q</kbd> 上升／下降 · 拖曳以環視 · 滾輪 = 速度",
-  "app.help.keys": "<kbd>Shift</kbd> 加速 · <kbd>Alt</kbd> 減速 · <kbd>F</kbd> 對準資料 · <kbd>K</kbd> 播放／暫停 · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> 熱度模式 · <kbd>?</kbd> 顏色",
   "app.empty.race.title": "尚未載入任何圈",
   "app.empty.race.hint": "將兩個以上的單圈檔案拖放到這裡，或從側邊欄載入示範圈。",
   "app.tab.plan": "戰術",

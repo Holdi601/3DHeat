@@ -29,8 +29,6 @@
   "app.fatal": "Nevar inicializēt renderētāju.",
   "app.empty.heat.title": "Nav ielādēta datu kopa",
   "app.empty.heat.hint": "Lai sāktu, ģenerē sintētisku datu kopu sānjoslā.",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> lidot · <kbd>Space</kbd>/<kbd>Q</kbd> augšup/lejup · velc, lai skatītos apkārt · ritenītis = ātrums",
-  "app.help.keys": "<kbd>Shift</kbd> paātrināt · <kbd>Alt</kbd> lēnāk · <kbd>F</kbd> ietvert datus · <kbd>K</kbd> atskaņot/pauze · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> siltuma režīmi · <kbd>?</kbd> krāsas",
   "app.empty.race.title": "Nav ielādētu apļu",
   "app.empty.race.hint": "Ievelc šeit divus vai vairāk apļu failus vai ielādē demonstrācijas apļus no sānjoslas.",
   "app.tab.plan": "Taktika",

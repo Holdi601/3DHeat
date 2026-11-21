@@ -50,7 +50,17 @@ export function setMarkedText(fn: ((text: string) => string) | null): void {
 }
 
 /** The message `key` in the current language, `values` filled in. */
-export function t(key: string, values: Values = {}): string {
+export function t(key: string, values?: Values): string {
+  const out = say(key, values ?? NONE);
+  // Which key said these words last: a section's title read back to its key (`keyOf`).
+  if (values === undefined && out !== key) said.set(out, key);
+  return out;
+}
+
+const NONE: Values = {};
+const said = new Map<string, string>();
+
+function say(key: string, values: Values): string {
   const text = catalog[key] ?? english[key];
   if (text === undefined) {
     if (import.meta.env.DEV) console.warn(`i18n: no message "${key}"`);
@@ -64,6 +74,31 @@ export function t(key: string, values: Values = {}): string {
     out = formatMessage(english[key] ?? key, values, 'en');
   }
   return marked && out.includes(MARK) ? marked(out) : out;
+}
+
+let reverse: { catalog: Catalog; map: Map<string, string> } | null = null;
+
+/**
+ * The key of a message, from its words in the current language: what a label
+ * on the screen was written from, so a remembered panel or a command found by
+ * its label is the same in every language. Only messages without values; built
+ * once per language, on first use. Words two messages share are read back to
+ * the one that said them last, which is the one on the screen.
+ */
+export function keyOf(text: string): string | undefined {
+  const last = said.get(text);
+  if (last !== undefined && (catalog[last] ?? english[last]) !== undefined) return last;
+  if (!reverse || reverse.catalog !== catalog) {
+    const map = new Map<string, string>();
+    for (const key of Object.keys(english)) {
+      const raw = catalog[key] ?? english[key];
+      if (raw.includes('{')) continue;
+      const said = say(key, NONE);
+      if (!map.has(said)) map.set(said, key);
+    }
+    reverse = { catalog, map };
+  }
+  return reverse.map.get(text);
 }
 
 /** Whether a message exists, in English at least. */

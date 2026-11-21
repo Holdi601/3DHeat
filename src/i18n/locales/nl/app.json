@@ -29,8 +29,6 @@
   "app.fatal": "Kan de renderer niet initialiseren.",
   "app.empty.heat.title": "Geen dataset geladen",
   "app.empty.heat.hint": "Genereer om te beginnen een synthetische dataset in de zijbalk.",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> vliegen · <kbd>Space</kbd>/<kbd>Q</kbd> omhoog/omlaag · slepen om rond te kijken · wiel = snelheid",
-  "app.help.keys": "<kbd>Shift</kbd> sneller · <kbd>Alt</kbd> langzamer · <kbd>F</kbd> data in beeld · <kbd>K</kbd> afspelen/pauze · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> warmtemodi · <kbd>?</kbd> kleuren",
   "app.empty.race.title": "Geen rondes geladen",
   "app.empty.race.hint": "Sleep hier twee of meer rondebestanden naartoe, of laad de demorondes vanuit de zijbalk.",
   "app.tab.plan": "Tactiek",

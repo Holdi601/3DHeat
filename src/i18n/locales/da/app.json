@@ -29,8 +29,6 @@
   "app.fatal": "Kan ikke initialisere rendereren.",
   "app.empty.heat.title": "Intet datasæt indlæst",
   "app.empty.heat.hint": "Generér et syntetisk datasæt fra sidepanelet for at komme i gang.",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> flyv · <kbd>Space</kbd>/<kbd>Q</kbd> op/ned · træk for at se dig om · hjul = hastighed",
-  "app.help.keys": "<kbd>Shift</kbd> boost · <kbd>Alt</kbd> langsomt · <kbd>F</kbd> indram data · <kbd>K</kbd> afspil/pause · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> varmetilstande · <kbd>?</kbd> farver",
   "app.empty.race.title": "Ingen omgange indlæst",
   "app.empty.race.hint": "Slip to eller flere omgangsfiler her, eller indlæs demo-omgangene fra sidepanelet.",
   "app.tab.plan": "Taktik",

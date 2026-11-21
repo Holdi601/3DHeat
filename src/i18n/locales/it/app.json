@@ -29,8 +29,6 @@
   "app.fatal": "Impossibile inizializzare il renderer.",
   "app.empty.heat.title": "Nessun dataset caricato",
   "app.empty.heat.hint": "Generane uno sintetico dalla barra laterale per iniziare.",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> vola · <kbd>Space</kbd>/<kbd>Q</kbd> su/giù · trascina per guardare · rotellina = velocità",
-  "app.help.keys": "<kbd>Shift</kbd> boost · <kbd>Alt</kbd> lento · <kbd>F</kbd> inquadra i dati · <kbd>K</kbd> play/pausa · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> modalità di calore · <kbd>?</kbd> colori",
   "app.empty.race.title": "Nessun giro caricato",
   "app.empty.race.hint": "Trascina qui due o più file di giro, oppure carica i giri demo dalla barra laterale.",
   "app.tab.plan": "Tattica",

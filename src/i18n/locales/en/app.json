@@ -29,8 +29,6 @@
   "app.fatal": "Cannot initialise the renderer.",
   "app.empty.heat.title": "No dataset loaded",
   "app.empty.heat.hint": "Generate a synthetic one from the sidebar to start.",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> fly · <kbd>Space</kbd>/<kbd>Q</kbd> up/down · drag to look · wheel = speed",
-  "app.help.keys": "<kbd>Shift</kbd> boost · <kbd>Alt</kbd> slow · <kbd>F</kbd> frame data · <kbd>K</kbd> play/pause · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> heat modes · <kbd>?</kbd> colours",
   "app.empty.race.title": "No laps loaded",
   "app.empty.race.hint": "Drop two or more lap files here, or load the demo laps from the sidebar.",
   "app.tab.plan": "Tactics",

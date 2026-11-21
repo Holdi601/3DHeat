@@ -29,8 +29,6 @@
   "app.fatal": "Der Renderer kann nicht initialisiert werden.",
   "app.empty.heat.title": "Kein Datensatz geladen",
   "app.empty.heat.hint": "Erzeuge zum Start einen synthetischen in der Seitenleiste.",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> fliegen · <kbd>Leertaste</kbd>/<kbd>Q</kbd> hoch/runter · ziehen zum Umsehen · Mausrad = Tempo",
-  "app.help.keys": "<kbd>Shift</kbd> Boost · <kbd>Alt</kbd> langsam · <kbd>F</kbd> Daten einpassen · <kbd>K</kbd> Wiedergabe/Pause · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> Heatmap-Modi · <kbd>?</kbd> Farben",
   "app.empty.race.title": "Keine Runden geladen",
   "app.empty.race.hint": "Zieh zwei oder mehr Rundendateien hierher oder lade die Demo-Runden aus der Seitenleiste.",
   "app.tab.plan": "Taktik",

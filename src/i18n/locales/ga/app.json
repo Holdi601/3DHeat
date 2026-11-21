@@ -29,8 +29,6 @@
   "app.fatal": "Ní féidir an rindreálaí a thúsú.",
   "app.empty.heat.title": "Níl aon tacar sonraí lódáilte",
   "app.empty.heat.hint": "Gin ceann sintéiseach ón mbarra taoibh chun tosú.",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> eitil · <kbd>Space</kbd>/<kbd>Q</kbd> suas/síos · tarraing chun breathnú · roth = luas",
-  "app.help.keys": "<kbd>Shift</kbd> treisiú · <kbd>Alt</kbd> go mall · <kbd>F</kbd> frámaigh na sonraí · <kbd>K</kbd> seinn/sos · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> móid teasa · <kbd>?</kbd> dathanna",
   "app.empty.race.title": "Níl aon chuaird lódáilte",
   "app.empty.race.hint": "Scaoil dhá chomhad cuairte nó níos mó anseo, nó lódáil na cuairteanna samplacha ón mbarra taoibh.",
   "app.tab.plan": "Beartaíocht",

@@ -29,8 +29,6 @@
   "app.fatal": "Nie można zainicjować renderera.",
   "app.empty.heat.title": "Nie wczytano zbioru danych",
   "app.empty.heat.hint": "Na początek wygeneruj syntetyczny zbiór na pasku bocznym.",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> lot · <kbd>Space</kbd>/<kbd>Q</kbd> w górę/w dół · przeciągnij, aby się rozejrzeć · kółko = prędkość",
-  "app.help.keys": "<kbd>Shift</kbd> szybciej · <kbd>Alt</kbd> wolniej · <kbd>F</kbd> pokaż dane · <kbd>K</kbd> odtwórz/pauza · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> tryby ciepła · <kbd>?</kbd> kolory",
   "app.empty.race.title": "Nie wczytano okrążeń",
   "app.empty.race.hint": "Upuść tutaj dwa lub więcej plików okrążeń albo wczytaj okrążenia demonstracyjne z paska bocznego.",
   "app.tab.plan": "Taktyka",

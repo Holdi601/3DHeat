@@ -29,8 +29,6 @@
   "app.fatal": "Impossible d’initialiser le moteur de rendu.",
   "app.empty.heat.title": "Aucun jeu de données chargé",
   "app.empty.heat.hint": "Générez-en un synthétique depuis la barre latérale pour commencer.",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> voler · <kbd>Space</kbd>/<kbd>Q</kbd> monter/descendre · glisser pour regarder · molette = vitesse",
-  "app.help.keys": "<kbd>Shift</kbd> accélérer · <kbd>Alt</kbd> ralentir · <kbd>F</kbd> cadrer les données · <kbd>K</kbd> lecture/pause · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> modes de chaleur · <kbd>?</kbd> couleurs",
   "app.empty.race.title": "Aucun tour chargé",
   "app.empty.race.hint": "Déposez ici deux fichiers de tour ou plus, ou chargez les tours de démo depuis la barre latérale.",
   "app.tab.plan": "Tactique",

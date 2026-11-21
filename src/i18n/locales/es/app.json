@@ -29,8 +29,6 @@
   "app.fatal": "No se puede inicializar el renderizador.",
   "app.empty.heat.title": "No hay ningún conjunto de datos cargado",
   "app.empty.heat.hint": "Genera uno sintético desde la barra lateral para empezar.",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> volar · <kbd>Space</kbd>/<kbd>Q</kbd> subir/bajar · arrastra para mirar · rueda = velocidad",
-  "app.help.keys": "<kbd>Shift</kbd> acelerar · <kbd>Alt</kbd> despacio · <kbd>F</kbd> encuadrar los datos · <kbd>K</kbd> reproducir/pausa · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> modos de calor · <kbd>?</kbd> colores",
   "app.empty.race.title": "No hay vueltas cargadas",
   "app.empty.race.hint": "Suelta aquí dos o más archivos de vuelta, o carga las vueltas de demostración desde la barra lateral.",
   "app.tab.plan": "Táctica",

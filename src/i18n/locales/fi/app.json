@@ -29,8 +29,6 @@
   "app.fatal": "Renderöijää ei voi alustaa.",
   "app.empty.heat.title": "Aineistoa ei ole ladattu",
   "app.empty.heat.hint": "Aloita luomalla synteettinen aineisto sivupalkista.",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> lennä · <kbd>Space</kbd>/<kbd>Q</kbd> ylös/alas · katsele vetämällä · rulla = nopeus",
-  "app.help.keys": "<kbd>Shift</kbd> nopeammin · <kbd>Alt</kbd> hitaammin · <kbd>F</kbd> rajaa data · <kbd>K</kbd> toisto/tauko · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> lämpökarttatilat · <kbd>?</kbd> värit",
   "app.empty.race.title": "Kierroksia ei ole ladattu",
   "app.empty.race.hint": "Pudota tähän kaksi tai useampia kierrostiedostoja tai lataa esimerkkikierrokset sivupalkista.",
   "app.tab.plan": "Taktiikka",

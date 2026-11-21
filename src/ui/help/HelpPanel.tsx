@@ -186,6 +186,7 @@ function MatchKey() {
 function AtPointer() {
   const engine = useEngine();
   const [target, setTarget] = useState<HelpTarget | null>(null);
+  const [control, setControl] = useState<ControlHelp | null>(null);
   useEffect(() => {
     const figureAt = (x: number, y: number) => {
       if (!engine) return false;
@@ -193,7 +194,11 @@ function AtPointer() {
       if (x < r.left || y < r.top || x > r.right || y > r.bottom) return false;
       return engine.figureAt(x - r.left, y - r.top, true) !== null;
     };
-    const read = () => setTarget(targetInPage(lastPointer.x, lastPointer.y, figureAt));
+    const read = () => {
+      const c = controlAt(lastPointer.x, lastPointer.y);
+      setControl(c);
+      setTarget(c ? null : targetInPage(lastPointer.x, lastPointer.y, figureAt));
+    };
     read();
     let timer = 0;
     const onMove = () => {
@@ -207,9 +212,52 @@ function AtPointer() {
   }, [engine]);
   return (
     <KeyGroup title={t('help.at.title')}>
-      <KeyRow>{target ? t(`help.at.${target}`) : t('help.at.none')}</KeyRow>
+      {control ? (
+        <div className="help-row help-control">
+          <i className="none" />
+          <span>
+            <b>{control.name}</b>
+            {control.about && <span className="help-about">{control.about}</span>}
+          </span>
+        </div>
+      ) : (
+        <KeyRow>{target ? t(`help.at.${target}`) : t('help.at.none')}</KeyRow>
+      )}
     </KeyGroup>
   );
+}
+
+/** A control of the panels, the bars or the settings under the pointer: its name and what its tooltip or hint says. */
+interface ControlHelp {
+  name: string;
+  about: string | null;
+}
+
+const words = (el: Element | null | undefined) => el?.textContent?.replace(/\s+/g, ' ').trim() ?? '';
+
+/**
+ * The control under (x, y), read from the page a few times a second at most
+ * while the help is open: every control explains itself by its label and the
+ * tooltip or hint it already carries, so nothing has to be written twice.
+ */
+function controlAt(x: number, y: number): ControlHelp | null {
+  if (x < 0 || typeof document.elementFromPoint !== 'function') return null;
+  const el = document.elementFromPoint(x, y) as HTMLElement | null;
+  if (!el || !el.closest('.sidebar, .timeline-bar, .quick-bar, .settings-popover, .help-panel')) return null;
+  if (el.closest('.help-panel')) return null;
+  const ctl = el.closest<HTMLElement>('button, select, input, textarea, label, [role="button"], [role="tab"], .field, summary');
+  if (!ctl) return null;
+  const field = ctl.closest('.field');
+  const name =
+    ctl.getAttribute('aria-label') ||
+    words(field?.querySelector('.label > span')) ||
+    words(ctl.tagName === 'INPUT' || ctl.tagName === 'SELECT' ? ctl.closest('label') : ctl).slice(0, 80) ||
+    ctl.getAttribute('title') ||
+    '';
+  if (!name) return null;
+  const titled = ctl.closest<HTMLElement>('[title]');
+  const about = ctl.getAttribute('data-tip') || titled?.getAttribute('title') || words(field?.querySelector('.hint')) || null;
+  return { name: name.replace(/^▶\s*/, ''), about: about && about !== name ? about : null };
 }
 
 /** The key over the view, while the help mode is on. */

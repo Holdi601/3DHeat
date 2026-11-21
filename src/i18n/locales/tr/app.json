@@ -29,8 +29,6 @@
   "app.fatal": "Render motoru başlatılamıyor.",
   "app.empty.heat.title": "Yüklü veri kümesi yok",
   "app.empty.heat.hint": "Başlamak için kenar çubuğundan sentetik bir veri kümesi oluşturun.",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> uçuş · <kbd>Space</kbd>/<kbd>Q</kbd> yukarı/aşağı · sürükleyerek bakış · tekerlek = hız",
-  "app.help.keys": "<kbd>Shift</kbd> hızlı · <kbd>Alt</kbd> yavaş · <kbd>F</kbd> veriyi çerçevele · <kbd>K</kbd> oynat/duraklat · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> ısı modları · <kbd>?</kbd> renkler",
   "app.empty.race.title": "Yüklü tur yok",
   "app.empty.race.hint": "İki veya daha fazla tur dosyasını buraya bırakın ya da kenar çubuğundan demo turları yükleyin.",
   "app.tab.plan": "Taktik",

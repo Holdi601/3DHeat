@@ -29,8 +29,6 @@
   "app.fatal": "Det går inte att initiera renderaren.",
   "app.empty.heat.title": "Ingen datamängd inläst",
   "app.empty.heat.hint": "Generera en syntetisk i sidopanelen för att börja.",
-  "app.help.move": "<kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> flyg · <kbd>Space</kbd>/<kbd>Q</kbd> upp/ner · dra för att titta · hjul = hastighet",
-  "app.help.keys": "<kbd>Shift</kbd> snabbare · <kbd>Alt</kbd> långsammare · <kbd>F</kbd> rama in data · <kbd>K</kbd> spela/pausa · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> värmelägen · <kbd>?</kbd> färger",
   "app.empty.race.title": "Inga varv inlästa",
   "app.empty.race.hint": "Släpp två eller fler varvfiler här, eller läs in demovarven från sidopanelen.",
   "app.tab.plan": "Taktik",
