@@ -21,6 +21,8 @@ function rng(seed: number) {
 
 const POWER = [500, 300];
 const CHOKE = [500, 700];
+/** Where, in the first match only, every kill is made from (`oneMatch`). */
+const ONE = [205, 605];
 
 /**
  * Matches of two teams of six on a 1000 x 1000 ground. Everyone walks from
@@ -30,7 +32,7 @@ const CHOKE = [500, 700];
  * within half a minute of the spawn (the spawn trap). Without it, kills and
  * deaths fall anywhere on the way, by anyone.
  */
-function synth(planted: boolean, matches = 30, seed = 7): Dataset {
+function synth(planted: boolean, matches = 30, seed = 7, oneMatch = false): Dataset {
   const r = rng(seed);
   type Row = { x: number; z: number; t: number; p: number; s: number; e: number; team: number; life: number };
   const rows: Row[] = [];
@@ -71,8 +73,9 @@ function synth(planted: boolean, matches = 30, seed = 7): Dataset {
       let killer = kTeam * 6 + Math.floor(r() * 6);
       if (planted && kTeam === 0 && r() < 0.4) killer = 0;
       const atPower = planted && kTeam === 0 && r() < 0.25;
-      const kx = atPower ? POWER[0] + (r() - 0.5) * 1.5 : d.x + (r() - 0.5) * 60;
-      const kz = atPower ? POWER[1] + (r() - 0.5) * 1.5 : d.z + (r() - 0.5) * 60;
+      const one = oneMatch && s === 0;
+      const kx = one ? ONE[0] + (r() - 0.5) * 1.5 : atPower ? POWER[0] + (r() - 0.5) * 1.5 : d.x + (r() - 0.5) * 60;
+      const kz = one ? ONE[1] + (r() - 0.5) * 1.5 : atPower ? POWER[1] + (r() - 0.5) * 1.5 : d.z + (r() - 0.5) * 60;
       rows.push({ x: kx, z: kz, t: d.t, p: killer, s, e: 1, team: kTeam, life: 0 });
     }
   }
@@ -197,6 +200,50 @@ describe('insights', () => {
     expect(r.detectors.find((d) => d.id === 'cover')!.tests).toBe(2);
     // Every event's cover read against 31,000 level vertices: real work, given room while the whole suite runs.
   }, 30_000);
+
+  it('says in how many matches a place holds, and leaves out what one match made', () => {
+    const r = insightsSync(synth(true, 30, 7, true), FULL_SCOPE);
+    const near = (i: { place: { x: number; z: number } | null }, at: number[]) => !!i.place && Math.hypot(i.place.x - at[0], i.place.z - at[1]) < 30;
+    // The power position holds match after match, and no match makes most of it.
+    const power = r.insights.find((i) => i.kind === 'power.kd' && near(i, POWER))!;
+    expect(power.spread!.matches).toBe(30);
+    expect(power.spread!.holding).toBeGreaterThan(10);
+    expect(power.spread!.topShare).toBeLessThan(0.5);
+    // Every kill of one match from one spot is that match, not the map.
+    expect(r.insights.some((i) => near(i, ONE) && i.kind.startsWith('power.'))).toBe(false);
+    const ids = new Set(r.insights.map((i) => i.id));
+    expect(r.dropped!.some((d) => d.reason === 'oneMatch' && d.id.includes('power.kd') && !ids.has(d.id))).toBe(true);
+  });
+
+  it('counts matches by a match column where the load mapped no session', () => {
+    const ds = synth(true, 12, 7);
+    const ids = ds.sessionId!;
+    const noSession = {
+      ...ds,
+      sessionId: null,
+      sessionLabels: [],
+      sessionStart: null,
+      sessionEnd: null,
+      attrs: [...ds.attrs, { name: 'match', kind: 'category', data: ids, min: 0, max: 11, categories: ds.sessionLabels }],
+    } as unknown as Dataset;
+    const r = insightsSync(noSession, FULL_SCOPE);
+    expect(r.dataset.matches).toBe(12);
+    expect(r.insights.find((i) => i.kind === 'power.kd')?.spread?.matches).toBe(12);
+  });
+
+  it("names the side that makes a place's kills", () => {
+    const power = of('power.kd')[0];
+    expect(power.side).toEqual({ team: 'red', share: expect.any(Number), of: 'kills' });
+    expect(power.side!.share).toBeGreaterThan(0.65);
+  });
+
+  it('ranks strictly by usefulness, a few of each kind at most', () => {
+    const u = report.insights.filter((i) => i.usefulness !== undefined).map((i) => i.usefulness!);
+    expect(u).toEqual([...u].sort((a, b) => b - a));
+    const per = new Map<string, number>();
+    for (const i of report.insights) per.set(i.kind + (i.variant ?? ''), (per.get(i.kind + (i.variant ?? '')) ?? 0) + 1);
+    expect(Math.max(...per.values())).toBeLessThanOrEqual(5);
+  });
 
   it('finds no power position, spawn trap or star player in noise', () => {
     const noise = insightsSync(synth(false, 30, 11), FULL_SCOPE);

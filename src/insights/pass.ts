@@ -48,11 +48,15 @@ export interface Grid {
   cz: number;
 }
 
-/** A round cell size (1, 2 or 5 times a power of ten) that fits the extent in `FINE_MAX` cells. */
-export function gridFor(minX: number, minZ: number, maxX: number, maxZ: number): Grid {
+/**
+ * A round cell size (1, 2 or 5 times a power of ten) that fits the extent in
+ * `FINE_MAX` cells, never under `minCell` world units: a metre, in the data's
+ * units (`upm`), so data in inches is not cut into places a hand across.
+ */
+export function gridFor(minX: number, minZ: number, maxX: number, maxZ: number, minCell = 1): Grid {
   const w = Math.max(1e-6, maxX - minX);
   const h = Math.max(1e-6, maxZ - minZ);
-  const raw = Math.max(1, Math.max(w, h) / FINE_MAX);
+  const raw = Math.max(minCell > 0 ? minCell : 1, Math.max(w, h) / FINE_MAX);
   const mag = Math.pow(10, Math.floor(Math.log10(raw)));
   const f = [1, 2, 5, 10].map((m) => m * mag).find((s) => s >= raw * (1 - 1e-9)) ?? raw;
   const x0 = Math.floor(minX / f) * f;
@@ -77,6 +81,52 @@ export interface InsightChunk extends CompareChunk {
   target: Uint32Array | null;
 }
 
+/**
+ * Per match (session): the presence on the coarse grid and, sparsely, the
+ * events, crossings and flank credits per mid cell - so a finding over many
+ * matches can say in how many it holds and how much of it one match makes
+ * (`consistency.ts`). Left out (null) for one match, or when there are so many
+ * matches that the tables would not be small.
+ */
+export interface SessionTables {
+  S: number;
+  /** Event kinds, then the crossings and the flank credits as two more kinds. */
+  kinds: number;
+  /** Seconds (or samples) of presence per session. */
+  pres: Float64Array;
+  /** Per session and coarse cell: [s * coarse cells + c]. */
+  presC: Float32Array;
+  /** Per session and kind: [s * kinds + kind]. */
+  total: Float64Array;
+  /** Sparse: ((kind * S + s) * mid cells + cell) -> count. */
+  ev: Map<number, number>;
+  /** The map grew past `SESSION_EVENTS_MAX` entries: counts stop and the spread is not told. */
+  full: boolean;
+}
+
+/** Session x coarse cells at most for the session tables (float32: 32 MB). */
+const SESSION_CELLS_MAX = 8_000_000;
+/** Distinct (kind, session, cell) entries at most. */
+const SESSION_EVENTS_MAX = 3_000_000;
+
+function sessionTables(meta: InsightMeta): SessionTables | null {
+  const S = meta.sessions;
+  const C = meta.grid.cx * meta.grid.cz;
+  if (S < 2 || S * C > SESSION_CELLS_MAX) return null;
+  const kinds = meta.eventKinds + 2;
+  return { S, kinds, pres: new Float64Array(S), presC: new Float32Array(S * C), total: new Float64Array(S * kinds), ev: new Map(), full: false };
+}
+
+function countSession(st: SessionTables, kind: number, s: number, M: number, mi: number): void {
+  st.total[s * st.kinds + kind]++;
+  if (st.full) return;
+  const key = (kind * st.S + s) * M + mi;
+  const v = st.ev.get(key);
+  if (v !== undefined) st.ev.set(key, v + 1);
+  else if (st.ev.size >= SESSION_EVENTS_MAX) st.full = true;
+  else st.ev.set(key, 1);
+}
+
 /** Per life: where and when it started and how its first minute went. */
 export class Lives {
   n = 0;
@@ -90,6 +140,8 @@ export class Lives {
   contact = new Float32Array(1024);
   earlyKills = new Uint16Array(1024);
   earlyDeath = new Uint8Array(1024);
+  /** The life is an AI unit's (by the row it started on). */
+  ai = new Uint8Array(1024);
 
   push(x: number, y: number, z: number, cell: number, team: number, start: number): number {
     if (this.n === this.x.length) {
@@ -107,6 +159,7 @@ export class Lives {
       this.contact = grow(this.contact);
       this.earlyKills = grow(this.earlyKills);
       this.earlyDeath = grow(this.earlyDeath);
+      this.ai = grow(this.ai);
     }
     const i = this.n++;
     this.x[i] = x;
@@ -118,6 +171,7 @@ export class Lives {
     this.contact[i] = NaN;
     this.earlyKills[i] = 0;
     this.earlyDeath[i] = 0;
+    this.ai[i] = 0;
     return i;
   }
 }
@@ -175,6 +229,8 @@ export class Tracks {
   speed: Float32Array;
   dead: Uint8Array;
   life: Int32Array;
+  /** The life has left the cell it started in: in play, no longer waiting at its spawn. */
+  away: Uint8Array;
   cls: Int8Array;
   pair: Int32Array;
   ringCell: Int32Array;
@@ -191,6 +247,7 @@ export class Tracks {
     this.speed = new Float32Array(cap);
     this.dead = new Uint8Array(cap);
     this.life = new Int32Array(cap);
+    this.away = new Uint8Array(cap);
     this.cls = new Int8Array(cap);
     this.pair = new Int32Array(cap);
     this.ringCell = new Int32Array(cap * RING);
@@ -211,6 +268,7 @@ export class Tracks {
     this.speed[i] = NaN;
     this.dead[i] = 0;
     this.life[i] = -1;
+    this.away[i] = 0;
     this.cls[i] = -2;
     this.pair[i] = -1;
     this.ringCell.fill(-1, i * RING, i * RING + RING);
@@ -231,6 +289,7 @@ export class Tracks {
     this.speed = g(this.speed);
     this.dead = g(this.dead);
     this.life = g(this.life);
+    this.away = g(this.away);
     this.cls = g(this.cls);
     this.pair = g(this.pair);
     this.ringCell = g(this.ringCell);
@@ -273,6 +332,11 @@ export interface InsightJob {
   teamPres: Float64Array;
   teamKills: Float64Array;
   teamDeaths: Float64Array;
+  /** Kills and deaths per team and mid cell: [team * mid cells + cell]. */
+  mTeamKills: Float64Array;
+  mTeamDeaths: Float64Array;
+  /** Per match, for the spread of a finding over the matches; null for one. */
+  sess: SessionTables | null;
   speedPres: Float64Array;
   speedDeaths: Float64Array;
   lives: Lives;
@@ -330,6 +394,9 @@ export function createInsightJob(meta: InsightMeta, scope: CompareScope): Insigh
     teamPres: new Float64Array(T),
     teamKills: new Float64Array(T),
     teamDeaths: new Float64Array(T),
+    mTeamKills: new Float64Array(T * M),
+    mTeamDeaths: new Float64Array(T * M),
+    sess: sessionTables(meta),
     speedPres: new Float64Array(SPEED_BINS),
     speedDeaths: new Float64Array(SPEED_BINS),
     lives: new Lives(),
@@ -396,7 +463,8 @@ export function stepInsight(job: InsightJob, ch: InsightChunk): void {
     const x = px[j];
     const y = py[j];
     const z = pz[j];
-    if (!(x === x && y === y && z === z) || !rowShown(scope, ch, j)) continue;
+    // A row exactly at the origin is a converter's "no position" (an event it could not place), not a place.
+    if (!(x === x && y === y && z === z) || (x === 0 && y === 0 && z === 0) || !rowShown(scope, ch, j)) continue;
     job.shown++;
     const s = session ? session[j] : -1;
     if (job.sessAny && s >= 0 && s < S) job.sessAny[s] = 1;
@@ -436,6 +504,12 @@ export function stepInsight(job: InsightJob, ch: InsightChunk): void {
     const ac = actor && meta.actorMap ? meta.actorMap[actor[j]] ?? -1 : -1;
     const tm = team ? team[j] : -1;
     if (tm >= 0 && tm < job.teamPres.length) job.teamPres[tm] += d;
+    const st = job.sess;
+    if (st && s >= 0 && s < st.S) {
+      st.pres[s] += d;
+      st.presC[s * C + ci] += d;
+      if (kind >= 0) countSession(st, kind, s, M, mi);
+    }
     if (kind >= 0) {
       job.events[kind]++;
       job.mEvents[kind * M + mi]++;
@@ -446,12 +520,18 @@ export function stepInsight(job: InsightJob, ch: InsightChunk): void {
         if (ac >= 0) job.cActKills[ac * C + ci]++;
         const tk = target && meta.targetMap ? meta.targetMap[target[j]] ?? -1 : -1;
         if (k >= 0 && tk >= 0) job.cTarget[tk * C + ci]++;
-        if (tm >= 0 && tm < job.teamKills.length) job.teamKills[tm]++;
+        if (tm >= 0 && tm < job.teamKills.length) {
+          job.teamKills[tm]++;
+          job.mTeamKills[tm * M + mi]++;
+        }
       } else if (kind === DEATH) {
         job.fDeaths[fi]++;
         if (k >= 0) job.cDeaths[k * C + ci]++;
         if (ac >= 0) job.cActDeaths[ac * C + ci]++;
-        if (tm >= 0 && tm < job.teamDeaths.length) job.teamDeaths[tm]++;
+        if (tm >= 0 && tm < job.teamDeaths.length) {
+          job.teamDeaths[tm]++;
+          job.mTeamDeaths[tm * M + mi]++;
+        }
       }
     }
     const p = person ? person[j] : -1;
@@ -473,8 +553,13 @@ export function stepInsight(job: InsightJob, ch: InsightChunk): void {
     if (kind === SPAWN || (tr.dead[a] && moving && kind !== DEATH)) born = true;
     if (born && time) {
       tr.life[a] = job.lives.push(x, y, z, mi, tm, t);
+      if (ac === 1) job.lives.ai[tr.life[a]] = 1; // ACTORS[1] is the AI
       tr.dead[a] = 0;
+      tr.away[a] = 0;
     }
+    // In play once it has left the cell its life started in (a life of unknown start always is).
+    const lifeNow = tr.life[a];
+    if (!tr.away[a] && (lifeNow < 0 || job.lives.cell[lifeNow] !== mi)) tr.away[a] = 1;
     // Speed from the last movement sample.
     if (moving && time) {
       const lt = tr.t[a];
@@ -486,8 +571,9 @@ export function stepInsight(job: InsightJob, ch: InsightChunk): void {
       tr.z[a] = z;
       tr.t[a] = t;
     }
+    // Speed while in play: time waiting at a spawn (a freeze time, a parked unit) is no speed to die at.
     const sp = tr.speed[a];
-    if (sp === sp) {
+    if (sp === sp && tr.away[a]) {
       const b = speedBin(sp);
       job.speedPres[b] += d;
       if (kind === DEATH) job.speedDeaths[b]++;
@@ -511,6 +597,7 @@ export function stepInsight(job: InsightJob, ch: InsightChunk): void {
     const ring = a * RING;
     if (moving && mi !== tr.cell[a]) {
       job.mPasses[mi]++;
+      if (st && s >= 0 && s < st.S) countSession(st, meta.eventKinds, s, M, mi);
       tr.cell[a] = mi;
       const h = tr.ringHead[a];
       tr.ringCell[ring + h] = mi;
@@ -524,7 +611,10 @@ export function stepInsight(job: InsightJob, ch: InsightChunk): void {
         if (time && t - tr.ringT[ring + r] > APPROACH) continue;
         let dup = false;
         for (let q = 0; q < r; q++) if (tr.ringCell[ring + q] === c) dup = true;
-        if (!dup) job.mApproach[c]++;
+        if (!dup) {
+          job.mApproach[c]++;
+          if (st && s >= 0 && s < st.S) countSession(st, meta.eventKinds + 1, s, M, c);
+        }
       }
     }
     // The player in this class.

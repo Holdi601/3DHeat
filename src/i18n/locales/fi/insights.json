@@ -6,7 +6,7 @@
   "insights.counting": "Lasketaan… {pct}",
   "insights.error": "Laskenta epäonnistui: {error}",
   "insights.stale": "Suodattimet tai data ovat muuttuneet tämän laskennan jälkeen.",
-  "insights.summary": "{n} havaintoa {rows} rivistä {matches} ottelussa, vahvimmat ensin",
+  "insights.summary": "{n} lukemisen arvoista havaintoa {matches} {unit, select, round {erästä} other {ottelusta}}, hyödyllisimmät ensin",
   "insights.none": "Mikään ei erotu väärien löydösten osuudella {fdr}.",
   "insights.showTitle": "Näytä: kamera paikalle, sen eristävät suodattimet",
   "insights.reset": "Palauta suodattimet",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: voitettiin {withPct} {n1} kierroksesta, joissa puoli piti paikkaa {place}, kun taas {withoutPct} {n2} kierroksesta, ilman sitä ({diff} pistettä, 95% väliltä {lo}–{hi})",
   "insights.say.outcome.early": "{team}: voitettiin {withPct} {n1} kierroksesta, joissa puoli pääsi paikkaan {place} ensimmäisten 25 s aikana, kun taas {withoutPct} {n2} kierroksesta, muuten ({diff} pistettä, 95% väliltä {lo}–{hi})",
   "insights.say.outcome.playerUp": "{player} ({team}) lisäsi {wpa} kierroksen verran voittotodennäköisyyttä {rounds} kierroksella ({perRound} pistettä kierrosta kohti, 95% väliltä {lo}–{hi})",
-  "insights.say.outcome.playerDown": "{player} ({team}) menetti {wpa} kierroksen verran voittotodennäköisyyttä {rounds} kierroksella ({perRound} pistettä kierrosta kohti, 95% väliltä {lo}–{hi})"
+  "insights.say.outcome.playerDown": "{player} ({team}) menetti {wpa} kierroksen verran voittotodennäköisyyttä {rounds} kierroksella ({perRound} pistettä kierrosta kohti, 95% väliltä {lo}–{hi})",
+  "insights.skip.fewPersons": "alle neljän henkilön jäljet",
+  "insights.totals": "Yhteensä ({n})"
 }

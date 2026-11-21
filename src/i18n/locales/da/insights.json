@@ -6,7 +6,7 @@
   "insights.counting": "Tæller… {pct}",
   "insights.error": "Optællingen mislykkedes: {error}",
   "insights.stale": "Filtrene eller dataene er ændret, siden dette blev talt.",
-  "insights.summary": "{n} indsigter fra {rows} rækker i {matches} kampe, de stærkeste først",
+  "insights.summary": "{n} indsigter værd at læse fra {matches} {unit, select, round {runder} other {kampe}}, de mest nyttige først",
   "insights.none": "Intet skiller sig ud ved en falsk opdagelsesrate på {fdr}.",
   "insights.showTitle": "Vis den: kameraet på stedet, filtrene der isolerer det",
   "insights.reset": "Gendan filtre",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: vandt {withPct} af {n1} runder, hvor siden holdt {place}, mod {withoutPct} af {n2}, uden det ({diff} point, 95% fra {lo} til {hi})",
   "insights.say.outcome.early": "{team}: vandt {withPct} af {n1} runder, hvor siden nåede {place} inden for de første 25 s, mod {withoutPct} af {n2}, ellers ({diff} point, 95% fra {lo} til {hi})",
   "insights.say.outcome.playerUp": "{player} ({team}) tilføjede {wpa} runders sejrssandsynlighed over {rounds} runder ({perRound} point pr. runde, 95% fra {lo} til {hi})",
-  "insights.say.outcome.playerDown": "{player} ({team}) kostede {wpa} runders sejrssandsynlighed over {rounds} runder ({perRound} point pr. runde, 95% fra {lo} til {hi})"
+  "insights.say.outcome.playerDown": "{player} ({team}) kostede {wpa} runders sejrssandsynlighed over {rounds} runder ({perRound} point pr. runde, 95% fra {lo} til {hi})",
+  "insights.skip.fewPersons": "spor fra færre end fire personer",
+  "insights.totals": "I alt ({n})"
 }

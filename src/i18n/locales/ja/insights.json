@@ -6,7 +6,7 @@
   "insights.counting": "集計中… {pct}",
   "insights.error": "集計に失敗しました: {error}",
   "insights.stale": "集計後にフィルターまたはデータが変更されました。",
-  "insights.summary": "{matches} マッチ、{rows} 行から {n} 件のインサイト(強い順)",
+  "insights.summary": "{matches} {unit, select, round {ラウンド} other {マッチ}}から読む価値のある {n} 件のインサイト（役立つ順）",
   "insights.none": "誤発見率 {fdr} では目立つものはありません。",
   "insights.showTitle": "表示: その場所にカメラを合わせ、絞り込むフィルターを適用",
   "insights.reset": "フィルターを戻す",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}：{place}を押さえた場合（{n1}ラウンド）の勝率は{withPct}、押さえなかった場合（{n2}ラウンド）は{withoutPct}（{diff}ポイント、95%：{lo}～{hi}）",
   "insights.say.outcome.early": "{team}：最初の25 s以内に{place}へ到達した場合（{n1}ラウンド）の勝率は{withPct}、そうでない場合（{n2}ラウンド）は{withoutPct}（{diff}ポイント、95%：{lo}～{hi}）",
   "insights.say.outcome.playerUp": "{player}（{team}）は{rounds}ラウンドで{wpa}ラウンド分の勝利確率を上積み（1ラウンドあたり{perRound}ポイント、95%：{lo}～{hi}）",
-  "insights.say.outcome.playerDown": "{player}（{team}）は{rounds}ラウンドで{wpa}ラウンド分の勝利確率を失わせた（1ラウンドあたり{perRound}ポイント、95%：{lo}～{hi}）"
+  "insights.say.outcome.playerDown": "{player}（{team}）は{rounds}ラウンドで{wpa}ラウンド分の勝利確率を失わせた（1ラウンドあたり{perRound}ポイント、95%：{lo}～{hi}）",
+  "insights.skip.fewPersons": "4 人未満の軌跡",
+  "insights.totals": "合計（{n}）"
 }

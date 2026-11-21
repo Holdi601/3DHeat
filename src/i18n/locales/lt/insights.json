@@ -6,7 +6,7 @@
   "insights.counting": "Skaičiuojama… {pct}",
   "insights.error": "Skaičiavimas nepavyko: {error}",
   "insights.stale": "Nuo šio skaičiavimo filtrai ar duomenys pasikeitė.",
-  "insights.summary": "{n} įžvalgų iš {rows} eilučių {matches} rungtynėse, stipriausios pirmos",
+  "insights.summary": "{n} vertų perskaityti įžvalgų iš {matches} {unit, select, round {raundų} other {rungtynių}}, naudingiausios pirmos",
   "insights.none": "Esant klaidingų atradimų daliai {fdr}, niekas neišsiskiria.",
   "insights.showTitle": "Rodyti: kamera vietoje, filtrai, kurie ją išskiria",
   "insights.reset": "Atkurti filtrus",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: laimėta {withPct} iš {n1} raundų, kuriuose pusė laikė {place}, palyginti su {withoutPct} iš {n2}, be to ({diff} punktų, 95% nuo {lo} iki {hi})",
   "insights.say.outcome.early": "{team}: laimėta {withPct} iš {n1} raundų, kuriuose pusė pasiekė {place} per pirmąsias 25 s, palyginti su {withoutPct} iš {n2}, kitaip ({diff} punktų, 95% nuo {lo} iki {hi})",
   "insights.say.outcome.playerUp": "{player} ({team}) pridėjo {wpa} raundų pergalės tikimybės per {rounds} raundų ({perRound} punktų per raundą, 95% nuo {lo} iki {hi})",
-  "insights.say.outcome.playerDown": "{player} ({team}) prarado {wpa} raundų pergalės tikimybės per {rounds} raundų ({perRound} punktų per raundą, 95% nuo {lo} iki {hi})"
+  "insights.say.outcome.playerDown": "{player} ({team}) prarado {wpa} raundų pergalės tikimybės per {rounds} raundų ({perRound} punktų per raundą, 95% nuo {lo} iki {hi})",
+  "insights.skip.fewPersons": "mažiau nei keturių žmonių pėdsakai",
+  "insights.totals": "Iš viso ({n})"
 }

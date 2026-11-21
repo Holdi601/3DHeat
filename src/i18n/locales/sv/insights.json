@@ -6,7 +6,7 @@
   "insights.counting": "Räknar… {pct}",
   "insights.error": "Räkningen misslyckades: {error}",
   "insights.stale": "Filtren eller datan har ändrats sedan detta räknades.",
-  "insights.summary": "{n} insikter från {rows} rader i {matches} matcher, starkaste först",
+  "insights.summary": "{n} insikter värda att läsa från {matches} {unit, select, round {rundor} other {matcher}}, de mest användbara först",
   "insights.none": "Inget sticker ut vid en falsk upptäcktsfrekvens på {fdr}.",
   "insights.showTitle": "Visa den: kameran på platsen, filtren som isolerar den",
   "insights.reset": "Återställ filter",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: vann {withPct} av {n1} rundor, där sidan höll {place}, mot {withoutPct} av {n2}, utan det ({diff} poäng, 95% från {lo} till {hi})",
   "insights.say.outcome.early": "{team}: vann {withPct} av {n1} rundor, där sidan nådde {place} under de första 25 s, mot {withoutPct} av {n2}, annars ({diff} poäng, 95% från {lo} till {hi})",
   "insights.say.outcome.playerUp": "{player} ({team}) la till {wpa} rundors vinstsannolikhet över {rounds} rundor ({perRound} poäng per runda, 95% från {lo} till {hi})",
-  "insights.say.outcome.playerDown": "{player} ({team}) kostade {wpa} rundors vinstsannolikhet över {rounds} rundor ({perRound} poäng per runda, 95% från {lo} till {hi})"
+  "insights.say.outcome.playerDown": "{player} ({team}) kostade {wpa} rundors vinstsannolikhet över {rounds} rundor ({perRound} poäng per runda, 95% från {lo} till {hi})",
+  "insights.skip.fewPersons": "spår från färre än fyra personer",
+  "insights.totals": "Totalt ({n})"
 }

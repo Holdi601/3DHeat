@@ -6,7 +6,7 @@
   "insights.counting": "Counting… {pct}",
   "insights.error": "Counting failed: {error}",
   "insights.stale": "The filters or the data changed since this was counted.",
-  "insights.summary": "{n} findings from {rows} rows in {matches} matches, strongest first",
+  "insights.summary": "{n} findings worth reading from {matches} {unit, select, round {{matches, plural, one {round} other {rounds}}} other {{matches, plural, one {match} other {matches}}}}, most useful first",
   "insights.none": "Nothing stands out at a false discovery rate of {fdr}.",
   "insights.showTitle": "Show it: the camera on the place, the filters that isolate it",
   "insights.reset": "Restore filters",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team} won {withPct} of the {n1} rounds it held {place}, against {withoutPct} of {n2} without it ({diff} points, 95% {lo} to {hi})",
   "insights.say.outcome.early": "{team} won {withPct} of the {n1} rounds it reached {place} in the first 25 s, against {withoutPct} of {n2} otherwise ({diff} points, 95% {lo} to {hi})",
   "insights.say.outcome.playerUp": "{player} ({team}) added {wpa} rounds' worth of win probability over {rounds} rounds ({perRound} points a round, 95% {lo} to {hi})",
-  "insights.say.outcome.playerDown": "{player} ({team}) cost {wpa} rounds' worth of win probability over {rounds} rounds ({perRound} points a round, 95% {lo} to {hi})"
+  "insights.say.outcome.playerDown": "{player} ({team}) cost {wpa} rounds' worth of win probability over {rounds} rounds ({perRound} points a round, 95% {lo} to {hi})",
+  "insights.skip.fewPersons": "fewer than four people's tracks",
+  "insights.totals": "Totals ({n})"
 }

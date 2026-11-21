@@ -6,7 +6,7 @@
   "insights.counting": "Zähle… {pct}",
   "insights.error": "Zählen fehlgeschlagen: {error}",
   "insights.stale": "Die Filter oder die Daten haben sich seit dem Zählen geändert.",
-  "insights.summary": "{n} Erkenntnisse aus {rows} Zeilen in {matches} Matches, die stärksten zuerst",
+  "insights.summary": "{n} lesenswerte Erkenntnisse aus {matches} {unit, select, round {Runden} other {Matches}}, die nützlichsten zuerst",
   "insights.none": "Bei einer False Discovery Rate von {fdr} fällt nichts auf.",
   "insights.showTitle": "Anzeigen: Kamera auf den Ort, Filter, die ihn isolieren",
   "insights.reset": "Filter zurücksetzen",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: {withPct} von {n1} Runden gewonnen, in denen die Seite {place} hielt, gegenüber {withoutPct} von {n2}, ohne das ({diff} Punkte, 95% von {lo} bis {hi})",
   "insights.say.outcome.early": "{team}: {withPct} von {n1} Runden gewonnen, in denen die Seite {place} in den ersten 25 s erreichte, gegenüber {withoutPct} von {n2}, sonst ({diff} Punkte, 95% von {lo} bis {hi})",
   "insights.say.outcome.playerUp": "{player} ({team}) brachte {wpa} Runden an Siegwahrscheinlichkeit über {rounds} Runden ({perRound} Punkte pro Runde, 95% von {lo} bis {hi})",
-  "insights.say.outcome.playerDown": "{player} ({team}) kostete {wpa} Runden an Siegwahrscheinlichkeit über {rounds} Runden ({perRound} Punkte pro Runde, 95% von {lo} bis {hi})"
+  "insights.say.outcome.playerDown": "{player} ({team}) kostete {wpa} Runden an Siegwahrscheinlichkeit über {rounds} Runden ({perRound} Punkte pro Runde, 95% von {lo} bis {hi})",
+  "insights.skip.fewPersons": "Spuren von weniger als vier Personen",
+  "insights.totals": "Summen ({n})"
 }

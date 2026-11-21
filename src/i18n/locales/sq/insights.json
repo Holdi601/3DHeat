@@ -6,7 +6,7 @@
   "insights.counting": "Po numërohet… {pct}",
   "insights.error": "Numërimi dështoi: {error}",
   "insights.stale": "Filtrat ose të dhënat kanë ndryshuar që nga ky numërim.",
-  "insights.summary": "{n} vëzhgime nga {rows} rreshta në {matches} ndeshje, më të fortat së pari",
+  "insights.summary": "{n} vëzhgime që ia vlen të lexohen nga {matches} {unit, select, round {raunde} other {ndeshje}}, më të dobishmet së pari",
   "insights.none": "Asgjë nuk dallon me një shkallë zbulimesh të rreme prej {fdr}.",
   "insights.showTitle": "Shfaqe: kamera te vendi, filtrat që e veçojnë",
   "insights.reset": "Rikthe filtrat",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: u fituan {withPct} nga {n1} raunde, në të cilat ana mbajti {place}, kundrejt {withoutPct} nga {n2}, pa të ({diff} pikë, 95% nga {lo} në {hi})",
   "insights.say.outcome.early": "{team}: u fituan {withPct} nga {n1} raunde, në të cilat ana arriti te {place} në 25 s e para, kundrejt {withoutPct} nga {n2}, përndryshe ({diff} pikë, 95% nga {lo} në {hi})",
   "insights.say.outcome.playerUp": "{player} ({team}) shtoi {wpa} raunde probabilitet fitoreje në {rounds} raunde ({perRound} pikë për raund, 95% nga {lo} në {hi})",
-  "insights.say.outcome.playerDown": "{player} ({team}) humbi {wpa} raunde probabilitet fitoreje në {rounds} raunde ({perRound} pikë për raund, 95% nga {lo} në {hi})"
+  "insights.say.outcome.playerDown": "{player} ({team}) humbi {wpa} raunde probabilitet fitoreje në {rounds} raunde ({perRound} pikë për raund, 95% nga {lo} në {hi})",
+  "insights.skip.fewPersons": "gjurmë të më pak se katër personave",
+  "insights.totals": "Totalet ({n})"
 }

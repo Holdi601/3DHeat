@@ -6,7 +6,7 @@
   "insights.counting": "Skaita… {pct}",
   "insights.error": "Skaitīšana neizdevās: {error}",
   "insights.stale": "Filtri vai dati ir mainījušies kopš šīs skaitīšanas.",
-  "insights.summary": "{n} atziņas no {rows} rindām {matches} spēlēs, spēcīgākās pirmās",
+  "insights.summary": "{n} lasīšanas vērtas atziņas no {matches} {unit, select, round {raundiem} other {spēlēm}}, noderīgākās pirmās",
   "insights.none": "Pie viltus atklājumu līmeņa {fdr} nekas neizceļas.",
   "insights.showTitle": "Parādīt: kamera uz vietu, filtri, kas to izdala",
   "insights.reset": "Atjaunot filtrus",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: uzvarēti {withPct} no {n1} raundiem, kuros puse noturēja {place}, salīdzinājumā ar {withoutPct} no {n2}, bez tā ({diff} punkti, 95% no {lo} līdz {hi})",
   "insights.say.outcome.early": "{team}: uzvarēti {withPct} no {n1} raundiem, kuros puse sasniedza {place} pirmajās 25 s, salīdzinājumā ar {withoutPct} no {n2}, citādi ({diff} punkti, 95% no {lo} līdz {hi})",
   "insights.say.outcome.playerUp": "{player} ({team}) pievienoja {wpa} raundu uzvaras varbūtības {rounds} raundos ({perRound} punkti raundā, 95% no {lo} līdz {hi})",
-  "insights.say.outcome.playerDown": "{player} ({team}) zaudēja {wpa} raundu uzvaras varbūtības {rounds} raundos ({perRound} punkti raundā, 95% no {lo} līdz {hi})"
+  "insights.say.outcome.playerDown": "{player} ({team}) zaudēja {wpa} raundu uzvaras varbūtības {rounds} raundos ({perRound} punkti raundā, 95% no {lo} līdz {hi})",
+  "insights.skip.fewPersons": "mazāk nekā četru cilvēku pēdas",
+  "insights.totals": "Kopā ({n})"
 }

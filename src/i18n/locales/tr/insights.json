@@ -6,7 +6,7 @@
   "insights.counting": "Sayılıyor… {pct}",
   "insights.error": "Sayım başarısız: {error}",
   "insights.stale": "Bu sayıldığından beri filtreler veya veri değişti.",
-  "insights.summary": "{rows} satırdan, {matches} maçta {n} içgörü, en güçlüler önce",
+  "insights.summary": "{matches} {unit, select, round {turdan} other {maçtan}} okumaya değer {n} içgörü, en faydalılar önce",
   "insights.none": "{fdr} yanlış keşif oranında öne çıkan bir şey yok.",
   "insights.showTitle": "Göster: kamera yerde, onu ayıran filtreler",
   "insights.reset": "Filtreleri geri yükle",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: {place} noktasını tuttuğunda ({n1} tur) kazanma oranı {withPct}, tutmadığında ({n2} tur) {withoutPct} ({diff} puan, 95%: {lo} ile {hi} arası)",
   "insights.say.outcome.early": "{team}: ilk 25 s içinde {place} noktasına ulaştığında ({n1} tur) kazanma oranı {withPct}, ulaşmadığında ({n2} tur) {withoutPct} ({diff} puan, 95%: {lo} ile {hi} arası)",
   "insights.say.outcome.playerUp": "{player} ({team}) {rounds} turda {wpa} tur değerinde kazanma olasılığı ekledi (tur başına {perRound} puan, 95%: {lo} ile {hi} arası)",
-  "insights.say.outcome.playerDown": "{player} ({team}) {rounds} turda {wpa} tur değerinde kazanma olasılığı kaybettirdi (tur başına {perRound} puan, 95%: {lo} ile {hi} arası)"
+  "insights.say.outcome.playerDown": "{player} ({team}) {rounds} turda {wpa} tur değerinde kazanma olasılığı kaybettirdi (tur başına {perRound} puan, 95%: {lo} ile {hi} arası)",
+  "insights.skip.fewPersons": "dörtten az kişinin izleri",
+  "insights.totals": "Toplamlar ({n})"
 }

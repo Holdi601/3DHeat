@@ -6,7 +6,7 @@
   "insights.counting": "統計中… {pct}",
   "insights.error": "統計失敗:{error}",
   "insights.stale": "自統計以來,篩選或資料已發生變化。",
-  "insights.summary": "{matches} 場比賽、{rows} 列資料中的 {n} 項洞察,依強度排序",
+  "insights.summary": "從 {matches} {unit, select, round {個回合} other {場比賽}}中得出 {n} 項值得一讀的洞察，最有用的在前",
   "insights.none": "在錯誤發現率 {fdr} 下沒有突出的發現。",
   "insights.showTitle": "顯示:鏡頭對準該地點,並套用將其單獨篩出的篩選",
   "insights.reset": "還原篩選",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}：守住 {place} 時（{n1} 回合）勝率為 {withPct}，沒有守住時（{n2} 回合）為 {withoutPct}（{diff} 個百分點，95%：{lo} 至 {hi}）",
   "insights.say.outcome.early": "{team}：在前 25 s 內抵達 {place} 時（{n1} 回合）勝率為 {withPct}，否則（{n2} 回合）為 {withoutPct}（{diff} 個百分點，95%：{lo} 至 {hi}）",
   "insights.say.outcome.playerUp": "{player}（{team}）在 {rounds} 回合中增加了相當於 {wpa} 回合的獲勝機率（每回合 {perRound} 個百分點，95%：{lo} 至 {hi}）",
-  "insights.say.outcome.playerDown": "{player}（{team}）在 {rounds} 回合中損失了相當於 {wpa} 回合的獲勝機率（每回合 {perRound} 個百分點，95%：{lo} 至 {hi}）"
+  "insights.say.outcome.playerDown": "{player}（{team}）在 {rounds} 回合中損失了相當於 {wpa} 回合的獲勝機率（每回合 {perRound} 個百分點，95%：{lo} 至 {hi}）",
+  "insights.skip.fewPersons": "少於四人的軌跡",
+  "insights.totals": "合計（{n}）"
 }

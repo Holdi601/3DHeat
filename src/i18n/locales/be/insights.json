@@ -6,7 +6,7 @@
   "insights.counting": "Падлік… {pct}",
   "insights.error": "Падлік не ўдаўся: {error}",
   "insights.stale": "Фільтры або даныя змяніліся з моманту падліку.",
-  "insights.summary": "{n} высноў з {rows} радкоў у {matches} матчах, самыя моцныя першымі",
+  "insights.summary": "{n} высноў, якія варта прачытаць, з {matches} {unit, select, round {раўндаў} other {матчаў}}, самыя карысныя першымі",
   "insights.none": "Пры долі ілжывых адкрыццяў {fdr} нічога не вылучаецца.",
   "insights.showTitle": "Паказаць: камера на месца, фільтры, што яго вылучаюць",
   "insights.reset": "Вярнуць фільтры",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: выйграна {withPct} з {n1} раўндаў, у якіх каманда трымала {place}, супраць {withoutPct} з {n2}, без гэтага ({diff} п.п., 95% ад {lo} да {hi})",
   "insights.say.outcome.early": "{team}: выйграна {withPct} з {n1} раўндаў, у якіх каманда дайшла да {place} за першыя 25 s, супраць {withoutPct} з {n2}, інакш ({diff} п.п., 95% ад {lo} да {hi})",
   "insights.say.outcome.playerUp": "{player} ({team}) дадаў {wpa} раўндаў імавернасці перамогі за {rounds} раўндаў ({perRound} п.п. за раўнд, 95% ад {lo} да {hi})",
-  "insights.say.outcome.playerDown": "{player} ({team}) страціў {wpa} раўндаў імавернасці перамогі за {rounds} раўндаў ({perRound} п.п. за раўнд, 95% ад {lo} да {hi})"
+  "insights.say.outcome.playerDown": "{player} ({team}) страціў {wpa} раўндаў імавернасці перамогі за {rounds} раўндаў ({perRound} п.п. за раўнд, 95% ад {lo} да {hi})",
+  "insights.skip.fewPersons": "трэкі менш чым чатырох чалавек",
+  "insights.totals": "Вынікі ({n})"
 }

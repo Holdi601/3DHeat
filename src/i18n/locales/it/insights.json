@@ -6,7 +6,7 @@
   "insights.counting": "Conteggio… {pct}",
   "insights.error": "Conteggio non riuscito: {error}",
   "insights.stale": "I filtri o i dati sono cambiati dopo questo conteggio.",
-  "insights.summary": "{n} rilevamenti da {rows} righe in {matches} partite, i più forti per primi",
+  "insights.summary": "{n} rilevamenti da leggere su {matches} {unit, select, round {round} other {partite}}, i più utili per primi",
   "insights.none": "Niente spicca con un tasso di falsa scoperta di {fdr}.",
   "insights.showTitle": "Mostralo: la camera sul luogo, i filtri che lo isolano",
   "insights.reset": "Ripristina filtri",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: {withPct} di {n1} round vinti, in cui ha tenuto {place}, contro {withoutPct} di {n2}, senza ({diff} punti, 95% da {lo} a {hi})",
   "insights.say.outcome.early": "{team}: {withPct} di {n1} round vinti, in cui ha raggiunto {place} nei primi 25 s, contro {withoutPct} di {n2}, altrimenti ({diff} punti, 95% da {lo} a {hi})",
   "insights.say.outcome.playerUp": "{player} ({team}) ha aggiunto {wpa} round di probabilità di vittoria in {rounds} round ({perRound} punti a round, 95% da {lo} a {hi})",
-  "insights.say.outcome.playerDown": "{player} ({team}) ha fatto perdere {wpa} round di probabilità di vittoria in {rounds} round ({perRound} punti a round, 95% da {lo} a {hi})"
+  "insights.say.outcome.playerDown": "{player} ({team}) ha fatto perdere {wpa} round di probabilità di vittoria in {rounds} round ({perRound} punti a round, 95% da {lo} a {hi})",
+  "insights.skip.fewPersons": "tracce di meno di quattro persone",
+  "insights.totals": "Totali ({n})"
 }

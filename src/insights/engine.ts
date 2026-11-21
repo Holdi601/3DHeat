@@ -5,20 +5,24 @@
 
 import { DETECTOR_LIST, type DetectContext, type InsightNames } from './detectors';
 import { COARSE, MID, type InsightJob } from './pass';
-import { curateInsights } from './curate';
+import { curateInsights, rankInsights, type SpawnSpot } from './curate';
+import { attachSpread } from './consistency';
 import type { DetectorRun, Insight, InsightReport, InsightValue } from './types';
 
 /** False discovery rate every detector holds its findings to. */
 export const FDR = 0.05;
 /** Insights in a report at most, strongest first. */
-export const MAX_INSIGHTS = 60;
-/** Findings of one kind ranked before any second-tier ones. */
-const PER_KIND = 3;
+export const MAX_INSIGHTS = 40;
+/** Mid cells holding at least this share of all life starts (and 3) are a spawn. */
+const SPAWN_SHARE = 0.01;
 
 export interface ReportInfo {
   name: string;
   rows: number;
   hasLevel: boolean;
+  /** World units in a metre. */
+  upm?: number;
+  sessionUnit?: 'match' | 'round';
 }
 
 /** Mean row height per cell of a coarser grid, from the fine cells. */
@@ -61,21 +65,19 @@ export function finishInsights(job: InsightJob, names: InsightNames, info: Repor
     all.push(...r.insights);
     runs.push({ id: d.id, ran: true, tests: r.tests, found: r.insights.length, ms: Math.round(now() - s) });
   }
-  // Left out: findings that say nothing (whole-map places, the rear, the spawns); the rest by usefulness.
-  const { kept, dropped } = curateInsights(all, { mapExtent: Math.max(g.nx, g.nz) * g.f, presence: job.presence });
-  all.length = 0;
-  all.push(...kept);
-  // A few of each kind of finding first, then the rest: the top of the list shows every detector's best.
-  const seen = new Map<string, number>();
-  const first: Insight[] = [];
-  const rest: Insight[] = [];
-  for (const i of all) {
-    const g = i.kind;
-    const n = seen.get(g) ?? 0;
-    seen.set(g, n + 1);
-    (n < PER_KIND ? first : rest).push(i);
-  }
-  const ranked = [...first, ...rest];
+  // How each finding spreads over the matches (or rounds), where there are several.
+  const m0 = job.meta;
+  const evIndex = (name: string) => names.events.indexOf(name);
+  for (const i of all) attachSpread(job, i, m0.kill, m0.death, evIndex);
+  // Left out: findings that say nothing (whole-map places, the rear, the spawns, one match's doing); the rest by usefulness.
+  const spots = spawnSpots(job);
+  const { kept, dropped } = curateInsights(all, {
+    mapExtent: Math.max(g.nx, g.nz) * g.f,
+    presence: job.presence,
+    spawns: spots,
+    powerRan: runs.some((r) => r.id === 'power' && r.ran),
+  });
+  const ranked = rankInsights(kept, dropped);
   let crossings = 0;
   for (let i = 0; i < job.mPasses.length; i++) crossings += job.mPasses[i];
   let matches = 0;
@@ -92,6 +94,8 @@ export function finishInsights(job: InsightJob, names: InsightNames, info: Repor
       teams: m.teams,
       hasLevel: info.hasLevel,
       exposure: m.hasLife ? 'seconds' : 'samples',
+      upm: info.upm ?? 1,
+      sessionUnit: info.sessionUnit ?? 'match',
     },
     grid: { x0: g.x0, z0: g.z0, fine: g.f, mid: g.f * MID, coarse: g.f * COARSE, nx: g.nx, nz: g.nz },
     baseline: {
@@ -105,9 +109,27 @@ export function finishInsights(job: InsightJob, names: InsightNames, info: Repor
     detectors: runs,
     insights: ranked.slice(0, MAX_INSIGHTS),
     dropped,
+    spawnSpots: spots.map((s) => ({ x: Math.round(s.x), z: Math.round(s.z), starts: s.starts })),
     fdr: FDR,
     elapsedMs: Math.round(now() - t0),
   };
+}
+
+/** Where lives start: the mid cells that hold at least `SPAWN_SHARE` of all life starts. */
+function spawnSpots(job: InsightJob): SpawnSpot[] {
+  const lv = job.lives;
+  if (lv.n < 10) return [];
+  const g = job.meta.grid;
+  const per = new Map<number, number>();
+  for (let i = 0; i < lv.n; i++) per.set(lv.cell[i], (per.get(lv.cell[i]) ?? 0) + 1);
+  const floor = Math.max(3, lv.n * SPAWN_SHARE);
+  const size = g.f * MID;
+  const out: SpawnSpot[] = [];
+  for (const [mi, n] of per) {
+    if (n < floor) continue;
+    out.push({ x: g.x0 + ((mi % g.mx) + 0.5) * size, z: g.z0 + (Math.floor(mi / g.mx) + 0.5) * size, radius: size * 0.71, starts: n });
+  }
+  return out;
 }
 
 /** Each value column's totals: by group, and the ten players with the most. */

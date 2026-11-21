@@ -6,7 +6,7 @@
   "insights.counting": "Καταμέτρηση… {pct}",
   "insights.error": "Η καταμέτρηση απέτυχε: {error}",
   "insights.stale": "Τα φίλτρα ή τα δεδομένα άλλαξαν από τότε που μετρήθηκε.",
-  "insights.summary": "{n} ευρήματα από {rows} γραμμές σε {matches} αγώνες, τα ισχυρότερα πρώτα",
+  "insights.summary": "{n} ευρήματα που αξίζει να διαβάσετε από {matches} {unit, select, round {γύρους} other {αγώνες}}, τα πιο χρήσιμα πρώτα",
   "insights.none": "Τίποτα δεν ξεχωρίζει με ποσοστό ψευδών ανακαλύψεων {fdr}.",
   "insights.showTitle": "Εμφάνιση: κάμερα στο σημείο, τα φίλτρα που το απομονώνουν",
   "insights.reset": "Επαναφορά φίλτρων",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: κερδήθηκαν {withPct} από {n1} γύρους, στους οποίους η πλευρά κράτησε το {place}, έναντι {withoutPct} από {n2}, χωρίς αυτό ({diff} μονάδες, 95% από {lo} έως {hi})",
   "insights.say.outcome.early": "{team}: κερδήθηκαν {withPct} από {n1} γύρους, στους οποίους η πλευρά έφτασε στο {place} στα πρώτα 25 s, έναντι {withoutPct} από {n2}, διαφορετικά ({diff} μονάδες, 95% από {lo} έως {hi})",
   "insights.say.outcome.playerUp": "Ο {player} ({team}) πρόσθεσε {wpa} γύρους πιθανότητας νίκης σε {rounds} γύρους ({perRound} μονάδες ανά γύρο, 95% από {lo} έως {hi})",
-  "insights.say.outcome.playerDown": "Ο {player} ({team}) έχασε {wpa} γύρους πιθανότητας νίκης σε {rounds} γύρους ({perRound} μονάδες ανά γύρο, 95% από {lo} έως {hi})"
+  "insights.say.outcome.playerDown": "Ο {player} ({team}) έχασε {wpa} γύρους πιθανότητας νίκης σε {rounds} γύρους ({perRound} μονάδες ανά γύρο, 95% από {lo} έως {hi})",
+  "insights.skip.fewPersons": "ίχνη από λιγότερα από τέσσερα άτομα",
+  "insights.totals": "Σύνολα ({n})"
 }

@@ -21,6 +21,25 @@ export function secs(s: number): string {
   return `${num(s / 3600, s < 36000 ? 1 : 0)} h`;
 }
 
+/** A share to two significant figures: "46%", "4.6%", "0.35%"; "under 0.1%" for less, never "0.0%". */
+export function pctText(v: number): string {
+  if (!Number.isFinite(v)) return '—';
+  const p = v * 100;
+  if (p === 0) return `${num(0)}%`;
+  if (p < 0.1) return t('analysis.ins.under', { v: `${num(0.1, 1)}%` });
+  const r = Number(p.toFixed(p < 1 ? 2 : p < 10 ? 1 : 0));
+  return `${num(r, String(r).split('.')[1]?.length ?? 0)}%`;
+}
+
+/** Factors above this are said as "over 20": against a baseline near nothing, the exact factor means nothing. */
+export const RATIO_CAP = 20;
+
+/** A factor to two significant figures: "7.6", "2.4"; "over 20" above `RATIO_CAP`. */
+export function ratioText(v: number): string {
+  if (v > RATIO_CAP) return t('analysis.ins.over', { v: num(RATIO_CAP) });
+  return num(v, v >= 10 ? 0 : 1);
+}
+
 export function formatParam(name: string, v: number | string, samples: boolean): string {
   if (typeof v === 'string') {
     if (name === 'kind') return labelOf(CANON.event, v);
@@ -28,8 +47,10 @@ export function formatParam(name: string, v: number | string, samples: boolean):
     if (name === 'actor') return labelOf(CANON.actor, v);
     return v;
   }
-  if (name === 'ratio') return num(v, v >= 10 ? 1 : v >= 2 ? 1 : 2);
-  if (name.endsWith('Pct')) return `${num(v * 100, v > 0 && v < 0.1 ? 1 : 0)}%`;
+  if (name === 'ratio') return ratioText(v);
+  // Points of win probability and their interval: whole points from ten up.
+  if (name === 'diff' || name === 'lo' || name === 'hi' || name === 'perRound') return num(v, Math.abs(v) >= 10 ? 0 : 1);
+  if (name.endsWith('Pct')) return pctText(v);
   if (name.endsWith('Secs')) return samples && name === 'timeSecs' ? t('insights.samples', { n: int(v) }) : secs(v);
   return Number.isInteger(v) ? int(v) : num(v, 1);
 }

@@ -30,6 +30,17 @@ function taxonomyMap(ds: Dataset, column: string, kinds: readonly string[]): Int
   return Int8Array.from(a.categories, (c) => kinds.indexOf(c));
 }
 
+/**
+ * World units in a metre, for sizes and the grid: from the file's entity size
+ * (as the replay reckons it), but only where that clearly says the data is not
+ * in metres (inches, centimetres); a person a little wider or narrower than
+ * 0.8 m is still metres.
+ */
+function unitsPerMetre(ds: Dataset): number {
+  const u = ds.entitySize ? ds.entitySize / 0.8 : 1;
+  return u >= 3 ? u : 1;
+}
+
 /** The analysis covers the whole time; the filters, hidden groups and match picked still apply. */
 export function analysisScope(sc: CompareScope): CompareScope {
   return { ...sc, timeLo: -Infinity, timeHi: Infinity, lifetimeNow: null };
@@ -47,6 +58,22 @@ interface Prep {
   shooterCol: Uint32Array | null;
   /** Round and loadout columns for the behaviour analysis, where the data has them. */
   bcols: BehaviourColumns | null;
+  /** The match column standing in for sessions where none is mapped (`matchColumn`). */
+  match: Uint32Array | null;
+}
+
+/** Columns that name a row's match, in order of preference. */
+const MATCH_COLUMNS = /^(match|matchid|match_id|game|mission|recording)$/i;
+
+/**
+ * Where the load mapped no session but the rows name their match (several
+ * War Thunder battles loaded together, say): that column, so the findings are
+ * counted, and checked, per match rather than as one long match.
+ */
+function matchColumn(ds: Dataset): { name: string; data: Uint32Array; count: number } | null {
+  if (ds.sessionId) return null;
+  const a = ds.attrs.find((x) => x.categories && x.categories.length > 1 && MATCH_COLUMNS.test(x.name));
+  return a && a.categories ? { name: a.name, data: a.data as Uint32Array, count: a.categories.length } : null;
 }
 
 function prepare(ds: Dataset, sc: CompareScope, level: Level | null): Prep {
@@ -56,9 +83,11 @@ function prepare(ds: Dataset, sc: CompareScope, level: Level | null): Prep {
   cmp.meta.hasDir = false;
   const b = ds.bounds;
   const ev = (k: string) => EVENT_KINDS.indexOf(k as (typeof EVENT_KINDS)[number]);
+  const match = matchColumn(ds);
   const meta: InsightMeta = {
     ...cmp.meta,
-    grid: gridFor(b.minX, b.minZ, b.maxX, b.maxZ),
+    ...(match ? { sessions: match.count, sessionStart: null } : {}),
+    grid: gridFor(b.minX, b.minZ, b.maxX, b.maxZ, unitsPerMetre(ds)),
     targetMap: taxonomyMap(ds, CANON.targetClass, VEHICLE_CLASSES),
     spawn: ev('spawn'),
     contact: ['fire', 'launch', 'hit', 'damage', 'kill', 'death'].map(ev),
@@ -80,16 +109,28 @@ function prepare(ds: Dataset, sc: CompareScope, level: Level | null): Prep {
       classColumn: CANON.vehicleClass,
       actorColumn: CANON.actor,
     },
-    info: { name: ds.name, rows: ds.count, hasLevel: !!model },
+    info: {
+      name: ds.name,
+      rows: ds.count,
+      hasLevel: !!model,
+      upm: unitsPerMetre(ds),
+      sessionUnit: /round/i.test(match?.name ?? ds.roleColumns?.session ?? '') ? 'round' : 'match',
+    },
     // Units in a metre, as the replay reckons it (`replayData.unitsPerMetre`): from the file's entity size.
     lens: { upm: ds.entitySize ? ds.entitySize / 0.8 : 1, events: { launch: ev('launch'), fire: ev('fire'), takeoff: ev('takeoff'), landing: ev('landing') }, shooterMap: shooter?.map },
     shooterCol: shooter?.col ?? null,
     bcols: behaviourColumns(ds),
+    match: match?.data ?? null,
   };
 }
 
 function chunk(p: Prep, lo: number, n: number): { chunk: InsightChunk; transfer: ArrayBuffer[] } {
   const { chunk: c, transfer } = chunkAt(p.cmp, lo, n);
+  if (p.match) {
+    const s = p.match.slice(lo, lo + n);
+    transfer.push(s.buffer as ArrayBuffer);
+    (c as { session: Uint32Array | null }).session = s;
+  }
   let target: Uint32Array | null = null;
   if (p.meta.targetMap) {
     const col = p.ds.attrs.find((a) => a.name === CANON.targetClass)?.data as Uint32Array | undefined;
@@ -138,8 +179,9 @@ function shooterOf(ds: Dataset): { col: Uint32Array; map: Int32Array } | null {
   return map.some((v) => v >= 0) ? { col: a.data as Uint32Array, map } : null;
 }
 
-/** The people the report names by index, named. */
+/** The people the report names by index, named; the matches counted where no column names them. */
 function resolve(r: InsightReport, ds: Dataset): InsightReport {
+  if (r.dataset.matches <= 1 && (ds.recordingsAligned ?? 0) > 1) r.dataset.matches = ds.recordingsAligned!;
   for (const ins of r.insights) {
     const i = ins.subject.personIndex;
     if (i === undefined) continue;

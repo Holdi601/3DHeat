@@ -104,8 +104,28 @@ export interface Insight {
    * rests on. Absent on findings merged in after curation (outcome).
    */
   usefulness?: number;
+  /** The usefulness before the repeats of its kind counted less (`curate.ts` `rankInsights`). */
+  usefulnessBase?: number;
   /** A variant of the kind's wording: `target` for a hot zone hardly anyone stands in. */
   variant?: string;
+  /** The mid cells of the analysis grid the place covers, for its spread over the matches. */
+  cells?: number[];
+  /** How it spreads over the matches (`consistency.ts`); absent with one match. */
+  spread?: InsightSpread;
+  /** The side that makes most of it, where one does (`team` its name, `share` of the place's events). */
+  side?: { team: string; share: number; of: 'kills' | 'deaths' };
+}
+
+/** A finding over several matches (or rounds): in how many it holds, and how much one makes. */
+export interface InsightSpread {
+  /** Matches in the data. */
+  matches: number;
+  /** Matches with any of its events at the place (or, for a rate, with at least one expected). */
+  active: number;
+  /** Matches in which it holds on its own. */
+  holding: number;
+  /** The share of its events the biggest match makes, 0..1. */
+  topShare: number;
 }
 
 export interface DetectorRun {
@@ -139,6 +159,10 @@ export interface InsightReport {
     hasLevel: boolean;
     /** What exposure is counted in. */
     exposure: 'seconds' | 'samples';
+    /** World units in a metre (1 where the data does not say). */
+    upm?: number;
+    /** What a session is: a match, or a round of one. */
+    sessionUnit?: 'match' | 'round';
   };
   /** The analysis grids on the ground (x, z), world units. */
   grid: { x0: number; z0: number; fine: number; mid: number; coarse: number; nx: number; nz: number };
@@ -153,6 +177,8 @@ export interface InsightReport {
   insights: Insight[];
   /** Findings that passed their test and were left out as saying nothing, with why (`curate.ts`). */
   dropped?: { id: string; kind: string; reason: string }[];
+  /** Where lives start (mid cells with at least 1% of the starts): what explains quiet ground and busy cells there. */
+  spawnSpots?: { x: number; z: number; starts: number }[];
   /** Measures of operations analysis over the same rows (`lensMetrics.ts`), for the knowledge lens. */
   lens?: LensMetrics;
   /** Was the false discovery rate controlled at. */

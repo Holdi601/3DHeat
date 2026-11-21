@@ -6,7 +6,7 @@
   "insights.counting": "Számolás… {pct}",
   "insights.error": "A számolás sikertelen: {error}",
   "insights.stale": "A szűrők vagy az adatok megváltoztak a számolás óta.",
-  "insights.summary": "{n} felismerés {rows} sorból, {matches} meccsen, a legerősebbek elöl",
+  "insights.summary": "{n} olvasásra érdemes felismerés {matches} {unit, select, round {körből} other {meccsből}}, a leghasznosabbak elöl",
   "insights.none": "{fdr} hamis felfedezési aránynál semmi sem tűnik ki.",
   "insights.showTitle": "Mutasd: a kamera a helyen, a kiemelő szűrők",
   "insights.reset": "Szűrők visszaállítása",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: {n1} körből {withPct} nyert, amelyekben az oldal tartotta a(z) {place} helyet, szemben a {n2} körből {withoutPct}-kal, enélkül ({diff} pont, 95%: {lo} – {hi})",
   "insights.say.outcome.early": "{team}: {n1} körből {withPct} nyert, amelyekben az oldal az első 25 s-ban elérte a(z) {place} helyet, szemben a {n2} körből {withoutPct}-kal, egyébként ({diff} pont, 95%: {lo} – {hi})",
   "insights.say.outcome.playerUp": "{player} ({team}) {wpa} környi győzelmi esélyt adott hozzá {rounds} kör alatt ({perRound} pont körönként, 95%: {lo} – {hi})",
-  "insights.say.outcome.playerDown": "{player} ({team}) {wpa} környi győzelmi esélyt vesztett {rounds} kör alatt ({perRound} pont körönként, 95%: {lo} – {hi})"
+  "insights.say.outcome.playerDown": "{player} ({team}) {wpa} környi győzelmi esélyt vesztett {rounds} kör alatt ({perRound} pont körönként, 95%: {lo} – {hi})",
+  "insights.skip.fewPersons": "négynél kevesebb ember nyomvonala",
+  "insights.totals": "Összesen ({n})"
 }

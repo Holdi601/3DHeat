@@ -6,7 +6,7 @@
   "insights.counting": "Comptant… {pct}",
   "insights.error": "Ha fallat el recompte: {error}",
   "insights.stale": "Els filtres o les dades han canviat des que es va comptar.",
-  "insights.summary": "{n} troballes de {rows} files en {matches} partides, les més fortes primer",
+  "insights.summary": "{n} troballes que val la pena llegir de {matches} {unit, select, round {rondes} other {partides}}, les més útils primer",
   "insights.none": "Res destaca amb una taxa de falsos descobriments de {fdr}.",
   "insights.showTitle": "Mostra-ho: la càmera al lloc, els filtres que l'aïllen",
   "insights.reset": "Restaura els filtres",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: ha guanyat {withPct} de {n1} rondes, en què va mantenir {place}, contra {withoutPct} de {n2}, sense això ({diff} punts, 95% de {lo} a {hi})",
   "insights.say.outcome.early": "{team}: ha guanyat {withPct} de {n1} rondes, en què va arribar a {place} en els primers 25 s, contra {withoutPct} de {n2}, altrament ({diff} punts, 95% de {lo} a {hi})",
   "insights.say.outcome.playerUp": "{player} ({team}) ha afegit {wpa} rondes de probabilitat de victòria en {rounds} rondes ({perRound} punts per ronda, 95% de {lo} a {hi})",
-  "insights.say.outcome.playerDown": "{player} ({team}) ha costat {wpa} rondes de probabilitat de victòria en {rounds} rondes ({perRound} punts per ronda, 95% de {lo} a {hi})"
+  "insights.say.outcome.playerDown": "{player} ({team}) ha costat {wpa} rondes de probabilitat de victòria en {rounds} rondes ({perRound} punts per ronda, 95% de {lo} a {hi})",
+  "insights.skip.fewPersons": "rastres de menys de quatre persones",
+  "insights.totals": "Totals ({n})"
 }

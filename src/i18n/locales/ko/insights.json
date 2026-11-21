@@ -6,7 +6,7 @@
   "insights.counting": "집계 중… {pct}",
   "insights.error": "집계 실패: {error}",
   "insights.stale": "집계 이후 필터나 데이터가 바뀌었습니다.",
-  "insights.summary": "{matches}개 매치, {rows}개 행에서 인사이트 {n}개, 강한 순",
+  "insights.summary": "{matches}개 {unit, select, round {라운드} other {매치}}에서 읽어 볼 만한 인사이트 {n}개, 유용한 순",
   "insights.none": "거짓 발견율 {fdr}에서는 두드러지는 것이 없습니다.",
   "insights.showTitle": "보기: 카메라를 그 장소에, 그곳을 분리하는 필터 적용",
   "insights.reset": "필터 복원",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: {place}을(를) 지킨 경우({n1}라운드) 승률 {withPct}, 지키지 않은 경우({n2}라운드) {withoutPct} ({diff}포인트, 95%: {lo}~{hi})",
   "insights.say.outcome.early": "{team}: 처음 25 s 안에 {place}에 도달한 경우({n1}라운드) 승률 {withPct}, 그렇지 않은 경우({n2}라운드) {withoutPct} ({diff}포인트, 95%: {lo}~{hi})",
   "insights.say.outcome.playerUp": "{player}({team})은(는) {rounds}라운드 동안 승리 확률을 {wpa}라운드만큼 더했습니다 (라운드당 {perRound}포인트, 95%: {lo}~{hi})",
-  "insights.say.outcome.playerDown": "{player}({team})은(는) {rounds}라운드 동안 승리 확률을 {wpa}라운드만큼 잃게 했습니다 (라운드당 {perRound}포인트, 95%: {lo}~{hi})"
+  "insights.say.outcome.playerDown": "{player}({team})은(는) {rounds}라운드 동안 승리 확률을 {wpa}라운드만큼 잃게 했습니다 (라운드당 {perRound}포인트, 95%: {lo}~{hi})",
+  "insights.skip.fewPersons": "4명 미만의 이동 경로",
+  "insights.totals": "합계 ({n})"
 }

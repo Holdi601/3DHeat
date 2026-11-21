@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import type { Dataset } from '../state/types';
-import { curateInsights, sampleSize } from './curate';
-import { peaks } from './detectors';
+import { curateInsights, rankInsights, sampleSize, spreadFails } from './curate';
+import { peaks, throughRoute } from './detectors';
 import { fitPlace } from './fit';
 import { highlightLines } from './highlight';
 import type { Insight } from './types';
 import { plainInsight } from '../ui/insights/plain';
+import { pctText, ratioText } from '../ui/insights/say';
 
 function ins(p: Partial<Insight> & { kind: string }): Insight {
   return {
@@ -32,7 +33,7 @@ describe('curateInsights', () => {
     const all = [
       ins({ kind: 'zones.hot', place: place(500, 500, 400), evidence: { count: 300, expected: 20, mapCount: 400, presence: 50, mapPresence: 1000 } }),
       ins({ kind: 'zones.cold', place: place(300, 300, 20), evidence: { count: 2, expected: 30, presence: 400, mapPresence: 1000 } }),
-      ins({ kind: 'power.safe', place: place(110, 100, 20), evidence: { deaths: 1, presence: 30, mapPresence: 1000 } }),
+      ins({ kind: 'power.safe', place: place(110, 100, 20), evidence: { deaths: 1, presence: 30, mapDeaths: 500, mapPresence: 1000 } }),
       ins({ kind: 'zones.hot', place: place(700, 700, 20), evidence: { count: 4, expected: 0.4, presence: 1, mapPresence: 1000 } }),
       ins({ kind: 'zones.hot', place: place(200, 800, 20), subject: { eventKind: 'spawn' }, evidence: { count: 90, expected: 9 } }),
       spawn,
@@ -129,5 +130,84 @@ describe('plainInsight', () => {
     expect(p.why.length).toBeGreaterThan(20);
     expect(p.todo.length).toBeGreaterThan(20);
     expect(p.evidence).toMatch(/Rests on 365 events/);
+  });
+});
+
+// Patterns found on real recordings, rebuilt here from made-up numbers.
+describe('what real data showed', () => {
+  it('a busy cell with traffic all round is a hub (a spawn, an airfield), not a choke point', () => {
+    // Sectors east, north-east, north ... south-east.
+    expect(throughRoute([10, 10, 10, 10, 10, 10, 10, 10], 80)).toBe(false);
+    expect(throughRoute([30, 4, 0, 4, 30, 4, 0, 4], 76)).toBe(true);
+    expect(throughRoute([0, 0, 0, 0, 0, 0, 0, 0], 0)).toBe(false);
+  });
+
+  it('a place one match (or round) makes is that match, not the map', () => {
+    expect(spreadFails({ matches: 20, active: 1, holding: 1, topShare: 1 })).toBe('oneMatch');
+    expect(spreadFails({ matches: 20, active: 6, holding: 5, topShare: 0.7 })).toBe('oneMatch');
+    expect(spreadFails({ matches: 300, active: 40, holding: 6, topShare: 0.1 })).toBe('fewMatches');
+    expect(spreadFails({ matches: 300, active: 60, holding: 35, topShare: 0.1 })).toBeNull();
+    expect(spreadFails({ matches: 20, active: 10, holding: 3, topShare: 0.45 })).toBe('oneMatch');
+    expect(spreadFails({ matches: 2, active: 1, holding: 1, topShare: 1 })).toBeNull();
+  });
+
+  it('quiet ground, safe ground and chokes where lives start are the spawn, and kills by place are the power positions', () => {
+    const spot = { x: 100, z: 100, radius: 10, starts: 40 };
+    const all = [
+      ins({ kind: 'zones.cold', place: place(104, 100, 10), subject: { eventKind: 'fire' }, evidence: { count: 0, expected: 99, presence: 30, mapPresence: 1000 } }),
+      ins({ kind: 'power.safe', place: place(96, 100, 10), evidence: { deaths: 0, presence: 30, mapDeaths: 500, mapPresence: 1000 } }),
+      ins({ kind: 'flow.choke', place: place(100, 110, 10), evidence: { crossings: 120 } }),
+      ins({ kind: 'zones.hot', place: place(600, 600, 10), subject: { eventKind: 'kill' }, evidence: { count: 50, expected: 5, presence: 100, mapPresence: 1000 } }),
+      ins({ kind: 'zones.hot', place: place(700, 600, 10), subject: { eventKind: 'takeoff' }, evidence: { count: 50, expected: 5, presence: 100, mapPresence: 1000 } }),
+    ];
+    const { kept, dropped } = curateInsights(all, { mapExtent: 1000, presence: 1000, spawns: [spot], powerRan: true });
+    expect(kept).toEqual([]);
+    expect(dropped.map((d) => d.reason).sort()).toEqual(['covered', 'spawn', 'spawn', 'spawn', 'trivialKind']);
+  });
+
+  it('a hot zone holding most of all its events is the whole fight, not a place in it', () => {
+    const spread = { matches: 6, active: 6, holding: 6, topShare: 0.2 };
+    const z = ins({ kind: 'zones.hot', spread, place: place(500, 500, 20), subject: { eventKind: 'death' }, evidence: { count: 18, mapCount: 22, expected: 1.1, presence: 210, mapPresence: 1000 } });
+    expect(curateInsights([z], { mapExtent: 10000, presence: 1000 }).dropped.map((d) => d.reason)).toEqual(['mostOfIt']);
+  });
+
+  it('says a place once, whatever kinds of events stand out there, and a few of each kind at most', () => {
+    const spread = { matches: 10, active: 10, holding: 8, topShare: 0.2 };
+    const at = (k: string, s: number) => ins({ kind: 'zones.hot', strength: s, spread, place: place(500, 500, 10), subject: { eventKind: k }, evidence: { count: 40, expected: 4, presence: 100, mapPresence: 1000 } });
+    const { kept, dropped } = curateInsights([at('fire', 0.9), at('hit', 0.8), at('damage', 0.7)], { mapExtent: 1000, presence: 1000 });
+    // In one match, where the shooting was is that match's fight.
+    expect(curateInsights([at('fire', 0.9)].map((i) => ({ ...i, spread: undefined })), { mapExtent: 1000, presence: 1000 }).dropped[0].reason).toBe('fewMatches');
+    expect(kept.map((k) => k.subject.eventKind)).toEqual(['fire']);
+    expect(dropped.filter((d) => d.reason === 'samePlace').length).toBe(2);
+    const many = Array.from({ length: 8 }, (_, i) => ins({ kind: 'flow.choke', usefulness: 0.9 - i * 0.01 }));
+    const out: { reason: string }[] = [];
+    const ranked = rankInsights(many, out as never);
+    expect(ranked.length).toBe(4);
+    expect(out.length).toBe(4);
+    expect(ranked.map((r) => r.usefulness)).toEqual([...ranked.map((r) => r.usefulness)].sort((a, b) => b! - a!));
+  });
+
+  it('says nothing as nothing, sizes in the data scale, shares without "0.0%"', () => {
+    const z = ins({
+      kind: 'zones.cold',
+      sentence: { key: 'insights.say.zones.cold', params: { ratio: 34, kind: 'fire', count: 0, expected: 99 } },
+      place: place(500, 500, 1140),
+      evidence: { count: 0, expected: 99, presence: 35, mapPresence: 1000 },
+    });
+    // 2,280 inch-like units across at 39.4 units a metre is about 58 m, not 2,300.
+    const report = { dataset: { upm: 39.37, sessionUnit: 'round' }, baseline: { presence: 1000 } } as never;
+    const p = plainInsight(z, report, false);
+    expect(p.what).toMatch(/^No .* at all in this area about 58 m across/);
+    expect(pctText(0.0004)).toBe('under 0.1%');
+    expect(pctText(0.0035)).toBe('0.35%');
+    expect(pctText(0.46)).toBe('46%');
+    // Against a baseline near nothing the factor means nothing: never "200000.4×".
+    expect(ratioText(200000.4)).toBe('over 20');
+    expect(ratioText(7.64)).toBe('7.6');
+    // One death is a death, not "1 players".
+    const choke = ins({ kind: 'flow.choke', sentence: { key: 'insights.say.flow.choke', params: { ratio: 3, crossings: 121, deaths: 1 } }, place: place(0, 0, 100), evidence: { crossings: 121, deaths: 1 } });
+    expect(plainInsight(choke, report, false).what).toMatch(/and 1 player died here/);
+    z.spread = { matches: 20, active: 12, holding: 9, topShare: 0.18 };
+    expect(plainInsight(z, report, false).evidence).toMatch(/Seen in 9 of 20 rounds; the biggest single round makes 18% of it/);
   });
 });

@@ -6,7 +6,7 @@
   "insights.counting": "Qed jingħadd… {pct}",
   "insights.error": "L-għadd falla: {error}",
   "insights.stale": "Il-filtri jew id-data nbidlu minn meta dan ingħadd.",
-  "insights.summary": "{n} għarfien minn {rows} ringieli f'{matches} logħbiet, l-aktar b'saħħtu l-ewwel",
+  "insights.summary": "{n} għarfien li ta' min jaqrahom minn {matches} {unit, select, round {rawnds} other {logħbiet}}, l-aktar utli l-ewwel",
   "insights.none": "Xejn ma joħroġ b'rata ta' skoperti foloz ta' {fdr}.",
   "insights.showTitle": "Uri: il-kamera fuq il-post, il-filtri li jisseparawh",
   "insights.reset": "Irrestawra l-filtri",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: rebħet {withPct} minn {n1} rawnds, li fihom in-naħa żammet {place}, kontra {withoutPct} minn {n2}, mingħajru ({diff} punti, 95% minn {lo} sa {hi})",
   "insights.say.outcome.early": "{team}: rebħet {withPct} minn {n1} rawnds, li fihom in-naħa laħqet {place} fl-ewwel 25 s, kontra {withoutPct} minn {n2}, inkella ({diff} punti, 95% minn {lo} sa {hi})",
   "insights.say.outcome.playerUp": "{player} ({team}) żied {wpa} rawnds ta’ probabbiltà ta’ rebħa fuq {rounds} rawnds ({perRound} punti għal kull rawnd, 95% minn {lo} sa {hi})",
-  "insights.say.outcome.playerDown": "{player} ({team}) tilef {wpa} rawnds ta’ probabbiltà ta’ rebħa fuq {rounds} rawnds ({perRound} punti għal kull rawnd, 95% minn {lo} sa {hi})"
+  "insights.say.outcome.playerDown": "{player} ({team}) tilef {wpa} rawnds ta’ probabbiltà ta’ rebħa fuq {rounds} rawnds ({perRound} punti għal kull rawnd, 95% minn {lo} sa {hi})",
+  "insights.skip.fewPersons": "traċċi ta' inqas minn erba' persuni",
+  "insights.totals": "Totali ({n})"
 }

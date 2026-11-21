@@ -6,7 +6,7 @@
   "insights.counting": "Преброяване… {pct}",
   "insights.error": "Преброяването не успя: {error}",
   "insights.stale": "Филтрите или данните са се променили от това преброяване.",
-  "insights.summary": "{n} извода от {rows} реда в {matches} мача, най-силните първи",
+  "insights.summary": "{n} извода, които си струва да се прочетат, от {matches} {unit, select, round {рунда} other {мача}}, най-полезните първи",
   "insights.none": "При дял на фалшивите открития {fdr} нищо не се откроява.",
   "insights.showTitle": "Покажи: камера на мястото, филтри, които го изолират",
   "insights.reset": "Върни филтрите",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: спечелени {withPct} от {n1} рунда, в които отборът държеше {place}, срещу {withoutPct} от {n2}, без това ({diff} пр.п., 95% от {lo} до {hi})",
   "insights.say.outcome.early": "{team}: спечелени {withPct} от {n1} рунда, в които отборът стигна до {place} през първите 25 s, срещу {withoutPct} от {n2}, иначе ({diff} пр.п., 95% от {lo} до {hi})",
   "insights.say.outcome.playerUp": "{player} ({team}) добави {wpa} рунда вероятност за победа в {rounds} рунда ({perRound} пр.п. на рунд, 95% от {lo} до {hi})",
-  "insights.say.outcome.playerDown": "{player} ({team}) загуби {wpa} рунда вероятност за победа в {rounds} рунда ({perRound} пр.п. на рунд, 95% от {lo} до {hi})"
+  "insights.say.outcome.playerDown": "{player} ({team}) загуби {wpa} рунда вероятност за победа в {rounds} рунда ({perRound} пр.п. на рунд, 95% от {lo} до {hi})",
+  "insights.skip.fewPersons": "следи на по-малко от четирима души",
+  "insights.totals": "Общо ({n})"
 }

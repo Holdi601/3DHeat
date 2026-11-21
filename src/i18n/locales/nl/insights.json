@@ -6,7 +6,7 @@
   "insights.counting": "Tellen… {pct}",
   "insights.error": "Tellen mislukt: {error}",
   "insights.stale": "De filters of de data zijn veranderd sinds dit geteld werd.",
-  "insights.summary": "{n} inzichten uit {rows} rijen in {matches} matches, sterkste eerst",
+  "insights.summary": "{n} inzichten die het lezen waard zijn uit {matches} {unit, select, round {rondes} other {matches}}, nuttigste eerst",
   "insights.none": "Niets valt op bij een false discovery rate van {fdr}.",
   "insights.showTitle": "Toon het: camera op de plek, de filters die haar isoleren",
   "insights.reset": "Filters herstellen",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: {withPct} van {n1} rondes gewonnen, waarin de kant {place} hield, tegen {withoutPct} van {n2}, zonder dat ({diff} punten, 95% van {lo} tot {hi})",
   "insights.say.outcome.early": "{team}: {withPct} van {n1} rondes gewonnen, waarin de kant {place} bereikte in de eerste 25 s, tegen {withoutPct} van {n2}, anders ({diff} punten, 95% van {lo} tot {hi})",
   "insights.say.outcome.playerUp": "{player} ({team}) voegde {wpa} rondes aan winkans toe over {rounds} rondes ({perRound} punten per ronde, 95% van {lo} tot {hi})",
-  "insights.say.outcome.playerDown": "{player} ({team}) kostte {wpa} rondes aan winkans over {rounds} rondes ({perRound} punten per ronde, 95% van {lo} tot {hi})"
+  "insights.say.outcome.playerDown": "{player} ({team}) kostte {wpa} rondes aan winkans over {rounds} rondes ({perRound} punten per ronde, 95% van {lo} tot {hi})",
+  "insights.skip.fewPersons": "sporen van minder dan vier personen",
+  "insights.totals": "Totalen ({n})"
 }

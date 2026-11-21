@@ -6,7 +6,7 @@
   "insights.counting": "Comptage… {pct}",
   "insights.error": "Échec du comptage : {error}",
   "insights.stale": "Les filtres ou les données ont changé depuis ce comptage.",
-  "insights.summary": "{n} observations sur {rows} lignes dans {matches} matchs, les plus fortes d'abord",
+  "insights.summary": "{n} observations à lire sur {matches} {unit, select, round {manches} other {matchs}}, les plus utiles d'abord",
   "insights.none": "Rien ne se démarque avec un taux de fausses découvertes de {fdr}.",
   "insights.showTitle": "L'afficher : caméra sur le lieu, filtres qui l'isolent",
   "insights.reset": "Restaurer les filtres",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team} : {withPct} de {n1} manches gagnées, où le camp a tenu {place}, contre {withoutPct} de {n2}, sans cela ({diff} points, 95% de {lo} à {hi})",
   "insights.say.outcome.early": "{team} : {withPct} de {n1} manches gagnées, où le camp a atteint {place} dans les 25 premières s, contre {withoutPct} de {n2}, sinon ({diff} points, 95% de {lo} à {hi})",
   "insights.say.outcome.playerUp": "{player} ({team}) a ajouté {wpa} manches de probabilité de victoire sur {rounds} manches ({perRound} points par manche, 95% de {lo} à {hi})",
-  "insights.say.outcome.playerDown": "{player} ({team}) a coûté {wpa} manches de probabilité de victoire sur {rounds} manches ({perRound} points par manche, 95% de {lo} à {hi})"
+  "insights.say.outcome.playerDown": "{player} ({team}) a coûté {wpa} manches de probabilité de victoire sur {rounds} manches ({perRound} points par manche, 95% de {lo} à {hi})",
+  "insights.skip.fewPersons": "traces de moins de quatre personnes",
+  "insights.totals": "Totaux ({n})"
 }

@@ -6,7 +6,7 @@
   "insights.counting": "Contando… {pct}",
   "insights.error": "Error al contar: {error}",
   "insights.stale": "Los filtros o los datos cambiaron desde que se contó.",
-  "insights.summary": "{n} hallazgos de {rows} filas en {matches} partidas, los más fuertes primero",
+  "insights.summary": "{n} hallazgos que vale la pena leer de {matches} {unit, select, round {rondas} other {partidas}}, los más útiles primero",
   "insights.none": "Nada destaca con una tasa de falsos descubrimientos de {fdr}.",
   "insights.showTitle": "Mostrarlo: la cámara en el lugar, los filtros que lo aíslan",
   "insights.reset": "Restaurar filtros",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: ganó {withPct} de {n1} rondas, en las que mantuvo {place}, frente a {withoutPct} de {n2}, sin ello ({diff} puntos, 95% de {lo} a {hi})",
   "insights.say.outcome.early": "{team}: ganó {withPct} de {n1} rondas, en las que llegó a {place} en los primeros 25 s, frente a {withoutPct} de {n2}, en caso contrario ({diff} puntos, 95% de {lo} a {hi})",
   "insights.say.outcome.playerUp": "{player} ({team}) sumó {wpa} rondas de probabilidad de victoria en {rounds} rondas ({perRound} puntos por ronda, 95% de {lo} a {hi})",
-  "insights.say.outcome.playerDown": "{player} ({team}) restó {wpa} rondas de probabilidad de victoria en {rounds} rondas ({perRound} puntos por ronda, 95% de {lo} a {hi})"
+  "insights.say.outcome.playerDown": "{player} ({team}) restó {wpa} rondas de probabilidad de victoria en {rounds} rondas ({perRound} puntos por ronda, 95% de {lo} a {hi})",
+  "insights.skip.fewPersons": "rastros de menos de cuatro personas",
+  "insights.totals": "Totales ({n})"
 }

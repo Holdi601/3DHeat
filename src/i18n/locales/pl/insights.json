@@ -6,7 +6,7 @@
   "insights.counting": "Liczenie… {pct}",
   "insights.error": "Liczenie nie powiodło się: {error}",
   "insights.stale": "Filtry lub dane zmieniły się od czasu tego liczenia.",
-  "insights.summary": "{n} wniosków z {rows} wierszy w {matches} meczach, najsilniejsze najpierw",
+  "insights.summary": "{n} wniosków wartych przeczytania z {matches} {unit, select, round {rund} other {meczów}}, najbardziej przydatne najpierw",
   "insights.none": "Nic nie odstaje przy odsetku fałszywych odkryć {fdr}.",
   "insights.showTitle": "Pokaż: kamera na miejscu, filtry, które je wyodrębniają",
   "insights.reset": "Przywróć filtry",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: wygrano {withPct} z {n1} rund, w których strona utrzymała {place}, wobec {withoutPct} z {n2}, bez tego ({diff} p. proc., 95% od {lo} do {hi})",
   "insights.say.outcome.early": "{team}: wygrano {withPct} z {n1} rund, w których strona dotarła do {place} w pierwszych 25 s, wobec {withoutPct} z {n2}, w przeciwnym razie ({diff} p. proc., 95% od {lo} do {hi})",
   "insights.say.outcome.playerUp": "{player} ({team}) dodał {wpa} rund prawdopodobieństwa wygranej w {rounds} rundach ({perRound} p. proc. na rundę, 95% od {lo} do {hi})",
-  "insights.say.outcome.playerDown": "{player} ({team}) kosztował {wpa} rund prawdopodobieństwa wygranej w {rounds} rundach ({perRound} p. proc. na rundę, 95% od {lo} do {hi})"
+  "insights.say.outcome.playerDown": "{player} ({team}) kosztował {wpa} rund prawdopodobieństwa wygranej w {rounds} rundach ({perRound} p. proc. na rundę, 95% od {lo} do {hi})",
+  "insights.skip.fewPersons": "ślady mniej niż czterech osób",
+  "insights.totals": "Sumy ({n})"
 }

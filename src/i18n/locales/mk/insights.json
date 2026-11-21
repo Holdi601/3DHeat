@@ -6,7 +6,7 @@
   "insights.counting": "Броење… {pct}",
   "insights.error": "Броењето не успеа: {error}",
   "insights.stale": "Филтрите или податоците се променија од ова броење.",
-  "insights.summary": "{n} увиди од {rows} редови во {matches} натпревари, најсилните први",
+  "insights.summary": "{n} увиди вредни за читање од {matches} {unit, select, round {рунди} other {натпревари}}, најкорисните први",
   "insights.none": "При стапка на лажни откритија од {fdr} ништо не се издвојува.",
   "insights.showTitle": "Прикажи: камерата на местото, филтрите што го издвојуваат",
   "insights.reset": "Врати филтри",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: добиени {withPct} од {n1} рундови, во кои страната го држеше {place}, наспроти {withoutPct} од {n2}, без тоа ({diff} поени, 95% од {lo} до {hi})",
   "insights.say.outcome.early": "{team}: добиени {withPct} од {n1} рундови, во кои страната стигна до {place} во првите 25 s, наспроти {withoutPct} од {n2}, инаку ({diff} поени, 95% од {lo} до {hi})",
   "insights.say.outcome.playerUp": "{player} ({team}) додаде {wpa} рундови веројатност за победа во {rounds} рундови ({perRound} поени по рунда, 95% од {lo} до {hi})",
-  "insights.say.outcome.playerDown": "{player} ({team}) изгуби {wpa} рундови веројатност за победа во {rounds} рундови ({perRound} поени по рунда, 95% од {lo} до {hi})"
+  "insights.say.outcome.playerDown": "{player} ({team}) изгуби {wpa} рундови веројатност за победа во {rounds} рундови ({perRound} поени по рунда, 95% од {lo} до {hi})",
+  "insights.skip.fewPersons": "траги од помалку од четири лица",
+  "insights.totals": "Вкупно ({n})"
 }

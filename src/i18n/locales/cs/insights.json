@@ -6,7 +6,7 @@
   "insights.counting": "Počítám… {pct}",
   "insights.error": "Počítání selhalo: {error}",
   "insights.stale": "Filtry nebo data se od tohoto počítání změnily.",
-  "insights.summary": "{n} zjištění z {rows} řádků v {matches} zápasech, nejsilnější první",
+  "insights.summary": "{n} zjištění, která stojí za přečtení, z {matches} {unit, select, round {kol} other {zápasů}}, nejužitečnější první",
   "insights.none": "Při míře falešných objevů {fdr} nic nevybočuje.",
   "insights.showTitle": "Zobrazit: kamera na místě, filtry, které je izolují",
   "insights.reset": "Obnovit filtry",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: vyhráno {withPct} z {n1} kol, v nichž strana držela {place}, oproti {withoutPct} z {n2}, bez toho ({diff} p. b., 95% od {lo} do {hi})",
   "insights.say.outcome.early": "{team}: vyhráno {withPct} z {n1} kol, v nichž strana dorazila na {place} v prvních 25 s, oproti {withoutPct} z {n2}, jinak ({diff} p. b., 95% od {lo} do {hi})",
   "insights.say.outcome.playerUp": "{player} ({team}) přidal {wpa} kol pravděpodobnosti výhry za {rounds} kol ({perRound} p. b. za kolo, 95% od {lo} do {hi})",
-  "insights.say.outcome.playerDown": "{player} ({team}) ztratil {wpa} kol pravděpodobnosti výhry za {rounds} kol ({perRound} p. b. za kolo, 95% od {lo} do {hi})"
+  "insights.say.outcome.playerDown": "{player} ({team}) ztratil {wpa} kol pravděpodobnosti výhry za {rounds} kol ({perRound} p. b. za kolo, 95% od {lo} do {hi})",
+  "insights.skip.fewPersons": "stopy méně než čtyř lidí",
+  "insights.totals": "Součty ({n})"
 }

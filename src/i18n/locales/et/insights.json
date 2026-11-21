@@ -6,7 +6,7 @@
   "insights.counting": "Loen… {pct}",
   "insights.error": "Lugemine ebaõnnestus: {error}",
   "insights.stale": "Filtrid või andmed on pärast selle lugemist muutunud.",
-  "insights.summary": "{n} tähelepanekut {rows} real {matches} mängus, tugevaimad enne",
+  "insights.summary": "{n} lugemist väärt tähelepanekut {matches} {unit, select, round {raundist} other {matšist}}, kasulikumad enne",
   "insights.none": "Valeavastuste määraga {fdr} ei paista miski silma.",
   "insights.showTitle": "Näita: kaamera kohal, filtrid, mis selle eraldavad",
   "insights.reset": "Taasta filtrid",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: võideti {withPct} {n1} vooru hulgast, kus pool hoidis kohta {place}, võrreldes {withoutPct}ga {n2} hulgast, ilma selleta ({diff} punkti, 95% vahemikus {lo} kuni {hi})",
   "insights.say.outcome.early": "{team}: võideti {withPct} {n1} vooru hulgast, kus pool jõudis kohta {place} esimese 25 s jooksul, võrreldes {withoutPct}ga {n2} hulgast, muidu ({diff} punkti, 95% vahemikus {lo} kuni {hi})",
   "insights.say.outcome.playerUp": "{player} ({team}) lisas {wpa} vooru jagu võidutõenäosust {rounds} voorus ({perRound} punkti voorus, 95% vahemikus {lo} kuni {hi})",
-  "insights.say.outcome.playerDown": "{player} ({team}) kaotas {wpa} vooru jagu võidutõenäosust {rounds} voorus ({perRound} punkti voorus, 95% vahemikus {lo} kuni {hi})"
+  "insights.say.outcome.playerDown": "{player} ({team}) kaotas {wpa} vooru jagu võidutõenäosust {rounds} voorus ({perRound} punkti voorus, 95% vahemikus {lo} kuni {hi})",
+  "insights.skip.fewPersons": "vähem kui nelja inimese jäljed",
+  "insights.totals": "Kokku ({n})"
 }

@@ -6,7 +6,7 @@
   "insights.counting": "Brojim… {pct}",
   "insights.error": "Brojanje nije uspjelo: {error}",
   "insights.stale": "Filtri ili podaci promijenili su se od ovog brojanja.",
-  "insights.summary": "{n} uvida iz {rows} redaka u {matches} mečeva, najjači prvi",
+  "insights.summary": "{n} uvida vrijednih čitanja iz {matches} {unit, select, round {rundi} other {mečeva}}, najkorisniji prvi",
   "insights.none": "Pri stopi lažnih otkrića {fdr} ništa ne odskače.",
   "insights.showTitle": "Prikaži: kamera na mjestu, filtri koji ga izdvajaju",
   "insights.reset": "Vrati filtre",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: dobiveno {withPct} od {n1} rundi, u kojima je strana držala {place}, naspram {withoutPct} od {n2}, bez toga ({diff} bodova, 95% od {lo} do {hi})",
   "insights.say.outcome.early": "{team}: dobiveno {withPct} od {n1} rundi, u kojima je strana stigla do {place} u prvih 25 s, naspram {withoutPct} od {n2}, inače ({diff} bodova, 95% od {lo} do {hi})",
   "insights.say.outcome.playerUp": "{player} ({team}) je dodao {wpa} rundi vjerojatnosti pobjede u {rounds} rundi ({perRound} bodova po rundi, 95% od {lo} do {hi})",
-  "insights.say.outcome.playerDown": "{player} ({team}) je izgubio {wpa} rundi vjerojatnosti pobjede u {rounds} rundi ({perRound} bodova po rundi, 95% od {lo} do {hi})"
+  "insights.say.outcome.playerDown": "{player} ({team}) je izgubio {wpa} rundi vjerojatnosti pobjede u {rounds} rundi ({perRound} bodova po rundi, 95% od {lo} do {hi})",
+  "insights.skip.fewPersons": "tragovi manje od četiri osobe",
+  "insights.totals": "Ukupno ({n})"
 }

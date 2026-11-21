@@ -6,7 +6,7 @@
   "insights.counting": "Se numără… {pct}",
   "insights.error": "Numărarea a eșuat: {error}",
   "insights.stale": "Filtrele sau datele s-au schimbat de la această numărare.",
-  "insights.summary": "{n} observații din {rows} rânduri în {matches} meciuri, cele mai puternice primele",
+  "insights.summary": "{n} observații care merită citite din {matches} {unit, select, round {runde} other {meciuri}}, cele mai utile primele",
   "insights.none": "Nimic nu iese în evidență la o rată de false descoperiri de {fdr}.",
   "insights.showTitle": "Arată: camera pe loc, filtrele care îl izolează",
   "insights.reset": "Restaurează filtrele",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: câștigat {withPct} din {n1} runde, în care partea a ținut {place}, față de {withoutPct} din {n2}, fără asta ({diff} puncte, 95% de la {lo} la {hi})",
   "insights.say.outcome.early": "{team}: câștigat {withPct} din {n1} runde, în care partea a ajuns la {place} în primele 25 s, față de {withoutPct} din {n2}, altfel ({diff} puncte, 95% de la {lo} la {hi})",
   "insights.say.outcome.playerUp": "{player} ({team}) a adăugat {wpa} runde de probabilitate de victorie în {rounds} runde ({perRound} puncte pe rundă, 95% de la {lo} la {hi})",
-  "insights.say.outcome.playerDown": "{player} ({team}) a costat {wpa} runde de probabilitate de victorie în {rounds} runde ({perRound} puncte pe rundă, 95% de la {lo} la {hi})"
+  "insights.say.outcome.playerDown": "{player} ({team}) a costat {wpa} runde de probabilitate de victorie în {rounds} runde ({perRound} puncte pe rundă, 95% de la {lo} la {hi})",
+  "insights.skip.fewPersons": "urme de la mai puțin de patru persoane",
+  "insights.totals": "Totaluri ({n})"
 }

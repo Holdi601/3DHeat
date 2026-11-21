@@ -6,7 +6,7 @@
   "insights.counting": "统计中… {pct}",
   "insights.error": "统计失败:{error}",
   "insights.stale": "自统计以来,筛选或数据已发生变化。",
-  "insights.summary": "{matches} 场比赛、{rows} 行数据中的 {n} 项洞察,按强度排序",
+  "insights.summary": "从 {matches} {unit, select, round {个回合} other {场比赛}}中得出 {n} 项值得一读的洞察，最有用的在前",
   "insights.none": "在错误发现率 {fdr} 下没有突出的发现。",
   "insights.showTitle": "显示:镜头对准该地点,并应用将其单独筛出的筛选",
   "insights.reset": "恢复筛选",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}：守住 {place} 时（{n1} 回合）胜率为 {withPct}，没有守住时（{n2} 回合）为 {withoutPct}（{diff} 个百分点，95%：{lo} 至 {hi}）",
   "insights.say.outcome.early": "{team}：在前 25 s 内到达 {place} 时（{n1} 回合）胜率为 {withPct}，否则（{n2} 回合）为 {withoutPct}（{diff} 个百分点，95%：{lo} 至 {hi}）",
   "insights.say.outcome.playerUp": "{player}（{team}）在 {rounds} 回合中增加了相当于 {wpa} 回合的获胜概率（每回合 {perRound} 个百分点，95%：{lo} 至 {hi}）",
-  "insights.say.outcome.playerDown": "{player}（{team}）在 {rounds} 回合中损失了相当于 {wpa} 回合的获胜概率（每回合 {perRound} 个百分点，95%：{lo} 至 {hi}）"
+  "insights.say.outcome.playerDown": "{player}（{team}）在 {rounds} 回合中损失了相当于 {wpa} 回合的获胜概率（每回合 {perRound} 个百分点，95%：{lo} 至 {hi}）",
+  "insights.skip.fewPersons": "少于四人的轨迹",
+  "insights.totals": "合计（{n}）"
 }

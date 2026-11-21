@@ -6,7 +6,7 @@
   "insights.counting": "Teller… {pct}",
   "insights.error": "Tellingen mislyktes: {error}",
   "insights.stale": "Filtrene eller dataene har endret seg siden dette ble talt.",
-  "insights.summary": "{n} innsikter fra {rows} rader i {matches} kamper, de sterkeste først",
+  "insights.summary": "{n} innsikter verdt å lese fra {matches} {unit, select, round {runder} other {kamper}}, de mest nyttige først",
   "insights.none": "Ingenting skiller seg ut ved en falsk oppdagelsesrate på {fdr}.",
   "insights.showTitle": "Vis den: kameraet på stedet, filtrene som isolerer det",
   "insights.reset": "Gjenopprett filtre",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: vant {withPct} av {n1} runder, der siden holdt {place}, mot {withoutPct} av {n2}, uten det ({diff} poeng, 95% fra {lo} til {hi})",
   "insights.say.outcome.early": "{team}: vant {withPct} av {n1} runder, der siden nådde {place} i løpet av de første 25 s, mot {withoutPct} av {n2}, ellers ({diff} poeng, 95% fra {lo} til {hi})",
   "insights.say.outcome.playerUp": "{player} ({team}) la til {wpa} runders seierssannsynlighet over {rounds} runder ({perRound} poeng per runde, 95% fra {lo} til {hi})",
-  "insights.say.outcome.playerDown": "{player} ({team}) kostet {wpa} runders seierssannsynlighet over {rounds} runder ({perRound} poeng per runde, 95% fra {lo} til {hi})"
+  "insights.say.outcome.playerDown": "{player} ({team}) kostet {wpa} runders seierssannsynlighet over {rounds} runder ({perRound} poeng per runde, 95% fra {lo} til {hi})",
+  "insights.skip.fewPersons": "spor fra færre enn fire personer",
+  "insights.totals": "Totalt ({n})"
 }

@@ -17,11 +17,11 @@ The **Insights** section is in the sidebar of the Heatmap and Match tabs. It has
 ## Findings
 
 1. Load data and open **Insights**. Press **Find insights** ("Counting… n%" shows the progress).
-2. Read the list. Each finding has a usefulness bar, what happened in plain words (with the size of the place and the events it rests on), how good the evidence is (*Strong evidence*, *Good evidence* or *Some evidence*), which detector found it, and the vehicle class where that matters.
+2. Read the list. The ten most useful findings are shown; **Show more** lists the rest. Each finding has a usefulness bar, what happened in plain words (with the size of the place and the events it rests on), how good the evidence is (*Strong evidence*, *Good evidence* or *Some evidence*), which detector found it, and the vehicle class where that matters. Totals of the [value columns](value-weighting.md) are folded under **Totals** above the list.
 3. **Click a finding**: the viewer applies its filters, jumps to the time and fits the place to the finding's own events (below). The place is outlined in the view - a ring at its floor and at its ceiling, joined at four corners, with a mast - a pulse runs out from its centre three times, each event it is about gets a small cross, and the camera frames it. The details open:
-   - the comparison: how unusual it is and against what (*Players spent 0.2% of their time here, so about 0.7 would be expected...*);
+   - the comparison: how unusual it is and against what (*Players spent 0.2% of their time here, so about 0.7 would be expected...*), and which side makes most of it where one does (*Red makes 81% of the kills here.*);
    - **Why it matters** and **What to do**;
-   - the events it rests on, the matches, and the evidence (q over the number of tests);
+   - the events it rests on and the evidence; over several matches (or the rounds of one), in how many it holds and how much the biggest one makes (*Seen in 14 of 20 rounds; the biggest single round makes 12% of it.*);
    - **The numbers** (folded): the effect with its 95% interval, the p and q values and the counted evidence;
    - **Volume here**, which draws a [volume](volumes.md) fitted to the finding.
 
@@ -43,16 +43,16 @@ The lines at the top of the list (for example the money totals) summarise the wh
 | **Open ground and cover** | Deaths in the open against near level geometry, and slow against fast movement | deaths; a 3D level for the geometry part |
 | **Spawns** | Strong spawns, spawn traps, safe spawns, time to first contact | time and persons |
 | **Class by place** | A vehicle class, or players against AI, doing much better or worse in an area | kills plus a vehicle class or player/AI column |
-| **Players** | Players killing or dying far more or less than others in the same class | persons and kills |
+| **Players** | Players killing or dying far more or less than others in the same class (AI units only when they kill far more) | persons and kills |
 | **Chokes and flanks** | Choke points (far more crossings than the ground around) and flank routes (rarely used, but lead to kills) | persons |
-| **Value** | *Costly ground* and *Earning ground* | [value columns](value-weighting.md) |
+| **Value** | *Costly ground* and *Earning ground*, in the game's own currencies (not a converter's real-world price estimate), at most two and ranked below the tactical findings | [value columns](value-weighting.md) |
 | **What decided the rounds** | What separated won from lost rounds, and the players who added or cost the most win probability (see [Who won](#who-won-what-decided-the-rounds)) | rounds, kills and deaths, and the [outcome columns](data-formats.md#outcome-columns) (`won`) |
 
 Detectors that cannot run on the data are listed at the bottom with the reason.
 
 ### How findings are ranked
 
-Every place or group is tested against the rest of the map (exact binomial or rate tests). The false discovery rate is held at 5% (Benjamini-Hochberg). Chance can look like a pattern; this keeps false alarms low: among the findings shown, at most about one in twenty is expected to be chance. Effects from few events are pulled toward "no effect" before ranking. At most 60 findings are listed, and every detector gets a few places near the top.
+Every place or group is tested against the rest of the map (exact binomial or rate tests); a player against the players of the same vehicle class. The false discovery rate is held at 5% (Benjamini-Hochberg). Chance can look like a pattern; this keeps false alarms low: among the findings shown, at most about one in twenty is expected to be chance. Effects from few events are pulled toward "no effect" before ranking. At most 40 findings are listed.
 
 A connected area of significant cells is split into its peaks: the best cell and its neighbours that score at least 30% of it (the score is the excess of events over what the time spent predicts). So one hot spot is one finding a few cells across, never a sprawl over half the map.
 
@@ -61,14 +61,30 @@ A finding that passes its test can still say nothing. These are left out, and a 
 | Left out | When |
 |---|---|
 | covered most of the map | the place is wider than 35% of the map (60% for a flank route); spawn areas are exempt |
-| only reflected where everyone spends their time | a quiet zone or safe ground that holds over 25% of all time spent (the rear, a base) |
-| rested on a handful of events | a hot zone with fewer than 10 events where less than 1 was expected |
+| held most of all such events | a hot zone with more than half of all events of its kind: the whole fight ("99% of it happens here"), not a place in it |
+| only reflected where everyone spends their time | every quiet zone and every stretch of safe ground: on real data a place where people spend time and little happens was always a rear, a rotation, a spawn or a parked unit |
+| rested on a handful of events | fewer than 10 events (below); and a "player" with no kill and no death at all (an observer, a camera, a parked unit) |
 | were explained by a spawn nearby | a quiet zone or safe ground overlapping a spawn finding |
-| were spawns or joins | hot or quiet zones of spawn, join, leave and similar events, which happen where the game puts them |
+| were spawns or joins | hot or quiet zones of spawn, join, leave, take-off, landing, rearm, capture and similar events, which happen where the game puts them |
+| were explained by a spawn nearby | also: quiet ground, safe ground, choke points and money paid or earned in a cell where at least 1% of all lives start (a freeze time, a buy, an airfield, a parked unit) |
+| were kills by place | hot zones of kills, and quiet zones of deaths, where the power positions already read kills and deaths by place |
+| came mostly from one match | over three or more matches (or rounds): one match makes more than 40% of it, or only one has it at all |
+| held in too few matches | it holds in fewer than two matches, in fewer than a tenth of all (from ten matches up), or in fewer than a quarter of those that have it |
+| repeated a place | the same place already listed for another kind of event: the most useful one says it |
+| were more of a kind | more than a few of one kind (two quiet zones, two target areas, four choke points, five of most kinds) |
+| held in too few matches (single match) | hot zones of shots, hits, explosions and the like in a single match: they show where that match's fight was; over three or more matches they must recur. Deaths per time spent (deadly ground) stand on their own |
+| mixed cause and effect | deaths by movement speed: people slow down, or run, to fight, so the speed at death says little about what to do |
+| followed from winning the round | what decided the rounds: a plant, a place held (see [below](#who-won-what-decided-the-rounds)) |
 
-The rest are ordered by **usefulness**: the evidence strength times how specific the place is (smaller against the map is better), what the kind of finding tells a player or a designer (rounds and power positions most, quiet zones least) and how many events it rests on.
+A finding rests on at least 10 events (an absence on at least 10 expected; a choke point on 30 crossings; open ground against cover on 20 deaths in the two compared thirds). A choke point must be a passage: the traffic round it runs through it from two opposite sides with little across, not out in every direction as from a spawn or an airfield. The choke points and flank routes need four or more people's tracks.
 
-A hot zone where players spend less than 2% of their time is told for what it is: for effects (explosions, hits, impacts) *where they land, not where the people causing them stand*; for actions (shots, launches, drops) *a spot people stop at to fire and move on*.
+The rest are ordered by **usefulness**: the evidence strength times how specific the place is (smaller against the map is better), what the kind of finding tells a player or a designer (rounds and power positions most, target areas and quiet zones least), how many events it rests on and, over several matches, the share of them it holds in. Each further finding of a kind counts 15% less than the one above it, so the top of the list mixes kinds; the list is strictly in that order.
+
+Sizes are in the viewer's units from the data's own scale (a CS2 unit is an inch), to two figures; shares to two figures (*under 0.1%* rather than *0.0%*); a count of nothing is said as nothing (*No deaths*, *never died*). Movement speeds are measured while a life is in play, after it has left the cell it started in, so time spent waiting at a spawn does not count as standing still. Rows exactly at the origin (0, 0, 0) are a converter's mark for an event it could not place and are left out. The analysis grid's cells are never under a metre in the data's own units.
+
+These standards are functions other analyses can hold their findings to: [`curate.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/insights/curate.ts) (`curateInsights`, `rankInsights`, `spreadFails`), [`consistency.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/insights/consistency.ts) (`spreadOf`) and the narration in [`plain.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/insights/plain.ts).
+
+A hot zone where players spend less than 2% of their time is told for what it is: for effects (explosions, hits, impacts) *where they land, while whoever caused them stands somewhere else*; for actions (shots, launches, drops) *a spot people stop at to fire and move on*; for deaths *a deadly crossing*, where people die passing through.
 
 ### Fitted places
 

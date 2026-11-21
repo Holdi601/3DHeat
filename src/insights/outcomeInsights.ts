@@ -7,6 +7,8 @@
  */
 
 import { confidenceLevel, strengthOf } from './stats';
+import { rankInsights, usefulnessOf, type Dropped } from './curate';
+import { MAX_INSIGHTS } from './engine';
 import type { CqbOutcome, OutcomeFactor } from './cqb/outcome';
 import type { DetectorRun, Insight, InsightReport } from './types';
 
@@ -85,15 +87,26 @@ export function mergeOutcome(r: InsightReport): void {
   if (!o) return;
   const { insights, run } = outcomeInsights(o, r.fdr);
   r.detectors.push(run);
-  // As the engine ranks: a few of each kind first, then the rest, strongest first.
-  const all = [...r.insights, ...insights].sort((a, b) => b.strength - a.strength);
-  const seen = new Map<string, number>();
-  const first: Insight[] = [];
-  const rest: Insight[] = [];
-  for (const i of all) {
-    const n = seen.get(i.kind) ?? 0;
-    seen.set(i.kind, n + 1);
-    (n < 3 ? first : rest).push(i);
+  // Ranked as the engine ranks (`curate.ts`): by usefulness, a few of each kind; a plant goes with a
+  // won round because a won round needs one more often than the other way round - a consequence, not a cause.
+  const extent = Math.max(r.grid.nx, r.grid.nz) * r.grid.fine;
+  const dropped = (r.dropped ?? []).filter((d) => !d.kind.startsWith('outcome.')) as Dropped[];
+  const kept: Insight[] = [];
+  for (const i of insights) {
+    if (CONSEQUENCE.test(i.kind)) dropped.push({ id: i.id, kind: i.kind, reason: 'consequence' });
+    else {
+      i.usefulness = Math.round(usefulnessOf(i, extent) * 1e4) / 1e4;
+      kept.push(i);
+    }
   }
-  r.insights = [...first, ...rest].slice(0, Math.max(60, r.insights.length));
+  r.insights = rankInsights([...r.insights, ...kept], dropped).slice(0, MAX_INSIGHTS);
+  r.dropped = dropped;
 }
+
+/**
+ * Outcome factors that follow from winning the round rather than lead to it:
+ * a plant, and a place held for a while (a side that is winning holds the
+ * site, and the other side's spawn once it has pushed through). Reaching a
+ * place early (`outcome.early`) is the side's choice, and stays.
+ */
+const CONSEQUENCE = /^outcome\.(plant|held)$/;

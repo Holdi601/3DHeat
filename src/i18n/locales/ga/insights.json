@@ -6,7 +6,7 @@
   "insights.counting": "Ag comhaireamh… {pct}",
   "insights.error": "Theip ar an gcomhaireamh: {error}",
   "insights.stale": "D'athraigh na scagairí nó na sonraí ón gcomhaireamh seo.",
-  "insights.summary": "{n} léargas as {rows} sraith i {matches} cluiche, an chuid is láidre ar dtús",
+  "insights.summary": "{n} léargas ar fiú iad a léamh as {matches} {unit, select, round {babhta} other {cluiche}}, an chuid is úsáidí ar dtús",
   "insights.none": "Ní thagann aon rud chun suntais ag ráta bréagfhionnachtana de {fdr}.",
   "insights.showTitle": "Taispeáin é: an ceamara ar an áit, na scagairí a leithlisíonn é",
   "insights.reset": "Athchóirigh scagairí",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: bhuaigh {withPct} de {n1} babhta, inar choinnigh an taobh {place}, i gcomparáid le {withoutPct} de {n2}, gan é ({diff} pointe, 95% ó {lo} go {hi})",
   "insights.say.outcome.early": "{team}: bhuaigh {withPct} de {n1} babhta, inar shroich an taobh {place} sna chéad 25 s, i gcomparáid le {withoutPct} de {n2}, ar shlí eile ({diff} pointe, 95% ó {lo} go {hi})",
   "insights.say.outcome.playerUp": "Chuir {player} ({team}) {wpa} babhta de dhóchúlacht bua leis thar {rounds} babhta ({perRound} pointe sa bhabhta, 95% ó {lo} go {hi})",
-  "insights.say.outcome.playerDown": "Chaill {player} ({team}) {wpa} babhta de dhóchúlacht bua thar {rounds} babhta ({perRound} pointe sa bhabhta, 95% ó {lo} go {hi})"
+  "insights.say.outcome.playerDown": "Chaill {player} ({team}) {wpa} babhta de dhóchúlacht bua thar {rounds} babhta ({perRound} pointe sa bhabhta, 95% ó {lo} go {hi})",
+  "insights.skip.fewPersons": "rianta níos lú ná ceathrar",
+  "insights.totals": "Iomlán ({n})"
 }

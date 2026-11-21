@@ -7,14 +7,14 @@
  * data marks the list as stale rather than recounting under the user's hands.
  */
 
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { create } from 'zustand';
 import { CANON } from '../../data/canonical';
 import { labelOf } from './say';
 import { showInsight, volumeFor } from '../../insights/apply';
 import { fitInsight } from '../../insights/fit';
 import { clearHighlight, showHighlight } from '../../insights/highlight';
-import { droppedLine, plainInsight } from './plain';
+import { droppedLine, plainInsight, sessionUnit } from './plain';
 import { analysisScope, runInsights } from '../../insights/run';
 import { toggledSelection, useInsights } from '../../insights/store';
 import type { Insight, InsightReport } from '../../insights/types';
@@ -38,6 +38,8 @@ import './insights.css';
 
 type Tab = 'findings' | 'debrief' | 'caster' | 'maneuvers';
 const NONE: Insight[] = [];
+/** Findings shown before "Show more": the list reads top down, and the tail is weaker. */
+const FIRST = 10;
 /** Outside the panel: the sidebar is rebuilt when the replay opens, and the tab stays. */
 const useTab = create<{ tab: Tab }>(() => ({ tab: 'findings' }));
 
@@ -161,6 +163,10 @@ function InsightsBody() {
     'importance',
   );
   const findings = useSorted(r?.insights ?? NONE, sort);
+  const [all, setAll] = useState(false);
+  // The open finding stays in view when the list is folded.
+  const openAt = findings.findIndex((i) => i.id === st.selected);
+  const shown = all ? findings : findings.slice(0, Math.max(FIRST, openAt + 1));
   // The open one's title closes it again; the camera and filters it set stay.
   const pick = (ins: Insight) => {
     if (toggledSelection(useInsights.getState().selected, ins.id) !== null) return pickInsight(ins, engine);
@@ -198,24 +204,34 @@ function InsightsBody() {
       {r && (
         <>
           <div className="hint">
-            {t('insights.summary', { n: int(r.insights.length), rows: int(r.dataset.shownRows), matches: int(r.dataset.matches) })}
+            {t('insights.summary', { n: int(r.insights.length), matches: int(r.dataset.matches), unit: sessionUnit(r) })}
           </div>
-          {r.values?.map((v) => {
-            const col = parseValueColumn(v.column);
-            const top = v.topPlayers[0];
-            return col ? (
-              <div className="hint" key={v.column}>
-                {t('value.insightTotal', { kind: valueColumnLabel(col), total: int(v.total), player: top?.person ?? '—', value: int(top?.value ?? 0) })}
-              </div>
-            ) : null;
-          })}
+          {!!r.values?.length && (
+            <details className="hint ins-totals">
+              <summary>{t('insights.totals', { n: int(r.values.length) })}</summary>
+              {r.values.map((v) => {
+                const col = parseValueColumn(v.column);
+                const top = v.topPlayers[0];
+                return col ? (
+                  <div key={v.column}>
+                    {t('value.insightTotal', { kind: valueColumnLabel(col), total: int(v.total), player: top?.person ?? '—', value: int(top?.value ?? 0) })}
+                  </div>
+                ) : null;
+              })}
+            </details>
+          )}
           {r.insights.length === 0 && <div className="hint">{t('insights.none', { fdr: `${num(r.fdr * 100)}%` })}</div>}
           {r.insights.length > 1 && <SortControl sort={sort} />}
           <ol className="ins-list">
-            {findings.map((ins) => (
+            {shown.map((ins) => (
               <InsightRow key={ins.id} ins={ins} report={r} samples={r.dataset.exposure === 'samples'} open={st.selected === ins.id} onPick={() => pick(ins)} />
             ))}
           </ol>
+          {findings.length > FIRST && (
+            <button className="link" onClick={() => setAll(!all)}>
+              {all ? t('analysis.ins.less') : t('analysis.ins.more', { n: int(findings.length - shown.length) })}
+            </button>
+          )}
           {droppedLine(r) && <div className="hint ins-dropped">{droppedLine(r)}</div>}
           <Skipped />
           <LensPicker />
@@ -259,7 +275,7 @@ function Details({ ins, samples }: { ins: Insight; samples: boolean }) {
   const plain = plainInsight(ins, report, samples);
   return (
     <div className="ins-details">
-      <p className="ins-compare">{plain.compare}</p>
+      {plain.compare && <p className="ins-compare">{plain.compare}</p>}
       {plain.why && (
         <p className="ins-why">
           <b>{t('analysis.ins.why')}:</b> {plain.why}

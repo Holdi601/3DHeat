@@ -6,7 +6,7 @@
   "insights.counting": "Подсчёт… {pct}",
   "insights.error": "Подсчёт не удался: {error}",
   "insights.stale": "Фильтры или данные изменились с момента подсчёта.",
-  "insights.summary": "{n} выводов из {rows} строк в {matches} матчах, самые сильные первыми",
+  "insights.summary": "{n} выводов, которые стоит прочитать, из {matches} {unit, select, round {раундов} other {матчей}}, самые полезные первыми",
   "insights.none": "При доле ложных открытий {fdr} ничто не выделяется.",
   "insights.showTitle": "Показать: камера на место, фильтры, которые его выделяют",
   "insights.reset": "Вернуть фильтры",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: выиграно {withPct} из {n1} раундов, в которых сторона удерживала {place}, против {withoutPct} из {n2}, без этого ({diff} п.п., 95% от {lo} до {hi})",
   "insights.say.outcome.early": "{team}: выиграно {withPct} из {n1} раундов, в которых сторона дошла до {place} за первые 25 s, против {withoutPct} из {n2}, иначе ({diff} п.п., 95% от {lo} до {hi})",
   "insights.say.outcome.playerUp": "{player} ({team}) добавил {wpa} раундов вероятности победы за {rounds} раундов ({perRound} п.п. за раунд, 95% от {lo} до {hi})",
-  "insights.say.outcome.playerDown": "{player} ({team}) потерял {wpa} раундов вероятности победы за {rounds} раундов ({perRound} п.п. за раунд, 95% от {lo} до {hi})"
+  "insights.say.outcome.playerDown": "{player} ({team}) потерял {wpa} раундов вероятности победы за {rounds} раундов ({perRound} п.п. за раунд, 95% от {lo} до {hi})",
+  "insights.skip.fewPersons": "треки менее чем четырёх человек",
+  "insights.totals": "Итоги ({n})"
 }

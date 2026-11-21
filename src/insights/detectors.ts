@@ -15,6 +15,7 @@ import { APPROACH, COARSE, EARLY, MID, speedEdge, SPEED_BINS, type InsightJob } 
 import { bhAdjust, confidenceLevel, quantileSorted, rateTest, shareTest, strengthOf, type RateTest, type ShareTest } from './stats';
 import type { DetectorId, Insight, InsightFilter, InsightPlace, InsightSubject } from './types';
 import { currencyUnit, parseValueColumn } from '../data/costs/columns';
+import { midCellsOf } from './consistency';
 
 /** Names the detectors speak in: the taxonomies and the canonical columns (kept out of the worker's imports). */
 export interface InsightNames {
@@ -254,6 +255,36 @@ function placeKey(p: InsightPlace | null): string {
   return p ? `${Math.round(p.x)},${Math.round(p.z)}` : 'map';
 }
 
+/** A side makes at least this share of a place's kills (or deaths) for the place to be told as that side's. */
+const SIDE_SHARE = 0.65;
+
+/**
+ * The side that makes most of a place's kills or deaths, where one does and
+ * there are enough of them to say: on most maps a side is a side of the map,
+ * and "a power position" means little until it says for whom.
+ */
+function sideOf(ctx: DetectContext, cells: readonly number[], of: 'kills' | 'deaths'): Insight['side'] {
+  const { job, names } = ctx;
+  const M = job.meta.grid.mx * job.meta.grid.mz;
+  const arr = of === 'kills' ? job.mTeamKills : job.mTeamDeaths;
+  const T = Math.floor(arr.length / Math.max(1, M));
+  if (T < 2) return undefined;
+  let all = 0;
+  let best = -1;
+  let bestN = 0;
+  for (let t = 0; t < T; t++) {
+    let n = 0;
+    for (const c of cells) n += arr[t * M + c];
+    all += n;
+    if (n > bestN) {
+      bestN = n;
+      best = t;
+    }
+  }
+  if (all < 5 || best < 0 || bestN / all < SIDE_SHARE || !names.teams[best]) return undefined;
+  return { team: names.teams[best], share: round(bestN / all, 3), of };
+}
+
 // ---------------------------------------------------------------------------
 // 1. Power positions: kill-to-death odds or survival far above the map's
 
@@ -336,6 +367,8 @@ const power: Detector = {
           place,
           filters: [evFilter(ctx, 'kill', 'death')],
         }),
+        cells: [t.mi],
+        ...(t.kind === 'kd' ? { side: sideOf(ctx, [t.mi], 'kills') } : {}),
         cell: t.mi,
         group: t.kind,
       });
@@ -421,6 +454,8 @@ const zones: Detector = {
         // An absence ranks below a presence of the same size: quiet ground is
         // often only where nobody fights (a spawn, an airfield).
         if (!gr.hot) ins.strength = round(ins.strength * 0.6, 4);
+        ins.cells = cells;
+        if (gr.hot && (kindName === 'kill' || kindName === 'death')) ins.side = sideOf(ctx, cells, kindName === 'kill' ? 'kills' : 'deaths');
         return ins;
       });
       zs.sort((a, b) => b.strength - a.strength);
@@ -474,7 +509,8 @@ const cover: Detector = {
         d[b[i]] += eventsAt(ctx, m.death, c);
         t[b[i]] += job.mPres[c];
       });
-      if (d[0] + d[2] >= 10 && t[0] > 0 && t[2] > 0)
+      // Two of the three bands compared: at least 20 deaths between them, or the factor is chance.
+      if (d[0] + d[2] >= 20 && t[0] > 0 && t[2] > 0)
         cands.push({ kind: 'level', test: rateTest(d[0], t[0], d[2], t[2]), ev: { deathsOpen: d[0], presenceOpen: round(t[0], 1), deathsMid: d[1], presenceMid: round(t[1], 1), deathsDense: d[2], presenceDense: round(t[2], 1) } });
     }
     {
@@ -512,7 +548,7 @@ const cover: Detector = {
           method:
             c.kind === 'level'
               ? 'deaths per presence, most open vs densest third of the ground by level geometry, exact Poisson rate ratio'
-              : 'deaths per presence, slowest vs fastest third of the time by speed, exact Poisson rate ratio',
+              : 'deaths per presence in play (away from the cell the life started in), slowest vs fastest third of that time by speed, exact Poisson rate ratio',
           params: c.kind === 'speed' ? { slowBelow: c.ev.slowBelow, fastAbove: c.ev.fastAbove } : {},
           evidence: c.ev,
           place: null,
@@ -540,12 +576,17 @@ const spawn: Detector = {
     const lv = job.lives;
     const g = job.meta.grid;
     const N = lv.n;
+    // AI lives where there are players' too: an AI wave sent to die (bombers, targets) is no spawn to learn from.
+    let human = 0;
+    for (let i = 0; i < N; i++) if (!lv.ai[i]) human++;
+    const counts = (i: number) => human === 0 || human === N || !lv.ai[i];
     // Spawn areas: coarse cells many lives start in, merged with their near
     // neighbours; by side instead where the areas hold under half the spawns.
     const R = COARSE / MID;
     const coarseOf = (mi: number) => Math.floor(Math.floor(mi / g.mx) / R) * g.cx + Math.floor((mi % g.mx) / R);
     const perCell = new Map<number, number>();
     for (let i = 0; i < N; i++) {
+      if (!counts(i)) continue;
       const c = coarseOf(lv.cell[i]);
       perCell.set(c, (perCell.get(c) ?? 0) + 1);
     }
@@ -569,6 +610,7 @@ const spawn: Detector = {
     const contacts: number[][] = Array.from({ length: G }, () => []);
     const all: number[] = [];
     for (let i = 0; i < N; i++) {
+      if (!counts(i)) continue;
       const gi = byTeam ? lv.team[i] : groupOf.get(coarseOf(lv.cell[i])) ?? -1;
       if (gi < 0 || gi >= G) continue;
       n[gi]++;
@@ -621,6 +663,8 @@ const spawn: Detector = {
           }
       }
       const teamName = team >= 0 && team < names.teams.length ? names.teams[team] : '';
+      // A side the data leaves unnamed (neutral units, the AI's own spawns): no side to tell.
+      if (!teamName) return;
       const cs = contacts[gi].sort((a, b) => a - b);
       const place: InsightPlace = byTeam
         ? { x: sx[gi] / n[gi], y: sy[gi] / n[gi], z: sz[gi] / n[gi], radius: g.f * MID * 4, grid: 'mid', cell: g.f * MID }
@@ -725,6 +769,7 @@ const classPlace: Detector = {
           filters: [{ by: 'category', column: isClass ? names.classColumn : names.actorColumn, values: [value] }, evFilter(ctx, 'kill', 'death')],
           subject: isClass ? { vehicleClass: value, ...(top >= 0 ? { targetClass: names.classes[top] } : {}) } : { actor: value },
         }),
+        cells: midCellsOf(job, t.ci),
         cell: t.ci,
         group: `${t.dim.dim}:${t.v}:${strong}`,
       });
@@ -777,6 +822,9 @@ const players: Detector = {
       const cls = pr.cls[i] >= 0 ? names.classes[pr.cls[i]] : '';
       const kind = t.kind === 'kills' ? (up ? 'players.over' : 'players.under') : up ? 'players.fragile' : 'players.durable';
       const ai = pr.ai[i] * 2 > pr.rows[i];
+      // An AI unit is no player to learn from: one that kills little or never dies was left alone, one
+      // that dies often is a wave sent to die (bombers, targets). Only an AI that kills far more is told.
+      if (ai && kind !== 'players.over') return;
       out.push(
         build({
           detector: 'players',
@@ -812,10 +860,32 @@ const players: Detector = {
 // ---------------------------------------------------------------------------
 // 7. Choke points and flank routes, from where the tracks cross
 
+const withCells = (cells: number[], ins: Insight): Insight => Object.assign(ins, { cells });
+
+/**
+ * Whether the traffic round a cell (by eight directions, from its 5 x 5 ring)
+ * runs through it: on two opposite sides, with little on the two sides across.
+ * A spawn, a base or an airfield is busy all round - traffic that starts or
+ * ends there, not a passage - and is no choke point.
+ */
+export function throughRoute(sec: readonly number[], total: number): boolean {
+  if (!(total > 0)) return false;
+  const at = (k: number) => sec[((k % 8) + 8) % 8];
+  for (let k = 0; k < 4; k++) {
+    const a = at(k - 1) + at(k) + at(k + 1);
+    const b = at(k + 3) + at(k + 4) + at(k + 5);
+    const across = at(k + 2) + at(k + 6);
+    if (Math.min(a, b) >= 0.2 * total && across <= 0.2 * total) return true;
+  }
+  return false;
+}
+
 const flow: Detector = {
   id: 'flow',
   skip: (ctx) => {
     if (ctx.job.meta.persons === 0) return 'insights.skip.noTracks';
+    // A route is where many go: one or two people's tracks are only their own way.
+    if (ctx.job.meta.persons < 4) return 'insights.skip.fewPersons';
     let n = 0;
     for (let i = 0; i < ctx.job.mPasses.length; i++) n += ctx.job.mPasses[i];
     return n < 50 ? 'insights.skip.fewCrossings' : null;
@@ -844,16 +914,19 @@ const flow: Detector = {
       const iz = Math.floor(mi / g.mx);
       let b = 0;
       let nb = 0;
+      const sec = [0, 0, 0, 0, 0, 0, 0, 0];
       for (let dz = -2; dz <= 2; dz++)
         for (let dx = -2; dx <= 2; dx++) {
           if (!dx && !dz) continue;
           const x = ix + dx;
           const z = iz + dz;
           if (x < 0 || z < 0 || x >= g.mx || z >= g.mz) continue;
-          b += P[z * g.mx + x];
+          const v = P[z * g.mx + x];
+          b += v;
           nb++;
+          sec[(Math.round(Math.atan2(dz, dx) / (Math.PI / 4)) + 8) % 8] += v;
         }
-      if (nb < 8) continue;
+      if (nb < 8 || !throughRoute(sec, b)) continue;
       const r = rateTest(a, 1, b, nb);
       tests.push({ mi, kind: 'choke', test: r, p: r.pUpper, around: b / nb });
     }
@@ -894,6 +967,7 @@ const flow: Detector = {
             place,
             filters: [],
           }),
+          cells: [t.mi],
           cell: t.mi,
           group: 'choke',
         });
@@ -914,7 +988,7 @@ const flow: Detector = {
       }
       const r = rateTest(a, n, approach - a, total - n);
       const place = { ...groupPlace(ctx, cells, (c) => P[c]), path: along(ctx, cells) };
-      return build({
+      return withCells(cells, build({
         detector: 'flow',
         kind: 'flow.flank',
         key: placeKey(place),
@@ -928,7 +1002,7 @@ const flow: Detector = {
         evidence: { killsAfter: a, crossings: n, cells: cells.length, mapKillsAfter: approach, mapCrossings: total },
         place,
         filters: [evFilter(ctx, 'kill')],
-      });
+      }));
     });
     routes.sort((a, b) => b.strength - a.strength);
     out.push(...routes.slice(0, 6));
@@ -943,7 +1017,8 @@ const flow: Detector = {
 function valueTargets(cols: readonly string[]): { c: number; earned: boolean; currency: string }[] {
   const out: { c: number; earned: boolean; currency: string }[] = [];
   const parsed = cols.map((name) => parseValueColumn(name));
-  const currencies = new Set(parsed.flatMap((p) => (p ? [p.currency] : [])));
+  // A game's own currencies only: a converter's real-world price estimate (`usd`) for game vehicles is no finding.
+  const currencies = new Set(parsed.flatMap((p) => (p && p.currency !== 'usd' ? [p.currency] : [])));
   const PAID = ['total', 'lost', 'spent', 'fired', 'fuel'];
   for (const cur of currencies) {
     for (const kind of PAID) {
@@ -1027,6 +1102,7 @@ const value: Detector = {
         });
         // Ranked by the money as much as by the rate: a big share is the finding.
         ins.strength = round(ins.strength * (0.5 + Math.min(1, Math.abs(share) / 20)), 4);
+        ins.cells = cells;
         return ins;
       });
       found.sort((a, b) => b.strength - a.strength);

@@ -6,7 +6,7 @@
   "insights.counting": "Tel… {pct}",
   "insights.error": "Talning mistókst: {error}",
   "insights.stale": "Síurnar eða gögnin hafa breyst síðan þetta var talið.",
-  "insights.summary": "{n} innsýn úr {rows} röðum í {matches} leikjum, sú sterkasta fyrst",
+  "insights.summary": "{n} innsýn sem vert er að lesa úr {matches} {unit, select, round {lotum} other {leikjum}}, gagnlegasta fyrst",
   "insights.none": "Ekkert sker sig úr við {fdr} falskt uppgötvunarhlutfall.",
   "insights.showTitle": "Sýna: myndavélin á staðinn, síurnar sem einangra hann",
   "insights.reset": "Endurheimta síur",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: vann {withPct} af {n1} lotum, þar sem liðið hélt {place}, á móti {withoutPct} af {n2}, án þess ({diff} stig, 95% frá {lo} til {hi})",
   "insights.say.outcome.early": "{team}: vann {withPct} af {n1} lotum, þar sem liðið náði {place} á fyrstu 25 s, á móti {withoutPct} af {n2}, annars ({diff} stig, 95% frá {lo} til {hi})",
   "insights.say.outcome.playerUp": "{player} ({team}) bætti við {wpa} lotum af sigurlíkum á {rounds} lotum ({perRound} stig á lotu, 95% frá {lo} til {hi})",
-  "insights.say.outcome.playerDown": "{player} ({team}) tapaði {wpa} lotum af sigurlíkum á {rounds} lotum ({perRound} stig á lotu, 95% frá {lo} til {hi})"
+  "insights.say.outcome.playerDown": "{player} ({team}) tapaði {wpa} lotum af sigurlíkum á {rounds} lotum ({perRound} stig á lotu, 95% frá {lo} til {hi})",
+  "insights.skip.fewPersons": "slóðir færri en fjögurra manna",
+  "insights.totals": "Samtals ({n})"
 }

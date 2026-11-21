@@ -6,7 +6,7 @@
   "insights.counting": "Štetje… {pct}",
   "insights.error": "Štetje ni uspelo: {error}",
   "insights.stale": "Filtri ali podatki so se spremenili od tega štetja.",
-  "insights.summary": "{n} ugotovitev iz {rows} vrstic v {matches} tekmah, najmočnejše prve",
+  "insights.summary": "{n} ugotovitev, vrednih branja, iz {matches} {unit, select, round {rund} other {tekem}}, najkoristnejše najprej",
   "insights.none": "Pri stopnji lažnih odkritij {fdr} nič ne izstopa.",
   "insights.showTitle": "Prikaži: kamera na kraju, filtri, ki ga izolirajo",
   "insights.reset": "Obnovi filtre",
@@ -67,5 +67,7 @@
   "insights.say.outcome.held": "{team}: dobljenih {withPct} od {n1} krogov, v katerih je stran držala {place}, v primerjavi z {withoutPct} od {n2}, brez tega ({diff} točke, 95% od {lo} do {hi})",
   "insights.say.outcome.early": "{team}: dobljenih {withPct} od {n1} krogov, v katerih je stran dosegla {place} v prvih 25 s, v primerjavi z {withoutPct} od {n2}, sicer ({diff} točke, 95% od {lo} do {hi})",
   "insights.say.outcome.playerUp": "{player} ({team}) je dodal {wpa} krogov verjetnosti zmage v {rounds} krogih ({perRound} točke na krog, 95% od {lo} do {hi})",
-  "insights.say.outcome.playerDown": "{player} ({team}) je izgubil {wpa} krogov verjetnosti zmage v {rounds} krogih ({perRound} točke na krog, 95% od {lo} do {hi})"
+  "insights.say.outcome.playerDown": "{player} ({team}) je izgubil {wpa} krogov verjetnosti zmage v {rounds} krogih ({perRound} točke na krog, 95% od {lo} do {hi})",
+  "insights.skip.fewPersons": "sledi manj kot štirih oseb",
+  "insights.totals": "Seštevki ({n})"
 }
