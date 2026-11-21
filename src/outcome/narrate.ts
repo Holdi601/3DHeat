@@ -57,6 +57,20 @@ export function whatText(f: OutcomeFinding): string {
 
 /** The whole sentence; `rounds`: the map is played in rounds (else a match is one). */
 export function sayFinding(f: OutcomeFinding, rounds: boolean): string {
+  // Most of the plain difference is who played: say what is left first, the plain rates after.
+  if (f.strengthExplained)
+    return t('outcome.sayExplained', {
+      group: f.group,
+      side: t('outcome.sideName', { by: f.sideBy, name: f.sideName }),
+      what: whatText(f),
+      more: f.adjDiff > 0 ? 'yes' : 'no',
+      adj: pts(Math.abs(f.adjDiff)),
+      withPct: pct(f.with.rate),
+      withoutPct: pct(f.without.rate),
+      n1: int(f.with.n),
+      n2: int(f.without.n),
+      unit: t('outcome.unit', { rounds: rounds ? 'yes' : 'no' }),
+    });
   return t('outcome.say', {
     group: f.group,
     side: t('outcome.sideName', { by: f.sideBy, name: f.sideName }),

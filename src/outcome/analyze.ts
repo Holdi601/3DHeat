@@ -419,6 +419,8 @@ export async function analyseOutcome(
   pending.forEach((c, i) => {
     if (!(q[i] <= o.fdr)) return drop('notSignificant');
     if (Math.abs(c.diff) < o.minDiff) return drop('tooSmall');
+    // Allowed for the team, the players and the score, too little is left: the plain difference was theirs.
+    if (Math.abs(c.adjDiff) < o.minDiff || Math.sign(c.adjDiff) !== Math.sign(c.diff)) return drop('explained');
     const stable = c.folds[1] < 3 || c.folds[0] >= Math.ceil(0.6 * c.folds[1]);
     if (!stable) drop('unstable');
     const agreeShare = c.folds[1] ? c.folds[0] / c.folds[1] : 0.5;

@@ -112,7 +112,36 @@ await step('open the index in the mass analysis', async () => {
   return `${n} matches`;
 });
 
+/** Frame intervals for `ms` with nothing running: what the run's are judged against. */
+async function idleFrames(ms) {
+  return page.evaluate(async (ms) => {
+    const e = globalThis.__3dheat_engine;
+    const t = [];
+    let last = performance.now();
+    const end = last + ms;
+    await new Promise((done) => {
+      const tick = (now) => {
+        t.push(now - last);
+        last = now;
+        e.invalidate?.(1);
+        if (now < end) requestAnimationFrame(tick);
+        else done();
+      };
+      requestAnimationFrame(tick);
+    });
+    t.splice(0, 2);
+    t.sort((a, b) => a - b);
+    return { p50: t[Math.floor(t.length * 0.5)], p99: t[Math.min(t.length - 1, Math.floor(t.length * 0.99))], max: t[t.length - 1], n: t.length };
+  }, ms);
+}
+
 let report = null;
+await step('frames with nothing running (baseline)', async () => {
+  const f = await idleFrames(4000);
+  writeFileSync(path.join(OUT, 'outcome-baseline.json'), JSON.stringify(f));
+  return `p50 ${f.p50.toFixed(1)} p99 ${f.p99.toFixed(1)} max ${f.max.toFixed(1)} ms over ${f.n}`;
+});
+
 await step('run the outcome analysis, frames measured meanwhile', async () => {
   // Frame intervals while it runs: the camera turns, so every frame draws.
   await page.evaluate(() => {
@@ -127,6 +156,18 @@ await step('run the outcome analysis, frames measured meanwhile', async () => {
       if (globalThis.__measuring) requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
+    // Long tasks on the page's thread, and when the result came in: where a slow frame comes from.
+    globalThis.__long = [];
+    globalThis.__t0 = performance.now();
+    try {
+      new PerformanceObserver((l) => {
+        for (const e of l.getEntries()) globalThis.__long.push([Math.round(e.startTime - globalThis.__t0), Math.round(e.duration)]);
+      }).observe({ type: 'longtask', buffered: false });
+    } catch {}
+    globalThis.__oc.subscribe((s, p) => {
+      if (s.result && !p.result) globalThis.__resultAt = Math.round(performance.now() - globalThis.__t0);
+      if (s.map && !p.map) globalThis.__mapAt = Math.round(performance.now() - globalThis.__t0);
+    });
   });
   const t0 = Date.now();
   await page.click('[data-testid=outcome-run]');
@@ -136,8 +177,9 @@ await step('run the outcome analysis, frames measured meanwhile', async () => {
     globalThis.__measuring = false;
     const t = globalThis.__frames.slice(2).sort((a, b) => a - b);
     const q = (p) => t[Math.min(t.length - 1, Math.floor(t.length * p))];
-    return { p50: q(0.5), p99: q(0.99), max: t[t.length - 1], n: t.length };
+    return { p50: q(0.5), p99: q(0.99), max: t[t.length - 1], n: t.length, long: globalThis.__long.sort((x, y) => y[1] - x[1]).slice(0, 6), resultAt: globalThis.__resultAt, mapAt: globalThis.__mapAt };
   });
+  console.log(`     long tasks [at ms, ms]: ${JSON.stringify(frames.long)}; result at ${frames.resultAt} ms, map at ${frames.mapAt} ms`);
   report = await page.evaluate(() => {
     const r = globalThis.__oc.getState().result;
     return { matches: r.matches, read: r.read, missing: r.missing, tests: r.report.tests, ms: r.report.ms, groups: r.report.groups.length, findings: r.report.findings.map((f) => ({ kind: f.kind, side: f.side, window: f.feature.window ?? null, diff: f.diff, group: f.group })) };

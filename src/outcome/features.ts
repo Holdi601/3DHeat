@@ -470,9 +470,9 @@ export function buildGroup(key: string, matches: OutcomeMatch[]): OutcomeGroup |
   const spawnZone = [new Set<number>(), new Set<number>()];
   for (let s = 0; s < 2; s++) for (const [z, n] of startCount[s]) if (n >= SPAWN_SHARE * startTotal[s]) spawnZone[s].add(z);
 
-  // Time slices for the slider: half a window each, up to the last window's end.
+  // Time slices for the slider: half a window each, over a round and a quarter of the usual length.
   const slice = b / 2;
-  const slices = 16;
+  const slices = Math.max(8, Math.min(48, Math.ceil((1.25 * median) / slice)));
   const held: Int32Array[] = [];
 
   // Per side-round measures the medians split.

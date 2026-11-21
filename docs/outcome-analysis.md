@@ -58,7 +58,7 @@ For each pattern the side-rounds split into two arms, with and without it:
 - **Minimum sample**: each arm needs 20 side-rounds, and a pattern present in under 5% or over 95% of the rounds is not tested.
 - **The test**: Cochran-Mantel-Haenszel within strata (below), continuity corrected.
 - **Many tests**: every pattern of every map and side tested in one run counts. The false discovery rate is held at 5% with Benjamini-Hochberg. Some patterns overlap (neighbouring zones), and the method is valid for that kind of positive dependence.
-- **Size**: a difference under 5 percentage points is not said.
+- **Size**: a difference under 5 percentage points is not said, and neither is one whose allowed-for difference (below) is under 5 points or points the other way: the plain difference was the team's, the players' or the score's.
 - **Consistency**: the matches are cut into five periods by date. A finding says in how many periods the difference points the same way, and for how many regular players (ten side-rounds or more on that side of that map). A finding whose direction flips in more than 40% of the periods is marked **unstable** and ranked low.
 
 The list is ranked by the allowed-for difference, times its consistency, halved for the marks below.

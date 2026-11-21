@@ -164,10 +164,19 @@ export function outcomeLines(m: OutcomeMap | null, focus: OutcomeFinding | null,
   if (m) {
     for (const z of m.zones) {
       const c = deltaColor(z.delta);
-      const a = (0.3 + 0.6 * Math.min(1, z.nWith / 40)) * dim;
+      const a = (0.45 + 0.55 * Math.min(1, z.nWith / 40)) * dim;
       const w = z.x1 - z.x0;
       square(z, c, a, w * 0.04);
       square(z, c, a * 0.7, w * 0.08);
+      // A hatch that thickens with the difference, so a strong zone reads as filled from afar.
+      const hatch = Math.round(Math.min(1, Math.abs(z.delta) / FULL_DELTA) * 6);
+      for (let k = 1; k <= hatch; k++) {
+        const f = k / (hatch + 1);
+        const y = z.y + lift;
+        const i0 = w * 0.08, x0 = z.x0 + i0, x1 = z.x1 - i0, z0 = z.z0 + i0, z1 = z.z1 - i0;
+        seg(x0 + (x1 - x0) * f, y, z0, x0, y, z0 + (z1 - z0) * f, c, a * 0.55);
+        seg(x1, y, z0 + (z1 - z0) * f, x0 + (x1 - x0) * f, y, z1, c, a * 0.55);
+      }
       const cx = (z.x0 + z.x1) / 2, cz = (z.z0 + z.z1) / 2, y = z.y + lift, h = w * 0.18;
       if (z.delta > 0.05) {
         seg(cx - h, y, cz, cx + h, y, cz, c, a);

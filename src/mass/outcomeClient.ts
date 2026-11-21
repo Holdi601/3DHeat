@@ -8,6 +8,7 @@
 
 import { create } from 'zustand';
 import { outcomeColumns } from '../data/outcome';
+import { sourceSeconds } from '../data/reshape';
 import type { Engine } from '../render/engine';
 import { useStore } from '../state/store';
 import type { OutcomeFinding } from '../outcome/analyze';
@@ -104,7 +105,7 @@ export async function refreshOutcomeMap(engine: Engine | null, frame = false): P
       z1 = Math.max(z1, z.z1);
       y += z.y / map.zones.length;
     }
-    engine.frameAround((x0 + x1) / 2, y, (z0 + z1) / 2, Math.max(x1 - x0, z1 - z0) * 0.6);
+    engine.frameAround((x0 + x1) / 2, y, (z0 + z1) / 2, Math.max(x1 - x0, z1 - z0) * 0.35);
   }
 }
 
@@ -187,7 +188,8 @@ export async function openExample(engine: Engine | null, f: OutcomeFinding, k: n
   if (ds?.time) {
     const st = useStore.getState();
     if (st.timeline.mode === 'all') st.patchTimeline({ mode: 'play' });
-    st.seek(ex.t0 + ex.at);
+    // The summary's times are the file's own seconds; the dataset's count from its origin.
+    st.seek(ex.t0 + ex.at - sourceSeconds(ds, 0));
   }
   frameFinding(engine, f);
   drawOutcome(engine);
