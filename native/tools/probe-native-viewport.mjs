@@ -4,7 +4,7 @@
  *   node native/tools/probe-native-viewport.mjs --dir <rowceiling folder> --rows 10,100
  *        [--exe <3dheat-app.exe>] [--out <folder>] [--seconds 8]
  *        [--cases exposure,heat,teams,filter,window,split,figures,cubes,overlays,lines,directions,rate,structures|none]
- *        [--backends webgpu,native] [--matches 1000] [--units 20]
+ *        [--backends webgpu,native] [--matches 1000] [--units 20] [--screen 1]
  *   node native/tools/probe-native-viewport.mjs --cases tracks,tracks-cpu --matches 1000 --units 20
  *
  * For each load, starts the built app twice - the web engine (WebGPU in the app's
@@ -48,7 +48,7 @@
  * Exits 1 when a parity gate fails. Windows (WebView2's DevTools port). Needs the
  * real GPU: check nothing else is using it (a game) before running.
  */
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { existsSync, linkSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { deflateSync } from 'node:zlib';
@@ -386,6 +386,13 @@ async function run(rows, backend) {
         return { rows: r.rows, loadMs, resident: eng.live.residentRows, dropped: eng.live.droppedRows, exposure };
       }, mapping);
     const load = picked.length ? await loadOnce() : { rows: 0, loadMs: 0, resident: 0, dropped: 0, exposure: null };
+    // --screen: the app's window as it is on screen, in front, both layers (grab-window.ps1).
+    if (arg('screen', null) !== null) {
+      for (let i = 0; i < 60; i++) await page.evaluate(() => new Promise((r) => requestAnimationFrame(r)));
+      const file = join(out, `${rows / 1e6}M-screen-${backend}.png`);
+      const g = spawnSync('powershell', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', join(import.meta.dirname, 'grab-window.ps1'), '-ProcessId', String(app.pid), '-Out', file], { encoding: 'utf8' });
+      console.log(`${backend}: window ${(g.stdout || g.stderr).trim()} -> ${file}`);
+    }
     // The same files again, three times: the meter must not catch a load still arriving (a snapshot
     // of the last load's rows) nor a frame other than the one it meant.
     const exposures = [load.exposure];
