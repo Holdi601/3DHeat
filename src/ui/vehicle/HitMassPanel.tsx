@@ -23,6 +23,7 @@ import { useStore } from '../../state/store';
 import { expandContainerFiles } from '../../data/container';
 import { formatBytes } from '../../data/memory';
 import { platesHere } from '../../vehicle/plates';
+import { il2PartLabel } from '../../vehicle/il2parts';
 import { cancelHits, fileOfHit, legendStops, loadHits, metaOf, NO_DATA_CSS, patchFilter, patchHits, RESULT_COLOURS, showHit, useHitMass, vehicleName } from '../../vehicle/mass/client';
 import type { BinField, Grouping, HitFilter, PlateMetric, Range } from '../../vehicle/mass/analyze';
 import type { Compare } from '../../vehicle/mass/hitWorker';
@@ -370,7 +371,7 @@ export function HitMassPanel({ engine }: { engine?: Engine | null }) {
           {pstat && plates && plates[plate] && (
             <div className="vhits-plate" data-vhits="plate">
               <div className="vhits-plate-name">
-                {plates[plate].name} {plates[plate].mm !== null && <span className="hint">{t('vhits.plate.mm', { mm: num(plates[plate].mm!, 0) })}</span>}
+                {il2PartLabel(plates[plate].name) && <>{il2PartLabel(plates[plate].name)} · </>}{plates[plate].name} {plates[plate].mm !== null && <span className="hint">{t('vhits.plate.mm', { mm: num(plates[plate].mm!, 0) })}</span>}
               </div>
               <table className="vhits-table">
                 <tbody>
@@ -415,7 +416,7 @@ export function HitMassPanel({ engine }: { engine?: Engine | null }) {
           )}
         </Section>
 
-        <Section title={plate >= 0 ? t('vhits.charts.titlePlate', { plate: plates?.[plate]?.name ?? '' }) : t('vhits.charts.title')} defaultOpen>
+        <Section title={plate >= 0 ? t('vhits.charts.titlePlate', { plate: plates?.[plate] ? (il2PartLabel(plates[plate].name) ?? plates[plate].name) : '' }) : t('vhits.charts.title')} defaultOpen>
           <Segmented
             value={s.charts[0]?.split ?? 'kind'}
             options={[
@@ -529,7 +530,7 @@ function HitCard() {
   return (
     <table className="vhits-table" data-vhits="hit">
       <tbody>
-        <tr><th>{t('vhits.hit.result')}</th><td>{t(`vhits.result.${d.result}`)}</td></tr>
+        <tr><th>{t('vhits.hit.result')}</th><td>{t(`vhits.result.${d.result}`)}{d.result !== 'unknown' && <> {src(d.resultSource)}</>}</td></tr>
         <tr><th>{t('vhits.hit.ammo')}</th><td>{[d.ammoName, d.ammoType, d.kind, d.calibre !== null ? `${num(d.calibre, 1)} mm` : ''].filter(Boolean).join(' · ')}</td></tr>
         <tr><th>{t('vhits.field.speed')}</th><td>{d.speed !== null ? `${int(d.speed)} m/s` : '-'} {src(d.speedSource)}</td></tr>
         <tr><th>{t('vhits.field.angle')}</th><td>{d.angle !== null ? `${num(d.angle, 1)}°` : '-'} {src(d.angleSource)}{d.effMm !== null && <> · {t('vhits.hit.effMm', { mm: num(d.effMm, 0) })}</>}</td></tr>

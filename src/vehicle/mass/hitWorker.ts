@@ -13,7 +13,7 @@ import { compileFilter, histogram, plateColours, plateStats, rateOver, sourceNam
 import type { ScanReply, ScanRequest } from './scanWorker';
 import type { CoreEndpoint } from '../../data/native/core';
 import type { ChartData } from '../../charts/types';
-import { EFFECTS, FLAG_DIR, FLAG_DIST, FLAG_LOCAL, FLAG_POSE, FLAG_WON, FLAG_RESULT_KNOWN, FLAG2_DAMAGE, FLAG2_DIR_DERIVED, FLAG2_LOCAL_EST, NONE16, RESULTS, type Effect, type VehicleMeta } from './types';
+import { armourKnown, EFFECTS, FLAG_DIR, FLAG_DIST, FLAG_LOCAL, FLAG_POSE, FLAG_WON, FLAG_RESULT_KNOWN, FLAG2_DAMAGE, FLAG2_DIR_DERIVED, FLAG2_LOCAL_EST, FLAG2_RESULT_DERIVED, NONE16, RESULTS, type Effect, type VehicleMeta } from './types';
 
 export interface LoadStats {
   files: number;
@@ -50,6 +50,8 @@ export interface ViewRequest {
   platesKey: string | null;
   filter: HitFilter;
   metric: PlateMetric;
+  /** The metric not chosen by the user: the penetration rate where the vehicle has armour results, else the hits. */
+  metricAuto?: boolean;
   minHits: number;
   centre: 'overall' | 'half';
   compare: Compare | null;
@@ -68,6 +70,8 @@ export interface ViewResult {
   kept: number;
   known: number;
   through: number;
+  /** The metric the plates are coloured by (the asked one, or the automatic choice). */
+  metric: PlateMetric;
   stats: PlateStat[] | null;
   colours: { t: Float32Array; lo: number; mid: number; hi: number; diverging: boolean } | null;
   /** Per plate A and B rates and the difference's z, when comparing. */
@@ -106,6 +110,8 @@ export interface HitDetail {
   attackerTeam: string;
   won: boolean | null;
   result: string;
+  /** Recorded (War Thunder), derived (a kill worked out from the death: DCS World, IL-2) or unknown. */
+  resultSource: string;
   calibre: number | null;
   ammoType: string;
   ammoName: string;
@@ -418,15 +424,17 @@ function view(q: ViewRequest): ViewResult {
   const ps = set && set.vehicle === q.vehicle && set.grouping === q.grouping ? set : undefined;
   const keep = compileFilter(store, q.filter, ps ? { ph: ps.ph, at: ps.at } : null);
   const c = store.cols;
-  let kept = 0, known = 0, through = 0;
+  let kept = 0, known = 0, through = 0, armour = 0;
   const cov = { plate: 0, angle: 0, dir: 0, speed: 0, distance: 0, pose: 0 };
   const keptRows: number[] = [];
   for (let j = 0; j < rows.length; j++) {
     const i = rows[j];
+    const ak = armourKnown(c, i);
+    if (ak) armour++;
     if (!keep(i)) continue;
     kept++;
     keptRows.push(j);
-    if (c.result[i]) {
+    if (ak) {
       known++;
       if (c.result[i] >= 2) through++;
     }
@@ -439,6 +447,8 @@ function view(q: ViewRequest): ViewResult {
       if (Number.isFinite(ps.ph.angle[j])) cov.angle++;
     }
   }
+  // No armour result on any of the vehicle's hits (DCS World, IL-2 record none): a penetration rate says nothing, the hits do.
+  const metric: PlateMetric = q.metricAuto && !q.compare ? (armour > 0 ? 'rate' : 'density') : q.metric;
   let stats: PlateStat[] | null = null;
   let colours: ViewResult['colours'] = null;
   let compare: ViewResult['compare'] = null;
@@ -453,7 +463,7 @@ function view(q: ViewRequest): ViewResult {
       const z = a.map((x, k) => twoProportion(x.through, x.known, b[k].through, b[k].known).z);
       compare = { a, b, diff, z, aHits: a.reduce((s, x) => s + x.hits, 0), bHits: b.reduce((s, x) => s + x.hits, 0) };
     }
-    colours = plateColours(stats, q.compare ? 'diff' : q.metric, q.minHits, diff, q.centre);
+    colours = plateColours(stats, q.compare ? 'diff' : metric, q.minHits, diff, q.centre);
   }
   // Marks: an even sample of the kept hits that lie on a plate.
   let marks = EMPTY_MARKS();
@@ -479,7 +489,7 @@ function view(q: ViewRequest): ViewResult {
   const charts = q.charts.map((ch) => (ch.kind === 'rate' ? rateOver(store, rows, ch.field, keepChart, ps?.ph ?? null, ch.split) : histogram(store, rows, ch.field, keepChart, ps?.ph ?? null)));
   const top: Record<string, TopRow[]> = {};
   for (const by of q.top) top[by] = topBy(store, rows, by, keepChart, 20);
-  return { key: `${q.vehicle}|${q.grouping}`, hits: rows.length, kept, known, through, stats, colours, compare, marks, charts, top, coverage: cov, ms: performance.now() - t0 };
+  return { key: `${q.vehicle}|${q.grouping}`, hits: rows.length, kept, known, through, metric, stats, colours, compare, marks, charts, top, coverage: cov, ms: performance.now() - t0 };
 }
 
 /** The rows of a vehicle that pass the filter, as a table (at most `limit`, an even sample past it). */
@@ -557,7 +567,7 @@ function hitRows(q: Extract<HitWorkerRequest, { type: 'rows' }>): HitRows {
       ps && pj >= 0 ? ps.ph.effMm[pj] : NaN,
       c.calibre[i] ? c.calibre[i] / 10 : NaN,
       c.flags2[i] & FLAG2_DAMAGE ? c.damage[i] / 10 : NaN,
-      c.result[i] ? (c.result[i] >= 2 ? 1 : 0) : NaN,
+      armourKnown(c, i) ? (c.result[i] >= 2 ? 1 : 0) : NaN,
       flag & FLAG_RESULT_KNOWN ? (flag & FLAG_WON ? 1 : 0) : NaN,
       ...EFFECTS.map((_, b) => (c.effects[i] & (1 << b) ? 1 : 0)),
     ];
@@ -591,6 +601,7 @@ function hit(index: number, platesKey: string | null): HitDetail | null {
     attackerTeam: s.teams.list[c.attackerTeam[index]],
     won: flag & FLAG_RESULT_KNOWN ? (flag & FLAG_WON) !== 0 : null,
     result: RESULTS[c.result[index]],
+    resultSource: c.result[index] ? (c.flags2[index] & FLAG2_RESULT_DERIVED ? 'derived' : 'recorded') : 'unknown',
     calibre: c.calibre[index] ? c.calibre[index] / 10 : null,
     ammoType: s.ammoTypes.list[c.ammoType[index]],
     ammoName: s.ammoNames.list[c.ammoName[index]],

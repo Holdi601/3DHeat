@@ -11,7 +11,7 @@
 
 import type { ChartData, ChartEntity } from '../../charts/types';
 import { HitStore, SRC_BALLISTIC, SRC_RECORDED, type PlateHits } from './store';
-import { EFFECT_BIT, EFFECTS, FLAG_ATTACKER_AI, FLAG_DIST, FLAG_RESULT_KNOWN, FLAG_VICTIM_AI, FLAG_WON, NONE16, R_UNKNOWN, RESULTS, type Effect, type HitResult } from './types';
+import { armourKnown, EFFECT_BIT, EFFECTS, FLAG_ATTACKER_AI, FLAG_DIST, FLAG_RESULT_KNOWN, FLAG_VICTIM_AI, FLAG_WON, NONE16, RESULTS, type Effect, type HitResult } from './types';
 
 export type Range = [number | null, number | null];
 
@@ -269,7 +269,7 @@ export function plateStats(s: HitStore, ph: PlateHits, plates: number, keep: (i:
     const a = acc[p];
     a.hits++;
     const r = c.result[i];
-    if (r !== R_UNKNOWN) {
+    if (armourKnown(c, i)) {
       a.known++;
       if (r >= 2) {
         a.through++;
@@ -405,7 +405,7 @@ export function rateOver(s: HitStore, rows: ArrayLike<number>, field: BinField, 
   let used = 0;
   for (let j = 0; j < rows.length; j++) {
     const i = rows[j];
-    if (!keep(i) || s.cols.result[i] === R_UNKNOWN) continue;
+    if (!keep(i) || !armourKnown(s.cols, i)) continue;
     const v = fieldValue(s, field, i, ph ? j : -1, ph);
     if (!Number.isFinite(v)) continue;
     const bi = Math.min(bins - 1, Math.max(0, Math.floor((v - a) / w)));
@@ -503,7 +503,7 @@ export function topBy(s: HitStore, rows: ArrayLike<number>, by: 'attacker' | 'am
     let a = m.get(k);
     if (!a) m.set(k, (a = { hits: 0, known: 0, through: 0, kills: 0, fires: 0, crew: 0, d: [] }));
     a.hits++;
-    if (c.result[i] !== R_UNKNOWN) {
+    if (armourKnown(c, i)) {
       a.known++;
       if (c.result[i] >= 2) a.through++;
     }

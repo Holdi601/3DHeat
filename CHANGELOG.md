@@ -5,6 +5,7 @@ What changed for people who use the viewer, newest first. The format follows [Ke
 ## Unreleased (since 2026-11-14)
 
 ### Added
+- **Vehicle hits, DCS World and IL-2:** a vehicle whose hits have no armour result colours its plates by hits instead of an empty penetration rate; the killing shot's result is `kill` (worked out from the death, labelled derived); missiles and bombs have their body diameter as calibre, the F-4E's numbered 20 mm rounds are named, IL-2's own object names (mission reports and the Tacview recordings it writes) give calibre and type, and an IL-2 aircraft's damage-model pieces say which region they are ([Vehicle hits](docs/vehicle-hits.md#dcs-world-and-il-2)).
 - **Extractor windows:** every extractor and tool (21 of them) opens a window in the 3DHeat look, dark or light, with the logo and its own icon (the 3DHeat cube with a text badge for its game): a rail with the steps and what was found, a page that fills the window - find the game, choose maps or a job, progress with time left and cancel, done with Open in 3DHeat and, for a failure, what to do. No console window on Windows. The Extractors panel and the Library show each extractor's icon.
 - **Replay readers share two verbs:** `convert <replay> -o <out> [--progress-json]` and `info <replay> --json` (what a replay holds, read from its header) in every replay reader ([Extractors](docs/extractors.md)).
 - **The server, double-clicked on Windows,** says what it is for and points to the app's Host window, instead of flashing a console.

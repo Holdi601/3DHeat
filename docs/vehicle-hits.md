@@ -14,7 +14,7 @@ The **hit analysis** in the **Vehicles** tab loads only the hits on vehicles fro
 2. Open **Hits over many matches** and press **Open the hit analysis**.
 3. Press **Folder…** (or **Files…**) and pick your War Thunder `.3dheat` matches. With the [Mass analysis](mass-analysis.md) open, **From Mass analysis** takes its War Thunder matches and its filter.
 4. Watch the counts: files read, matches, hits, memory, seconds.
-5. Pick a vehicle under **Vehicle hit**. Its plates take the colour of their penetration rate; the marks are single hits.
+5. Pick a vehicle under **Vehicle hit**. Its plates take the colour of their penetration rate (or of their hits, for a vehicle whose hits have no armour result: DCS World, IL-2); the marks are single hits.
 6. Point at a plate to read what struck it. Click a mark for its card; **Open the match at this moment** loads that match at the hit.
 
 ```
@@ -57,20 +57,25 @@ A shell is a point mass under gravity and quadratic drag. Flat fire (darts, tank
 
 ## DCS World and IL-2
 
-The same analysis reads a DCS World recording converted by the Tacview converter (`.3dheat`, [hits the converter works out](tacview-acmi.md#hits-the-converter-works-out)) and IL-2 Sturmovik mission reports (`missionReport(<date>)[<n>].txt`, written by a server or the game with `mission_text_log = 1` in its `startup.cfg`; the pieces of one mission are read as one). Aircraft are vehicles like any other: a model without armour plates shows its outer surface instead, an aircraft's cut into nose, fuselage, wings and tail, so hits on its parts can be told apart.
+The same analysis reads a DCS World recording converted by the Tacview converter (`.3dheat`, [hits the converter works out](tacview-acmi.md#hits-the-converter-works-out)), IL-2 Sturmovik mission reports (`missionReport(<date>)[<n>].txt`, written by a server or the game with `mission_text_log = 1` in its `startup.cfg`; the pieces of one mission are read as one) and the Tacview recordings IL-2 writes itself (`tacviewrecord = 1` in `startup.cfg`, files in `data\Tracks`), converted like a DCS World one. Aircraft are vehicles like any other: a model without armour plates shows its outer surface instead, an aircraft's cut into nose, fuselage, wings and tail, so hits on its parts can be told apart.
 
 | Value | DCS World (Tacview recording) | IL-2 (mission report) |
 |---|---|---|
 | Weapon, shooter, unit hit | recorded: the weapon object's name; launcher and unit worked out by the converter | recorded (`AMMO`, `AID`, `TID`) |
-| Calibre, type | derived from the weapon's name (a shell's id holds its calibre and type; missiles, rockets and bombs by public figures) | derived from the ammunition word (`BULLET_GER_792x57_SS`: 7.92 mm, ball) |
+| Calibre, type | derived from the weapon's name (a shell's id holds its calibre and type; missiles, rockets and bombs by public figures: the type by seeker and role, the calibre as the nominal body diameter, `AIM_120C` 178 mm, `Mk_82` 273 mm; `supply.shells.N` are the F-4E's 20 mm M61A1 rounds, belt slot not known) | derived from the game's object name (`BULLET_GER_7-92x57_AP`: 7.92 mm, AP; `SHELL_GER_75_CV`: 75 mm, APHE; `RKT_RUS_RBS82`: 82 mm; `BOMB_GER_SC250`: 368 mm body); the same names in IL-2's own Tacview recordings |
 | Hit point | estimate: where the weapon's path passed nearest the unit, put on the model where its way in enters it | unknown: the report has none |
 | Way in, impact angle | derived from the weapon's and the unit's motion and attitude; the angle against the model's surface | unknown |
 | Impact speed | derived: the weapon's speed over its last samples | ballistic estimate where a distance is known, else unknown |
 | Distance | derived: from where the weapon was first seen (its launch) to the hit | derived where both places were written within half a second of the hit, else unknown |
 | Damage | not in the recording | recorded: the share of the unit's strength each hit took (`DMG`) |
 | Lethal, killing shot | derived: the unit's death the converter worked out, by the hit's shooter | recorded kills (`AType 4`), tied to the shooter's last hit |
+| Result | `kill` on the killing shot (derived from the death); every other hit unknown. Neither game records whether a hit went through, so the penetration rate leaves these kills out and stays empty | the same |
 | Crew | a bail-out: an ejection from the unit after a hit (derived) | the pilot or a gunner hit, a crew member killed (hits and kills on the aircraft's bots), a bail-out |
-| Fire, modules, the part struck | not in the recording | not in the report |
+| Fire, modules, the part struck | not in the recording; the plate under the estimated point stands for the part | not in the report |
+
+An IL-2 aircraft's plates are the game's damage-model pieces; their part numbers name the region on the plate card (`Cf.10200`: fuselage 1, bottom; `Ailer_L.12240`: left aileron; `14143`: engine 1).
+
+With no armour result on any of a vehicle's hits, **Colour the plates by** starts at **Hits** instead of the penetration rate (the choice you make stays).
 
 A DCS World recording converted before the geometry columns gives the weapon, the shooter, the unit and the kills only; convert it again for the point, the way in, the speed and the distance. The DCS shells' muzzle speeds of your installation's range catalogue (`heat3d-dcs-maps ranges`) are used where a hit has no speed of its own.
 
@@ -80,7 +85,7 @@ A DCS World recording converted before the geometry columns gives the weapon, th
 |---|---|
 | **Vehicle hit** | The vehicle shown, most hit first |
 | **This model / Same vehicle / Family** | One vehicle id; every id of the same real vehicle; its whole family (T-72, Leopard 2...) drawn on this model's plates by plate name |
-| **Colour the plates by** | Penetration rate (diverging: blue below the vehicle's own rate or 50 %, red above), hits, penetrations that killed, lit a fire, hurt the crew, reached the ammunition, median angle, median speed (one hue, darker is less). Plates with fewer hits than **Fewest hits for a colour** stay dark grey |
+| **Colour the plates by** | Penetration rate (diverging: blue below the vehicle's own rate or 50 %, red above; the default where the hits have armour results), hits (the default where none has), penetrations that killed, lit a fire, hurt the crew, reached the ammunition, median angle, median speed (one hue, darker is less). Plates with fewer hits than **Fewest hits for a colour** stay dark grey |
 | **Colour the marks by** | The result, or one effect (amber: the hit did it). Marks are sized by calibre; an even sample when there are more than **Marks drawn** |
 | **Plate** | What struck the plate under the pointer: hits, penetration rate with its 95 % Wilson interval, impact speed and angle (mean, median), armour along the way, distance, calibres, and of the penetrations how many killed, lit a fire, reached the ammunition, hurt the crew, destroyed a module |
 | **Compare** | Split the hits in two, A and B: the side of the vehicle hit, game version, converter version, shell kind or type, won or lost, map, mode. The plates show A's penetration rate minus B's; the plate card says both with a z score |

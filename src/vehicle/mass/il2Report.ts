@@ -32,8 +32,10 @@ import {
   FLAG_VICTIM_AI,
   FLAG2_CALIBRE_NAMED,
   FLAG2_DAMAGE,
+  FLAG2_RESULT_DERIVED,
   NONE16,
   NONE8,
+  R_KILL,
   R_UNKNOWN,
   sliceColumns,
   type HitBlock,
@@ -298,6 +300,9 @@ export function il2ReportHits(text: string, match: HitMatch): Omit<HitBlock, 'ro
       continue;
     }
     out.effects[last] |= EFFECT_BIT.killingShot | EFFECT_BIT.lethal;
+    // Its result: the kill, from the report's kill line (the report has no armour result).
+    out.result[last] = R_KILL;
+    out.flags2[last] |= FLAG2_RESULT_DERIVED;
     for (const i of byVictim.get(victim) ?? []) if (i !== last && kept[i].aid === kept[last].aid && kept[i].t <= kept[last].t && kept[i].t >= kept[last].t - FATAL_WINDOW) out.effects[i] |= EFFECT_BIT.lethal;
   }
   for (const b of bails) {

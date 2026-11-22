@@ -13,7 +13,7 @@ import { scanFile } from './scan';
 import { COLUMN_NAMES, COLUMN_TYPES, transferList, type HitBlock, type HitColumns } from './types';
 
 /** Bumped when what a scan keeps changes: older cached blocks are read again. */
-export const SCAN_VERSION = 2;
+export const SCAN_VERSION = 3;
 
 export type ScanRequest = { type: 'names'; names: string[] | null } | {
   type: 'scan';

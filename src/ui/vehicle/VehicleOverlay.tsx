@@ -5,6 +5,7 @@ import { useColumnStore } from '../../data/columnStore';
 import { vehicleView } from '../../vehicle/view';
 import { useVolumeStore } from '../../volumes/store';
 import { categoryColours, OUTCOME_COLOURS } from '../../vehicle/scene';
+import { plateTitle } from '../../vehicle/il2parts';
 import { sectorOf, weaponOf, type Outcome, type VehicleHit } from '../../vehicle/hits';
 import { regionOf } from '../../vehicle/regions';
 import { stopToCss } from '../../render/colors';
@@ -145,7 +146,7 @@ function PlateCard() {
   return (
     <div className="vehicle-card">
       <div className="vehicle-card-head">
-        <strong>{plate.name.replace(/_dm$/, '').replace(/_/g, ' ')}</strong>
+        <strong>{plateTitle(plate.name)}</strong>
       </div>
       <dl>
         {rows.map(([k, v]) => (

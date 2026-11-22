@@ -44,6 +44,8 @@ export interface HitMassState {
   grouping: Grouping;
   filter: HitFilter;
   metric: PlateMetric;
+  /** The user has not picked a metric: the worker colours by the penetration rate where the vehicle has armour results, else by hits. */
+  metricAuto: boolean;
   centre: 'overall' | 'half';
   minHits: number;
   compare: Compare | null;
@@ -76,6 +78,7 @@ export const useHitMass = create<HitMassState>((set) => ({
   grouping: 'model',
   filter: {},
   metric: 'rate',
+  metricAuto: true,
   centre: 'overall',
   minHits: 5,
   compare: null,
@@ -255,6 +258,7 @@ export async function refreshView(): Promise<void> {
       platesKey: st.platesKey,
       filter: st.filter,
       metric: st.metric,
+      metricAuto: st.metricAuto,
       minHits: st.minHits,
       centre: st.centre,
       compare: st.compare,
@@ -266,7 +270,7 @@ export async function refreshView(): Promise<void> {
     });
     const now = useHitMass.getState();
     // The view's new colours and marks this frame, the panel's numbers and charts the next: two short frames, not one long.
-    useHitMass.getState().set({ drawn: drawnMarks(r, now.markBy), colours: plateRgb(r, now.compare ? 'diff' : now.metric), error: null });
+    useHitMass.getState().set({ drawn: drawnMarks(r, now.markBy), colours: plateRgb(r, now.compare ? 'diff' : r.metric), error: null, ...(now.metricAuto && !now.compare && r.metric !== now.metric ? { metric: r.metric } : {}) });
     await new Promise((res) => requestAnimationFrame(() => setTimeout(res, 0)));
     useHitMass.getState().set({ result: r });
     for (const cb of viewListeners) cb();
@@ -285,7 +289,7 @@ export async function refreshView(): Promise<void> {
 export function patchHits(p: Partial<Pick<HitMassState, 'vehicle' | 'grouping' | 'filter' | 'metric' | 'centre' | 'minHits' | 'compare' | 'markBy' | 'marks' | 'plate' | 'charts'>>): void {
   const st = useHitMass.getState();
   const plates = (p.vehicle !== undefined && p.vehicle !== st.vehicle) || (p.grouping !== undefined && p.grouping !== st.grouping);
-  st.set({ ...p, ...(plates ? { platesKey: null, plate: -1, detail: null } : {}) });
+  st.set({ ...p, ...(p.metric !== undefined ? { metricAuto: false } : {}), ...(plates ? { platesKey: null, plate: -1, detail: null } : {}) });
   if (plates) void selectVehicle();
   else void refreshView();
 }

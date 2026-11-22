@@ -5,7 +5,7 @@ import { extractAcmiHits, labelParts, type AcmiScanColumns } from './scanAcmi';
 import { groupIl2Reports, il2Fields, il2Match, il2ReportHits } from './il2Report';
 import { rayEntry } from './geometry';
 import { HitStore, SRC_DERIVED } from './store';
-import { EFFECT_BIT, FLAG_DIR, FLAG_DIST, FLAG_LOCAL, FLAG_VICTIM_AI, FLAG2_DAMAGE, FLAG2_DIR_DERIVED, FLAG2_LOCAL_EST, FLAG2_SPEED, type HitMatch } from './types';
+import { armourKnown, EFFECT_BIT, FLAG_DIR, FLAG_DIST, FLAG_LOCAL, FLAG_VICTIM_AI, FLAG2_DAMAGE, FLAG2_DIR_DERIVED, FLAG2_LOCAL_EST, FLAG2_RESULT_DERIVED, FLAG2_SPEED, R_KILL, R_UNKNOWN, type HitMatch } from './types';
 
 const match: HitMatch = { id: 'm', file: 0, map: '', mode: '', started: NaN, gameVersion: '', converterVersion: '', winner: '' };
 
@@ -29,6 +29,42 @@ describe('weapon names', () => {
     expect(dcsAmmo('GBU_12', 'Weapon+Bomb').type).toBe('bomb guided');
     expect(dcsAmmo('Mk_82', 'Weapon+Bomb').type).toBe('bomb GP');
     expect(dcsAmmo('something new', 'Weapon+Missile')).toMatchObject({ kind: 'missile', src: 'unknown' });
+  });
+
+  it('gives DCS missiles and bombs their body diameter', () => {
+    expect(dcsAmmo('AIM_120C', 'Weapon+Missile').calibre).toBe(178);
+    expect(dcsAmmo('AIM-9L', 'Weapon+Missile').calibre).toBe(127);
+    expect(dcsAmmo('P_27PE', 'Weapon+Missile').calibre).toBe(260);
+    expect(dcsAmmo('P_27T', 'Weapon+Missile').calibre).toBe(230);
+    expect(dcsAmmo('AGM_65D', 'Weapon+Missile').calibre).toBe(305);
+    expect(dcsAmmo('FIM_92C', 'Weapon+Missile').calibre).toBe(70);
+    expect(dcsAmmo('SA9M311', 'Weapon+Missile').calibre).toBe(170);
+    expect(dcsAmmo('Mk_82', 'Weapon+Bomb').calibre).toBe(273);
+    expect(dcsAmmo('GBU_31', 'Weapon+Bomb').calibre).toBe(457);
+    expect(dcsAmmo('P_33E', 'Weapon+Missile')).toMatchObject({ type: 'missile SARH AAM', calibre: 380 });
+    expect(dcsAmmo('Rb 74', 'Weapon+Missile').type).toBe('missile IR AAM');
+    expect(dcsAmmo('ARAKM70BHE', 'Weapon+Rocket')).toMatchObject({ kind: 'rocket', calibre: 135 });
+  });
+
+  it("reads the F-4E's numbered shells as its 20 mm rounds", () => {
+    expect(dcsAmmo('supply.shells.1', 'Projectile+Shell')).toMatchObject({ calibre: 20, kind: 'round', name: 'supply.shells.1', src: 'table' });
+  });
+
+  it("reads IL-2's own object names, from its mission reports and its Tacview recordings", () => {
+    expect(il2Ammo('BULLET_GER_7-92x57_AP')).toMatchObject({ calibre: 7.92, type: 'AP', kind: 'round' });
+    expect(il2Ammo('BULLET_USA_12-7x99_AP').calibre).toBe(12.7);
+    expect(il2Ammo('SHELL_GER_75_CV')).toMatchObject({ calibre: 75, type: 'APHE' });
+    expect(il2Ammo('SHELL_RUS_76_SPHV').type).toBe('APCR');
+    expect(il2Ammo('SHELL_GER_88_HT').type).toBe('HEAT');
+    expect(il2Ammo('SHELL_GER_150_HE').calibre).toBe(150);
+    expect(il2Ammo('NPC_BULLET_GER_7-92_AP').calibre).toBe(7.92);
+    expect(il2Ammo('RKT_USA_M8')).toMatchObject({ kind: 'rocket', calibre: 114 });
+    expect(il2Ammo('RKT_RUS_M8').calibre).toBe(82);
+    expect(il2Ammo('BOMB_GER_SC250')).toMatchObject({ kind: 'bomb', calibre: 368, type: 'bomb GP' });
+    expect(il2Ammo('CLUSTER_RUS_PTAB2515').type).toBe('bomb cluster');
+    // A Tacview recording IL-2 writes goes through the DCS path: the same answer.
+    expect(dcsAmmo('SHELL_GER_20x82_HE', 'Projectile+Shell')).toEqual(il2Ammo('SHELL_GER_20x82_HE'));
+    expect(dcsAmmo('BOMB_GER_SC50', 'Medium+Weapon+Bomb')).toMatchObject({ kind: 'bomb', calibre: 200 });
   });
 
   it('reads IL-2 ammunition words', () => {
@@ -139,6 +175,11 @@ describe('DCS hits for the mass analysis', () => {
     expect(c.effects[1] & EFFECT_BIT.killingShot).toBeTruthy();
     expect(c.effects[0] & EFFECT_BIT.lethal).toBeTruthy();
     expect(c.effects[0] & EFFECT_BIT.killingShot).toBe(0);
+    // The killing shot's result is the kill, marked as worked out: no armour result for the penetration rate.
+    expect(c.result[1]).toBe(R_KILL);
+    expect(c.flags2[1] & FLAG2_RESULT_DERIVED).toBeTruthy();
+    expect(c.result[0]).toBe(R_UNKNOWN);
+    expect(armourKnown(c, 1)).toBe(false);
   });
 
   it('reads a Tacview label', () => {
@@ -212,6 +253,8 @@ describe('IL-2 mission reports', () => {
     // The aircraft's kill: the last hit the killing shot, the one before within the window lethal too.
     expect(c.effects[1] & EFFECT_BIT.killingShot).toBeTruthy();
     expect(c.effects[0] & EFFECT_BIT.lethal).toBeTruthy();
+    expect(c.result[1]).toBe(R_KILL);
+    expect(c.flags2[1] & FLAG2_RESULT_DERIVED).toBeTruthy();
     expect(c.flags[0] & FLAG_DIST).toBe(0);
     const m = il2Match(report, 'missionReport(2026-01-02_03-04-05)[0].txt', 0);
     expect(m.map).toBe('test');

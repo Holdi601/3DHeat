@@ -41,9 +41,11 @@ import {
   FLAG2_DIR_DERIVED,
   FLAG2_DIST_LAUNCH,
   FLAG2_LOCAL_EST,
+  FLAG2_RESULT_DERIVED,
   FLAG2_SPEED,
   NONE16,
   NONE8,
+  R_KILL,
   R_UNKNOWN,
   sliceColumns,
   type HitBlock,
@@ -219,6 +221,9 @@ export function extractAcmiHits(tables: AcmiScanColumns[], match: HitMatch): Omi
       }
       if (last < 0) continue;
       out.effects[last] |= EFFECT_BIT.killingShot | EFFECT_BIT.lethal;
+      // Its result: the kill, worked out from the death (the recording has no hit result).
+      out.result[last] = R_KILL;
+      out.flags2[last] |= FLAG2_RESULT_DERIVED;
       // The killer's hits of the same pass (within the window before the killing shot) count towards it.
       for (const i of l) if (i !== last && shooterOfHit[i] === shooterOfHit[last] && out.time[i] <= out.time[last] && out.time[i] >= out.time[last] - FATAL_WINDOW) out.effects[i] |= EFFECT_BIT.lethal;
     } else {

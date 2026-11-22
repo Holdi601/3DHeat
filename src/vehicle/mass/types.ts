@@ -105,6 +105,12 @@ export const FLAG2_DIR_DERIVED = 4; // the way in is the weapon's motion against
 export const FLAG2_DIST_LAUNCH = 8; // the distance is from where the weapon was first seen (its launch) to the hit
 export const FLAG2_DAMAGE = 16; // `damage` holds the share of the unit's strength the hit took (recorded)
 export const FLAG2_CALIBRE_NAMED = 32; // the calibre and type are read from the weapon's name or a table of public figures (derived)
+export const FLAG2_RESULT_DERIVED = 64; // the result (`kill`) is worked out from the unit's death after the hit, not recorded: says nothing of the armour
+
+/** Whether hit `i` has a recorded armour result (went through or not): the penetration rate's hits. A kill worked out from a death is not one. */
+export function armourKnown(c: Pick<HitColumns, 'result' | 'flags2'>, i: number): boolean {
+  return c.result[i] !== R_UNKNOWN && !(c.flags2[i] & FLAG2_RESULT_DERIVED);
+}
 
 /** Seconds: a fire lit, a module lost after a hit, and the hits before a death counted towards it. */
 export const FIRE_WINDOW = 0.12;
