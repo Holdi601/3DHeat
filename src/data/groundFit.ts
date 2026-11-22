@@ -114,7 +114,122 @@ export function heightAt(g: HeightGrid, x: number, z: number): number {
   return g.h[cz * g.nx + cx];
 }
 
-const AIR_OR_OTHER = /aircraft|airplane|plane|fighter|bomber|attacker|heli|drone|uav|jet|glider|bomb|rocket|missile|shell|projectile|effect|weapon|camera|parachute|^air$/i;
+/**
+ * The level's drawn ground surface over an area, sampled at the middle of each
+ * cell `cell` wide (or wider where the area would need more than `MAX_CELLS`):
+ * the height of the ground triangle over that point, the highest where two
+ * overlap; NaN where none lies. Exact on the surface the renderer draws, unlike
+ * `heightGridSteps`' mean of the corners in a cell, which is what a unit is to
+ * be put on: a slope's corners average to a height the triangle between them
+ * does not have.
+ */
+export function* surfaceGridSteps(
+  vertices: Float32Array,
+  indices: Uint32Array,
+  area: { minX: number; maxX: number; minZ: number; maxZ: number },
+  cell: number,
+): Generator<void, HeightGrid | null, void> {
+  const w = area.maxX - area.minX;
+  const dz = area.maxZ - area.minZ;
+  if (!(w > 0) || !(dz > 0) || !indices.length) return null;
+  const size = Math.max(cell, Math.sqrt((w * dz) / MAX_CELLS));
+  const nx = Math.ceil(w / size) + 1;
+  const nz = Math.ceil(dz / size) + 1;
+  const h = new Float32Array(nx * nz).fill(NaN);
+  for (let i = 0; i + 2 < indices.length; i += 3) {
+    if ((i & (STEP - 1)) < 3) yield;
+    const a = indices[i] * 6;
+    const b = indices[i + 1] * 6;
+    const c = indices[i + 2] * 6;
+    const ax = vertices[a], ay = vertices[a + 1], az = vertices[a + 2];
+    const bx = vertices[b], by = vertices[b + 1], bz = vertices[b + 2];
+    const cx = vertices[c], cy = vertices[c + 1], cz = vertices[c + 2];
+    const det = (bz - cz) * (ax - cx) + (cx - bx) * (az - cz);
+    if (!det) continue;
+    const x0 = Math.max(0, Math.ceil((Math.min(ax, bx, cx) - area.minX) / size));
+    const x1 = Math.min(nx - 1, Math.floor((Math.max(ax, bx, cx) - area.minX) / size));
+    const z0 = Math.max(0, Math.ceil((Math.min(az, bz, cz) - area.minZ) / size));
+    const z1 = Math.min(nz - 1, Math.floor((Math.max(az, bz, cz) - area.minZ) / size));
+    for (let gz = z0; gz <= z1; gz++) {
+      const z = area.minZ + gz * size;
+      for (let gx = x0; gx <= x1; gx++) {
+        const x = area.minX + gx * size;
+        const l1 = ((bz - cz) * (x - cx) + (cx - bx) * (z - cz)) / det;
+        const l2 = ((cz - az) * (x - cx) + (ax - cx) * (z - cz)) / det;
+        const l3 = 1 - l1 - l2;
+        if (l1 < -1e-6 || l2 < -1e-6 || l3 < -1e-6) continue;
+        const y = l1 * ay + l2 * by + l3 * cy;
+        const k = gz * nx + gx;
+        if (!(h[k] >= y)) h[k] = y;
+      }
+    }
+  }
+  return { minX: area.minX, minZ: area.minZ, cell: size, nx, nz, h };
+}
+
+/** The surface's height at a point, between the four nearest samples; NaN where any is missing. */
+export function surfaceAt(g: HeightGrid, x: number, z: number): number {
+  const fx = (x - g.minX) / g.cell;
+  const fz = (z - g.minZ) / g.cell;
+  const x0 = Math.floor(fx);
+  const z0 = Math.floor(fz);
+  if (x0 < 0 || z0 < 0 || x0 + 1 >= g.nx || z0 + 1 >= g.nz) return NaN;
+  const tx = fx - x0;
+  const tz = fz - z0;
+  const i = z0 * g.nx + x0;
+  const h00 = g.h[i], h10 = g.h[i + 1], h01 = g.h[i + g.nx], h11 = g.h[i + g.nx + 1];
+  return (h00 * (1 - tx) + h10 * tx) * (1 - tz) + (h01 * (1 - tx) + h11 * tx) * tz;
+}
+
+/** Metres under the ground a vehicle or ship is put back on it from: a little deeper is a unit in a tunnel or a data error, left as it is. */
+export const SNAP_UNDER = 6;
+/** Metres above the ground it is put down on it from: higher is a bridge, a deck or a roof, left where it is. */
+export const SNAP_OVER = 2.5;
+
+/**
+ * Metres off below which a row is left as it is: a vehicle's origin a hand
+ * above its tracks is not worth moving every row of a load for (a moved
+ * height is a new dataset and a new upload).
+ */
+export const SNAP_MIN = 0.3;
+
+/** What putting the ground units on the drawn ground did. */
+export interface GroundSnap {
+  /** Rows moved. */
+  rows: number;
+  /** The farthest a row was moved, metres. */
+  most: number;
+}
+
+/**
+ * The heights of `d` with its ground units' rows on the level's drawn ground
+ * `g` where they were within `SNAP_UNDER` under or `SNAP_OVER` over it: a
+ * vehicle sinking a metre into a slope or hovering over it because the level's
+ * ground and the recording's are not the same to the metre. Rows further off
+ * (a bridge, a tunnel) and every other row are left as they were. Null when
+ * nothing was `SNAP_MIN` or more off.
+ */
+export function* snappedHeightsSteps(d: Dataset, g: HeightGrid, k: number, ground: Uint8Array): Generator<void, { py: Float32Array; snap: GroundSnap } | null, void> {
+  let py: Float32Array | null = null;
+  let rows = 0;
+  let most = 0;
+  for (let r = 0; r < d.count; r++) {
+    if ((r & (STEP - 1)) === STEP - 1) yield;
+    if (!d.personId || !ground[d.personId[r]]) continue;
+    const h = surfaceAt(g, d.px[r], d.pz[r]);
+    if (!Number.isFinite(h)) continue;
+    const off = (d.py[r] - h) / k;
+    if (off < -SNAP_UNDER || off > SNAP_OVER || Math.abs(off) < SNAP_MIN) continue;
+    py ??= d.py.slice();
+    py[r] = h;
+    rows++;
+    most = Math.max(most, Math.abs(off));
+  }
+  return py ? { py, snap: { rows, most } } : null;
+}
+
+// Tacview's types are tags joined by `+`: a parachuting pilot is `Ground+Light+Human+Air+Parachutist`, in the air.
+const AIR_OR_OTHER = /aircraft|airplane|plane|fighter|bomber|attacker|heli|drone|uav|jet|glider|bomb|rocket|missile|shell|projectile|effect|weapon|camera|parachut|(^|\+)air(\+|$)/i;
 const DRIVES_OR_SAILS = /tank|spaa|apc|ifv|ground|vehicle|truck|car\b|artillery|atgm|howitzer|spg|armou?r|ship|boat|destroyer|cruiser|frigate|battleship|submarine|naval|carrier|corvette|barge/i;
 
 /** Per person, 1 where its first row's `kind` (else `type`) says it drives or sails; null when the data has no such column. */

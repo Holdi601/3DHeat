@@ -437,6 +437,12 @@ export interface Dataset {
    * their starts. Absent when the files kept their own clock.
    */
   recordingsAligned?: number;
+  /**
+   * The heights as recorded, where the drawn ones were moved: ground units put
+   * on the level's ground when they were a little under or over it
+   * (`groundFitRun.ts`). What the data says of a unit's height reads these.
+   */
+  pyTrue?: Float32Array;
   /** The outcome columns were worked out already (`deriveOutcome`), in the load's worker. */
   outcomeDerived?: boolean;
   /**

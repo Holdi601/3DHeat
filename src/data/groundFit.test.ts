@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { AttributeColumn, Dataset } from '../state/types';
-import { drainSteps, fixedHeightsSteps, fixesOf, groundChecksSteps, groundPersons, heightAt, heightGridSteps, MAX_SPREAD, MIN_SHIFT } from './groundFit';
+import { drainSteps, fixedHeightsSteps, fixesOf, groundChecksSteps, groundPersons, heightAt, heightGridSteps, MAX_SPREAD, MIN_SHIFT, SNAP_OVER, SNAP_UNDER, snappedHeightsSteps, surfaceAt, surfaceGridSteps } from './groundFit';
 
 /** A rolling ground over 0..400 m: a grid of corners 2 m apart, six floats each (position, normal), two triangles a cell. */
 function level(): { vertices: Float32Array; indices: Uint32Array; ground: (x: number, z: number) => number } {
@@ -111,5 +111,41 @@ describe('ground units on the level', () => {
     // Bridges, rivers, a hill the level lacks: off by different heights, not one number.
     expect(fixesOf([{ session: 0, label: 'b', median: -6, spread: MAX_SPREAD + 4, samples: 5000 }])).toEqual([]);
     expect(fixesOf([{ session: 0, label: 'c', median: -6, spread: 0.2, samples: 20 }])).toEqual([]);
+  });
+});
+
+describe('ground units on the ground as drawn', () => {
+  it('samples the drawn triangles themselves, not a mean of corners', () => {
+    const lv = level();
+    const g = drainSteps(surfaceGridSteps(lv.vertices, lv.indices, { minX: 0, maxX: 400, minZ: 0, maxZ: 400 }, 1))!;
+    for (const [x, z] of [[33.3, 71.9], [250.5, 12.2], [399, 399]]) expect(Math.abs(surfaceAt(g, x, z) - lv.ground(x, z))).toBeLessThan(0.05);
+  });
+
+  it('puts a vehicle a little under or over the ground on it, and leaves bridges, tunnels and aircraft where they are', () => {
+    const lv = level();
+    const g = drainSteps(surfaceGridSteps(lv.vertices, lv.indices, { minX: 0, maxX: 400, minZ: 0, maxZ: 400 }, 1))!;
+    const d = matches(lv.ground, 0);
+    const want = [-1.5, 1.2, -SNAP_UNDER - 2, SNAP_OVER + 4];
+    // Four tank rows: sunk, hovering, deep in a tunnel, up on a bridge.
+    const rows = [0, 1, 2, 3];
+    for (const [i, r] of rows.entries()) d.py[r] = lv.ground(d.px[r], d.pz[r]) + want[i];
+    const ground = groundPersons(d)!;
+    const out = drainSteps(snappedHeightsSteps(d, g, 1, ground))!;
+    expect(Math.abs(out.py[0] - lv.ground(d.px[0], d.pz[0]))).toBeLessThan(0.05);
+    expect(Math.abs(out.py[1] - lv.ground(d.px[1], d.pz[1]))).toBeLessThan(0.05);
+    expect(out.py[2]).toBe(d.py[2]);
+    expect(out.py[3]).toBe(d.py[3]);
+    // The aircraft's rows are untouched.
+    for (let r = 0; r < d.count; r++) if (d.personId![r] % 4 === 3) expect(out.py[r]).toBe(d.py[r]);
+    expect(out.snap.most).toBeLessThanOrEqual(SNAP_UNDER);
+  });
+
+  it('takes a parachuting pilot for something in the air, not a ground unit', () => {
+    const d = matches(level().ground, 0);
+    const kind = d.attrs[0];
+    kind.categories = ['Ground+Light+Human+Air+Parachutist', 'Air+FixedWing'];
+    expect(groundPersons(d)).toBeNull();
+    kind.categories = ['Ground+Heavy+Armor+Vehicle+Tank', 'Air+FixedWing'];
+    expect(groundPersons(d)![0]).toBe(1);
   });
 });

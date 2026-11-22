@@ -1,4 +1,4 @@
-import type { AxisMapping, Bounds, GeoReference } from '../state/types';
+import type { AxisMapping, Bounds, Dataset, GeoReference } from '../state/types';
 import { boxCentre, geoBoxOf, knownProjection, type GeoBox } from './tiles';
 
 /**
@@ -77,10 +77,14 @@ export function theatreGeo(t: Theatre): GeoReference {
   return { lat0: t.origin.lat, lon0: t.origin.lon, projection: 'tangent-plane' };
 }
 
-/** The theatre whose box holds a point, the smallest first; undefined when none does. */
-export function theatreAt(lat: number, lon: number): Theatre | undefined {
+/**
+ * The theatre whose box holds a point, the smallest first; of `game` only when
+ * the data says whose it is (a DCS recording over the Rhine is on DCS's
+ * Germany, not on IL-2's smaller Rheinland); undefined when none does.
+ */
+export function theatreAt(lat: number, lon: number, game?: Theatre['game']): Theatre | undefined {
   const area = (t: Theatre) => (t.box.north - t.box.south) * (t.box.east - t.box.west);
-  return THEATRES.filter((t) => lat >= t.box.south && lat <= t.box.north && lon >= t.box.west && lon <= t.box.east).sort(
+  return THEATRES.filter((t) => (!game || t.game === game) && lat >= t.box.south && lat <= t.box.north && lon >= t.box.west && lon <= t.box.east).sort(
     (a, b) => area(a) - area(b),
   )[0];
 }
@@ -100,18 +104,34 @@ export function theatreOfDcsFolder(folder: string): Theatre | undefined {
  * often a whole degree outside the map (a DCS Caucasus recording names 38 N
  * 36 E, in the Turkish uplands), so the extent decides first.
  */
-export function theatreOfData(geo: GeoReference, bounds: Bounds | null | undefined, axes: AxisMapping | null | undefined): Theatre | undefined {
+export function theatreOfData(geo: GeoReference, bounds: Bounds | null | undefined, axes: AxisMapping | null | undefined, game?: Theatre['game']): Theatre | undefined {
   // The Watcher's DCS tables name their theatre.
   const named = geo.theatre ? theatreOfDcsFolder(geo.theatre) : undefined;
   if (named) return named;
   if (bounds && Number.isFinite(bounds.minX) && knownProjection(geo)) {
     try {
       const c = boxCentre(geoBoxOf(geo, bounds, axes, 0));
-      const th = theatreAt(c.lat, c.lon);
+      const th = theatreAt(c.lat, c.lon, game);
       if (th) return th;
     } catch {
       // The reference decides.
     }
   }
-  return theatreAt(geo.lat0, geo.lon0);
+  return theatreAt(geo.lat0, geo.lon0, game);
+}
+
+/**
+ * Whose a Tacview recording is, by the `DataSource` its header names (kept in
+ * the load's `RecordingInfo` column), or the theatre a Watcher DCS table names;
+ * undefined when it does not say.
+ */
+export function recordingGame(d: Dataset): Theatre['game'] | undefined {
+  if (d.geo?.theatre) return 'dcs';
+  const info = d.attrs.find((a) => a.kind === 'category' && a.name === 'RecordingInfo' && a.categories);
+  for (const c of info?.categories ?? []) {
+    const src = /"DataSource"\s*:\s*"([^"]*)"/.exec(c)?.[1] ?? '';
+    if (/\bDCS\b/i.test(src)) return 'dcs';
+    if (/IL-?2/i.test(src)) return 'il2';
+  }
+  return undefined;
 }

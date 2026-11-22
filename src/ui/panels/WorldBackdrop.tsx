@@ -13,7 +13,7 @@ import { clearCache } from '../../world/cache';
 import type { WorldLabel } from '../../world/backdrop';
 import { dcsBuildings, dcsGroundFrom, mergeDcsModels, type DcsGroundData } from '../../world/dcsGround';
 import { DCS_PROJECTIONS, fromDcs } from '../../world/dcsProjection';
-import { THEATRES, theatreById, theatreGeo, theatreOfData, theatreOfDcsFolder, type Theatre } from '../../world/theatres';
+import { recordingGame, THEATRES, theatreById, theatreGeo, theatreOfData, theatreOfDcsFolder, type Theatre } from '../../world/theatres';
 import { boxAround } from '../../world/tiles';
 import { Check } from '../controls';
 import { useEngine } from '../EngineContext';
@@ -153,7 +153,7 @@ export function WorldBackdrop({
   const setLevel = useStore((s) => s.setLevel);
   const geo = dataset?.geo;
   const [world, setWorld] = useState<{ label: string; fraction: number | null } | null>(null);
-  const [theatreId, setTheatreId] = useState<string>(() => (geo ? (theatreOfData(geo, dataset?.bounds, dataset?.axes)?.id ?? '') : ''));
+  const [theatreId, setTheatreId] = useState<string>(() => (geo ? (theatreOfData(geo, dataset?.bounds, dataset?.axes, dataset ? recordingGame(dataset) : undefined)?.id ?? '') : ''));
   const [detail, setDetail] = useState<Detail>(geo ? 'data' : 'point');
   const [lat, setLat] = useState('');
   const [lon, setLon] = useState('');
@@ -180,7 +180,7 @@ export function WorldBackdrop({
   // A newly loaded recording picks its theatre, and the area under it.
   useEffect(() => {
     if (!geo) return;
-    const th = theatreOfData(geo, dataset?.bounds, dataset?.axes);
+    const th = theatreOfData(geo, dataset?.bounds, dataset?.axes, dataset ? recordingGame(dataset) : undefined);
     if (th) setTheatreId(th.id);
     setDetail('data');
   }, [geo]);
@@ -319,7 +319,7 @@ export function WorldBackdrop({
       return;
     }
     if (th.id !== theatreId) setTheatreId(th.id);
-    const dataTheatre = geo ? theatreOfData(geo, dataset?.bounds, dataset?.axes) : undefined;
+    const dataTheatre = geo ? theatreOfData(geo, dataset?.bounds, dataset?.axes, dataset ? recordingGame(dataset) : undefined) : undefined;
     setWorld({ label: t('heat.levelPanel.reading'), fraction: null });
     try {
       // One area after another (the loader takes one at a time), then joined.
@@ -399,7 +399,7 @@ export function WorldBackdrop({
           {/* Where the data is, not the file's reference point: a DCS Caucasus recording's reference is 38° N 36° E, in Anatolia. */}
           <div className="hint">
             {(() => {
-              const where = theatreOfData(geo, dataset?.bounds, dataset?.axes);
+              const where = theatreOfData(geo, dataset?.bounds, dataset?.axes, dataset ? recordingGame(dataset) : undefined);
               const values = { lat: num(around.lat, 2), lon: num(around.lon, 2), refLat: num(geo.lat0, 3), refLon: num(geo.lon0, 3) };
               return where ? t('heat.world.hintAroundIn', { ...values, theatre: where.name }) : t('heat.world.hintAround', values);
             })()}

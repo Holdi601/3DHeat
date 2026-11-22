@@ -381,7 +381,8 @@ function computeSeries(d: Dataset, person: number, session: number): FlightSerie
     const r = rows[i];
     time[i] = d.time[r];
     x[i] = d.px[r] / k;
-    y[i] = d.py[r] / k;
+    // As recorded, not as drawn on the level's ground (`Dataset.pyTrue`).
+    y[i] = (d.pyTrue ?? d.py)[r] / k;
     z[i] = d.pz[r] / k;
   }
   const values: Record<string, Float64Array> = {};

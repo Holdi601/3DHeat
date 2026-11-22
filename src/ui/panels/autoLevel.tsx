@@ -24,7 +24,7 @@ import { t, useLang } from '../../i18n';
 import { loadLayoutFiles } from '../../state/levelLayoutsStore';
 import { useStore } from '../../state/store';
 import type { Dataset, GeoPlacement } from '../../state/types';
-import { theatreOfData, theatreOfDcsFolder, type Theatre } from '../../world/theatres';
+import { recordingGame, theatreOfData, theatreOfDcsFolder, type Theatre } from '../../world/theatres';
 import { dcsBuildings, dcsGroundFrom, mergeDcsModels, type DcsGroundData } from '../../world/dcsGround';
 import type { WorldLabel } from '../../world/backdrop';
 import { eastNorthOf, planeInverse } from '../../world/tiles';
@@ -175,7 +175,7 @@ async function dcsGroundUnder(d: Dataset, th: Theatre): Promise<{ dcs: DcsGround
 /** The theatre a recording flies in, streamed under it (on the game's own ground where the folder has it); false when it is in none known. */
 async function streamTheatreUnder(d: Dataset): Promise<boolean> {
   if (!d.geo) return false;
-  const th = theatreOfData(d.geo, d.bounds, d.axes);
+  const th = theatreOfData(d.geo, d.bounds, d.axes, recordingGame(d));
   if (!th) return false;
   useAutoLevel.setState({ label: th.name });
   const placement: GeoPlacement = { geo: d.geo, axes: d.axes ?? null };
