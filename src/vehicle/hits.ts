@@ -127,6 +127,8 @@ export interface VehicleHit {
   /** The round's own name in the game (War Thunder: e.g. 125mm_3bm46), and the slot it was loaded in; null when not known. */
   ammoName: string | null;
   ammoSlot: string | null;
+  /** The belt the gun fired (War Thunder aircraft guns and machine guns: 'default' or the belt's name); null when not known. */
+  ammoBelt: string | null;
   /** Modules destroyed right after it (War Thunder). */
   modules: number;
   kind: HitKind;
@@ -280,6 +282,7 @@ export function* hitsSteps(d: Dataset): Generator<void, HitSet, void> {
   const ammoTypeCol = text(d, 'ammoType');
   const ammoNameCol = text(d, 'ammoName');
   const ammoSlotCol = text(d, 'ammoSlot');
+  const ammoBeltCol = text(d, 'ammoBelt');
   const comp = num(d, 'hitComponent') ?? NONE;
   const bu = num(d, 'hitU') ?? NONE, bv = num(d, 'hitV') ?? NONE, bw = num(d, 'hitW') ?? NONE;
   const eu = num(d, 'hitExitU') ?? NONE, ev_ = num(d, 'hitExitV') ?? NONE, ew = num(d, 'hitExitW') ?? NONE;
@@ -370,6 +373,7 @@ export function* hitsSteps(d: Dataset): Generator<void, HitSet, void> {
     ammoType: null,
     ammoName: null,
     ammoSlot: null,
+    ammoBelt: null,
     fatal: false,
     killingShot: false,
     toDeath: null,
@@ -628,6 +632,7 @@ export function* hitsSteps(d: Dataset): Generator<void, HitSet, void> {
       ammoType: ammoTypeCol(r) || null,
       ammoName: ammoNameCol(r) || null,
       ammoSlot: ammoSlotCol(r) || null,
+      ammoBelt: ammoBeltCol(r) || null,
     });
     sources.add(wt ? (ghpc ? 'ghpc' : 'warthunder') : WOWS_IMPACT.test(ev) ? 'wows' : 'generic');
   }

@@ -55,7 +55,7 @@ describe('hits from a recording', () => {
   const wt = dataset([
     { time: 10, event: 'position', player: 'Blue', Vehicle: 'p-51d-30', life: '7#1', kind: 'aircraft', VehicleName: 'P-51D-30' },
     { time: 11, event: 'shot', player: 'Red', Vehicle: 'bf-109f-4', other: 'Blue', otherVehicle: 'p-51d-30', otherLife: '7#1', hitLocalX: 1, hitLocalY: 0.25, hitLocalZ: 2, hitDirX: 0, hitDirY: 0, hitDirZ: -1, hitPart: 17310, match: 'm1' },
-    { time: 11.3, event: 'shot', player: 'Red', Vehicle: 'bf-109f-4', other: 'Blue', otherVehicle: 'p-51d-30', otherLife: '7#1', hitLocalX: -3, hitLocalY: 0.125, hitLocalZ: 0, hitDirX: 1, hitDirY: 0, hitDirZ: 0, match: 'm1' },
+    { time: 11.3, event: 'shot', player: 'Red', Vehicle: 'bf-109f-4', other: 'Blue', otherVehicle: 'p-51d-30', otherLife: '7#1', hitLocalX: -3, hitLocalY: 0.125, hitLocalZ: 0, hitDirX: 1, hitDirY: 0, hitDirZ: 0, calibre: 20, ammoName: 'frag_i_t', ammoBelt: 'mg151_universal', match: 'm1' },
     { time: 11.35, event: 'module_destroyed', player: 'Blue', Vehicle: 'p-51d-30', life: '7#1', other: 'Red', weapon: 'part 4965', match: 'm1' },
     // Shot long before the death, by someone else: not a killing hit.
     { time: 2, event: 'shot', player: 'Green', Vehicle: 'yak-3', other: 'Blue', otherVehicle: 'p-51d-30', otherLife: '7#1', hitLocalX: 0, hitLocalY: 0.5, hitLocalZ: 0.1, match: 'm1' },
@@ -71,6 +71,9 @@ describe('hits from a recording', () => {
     const hits = set.hits.filter((h) => h.kind === 'hit');
     expect(hits).toHaveLength(3);
     expect(hits[0]).toMatchObject({ vehicle: 'p-51d-30', victim: 'Blue', shooter: 'Red', shooterVehicle: 'bf-109f-4', local: [1, 0.25, 2], dir: [0, 0, -1], part: 17310, match: 'm1' });
+    // The belt an aircraft's gun fired, where the converter names it (converter 0.5.0).
+    expect(hits[0].ammoBelt).toBeNull();
+    expect(hits.find((h) => h.time === Math.fround(11.3))).toMatchObject({ calibre: 20, ammoName: 'frag_i_t', ammoBelt: 'mg151_universal' });
     // The two by the killer within the window before the death; not the one by Green ten seconds before.
     expect(hits.filter((h) => h.fatal).map((h) => h.time)).toEqual([11, 11.3].map((t) => Math.fround(t)));
     expect(12 - 11).toBeLessThan(FATAL_WINDOW);

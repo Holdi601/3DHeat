@@ -204,6 +204,7 @@ export function* acmiHitsSteps(d: Dataset): Generator<void, { hits: VehicleHit[]
     ammoType: null,
     ammoName: null,
     ammoSlot: null,
+    ammoBelt: null,
     modules: 0,
     kind: 'hit',
   });

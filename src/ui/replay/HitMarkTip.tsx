@@ -59,7 +59,7 @@ export function HitMarkTip() {
     if (h.ammoName || h.ammoType) {
       // A specific type (APFSDS, HEAT) as the game names it; the converter's generic ones in words.
       const type = h.ammoType === 'explosive' ? t('far.ammoExplosive') : h.ammoType === 'kinetic' ? t('far.ammoKinetic') : h.ammoType;
-      rows.push([t('far.hitAmmo'), [h.ammoName, type].filter(Boolean).join(' · ')]);
+      rows.push([t('far.hitAmmo'), [h.ammoName, type, h.ammoBelt].filter(Boolean).join(' · ')]);
     }
     if (h.calibre !== null) rows.push([t('far.hitCalibre'), `${num(h.calibre, h.calibre < 20 ? 1 : 0)} mm`]);
     if (h.damage !== null) rows.push([t('vehicle.card.damage'), num(h.damage, 0)]);
