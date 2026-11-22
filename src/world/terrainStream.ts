@@ -42,6 +42,8 @@ export const UPLOADS_PER_FRAME = 8;
 const OBJECT_REACH = 2500;
 const OBJECT_REACH_MAX = 6000;
 const OBJECT_BOXES = 300_000;
+/** Boxes a world tile, at most (about a megabyte of buffers). */
+const OBJECT_CHUNK = 1500;
 
 interface TileEntry {
   key: number;
@@ -530,7 +532,10 @@ class ObjectCells {
   /** This stream's tiles' prefix: two streams of one map never take each other's. */
   private readonly prefix = `terrain:${++streams}:`;
   private worker: Worker | null = null;
-  private readonly built = new Map<string, WorldTile>();
+  /** By cell: its tiles, in pieces of at most `OBJECT_CHUNK` boxes. */
+  private readonly built = new Map<string, WorldTile[]>();
+  /** Cells being built: the pieces still to come and those here. */
+  private readonly parts = new Map<string, { need: number; tiles: WorldTile[] }>();
   private readonly loading = new Set<string>();
   private lastAt: [number, number, number] | null = null;
   private readonly water: WorldTile | null;
@@ -556,9 +561,16 @@ class ObjectCells {
     this.worker.postMessage({ kind: 'models', models: this.s.index.instances.models } satisfies ObjectsWorkerRequest);
     this.worker.onmessage = (e: MessageEvent<WorldTile>) => {
       const tile = e.data;
-      this.loading.delete(tile.id);
-      if (this.s.gone || !this.wanted.has(tile.id)) return;
-      this.built.set(tile.id, tile);
+      const cell = tile.id.slice(0, tile.id.lastIndexOf('#'));
+      const part = this.parts.get(cell);
+      if (!part) return;
+      part.tiles.push(tile);
+      if (part.tiles.length < part.need) return;
+      // A cell shows whole, once all its pieces are built.
+      this.parts.delete(cell);
+      this.loading.delete(cell);
+      if (this.s.gone || !this.wanted.has(cell)) return;
+      this.built.set(cell, part.tiles);
       this.publish();
     };
     return this.worker;
@@ -613,20 +625,27 @@ class ObjectCells {
         this.loading.delete(id);
         return;
       }
-      w.postMessage({ kind: 'build', id, records: buf, count } satisfies ObjectsWorkerRequest, [buf]);
+      // In pieces: one big town as one tile was megabytes to upload in one frame.
+      const pieces = Math.ceil(count / OBJECT_CHUNK);
+      this.parts.set(id, { need: pieces, tiles: [] });
+      for (let k = 0; k < pieces; k++) {
+        const n = Math.min(OBJECT_CHUNK, count - k * OBJECT_CHUNK);
+        const records = buf.slice(k * OBJECT_CHUNK * RECORD_BYTES, (k * OBJECT_CHUNK + n) * RECORD_BYTES);
+        w.postMessage({ kind: 'build', id: `${id}#${k}`, records, count: n } satisfies ObjectsWorkerRequest, [records]);
+      }
     } catch {
       this.loading.delete(id);
     }
   }
 
   private publish(): void {
-    const tiles = [...(this.water ? [this.water] : []), ...this.built.values()];
+    const tiles = [...(this.water ? [this.water] : []), ...[...this.built.values()].flat()];
     const key = tiles.map((t) => t.id).join('|');
     if (key === this.published) return;
     this.published = key;
     worldTiles.replace(tiles);
     this.s.stats.objectCells = this.built.size;
-    this.s.stats.boxes = [...this.built.values()].reduce((n, t) => n + t.structureIndices.length / 36, 0);
+    this.s.stats.boxes = tiles.reduce((n, t) => n + t.structureIndices.length / 36, 0);
     this.s.changed();
   }
 }

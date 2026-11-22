@@ -41,11 +41,12 @@ const body = readFileSync(DATA);
 const name = path.basename(DATA);
 
 /** RAM (private bytes) and dedicated GPU memory of a process tree, MB. */
-function memoryOf(rootPid) {
-  if (process.platform !== 'win32' || !rootPid) return null;
+function memoryOf() {
+  if (process.platform !== 'win32') return null;
+  // The browser this probe started: the Edge whose command line names Playwright's profile, and every process under it.
   const ps = `
-$all = Get-CimInstance Win32_Process | Select-Object ProcessId, ParentProcessId, PrivatePageCount
-$want = @(${rootPid}); $grew = $true
+$all = Get-CimInstance Win32_Process | Select-Object ProcessId, ParentProcessId, PrivatePageCount, Name, CommandLine
+$want = @($all | Where-Object { $_.Name -eq 'msedge.exe' -and $_.CommandLine -match 'playwright' -and $_.CommandLine -notmatch '--type=' } | ForEach-Object { $_.ProcessId }); $grew = $true
 while ($grew) { $grew = $false; foreach ($p in $all) { if ($want -contains $p.ParentProcessId -and -not ($want -contains $p.ProcessId)) { $want += $p.ProcessId; $grew = $true } } }
 $ram = ($all | Where-Object { $want -contains $_.ProcessId } | Measure-Object PrivatePageCount -Sum).Sum
 $gpu = 0
@@ -61,7 +62,6 @@ try { $c = (Get-Counter '\\GPU Process Memory(*)\\Dedicated Usage' -ErrorAction 
 }
 
 const browser = await chromium.launch({ channel: 'msedge', headless: false, args: ['--enable-unsafe-webgpu', '--enable-precise-memory-info'] });
-const rootPid = browser.process?.()?.pid ?? null;
 const page = await browser.newPage({ viewport: { width: 1280, height: 720 }, deviceScaleFactor: 1 });
 page.on('pageerror', (e) => console.log('  pageerror:', e.message));
 await page.routeWebSocket(/./, () => {});
@@ -78,7 +78,7 @@ if (MESH) {
 await page.goto(base, { waitUntil: 'domcontentloaded', timeout: 180_000 });
 await page.waitForFunction(() => Boolean(globalThis.__3dheat_engine && globalThis.__3dheat), null, { timeout: 180_000 });
 await page.waitForTimeout(2000);
-const before = memoryOf(rootPid);
+const before = memoryOf();
 
 const load = await page.evaluate(async (file) => {
   const h = globalThis.__3dheat;
@@ -185,7 +185,7 @@ const fly = QUICK ? null : await page.evaluate(async (figures) => {
     backend: eng.backendName ?? null,
   };
 }, FIGURES);
-const after = memoryOf(rootPid);
+const after = memoryOf();
 if (fly) report(fly);
 function report(fly) {
 const f = (s) => `p50 ${s.p50.toFixed(1)} / p99 ${s.p99.toFixed(1)} / max ${s.max.toFixed(1)} ms, ${s.over20} of ${s.n} over 20 ms`;
