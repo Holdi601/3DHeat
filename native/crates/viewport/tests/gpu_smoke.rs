@@ -2,7 +2,8 @@
 //! (heat, binning, composite, level with its structures and water, the structure depth and
 //! the peeled layers, lines, figures, cubes, zones, spawn marks, volume contours,
 //! engagement ranges with a view taken from the level, line heat, wedges with the direction
-//! field over them, the rate map), one frame of heat drawn offscreen with
+//! field over them, the rate map, the GPU tracks' place and finish passes and their
+//! indirect draws), one frame of heat drawn offscreen with
 //! no validation error, and the heat read back. Skipped where no adapter is found, unless
 //! `HEAT3D_GPU_SMOKE=1` asks for one (the Linux CI job, with lavapipe installed).
 
@@ -11,7 +12,7 @@ use std::sync::{Arc, Mutex};
 use heat3d_viewport::generated::*;
 use heat3d_viewport::heatmodes::{RowData, ROW_DIRS, ROW_LINES};
 use heat3d_viewport::loader::PageChunk;
-use heat3d_viewport::packet::{Contours, Glyphs, Overlays, Packet, PlanEntry, Ranges, Spawns, Top, Zones};
+use heat3d_viewport::packet::{Contours, Glyphs, Overlays, Packet, PlanEntry, Ranges, Spawns, Top, TracksFrame, Zones};
 use heat3d_viewport::LevelMesh;
 use heat3d_viewport::wgpu;
 use heat3d_viewport::Renderer;
@@ -192,6 +193,40 @@ fn mesh_slice() -> Vec<u8> {
     out
 }
 
+/// A GPU tracks store of one track drawn with the mesh above (`nativeTracks.ts` messages): the
+/// begin message, then each array in one slice. The track has no keys, so nothing is placed; the
+/// passes, bindings and indirect draws are what is checked.
+fn tracks_messages() -> Vec<Vec<u8>> {
+    let le = |w: &[u32]| w.iter().flat_map(|x| x.to_le_bytes()).collect::<Vec<u8>>();
+    let want = [64u32, 16, 16, 16];
+    let mut begin = vec![0u32, 5, 1, 1, 4, want[0], want[1], want[2], want[3], 7];
+    begin.extend_from_slice(&[0, 1, 1, 1]);
+    begin.extend_from_slice(&[3, 0, 0, 0, 6, 0, 0, 0]);
+    let mut out = vec![le(&begin)];
+    for (i, n) in want.iter().enumerate() {
+        let mut m = le(&[1, 5, i as u32, 0]);
+        m.extend(std::iter::repeat_n(0u8, *n as usize));
+        out.push(m);
+    }
+    out
+}
+
+fn tracks_frame() -> TracksFrame {
+    let mut uniform = vec![0u32; TRACKS_UNIFORM_BYTES as usize / 4];
+    let f = |v: f32| v.to_bits();
+    for k in [0, 5, 10, 15] {
+        uniform[k] = f(1.0);
+    }
+    uniform[24] = f(1.0);
+    uniform[25] = f(1.0);
+    uniform[26] = f(120.0);
+    uniform[27] = f(2.0);
+    uniform[28] = 1;
+    uniform[29] = 1;
+    uniform[37] = 1;
+    TracksFrame { id: 5, uniform, vis: Some(vec![1, 0, 0, 0]) }
+}
+
 #[test]
 fn draws_heat_offscreen() {
     let required = std::env::var("HEAT3D_GPU_SMOKE").is_ok_and(|v| v == "1");
@@ -216,6 +251,10 @@ fn draws_heat_offscreen() {
     let c = chunk().upload(&r.device);
     r.add_chunk(c);
     r.figures.mesh_slice(&r.device, &r.queue, &mesh_slice()).expect("mesh");
+    for m in tracks_messages() {
+        r.tracks.message(&r.device, &r.queue, &m).expect("tracks message");
+    }
+    assert_eq!(r.tracks.ready_id(), 5, "the tracks store whole");
     // A flat level the views are taken from: four corners (position, normal), two triangles.
     let mut vertices = Vec::new();
     for (x, z) in [(0.0f32, 0.0f32), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)] {
@@ -255,6 +294,9 @@ fn draws_heat_offscreen() {
     r.draw(&[packet(), packet_under()], &view, (SIDE, SIDE), false);
     r.draw(&[packet()], &view, (SIDE, SIDE), false);
     heat_modes(&mut r, &view);
+    let mut with_tracks = packet();
+    with_tracks.tracks = Some(tracks_frame());
+    r.draw(&[with_tracks.clone(), with_tracks], &view, (SIDE, SIDE), false);
     let error = pollster::block_on(scope.pop());
     assert!(error.is_none(), "validation error: {error:?}");
     for _ in 0..500 {

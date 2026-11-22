@@ -488,6 +488,16 @@ impl Figures {
         }
     }
 
+    /// A mesh whole here, by id: its vertices and whether any of them is see-through.
+    pub fn mesh_whole(&self, id: u32) -> Option<(&wgpu::Buffer, bool)> {
+        self.meshes.get(&id).filter(|m| m.received >= m.total).map(|m| (&m.buf, m.see))
+    }
+
+    /// The figures' pipeline for the solid parts or the see-through ones (the GPU tracks' draws).
+    pub fn set_pipeline(&self, pass: &mut wgpu::RenderPass<'_>, see: bool) {
+        pass.set_pipeline(if see { &self.see } else { &self.solid });
+    }
+
     /// The figures' solid parts (`see` false) or, after everything solid, their see-through ones.
     pub fn draw(&self, pass: &mut wgpu::RenderPass<'_>, f: &FigureFrame, group: &wgpu::BindGroup, see: bool) {
         let mut set = false;

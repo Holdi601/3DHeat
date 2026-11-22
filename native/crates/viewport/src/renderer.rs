@@ -309,6 +309,8 @@ pub struct Renderer {
     m_splat: wgpu::ShaderModule,
     m_decay: wgpu::ShaderModule,
     m_merge: wgpu::ShaderModule,
+    /// The GPU tracks (`tracks.rs`).
+    pub tracks: crate::tracks::Tracks,
     filter_pass: wgpu::ComputePipeline,
     bin: Option<HeatBin>,
     // Targets.
@@ -537,6 +539,7 @@ impl Renderer {
         let ranges = crate::ranges::Ranges::new(&device);
         let modes = crate::heatmodes::HeatModes::new(&device, out_format);
         let occ = crate::occlusion::Occlusion::new(&device);
+        let tracks = crate::tracks::Tracks::new(&device);
         let m_line = module(&device, "line", W_LINE);
         const LINE_ATTRS: [wgpu::VertexAttribute; 2] = wgpu::vertex_attr_array![0 => Float32x3, 1 => Float32x4];
         let line = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
@@ -631,6 +634,7 @@ impl Renderer {
             m_splat,
             m_decay,
             m_merge,
+            tracks,
             filter_pass,
             bin,
             width: 0,
@@ -1141,7 +1145,9 @@ impl Renderer {
         // The figures and cubes: their instances in the frame's vertex buffer, their uniforms as
         // `drawScene` pushes them (the cubes' size, the look lines' length, the figures relative to the origin).
         let figs = self.figures.prepare(&self.device, &self.queue, p);
-        let fig_groups = if figs.is_empty() {
+        // The GPU tracks placed first, in a compute pass of their own (`drawScene`).
+        let tracks_on = self.tracks.compute(&self.queue, encoder, p.tracks.as_ref());
+        let fig_groups = if figs.is_empty() && !tracks_on {
             None
         } else {
             let far = (1e9, 1e9 + 1.0);
@@ -1265,10 +1271,12 @@ impl Renderer {
         if let Some((cube, look, rel, plain, _)) = &fig_groups {
             self.figures.draw_cubes(&mut pass, &figs, cube, look.as_ref());
             self.figures.draw(&mut pass, &figs, rel, false);
+            self.tracks.draw(&mut pass, &self.figures, plain, false);
             self.figures.draw_tris(&mut pass, &figs, plain, false);
             self.figures.draw_trails(&mut pass, &figs, plain);
             self.draw_shells(&mut pass, &occ);
             self.figures.draw(&mut pass, &figs, rel, true);
+            self.tracks.draw(&mut pass, &self.figures, plain, true);
             self.figures.draw_tris(&mut pass, &figs, plain, true);
         }
         self.draw_shells(&mut pass, &occ);

@@ -12,7 +12,7 @@ import { KEY_U32, KEYS_PER_BUFFER, sameKeys, type GpuTrackStore } from '../gpuTr
 import { FINISH_WGSL, MARKS_WGSL, PLACE_WGSL, TRAIL_WGSL } from '../gpuTracks/shader';
 import { TRAIL_SEGMENTS_GL } from '../gpuTracks/glsl';
 import { visWords } from '../gpuTracks/visibility';
-import { DART_MESHES } from '../symbols/darts';
+import { TRACKS_UNIFORM_BYTES, trackRuns, writeTracksUniform } from '../gpuTracks/gpuLayout';
 import type { GpuFigures } from './figures';
 import type { GpuSymbols } from './symbols';
 import type { SymbolParams } from '../types';
@@ -61,10 +61,8 @@ function dispatch(pass: GPUComputePassEncoder, n: number): void {
   pass.dispatchWorkgroups(x, Math.ceil(groups / x));
 }
 
-/** Pixels across a death's marker. */
-const MARKER_PX = 9;
 /** Uniform bytes. */
-const U_BYTES = 192;
+const U_BYTES = TRACKS_UNIFORM_BYTES;
 /** Bytes a write of the keys carries, and milliseconds a frame may spend on them; see `flushWrites`. */
 const TRACK_WRITE_BYTES = 4 * 1024 * 1024;
 const TRACK_WRITE_MS = 3;
@@ -201,34 +199,12 @@ export class GpuTracks {
     // Only the keys there are: the array past them is room the load did not use.
     const keysA1 = buf('track keys (2)', s.keys > KEYS_PER_BUFFER ? s.keysA.subarray(KEYS_PER_BUFFER * KEY_U32, s.keys * KEY_U32) : new Uint32Array(4), S);
     const keysB = buf('track attitudes', s.keysB, S);
-    // A run per mesh: the dart's holds every track; a figure's as many as it has tracks, within the triangle budget.
+    // A run per mesh, then the glyphs' run (`gpuLayout.ts`).
     const M = s.meshes.length;
-    const runFirst = new Uint32Array(M);
-    const runRoom = new Uint32Array(M);
-    let total = 0;
-    for (let m = 0; m < M; m++) {
-      const tris = s.meshes[m].count / 3;
-      // A dart's run holds every track of its domain; a figure's as many as fit the triangle budget.
-      runRoom[m] = m < DART_MESHES ? s.meshTracks[m] : Math.min(s.meshTracks[m], Math.floor(triangleBudget / Math.max(1, tris)));
-      runFirst[m] = total;
-      total += runRoom[m];
-    }
-    // After the meshes' runs, the glyphs' (`symbols/`): one at most a track.
-    const glyphRoom = s.tracks;
-    const runsData = new Uint32Array((M + 1) * 2);
-    runsData[M * 2] = total;
-    runsData[M * 2 + 1] = glyphRoom;
-    this.glyphFirst = total;
-    total += glyphRoom;
-    for (let m = 0; m < M; m++) {
-      runsData[m * 2] = runFirst[m];
-      runsData[m * 2 + 1] = runRoom[m];
-    }
+    const { runFirst, runRoom, runsData, argsInit, glyphFirst, total } = trackRuns(s, triangleBudget);
+    this.glyphFirst = glyphFirst;
     const runs = buf('track runs', runsData, S);
     const counts = dev.createBuffer({ label: 'track counts', size: Math.max(16, (M + 2) * 4), usage: S | GPUBufferUsage.COPY_DST });
-    const argsInit = new Uint32Array((M + 1) * 4);
-    for (let m = 0; m < M; m++) argsInit[m * 4] = s.meshes[m].count;
-    argsInit[M * 4] = 6;
     const args = buf('track draws', argsInit, S | GPUBufferUsage.INDIRECT);
     const instances = dev.createBuffer({ label: 'track instances', size: Math.max(64, total * INSTANCE_STRIDE * 4), usage: S | GPUBufferUsage.VERTEX });
     const trail = dev.createBuffer({ label: 'track trails', size: TRAIL_ROOM * 32, usage: S | GPUBufferUsage.VERTEX });
@@ -308,47 +284,10 @@ export class GpuTracks {
     }
     const up = this.up;
     const s = f.store;
-    const fl = new Float32Array(this.u);
-    const ui = new Uint32Array(this.u);
-    fl.set(f.viewProj, 0);
-    fl[16] = f.camera[0];
-    fl[17] = f.camera[1];
-    fl[18] = f.camera[2];
-    fl[19] = f.t;
-    fl[20] = f.focalPx;
-    fl[21] = f.orthoPx;
-    fl[22] = f.minPixels;
-    fl[23] = f.stale;
-    fl[24] = s.units;
-    fl[25] = f.scale;
-    fl[26] = f.fullPx;
-    fl[27] = f.dartPx;
-    ui[28] = s.tracks;
-    ui[29] = s.meshes.length;
-    ui[30] = TRAIL_ROOM;
-    ui[31] = TRAIL_SEGMENTS;
-    fl[32] = f.trailSeconds;
-    const weapons = f.weapons ?? 1.5;
-    fl[33] = weapons > 0 ? weapons : -1;
-    const markSeconds = up.markGroup ? (f.markerSeconds ?? 0) : 0;
-    fl[34] = markSeconds;
-    fl[35] = MARKER_PX;
-    ui[36] = s.markers?.count ?? 0;
-    ui[37] = f.visible ? 0 : 1;
-    const drop = f.dropFloor ?? null;
-    ui[38] = drop === null ? 0 : 1;
-    fl[39] = drop ?? 0;
-    // The playhead past what its f32 holds (2 ms at five hours: half a metre at 250 m/s), and where the aim keys start.
-    fl[40] = f.t - fl[19];
-    ui[41] = s.trackData.length;
-    ui[42] = f.visible && f.visible.length > visWords(s) ? visWords(s) : 0;
-    fl[44] = f.farMode ?? 0;
-    fl[45] = f.symbolThreshold ?? 36;
-    fl[46] = f.symbolPx ?? 28;
-    fl[47] = f.weaponDrops ? 1 : 0;
+    const { markSeconds, trailsOn } = writeTracksUniform(this.u, f, f.viewProj, f.camera, { trailRoom: TRAIL_ROOM, trailSegments: TRAIL_SEGMENTS, marks: !!up.markGroup });
     if (f.visible && f.visible !== up.visSent) this.device.queue.writeBuffer(up.vis, 0, f.visible.buffer, f.visible.byteOffset, Math.min(f.visible.byteLength, up.vis.size));
     up.visSent = f.visible ?? null;
-    this.trailsOn = f.trailSeconds > 0 || weapons > 0 || markSeconds > 0 || drop !== null;
+    this.trailsOn = trailsOn;
     this.device.queue.writeBuffer(this.uniform, 0, this.u);
     this.device.queue.writeBuffer(this.meshCountBuf, 0, new Uint32Array([s.meshes.length, TRAIL_ROOM, 0, 0]));
     // Counters to zero, and the draws' instance counts with them.

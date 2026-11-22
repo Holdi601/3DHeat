@@ -117,6 +117,13 @@ pub fn viewport_mesh(window: WebviewWindow, request: Request<'_>) {
     with(&window, |v| v.send(Msg::Mesh(bytes)));
 }
 
+/// The GPU tracks' store, a message at a time (raw: `nativeTracks.ts`, `Tracks::message`).
+#[tauri::command]
+pub fn viewport_tracks(window: WebviewWindow, request: Request<'_>) {
+    let bytes = raw(&request).to_vec();
+    with(&window, |v| v.send(Msg::Tracks(bytes)));
+}
+
 /// The glyph atlas the page made (raw RGBA8, `ATLAS_WIDTH` x `ATLAS_HEIGHT`).
 #[tauri::command]
 pub fn viewport_glyphs(window: WebviewWindow, request: Request<'_>) {

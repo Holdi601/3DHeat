@@ -68,6 +68,17 @@ pub struct Packet {
     pub overlays: Option<Overlays>,
     /// The engagement ranges (`SECTION_RANGES`).
     pub ranges: Option<Ranges>,
+    /// The GPU tracks' frame (`SECTION_TRACKS`).
+    pub tracks: Option<TracksFrame>,
+}
+
+/// `SECTION_TRACKS`: the store's id, the place shader's uniform, the visibility bits when they changed.
+#[derive(Clone, Default)]
+pub struct TracksFrame {
+    pub id: u32,
+    /// `TRACKS_UNIFORM_BYTES / 4` words.
+    pub uniform: Vec<u32>,
+    pub vis: Option<Vec<u32>>,
 }
 
 /// `SECTION_RANGES`: the page packs every uniform; the shell mesh comes once.
@@ -346,6 +357,13 @@ pub fn decode(bytes: &[u8]) -> Result<Packet> {
                     r.captures.push((layer, f(s.slice(16)?)));
                 }
                 p.ranges = Some(r);
+            }
+            SECTION_TRACKS => {
+                let id = s.take()?;
+                let uniform = s.slice(TRACKS_UNIFORM_BYTES as usize / 4)?.to_vec();
+                let n = s.take()? as usize;
+                let vis = (n > 0).then(|| s.slice(n).map(|v| v.to_vec())).transpose()?;
+                p.tracks = Some(TracksFrame { id, uniform, vis });
             }
             SECTION_CUBES => {
                 let n = s.take()? as usize;

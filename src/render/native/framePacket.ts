@@ -75,6 +75,12 @@ export const SECTION = {
    * to take from the level this frame, each its layer and its 16 capture floats.
    */
   ranges: 15,
+  /**
+   * The GPU tracks' frame (`FrameParams.gpuTracks`, `nativeTracks.ts`): the store's id (sent
+   * before by `viewport_tracks`), the place shader's uniform (`TRACKS_UNIFORM_BYTES`), then the
+   * visibility words' count and the words when they changed (0 otherwise).
+   */
+  tracks: 20,
 } as const;
 
 /** The frame's numbers, in packet order, with how many floats each takes. */

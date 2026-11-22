@@ -7,7 +7,7 @@
  * the accumulation merge, the composite, the level's mesh, the lines, the figures,
  * the cubes and their look lines, the far-off glyphs, the capture zones' discs,
  * the spawn marks, the volumes' contours, the engagement ranges (shells, the
- * units' views, the ground they see). The texts are
+ * units' views, the ground they see), the GPU tracks' place and finish passes. The texts are
  * built here from the same sources, constants and all, and written beside the
  * crate as `.wgsl` files with a `generated.rs` of the numbers the Rust side
  * packs uniforms by. `shaderExport.test.ts` keeps the committed copies equal to
@@ -82,6 +82,9 @@ import { CONTOUR_UNIFORM_BYTES, volumeContourWgsl } from '../volumeContours';
 import { MAX_GPU_VOLUMES } from '../../volumes/gpu';
 import { SHELL_UNIFORM_BYTES, SHELL_WGSL } from '../../ranges/shellShaders';
 import { SHELL_FLOATS } from '../../ranges/shells';
+import { FINISH_WGSL, PLACE_WGSL } from '../gpuTracks/shader';
+import { TRACKS_UNIFORM_BYTES } from '../gpuTracks/gpuLayout';
+import { TRACK_U32 } from '../gpuTracks/store';
 import { CAPTURE_UNIFORM_BYTES, CAPTURE_WGSL, GROUND_UNIFORM_BYTES, GROUND_WGSL, MAX_VIEWS, VIEW_FACE, VIEW_LAYERS } from '../../ranges/viewshedShaders';
 
 /** The shaders, by file name. */
@@ -114,6 +117,8 @@ export function nativeShaders(): Record<string, string> {
     'range_shell.wgsl': SHELL_WGSL,
     'range_ground.wgsl': GROUND_WGSL,
     'range_capture.wgsl': CAPTURE_WGSL,
+    'tracks_place.wgsl': PLACE_WGSL,
+    'tracks_finish.wgsl': FINISH_WGSL,
   };
 }
 
@@ -167,6 +172,8 @@ export function nativeConstants(): string {
   int('HEAT_DEPTH_LAYERS', HEAT_DEPTH_LAYERS);
   int('PEEL_UNIFORM_BYTES', PEEL_UNIFORM_BYTES);
   flt('PEEL_EPSILON_REVERSE', PEEL_EPSILON_REVERSE);
+  int('TRACKS_UNIFORM_BYTES', TRACKS_UNIFORM_BYTES);
+  int('TRACK_U32', TRACK_U32);
   for (const [k, v] of Object.entries({
     FLAG_PERSPECTIVE,
     FLAG_GROUND_PROJECTED,

@@ -16,13 +16,13 @@
  * Drawn natively so far: the heat (points; binned or splatted as on the web),
  * team colours, the difference (by group or a column), value weights, filters,
  * time window, lifetimes, the slice and the distance cull, a model level's ground, the box
- * replay's figures (placed on the CPU: `gpuTracksMaxBytes` is 0 here) and cubes, their meshes
+ * replay's figures (placed on the CPU, or by the GPU tracks for large loads: `nativeTracks.ts`) and cubes, their meshes
  * sent a slice a frame as `GpuFigures` writes them, the far-off glyphs the CPU placed, the
  * scene's triangles, the trails and the overlay lines, the objectives' marks and the lines
  * over the finished picture, the zones' discs, spawn marks, ranges, volume contours; the level's
  * water and structures with the heat's occlusion behind them (seal, structure depth, peeled
  * layers); line heat, the wedges and the direction field (their per-row data sent a chunk at a
- * time, `sendRowData`), the rate map. Not yet: GPU tracks, textures, image levels, world tiles.
+ * time, `sendRowData`), the rate map. Not yet: the GPU tracks' trails, marks and glyphs, textures, image levels, world tiles.
  */
 
 import type { Dataset } from '../../state/types';
@@ -55,6 +55,8 @@ import { PacketWriter, SECTION, coreColumnName, writeFigures, writeFilters, writ
 import { INSTANCE_STRIDE, MESH_STRIDE, type FigureMesh } from '../../figures/instances';
 import { symbolAtlas } from '../symbols/atlas';
 import { markResident, nextToUpload, playbackStarting, setMeshUploader, uploadsWaiting } from '../../figures/residency';
+import { NativeTracks } from './nativeTracks';
+import { KEYS_PER_BUFFER } from '../gpuTracks/store';
 
 interface Tauri {
   invoke(cmd: string, args?: unknown, options?: unknown): Promise<unknown>;
@@ -123,8 +125,24 @@ export class NativeRenderer implements Renderer {
   readonly heatPrecision: 'f16' | 'f32';
   readonly gpuName: string | null;
   readonly gpuLimits: GpuLimits = { maxTextureSize: 16384, maxBufferBytes: 2 ** 31 - 4 };
-  readonly gpuTracksMaxBytes = 0;
   gpuBudgetBytes = 2 * 1024 ** 3;
+
+  /** The GPU tracks (`nativeTracks.ts`): the store sent once, each frame its uniform. */
+  private readonly tracks = new NativeTracks((bytes) => void this.invoke('viewport_tracks', bytes).catch((e: unknown) => console.warn('native viewport: tracks', e)));
+
+  /** The keys' x, y, z, t in one binding (8 bytes a key), within half the GPU budget. */
+  get gpuTracksMaxBytes(): number {
+    return Math.min(KEYS_PER_BUFFER * 8, Math.floor(this.gpuBudgetBytes / 2));
+  }
+
+  /** The tracks' pipelines are made when the viewport starts. */
+  gpuTracksReady(): boolean {
+    return true;
+  }
+
+  get gpuTracksBytes(): number {
+    return this.tracks.bytes;
+  }
 
   private readonly writer = new PacketWriter();
   private seq = 0;
@@ -258,6 +276,7 @@ export class NativeRenderer implements Renderer {
 
   setDataset(dataset: Dataset | null): void {
     this.dataset = dataset;
+    this.tracks.reset();
     const gen = ++this.datasetGen;
     // Per-row data was the old rows'; the engine sends the new ones' after this.
     this.lines = null;
@@ -562,6 +581,11 @@ export class NativeRenderer implements Renderer {
       writeFigures(w, p.figureBatches, (id) => this.meshes.has(id));
       w.close();
       this.evictMeshes();
+    }
+    if (p.gpuTracks) {
+      if (!p.figureBatches?.length) this.meshFrame++;
+      this.tracks.write(w, p, (m) => this.meshFor(m), all);
+      if (!p.figureBatches?.length) this.evictMeshes();
     }
     if (p.cubes && p.cubeCount > 0) {
       w.open(SECTION.cubes);
@@ -929,7 +953,7 @@ export class NativeRenderer implements Renderer {
 
   /** Whether figure meshes are on their way. */
   get uploading(): boolean {
-    return this.meshPartial.size > 0 || uploadsWaiting() > 0;
+    return this.meshPartial.size > 0 || uploadsWaiting() > 0 || this.tracks.uploading;
   }
 
   private sameSigns(s: Float32Array): boolean {

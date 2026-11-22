@@ -31,6 +31,7 @@
     "allow-viewport-snapshot",
     "allow-viewport-mesh",
     "allow-viewport-glyphs",
+    "allow-viewport-tracks",
     "allow-viewport-times"
   ],
   "remote": {

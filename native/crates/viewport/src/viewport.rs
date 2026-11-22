@@ -54,6 +54,8 @@ pub enum Msg {
     Mesh(Vec<u8>),
     /// The glyph atlas (`Figures::set_atlas`).
     Glyphs(Vec<u8>),
+    /// The GPU tracks' store, a message at a time (`Tracks::message`).
+    Tracks(Vec<u8>),
     Times(Reply<String>),
     Hide(bool),
     Stop,
@@ -247,6 +249,7 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                 Msg::CoreDataset { ds, budget, gen: page_gen } => {
                     data.page_gen = page_gen;
                     let gen = data.generation.fetch_add(1, Ordering::SeqCst) + 1;
+                    r.tracks.clear();
                     r.clear_dataset(ds.as_ref().is_some_and(|d| loader::has_times(d)));
                     data.core = ds.clone();
                     if let Some(ds) = ds {
@@ -287,6 +290,7 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                     data.page_gen = gen;
                     data.generation.fetch_add(1, Ordering::SeqCst);
                     data.core = None;
+                    r.tracks.clear();
                     r.clear_dataset(has_time);
                     dirty = true;
                 }
@@ -360,6 +364,12 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                     if let Err(e) = r.figures.set_atlas(&r.device, &r.queue, &bytes) {
                         eprintln!("viewport: {e:#}");
                     }
+                }
+                Msg::Tracks(bytes) => {
+                    if let Err(e) = r.tracks.message(&r.device, &r.queue, &bytes) {
+                        eprintln!("viewport: {e:#}");
+                    }
+                    dirty = true;
                 }
                 Msg::Mesh(bytes) => {
                     if let Err(e) = r.figures.mesh_slice(&r.device, &r.queue, &bytes) {
@@ -456,8 +466,8 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
         r.poll();
         let s = &r.stats;
         snap.lock().json = format!(
-            "{{\"residentRows\":{},\"droppedRows\":{},\"gpuBytes\":{},\"levelBytes\":{},\"frames\":{},\"binned\":{},\"filtersPending\":{},\"lastSeq\":{},\"dataGen\":{},\"rowsTaken\":{},\"backend\":{:?},\"adapter\":{:?},\"heatFormat\":{:?}}}",
-            r.resident_rows, r.dropped_rows, r.gpu_bytes, r.level_bytes(), s.frames, s.binned, s.filters_pending, s.last_seq, data.page_gen, r.modes.taken, s.backend, s.adapter, s.heat_format
+            "{{\"residentRows\":{},\"droppedRows\":{},\"gpuBytes\":{},\"levelBytes\":{},\"frames\":{},\"binned\":{},\"filtersPending\":{},\"lastSeq\":{},\"dataGen\":{},\"rowsTaken\":{},\"tracksBytes\":{},\"tracksReady\":{},\"backend\":{:?},\"adapter\":{:?},\"heatFormat\":{:?}}}",
+            r.resident_rows, r.dropped_rows, r.gpu_bytes, r.level_bytes(), s.frames, s.binned, s.filters_pending, s.last_seq, data.page_gen, r.modes.taken, r.tracks.bytes(), r.tracks.ready_id(), s.backend, s.adapter, s.heat_format
         );
     }
 }

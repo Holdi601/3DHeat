@@ -4,7 +4,8 @@
  *   node native/tools/probe-native-viewport.mjs --dir <rowceiling folder> --rows 10,100
  *        [--exe <3dheat-app.exe>] [--out <folder>] [--seconds 8]
  *        [--cases exposure,heat,teams,filter,window,split,figures,cubes,overlays,lines,directions,rate,structures|none]
- *        [--backends webgpu,native]
+ *        [--backends webgpu,native] [--matches 1000] [--units 20]
+ *   node native/tools/probe-native-viewport.mjs --cases tracks,tracks-cpu --matches 1000 --units 20
  *
  * For each load, starts the built app twice - the web engine (WebGPU in the app's
  * WebView2), then the native viewport (Settings > Native viewport) - picks the
@@ -27,6 +28,14 @@
  *            level (ground under the rows, a lake, a grid of see-through walls with their edges)
  *            with occlusion on, so the walls dim the heat behind them through the peeled
  *            layers, and the cut behind the ground reads the structure depth
+ *   tracks   GPU tracks: a synthetic load built in the page, --matches overlaid matches of --units
+ *            units each (made up: circles on an empty map, 2 minutes of samples a unit), the box
+ *            replay with figures at the middle of the recording, placed by the GPU (`gpuTracks/`)
+ *            on both backends; the pictures, as the box replay. tracks-cpu: the same load with
+ *            the GPU tracks off (`?gputracks=0`), every unit placed on the CPU - compared with the
+ *            GPU path's picture of the same backend (reported, not gated: the CPU path picks its
+ *            figures' detail by its own rules). Without --dir (only tracks cases) no files load,
+ *            and the frames below are taken on the synthetic load, the GPU tracks on
  *   exposure the first auto-exposure after each load (the first and three loads of the same
  *            files again, the same view): every one within 1 % of the web's first - a meter
  *            that read the field before all rows were drawn, or before the frame it meant,
@@ -52,15 +61,19 @@ const arg = (name, def) => {
 const target = process.env.CARGO_TARGET_DIR ?? resolve(import.meta.dirname, '..', 'target');
 const exe = arg('exe', join(target, 'release', '3dheat-app.exe'));
 const dir = arg('dir', null);
-const loads = String(arg('rows', '10')).split(',').map((r) => Number(r) * 1e6);
 const out = resolve(arg('out', join(process.env.TEMP ?? '.', 'heat3d-native-viewport')));
 const secs = Number(arg('seconds', 8));
 const cases = String(arg('cases', 'exposure,heat,teams,filter,window,split,figures,cubes,overlays,lines,directions,rate,structures')).split(',').filter((c) => c && c !== 'none');
 const backends = String(arg('backends', 'webgpu,native')).split(',');
 const PORT = Number(arg('port', 9336));
+const matches = Number(arg('matches', 1000));
+const unitsPerMatch = Number(arg('units', 20));
+const TRACK_CASES = ['tracks', 'tracks-cpu'];
+const fileCases = cases.filter((c) => !TRACK_CASES.includes(c));
+const loads = fileCases.length ? String(arg('rows', '10')).split(',').map((r) => Number(r) * 1e6) : [0];
 const PER_FILE = 10_000_000;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-if (!dir) throw new Error('--dir is required');
+if (!dir && fileCases.length) throw new Error('--dir is required (unless only tracks cases run)');
 mkdirSync(out, { recursive: true });
 
 function files(rows) {
@@ -184,10 +197,117 @@ function comparePictures(a, b) {
   return { mean, p99: quantile(d, 0.99), max: d[d.length - 1], offShare: off / d.length };
 }
 
+// ---------------------------------------------------------------- GPU tracks
+
+/**
+ * In the page: the synthetic load of `matches` x `units` units (once), the box replay at its middle
+ * with every unit a figure, placed by the GPU (`tracks`) or the CPU (`tracks-cpu`, `?gputracks=0`);
+ * the picture once converged. The dart threshold is pinned (`dartPx`, which the engine steers by
+ * frame time) so both backends pick the same detail. The GPU path is on again when it returns.
+ */
+async function tracksCase({ c, matches, units }) {
+  const useStore = await globalThis.__heat3dNative.store();
+  const eng = globalThis.__3dheat_engine;
+  const raf = () => new Promise((r) => requestAnimationFrame(r));
+  const st = () => useStore.getState();
+  const P = matches * units;
+  const SAMPLES = 25;
+  const DT = 5;
+  if (globalThis.__probeTracksLoaded !== P) {
+    // Circles on an empty 4 km map, a sample every 5 s for 2 minutes, time-major (sorted by time).
+    let seed = 7;
+    const rnd = () => {
+      seed = (seed + 0x6d2b79f5) >>> 0;
+      let t = seed;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+    const unit = Array.from({ length: P }, () => {
+      const R = 80 + 400 * rnd();
+      return { cx: (rnd() - 0.5) * 3000, cz: (rnd() - 0.5) * 3000, R, w: (15 + 25 * rnd()) / R, ph: rnd() * 2 * Math.PI, y: 200 + 600 * rnd() };
+    });
+    const n = P * SAMPLES;
+    const px = new Float32Array(n), py = new Float32Array(n), pz = new Float32Array(n), time = new Float32Array(n), yaw = new Float32Array(n);
+    const personId = new Uint32Array(n), teamId = new Uint16Array(n);
+    let i = 0;
+    for (let k = 0; k < SAMPLES; k++)
+      for (let p = 0; p < P; p++, i++) {
+        const u = unit[p];
+        const t = k * DT;
+        const a = u.ph + u.w * t;
+        px[i] = u.cx + u.R * Math.sin(a);
+        py[i] = u.y;
+        pz[i] = u.cz - u.R * Math.cos(a);
+        time[i] = t;
+        yaw[i] = a;
+        personId[i] = p;
+        teamId[i] = p % units < units / 2 ? 0 : 1;
+      }
+    st().setLevel?.(null);
+    st().setDataset({
+      id: `probe-tracks-${P}`, name: 'probe tracks', count: n,
+      px, py, pz, time, epochMs: null, lifetime: null, maxLifetimeGap: 0, personShared: null,
+      yaw, pitch: new Float32Array(n), personId, teamId,
+      personLabels: Array.from({ length: P }, (_, p) => `m${Math.floor(p / units)}u${p % units}`), teamLabels: ['blue', 'red'],
+      sessionId: null, sessionLabels: [], sessionRows: null, sessionStart: null, sessionEnd: null,
+      personTeam: Uint16Array.from({ length: P }, (_, p) => (p % units < units / 2 ? 0 : 1)), personSlot: null, teamSizes: Uint32Array.of(P / 2, P / 2),
+      attrs: [{ name: 'kind', kind: 'category', data: new Uint32Array(n), min: 0, max: 0, categories: ['aircraft'] }], warnings: [],
+      bounds: { minX: -2000, minY: 150, minZ: -2000, maxX: 2000, maxY: 850, maxZ: 2000 },
+      timeRange: [0, (SAMPLES - 1) * DT], timeSorted: true,
+    });
+    globalThis.__probeTracksLoaded = P;
+  }
+  const url = new URL(location.href);
+  if (c === 'tracks-cpu') url.searchParams.set('gputracks', '0');
+  else url.searchParams.delete('gputracks');
+  history.replaceState(null, '', url.href);
+  st().setMode('team');
+  st().patchTeam({ figures: true, showRawSamples: false, trailSeconds: 0, farMode: 'figure', figureScale: 1 });
+  st().patchTimeline({ mode: 'play', window: 'cumulative', playing: false });
+  st().patchBudget({ adaptive: false, exact: true, heatScale: 1 });
+  st().seek(((SAMPLES - 1) * DT) / 2);
+  const rd = eng.renderer;
+  const own = Object.prototype.hasOwnProperty.call(rd, 'render');
+  const orig = rd.render;
+  rd.render = function (p) {
+    return orig.call(this, p.gpuTracks ? { ...p, gpuTracks: { ...p.gpuTracks, dartPx: 2 } } : p);
+  };
+  // The store built and over to the GPU (both backends), then still frames.
+  const t0 = performance.now();
+  if (c === 'tracks') while (performance.now() - t0 < 120_000 && (!eng.gpuTracksInfo() || rd.uploadsPending)) await raf();
+  const readyMs = performance.now() - t0;
+  for (let i = 0; i < 30; i++) await raf();
+  // The same view in every case, once the load has settled (a new load frames itself).
+  eng.camera.setOrientationDegrees(30, -40);
+  eng.frameDataset(true);
+  for (let i = 0; i < 8; i++) {
+    eng.camera.moved = true;
+    eng.invalidate(2);
+    await raf();
+  }
+  for (let i = 0; i < 120; i++) await raf();
+  const info = eng.gpuTracksInfo();
+  const cap = await eng.captureFrame();
+  if (own) rd.render = orig;
+  else delete rd.render;
+  url.searchParams.delete('gputracks');
+  history.replaceState(null, '', url.href);
+  return {
+    field: null,
+    w: eng.canvas.width,
+    h: eng.canvas.height,
+    picture: cap ? { width: cap.width, height: cap.height, rgba: Array.from(cap.rgba) } : null,
+    info: c === 'tracks' ? info : null,
+    gpu: c === 'tracks' ? !!info : false,
+    readyMs,
+  };
+}
+
 // ---------------------------------------------------------------- one run
 
 async function run(rows, backend) {
-  const picked = files(rows);
+  const picked = rows > 0 ? files(rows) : [];
   const app = spawn(exe, [], {
     // A WebView2 profile of the probe's own: another app started meanwhile (another probe) shares
     // the default one, and its browser process took this run's page down with it.
@@ -259,15 +379,21 @@ async function run(rows, backend) {
         const exposure = (eng.exposuresMetered ?? 0) > metered ? useStore.getState().heat.saturation : null;
         return { rows: r.rows, loadMs, resident: eng.live.residentRows, dropped: eng.live.droppedRows, exposure };
       }, mapping);
-    const load = await loadOnce();
+    const load = picked.length ? await loadOnce() : { rows: 0, loadMs: 0, resident: 0, dropped: 0, exposure: null };
     // The same files again, three times: the meter must not catch a load still arriving (a snapshot
     // of the last load's rows) nor a frame other than the one it meant.
     const exposures = [load.exposure];
-    if (cases.includes('exposure')) for (let i = 0; i < 3; i++) exposures.push((await loadOnce()).exposure);
+    if (cases.includes('exposure') && picked.length) for (let i = 0; i < 3; i++) exposures.push((await loadOnce()).exposure);
 
     // Parity: converged fields and pictures, case by case, the same steps in both runs.
     const parity = {};
-    for (const c of cases.filter((c) => c !== 'exposure')) {
+    // The tracks cases last: they replace the load with their own.
+    const order = [...fileCases.filter((c) => c !== 'exposure'), ...TRACK_CASES.filter((c) => cases.includes(c))];
+    for (const c of order) {
+      if (TRACK_CASES.includes(c)) {
+        parity[c] = await page.evaluate(tracksCase, { c, matches, units: unitsPerMatch });
+        continue;
+      }
       parity[c] = await page.evaluate(async (c) => {
         const useStore = await globalThis.__heat3dNative.store();
         const eng = globalThis.__3dheat_engine;
@@ -506,7 +632,7 @@ const summary = [];
 for (const rows of loads) {
   const web = backends.includes('webgpu') ? await run(rows, 'webgpu') : null;
   const nat = backends.includes('native') ? await run(rows, 'native') : null;
-  const m = `${rows / 1e6}M`;
+  const m = rows > 0 ? `${rows / 1e6}M` : `${matches}x${unitsPerMatch}`;
   for (const r of [web, nat].filter(Boolean)) {
     const fr = r.frames;
     console.log(
@@ -530,7 +656,19 @@ for (const rows of loads) {
     console.log(`  ${bad ? 'FAIL' : 'ok  '} ${m} exposure: first auto-exposure web ${list(web.exposures)}; native ${list(nat.exposures)}; worst ${pct(worst)}`);
     summary.push({ rows, case: 'exposure', web: web.exposures, native: nat.exposures, worst });
   }
-  for (const c of web && nat ? cases.filter((c) => c !== 'exposure') : []) {
+  for (const r of [web, nat].filter(Boolean)) {
+    // The CPU path against the GPU path on the same backend: reported only.
+    const g = r.parity.tracks;
+    const cp = r.parity['tracks-cpu'];
+    if (g) console.log(`  ${r.backend} tracks: ${g.gpu ? 'GPU tracks' : 'NOT on the GPU'} ${JSON.stringify(g.info)}, ready in ${(g.readyMs / 1000).toFixed(1)} s`);
+    if (g?.picture && cp?.picture) {
+      const pic = comparePictures({ ...g.picture, rgba: Uint8Array.from(g.picture.rgba) }, { ...cp.picture, rgba: Uint8Array.from(cp.picture.rgba) });
+      writeFileSync(join(out, `${m}-tracks-cpu-${r.backend}.png`), png(cp.picture.width, cp.picture.height, Uint8Array.from(cp.picture.rgba)));
+      console.log(`  info ${m} ${r.backend} GPU tracks vs CPU placing: ` + (pic ? `picture mean ${pic.mean.toFixed(2)}/255, p99 ${pic.p99}, ${pct(pic.offShare)} off by > 8` : 'no picture'));
+      summary.push({ rows, case: 'tracks-cpu', backend: r.backend, picture: pic });
+    }
+  }
+  for (const c of web && nat ? cases.filter((c) => c !== 'exposure' && c !== 'tracks-cpu') : []) {
     const a = web.parity[c];
     const b = nat.parity[c];
     if (a.picture) writeFileSync(join(out, `${m}-${c}-web.png`), png(a.picture.width, a.picture.height, Uint8Array.from(a.picture.rgba)));
@@ -539,7 +677,7 @@ for (const rows of loads) {
       a.picture && { ...a.picture, rgba: Uint8Array.from(a.picture.rgba) },
       b.picture && { ...b.picture, rgba: Uint8Array.from(b.picture.rgba) },
     );
-    if (c === 'figures' || c === 'cubes' || c === 'overlays') {
+    if (c === 'figures' || c === 'cubes' || c === 'overlays' || c === 'tracks') {
       // No heat in the box replay: the pictures alone, within a pixel's rounding at the figures' edges.
       // The overlays: their pictures over the heat, compared the same way.
       const bad = !pic || pic.mean > 1 || pic.offShare > 0.01;

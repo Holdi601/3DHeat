@@ -16,6 +16,7 @@ pub mod overlays;
 pub mod ranges;
 pub mod packet;
 pub mod renderer;
+pub mod tracks;
 pub mod viewport;
 
 pub use renderer::{Captured, LevelMesh, Renderer};

@@ -163,8 +163,9 @@ What the preview draws:
 - the objectives' marks on the ground, under the units or over the picture, the capture zones' discs, and the other lines drawn over the finished picture (the mass analysis' places, the movement analysis' maneuvers)
 - a level layout's spawn marks with their lines to their owners, and the volumes' outlines where they cut the level
 - the engagement ranges: the shells, cut where each unit's line of sight ends (its views taken from a model level, a few faces a frame), and the ground it sees within reach
+- large recordings (thousands of units, such as many matches overlaid) placed on the graphics card: their tracks sent to the app once, then every frame one pass places every unit at the playhead and each model is drawn once for all units that use it, with no work per unit on the processor
 
-What it does not draw yet: units placed on the graphics card (large recordings are placed on the processor instead, as on a card without that path), textures (a level's atlas: textured structures and their cut-out leaves), image levels, world tiles and tiled terrain, the tactical display and depth of field. Lines of sight are taken from a model level's ground only: structures, image levels and world tiles do not block them yet. Those parts of the view are missing while the preview is on. The heat under the cursor is read from the viewport.
+What it does not draw yet: the trails, death marks and far-off symbols of units placed on the graphics card, textures (a level's atlas: textured structures and their cut-out leaves), image levels, world tiles and tiled terrain, the tactical display and depth of field. Lines of sight are taken from a model level's ground only: structures, image levels and world tiles do not block them yet. Those parts of the view are missing while the preview is on. The heat under the cursor is read from the viewport.
 
 Measured on the PC above (`native/tools/probe-native-viewport.mjs`: the same app and the same load, once with the page's WebGPU engine, once with the native viewport), 10 million rows of the synthetic row-ceiling table, while another 3D program shared the graphics card:
 

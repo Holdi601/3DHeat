@@ -57,6 +57,7 @@ fn main() {
                 "viewport_snapshot",
                 "viewport_mesh",
                 "viewport_glyphs",
+                "viewport_tracks",
                 "viewport_times",
             ])),
     )
