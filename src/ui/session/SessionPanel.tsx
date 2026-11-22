@@ -46,6 +46,9 @@ export function ConnBadge() {
   );
 }
 
+/** The join errors with something the user can do about them: said under the error, the Join button below does it. */
+const TODO = new Set(['badPassword', 'unreachable', 'protocol', 'full', 'dropped', 'refused']);
+
 function JoinForm() {
   const name0 = (() => {
     try {
@@ -97,6 +100,7 @@ function JoinForm() {
         <div className="session-error" role="alert">
           {t(`session.error.${error}`)}
           {retryMs > 0 && error === 'lockedOut' ? ` ${t('session.retryIn', { min: Math.ceil(retryMs / 60000) })}` : ''}
+          {TODO.has(error) && <div className="session-todo">{t(`session.todo.${error}`)}</div>}
         </div>
       )}
       <button type="submit" className="primary" disabled={state === 'connecting' || !name.trim()}>

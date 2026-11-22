@@ -254,5 +254,16 @@
   "session.share.confidentialHint": "Items marked confidential (a confidential folder, a marker file, a word in the path) can be shared only after a warning. For such a session, invite links and the waiting room are the safe way in.",
   "session.share.confidentialWarn": "{name} is marked confidential. Only share it with people entitled to see it. Everyone in this session can fetch it - for such data, prefer a session joined by invite links only, with the waiting room on. Share it?",
   "session.share.shareConfidential": "Share confidential item",
-  "session.share.confidentialMember": "Items marked confidential are for people entitled to see them only: do not pass them on."
+  "session.share.confidentialMember": "Items marked confidential are for people entitled to see them only: do not pass them on.",
+  "session.public.lead": "Let people outside your network join with a link, in three steps.",
+  "session.public.step.read": "What becomes reachable",
+  "session.public.step.start": "Confirm and start",
+  "session.public.failedTodo": "Check this machine's internet connection, or pick another way above, then try again.",
+  "session.public.retry": "Try again",
+  "session.todo.badPassword": "Ask the host for the password, then join again.",
+  "session.todo.unreachable": "Check the server address (the host sees it in their session panel) and that the server runs, then join again.",
+  "session.todo.protocol": "Update 3DHeat here or on the server, then join again.",
+  "session.todo.full": "Ask the host to make room, then join again.",
+  "session.todo.dropped": "Join again; the host lets you in from the waiting room.",
+  "session.todo.refused": "Check the address and the password, then join again."
 }

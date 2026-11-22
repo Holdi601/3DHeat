@@ -54,56 +54,85 @@ export function GoPublic() {
     }
   };
   const join = status.url ? `${status.url.replace(/\/+$/, '')}/#join` : '';
+  const failed = status.phase === 'failed' && !!status.error;
   return (
     <section className="session-sec session-public">
       <h3>{t('session.public.title')}</h3>
       {!on && (
         <>
-          <div role="radiogroup" aria-label={t('session.public.how')}>
+          <p className="session-hint">{t('session.public.lead')}</p>
+          <div className="session-step">
+            <span className="session-step-n" aria-hidden="true">1</span>
+            {t('session.public.how')}
+          </div>
+          <div className="session-choices" role="radiogroup" aria-label={t('session.public.how')}>
             {MODES.map((m) => (
-              <label key={m} className="session-check">
+              <label key={m} className={`session-choice${pick === m ? ' on' : ''}${modes[m]?.available ? '' : ' off'}`}>
                 <input type="radio" name="public-mode" checked={pick === m} disabled={!modes[m]?.available || busy} onChange={() => setMode(m)} />
-                {label(m)}
-                {!modes[m]?.available && <span className="session-flag"> · {t(`session.public.unavailable.${m}`)}</span>}
+                <span className="session-choice-text">
+                  <span>{label(m)}</span>
+                  {!modes[m]?.available && <span className="session-flag">{t(`session.public.unavailable.${m}`)}</span>}
+                </span>
               </label>
             ))}
           </div>
-          <div className="session-warn" role="note">
-            <p>{t('session.public.reachable')}</p>
-            <p>{modes[pick]?.showsAddress ? t('session.public.addressShown') : t('session.public.addressHidden')}</p>
-            <p>{t('session.public.waitingRoom')}</p>
+          <div className="session-step">
+            <span className="session-step-n" aria-hidden="true">2</span>
+            {t('session.public.step.read')}
           </div>
+          <ul className="session-note" role="note">
+            <li>{t('session.public.reachable')}</li>
+            <li>{modes[pick]?.showsAddress ? t('session.public.addressShown') : t('session.public.addressHidden')}</li>
+            <li>{t('session.public.waitingRoom')}</li>
+          </ul>
+          <div className="session-step">
+            <span className="session-step-n" aria-hidden="true">3</span>
+            {t('session.public.step.start')}
+          </div>
+          {failed && (
+            <div className="session-error" role="alert">
+              <div>{t('session.public.error', { error: status.error ?? '' })}</div>
+              <div className="session-todo">{t('session.public.failedTodo')}</div>
+            </div>
+          )}
           <label className="session-check">
             <input type="checkbox" checked={understood} onChange={(e) => setUnderstood(e.target.checked)} />
             {t('session.public.understood')}
           </label>
           <button type="button" className="primary" disabled={!understood || busy || !modes[pick]?.available} onClick={() => void start()}>
-            {busy ? t('session.public.starting') : t('session.public.start')}
+            {busy ? t('session.public.starting') : failed ? t('session.public.retry') : t('session.public.start')}
           </button>
-          {status.phase === 'failed' && status.error && <p className="session-hint">{t('session.public.error', { error: status.error })}</p>}
         </>
       )}
       {on && (
         <>
-          <p className="session-hint">{t('session.public.on', { how: label(status.mode ?? pick) })}</p>
-          {status.checks.map((c) => (
-            <div key={c.what} className="session-hint">
-              {c.ok ? '✓' : '✗'} {t(`session.public.check.${c.what}`)}
-              {!c.ok && c.detail ? ` - ${c.detail}` : ''}
-            </div>
-          ))}
+          <div className="session-live" role="status">
+            <span className="dot" aria-hidden="true" />
+            {t('session.public.on', { how: label(status.mode ?? pick) })}
+          </div>
+          <ul className="session-checks">
+            {status.checks.map((c) => (
+              <li key={c.what} className={c.ok ? 'ok' : 'bad'}>
+                <span className="session-glyph">{c.ok ? '✓' : '✗'}</span>
+                <span>
+                  {t(`session.public.check.${c.what}`)}
+                  {!c.ok && c.detail ? <span className="session-flag"> - {c.detail}</span> : ''}
+                </span>
+              </li>
+            ))}
+          </ul>
           {status.checks.some((c) => !c.ok) && <p className="session-hint">{t('session.public.checkHint')}</p>}
           {join ? (
             <div className="session-link">
               <input readOnly value={join} aria-label={t('session.public.link')} onFocus={(e) => e.target.select()} />
-              <button type="button" className="small" onClick={() => void navigator.clipboard?.writeText(join).then(() => toast(t('session.public.copied'), 'good'))}>
+              <button type="button" className="primary small" onClick={() => void navigator.clipboard?.writeText(join).then(() => toast(t('session.public.copied'), 'good'))}>
                 {t('session.invite.copy')}
               </button>
             </div>
           ) : (
             <p className="session-hint">{t('session.public.noUrl', { port: modes['port-forward']?.port ?? 7878 })}</p>
           )}
-          <button type="button" disabled={busy} onClick={() => void stopPublic().then(() => toast(t('session.public.stopped'), 'good'))}>
+          <button type="button" className="danger" disabled={busy} onClick={() => void stopPublic().then(() => toast(t('session.public.stopped'), 'good'))}>
             {t('session.public.stop')}
           </button>
         </>
@@ -112,6 +141,7 @@ export function GoPublic() {
   );
 }
 
+/** The host: share items of the catalogue folder with the members. Off until switched on. */
 /** The host: share items of the catalogue folder with the members. Off until switched on. */
 export function ShareAssets() {
   const role = useSessionStore((s) => s.role);
