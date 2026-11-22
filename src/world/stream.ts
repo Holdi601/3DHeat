@@ -6,6 +6,7 @@ import type { DcsGroundData } from './dcsGround';
 import type { StreamWorkerRequest, StreamWorkerResponse } from './streamWorker';
 import type { BuiltTile, TileRequest } from './tileBuild';
 import { worldTiles, type WorldTile } from './tileSet';
+import type { GroundPins } from './groundPins';
 import { eastNorthOf, heightOf, MAX_LAT, planeInverse, tileBox, tileOf } from './tiles';
 
 /**
@@ -42,6 +43,8 @@ export interface StreamOptions {
   runways: boolean;
   /** A DCS theatre's own ground: the hybrid backdrop (src/world/dcsGround). */
   dcs?: DcsGroundData | null;
+  /** The recording's vehicles' ground, the tiles' heights moved onto it (`groundPins.ts`). */
+  pins?: GroundPins | null;
 }
 
 export interface TileNode {
@@ -170,6 +173,7 @@ export class WorldStreamer {
     this.worker = new Worker(new URL('./streamWorker.ts', import.meta.url), { type: 'module' });
     this.worker.onmessage = (ev: MessageEvent<StreamWorkerResponse>) => this.received(ev.data);
     if (opts.dcs) this.worker.postMessage({ kind: 'dcs', ground: opts.dcs } satisfies StreamWorkerRequest);
+    if (opts.pins) this.worker.postMessage({ kind: 'pins', pins: opts.pins } satisfies StreamWorkerRequest);
   }
 
   stop(): void {
@@ -333,6 +337,7 @@ function sameOptions(a: StreamOptions, b: StreamOptions): boolean {
     a.imagery === b.imagery &&
     a.runways === b.runways &&
     (a.dcs ?? null) === (b.dcs ?? null) &&
+    (a.pins ?? null) === (b.pins ?? null) &&
     ga.lat0 === gb.lat0 &&
     ga.lon0 === gb.lon0 &&
     ga.projection === gb.projection &&

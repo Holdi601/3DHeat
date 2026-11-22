@@ -2,6 +2,9 @@ import { useEffect, useRef } from 'react';
 import { useStore } from '../state/store';
 import type { WorldLabel } from '../world/backdrop';
 import { worldStreamer } from '../world/stream';
+import type { GroundPins } from '../world/groundPins';
+import { groundPinsSteps } from '../world/pinsOfData';
+import type { Dataset, GeoPlacement } from '../state/types';
 import { useAnimationFrame, useEngine } from './EngineContext';
 
 /**
@@ -28,6 +31,36 @@ const PRIORITY: Record<WorldLabel['kind'], number> = { city: 0, airfield: 1, tow
 const MAX_LABELS = 70;
 /** How often the streamed tiles are chosen again, milliseconds. */
 const STREAM_EVERY = 250;
+
+/** Each dataset's ground pins: worked out once, in slices between frames; 'busy' while they are. */
+const pinsOf = new WeakMap<Dataset, GroundPins | null | 'busy'>();
+
+/**
+ * The ground pins of `d` for a streamed level on `placement`: null when there
+ * are none to take (no data, data on another plane, no vehicles), undefined
+ * while they are still being worked out.
+ */
+function pinsFor(d: Dataset | null, placement: GeoPlacement): GroundPins | null | undefined {
+  const g = d?.geo;
+  const p = placement.geo;
+  if (!d || !g || g.lat0 !== p.lat0 || g.lon0 !== p.lon0 || g.projection !== p.projection) return null;
+  const have = pinsOf.get(d);
+  if (have === 'busy') return undefined;
+  if (have !== undefined) return have;
+  pinsOf.set(d, 'busy');
+  const steps = groundPinsSteps(d);
+  const slice = () => {
+    const end = performance.now() + 4;
+    for (;;) {
+      const r = steps.next();
+      if (r.done) return void pinsOf.set(d, r.value);
+      if (performance.now() >= end) break;
+    }
+    setTimeout(slice, 0);
+  };
+  setTimeout(slice, 0);
+  return undefined;
+}
 
 export function WorldOverlay() {
   const engine = useEngine();
@@ -89,7 +122,10 @@ export function WorldOverlay() {
     const timer = window.setInterval(() => {
       const lv = useStore.getState().level;
       if (lv?.kind === 'model' && lv.stream && lv.placement) {
-        worldStreamer.start({ placement: lv.placement, imagery: lv.stream.imagery, runways: lv.stream.runways, dcs: lv.stream.dcs ?? null });
+        // The recording's vehicles' ground under it (`groundPins.ts`): waited for, so the tiles are built once, with it.
+        const pins = pinsFor(useStore.getState().dataset, lv.placement);
+        if (pins === undefined) return;
+        worldStreamer.start({ placement: lv.placement, imagery: lv.stream.imagery, runways: lv.stream.runways, dcs: lv.stream.dcs ?? null, pins });
         worldStreamer.update(engine.cameraPose().position);
       } else if (worldStreamer.running) worldStreamer.stop();
     }, STREAM_EVERY);

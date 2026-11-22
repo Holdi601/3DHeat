@@ -2,6 +2,7 @@
 import { cachedFetch } from './cache';
 import { DcsGround, type DcsGroundData } from './dcsGround';
 import { buildTile, type BuiltTile, type TileRequest } from './tileBuild';
+import { PinIndex, type GroundPins } from './groundPins';
 
 /**
  * Builds the streamed backdrop's tiles off the main thread, several at once:
@@ -15,7 +16,9 @@ import { buildTile, type BuiltTile, type TileRequest } from './tileBuild';
 export type StreamWorkerRequest =
   | { kind: 'build'; id: number; req: TileRequest }
   | { kind: 'drop'; ids: number[] }
-  | { kind: 'dcs'; ground: DcsGroundData | null };
+  | { kind: 'dcs'; ground: DcsGroundData | null }
+  /** The recording's vehicles' ground (`groundPins.ts`), or none. */
+  | { kind: 'pins'; pins: GroundPins | null };
 
 export type StreamWorkerResponse = { id: number; kind: 'done'; tile: BuiltTile } | { id: number; kind: 'error'; message: string };
 
@@ -24,6 +27,8 @@ const queue: Array<{ id: number; req: TileRequest }> = [];
 let running = 0;
 /** The DCS theatre's own ground for the hybrid backdrop, indexed once. */
 let dcs: DcsGround | null = null;
+/** The recording's vehicles' ground, indexed once. */
+let pins: PinIndex | null = null;
 const PARALLEL = 4;
 
 const decodeImage = async (bytes: ArrayBuffer, type: string) => {
@@ -61,6 +66,7 @@ function pump(): void {
         return canvas.transferToImageBitmap();
       },
       dcs,
+      pins,
     })
       .then((tile) => {
         const m = tile.mesh;
@@ -86,6 +92,10 @@ scope.onmessage = (ev: MessageEvent<StreamWorkerRequest>) => {
       console.warn(`DCS ground: ${err instanceof Error ? err.message : String(err)}`);
       dcs = null;
     }
+    return;
+  }
+  if (m.kind === 'pins') {
+    pins = m.pins && m.pins.length ? new PinIndex(m.pins) : null;
     return;
   }
   if (m.kind === 'drop') {

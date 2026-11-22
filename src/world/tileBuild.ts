@@ -21,6 +21,7 @@ import { clipLine, drapePolygon, extrudeBuilding, MeshBuilder, ribbon, type Buil
 import { decodeTile, inflateIfGzip } from './mvt';
 import { OURAIRPORTS_RUNWAYS, parseRunways, runwaysIn, type Runway } from './runways';
 import { decodeTerrarium, TERRARIUM_URL } from './terrarium';
+import { pinHeights, type PinIndex } from './groundPins';
 import { dataOfEastNorth, frameSense, latToMy, lonToMx, mercatorToPlane, metresPerPixel, myToLat, tileBox } from './tiles';
 
 /**
@@ -144,6 +145,8 @@ export interface TileIo {
   mosaic(parts: Array<ArrayBuffer | null>, n: number, type: string): Promise<ImageBitmap | null>;
   /** A DCS theatre's own ground, for the hybrid backdrop (src/world/dcsGround); absent otherwise. */
   dcs?: DcsGround | null;
+  /** The recording's own vehicles' ground (`groundPins.ts`): the tile's heights moved onto them; absent otherwise. */
+  pins?: PinIndex | null;
 }
 
 export interface BuiltTile {
@@ -252,6 +255,8 @@ export async function buildTile(req: TileRequest, io: TileIo): Promise<BuiltTile
   const game = io.dcs ? io.dcs.forTile(px0, py0, dx, GRID, S, heights, dx * mpp) : null;
   const realWorld = !game || game.verdict.agree;
   if (game) for (let k = 0; k < heights.length; k++) if (game.covered[k]) heights[k] = game.heights[k];
+  // The recording's vehicles' ground over all of it, at this tile's detail: they drove on it (`groundPins.ts`).
+  if (io.pins) pinHeights(heights, GRID, px0, py0, dx, S, mpp, box, io.pins, null);
   const grid = new TerrainGrid(px0, py0, GRID, GRID, dx, dx, heights);
   const plane = mercatorToPlane(geo);
   const [smx, smy] = game?.shift ?? [0, 0];
