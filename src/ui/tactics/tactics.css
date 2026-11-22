@@ -542,3 +542,29 @@
 .hint.warn {
   color: var(--bad);
 }
+.mission-base {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.mission-base > span {
+  color: var(--text-faint);
+  font-size: 12px;
+}
+.mission-base label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.mission-theatre {
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+}
+.mission-warnings {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--bad);
+  font-size: 12px;
+  line-height: 1.45;
+}

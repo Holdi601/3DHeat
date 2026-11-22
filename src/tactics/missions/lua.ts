@@ -4,6 +4,10 @@
  * backslash-newline DCS uses inside them), numbers, booleans, nil, tables
  * with bracketed, bare-name or positional keys, and comments. Not a Lua
  * interpreter: nothing is run, only data is read.
+ *
+ * Asked to, it also says where in the text each table and each of its
+ * entries stands (`LuaSpans`), so a writer can change one value of a mission
+ * and leave every other byte as it was (`missions/dcsWrite.ts`).
  */
 
 export type LuaValue = string | number | boolean | null | LuaTable;
@@ -25,18 +29,49 @@ export const luaNum = (v: LuaValue | undefined, d = 0): number => (typeof v === 
 export const luaStr = (v: LuaValue | undefined, d = ''): string => (typeof v === 'string' ? v : typeof v === 'number' ? String(v) : d);
 export const luaTable = (v: LuaValue | undefined): LuaTable | null => (v && typeof v === 'object' ? v : null);
 
-/** Every top-level assignment of a Lua file: `name = value`. */
-export function parseLuaAssignments(text: string): Record<string, LuaValue> {
-  const p = new Parser(text);
+/** Where an entry of a table stands in the text: its key (or its value, for a positional one) to just past its separator. */
+export interface LuaEntrySpan {
+  /** Where the entry begins: its key, or its value when it has no key. */
+  start: number;
+  valueStart: number;
+  valueEnd: number;
+  /** Past the entry's ',' or ';' when it has one, else `valueEnd`. */
+  end: number;
+}
+
+/** Where a table stands: from its '{' to just past its '}', and each entry by key, in the order written. */
+export interface LuaTableSpan {
+  start: number;
+  end: number;
+  entries: Map<string, LuaEntrySpan>;
+}
+
+/** The spans of every table a parse read, by the table; the top-level assignments by name. */
+export interface LuaSpans {
+  tables: WeakMap<LuaTable, LuaTableSpan>;
+  top: Map<string, LuaEntrySpan>;
+}
+
+export function luaSpans(): LuaSpans {
+  return { tables: new WeakMap(), top: new Map() };
+}
+
+/** Every top-level assignment of a Lua file: `name = value`; with `spans`, where everything stands as well. */
+export function parseLuaAssignments(text: string, spans?: LuaSpans): Record<string, LuaValue> {
+  const p = new Parser(text, spans);
   const out: Record<string, LuaValue> = {};
   for (;;) {
     p.skip();
     if (p.done()) break;
+    const start = p.i;
     const name = p.name();
     if (!name) throw p.error('a name');
     p.skip();
     p.expect('=');
+    p.skip();
+    const valueStart = p.i;
     out[name] = p.value();
+    spans?.top.set(name, { start, valueStart, valueEnd: p.i, end: p.i });
     p.skip();
     if (p.peek() === ';' || p.peek() === ',') p.i++;
   }
@@ -45,7 +80,10 @@ export function parseLuaAssignments(text: string): Record<string, LuaValue> {
 
 class Parser {
   i = 0;
-  constructor(private readonly s: string) {}
+  constructor(
+    private readonly s: string,
+    private readonly spans?: LuaSpans,
+  ) {}
   done() {
     return this.i >= this.s.length;
   }
@@ -139,17 +177,21 @@ class Parser {
     return this.s.slice(start, end).replace(/^\r?\n/, '');
   }
   table(): LuaTable {
+    const start = this.i;
     this.expect('{');
     const out: LuaTable = {};
+    const entries = this.spans ? new Map<string, LuaEntrySpan>() : null;
     let n = 1;
     for (;;) {
       this.skip();
       if (this.peek() === '}') {
         this.i++;
+        if (entries) this.spans!.tables.set(out, { start, end: this.i, entries });
         return out;
       }
       if (this.done()) throw this.error('"}"');
       let key: string | null = null;
+      const entryStart = this.i;
       if (this.peek() === '[' && this.s[this.i + 1] !== '[' && this.s[this.i + 1] !== '=') {
         this.i++;
         const k = this.value();
@@ -168,10 +210,17 @@ class Parser {
           key = w;
         } else this.i = save;
       }
+      this.skip();
+      const valueStart = this.i;
       const v = this.value();
-      out[key ?? String(n++)] = v;
+      const k = key ?? String(n++);
+      out[k] = v;
+      const valueEnd = this.i;
       this.skip();
       if (this.peek() === ',' || this.peek() === ';') this.i++;
+      else this.i = valueEnd;
+      entries?.set(k, { start: entryStart, valueStart, valueEnd, end: this.i });
+      // The comment DCS writes after an entry (`-- end of [...]`) is skipped by the next round.
     }
   }
 }

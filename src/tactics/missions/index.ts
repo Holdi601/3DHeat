@@ -21,6 +21,9 @@ import { figureLabel } from '../names';
 import { dcsMiz } from './dcs';
 import { armaSqm } from './arma';
 import { ocapRecording } from './ocap';
+import type { MissionInfo, PlanMission } from '../missionLink';
+
+export type { MissionInfo, MissionWeather, PlanMission } from '../missionLink';
 
 export type UnitCategory = 'air' | 'heli' | 'ground' | 'sea' | 'infantry' | 'static';
 
@@ -37,6 +40,10 @@ export interface MissionUnit {
   yaw: number;
   /** A slot a player takes, not the computer. */
   player?: boolean;
+  /** Its id in the file (a DCS unitId), for writing it back. */
+  ref?: string;
+  /** The game's skill name (DCS: Average, Good, High, Excellent, Random, Client, Player). */
+  skill?: string;
 }
 
 /**
@@ -60,6 +67,10 @@ export interface MissionTask {
   loops?: number;
   /** A weapons or alarm state (`tasks.ts` ROE_STATES, ALARM_STATES). */
   state?: string;
+  /** The group it acts on (followed, escorted, attacked): that group's `ref`, else its name. */
+  target?: string;
+  /** How a patrol goes round (`PlanTask.pattern`). */
+  pattern?: string;
 }
 
 export interface MissionWaypoint {
@@ -71,6 +82,10 @@ export interface MissionWaypoint {
   /** Seconds from the mission's start it is to be reached, when the mission holds it to that. */
   eta?: number;
   name?: string;
+  /** The game's kind of waypoint (DCS: TakeOffParking, Turning Point, Land), when it has one. */
+  kind?: string;
+  /** Written from a plan: an aircraft's waypoint that lies on the ground, where the board's click put it. */
+  onGround?: boolean;
 }
 
 export interface MissionGroup {
@@ -82,6 +97,10 @@ export interface MissionGroup {
   route: MissionWaypoint[];
   /** The group's own task from the start (DCS's main task), when it has one. */
   task?: MissionTask;
+  /** Its id in the file (a DCS groupId), for writing it back; absent for a group the board made. */
+  ref?: string;
+  /** The country it belongs to, by the game's name. */
+  country?: string;
 }
 
 export interface MissionPlace {
@@ -107,6 +126,10 @@ export interface MissionState {
   places: MissionPlace[];
   /** What could not be read, said plainly (a unit type without a figure, a binarised file). */
   notes: string[];
+  /** Start time, date, weather and briefing, where the file has them. */
+  info?: MissionInfo;
+  /** Written from a plan: the `ref`s of the file's groups the plan took off the board. */
+  removed?: string[];
 }
 
 export interface MissionImporter {
@@ -162,13 +185,18 @@ export function missionToPlan(m: MissionState): Plan {
   const placesLayer = newId('l');
   if (m.places.length) plan.layers.push({ id: placesLayer, name: 'Mission places', visible: true, locked: false });
   const team = (id: string) => (sides.some((s) => s.id === id) ? id : sides[0].id);
+  const aimed: [PlanTask, string][] = [];
+  const link: PlanMission = { format: m.format, source: m.title, map: m.map, ...(m.info ? { info: m.info } : {}), ...(m.places.length ? { placesLayer } : {}), groups: [] };
   for (const g of m.groups) {
     const layer = layerOfSide.get(g.side);
     const lead = g.units[0];
     const first = plan.figures.length;
+    const linked: PlanMission['groups'][number] | null = g.ref !== undefined ? { ref: g.ref, name: g.name, side: g.side, category: g.category, ...(g.country ? { country: g.country } : {}), units: [] } : null;
+    if (linked) link.groups.push(linked);
     for (const u of g.units) {
       const kind = figureOfUnit(u);
       const f: PlanFigure = { id: newId('f'), kind, team: team(g.side), label: u.name || figureLabel(kind), keys: { 0: { ...u.at, yaw: u.yaw } }, from: 0, ...(layer && layer !== BASE_LAYER ? { layer } : {}) };
+      if (linked && u.ref !== undefined) linked.units.push({ figure: f.id, ref: u.ref, type: u.type, kind, ...(u.skill ? { skill: u.skill } : {}) });
       const speed = g.route.find((w, i) => i > 0 && w.speed && w.speed > 0)?.speed;
       // The mission's leg speed as the figure's own cruise (air) or normal (ground) speed.
       if (speed && u.category !== 'static') f.speeds = u.category === 'air' || u.category === 'heli' ? { cruise: speed } : u.category === 'infantry' ? { run: speed } : { normal: speed };
@@ -193,7 +221,7 @@ export function missionToPlan(m: MissionState): Plan {
     // The group's tasks: one task for all its units, at the waypoint the mission gives it.
     const ids = plan.figures.slice(first).filter((f) => !f.kind.includes('base')).map((f) => f.id);
     const routed = g.route.length >= 2 && g.category !== 'static';
-    const make = (t: MissionTask, at: Vec3, point: number | null) => {
+    const make = (t: MissionTask, at: Vec3, point: number | null): PlanTask => {
       const kind = t.kind ?? 'game';
       const pts = t.points ?? (taskDef(kind).min > 0 || kind === 'orbit' ? [at] : undefined);
       const task: PlanTask = {
@@ -212,11 +240,17 @@ export function missionToPlan(m: MissionState): Plan {
         ...(t.duration ? { duration: t.duration } : {}),
         ...(t.loops ? { loops: t.loops } : {}),
         ...(t.state ? { state: t.state } : {}),
+        ...(t.pattern === 'loop' || t.pattern === 'back' ? { pattern: t.pattern } : {}),
         ...(layer ? { layer } : {}),
       };
       plan.tasks.push(task);
+      if (t.target) aimed.push([task, t.target]);
+      return task;
     };
-    if (ids.length && g.task) make(g.task, g.route[0]?.at ?? lead?.at ?? { x: 0, y: 0, z: 0 }, null);
+    if (ids.length && g.task) {
+      const main = make(g.task, g.route[0]?.at ?? lead?.at ?? { x: 0, y: 0, z: 0 }, null);
+      if (linked) linked.mainTask = main.id;
+    }
     if (ids.length) g.route.forEach((w, i) => w.tasks?.forEach((t) => make(t, w.at, i)));
   }
   const seen = new Set<string>();
@@ -235,7 +269,15 @@ export function missionToPlan(m: MissionState): Plan {
       plan.notes.push({ id: newId('n'), step: 0, at: p.at, text: p.text ? `${p.name}: ${p.text}` : p.name, show: 'always', ...(p.kind === 'bullseye' ? { color: [0.6, 0.85, 1] as [number, number, number] } : {}), ...layer });
     }
   }
+  // Tasks on another group (followed, escorted, attacked): the lead of the group the mission names.
+  const leadOf = new Map<string, string>();
+  for (const g of link.groups) if (g.units[0]) leadOf.set(g.ref, g.units[0].figure);
+  for (const [task, target] of aimed) {
+    const lead = leadOf.get(target);
+    if (lead) task.target = lead;
+  }
   // The base layer carries nothing of a mission; it stays for the planners' own work.
   if (!plan.layers.some((l) => l.id === BASE_LAYER)) plan.layers.unshift(baseLayer());
+  if (link.groups.length) plan.mission = link;
   return plan;
 }

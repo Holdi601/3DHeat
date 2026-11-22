@@ -3,7 +3,9 @@ import { Section, Select, Slider } from '../controls';
 import { BOARD_TOOLS, momentOf, movableSelection, usePlanStore, type BoardTool } from '../../state/planStore';
 import { toolKeys } from './boardKeys';
 import { LayersPanel } from './LayersPanel';
-import { MISSION_ACCEPT, missionToPlan, readMission } from '../../tactics/missions';
+import { MISSION_ACCEPT, missionToPlan, readMission, type MissionState } from '../../tactics/missions';
+import { keepMissionFile } from '../../tactics/missions/sources';
+import { MissionOpenedDialog, MissionSaveDialog } from './MissionDialog';
 import { hasContent } from '../../tactics/autosave';
 import { DrawOptions, NoteOptions, ThrowOptions } from './PenOptions';
 import { useStore } from '../../state/store';
@@ -129,12 +131,19 @@ export function TacticsPanel({ load, present }: { load?: ReactNode; present?: Re
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   };
   const missionRef = useRef<HTMLInputElement>(null);
+  const dcsRef = useRef<HTMLInputElement>(null);
   const [imported, setImported] = useState<string | null>(null);
+  const [opened, setOpened] = useState<MissionState | null>(null);
+  const [saving, setSaving] = useState(false);
   const importMission = async (file: File) => {
     try {
-      const m = await readMission(file.name, new Uint8Array(await file.arrayBuffer()));
+      const bytes = new Uint8Array(await file.arrayBuffer());
+      const m = await readMission(file.name, bytes);
       if (hasContent(usePlanStore.getState().plan) && !(await confirmDialog(t('tactics.mission.replace'), t('tactics.mission.replaceOk')))) return;
+      // Kept for writing the plan back into it (Save as DCS mission).
+      if (m.format === 'dcs-miz') keepMissionFile(m.title, bytes);
       store().replacePlan(missionToPlan(m));
+      if (m.format === 'dcs-miz') setOpened(m);
       const units = m.groups.reduce((n, g) => n + g.units.length, 0);
       const count = (k: string) => m.places.filter((p) => p.kind === k).length;
       setImported(
@@ -341,6 +350,12 @@ export function TacticsPanel({ load, present }: { load?: ReactNode; present?: Re
             <button onClick={() => missionRef.current?.click()} title={t('tactics.mission.hint')}>
               {t('tactics.mission.import')}
             </button>
+            <button onClick={() => dcsRef.current?.click()} title={t('tactics.dcs.openHint')}>
+              {t('tactics.dcs.open')}
+            </button>
+            <button onClick={() => setSaving(true)} title={t('tactics.dcs.saveHint')}>
+              {t('tactics.dcs.save')}
+            </button>
             <button className="danger" onClick={() => void confirmDialog(t('tactics.clearConfirm'), t('tactics.clear')).then((ok) => ok && store().clear())}>
               {t('tactics.clear')}
             </button>
@@ -367,6 +382,19 @@ export function TacticsPanel({ load, present }: { load?: ReactNode; present?: Re
               e.target.value = '';
             }}
           />
+          <input
+            ref={dcsRef}
+            type="file"
+            accept=".miz"
+            style={{ display: 'none' }}
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) void importMission(f);
+              e.target.value = '';
+            }}
+          />
+          {opened && <MissionOpenedDialog mission={opened} onClose={() => setOpened(null)} />}
+          {saving && <MissionSaveDialog onClose={() => setSaving(false)} />}
           {imported && <div className="hint">{imported}</div>}
           {error && <div className="hint" style={{ color: 'var(--warm)' }}>{error}</div>}
           <div className="hint">{t('tactics.counts', { figures: plan.figures.length, arrows: plan.arrows.length, steps: plan.steps.length })}</div>

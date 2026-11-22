@@ -16,6 +16,7 @@ import type { Mode } from './speeds';
 import { planTimings, poseOnRoute, stepDuration, stepStart } from './timing';
 import { channelAt } from './keyframes';
 import { applyTaskMoves, readCodes, readTasks, type GoCode, type PlanTask } from './tasks';
+import { readPlanMission, type PlanMission } from './missionLink';
 
 export type Vec3 = { x: number; y: number; z: number };
 
@@ -187,6 +188,8 @@ export interface Plan {
   unitsPerMetre?: number;
   /** False: steps play for their set seconds; otherwise a step lasts until its slowest route arrives. */
   realTime?: boolean;
+  /** The mission file the plan was made from, and which figures are which of its units (`missionLink.ts`). */
+  mission?: PlanMission;
 }
 
 export function emptyPlan(game: string, teams: PlanTeam[], level = ''): Plan {
@@ -533,6 +536,7 @@ export function readPlan(text: string): Plan {
     figureScale: num(p.figureScale, 1),
     ...(typeof p.unitsPerMetre === 'number' && p.unitsPerMetre > 0 ? { unitsPerMetre: p.unitsPerMetre } : {}),
     ...(p.realTime === false ? { realTime: false } : {}),
+    ...(readPlanMission(p.mission) ? { mission: readPlanMission(p.mission) } : {}),
     ...(str(p.savedBy) ? { savedBy: str(p.savedBy) } : {}),
     ...(str(p.savedAt) ? { savedAt: str(p.savedAt) } : {}),
   };
