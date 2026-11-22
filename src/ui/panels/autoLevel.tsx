@@ -70,7 +70,7 @@ const THEATRE_GAMES = /^(tacview|dcs|il2)$/i;
 let catalog: Promise<CatalogItem[]> | null = null;
 
 /** The levels folder's items, asked once; nothing without a local server. */
-function catalogItems(): Promise<CatalogItem[]> {
+export function catalogItems(): Promise<CatalogItem[]> {
   catalog ??= fetch(CATALOG_ROUTE)
     .then((r) => (r.status === 200 ? (r.json() as Promise<CatalogIndex>) : null))
     .then((ix) => (ix && Array.isArray(ix.items) ? ix.items : []))
@@ -82,7 +82,7 @@ function catalogItems(): Promise<CatalogItem[]> {
   return catalog;
 }
 
-async function catalogFile(path: string): Promise<File | null> {
+export async function catalogFile(path: string): Promise<File | null> {
   const r = await fetch(`${CATALOG_ROUTE}/file?path=${encodeURIComponent(path)}`);
   if (!r.ok) return null;
   return new File([await r.blob()], path.split('/').pop() ?? path);
@@ -91,7 +91,8 @@ async function catalogFile(path: string): Promise<File | null> {
 /** Whether a level was put there since `since`: the person's choice, which stands. */
 const levelTaken = () => !!useStore.getState().level;
 
-async function loadCatalogLevel(item: CatalogItem): Promise<void> {
+/** Loads a level of the levels folder as the level; one the person chose meanwhile stands, unless `replace` (a mission opened on its own map). */
+export async function loadCatalogLevel(item: CatalogItem, replace = false): Promise<void> {
   useAutoLevel.setState({ status: 'loading', label: item.name });
   try {
     if (item.layouts) {
@@ -101,7 +102,7 @@ async function loadCatalogLevel(item: CatalogItem): Promise<void> {
     const f = await catalogFile(item.path);
     if (!f) throw new Error('not served');
     const m = await modelLoader.load(f, LOD_TARGETS[IMPORT_DEFAULT_LOD], () => undefined);
-    if (levelTaken()) {
+    if (levelTaken() && !replace) {
       useAutoLevel.setState({ status: 'none' });
       return;
     }

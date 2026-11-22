@@ -27,6 +27,7 @@ import { groundAt, planTimings, routeModes, stepStart, unitsPerMetre } from '../
 import { moveClassOf } from '../speeds';
 import type { PlanTask } from '../tasks';
 import type { PlanMissionGroup } from '../missionLink';
+import { unplaceMission } from './placement';
 import type { MissionGroup, MissionState, MissionTask, MissionUnit, MissionWaypoint, UnitCategory } from './index';
 
 /** A figure's mission category by what it is; null for what is not a unit (markers, utility, weapons). */
@@ -261,7 +262,7 @@ export function planToMission(plan: Plan): MissionState {
   const notes: string[] = [];
   if (skipped) notes.push(`skipped:${skipped}`);
   if (flags.has('start')) notes.push('start');
-  return {
+  const out: MissionState = {
     format: link?.format ?? '',
     game: plan.game,
     title: plan.title || link?.source || 'mission',
@@ -273,4 +274,6 @@ export function planToMission(plan: Plan): MissionState {
     ...(link?.info ? { info: link.info } : {}),
     ...(removed.length ? { removed } : {}),
   };
+  // A mission moved onto its level goes back in the game's own metres.
+  return link?.placement ? unplaceMission(out, link.placement) : out;
 }

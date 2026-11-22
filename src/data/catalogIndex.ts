@@ -83,8 +83,8 @@ export function classify(path: string): Pick<CatalogItem, 'game' | 'kind' | 'nam
   if (/^ranges\.json$/i.test(file)) return { game, kind: 'ranges', name: game || stem };
   if (/\.h3dcars$/i.test(file)) return { game, kind: 'cars', name: stem };
   if (/\.(glb|gltf)$/i.test(file)) return { game, kind: parts.includes('courses') ? 'course' : 'level', name: stem };
-  // A DCS area's own .json beside its .glb (where it lies, towns, airfields, buildings): read with it (`autoLevel.tsx`).
-  if (/\.json$/i.test(file) && game === 'dcs' && parts.length > 2) return { game, kind: 'other', name: stem };
+  // A DCS area's or an IL-2 map's own .json beside its .glb (where it lies, towns, airfields, buildings): read with it (`autoLevel.tsx`, `missionLevel.ts`).
+  if (/\.json$/i.test(file) && (game === 'dcs' || game === 'il2') && parts.length > 2) return { game, kind: 'other', name: stem };
   if (/\.(png|jpg|webp|csv|json)$/i.test(file)) return parts.length === 2 ? { game, kind: 'other', name: stem } : null;
   return { game, kind: 'other', name: stem };
 }

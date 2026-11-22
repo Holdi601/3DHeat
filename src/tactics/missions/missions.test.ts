@@ -212,7 +212,7 @@ describe('Arma missions', () => {
     expect(p.arrows).toHaveLength(2);
   });
 
-  it('reads the older layout, and refuses a binarised file with what to do', async () => {
+  it('reads the older layout, and refuses a binarised file it cannot read', async () => {
     const m = readArmaMission(LEGACY, 'mission.sqm');
     expect(m.groups[0]).toMatchObject({ side: 'opfor', category: 'heli' });
     expect(m.groups[0].units[0].yaw).toBeCloseTo(Math.PI / 2);

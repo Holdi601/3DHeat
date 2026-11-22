@@ -11,6 +11,8 @@
  * mission; the file's bytes themselves are not kept in it.
  */
 
+import { readPlacement, type MissionPlacement } from './missions/placement';
+
 export interface MissionWeather {
   /** The editor's preset name, when it has one. */
   preset?: string;
@@ -74,6 +76,8 @@ export interface PlanMission {
   /** The layer the mission's places (airbases, zones, bullseyes) were put on. */
   placesLayer?: string;
   groups: PlanMissionGroup[];
+  /** How the mission was moved onto its level, to write it back in the game's own metres (`missions/placement.ts`). */
+  placement?: MissionPlacement;
 }
 
 const str = (x: unknown) => (typeof x === 'string' ? x : '');
@@ -116,6 +120,7 @@ export function readPlanMission(x: unknown): PlanMission | undefined {
       ...(str(g.mainTask) ? { mainTask: str(g.mainTask) } : {}),
     }));
   const info = readInfo(m.info);
+  const placement = readPlacement(m.placement);
   return {
     format: str(m.format),
     source: str(m.source),
@@ -123,5 +128,6 @@ export function readPlanMission(x: unknown): PlanMission | undefined {
     ...(info ? { info } : {}),
     ...(str(m.placesLayer) ? { placesLayer: str(m.placesLayer) } : {}),
     groups,
+    ...(placement ? { placement } : {}),
   };
 }

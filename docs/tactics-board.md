@@ -180,18 +180,21 @@ The board is also kept in the browser a moment after each change and comes back 
 
 ## Mission files
 
-**Import mission…** in the **File** section reads a game's mission file as the starting board, in place of the board (Undo brings it back). A board with something on it asks first, in the viewer's own dialog:
+**Open mission…** in the **File** section reads a game's mission file as the starting board, in place of the board (Undo brings it back). A board with something on it asks first, in the viewer's own dialog. When the levels folder holds the mission's level (the DCS theatre's area with most of its units, the War Thunder level, the Arma world, the IL-2 map), it is loaded with it:
 
 | Game | File | What comes in |
 |---|---|---|
-| DCS World | `.miz` | Each coalition (Blue, Red, Neutral) on its own layer; every plane, helicopter, vehicle, ship and static of every group as a figure where the mission puts it, facing its heading, named as in the mission (names kept in the mission's dictionary are looked up); each group's route as a route of every unit in it (the wingmen keep their places off the lead), with the leg speed as the unit's own cruise or normal speed and the arrival times the mission holds waypoints to (**Be there**); airfields where routes take off and land, FARPs, trigger zones (as areas) and each side's bullseye on a **Mission places** layer. Positions are DCS's own metres, as the DCS levels lie, so the mission falls on its theatre's level - the line under the button says which one to load. |
-| Arma 3 | `mission.sqm` | The Eden editor's layout (and the older pre-Eden one): each side (BLUFOR, OPFOR, Independent, Civilian) on its own layer; every group's soldiers, vehicles, aircraft and boats where they stand and which way they face, the group's waypoints as its route; markers as notes and objectives, triggers as areas. A binarised `mission.sqm` is not text; the message says to save it again with **Binarize the scenario file** off. |
+| DCS World | `.miz` | Each coalition (Blue, Red, Neutral) on its own layer; every plane, helicopter, vehicle, ship and static of every group as a figure where the mission puts it, facing its heading, named as in the mission (names kept in the mission's dictionary are looked up); each group's route as a route of every unit in it (the wingmen keep their places off the lead), with the leg speed as the unit's own cruise or normal speed and the arrival times the mission holds waypoints to (**Be there**); airfields where routes take off and land, FARPs, trigger zones (as areas) and each side's bullseye on a **Mission places** layer. Positions are DCS's own metres, as the DCS levels lie, so the mission falls on its theatre's level. |
+| War Thunder | `.blk` (text) | A user mission as the mission editor saves it: each army on its own layer, every unit block a figure with its waypoints. |
+| Arma 3 | `mission.sqm`, mission `.pbo` | The Eden editor's layout (and the older pre-Eden one), text or binarised: each side (BLUFOR, OPFOR, Independent, Civilian) on its own layer; every group's soldiers, vehicles, aircraft and boats where they stand and which way they face, the group's waypoints as its route; markers as notes and objectives, triggers as areas. |
+| IL-2 Great Battles | `.Mission` (text) | Each coalition on its own layer; planes, vehicles (the drivable tanks too), ships and trains, a leader and the units following it one group, with the waypoints their links lead through. |
+| Arma Reforger | `.layer` (text) | Groups, characters and vehicles placed on their own, their waypoints, and bases, spawn points and capture areas as **Mission places**. |
 
-DCS missions and War Thunder user missions also go the other way: **Open DCS mission…** / **Save as DCS mission…** and **Open War Thunder mission…** / **Save as War Thunder mission…** read a `.miz` or `.blk` onto the board and write the board back into it, or into a new mission ([Mission planner](mission-planner.md)).
+Every one of them also goes the other way: **Save as mission…** writes the board back into the mission it came from, or into a new one ([Mission planner](mission-planner.md)).
 
 A unit type the figure catalogue knows gets its own figure; others get one judged from the type name (an Arma `..._MBT_...` is a tank), else the generic figure of their kind. Hide the other side's layer to plan with your own side only.
 
-The readers share one shape (sides, groups with units and routes, places), so other games' mission files can follow: IL-2 Great Battles (`.mission`, text), Falcon BMS (campaign and tactical engagement files) and Arma Reforger scenarios are next. The importers live in `src/tactics/missions/`.
+The readers share one shape (sides, groups with units and routes, places), so other games' mission files can follow. The importers live in `src/tactics/missions/`.
 
 Every change to the board is also recorded as a list of operations - add, change or remove one thing by its id, or change the board's own settings - signed with **Your name**. Two people's changes to different things never overwrite each other, which is what a shared session will exchange.
 

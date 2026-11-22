@@ -1,15 +1,15 @@
 /**
  * Mission files as the board's starting state: a game's mission (DCS .miz,
- * Arma 3 mission.sqm, an Arma OCAP recording's first moments, and more to follow) read into one neutral shape - the
+ * War Thunder .blk, Arma 3 mission.sqm or mission .pbo, IL-2 .Mission, Arma
+ * Reforger .layer, an Arma OCAP recording's first moments) read into one neutral shape - the
  * sides, the groups with their units and routes, and the places that matter
  * (airbases, zones, markers) - and that shape made into a plan: a layer per
  * side, so one side's planners can hide the other's, every unit a figure
  * where the mission puts it, every group's route its route in the first step.
  *
  * A reader for another game implements `MissionImporter` and is added to
- * `IMPORTERS`; nothing else changes. IL-2 (.mission, text), Falcon BMS
- * (.cam/.tac campaign files) and Arma Reforger (.ent world layers / .conf
- * scenarios) are the next ones (see docs/tactics-board.md#mission-files).
+ * `IMPORTERS`; nothing else changes. Falcon BMS (.cam/.tac campaign files)
+ * is not read: see docs/mission-planner.md.
  */
 
 import { BASE_LAYER, baseLayer, emptyPlan, newId, type Plan, type PlanFigure, type PlanTeam, type Vec3 } from '../plan';
@@ -22,7 +22,10 @@ import { dcsMiz } from './dcs';
 import { armaSqm } from './arma';
 import { wtBlk } from './wt';
 import { ocapRecording } from './ocap';
+import { il2Mission } from './il2';
+import { reforgerLayer } from './reforger';
 import type { MissionInfo, PlanMission } from '../missionLink';
+import type { MissionPlacement } from './placement';
 
 export type { MissionInfo, MissionWeather, PlanMission } from '../missionLink';
 
@@ -131,6 +134,8 @@ export interface MissionState {
   info?: MissionInfo;
   /** Written from a plan: the `ref`s of the file's groups the plan took off the board. */
   removed?: string[];
+  /** Where it was moved onto its level, when the level is not in the game's own metres (`placement.ts`). */
+  placement?: MissionPlacement;
 }
 
 export interface MissionImporter {
@@ -141,10 +146,10 @@ export interface MissionImporter {
   read: (bytes: Uint8Array, name: string) => Promise<MissionState>;
 }
 
-export const IMPORTERS: MissionImporter[] = [dcsMiz, armaSqm, ocapRecording, wtBlk];
+export const IMPORTERS: MissionImporter[] = [dcsMiz, armaSqm, ocapRecording, wtBlk, il2Mission, reforgerLayer];
 
 /** The file chooser's accept list. */
-export const MISSION_ACCEPT = '.miz,.sqm,.json,.gz,.jsonl,.blk';
+export const MISSION_ACCEPT = '.miz,.sqm,.pbo,.json,.gz,.jsonl,.blk,.mission,.msnbin,.layer,.ent';
 
 /** Reads a mission file with the reader that takes its name; refuses one no reader takes. */
 export async function readMission(name: string, bytes: Uint8Array): Promise<MissionState> {
@@ -187,7 +192,7 @@ export function missionToPlan(m: MissionState): Plan {
   if (m.places.length) plan.layers.push({ id: placesLayer, name: 'Mission places', visible: true, locked: false });
   const team = (id: string) => (sides.some((s) => s.id === id) ? id : sides[0].id);
   const aimed: [PlanTask, string][] = [];
-  const link: PlanMission = { format: m.format, source: m.title, map: m.map, ...(m.info ? { info: m.info } : {}), ...(m.places.length ? { placesLayer } : {}), groups: [] };
+  const link: PlanMission = { format: m.format, source: m.title, map: m.map, ...(m.info ? { info: m.info } : {}), ...(m.placement ? { placement: m.placement } : {}), ...(m.places.length ? { placesLayer } : {}), groups: [] };
   for (const g of m.groups) {
     const layer = layerOfSide.get(g.side);
     const lead = g.units[0];
