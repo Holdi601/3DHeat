@@ -14,6 +14,10 @@
  *     that moment, or a hit without a point;
  *   - `Destroyed`: the unit's death - the last hit on it before is the
  *     killing one, else a kill without a point or a shooter.
+ *
+ * A weapon's calibre and type come from its name (`mass/ammo.ts`: a DCS
+ * shell's id holds its calibre, missiles and bombs typed by public figures);
+ * the distance is the weapon's flight, from its first sample to its end.
  */
 
 import type { AttributeColumn, Dataset } from '../state/types';
@@ -21,6 +25,7 @@ import type { Vec3 } from '../race/geometry';
 import type { Outcome, VehicleHit } from './hits';
 import { bodyAxes, personRows } from '../data/flight';
 import { trackName, unitsPerMetre } from '../ui/replay/replayData';
+import { dcsAmmo } from './mass/ammo';
 
 /** Metres from a unit within which a weapon's end is a hit on it (a missile's proximity fuse and more). */
 export const PROXIMITY = 30;
@@ -233,6 +238,13 @@ export function* acmiHitsSteps(d: Dataset): Generator<void, { hits: VehicleHit[]
     const row = rowAt(best.person, t);
     const h = make(best, byId.get(w.parent) ?? null, t, row, 'hit');
     h.weapon = w.name;
+    const ammo = dcsAmmo(w.name, w.type);
+    h.calibre = ammo.calibre;
+    h.ammoType = ammo.type || null;
+    h.ammoName = ammo.name || null;
+    const first = rows.rows[rows.start[w.person]];
+    const flown = Math.hypot(at[0] - d.px[first], at[1] - d.py[first], at[2] - d.pz[first]) / k;
+    if (Number.isFinite(flown) && flown > 0) h.distance = flown;
     h.local = toBody(row, [at[0] - bp[0], at[1] - bp[1], at[2] - bp[2]], k);
     // The way it flew: from its last sample elsewhere (its removal repeats its last place).
     let back = endIndex - 1;

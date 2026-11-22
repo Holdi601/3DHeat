@@ -27,7 +27,19 @@
  *                          debriefing does (`src/data/acmiEvents.ts`), each a
  *                          row of its own at its object (`Inferred`), with
  *                          Shooter, Target, Weapon, OtherVehicle, OtherType,
- *                          Airfield, Detail and Rounds
+ *                          Airfield, Detail and Rounds; a hit and its
+ *                          damage also with the hit's geometry, every value
+ *                          worked out (`AcmiHitGeometry`): hitLocalX/Y/Z
+ *                          (where the weapon's path passed nearest the unit,
+ *                          in its frame: x forward, y up, z right, metres),
+ *                          hitDirX/Y/Z (the way in, against the unit's own
+ *                          motion, in that frame), impactSpeed and
+ *                          closingSpeed (m/s, over the weapon's last
+ *                          samples), launchDistance (m, from its first
+ *                          sample), flightTime (s), hitMiss (m, how near it
+ *                          passed the unit's reference point), impactDescent
+ *                          (degrees below the horizontal), ShooterVehicle
+ *                          and WeaponType (the weapon's Tacview type)
  *                          An airfield or FARP that changes sides where the
  *                          recording shows it is a `capture` row at the pad
  *                          (Detail "Red to Blue", Airfield its name)
@@ -249,13 +261,16 @@ async function convert(job, theatres) {
 
   // The columns: the viewer's ACMI table, then every property.
   const EVENT_TEXT = ['Shooter', 'Target', 'Weapon', 'OtherVehicle', 'OtherType', 'Airfield', 'Detail', 'Inferred'];
+  // A hit's geometry (on its hit and its damage rows), worked out by the event finder.
+  const HIT_NUM = ['hitLocalX', 'hitLocalY', 'hitLocalZ', 'hitDirX', 'hitDirY', 'hitDirZ', 'impactSpeed', 'closingSpeed', 'launchDistance', 'flightTime', 'hitMiss', 'impactDescent'];
+  const HIT_TEXT = ['ShooterVehicle', 'WeaponType'];
   // Who won (docs/data-formats.md#outcome-columns) and each aircraft's sortie.
   // A campaign round spans many sessions (recordings): `campaign` names it, `session` is this one's place in it.
   const OUTCOME_NUM = ['round', 'session', 'sessionStart', 'heldRed', 'heldBlue', 'won', 'matchWon', 'sortie', 'sortieKills'];
   const OUTCOME_TEXT = ['server', 'mission', 'campaign', 'roundEndReason', 'sortieResult'];
   const OUTCOME = ['server', 'mission', 'campaign', 'round', 'session', 'sessionStart', 'heldRed', 'heldBlue', 'won', 'matchWon', 'roundEndReason', 'sortie', 'sortieResult', 'sortieKills'];
-  const FIXED_NUM = ['Time', 'X', 'Y', 'Altitude', 'Heading', 'Pitch', 'Roll', 'Latitude', 'Longitude', 'Rounds', ...OUTCOME_NUM];
-  const FIXED_TEXT = ['Object', 'Coalition', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Recording', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher', ...EVENT_TEXT, ...OUTCOME_TEXT];
+  const FIXED_NUM = ['Time', 'X', 'Y', 'Altitude', 'Heading', 'Pitch', 'Roll', 'Latitude', 'Longitude', 'Rounds', ...OUTCOME_NUM, ...HIT_NUM];
+  const FIXED_TEXT = ['Object', 'Coalition', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Recording', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher', ...EVENT_TEXT, ...OUTCOME_TEXT, ...HIT_TEXT];
   const OWN_TEXT = new Set(['Type', 'Name', 'Pilot', 'Group', 'Country', 'Coalition', 'Color']);
   const hasUV = r1.rowsWithUV > 0;
   const taken = new Set([...FIXED_NUM, ...FIXED_TEXT, ...(hasUV ? ['U', 'V'] : [])]);
@@ -263,7 +278,7 @@ async function convert(job, theatres) {
   const colName = (k) => (taken.has(k) ? `${k} (property)` : k);
   const numKeys = [...r1.numericKeys].filter((k) => !r1.textKeys.has(k)).sort();
   const textKeys = [...r1.textKeys].filter((k) => !OWN_TEXT.has(k)).sort();
-  const order = ['Time', 'X', 'Y', 'Altitude', 'Object', 'Coalition', 'Heading', 'Pitch', 'Roll', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Latitude', 'Longitude', 'Recording', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher', ...EVENT_TEXT, 'Rounds', ...OUTCOME, ...(hasUV ? ['U', 'V'] : [])];
+  const order = ['Time', 'X', 'Y', 'Altitude', 'Object', 'Coalition', 'Heading', 'Pitch', 'Roll', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Latitude', 'Longitude', 'Recording', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher', ...EVENT_TEXT, 'Rounds', ...OUTCOME, ...HIT_TEXT, ...HIT_NUM, ...(hasUV ? ['U', 'V'] : [])];
   const numeric = new Set([...FIXED_NUM, 'U', 'V']);
   const columns = [...order.map((c) => ({ name: c, num: numeric.has(c) })), ...numKeys.map((k) => ({ name: colName(k), num: true, prop: k })), ...textKeys.map((k) => ({ name: colName(k), num: false, prop: k }))];
 
@@ -285,7 +300,7 @@ async function convert(job, theatres) {
       pitch: 'Pitch',
       angleUnit: 'degrees',
       // As the viewer's own reading (`acmiHints`): RecordingInfo for the Match tab's title, briefing and comments.
-      extra: ['Type', 'Name', 'Pilot', 'Group', 'Country', 'Event', 'Altitude', 'Roll', 'Latitude', 'Longitude', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher', ...EVENT_TEXT, 'Rounds', ...OUTCOME, ...columns.slice(order.length).map((c) => c.name)],
+      extra: ['Type', 'Name', 'Pilot', 'Group', 'Country', 'Event', 'Altitude', 'Roll', 'Latitude', 'Longitude', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher', ...EVENT_TEXT, 'Rounds', ...OUTCOME, ...HIT_TEXT, ...HIT_NUM, ...columns.slice(order.length).map((c) => c.name)],
     },
     geo: { lat0: origin.lat, lon0: origin.lon, projection: 'tangent-plane', east: 'X', north: 'Y', up: 'Altitude' },
   };
@@ -414,6 +429,15 @@ async function convert(job, theatres) {
   const [jObj, jCo, jTy, jNa, jPi, jGr, jCn, jCl, jEv, jRec, jEvo, jInfo, jAct, jLau] = ['Object', 'Coalition', 'Type', 'Name', 'Pilot', 'Group', 'Country', 'Color', 'Event', 'Recording', 'EventObjects', 'RecordingInfo', 'Actor', 'Launcher'].map(J);
   const [jSh, jTg, jWp, jOv, jOt, jAf, jDt, jInf, jRnd] = [...EVENT_TEXT, 'Rounds'].map(J);
   const [jSrv, jMis, jCamp, jRound, jSess, jSessT, jHeldR, jHeldB, jWon, jMWon, jWhy, jSor, jSorR, jSorK] = OUTCOME.map(J);
+  const jHitNum = HIT_NUM.map(J);
+  const [jShV, jWpT] = HIT_TEXT.map(J);
+  /** A row's hit geometry: the event's, or none. */
+  const hitCols = (b, i, g, shooterVehicle, weaponType) => {
+    const v = g ? [...(g.local ?? [NaN, NaN, NaN]), ...(g.dir ?? [NaN, NaN, NaN]), g.speed, g.closing, g.launchDistance, g.flightTime, g.miss, g.descent] : null;
+    for (let k = 0; k < jHitNum.length; k++) b[jHitNum[k]][i] = v ? v[k] : NaN;
+    b[jShV][i] = shooterVehicle;
+    b[jWpT][i] = weaponType;
+  };
   /** A row's server, round and outcome by its side and the real time of its mission time `t`; no sortie yet. */
   let lastRound = null;
   const stamp = (b, i, t, color) => {
@@ -507,6 +531,7 @@ async function convert(job, theatres) {
     b[jDt][i] = e.detail;
     b[jInf][i] = 'inferred';
     b[jRnd][i] = e.rounds || NaN;
+    hitCols(b, i, e.hit, e.hit ? nameOf(e.shooterInfo) : '', e.hit ? typeOf(e.weaponInfo) : '');
     stamp(b, i, e.t, p.get('Color') ?? '');
     eventRows++;
     if (o === main) mainRows++;
@@ -565,6 +590,7 @@ async function convert(job, theatres) {
     }
     b[jSh][i] = b[jTg][i] = b[jWp][i] = b[jOv][i] = b[jOt][i] = b[jAf][i] = b[jDt][i] = b[jInf][i] = '';
     b[jRnd][i] = NaN;
+    hitCols(b, i, null, '', '');
     stamp(b, i, row.t, p.get('Color') ?? '');
     if (p.has('Color') && p.has('Coalition') && !coalitionOf.has(p.get('Color'))) coalitionOf.set(p.get('Color'), p.get('Coalition'));
     // What the recording leaves unsaid, from how things move, appear and end.
@@ -595,7 +621,8 @@ async function convert(job, theatres) {
         s.head = head;
         s.pitch = row.pitch;
         s.roll = row.roll;
-        finder.sample(row.id, null, row.t, x, y, row.alt, p.get('Type') ?? '', s, own.id ?? null, Number(p.get('AGL') ?? NaN));
+        // Its attitude for the hits on it: the snapshot holds heading, pitch and roll (NaN where not written).
+        finder.sample(row.id, null, row.t, x, y, row.alt, p.get('Type') ?? '', s, own.id ?? null, Number(p.get('AGL') ?? NaN), s);
       }
     }
     if (o === main) mainRows++;

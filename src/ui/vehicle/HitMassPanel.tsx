@@ -27,6 +27,7 @@ import { cancelHits, fileOfHit, legendStops, loadHits, metaOf, NO_DATA_CSS, patc
 import type { BinField, Grouping, HitFilter, PlateMetric, Range } from '../../vehicle/mass/analyze';
 import type { Compare } from '../../vehicle/mass/hitWorker';
 import { EFFECTS, EFFECTS_IN_DATA, RESULTS, type Effect, type HitResult } from '../../vehicle/mass/types';
+import { groupIl2Reports, IL2_REPORT } from '../../vehicle/mass/il2Report';
 import { rgbCss } from '../../race/geometry';
 import { useMass } from '../../mass/client';
 import { startLeanLoad } from '../overlay/LeanOverlayPanel';
@@ -133,7 +134,8 @@ export function HitMassPanel({ engine }: { engine?: Engine | null }) {
 
   const pickFiles = async (list: FileList | null, add = false) => {
     if (!list || !list.length) return;
-    const files = [...list].filter((x) => /\.(3dheat|parquet)$/i.test(x.name) && !/\.(flight|messages|events|chat|objectives)\.parquet$/i.test(x.name));
+    // Containers and tables (War Thunder, DCS World), IL-2 mission reports (a mission's pieces read as one).
+    const files = groupIl2Reports([...list].filter((x) => (/\.(3dheat|parquet)$/i.test(x.name) && !/\.(flight|messages|events|chat|objectives|effects)\.parquet$/i.test(x.name)) || IL2_REPORT.test(x.name)));
     await loadHits(files, { add, pose });
   };
   const fromMass = async () => {
@@ -156,7 +158,7 @@ export function HitMassPanel({ engine }: { engine?: Engine | null }) {
   const loadSection = (
     <>
     {/* The pickers outside the section: they stay while it is closed. */}
-      <input ref={filePick} type="file" multiple accept=".3dheat,.parquet" style={{ display: 'none' }} onChange={(e) => void pickFiles(e.target.files)} data-vhits="files" />
+      <input ref={filePick} type="file" multiple accept=".3dheat,.parquet,.txt" style={{ display: 'none' }} onChange={(e) => void pickFiles(e.target.files)} data-vhits="files" />
       <input ref={folderPick} type="file" multiple style={{ display: 'none' }} {...({ webkitdirectory: '' } as object)} onChange={(e) => void pickFiles(e.target.files)} data-vhits="folder" />
     <Section title={t('vhits.load.title')} defaultOpen={!st || st.running}>
       <div className="hint">{t('vhits.load.hint')}</div>
@@ -533,6 +535,8 @@ function HitCard() {
         <tr><th>{t('vhits.field.angle')}</th><td>{d.angle !== null ? `${num(d.angle, 1)}°` : '-'} {src(d.angleSource)}{d.effMm !== null && <> · {t('vhits.hit.effMm', { mm: num(d.effMm, 0) })}</>}</td></tr>
         <tr><th>{t('vhits.field.descent')}</th><td>{d.descent !== null ? `${num(d.descent, 1)}°` : '-'} {src(d.descentSource)}</td></tr>
         <tr><th>{t('vhits.field.distance')}</th><td>{d.distance !== null ? `${int(d.distance)} m` : '-'} {src(d.distanceSource)}</td></tr>
+        <tr><th>{t('vhits.hit.point')}</th><td>{src(d.pointSource)} · {t('vhits.hit.way')} {src(d.dirSource)}</td></tr>
+        {d.damage !== null && <tr><th>{t('vhits.hit.damage')}</th><td>{num(d.damage * 100, 1)} % {src('recorded')}</td></tr>}
         <tr><th>{t('vhits.hit.attacker')}</th><td>{vehicleName(d.attacker)} · {d.attackerPlayer}</td></tr>
         <tr><th>{t('vhits.hit.victim')}</th><td>{vehicleName(d.victim)} · {d.victimPlayer}{d.won !== null && <> · {d.won ? t('vhits.filter.won') : t('vhits.filter.lost')}</>}</td></tr>
         <tr><th>{t('vhits.hit.effects')}</th><td>{d.effects.length ? d.effects.map((e) => t(`vhits.effect.${e}`)).join(', ') : '-'}</td></tr>

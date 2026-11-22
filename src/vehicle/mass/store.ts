@@ -11,7 +11,7 @@
 import type { Vec3 } from '../../race/geometry';
 import { atRest } from '../plates';
 import { FlightCache, shellFor, shellKind, type ShellKind } from './ballistics';
-import { descentOf, dirAtRest, effectiveThickness, impactAngle, nearestTriangle, triNormal } from './geometry';
+import { descentOf, dirAtRest, effectiveThickness, impactAngle, nearestTriangle, rayEntry, triNormal } from './geometry';
 import {
   BYTES_PER_HIT,
   COLUMN_NAMES,
@@ -20,6 +20,9 @@ import {
   FLAG_DIST,
   FLAG_LOCAL,
   FLAG_POSE,
+  FLAG2_DIR_DERIVED,
+  FLAG2_LOCAL_EST,
+  FLAG2_SPEED,
   NONE16,
   type HitBlock,
   type HitColumns,
@@ -150,7 +153,7 @@ export class HitStore {
       o.ammoType[j] = Math.min(65535, at[c.ammoType[i]]);
       o.ammoName[j] = Math.min(65535, an[c.ammoName[i]]);
     }
-    for (const k of ['part', 'lx', 'ly', 'lz', 'dx', 'dy', 'dz', 'yaw', 'pitch', 'dist', 'dh', 'calibre', 'result', 'effects', 'flags'] as const) {
+    for (const k of ['part', 'lx', 'ly', 'lz', 'dx', 'dy', 'dz', 'yaw', 'pitch', 'dist', 'dh', 'calibre', 'result', 'effects', 'flags', 'flags2', 'speed', 'damage'] as const) {
       (o[k] as Uint8Array).set(c[k] as unknown as Uint8Array, s);
     }
     this.n += c.n;
@@ -172,8 +175,10 @@ export class HitStore {
 
   /**
    * Speed and descent at the hit for every hit not worked out yet: the descent recorded where the replay has the
-   * shell's way (in the vehicle's frame), else the ballistic flight's; the speed the ballistic estimate's (the replays
-   * carry the impact speed, the converter does not export it yet). Returns how many hits it worked on.
+   * shell's way (in the vehicle's frame; derived where the source works the way out, a Tacview recording from the
+   * weapon's motion), else the ballistic flight's; the speed the source's own where it has one (a Tacview weapon's
+   * over its last samples, derived), else the ballistic estimate's (War Thunder replays carry the impact speed, the
+   * converter does not export it yet). Returns how many hits it worked on.
    */
   deriveFlights(limit = Infinity): number {
     const c = this.cols;
@@ -183,9 +188,12 @@ export class HitStore {
       let desc = NaN, descSrc = SRC_UNKNOWN, sp = NaN, spSrc = SRC_UNKNOWN;
       if (dir) {
         desc = descentOf(dir);
-        descSrc = SRC_RECORDED;
+        descSrc = c.flags2[i] & FLAG2_DIR_DERIVED ? SRC_DERIVED : SRC_RECORDED;
       }
-      if (c.flags[i] & FLAG_DIST) {
+      if (c.flags2[i] & FLAG2_SPEED && c.speed[i] > 0) {
+        sp = c.speed[i];
+        spSrc = SRC_DERIVED;
+      } else if (c.flags[i] & FLAG_DIST) {
         const kind = this.kindOf(i);
         const name = this.ammoNames.list[c.ammoName[i]] ?? '';
         const shell = shellFor(kind, c.calibre[i] / 10, this.catalogue.get(name.toLowerCase()) ?? null, name);
@@ -248,7 +256,7 @@ export class HitStore {
       let at = name !== undefined ? (byName.get(name) ?? -1) : -1;
       const has = (c.flags[i] & FLAG_LOCAL) !== 0;
       let p: Vec3 | null = has ? [c.lx[i] / 1000, c.ly[i] / 1000, c.lz[i] / 1000] : null;
-      if (at < 0 && p) {
+      if (at < 0 && p && !(c.flags2[i] & FLAG2_LOCAL_EST)) {
         let best = 0.25;
         for (let k = 0; k < plates.length; k++) {
           const [mn, mx] = boxes[k];
@@ -264,10 +272,20 @@ export class HitStore {
           }
         }
       }
+      let dir: Vec3 | null = c.flags[i] & FLAG_DIR ? [c.dx[i] / 127, c.dy[i] / 127, c.dz[i] / 127] : null;
+      // A point that is only where the weapon's path passed nearest the unit: where that path enters the model.
+      // A path that enters none (a proximity fuse's burst beside it) strikes no plate.
+      const est = (c.flags2[i] & FLAG2_LOCAL_EST) !== 0;
+      if (est && p && dir) {
+        const l = Math.hypot(dir[0], dir[1], dir[2]) || 1;
+        dir = [dir[0] / l, dir[1] / l, dir[2] / l];
+        const e = rayEntry(p, dir, plates, 80);
+        at = e ? e.plate : -1;
+        p = e ? e.point : p;
+      } else if (est) at = -1;
       out.plate[j] = at;
       if (at < 0 || !p) continue;
       const pl = plates[at];
-      let dir: Vec3 | null = c.flags[i] & FLAG_DIR ? [c.dx[i] / 127, c.dy[i] / 127, c.dz[i] / 127] : null;
       if (/^(turret|gun)/.test(pl.part) && c.flags[i] & FLAG_POSE && c.yaw[i] !== NONE16) {
         const yaw = c.yaw[i] / 1e4, pitch = c.pitch[i] === NONE16 ? 0 : c.pitch[i] / 1e4;
         p = atRest(p, pl.part, yaw, pitch, turret, gun);
@@ -283,7 +301,7 @@ export class HitStore {
       if (dir) {
         const a = impactAngle(dir, nrm);
         out.angle[j] = a;
-        out.angleSrc[j] = SRC_RECORDED;
+        out.angleSrc[j] = c.flags2[i] & FLAG2_DIR_DERIVED ? SRC_DERIVED : SRC_RECORDED;
         if (pl.mm !== null && pl.mm > 0) out.effMm[j] = effectiveThickness(pl.mm, a);
       }
     }

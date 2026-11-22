@@ -34,6 +34,22 @@ All four forms of Tacview's position (`lon|lat|alt`, with `u|v`, with `roll|pitc
 
 The positions are always projected from latitude and longitude, never taken from U/V, so recordings from every game share one projection with a backdrop of the real world.
 
+### Hits the converter works out
+
+A DCS server's recording names no hit: the converter (`node tools/acmi-to-parquet.mjs`) finds them as Tacview's debriefing does, from a weapon whose last stretch passes close to a unit, and writes a `hit` row at the weapon and a `damage` row at the unit (`Shooter`, `Target`, `Weapon`, `OtherVehicle`, `Inferred`). Both rows also carry the hit's geometry, every value worked out from the samples of the weapon and the unit (none of it is in the recording):
+
+| Column | Meaning |
+|---|---|
+| `hitLocalX`, `hitLocalY`, `hitLocalZ` | Where the weapon's path passed nearest the unit's reference point, in the unit's frame (x forward, y up, z right, metres; from its heading, pitch and roll at its last sample). An estimate of the hit point: the [hit analysis](vehicle-hits.md) puts it on the model where the way in enters it. |
+| `hitDirX`, `hitDirY`, `hitDirZ` | The weapon's way in against the unit's own motion, in the same frame (unit length). |
+| `impactSpeed`, `closingSpeed` | The weapon's speed over its last samples, and against the unit's, m/s. |
+| `launchDistance`, `flightTime` | From the weapon's first sample (its launch) to the hit: metres in a straight line, seconds. |
+| `hitMiss` | How near the path passed the unit's reference point, metres. |
+| `impactDescent` | The weapon's way below the horizontal, degrees (+ coming down). |
+| `ShooterVehicle`, `WeaponType` | The shooter's vehicle and the weapon's Tacview type (`Projectile+Shell`, `Weapon+Missile`...). |
+
+The weapon's calibre and type are not written: the viewer reads them from its name, so a better reading needs no new conversion (`src/vehicle/mass/ammo.ts`).
+
 ## DCS servers: who won, and how each sortie ended
 
 A DCS multiplayer server records its missions with Tacview around the clock, and a persistent PvP server runs a campaign over many of them: a side wins by taking every airfield, FARP and zone of the other, which takes days and many mission restarts. The recordings hold the flights, not the campaign: no message says who took what, the airfields are written once at the start, and none says who won. The Tacview converter (`node tools/acmi-to-parquet.mjs`, [`data/dcsOutcome.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/dcsOutcome.ts)) adds what can be known to every row, and leaves empty what cannot - it never guesses.

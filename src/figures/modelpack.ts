@@ -358,10 +358,14 @@ export interface ModelPlate {
 const num = (x: unknown): number | undefined => (typeof x === 'number' && Number.isFinite(x) ? x : undefined);
 const str = (x: unknown): string | undefined => (typeof x === 'string' && x ? x : undefined);
 
-/** A pack model's damage-model parts (none when it has no `dm` node). */
+/**
+ * A pack model's damage-model parts; a model without a `dm` node (a DCS World aircraft, an unarmoured vehicle) gives
+ * its outer surface instead (`outerPlates`), so a hit's way in still meets the model's own shape.
+ */
 export function platesFromModelGlb(bytes: Uint8Array): ModelPlate[] {
   const { json: g, bin } = readGlb(bytes);
   const dm = g.nodes.find((n) => n.name === 'dm');
+  if (!dm) return outerPlates(g, bin);
   const out: ModelPlate[] = [];
   for (const ci of dm?.children ?? []) {
     const n = g.nodes[ci];
@@ -382,6 +386,58 @@ export function platesFromModelGlb(bytes: Uint8Array): ModelPlate[] {
       pos: accessor(g, bin, prim.attributes.POSITION) as Float32Array,
       idx: accessor(g, bin, prim.indices) as Uint16Array | Uint32Array,
     });
+  }
+  return out;
+}
+
+/** Outer-surface regions of an aircraft's hull, by where a triangle's middle lies (x forward, z right, the model's box). */
+function airZone(x: number, z: number, lo: number[], hi: number[]): string {
+  const len = hi[0] - lo[0], span = hi[2] - lo[2];
+  if (x < lo[0] + 0.25 * len) return 'tail';
+  if (x > hi[0] - 0.2 * len) return 'nose';
+  if (Math.abs(z) > 0.12 * span) return z < 0 ? 'left wing' : 'right wing';
+  return 'fuselage';
+}
+
+/**
+ * The outer surface of a model with no damage model: its finest level's hull, turret and gun meshes (not the gear,
+ * rotors or aerials) as plates of group `outer`, no thickness. An aircraft's hull (the unit's `domain` air) is cut
+ * into nose, fuselage, wings and tail, so hits on its parts can be told apart.
+ */
+function outerPlates(g: Gltf, bin: Uint8Array): ModelPlate[] {
+  const lod = g.nodes.find((n) => n.name === 'lod0');
+  if (!lod) return [];
+  const unit = g.nodes.find((n) => n.name === 'unit');
+  const air = unit?.extras?.domain === 'air';
+  const out: ModelPlate[] = [];
+  for (const ci of lod.children ?? []) {
+    const n = g.nodes[ci];
+    const m = n?.name ? PART_NAME.exec(n.name) : null;
+    if (!n || n.mesh === undefined || !m || !/^(hull|turret|gun)$/.test(m[1])) continue;
+    for (const prim of g.meshes[n.mesh].primitives) {
+      if (((prim as { mode?: number }).mode ?? 4) !== 4 || prim.indices === undefined) continue;
+      const pos = accessor(g, bin, prim.attributes.POSITION) as Float32Array;
+      const idx = accessor(g, bin, prim.indices) as Uint16Array | Uint32Array;
+      if (!air || m[1] !== 'hull') {
+        out.push({ name: m[0], part: m[0], group: 'outer', pos, idx: Uint32Array.from(idx) });
+        continue;
+      }
+      const lo = [Infinity, Infinity, Infinity], hi = [-Infinity, -Infinity, -Infinity];
+      for (let k = 0; k < pos.length; k += 3)
+        for (let a = 0; a < 3; a++) {
+          if (pos[k + a] < lo[a]) lo[a] = pos[k + a];
+          if (pos[k + a] > hi[a]) hi[a] = pos[k + a];
+        }
+      const zones = new Map<string, number[]>();
+      for (let k = 0; k + 2 < idx.length; k += 3) {
+        const a = idx[k] * 3, b = idx[k + 1] * 3, c = idx[k + 2] * 3;
+        const z = airZone((pos[a] + pos[b] + pos[c]) / 3, (pos[a + 2] + pos[b + 2] + pos[c + 2]) / 3, lo, hi);
+        let l = zones.get(z);
+        if (!l) zones.set(z, (l = []));
+        l.push(idx[k], idx[k + 1], idx[k + 2]);
+      }
+      for (const [z, l] of zones) out.push({ name: z, part: 'hull', group: 'outer', zone: z, pos, idx: Uint32Array.from(l) });
+    }
   }
   return out;
 }

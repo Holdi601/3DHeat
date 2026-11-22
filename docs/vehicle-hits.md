@@ -6,7 +6,7 @@ nav_order: 5
 
 # Vehicle hits over many matches
 
-The **hit analysis** in the **Vehicles** tab loads only the hits on vehicles from thousands of War Thunder matches and shows them on one vehicle's armour plates. Use it to see where a tank is weak, which shells go through at which angle and speed, and what a penetration usually does there.
+The **hit analysis** in the **Vehicles** tab loads only the hits on vehicles from thousands of War Thunder matches - or DCS World recordings and IL-2 mission reports, aircraft included ([below](#dcs-world-and-il-2)) - and shows them on one vehicle's armour plates. Use it to see where a tank is weak, which shells go through at which angle and speed, and what a penetration usually does there.
 
 ## Try it
 
@@ -55,6 +55,25 @@ Every value says where it came from: **recorded** (in the replay), **derived** (
 
 A shell is a point mass under gravity and quadratic drag. Flat fire (darts, tank guns over a few kilometres) has a closed form that is exact while the path stays shallow; a slow shell (a howitzer's, a mortar's, low-velocity HE or HEAT) is integrated step by step, and the launch elevation found that carries it to the hit point - the low arc, or the high one for indirect fire or where the low arc cannot reach. Guided missiles and rockets get no estimate.
 
+## DCS World and IL-2
+
+The same analysis reads a DCS World recording converted by the Tacview converter (`.3dheat`, [hits the converter works out](tacview-acmi.md#hits-the-converter-works-out)) and IL-2 Sturmovik mission reports (`missionReport(<date>)[<n>].txt`, written by a server or the game with `mission_text_log = 1` in its `startup.cfg`; the pieces of one mission are read as one). Aircraft are vehicles like any other: a model without armour plates shows its outer surface instead, an aircraft's cut into nose, fuselage, wings and tail, so hits on its parts can be told apart.
+
+| Value | DCS World (Tacview recording) | IL-2 (mission report) |
+|---|---|---|
+| Weapon, shooter, unit hit | recorded: the weapon object's name; launcher and unit worked out by the converter | recorded (`AMMO`, `AID`, `TID`) |
+| Calibre, type | derived from the weapon's name (a shell's id holds its calibre and type; missiles, rockets and bombs by public figures) | derived from the ammunition word (`BULLET_GER_792x57_SS`: 7.92 mm, ball) |
+| Hit point | estimate: where the weapon's path passed nearest the unit, put on the model where its way in enters it | unknown: the report has none |
+| Way in, impact angle | derived from the weapon's and the unit's motion and attitude; the angle against the model's surface | unknown |
+| Impact speed | derived: the weapon's speed over its last samples | ballistic estimate where a distance is known, else unknown |
+| Distance | derived: from where the weapon was first seen (its launch) to the hit | derived where both places were written within half a second of the hit, else unknown |
+| Damage | not in the recording | recorded: the share of the unit's strength each hit took (`DMG`) |
+| Lethal, killing shot | derived: the unit's death the converter worked out, by the hit's shooter | recorded kills (`AType 4`), tied to the shooter's last hit |
+| Crew | a bail-out: an ejection from the unit after a hit (derived) | the pilot or a gunner hit, a crew member killed (hits and kills on the aircraft's bots), a bail-out |
+| Fire, modules, the part struck | not in the recording | not in the report |
+
+A DCS World recording converted before the geometry columns gives the weapon, the shooter, the unit and the kills only; convert it again for the point, the way in, the speed and the distance. The DCS shells' muzzle speeds of your installation's range catalogue (`heat3d-dcs-maps ranges`) are used where a hit has no speed of its own.
+
 ## The view
 
 | Control | What it does |
@@ -88,7 +107,7 @@ Measured on this project's test machine while other heavy jobs kept every core b
 
 ## Dashboards
 
-The hit analysis is a source of the [dashboards](dashboards.md): **Vehicle hits (many matches)**, the shown vehicle's hits that pass the panel's filters, one row a hit (an even sample past 400,000), with the fields `vehicle`, `attacker`, `attacker class`, `attacker nation`, `shell type`, `shell`, `shell kind`, `result`, `plate`, `map`, `mode`, `version`, `converter`, `shooter` and the numbers `angle`, `speed`, `descent`, `distance`, `effMm`, `calibre`, `penetrated` (1, 0, or empty when the result is not known), `won` and one 0/1 column per effect (`lethal`, `killingShot`, `fire`, `crew`, `ammo`, `module`...).
+The hit analysis is a source of the [dashboards](dashboards.md): **Vehicle hits (many matches)**, the shown vehicle's hits that pass the panel's filters, one row a hit (an even sample past 400,000), with the fields `vehicle`, `attacker`, `attacker class`, `attacker nation`, `shell type`, `shell`, `shell kind`, `result`, `plate`, `map`, `mode`, `version`, `converter`, `shooter` and the numbers `angle`, `speed`, `descent`, `distance`, `effMm`, `calibre`, `damage` (per cent of the unit's strength, IL-2), `penetrated` (1, 0, or empty when the result is not known), `won` and one 0/1 column per effect (`lethal`, `killingShot`, `fire`, `crew`, `ammo`, `module`...).
 
 Four starter dashboards (in the Vehicles tab's dashboard templates):
 
@@ -109,6 +128,8 @@ The link goes both ways: the starter dashboards drive the view, so picking a pla
 |---|---|
 | `src/vehicle/mass/types.ts` | The hit columns, results, effect bits, value sources |
 | `src/vehicle/mass/scan.ts` | One file's hits: the row filter, the columns, effects tied by life and time, the turret pose |
+| `src/vehicle/mass/scanAcmi.ts`, `il2Report.ts` | A DCS World recording's hits (the converter's hit rows), an IL-2 mission report's |
+| `src/vehicle/mass/ammo.ts` | A DCS World or IL-2 weapon's calibre, type and kind from its name |
 | `src/vehicle/mass/ballistics.ts` | Flat fire in closed form, the integrated arc, the flight cache |
 | `src/vehicle/mass/geometry.ts` | Plate normal, impact angle, armour along the way, the rest pose of a direction |
 | `src/vehicle/mass/store.ts` | The worker's columns and dictionaries, the flights, each model's plates per hit |

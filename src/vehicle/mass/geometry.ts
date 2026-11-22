@@ -65,3 +65,38 @@ export function descentOf(dir: Vec3): number {
   const l = Math.hypot(dir[0], dir[1], dir[2]) || 1;
   return (Math.asin(Math.max(-1, Math.min(1, -dir[1] / l))) * 180) / Math.PI;
 }
+
+/**
+ * Where a line through `p` along `dir` (unit) first enters the triangles of `plates`: the entry point (the smallest
+ * distance along `dir` from `p - reach * dir`), the plate and its triangle; null when the line misses them all. For
+ * a hit whose point is only where the weapon's path passed nearest the unit (a Tacview recording's), this is the
+ * point of the model it struck on that path (Moller-Trumbore, both sides of each triangle).
+ */
+export function rayEntry(p: Vec3, dir: Vec3, plates: readonly { tris: Float32Array }[], reach: number): { plate: number; k: number; point: Vec3 } | null {
+  const ox = p[0] - dir[0] * reach, oy = p[1] - dir[1] * reach, oz = p[2] - dir[2] * reach;
+  let best = Infinity, bp = -1, bk = -1;
+  for (let i = 0; i < plates.length; i++) {
+    const t = plates[i].tris;
+    for (let k = 0; k + 8 < t.length; k += 9) {
+      const e1x = t[k + 3] - t[k], e1y = t[k + 4] - t[k + 1], e1z = t[k + 5] - t[k + 2];
+      const e2x = t[k + 6] - t[k], e2y = t[k + 7] - t[k + 1], e2z = t[k + 8] - t[k + 2];
+      const px = dir[1] * e2z - dir[2] * e2y, py = dir[2] * e2x - dir[0] * e2z, pz = dir[0] * e2y - dir[1] * e2x;
+      const det = e1x * px + e1y * py + e1z * pz;
+      if (Math.abs(det) < 1e-12) continue;
+      const inv = 1 / det;
+      const sx = ox - t[k], sy = oy - t[k + 1], sz = oz - t[k + 2];
+      const u = (sx * px + sy * py + sz * pz) * inv;
+      if (u < 0 || u > 1) continue;
+      const qx = sy * e1z - sz * e1y, qy = sz * e1x - sx * e1z, qz = sx * e1y - sy * e1x;
+      const v = (dir[0] * qx + dir[1] * qy + dir[2] * qz) * inv;
+      if (v < 0 || u + v > 1) continue;
+      const d = (e2x * qx + e2y * qy + e2z * qz) * inv;
+      if (d > 0 && d < best) {
+        best = d;
+        bp = i;
+        bk = k;
+      }
+    }
+  }
+  return bp < 0 ? null : { plate: bp, k: bk, point: [ox + dir[0] * best, oy + dir[1] * best, oz + dir[2] * best] };
+}

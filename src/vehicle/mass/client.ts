@@ -161,7 +161,7 @@ export function vehicleName(id: string): string {
 export async function loadHits(files: File[], opts: { add?: boolean; pose?: boolean; cache?: boolean } = {}): Promise<void> {
   const st = useHitMass.getState();
   if (!files.length) {
-    st.set({ active: true, error: 'No War Thunder matches (.3dheat or tables) among the files picked.' });
+    st.set({ active: true, error: 'No matches among the files picked: War Thunder or DCS World (.3dheat or tables), IL-2 mission reports (missionReport(...)[n].txt).' });
     return;
   }
   st.set({ active: true, error: null, busy: true, ...(opts.add ? {} : { result: null, drawn: null, colours: null, detail: null, facets: null, platesKey: null }) });

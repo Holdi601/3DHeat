@@ -321,4 +321,14 @@ describe('model pack', () => {
     ]);
     expect(plates[0].hp).toBe(1000);
   });
+
+  it('gives a model without a damage model its outer surface: hull, turret and gun, not the gear', () => {
+    const plates = platesFromModelGlb(syntheticGlb());
+    expect(plates.map((p) => [p.name, p.part, p.group])).toEqual([
+      ['hull', 'hull', 'outer'],
+      ['turret', 'turret', 'outer'],
+      ['gun', 'gun', 'outer'],
+    ]);
+    expect(plates[0].idx.length).toBe(36);
+  });
 });

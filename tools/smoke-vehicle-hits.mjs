@@ -10,7 +10,8 @@
  *
  * VHITS_SET=<folder of .3dheat> runs it on that folder instead (a local real
  * set, never committed), VHITS_LIST=<file> on the files it lists (a path a
- * line); VHITS_LIMIT=<n> takes the first n files.
+ * line); VHITS_LIMIT=<n> takes the first n files; VHITS_VEHICLE=<id> shows
+ * that vehicle (a DCS World aircraft's, say) instead of the most hit.
  * ANALYSIS_GPU=1 uses the real GPU, so the frame numbers mean something.
  *
  *   node tools/smoke-vehicle-hits.mjs [url]
@@ -209,6 +210,11 @@ await step(`load the hits of ${files.length} files, frames measured meanwhile`, 
 
 await step('a vehicle is shown with its counts and plate colours', async () => {
   await page.waitForFunction(() => !!globalThis.__vh.getState().result, null, { timeout: 120_000 });
+  if (process.env.VHITS_VEHICLE) {
+    const before = await page.evaluate(() => globalThis.__vh.getState().result);
+    await page.evaluate(async (id) => (await globalThis.__3dheat.modules['vehicle/mass/client']()).patchHits({ vehicle: id }), process.env.VHITS_VEHICLE);
+    await page.waitForFunction((b) => { const s = globalThis.__vh.getState(); return s.result && s.result !== b && !s.platesPending; }, before, { timeout: 120_000 }).catch(() => null);
+  }
   const r = await page.evaluate(() => {
     const s = globalThis.__vh.getState();
     return { vehicle: s.vehicle, kept: s.result.kept, hits: s.result.hits, plates: !!s.platesKey, coloured: s.colours ? Array.from(s.colours).filter(Number.isFinite).length / 3 : 0, marks: s.drawn?.length ?? 0, ms: s.result.ms };
@@ -262,7 +268,7 @@ await step('a mark opens its card', async () => {
     const index = first ? first.id : 0;
     await mod.showHit(index);
     const d = globalThis.__vh.getState().detail;
-    return d ? { result: d.result, speedSource: d.speedSource, distanceSource: d.distanceSource } : null;
+    return d ? { result: d.result, ammo: [d.ammoName, d.ammoType, d.calibre], speed: d.speed, speedSource: d.speedSource, distance: d.distance, distanceSource: d.distanceSource, angle: d.angle, angleSource: d.angleSource, point: d.pointSource, way: d.dirSource, effects: d.effects } : null;
   });
   expect(ok, 'no card');
   return JSON.stringify(ok);

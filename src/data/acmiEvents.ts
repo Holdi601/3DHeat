@@ -13,7 +13,9 @@
  *              `HIT_REACH_M` of a unit not its launcher (a shell `SHELL_REACH_M`)
  *   miss       a missile, rocket, bomb or torpedo ending near no unit: where
  *              it struck or burst, on the ground or in the air
- *   damage     each hit, on the unit hit
+ *   damage     each hit, on the unit hit; a hit and its damage carry the hit's
+ *              geometry (`AcmiHitGeometry`): where the path passed the unit
+ *              in its frame, the way in, the weapon's speed, how far it flew
  *   kill/death a unit removed within `KILL_WINDOW_S` of the last hit on it
  *              (an aircraft `AIR_WINDOW_S`: a shot down aircraft falls a while),
  *              `shot down` when it was flying when hit
@@ -87,6 +89,52 @@ export function acmiKindOf(type: string): Kind {
   return 'target';
 }
 
+/**
+ * A hit's geometry as the recording lets it be worked out (every value derived, the point an estimate): the
+ * weapon's last sample moved on at its speed, the unit's moved on at its own, the moment they were nearest.
+ * Frames: the unit's x forward, y up, z right, metres; from its heading, pitch and roll at its last sample.
+ */
+export interface AcmiHitGeometry {
+  /** Where the weapon's path passed nearest the unit's reference point, in the unit's frame; null without its attitude. */
+  local: [number, number, number] | null;
+  /** The weapon's way in against the unit's motion, in the unit's frame (unit length); null without its attitude or the weapon's motion. */
+  dir: [number, number, number] | null;
+  /** The weapon's speed over its last samples, m/s; NaN when it had one sample. */
+  speed: number;
+  /** Its speed against the unit's, m/s; NaN as `speed`. */
+  closing: number;
+  /** Metres from where the weapon was first seen (its launch) to the hit point. */
+  launchDistance: number;
+  /** Seconds from its first sample to the hit. */
+  flightTime: number;
+  /** How near the path passed the unit's reference point, metres. */
+  miss: number;
+  /** Below the horizontal of the weapon's own way, degrees (+ coming down); NaN as `speed`. */
+  descent: number;
+}
+
+/** A unit's attitude at a sample, degrees: heading (clockwise from north), pitch (nose up), roll (right wing down). */
+export interface AcmiAttitude {
+  head: number;
+  pitch: number;
+  roll: number;
+}
+
+/** A world offset (east, north, up) in the frame of a unit of attitude `a`: forward, up, right. Null without a heading. */
+export function toUnitFrame(a: AcmiAttitude, e: number, n: number, u: number): [number, number, number] | null {
+  if (!Number.isFinite(a.head)) return null;
+  const D = Math.PI / 180;
+  const y = a.head * D, p = (Number.isFinite(a.pitch) ? a.pitch : 0) * D, r = (Number.isFinite(a.roll) ? a.roll : 0) * D;
+  const sy = Math.sin(y), cy = Math.cos(y), sp = Math.sin(p), cp = Math.cos(p), sr = Math.sin(r), cr = Math.cos(r);
+  const f = [sy * cp, cy * cp, sp];
+  const r0 = [cy, -sy, 0];
+  const u0 = [-sy * sp, -cy * sp, cp];
+  const right = [r0[0] * cr - u0[0] * sr, r0[1] * cr - u0[1] * sr, r0[2] * cr - u0[2] * sr];
+  const up = [r0[0] * sr + u0[0] * cr, r0[1] * sr + u0[1] * cr, r0[2] * sr + u0[2] * cr];
+  const dot = (v: number[]) => v[0] * e + v[1] * n + v[2] * u;
+  return [dot(f), dot(up), dot(right)];
+}
+
 export interface AcmiEvent<K, R, I> {
   /** The Event label: launch, burst, hit, miss, damage, kill, death, crash, takeoff, landing, touchdown, stop, rearm, eject, spawn. */
   kind: string;
@@ -114,6 +162,8 @@ export interface AcmiEvent<K, R, I> {
   targetInfo: I | null;
   weaponInfo: I | null;
   airfieldInfo: I | null;
+  /** On a hit and its damage: the hit's geometry. */
+  hit: AcmiHitGeometry | null;
 }
 
 interface Obj<K, R, I> {
@@ -130,6 +180,13 @@ interface Obj<K, R, I> {
   vy: number;
   vz: number;
   n: number;
+  /** Its first sample: where a weapon was launched. */
+  t0: number;
+  x0: number;
+  y0: number;
+  z0: number;
+  /** Its attitude at its last sample, where the caller gives one. */
+  att: AcmiAttitude | null;
   cell: number;
   gone: number;
   ref: R | null;
@@ -196,7 +253,7 @@ export class AcmiEventFinder<K, R, I> {
    * An object's sample (not its removal), on row `ref`. `shooter`: a weapon's
    * launcher when the caller knows it (else the nearest unit where it appeared).
    */
-  sample(key: K, ref: R | null, t: number, x: number, y: number, z: number, type: string, info: I, shooter: K | null = null, agl = NaN): void {
+  sample(key: K, ref: R | null, t: number, x: number, y: number, z: number, type: string, info: I, shooter: K | null = null, agl = NaN, att: AcmiAttitude | null = null): void {
     if (!Number.isFinite(x) || !Number.isFinite(y) || !Number.isFinite(t)) return;
     if (!Number.isFinite(z)) z = 0;
     this.advance(t);
@@ -205,6 +262,7 @@ export class AcmiEventFinder<K, R, I> {
       const kind = acmiKindOf(type);
       if (kind === 'other') return;
       o = this.make(key, kind, ref, t, x, y, z, info);
+      if (att) o.att = { head: att.head, pitch: att.pitch, roll: att.roll };
       this.objs.set(key, o);
       this.first(o, type, shooter);
       if (o.kind === 'shell') return;
@@ -213,6 +271,14 @@ export class AcmiEventFinder<K, R, I> {
     }
     o.info = info;
     o.agl = agl;
+    if (att) {
+      if (!o.att) o.att = { head: att.head, pitch: att.pitch, roll: att.roll };
+      else {
+        o.att.head = att.head;
+        o.att.pitch = att.pitch;
+        o.att.roll = att.roll;
+      }
+    }
     const dt = t - o.t;
     if (dt <= 1e-3) {
       o.x = x;
@@ -296,7 +362,7 @@ export class AcmiEventFinder<K, R, I> {
 
   private make(key: K, kind: Kind, ref: R | null, t: number, x: number, y: number, z: number, info: I): Obj<K, R, I> {
     return {
-      key, info, kind, shooter: null, bomb: false, x, y, z, t, vx: 0, vy: 0, vz: 0, n: 1, cell: cellOf(x, y), gone: NaN, ref, hits: [],
+      key, info, kind, shooter: null, bomb: false, x, y, z, t, vx: 0, vy: 0, vz: 0, n: 1, t0: t, x0: x, y0: y, z0: z, att: null, cell: cellOf(x, y), gone: NaN, ref, hits: [],
       state: 0, gref: NaN, gx: NaN, gy: NaN, ring: [], hitInAir: false, stop: null, landed: NaN, longStop: null, touch: null, climbed: false, slow: NaN, moved: t, agl: NaN,
     };
   }
@@ -306,13 +372,14 @@ export class AcmiEventFinder<K, R, I> {
   }
 
   /** An event of `o`'s; the others by their objects, each its key and what was said of it. */
-  private tell(kind: string, o: Obj<K, R, I>, at: { t: number; x: number; y: number; z: number }, ref: R | null, who: { shooter?: Obj<K, R, I> | null; target?: Obj<K, R, I> | null; weapon?: Obj<K, R, I> | null; airfield?: Obj<K, R, I> | null }, detail = '', rounds = 0): void {
+  private tell(kind: string, o: Obj<K, R, I>, at: { t: number; x: number; y: number; z: number }, ref: R | null, who: { shooter?: Obj<K, R, I> | null; target?: Obj<K, R, I> | null; weapon?: Obj<K, R, I> | null; airfield?: Obj<K, R, I> | null }, detail = '', rounds = 0, hit: AcmiHitGeometry | null = null): void {
     this.counts[kind] = (this.counts[kind] ?? 0) + 1;
     const { shooter = null, target = null, weapon = null, airfield = null } = who;
     this.emit({
       kind, t: at.t, x: at.x, y: at.y, z: at.z, subject: o.key, subjectGone: o.gone < at.t, ref, detail, rounds,
       shooter: shooter?.key ?? null, target: target?.key ?? null, weapon: weapon?.key ?? null, airfield: airfield?.key ?? null,
       subjectInfo: o.info, shooterInfo: shooter?.info ?? null, targetInfo: target?.info ?? null, weaponInfo: weapon?.info ?? null, airfieldInfo: airfield?.info ?? null,
+      hit,
     });
   }
 
@@ -474,6 +541,7 @@ export class AcmiEventFinder<K, R, I> {
     let best: Obj<K, R, I> | null = null;
     let bestD = reach;
     let bestS = S;
+    let bestG: AcmiHitGeometry | null = null;
     let groundZ = NaN;
     let groundD = Infinity;
     for (let cx = cx0; cx <= cx1; cx++)
@@ -505,6 +573,7 @@ export class AcmiEventFinder<K, R, I> {
             bestD = d;
             best = u;
             bestS = s;
+            bestG = this.geometry(w, u, dx + rx * s, dy + ry * s, dz + rz * s, rx, ry, rz, d);
           }
         }
       }
@@ -516,11 +585,37 @@ export class AcmiEventFinder<K, R, I> {
       return;
     }
     const air = best.state === 2;
+    if (bestG) {
+      bestG.launchDistance = Math.hypot(at.x - w.x0, at.y - w.y0, at.z - w.z0);
+      bestG.flightTime = t - w.t0;
+    }
     best.hits.push({ t, shooter: w.shooter, weapon: w, ref, air });
     if (best.hits.length > 8) best.hits.shift();
     if (air) best.hitInAir = true;
-    this.tell('hit', w, at, ref, { shooter: w.shooter, target: best, weapon: w }, air ? 'air' : 'ground');
-    this.tell('damage', best, { t, x: best.x, y: best.y, z: best.z }, null, { shooter: w.shooter, target: best, weapon: w }, air ? 'air' : 'ground');
+    this.tell('hit', w, at, ref, { shooter: w.shooter, target: best, weapon: w }, air ? 'air' : 'ground', 0, bestG);
+    this.tell('damage', best, { t, x: best.x, y: best.y, z: best.z }, null, { shooter: w.shooter, target: best, weapon: w }, air ? 'air' : 'ground', 0, bestG);
+  }
+
+  /**
+   * A hit's geometry: `ox..oz` the weapon's offset from the unit at their nearest, `rx..rz` its velocity against the
+   * unit's, `miss` the distance between. The launch distance is set by the caller (it needs the hit point).
+   */
+  private geometry(w: Obj<K, R, I>, u: Obj<K, R, I>, ox: number, oy: number, oz: number, rx: number, ry: number, rz: number, miss: number): AcmiHitGeometry {
+    const moved = w.n > 1;
+    const speed = moved ? Math.hypot(w.vx, w.vy, w.vz) : NaN;
+    const closing = moved ? Math.hypot(rx, ry, rz) : NaN;
+    const local = u.att ? toUnitFrame(u.att, ox, oy, oz) : null;
+    const dir = u.att && moved && closing > 1e-6 ? toUnitFrame(u.att, rx / closing, ry / closing, rz / closing) : null;
+    return {
+      local,
+      dir,
+      speed,
+      closing,
+      launchDistance: NaN,
+      flightTime: w.t - w.t0,
+      miss,
+      descent: moved && speed > 1e-6 ? (Math.atan2(-w.vz, Math.hypot(w.vx, w.vy)) * 180) / Math.PI : NaN,
+    };
   }
 
   /** A unit removed: killed by the last hit on it, crashed, or just gone. */

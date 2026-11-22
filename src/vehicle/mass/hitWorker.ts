@@ -13,7 +13,7 @@ import { compileFilter, histogram, plateColours, plateStats, rateOver, sourceNam
 import type { ScanReply, ScanRequest } from './scanWorker';
 import type { CoreEndpoint } from '../../data/native/core';
 import type { ChartData } from '../../charts/types';
-import { EFFECTS, FLAG_DIR, FLAG_DIST, FLAG_LOCAL, FLAG_POSE, FLAG_WON, FLAG_RESULT_KNOWN, NONE16, RESULTS, type Effect, type VehicleMeta } from './types';
+import { EFFECTS, FLAG_DIR, FLAG_DIST, FLAG_LOCAL, FLAG_POSE, FLAG_WON, FLAG_RESULT_KNOWN, FLAG2_DAMAGE, FLAG2_DIR_DERIVED, FLAG2_LOCAL_EST, NONE16, RESULTS, type Effect, type VehicleMeta } from './types';
 
 export interface LoadStats {
   files: number;
@@ -122,6 +122,11 @@ export interface HitDetail {
   effMm: number | null;
   plate: number;
   effects: Effect[];
+  /** The share of the unit's strength the hit took (0..1, recorded: IL-2), null not known. */
+  damage: number | null;
+  /** Where the hit point and the way in came from: recorded (War Thunder), an estimate / derived (a Tacview recording's). */
+  pointSource: string;
+  dirSource: string;
   local: [number, number, number] | null;
   dir: [number, number, number] | null;
   pose: boolean;
@@ -181,16 +186,26 @@ function progress(): void {
   post({ type: 'progress', stats: { ...stats }, vehicles: fresh });
 }
 
-/** Muzzle speeds of every shell the install's range catalogue lists (`/__heat3d/ranges/wt`), by name. */
+/**
+ * Muzzle speeds of every shell the install's range catalogues list (`/__heat3d/ranges/wt`, `/__heat3d/ranges/dcs`),
+ * by name: War Thunder's per shell, DCS World's per launcher (`muzzleVelocity`, for each shell it fires).
+ */
 async function loadCatalogue(): Promise<void> {
   if (store.catalogue.size) return;
-  try {
-    const r = await fetch(new URL('/__heat3d/ranges/wt', self.location.origin));
-    if (!r.ok || r.status === 204) return;
-    const doc = (await r.json()) as { weapons?: { detail?: { shells?: { name?: string; speed?: number }[] } }[] };
-    for (const w of doc.weapons ?? []) for (const s of w.detail?.shells ?? []) if (s.name && typeof s.speed === 'number') store.catalogue.set(s.name.toLowerCase(), s.speed);
-  } catch {
-    // No catalogue: muzzle speeds by the round's kind.
+  for (const game of ['wt', 'dcs']) {
+    try {
+      const r = await fetch(new URL(`/__heat3d/ranges/${game}`, self.location.origin));
+      if (!r.ok || r.status === 204) continue;
+      const doc = (await r.json()) as { weapons?: { detail?: { shells?: ({ name?: string; speed?: number } | string)[]; muzzleVelocity?: number } }[] };
+      for (const w of doc.weapons ?? [])
+        for (const s of w.detail?.shells ?? []) {
+          if (typeof s === 'string') {
+            if (typeof w.detail?.muzzleVelocity === 'number' && !store.catalogue.has(s.toLowerCase())) store.catalogue.set(s.toLowerCase(), w.detail.muzzleVelocity);
+          } else if (s.name && typeof s.speed === 'number') store.catalogue.set(s.name.toLowerCase(), s.speed);
+        }
+    } catch {
+      // No catalogue: muzzle speeds by the round's kind.
+    }
   }
 }
 
@@ -492,7 +507,7 @@ function hitRows(q: Extract<HitWorkerRequest, { type: 'rows' }>): HitRows {
   const catNames = ['vehicle', 'attacker', 'attacker class', 'attacker nation', 'shell type', 'shell', 'shell kind', 'result', 'plate', 'map', 'mode', 'version', 'converter', 'shooter'];
   const coders = catNames.map(() => coder());
   const codes = catNames.map(() => new Uint32Array(n));
-  const numNames = ['angle', 'speed', 'descent', 'distance', 'effMm', 'calibre', 'penetrated', 'won', ...EFFECTS];
+  const numNames = ['angle', 'speed', 'descent', 'distance', 'effMm', 'calibre', 'damage', 'penetrated', 'won', ...EFFECTS];
   const nums = numNames.map(() => new Float32Array(n));
   const out: HitRows = { n, total: js.length, time: new Float32Array(n), x: new Float32Array(n), y: new Float32Array(n), z: new Float32Array(n), match: new Uint32Array(n), matchLabels: [], player: new Uint32Array(n), playerLabels: [], team: new Uint32Array(n), teamLabels: [], cats: [], nums: [] };
   const mc = coder(), pc = coder(), tc = coder();
@@ -541,6 +556,7 @@ function hitRows(q: Extract<HitWorkerRequest, { type: 'rows' }>): HitRows {
       flag & FLAG_DIST ? c.dist[i] / 4 : NaN,
       ps && pj >= 0 ? ps.ph.effMm[pj] : NaN,
       c.calibre[i] ? c.calibre[i] / 10 : NaN,
+      c.flags2[i] & FLAG2_DAMAGE ? c.damage[i] / 10 : NaN,
       c.result[i] ? (c.result[i] >= 2 ? 1 : 0) : NaN,
       flag & FLAG_RESULT_KNOWN ? (flag & FLAG_WON ? 1 : 0) : NaN,
       ...EFFECTS.map((_, b) => (c.effects[i] & (1 << b) ? 1 : 0)),
@@ -591,6 +607,9 @@ function hit(index: number, platesKey: string | null): HitDetail | null {
     effMm: ps && j >= 0 && Number.isFinite(ps.ph.effMm[j]) ? ps.ph.effMm[j] : null,
     plate: ps && j >= 0 ? ps.ph.plate[j] : -1,
     effects,
+    damage: c.flags2[index] & FLAG2_DAMAGE ? c.damage[index] / 1000 : null,
+    pointSource: flag & FLAG_LOCAL ? (c.flags2[index] & FLAG2_LOCAL_EST ? 'estimate' : 'recorded') : 'unknown',
+    dirSource: flag & FLAG_DIR ? (c.flags2[index] & FLAG2_DIR_DERIVED ? 'derived' : 'recorded') : 'unknown',
     local: flag & FLAG_LOCAL ? [c.lx[index] / 1000, c.ly[index] / 1000, c.lz[index] / 1000] : null,
     dir: flag & FLAG_DIR ? [c.dx[index] / 127, c.dy[index] / 127, c.dz[index] / 127] : null,
     pose: (flag & FLAG_POSE) !== 0,

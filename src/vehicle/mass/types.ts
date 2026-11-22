@@ -1,6 +1,7 @@
 /**
  * The vehicle-hit mass analysis (docs/vehicle-hits.md): every hit on a
- * vehicle from thousands of War Thunder matches, kept as columns of small
+ * vehicle from thousands of War Thunder matches, DCS World recordings or
+ * IL-2 mission reports, kept as columns of small
  * numbers and dictionary codes in a worker, filtered and summed there per
  * plate of the vehicle shown in the Vehicles tab.
  *
@@ -50,12 +51,16 @@ export const EFFECTS = [
   'fuel',
   'radiator',
   'optics',
+  // Air games (DCS World, IL-2): the pilot hit, crew killed, crew left the aircraft (an ejection, a bail-out).
+  'pilot',
+  'crewKilled',
+  'bailout',
 ] as const;
 export type Effect = (typeof EFFECTS)[number];
 export const EFFECT_BIT: Record<Effect, number> = Object.fromEntries(EFFECTS.map((e, i) => [e, 1 << i])) as Record<Effect, number>;
 
 /** Effects the current data can carry at all (the rest wait for the converter). */
-export const EFFECTS_IN_DATA: readonly Effect[] = ['lethal', 'killingShot', 'fire', 'module', 'critical', 'engine', 'transmission', 'fuel', 'ammo', 'track', 'breech', 'barrel', 'turretDrive', 'optics', 'radiator'];
+export const EFFECTS_IN_DATA: readonly Effect[] = ['lethal', 'killingShot', 'fire', 'module', 'critical', 'engine', 'transmission', 'fuel', 'ammo', 'track', 'breech', 'barrel', 'turretDrive', 'optics', 'radiator', 'crew', 'pilot', 'gunner', 'crewKilled', 'bailout'];
 
 /** The component a damage-model part name stands for, or null. */
 export function componentOf(name: string): Effect | null {
@@ -78,7 +83,7 @@ export function componentOf(name: string): Effect | null {
 }
 
 /** Crew roles among the effects. */
-export const CREW: readonly Effect[] = ['driver', 'gunner', 'commander', 'loader', 'machineGunner'];
+export const CREW: readonly Effect[] = ['driver', 'gunner', 'commander', 'loader', 'machineGunner', 'pilot'];
 
 /** Where a value came from. */
 export type Source = 'recorded' | 'derived' | 'ballistic' | 'unknown';
@@ -92,6 +97,14 @@ export const FLAG_ATTACKER_AI = 16;
 export const FLAG_VICTIM_AI = 32;
 export const FLAG_WON = 64; // the victim's side won the match
 export const FLAG_RESULT_KNOWN = 128; // the match says who won
+
+/** More per-hit flags (`flags2`): how sure the recorded-looking values are, for the sources that work them out. */
+export const FLAG2_SPEED = 1; // `speed` holds an impact speed worked out from the weapon's own samples (derived)
+export const FLAG2_LOCAL_EST = 2; // the hit point is where the weapon's path passed nearest the unit's reference point (estimate)
+export const FLAG2_DIR_DERIVED = 4; // the way in is the weapon's motion against the unit's, turned into its frame (derived, not recorded)
+export const FLAG2_DIST_LAUNCH = 8; // the distance is from where the weapon was first seen (its launch) to the hit
+export const FLAG2_DAMAGE = 16; // `damage` holds the share of the unit's strength the hit took (recorded)
+export const FLAG2_CALIBRE_NAMED = 32; // the calibre and type are read from the weapon's name or a table of public figures (derived)
 
 /** Seconds: a fire lit, a module lost after a hit, and the hits before a death counted towards it. */
 export const FIRE_WINDOW = 0.12;
@@ -144,6 +157,12 @@ export interface HitColumns {
   /** `EFFECT_BIT`s. */
   effects: Uint32Array;
   flags: Uint8Array;
+  /** `FLAG2_*`. */
+  flags2: Uint8Array;
+  /** Impact speed, m/s, where the source gives one (`FLAG2_SPEED`); 0 none. */
+  speed: Uint16Array;
+  /** The share of the unit's strength the hit took, 0.1 % (`FLAG2_DAMAGE`); 0 none. */
+  damage: Uint16Array;
 }
 
 /** The columns' names and element types, for allocation and transfer. */
@@ -173,6 +192,9 @@ export const COLUMN_TYPES = {
   result: Uint8Array,
   effects: Uint32Array,
   flags: Uint8Array,
+  flags2: Uint8Array,
+  speed: Uint16Array,
+  damage: Uint16Array,
 } as const;
 export type ColumnName = keyof typeof COLUMN_TYPES;
 export const COLUMN_NAMES = Object.keys(COLUMN_TYPES) as ColumnName[];

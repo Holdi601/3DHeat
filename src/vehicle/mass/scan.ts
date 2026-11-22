@@ -1,6 +1,7 @@
 /**
- * One match's hits on vehicles, read for the mass analysis: from a War
- * Thunder table only the rows that are hits or what follows them (the
+ * One match's hits on vehicles, read for the mass analysis (a DCS World
+ * recording's: `scanAcmi.ts`; an IL-2 mission report's: `il2Report.ts`):
+ * from a War Thunder table only the rows that are hits or what follows them (the
  * shots, deaths, fires lit, modules lost), only the columns the analysis
  * uses, and - for the turret's pose at each hit - the victims' turret yaw and
  * gun elevation from their own samples. Everything else in the file is never
@@ -17,6 +18,8 @@ import { readSelectedColumns, selectRows, type RowFilterClause } from '../../dat
 import type { ParquetColumnReader } from '../../data/ingestParquet';
 import { isContainer, openContainer } from '../../data/container';
 import { partNumber } from '../plates';
+import { ACMI_HIT_EVENTS, ACMI_NUMBER_COLUMNS, ACMI_TEXT_COLUMNS, extractAcmiHits, isAcmiTable } from './scanAcmi';
+import { IL2_REPORT, il2Match, il2ReportHits } from './il2Report';
 import {
   allocColumns,
   componentOf,
@@ -355,6 +358,7 @@ async function readColumns(
   numbers: string[],
   texts: string[],
   reader: ParquetColumnReader | null,
+  timeColumn = 'time',
 ): Promise<ScanColumns> {
   const buf = asyncBufferFromFile(table);
   let count: number;
@@ -363,11 +367,11 @@ async function readColumns(
   const txts = texts.filter((c) => available.has(c));
   if (reader) count = (await reader.count(clauses)).count;
   else {
-    sel = await selectRows(buf, metadata, clauses, ['time', ...nums, ...txts]);
+    sel = await selectRows(buf, metadata, clauses, [timeColumn, ...nums, ...txts]);
     count = sel.count;
   }
   const time = new Float64Array(count);
-  const requests: ColumnRequest[] = [{ name: 'time', numbers: time }];
+  const requests: ColumnRequest[] = [{ name: timeColumn, numbers: time }];
   const num: ScanColumns['num'] = {};
   const txt: ScanColumns['txt'] = {};
   for (const c of nums) requests.push({ name: c, numbers: (num[c] = new Float32Array(count)) });
@@ -385,10 +389,10 @@ async function readColumns(
 }
 
 /** What a container's manifest and match document say of the match. */
-async function matchOf(file: File, index: number): Promise<{ match: HitMatch; table: File | null }> {
+async function matchOf(file: File, index: number): Promise<{ match: HitMatch; table: File | null; effects: () => Promise<File | null> }> {
   const stem = file.name.replace(/\.(3dheat|parquet)$/i, '');
   const base: HitMatch = { id: stem, file: index, map: '', mode: '', started: NaN, gameVersion: '', converterVersion: '', winner: '' };
-  if (!isContainer(file.name)) return { match: base, table: file };
+  if (!isContainer(file.name)) return { match: base, table: file, effects: async () => null };
   const c = await openContainer(file);
   const m = c.manifest;
   const econ = (m.extensions?.['heat3d/economy'] ?? null) as { winnerTeam?: string } | null;
@@ -413,16 +417,51 @@ async function matchOf(file: File, index: number): Promise<{ match: HitMatch; ta
       winner,
     },
     table: c.table,
+    // A Tacview recording's shells, bullets and flares, kept apart by the converter (`effects`).
+    effects: () => c.member('effects').catch(() => null),
   };
 }
 
-/** One file's hits: a container or a loose table. Null when it has no hits on vehicles (or is not a War Thunder table). */
+/** Whether a file is an IL-2 mission report (or the pieces of one, read together: `groupIl2Reports`). */
+export function isIl2Report(name: string): boolean {
+  return IL2_REPORT.test(name);
+}
+
+/**
+ * One file's hits: a container or a loose table (War Thunder, a DCS World recording converted), or an IL-2 mission
+ * report. Null when it has no hits on vehicles.
+ */
 export async function scanFile(file: File, index: number, partNames: readonly string[] | null, opts: { pose: boolean; readerFor?: ReaderFor }): Promise<HitBlock | null> {
   const t0 = performance.now();
-  const { match, table } = await matchOf(file, index);
+  if (isIl2Report(file.name)) {
+    const text = await file.text();
+    const block = il2ReportHits(text, il2Match(text, file.name, index));
+    if (!block.cols.n) return null;
+    return { ...block, rows: text.length, kept: block.cols.n, ms: performance.now() - t0, native: false };
+  }
+  const { match, table, effects } = await matchOf(file, index);
   if (!table) return null;
   const metadata = await parquetMetadataAsync(asyncBufferFromFile(table));
   const available = new Set(metadata.schema.slice(1).map((e) => e.name));
+  if (isAcmiTable(available)) {
+    const reader = opts.readerFor?.(table) ?? null;
+    const clause: RowFilterClause[] = [{ column: 'Event', kind: 'set', values: ACMI_HIT_EVENTS }];
+    const main = await readColumns(table, metadata, available, clause, ACMI_NUMBER_COLUMNS, ACMI_TEXT_COLUMNS, reader, 'Time');
+    const parts = [main];
+    let rows = Number(metadata.num_rows);
+    const fx = await effects();
+    if (fx) {
+      const m2 = await parquetMetadataAsync(asyncBufferFromFile(fx));
+      const a2 = new Set(m2.schema.slice(1).map((e) => e.name));
+      if (a2.has('Event')) {
+        parts.push(await readColumns(fx, m2, a2, clause, ACMI_NUMBER_COLUMNS, ACMI_TEXT_COLUMNS, null, 'Time'));
+        rows += Number(m2.num_rows);
+      }
+    }
+    const block = extractAcmiHits(parts, match);
+    if (!block.cols.n) return null;
+    return { ...block, rows, kept: parts.reduce((a, p) => a + p.rows, 0), ms: performance.now() - t0, native: reader !== null };
+  }
   if (!available.has('event') || !available.has('otherVehicle') || !available.has('time')) return null;
   const reader = opts.readerFor?.(table) ?? null;
   const rows = Number(metadata.num_rows);
