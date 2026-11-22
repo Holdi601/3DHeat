@@ -28,8 +28,8 @@ unicode-normalization = "0.1"
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "sync", "time", "signal", "fs", "io-util", "io-std"] }
 axum = { version = "0.8", features = ["ws"] }
 rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12"] }
-rcgen = "0.13"
-tower-http = { version = "0.6", features = ["fs", "set-header"] }
+rcgen = "0.14"
+tower-http = { version = "0.7", features = ["fs", "set-header"] }
 futures-util = { version = "0.3", default-features = false, features = ["sink", "std"] }
 if-addrs = "0.13"
 hyper-util = { version = "0.1", features = ["tokio"] }
@@ -40,4 +40,4 @@ tower = { version = "0.5", features = ["util"] }
 
 [dev-dependencies]
 ed25519-dalek = { version = "2.1", features = ["rand_core"] }
-tokio-tungstenite = "0.29"
+tokio-tungstenite = "0.30"
