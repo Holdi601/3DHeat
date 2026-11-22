@@ -11,10 +11,12 @@
 //! - Keyed by filter hash (`TileQuery::key`): files, axes, filter (the time
 //!   window is a range on the time column), split and leaf level. Equal queries
 //!   share tiles across clients.
-//! - Incremental: a query differing from a cached one in its filter starts from
-//!   the cached leaf grid and visits only the row groups whose statistics say
-//!   the change can touch them, subtracting their rows under the old filter and
-//!   adding them under the new (exact: counts are integers).
+//! - Incremental: a query differing from a cached one in its filter visits only
+//!   the row groups whose statistics say the change can touch them, subtracting
+//!   their rows under the old filter and adding them under the new (exact:
+//!   counts are integers), into a grid of differences. Only the tiles whose
+//!   cells changed are decoded, changed and encoded again, and their ancestors;
+//!   every other tile is copied from the cached pyramid as it is.
 //! - On disk (`TileStore`): one folder per key, `tiles.bin` (every tile, packed)
 //!   and `meta.json` (extent, levels, the byte range of each tile), evicted least
 //!   recently used past a byte budget.
@@ -38,6 +40,7 @@
 use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicU32, AtomicU64, Ordering};
+use std::sync::atomic::AtomicU64 as AtomicBits;
 use std::sync::{Arc, Condvar, Mutex, RwLock};
 use std::time::{Instant, SystemTime};
 
@@ -161,6 +164,9 @@ pub struct Meta {
     /// Per level, tile `y * 2^l + x` -> [offset, length] in `tiles.bin`; empty tiles absent.
     pub index: Vec<HashMap<u32, [u64; 2]>>,
     pub bytes: u64,
+    /// Tiles encoded by this build (a delta copies the others from its base).
+    #[serde(default)]
+    pub tiles_written: u64,
 }
 
 // ---------------------------------------------------------------- tiles
@@ -361,8 +367,10 @@ fn extent(sources: &[Source], x: &str, y: &str) -> Result<(f64, f64, f64)> {
     Ok((cx - size * 0.5, cy - size * 0.5, size))
 }
 
-/// Bins one row group's rows that `clauses` keep, adding `sign` (1, or u32::MAX to subtract).
-fn bin_group(src: &Source, g: usize, q: &TileQuery, clauses: &[Clause], frame: &Frame, grid: &[AtomicU32], sign: u32) -> Result<u64> {
+/// Bins one row group's rows that `clauses` keep, adding `sign` (1, or u32::MAX to subtract);
+/// `touched` (a bit per leaf tile) gets the tiles a row went into.
+#[allow(clippy::too_many_arguments)]
+fn bin_group(src: &Source, g: usize, q: &TileQuery, clauses: &[Clause], frame: &Frame, grid: &[AtomicU32], sign: u32, touched: Option<&[AtomicBits]>) -> Result<u64> {
     let mut specs = vec![Spec { name: q.x.clone(), kind: Kind::F64 }, Spec { name: q.y.clone(), kind: Kind::F64 }];
     if let Some(s) = &q.split {
         specs.push(Spec { name: s.column.clone(), kind: Kind::Dict });
@@ -379,6 +387,8 @@ fn bin_group(src: &Source, g: usize, q: &TileQuery, clauses: &[Clause], frame: &
     let n = frame.n;
     let inv = n as f64 / frame.size;
     let plane = n * n;
+    let side = n / TILE;
+    let mut mine = vec![0u64; if touched.is_some() { (side * side).div_ceil(64) } else { 0 }];
     let mut counted = 0u64;
     for i in 0..xs.len() {
         let cx = ((xs[i] - frame.x0) * inv).floor();
@@ -397,7 +407,18 @@ fn bin_group(src: &Source, g: usize, q: &TileQuery, clauses: &[Clause], frame: &
             None => 0,
         };
         grid[c * plane + cy as usize * n + cx as usize].fetch_add(sign, Ordering::Relaxed);
+        if !mine.is_empty() {
+            let t = (cy as usize / TILE) * side + cx as usize / TILE;
+            mine[t / 64] |= 1 << (t % 64);
+        }
         counted += 1;
+    }
+    if let Some(all) = touched {
+        for (a, &m) in all.iter().zip(&mine) {
+            if m != 0 {
+                a.fetch_or(m, Ordering::Relaxed);
+            }
+        }
     }
     Ok(counted)
 }
@@ -542,17 +563,17 @@ fn run_build(q: TileQuery, key: String, dir: PathBuf, base: Option<(Meta, PathBu
     meta.groups = all.len() as u64;
     build.status.lock().unwrap().meta = meta.clone();
 
-    let mut grid = Grid::new(n, channels);
+    let grid = Grid::new(n, channels);
     let counted = AtomicU64::new(0);
     let read = AtomicU64::new(0);
     let failed: Mutex<Option<anyhow::Error>> = Mutex::new(None);
-    let visit = |items: &[(usize, usize)], clauses: &[Clause], sign: u32, grid: &[AtomicU32]| {
+    let visit = |items: &[(usize, usize)], clauses: &[Clause], sign: u32, grid: &[AtomicU32], touched: Option<&[AtomicBits]>| {
         let work = || {
             items.par_iter().for_each(|&(f, g)| {
                 if failed.lock().unwrap().is_some() {
                     return;
                 }
-                match bin_group(&sources[f], g, &q, clauses, &frame, grid, sign) {
+                match bin_group(&sources[f], g, &q, clauses, &frame, grid, sign, touched) {
                     Ok(c) => {
                         if sign == 1 {
                             counted.fetch_add(c, Ordering::Relaxed);
@@ -574,18 +595,25 @@ fn run_build(q: TileQuery, key: String, dir: PathBuf, base: Option<(Meta, PathBu
         }
     };
 
-    if let Some((bm, bdir)) = &base {
-        // Incremental: the cached leaf grid, then only the groups the change touches.
+    let packed = if let Some((bm, bdir)) = &base {
+        // Incremental: only the groups the change touches, into a grid of differences
+        // (wrapping: a cell's old rows out, its new rows in), then only the tiles that changed.
         meta.how = "delta".into();
         meta.delta_base = bm.key.clone();
         let old: Vec<Clause> = parse_clauses(&bm.filter);
-        load_leaf(bm, bdir, &mut grid)?;
         counted.store(bm.rows_counted, Ordering::Relaxed);
-        let touched: Vec<(usize, usize)> = all.iter().copied().filter(|&(f, g)| may_differ(&sources[f], g, &old, &filter)).collect();
+        let groups: Vec<(usize, usize)> = all.iter().copied().filter(|&(f, g)| may_differ(&sources[f], g, &old, &filter)).collect();
+        let side = 1usize << leaf;
+        let touched: Vec<AtomicBits> = (0..(side * side).div_ceil(64)).map(|_| AtomicBits::new(0)).collect();
         let atoms = grid.atomics();
-        visit(&touched, &old, u32::MAX, atoms);
-        visit(&touched, &filter, 1, atoms);
-        meta.groups_read = touched.len() as u64;
+        visit(&groups, &old, u32::MAX, atoms, Some(&touched));
+        visit(&groups, &filter, 1, atoms, Some(&touched));
+        meta.groups_read = groups.len() as u64;
+        if let Some(e) = failed.lock().unwrap().take() {
+            return Err(e);
+        }
+        let bits: Vec<u64> = touched.iter().map(|a| a.load(Ordering::Relaxed)).collect();
+        pack_delta(&grid, &bits, bm, bdir)?
     } else {
         meta.how = "full".into();
         // Groups the statistics rule out hold no rows of the filter's.
@@ -594,7 +622,7 @@ fn run_build(q: TileQuery, key: String, dir: PathBuf, base: Option<(Meta, PathBu
         let order = shuffled(candidates);
         let first = order.len().div_ceil(SAMPLE_SHARE).max(1).min(order.len());
         let atoms = grid.atomics();
-        visit(&order[..first], &filter, 1, atoms);
+        visit(&order[..first], &filter, 1, atoms, None);
         if first < order.len() {
             // Coarse first: the sample, scaled up, as the first picture.
             let sampled: u64 = order[..first].iter().map(|&(f, g)| sources[f].file.group_rows(g)).sum();
@@ -615,28 +643,20 @@ fn run_build(q: TileQuery, key: String, dir: PathBuf, base: Option<(Meta, PathBu
             st.meta.level_max = levels.iter().map(|l| (*l.iter().max().unwrap_or(&0) as f64 * scale) as u32).collect();
             meta.first_ms = st.meta.first_ms;
         }
-        visit(&order[first..], &filter, 1, atoms);
+        visit(&order[first..], &filter, 1, atoms, None);
         meta.groups_read = order.len() as u64;
-    }
-    if let Some(e) = failed.into_inner().unwrap() {
-        return Err(e);
-    }
-    meta.rows_counted = counted.load(Ordering::Relaxed);
-
-    // Every level, packed.
-    let levels = pyramid(grid.cells, leaf, channels);
-    meta.level_max = levels.iter().map(|l| l.iter().copied().max().unwrap_or(0)).collect();
-    std::fs::create_dir_all(&dir)?;
-    let mut pack = Vec::new();
-    meta.index = Vec::new();
-    for (l, cells) in levels.iter().enumerate() {
-        let mut idx = HashMap::new();
-        for (x, y, b) in encode_level(cells, l as u32, channels, false, 1.0) {
-            idx.insert(y * (1 << l) + x, [pack.len() as u64, b.len() as u64]);
-            pack.extend_from_slice(&b);
+        if let Some(e) = failed.lock().unwrap().take() {
+            return Err(e);
         }
-        meta.index.push(idx);
-    }
+        // Every level, packed.
+        pack_full(pyramid(grid.cells, leaf, channels), channels)
+    };
+    meta.rows_counted = counted.load(Ordering::Relaxed);
+    let Packed { pack, index, level_max, written } = packed;
+    meta.level_max = level_max;
+    meta.index = index;
+    meta.tiles_written = written;
+    std::fs::create_dir_all(&dir)?;
     meta.bytes = pack.len() as u64;
     let tmp = dir.join("tiles.bin.part");
     std::fs::write(&tmp, &pack)?;
@@ -663,24 +683,151 @@ fn parse_clauses(texts: &[String]) -> Vec<Clause> {
         .collect()
 }
 
-/// The leaf level of a cached pyramid, decoded into `grid`.
-fn load_leaf(m: &Meta, dir: &Path, grid: &mut Grid) -> Result<()> {
-    let pack = crate::source::map(&dir.join("tiles.bin"))?;
-    let l = m.leaf_level as usize;
-    let n = grid.n;
-    let plane = n * n;
-    let tiles = 1u32 << l;
-    for (&t, &[off, len]) in &m.index[l] {
-        let tile = decode_tile(&pack[off as usize..(off + len) as usize])?;
-        let (tx, ty) = ((t % tiles) as usize, (t / tiles) as usize);
-        for c in 0..grid.channels {
-            for row in 0..TILE {
-                let dst = c * plane + (ty * TILE + row) * n + tx * TILE;
-                grid.cells[dst..dst + TILE].copy_from_slice(&tile.cells[c * TILE * TILE + row * TILE..c * TILE * TILE + (row + 1) * TILE]);
+/// A pyramid's tiles, packed: the bytes of `tiles.bin`, its index, each level's largest cell.
+struct Packed {
+    pack: Vec<u8>,
+    index: Vec<HashMap<u32, [u64; 2]>>,
+    level_max: Vec<u32>,
+    written: u64,
+}
+
+/// The largest cell, from a tile's header.
+fn header_max(b: &[u8]) -> u32 {
+    u32::from_le_bytes(b[20..24].try_into().unwrap())
+}
+
+/// Every tile of every level encoded.
+fn pack_full(levels: Vec<Vec<u32>>, channels: usize) -> Packed {
+    let mut out = Packed { pack: Vec::new(), index: Vec::new(), level_max: Vec::new(), written: 0 };
+    for (l, cells) in levels.iter().enumerate() {
+        out.level_max.push(cells.iter().copied().max().unwrap_or(0));
+        let mut idx = HashMap::new();
+        for (x, y, b) in encode_level(cells, l as u32, channels, false, 1.0) {
+            idx.insert(y * (1 << l) + x, [out.pack.len() as u64, b.len() as u64]);
+            out.pack.extend_from_slice(&b);
+            out.written += 1;
+        }
+        out.index.push(idx);
+    }
+    out
+}
+
+/// A delta's pyramid: `diff` (the leaf grid's change, wrapping) added to the
+/// base's tiles where a row went (`touched`, a bit per leaf tile) and a cell
+/// changed; those tiles and their ancestors encoded again, every other tile's
+/// bytes copied from the base as they are.
+fn pack_delta(diff: &Grid, touched: &[u64], bm: &Meta, bdir: &Path) -> Result<Packed> {
+    let base = crate::source::map(&bdir.join("tiles.bin"))?;
+    pack_delta_from(diff, touched, bm, &base)
+}
+
+fn pack_delta_from(diff: &Grid, touched: &[u64], bm: &Meta, base: &[u8]) -> Result<Packed> {
+    let leaf = bm.leaf_level as usize;
+    let channels = diff.channels;
+    let (n, plane, cells_per) = (diff.n, diff.n * diff.n, TILE * TILE * diff.channels);
+    let base_tile = |l: usize, t: u32| -> Option<&[u8]> { bm.index.get(l)?.get(&t).map(|&[o, len]| &base[o as usize..(o + len) as usize]) };
+    let cells_of = |l: usize, t: u32| -> Result<Vec<u32>> {
+        match base_tile(l, t) {
+            Some(b) => Ok(decode_tile(b)?.cells),
+            None => Ok(vec![0u32; cells_per]),
+        }
+    };
+    // Leaf tiles a row went into whose cells changed: the base's plus the difference.
+    let side = 1u32 << leaf;
+    let cand: Vec<u32> = (0..side * side).filter(|&t| touched[t as usize / 64] >> (t % 64) & 1 == 1).collect();
+    let mut cur: HashMap<u32, Vec<u32>> = cand
+        .par_iter()
+        .filter_map(|&t| {
+            let (tx, ty) = ((t % side) as usize, (t / side) as usize);
+            let at = |c: usize, row: usize| c * plane + (ty * TILE + row) * n + tx * TILE;
+            let changed = (0..channels).any(|c| (0..TILE).any(|row| diff.cells[at(c, row)..at(c, row) + TILE].iter().any(|&v| v != 0)));
+            if !changed {
+                return None;
             }
+            let mut cells = match cells_of(leaf, t) {
+                Ok(c) => c,
+                Err(e) => return Some(Err(e)),
+            };
+            for c in 0..channels {
+                for row in 0..TILE {
+                    let src = &diff.cells[at(c, row)..at(c, row) + TILE];
+                    let dst = &mut cells[c * TILE * TILE + row * TILE..c * TILE * TILE + (row + 1) * TILE];
+                    for (d, &v) in dst.iter_mut().zip(src) {
+                        *d = d.wrapping_add(v);
+                    }
+                }
+            }
+            Some(Ok((t, cells)))
+        })
+        .collect::<Result<_>>()?;
+    // Level by level up: the changed tiles encoded, their parents summed 2 x 2 from
+    // the changed children and the base's other children.
+    let mut dirty: Vec<HashSet<u32>> = vec![HashSet::new(); leaf + 1];
+    let mut encoded: Vec<Vec<(u32, Vec<u8>)>> = vec![Vec::new(); leaf + 1];
+    for l in (0..=leaf).rev() {
+        let ls = 1u32 << l;
+        dirty[l] = cur.keys().copied().collect();
+        encoded[l] = cur
+            .par_iter()
+            .filter(|(_, cells)| cells.iter().any(|&v| v != 0))
+            .map(|(&t, cells)| (t, encode_tile(l as u32, t % ls, t / ls, channels, cells, false)))
+            .collect();
+        if l == 0 {
+            break;
+        }
+        let ps = ls / 2;
+        let parents: HashSet<u32> = cur.keys().map(|&t| (t / ls / 2) * ps + (t % ls) / 2).collect();
+        let parents: Vec<u32> = parents.into_iter().collect();
+        let next: HashMap<u32, Vec<u32>> = parents
+            .par_iter()
+            .map(|&p| -> Result<(u32, Vec<u32>)> {
+                let (px, py) = (p % ps, p / ps);
+                let mut out = vec![0u32; cells_per];
+                for q in 0..4u32 {
+                    let ct = (py * 2 + q / 2) * ls + px * 2 + q % 2;
+                    let owned;
+                    let child: &[u32] = match cur.get(&ct) {
+                        Some(c) => c,
+                        None => {
+                            owned = cells_of(l, ct)?;
+                            &owned
+                        }
+                    };
+                    let (oy, ox) = ((q / 2) as usize * TILE / 2, (q % 2) as usize * TILE / 2);
+                    for c in 0..channels {
+                        let (src, dst) = (&child[c * TILE * TILE..(c + 1) * TILE * TILE], c * TILE * TILE);
+                        for row in 0..TILE {
+                            let d = dst + (oy + row / 2) * TILE + ox;
+                            for col in 0..TILE {
+                                out[d + col / 2] = out[d + col / 2].saturating_add(src[row * TILE + col]);
+                            }
+                        }
+                    }
+                }
+                Ok((p, out))
+            })
+            .collect::<Result<_>>()?;
+        cur = next;
+    }
+    let mut out = Packed { pack: Vec::with_capacity(base.len()), index: vec![HashMap::new(); leaf + 1], level_max: vec![0; leaf + 1], written: 0 };
+    for l in 0..=leaf {
+        for (&t, &[o, len]) in &bm.index[l] {
+            if dirty[l].contains(&t) {
+                continue;
+            }
+            let b = &base[o as usize..(o + len) as usize];
+            out.level_max[l] = out.level_max[l].max(header_max(b));
+            out.index[l].insert(t, [out.pack.len() as u64, len]);
+            out.pack.extend_from_slice(b);
+        }
+        for (t, b) in &encoded[l] {
+            out.level_max[l] = out.level_max[l].max(header_max(b));
+            out.index[l].insert(*t, [out.pack.len() as u64, b.len() as u64]);
+            out.pack.extend_from_slice(b);
+            out.written += 1;
         }
     }
-    Ok(())
+    Ok(out)
 }
 
 // ---------------------------------------------------------------- the store
@@ -982,5 +1129,58 @@ mod tests {
         assert_eq!(q(vec![a.clone(), b]).key(), q(vec![b2, a.clone()]).key());
         assert_ne!(q(vec![a]).key(), q(vec![]).key());
         assert_eq!(parse_clauses(&[clause_text(&Clause::Range { column: "t".into(), min: Some(2.5), max: None })]), vec![Clause::Range { column: "t".into(), min: Some(2.5), max: None }]);
+    }
+
+    /// Every tile of every level, decoded, by level and index.
+    fn tiles_of(p: &Packed) -> Vec<HashMap<u32, Vec<u32>>> {
+        p.index.iter().map(|idx| idx.iter().map(|(&t, &[o, len])| (t, decode_tile(&p.pack[o as usize..(o + len) as usize]).unwrap().cells)).collect()).collect()
+    }
+
+    #[test]
+    fn a_delta_rewrites_only_the_tiles_that_changed() {
+        // Leaf level 2 (4 x 4 tiles), two channels; cells pseudo-random, some tiles empty.
+        let (leaf, ch) = (2u32, 2usize);
+        let n = TILE << leaf;
+        let mut s: u64 = 7;
+        let mut a = vec![0u32; n * n * ch];
+        for (i, v) in a.iter_mut().enumerate() {
+            s ^= s << 13;
+            s ^= s >> 7;
+            s ^= s << 17;
+            let (x, y) = ((i % n) / TILE, ((i / n) % n) / TILE);
+            if (x + y) % 3 != 0 && s % 5 == 0 {
+                *v = (s % 1000) as u32;
+            }
+        }
+        let base = pack_full(pyramid(a.clone(), leaf, ch), ch);
+        let bm = Meta { leaf_level: leaf, channels: ch as u32, index: base.index.clone(), ..Default::default() };
+        // Rows out of tile (1, 2) and into the empty tile (0, 0); tile (3, 3) touched with no net change.
+        let mut b = a.clone();
+        let mut diff = Grid::new(n, ch);
+        let mut touched = vec![0u64; 1];
+        let mut change = |x: usize, y: usize, c: usize, d: i64| {
+            let i = c * n * n + y * n + x;
+            let nv = (b[i] as i64 + d) as u32;
+            diff.cells[i] = diff.cells[i].wrapping_add(nv.wrapping_sub(b[i]));
+            b[i] = nv;
+            let t = (y / TILE) * (1 << leaf) + x / TILE;
+            touched[0] |= 1 << t;
+        };
+        let at = |tx: usize, ty: usize, o: usize| (tx * TILE + o, ty * TILE + o);
+        let (x, y) = at(1, 2, 3);
+        change(x, y, 1, 5);
+        let (x, y) = at(1, 2, 40);
+        change(x, y, 0, -(a[y * n + x] as i64));
+        let (x, y) = at(0, 0, 9);
+        change(x, y, 0, 12);
+        let (x, y) = at(3, 3, 1);
+        change(x, y, 0, 3);
+        change(x, y, 0, -3);
+        let delta = pack_delta_from(&diff, &touched, &bm, &base.pack).unwrap();
+        let full = pack_full(pyramid(b, leaf, ch), ch);
+        assert_eq!(delta.level_max, full.level_max);
+        assert_eq!(tiles_of(&delta), tiles_of(&full));
+        // Two leaf tiles and their ancestors: (1,2) and (0,0) at level 2, their parents (0,1) and (0,0) at 1, the root.
+        assert_eq!(delta.written, 2 + 2 + 1);
     }
 }
