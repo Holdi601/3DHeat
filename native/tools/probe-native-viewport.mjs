@@ -2,7 +2,8 @@
  * The native viewport (Stage 5) against the web engine, in the same app, on the same load.
  *
  *   node native/tools/probe-native-viewport.mjs --dir <rowceiling folder> --rows 10,100
- *        [--exe <3dheat-app.exe>] [--out <folder>] [--seconds 8] [--cases heat,teams,filter,window|none]
+ *        [--exe <3dheat-app.exe>] [--out <folder>] [--seconds 8]
+ *        [--cases heat,teams,filter,window,split,figures,cubes|none]
  *        [--backends webgpu,native]
  *
  * For each load, starts the built app twice - the web engine (WebGPU in the app's
@@ -15,7 +16,8 @@
  *            compares its two paths - p50/p90/p99 of the lit texels within 1 %,
  *            SSIM >= 0.99 - and the composited pictures (mean and 99th percentile of
  *            the per-pixel difference, pixels off by more than 8/255); both written
- *            as PNG to --out
+ *            as PNG to --out. The box replay (figures, cubes) has no heat: its pictures
+ *            alone, within 1/255 on average and 1 % of pixels
  *   frames   camera orbit with the timeline playing: the page's frame intervals, and
  *            for the native viewport its own present intervals (p50 / p99 / max, the
  *            no-frame-drops rule: judged by p99 and max)
@@ -40,7 +42,7 @@ const dir = arg('dir', null);
 const loads = String(arg('rows', '10')).split(',').map((r) => Number(r) * 1e6);
 const out = resolve(arg('out', join(process.env.TEMP ?? '.', 'heat3d-native-viewport')));
 const secs = Number(arg('seconds', 8));
-const cases = String(arg('cases', 'heat,teams,filter,window,split')).split(',').filter((c) => c && c !== 'none');
+const cases = String(arg('cases', 'heat,teams,filter,window,split,figures,cubes')).split(',').filter((c) => c && c !== 'none');
 const backends = String(arg('backends', 'webgpu,native')).split(',');
 const PORT = Number(arg('port', 9336));
 const PER_FILE = 10_000_000;
@@ -229,7 +231,8 @@ async function run(rows, backend) {
       const eng = globalThis.__3dheat_engine;
       const until = performance.now() + 600_000;
       await new Promise((res) => setTimeout(res, 300));
-      while (performance.now() < until && eng.live.residentRows + eng.live.droppedRows < r.rows) await new Promise((res) => setTimeout(res, 20));
+      // The native renderer counts the rows it planned at once: its `dataPending` says when they are on the GPU.
+      while (performance.now() < until && (eng.live.residentRows + eng.live.droppedRows < r.rows || eng.renderer.dataPending)) await new Promise((res) => setTimeout(res, 20));
       return { rows: r.rows, loadMs: performance.now() - t0, resident: eng.live.residentRows, dropped: eng.live.droppedRows };
     }, mapping);
 
@@ -241,7 +244,7 @@ async function run(rows, backend) {
         const eng = globalThis.__3dheat_engine;
         const st = useStore.getState();
         const raf = () => new Promise((r) => requestAnimationFrame(r));
-        const base = JSON.parse(JSON.stringify({ heat: st.heat, budget: st.budget, mode: st.mode, timeline: st.timeline }));
+        const base = JSON.parse(JSON.stringify({ heat: st.heat, budget: st.budget, mode: st.mode, timeline: st.timeline, team: st.team }));
         st.patchBudget({ adaptive: false, exact: true, heatScale: 1 });
         eng.camera.setOrientationDegrees(30, -40);
         eng.frameDataset(true);
@@ -260,6 +263,16 @@ async function run(rows, backend) {
             st.setMode('heat-difference');
           }
         }
+        if (c === 'figures' || c === 'cubes') {
+          // The box replay at the middle of the recording: each unit as its figure, or as a cube.
+          const t = st.dataset.time;
+          let lo = Infinity, hi = -Infinity;
+          for (let i = 0; i < t.length; i += 997) { lo = Math.min(lo, t[i]); hi = Math.max(hi, t[i]); }
+          st.patchTeam({ figures: c === 'figures', showRawSamples: false });
+          st.patchTimeline({ mode: 'play' });
+          st.setMode('team');
+          st.seek(lo + (hi - lo) * 0.5);
+        }
         if (c === 'window') {
           const t = st.dataset.time;
           let lo = Infinity, hi = -Infinity;
@@ -274,7 +287,15 @@ async function run(rows, backend) {
         }
         // Converged: still frames until the field stops changing.
         for (let i = 0; i < 90; i++) await raf();
-        const f = await eng.renderer.readHeatField(0, true);
+        // And the exposure at rest: it follows the view with a glide once metered, and a backend
+        // whose readback lands a few frames later must not be caught mid-glide.
+        for (let i = 0, still = 0, last = NaN; i < 600 && still < 30; i++) {
+          await raf();
+          const s = eng.shownSaturation ?? useStore.getState().heat.saturation;
+          still = s === last ? still + 1 : 0;
+          last = s;
+        }
+        const f = c === 'figures' || c === 'cubes' ? null : await eng.renderer.readHeatField(0, true);
         const cap = await eng.captureFrame();
         const out = {
           field: f ? Array.from(f) : null,
@@ -282,6 +303,7 @@ async function run(rows, backend) {
           h: eng.canvas.height || Math.round(eng.canvas.clientHeight * devicePixelRatio),
           picture: cap ? { width: cap.width, height: cap.height, rgba: Array.from(cap.rgba) } : null,
           binned: eng.renderer.heatBinned ?? eng.renderer.binned ?? null,
+          saturation: eng.shownSaturation ?? useStore.getState().heat.saturation,
         };
         st.patchHeat(base.heat);
         st.patchBudget(base.budget);
@@ -289,6 +311,7 @@ async function run(rows, backend) {
         st.patchTimeline({ mode: base.timeline.mode, window: base.timeline.window, windowSeconds: base.timeline.windowSeconds });
         if (c === 'filter') st.setFilters([]);
         if (c === 'split') st.setSplit({ kind: 'teams' });
+        st.patchTeam(base.team);
         return out;
       }, c);
     }
@@ -355,6 +378,14 @@ for (const rows of loads) {
       a.picture && { ...a.picture, rgba: Uint8Array.from(a.picture.rgba) },
       b.picture && { ...b.picture, rgba: Uint8Array.from(b.picture.rgba) },
     );
+    if (c === 'figures' || c === 'cubes') {
+      // No heat in the box replay: the pictures alone, within a pixel's rounding at the figures' edges.
+      const bad = !pic || pic.mean > 1 || pic.offShare > 0.01;
+      if (bad) failed++;
+      console.log(`  ${bad ? 'FAIL' : 'ok  '} ${m} ${c}: ` + (pic ? `picture mean ${pic.mean.toFixed(2)}/255, p99 ${pic.p99}, ${pct(pic.offShare)} off by > 8` : 'no picture'));
+      summary.push({ rows, case: c, picture: pic });
+      continue;
+    }
     if (!a.field || !b.field || a.field.length !== b.field.length) {
       console.log(`  FAIL ${m} ${c}: fields ${a.field?.length ?? 'none'} vs ${b.field?.length ?? 'none'} values`);
       failed++;
@@ -365,7 +396,7 @@ for (const rows of loads) {
     const bad = v.lit === 0 || v.p50.err > 0.01 || v.p90.err > 0.01 || v.p99.err > 0.01 || v.ssim < 0.99;
     if (bad) failed++;
     console.log(
-      `  ${bad ? 'FAIL' : 'ok  '} ${m} ${c}: field p50 ${pct(v.p50.err)} p90 ${pct(v.p90.err)} p99 ${pct(v.p99.err)} total ${pct(v.total)} ssim ${v.ssim.toFixed(4)} (${v.lit} texels, binned web ${a.binned} native ${b.binned})` +
+      `  ${bad ? 'FAIL' : 'ok  '} ${m} ${c}: field p50 ${pct(v.p50.err)} p90 ${pct(v.p90.err)} p99 ${pct(v.p99.err)} total ${pct(v.total)} ssim ${v.ssim.toFixed(4)} (${v.lit} texels, binned web ${a.binned} native ${b.binned}, exposure web ${a.saturation?.toPrecision(4)} native ${b.saturation?.toPrecision(4)})` +
         (pic ? `; picture mean ${pic.mean.toFixed(2)}/255, p99 ${pic.p99}, ${pct(pic.offShare)} off by > 8` : '; no picture'),
     );
     summary.push({ rows, case: c, field: v, picture: pic });

@@ -14,6 +14,7 @@
  */
 
 import { SAMPLE_BLOCK, type ActiveFilter, type FrameParams } from '../types';
+import { INSTANCE_STRIDE, type FigureBatch } from '../../figures/instances';
 import type { ViewMode } from '../../state/types';
 import { PERSON_FILTER_COLUMN } from '../filterTables';
 
@@ -31,6 +32,25 @@ export const SECTION = {
   volumes: 7,
   /** The difference split's column and the value weight's (core names, '' for none). */
   values: 8,
+  /**
+   * The figures' instances (`FrameParams.figureBatches`), relative to `origin`: per batch its
+   * mesh id (the mesh sent before by `viewport_mesh`), its count, its instances.
+   */
+  figures: 9,
+  /** The box replay's cubes (`FrameParams.cubes`): count, then eight floats each. */
+  cubes: 10,
+  /**
+   * The scene's own triangles and lines, seven floats a vertex (xyz, rgba), each a vertex count
+   * and its floats: `sceneTris` (figures' weapons and effects, the race tab's lines), `trailVerts`,
+   * `overlayVerts` (the ruler and probe, drawn without depth).
+   */
+  geometry: 11,
+  /**
+   * The far-off glyphs the CPU placed (`FrameParams.symbols`): style, mode, ticks, the 16 sides'
+   * colours (64 floats), then the instance count and the instances (the atlas goes once, by
+   * `viewport_glyphs`).
+   */
+  symbols: 12,
 } as const;
 
 /** The frame's numbers, in packet order, with how many floats each takes. */
@@ -122,6 +142,14 @@ export const FRAME_FIELDS: ReadonlyArray<readonly [string, number]> = [
   ['showAxes', 1],
   ['gridSpacing', 1],
   ['gridExtent', 1],
+  /** The figures' view: relative to `origin` (`FrameParams.viewProjRel`). */
+  ['viewProjRel', 16],
+  ['origin', 3],
+  /** The spinning parts' clock, seconds (the page's, so both draw the same turn). */
+  ['spinTime', 1],
+  ['cubeSize', 1],
+  ['showLook', 1],
+  ['lookLength', 1],
 ];
 
 /** Each field's first float. */
@@ -211,6 +239,14 @@ export class PacketWriter {
     this.at += n;
   }
 
+  /** Room for `n` floats, written by the caller through the returned view (valid until the next write). */
+  reserveFloats(n: number): Float32Array {
+    this.ensure(n);
+    const at = this.at;
+    this.at += n;
+    return this.f32.subarray(at, at + n);
+  }
+
   /** Bytes, padded to whole words. */
   bytes(b: Uint8Array): void {
     const n = Math.ceil(b.length / 4);
@@ -233,7 +269,7 @@ export class PacketWriter {
 }
 
 /** The frame's numbers (`FRAME_FIELDS`), into an open section. */
-export function writeFrame(w: PacketWriter, p: FrameParams, palette: number, viewX = 0, viewY = 0): void {
+export function writeFrame(w: PacketWriter, p: FrameParams, palette: number, viewX = 0, viewY = 0, spinTime = 0): void {
   const f = new Float32Array(FRAME_WORDS);
   const set = (name: string, v: number | boolean) => {
     f[FRAME_AT[name]] = typeof v === 'boolean' ? (v ? 1 : 0) : v;
@@ -332,7 +368,31 @@ export function writeFrame(w: PacketWriter, p: FrameParams, palette: number, vie
   set('showAxes', p.showAxes);
   set('gridSpacing', p.gridSpacing);
   set('gridExtent', p.gridExtent);
+  f.set(p.viewProjRel, FRAME_AT.viewProjRel);
+  f.set(p.origin.slice(0, 3), FRAME_AT.origin);
+  set('spinTime', spinTime);
+  set('cubeSize', p.cubeSize);
+  set('showLook', p.showLookDirection);
+  set('lookLength', p.lookLength);
   w.floats(f);
+}
+
+/**
+ * The figures' instances into an open section, as they are: the figure replay writes them
+ * relative to the frame's origin already (`FrameParams.viewProjRel`). `sent` says which
+ * meshes the viewport has whole; the others are left out this frame, as the web leaves out a
+ * mesh still on its way.
+ */
+export function writeFigures(w: PacketWriter, batches: readonly FigureBatch[], sent: (id: number) => boolean): void {
+  let n = 0;
+  for (const b of batches) if (b.count > 0 && sent(b.mesh.id)) n++;
+  w.word(n);
+  for (const b of batches) {
+    if (!(b.count > 0) || !sent(b.mesh.id)) continue;
+    w.word(b.mesh.id);
+    w.word(b.count);
+    w.reserveFloats(b.count * INSTANCE_STRIDE).set(b.data.subarray(0, b.count * INSTANCE_STRIDE));
+  }
 }
 
 /**

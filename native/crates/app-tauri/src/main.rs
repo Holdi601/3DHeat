@@ -155,6 +155,9 @@ fn main() {
             viewport::viewport_capture,
             viewport::viewport_read_heat,
             viewport::viewport_probe,
+            viewport::viewport_snapshot,
+            viewport::viewport_mesh,
+            viewport::viewport_glyphs,
             viewport::viewport_times
         ])
         .register_asynchronous_uri_scheme_protocol("heat3d", move |_ctx, request, responder| {

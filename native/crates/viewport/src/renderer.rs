@@ -276,6 +276,8 @@ pub struct Renderer {
     mesh: wgpu::RenderPipeline,
     line: wgpu::RenderPipeline,
     grid: Option<(String, wgpu::Buffer, u32)>,
+    /// The box replay's figures and cubes (`figures.rs`).
+    pub figures: crate::figures::Figures,
     filter_pass: wgpu::ComputePipeline,
     bin: Option<HeatBin>,
     // Targets.
@@ -413,7 +415,7 @@ impl Renderer {
             required_limits: limits,
             ..Default::default()
         }))?;
-        device.on_uncaptured_error(Arc::new(|e| eprintln!("viewport: GPU error: {e}")));
+        device.on_uncaptured_error(Arc::new(|e| eprintln!("viewport: GPU error: {e:?}")));
         let heat_format = if heat_f32 { wgpu::TextureFormat::R32Float } else { wgpu::TextureFormat::R16Float };
 
         let sampler = device.create_sampler(&wgpu::SamplerDescriptor {
@@ -497,6 +499,7 @@ impl Renderer {
             }),
         );
         let filter_pass = compute(&device, &m_filter, "main");
+        let figures = crate::figures::Figures::new(&device);
         let m_line = module(&device, "line", W_LINE);
         const LINE_ATTRS: [wgpu::VertexAttribute; 2] = wgpu::vertex_attr_array![0 => Float32x3, 1 => Float32x4];
         let line = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
@@ -583,6 +586,7 @@ impl Renderer {
             mesh,
             line,
             grid: None,
+            figures,
             filter_pass,
             bin,
             width: 0,
@@ -858,10 +862,13 @@ impl Renderer {
     /// (`FilterStaging`: the heat never mixes chunks filtered two ways).
     fn want_filters(&mut self, f: FilterSet) {
         let mut missing = Vec::new();
-        for c in self.chunks.iter().flatten() {
-            for flt in &f.filters {
-                if !c.columns.contains_key(&flt.column) {
-                    missing.push((c.index, flt.column.clone()));
+        // The split's and the weight's columns stay wanted when the filters change.
+        let values = [self.value_cols.0.clone(), self.value_cols.1.clone()];
+        let names = f.filters.iter().map(|flt| flt.column.clone()).chain(values.into_iter().filter(|n| !n.is_empty()));
+        for name in names {
+            for c in self.chunks.iter().flatten() {
+                if !c.columns.contains_key(&name) && !self.failed_columns.contains(&(c.index, name.clone())) {
+                    missing.push((c.index, name.clone()));
                 }
             }
         }
@@ -891,7 +898,9 @@ impl Renderer {
                 self.applied = Some(w);
             }
         }
-        self.stats.filters_pending = self.wanted.is_some();
+        // The split's or the weight's column on its way counts too: the page keeps drawing until it lands.
+        let values = [&self.value_cols.0, &self.value_cols.1];
+        self.stats.filters_pending = self.wanted.is_some() || self.missing_columns.iter().any(|(_, n)| values.iter().any(|v| !v.is_empty() && *v == n));
     }
 
     /// A column a chunk lacked has arrived, or will never: try the filters again.
@@ -911,6 +920,7 @@ impl Renderer {
         let t0 = Instant::now();
         self.ring.data.clear();
         let mut encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some("frame") });
+        self.figures.begin();
         let mut last: Option<Packet> = None;
         for p in packets {
             self.take_tables(p);
@@ -974,6 +984,7 @@ impl Renderer {
         if !self.ring.data.is_empty() {
             self.queue.write_buffer(&self.ring.buf, 0, &self.ring.data);
         }
+        self.figures.flush(&self.queue);
         self.queue.submit(Some(encoder.finish()));
         self.map_readbacks();
         self.last_frame = Some(p);
@@ -1006,7 +1017,8 @@ impl Renderer {
         let f = p.frame.as_ref().unwrap();
         u[..16].copy_from_slice(&f[F_VIEW_PROJ..F_VIEW_PROJ + 16]);
         u[16..19].copy_from_slice(&f[F_CAMERA_POS..F_CAMERA_POS + 3]);
-        u[19] = 0.0;
+        // The figures' spinning parts' clock (camera.w), the page's.
+        u[19] = p.f(F_SPIN_TIME);
         u[20] = fade.0;
         u[21] = fade.1;
         u[22] = size;
@@ -1065,6 +1077,48 @@ impl Renderer {
                 entries: &[wgpu::BindGroupEntry { binding: 0, resource: self.ring.binding(off, SCENE_UNIFORM_BYTES) }],
             })
         });
+        // The figures and cubes: their instances in the frame's vertex buffer, their uniforms as
+        // `drawScene` pushes them (the cubes' size, the look lines' length, the figures relative to the origin).
+        let figs = self.figures.prepare(&self.device, &self.queue, p);
+        let fig_groups = if figs.is_empty() {
+            None
+        } else {
+            let far = (1e9, 1e9 + 1.0);
+            let cube = self.scene_uniform(p, far, p.f(F_CUBE_SIZE), 1.0, false, false);
+            let look = self.scene_uniform(p, far, p.f(F_LOOK_LENGTH), 1.0, false, false);
+            let mut rel = self.scene_uniform(p, far, 0.0, 1.0, false, false);
+            {
+                let f = p.frame.as_ref().unwrap();
+                let mut put = |lane: usize, v: f32| rel[lane * 4..lane * 4 + 4].copy_from_slice(&v.to_le_bytes());
+                for k in 0..16 {
+                    put(k, f[F_VIEW_PROJ_REL + k]);
+                }
+                for k in 0..3 {
+                    put(16 + k, f[F_CAMERA_POS + k] - f[F_ORIGIN + k]);
+                }
+            }
+            let plain = self.scene_uniform(p, far, 0.0, 1.0, false, false);
+            // The glyphs' uniforms (`GpuSymbols.write`): the view, the canvas, the style, the camera, the sides.
+            let glyph = p.glyphs.as_ref().filter(|_| crate::figures::Figures::has_glyphs(&figs)).map(|gl| {
+                let f = p.frame.as_ref().unwrap();
+                let mut u = vec![0f32; SYMBOL_UNIFORM_FLOATS as usize];
+                u[..16].copy_from_slice(&f[F_VIEW_PROJ..F_VIEW_PROJ + 16]);
+                u[16] = p.f(F_WIDTH);
+                u[17] = p.f(F_HEIGHT);
+                u[18] = gl.style;
+                u[19] = gl.mode;
+                u[20] = gl.ticks;
+                u[21] = 1.0;
+                u[24..27].copy_from_slice(&f[F_CAMERA_POS..F_CAMERA_POS + 3]);
+                let n = gl.sides.len().min(64);
+                u[28..28 + n].copy_from_slice(&gl.sides[..n]);
+                self.ring.push(bytemuck::cast_slice(&u), 256)
+            });
+            let (c, l, r, o) = (self.ring.push(&cube, 256), self.ring.push(&look, 256), self.ring.push(&rel, 256), self.ring.push(&plain, 256));
+            let g = |off| self.figures.group(&self.device, &self.ring.buf, off);
+            let glyph = glyph.and_then(|off| self.figures.glyph_group(&self.device, &self.ring.buf, off));
+            Some((g(c), p.flag(F_SHOW_LOOK).then(|| g(l)), g(r), g(o), glyph))
+        };
         let scene = &self.scene.as_ref().unwrap().1;
         let depth = &self.depth.as_ref().unwrap().1;
         let groups = ground.map(|off| {
@@ -1118,6 +1172,21 @@ impl Renderer {
                 pass.set_vertex_buffer(0, buf.slice(..));
                 pass.draw(0..*n, 0..1);
             }
+        }
+        // In `drawScene`'s order: cubes, figures, the scene's triangles, trails; then what is
+        // see-through, depth tested but not writing depth (`SEE_THROUGH_BELOW`); the far-off glyphs
+        // over all of it; the overlay last.
+        if let Some((cube, look, rel, plain, glyph)) = &fig_groups {
+            self.figures.draw_cubes(&mut pass, &figs, cube, look.as_ref());
+            self.figures.draw(&mut pass, &figs, rel, false);
+            self.figures.draw_tris(&mut pass, &figs, plain, false);
+            self.figures.draw_trails(&mut pass, &figs, plain);
+            self.figures.draw(&mut pass, &figs, rel, true);
+            self.figures.draw_tris(&mut pass, &figs, plain, true);
+            if let Some(g) = glyph {
+                self.figures.draw_glyphs(&mut pass, &figs, g);
+            }
+            self.figures.draw_overlay(&mut pass, &figs, plain);
         }
     }
 

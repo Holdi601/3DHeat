@@ -31,7 +31,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev libwayland-dev libxdo-dev libssl-dev patchelf libvulkan1
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev libwayland-dev libxdo-dev libssl-dev patchelf libvulkan1 mesa-vulkan-drivers
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: native
@@ -49,6 +49,13 @@ jobs:
       - name: Core tests
         working-directory: native
         run: cargo test -p heat3d-core -p heat3d-proto -p heat3d-library -p heat3d-session -p heat3d-server -p heat3d-extractors -p heat3d-viewport
+      - name: Native viewport on lavapipe (software Vulkan)
+        if: runner.os == 'Linux'
+        working-directory: native
+        env:
+          HEAT3D_GPU_SMOKE: '1'
+          WGPU_BACKEND: vulkan
+        run: cargo test -p heat3d-viewport --test gpu_smoke -- --nocapture
       - name: Viewer tests of the shared vectors and the native viewport's shader copies
         run: npx vitest run src/data/containerVectors.test.ts src/render/native/shaderExport.test.ts
       - name: Icons

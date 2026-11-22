@@ -10,11 +10,12 @@ use heat3d_core::dataset::Dataset;
 
 use crate::renderer::GpuChunk;
 
+/// COPY_SRC too: a column is copied on the GPU into a chunk's split and weight values.
 fn mapped(device: &wgpu::Device, label: &str, bytes: u64) -> wgpu::Buffer {
     device.create_buffer(&wgpu::BufferDescriptor {
         label: Some(label),
         size: bytes.max(4).next_multiple_of(4),
-        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::COPY_SRC,
         mapped_at_creation: true,
     })
 }
@@ -169,7 +170,7 @@ pub fn page_column(device: &wgpu::Device, bytes: &[u8]) -> anyhow::Result<(usize
         device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("filter column"),
             contents: &bytes[at..at + rows * 4],
-            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::COPY_SRC,
         })
     });
     Ok((chunk, name, buf))

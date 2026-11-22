@@ -49,6 +49,28 @@ pub struct Packet {
     pub volumes: Option<Vec<f32>>,
     /// The difference split's column and the value weight's (core names, empty for none).
     pub values: Option<(String, String)>,
+    /// The figures this frame: per batch its mesh id and instance count, the instances end to end
+    /// (`INSTANCE_STRIDE` floats each, relative to `F_ORIGIN`).
+    pub figures: Vec<(u32, u32)>,
+    pub instances: Vec<f32>,
+    /// The box replay's cubes, eight floats each.
+    pub cubes: Vec<f32>,
+    /// The scene's triangles, trails and overlay lines, seven floats a vertex (xyz, rgba).
+    pub tris: Vec<f32>,
+    pub trails: Vec<f32>,
+    pub overlay: Vec<f32>,
+    /// The far-off glyphs the CPU placed: style, mode, ticks, the sides' colours (64 floats), the
+    /// instances (`INSTANCE_STRIDE` floats each).
+    pub glyphs: Option<Glyphs>,
+}
+
+#[derive(Clone, Default)]
+pub struct Glyphs {
+    pub style: f32,
+    pub mode: f32,
+    pub ticks: f32,
+    pub sides: Vec<f32>,
+    pub instances: Vec<f32>,
 }
 
 impl Packet {
@@ -149,6 +171,34 @@ pub fn decode(bytes: &[u8]) -> Result<Packet> {
                 let len = s.take()? as usize;
                 let table = s.slice(len)?.to_vec();
                 p.filters = Some(FilterSet { generation, filters, table });
+            }
+            SECTION_FIGURES => {
+                let n = s.take()?;
+                for _ in 0..n {
+                    let mesh = s.take()?;
+                    let count = s.take()?;
+                    let words = s.slice(count as usize * INSTANCE_STRIDE as usize)?;
+                    p.figures.push((mesh, count));
+                    p.instances.extend(words.iter().map(|w| f32::from_bits(*w)));
+                }
+            }
+            SECTION_GEOMETRY => {
+                for out in [&mut p.tris, &mut p.trails, &mut p.overlay] {
+                    let n = s.take()? as usize;
+                    *out = s.slice(n * 7)?.iter().map(|w| f32::from_bits(*w)).collect();
+                }
+            }
+            SECTION_SYMBOLS => {
+                let f = |w: &[u32]| w.iter().map(|x| f32::from_bits(*x)).collect::<Vec<f32>>();
+                let head = f(s.slice(3)?);
+                let sides = f(s.slice(64)?);
+                let n = s.take()? as usize;
+                let instances = f(s.slice(n * INSTANCE_STRIDE as usize)?);
+                p.glyphs = Some(Glyphs { style: head[0], mode: head[1], ticks: head[2], sides, instances });
+            }
+            SECTION_CUBES => {
+                let n = s.take()? as usize;
+                p.cubes = s.slice(n * 8)?.iter().map(|w| f32::from_bits(*w)).collect();
             }
             _ => bail!("unknown section {tag}"),
         }

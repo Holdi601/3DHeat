@@ -43,6 +43,10 @@ pub enum Msg {
     ReadHeat(usize, Reply<Option<Vec<f32>>>),
     /// The heat under a canvas pixel.
     Probe(f32, f32, Reply<Option<f32>>),
+    /// A slice of a figure mesh (`Figures::mesh_slice`).
+    Mesh(Vec<u8>),
+    /// The glyph atlas (`Figures::set_atlas`).
+    Glyphs(Vec<u8>),
     Times(Reply<String>),
     Hide(bool),
     Stop,
@@ -281,8 +285,13 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                     Ok((chunk, name, Some(buf))) => {
                         r.add_column(chunk, name, buf);
                         r.columns_settled();
+                        // Composited again so the counters (filtersPending) follow.
+                        dirty = true;
                     }
-                    Ok((chunk, name, None)) => r.column_failed(chunk, &name),
+                    Ok((chunk, name, None)) => {
+                        r.column_failed(chunk, &name);
+                        dirty = true;
+                    }
                     Err(e) => eprintln!("viewport: {e:#}"),
                 },
                 Msg::Chunk(gen, c) => {
@@ -303,6 +312,7 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                             None => r.column_failed(chunk, &name),
                         }
                         r.columns_settled();
+                        dirty = true;
                     }
                 }
                 Msg::Level(l) => {
@@ -314,6 +324,16 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                     want_capture = true;
                 }
                 Msg::ReadHeat(max, reply) => r.request_heat(max, reply),
+                Msg::Glyphs(bytes) => {
+                    if let Err(e) = r.figures.set_atlas(&r.device, &r.queue, &bytes) {
+                        eprintln!("viewport: {e:#}");
+                    }
+                }
+                Msg::Mesh(bytes) => {
+                    if let Err(e) = r.figures.mesh_slice(&r.device, &r.queue, &bytes) {
+                        eprintln!("viewport: {e:#}");
+                    }
+                }
                 Msg::Probe(x, y, reply) => {
                     r.request_probe(x, y, reply);
                     want_capture = true;

@@ -25,6 +25,9 @@ fn main() {
                 "viewport_capture",
                 "viewport_read_heat",
                 "viewport_probe",
+                "viewport_snapshot",
+                "viewport_mesh",
+                "viewport_glyphs",
                 "viewport_times",
             ])),
     )

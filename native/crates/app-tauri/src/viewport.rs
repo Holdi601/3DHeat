@@ -100,6 +100,21 @@ pub fn viewport_column(window: WebviewWindow, request: Request<'_>) {
     with(&window, |v| v.send(Msg::PageColumn(bytes)));
 }
 
+/// A slice of a figure mesh (raw: id, vertices, total bytes, offset, then the bytes; a total of 0
+/// lets the mesh go, and id `u32::MAX` with it every mesh).
+#[tauri::command]
+pub fn viewport_mesh(window: WebviewWindow, request: Request<'_>) {
+    let bytes = raw(&request).to_vec();
+    with(&window, |v| v.send(Msg::Mesh(bytes)));
+}
+
+/// The glyph atlas the page made (raw RGBA8, `ATLAS_WIDTH` x `ATLAS_HEIGHT`).
+#[tauri::command]
+pub fn viewport_glyphs(window: WebviewWindow, request: Request<'_>) {
+    let bytes = raw(&request).to_vec();
+    with(&window, |v| v.send(Msg::Glyphs(bytes)));
+}
+
 /// The level's ground (raw: vertex floats, index count, has colours; then positions+normals,
 /// colours, indices), or an empty body for none.
 #[tauri::command]
@@ -175,6 +190,13 @@ pub async fn viewport_probe(window: WebviewWindow, x: f32, y: f32) -> Result<Opt
     })
     .ok_or("no viewport")?;
     tauri::async_runtime::spawn_blocking(move || rx.recv_timeout(std::time::Duration::from_secs(5)).ok().flatten()).await.map_err(|e| e.to_string())
+}
+
+/// The viewport's counters as `viewport_frame` answers them, without a frame: the page asks
+/// while columns or rows are on their way and it draws nothing itself.
+#[tauri::command]
+pub fn viewport_snapshot(window: WebviewWindow) -> String {
+    with(&window, |v| v.snapshot.lock().json.clone()).unwrap_or_default()
 }
 
 /// Present intervals and CPU times since the last call (the parity probe).

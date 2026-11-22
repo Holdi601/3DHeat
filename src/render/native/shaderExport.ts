@@ -4,7 +4,8 @@
  * The native renderer (`native/crates/viewport`) runs the same WGSL the page
  * does, compiled by naga instead of Dawn: the splat, the compute binning of
  * Stage 0 (bin, resolve, kernel table, fold, listed splat), the filter pass,
- * the accumulation merge, the composite and the level's mesh. The texts are
+ * the accumulation merge, the composite, the level's mesh, the lines, the figures,
+ * the cubes and their look lines, the far-off glyphs. The texts are
  * built here from the same sources, constants and all, and written beside the
  * crate as `.wgsl` files with a `generated.rs` of the numbers the Rust side
  * packs uniforms by. `shaderExport.test.ts` keeps the committed copies equal to
@@ -37,6 +38,7 @@ import {
 import {
   COMPOSITE_UNIFORM_BYTES,
   COMPOSITE_WGSL,
+  CUBE_WGSL,
   DECAY_WGSL,
   FILTER_PASS_WGSL,
   FLAG_CONSERVE,
@@ -52,6 +54,7 @@ import {
   HEAT_UNIFORM_BYTES,
   HEAT_WGSL,
   LINE_WGSL,
+  LOOK_WGSL,
   MERGE_WGSL,
   MESH_WGSL,
 } from '../webgpu/shaders';
@@ -59,6 +62,10 @@ import { CHUNK_ROWS, FILTER_MASK_WIDTH, MAX_PLAN_BLOCKS, SAMPLE_BLOCK } from '..
 import { LUT_HEIGHT, LUT_WIDTH } from '../colors';
 import { CURVE_LUT_SIZE } from '../../state/curve';
 import { VOLUME_BLOCK_FLOATS } from '../../volumes/gpu';
+import { figureWgsl, SEE_THROUGH_BELOW } from '../figureShaders';
+import { INSTANCE_STRIDE, MESH_STRIDE } from '../../figures/instances';
+import { ATLAS_HEIGHT, ATLAS_WIDTH } from '../symbols/atlas';
+import { SYMBOL_UNIFORM_FLOATS, symbolWgsl } from '../symbols/shaders';
 import { FRAME_FIELDS, FRAME_WORDS, PACKET_MAGIC, PACKET_VERSION, SECTION } from './framePacket';
 
 /** The shaders, by file name. */
@@ -76,6 +83,10 @@ export function nativeShaders(): Record<string, string> {
     'composite.wgsl': COMPOSITE_WGSL,
     'mesh.wgsl': MESH_WGSL,
     'line.wgsl': LINE_WGSL,
+    'figure.wgsl': figureWgsl(),
+    'cube.wgsl': CUBE_WGSL,
+    'look.wgsl': LOOK_WGSL,
+    'symbol.wgsl': symbolWgsl(),
   };
 }
 
@@ -103,6 +114,12 @@ export function nativeConstants(): string {
   int('LUT_WIDTH', LUT_WIDTH);
   int('LUT_HEIGHT', LUT_HEIGHT);
   int('CURVE_LUT_SIZE', CURVE_LUT_SIZE);
+  int('MESH_STRIDE', MESH_STRIDE);
+  int('INSTANCE_STRIDE', INSTANCE_STRIDE);
+  flt('SEE_THROUGH_BELOW', SEE_THROUGH_BELOW);
+  int('ATLAS_WIDTH', ATLAS_WIDTH);
+  int('ATLAS_HEIGHT', ATLAS_HEIGHT);
+  int('SYMBOL_UNIFORM_FLOATS', SYMBOL_UNIFORM_FLOATS);
   for (const [k, v] of Object.entries({
     FLAG_PERSPECTIVE,
     FLAG_GROUND_PROJECTED,

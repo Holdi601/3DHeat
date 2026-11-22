@@ -15,9 +15,12 @@
  *
  * Drawn natively so far: the heat (points; binned or splatted as on the web),
  * team colours, the difference (by group or a column), value weights, filters,
- * time window, lifetimes, the slice and the distance cull, a model level's ground. Not yet: figures,
- * tracks, trails, structures and their occlusion layers, image levels, world
- * tiles, line heat, directions, the rate map, overlays drawn into the canvas.
+ * time window, lifetimes, the slice and the distance cull, a model level's ground, the box
+ * replay's figures (placed on the CPU: `gpuTracksMaxBytes` is 0 here) and cubes, their meshes
+ * sent a slice a frame as `GpuFigures` writes them, the far-off glyphs the CPU placed, the
+ * scene's triangles, the trails and the overlay lines. Not yet: GPU tracks, structures and
+ * their occlusion layers, image levels, world tiles, line heat, directions, the rate map,
+ * the objectives and the lines over the finished picture.
  */
 
 import type { Dataset } from '../../state/types';
@@ -39,7 +42,10 @@ import { teamPaletteIndex } from '../colors';
 import { filterColumnData, packFilterTable, packSignTables } from '../filterTables';
 import { CURVE_LUT_SIZE } from '../../state/curve';
 import { VOLUME_BLOCK_FLOATS } from '../../volumes/gpu';
-import { PacketWriter, SECTION, coreColumnName, writeFilters, writeFrame, writePlan } from './framePacket';
+import { PacketWriter, SECTION, coreColumnName, writeFigures, writeFilters, writeFrame, writePlan } from './framePacket';
+import { INSTANCE_STRIDE, MESH_STRIDE, type FigureMesh } from '../../figures/instances';
+import { symbolAtlas } from '../symbols/atlas';
+import { markResident, nextToUpload, playbackStarting, setMeshUploader, uploadsWaiting } from '../../figures/residency';
 
 interface Tauri {
   invoke(cmd: string, args?: unknown, options?: unknown): Promise<unknown>;
@@ -85,6 +91,9 @@ interface Snapshot {
 
 const SIGN_SCRATCH = new Float32Array(FILTER_MASK_WIDTH * 2);
 const DATA_SLICE_ROWS = 262_144;
+/** Figure mesh bytes sent in one frame at most, as `GpuFigures` writes them; less while playback starts. */
+const MESH_BYTES_PER_FRAME = 2 * 1024 * 1024;
+const MESH_BYTES_STARTING = 512 * 1024;
 
 function clampU16(v: number): number {
   return v < 0 ? 0 : v > 65535 ? 65535 : (v + 0.5) | 0;
@@ -131,6 +140,10 @@ export class NativeRenderer implements Renderer {
     if (!t) throw new Error('not in the native app');
     const info = (await t.invoke('viewport_start')) as string;
     document.documentElement.classList.add('native-viewport');
+    // Figure meshes go over a slice a frame (`figures/residency.ts`); a viewport still running from
+    // this window's last page lets the old ones go first, as their ids start over with the page.
+    await t.invoke('viewport_mesh', new Uint8Array(new Uint32Array([0xffffffff, 0, 0, 0]).buffer)).catch(() => {});
+    setMeshUploader(true);
     return new NativeRenderer(canvas, info);
   }
 
@@ -162,6 +175,32 @@ export class NativeRenderer implements Renderer {
 
   get filtersPending(): boolean {
     return this.snap.filtersPending ?? false;
+  }
+
+  /**
+   * Filter, split or weight columns, or rows, still on their way to the viewport. The engine
+   * draws a fresh frame when this turns false, so a still view takes them in; meanwhile the
+   * counters are asked for between frames, as no frame may be sent to carry them back.
+   */
+  get uploadsPending(): boolean {
+    const pending = (this.snap.filtersPending ?? false) || this.dataPending;
+    if (pending) this.pollSnapshot();
+    return pending || this.uploading;
+  }
+
+  private polling = false;
+
+  private pollSnapshot(): void {
+    if (this.polling) return;
+    this.polling = true;
+    setTimeout(() => {
+      void this.invoke('viewport_snapshot')
+        .then((s) => {
+          if (typeof s === 'string' && s) this.snap = JSON.parse(s) as Snapshot;
+        })
+        .catch(() => {})
+        .finally(() => (this.polling = false));
+    }, 50);
   }
 
   /** Whether the last frame was binned (Stage 0's path), for probes. */
@@ -346,11 +385,59 @@ export class NativeRenderer implements Renderer {
     const r = this.canvas.getBoundingClientRect();
     const dpr = p.width / Math.max(1, r.width);
     w.open(SECTION.frame);
-    writeFrame(w, p, teamPaletteIndex(), Math.round(r.left * dpr), Math.round(r.top * dpr));
+    // The spinning parts' clock as `pushSceneUniform` has it: seconds, wrapped before float32 loses the fraction.
+    writeFrame(w, p, teamPaletteIndex(), Math.round(r.left * dpr), Math.round(r.top * dpr), (performance.now() / 1000) % 3600);
     w.close();
     w.open(SECTION.plan);
     writePlan(w, p.plan, MAX_PLAN_BLOCKS);
     w.close();
+    // The figures: meshes a slice a frame (as `GpuFigures` writes them), the frame's instances here.
+    this.pumpMeshes();
+    if (p.figureBatches && p.figureBatches.length) {
+      this.meshFrame++;
+      for (const b of p.figureBatches) if (b.count > 0) this.meshFor(b.mesh);
+      w.open(SECTION.figures);
+      writeFigures(w, p.figureBatches, (id) => this.meshes.has(id));
+      w.close();
+      this.evictMeshes();
+    }
+    if (p.cubes && p.cubeCount > 0) {
+      w.open(SECTION.cubes);
+      w.word(p.cubeCount);
+      w.reserveFloats(p.cubeCount * 8).set(p.cubes.subarray(0, p.cubeCount * 8));
+      w.close();
+    }
+    // The far-off glyphs the CPU placed, once the atlas is over (it is made once, on the page).
+    const glyphs = p.symbols?.cpu && p.symbols.cpu.count > 0 ? p.symbols : null;
+    if (glyphs && !this.atlasSent) {
+      const pixels = symbolAtlas();
+      if (pixels) {
+        this.atlasSent = true;
+        void this.invoke('viewport_glyphs', pixels).catch((e: unknown) => console.warn('native viewport: glyph atlas', e));
+      }
+    }
+    if (glyphs && this.atlasSent) {
+      const g = glyphs.cpu!;
+      w.open(SECTION.symbols);
+      w.float(glyphs.style);
+      w.float(glyphs.mode);
+      w.float(glyphs.ticks ? 1 : 0);
+      w.reserveFloats(64).set(glyphs.sides.subarray(0, 64));
+      w.word(g.count);
+      w.reserveFloats(g.count * INSTANCE_STRIDE).set(g.data.subarray(0, g.count * INSTANCE_STRIDE));
+      w.close();
+    }
+    const tris = p.sceneTris && p.sceneTriVertCount > 0 ? p.sceneTriVertCount : 0;
+    const trails = p.trailVerts && p.trailVertCount > 0 ? p.trailVertCount : 0;
+    const overlay = p.overlayVerts && p.overlayVertCount > 0 ? p.overlayVertCount : 0;
+    if (tris + trails + overlay > 0) {
+      w.open(SECTION.geometry);
+      for (const [data, n] of [[p.sceneTris, tris], [p.trailVerts, trails], [p.overlayVerts, overlay]] as const) {
+        w.word(n);
+        if (n > 0) w.reserveFloats(n * 7).set(data!.subarray(0, n * 7));
+      }
+      w.close();
+    }
     if (p.colorLutDirty || all) {
       w.open(SECTION.colorLut);
       w.bytes(p.colorLut);
@@ -411,6 +498,91 @@ export class NativeRenderer implements Renderer {
       this.resend = true;
     }
     return { gpuMs: null };
+  }
+
+  // ------------------------------------------------------------ figure meshes
+
+  /** Meshes the viewport has whole, by id, with the frame each was last drawn in. */
+  private readonly meshes = new Map<number, { used: number }>();
+  /** Meshes part way over, by id: how many bytes are sent. */
+  private readonly meshPartial = new Map<number, { mesh: FigureMesh; at: number }>();
+  private meshFrame = 0;
+  /** The glyph atlas went over (`viewport_glyphs`); it is the same for the page's life. */
+  private atlasSent = false;
+  private meshBytes = 0;
+  private meshBudget = MESH_BYTES_PER_FRAME;
+
+  /** Whether `mesh` is whole in the viewport; if not, sends what this frame's budget allows of it. */
+  private meshFor(mesh: FigureMesh): boolean {
+    const m = this.meshes.get(mesh.id);
+    if (m) {
+      m.used = this.meshFrame;
+      return true;
+    }
+    let u = this.meshPartial.get(mesh.id);
+    if (!u) {
+      if (this.meshBytes >= this.meshBudget) return false;
+      u = { mesh, at: 0 };
+      this.meshPartial.set(mesh.id, u);
+    }
+    return this.sendMesh(u);
+  }
+
+  /** One slice of a mesh (`viewport_mesh`: id, vertices, total bytes, offset, then the bytes). */
+  private sendMesh(u: { mesh: FigureMesh; at: number }): boolean {
+    const d = u.mesh.data;
+    const room = this.meshBudget - this.meshBytes;
+    if (room <= 0) return false;
+    // Whole vertices, so the viewport's see-through test reads each one once.
+    const V = MESH_STRIDE * 4;
+    const n = Math.min(d.byteLength - u.at, Math.max(V, Math.floor(room / V) * V));
+    if (n > 0) {
+      const buf = new ArrayBuffer(16 + n);
+      new Uint32Array(buf, 0, 4).set([u.mesh.id, u.mesh.count, d.byteLength, u.at]);
+      new Uint8Array(buf, 16).set(new Uint8Array(d.buffer, d.byteOffset + u.at, n));
+      void this.invoke('viewport_mesh', new Uint8Array(buf)).catch((e: unknown) => console.warn('native viewport: mesh', e));
+      u.at += n;
+      this.meshBytes += n;
+    }
+    if (u.at < d.byteLength) return false;
+    this.meshPartial.delete(u.mesh.id);
+    this.meshes.set(u.mesh.id, { used: this.meshFrame });
+    markResident(u.mesh.id, true);
+    return true;
+  }
+
+  /** A frame's start: uploads under way carried on, then meshes asked for ahead (`makeResident`). */
+  private pumpMeshes(): void {
+    this.meshBytes = 0;
+    const starting = playbackStarting();
+    this.meshBudget = starting ? MESH_BYTES_STARTING : MESH_BYTES_PER_FRAME;
+    for (const u of this.meshPartial.values()) {
+      if (this.meshBytes >= this.meshBudget) return;
+      this.sendMesh(u);
+    }
+    if (starting) return;
+    while (this.meshBytes < this.meshBudget) {
+      const mesh = nextToUpload();
+      if (!mesh) return;
+      this.meshFor(mesh);
+    }
+  }
+
+  /** Meshes not drawn for 600 frames are let go, here and in the viewport (as `GpuFigures` does). */
+  private evictMeshes(): void {
+    if (this.meshFrame % 600 !== 0) return;
+    for (const [id, m] of this.meshes) {
+      if (this.meshFrame - m.used < 600) continue;
+      this.meshes.delete(id);
+      markResident(id, false);
+      const buf = new Uint32Array([id, 0, 0, 0]);
+      void this.invoke('viewport_mesh', new Uint8Array(buf.buffer)).catch(() => {});
+    }
+  }
+
+  /** Whether figure meshes are on their way. */
+  get uploading(): boolean {
+    return this.meshPartial.size > 0 || uploadsWaiting() > 0;
   }
 
   private sameSigns(s: Float32Array): boolean {
@@ -485,6 +657,7 @@ export class NativeRenderer implements Renderer {
   }
 
   dispose(): void {
+    setMeshUploader(false);
     document.documentElement.classList.remove('native-viewport');
     void this.invoke('viewport_stop').catch(() => {});
   }

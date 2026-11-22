@@ -27,6 +27,9 @@
     "allow-viewport-capture",
     "allow-viewport-read-heat",
     "allow-viewport-probe",
+    "allow-viewport-snapshot",
+    "allow-viewport-mesh",
+    "allow-viewport-glyphs",
     "allow-viewport-times"
   ],
   "remote": {
