@@ -158,9 +158,10 @@ What the preview draws:
 - the accumulation across frames, the colour ramp, the floor and the response curve; the exposure reads the native heat, of the frame the page has just sent and only once the whole load is drawn, so a load's first exposure is the web engine's
 - a model level's ground (the mesh, relief, contours and its colours), the grid and the axes
 - the box replay: units as their figures (each model sent to the app once, a slice a frame, then drawn instanced from the frame's positions) or as cubes with their look lines, the weapons and effects drawn on the figures, the far-off symbols, the trails, and the ruler's and probe's lines
-- the objectives' marks on the ground, under the units or over the picture, and the other lines drawn over the finished picture (the mass analysis' places, the movement analysis' maneuvers)
+- the objectives' marks on the ground, under the units or over the picture, the capture zones' discs, and the other lines drawn over the finished picture (the mass analysis' places, the movement analysis' maneuvers)
+- a level layout's spawn marks with their lines to their owners, and the volumes' outlines where they cut the level
 
-What it does not draw yet: units placed on the graphics card (large recordings are placed on the processor instead, as on a card without that path), structures and the wall layers that dim heat behind them, image levels, world tiles, line heat, direction wedges and arrows, the rate map, the capture zones' discs, spawn marks, engagement ranges, depth of field and volume outlines. Those parts of the view are missing while the preview is on. The heat under the cursor is read from the viewport.
+What it does not draw yet: units placed on the graphics card (large recordings are placed on the processor instead, as on a card without that path), structures and the wall layers that dim heat behind them, image levels, world tiles, line heat, direction wedges and arrows, the rate map, engagement ranges, the tactical display and depth of field. Those parts of the view are missing while the preview is on. The heat under the cursor is read from the viewport.
 
 Measured on the PC above (`native/tools/probe-native-viewport.mjs`: the same app and the same load, once with the page's WebGPU engine, once with the native viewport), 10 million rows of the synthetic row-ceiling table, while another 3D program shared the graphics card:
 

@@ -64,6 +64,50 @@ pub struct Packet {
     pub glyphs: Option<Glyphs>,
     /// The objectives' marks and the lines over the finished picture.
     pub top: Option<Top>,
+    /// The capture zones' discs, the spawn marks and the volumes' contours (`SECTION_OVERLAYS`).
+    pub overlays: Option<Overlays>,
+}
+
+/// `SECTION_OVERLAYS`. The kept arrays (the zones' vertices, the spawn instances) come only when new.
+#[derive(Clone, Default)]
+pub struct Overlays {
+    pub zones: Option<Zones>,
+    pub spawns: Option<Spawns>,
+    pub contours: Option<Contours>,
+}
+
+/// The capture zones' discs (`FrameParams.objectiveZones`, `zoneShaders.ts`).
+#[derive(Clone, Default)]
+pub struct Zones {
+    /// On the ground in the scene as well (depth tested).
+    pub ground: bool,
+    pub xray: f32,
+    /// The smallest radius drawn, device pixels.
+    pub min_px: f32,
+    pub count: u32,
+    /// `MAX_ZONES * ZONE_STATE_FLOATS`.
+    pub state: Vec<f32>,
+    pub verts: Option<Vec<f32>>,
+}
+
+/// The layout's spawn points (`FrameParams.spawnMarks`, `spawnMarks.ts`).
+#[derive(Clone, Default)]
+pub struct Spawns {
+    pub count: u32,
+    pub lines: bool,
+    pub dpr: f32,
+    pub data: Option<Vec<f32>>,
+}
+
+/// Where the volumes cut the level (`FrameParams.volumeContours`, `volumeContours.ts`).
+#[derive(Clone, Default)]
+pub struct Contours {
+    /// `VOLUME_BLOCK_FLOATS`.
+    pub block: Vec<f32>,
+    /// `MAX_GPU_VOLUMES` x rgba.
+    pub colors: Vec<f32>,
+    /// The inverse of the frame's view-projection.
+    pub inv: Vec<f32>,
 }
 
 /// `SECTION_TOP`: seven floats a vertex throughout. The kept arrays come only when new.
@@ -236,6 +280,32 @@ pub fn decode(bytes: &[u8]) -> Result<Packet> {
                 let n = s.take()? as usize;
                 t.under_lines = f(s.slice(n * 7)?);
                 p.top = Some(t);
+            }
+            SECTION_OVERLAYS => {
+                let f = |w: &[u32]| w.iter().map(|x| f32::from_bits(*x)).collect::<Vec<f32>>();
+                let mut o = Overlays::default();
+                if s.take()? == 1 {
+                    let ground = s.take()? == 1;
+                    let head = f(s.slice(2)?);
+                    let count = s.take()?;
+                    let state = f(s.slice((MAX_ZONES * ZONE_STATE_FLOATS) as usize)?);
+                    let verts = if s.take()? == 1 { Some(f(s.slice(count as usize * ZONE_VERTEX_FLOATS as usize)?)) } else { None };
+                    o.zones = Some(Zones { ground, xray: head[0], min_px: head[1], count, state, verts });
+                }
+                let count = s.take()?;
+                if count > 0 {
+                    let lines = s.take()? == 1;
+                    let dpr = f32::from_bits(s.take()?);
+                    let data = if s.take()? == 1 { Some(f(s.slice(count as usize * SPAWN_INSTANCE_FLOATS as usize)?)) } else { None };
+                    o.spawns = Some(Spawns { count, lines, dpr, data });
+                }
+                if s.take()? == 1 {
+                    let block = f(s.slice(VOLUME_BLOCK_FLOATS as usize)?);
+                    let colors = f(s.slice(MAX_GPU_VOLUMES as usize * 4)?);
+                    let inv = f(s.slice(16)?);
+                    o.contours = Some(Contours { block, colors, inv });
+                }
+                p.overlays = Some(o);
             }
             SECTION_CUBES => {
                 let n = s.take()? as usize;

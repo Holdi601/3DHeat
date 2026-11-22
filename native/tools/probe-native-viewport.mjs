@@ -3,7 +3,7 @@
  *
  *   node native/tools/probe-native-viewport.mjs --dir <rowceiling folder> --rows 10,100
  *        [--exe <3dheat-app.exe>] [--out <folder>] [--seconds 8]
- *        [--cases exposure,heat,teams,filter,window,split,figures,cubes|none]
+ *        [--cases exposure,heat,teams,filter,window,split,figures,cubes,overlays|none]
  *        [--backends webgpu,native]
  *
  * For each load, starts the built app twice - the web engine (WebGPU in the app's
@@ -17,7 +17,9 @@
  *            SSIM >= 0.99 - and the composited pictures (mean and 99th percentile of
  *            the per-pixel difference, pixels off by more than 8/255); both written
  *            as PNG to --out. The box replay (figures, cubes) has no heat: its pictures
- *            alone, within 1/255 on average and 1 % of pixels
+ *            alone, within 1/255 on average and 1 % of pixels. overlays: synthetic capture
+ *            zones (on the ground and over the picture) and spawn marks with their lines put
+ *            into every frame's parameters, over the plain heat: the pictures, as the box replay
  *   exposure the first auto-exposure after each load (the first and three loads of the same
  *            files again, the same view): every one within 1 % of the web's first - a meter
  *            that read the field before all rows were drawn, or before the frame it meant,
@@ -46,7 +48,7 @@ const dir = arg('dir', null);
 const loads = String(arg('rows', '10')).split(',').map((r) => Number(r) * 1e6);
 const out = resolve(arg('out', join(process.env.TEMP ?? '.', 'heat3d-native-viewport')));
 const secs = Number(arg('seconds', 8));
-const cases = String(arg('cases', 'exposure,heat,teams,filter,window,split,figures,cubes')).split(',').filter((c) => c && c !== 'none');
+const cases = String(arg('cases', 'exposure,heat,teams,filter,window,split,figures,cubes,overlays')).split(',').filter((c) => c && c !== 'none');
 const backends = String(arg('backends', 'webgpu,native')).split(',');
 const PORT = Number(arg('port', 9336));
 const PER_FILE = 10_000_000;
@@ -289,6 +291,50 @@ async function run(rows, backend) {
           st.setMode('team');
           st.seek(lo + (hi - lo) * 0.5);
         }
+        let unwrap = null;
+        if (c === 'overlays') {
+          // Synthetic overlays in every frame's parameters, the same for both backends: three capture
+          // zones (the first owned, the second being taken, the third neutral) and six spawn marks.
+          const b = eng.toDisplay(eng.dataset.bounds);
+          const cx = (b.minX + b.maxX) / 2, cz = (b.minZ + b.maxZ) / 2, y = b.minY;
+          const span = Math.min(b.maxX - b.minX, b.maxZ - b.minZ);
+          const r = span * 0.08, n = 48, verts = [];
+          const zones = [[cx - span * 0.25, cz], [cx, cz + span * 0.2], [cx + span * 0.25, cz - span * 0.1]];
+          // Each zone: the fill, the capture band, the owner's band, the dark rim (`zoneShaders.ts` parts 3, 2, 1, 0).
+          const rings = [[3, 0, 0.8], [2, 0.8, 0.88], [1, 0.88, 0.96], [0, 0.96, 1]];
+          zones.forEach(([mx, mz], zi) => {
+            for (const [part, r0, r1] of rings)
+              for (let k = 0; k < n; k++) {
+                const a0 = (k / n) * 2 * Math.PI, a1 = ((k + 1) / n) * 2 * Math.PI;
+                const pt = (a, rr) => [mx + Math.sin(a) * r * rr, y, mz + Math.cos(a) * r * rr];
+                const quad = [[a0, r0], [a1, r0], [a1, r1], [a0, r0], [a1, r1], [a0, r1]];
+                for (const [a, rr] of quad) verts.push(...pt(a, rr), mx, y, mz, part, a / (2 * Math.PI), zi, r);
+              }
+          });
+          const state = new Float32Array(32 * 8);
+          state.set([0.2, 0.45, 1, 1, 1, 0.3, 0.2, 0], 0);
+          state.set([1, 0.3, 0.2, 1, 0.2, 0.45, 1, 0.6], 8);
+          state.set([0.6, 0.6, 0.6, 0, 1, 0.3, 0.2, 0.25], 16);
+          const zoneDraw = { verts: new Float32Array(verts), count: verts.length / 10, state, ground: true, xray: 0.35 };
+          const sp = [];
+          for (let i = 0; i < 6; i++) {
+            const a = (i / 6) * 2 * Math.PI;
+            const x = cx + Math.cos(a) * span * 0.3, z = cz + Math.sin(a) * span * 0.3;
+            // xyz, heading; rgb, flags (1 vehicle, 2 idle, glyph above); the owner's xyz, whether there is one.
+            sp.push(x, y, z, i % 2 ? a : -1000, i < 3 ? 0.2 : 1, 0.45, i < 3 ? 1 : 0.2, (i % 3 === 0 ? 1 : 0) | (i === 5 ? 2 : 0) | ((i % 4) << 2), cx, y, cz, i < 4 ? 1 : 0);
+          }
+          const spawnDraw = { data: new Float32Array(sp), count: 6, lines: true };
+          const rd = eng.renderer;
+          const own = Object.prototype.hasOwnProperty.call(rd, 'render');
+          const orig = rd.render;
+          rd.render = function (p) {
+            return orig.call(this, { ...p, objectiveZones: zoneDraw, spawnMarks: spawnDraw });
+          };
+          unwrap = () => {
+            if (own) rd.render = orig;
+            else delete rd.render;
+          };
+        }
         if (c === 'window') {
           const t = st.dataset.time;
           let lo = Infinity, hi = -Infinity;
@@ -311,7 +357,7 @@ async function run(rows, backend) {
           still = s === last ? still + 1 : 0;
           last = s;
         }
-        const f = c === 'figures' || c === 'cubes' ? null : await eng.renderer.readHeatField(0, true);
+        const f = c === 'figures' || c === 'cubes' || c === 'overlays' ? null : await eng.renderer.readHeatField(0, true);
         const cap = await eng.captureFrame();
         const out = {
           field: f ? Array.from(f) : null,
@@ -336,6 +382,7 @@ async function run(rows, backend) {
         if (c === 'filter') st.setFilters([]);
         if (c === 'split') st.setSplit({ kind: 'teams' });
         st.patchTeam(base.team);
+        unwrap?.();
         return out;
       }, c);
     }
@@ -417,8 +464,9 @@ for (const rows of loads) {
       a.picture && { ...a.picture, rgba: Uint8Array.from(a.picture.rgba) },
       b.picture && { ...b.picture, rgba: Uint8Array.from(b.picture.rgba) },
     );
-    if (c === 'figures' || c === 'cubes') {
+    if (c === 'figures' || c === 'cubes' || c === 'overlays') {
       // No heat in the box replay: the pictures alone, within a pixel's rounding at the figures' edges.
+      // The overlays: their pictures over the heat, compared the same way.
       const bad = !pic || pic.mean > 1 || pic.offShare > 0.01;
       if (bad) failed++;
       console.log(`  ${bad ? 'FAIL' : 'ok  '} ${m} ${c}: ` + (pic ? `picture mean ${pic.mean.toFixed(2)}/255, p99 ${pic.p99}, ${pct(pic.offShare)} off by > 8` : 'no picture'));

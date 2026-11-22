@@ -234,6 +234,9 @@ void main() {
 `;
 
 /** WGSL: the pass, the volumes at binding 0, its own uniforms at 1, the depth at 2. */
+/** The contour uniforms' bytes: color[8] vec4, inv mat4, view vec4, origin vec4. */
+export const CONTOUR_UNIFORM_BYTES = (MAX_GPU_VOLUMES * 4 + 16 + 4 + 4) * 4;
+
 export function volumeContourWgsl(): string {
   return /* wgsl */ `
 ${volumeWgsl(0)}
@@ -242,6 +245,8 @@ struct ContourUniforms {
   inv : mat4x4<f32>,
   // width, height, clear depth, 0
   view : vec4<f32>,
+  // Where the canvas starts in the target, pixels (the native viewport draws into the window).
+  origin : vec4<f32>,
 };
 @group(0) @binding(1) var<uniform> cu : ContourUniforms;
 @group(0) @binding(2) var depthTex : texture_depth_2d;
@@ -291,9 +296,10 @@ fn volEdge(i : i32, p : vec3<f32>) -> f32 {
 
 @fragment
 fn fsContour(in : VsOut) -> @location(0) vec4<f32> {
-  let px = vec2<i32>(in.pos.xy);
+  let fp = in.pos.xy - cu.origin.xy;
+  let px = vec2<i32>(fp);
   let depth = textureLoad(depthTex, px, 0);
-  let ndc = vec2<f32>(in.pos.x / cu.view.x * 2.0 - 1.0, 1.0 - in.pos.y / cu.view.y * 2.0);
+  let ndc = vec2<f32>(fp.x / cu.view.x * 2.0 - 1.0, 1.0 - fp.y / cu.view.y * 2.0);
   let w = cu.inv * vec4<f32>(ndc, depth, 1.0);
   let p = w.xyz / w.w;
   let count = i32(vol.cfg.y + 0.5);

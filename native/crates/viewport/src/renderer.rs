@@ -18,6 +18,7 @@ use std::time::Instant;
 use wgpu::util::DeviceExt;
 
 use crate::generated::*;
+use crate::overlays::ZoneSlot;
 use crate::packet::{FilterSet, Packet};
 
 pub const SCENE_FORMAT: wgpu::TextureFormat = wgpu::TextureFormat::Rgba8Unorm;
@@ -280,6 +281,8 @@ pub struct Renderer {
     grid: Option<(String, wgpu::Buffer, u32)>,
     /// The box replay's figures and cubes (`figures.rs`).
     pub figures: crate::figures::Figures,
+    /// The capture zones, spawn marks and volume contours (`overlays.rs`).
+    pub overlays: crate::overlays::Overlays,
     filter_pass: wgpu::ComputePipeline,
     bin: Option<HeatBin>,
     // Targets.
@@ -504,6 +507,7 @@ impl Renderer {
         );
         let filter_pass = compute(&device, &m_filter, "main");
         let figures = crate::figures::Figures::new(&device, out_format);
+        let overlays = crate::overlays::Overlays::new(&device, out_format);
         let m_line = module(&device, "line", W_LINE);
         const LINE_ATTRS: [wgpu::VertexAttribute; 2] = wgpu::vertex_attr_array![0 => Float32x3, 1 => Float32x4];
         let line = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
@@ -591,6 +595,7 @@ impl Renderer {
             line,
             grid: None,
             figures,
+            overlays,
             filter_pass,
             bin,
             width: 0,
@@ -801,6 +806,9 @@ impl Renderer {
         }
         if let Some(top) = &p.top {
             self.figures.take_top(&self.device, top);
+        }
+        if let Some(o) = &p.overlays {
+            self.overlays.take(&self.device, o);
         }
         if let Some(v) = &p.values {
             self.value_cols = v.clone();
@@ -1127,6 +1135,7 @@ impl Renderer {
             let glyph = glyph.and_then(|off| self.figures.glyph_group(&self.device, &self.ring.buf, off));
             Some((g(c), p.flag(F_SHOW_LOOK).then(|| g(l)), g(r), g(o), glyph))
         };
+        let ov = self.overlay_groups(p, true, (0.0, 0.0));
         let scene = &self.scene.as_ref().unwrap().1;
         let depth = &self.depth.as_ref().unwrap().1;
         let groups = ground.map(|off| {
@@ -1185,17 +1194,39 @@ impl Renderer {
         // In `drawScene`'s order: cubes, figures, the scene's triangles, trails; then what is
         // see-through, depth tested but not writing depth (`SEE_THROUGH_BELOW`); the far-off glyphs
         // over all of it; the overlay last.
-        if let Some((cube, look, rel, plain, glyph)) = &fig_groups {
-            self.figures.draw_under(&mut pass, p, &figs, plain);
+        // The objectives under the units (`drawObjectivesUnder`): the marks on the ground (the zones'
+        // discs among them), the edges, the zones' bands and the lines through it, before the figures.
+        let under = p.top.as_ref().is_some_and(|t| t.under);
+        let plain = fig_groups.as_ref().map(|g| &g.3);
+        if under {
+            if let Some(plain) = plain {
+                self.figures.draw_ground(&mut pass, p, plain);
+            }
+            self.overlays.draw_zones(&mut pass, p, ZoneSlot::Ground, ov.zone_ground.as_ref());
+            if let Some(plain) = plain {
+                self.figures.draw_under_tris(&mut pass, p, plain);
+            }
+            self.overlays.draw_zones(&mut pass, p, ZoneSlot::Under, ov.zone_over.as_ref());
+            if let Some(plain) = plain {
+                self.figures.draw_under_lines(&mut pass, &figs, plain);
+            }
+        }
+        if let Some((cube, look, rel, plain, _)) = &fig_groups {
             self.figures.draw_cubes(&mut pass, &figs, cube, look.as_ref());
             self.figures.draw(&mut pass, &figs, rel, false);
             self.figures.draw_tris(&mut pass, &figs, plain, false);
             self.figures.draw_trails(&mut pass, &figs, plain);
             self.figures.draw(&mut pass, &figs, rel, true);
             self.figures.draw_tris(&mut pass, &figs, plain, true);
-            if !p.top.as_ref().is_some_and(|t| t.under) {
+        }
+        if !under {
+            // `drawObjectivesOnGround`: the ground triangles, then the zones' discs on the ground.
+            if let Some(plain) = plain {
                 self.figures.draw_ground(&mut pass, p, plain);
             }
+            self.overlays.draw_zones(&mut pass, p, ZoneSlot::Ground, ov.zone_ground.as_ref());
+        }
+        if let Some((_, _, _, plain, glyph)) = &fig_groups {
             if let Some(g) = glyph {
                 self.figures.draw_glyphs(&mut pass, &figs, g);
             }
@@ -1952,6 +1983,8 @@ impl Renderer {
         let pipe = self.composite.clone();
         let g = self.composite_group(p, &pipe);
         let top = self.top_group(p);
+        let origin = (p.f(F_VIEW_X).max(0.0), p.f(F_VIEW_Y).max(0.0));
+        let ov = self.overlay_groups(p, false, origin);
         let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
             label: Some("composite"),
             color_attachments: &[Some(wgpu::RenderPassColorAttachment {
@@ -1976,10 +2009,59 @@ impl Renderer {
             pass.set_pipeline(&pipe);
             pass.set_bind_group(0, &g, &[]);
             pass.draw(0..3, 0..1);
-            if let Some((lines, group)) = &top {
-                self.figures.draw_top(&mut pass, p, *lines, group);
+            self.draw_over(&mut pass, p, &top, &ov);
+        }
+    }
+
+    /// Over the finished picture, in the composite pass, in `composite`'s order: the volumes'
+    /// contours, the objectives' triangles, the zones (unless they went under the units), the
+    /// spawn marks, the lines and the kept lines.
+    fn draw_over(&self, pass: &mut wgpu::RenderPass<'_>, p: &Packet, top: &Option<(Option<(u32, u64)>, wgpu::BindGroup)>, ov: &crate::overlays::OverlayGroups) {
+        self.overlays.draw_contours(pass, ov.contour.as_ref());
+        if let Some((_, group)) = top {
+            self.figures.draw_top_tris(pass, p, group);
+        }
+        if !p.top.as_ref().is_some_and(|t| t.under) {
+            self.overlays.draw_zones(pass, p, ZoneSlot::Top, ov.zone_over.as_ref());
+        }
+        self.overlays.draw_spawns(pass, p, ov.spawn.as_ref());
+        if let Some((lines, group)) = top {
+            self.figures.draw_top_lines(pass, p, *lines, group);
+        }
+    }
+
+    /// The overlays' bind groups for one packet, their uniforms in the ring: in the scene the
+    /// zones on the ground and under the units; over the picture the zones, the spawn marks and the
+    /// contours (`origin`: where the canvas starts in the target).
+    fn overlay_groups(&mut self, p: &Packet, scene: bool, origin: (f32, f32)) -> crate::overlays::OverlayGroups {
+        use crate::overlays::Overlays;
+        let mut g = crate::overlays::OverlayGroups::default();
+        let Some(o) = p.overlays.as_ref() else { return g };
+        let under = p.top.as_ref().is_some_and(|t| t.under);
+        if let Some(z) = &o.zones {
+            if scene && z.ground {
+                let off = self.ring.push(bytemuck::cast_slice(&Overlays::zone_uniform(p, z, ZoneSlot::Ground)), 256);
+                g.zone_ground = Some(self.overlays.zone_group(&self.device, &self.ring.buf, off));
+            }
+            // Under the units in the scene, else over the picture: at the frame's xray either way.
+            if scene == under {
+                let off = self.ring.push(bytemuck::cast_slice(&Overlays::zone_uniform(p, z, ZoneSlot::Top)), 256);
+                g.zone_over = Some(self.overlays.zone_group(&self.device, &self.ring.buf, off));
             }
         }
+        if scene {
+            return g;
+        }
+        if let Some(s) = &o.spawns {
+            let off = self.ring.push(bytemuck::cast_slice(&Overlays::spawn_uniform(p, s)), 256);
+            g.spawn = Some(self.overlays.spawn_group(&self.device, &self.ring.buf, off));
+        }
+        if let (Some(c), Some((_, depth))) = (&o.contours, &self.depth) {
+            let vol = self.ring.push(bytemuck::cast_slice(&c.block), 256);
+            let u = self.ring.push(bytemuck::cast_slice(&Overlays::contour_uniform(c, self.width as f32, self.height as f32, origin)), 256);
+            g.contour = Some(self.overlays.contour_group(&self.device, &self.ring.buf, vol, u, depth));
+        }
+        g
     }
 
     /// What the lines and marks over the finished picture need: their per-frame lines placed, and the
@@ -2001,6 +2083,7 @@ impl Renderer {
         let pipe = self.composite.clone();
         let g = self.composite_group(p, &pipe);
         let top = self.top_group(p);
+        let ov = self.overlay_groups(p, false, (0.0, 0.0));
         {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("capture"),
@@ -2018,9 +2101,7 @@ impl Renderer {
             pass.set_pipeline(&pipe);
             pass.set_bind_group(0, &g, &[]);
             pass.draw(0..3, 0..1);
-            if let Some((lines, group)) = &top {
-                self.figures.draw_top(&mut pass, p, *lines, group);
-            }
+            self.draw_over(&mut pass, p, &top, &ov);
         }
         let stride = align(w as u64 * 4, 256) as u32;
         let buffer = self.device.create_buffer(&wgpu::BufferDescriptor {

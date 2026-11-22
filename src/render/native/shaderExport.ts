@@ -5,7 +5,8 @@
  * does, compiled by naga instead of Dawn: the splat, the compute binning of
  * Stage 0 (bin, resolve, kernel table, fold, listed splat), the filter pass,
  * the accumulation merge, the composite, the level's mesh, the lines, the figures,
- * the cubes and their look lines, the far-off glyphs. The texts are
+ * the cubes and their look lines, the far-off glyphs, the capture zones' discs,
+ * the spawn marks and the volumes' contours. The texts are
  * built here from the same sources, constants and all, and written beside the
  * crate as `.wgsl` files with a `generated.rs` of the numbers the Rust side
  * packs uniforms by. `shaderExport.test.ts` keeps the committed copies equal to
@@ -67,6 +68,10 @@ import { INSTANCE_STRIDE, MESH_STRIDE } from '../../figures/instances';
 import { ATLAS_HEIGHT, ATLAS_WIDTH } from '../symbols/atlas';
 import { SYMBOL_UNIFORM_FLOATS, symbolWgsl } from '../symbols/shaders';
 import { FRAME_FIELDS, FRAME_WORDS, PACKET_MAGIC, PACKET_VERSION, SECTION } from './framePacket';
+import { MAX_ZONES, ZONE_MIN_PX, ZONE_STATE_FLOATS, ZONE_UNIFORM_BYTES, ZONE_VERTEX_FLOATS, ZONE_WGSL } from '../zoneShaders';
+import { SPAWN_INSTANCE_FLOATS, SPAWN_UNIFORM_FLOATS, spawnWgsl } from '../spawnMarks';
+import { CONTOUR_UNIFORM_BYTES, volumeContourWgsl } from '../volumeContours';
+import { MAX_GPU_VOLUMES } from '../../volumes/gpu';
 
 /** The shaders, by file name. */
 export function nativeShaders(): Record<string, string> {
@@ -87,6 +92,9 @@ export function nativeShaders(): Record<string, string> {
     'cube.wgsl': CUBE_WGSL,
     'look.wgsl': LOOK_WGSL,
     'symbol.wgsl': symbolWgsl(),
+    'zone.wgsl': ZONE_WGSL,
+    'spawn.wgsl': spawnWgsl(),
+    'volume_contour.wgsl': volumeContourWgsl(),
   };
 }
 
@@ -120,6 +128,15 @@ export function nativeConstants(): string {
   int('ATLAS_WIDTH', ATLAS_WIDTH);
   int('ATLAS_HEIGHT', ATLAS_HEIGHT);
   int('SYMBOL_UNIFORM_FLOATS', SYMBOL_UNIFORM_FLOATS);
+  int('MAX_ZONES', MAX_ZONES);
+  int('ZONE_VERTEX_FLOATS', ZONE_VERTEX_FLOATS);
+  int('ZONE_STATE_FLOATS', ZONE_STATE_FLOATS);
+  int('ZONE_UNIFORM_BYTES', ZONE_UNIFORM_BYTES);
+  flt('ZONE_MIN_PX', ZONE_MIN_PX);
+  int('SPAWN_INSTANCE_FLOATS', SPAWN_INSTANCE_FLOATS);
+  int('SPAWN_UNIFORM_FLOATS', SPAWN_UNIFORM_FLOATS);
+  int('CONTOUR_UNIFORM_BYTES', CONTOUR_UNIFORM_BYTES);
+  int('MAX_GPU_VOLUMES', MAX_GPU_VOLUMES);
   for (const [k, v] of Object.entries({
     FLAG_PERSPECTIVE,
     FLAG_GROUND_PROJECTED,

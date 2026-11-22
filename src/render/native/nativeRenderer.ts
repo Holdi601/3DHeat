@@ -42,7 +42,10 @@ import {
 import { teamPaletteIndex } from '../colors';
 import { filterColumnData, packFilterTable, packSignTables } from '../filterTables';
 import { CURVE_LUT_SIZE } from '../../state/curve';
-import { VOLUME_BLOCK_FLOATS } from '../../volumes/gpu';
+import { MAX_GPU_VOLUMES, VOLUME_BLOCK_FLOATS } from '../../volumes/gpu';
+import { MAX_ZONES, ZONE_MIN_PX, ZONE_STATE_FLOATS, ZONE_VERTEX_FLOATS } from '../zoneShaders';
+import { SPAWN_INSTANCE_FLOATS } from '../spawnMarks';
+import { invert4 } from '../volumeContours';
 import { PacketWriter, SECTION, coreColumnName, writeFigures, writeFilters, writeFrame, writePlan } from './framePacket';
 import { INSTANCE_STRIDE, MESH_STRIDE, type FigureMesh } from '../../figures/instances';
 import { symbolAtlas } from '../symbols/atlas';
@@ -439,6 +442,7 @@ export class NativeRenderer implements Renderer {
       w.close();
     }
     this.writeTop(p, all);
+    this.writeOverlays(p, all);
     const tris = p.sceneTris && p.sceneTriVertCount > 0 ? p.sceneTriVertCount : 0;
     const trails = p.trailVerts && p.trailVertCount > 0 ? p.trailVertCount : 0;
     const overlay = p.overlayVerts && p.overlayVertCount > 0 ? p.overlayVertCount : 0;
@@ -567,6 +571,59 @@ export class NativeRenderer implements Renderer {
     w.word(under ? 1 : 0);
     w.word(ul);
     if (ul) floats(under!.lines!, ul);
+    w.close();
+  }
+
+  /** The kept overlay arrays the viewport holds, by identity. */
+  private overlaySent: { zones: Float32Array | null; spawns: Float32Array | null } = { zones: null, spawns: null };
+  private readonly invView = new Float32Array(16);
+
+  /** The `overlays` section (`SECTION.overlays`), when any of the three is drawn. */
+  private writeOverlays(p: FrameParams, all: boolean): void {
+    const z = p.objectiveZones && p.objectiveZones.count ? p.objectiveZones : null;
+    const sp = p.spawnMarks && p.spawnMarks.count ? p.spawnMarks : null;
+    // As the web engine: the contours only where there is a level to cut.
+    const c = p.volumeContours && p.level ? p.volumeContours : null;
+    if (all) this.overlaySent = { zones: null, spawns: null };
+    if (!z && !sp && !c) return;
+    const s = this.overlaySent;
+    const w = this.writer;
+    const dpr = globalThis.devicePixelRatio || 1;
+    w.open(SECTION.overlays);
+    w.word(z ? 1 : 0);
+    if (z) {
+      w.word(z.ground ? 1 : 0);
+      w.floats([z.xray, ZONE_MIN_PX * dpr]);
+      w.word(z.count);
+      const state = new Float32Array(MAX_ZONES * ZONE_STATE_FLOATS);
+      state.set(z.state.subarray(0, state.length));
+      w.floats(state);
+      const fresh = s.zones !== z.verts;
+      w.word(fresh ? 1 : 0);
+      if (fresh) {
+        w.floats(z.verts.subarray(0, z.count * ZONE_VERTEX_FLOATS));
+        s.zones = z.verts;
+      }
+    }
+    w.word(sp ? sp.count : 0);
+    if (sp) {
+      w.word(sp.lines ? 1 : 0);
+      w.floats([dpr]);
+      const fresh = s.spawns !== sp.data;
+      w.word(fresh ? 1 : 0);
+      if (fresh) {
+        w.floats(sp.data.subarray(0, sp.count * SPAWN_INSTANCE_FLOATS));
+        s.spawns = sp.data;
+      }
+    }
+    w.word(c ? 1 : 0);
+    if (c) {
+      w.floats(c.block.subarray(0, VOLUME_BLOCK_FLOATS));
+      const colors = new Float32Array(MAX_GPU_VOLUMES * 4);
+      colors.set(c.colors.subarray(0, colors.length));
+      w.floats(colors);
+      w.floats(invert4(p.viewProj, this.invView));
+    }
     w.close();
   }
 

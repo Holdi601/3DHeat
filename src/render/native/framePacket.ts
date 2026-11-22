@@ -58,6 +58,15 @@ export const SECTION = {
    * floats when the array is new, else 0); `objectivesUnder` (0, or 1, a line count, its floats).
    */
   top: 13,
+  /**
+   * The overlays over the scene, in three parts. Zones (`objectiveZones`): 0, or 1, on the ground
+   * (0/1), xray, the smallest radius in device pixels, the vertex count, the zones' state
+   * (`MAX_ZONES * ZONE_STATE_FLOATS`), then 1 and the vertices when new to the viewport, else 0.
+   * Spawn marks (`spawnMarks`): the count; when any, the lines (0/1), the pixel ratio, then 1 and
+   * the instances when new, else 0. Volume contours (`volumeContours`, with a level): 0, or 1, the
+   * volumes' block (`VOLUME_BLOCK_FLOATS`), their colours (`MAX_GPU_VOLUMES` x 4), the inverse view.
+   */
+  overlays: 14,
 } as const;
 
 /** The frame's numbers, in packet order, with how many floats each takes. */

@@ -608,17 +608,20 @@ impl Figures {
         }
     }
 
-    /// The objectives under the units (`drawObjectivesUnder`), before anything stands on them: the
-    /// ground marks depth tested, then the edges and lines that show through the ground, without depth.
-    pub fn draw_under(&self, pass: &mut wgpu::RenderPass<'_>, p: &Packet, f: &FigureFrame, group: &wgpu::BindGroup) {
+    /// The objectives under the units (`drawObjectivesUnder`), before anything stands on them: after
+    /// the ground marks (`draw_ground`), the edges that show through the ground, without depth.
+    pub fn draw_under_tris(&self, pass: &mut wgpu::RenderPass<'_>, p: &Packet, group: &wgpu::BindGroup) {
         let Some(top) = p.top.as_ref().filter(|t| t.under) else { return };
-        self.draw_ground(pass, p, group);
         if let (true, Some(b)) = (top.tris_count > 0, &self.top_tris) {
             pass.set_pipeline(&self.under_tri);
             pass.set_bind_group(0, group, &[]);
             pass.set_vertex_buffer(0, b.slice(..));
             pass.draw(0..top.tris_count, 0..1);
         }
+    }
+
+    /// The objectives' lines under the units, last of them (after the zones' bands).
+    pub fn draw_under_lines(&self, pass: &mut wgpu::RenderPass<'_>, f: &FigureFrame, group: &wgpu::BindGroup) {
         self.lines(pass, &self.overlay, f.under_lines, group);
     }
 
@@ -632,9 +635,9 @@ impl Figures {
         Some(((lines.len() / 7) as u32, self.push(bytemuck::cast_slice(lines))))
     }
 
-    /// Over the finished picture, in the composite pass (`composite`): the objectives' triangles
-    /// (unless they went under the units), the lines, the kept lines.
-    pub fn draw_top(&self, pass: &mut wgpu::RenderPass<'_>, p: &Packet, lines: Option<(u32, u64)>, group: &wgpu::BindGroup) {
+    /// Over the finished picture, in the composite pass (`composite`): the objectives' triangles,
+    /// unless they went under the units.
+    pub fn draw_top_tris(&self, pass: &mut wgpu::RenderPass<'_>, p: &Packet, group: &wgpu::BindGroup) {
         let Some(top) = &p.top else { return };
         if let (true, false, Some(b)) = (top.tris_count > 0, top.under, &self.top_tris) {
             pass.set_pipeline(&self.top_tri);
@@ -642,6 +645,11 @@ impl Figures {
             pass.set_vertex_buffer(0, b.slice(..));
             pass.draw(0..top.tris_count, 0..1);
         }
+    }
+
+    /// Over the finished picture, after the zones and spawn marks: the lines, the kept lines.
+    pub fn draw_top_lines(&self, pass: &mut wgpu::RenderPass<'_>, p: &Packet, lines: Option<(u32, u64)>, group: &wgpu::BindGroup) {
+        let Some(top) = &p.top else { return };
         self.lines(pass, &self.top_line, lines, group);
         if let (true, Some((v, b))) = (top.static_count > 0, &self.top_static) {
             if *v == top.static_version {

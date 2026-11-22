@@ -7,10 +7,7 @@
 import { VOLUME_BLOCK_BYTES } from '../../volumes/gpu';
 import { GPU_DEPTH_CLEAR } from '../depth';
 import type { FrameParams } from '../types';
-import { invert4, volumeContourWgsl, type VolumeContourDraw } from '../volumeContours';
-
-/** color[8] vec4, inv mat4, view vec4. */
-const CONTOUR_BYTES = (8 * 4 + 16 + 4) * 4;
+import { CONTOUR_UNIFORM_BYTES as CONTOUR_BYTES, invert4, volumeContourWgsl, type VolumeContourDraw } from '../volumeContours';
 
 export class GpuVolumeContours {
   private readonly pipeline: GPURenderPipeline;
@@ -59,6 +56,7 @@ export class GpuVolumeContours {
     u[49] = height;
     u[50] = GPU_DEPTH_CLEAR;
     u[51] = 0;
+    // The canvas is the whole target here: no origin (u[52..55] stay 0).
     this.device.queue.writeBuffer(this.uniforms, 0, u);
     if (this.groupDepth !== depth || !this.group) {
       this.group = this.device.createBindGroup({

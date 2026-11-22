@@ -1,5 +1,5 @@
 //! The renderer on a real adapter - or lavapipe, Mesa's software Vulkan, in CI: every pipeline made
-//! (heat, binning, composite, level, lines, figures, cubes), one frame of heat drawn offscreen with
+//! (heat, binning, composite, level, lines, figures, cubes, zones, spawn marks, volume contours), one frame of heat drawn offscreen with
 //! no validation error, and the heat read back. Skipped where no adapter is found, unless
 //! `HEAT3D_GPU_SMOKE=1` asks for one (the Linux CI job, with lavapipe installed).
 
@@ -7,7 +7,7 @@ use std::sync::{Arc, Mutex};
 
 use heat3d_viewport::generated::*;
 use heat3d_viewport::loader::PageChunk;
-use heat3d_viewport::packet::{Glyphs, Packet, PlanEntry, Top};
+use heat3d_viewport::packet::{Contours, Glyphs, Overlays, Packet, PlanEntry, Spawns, Top, Zones};
 use heat3d_viewport::wgpu;
 use heat3d_viewport::Renderer;
 
@@ -89,8 +89,37 @@ fn packet() -> Packet {
             under: false,
             under_lines: Vec::new(),
         }),
+        overlays: Some(overlays()),
         ..Default::default()
     }
+}
+
+/// A zone's triangle (on the ground too), a spawn mark with its line, a volume's contours.
+fn overlays() -> Overlays {
+    let mut verts = Vec::new();
+    for (x, z) in [(0.2f32, 0.2f32), (0.8, 0.2), (0.5, 0.8)] {
+        // xyz, middle, part (fill), angle, zone 0, radius.
+        verts.extend_from_slice(&[x, 0.5, z, 0.5, 0.5, 0.5, 3.0, 0.25, 0.0, 0.3]);
+    }
+    let mut state = vec![0f32; (MAX_ZONES * ZONE_STATE_FLOATS) as usize];
+    state[..8].copy_from_slice(&[1.0, 0.2, 0.2, 1.0, 0.2, 0.2, 1.0, 0.5]);
+    let mut block = vec![0f32; VOLUME_BLOCK_FLOATS as usize];
+    block[..4].copy_from_slice(&[1.0, 1.0, 0.0, 1.5]);
+    let identity = vec![1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0];
+    Overlays {
+        zones: Some(Zones { ground: true, xray: 0.5, min_px: 28.0, count: 3, state, verts: Some(verts) }),
+        spawns: Some(Spawns { count: 1, lines: true, dpr: 1.0, data: Some(vec![0.5, 0.5, 0.5, 0.3, 1.0, 0.5, 0.2, 1.0, 0.3, 0.5, 0.3, 1.0]) }),
+        contours: Some(Contours { block, colors: vec![1.0; (MAX_GPU_VOLUMES * 4) as usize], inv: identity }),
+    }
+}
+
+/// The same frame with the objectives under the units (`objectivesUnder`).
+fn packet_under() -> Packet {
+    let mut p = packet();
+    p.seq = 2;
+    p.top.as_mut().unwrap().under = true;
+    p.top.as_mut().unwrap().under_lines = tri()[..14].to_vec();
+    p
 }
 
 /// Three vertices, seven floats each (xyz, rgba).
@@ -162,6 +191,7 @@ fn draws_heat_offscreen() {
     let picture: Arc<Mutex<Option<bool>>> = Arc::default();
     let pc = picture.clone();
     r.request_capture(Box::new(move |c| *pc.lock().unwrap() = Some(c.is_some_and(|c| c.rgba.len() == (SIDE * SIDE * 4) as usize))));
+    r.draw(&[packet(), packet_under()], &view, (SIDE, SIDE), false);
     r.draw(&[packet()], &view, (SIDE, SIDE), false);
     let error = pollster::block_on(scope.pop());
     assert!(error.is_none(), "validation error: {error:?}");
