@@ -11,7 +11,7 @@ heat3d-core.workspace = true
 anyhow.workspace = true
 rayon.workspace = true
 # Vulkan (the default) and DX12 (the Windows fallback) only: no Metal, GL or web backends.
-wgpu = { version = "27", default-features = false, features = ["std", "parking_lot", "dx12", "vulkan", "wgsl"] }
+wgpu = { version = "30", default-features = false, features = ["std", "parking_lot", "dx12", "vulkan", "wgsl"] }
 bytemuck = "1"
 pollster = "1"
 parking_lot = "0.12"
