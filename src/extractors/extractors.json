@@ -133,6 +133,16 @@
       "sums": "SHA256SUMS"
     },
     {
+      "id": "heat3d-assettocorsa",
+      "name": "Assetto Corsa",
+      "games": ["Assetto Corsa"],
+      "what": "Track layouts as courses with the racing line, pit lane and timing lines, a car file, the catalogue, and replays as sessions, from your own install",
+      "repo": "Holdi601/3DHeat-Ext-AssettoCorsa",
+      "assets": {"windows-x64": "{id}-{version}-windows-x64.zip", "linux-x64": "{id}-{version}-linux-x64.tar.gz"},
+      "exe": {"windows-x64": "{id}/{id}.exe", "linux-x64": "{id}/{id}"},
+      "sums": "SHA256SUMS"
+    },
+    {
       "id": "heat3d-beamng",
       "name": "BeamNG.drive",
       "games": ["BeamNG.drive"],

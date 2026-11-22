@@ -25,9 +25,9 @@ const item = (over: Partial<Item>): Item => ({
 
 describe('the extractors manager, as the panel sees it', () => {
   it('ships the public extractors only, each from its own repository', () => {
-    expect(INDEX).toHaveLength(21);
+    expect(INDEX).toHaveLength(22);
     const ids = new Set(INDEX.map((e) => e.id));
-    expect(ids.size).toBe(21);
+    expect(ids.size).toBe(22);
     for (const e of INDEX) {
       expect(e.id).toMatch(/^heat3d-[a-z0-9-]+$/);
       expect(e.id).not.toMatch(/fetch|models/);
@@ -38,7 +38,7 @@ describe('the extractors manager, as the panel sees it', () => {
       expect(e.sums).toBe('SHA256SUMS');
     }
     const on = (p: string) => INDEX.filter((e) => p in e.assets).map((e) => e.id);
-    expect(on('linux-x64')).toHaveLength(18);
+    expect(on('linux-x64')).toHaveLength(19);
     expect(on('linux-x64')).not.toContain('heat3d-battlefield');
     expect(on('macos-arm64').sort()).toEqual(
       ['heat3d-dota-maps', 'heat3d-dota-replay', 'heat3d-gamecapture', 'heat3d-gamefiles', 'heat3d-riot', 'heat3d-warthunder', 'heat3d-watcher', 'heat3d-wot', 'heat3d-wows'].sort(),
