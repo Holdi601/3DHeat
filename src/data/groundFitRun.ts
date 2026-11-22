@@ -98,7 +98,7 @@ export function installGroundFit(store: Host): () => void {
       if (!flat) return;
       if (flat.length) {
         const area = { minX: b.minX - pad, maxX: b.maxX + pad, minZ: b.minZ - pad, maxZ: b.maxZ + pad };
-        const surface = await sliced(surfaceGridSteps(level.vertices, level.indices, area, k), stale);
+        const surface = level.terrain ? await level.terrain.heightGrid(area, k) : await sliced(surfaceGridSteps(level.vertices, level.indices, area, k), stale);
         if (stale()) return;
         const done = surface ? await sliced(groundedHeightsSteps(d, surface, flat), stale) : null;
         if (stale()) return;
@@ -132,7 +132,10 @@ export function installGroundFit(store: Host): () => void {
       useGroundFit.setState({ dataset: d, level, checks: [], fixes: madeHere.get(d) ?? [], grounded: groundedOf(d) });
       return;
     }
-    const grid = await sliced(heightGridSteps(level.vertices, level.indices, { minX: b.minX - pad, maxX: b.maxX + pad, minZ: b.minZ - pad, maxZ: b.maxZ + pad }, 2 * k), stale);
+    const area = { minX: b.minX - pad, maxX: b.maxX + pad, minZ: b.minZ - pad, maxZ: b.maxZ + pad };
+    // A tiled terrain's heights straight from its samples (src/world/terrainStream.ts).
+    const grid = level.terrain ? await level.terrain.heightGrid(area, 2 * k) : await sliced(heightGridSteps(level.vertices, level.indices, area, 2 * k), stale);
+    if (stale()) return;
     if (!grid) return;
     const checks = await sliced(groundChecksSteps(d, grid, k, ground), stale);
     if (!checks) return;
@@ -142,7 +145,7 @@ export function installGroundFit(store: Host): () => void {
     const fixed = fixes.length ? await sliced(fixedHeightsSteps(d, fixes, k, ground), stale) : null;
     if (fixes.length && !fixed) return;
     // Then each ground unit on the ground as drawn, where it is within a few metres of it (`snappedHeightsSteps`).
-    const surface = await sliced(surfaceGridSteps(level.vertices, level.indices, { minX: b.minX - pad, maxX: b.maxX + pad, minZ: b.minZ - pad, maxZ: b.maxZ + pad }, k), stale);
+    const surface = level.terrain ? await level.terrain.heightGrid(area, k) : await sliced(surfaceGridSteps(level.vertices, level.indices, area, k), stale);
     if (stale()) return;
     const snapped = surface ? await sliced(snappedHeightsSteps(fixed ? { ...d, py: fixed } : d, surface, k, ground), stale) : null;
     if (stale()) return;

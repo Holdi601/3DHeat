@@ -6,7 +6,7 @@ lang: "ca"
 source: "model-levels.md"
 source_hash: "0afa06188c9e"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # Nivells 3D

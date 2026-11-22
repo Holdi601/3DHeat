@@ -37,7 +37,7 @@ import { groundPersons } from '../../data/groundFit';
 import { trackGround } from '../../data/trackGround';
 import type { LoadedModel } from '../../data/modelLoader';
 import { reveal } from '../shell/commands';
-import { CATALOG_ROUTE } from './CatalogSection';
+import { CATALOG_ROUTE, terrainLevelOf } from './CatalogSection';
 import { modelLevelFrom, worldLevelFrom } from './LevelPanel';
 import { dcsLabels, streamedLevel, type DcsLevelMeta } from './WorldBackdrop';
 
@@ -98,6 +98,18 @@ export async function loadCatalogLevel(item: CatalogItem, replace = false): Prom
     if (item.layouts) {
       const l = await catalogFile(item.layouts);
       if (l) await loadLayoutFiles([new File([l], l.name.endsWith('.layouts.json') ? l.name : `${item.name}.layouts.json`)]);
+    }
+    // A big map's tiled terrain, streamed, before its glb (src/world/terrainStream.ts).
+    const tiled = item.terrain ? await terrainLevelOf(item) : null;
+    if (tiled) {
+      if (levelTaken()) {
+        tiled.terrain?.dispose();
+        useAutoLevel.setState({ status: 'none' });
+        return;
+      }
+      useStore.getState().setLevel(tiled);
+      useAutoLevel.setState({ status: 'loaded', level: tiled.name });
+      return;
     }
     const f = await catalogFile(item.path);
     if (!f) throw new Error('not served');

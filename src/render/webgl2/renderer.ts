@@ -77,6 +77,7 @@ import { buildEdgeList, type Level } from '../level';
 import { IndexUpload, type LevelIndexSets } from '../levelIndices';
 import { boxOutsideFrustum, diffWorldTiles, frustumPlanes, textureBytes } from '../worldTiles';
 import type { WorldTile } from '../../world/tileSet';
+import { GlTerrain } from './terrain';
 import { num, t } from '../../i18n';
 import { GlFrameTimer, type FrameRing } from './frameTimer';
 
@@ -429,6 +430,9 @@ export class Webgl2Renderer implements Renderer {
    * would show heat through a hill that is plainly there.
    */
   private frameMeshes: GlMesh[] = [];
+  /** A tiled terrain's ground (`terrain.ts`), made with the first one, and this frame's. */
+  private terrain: GlTerrain | null = null;
+  private frameTerrain: FrameParams['terrain'] | null = null;
   private readonly planes = new Float32Array(20);
   /**
    * Bumped on every level change, so an atlas that finishes decoding after the
@@ -459,7 +463,7 @@ export class Webgl2Renderer implements Renderer {
   }
 
   get levelBytes(): number {
-    return this.levelOwnBytes + this.tileBytes;
+    return this.levelOwnBytes + this.tileBytes + (this.terrain?.bytes ?? 0);
   }
 
   /** The GPU tracks' room here: their keys in integer textures, a square of the largest. */
@@ -1704,6 +1708,11 @@ export class Webgl2Renderer implements Renderer {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     this.frameMeshes = this.meshesInView(params);
+    this.frameTerrain = params.level?.kind === 'model' ? (params.terrain ?? null) : null;
+    if (this.frameTerrain) {
+      this.terrain ??= new GlTerrain(this.gl);
+      this.terrain.prepare(this.frameTerrain.stream);
+    }
     // Level geometry first, with depth writes on, so heat sprites behind a wall
     // are correctly hidden by it. Its see-through shells come after the figures
     // and everything else in the scene (`drawLevel`).
@@ -2223,6 +2232,29 @@ export class Webgl2Renderer implements Renderer {
         gl.disable(gl.BLEND);
         gl.useProgram(prog);
       }
+    }
+
+    // A tiled terrain's ground, with the ground's look (src/world/terrainStream.ts).
+    const tf = shells ? null : this.frameTerrain;
+    if (tf && this.terrain) {
+      const tu = this.terrain.u;
+      gl.useProgram(this.terrain.prog);
+      tu.mat4('uViewProj', params.viewProj);
+      tu.f3('uCameraPos', params.cameraPos[0], params.cameraPos[1], params.cameraPos[2]);
+      tu.f3('uTint', 1, 1, 1);
+      tu.f1('uOpacity', level.opacity);
+      tu.f1('uBrightness', level.brightness);
+      tu.f1('uFresnel', 0);
+      tu.f1('uFlatNormals', 0);
+      tu.f1('uVertexColour', tf.colours ? 1 : 0);
+      this.setRelief(tu, level);
+      this.setSlice(tu, params.slice);
+      this.setCull(tu, params);
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, this.blankTex());
+      tu.i1('uAtlas', 0);
+      tu.f1('uTexture', 0);
+      this.terrain.draw(tf.frame, tf.stream.palette);
     }
 
     // Water after the ground and before the structures: flat, no relief cues, no
@@ -3839,6 +3871,8 @@ export class Webgl2Renderer implements Renderer {
 
   dispose(): void {
     const gl = this.gl;
+    this.terrain?.dispose();
+    this.terrain = null;
     for (const j of this.pendingChunks) {
       for (const t of j.posTex) gl.deleteTexture(t);
       for (const t of j.timeTex ?? []) gl.deleteTexture(t);

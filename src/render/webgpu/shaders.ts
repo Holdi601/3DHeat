@@ -1692,3 +1692,79 @@ fn fsWire(in : WireOut) -> @location(0) vec4<f32> {
 }
 `;
 
+
+/**
+ * A tiled terrain's ground (src/world/terrainStream.ts): one 32 x 32 grid drawn
+ * once per node, its heights read from the node's tile - a layer of 16-bit
+ * samples - in the vertex shader, so the GPU holds a few megabytes of samples
+ * instead of a mesh of the whole map. In the outer part of a node's range its
+ * odd vertices slide onto the even ones (`morph`, src/world/terrainLod.ts), so
+ * a change of level never pops; normals are taken over a span that widens with
+ * the morph, so the shading slides with it. A skirt ring hangs below the edges.
+ * The fragment stage is the level's own (`fsMesh`): the same relief, contours,
+ * slice and cull as any ground, with the ground's class colour per vertex.
+ */
+export const TERRAIN_WGSL = MESH_WGSL + /* wgsl */ `
+struct TerrainU {
+  palette : array<vec4<f32>, 16>,
+  // x: samples a tile row (side)
+  cfg : vec4<f32>,
+};
+@group(2) @binding(0) var terrainHeights : texture_2d_array<u32>;
+@group(2) @binding(1) var terrainClasses : texture_2d_array<u32>;
+@group(2) @binding(2) var<uniform> tu : TerrainU;
+
+fn terrainH(layer : i32, p : vec2<i32>, base : f32, stp : f32) -> f32 {
+  return base + f32(textureLoad(terrainHeights, p, layer, 0).r) * stp;
+}
+
+fn terrainBilinear(layer : i32, q : vec2<f32>, base : f32, stp : f32) -> f32 {
+  let top = tu.cfg.x - 2.0;
+  let p0 = clamp(floor(q), vec2<f32>(0.0), vec2<f32>(top));
+  let f = clamp(q - p0, vec2<f32>(0.0), vec2<f32>(1.0));
+  let i = vec2<i32>(p0);
+  let h00 = terrainH(layer, i, base, stp);
+  let h10 = terrainH(layer, i + vec2<i32>(1, 0), base, stp);
+  let h01 = terrainH(layer, i + vec2<i32>(0, 1), base, stp);
+  let h11 = terrainH(layer, i + vec2<i32>(1, 1), base, stp);
+  return mix(mix(h00, h10, f.x), mix(h01, h11, f.x), f.y);
+}
+
+@vertex
+fn vsTerrain(
+  // x, z in cells of the node; 1 for a skirt vertex
+  @location(0) grid : vec3<f32>,
+  // origin x, origin z, spacing, skirt depth
+  @location(5) a : vec4<f32>,
+  // layer, texel x, texel z, level
+  @location(6) b : vec4<f32>,
+  // height base, height step, morph start, morph end
+  @location(7) c : vec4<f32>,
+) -> MeshOut {
+  var out : MeshOut;
+  let layer = i32(b.x + 0.5);
+  let g = grid.xy;
+  let t0 = b.yz;
+  let h0 = terrainH(layer, vec2<i32>(t0 + g + vec2<f32>(0.5)), c.x, c.y);
+  let w0 = vec3<f32>(a.x + g.x * a.z, h0, a.y + g.y * a.z);
+  let k = clamp((distance(w0, u.camera.xyz) - c.z) / max(c.w - c.z, 1e-3), 0.0, 1.0);
+  let gm = g - fract(g * 0.5) * 2.0 * k;
+  let q = t0 + gm;
+  let h = terrainBilinear(layer, q, c.x, c.y);
+  let sz = 1.0 + k;
+  let hx0 = terrainBilinear(layer, q - vec2<f32>(sz, 0.0), c.x, c.y);
+  let hx1 = terrainBilinear(layer, q + vec2<f32>(sz, 0.0), c.x, c.y);
+  let hz0 = terrainBilinear(layer, q - vec2<f32>(0.0, sz), c.x, c.y);
+  let hz1 = terrainBilinear(layer, q + vec2<f32>(0.0, sz), c.x, c.y);
+  out.normal = normalize(vec3<f32>(hx0 - hx1, 2.0 * sz * a.z, hz0 - hz1));
+  let cls = textureLoad(terrainClasses, vec2<i32>(round(q)), layer, 0).r;
+  out.colour = tu.palette[min(cls, 15u)].rgb;
+  var world = vec3<f32>(a.x + gm.x * a.z, h, a.y + gm.y * a.z);
+  if (grid.z > 0.5) { world.y = world.y - a.w; }
+  out.world = world;
+  out.uv = vec2<f32>(-1.0);
+  out.tile = vec4<f32>(0.0);
+  out.pos = u.viewProj * vec4<f32>(world, 1.0);
+  return out;
+}
+`;

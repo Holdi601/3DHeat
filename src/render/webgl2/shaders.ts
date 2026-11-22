@@ -1648,3 +1648,76 @@ export const LINE_HEAT_FS = (() => {
   s = swapOnce(s, 'float d = length(vLocal);', 'float d = length(vec2(vLocal.x, vLocal.y / max(vWidth, 1e-6)));', 'fragment distance');
   return s;
 })();
+
+/**
+ * A tiled terrain's ground (src/world/terrainStream.ts), drawn with MESH_FS:
+ * one 32 x 32 grid instanced once per node, its heights read from the node's
+ * tile - a layer of 16-bit samples - here, with the outer part of a node's
+ * range sliding its odd vertices onto the even ones (src/world/terrainLod.ts).
+ * The WebGPU renderer's `vsTerrain` does the same; see it for the why.
+ */
+export const TERRAIN_VS = `#version 300 es
+precision highp float;
+precision highp int;
+precision highp usampler2DArray;
+// x, z in cells of the node; 1 for a skirt vertex
+layout(location = 0) in vec3 aGrid;
+// origin x, origin z, spacing, skirt depth
+layout(location = 5) in vec4 aA;
+// layer, texel x, texel z, level
+layout(location = 6) in vec4 aB;
+// height base, height step, morph start, morph end
+layout(location = 7) in vec4 aC;
+uniform mat4 uViewProj;
+uniform vec3 uCameraPos;
+uniform usampler2DArray uHeights;
+uniform usampler2DArray uClasses;
+uniform vec4 uPalette[16];
+uniform float uSide;
+out vec3 vNormal;
+out vec3 vWorld;
+out vec3 vColour;
+out vec2 vUv;
+out vec4 vTile;
+
+float terrainH(int layer, ivec2 p) {
+  return aC.x + float(texelFetch(uHeights, ivec3(p, layer), 0).r) * aC.y;
+}
+
+float terrainBilinear(int layer, vec2 q) {
+  vec2 p0 = clamp(floor(q), vec2(0.0), vec2(uSide - 2.0));
+  vec2 f = clamp(q - p0, 0.0, 1.0);
+  ivec2 i = ivec2(p0);
+  float h00 = terrainH(layer, i);
+  float h10 = terrainH(layer, i + ivec2(1, 0));
+  float h01 = terrainH(layer, i + ivec2(0, 1));
+  float h11 = terrainH(layer, i + ivec2(1, 1));
+  return mix(mix(h00, h10, f.x), mix(h01, h11, f.x), f.y);
+}
+
+void main() {
+  int layer = int(aB.x + 0.5);
+  vec2 g = aGrid.xy;
+  vec2 t0 = aB.yz;
+  float h0 = terrainH(layer, ivec2(t0 + g + 0.5));
+  vec3 w0 = vec3(aA.x + g.x * aA.z, h0, aA.y + g.y * aA.z);
+  float k = clamp((distance(w0, uCameraPos) - aC.z) / max(aC.w - aC.z, 1e-3), 0.0, 1.0);
+  vec2 gm = g - fract(g * 0.5) * 2.0 * k;
+  vec2 q = t0 + gm;
+  float h = terrainBilinear(layer, q);
+  float sz = 1.0 + k;
+  float hx0 = terrainBilinear(layer, q - vec2(sz, 0.0));
+  float hx1 = terrainBilinear(layer, q + vec2(sz, 0.0));
+  float hz0 = terrainBilinear(layer, q - vec2(0.0, sz));
+  float hz1 = terrainBilinear(layer, q + vec2(0.0, sz));
+  vNormal = normalize(vec3(hx0 - hx1, 2.0 * sz * aA.z, hz0 - hz1));
+  uint cls = texelFetch(uClasses, ivec3(ivec2(round(q)), layer), 0).r;
+  vColour = uPalette[int(min(cls, 15u))].rgb;
+  vec3 world = vec3(aA.x + gm.x * aA.z, h, aA.y + gm.y * aA.z);
+  if (aGrid.z > 0.5) world.y -= aA.w;
+  vWorld = world;
+  vUv = vec2(-1.0);
+  vTile = vec4(0.0);
+  gl_Position = uViewProj * vec4(world, 1.0);
+}
+`;

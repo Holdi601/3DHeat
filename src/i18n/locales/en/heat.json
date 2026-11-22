@@ -262,6 +262,7 @@
   "heat.levelPanel.saving": "Saving to library",
   "heat.levelPanel.encodeFailed": "Could not encode the map image.",
   "heat.levelPanel.saved": "Saved. It will load instantly next time.",
+  "heat.levelPanel.terrainNotSaved": "This map streams from the levels folder as you look round; it needs no copy in the library.",
   "heat.levelPanel.loading": "Loading {name}",
   "heat.levelPanel.entryGone": "That entry is no longer in the library.",
   "heat.levelPanel.entryEmpty": "That entry has no usable payload.",

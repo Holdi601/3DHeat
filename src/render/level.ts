@@ -1,6 +1,7 @@
 import type { Bounds, GeoPlacement } from '../state/types';
 import type { WorldLabel } from '../world/backdrop';
 import type { DcsGroundData } from '../world/dcsGround';
+import type { TerrainStream } from '../world/terrainStream';
 
 /**
  * Background geometry: the map under the heat.
@@ -193,6 +194,12 @@ export interface ModelLevel {
    * Absent on a backdrop built once.
    */
   stream?: { theatre: string; runways: boolean; imagery: boolean; dcs?: DcsGroundData | null };
+  /**
+   * A tiled terrain (src/world/terrainStream.ts): the ground drawn from its
+   * height tiles round the camera, the placed objects and the sea as world
+   * tiles. The level's own arrays are then empty. Absent on every other level.
+   */
+  terrain?: TerrainStream;
 
   // Ground appearance.
   opacity: number;

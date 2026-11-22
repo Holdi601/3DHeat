@@ -110,6 +110,7 @@ import {
 } from './types';
 import { t } from '../i18n';
 import { worldTiles } from '../world/tileSet';
+import { boxOutsideFrustum, frustumPlanes } from './worldTiles';
 import { VolumeGestures, rayToVertical } from '../volumes/gestures';
 import { appendVolumeOverlay } from '../volumes/overlay';
 import { packVolumes, type VolumeDraw } from '../volumes/gpu';
@@ -841,6 +842,25 @@ export class Engine {
   private forceRenderFrames = 0;
 
   /** Force the next frame to redraw, e.g. after an external state change. */
+  private readonly terrainPlanes = new Float32Array(20);
+
+  /** A tiled terrain's nodes for this frame's camera, culled to the view (src/world/terrainStream.ts). */
+  private terrainFrame(level: Level | null): FrameParams['terrain'] {
+    if (level?.kind !== 'model' || !level.terrain) return null;
+    const planes = frustumPlanes(this.viewProjArr, this.terrainPlanes);
+    const box = { minX: 0, minY: 0, minZ: 0, maxX: 0, maxY: 0, maxZ: 0 };
+    const frame = level.terrain.frame(this.camPos, (minX, minY, minZ, maxX, maxY, maxZ) => {
+      box.minX = minX;
+      box.minY = minY;
+      box.minZ = minZ;
+      box.maxX = maxX;
+      box.maxY = maxY;
+      box.maxZ = maxZ;
+      return boxOutsideFrustum(planes, box);
+    });
+    return { stream: level.terrain, frame, colours: level.showTexture !== false };
+  }
+
   invalidate(frames = 1): void {
     this.forceRenderFrames = Math.max(this.forceRenderFrames, frames);
   }
@@ -2994,6 +3014,11 @@ export class Engine {
     }
 
     if (s.level !== this.level) {
+      // A tiled terrain: told to ask for a frame when tiles arrive; the one it replaces let go.
+      const oldTerrain = this.level?.kind === 'model' ? this.level.terrain : undefined;
+      const newTerrain = s.level?.kind === 'model' ? s.level.terrain : undefined;
+      if (oldTerrain && oldTerrain !== newTerrain) oldTerrain.dispose();
+      if (newTerrain) newTerrain.onChange = () => this.invalidate(2);
       if (!sameLevelUpload(this.level, s.level)) {
         // A new simplification of the same level: only its triangles go up, over frames (levelIndices.ts).
         const swap = (renderer as Partial<LevelIndexUploader>).setLevelIndices;
@@ -4444,6 +4469,7 @@ export class Engine {
       topTriCount: this.objectiveTopTris?.count ?? 0,
       direction: raceTab || s.mode === 'team' ? null : this.directions.frame(window.devicePixelRatio || 1, now),
       level: vehicleTab ? null : lookOn ? tacticalLevel(buildLevelDraw(s.level)) : buildLevelDraw(s.level),
+      terrain: vehicleTab ? null : this.terrainFrame(s.level),
       post: lookOn ? this.lookPost(s) : null,
       // Auto-focus uses whatever the view was last framed on, which is the only
       // distance the camera can honestly claim to be looking at.

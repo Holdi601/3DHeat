@@ -6,7 +6,7 @@ lang: "tr"
 source: "model-levels.md"
 source_hash: "0afa06188c9e"
 translated: true
-outdated: false
+outdated: true
 ---
 
 # 3B seviyeler

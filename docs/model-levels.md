@@ -85,6 +85,18 @@ Ground texture is shown by default when present; structures that carry textures 
 - Above **300,000** structure triangles the structure edges start switched off and the face opacity at 35%: with an edge in every pixel the district reads as flat white.
 - The camera's far plane widens to fit the level ([Levels](levels.md#what-a-level-does-for-the-heat)).
 
+### Tiled terrains (big maps)
+
+A whole island of 30 km at 7.5 m a sample is too big to load as one mesh. An extractor can also write such a map **tiled**: `<Level>.terrain.json` and `<Level>.terrain.bin` beside the level's `.glb` in the levels folder. When both are there the viewer loads the tiled one, and the level shows in about a second:
+
+- the ground is drawn from its height samples near the camera in full detail and coarser further off, the finer pieces loaded as you look round; changes of detail blend in rather than pop;
+- buildings and other placed objects show within a few kilometres of the camera (further when it is high);
+- the GPU keeps a fixed amount for the ground (about 13 MB), whatever the map's size;
+- the ground's colours (beach, rock, roads ...) are its ground texture: **Ground texture** in the panel turns them off;
+- a tiled level stays in the levels folder: **Save to library** keeps no copy of it.
+
+The ground check, the heightless-recording fit and a click on the ground read the heights straight from the tiles. The format is described in [`terrainFormat.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/world/terrainFormat.ts); the Arma 3 extractor (version 0.6.0 and later) writes it.
+
 ## For developers
 
 ### Texture atlas

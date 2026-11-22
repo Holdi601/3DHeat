@@ -7,6 +7,7 @@ import type { Dataset, ViewMode } from '../state/types';
 import type { Level } from './level';
 import type { WorldTile } from '../world/tileSet';
 import type { RateParams } from './rateMap';
+import type { TerrainFrame, TerrainStream } from '../world/terrainStream';
 
 /** `native`: the native app's own viewport (Stage 5, preview; src/render/native/nativeRenderer.ts). */
 export type BackendKind = 'webgpu' | 'webgl2' | 'native';
@@ -610,6 +611,13 @@ export interface FrameParams {
 
   /** Appearance of the background map or level mesh. Null draws neither. */
   level: LevelDraw | null;
+  /**
+   * A tiled terrain's ground (src/world/terrainStream.ts), drawn with the
+   * model level's look: the stream whose tiles the renderer holds, this
+   * frame's nodes, and whether the ground is in its classes' colours (the
+   * level's texture switch). Null or absent: none.
+   */
+  terrain?: { stream: TerrainStream; frame: TerrainFrame; colours: boolean } | null;
 
   /** Depth of field for the scene pass. Null disables it entirely. */
   dof: DofDraw | null;

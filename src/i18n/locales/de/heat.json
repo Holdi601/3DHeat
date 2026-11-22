@@ -255,6 +255,7 @@
   "heat.levelPanel.saving": "Speichere in die Bibliothek",
   "heat.levelPanel.encodeFailed": "Das Kartenbild konnte nicht kodiert werden.",
   "heat.levelPanel.saved": "Gespeichert. Beim nächsten Mal lädt es sofort.",
+  "heat.levelPanel.terrainNotSaved": "Diese Karte wird beim Umsehen aus dem Level-Ordner nachgeladen; sie braucht keine Kopie in der Bibliothek.",
   "heat.levelPanel.loading": "Lade {name}",
   "heat.levelPanel.entryGone": "Dieser Eintrag ist nicht mehr in der Bibliothek.",
   "heat.levelPanel.entryEmpty": "Dieser Eintrag hat keine verwendbaren Daten.",

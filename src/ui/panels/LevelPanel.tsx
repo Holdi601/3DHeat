@@ -547,6 +547,10 @@ export function LevelPanel() {
 
   const saveCurrent = async () => {
     if (!level) return;
+    if (level.kind === 'model' && level.terrain) {
+      setNote(t('heat.levelPanel.terrainNotSaved'));
+      return;
+    }
     setBusy(t('heat.levelPanel.saving'));
     setError(null);
     try {
@@ -1002,7 +1006,7 @@ export function LevelPanel() {
                 onChange={(wireframe) => patchLevel({ wireframe })}
                 title={t('heat.levelPanel.wireframeTitle')}
               />
-              {mdl.uvs && mdl.atlas ? (
+              {(mdl.uvs && mdl.atlas) || mdl.terrain ? (
                 <Check
                   label={t('heat.levelPanel.groundTexture')}
                   checked={mdl.showTexture !== false}

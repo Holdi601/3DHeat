@@ -3,7 +3,9 @@ import { notePick } from '../../usage/hooks';
 import { int, t } from '../../i18n';
 import { useStore } from '../../state/store';
 import { useFrostbiteMaps } from '../../data/frostbiteLevel';
-import { byGame, classify, fingerprint, levelFor, linkLayouts, type CatalogIndex, type CatalogItem } from '../../data/catalogIndex';
+import { byGame, classify, fingerprint, levelFor, linkLayouts, TERRAIN_BIN, type CatalogIndex, type CatalogItem } from '../../data/catalogIndex';
+import { blobReader, urlReader, type TerrainReader } from '../../world/terrainFormat';
+import { openTerrainLevel } from './terrainLevel';
 import { armaLevelFor, armaWorldOf, armaWorldsOfLabels, type ArmaWorld } from '../../data/armaWorlds';
 import { previewedWorlds } from '../../data/ingestOcap';
 import type { Dataset } from '../../state/types';
@@ -27,7 +29,11 @@ function indexOfPicked(files: FileList): CatalogIndex {
     root = root || (parts.length > 1 ? parts[0] : '');
     const path = parts.length > 1 ? parts.slice(1).join('/') : rel;
     const c = classify(path);
-    if (!c) continue;
+    if (!c) {
+      // A tiled terrain's tiles: read a range at a time beside its index, never listed.
+      if (TERRAIN_BIN.test(path)) picked.set(path, f);
+      continue;
+    }
     picked.set(path, f);
     items.push({ path, ...c, bytes: f.size, mtime: f.lastModified, sha256: null, extractor: null, gameBuild: null });
   }
@@ -56,8 +62,37 @@ export async function loadCatalogItem(item: CatalogItem, loadModel: (file: File)
     const l = await fileOf(item.layouts);
     if (l) await loadLayoutFiles([new File([l], l.name.endsWith('.layouts.json') ? l.name : `${item.name}.layouts.json`)]);
   }
+  if (item.terrain) {
+    const lv = await terrainLevelOf(item);
+    if (lv) {
+      useStore.getState().setLevel(lv);
+      return;
+    }
+  }
   const f = await fileOf(item);
   if (f) await loadModel(f);
+}
+
+/**
+ * A level's tiled terrain (`item.terrain`) as its level, its tiles read by
+ * range from the picked folder or the local server; null when it cannot be read
+ * (the glb is loaded instead).
+ */
+export async function terrainLevelOf(item: CatalogItem): Promise<import('../../render/level').ModelLevel | null> {
+  if (!item.terrain) return null;
+  try {
+    const ix = await fileOf(item.terrain);
+    if (!ix) return null;
+    const text = await ix.text();
+    const bin = (JSON.parse(text) as { bin?: unknown }).bin;
+    if (typeof bin !== 'string') return null;
+    const binPath = item.terrain.replace(/[^/]*$/, '') + bin;
+    const local = picked.get(binPath);
+    const reader: TerrainReader = local ? blobReader(local) : urlReader(`${CATALOG_ROUTE}/file?path=${encodeURIComponent(binPath)}`);
+    return await openTerrainLevel(item.name, text, reader);
+  } catch {
+    return null;
+  }
 }
 
 async function fileOf(item: CatalogItem | string): Promise<File | null> {

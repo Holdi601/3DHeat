@@ -10,7 +10,7 @@ import { brotliCompressSync, constants as zlibConstants, gzipSync } from 'node:z
 import { encodePackFigure, type PackFigure } from './src/figures/figurepackBin.ts';
 import { figureFromModelGlb, platesFromModelGlb } from './src/figures/modelpack.ts';
 import { preferFromCookie, preferredModels } from './src/figures/modelprefer.ts';
-import { classify, glbExtras, jsonExtras, linkLayouts, type CatalogIndex, type CatalogItem } from './src/data/catalogIndex.ts';
+import { classify, glbExtras, jsonExtras, linkLayouts, TERRAIN_BIN, type CatalogIndex, type CatalogItem } from './src/data/catalogIndex.ts';
 import { buildCommandIndex } from './tools/commandIndex.ts';
 import { checkBatch, LIMITS } from './src/usage/schema.ts';
 
@@ -766,13 +766,32 @@ function catalogFolder(): Plugin {
       }
       if (url.pathname === '/file') {
         const path = (url.searchParams.get('path') ?? '').replace(/\\/g, '/');
-        if (!path || path.split('/').some((p) => p === '..' || p.startsWith('.')) || !classify(path) || !existsSync(`${root}/${path}`)) {
+        if (!path || path.split('/').some((p) => p === '..' || p.startsWith('.')) || !(classify(path) || TERRAIN_BIN.test(path)) || !existsSync(`${root}/${path}`)) {
           res.statusCode = 404;
           res.end();
           return;
         }
         res.setHeader('Content-Type', /\.json$/i.test(path) ? 'application/json' : 'application/octet-stream');
-        res.setHeader('Content-Length', statSync(`${root}/${path}`).size);
+        res.setHeader('Accept-Ranges', 'bytes');
+        const size = statSync(`${root}/${path}`).size;
+        // A byte range (a tiled terrain's tile: src/world/terrainFormat.ts), else the whole file.
+        const range = /^bytes=(\d+)-(\d*)$/.exec(String(req.headers.range ?? ''));
+        if (range) {
+          const start = Number(range[1]);
+          const end = Math.min(size - 1, range[2] ? Number(range[2]) : size - 1);
+          if (start > end || start >= size) {
+            res.statusCode = 416;
+            res.setHeader('Content-Range', `bytes */${size}`);
+            res.end();
+            return;
+          }
+          res.statusCode = 206;
+          res.setHeader('Content-Range', `bytes ${start}-${end}/${size}`);
+          res.setHeader('Content-Length', end - start + 1);
+          createReadStream(`${root}/${path}`, { start, end }).pipe(res);
+          return;
+        }
+        res.setHeader('Content-Length', size);
         createReadStream(`${root}/${path}`).pipe(res);
         return;
       }

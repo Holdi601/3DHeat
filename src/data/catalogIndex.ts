@@ -26,7 +26,7 @@
  * page, which can index a folder picked by hand without one.
  */
 
-export type CatalogKind = 'level' | 'layouts' | 'course' | 'ranges' | 'cars' | 'figure-pack' | 'model-pack' | 'catalog' | 'other';
+export type CatalogKind = 'level' | 'layouts' | 'terrain' | 'course' | 'ranges' | 'cars' | 'figure-pack' | 'model-pack' | 'catalog' | 'other';
 
 export interface CatalogItem {
   /** The path under the root, with forward slashes: the item's id. */
@@ -47,6 +47,11 @@ export interface CatalogItem {
   gameBuild: string | null;
   /** A level's layouts file, by path. */
   layouts?: string;
+  /**
+   * A level's tiled terrain index (`<Level>.terrain.json`, src/world/terrainFormat.ts), by path:
+   * loaded instead of the level's glb, which is then only for other tools.
+   */
+  terrain?: string;
 }
 
 export interface CatalogIndex {
@@ -70,7 +75,7 @@ export function classify(path: string): Pick<CatalogItem, 'game' | 'kind' | 'nam
   const file = parts[parts.length - 1];
   if (file.startsWith('.') || !KNOWN.test(file)) return null;
   const top = parts.length > 1 ? parts[0] : '';
-  const stem = file.replace(/\.layouts\.json$/i, '').replace(/\.[^.]+$/, '');
+  const stem = file.replace(/\.(layouts|terrain)\.json$/i, '').replace(/\.[^.]+$/, '');
   if (top === 'figure-packs') {
     if (/^figures.*\.json$/i.test(file)) return { game: '', kind: 'figure-pack', name: parts.length > 2 ? parts[1] : stem };
     return null;
@@ -80,6 +85,7 @@ export function classify(path: string): Pick<CatalogItem, 'game' | 'kind' | 'nam
   const game = NOT_GAMES.has(top) ? '' : top;
   if (parts.length === 2 && file === 'catalog.json') return { game, kind: 'catalog', name: game };
   if (/\.layouts\.json$/i.test(file)) return { game, kind: 'layouts', name: stem };
+  if (/\.terrain\.json$/i.test(file)) return { game, kind: 'terrain', name: stem };
   if (/^ranges\.json$/i.test(file)) return { game, kind: 'ranges', name: game || stem };
   if (/\.h3dcars$/i.test(file)) return { game, kind: 'cars', name: stem };
   if (/\.(glb|gltf)$/i.test(file)) return { game, kind: parts.includes('courses') ? 'course' : 'level', name: stem };
@@ -95,13 +101,29 @@ export function fingerprint(item: Pick<CatalogItem, 'sha256' | 'extractor' | 'ga
   return `sha256:${item.sha256}|${item.extractor ?? ''}|${item.gameBuild ?? ''}`;
 }
 
-/** Joins each level to its layouts file beside it. */
+/** A tiled terrain's tiles: beside its index, served with it, never listed. */
+export const TERRAIN_BIN = /\.terrain\.bin$/i;
+
+/**
+ * Joins each level to its layouts file and its tiled terrain beside it; a
+ * tiled terrain with no glb beside it is a level of its own.
+ */
 export function linkLayouts(items: CatalogItem[]): CatalogItem[] {
   const layouts = new Map<string, string>();
-  for (const it of items) if (it.kind === 'layouts') layouts.set(`${it.game}/${it.name.toLowerCase()}`, it.path);
+  const terrains = new Map<string, CatalogItem>();
+  const key = (it: CatalogItem) => `${it.game}/${it.name.toLowerCase()}`;
+  for (const it of items) if (it.kind === 'layouts') layouts.set(key(it), it.path);
+  for (const it of items) if (it.kind === 'terrain') terrains.set(key(it), it);
+  const levels = new Set(items.filter((it) => it.kind === 'level').map(key));
   return items.map((it) => {
-    const l = it.kind === 'level' ? layouts.get(`${it.game}/${it.name.toLowerCase()}`) : undefined;
-    return l ? { ...it, layouts: l } : it;
+    if (it.kind === 'terrain' && !levels.has(key(it))) {
+      const l = layouts.get(key(it));
+      return { ...it, kind: 'level', terrain: it.path, ...(l ? { layouts: l } : {}) };
+    }
+    if (it.kind !== 'level') return it;
+    const l = layouts.get(key(it));
+    const tr = terrains.get(key(it));
+    return l || tr ? { ...it, ...(l ? { layouts: l } : {}), ...(tr ? { terrain: tr.path } : {}) } : it;
   });
 }
 
@@ -134,7 +156,7 @@ export function jsonExtras(text: string): { extractor: string | null; gameBuild:
 
 /** The items grouped by game, games in name order, levels first within each. */
 export function byGame(items: readonly CatalogItem[]): { game: string; items: CatalogItem[] }[] {
-  const order: CatalogKind[] = ['level', 'course', 'model-pack', 'catalog', 'figure-pack', 'ranges', 'cars', 'layouts', 'other'];
+  const order: CatalogKind[] = ['level', 'course', 'model-pack', 'catalog', 'figure-pack', 'ranges', 'cars', 'layouts', 'terrain', 'other'];
   const groups = new Map<string, CatalogItem[]>();
   for (const it of items) {
     const g = groups.get(it.game);

@@ -249,6 +249,18 @@ export class Inspector {
           return;
         }
       }
+    } else if (level?.kind === 'model' && level.terrain) {
+      // A tiled terrain: its heights marched along the ray (src/world/terrainStream.ts); no index to build.
+      const hit = terrainHit(level, ctx.ray);
+      const tile = raycastTiles(this.tiles, ctx.ray, hit ? hit.t : Infinity, ctx.accept);
+      if (tile) {
+        this.publishSurface(id, ctx, tile.point, tileSurface(tile));
+        return;
+      }
+      if (hit && (!ctx.accept || ctx.accept(hit.point.x, hit.point.y, hit.point.z))) {
+        this.publishSurface(id, ctx, hit.point, { part: level.name, cls: 'ground', approximate: false });
+        return;
+      }
     } else if (level?.kind === 'model') {
       if (!this.index) {
         store.setPick({ id, kind: 'pending', point: null, distance: 0, progress: this.buildFraction });
@@ -351,7 +363,8 @@ export class Inspector {
     }
     if (level?.kind !== 'model') return null;
     let hit: { t: number; point: Vec3 } | null = null;
-    if (this.index) hit = raycastSurface(this.index.main, level.vertices, ray, Infinity, null);
+    if (level.terrain) hit = terrainHit(level, ray);
+    else if (this.index) hit = raycastSurface(this.index.main, level.vertices, ray, Infinity, null);
     // Started once; the frames that ask meanwhile get the world tiles, which
     // need no index over the whole set, or the ground plane.
     else if (!this.building) this.ensureIndex(level, () => {}).catch(() => undefined);
@@ -404,4 +417,14 @@ function tileSurface(hit: TileHit): PickedSurface {
 
 function distance(a: Vec3, b: Vec3): number {
   return Math.hypot(a.x - b.x, a.y - b.y, a.z - b.z);
+}
+
+/** Where a ray meets a tiled terrain's loaded ground. */
+function terrainHit(level: ModelLevel, ray: { origin: Vec3; dir: Vec3 }): { t: number; point: Vec3 } | null {
+  const o = ray.origin;
+  const d = ray.dir;
+  const len = Math.hypot(d.x, d.y, d.z) || 1;
+  const hit = level.terrain?.raycast([o.x, o.y, o.z], [d.x / len, d.y / len, d.z / len]);
+  if (!hit) return null;
+  return { t: hit.t / len, point: { x: hit.point[0], y: hit.point[1], z: hit.point[2] } };
 }

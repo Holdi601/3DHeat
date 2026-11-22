@@ -22,6 +22,7 @@ import { forcedHeatPrecision } from '../webgl2/glutil';
 import { buildEdgeList, type Level } from '../level';
 import { boxOutsideFrustum, diffWorldTiles, frustumPlanes, textureBytes } from '../worldTiles';
 import type { WorldTile } from '../../world/tileSet';
+import { GpuTerrain } from './terrain';
 import { filterColumnData, packFilterTable, packSignTables, PERSON_FILTER_COLUMN } from '../filterTables';
 import { FilterStaging, type StageOps } from '../filterStaging';
 import {
@@ -257,7 +258,7 @@ export class WebgpuRenderer implements Renderer {
   }
 
   get levelBytes(): number {
-    return this.levelOwnBytes + this.tileBytes;
+    return this.levelOwnBytes + this.tileBytes + (this.terrain?.bytes ?? 0);
   }
 
   private dataset: Dataset | null = null;
@@ -530,6 +531,11 @@ export class WebgpuRenderer implements Renderer {
    * would show heat through a hill that is plainly there.
    */
   private frameMeshes: GpuMesh[] = [];
+  /** A tiled terrain's ground (`terrain.ts`), made with the first one. */
+  private terrain: GpuTerrain | null = null;
+  private frameTerrain: FrameParams['terrain'] | null = null;
+  /** The terrain's (empty) texture group: it draws nothing textured. */
+  private terrainAtlas: { pipeline: GPURenderPipeline; group: GPUBindGroup } | null = null;
   private readonly planes = new Float32Array(20);
   private tilePlaceholder: GPUBuffer | null = null;
   /** Bumped per level so a late atlas is not uploaded onto the next level. */
@@ -2316,6 +2322,43 @@ export class WebgpuRenderer implements Renderer {
    * when the tile does instead of piling up under ids that never come back.
    */
   private atlasBindGroup(pipeline: GPURenderPipeline, mesh: GpuMesh): GPUBindGroup {
+    this.ensureAtlasPlaceholders();
+    let group = mesh.atlasGroups.get(pipeline);
+    if (!group) {
+      const texture = mesh.texture ?? this.atlasPlaceholder!;
+      const tiles = mesh.tileTable ?? this.tilePlaceholder!;
+      const view = mesh.texture && mesh.textureLevels ? texture.createView({ mipLevelCount: mesh.textureLevels }) : texture.createView();
+      group = this.device.createBindGroup({
+        layout: pipeline.getBindGroupLayout(1),
+        entries: [
+          { binding: 0, resource: view },
+          { binding: 1, resource: this.atlasSamplerCache! },
+          { binding: 2, resource: { buffer: tiles } },
+        ],
+      });
+      mesh.atlasGroups.set(pipeline, group);
+    }
+    return group;
+  }
+
+  /** The tiled terrain's texture group: the placeholder atlas (its vertex stage reads no tile table). */
+  private terrainAtlasGroup(pipeline: GPURenderPipeline): GPUBindGroup {
+    this.ensureAtlasPlaceholders();
+    if (this.terrainAtlas?.pipeline !== pipeline) {
+      const group = this.device.createBindGroup({
+        label: 'terrain atlas',
+        layout: pipeline.getBindGroupLayout(1),
+        entries: [
+          { binding: 0, resource: this.atlasPlaceholder!.createView() },
+          { binding: 1, resource: this.atlasSamplerCache! },
+        ],
+      });
+      this.terrainAtlas = { pipeline, group };
+    }
+    return this.terrainAtlas.group;
+  }
+
+  private ensureAtlasPlaceholders(): void {
     if (!this.atlasPlaceholder) {
       this.atlasPlaceholder = this.device.createTexture({
         label: 'no atlas',
@@ -2353,22 +2396,6 @@ export class WebgpuRenderer implements Renderer {
         usage: GPUBufferUsage.STORAGE,
       });
     }
-    let group = mesh.atlasGroups.get(pipeline);
-    if (!group) {
-      const texture = mesh.texture ?? this.atlasPlaceholder;
-      const tiles = mesh.tileTable ?? this.tilePlaceholder;
-      const view = mesh.texture && mesh.textureLevels ? texture.createView({ mipLevelCount: mesh.textureLevels }) : texture.createView();
-      group = this.device.createBindGroup({
-        layout: pipeline.getBindGroupLayout(1),
-        entries: [
-          { binding: 0, resource: view },
-          { binding: 1, resource: this.atlasSamplerCache },
-          { binding: 2, resource: { buffer: tiles } },
-        ],
-      });
-      mesh.atlasGroups.set(pipeline, group);
-    }
-    return group;
   }
 
   /**
@@ -2548,6 +2575,11 @@ export class WebgpuRenderer implements Renderer {
     const lookOffset = this.pushSceneUniform(params, 1e9, 1e9 + 1, params.lookLength, 1);
     this.frameMeshes = this.meshesInView(params);
     const model = params.level?.kind === 'model' ? params.level : null;
+    this.frameTerrain = model ? (params.terrain ?? null) : null;
+    if (model && params.terrain) {
+      this.terrain ??= new GpuTerrain(this.device, SCENE_FORMAT, DEPTH_FORMAT, GPU_DEPTH_TEST, alphaBlend());
+      this.terrain.prepare(params.terrain.stream);
+    }
     const slots = model ? this.pushMeshUniforms(params, model) : null;
     const mapOffset = params.level?.kind === 'image' ? this.pushMapUniform(params, params.level) : 0;
     // The units' lines of sight, a few faces a frame, in passes of their own before the scene that reads them.
@@ -2831,7 +2863,11 @@ export class WebgpuRenderer implements Renderer {
       model.water.tint,
       0,
     );
-    return { ground, struct, seal, wire, groundWire, water };
+    // A tiled terrain's ground: the level's look, its classes' colours when the texture is on.
+    const terrain = params.terrain
+      ? this.pushSceneUniform(params, 1e9, 1e9 + 1, model.opacity, model.brightness, [1, 1, 1], 0, model.relief, false, params.terrain.colours, false)
+      : 0;
+    return { ground, struct, seal, wire, groundWire, water, terrain };
   }
 
   /** The structures' depth-only slot: the seal's and the structure-depth target's. */
@@ -2925,6 +2961,15 @@ export class WebgpuRenderer implements Renderer {
       this.setMeshBuffers(pass, m);
       pass.setIndexBuffer(m.groundBuffer, 'uint32');
       pass.drawIndexed(m.groundCount);
+    }
+
+    if (this.frameTerrain && this.terrain) {
+      this.terrain.draw(
+        pass,
+        this.frameTerrain.frame,
+        this.sceneBindGroup(this.terrain.pipeline, 'terrain', slots.terrain),
+        this.terrainAtlasGroup(this.terrain.pipeline),
+      );
     }
 
     // Its triangle edges over the top, not instead of it: the shape and the
@@ -4782,6 +4827,8 @@ export class WebgpuRenderer implements Renderer {
 
   dispose(): void {
     this.disposed = true;
+    this.terrain?.destroy();
+    this.terrain = null;
     this.heatBin?.dispose();
     this.zones?.dispose();
     this.spawnMarks?.dispose();
@@ -5006,6 +5053,8 @@ interface MeshSlots {
   wire: number;
   groundWire: number;
   water: number;
+  /** The tiled terrain's ground slot; 0 without one. */
+  terrain: number;
 }
 
 function groundKey(colour: boolean, textured: boolean): string {
