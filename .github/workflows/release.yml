@@ -33,7 +33,7 @@ jobs:
       version: ${{ steps.v.outputs.version }}
       tag: ${{ steps.v.outputs.tag }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - id: v
         name: Version and tag agree with the package and the Rust workspace
         shell: bash
@@ -51,8 +51,8 @@ jobs:
     needs: version
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
       - uses: dtolnay/rust-toolchain@stable
@@ -94,7 +94,7 @@ jobs:
       - name: Collect
         shell: bash
         run: cp native/target/release/bundle/nsis/*.exe native/target/release/bundle/msi/*.msi out/
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: release-windows
           path: out/*
@@ -104,8 +104,8 @@ jobs:
     needs: version
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
       - uses: dtolnay/rust-toolchain@stable
@@ -140,7 +140,7 @@ jobs:
           rpm -qp --requires native/target/release/bundle/rpm/*.rpm 2>/dev/null || true
       - name: Collect
         run: cp native/target/release/bundle/appimage/*.AppImage native/target/release/bundle/deb/*.deb native/target/release/bundle/rpm/*.rpm out/
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: release-linux-x64
           path: out/*
@@ -150,8 +150,8 @@ jobs:
     needs: version
     runs-on: ubuntu-22.04-arm
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
       - uses: dtolnay/rust-toolchain@stable
@@ -167,7 +167,7 @@ jobs:
         run: cargo build --release --locked -p heat3d-server
       - name: Server packages
         run: bash native/packaging/server-package.sh "${{ needs.version.outputs.version }}" linux-arm64 native/target/release/3dheat dist out
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: release-linux-arm64
           path: out/*
@@ -185,7 +185,7 @@ jobs:
             runner: ubuntu-24.04-arm
     runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Build the image (not pushed anywhere)
         run: docker build -f native/packaging/docker/Dockerfile --build-arg VERSION=${{ needs.version.outputs.version }} -t 3dheat-server:${{ needs.version.outputs.version }} .
       - name: Starts read-only as a non-root user and turns healthy
@@ -205,7 +205,7 @@ jobs:
           docker rm -f heat
       - name: Save
         run: docker save 3dheat-server:${{ needs.version.outputs.version }} | gzip > 3dheat-server-${{ needs.version.outputs.version }}-docker-${{ matrix.arch }}.tar.gz
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: docker-${{ matrix.arch }}
           path: 3dheat-server-*-docker-*.tar.gz
@@ -217,7 +217,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/download-artifact@v4
         with:
           pattern: release-*
