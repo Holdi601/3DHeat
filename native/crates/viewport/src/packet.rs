@@ -66,6 +66,27 @@ pub struct Packet {
     pub top: Option<Top>,
     /// The capture zones' discs, the spawn marks and the volumes' contours (`SECTION_OVERLAYS`).
     pub overlays: Option<Overlays>,
+    /// The engagement ranges (`SECTION_RANGES`).
+    pub ranges: Option<Ranges>,
+}
+
+/// `SECTION_RANGES`: the page packs every uniform; the shell mesh comes once.
+#[derive(Clone, Default)]
+pub struct Ranges {
+    pub count: u32,
+    pub cone_start: u32,
+    /// Vertices of the sphere and of the cone in the mesh.
+    pub sphere: u32,
+    pub cone: u32,
+    pub mesh: Option<Vec<f32>>,
+    /// `SHELL_UNIFORM_BYTES`.
+    pub shell_uniform: Vec<f32>,
+    /// `SHELL_FLOATS` each.
+    pub instances: Vec<f32>,
+    /// `GROUND_UNIFORM_BYTES`, when the ground is shaded.
+    pub ground: Option<Vec<f32>>,
+    /// The faces to take this frame: layer, its capture uniforms (16 floats).
+    pub captures: Vec<(u32, Vec<f32>)>,
 }
 
 /// `SECTION_OVERLAYS`. The kept arrays (the zones' vertices, the spawn instances) come only when new.
@@ -306,6 +327,25 @@ pub fn decode(bytes: &[u8]) -> Result<Packet> {
                     o.contours = Some(Contours { block, colors, inv });
                 }
                 p.overlays = Some(o);
+            }
+            SECTION_RANGES => {
+                let f = |w: &[u32]| w.iter().map(|x| f32::from_bits(*x)).collect::<Vec<f32>>();
+                let mut r = Ranges { count: s.take()?, cone_start: s.take()?, sphere: s.take()?, cone: s.take()?, ..Default::default() };
+                if s.take()? == 1 {
+                    let n = s.take()? as usize;
+                    r.mesh = Some(f(s.slice(n)?));
+                }
+                r.shell_uniform = f(s.slice(SHELL_UNIFORM_BYTES as usize / 4)?);
+                r.instances = f(s.slice(r.count as usize * SHELL_FLOATS as usize)?);
+                if s.take()? == 1 {
+                    r.ground = Some(f(s.slice(GROUND_UNIFORM_BYTES as usize / 4)?));
+                }
+                let n = s.take()?;
+                for _ in 0..n {
+                    let layer = s.take()?;
+                    r.captures.push((layer, f(s.slice(16)?)));
+                }
+                p.ranges = Some(r);
             }
             SECTION_CUBES => {
                 let n = s.take()? as usize;

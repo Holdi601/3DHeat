@@ -1,5 +1,6 @@
 //! The renderer on a real adapter - or lavapipe, Mesa's software Vulkan, in CI: every pipeline made
-//! (heat, binning, composite, level, lines, figures, cubes, zones, spawn marks, volume contours), one frame of heat drawn offscreen with
+//! (heat, binning, composite, level, lines, figures, cubes, zones, spawn marks, volume contours,
+//! engagement ranges with a view taken from the level), one frame of heat drawn offscreen with
 //! no validation error, and the heat read back. Skipped where no adapter is found, unless
 //! `HEAT3D_GPU_SMOKE=1` asks for one (the Linux CI job, with lavapipe installed).
 
@@ -7,7 +8,8 @@ use std::sync::{Arc, Mutex};
 
 use heat3d_viewport::generated::*;
 use heat3d_viewport::loader::PageChunk;
-use heat3d_viewport::packet::{Contours, Glyphs, Overlays, Packet, PlanEntry, Spawns, Top, Zones};
+use heat3d_viewport::packet::{Contours, Glyphs, Overlays, Packet, PlanEntry, Ranges, Spawns, Top, Zones};
+use heat3d_viewport::LevelMesh;
 use heat3d_viewport::wgpu;
 use heat3d_viewport::Renderer;
 
@@ -41,7 +43,7 @@ fn chunk() -> PageChunk {
 fn packet() -> Packet {
     let mut f = vec![0f32; FRAME_WORDS];
     // Column-major: clip.x = 2x - 1, clip.y = 2z - 1, depth 0.5.
-    let vp = [2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, -1.0, -1.0, 0.5, 1.0];
+    let vp: [f32; 16] = [2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, -1.0, -1.0, 0.5, 1.0];
     f[F_VIEW_PROJ..F_VIEW_PROJ + 16].copy_from_slice(&vp);
     f[F_VIEW_PROJ_REL..F_VIEW_PROJ_REL + 16].copy_from_slice(&vp);
     f[F_PROJ5] = 2.0;
@@ -90,7 +92,31 @@ fn packet() -> Packet {
             under_lines: Vec::new(),
         }),
         overlays: Some(overlays()),
+        ranges: Some(ranges(&vp)),
         ..Default::default()
+    }
+}
+
+/// Two shells (a sphere, then a cone), the ground shaded, one face of a view taken from the level.
+fn ranges(vp: &[f32; 16]) -> Ranges {
+    let mut shell_uniform = vec![0f32; SHELL_UNIFORM_BYTES as usize / 4];
+    shell_uniform[..16].copy_from_slice(vp);
+    shell_uniform[19] = 0.5;
+    shell_uniform[20] = 1.0;
+    let mut ground = vec![0f32; GROUND_UNIFORM_BYTES as usize / 4];
+    ground[..16].copy_from_slice(vp);
+    let mut instance = vec![0f32; SHELL_FLOATS as usize];
+    instance[..4].copy_from_slice(&[0.5, 0.5, 0.5, 0.3]);
+    Ranges {
+        count: 2,
+        cone_start: 1,
+        sphere: 3,
+        cone: 3,
+        mesh: Some(vec![0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0]),
+        shell_uniform,
+        instances: [instance.clone(), instance].concat(),
+        ground: Some(ground),
+        captures: vec![(0, vec![0.5, 0.6, 0.5, 2.0, 1.0, 0.0, 0.0, 0.001, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0])],
     }
 }
 
@@ -173,6 +199,12 @@ fn draws_heat_offscreen() {
     let c = chunk().upload(&r.device);
     r.add_chunk(c);
     r.figures.mesh_slice(&r.device, &r.queue, &mesh_slice()).expect("mesh");
+    // A flat level the views are taken from: four corners (position, normal), two triangles.
+    let mut vertices = Vec::new();
+    for (x, z) in [(0.0f32, 0.0f32), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)] {
+        vertices.extend_from_slice(&[x, 0.4, z, 0.0, 1.0, 0.0]);
+    }
+    r.set_level(Some(&LevelMesh { vertices, colours: None, indices: vec![0, 1, 2, 0, 2, 3] }));
     r.figures.set_atlas(&r.device, &r.queue, &vec![255u8; (ATLAS_WIDTH * ATLAS_HEIGHT * 4) as usize]).expect("atlas");
     let out = r.device.create_texture(&wgpu::TextureDescriptor {
         label: Some("out"),

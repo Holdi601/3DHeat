@@ -283,6 +283,8 @@ pub struct Renderer {
     pub figures: crate::figures::Figures,
     /// The capture zones, spawn marks and volume contours (`overlays.rs`).
     pub overlays: crate::overlays::Overlays,
+    /// The engagement ranges (`ranges.rs`).
+    pub ranges: crate::ranges::Ranges,
     filter_pass: wgpu::ComputePipeline,
     bin: Option<HeatBin>,
     // Targets.
@@ -508,6 +510,7 @@ impl Renderer {
         let filter_pass = compute(&device, &m_filter, "main");
         let figures = crate::figures::Figures::new(&device, out_format);
         let overlays = crate::overlays::Overlays::new(&device, out_format);
+        let ranges = crate::ranges::Ranges::new(&device);
         let m_line = module(&device, "line", W_LINE);
         const LINE_ATTRS: [wgpu::VertexAttribute; 2] = wgpu::vertex_attr_array![0 => Float32x3, 1 => Float32x4];
         let line = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
@@ -596,6 +599,7 @@ impl Renderer {
             grid: None,
             figures,
             overlays,
+            ranges,
             filter_pass,
             bin,
             width: 0,
@@ -809,6 +813,9 @@ impl Renderer {
         }
         if let Some(o) = &p.overlays {
             self.overlays.take(&self.device, o);
+        }
+        if let Some(r) = &p.ranges {
+            self.ranges.take(&self.device, &self.queue, r);
         }
         if let Some(v) = &p.values {
             self.value_cols = v.clone();
@@ -1136,6 +1143,7 @@ impl Renderer {
             Some((g(c), p.flag(F_SHOW_LOOK).then(|| g(l)), g(r), g(o), glyph))
         };
         let ov = self.overlay_groups(p, true, (0.0, 0.0));
+        let rg = self.range_groups(encoder, p);
         let scene = &self.scene.as_ref().unwrap().1;
         let depth = &self.depth.as_ref().unwrap().1;
         let groups = ground.map(|off| {
@@ -1226,6 +1234,11 @@ impl Renderer {
             }
             self.overlays.draw_zones(&mut pass, p, ZoneSlot::Ground, ov.zone_ground.as_ref());
         }
+        // The engagement ranges: the ground each unit sees within reach, then the shells over everything solid.
+        if let (Some(g), Some(l)) = (&rg.ground, &self.level) {
+            self.ranges.draw_ground(&mut pass, Some(g), &l.vertices, &l.indices, l.count);
+        }
+        self.ranges.draw_shells(&mut pass, p, rg.shell.as_ref());
         if let Some((_, _, _, plain, glyph)) = &fig_groups {
             if let Some(g) = glyph {
                 self.figures.draw_glyphs(&mut pass, &figs, g);
@@ -2028,6 +2041,28 @@ impl Renderer {
         if let Some((lines, group)) = top {
             self.figures.draw_top_lines(pass, p, *lines, group);
         }
+    }
+
+    /// The ranges' bind groups for one packet, and the faces of the units' views it takes, each in a
+    /// pass of its own before the scene's (`takeViews`; only from a level the viewport holds).
+    fn range_groups(&mut self, encoder: &mut wgpu::CommandEncoder, p: &Packet) -> crate::ranges::RangeGroups {
+        let mut g = crate::ranges::RangeGroups::default();
+        let Some(r) = p.ranges.as_ref() else { return g };
+        let off = self.ring.push(bytemuck::cast_slice(&r.shell_uniform), 256);
+        g.shell = Some(self.ranges.view_group(&self.device, &self.ring.buf, off, SHELL_UNIFORM_BYTES as u64));
+        if self.level.is_none() {
+            return g;
+        }
+        if let Some(u) = &r.ground {
+            let off = self.ring.push(bytemuck::cast_slice(u), 256);
+            g.ground = Some(self.ranges.view_group(&self.device, &self.ring.buf, off, GROUND_UNIFORM_BYTES as u64));
+        }
+        if !r.captures.is_empty() {
+            let offs: Vec<u64> = r.captures.iter().map(|(_, c)| self.ring.push(bytemuck::cast_slice(c), 256)).collect();
+            let l = self.level.as_ref().unwrap();
+            self.ranges.take_views(&self.device, encoder, r, &self.ring.buf, &offs, &l.vertices, &l.indices, l.count);
+        }
+        g
     }
 
     /// The overlays' bind groups for one packet, their uniforms in the ring: in the scene the

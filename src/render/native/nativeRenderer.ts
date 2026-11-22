@@ -46,6 +46,10 @@ import { MAX_GPU_VOLUMES, VOLUME_BLOCK_FLOATS } from '../../volumes/gpu';
 import { MAX_ZONES, ZONE_MIN_PX, ZONE_STATE_FLOATS, ZONE_VERTEX_FLOATS } from '../zoneShaders';
 import { SPAWN_INSTANCE_FLOATS } from '../spawnMarks';
 import { invert4 } from '../volumeContours';
+import { ViewshedPlan } from '../../ranges/viewshed';
+import { SHELL_FLOATS, shellMesh } from '../../ranges/shells';
+import { SHELL_UNIFORM_BYTES } from '../../ranges/shellShaders';
+import { FACES, GROUND_UNIFORM_BYTES, MAX_VIEWS, VIEW_FACE } from '../../ranges/viewshedShaders';
 import { PacketWriter, SECTION, coreColumnName, writeFigures, writeFilters, writeFrame, writePlan } from './framePacket';
 import { INSTANCE_STRIDE, MESH_STRIDE, type FigureMesh } from '../../figures/instances';
 import { symbolAtlas } from '../symbols/atlas';
@@ -366,6 +370,7 @@ export class NativeRenderer implements Renderer {
   setDirections(_angles: Uint8Array | null): void {}
 
   setLevel(level: Level | null): void {
+    this.rangeLevel = level && level.kind === 'model' && level.indices.length > 0 ? level : null;
     if (!level || level.kind !== 'model' || level.indices.length === 0) {
       void this.invoke('viewport_level', new Uint8Array(0));
       return;
@@ -443,6 +448,7 @@ export class NativeRenderer implements Renderer {
     }
     this.writeTop(p, all);
     this.writeOverlays(p, all);
+    this.writeRanges(p, all);
     const tris = p.sceneTris && p.sceneTriVertCount > 0 ? p.sceneTriVertCount : 0;
     const trails = p.trailVerts && p.trailVertCount > 0 ? p.trailVertCount : 0;
     const overlay = p.overlayVerts && p.overlayVertCount > 0 ? p.overlayVertCount : 0;
@@ -623,6 +629,77 @@ export class NativeRenderer implements Renderer {
       colors.set(c.colors.subarray(0, colors.length));
       w.floats(colors);
       w.floats(invert4(p.viewProj, this.invView));
+    }
+    w.close();
+  }
+
+  /** The units' views the viewport holds (`ViewshedPlan`, as `GpuRanges` keeps it), and the level they are taken from. */
+  private readonly rangePlan = new ViewshedPlan();
+  private rangeLevel: Level | null = null;
+  private rangeMesh: { data: Float32Array; sphere: number; cone: number } | null = null;
+  private rangeMeshSent = false;
+  private readonly rangeViews = new Float32Array(MAX_VIEWS * 6 * 4);
+
+  /** Faces of the units' views still to take: the engine draws on until they are. */
+  get rangesPending(): boolean {
+    return this.rangePlan.pending;
+  }
+
+  /** The `ranges` section (`SECTION.ranges`): what `GpuRanges.takeViews` and `prepare` hand the GPU. */
+  private writeRanges(p: FrameParams, all: boolean): void {
+    if (all) this.rangeMeshSent = false;
+    const r = p.ranges;
+    if (!r) return;
+    const o = p.origin;
+    // Faces only from a model level the viewport holds, as the web engine takes them from its level mesh.
+    const level = p.level?.kind === 'model' ? this.rangeLevel : null;
+    const todo = level && (r.los || r.ground) ? this.rangePlan.plan(r.views, level, r.facesPerFrame) : [];
+    const views = this.rangePlan.uniforms(r.views, o, this.rangeViews);
+    const mesh = (this.rangeMesh ??= shellMesh());
+    const w = this.writer;
+    w.open(SECTION.ranges);
+    w.word(r.count);
+    w.word(r.coneStart);
+    w.word(mesh.sphere);
+    w.word(mesh.cone);
+    w.word(this.rangeMeshSent ? 0 : 1);
+    if (!this.rangeMeshSent) {
+      w.word(mesh.data.length);
+      w.floats(mesh.data);
+      this.rangeMeshSent = true;
+    }
+    const s = new Float32Array(SHELL_UNIFORM_BYTES / 4);
+    s.set(p.viewProjRel, 0);
+    s.set([p.cameraPos[0] - o[0], p.cameraPos[1] - o[1], p.cameraPos[2] - o[2], r.opacity], 16);
+    s.set([r.faces ? 1 : 0, r.lines ? 1 : 0, r.los ? 1 : 0, 0], 20);
+    s.set(views, 24);
+    s.set([VIEW_FACE, r.bias, 0, 0], 24 + MAX_VIEWS * 24);
+    w.floats(s);
+    if (r.count) w.floats(r.shells.subarray(0, r.count * SHELL_FLOATS));
+    let n = 0;
+    const g = new Float32Array(GROUND_UNIFORM_BYTES / 4);
+    if (r.ground) {
+      g.set(p.viewProj, 0);
+      r.views.forEach((v, i) => {
+        if (!v) return;
+        n = i + 1;
+        g.set([v.band[0], v.band[1], v.band[2], r.opacity], 20 + MAX_VIEWS * 24 + 4 + i * 4);
+        g.set([v.colour[0], v.colour[1], v.colour[2], 1], 20 + MAX_VIEWS * 24 + 4 + MAX_VIEWS * 4 + i * 4);
+        if (v.cone) g.set([v.cone.fwd[0], v.cone.fwd[1], v.cone.fwd[2], v.cone.tanH], 20 + MAX_VIEWS * 24 + 4 + MAX_VIEWS * 8 + i * 4);
+      });
+      g.set([o[0], o[1], o[2], n], 16);
+      g.set(views, 20);
+      g.set([VIEW_FACE, r.bias, 0, 0], 20 + MAX_VIEWS * 24);
+    }
+    w.word(n > 0 ? 1 : 0);
+    if (n > 0) w.floats(g);
+    w.word(todo.length);
+    for (const layer of todo) {
+      const v = r.views[Math.floor(layer / 6)]!;
+      const [a, rt, up] = FACES[layer % 6];
+      const near = Math.max(1e-3, v.far * 1e-5);
+      w.word(layer);
+      w.floats([v.eye[0], v.eye[1], v.eye[2], v.far, a[0], a[1], a[2], near, rt[0], rt[1], rt[2], 0, up[0], up[1], up[2], 0]);
     }
     w.close();
   }

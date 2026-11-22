@@ -11,6 +11,7 @@ pub mod figures;
 pub mod generated;
 pub mod loader;
 pub mod overlays;
+pub mod ranges;
 pub mod packet;
 pub mod renderer;
 pub mod viewport;

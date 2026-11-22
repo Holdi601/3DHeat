@@ -6,7 +6,8 @@
  * Stage 0 (bin, resolve, kernel table, fold, listed splat), the filter pass,
  * the accumulation merge, the composite, the level's mesh, the lines, the figures,
  * the cubes and their look lines, the far-off glyphs, the capture zones' discs,
- * the spawn marks and the volumes' contours. The texts are
+ * the spawn marks, the volumes' contours, the engagement ranges (shells, the
+ * units' views, the ground they see). The texts are
  * built here from the same sources, constants and all, and written beside the
  * crate as `.wgsl` files with a `generated.rs` of the numbers the Rust side
  * packs uniforms by. `shaderExport.test.ts` keeps the committed copies equal to
@@ -72,6 +73,9 @@ import { MAX_ZONES, ZONE_MIN_PX, ZONE_STATE_FLOATS, ZONE_UNIFORM_BYTES, ZONE_VER
 import { SPAWN_INSTANCE_FLOATS, SPAWN_UNIFORM_FLOATS, spawnWgsl } from '../spawnMarks';
 import { CONTOUR_UNIFORM_BYTES, volumeContourWgsl } from '../volumeContours';
 import { MAX_GPU_VOLUMES } from '../../volumes/gpu';
+import { SHELL_UNIFORM_BYTES, SHELL_WGSL } from '../../ranges/shellShaders';
+import { SHELL_FLOATS } from '../../ranges/shells';
+import { CAPTURE_UNIFORM_BYTES, CAPTURE_WGSL, GROUND_UNIFORM_BYTES, GROUND_WGSL, MAX_VIEWS, VIEW_FACE, VIEW_LAYERS } from '../../ranges/viewshedShaders';
 
 /** The shaders, by file name. */
 export function nativeShaders(): Record<string, string> {
@@ -95,6 +99,9 @@ export function nativeShaders(): Record<string, string> {
     'zone.wgsl': ZONE_WGSL,
     'spawn.wgsl': spawnWgsl(),
     'volume_contour.wgsl': volumeContourWgsl(),
+    'range_shell.wgsl': SHELL_WGSL,
+    'range_ground.wgsl': GROUND_WGSL,
+    'range_capture.wgsl': CAPTURE_WGSL,
   };
 }
 
@@ -137,6 +144,13 @@ export function nativeConstants(): string {
   int('SPAWN_UNIFORM_FLOATS', SPAWN_UNIFORM_FLOATS);
   int('CONTOUR_UNIFORM_BYTES', CONTOUR_UNIFORM_BYTES);
   int('MAX_GPU_VOLUMES', MAX_GPU_VOLUMES);
+  int('SHELL_FLOATS', SHELL_FLOATS);
+  int('SHELL_UNIFORM_BYTES', SHELL_UNIFORM_BYTES);
+  int('GROUND_UNIFORM_BYTES', GROUND_UNIFORM_BYTES);
+  int('CAPTURE_UNIFORM_BYTES', CAPTURE_UNIFORM_BYTES);
+  int('MAX_VIEWS', MAX_VIEWS);
+  int('VIEW_FACE', VIEW_FACE);
+  int('VIEW_LAYERS', VIEW_LAYERS);
   for (const [k, v] of Object.entries({
     FLAG_PERSPECTIVE,
     FLAG_GROUND_PROJECTED,

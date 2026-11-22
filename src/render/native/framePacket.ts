@@ -67,6 +67,14 @@ export const SECTION = {
    * volumes' block (`VOLUME_BLOCK_FLOATS`), their colours (`MAX_GPU_VOLUMES` x 4), the inverse view.
    */
   overlays: 14,
+  /**
+   * The engagement ranges (`FrameParams.ranges`, `ranges/`): the shell count, where the cones
+   * start, the sphere's and the cone's vertex counts; 1 and the mesh's floats (`shellMesh`) when
+   * new to the viewport, else 0; the shells' uniforms (`SHELL_UNIFORM_BYTES`), the instances
+   * (`SHELL_FLOATS` each); 0, or 1 and the ground's uniforms (`GROUND_UNIFORM_BYTES`); the faces
+   * to take from the level this frame, each its layer and its 16 capture floats.
+   */
+  ranges: 15,
 } as const;
 
 /** The frame's numbers, in packet order, with how many floats each takes. */

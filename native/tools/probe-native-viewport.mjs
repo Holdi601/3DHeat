@@ -18,8 +18,9 @@
  *            the per-pixel difference, pixels off by more than 8/255); both written
  *            as PNG to --out. The box replay (figures, cubes) has no heat: its pictures
  *            alone, within 1/255 on average and 1 % of pixels. overlays: synthetic capture
- *            zones (on the ground and over the picture) and spawn marks with their lines put
- *            into every frame's parameters, over the plain heat: the pictures, as the box replay
+ *            zones (on the ground and over the picture), spawn marks with their lines and three
+ *            range shells (two spheres, a cone) put into every frame's parameters, over the
+ *            plain heat: the pictures, as the box replay
  *   exposure the first auto-exposure after each load (the first and three loads of the same
  *            files again, the same view): every one within 1 % of the web's first - a meter
  *            that read the field before all rows were drawn, or before the frame it meant,
@@ -327,8 +328,19 @@ async function run(rows, backend) {
           const rd = eng.renderer;
           const own = Object.prototype.hasOwnProperty.call(rd, 'render');
           const orig = rd.render;
+          // Shells (`ranges/shells.ts` SHELL_FLOATS): middle relative to the origin, radius; colour; forward,
+          // cone cosine (-2 none); target heights, elevation sines; band, view slot, class, line of sight;
+          // least and best range, frustum tangents. No views: the row-ceiling load has no level.
+          const shell = (o, x, z, rad, rgb, cone) => [x - o[0], y + rad * 0.2 - o[1], z - o[2], rad, ...rgb, 0.8, 1, 0, 0, cone ? 0.85 : -2, -1e6, 1e6, -1, 1, 2, -1, 0, 0, rad * 0.3, rad * 0.6, 0, 0];
           rd.render = function (p) {
-            return orig.call(this, { ...p, objectiveZones: zoneDraw, spawnMarks: spawnDraw });
+            const o = p.origin;
+            const shells = new Float32Array([
+              ...shell(o, cx - span * 0.25, cz, r * 1.6, [1, 0.35, 0.2], false),
+              ...shell(o, cx + span * 0.25, cz - span * 0.1, r * 2.2, [0.2, 0.5, 1], false),
+              ...shell(o, cx, cz + span * 0.2, r * 3, [1, 0.85, 0.2], true),
+            ]);
+            const ranges = { shells, count: 3, coneStart: 2, opacity: 0.6, faces: true, lines: true, los: false, ground: false, views: [null, null, null, null], facesPerFrame: 2, bias: 1 };
+            return orig.call(this, { ...p, objectiveZones: zoneDraw, spawnMarks: spawnDraw, ranges });
           };
           unwrap = () => {
             if (own) rd.render = orig;
