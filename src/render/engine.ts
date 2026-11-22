@@ -93,6 +93,7 @@ import { lookAtDistance, lookAtPitch, type Vec3 } from './pose';
 import { useInspectStore } from '../state/inspectStore';
 import { effectiveGpuBudget } from './budget';
 import { buildActiveFilters, frameSignTables, matchScales, sideCountSteps, sideScales, type SideCounts, type SplitTable } from './filterTables';
+import type { HeatTileSource } from './heatTiles/source';
 import { overallShare } from './rateMap';
 import { ExposureFollower } from './exposureFollow';
 import { publishSplitStatus } from '../state/splitStatus';
@@ -491,6 +492,11 @@ export class Engine {
   private lastStoreProjection: Projection | null = null;
   /** Splat scale in force for the current frame; see `heatGain`. */
   private frameGain = 1;
+  /** Heat from a tile pyramid (Stage 6, `heatTiles/`), when set; `heatTileSeq` counts frames whose tiles waited for uploads. */
+  private heatTileSource: HeatTileSource | null = null;
+  private heatTileSeq = 0;
+  /** The tile source whose heat was metered for exposure (once, when its first tiles show). */
+  private heatTileMetered: HeatTileSource | null = null;
   /**
    * The row range the accumulation buffer currently represents, when it is a
    * growing cumulative window.
@@ -863,6 +869,19 @@ export class Engine {
       return boxOutsideFrustum(planes, box);
     });
     return { stream: level.terrain, frame, colours: level.showTexture !== false };
+  }
+
+  /**
+   * Draws heat from a tile pyramid (data too large to load, or a session
+   * host's) under the rows, or stops with null. The caller owns the source.
+   */
+  setHeatTiles(source: HeatTileSource | null): void {
+    this.heatTileSource = source;
+    this.invalidate(2);
+  }
+
+  heatTiles(): HeatTileSource | null {
+    return this.heatTileSource;
   }
 
   invalidate(frames = 1): void {
@@ -1787,7 +1806,7 @@ export class Engine {
    */
   async autoExpose(): Promise<ExposureResult | null> {
     const renderer = this.renderer;
-    if (!renderer || !this.dataset) return null;
+    if (!renderer || (!this.dataset && !this.heatTileSource)) return null;
     // Metering a half-finished estimate would expose for the noise, so give the
     // accumulation a moment to converge first.
     this.forceRenderFrames = Math.max(this.forceRenderFrames, 2);
@@ -1795,7 +1814,7 @@ export class Engine {
     // No field to meter: a read already under way (the follower's) takes the one readback there
     // is. Metered again a couple of frames on, or the load keeps the analytic estimate, which
     // was 3.6x the metered value on the row-ceiling load.
-    if (!samples && this.dataset && this.meterRetries++ < 3) {
+    if (!samples && (this.dataset || this.heatTileSource) && this.meterRetries++ < 3) {
       this.autoExposePending = 2;
       return null;
     }
@@ -3574,6 +3593,8 @@ export class Engine {
     // already accumulated.
     this.frameGain = this.heatGain(renderer, h);
     const geometrySig = [
+      // Tiles arrived or still uploading: drawn again.
+      this.heatTileSource ? `tiles:${this.heatTileSource.version}:${this.heatTileSeq}` : '',
       raceTab ? 'race' : s.mode === 'heat-lines' ? `heat-lines|${heatMode}` : s.mode,
       // Which routes line heat draws.
       this.linesKey,
@@ -4351,6 +4372,29 @@ export class Engine {
 
     // The tactical display: the match replay only.
     const lookOn = !raceTab && s.mode === 'team' && !!this.dataset && useReplayStore.getState().look.on;
+    // Heat tiles for this view: LOD rings about the camera, coarse first (heatTiles/lod.ts).
+    let heatTiles: FrameParams['heatTiles'] = null;
+    if (this.heatTileSource && !raceTab) {
+      const d = this.heatTileSource.frame({
+        viewProj: this.viewProjArr,
+        cameraPos: this.camPos,
+        perspective: s.camera.projection === 'perspective',
+        pxPerUnit: this.projArr[5] * height * 0.5,
+        cellPx: 0,
+        maxTiles: 0,
+      });
+      if (d) {
+        // Density times the sprite's area: what the splat of the same rows would add up to.
+        const kernelArea = Math.PI * h.radius * h.radius * 0.5 * (h.centerIntensity + h.edgeIntensity);
+        d.scale = sampleWeight * this.frameGain * kernelArea;
+        heatTiles = d;
+        // Tiles alone (no rows): exposed from them once their first view is drawn, as a load is.
+        if (!this.dataset && d.tiles.length > 0 && this.heatTileMetered !== this.heatTileSource && this.heatTileSource.info?.complete) {
+          this.heatTileMetered = this.heatTileSource;
+          this.autoExposePending = AUTO_EXPOSE_AFTER_FRAMES;
+        }
+      }
+    }
     const params: FrameParams = {
       viewProj: this.viewProjArr,
       viewProjRel: this.viewProjRelArr,
@@ -4420,6 +4464,7 @@ export class Engine {
       compositeOnly,
       blendAlpha,
       heatGain: this.frameGain,
+      heatTiles,
       spriteTexels: this.spriteTexels,
       accumFrames: this.accumFrames,
       timeLo,
@@ -4517,6 +4562,10 @@ export class Engine {
     renderer.render(params);
     // Views of the engagement ranges still to take: more frames until they are.
     if (renderer.rangesPending && params.ranges) this.forceRenderFrames = Math.max(this.forceRenderFrames, 1);
+    if (heatTiles?.uploadsPending) {
+      this.heatTileSeq++;
+      this.forceRenderFrames = Math.max(this.forceRenderFrames, 1);
+    }
     this.frameIndex++;
     // A getter on the renderer; the atlas and the tiles' edges arrive between
     // uploads, so it is read every frame rather than at them.
@@ -4532,7 +4581,7 @@ export class Engine {
     // Not while the dataset is still arriving: a field of part of it would be
     // exposed too bright for the whole.
     const dataPending = (renderer as { dataPending?: boolean }).dataPending ?? false;
-    if (this.autoExposePending > 0 && this.dataset && !dataPending) {
+    if (this.autoExposePending > 0 && (this.dataset || this.heatTileSource) && !dataPending) {
       this.autoExposePending--;
       if (this.autoExposePending === 0) void this.autoExpose();
     }

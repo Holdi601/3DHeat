@@ -12,15 +12,41 @@
  *   parity(files, mapping)  the same load built by the core and by the page, every column compared
  *   budget(gpu?)            the budgets, the live reading and the rows on the GPU; with `gpu`, that GPU budget chosen
  *   store()                 the app's state store, for probes that set a view up (`native/tools/probe-native-viewport.mjs`)
+ *   heatTiles(query, place) heat from the core's tile pyramid instead of rows (Stage 6), null stops; then
+ *   heatTileStats()         the pyramid, bytes and tiles received, time to the first tile
  */
 
 import { call, coreEndpoint } from './core';
 import { nativeRefs } from './files';
 import { ChunkPart } from './gen/heat3d/v1/heat3d_pb';
+import type { TilePlacement } from '../../render/heatTiles/lod';
+import { HeatTileSource } from '../../render/heatTiles/source';
+import { heatTileTransport, type HeatTileQueryInit } from '../../render/heatTiles/transport';
 
 export function installNativeHook(): void {
   const at = coreEndpoint();
+  type TileEngine = { setHeatTiles(s: HeatTileSource | null): void; heatTiles(): HeatTileSource | null; invalidate(n?: number): void };
+  const engine = () => (globalThis as unknown as { __3dheat_engine?: TileEngine }).__3dheat_engine;
   const hook = {
+    async heatTiles(query: HeatTileQueryInit | null, place: TilePlacement = { sx: 1, sz: 1, ground: 0 }) {
+      const e = engine();
+      if (!e) return false;
+      e.heatTiles()?.dispose();
+      if (!query) {
+        e.setHeatTiles(null);
+        return true;
+      }
+      const src = new HeatTileSource(heatTileTransport(await at, query), place, {}, () => e.invalidate(1));
+      e.setHeatTiles(src);
+      src.start();
+      return true;
+    },
+
+    heatTileStats() {
+      const src = engine()?.heatTiles();
+      return src ? { info: src.info, ...src.stats, cached: src.cachedTiles(), version: src.version } : null;
+    },
+
     async endpoint() {
       return (await at).url;
     },

@@ -7,6 +7,7 @@ import type { Dataset, ViewMode } from '../state/types';
 import type { Level } from './level';
 import type { WorldTile } from '../world/tileSet';
 import type { RateParams } from './rateMap';
+import type { HeatTileDraw } from './heatTiles/source';
 import type { TerrainFrame, TerrainStream } from '../world/terrainStream';
 
 /** `native`: the native app's own viewport (Stage 5, preview; src/render/native/nativeRenderer.ts). */
@@ -536,6 +537,12 @@ export interface FrameParams {
    * set (WebGPU); absent: none.
    */
   gpuTracks?: GpuTracksParams | null;
+  /**
+   * Heat from a tile pyramid (Stage 6, `heatTiles/`): drawn into the heat
+   * target before the rows, single-channel heat only. The renderer sets
+   * `uploadsPending` when tiles waited for their upload (more frames needed).
+   */
+  heatTiles?: (HeatTileDraw & { uploadsPending?: boolean }) | null;
   /**
    * The far-off glyphs (`symbols/`): map symbols, weapons' glyphs, decoys -
    * screen-facing quads from one atlas, from the GPU tracks' own run and

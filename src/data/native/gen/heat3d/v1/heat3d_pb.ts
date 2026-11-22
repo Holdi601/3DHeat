@@ -29,7 +29,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file heat3d/v1/heat3d.proto.
  */
 export const file_heat3d_v1_heat3d: GenFile = /*@__PURE__*/
-  fileDesc("ChZoZWF0M2QvdjEvaGVhdDNkLnByb3RvEgloZWF0M2QudjEivwoKCEVudmVsb3BlEhAKCHByb3RvY29sGAEgASgNEgoKAmlkGAIgASgEEhAKCHJlcGx5X3RvGAMgASgEEg8KB3Nlc3Npb24YBCABKAkSIQoFaGVsbG8YCiABKAsyEC5oZWF0M2QudjEuSGVsbG9IABIsCgtoZWxsb19yZXBseRgLIAEoCzIVLmhlYXQzZC52MS5IZWxsb1JlcGx5SAASIQoFZXJyb3IYDCABKAsyEC5oZWF0M2QudjEuRXJyb3JIABInCghwcm9ncmVzcxgNIAEoCzITLmhlYXQzZC52MS5Qcm9ncmVzc0gAEiMKBmNhbmNlbBgOIAEoCzIRLmhlYXQzZC52MS5DYW5jZWxIABIuCgxvcGVuX2RhdGFzZXQYFCABKAsyFi5oZWF0M2QudjEuT3BlbkRhdGFzZXRIABIuCgxkYXRhc2V0X2luZm8YFSABKAsyFi5oZWF0M2QudjEuRGF0YXNldEluZm9IABIwCg1jbG9zZV9kYXRhc2V0GBYgASgLMhcuaGVhdDNkLnYxLkNsb3NlRGF0YXNldEgAEiMKBmNsb3NlZBgXIAEoCzIRLmhlYXQzZC52MS5DbG9zZWRIABIuCgxyZWFkX2NvbHVtbnMYHiABKAsyFi5oZWF0M2QudjEuUmVhZENvbHVtbnNIABIlCgdjb2x1bW5zGB8gASgLMhIuaGVhdDNkLnYxLkNvbHVtbnNIABIqCgpyZWFkX3RhYmxlGCAgASgLMhQuaGVhdDNkLnYxLlJlYWRUYWJsZUgAEiEKBXRhYmxlGCEgASgLMhAuaGVhdDNkLnYxLlRhYmxlSAASJgoIc2Nhbl9jc3YYIiABKAsyEi5oZWF0M2QudjEuU2NhbkNzdkgAEiwKC2Nzdl9jb2x1bW5zGCMgASgLMhUuaGVhdDNkLnYxLkNzdkNvbHVtbnNIABIuCgxidWlsZF9jaHVua3MYKCABKAsyFi5oZWF0M2QudjEuQnVpbGRDaHVua3NIABIoCgljaHVua19zZXQYKSABKAsyEy5oZWF0M2QudjEuQ2h1bmtTZXRIABIqCgpyZWFkX2NodW5rGCogASgLMhQuaGVhdDNkLnYxLlJlYWRDaHVua0gAEioKCmNodW5rX2RhdGEYKyABKAsyFC5oZWF0M2QudjEuQ2h1bmtEYXRhSAASMAoNYnVpbGRfZGF0YXNldBgsIAEoCzIXLmhlYXQzZC52MS5CdWlsZERhdGFzZXRIABIwCg1kYXRhc2V0X2J1aWx0GC0gASgLMhcuaGVhdDNkLnYxLkRhdGFzZXRCdWlsdEgAEj0KFHJlYWRfZGF0YXNldF9jb2x1bW5zGC4gASgLMh0uaGVhdDNkLnYxLlJlYWREYXRhc2V0Q29sdW1uc0gAEjQKD2RhdGFzZXRfY29sdW1ucxgvIAEoCzIZLmhlYXQzZC52MS5EYXRhc2V0Q29sdW1uc0gAEjIKDmJ1aWxkX3Byb2dyZXNzGDAgASgLMhguaGVhdDNkLnYxLkJ1aWxkUHJvZ3Jlc3NIABI9ChRidWlsZF9wcm9ncmVzc19yZXBseRgxIAEoCzIdLmhlYXQzZC52MS5CdWlsZFByb2dyZXNzUmVwbHlIABIhCgVxdWVyeRgyIAEoCzIQLmhlYXQzZC52MS5RdWVyeUgAEiwKC3F1ZXJ5X3JlcGx5GDMgASgLMhUuaGVhdDNkLnYxLlF1ZXJ5UmVwbHlIABIfCgRlY2hvGDwgASgLMg8uaGVhdDNkLnYxLkVjaG9IAEIGCgRib2R5SgUIZBDIASIXCgVIZWxsbxIOCgZjbGllbnQYASABKAkiygEKCkhlbGxvUmVwbHkSDAoEY29yZRgBIAEoCRIUCgxjb3JlX3ZlcnNpb24YAiABKAkSDwoHdGhyZWFkcxgDIAEoDRIUCgxtZW1vcnlfYnl0ZXMYBCABKAQSDwoHZm9ybWF0cxgFIAMoCRIxCgZzZXJ2ZWQYBiADKAsyIS5oZWF0M2QudjEuSGVsbG9SZXBseS5TZXJ2ZWRFbnRyeRotCgtTZXJ2ZWRFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAQ6AjgBIjwKBUVycm9yEiIKBGNvZGUYASABKA4yFC5oZWF0M2QudjEuRXJyb3JDb2RlEg8KB21lc3NhZ2UYAiABKAkilwEKCFByb2dyZXNzEgsKA2tleRgBIAEoCRIvCgZwYXJhbXMYAiADKAsyHy5oZWF0M2QudjEuUHJvZ3Jlc3MuUGFyYW1zRW50cnkSEAoIZnJhY3Rpb24YAyABKAESDAoEcm93cxgEIAEoBBotCgtQYXJhbXNFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBIhkKBkNhbmNlbBIPCgdyZXF1ZXN0GAEgASgEIh0KBEVjaG8SFQoNcGF5bG9hZF9ieXRlcxgBIAEoBCJECgdGaWxlUmVmEg4KBHBhdGgYASABKAlIABIPCgV0b2tlbhgCIAEoCUgAEg4KBm1lbWJlchgDIAEoCUIICgZzb3VyY2UiMAoLT3BlbkRhdGFzZXQSIQoFZmlsZXMYASADKAsyEi5oZWF0M2QudjEuRmlsZVJlZiJBCgtEYXRhc2V0SW5mbxIOCgZoYW5kbGUYASABKAQSIgoFZmlsZXMYAiADKAsyEy5oZWF0M2QudjEuRmlsZUluZm8igAIKCEZpbGVJbmZvEgwKBG5hbWUYASABKAkSIQoGZm9ybWF0GAIgASgOMhEuaGVhdDNkLnYxLkZvcm1hdBINCgVieXRlcxgDIAEoBBIMCgRyb3dzGAQgASgEEhIKCnJvd3NfZXhhY3QYBSABKAgSJgoHY29sdW1ucxgGIAMoCzIVLmhlYXQzZC52MS5Db2x1bW5JbmZvEhIKCnJvd19ncm91cHMYByABKA0SEgoKaGludHNfanNvbhgIIAEoCRIVCg1tYW5pZmVzdF9qc29uGAkgASgJEisKB21lbWJlcnMYCiADKAsyGi5oZWF0M2QudjEuQ29udGFpbmVyTWVtYmVyIl4KCkNvbHVtbkluZm8SDAoEbmFtZRgBIAEoCRIQCghwaHlzaWNhbBgCIAEoCRIPCgdsb2dpY2FsGAMgASgJEgwKBHRleHQYBCABKAgSEQoJdGltZXN0YW1wGAUgASgIInsKD0NvbnRhaW5lck1lbWJlchIMCgRuYW1lGAEgASgJEgwKBHJvbGUYAiABKAkSDgoGbWV0aG9kGAMgASgNEhgKEGNvbXByZXNzZWRfYnl0ZXMYBCABKAQSDQoFYnl0ZXMYBSABKAQSEwoLZGF0YV9vZmZzZXQYBiABKAQiHgoMQ2xvc2VEYXRhc2V0Eg4KBmhhbmRsZRgBIAEoBCIICgZDbG9zZWQiPwoKQ29sdW1uU3BlYxIMCgRuYW1lGAEgASgJEiMKBGtpbmQYAiABKA4yFS5oZWF0M2QudjEuQ29sdW1uS2luZCJzCg9Sb3dGaWx0ZXJDbGF1c2USDgoGY29sdW1uGAEgASgJEiEKA3NldBgCIAEoCzISLmhlYXQzZC52MS5TZXRUZXN0SAASJQoFcmFuZ2UYAyABKAsyFC5oZWF0M2QudjEuUmFuZ2VUZXN0SABCBgoEdGVzdCIZCgdTZXRUZXN0Eg4KBnZhbHVlcxgBIAMoCSI/CglSYW5nZVRlc3QSEAoDbWluGAEgASgBSACIAQESEAoDbWF4GAIgASgBSAGIAQFCBgoEX21pbkIGCgRfbWF4IpYBCgtSZWFkQ29sdW1ucxIgCgRmaWxlGAEgASgLMhIuaGVhdDNkLnYxLkZpbGVSZWYSJgoHY29sdW1ucxgCIAMoCzIVLmhlYXQzZC52MS5Db2x1bW5TcGVjEioKBmZpbHRlchgDIAMoCzIaLmhlYXQzZC52MS5Sb3dGaWx0ZXJDbGF1c2USEQoJa2VwdF9yb3dzGAQgASgIIsYBCgdDb2x1bW5zEhIKCnJvd3NfdG90YWwYASABKAQSDAoEcm93cxgCIAEoBBIoCghmaWx0ZXJlZBgDIAEoCzIWLmhlYXQzZC52MS5GaWx0ZXJTdGF0cxImCgdjb2x1bW5zGAQgAygLMhUuaGVhdDNkLnYxLkNvbHVtbkRhdGESJAoJa2VwdF9yb3dzGAUgASgLMhEuaGVhdDNkLnYxLkJ1ZmZlchIhCgZ0aW1pbmcYBiABKAsyES5oZWF0M2QudjEuVGltaW5nImcKC0ZpbHRlclN0YXRzEgwKBHJvd3MYASABKAQSDAoEa2VwdBgCIAEoBBIUCgxyb3dzX3NraXBwZWQYAyABKAQSDgoGZ3JvdXBzGAQgASgEEhYKDmdyb3Vwc19za2lwcGVkGAUgASgEInIKCkNvbHVtbkRhdGESDAoEbmFtZRgBIAEoCRIjCgRraW5kGAIgASgOMhUuaGVhdDNkLnYxLkNvbHVtbktpbmQSIQoGdmFsdWVzGAMgASgLMhEuaGVhdDNkLnYxLkJ1ZmZlchIOCgZsYWJlbHMYBCADKAkiKAoGQnVmZmVyEg4KBm9mZnNldBgBIAEoBBIOCgZsZW5ndGgYAiABKAQicQoGVGltaW5nEg8KB3JlYWRfbXMYASABKAESEQoJZmlsdGVyX21zGAIgASgBEg8KB3NvcnRfbXMYAyABKAESDwoHcGFja19tcxgEIAEoARIQCgh0b3RhbF9tcxgFIAEoARIPCgd0aHJlYWRzGAYgASgNIi0KCVJlYWRUYWJsZRIgCgRmaWxlGAEgASgLMhIuaGVhdDNkLnYxLkZpbGVSZWYiUAoFVGFibGUSDAoEcm93cxgBIAEoBBImCgdjb2x1bW5zGAIgAygLMhUuaGVhdDNkLnYxLkNvbHVtbkRhdGESEQoJaW5mb19qc29uGAMgASgJIvUBCgdTY2FuQ3N2EiAKBGZpbGUYASABKAsyEi5oZWF0M2QudjEuRmlsZVJlZhIRCglkZWxpbWl0ZXIYAiABKA0SFgoObnVtYmVyX2NvbHVtbnMYAyADKAUSEQoJd2lkZV9zbG90GAQgASgFEhQKDHRleHRfY29sdW1ucxgFIAMoBRISCgpheGlzX3Nsb3RzGAYgAygFEigKDG51bWJlcl90ZXN0cxgHIAMoCzISLmhlYXQzZC52MS5Dc3ZUZXN0EiYKCnRleHRfdGVzdHMYCCADKAsyEi5oZWF0M2QudjEuQ3N2VGVzdBIOCgZzdHJpZGUYCSABKA0iQwoHQ3N2VGVzdBIMCgRzbG90GAEgASgNEioKBmNsYXVzZRgCIAEoCzIaLmhlYXQzZC52MS5Sb3dGaWx0ZXJDbGF1c2UixwEKCkNzdkNvbHVtbnMSDAoEcm93cxgBIAEoBBIQCghyZWplY3RlZBgCIAEoBBIoCghmaWx0ZXJlZBgDIAEoCzIWLmhlYXQzZC52MS5GaWx0ZXJTdGF0cxImCgdudW1iZXJzGAQgAygLMhUuaGVhdDNkLnYxLkNvbHVtbkRhdGESJAoFdGV4dHMYBSADKAsyFS5oZWF0M2QudjEuQ29sdW1uRGF0YRIhCgZ0aW1pbmcYBiABKAsyES5oZWF0M2QudjEuVGltaW5nIuIBCgtCdWlsZENodW5rcxIhCgVmaWxlcxgBIAMoCzISLmhlYXQzZC52MS5GaWxlUmVmEgkKAXgYAiABKAkSCQoBeRgDIAEoCRIJCgF6GAQgASgJEgwKBHRpbWUYBSABKAkSDgoGcGVyc29uGAYgASgJEg0KBWdyb3VwGAcgASgJEhIKCnRpbWVfc2NhbGUYCCABKAESKgoGZmlsdGVyGAkgAygLMhouaGVhdDNkLnYxLlJvd0ZpbHRlckNsYXVzZRIOCgZzdHJpZGUYCiABKA0SEgoKY2h1bmtfcm93cxgLIAEoDSLzAQoIQ2h1bmtTZXQSDgoGaGFuZGxlGAEgASgEEgwKBHJvd3MYAiABKAQSEQoJcm93c19yZWFkGAMgASgEEhAKCHRpbWVfbWluGAQgASgBEhAKCHRpbWVfbWF4GAUgASgBEhgKEG1heF9saWZldGltZV9nYXAYBiABKAISJAoGY2h1bmtzGAcgAygLMhQuaGVhdDNkLnYxLkNodW5rSW5mbxIhCgZ0aW1pbmcYCCABKAsyES5oZWF0M2QudjEuVGltaW5nEhkKEXBlYWtfbWVtb3J5X2J5dGVzGAkgASgEEhQKDGdyb3VwX2xhYmVscxgKIAMoCSKWAQoJQ2h1bmtJbmZvEg0KBWluZGV4GAEgASgNEg0KBXN0YXJ0GAIgASgEEgwKBHJvd3MYAyABKA0SEAoIYWFiYl9taW4YBCADKAISEQoJYWFiYl9zaXplGAUgAygCEhAKCHRpbWVfbWluGAYgASgCEhIKCnRpbWVfc2NhbGUYByABKAISEgoKbGlmZV9zY2FsZRgIIAEoAiJeCglSZWFkQ2h1bmsSDgoGaGFuZGxlGAEgASgEEg0KBWluZGV4GAIgASgNEiIKBHBhcnQYAyABKA4yFC5oZWF0M2QudjEuQ2h1bmtQYXJ0Eg4KBnNoYXJlZBgEIAEoCCJyCglDaHVua0RhdGESDQoFaW5kZXgYASABKA0SIgoEcGFydBgCIAEoDjIULmhlYXQzZC52MS5DaHVua1BhcnQSHwoEZGF0YRgDIAEoCzIRLmhlYXQzZC52MS5CdWZmZXISEQoJc2hhcmVkX2lkGAQgASgEIo0DCg5EYXRhc2V0TWFwcGluZxIJCgF4GAEgASgJEgkKAXkYAiABKAkSCQoBehgDIAEoCRIMCgR0aW1lGAQgASgJEhEKCXRpbWVfdW5pdBgFIAEoCRIRCglsb29rX21vZGUYBiABKAkSCwoDeWF3GAcgASgJEg0KBXBpdGNoGAggASgJEg0KBWRpcl94GAkgASgJEg0KBWRpcl95GAogASgJEg0KBWRpcl96GAsgASgJEg8KB2RlZ3JlZXMYDCABKAgSDgoGcGVyc29uGA0gASgJEgwKBHRlYW0YDiABKAkSDwoHc2Vzc2lvbhgPIAEoCRIlCgVleHRyYRgQIAMoCzIWLmhlYXQzZC52MS5FeHRyYUNvbHVtbhIpCglvbl9kZW1hbmQYESADKAsyFi5oZWF0M2QudjEuRXh0cmFDb2x1bW4SDAoEdXBfehgSIAEoCBIOCgZmbGlwX3gYEyABKAgSDgoGZmxpcF95GBQgASgIEg4KBmZsaXBfehgVIAEoCBINCgVzY2FsZRgWIAEoASIsCgtFeHRyYUNvbHVtbhIMCgRuYW1lGAEgASgJEg8KB251bWVyaWMYAiABKAgi5wEKDEJ1aWxkRGF0YXNldBIhCgVmaWxlcxgBIAMoCzISLmhlYXQzZC52MS5GaWxlUmVmEg0KBW5hbWVzGAIgAygJEioKB21hcHBpbmcYAyABKAsyGS5oZWF0M2QudjEuRGF0YXNldE1hcHBpbmcSKgoGZmlsdGVyGAQgAygLMhouaGVhdDNkLnYxLlJvd0ZpbHRlckNsYXVzZRIOCgZzdHJpZGUYBSABKA0SEQoJcGFnZV9yb3dzGAYgASgEEhIKCmNodW5rX3Jvd3MYByABKA0SFgoOcHJvZ3Jlc3NfdG9rZW4YCCABKAkiogIKCUJ1aWx0RmlsZRIMCgRyb3dzGAEgASgEEhAKCHJlamVjdGVkGAIgASgEEigKCGZpbHRlcmVkGAMgASgLMhYuaGVhdDNkLnYxLkZpbHRlclN0YXRzEhMKC2ZhaWx1cmVfa2V5GAQgASgJEj8KDmZhaWx1cmVfcGFyYW1zGAUgAygLMicuaGVhdDNkLnYxLkJ1aWx0RmlsZS5GYWlsdXJlUGFyYW1zRW50cnkSFAoMZmFpbHVyZV90ZXh0GAYgASgJEhIKCmhpbnRzX2pzb24YByABKAkSFQoNdGltZV9hYnNvbHV0ZRgIIAEoCBo0ChJGYWlsdXJlUGFyYW1zRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASJYCglCdWlsdEF0dHISDAoEbmFtZRgBIAEoCRIPCgdudW1lcmljGAIgASgIEgsKA21pbhgDIAEoARILCgNtYXgYBCABKAESEgoKY2F0ZWdvcmllcxgFIAMoCSIsCg1Ecm9wcGVkQ29sdW1uEgwKBG5hbWUYASABKAkSDQoFY291bnQYAiABKAQimQEKDERhdGFzZXRDaHVuaxINCgVpbmRleBgBIAEoDRINCgVzdGFydBgCIAEoBBIMCgRyb3dzGAMgASgNEhAKCGFhYmJfbWluGAQgAygBEhEKCWFhYmJfc2l6ZRgFIAMoARIQCgh0aW1lX21pbhgGIAEoARISCgp0aW1lX3NjYWxlGAcgASgBEhIKCmxpZmVfc2NhbGUYCCABKAEi5gUKDERhdGFzZXRCdWlsdBIOCgZoYW5kbGUYASABKAQSDAoEcm93cxgCIAEoBBIjCgVmaWxlcxgDIAMoCzIULmhlYXQzZC52MS5CdWlsdEZpbGUSDwoHc291cmNlcxgEIAEoDRIQCghyZWplY3RlZBgFIAEoBBIQCghoYXNfdGltZRgGIAEoCBIVCghlcG9jaF9tcxgHIAEoAUgAiAEBEhMKC3RpbWVfb3JpZ2luGAggASgBEhIKCnRpbWVfcmFuZ2UYCSADKAESFQoNcGVyc29uX2xhYmVscxgKIAMoCRITCgt0ZWFtX2xhYmVscxgLIAMoCRIVCg10ZWFtc19kcm9wcGVkGAwgASgEEhYKDnNlc3Npb25fbGFiZWxzGA0gAygJEhgKEHNlc3Npb25zX2Ryb3BwZWQYDiABKAQSGAoQbWF4X2xpZmV0aW1lX2dhcBgPIAEoARIUCgxzaGFyZWRfY291bnQYECABKAQSIwoFYXR0cnMYESADKAsyFC5oZWF0M2QudjEuQnVpbHRBdHRyEjEKD2Ryb3BwZWRfY29sdW1ucxgSIAMoCzIYLmhlYXQzZC52MS5Ecm9wcGVkQ29sdW1uEg4KBmJvdW5kcxgTIAMoARIPCgdhbGlnbmVkGBQgASgEEhMKC3Nlcmllc19qc29uGBUgASgJEicKBmNodW5rcxgWIAMoCzIXLmhlYXQzZC52MS5EYXRhc2V0Q2h1bmsSEQoJcGFnZV9yb3dzGBcgASgEEhEKCXBhZ2Vfc3RlcBgYIAEoDRIdChVwYWdlX21heF9saWZldGltZV9nYXAYGSABKAESDwoHY29sdW1ucxgaIAMoCRIRCglvbl9kZW1hbmQYGyADKAkSIQoGdGltaW5nGBwgASgLMhEuaGVhdDNkLnYxLlRpbWluZxIZChFwZWFrX21lbW9yeV9ieXRlcxgdIAEoBBIOCgZzaGFyZWQYHiABKAhCCwoJX2Vwb2NoX21zImQKElJlYWREYXRhc2V0Q29sdW1ucxIOCgZoYW5kbGUYASABKAQSDQoFbmFtZXMYAiADKAkSEAoIYnlfY2h1bmsYAyABKAgSDQoFY2h1bmsYBCABKA0SDgoGc2hhcmVkGAUgASgIIrIBCg1EYXRhc2V0Q29sdW1uEgwKBG5hbWUYASABKAkSDwoHZWxlbWVudBgCIAEoCRIhCgZ2YWx1ZXMYAyABKAsyES5oZWF0M2QudjEuQnVmZmVyEhEKCXNoYXJlZF9pZBgEIAEoBBISCgpjYXRlZ29yaWVzGAUgAygJEg8KB251bWVyaWMYBiABKAgSCwoDbWluGAcgASgBEgsKA21heBgIIAEoARINCgVjb3VudBgJIAEoBCI7Cg5EYXRhc2V0Q29sdW1ucxIpCgdjb2x1bW5zGAEgAygLMhguaGVhdDNkLnYxLkRhdGFzZXRDb2x1bW4iHgoNQnVpbGRQcm9ncmVzcxINCgV0b2tlbhgBIAEoCSI1ChJCdWlsZFByb2dyZXNzUmVwbHkSDQoFcGhhc2UYASABKAkSEAoIZnJhY3Rpb24YAiABKAEiNgoFUXVlcnkSJQoFY291bnQYASABKAsyFC5oZWF0M2QudjEuQ291bnRSb3dzSABCBgoEa2luZCJaCglDb3VudFJvd3MSIQoFZmlsZXMYASADKAsyEi5oZWF0M2QudjEuRmlsZVJlZhIqCgZmaWx0ZXIYAiADKAsyGi5oZWF0M2QudjEuUm93RmlsdGVyQ2xhdXNlIjoKClF1ZXJ5UmVwbHkSJAoFY291bnQYASABKAsyEy5oZWF0M2QudjEuUm93Q291bnRIAEIGCgRraW5kIoYBCghSb3dDb3VudBIPCgdtYXRjaGVkGAEgASgEEhQKDHNjYW5uZWRfcm93cxgCIAEoBBIVCg1zY2FubmVkX2ZpbGVzGAMgASgNEhQKDHJvd3Nfc2tpcHBlZBgEIAEoBBIOCgZncm91cHMYBSABKAQSFgoOZ3JvdXBzX3NraXBwZWQYBiABKAQqUQoPUHJvdG9jb2xWZXJzaW9uEiAKHFBST1RPQ09MX1ZFUlNJT05fVU5TUEVDSUZJRUQQABIcChhQUk9UT0NPTF9WRVJTSU9OX0NVUlJFTlQQASrVAQoJRXJyb3JDb2RlEhoKFkVSUk9SX0NPREVfVU5TUEVDSUZJRUQQABIaChZFUlJPUl9DT0RFX1VOU1VQUE9SVEVEEAESGAoURVJST1JfQ09ERV9OT1RfRk9VTkQQAhIWChJFUlJPUl9DT0RFX0lOVkFMSUQQAxIRCg1FUlJPUl9DT0RFX0lPEAQSGAoURVJST1JfQ09ERV9DQU5DRUxMRUQQBRIXChNFUlJPUl9DT0RFX0lOVEVSTkFMEAYSGAoURVJST1JfQ09ERV9OT19NRU1PUlkQByprCgZGb3JtYXQSFgoSRk9STUFUX1VOU1BFQ0lGSUVEEAASEgoORk9STUFUX1BBUlFVRVQQARIOCgpGT1JNQVRfQ1NWEAISDwoLRk9STUFUX0FDTUkQAxIUChBGT1JNQVRfQ09OVEFJTkVSEAQqaQoKQ29sdW1uS2luZBIbChdDT0xVTU5fS0lORF9VTlNQRUNJRklFRBAAEhMKD0NPTFVNTl9LSU5EX0YzMhABEhMKD0NPTFVNTl9LSU5EX0Y2NBACEhQKEENPTFVNTl9LSU5EX0RJQ1QQAypXCglDaHVua1BhcnQSGgoWQ0hVTktfUEFSVF9VTlNQRUNJRklFRBAAEhgKFENIVU5LX1BBUlRfUE9TSVRJT05TEAESFAoQQ0hVTktfUEFSVF9USU1FUxACYgZwcm90bzM");
+  fileDesc("ChZoZWF0M2QvdjEvaGVhdDNkLnByb3RvEgloZWF0M2QudjEihQwKCEVudmVsb3BlEhAKCHByb3RvY29sGAEgASgNEgoKAmlkGAIgASgEEhAKCHJlcGx5X3RvGAMgASgEEg8KB3Nlc3Npb24YBCABKAkSIQoFaGVsbG8YCiABKAsyEC5oZWF0M2QudjEuSGVsbG9IABIsCgtoZWxsb19yZXBseRgLIAEoCzIVLmhlYXQzZC52MS5IZWxsb1JlcGx5SAASIQoFZXJyb3IYDCABKAsyEC5oZWF0M2QudjEuRXJyb3JIABInCghwcm9ncmVzcxgNIAEoCzITLmhlYXQzZC52MS5Qcm9ncmVzc0gAEiMKBmNhbmNlbBgOIAEoCzIRLmhlYXQzZC52MS5DYW5jZWxIABIuCgxvcGVuX2RhdGFzZXQYFCABKAsyFi5oZWF0M2QudjEuT3BlbkRhdGFzZXRIABIuCgxkYXRhc2V0X2luZm8YFSABKAsyFi5oZWF0M2QudjEuRGF0YXNldEluZm9IABIwCg1jbG9zZV9kYXRhc2V0GBYgASgLMhcuaGVhdDNkLnYxLkNsb3NlRGF0YXNldEgAEiMKBmNsb3NlZBgXIAEoCzIRLmhlYXQzZC52MS5DbG9zZWRIABIuCgxyZWFkX2NvbHVtbnMYHiABKAsyFi5oZWF0M2QudjEuUmVhZENvbHVtbnNIABIlCgdjb2x1bW5zGB8gASgLMhIuaGVhdDNkLnYxLkNvbHVtbnNIABIqCgpyZWFkX3RhYmxlGCAgASgLMhQuaGVhdDNkLnYxLlJlYWRUYWJsZUgAEiEKBXRhYmxlGCEgASgLMhAuaGVhdDNkLnYxLlRhYmxlSAASJgoIc2Nhbl9jc3YYIiABKAsyEi5oZWF0M2QudjEuU2NhbkNzdkgAEiwKC2Nzdl9jb2x1bW5zGCMgASgLMhUuaGVhdDNkLnYxLkNzdkNvbHVtbnNIABIuCgxidWlsZF9jaHVua3MYKCABKAsyFi5oZWF0M2QudjEuQnVpbGRDaHVua3NIABIoCgljaHVua19zZXQYKSABKAsyEy5oZWF0M2QudjEuQ2h1bmtTZXRIABIqCgpyZWFkX2NodW5rGCogASgLMhQuaGVhdDNkLnYxLlJlYWRDaHVua0gAEioKCmNodW5rX2RhdGEYKyABKAsyFC5oZWF0M2QudjEuQ2h1bmtEYXRhSAASMAoNYnVpbGRfZGF0YXNldBgsIAEoCzIXLmhlYXQzZC52MS5CdWlsZERhdGFzZXRIABIwCg1kYXRhc2V0X2J1aWx0GC0gASgLMhcuaGVhdDNkLnYxLkRhdGFzZXRCdWlsdEgAEj0KFHJlYWRfZGF0YXNldF9jb2x1bW5zGC4gASgLMh0uaGVhdDNkLnYxLlJlYWREYXRhc2V0Q29sdW1uc0gAEjQKD2RhdGFzZXRfY29sdW1ucxgvIAEoCzIZLmhlYXQzZC52MS5EYXRhc2V0Q29sdW1uc0gAEjIKDmJ1aWxkX3Byb2dyZXNzGDAgASgLMhguaGVhdDNkLnYxLkJ1aWxkUHJvZ3Jlc3NIABI9ChRidWlsZF9wcm9ncmVzc19yZXBseRgxIAEoCzIdLmhlYXQzZC52MS5CdWlsZFByb2dyZXNzUmVwbHlIABIhCgVxdWVyeRgyIAEoCzIQLmhlYXQzZC52MS5RdWVyeUgAEiwKC3F1ZXJ5X3JlcGx5GDMgASgLMhUuaGVhdDNkLnYxLlF1ZXJ5UmVwbHlIABIfCgRlY2hvGDwgASgLMg8uaGVhdDNkLnYxLkVjaG9IABIzCg9oZWF0X3RpbGVfcXVlcnkYRiABKAsyGC5oZWF0M2QudjEuSGVhdFRpbGVRdWVyeUgAEi4KDGhlYXRfcHlyYW1pZBhHIAEoCzIWLmhlYXQzZC52MS5IZWF0UHlyYW1pZEgAEjMKD3JlYWRfaGVhdF90aWxlcxhIIAEoCzIYLmhlYXQzZC52MS5SZWFkSGVhdFRpbGVzSAASKgoKaGVhdF90aWxlcxhJIAEoCzIULmhlYXQzZC52MS5IZWF0VGlsZXNIAEIGCgRib2R5SgUIZBDIASIXCgVIZWxsbxIOCgZjbGllbnQYASABKAkiygEKCkhlbGxvUmVwbHkSDAoEY29yZRgBIAEoCRIUCgxjb3JlX3ZlcnNpb24YAiABKAkSDwoHdGhyZWFkcxgDIAEoDRIUCgxtZW1vcnlfYnl0ZXMYBCABKAQSDwoHZm9ybWF0cxgFIAMoCRIxCgZzZXJ2ZWQYBiADKAsyIS5oZWF0M2QudjEuSGVsbG9SZXBseS5TZXJ2ZWRFbnRyeRotCgtTZXJ2ZWRFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAQ6AjgBIjwKBUVycm9yEiIKBGNvZGUYASABKA4yFC5oZWF0M2QudjEuRXJyb3JDb2RlEg8KB21lc3NhZ2UYAiABKAkilwEKCFByb2dyZXNzEgsKA2tleRgBIAEoCRIvCgZwYXJhbXMYAiADKAsyHy5oZWF0M2QudjEuUHJvZ3Jlc3MuUGFyYW1zRW50cnkSEAoIZnJhY3Rpb24YAyABKAESDAoEcm93cxgEIAEoBBotCgtQYXJhbXNFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBIhkKBkNhbmNlbBIPCgdyZXF1ZXN0GAEgASgEIh0KBEVjaG8SFQoNcGF5bG9hZF9ieXRlcxgBIAEoBCJECgdGaWxlUmVmEg4KBHBhdGgYASABKAlIABIPCgV0b2tlbhgCIAEoCUgAEg4KBm1lbWJlchgDIAEoCUIICgZzb3VyY2UiMAoLT3BlbkRhdGFzZXQSIQoFZmlsZXMYASADKAsyEi5oZWF0M2QudjEuRmlsZVJlZiJBCgtEYXRhc2V0SW5mbxIOCgZoYW5kbGUYASABKAQSIgoFZmlsZXMYAiADKAsyEy5oZWF0M2QudjEuRmlsZUluZm8igAIKCEZpbGVJbmZvEgwKBG5hbWUYASABKAkSIQoGZm9ybWF0GAIgASgOMhEuaGVhdDNkLnYxLkZvcm1hdBINCgVieXRlcxgDIAEoBBIMCgRyb3dzGAQgASgEEhIKCnJvd3NfZXhhY3QYBSABKAgSJgoHY29sdW1ucxgGIAMoCzIVLmhlYXQzZC52MS5Db2x1bW5JbmZvEhIKCnJvd19ncm91cHMYByABKA0SEgoKaGludHNfanNvbhgIIAEoCRIVCg1tYW5pZmVzdF9qc29uGAkgASgJEisKB21lbWJlcnMYCiADKAsyGi5oZWF0M2QudjEuQ29udGFpbmVyTWVtYmVyIl4KCkNvbHVtbkluZm8SDAoEbmFtZRgBIAEoCRIQCghwaHlzaWNhbBgCIAEoCRIPCgdsb2dpY2FsGAMgASgJEgwKBHRleHQYBCABKAgSEQoJdGltZXN0YW1wGAUgASgIInsKD0NvbnRhaW5lck1lbWJlchIMCgRuYW1lGAEgASgJEgwKBHJvbGUYAiABKAkSDgoGbWV0aG9kGAMgASgNEhgKEGNvbXByZXNzZWRfYnl0ZXMYBCABKAQSDQoFYnl0ZXMYBSABKAQSEwoLZGF0YV9vZmZzZXQYBiABKAQiHgoMQ2xvc2VEYXRhc2V0Eg4KBmhhbmRsZRgBIAEoBCIICgZDbG9zZWQiPwoKQ29sdW1uU3BlYxIMCgRuYW1lGAEgASgJEiMKBGtpbmQYAiABKA4yFS5oZWF0M2QudjEuQ29sdW1uS2luZCJzCg9Sb3dGaWx0ZXJDbGF1c2USDgoGY29sdW1uGAEgASgJEiEKA3NldBgCIAEoCzISLmhlYXQzZC52MS5TZXRUZXN0SAASJQoFcmFuZ2UYAyABKAsyFC5oZWF0M2QudjEuUmFuZ2VUZXN0SABCBgoEdGVzdCIZCgdTZXRUZXN0Eg4KBnZhbHVlcxgBIAMoCSI/CglSYW5nZVRlc3QSEAoDbWluGAEgASgBSACIAQESEAoDbWF4GAIgASgBSAGIAQFCBgoEX21pbkIGCgRfbWF4IpYBCgtSZWFkQ29sdW1ucxIgCgRmaWxlGAEgASgLMhIuaGVhdDNkLnYxLkZpbGVSZWYSJgoHY29sdW1ucxgCIAMoCzIVLmhlYXQzZC52MS5Db2x1bW5TcGVjEioKBmZpbHRlchgDIAMoCzIaLmhlYXQzZC52MS5Sb3dGaWx0ZXJDbGF1c2USEQoJa2VwdF9yb3dzGAQgASgIIsYBCgdDb2x1bW5zEhIKCnJvd3NfdG90YWwYASABKAQSDAoEcm93cxgCIAEoBBIoCghmaWx0ZXJlZBgDIAEoCzIWLmhlYXQzZC52MS5GaWx0ZXJTdGF0cxImCgdjb2x1bW5zGAQgAygLMhUuaGVhdDNkLnYxLkNvbHVtbkRhdGESJAoJa2VwdF9yb3dzGAUgASgLMhEuaGVhdDNkLnYxLkJ1ZmZlchIhCgZ0aW1pbmcYBiABKAsyES5oZWF0M2QudjEuVGltaW5nImcKC0ZpbHRlclN0YXRzEgwKBHJvd3MYASABKAQSDAoEa2VwdBgCIAEoBBIUCgxyb3dzX3NraXBwZWQYAyABKAQSDgoGZ3JvdXBzGAQgASgEEhYKDmdyb3Vwc19za2lwcGVkGAUgASgEInIKCkNvbHVtbkRhdGESDAoEbmFtZRgBIAEoCRIjCgRraW5kGAIgASgOMhUuaGVhdDNkLnYxLkNvbHVtbktpbmQSIQoGdmFsdWVzGAMgASgLMhEuaGVhdDNkLnYxLkJ1ZmZlchIOCgZsYWJlbHMYBCADKAkiKAoGQnVmZmVyEg4KBm9mZnNldBgBIAEoBBIOCgZsZW5ndGgYAiABKAQicQoGVGltaW5nEg8KB3JlYWRfbXMYASABKAESEQoJZmlsdGVyX21zGAIgASgBEg8KB3NvcnRfbXMYAyABKAESDwoHcGFja19tcxgEIAEoARIQCgh0b3RhbF9tcxgFIAEoARIPCgd0aHJlYWRzGAYgASgNIi0KCVJlYWRUYWJsZRIgCgRmaWxlGAEgASgLMhIuaGVhdDNkLnYxLkZpbGVSZWYiUAoFVGFibGUSDAoEcm93cxgBIAEoBBImCgdjb2x1bW5zGAIgAygLMhUuaGVhdDNkLnYxLkNvbHVtbkRhdGESEQoJaW5mb19qc29uGAMgASgJIvUBCgdTY2FuQ3N2EiAKBGZpbGUYASABKAsyEi5oZWF0M2QudjEuRmlsZVJlZhIRCglkZWxpbWl0ZXIYAiABKA0SFgoObnVtYmVyX2NvbHVtbnMYAyADKAUSEQoJd2lkZV9zbG90GAQgASgFEhQKDHRleHRfY29sdW1ucxgFIAMoBRISCgpheGlzX3Nsb3RzGAYgAygFEigKDG51bWJlcl90ZXN0cxgHIAMoCzISLmhlYXQzZC52MS5Dc3ZUZXN0EiYKCnRleHRfdGVzdHMYCCADKAsyEi5oZWF0M2QudjEuQ3N2VGVzdBIOCgZzdHJpZGUYCSABKA0iQwoHQ3N2VGVzdBIMCgRzbG90GAEgASgNEioKBmNsYXVzZRgCIAEoCzIaLmhlYXQzZC52MS5Sb3dGaWx0ZXJDbGF1c2UixwEKCkNzdkNvbHVtbnMSDAoEcm93cxgBIAEoBBIQCghyZWplY3RlZBgCIAEoBBIoCghmaWx0ZXJlZBgDIAEoCzIWLmhlYXQzZC52MS5GaWx0ZXJTdGF0cxImCgdudW1iZXJzGAQgAygLMhUuaGVhdDNkLnYxLkNvbHVtbkRhdGESJAoFdGV4dHMYBSADKAsyFS5oZWF0M2QudjEuQ29sdW1uRGF0YRIhCgZ0aW1pbmcYBiABKAsyES5oZWF0M2QudjEuVGltaW5nIuIBCgtCdWlsZENodW5rcxIhCgVmaWxlcxgBIAMoCzISLmhlYXQzZC52MS5GaWxlUmVmEgkKAXgYAiABKAkSCQoBeRgDIAEoCRIJCgF6GAQgASgJEgwKBHRpbWUYBSABKAkSDgoGcGVyc29uGAYgASgJEg0KBWdyb3VwGAcgASgJEhIKCnRpbWVfc2NhbGUYCCABKAESKgoGZmlsdGVyGAkgAygLMhouaGVhdDNkLnYxLlJvd0ZpbHRlckNsYXVzZRIOCgZzdHJpZGUYCiABKA0SEgoKY2h1bmtfcm93cxgLIAEoDSLzAQoIQ2h1bmtTZXQSDgoGaGFuZGxlGAEgASgEEgwKBHJvd3MYAiABKAQSEQoJcm93c19yZWFkGAMgASgEEhAKCHRpbWVfbWluGAQgASgBEhAKCHRpbWVfbWF4GAUgASgBEhgKEG1heF9saWZldGltZV9nYXAYBiABKAISJAoGY2h1bmtzGAcgAygLMhQuaGVhdDNkLnYxLkNodW5rSW5mbxIhCgZ0aW1pbmcYCCABKAsyES5oZWF0M2QudjEuVGltaW5nEhkKEXBlYWtfbWVtb3J5X2J5dGVzGAkgASgEEhQKDGdyb3VwX2xhYmVscxgKIAMoCSKWAQoJQ2h1bmtJbmZvEg0KBWluZGV4GAEgASgNEg0KBXN0YXJ0GAIgASgEEgwKBHJvd3MYAyABKA0SEAoIYWFiYl9taW4YBCADKAISEQoJYWFiYl9zaXplGAUgAygCEhAKCHRpbWVfbWluGAYgASgCEhIKCnRpbWVfc2NhbGUYByABKAISEgoKbGlmZV9zY2FsZRgIIAEoAiJeCglSZWFkQ2h1bmsSDgoGaGFuZGxlGAEgASgEEg0KBWluZGV4GAIgASgNEiIKBHBhcnQYAyABKA4yFC5oZWF0M2QudjEuQ2h1bmtQYXJ0Eg4KBnNoYXJlZBgEIAEoCCJyCglDaHVua0RhdGESDQoFaW5kZXgYASABKA0SIgoEcGFydBgCIAEoDjIULmhlYXQzZC52MS5DaHVua1BhcnQSHwoEZGF0YRgDIAEoCzIRLmhlYXQzZC52MS5CdWZmZXISEQoJc2hhcmVkX2lkGAQgASgEIo0DCg5EYXRhc2V0TWFwcGluZxIJCgF4GAEgASgJEgkKAXkYAiABKAkSCQoBehgDIAEoCRIMCgR0aW1lGAQgASgJEhEKCXRpbWVfdW5pdBgFIAEoCRIRCglsb29rX21vZGUYBiABKAkSCwoDeWF3GAcgASgJEg0KBXBpdGNoGAggASgJEg0KBWRpcl94GAkgASgJEg0KBWRpcl95GAogASgJEg0KBWRpcl96GAsgASgJEg8KB2RlZ3JlZXMYDCABKAgSDgoGcGVyc29uGA0gASgJEgwKBHRlYW0YDiABKAkSDwoHc2Vzc2lvbhgPIAEoCRIlCgVleHRyYRgQIAMoCzIWLmhlYXQzZC52MS5FeHRyYUNvbHVtbhIpCglvbl9kZW1hbmQYESADKAsyFi5oZWF0M2QudjEuRXh0cmFDb2x1bW4SDAoEdXBfehgSIAEoCBIOCgZmbGlwX3gYEyABKAgSDgoGZmxpcF95GBQgASgIEg4KBmZsaXBfehgVIAEoCBINCgVzY2FsZRgWIAEoASIsCgtFeHRyYUNvbHVtbhIMCgRuYW1lGAEgASgJEg8KB251bWVyaWMYAiABKAgi5wEKDEJ1aWxkRGF0YXNldBIhCgVmaWxlcxgBIAMoCzISLmhlYXQzZC52MS5GaWxlUmVmEg0KBW5hbWVzGAIgAygJEioKB21hcHBpbmcYAyABKAsyGS5oZWF0M2QudjEuRGF0YXNldE1hcHBpbmcSKgoGZmlsdGVyGAQgAygLMhouaGVhdDNkLnYxLlJvd0ZpbHRlckNsYXVzZRIOCgZzdHJpZGUYBSABKA0SEQoJcGFnZV9yb3dzGAYgASgEEhIKCmNodW5rX3Jvd3MYByABKA0SFgoOcHJvZ3Jlc3NfdG9rZW4YCCABKAkiogIKCUJ1aWx0RmlsZRIMCgRyb3dzGAEgASgEEhAKCHJlamVjdGVkGAIgASgEEigKCGZpbHRlcmVkGAMgASgLMhYuaGVhdDNkLnYxLkZpbHRlclN0YXRzEhMKC2ZhaWx1cmVfa2V5GAQgASgJEj8KDmZhaWx1cmVfcGFyYW1zGAUgAygLMicuaGVhdDNkLnYxLkJ1aWx0RmlsZS5GYWlsdXJlUGFyYW1zRW50cnkSFAoMZmFpbHVyZV90ZXh0GAYgASgJEhIKCmhpbnRzX2pzb24YByABKAkSFQoNdGltZV9hYnNvbHV0ZRgIIAEoCBo0ChJGYWlsdXJlUGFyYW1zRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASJYCglCdWlsdEF0dHISDAoEbmFtZRgBIAEoCRIPCgdudW1lcmljGAIgASgIEgsKA21pbhgDIAEoARILCgNtYXgYBCABKAESEgoKY2F0ZWdvcmllcxgFIAMoCSIsCg1Ecm9wcGVkQ29sdW1uEgwKBG5hbWUYASABKAkSDQoFY291bnQYAiABKAQimQEKDERhdGFzZXRDaHVuaxINCgVpbmRleBgBIAEoDRINCgVzdGFydBgCIAEoBBIMCgRyb3dzGAMgASgNEhAKCGFhYmJfbWluGAQgAygBEhEKCWFhYmJfc2l6ZRgFIAMoARIQCgh0aW1lX21pbhgGIAEoARISCgp0aW1lX3NjYWxlGAcgASgBEhIKCmxpZmVfc2NhbGUYCCABKAEi5gUKDERhdGFzZXRCdWlsdBIOCgZoYW5kbGUYASABKAQSDAoEcm93cxgCIAEoBBIjCgVmaWxlcxgDIAMoCzIULmhlYXQzZC52MS5CdWlsdEZpbGUSDwoHc291cmNlcxgEIAEoDRIQCghyZWplY3RlZBgFIAEoBBIQCghoYXNfdGltZRgGIAEoCBIVCghlcG9jaF9tcxgHIAEoAUgAiAEBEhMKC3RpbWVfb3JpZ2luGAggASgBEhIKCnRpbWVfcmFuZ2UYCSADKAESFQoNcGVyc29uX2xhYmVscxgKIAMoCRITCgt0ZWFtX2xhYmVscxgLIAMoCRIVCg10ZWFtc19kcm9wcGVkGAwgASgEEhYKDnNlc3Npb25fbGFiZWxzGA0gAygJEhgKEHNlc3Npb25zX2Ryb3BwZWQYDiABKAQSGAoQbWF4X2xpZmV0aW1lX2dhcBgPIAEoARIUCgxzaGFyZWRfY291bnQYECABKAQSIwoFYXR0cnMYESADKAsyFC5oZWF0M2QudjEuQnVpbHRBdHRyEjEKD2Ryb3BwZWRfY29sdW1ucxgSIAMoCzIYLmhlYXQzZC52MS5Ecm9wcGVkQ29sdW1uEg4KBmJvdW5kcxgTIAMoARIPCgdhbGlnbmVkGBQgASgEEhMKC3Nlcmllc19qc29uGBUgASgJEicKBmNodW5rcxgWIAMoCzIXLmhlYXQzZC52MS5EYXRhc2V0Q2h1bmsSEQoJcGFnZV9yb3dzGBcgASgEEhEKCXBhZ2Vfc3RlcBgYIAEoDRIdChVwYWdlX21heF9saWZldGltZV9nYXAYGSABKAESDwoHY29sdW1ucxgaIAMoCRIRCglvbl9kZW1hbmQYGyADKAkSIQoGdGltaW5nGBwgASgLMhEuaGVhdDNkLnYxLlRpbWluZxIZChFwZWFrX21lbW9yeV9ieXRlcxgdIAEoBBIOCgZzaGFyZWQYHiABKAhCCwoJX2Vwb2NoX21zImQKElJlYWREYXRhc2V0Q29sdW1ucxIOCgZoYW5kbGUYASABKAQSDQoFbmFtZXMYAiADKAkSEAoIYnlfY2h1bmsYAyABKAgSDQoFY2h1bmsYBCABKA0SDgoGc2hhcmVkGAUgASgIIrIBCg1EYXRhc2V0Q29sdW1uEgwKBG5hbWUYASABKAkSDwoHZWxlbWVudBgCIAEoCRIhCgZ2YWx1ZXMYAyABKAsyES5oZWF0M2QudjEuQnVmZmVyEhEKCXNoYXJlZF9pZBgEIAEoBBISCgpjYXRlZ29yaWVzGAUgAygJEg8KB251bWVyaWMYBiABKAgSCwoDbWluGAcgASgBEgsKA21heBgIIAEoARINCgVjb3VudBgJIAEoBCI7Cg5EYXRhc2V0Q29sdW1ucxIpCgdjb2x1bW5zGAEgAygLMhguaGVhdDNkLnYxLkRhdGFzZXRDb2x1bW4iHgoNQnVpbGRQcm9ncmVzcxINCgV0b2tlbhgBIAEoCSI1ChJCdWlsZFByb2dyZXNzUmVwbHkSDQoFcGhhc2UYASABKAkSEAoIZnJhY3Rpb24YAiABKAEiNgoFUXVlcnkSJQoFY291bnQYASABKAsyFC5oZWF0M2QudjEuQ291bnRSb3dzSABCBgoEa2luZCJaCglDb3VudFJvd3MSIQoFZmlsZXMYASADKAsyEi5oZWF0M2QudjEuRmlsZVJlZhIqCgZmaWx0ZXIYAiADKAsyGi5oZWF0M2QudjEuUm93RmlsdGVyQ2xhdXNlIjoKClF1ZXJ5UmVwbHkSJAoFY291bnQYASABKAsyEy5oZWF0M2QudjEuUm93Q291bnRIAEIGCgRraW5kIoYBCghSb3dDb3VudBIPCgdtYXRjaGVkGAEgASgEEhQKDHNjYW5uZWRfcm93cxgCIAEoBBIVCg1zY2FubmVkX2ZpbGVzGAMgASgNEhQKDHJvd3Nfc2tpcHBlZBgEIAEoBBIOCgZncm91cHMYBSABKAQSFgoOZ3JvdXBzX3NraXBwZWQYBiABKAQi2gEKDUhlYXRUaWxlUXVlcnkSIQoFZmlsZXMYASADKAsyEi5oZWF0M2QudjEuRmlsZVJlZhIPCgdkYXRhc2V0GAIgASgEEgkKAXgYAyABKAkSCQoBeRgEIAEoCRIqCgZmaWx0ZXIYBSADKAsyGi5oZWF0M2QudjEuUm93RmlsdGVyQ2xhdXNlEg0KBXNwbGl0GAYgASgJEhQKDHNwbGl0X3ZhbHVlcxgHIAMoCRISCgpsZWFmX2xldmVsGAggASgNEgsKA2tleRgJIAEoCRINCgVzaGFyZRgKIAEoCCKAAwoLSGVhdFB5cmFtaWQSCwoDa2V5GAEgASgJEgoKAngwGAIgASgBEgoKAnkwGAMgASgBEgwKBHNpemUYBCABKAESEgoKbGVhZl9sZXZlbBgFIAEoDRIQCghjaGFubmVscxgGIAEoDRIVCg1jaGFubmVsX25hbWVzGAcgAygJEhIKCnJvd3NfdG90YWwYCCABKAQSFAoMcm93c19jb3VudGVkGAkgASgEEhAKCGZyYWN0aW9uGAogASgBEhAKCGNvbXBsZXRlGAsgASgIEhcKD2VzdGltYXRlX2xldmVscxgMIAEoDRIRCglsZXZlbF9tYXgYDSADKA0SCwoDaG93GA4gASgJEhIKCmRlbHRhX2Jhc2UYDyABKAkSDgoGZ3JvdXBzGBAgASgEEhMKC2dyb3Vwc19yZWFkGBEgASgEEhAKCGZpcnN0X21zGBIgASgBEhAKCHRvdGFsX21zGBMgASgBEg0KBWVycm9yGBQgASgJEg4KBmNhY2hlZBgVIAEoCCJBCg1SZWFkSGVhdFRpbGVzEgsKA2tleRgBIAEoCRINCgV0aWxlcxgCIAMoBBIUCgxidWRnZXRfYnl0ZXMYAyABKAQiYQoJSGVhdFRpbGVzEiIKBXRpbGVzGAEgAygLMhMuaGVhdDNkLnYxLkhlYXRUaWxlEg0KBWVtcHR5GAIgAygEEg8KB3BlbmRpbmcYAyADKAQSEAoIZGVmZXJyZWQYBCADKAQiSQoISGVhdFRpbGUSCgoCaWQYASABKAQSHwoEZGF0YRgCIAEoCzIRLmhlYXQzZC52MS5CdWZmZXISEAoIZXN0aW1hdGUYAyABKAgqUQoPUHJvdG9jb2xWZXJzaW9uEiAKHFBST1RPQ09MX1ZFUlNJT05fVU5TUEVDSUZJRUQQABIcChhQUk9UT0NPTF9WRVJTSU9OX0NVUlJFTlQQASrVAQoJRXJyb3JDb2RlEhoKFkVSUk9SX0NPREVfVU5TUEVDSUZJRUQQABIaChZFUlJPUl9DT0RFX1VOU1VQUE9SVEVEEAESGAoURVJST1JfQ09ERV9OT1RfRk9VTkQQAhIWChJFUlJPUl9DT0RFX0lOVkFMSUQQAxIRCg1FUlJPUl9DT0RFX0lPEAQSGAoURVJST1JfQ09ERV9DQU5DRUxMRUQQBRIXChNFUlJPUl9DT0RFX0lOVEVSTkFMEAYSGAoURVJST1JfQ09ERV9OT19NRU1PUlkQByprCgZGb3JtYXQSFgoSRk9STUFUX1VOU1BFQ0lGSUVEEAASEgoORk9STUFUX1BBUlFVRVQQARIOCgpGT1JNQVRfQ1NWEAISDwoLRk9STUFUX0FDTUkQAxIUChBGT1JNQVRfQ09OVEFJTkVSEAQqaQoKQ29sdW1uS2luZBIbChdDT0xVTU5fS0lORF9VTlNQRUNJRklFRBAAEhMKD0NPTFVNTl9LSU5EX0YzMhABEhMKD0NPTFVNTl9LSU5EX0Y2NBACEhQKEENPTFVNTl9LSU5EX0RJQ1QQAypXCglDaHVua1BhcnQSGgoWQ0hVTktfUEFSVF9VTlNQRUNJRklFRBAAEhgKFENIVU5LX1BBUlRfUE9TSVRJT05TEAESFAoQQ0hVTktfUEFSVF9USU1FUxACYgZwcm90bzM");
 
 /**
  * @generated from message heat3d.v1.Envelope
@@ -235,6 +235,30 @@ export type Envelope = Message<"heat3d.v1.Envelope"> & {
      */
     value: Echo;
     case: "echo";
+  } | {
+    /**
+     * @generated from field: heat3d.v1.HeatTileQuery heat_tile_query = 70;
+     */
+    value: HeatTileQuery;
+    case: "heatTileQuery";
+  } | {
+    /**
+     * @generated from field: heat3d.v1.HeatPyramid heat_pyramid = 71;
+     */
+    value: HeatPyramid;
+    case: "heatPyramid";
+  } | {
+    /**
+     * @generated from field: heat3d.v1.ReadHeatTiles read_heat_tiles = 72;
+     */
+    value: ReadHeatTiles;
+    case: "readHeatTiles";
+  } | {
+    /**
+     * @generated from field: heat3d.v1.HeatTiles heat_tiles = 73;
+     */
+    value: HeatTiles;
+    case: "heatTiles";
   } | { case: undefined; value?: undefined };
 };
 
@@ -2296,6 +2320,322 @@ export type RowCount = Message<"heat3d.v1.RowCount"> & {
  */
 export const RowCountSchema: GenMessage<RowCount> = /*@__PURE__*/
   messageDesc(file_heat3d_v1_heat3d, 51);
+
+/**
+ * Heat over data of any size, as a pyramid of tiles: the core streams the
+ * files' row groups once into a leaf grid (never holding the rows), sums it
+ * down level by level and keeps the tiles on disk, keyed by a hash of the
+ * files, axes, filter (time window included) and split. Level l covers the
+ * square extent with 2^l x 2^l tiles of 256 x 256 cells. A tile's bytes are a
+ * 32-byte header and a zstd frame of its cells (`native/crates/core/src/tiles.rs`).
+ *
+ * @generated from message heat3d.v1.HeatTileQuery
+ */
+export type HeatTileQuery = Message<"heat3d.v1.HeatTileQuery"> & {
+  /**
+   * @generated from field: repeated heat3d.v1.FileRef files = 1;
+   */
+  files: FileRef[];
+
+  /**
+   * Or the files of an `OpenDataset` handle.
+   *
+   * @generated from field: uint64 dataset = 2;
+   */
+  dataset: bigint;
+
+  /**
+   * The two horizontal columns.
+   *
+   * @generated from field: string x = 3;
+   */
+  x: string;
+
+  /**
+   * @generated from field: string y = 4;
+   */
+  y: string;
+
+  /**
+   * The filter, the time window as a range on the time column.
+   *
+   * @generated from field: repeated heat3d.v1.RowFilterClause filter = 5;
+   */
+  filter: RowFilterClause[];
+
+  /**
+   * Optional: one channel per listed value of this text column.
+   *
+   * @generated from field: string split = 6;
+   */
+  split: string;
+
+  /**
+   * @generated from field: repeated string split_values = 7;
+   */
+  splitValues: string[];
+
+  /**
+   * The finest level built (0-7); 0 picks the core's default.
+   *
+   * @generated from field: uint32 leaf_level = 8;
+   */
+  leafLevel: number;
+
+  /**
+   * Instead of files: the state of the pyramid of this key, built by someone
+   * else (a session member following the host's heat). Never starts a build.
+   *
+   * @generated from field: string key = 9;
+   */
+  key: string;
+
+  /**
+   * The owner only: session members may read this pyramid by its key.
+   *
+   * @generated from field: bool share = 10;
+   */
+  share: boolean;
+};
+
+/**
+ * Describes the message heat3d.v1.HeatTileQuery.
+ * Use `create(HeatTileQuerySchema)` to create a new message.
+ */
+export const HeatTileQuerySchema: GenMessage<HeatTileQuery> = /*@__PURE__*/
+  messageDesc(file_heat3d_v1_heat3d, 52);
+
+/**
+ * @generated from message heat3d.v1.HeatPyramid
+ */
+export type HeatPyramid = Message<"heat3d.v1.HeatPyramid"> & {
+  /**
+   * The cache key: equal queries, equal keys, the same tiles for every client.
+   *
+   * @generated from field: string key = 1;
+   */
+  key: string;
+
+  /**
+   * The square the pyramid covers, in the x/y columns' units.
+   *
+   * @generated from field: double x0 = 2;
+   */
+  x0: number;
+
+  /**
+   * @generated from field: double y0 = 3;
+   */
+  y0: number;
+
+  /**
+   * @generated from field: double size = 4;
+   */
+  size: number;
+
+  /**
+   * @generated from field: uint32 leaf_level = 5;
+   */
+  leafLevel: number;
+
+  /**
+   * @generated from field: uint32 channels = 6;
+   */
+  channels: number;
+
+  /**
+   * @generated from field: repeated string channel_names = 7;
+   */
+  channelNames: string[];
+
+  /**
+   * @generated from field: uint64 rows_total = 8;
+   */
+  rowsTotal: bigint;
+
+  /**
+   * Rows binned so far (the filter's kept rows when complete).
+   *
+   * @generated from field: uint64 rows_counted = 9;
+   */
+  rowsCounted: bigint;
+
+  /**
+   * 0..1 of the row groups.
+   *
+   * @generated from field: double fraction = 10;
+   */
+  fraction: number;
+
+  /**
+   * @generated from field: bool complete = 11;
+   */
+  complete: boolean;
+
+  /**
+   * While building: levels 0..estimate_levels-1 readable as estimates (a sample scaled up).
+   *
+   * @generated from field: uint32 estimate_levels = 12;
+   */
+  estimateLevels: number;
+
+  /**
+   * The largest cell per level, for scaling.
+   *
+   * @generated from field: repeated uint32 level_max = 13;
+   */
+  levelMax: number[];
+
+  /**
+   * How it was built: "full", "delta" (only the row groups the change touches), "queued".
+   *
+   * @generated from field: string how = 14;
+   */
+  how: string;
+
+  /**
+   * @generated from field: string delta_base = 15;
+   */
+  deltaBase: string;
+
+  /**
+   * @generated from field: uint64 groups = 16;
+   */
+  groups: bigint;
+
+  /**
+   * @generated from field: uint64 groups_read = 17;
+   */
+  groupsRead: bigint;
+
+  /**
+   * @generated from field: double first_ms = 18;
+   */
+  firstMs: number;
+
+  /**
+   * @generated from field: double total_ms = 19;
+   */
+  totalMs: number;
+
+  /**
+   * @generated from field: string error = 20;
+   */
+  error: string;
+
+  /**
+   * Answered from the cache.
+   *
+   * @generated from field: bool cached = 21;
+   */
+  cached: boolean;
+};
+
+/**
+ * Describes the message heat3d.v1.HeatPyramid.
+ * Use `create(HeatPyramidSchema)` to create a new message.
+ */
+export const HeatPyramidSchema: GenMessage<HeatPyramid> = /*@__PURE__*/
+  messageDesc(file_heat3d_v1_heat3d, 53);
+
+/**
+ * A session member reads only pyramids shared with it: the host's (`share`)
+ * or ones it queried by file token itself.
+ *
+ * @generated from message heat3d.v1.ReadHeatTiles
+ */
+export type ReadHeatTiles = Message<"heat3d.v1.ReadHeatTiles"> & {
+  /**
+   * @generated from field: string key = 1;
+   */
+  key: string;
+
+  /**
+   * Tile ids: level << 56 | y << 28 | x.
+   *
+   * @generated from field: repeated uint64 tiles = 2;
+   */
+  tiles: bigint[];
+
+  /**
+   * At most this many payload bytes (the core caps it); the rest come back as `deferred`.
+   *
+   * @generated from field: uint64 budget_bytes = 3;
+   */
+  budgetBytes: bigint;
+};
+
+/**
+ * Describes the message heat3d.v1.ReadHeatTiles.
+ * Use `create(ReadHeatTilesSchema)` to create a new message.
+ */
+export const ReadHeatTilesSchema: GenMessage<ReadHeatTiles> = /*@__PURE__*/
+  messageDesc(file_heat3d_v1_heat3d, 54);
+
+/**
+ * @generated from message heat3d.v1.HeatTiles
+ */
+export type HeatTiles = Message<"heat3d.v1.HeatTiles"> & {
+  /**
+   * @generated from field: repeated heat3d.v1.HeatTile tiles = 1;
+   */
+  tiles: HeatTile[];
+
+  /**
+   * Asked for, but holding no rows.
+   *
+   * @generated from field: repeated uint64 empty = 2;
+   */
+  empty: bigint[];
+
+  /**
+   * Not built yet (a level finer than the estimate while building).
+   *
+   * @generated from field: repeated uint64 pending = 3;
+   */
+  pending: bigint[];
+
+  /**
+   * Over the budget: ask again.
+   *
+   * @generated from field: repeated uint64 deferred = 4;
+   */
+  deferred: bigint[];
+};
+
+/**
+ * Describes the message heat3d.v1.HeatTiles.
+ * Use `create(HeatTilesSchema)` to create a new message.
+ */
+export const HeatTilesSchema: GenMessage<HeatTiles> = /*@__PURE__*/
+  messageDesc(file_heat3d_v1_heat3d, 55);
+
+/**
+ * @generated from message heat3d.v1.HeatTile
+ */
+export type HeatTile = Message<"heat3d.v1.HeatTile"> & {
+  /**
+   * @generated from field: uint64 id = 1;
+   */
+  id: bigint;
+
+  /**
+   * @generated from field: heat3d.v1.Buffer data = 2;
+   */
+  data?: Buffer | undefined;
+
+  /**
+   * @generated from field: bool estimate = 3;
+   */
+  estimate: boolean;
+};
+
+/**
+ * Describes the message heat3d.v1.HeatTile.
+ * Use `create(HeatTileSchema)` to create a new message.
+ */
+export const HeatTileSchema: GenMessage<HeatTile> = /*@__PURE__*/
+  messageDesc(file_heat3d_v1_heat3d, 56);
 
 /**
  * @generated from enum heat3d.v1.ProtocolVersion

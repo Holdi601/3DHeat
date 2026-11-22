@@ -73,6 +73,8 @@ import { t } from '../../i18n';
 import type { LevelIndexSets } from '../levelIndices';
 import type { NativeChunk } from '../../state/types';
 import { leastUsedChunk } from '../evict';
+import { GpuHeatTiles } from './heatTilesPass';
+
 
 /** Largest block index texture we size the per-frame buffer for. */
 const MAX_BLOCKS = MAX_PLAN_BLOCKS;
@@ -490,6 +492,7 @@ export class WebgpuRenderer implements Renderer {
   private symbols: GpuSymbols | null = null;
   /** The heat by compute binning where it matches the splat (heatBin.ts); made at prewarm. */
   private heatBin: GpuHeatBin | null = null;
+  private heatTiles: GpuHeatTiles | null = null;
   /** `?heatbin=0` keeps every frame on the splat, `?heatbin=1` bins whenever it can; probes set it too. */
   heatBinMode: 'auto' | 'on' | 'off' = heatBinForced();
   /** Whether the last heat pass was binned: its cost then does not grow with the sprites' size. */
@@ -3228,6 +3231,10 @@ export class WebgpuRenderer implements Renderer {
       });
       clear.end();
     }
+    // Heat from tiles (Stage 6) under the rows: only where the target was just cleared.
+    if (!field && params.heatTiles && (!extend || fresh) && (format === 'r32float' || format === 'r16float')) {
+      (this.heatTiles ??= new GpuHeatTiles(this.device)).draw(encoder, target, format, params.heatTiles, params.viewProj);
+    }
 
     const weight = params.sampleWeight * params.heatGain;
     if (params.plan.length === 0) {
@@ -4830,6 +4837,8 @@ export class WebgpuRenderer implements Renderer {
     this.terrain?.destroy();
     this.terrain = null;
     this.heatBin?.dispose();
+    this.heatTiles?.destroy();
+    this.heatTiles = null;
     this.zones?.dispose();
     this.spawnMarks?.dispose();
     this.volumeContours?.dispose();

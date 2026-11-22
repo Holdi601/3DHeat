@@ -8,6 +8,7 @@
 //!   the engine's GPU chunk layout;
 //! - `build` and `dataset`: the viewer's whole dataset built here, held for the
 //!   viewer to take by column and the engine by packed chunk;
+//! - `tiles`: heat as a tile pyramid built out of core, cached on disk by filter hash;
 //! - `service`: the protocol (`heat3d-proto`) over any transport.
 
 pub mod acmi;
@@ -25,3 +26,4 @@ pub mod service;
 pub mod source;
 pub mod sort;
 pub mod table;
+pub mod tiles;

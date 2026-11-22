@@ -1,0 +1,986 @@
+//! Heat tiles (Stage 6): heat over data of any size as a pyramid of tiles.
+//!
+//! - Out of core: the files' row groups are streamed through once, every core
+//!   binning the rows of one group into a shared leaf grid; rows are never held,
+//!   so memory is the grid's, whatever the row count.
+//! - Level `l` covers the square extent with `2^l x 2^l` tiles of 256 x 256
+//!   cells; each level is the next finer one summed 2 x 2.
+//! - Coarse first: groups are visited in a shuffled order, and after the first
+//!   sixteenth the coarse levels are published as an estimate (the sample scaled
+//!   up), so a client sees the picture long before the pass ends.
+//! - Keyed by filter hash (`TileQuery::key`): files, axes, filter (the time
+//!   window is a range on the time column), split and leaf level. Equal queries
+//!   share tiles across clients.
+//! - Incremental: a query differing from a cached one in its filter starts from
+//!   the cached leaf grid and visits only the row groups whose statistics say
+//!   the change can touch them, subtracting their rows under the old filter and
+//!   adding them under the new (exact: counts are integers).
+//! - On disk (`TileStore`): one folder per key, `tiles.bin` (every tile, packed)
+//!   and `meta.json` (extent, levels, the byte range of each tile), evicted least
+//!   recently used past a byte budget.
+//!
+//! A tile's bytes: a 32-byte header, then a zstd frame of its cells, channel
+//! after channel, row after row, u16 or u32 little-endian:
+//!
+//! | at | size | field |
+//! |----|------|-------|
+//! | 0  | 4 | magic `H3DT` |
+//! | 4  | 1 | version (1) |
+//! | 5  | 1 | bytes per cell (2 or 4) |
+//! | 6  | 1 | channels |
+//! | 7  | 1 | flags (bit 0: estimate) |
+//! | 8  | 1 | level |
+//! | 12 | 4 | x |
+//! | 16 | 4 | y |
+//! | 20 | 4 | largest cell |
+//! | 24 | 4 | cell bytes uncompressed |
+
+use std::collections::{HashMap, HashSet};
+use std::path::{Path, PathBuf};
+use std::sync::atomic::{AtomicU32, AtomicU64, Ordering};
+use std::sync::{Arc, Condvar, Mutex, RwLock};
+use std::time::{Instant, SystemTime};
+
+use anyhow::{anyhow, bail, Context, Result};
+use bytes::Bytes;
+use rayon::prelude::*;
+use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha256};
+
+use crate::filter::Clause;
+use crate::parquet::{Kind, Out, ParquetFile, Spec};
+
+pub const TILE: usize = 256;
+pub const MAGIC: &[u8; 4] = b"H3DT";
+pub const HEADER: usize = 32;
+pub const MAX_LEVEL: u32 = 7;
+pub const DEFAULT_LEVEL: u32 = 5;
+/// The first published estimate covers levels 0..ESTIMATE_LEVELS.
+pub const ESTIMATE_LEVELS: u32 = 4;
+/// Share of the row groups read before the estimate is published.
+const SAMPLE_SHARE: usize = 16;
+
+/// `level << 56 | y << 28 | x`.
+pub fn tile_id(level: u32, x: u32, y: u32) -> u64 {
+    (level as u64) << 56 | (y as u64) << 28 | x as u64
+}
+
+pub fn tile_of(id: u64) -> (u32, u32, u32) {
+    ((id >> 56) as u32, ((id >> 28) & 0x0fff_ffff) as u32, (id & 0x0fff_ffff) as u32)
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Split {
+    pub column: String,
+    pub values: Vec<String>,
+}
+
+/// What a pyramid is of.
+#[derive(Debug, Clone)]
+pub struct TileQuery {
+    pub files: Vec<PathBuf>,
+    pub x: String,
+    pub y: String,
+    pub filter: Vec<Clause>,
+    pub split: Option<Split>,
+    pub leaf_level: u32,
+}
+
+fn clause_text(c: &Clause) -> String {
+    match c {
+        Clause::Range { column, min, max } => {
+            format!("R\u{1f}{column}\u{1f}{}\u{1f}{}", min.map(|v| v.to_string()).unwrap_or_default(), max.map(|v| v.to_string()).unwrap_or_default())
+        }
+        Clause::Set { column, values } => {
+            let mut v = values.clone();
+            v.sort();
+            v.dedup();
+            format!("S\u{1f}{column}\u{1f}{}", v.join("\u{1e}"))
+        }
+    }
+}
+
+/// The active clauses, one per column (several on a column are ANDed by the
+/// readers; kept in order), sorted so equal filters give equal keys.
+fn canonical(filter: &[Clause]) -> Vec<Clause> {
+    let mut v = crate::filter::active(filter);
+    v.sort_by_key(clause_text);
+    v.dedup_by(|a, b| clause_text(a) == clause_text(b));
+    v
+}
+
+fn file_stamp(p: &Path) -> String {
+    let m = std::fs::metadata(p).ok();
+    let len = m.as_ref().map(|m| m.len()).unwrap_or(0);
+    let t = m
+        .and_then(|m| m.modified().ok())
+        .and_then(|t| t.duration_since(SystemTime::UNIX_EPOCH).ok())
+        .map(|d| d.as_nanos())
+        .unwrap_or(0);
+    format!("{}\u{1f}{len}\u{1f}{t}", p.display())
+}
+
+impl TileQuery {
+    /// Everything but the filter: queries with equal bases can start from each other.
+    pub fn base(&self) -> String {
+        let mut files: Vec<String> = self.files.iter().map(|p| file_stamp(p)).collect();
+        files.sort();
+        let split = self.split.as_ref().map(|s| format!("{}\u{1f}{}", s.column, s.values.join("\u{1e}"))).unwrap_or_default();
+        format!("heat-tiles-1\u{1d}{}\u{1d}{}\u{1d}{}\u{1d}{}\u{1d}{}", files.join("\u{1e}"), self.x, self.y, split, self.leaf_level)
+    }
+
+    /// The filter hash: equal queries, equal keys.
+    pub fn key(&self) -> String {
+        let f: Vec<String> = canonical(&self.filter).iter().map(clause_text).collect();
+        let h = Sha256::digest(format!("{}\u{1d}{}", self.base(), f.join("\u{1d}")).as_bytes());
+        h.iter().take(12).map(|b| format!("{b:02x}")).collect()
+    }
+}
+
+/// A pyramid's description, on disk as `meta.json`.
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct Meta {
+    pub key: String,
+    pub base: String,
+    pub filter: Vec<String>,
+    pub x0: f64,
+    pub y0: f64,
+    pub size: f64,
+    pub leaf_level: u32,
+    pub channels: u32,
+    pub channel_names: Vec<String>,
+    pub rows_total: u64,
+    pub rows_counted: u64,
+    pub level_max: Vec<u32>,
+    pub how: String,
+    pub delta_base: String,
+    pub groups: u64,
+    pub groups_read: u64,
+    pub first_ms: f64,
+    pub total_ms: f64,
+    /// Per level, tile `y * 2^l + x` -> [offset, length] in `tiles.bin`; empty tiles absent.
+    pub index: Vec<HashMap<u32, [u64; 2]>>,
+    pub bytes: u64,
+}
+
+// ---------------------------------------------------------------- tiles
+
+/// Encodes one tile of `cells` (channel after channel, 256 x 256 each).
+pub fn encode_tile(level: u32, x: u32, y: u32, channels: usize, cells: &[u32], estimate: bool) -> Vec<u8> {
+    let max = cells.iter().copied().max().unwrap_or(0);
+    let wide = max > u16::MAX as u32;
+    let raw: Vec<u8> = if wide {
+        cells.iter().flat_map(|v| v.to_le_bytes()).collect()
+    } else {
+        cells.iter().flat_map(|&v| (v as u16).to_le_bytes()).collect()
+    };
+    let z = zstd::bulk::compress(&raw, 3).expect("zstd on memory");
+    let mut out = Vec::with_capacity(HEADER + z.len());
+    out.extend_from_slice(MAGIC);
+    out.push(1);
+    out.push(if wide { 4 } else { 2 });
+    out.push(channels as u8);
+    out.push(estimate as u8);
+    out.push(level as u8);
+    out.extend_from_slice(&[0, 0, 0]);
+    out.extend_from_slice(&x.to_le_bytes());
+    out.extend_from_slice(&y.to_le_bytes());
+    out.extend_from_slice(&max.to_le_bytes());
+    out.extend_from_slice(&(raw.len() as u32).to_le_bytes());
+    out.extend_from_slice(&[0, 0, 0, 0]);
+    out.extend_from_slice(&z);
+    out
+}
+
+/// A decoded tile.
+#[derive(Debug, Clone)]
+pub struct Tile {
+    pub level: u32,
+    pub x: u32,
+    pub y: u32,
+    pub channels: usize,
+    pub estimate: bool,
+    pub max: u32,
+    pub cells: Vec<u32>,
+}
+
+pub fn decode_tile(b: &[u8]) -> Result<Tile> {
+    if b.len() < HEADER || &b[..4] != MAGIC || b[4] != 1 {
+        bail!("not a heat tile");
+    }
+    let width = b[5] as usize;
+    let channels = b[6] as usize;
+    let raw_len = u32::from_le_bytes(b[24..28].try_into()?) as usize;
+    if !(width == 2 || width == 4) || channels == 0 || raw_len != TILE * TILE * channels * width {
+        bail!("bad heat tile header");
+    }
+    let raw = zstd::bulk::decompress(&b[HEADER..], raw_len)?;
+    let cells: Vec<u32> = if width == 4 {
+        raw.chunks_exact(4).map(|c| u32::from_le_bytes(c.try_into().unwrap())).collect()
+    } else {
+        raw.chunks_exact(2).map(|c| u16::from_le_bytes(c.try_into().unwrap()) as u32).collect()
+    };
+    Ok(Tile {
+        level: b[8] as u32,
+        x: u32::from_le_bytes(b[12..16].try_into()?),
+        y: u32::from_le_bytes(b[16..20].try_into()?),
+        channels,
+        estimate: b[7] & 1 != 0,
+        max: u32::from_le_bytes(b[20..24].try_into()?),
+        cells,
+    })
+}
+
+// ---------------------------------------------------------------- the grid
+
+/// The leaf grid, every channel, counted by all cores at once.
+struct Grid {
+    n: usize,
+    channels: usize,
+    cells: Vec<u32>,
+}
+
+impl Grid {
+    fn new(n: usize, channels: usize) -> Self {
+        // Zeroed pages straight from the allocator: no pass over hundreds of MB.
+        Self { n, channels, cells: vec![0u32; n * n * channels] }
+    }
+
+    fn atomics(&self) -> &[AtomicU32] {
+        // SAFETY: AtomicU32 has u32's size and alignment; while the slice is
+        // shared every access goes through it, never through `cells`.
+        unsafe { std::slice::from_raw_parts(self.cells.as_ptr() as *const AtomicU32, self.cells.len()) }
+    }
+
+}
+
+/// Levels 0..=top from `cells` (level `top`, `channels` planes), each the next finer summed 2 x 2.
+fn pyramid(cells: Vec<u32>, top: u32, channels: usize) -> Vec<Vec<u32>> {
+    let mut out: Vec<Vec<u32>> = vec![Vec::new(); top as usize + 1];
+    out[top as usize] = cells;
+    for l in (0..top as usize).rev() {
+        out[l] = downsample(&out[l + 1], TILE << (l + 1), channels, 2);
+    }
+    out
+}
+
+/// `cells` (`n x n` per channel) summed over `f x f` blocks.
+fn downsample(cells: &[u32], n: usize, channels: usize, f: usize) -> Vec<u32> {
+    let nc = n / f;
+    let mut coarse = vec![0u32; nc * nc * channels];
+    coarse.par_chunks_mut(nc).enumerate().for_each(|(row, dst)| {
+        let c = row / nc;
+        let y = row % nc;
+        let base = c * n * n;
+        let mut acc = vec![0u64; nc];
+        for r in 0..f {
+            let src = &cells[base + (y * f + r) * n..base + (y * f + r + 1) * n];
+            for (x, a) in acc.iter_mut().enumerate() {
+                *a += src[x * f..x * f + f].iter().map(|&v| v as u64).sum::<u64>();
+            }
+        }
+        for (d, a) in dst.iter_mut().zip(acc) {
+            *d = a.min(u32::MAX as u64) as u32;
+        }
+    });
+    coarse
+}
+
+/// One level's tiles, encoded: (x, y, bytes), empty ones left out.
+fn encode_level(cells: &[u32], level: u32, channels: usize, estimate: bool, scale: f64) -> Vec<(u32, u32, Vec<u8>)> {
+    let tiles = 1u32 << level;
+    let n = TILE << level;
+    (0..tiles * tiles)
+        .into_par_iter()
+        .filter_map(|t| {
+            let (tx, ty) = (t % tiles, t / tiles);
+            let mut buf = vec![0u32; TILE * TILE * channels];
+            let mut any = false;
+            for c in 0..channels {
+                for row in 0..TILE {
+                    let src = c * n * n + (ty as usize * TILE + row) * n + tx as usize * TILE;
+                    let dst = &mut buf[c * TILE * TILE + row * TILE..c * TILE * TILE + (row + 1) * TILE];
+                    dst.copy_from_slice(&cells[src..src + TILE]);
+                    any |= dst.iter().any(|&v| v != 0);
+                }
+            }
+            if !any {
+                return None;
+            }
+            if scale != 1.0 {
+                for v in buf.iter_mut() {
+                    *v = ((*v as f64) * scale).round().min(u32::MAX as f64) as u32;
+                }
+            }
+            Some((tx, ty, encode_tile(level, tx, ty, channels, &buf, estimate)))
+        })
+        .collect()
+}
+
+// ---------------------------------------------------------------- reading the files
+
+struct Source {
+    file: ParquetFile,
+}
+
+struct Frame {
+    x0: f64,
+    y0: f64,
+    size: f64,
+    n: usize,
+}
+
+fn open_sources(files: &[PathBuf]) -> Result<Vec<Source>> {
+    files
+        .par_iter()
+        .map(|p| {
+            let bytes = crate::source::map(p)?;
+            Ok(Source { file: ParquetFile::open(bytes).with_context(|| format!("reading {}", p.display()))? })
+        })
+        .collect()
+}
+
+/// The square the files' x/y statistics span (a little margin so the maximum falls inside).
+fn extent(sources: &[Source], x: &str, y: &str) -> Result<(f64, f64, f64)> {
+    let (mut x0, mut x1, mut y0, mut y1) = (f64::INFINITY, f64::NEG_INFINITY, f64::INFINITY, f64::NEG_INFINITY);
+    for s in sources {
+        for g in 0..s.file.row_groups() {
+            let (a, b) = s.file.group_span(g, x).ok_or_else(|| anyhow!("no statistics for {x}: the extent needs them"))?;
+            let (c, d) = s.file.group_span(g, y).ok_or_else(|| anyhow!("no statistics for {y}: the extent needs them"))?;
+            x0 = x0.min(a);
+            x1 = x1.max(b);
+            y0 = y0.min(c);
+            y1 = y1.max(d);
+        }
+    }
+    if !x0.is_finite() || !y0.is_finite() {
+        bail!("no rows");
+    }
+    let size = (x1 - x0).max(y1 - y0).max(1e-6) * 1.000_01;
+    let (cx, cy) = ((x0 + x1) * 0.5, (y0 + y1) * 0.5);
+    Ok((cx - size * 0.5, cy - size * 0.5, size))
+}
+
+/// Bins one row group's rows that `clauses` keep, adding `sign` (1, or u32::MAX to subtract).
+fn bin_group(src: &Source, g: usize, q: &TileQuery, clauses: &[Clause], frame: &Frame, grid: &[AtomicU32], sign: u32) -> Result<u64> {
+    let mut specs = vec![Spec { name: q.x.clone(), kind: Kind::F64 }, Spec { name: q.y.clone(), kind: Kind::F64 }];
+    if let Some(s) = &q.split {
+        specs.push(Spec { name: s.column.clone(), kind: Kind::Dict });
+    }
+    let cols = src.file.read_group_where(g, &specs, clauses)?;
+    let (Out::F64(xs), Out::F64(ys)) = (&cols[0], &cols[1]) else { bail!("x/y not numeric") };
+    let channel: Option<(Vec<i32>, &[u32])> = match (&q.split, cols.get(2)) {
+        (Some(s), Some(Out::Dict(d))) => {
+            let map = d.labels.iter().map(|l| s.values.iter().position(|v| v == l).map(|i| i as i32).unwrap_or(-1)).collect();
+            Some((map, &d.ids))
+        }
+        _ => None,
+    };
+    let n = frame.n;
+    let inv = n as f64 / frame.size;
+    let plane = n * n;
+    let mut counted = 0u64;
+    for i in 0..xs.len() {
+        let cx = ((xs[i] - frame.x0) * inv).floor();
+        let cy = ((ys[i] - frame.y0) * inv).floor();
+        if !(cx >= 0.0 && cy >= 0.0 && cx < n as f64 && cy < n as f64) {
+            continue;
+        }
+        let c = match &channel {
+            Some((map, ids)) => {
+                let c = map[ids[i] as usize];
+                if c < 0 {
+                    continue;
+                }
+                c as usize
+            }
+            None => 0,
+        };
+        grid[c * plane + cy as usize * n + cx as usize].fetch_add(sign, Ordering::Relaxed);
+        counted += 1;
+    }
+    Ok(counted)
+}
+
+/// Visit order: a fixed shuffle, so any prefix is a fair sample of the files.
+fn shuffled(mut work: Vec<(usize, usize)>) -> Vec<(usize, usize)> {
+    let mut s: u64 = 0x9e37_79b9_7f4a_7c15;
+    for i in (1..work.len()).rev() {
+        s ^= s << 13;
+        s ^= s >> 7;
+        s ^= s << 17;
+        work.swap(i, (s % (i as u64 + 1)) as usize);
+    }
+    work
+}
+
+/// Whether a row group's rows can be kept differently by `old` and `new`, on the statistics.
+fn may_differ(src: &Source, g: usize, old: &[Clause], new: &[Clause]) -> bool {
+    let by_col = |cs: &[Clause]| -> HashMap<String, Vec<String>> {
+        let mut m: HashMap<String, Vec<String>> = HashMap::new();
+        for c in cs {
+            m.entry(c.column().to_owned()).or_default().push(clause_text(c));
+        }
+        m
+    };
+    let (om, nm) = (by_col(old), by_col(new));
+    let cols: HashSet<&String> = om.keys().chain(nm.keys()).collect();
+    let shared: Vec<Clause> = old.iter().filter(|c| om.get(c.column()) == nm.get(c.column())).cloned().collect();
+    // Rows the unchanged clauses drop are dropped under both.
+    if !src.file.group_may_match(g, &shared) {
+        return false;
+    }
+    for col in cols {
+        if om.get(col) == nm.get(col) {
+            continue;
+        }
+        let o: Vec<Clause> = old.iter().filter(|c| c.column() == col).cloned().collect();
+        let n: Vec<Clause> = new.iter().filter(|c| c.column() == col).cloned().collect();
+        // Both rule the group out: no row kept either way.
+        if !src.file.group_may_match(g, &o) && !src.file.group_may_match(g, &n) {
+            continue;
+        }
+        // Both keep every row: ranges spanning the group's values (no nulls).
+        let keeps_all = |cs: &[Clause]| -> bool {
+            cs.iter().all(|c| match c {
+                Clause::Range { min, max, .. } => match src.file.group_span(g, col) {
+                    Some((lo, hi)) => {
+                        src.file.group_nulls(g, col) == Some(0) && min.is_none_or(|m| lo >= m) && max.is_none_or(|m| hi <= m)
+                    }
+                    None => false,
+                },
+                Clause::Set { .. } => false,
+            })
+        };
+        if keeps_all(&o) && keeps_all(&n) {
+            continue;
+        }
+        return true;
+    }
+    false
+}
+
+// ---------------------------------------------------------------- building
+
+/// What a build is doing, for `HeatPyramid`.
+#[derive(Debug, Clone, Default)]
+pub struct Status {
+    pub meta: Meta,
+    pub fraction: f64,
+    pub complete: bool,
+    pub estimate_levels: u32,
+    pub error: String,
+    /// Answered from the cache (`meta.how` says how it was built).
+    pub cached: bool,
+}
+
+pub struct Build {
+    status: Mutex<Status>,
+    /// Estimate tiles while building: id -> bytes.
+    estimate: RwLock<HashMap<u64, Bytes>>,
+    done: (Mutex<bool>, Condvar),
+}
+
+impl Build {
+    pub fn status(&self) -> Status {
+        self.status.lock().unwrap().clone()
+    }
+    pub fn wait(&self) {
+        let (m, cv) = &self.done;
+        let mut d = m.lock().unwrap();
+        while !*d {
+            d = cv.wait(d).unwrap();
+        }
+    }
+}
+
+/// Leaf level that fits `budget` bytes for the grid and its levels.
+fn fitting_level(want: u32, channels: usize, budget: u64) -> u32 {
+    let mut l = want.min(MAX_LEVEL);
+    while l > 0 {
+        let n = (TILE << l) as u64;
+        // leaf + the levels (a third) + their copy when summing.
+        if n * n * channels as u64 * 4 * 7 / 3 <= budget {
+            break;
+        }
+        l -= 1;
+    }
+    l
+}
+
+fn run_build(q: TileQuery, key: String, dir: PathBuf, base: Option<(Meta, PathBuf)>, build: Arc<Build>, threads: Option<&rayon::ThreadPool>) -> Result<Meta> {
+    let t0 = Instant::now();
+    let sources = open_sources(&q.files)?;
+    let channels = q.split.as_ref().map(|s| s.values.len().clamp(1, 16)).unwrap_or(1);
+    let channel_names = q.split.as_ref().map(|s| s.values.clone()).unwrap_or_else(|| vec!["".into()]);
+    let filter = canonical(&q.filter);
+    let rows_total: u64 = sources.iter().map(|s| s.file.rows()).sum();
+    let (x0, y0, size, leaf) = match &base {
+        Some((m, _)) => (m.x0, m.y0, m.size, m.leaf_level),
+        None => {
+            let (x0, y0, size) = extent(&sources, &q.x, &q.y)?;
+            let budget = (crate::memory::available_bytes() / 3).max(256 << 20);
+            (x0, y0, size, fitting_level(q.leaf_level, channels, budget))
+        }
+    };
+    let n = TILE << leaf;
+    let frame = Frame { x0, y0, size, n };
+    let mut meta = Meta {
+        key: key.clone(),
+        base: q.base(),
+        filter: filter.iter().map(clause_text).collect(),
+        x0,
+        y0,
+        size,
+        leaf_level: leaf,
+        channels: channels as u32,
+        channel_names,
+        rows_total,
+        ..Default::default()
+    };
+    let all: Vec<(usize, usize)> = sources.iter().enumerate().flat_map(|(f, s)| (0..s.file.row_groups()).map(move |g| (f, g))).collect();
+    meta.groups = all.len() as u64;
+    build.status.lock().unwrap().meta = meta.clone();
+
+    let mut grid = Grid::new(n, channels);
+    let counted = AtomicU64::new(0);
+    let read = AtomicU64::new(0);
+    let failed: Mutex<Option<anyhow::Error>> = Mutex::new(None);
+    let visit = |items: &[(usize, usize)], clauses: &[Clause], sign: u32, grid: &[AtomicU32]| {
+        let work = || {
+            items.par_iter().for_each(|&(f, g)| {
+                if failed.lock().unwrap().is_some() {
+                    return;
+                }
+                match bin_group(&sources[f], g, &q, clauses, &frame, grid, sign) {
+                    Ok(c) => {
+                        if sign == 1 {
+                            counted.fetch_add(c, Ordering::Relaxed);
+                        } else {
+                            counted.fetch_sub(c, Ordering::Relaxed);
+                        }
+                    }
+                    Err(e) => *failed.lock().unwrap() = Some(e),
+                }
+                let r = read.fetch_add(1, Ordering::Relaxed) + 1;
+                if r % 8 == 0 {
+                    build.status.lock().unwrap().fraction = r as f64 / all.len().max(1) as f64;
+                }
+            })
+        };
+        match threads {
+            Some(p) => p.install(work),
+            None => work(),
+        }
+    };
+
+    if let Some((bm, bdir)) = &base {
+        // Incremental: the cached leaf grid, then only the groups the change touches.
+        meta.how = "delta".into();
+        meta.delta_base = bm.key.clone();
+        let old: Vec<Clause> = parse_clauses(&bm.filter);
+        load_leaf(bm, bdir, &mut grid)?;
+        counted.store(bm.rows_counted, Ordering::Relaxed);
+        let touched: Vec<(usize, usize)> = all.iter().copied().filter(|&(f, g)| may_differ(&sources[f], g, &old, &filter)).collect();
+        let atoms = grid.atomics();
+        visit(&touched, &old, u32::MAX, atoms);
+        visit(&touched, &filter, 1, atoms);
+        meta.groups_read = touched.len() as u64;
+    } else {
+        meta.how = "full".into();
+        // Groups the statistics rule out hold no rows of the filter's.
+        let candidates: Vec<(usize, usize)> = all.iter().copied().filter(|&(f, g)| sources[f].file.group_may_match(g, &filter)).collect();
+        let candidate_rows: u64 = candidates.iter().map(|&(f, g)| sources[f].file.group_rows(g)).sum();
+        let order = shuffled(candidates);
+        let first = order.len().div_ceil(SAMPLE_SHARE).max(1).min(order.len());
+        let atoms = grid.atomics();
+        visit(&order[..first], &filter, 1, atoms);
+        if first < order.len() {
+            // Coarse first: the sample, scaled up, as the first picture.
+            let sampled: u64 = order[..first].iter().map(|&(f, g)| sources[f].file.group_rows(g)).sum();
+            let scale = candidate_rows as f64 / sampled.max(1) as f64;
+            let est_levels = ESTIMATE_LEVELS.min(leaf + 1);
+            let top = est_levels - 1;
+            let levels = pyramid(downsample(&grid.cells, n, channels, 1 << (leaf - top)), top, channels);
+            let mut est = HashMap::new();
+            for l in 0..est_levels {
+                for (x, y, b) in encode_level(&levels[l as usize], l, channels, true, scale) {
+                    est.insert(tile_id(l, x, y), Bytes::from(b));
+                }
+            }
+            *build.estimate.write().unwrap() = est;
+            let mut st = build.status.lock().unwrap();
+            st.estimate_levels = est_levels;
+            st.meta.first_ms = t0.elapsed().as_secs_f64() * 1e3;
+            st.meta.level_max = levels.iter().map(|l| (*l.iter().max().unwrap_or(&0) as f64 * scale) as u32).collect();
+            meta.first_ms = st.meta.first_ms;
+        }
+        visit(&order[first..], &filter, 1, atoms);
+        meta.groups_read = order.len() as u64;
+    }
+    if let Some(e) = failed.into_inner().unwrap() {
+        return Err(e);
+    }
+    meta.rows_counted = counted.load(Ordering::Relaxed);
+
+    // Every level, packed.
+    let levels = pyramid(grid.cells, leaf, channels);
+    meta.level_max = levels.iter().map(|l| l.iter().copied().max().unwrap_or(0)).collect();
+    std::fs::create_dir_all(&dir)?;
+    let mut pack = Vec::new();
+    meta.index = Vec::new();
+    for (l, cells) in levels.iter().enumerate() {
+        let mut idx = HashMap::new();
+        for (x, y, b) in encode_level(cells, l as u32, channels, false, 1.0) {
+            idx.insert(y * (1 << l) + x, [pack.len() as u64, b.len() as u64]);
+            pack.extend_from_slice(&b);
+        }
+        meta.index.push(idx);
+    }
+    meta.bytes = pack.len() as u64;
+    let tmp = dir.join("tiles.bin.part");
+    std::fs::write(&tmp, &pack)?;
+    std::fs::rename(&tmp, dir.join("tiles.bin"))?;
+    meta.total_ms = t0.elapsed().as_secs_f64() * 1e3;
+    if meta.first_ms == 0.0 {
+        meta.first_ms = meta.total_ms;
+    }
+    std::fs::write(dir.join("meta.json"), serde_json::to_vec(&meta)?)?;
+    Ok(meta)
+}
+
+fn parse_clauses(texts: &[String]) -> Vec<Clause> {
+    texts
+        .iter()
+        .filter_map(|t| {
+            let p: Vec<&str> = t.split('\u{1f}').collect();
+            match p.as_slice() {
+                ["R", col, lo, hi] => Some(Clause::Range { column: col.to_string(), min: lo.parse().ok(), max: hi.parse().ok() }),
+                ["S", col, vals] => Some(Clause::Set { column: col.to_string(), values: vals.split('\u{1e}').map(String::from).collect() }),
+                _ => None,
+            }
+        })
+        .collect()
+}
+
+/// The leaf level of a cached pyramid, decoded into `grid`.
+fn load_leaf(m: &Meta, dir: &Path, grid: &mut Grid) -> Result<()> {
+    let pack = crate::source::map(&dir.join("tiles.bin"))?;
+    let l = m.leaf_level as usize;
+    let n = grid.n;
+    let plane = n * n;
+    let tiles = 1u32 << l;
+    for (&t, &[off, len]) in &m.index[l] {
+        let tile = decode_tile(&pack[off as usize..(off + len) as usize])?;
+        let (tx, ty) = ((t % tiles) as usize, (t / tiles) as usize);
+        for c in 0..grid.channels {
+            for row in 0..TILE {
+                let dst = c * plane + (ty * TILE + row) * n + tx * TILE;
+                grid.cells[dst..dst + TILE].copy_from_slice(&tile.cells[c * TILE * TILE + row * TILE..c * TILE * TILE + (row + 1) * TILE]);
+            }
+        }
+    }
+    Ok(())
+}
+
+// ---------------------------------------------------------------- the store
+
+struct Entry {
+    meta: Arc<Meta>,
+    pack: Option<Bytes>,
+    used: u64,
+}
+
+/// The tile cache on disk, its builds, its LRU.
+pub struct TileStore {
+    root: PathBuf,
+    budget: u64,
+    entries: Mutex<HashMap<String, Entry>>,
+    builds: Mutex<HashMap<String, Arc<Build>>>,
+    clock: AtomicU64,
+    /// One build at a time: each takes every core.
+    gate: Mutex<()>,
+    pool: Option<rayon::ThreadPool>,
+}
+
+/// Where tiles go when nothing says: `HEAT3D_TILE_CACHE`, else the user's local data folder.
+pub fn default_root() -> PathBuf {
+    if let Some(p) = std::env::var_os("HEAT3D_TILE_CACHE") {
+        return PathBuf::from(p);
+    }
+    let base = std::env::var_os("LOCALAPPDATA")
+        .or_else(|| std::env::var_os("XDG_CACHE_HOME"))
+        .map(PathBuf::from)
+        .or_else(|| std::env::var_os("HOME").map(|h| PathBuf::from(h).join(".cache")))
+        .unwrap_or_else(std::env::temp_dir);
+    base.join("3DHeat").join("heat-tiles")
+}
+
+impl TileStore {
+    /// A store at `root` keeping at most `budget` bytes of tiles. Existing pyramids are adopted,
+    /// oldest first in line for eviction.
+    pub fn open(root: PathBuf, budget: u64) -> Result<Self> {
+        std::fs::create_dir_all(&root)?;
+        let mut found: Vec<(SystemTime, String, Meta)> = Vec::new();
+        for e in std::fs::read_dir(&root)?.flatten() {
+            let mp = e.path().join("meta.json");
+            let Ok(b) = std::fs::read(&mp) else {
+                // A build that never finished.
+                let _ = std::fs::remove_dir_all(e.path());
+                continue;
+            };
+            let Ok(m) = serde_json::from_slice::<Meta>(&b) else { continue };
+            let t = std::fs::metadata(&mp).and_then(|m| m.modified()).unwrap_or(SystemTime::UNIX_EPOCH);
+            found.push((t, m.key.clone(), m));
+        }
+        found.sort_by_key(|f| f.0);
+        let entries = found.into_iter().enumerate().map(|(i, (_, k, m))| (k, Entry { meta: Arc::new(m), pack: None, used: i as u64 })).collect::<HashMap<_, _>>();
+        let n = entries.len() as u64;
+        let threads = std::env::var("HEAT3D_TILE_THREADS").ok().and_then(|v| v.parse().ok());
+        let pool = threads.and_then(|t: usize| rayon::ThreadPoolBuilder::new().num_threads(t).build().ok());
+        Ok(Self { root, budget, entries: Mutex::new(entries), builds: Mutex::new(HashMap::new()), clock: AtomicU64::new(n + 1), gate: Mutex::new(()), pool })
+    }
+
+    fn tick(&self) -> u64 {
+        self.clock.fetch_add(1, Ordering::Relaxed)
+    }
+
+    /// The pyramid for `q`: cached, being built, or started now (in the background).
+    pub fn query(self: &Arc<Self>, q: TileQuery) -> Result<Status> {
+        if q.files.is_empty() {
+            bail!("no files");
+        }
+        let key = q.key();
+        if self.entries.lock().unwrap().contains_key(&key) {
+            return Ok(self.status_of(&key).expect("cached"));
+        }
+        let mut builds = self.builds.lock().unwrap();
+        if let Some(b) = builds.get(&key) {
+            return Ok(b.status());
+        }
+        let build = Arc::new(Build { status: Mutex::new(Status::default()), estimate: RwLock::new(HashMap::new()), done: (Mutex::new(false), Condvar::new()) });
+        build.status.lock().unwrap().meta.how = "queued".into();
+        builds.insert(key.clone(), build.clone());
+        drop(builds);
+        let me = self.clone();
+        let k = key.clone();
+        std::thread::Builder::new().name("heat-tiles".into()).spawn(move || {
+            let gate = me.gate.lock().unwrap();
+            let base = me.delta_base(&q);
+            let dir = me.root.join(&k);
+            let r = run_build(q, k.clone(), dir.clone(), base, build.clone(), me.pool.as_ref());
+            drop(gate);
+            match r {
+                Ok(meta) => {
+                    me.entries.lock().unwrap().insert(k.clone(), Entry { meta: Arc::new(meta.clone()), pack: None, used: me.tick() });
+                    let mut st = build.status.lock().unwrap();
+                    st.meta = meta;
+                    st.meta.index = Vec::new();
+                    st.complete = true;
+                    st.fraction = 1.0;
+                    drop(st);
+                    me.evict();
+                }
+                Err(e) => {
+                    let _ = std::fs::remove_dir_all(&dir);
+                    build.status.lock().unwrap().error = format!("{e:#}");
+                }
+            }
+            // A failed build stays listed with its error until asked again.
+            let failed = !build.status.lock().unwrap().error.is_empty();
+            {
+                let (m, cv) = &build.done;
+                *m.lock().unwrap() = true;
+                cv.notify_all();
+            }
+            if !failed {
+                me.builds.lock().unwrap().remove(&k);
+            } else {
+                // Asked again later: tried again.
+                std::thread::sleep(std::time::Duration::from_secs(2));
+                me.builds.lock().unwrap().remove(&k);
+            }
+        })?;
+        Ok(self.builds.lock().unwrap().get(&key).map(|b| b.status()).unwrap_or_else(|| {
+            let mut s = Status::default();
+            s.meta.key = key;
+            s
+        }))
+    }
+
+    /// The pyramid of `key`, cached or building; None when there is none. Starts nothing.
+    pub fn status_of(&self, key: &str) -> Option<Status> {
+        if let Some(e) = self.entries.lock().unwrap().get_mut(key) {
+            e.used = self.tick();
+            let mut m = (*e.meta).clone();
+            m.index = Vec::new();
+            return Some(Status { meta: m, fraction: 1.0, complete: true, estimate_levels: 0, error: String::new(), cached: true });
+        }
+        self.build_of(key).map(|b| b.status())
+    }
+
+    /// Builds queued or running.
+    pub fn builds_running(&self) -> usize {
+        self.builds.lock().unwrap().len()
+    }
+
+    /// The build of `key`, while one runs.
+    pub fn build_of(&self, key: &str) -> Option<Arc<Build>> {
+        self.builds.lock().unwrap().get(key).cloned()
+    }
+
+    /// A cached pyramid whose filter differs from `q`'s, cheaper to start from than a full pass.
+    fn delta_base(&self, q: &TileQuery) -> Option<(Meta, PathBuf)> {
+        let base = q.base();
+        let want: HashSet<String> = canonical(&q.filter).iter().map(clause_text).collect();
+        let entries = self.entries.lock().unwrap();
+        let best = entries
+            .values()
+            .filter(|e| e.meta.base == base && !e.meta.index.is_empty())
+            .map(|e| {
+                let have: HashSet<String> = e.meta.filter.iter().cloned().collect();
+                let cols: HashSet<String> = want.symmetric_difference(&have).map(|t| t.split('\u{1f}').nth(1).unwrap_or("").to_owned()).collect();
+                (cols.len(), e.used, e.meta.clone())
+            })
+            .min_by_key(|(c, used, _)| (*c, u64::MAX - used))?;
+        let m = (*best.2).clone();
+        drop(entries);
+        // Worth it only when the change leaves most groups alone.
+        let sources = open_sources(&q.files).ok()?;
+        let old = parse_clauses(&m.filter);
+        let new = canonical(&q.filter);
+        // Full: every group the new filter may keep. Delta: each touched group read
+        // under the old filter and the new, where each may keep rows; plus the leaf's load.
+        let (mut delta, mut full) = (1usize, 0usize);
+        for s in &sources {
+            for g in 0..s.file.row_groups() {
+                let may_new = s.file.group_may_match(g, &new) as usize;
+                full += may_new;
+                if may_differ(s, g, &old, &new) {
+                    delta += may_new + s.file.group_may_match(g, &old) as usize;
+                }
+            }
+        }
+        (delta < full).then(|| (m.clone(), self.root.join(&m.key)))
+    }
+
+    /// Tiles of `key` by id, at most `budget` bytes; estimates while it builds.
+    pub fn read(&self, key: &str, ids: &[u64], budget: u64) -> Result<TileRead> {
+        let mut out = TileRead::default();
+        let mut spent = 0u64;
+        let (meta, pack) = {
+            let mut entries = self.entries.lock().unwrap();
+            match entries.get_mut(key) {
+                Some(e) => {
+                    e.used = self.tick();
+                    if e.pack.is_none() {
+                        e.pack = Some(crate::source::map(&self.root.join(key).join("tiles.bin"))?);
+                    }
+                    (Some(e.meta.clone()), e.pack.clone())
+                }
+                None => (None, None),
+            }
+        };
+        let estimate = if meta.is_none() { self.build_of(key) } else { None };
+        if meta.is_none() && estimate.is_none() {
+            bail!("no pyramid {key}: query it first");
+        }
+        for &id in ids {
+            let (l, y, x) = tile_of(id);
+            let bytes: Option<Bytes> = match (&meta, &pack) {
+                (Some(m), Some(p)) => {
+                    if l > m.leaf_level || x >= 1 << l || y >= 1 << l {
+                        out.empty.push(id);
+                        continue;
+                    }
+                    m.index[l as usize].get(&(y * (1 << l) + x)).map(|&[o, n]| p.slice(o as usize..(o + n) as usize))
+                }
+                _ => {
+                    let b = estimate.as_ref().unwrap();
+                    let lv = b.status.lock().unwrap().estimate_levels;
+                    if l >= lv {
+                        out.pending.push(id);
+                        continue;
+                    }
+                    b.estimate.read().unwrap().get(&id).cloned()
+                }
+            };
+            match bytes {
+                None => out.empty.push(id),
+                Some(b) => {
+                    if spent > 0 && spent + b.len() as u64 > budget {
+                        out.deferred.push(id);
+                        continue;
+                    }
+                    spent += b.len() as u64;
+                    out.tiles.push((id, b, meta.is_none()));
+                }
+            }
+        }
+        Ok(out)
+    }
+
+    /// Drops least recently used pyramids past the budget.
+    fn evict(&self) {
+        let mut entries = self.entries.lock().unwrap();
+        let mut total: u64 = entries.values().map(|e| e.meta.bytes).sum();
+        while total > self.budget && entries.len() > 1 {
+            let Some(k) = entries.iter().min_by_key(|(_, e)| e.used).map(|(k, _)| k.clone()) else { break };
+            let e = entries.remove(&k).unwrap();
+            total -= e.meta.bytes;
+            drop(e);
+            let _ = std::fs::remove_dir_all(self.root.join(&k));
+        }
+    }
+
+    pub fn cached_bytes(&self) -> u64 {
+        self.entries.lock().unwrap().values().map(|e| e.meta.bytes).sum()
+    }
+}
+
+#[derive(Default)]
+pub struct TileRead {
+    /// (id, bytes, estimate)
+    pub tiles: Vec<(u64, Bytes, bool)>,
+    pub empty: Vec<u64>,
+    pub pending: Vec<u64>,
+    pub deferred: Vec<u64>,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn tile_round_trip() {
+        let mut cells = vec![0u32; TILE * TILE * 2];
+        cells[5] = 7;
+        cells[TILE * TILE + 9] = 70_000;
+        let b = encode_tile(3, 2, 5, 2, &cells, true);
+        let t = decode_tile(&b).unwrap();
+        assert_eq!((t.level, t.x, t.y, t.channels, t.estimate, t.max), (3, 2, 5, 2, true, 70_000));
+        assert_eq!(t.cells, cells);
+        assert_eq!(tile_of(tile_id(7, 127, 3)), (7, 3, 127));
+    }
+
+    #[test]
+    fn levels_sum_to_the_same() {
+        let mut g = Grid::new(TILE * 2, 1);
+        g.cells[0] = 1;
+        g.cells[TILE * 2 * 300 + 400] = 5;
+        let l = pyramid(g.cells, 1, 1);
+        assert_eq!(l[0].iter().map(|&v| v as u64).sum::<u64>(), 6);
+        assert_eq!(l[0][150 * TILE + 200], 5);
+    }
+
+    #[test]
+    fn keys_ignore_clause_order() {
+        let q = |f: Vec<Clause>| TileQuery { files: vec!["a.parquet".into()], x: "x".into(), y: "y".into(), filter: f, split: None, leaf_level: 5 };
+        let a = Clause::Range { column: "time".into(), min: Some(1.0), max: None };
+        let b = Clause::Set { column: "team".into(), values: vec!["red".into(), "blue".into()] };
+        let b2 = Clause::Set { column: "team".into(), values: vec!["blue".into(), "red".into()] };
+        assert_eq!(q(vec![a.clone(), b]).key(), q(vec![b2, a.clone()]).key());
+        assert_ne!(q(vec![a]).key(), q(vec![]).key());
+        assert_eq!(parse_clauses(&[clause_text(&Clause::Range { column: "t".into(), min: Some(2.5), max: None })]), vec![Clause::Range { column: "t".into(), min: Some(2.5), max: None }]);
+    }
+}

@@ -85,6 +85,10 @@ pub struct Core {
     sink: RwLock<Option<Arc<dyn SharedSink>>>,
     /// What each running build is doing, by the viewer's token.
     progress: Arc<Mutex<HashMap<String, (String, f64)>>>,
+    /// The heat-tile cache, opened on first use.
+    tiles: std::sync::OnceLock<Result<Arc<crate::tiles::TileStore>, String>>,
+    /// Pyramids session members may read by key: shared by the owner, or queried by a member by token.
+    tiles_shared: Mutex<std::collections::HashSet<String>>,
 }
 
 impl Default for Core {
@@ -104,6 +108,8 @@ impl Core {
             built: Mutex::new(HashMap::new()),
             sink: RwLock::new(None),
             progress: Arc::new(Mutex::new(HashMap::new())),
+            tiles: std::sync::OnceLock::new(),
+            tiles_shared: Mutex::new(std::collections::HashSet::new()),
         }
     }
 
@@ -251,6 +257,8 @@ impl Core {
                 }
                 None => bail!("empty query"),
             },
+            Body::HeatTileQuery(q) => self.heat_tile_query(q, access)?,
+            Body::ReadHeatTiles(r) => self.read_heat_tiles(r, out, access)?,
             _ => return Err(Unsupported("this request".into()).into()),
         })
     }
@@ -756,6 +764,119 @@ impl Core {
 }
 
 
+// ---------------------------------------------------------------- heat tiles
+
+/// Bytes of tiles one reply carries at most: the owner's window, a session member.
+const TILE_REPLY_OWNER: u64 = 16 << 20;
+const TILE_REPLY_REMOTE: u64 = 4 << 20;
+/// Tile ids one request may name.
+const TILE_IDS_MAX: usize = 4096;
+/// Builds a session member may have queued or running at once (each takes every core).
+const TILE_BUILDS_REMOTE: usize = 2;
+/// The finest level a session member may ask for (level 6: 16384^2 cells, 1 GiB per channel).
+const TILE_LEVEL_REMOTE: u32 = 6;
+
+impl Core {
+    fn tile_store(&self) -> Result<Arc<crate::tiles::TileStore>> {
+        self.tiles
+            .get_or_init(|| {
+                let budget = std::env::var("HEAT3D_TILE_CACHE_BYTES").ok().and_then(|v| v.parse().ok()).unwrap_or(8u64 << 30);
+                crate::tiles::TileStore::open(crate::tiles::default_root(), budget).map(Arc::new).map_err(|e| format!("{e:#}"))
+            })
+            .clone()
+            .map_err(|e| anyhow!("the heat-tile cache: {e}"))
+    }
+
+    fn heat_tile_query(&self, q: v1::HeatTileQuery, access: Access) -> Result<Body> {
+        if q.files.is_empty() && q.dataset == 0 && !q.key.is_empty() {
+            if !access.paths && !self.tiles_shared.lock().unwrap().contains(&q.key) {
+                bail!(Denied("a heat pyramid not shared with the session".into()));
+            }
+            let st = self.tile_store()?.status_of(&q.key).ok_or_else(|| anyhow!("no heat pyramid {}", q.key))?;
+            return Ok(pyramid_of(st));
+        }
+        let mut refs: Vec<(PathBuf, String)> = Vec::new();
+        for f in &q.files {
+            refs.push(self.resolve(&Some(f.clone()), access)?);
+        }
+        if q.dataset != 0 {
+            let ds = self.datasets.lock().unwrap();
+            refs.extend(ds.get(&q.dataset).ok_or_else(|| anyhow!("unknown dataset {}", q.dataset))?.iter().cloned());
+        }
+        let mut files = Vec::new();
+        for (p, member) in refs {
+            if !member.is_empty() || source::format_of(&p.to_string_lossy()) != Format::Parquet {
+                return Err(Unsupported("heat tiles of files other than plain Parquet".into()).into());
+            }
+            files.push(p);
+        }
+        if q.x.is_empty() || q.y.is_empty() {
+            bail!("heat tiles need the x and y columns");
+        }
+        let mut level = if q.leaf_level == 0 { crate::tiles::DEFAULT_LEVEL } else { q.leaf_level.min(crate::tiles::MAX_LEVEL) };
+        if !access.paths {
+            level = level.min(TILE_LEVEL_REMOTE);
+        }
+        let split = (!q.split.is_empty()).then(|| crate::tiles::Split { column: q.split.clone(), values: q.split_values.iter().take(16).cloned().collect() });
+        let query = crate::tiles::TileQuery { files, x: q.x, y: q.y, filter: clauses_of(&q.filter), split, leaf_level: level };
+        let store = self.tile_store()?;
+        if !access.paths && store.build_of(&query.key()).is_none() && store.builds_running() >= TILE_BUILDS_REMOTE {
+            bail!(Denied("more heat-tile builds at once; ask again when one is done".into()));
+        }
+        let st = store.query(query)?;
+        if !access.paths || q.share {
+            self.tiles_shared.lock().unwrap().insert(st.meta.key.clone());
+        }
+        Ok(pyramid_of(st))
+    }
+
+    fn read_heat_tiles(&self, r: v1::ReadHeatTiles, out: &mut Payload, access: Access) -> Result<Body> {
+        if r.tiles.len() > TILE_IDS_MAX {
+            bail!("at most {TILE_IDS_MAX} tiles a request");
+        }
+        if !access.paths && !self.tiles_shared.lock().unwrap().contains(&r.key) {
+            bail!(Denied("a heat pyramid not shared with the session".into()));
+        }
+        let cap = if access.paths { TILE_REPLY_OWNER } else { TILE_REPLY_REMOTE };
+        let budget = if r.budget_bytes == 0 { cap } else { r.budget_bytes.min(cap) };
+        let got = self.tile_store()?.read(&r.key, &r.tiles, budget)?;
+        Ok(Body::HeatTiles(v1::HeatTiles {
+            tiles: got.tiles.iter().map(|(id, b, est)| v1::HeatTile { id: *id, data: Some(out.push(b)), estimate: *est }).collect(),
+            empty: got.empty,
+            pending: got.pending,
+            deferred: got.deferred,
+        }))
+    }
+}
+
+/// A build's state as the protocol says it.
+fn pyramid_of(st: crate::tiles::Status) -> Body {
+    let m = st.meta;
+    Body::HeatPyramid(v1::HeatPyramid {
+        key: m.key,
+        x0: m.x0,
+        y0: m.y0,
+        size: m.size,
+        leaf_level: m.leaf_level,
+        channels: m.channels,
+        channel_names: m.channel_names,
+        rows_total: m.rows_total,
+        rows_counted: m.rows_counted,
+        fraction: st.fraction,
+        complete: st.complete,
+        estimate_levels: st.estimate_levels,
+        level_max: m.level_max,
+        how: m.how,
+        delta_base: m.delta_base,
+        groups: m.groups,
+        groups_read: m.groups_read,
+        first_ms: m.first_ms,
+        total_ms: m.total_ms,
+        error: st.error,
+        cached: st.cached,
+    })
+}
+
 fn kind_of(b: &Body) -> &'static str {
     match b {
         Body::Hello(_) => "hello",
@@ -771,6 +892,8 @@ fn kind_of(b: &Body) -> &'static str {
         Body::ReadDatasetColumns(_) => "read_dataset_columns",
         Body::BuildProgress(_) => "build_progress",
         Body::Query(_) => "query",
+        Body::HeatTileQuery(_) => "heat_tile_query",
+        Body::ReadHeatTiles(_) => "read_heat_tiles",
         _ => "other",
     }
 }
@@ -843,6 +966,33 @@ mod tests {
         let (_, payload) = unframe(&out).unwrap();
         assert_eq!(payload.len(), 1000);
         let out = core.handle(&req(Body::ReadColumns(v1::ReadColumns { file: Some(v1::FileRef { source: Some(v1::file_ref::Source::Token("x".into())), member: String::new() }), ..Default::default() })));
+        assert!(matches!(unframe(&out).unwrap().0.body, Some(Body::Error(_))));
+    }
+
+    #[test]
+    fn heat_tiles_by_path_are_the_owners() {
+        let core = Core::new();
+        let req = |body| frame(&v1::Envelope { protocol: PROTOCOL, id: 9, body: Some(body), ..Default::default() }, &[]);
+        let q = v1::HeatTileQuery {
+            files: vec![v1::FileRef { source: Some(v1::file_ref::Source::Path("C:/secret.parquet".into())), member: String::new() }],
+            x: "x".into(),
+            y: "y".into(),
+            ..Default::default()
+        };
+        let out = core.handle_as(&req(Body::HeatTileQuery(q)), Access::REMOTE);
+        match unframe(&out).unwrap().0.body {
+            Some(Body::Error(e)) => assert!(e.message.contains("files by path"), "{}", e.message),
+            other => panic!("{other:?}"),
+        }
+        let out = core.handle_as(&req(Body::ReadHeatTiles(v1::ReadHeatTiles { key: "k".into(), tiles: vec![0; 5000], budget_bytes: 0 })), Access::REMOTE);
+        assert!(matches!(unframe(&out).unwrap().0.body, Some(Body::Error(_))));
+        // A key not shared with the session: neither its state nor its tiles.
+        let out = core.handle_as(&req(Body::ReadHeatTiles(v1::ReadHeatTiles { key: "k".into(), tiles: vec![0], budget_bytes: 0 })), Access::REMOTE);
+        match unframe(&out).unwrap().0.body {
+            Some(Body::Error(e)) => assert!(e.message.contains("not shared"), "{}", e.message),
+            other => panic!("{other:?}"),
+        }
+        let out = core.handle_as(&req(Body::HeatTileQuery(v1::HeatTileQuery { key: "k".into(), ..Default::default() })), Access::REMOTE);
         assert!(matches!(unframe(&out).unwrap().0.body, Some(Body::Error(_))));
     }
 }

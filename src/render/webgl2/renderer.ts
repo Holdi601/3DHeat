@@ -80,6 +80,8 @@ import type { WorldTile } from '../../world/tileSet';
 import { GlTerrain } from './terrain';
 import { num, t } from '../../i18n';
 import { GlFrameTimer, type FrameRing } from './frameTimer';
+import { GlHeatTiles } from './heatTilesPass';
+
 
 /** Texture width for the row store. Power of two so the shader can shift/mask. */
 const ROW_TEX_WIDTH = 8192;
@@ -1538,6 +1540,7 @@ export class Webgl2Renderer implements Renderer {
 
   private dirAngles: Uint8Array | null = null;
   private dirUploads = 0;
+  private heatTiles: GlHeatTiles | null = null;
   private dirField: GlDirField | null = null;
 
   /** This chunk's bearing texture, uploaded now if the frame still has room for one. */
@@ -2561,6 +2564,10 @@ export class Webgl2Renderer implements Renderer {
     if (!extend || fresh) {
       gl.clearColor(0, 0, 0, 0);
       gl.clear(gl.COLOR_BUFFER_BIT);
+    }
+    // Heat from tiles (Stage 6) under the rows: only where the target was just cleared.
+    if (!field && params.heatTiles && (!extend || fresh) && this.heatChannels === 1) {
+      (this.heatTiles ??= new GlHeatTiles(gl)).draw(params.heatTiles, params.viewProj);
     }
 
     const weight = params.sampleWeight * params.heatGain;
@@ -3878,6 +3885,8 @@ export class Webgl2Renderer implements Renderer {
       for (const t of j.timeTex ?? []) gl.deleteTexture(t);
     }
     this.pendingChunks = [];
+    this.heatTiles?.dispose();
+    this.heatTiles = null;
     this.symbols?.dispose();
     this.zones?.dispose();
     this.spawnMarks?.dispose();

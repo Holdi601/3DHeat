@@ -66,6 +66,11 @@ message Envelope {
     QueryReply query_reply = 51;
 
     Echo echo = 60;
+
+    HeatTileQuery heat_tile_query = 70;
+    HeatPyramid heat_pyramid = 71;
+    ReadHeatTiles read_heat_tiles = 72;
+    HeatTiles heat_tiles = 73;
   }
 
   // Field numbers 100-199 of the body are kept for Stage 2b: sessions, members
@@ -625,4 +630,91 @@ message RowCount {
   uint64 rows_skipped = 4;
   uint64 groups = 5;
   uint64 groups_skipped = 6;
+}
+
+// ---------------------------------------------------------------- heat tiles (Stage 6)
+
+// Heat over data of any size, as a pyramid of tiles: the core streams the
+// files' row groups once into a leaf grid (never holding the rows), sums it
+// down level by level and keeps the tiles on disk, keyed by a hash of the
+// files, axes, filter (time window included) and split. Level l covers the
+// square extent with 2^l x 2^l tiles of 256 x 256 cells. A tile's bytes are a
+// 32-byte header and a zstd frame of its cells (`native/crates/core/src/tiles.rs`).
+message HeatTileQuery {
+  repeated FileRef files = 1;
+  // Or the files of an `OpenDataset` handle.
+  uint64 dataset = 2;
+  // The two horizontal columns.
+  string x = 3;
+  string y = 4;
+  // The filter, the time window as a range on the time column.
+  repeated RowFilterClause filter = 5;
+  // Optional: one channel per listed value of this text column.
+  string split = 6;
+  repeated string split_values = 7;
+  // The finest level built (0-7); 0 picks the core's default.
+  uint32 leaf_level = 8;
+  // Instead of files: the state of the pyramid of this key, built by someone
+  // else (a session member following the host's heat). Never starts a build.
+  string key = 9;
+  // The owner only: session members may read this pyramid by its key.
+  bool share = 10;
+}
+
+message HeatPyramid {
+  // The cache key: equal queries, equal keys, the same tiles for every client.
+  string key = 1;
+  // The square the pyramid covers, in the x/y columns' units.
+  double x0 = 2;
+  double y0 = 3;
+  double size = 4;
+  uint32 leaf_level = 5;
+  uint32 channels = 6;
+  repeated string channel_names = 7;
+  uint64 rows_total = 8;
+  // Rows binned so far (the filter's kept rows when complete).
+  uint64 rows_counted = 9;
+  // 0..1 of the row groups.
+  double fraction = 10;
+  bool complete = 11;
+  // While building: levels 0..estimate_levels-1 readable as estimates (a sample scaled up).
+  uint32 estimate_levels = 12;
+  // The largest cell per level, for scaling.
+  repeated uint32 level_max = 13;
+  // How it was built: "full", "delta" (only the row groups the change touches), "queued".
+  string how = 14;
+  string delta_base = 15;
+  uint64 groups = 16;
+  uint64 groups_read = 17;
+  double first_ms = 18;
+  double total_ms = 19;
+  string error = 20;
+  // Answered from the cache.
+  bool cached = 21;
+}
+
+// A session member reads only pyramids shared with it: the host's (`share`)
+// or ones it queried by file token itself.
+message ReadHeatTiles {
+  string key = 1;
+  // Tile ids: level << 56 | y << 28 | x.
+  repeated uint64 tiles = 2;
+  // At most this many payload bytes (the core caps it); the rest come back as `deferred`.
+  uint64 budget_bytes = 3;
+}
+
+message HeatTiles {
+  repeated HeatTile tiles = 1;
+  // Asked for, but holding no rows.
+  repeated uint64 empty = 2;
+  // Not built yet (a level finer than the estimate while building).
+  repeated uint64 pending = 3;
+  // Over the budget: ask again.
+  repeated uint64 deferred = 4;
+}
+
+message HeatTile {
+  uint64 id = 1;
+  Buffer data = 2;
+  bool estimate = 3;
 }

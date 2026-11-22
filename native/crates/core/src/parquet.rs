@@ -344,6 +344,70 @@ impl ParquetFile {
         }))
     }
 
+    /// Rows of one row group.
+    pub fn group_rows(&self, g: usize) -> u64 {
+        self.meta.metadata().row_group(g).num_rows().max(0) as u64
+    }
+
+    /// A numeric column's span in one row group, from its statistics (None: no usable statistics).
+    pub fn group_span(&self, g: usize, name: &str) -> Option<(f64, f64)> {
+        let &root = self.roots.get(name)?;
+        let schema = self.meta.metadata().file_metadata().schema_descr();
+        let leaf = (0..schema.num_columns()).find(|&i| schema.get_column_root_idx(i) == root)?;
+        let col = schema.column(leaf);
+        if col.logical_type_ref().is_some() || col.converted_type() != ConvertedType::NONE {
+            return None;
+        }
+        numeric_span(self.meta.metadata().row_group(g).column(leaf).statistics()?)
+    }
+
+    /// Nulls of a column in one row group, from its statistics.
+    pub fn group_nulls(&self, g: usize, name: &str) -> Option<u64> {
+        let &root = self.roots.get(name)?;
+        let schema = self.meta.metadata().file_metadata().schema_descr();
+        let leaf = (0..schema.num_columns()).find(|&i| schema.get_column_root_idx(i) == root)?;
+        self.meta.metadata().row_group(g).column(leaf).statistics()?.null_count_opt()
+    }
+
+    /// Whether the statistics leave a row group that `clauses` might keep rows of.
+    pub fn group_may_match(&self, g: usize, clauses: &[Clause]) -> bool {
+        let active = crate::filter::active(clauses);
+        active.is_empty() || !self.pruned(g, &active)
+    }
+
+    /// One row group's `specs`, only the rows `clauses` keep (`read`'s rules, one group).
+    pub fn read_group_where(&self, g: usize, specs: &[Spec], clauses: &[Clause]) -> Result<Vec<Out>> {
+        let none = || specs.iter().map(|s| Out::new(s.kind, 0)).collect::<Vec<_>>();
+        for s in specs {
+            if !self.roots.contains_key(&s.name) {
+                bail!("the file has no column {}", s.name);
+            }
+        }
+        let active = crate::filter::active(clauses);
+        let mut tests: Vec<(usize, Test)> = Vec::new();
+        for c in &active {
+            let t = c.compile();
+            match self.roots.get(c.column()) {
+                Some(&i) => tests.push((i, t)),
+                None if t.null() => {}
+                None => return Ok(none()),
+            }
+        }
+        if !active.is_empty() && self.pruned(g, &active) {
+            return Ok(none());
+        }
+        let rows = self.group_rows(g) as usize;
+        if tests.is_empty() {
+            return self.read_group(g, specs, None, rows);
+        }
+        let keep = self.test_group(g, &tests)?;
+        let n = keep.iter().filter(|&&b| b).count();
+        if n == 0 {
+            return Ok(none());
+        }
+        self.read_group(g, specs, Some(&keep), n)
+    }
+
     fn builder(&self, g: usize, roots: &[usize]) -> ParquetRecordBatchReaderBuilder<Bytes> {
         let schema = self.meta.metadata().file_metadata().schema_descr();
         let mask = ProjectionMask::roots(schema, roots.iter().copied());
