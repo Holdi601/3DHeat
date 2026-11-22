@@ -8,6 +8,8 @@ translated: true
 outdated: true
 ---
 
+![3DHeat](../assets/brand/banner.png){: width="720" }
+
 # 3DHeat
 
 3DHeat pokazuje, gdzie w grze coś się działo: dokąd szli gracze, gdzie walczyli i gdzie ginęli. Pokazuje to jako świecące kolory, po których możesz latać, albo jako małe figury 3D, które odtwarzają mecz.

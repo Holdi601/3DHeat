@@ -8,6 +8,8 @@ translated: true
 outdated: true
 ---
 
+![3DHeat](../assets/brand/banner.png){: width="720" }
+
 # 3DHeat
 
 3DHeat weist, wou Saache lass waren - wou Spiller gaang sinn, gekämpft hunn an gefall sinn - als glëtzeg Faarwen, duerch déi s de fléien kanns, oder als kleng 3D-Figuren, déi de Match nach eng Kéier ofspillen.

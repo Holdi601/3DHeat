@@ -8,6 +8,8 @@ translated: true
 outdated: true
 ---
 
+![3DHeat](../assets/brand/banner.png){: width="720" }
+
 # 3DHeat
 
 3DHeat visar var saker hände i ett spel – var spelare rörde sig, stred och föll – som glödande färger du kan flyga igenom, eller som små 3D-figurer som spelar upp matchen igen.

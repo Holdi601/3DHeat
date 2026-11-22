@@ -8,6 +8,8 @@ translated: true
 outdated: true
 ---
 
+![3DHeat](../assets/brand/banner.png){: width="720" }
+
 # 3DHeat
 
 3DHeat ukazuje, kde se ve hře něco stalo - kam hráči chodili, kde bojovali a kde padli - jako svítící barvy, kterými můžete proletět, nebo jako malé 3D figury, které zápas přehrají znovu.

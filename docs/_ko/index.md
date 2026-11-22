@@ -8,6 +8,8 @@ translated: true
 outdated: true
 ---
 
+![3DHeat](../assets/brand/banner.png){: width="720" }
+
 # 3DHeat
 
 3DHeat은 게임 안에서 무슨 일이 어디서 일어났는지를 보여 줍니다. 플레이어가 어디로 가고, 어디서 싸우고, 어디서 쓰러졌는지를, 날아다닐 수 있는 빛나는 색의 히트로 보거나, 경기를 다시 재생하는 작은 3D 피규어로 볼 수 있습니다.

@@ -3,6 +3,8 @@ title: Home
 nav_order: 1
 ---
 
+![3DHeat](assets/brand/banner.png){: width="720" }
+
 # 3DHeat
 
 3DHeat shows where things happened in a game - where players went, fought and fell - as glowing colours you can fly through, or as little 3D figures that replay the match.

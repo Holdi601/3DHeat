@@ -8,6 +8,8 @@ translated: true
 outdated: true
 ---
 
+![3DHeat](../assets/brand/banner.png){: width="720" }
+
 # 3DHeat
 
 3DHeat näitab, kus asjad mängus juhtusid - kuhu mängijad läksid, kus nad võitlesid ja kukkusid - hõõguvate värvidena, millest saab lennata läbi, või väikeste 3D-kujudena, mis kordavad matši.

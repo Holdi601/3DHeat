@@ -8,6 +8,8 @@ translated: true
 outdated: true
 ---
 
+![3DHeat](../assets/brand/banner.png){: width="720" }
+
 # 3DHeat
 
 3DHeat pokazuje gdje su se stvari dogodile u igri - kamo su igrači išli, gdje su se borili i gdje su pali - kao svjetleće boje kroz koje možete letjeti ili kao male 3D figure koje ponovno prikazuju utakmicu.

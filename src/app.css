@@ -1575,6 +1575,21 @@ button.link:disabled {
   padding: 0 24px;
 }
 
+/* The banner (public/brand/), shrinking with a small view and gone from a very short one. */
+.empty-state .start-logo {
+  width: min(360px, 70%);
+  height: auto;
+  aspect-ratio: 1584 / 672;
+  margin-bottom: 4px;
+  user-select: none;
+}
+
+@media (max-height: 560px) {
+  .empty-state .start-logo {
+    display: none;
+  }
+}
+
 .empty-state.start h2 {
   font-size: 18px;
   color: var(--text);

@@ -8,6 +8,8 @@ translated: true
 outdated: true
 ---
 
+![3DHeat](../assets/brand/banner.png){: width="720" }
+
 # 3DHeat
 
 3DHeat arată unde s-au întâmplat lucrurile într-un joc - unde au mers jucătorii, unde s-au luptat și unde au căzut - ca culori strălucitoare prin care poți zbura sau ca mici figuri 3D care refac meciul.

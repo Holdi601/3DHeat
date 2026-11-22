@@ -8,6 +8,8 @@ translated: true
 outdated: true
 ---
 
+![3DHeat](../assets/brand/banner.png){: width="720" }
+
 # 3DHeat
 
 3DHeat juri fejn ġraw affarijiet f'logħba - fejn mexxew il-plejers, fejn ġġieldu u fejn waqgħu - bħala kuluri li tista' ttir fihom, jew bħala figuri 3D żgħar li jerġgħu jilagħbu l-partita.

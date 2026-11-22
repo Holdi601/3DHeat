@@ -8,6 +8,8 @@ translated: true
 outdated: true
 ---
 
+![3DHeat](../assets/brand/banner.png){: width="720" }
+
 # 3DHeat
 
 Taispeánann 3DHeat cá ndeachaigh rudaí i gcluiche - cá ndeachaigh imreoirí, cá ndearna siad troid agus cá dtit siad - mar dhathanna lonracha ar féidir leat eitilt tríothu, nó mar fhigiúirí beaga 3D a athsheinm an cluiche.

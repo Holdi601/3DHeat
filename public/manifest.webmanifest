@@ -1,0 +1,16 @@
+{
+  "name": "3DHeat",
+  "short_name": "3DHeat",
+  "description": "3D telemetry heatmap viewer",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#161c26",
+  "theme_color": "#161c26",
+  "icons": [
+    { "src": "brand/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "brand/pwa-any-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "brand/pwa-any-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "brand/pwa-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "brand/pwa-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

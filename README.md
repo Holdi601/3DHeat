@@ -1,3 +1,5 @@
+<p align="center"><img src="public/brand/png/banner-1584.png" alt="3DHeat" width="720"></p>
+
 # 3DHeat
 
 3DHeat shows where things happened in a game - where players went, fought and fell - as **glowing colours you can fly through**, or as **little 3D figures that replay the match**, and it finds what stands out by itself. It handles millions of rows and thousands of matches, in the browser, on the graphics card (WebGPU, or WebGL2).

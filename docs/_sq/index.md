@@ -8,6 +8,8 @@ translated: true
 outdated: true
 ---
 
+![3DHeat](../assets/brand/banner.png){: width="720" }
+
 # 3DHeat
 
 3DHeat tregon se ku ndodhën gjërat në një lojë - ku shkuan lojtarët, ku luftuan dhe ku ranë - si ngjyra shkëlqyese nëpër të cilat mund të fluturosh, ose si figura të vogla 3D që riluajnë ndeshjen.

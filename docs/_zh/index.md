@@ -8,6 +8,8 @@ translated: true
 outdated: true
 ---
 
+![3DHeat](../assets/brand/banner.png){: width="720" }
+
 # 3DHeat
 
 3DHeat 显示游戏中事情发生在哪里：玩家去了哪里、在哪里交战、在哪里倒下。结果是一些发光的颜色，你可以在其中飞行穿梭；也可以是一个个小小的 3D 图形，重现整场比赛。

@@ -1,5 +1,6 @@
 /**
- * The app's icons, from `crates/app-tauri/icons/icon.svg` (the viewer's favicon): the
+ * The app's icons, from `crates/app-tauri/icons/icon.svg` (the logo's small mark,
+ * `public/brand/icon.svg`, without its width and height; docs/brand.md): the
  * SVG drawn at 1024 px by the repository's Playwright Chromium, then every size
  * Tauri bundles made by `tauri icon`. Generated, not committed.
  *

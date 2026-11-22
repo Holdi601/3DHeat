@@ -8,6 +8,8 @@ translated: true
 outdated: true
 ---
 
+![3DHeat](../assets/brand/banner.png){: width="720" }
+
 # 3DHeat
 
 3DHeat mostra on han passat les coses en un joc -on han anat, on han lluitat i on han caigut els jugadors- com a colors lluminosos pels quals pots volar, o com a petites figures 3D que repeteixen la partida.

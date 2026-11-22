@@ -8,6 +8,8 @@ translated: true
 outdated: true
 ---
 
+![3DHeat](../assets/brand/banner.png){: width="720" }
+
 # 3DHeat
 
 A 3DHeat megmutatja, hol történt valami egy játékban: hol mozogtak a játékosok, hol harcoltak és hol estek el. Ezt izzó színekként mutatja, amelyek között el lehet repülni, vagy apró 3D-s figuraként, amelyek visszajátsszák a meccset.

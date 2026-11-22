@@ -8,6 +8,8 @@ translated: true
 outdated: true
 ---
 
+![3DHeat](../assets/brand/banner.png){: width="720" }
+
 # 3DHeat
 
 3DHeat parāda, kur kas notika spēlē - kur spēlētāji devās, cīnījās un krita - kā spožas krāsas, pa kurām var "lidot", vai kā mazas 3D figūriņas, kas atkārto spēli. 

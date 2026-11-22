@@ -8,6 +8,8 @@ translated: true
 outdated: true
 ---
 
+![3DHeat](../assets/brand/banner.png){: width="720" }
+
 # 3DHeat
 
 3DHeat näyttää, missä asiat tapahtuivat pelissä: missä pelaajat liikkuivat, taistelivat ja kaatuivat. Se näyttää ne hehkuvina väreinä, joiden läpi voit lentää, tai pieninä 3D-hahmoina, jotka toistavat ottelun.

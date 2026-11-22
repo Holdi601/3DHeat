@@ -8,6 +8,8 @@ translated: true
 outdated: true
 ---
 
+![3DHeat](../assets/brand/banner.png){: width="720" }
+
 # 3DHeat
 
 3DHeat laat zien waar dingen in een spel gebeurden - waar spelers heen gingen, vochten en vielen - als gloeiende kleuren waar je doorheen kunt vliegen, of als kleine 3D-figuurtjes die de wedstrijd opnieuw afspelen.

@@ -8,6 +8,8 @@ translated: true
 outdated: true
 ---
 
+![3DHeat](../assets/brand/banner.png){: width="720" }
+
 # 3DHeat
 
 3DHeat 會顯示遊戲中事情發生的位置，包括玩家去過哪裡、在哪裡交戰、又在哪裡倒下。它可以呈現為你能飛行穿越的發光熱度色彩，也可以呈現為重播比賽過程的小型 3D 模型。

@@ -110,6 +110,11 @@ races/
 *.dds
 *.tif
 *.tiff
+# Except the project's own logo exports (docs/brand.md), which ship.
+!public/brand/**/*.png
+!public/brand/**/*.bmp
+!docs/assets/brand/*.png
+!native/crates/app-tauri/installer/*.bmp
 
 # Secrets.
 .env

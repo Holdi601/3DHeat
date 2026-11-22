@@ -6,6 +6,9 @@ plugins:
   - jekyll-remote-theme
 search_enabled: true
 heading_anchors: true
+# The logo (docs/brand.md): the lockup in the sidebar, the small mark as the tab icon.
+logo: "/assets/brand/lockup-light.svg"
+favicon_ico: "/assets/brand/favicon.ico"
 aux_links:
   "GitHub": "https://github.com/Holdi601/3DHeat"
 exclude:

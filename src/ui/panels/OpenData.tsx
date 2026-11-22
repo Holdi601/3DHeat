@@ -120,6 +120,7 @@ export function StartScreen() {
   const levels = useLevelCount();
   return (
     <div className="empty-state start" data-testid="start-screen">
+      <img className="start-logo" src={`${import.meta.env.BASE_URL}brand/banner-transparent.svg`} alt="3DHeat" draggable={false} />
       <h2>{t('app.empty.start.title')}</h2>
       <div>{t('app.empty.start.hint')}</div>
       <div className="start-actions">

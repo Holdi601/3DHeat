@@ -8,6 +8,8 @@ translated: true
 outdated: true
 ---
 
+![3DHeat](../assets/brand/banner.png){: width="720" }
+
 # 3DHeat
 
 3DHeat parodo, kur žaidime kas vyko – kur judėjo žaidėjai, kur kovojo ir kur žuvo – kaip spindinčias spalvas, per kurias galima skristi, arba kaip mažas 3D figūras, kurios pakartoja rungtynes.

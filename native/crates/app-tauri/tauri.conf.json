@@ -49,9 +49,14 @@
     "windows": {
       "nsis": {
         "installMode": "currentUser",
-        "installerHooks": "installer/hooks.nsh"
+        "installerHooks": "installer/hooks.nsh",
+        "installerIcon": "icons/icon.ico",
+        "headerImage": "installer/nsis-header.bmp",
+        "sidebarImage": "installer/nsis-sidebar.bmp"
       },
       "wix": {
+        "bannerPath": "installer/wix-banner.bmp",
+        "dialogImagePath": "installer/wix-dialog.bmp",
         "fragmentPaths": [
           "installer/requirements.wxs"
         ],

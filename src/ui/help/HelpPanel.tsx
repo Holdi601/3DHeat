@@ -295,6 +295,7 @@ export function HelpPanel() {
   return (
     <div className="help-panel">
       <div className="help-head">
+        <img className="help-logo" src={`${import.meta.env.BASE_URL}brand/icon.svg`} alt="" aria-hidden="true" draggable={false} />
         <strong>{t('help.title')}</strong>
         <button type="button" className="icon" title={t('help.toggle')} onClick={toggle}>
           ×

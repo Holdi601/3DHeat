@@ -17,9 +17,9 @@
 }
 
 /*
- * The logo slot. A wide row shows `.shell-brand-full` (the name, or a
- * horizontal lockup up to about 115px wide), a narrow one `.shell-brand-mark`
- * (the square mark) instead.
+ * The logo lockup (public/brand/, docs/brand.md): the mark, then the wordmark
+ * (`.shell-brand-full`, about 80px wide), which a narrow row drops so only the
+ * mark is left.
  */
 .shell-brand {
   flex: none;
@@ -28,28 +28,26 @@
   gap: 6px;
 }
 
-.shell-brand-mark {
-  display: none;
-}
-
 .brand-mark {
   flex: none;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 50% 50%, #fff 0 18%, #ffdc28 19% 42%, #ff4400 43% 100%);
-  box-shadow: 0 0 10px rgba(255, 90, 20, 0.55);
-}
-
-:root[data-quality='low'] .brand-mark {
-  box-shadow: none;
+  display: block;
+  width: 22px;
+  height: 22px;
+  user-select: none;
 }
 
 .sidebar > .brand h1 {
+  display: flex;
   margin: 0 4px 0 0;
   font-size: var(--fs-lg);
-  font-weight: var(--fw-bold);
-  letter-spacing: 0.01em;
+  line-height: 1;
+}
+
+.brand-word {
+  display: block;
+  height: 13px;
+  width: auto;
+  user-select: none;
 }
 
 .search-btn {
@@ -245,26 +243,18 @@ button.icon-btn.on {
 /*
  * The row's own breakpoints, on its content width (297px in the 336px side
  * panel, where the search shows its icon and key). Under 260px session and
- * help fold into the overflow menu; under 220px the name gives way to the
- * mark. Narrower still (no real panel is), the row wraps rather than clip.
+ * help fold into the overflow menu and the lockup gives way to its mark (the
+ * wordmark alone is wider than the two buttons). Narrower still (no real panel
+ * is), the row wraps rather than clip.
  */
 @container shell-header (max-width: 259px) {
   .sidebar > .brand > .session-btn,
-  .sidebar > .brand > .help-button {
+  .sidebar > .brand > .help-button,
+  .sidebar > .brand .shell-brand-full {
     display: none;
   }
 
   .shell-overflow {
-    display: block;
-  }
-}
-
-@container shell-header (max-width: 219px) {
-  .shell-brand-full {
-    display: none;
-  }
-
-  .shell-brand-mark {
     display: block;
   }
 }

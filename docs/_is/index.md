@@ -8,6 +8,8 @@ translated: true
 outdated: true
 ---
 
+![3DHeat](../assets/brand/banner.png){: width="720" }
+
 # 3DHeat
 
 3DHeat sýnir hvar hlutir gerðust í leik - hvert leikmenn fóru, börðust og féllu - sem glóandi liti sem þú getur flogið í gegnum, eða sem litlar þrívíðar fígúrur sem endurspila leikinn.

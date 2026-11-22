@@ -39,6 +39,17 @@
   margin-bottom: 6px;
 }
 
+.help-logo {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+}
+
+.help-head .help-logo + strong {
+  margin-right: auto;
+}
+
 .help-group {
   margin-top: 10px;
 }

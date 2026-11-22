@@ -67,10 +67,12 @@ export function Brand() {
   const setPalette = useShell((s) => s.setPalette);
   return (
     <div className="brand">
-      {/* The logo slot: `.shell-brand-full` shows on a wide row, `.shell-brand-mark` on a narrow one. */}
+      {/* The logo lockup (docs/brand.md): the mark always, the wordmark (`.shell-brand-full`) only on a wide row. */}
       <div className="shell-brand">
-        <div className="brand-mark" aria-hidden="true" />
-        <h1 className="shell-brand-full">3DHeat</h1>
+        <img className="brand-mark" src={`${import.meta.env.BASE_URL}brand/icon.svg`} alt="" aria-hidden="true" draggable={false} />
+        <h1 className="shell-brand-full">
+          <img className="brand-word" src={`${import.meta.env.BASE_URL}brand/wordmark.svg`} alt="3DHeat" draggable={false} />
+        </h1>
       </div>
       <button type="button" className="search-btn" data-usage="panel:palette" onClick={() => setPalette(true)} title={t('shell.palette.title')} aria-label={t('shell.palette.title')}>
         <Icon name="search" size={14} />
