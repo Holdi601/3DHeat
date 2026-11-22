@@ -270,8 +270,11 @@ async function tracksCase({ c, matches, units }) {
   const rd = eng.renderer;
   const own = Object.prototype.hasOwnProperty.call(rd, 'render');
   const orig = rd.render;
+  // The triangle budget too: when a mesh's run fills, which units still get it is the GPU threads'
+  // order (an atomic counter), so two runs of the same backend differ where it overflows. Room for
+  // every unit in every run makes the picture the same each time.
   rd.render = function (p) {
-    return orig.call(this, p.gpuTracks ? { ...p, gpuTracks: { ...p.gpuTracks, dartPx: 2 } } : p);
+    return orig.call(this, p.gpuTracks ? { ...p, gpuTracks: { ...p.gpuTracks, dartPx: 2, triangleBudget: 1e12 } } : p);
   };
   // The store built and over to the GPU (both backends), then still frames.
   const t0 = performance.now();
