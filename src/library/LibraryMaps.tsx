@@ -7,6 +7,7 @@
  */
 
 import { useEffect, useMemo, useState } from 'react';
+import { extractorIcon, hideBroken } from '../extractors/icon';
 import { ask, findManager, type Item as ManagedItem, type MapGame, type Route, type State as ManagerState } from '../extractors/manager';
 import { t, useLang } from '../i18n';
 import { toast } from '../ui/shell/kit';
@@ -37,6 +38,7 @@ function ExtractorBox({ x, game, onCheck }: { x: MapExtractor; game: string; onC
   return (
     <div className="lib-extractor">
       <div className="lib-extractor-head">
+        <img className="lib-extractor-icon" src={extractorIcon(x.id, 32)} alt="" width={20} height={20} onError={hideBroken} />
         <strong>{x.name}</strong>
         <span className="lib-hint">{x.installed ? `${x.version ?? ''}${x.checked ? ` · ${t('library.maps.checked', { when: date(x.checked) })}` : ''}` : t('library.maps.notInstalled')}</span>
         <span className="lib-spacer" />
@@ -109,6 +111,7 @@ function ManagedBox({ x, mg, route, onChange }: { x: ManagedItem; mg: MapGame; r
   return (
     <div className="lib-extractor">
       <div className="lib-extractor-head">
+        <img className="lib-extractor-icon" src={extractorIcon(x.id, 32)} alt="" width={20} height={20} onError={hideBroken} />
         <strong>{x.name}</strong>
         <span className="lib-hint">
           {x.installed}

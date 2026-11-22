@@ -15,6 +15,7 @@ import {
   type Route,
   type State,
 } from '../../extractors/manager';
+import { extractorIcon, hideBroken } from '../../extractors/icon';
 import { Section } from '../controls';
 import { Dialog } from '../shell/kit';
 import './extractors.css';
@@ -238,6 +239,7 @@ function Extractor({ x, act, ask: askUpdate }: { x: Item; act: Act; ask: () => v
   return (
     <article className={`ext-card ${tone}`} data-extractor={x.id} data-status={status}>
       <header className="ext-card-head">
+        <img className="ext-icon" src={extractorIcon(x.id)} alt="" width={32} height={32} onError={hideBroken} />
         <div className="ext-card-name">
           <strong>{x.name}</strong>
           <span className="hint">{x.games.join(', ')}</span>

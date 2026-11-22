@@ -1382,6 +1382,13 @@ button.lib-chip {
   margin-bottom: var(--sp-2);
 }
 
+/* An extractor's icon (public/brand/extractors/). */
+.lib-extractor-icon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+}
+
 .lib-extractor-head,
 .lib-extractor-news {
   display: flex;

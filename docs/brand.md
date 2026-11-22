@@ -55,6 +55,15 @@ The desktop app's icon set (`native/crates/app-tauri/icons/`) is made from
 | `lockup.svg`, `lockup-light.svg` | 24 px tall |
 | `banner.svg` | 320 px wide |
 
+## Extractor icons
+
+Each extractor and tool has its own icon: the simplified mark (`icon.svg`) with a small text badge
+naming its game - `WT`, `DCS`, `BF`, `CS2`, `R6`, `A3`, `FH` and so on - set in Montserrat in
+3DHeat's own colours, one colour per tool. The badges are letters only, never a game's logo or symbol.
+At 16 px the badge alone stands for the tool. `tools/extractor-kit/make_icons.py` makes the sets
+(PNG 16-256, ICO, ICNS); the web files are in `public/brand/extractors/<id>-<size>.png`, each tool's
+repository has its set as `app/assets/tool.*` (exe, window and taskbar icon).
+
 ## Colours
 
 The heat ramp, from the lowest ground to the peaks:

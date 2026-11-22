@@ -10,6 +10,17 @@
   gap: var(--sp-2);
 }
 
+/* The extractor's icon: the 3DHeat cube with its game's text badge (public/brand/extractors/). */
+.ext-icon {
+  flex: none;
+  width: 32px;
+  height: 32px;
+}
+
+.ext-icon + .ext-card-name {
+  flex: 1;
+}
+
 .ext-where {
   display: flex;
   flex-direction: column;

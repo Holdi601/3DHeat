@@ -46,6 +46,51 @@ In the web viewer (and for session members) the panel shows **Get the extractors
 
 By default an extractor writes into the levels folder above, asks before it updates itself, and updates without asking only when you turn on its own "Update automatically". To use another folder, set `HEAT3D_LEVELS` before starting it. A dev or preview server of the viewer reads the same default folder when it exists (see [Level library](level-library.md)).
 
+## The extractor program: window and command line
+
+Every extractor is the same kind of program: its window, command line and updates come from one shared
+part, kept in [`tools/extractor-kit/`](../tools/extractor-kit/) and copied into each tool's repository.
+
+**The window.** Started without arguments it opens a window in the 3DHeat look, dark or light, that walks
+through four steps: find the game (each requirement with its fix), choose (maps ticked when there is
+something to do; replay and recording jobs with their fields), work (progress, time left, cancel; recorders
+run until Stop), done (open in 3DHeat, open the output folder, and for a failure what went wrong and what to
+do). On Windows the program is a window program: no console window opens. From a terminal it prints as
+before; `<id>-cli.cmd` beside it makes a terminal wait for it.
+
+**The command line**, the same in every extractor:
+
+| call | does |
+|---|---|
+| `<id> --version`, `--help` | the version; the tools inside and these calls |
+| `<id> --check --json` | what is found and missing: `{"id", "version", "levels", "checks": [{"id", "label", "ok", "detail"}]}` |
+| `<id> status --json` | the maps of each game and their state (new, changed, outdated, current, missing) |
+| `<id> extract [--new] [--changed] [--outdated] [--all] [<map>...] [--progress-json]` | extracts, one map at a time |
+| `<id> convert <replay>... -o <out> [--progress-json]` | replay readers: each replay into a match under `<out>`; with `--progress-json` stdout carries only JSON lines: `{"event":"start","total":N}`, `{"event":"file","index":i,"input":"...","state":"ok"\|"failed","detail":"..."}`, `{"progress":0.5}`, `{"event":"done","ok":n,"failed":m}`; exit 1 when one failed |
+| `<id> info <replay> --json` | replay readers: what the replay says about its match, from its header, without converting it |
+| `<id> --update` | looks for a newer release and applies it (asks first) |
+| `<id> <tool> [args...]`, `<id> [args...]` | the tool's own commands, unchanged (so `<id> <replay> -o <out>` keeps working) |
+
+`info --json` answers one object; keys the replay does not hold are `null` (or `[]`):
+
+| key | |
+|---|---|
+| `game` | the game key (`warthunder`, `wows`, `wot`, `squad`, `r6`, `cs2`, `dota`, `riot`) |
+| `map`, `map_title` | the map id the converter writes, and a display name when the file has one |
+| `mode` | the game mode as the game names it |
+| `date` | ISO 8601; `date_from: "file"` when it is the file's own time because the replay holds none |
+| `duration_s` | the match length in seconds |
+| `players` | `[{"name", "team", ...}]`, with what the header gives cheaply (vehicle, ship, hero, clan, ...) |
+| `teams` | `[{"id", "name"?, "score"?}]` |
+| `outcome` | `{"winner": <team id or null>, "result": "..."}` or `null` |
+| `game_version` | the game's version or build as the file states it |
+| `converter` | `{"id", "version"}` of the program that answered |
+| `complete` | `true` when the reader looked into the replay, `false` when only the file name and date are known |
+| `file`, `size` | the replay's file name and size |
+
+An unreadable file answers `{"error": "..."}` with exit code 1. Readers add keys of their own (for
+example `match`, `layer`, `server_replay`); the Library ignores what it does not know.
+
 ## The manager's state, for other parts of the viewer
 
 `GET /__heat3d/extractors` (the owner only, as above) answers the panel's state as JSON, `"format": "3dheat-extractors-state"`, with `platform`, `levels` (the levels folder), `free` (bytes), `settings` (`autoUpdate`, `skip`: id → skipped version) and `extractors`, one object per extractor of the index:
