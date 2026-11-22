@@ -232,7 +232,7 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                 Msg::Stop => return,
                 Msg::Packet(bytes) => match packet::decode(&bytes) {
                     Ok(p) => packets.push(p),
-                    Err(e) => eprintln!("viewport: {e:#}"),
+                    Err(e) => crate::note(&format!("viewport: {e:#}")),
                 },
                 Msg::Resize(w, h) => {
                     if w > 0 && h > 0 && (w, h) != (config.width, config.height) {
@@ -275,7 +275,7 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                                             let _ = tx.send(Msg::Chunk(gen, c));
                                         }
                                         Err(e) => {
-                                            eprintln!("viewport: chunk {i}: {e:#}");
+                                            crate::note(&format!("viewport: chunk {i}: {e:#}"));
                                             dropped += rows;
                                         }
                                     }
@@ -299,7 +299,7 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                         let c = c.upload(&r.device);
                         r.add_chunk(c);
                     }
-                    Err(e) => eprintln!("viewport: {e:#}"),
+                    Err(e) => crate::note(&format!("viewport: {e:#}")),
                 },
                 Msg::Rows(bytes) => match {
                     // Counted whatever they hold: the page waits until every one it sent is taken.
@@ -325,7 +325,7 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                         r.column_failed(chunk, &name);
                         dirty = true;
                     }
-                    Err(e) => eprintln!("viewport: {e:#}"),
+                    Err(e) => crate::note(&format!("viewport: {e:#}")),
                 },
                 Msg::Chunk(gen, c) => {
                     if gen == data.generation.load(Ordering::SeqCst) {
@@ -362,18 +362,18 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                 }
                 Msg::Glyphs(bytes) => {
                     if let Err(e) = r.figures.set_atlas(&r.device, &r.queue, &bytes) {
-                        eprintln!("viewport: {e:#}");
+                        crate::note(&format!("viewport: {e:#}"));
                     }
                 }
                 Msg::Tracks(bytes) => {
                     if let Err(e) = r.tracks.message(&r.device, &r.queue, &bytes) {
-                        eprintln!("viewport: {e:#}");
+                        crate::note(&format!("viewport: {e:#}"));
                     }
                     dirty = true;
                 }
                 Msg::Mesh(bytes) => {
                     if let Err(e) = r.figures.mesh_slice(&r.device, &r.queue, &bytes) {
-                        eprintln!("viewport: {e:#}");
+                        crate::note(&format!("viewport: {e:#}"));
                     }
                 }
                 Msg::Probe(x, y, reply) => {
@@ -400,7 +400,7 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                             break;
                         }
                         let buf = loader::upload_column(&device, &ds, chunk, &name).unwrap_or_else(|e| {
-                            eprintln!("viewport: column {name}: {e:#}");
+                            crate::note(&format!("viewport: column {name}: {e:#}"));
                             None
                         });
                         let _ = tx.send(Msg::Column(gen, chunk, name, buf));
@@ -433,7 +433,7 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                 // Not shown this time (the window covered, or the compositor slow): drawn offscreen
                 // all the same, so the heat passes and the read-backs the page waits on go on.
                 if matches!(other, wgpu::CurrentSurfaceTexture::Validation) {
-                    eprintln!("viewport: surface: validation error");
+                    crate::note("viewport: surface: validation error");
                     std::thread::sleep(Duration::from_millis(2));
                     continue;
                 }

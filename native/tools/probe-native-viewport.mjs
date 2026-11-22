@@ -49,7 +49,7 @@
  * real GPU: check nothing else is using it (a game) before running.
  */
 import { spawn } from 'node:child_process';
-import { existsSync, linkSync, mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, linkSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { deflateSync } from 'node:zlib';
 import { chromium } from 'playwright';
@@ -301,6 +301,9 @@ async function tracksCase({ c, matches, units }) {
     info: c === 'tracks' ? info : null,
     gpu: c === 'tracks' ? !!info : false,
     readyMs,
+    // The native viewport's own word on the store (`viewport_snapshot`): whole there, and its bytes.
+    diag: { ds: eng.dataset?.count ?? null, store: st().dataset?.count ?? null, yaw: eng.camera.yawDegrees, pitch: eng.camera.pitchDegrees, gpuTracks: !!eng.gpuTracksParams, sentStore: rd.tracks ? rd.tracks.store === eng.gpuTracksParams?.store : null, slices: rd.tracks?.slices?.length ?? null, w: eng.canvas.clientWidth, h: eng.canvas.clientHeight },
+    viewport: rd.snap ? { snap: rd.snap, planned: rd.planned, dataPending: rd.dataPending, uploading: rd.uploading, tracksReady: rd.snap.tracksReady, tracksBytes: rd.snap.tracksBytes, seq: rd.seq, drawn: rd.snap.lastSeq, inFlight: rd.inFlight, frames: rd.snap.frames } : null,
   };
 }
 
@@ -308,10 +311,13 @@ async function tracksCase({ c, matches, units }) {
 
 async function run(rows, backend) {
   const picked = rows > 0 ? files(rows) : [];
+  // What the viewport says (GPU errors, packets it could not read): the released app has no console.
+  const vlog = join(out, `${backend}-viewport.log`);
+  rmSync(vlog, { force: true });
   const app = spawn(exe, [], {
     // A WebView2 profile of the probe's own: another app started meanwhile (another probe) shares
     // the default one, and its browser process took this run's page down with it.
-    env: { ...process.env, WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS: `--remote-debugging-port=${PORT}`, WEBVIEW2_USER_DATA_FOLDER: join(out, `webview2-${PORT}`) },
+    env: { ...process.env, WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS: `--remote-debugging-port=${PORT}`, WEBVIEW2_USER_DATA_FOLDER: join(out, `webview2-${PORT}`), HEAT3D_VIEWPORT_LOG: vlog },
     stdio: ['ignore', 'pipe', 'pipe'],
   });
   let log = '';
@@ -610,7 +616,7 @@ async function run(rows, backend) {
       };
       return { page: stats(dts), present: native ? stats(native.intervals) : null, cpu: native ? stats(native.cpu) : null, splats: eng.live.splats };
     }, secs);
-    return { backend, rows, load, exposures, parity, frames, errors: errors.slice(0, 5), log: log.slice(-1500) };
+    return { backend, rows, load, exposures, parity, frames, errors: errors.slice(0, 5), log: log.slice(-6000) };
   } catch (e) {
     // The app's own output says why a page went away (a crash, a panic in the viewport).
     throw new Error(`${backend} ${rows / 1e6}M: ${e.message}
@@ -640,6 +646,9 @@ for (const rows of loads) {
         (fr.present ? `; native presents p50 ${f1(fr.present.p50)} p99 ${f1(fr.present.p99)} max ${f1(fr.present.max)} ms (${fr.present.over25} over 25 ms of ${fr.present.n}), encode p99 ${f1(fr.cpu?.p99)} ms` : '') +
         (r.errors.length ? `; errors: ${r.errors.join(' | ')}` : ''),
     );
+    const vl = join(out, `${r.backend}-viewport.log`);
+    const said = [r.log, existsSync(vl) ? readFileSync(vl, 'utf8') : ''].join('\n').split(/\r?\n/).filter((l) => /viewport:|panicked/.test(l));
+    if (said.length) console.log(`  ${r.backend} app said: ${said.slice(-4).join(' | ').slice(0, 1200)}`);
   }
   if (!(web && nat) && cases.includes('exposure')) {
     const r = web ?? nat;
@@ -660,7 +669,8 @@ for (const rows of loads) {
     // The CPU path against the GPU path on the same backend: reported only.
     const g = r.parity.tracks;
     const cp = r.parity['tracks-cpu'];
-    if (g) console.log(`  ${r.backend} tracks: ${g.gpu ? 'GPU tracks' : 'NOT on the GPU'} ${JSON.stringify(g.info)}, ready in ${(g.readyMs / 1000).toFixed(1)} s`);
+    if (g) console.log(`  ${r.backend} tracks: ${g.gpu ? 'GPU tracks' : 'NOT on the GPU'} ${JSON.stringify(g.info)}, ready in ${(g.readyMs / 1000).toFixed(1)} s, ${JSON.stringify(g.diag)}${g.viewport ? `, viewport ${JSON.stringify(g.viewport)}` : ''}`);
+    for (const [k, v] of [['tracks', g], ['tracks-cpu', cp]]) if (v?.picture) writeFileSync(join(out, `${m}-${k}-${r.backend}.png`), png(v.picture.width, v.picture.height, Uint8Array.from(v.picture.rgba)));
     if (g?.picture && cp?.picture) {
       const pic = comparePictures({ ...g.picture, rgba: Uint8Array.from(g.picture.rgba) }, { ...cp.picture, rgba: Uint8Array.from(cp.picture.rgba) });
       writeFileSync(join(out, `${m}-tracks-cpu-${r.backend}.png`), png(cp.picture.width, cp.picture.height, Uint8Array.from(cp.picture.rgba)));

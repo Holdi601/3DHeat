@@ -20,6 +20,18 @@ pub mod tracks;
 pub mod viewport;
 
 pub use renderer::{Captured, LevelMesh, Renderer};
+
+/// A line about something that went wrong, on stderr and, with `HEAT3D_VIEWPORT_LOG` set to a file,
+/// appended there too: the released app has no console, so its stderr goes nowhere.
+pub fn note(line: &str) {
+    eprintln!("{line}");
+    if let Some(path) = std::env::var_os("HEAT3D_VIEWPORT_LOG") {
+        use std::io::Write;
+        if let Ok(mut f) = std::fs::OpenOptions::new().create(true).append(true).open(path) {
+            let _ = writeln!(f, "{line}");
+        }
+    }
+}
 pub use viewport::{Msg, Viewport};
 /// The wgpu this viewport is built with, for the app's surface.
 pub use wgpu;

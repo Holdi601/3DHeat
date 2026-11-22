@@ -450,7 +450,7 @@ impl Renderer {
             required_limits: limits,
             ..Default::default()
         }))?;
-        device.on_uncaptured_error(Arc::new(|e| eprintln!("viewport: GPU error: {e:?}")));
+        device.on_uncaptured_error(Arc::new(|e| crate::note(&format!("viewport: GPU error: {e:?}"))));
         let heat_format = if heat_f32 { wgpu::TextureFormat::R32Float } else { wgpu::TextureFormat::R16Float };
 
         let sampler = device.create_sampler(&wgpu::SamplerDescriptor {
@@ -981,7 +981,11 @@ impl Renderer {
         let mut encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some("frame") });
         self.figures.begin();
         let mut last: Option<Packet> = None;
-        for p in packets {
+        // The GPU tracks are placed and drawn for the last packet drawn only: an earlier packet's scene
+        // is drawn over by the next (its heat pass is what counts), and placing every unit again for
+        // each packet that queued up made a present cost as many placements and figure draws.
+        let last_scene = packets.iter().rposition(|p| p.frame.is_some() && !p.flag(F_COMPOSITE_ONLY));
+        for (i, p) in packets.iter().enumerate() {
             self.take_tables(p);
             if p.frame.is_none() {
                 continue;
@@ -993,7 +997,7 @@ impl Renderer {
             let channels = if p.flag(F_TEAM_COLORS) || p.flag(F_RATE_ON) { 4 } else { 1 };
             self.ensure_targets(width, height, p.f(F_HEAT_SCALE).max(1e-3), channels);
             if !p.flag(F_COMPOSITE_ONLY) {
-                self.draw_scene(&mut encoder, p);
+                self.draw_scene(&mut encoder, p, Some(i) == last_scene);
                 self.structure_depth(&mut encoder, p);
                 self.peel_layers(&mut encoder, p);
                 if p.f(F_MODE) as u32 != 4 {
@@ -1119,7 +1123,7 @@ impl Renderer {
         bytemuck::cast_slice(&u).to_vec()
     }
 
-    fn draw_scene(&mut self, encoder: &mut wgpu::CommandEncoder, p: &Packet) {
+    fn draw_scene(&mut self, encoder: &mut wgpu::CommandEncoder, p: &Packet, last: bool) {
         let ground = if p.flag(F_LEVEL_ON) && self.level.is_some() {
             let u = self.scene_uniform(p, (1e9, 1e9 + 1.0), p.f(F_LEVEL_OPACITY), p.f(F_LEVEL_BRIGHTNESS), true, p.flag(F_LEVEL_COLOURS));
             Some(self.ring.push(&u, 256))
@@ -1146,7 +1150,7 @@ impl Renderer {
         // `drawScene` pushes them (the cubes' size, the look lines' length, the figures relative to the origin).
         let figs = self.figures.prepare(&self.device, &self.queue, p);
         // The GPU tracks placed first, in a compute pass of their own (`drawScene`).
-        let tracks_on = self.tracks.compute(&self.queue, encoder, p.tracks.as_ref());
+        let tracks_on = self.tracks.compute(&self.queue, encoder, p.tracks.as_ref().filter(|_| last));
         let fig_groups = if figs.is_empty() && !tracks_on {
             None
         } else {

@@ -164,6 +164,8 @@ export class NativeRenderer implements Renderer {
   private inFlight = 0;
   /** A packet was not sent: the next one carries every table again. */
   private resend = false;
+  /** A packet that drew the scene was not sent: the next one draws it (`render`). */
+  private sceneOwed = false;
   private gpuMs: number | null = null;
 
   private constructor(
@@ -558,7 +560,11 @@ export class NativeRenderer implements Renderer {
     return filters;
   }
 
-  render(p: FrameParams): FrameResult {
+  render(params: FrameParams): FrameResult {
+    // A frame that drew the scene was dropped (too many in flight): the next one draws it, or the
+    // viewport would composite the old scene until the view next changes. A composite-only frame's
+    // plan is empty and its blend keeps the heat as it is, so drawing it does not change the heat.
+    const p = this.sceneOwed && params.compositeOnly ? { ...params, compositeOnly: false } : params;
     const w = this.writer;
     w.begin(++this.seq);
     const all = this.seq === 1 || this.resend;
@@ -684,8 +690,10 @@ export class NativeRenderer implements Renderer {
         })
         .catch(() => {})
         .finally(() => this.inFlight--);
+      this.sceneOwed = false;
     } else {
       this.resend = true;
+      if (!p.compositeOnly) this.sceneOwed = true;
     }
     return { gpuMs: null };
   }
