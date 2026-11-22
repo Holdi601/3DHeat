@@ -14,6 +14,8 @@ use serde_json::{json, Value};
 use crate::meta::Meta;
 
 pub const SCHEMA_VERSION: i64 = 1;
+/// Bumped when the level reader names levels differently: the catalogue's levels are then read again.
+const LEVELS_READ: &str = "2";
 
 const SCHEMA: &str = r#"
 CREATE TABLE IF NOT EXISTS kv (key TEXT PRIMARY KEY, value TEXT);
@@ -130,6 +132,12 @@ pub fn open(path: &Path) -> Result<Connection> {
     c.execute_batch("PRAGMA journal_mode = WAL; PRAGMA synchronous = NORMAL; PRAGMA foreign_keys = ON; PRAGMA temp_store = MEMORY; PRAGMA cache_size = -65536;")?;
     c.execute_batch(SCHEMA)?;
     c.execute("INSERT INTO kv(key, value) VALUES ('schema', ?1) ON CONFLICT(key) DO NOTHING", params![SCHEMA_VERSION.to_string()])?;
+    // Levels read before their map was the game's own name (a DCS region is its
+    // theatre's, `meta::read_level`) are read again by the next scan: they are few.
+    if kv_get(&c, "levels-read").as_deref() != Some(LEVELS_READ) {
+        c.execute("UPDATE items SET mtime = 0 WHERE kind = 'level'", [])?;
+        kv_set(&c, "levels-read", LEVELS_READ)?;
+    }
     Ok(c)
 }
 
@@ -646,7 +654,7 @@ pub fn detail(c: &Connection, id: i64) -> Result<Option<Value>> {
     if let (Some(g), Some(m)) = (d["game"].as_str().map(str::to_owned), d["map"].as_str().map(str::to_owned)) {
         if d["kind"] != "level" {
             let lvl: Option<(i64, String)> = c
-                .query_row("SELECT id, name FROM items WHERE kind = 'level' AND game = ?1 AND map = ?2 COLLATE NOCASE AND missing = 0 LIMIT 1", params![g, m], |r| Ok((r.get(0)?, r.get(1)?)))
+                .query_row("SELECT id, name FROM items WHERE kind = 'level' AND game = ?1 AND map = ?2 COLLATE NOCASE AND missing = 0 ORDER BY name COLLATE NOCASE LIMIT 1", params![g, m], |r| Ok((r.get(0)?, r.get(1)?)))
                 .optional()?;
             d["level"] = lvl.map(|(i, n)| json!({ "id": i, "name": n })).unwrap_or(Value::Null);
         }

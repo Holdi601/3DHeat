@@ -43,6 +43,9 @@ fn setup(t: &Path, version: &str) -> (PathBuf, PathBuf) {
         &levels.join("warthunder/fake_map/fake_map.json"),
         br#"{"format":"x","tool":"fake-level 1.0","maps":[{"kind":"map","file":"fake_map_map.png","gameRect":{"x0":-200,"z0":-400,"x1":800,"z1":600}}]}"#,
     );
+    // A DCS level is one region of its theatre; recordings name the theatre.
+    write(&levels.join("dcs/Caucasus/r1/Caucasus_r1.glb"), b"glTF dcs");
+    write(&levels.join("dcs/Caucasus/r1/Caucasus_r1.json"), br#"{"tool":"heat3d_ext_dcs","theatre":"Caucasus","level":"Caucasus_r1"}"#);
     let exe = env!("CARGO_BIN_EXE_fake-converter");
     write(
         &data.join("extractors/installed.json"),
@@ -129,6 +132,7 @@ fn scans_reads_converts_and_extracts() {
     let a = find(&lib, "Tacview-20260101-120000-DCS-Test.txt.acmi");
     let ad = detail(&lib, a);
     assert_eq!((ad["game"].as_str(), ad["map"].as_str(), ad["title"].as_str()), (Some("dcs"), Some("Caucasus"), Some("Test mission")));
+    assert_eq!(ad["level"]["name"].as_str(), Some("Caucasus_r1.glb"), "{}", ad["level"]);
     while scan::deep_round(&lib, 64).unwrap() > 0 {}
     let ad = detail(&lib, a);
     assert_eq!(ad["extra"]["pilots"], 3);

@@ -528,6 +528,15 @@ pub fn theatre_at(game: Option<&str>, lat: f64, lon: f64) -> Option<&'static str
         .map(|t| t.1)
 }
 
+/// DCS terrain folders (`Mods/terrains/<folder>`, as the DCS converter names a
+/// theatre) whose theatre id differs (as `DCS_FOLDERS` in `src/world/theatres.ts`).
+const DCS_FOLDERS: &[(&str, &str)] = &[("GermanyColdWar", "GermanyCW"), ("MarianasWWII", "MarianaIslandsWWII"), ("Sinai", "SinaiMap")];
+
+/// The theatre id of a DCS terrain folder (the folder itself when it is the id).
+pub fn dcs_theatre(folder: &str) -> &str {
+    DCS_FOLDERS.iter().find(|(f, _)| f.eq_ignore_ascii_case(folder)).map_or(folder, |(_, id)| id)
+}
+
 /// A recording's header (the globals before the first time frame); `deep` reads
 /// on to the end: the length, the pilots, a sample of positions.
 pub fn read_acmi(path: &Path, deep: bool) -> Result<Meta> {
@@ -898,6 +907,11 @@ pub fn read_level(path: &Path) -> Result<Meta> {
             if let Some(t) = str_of(&v, "tool") {
                 m.converter = Some(t);
             }
+            // A DCS level is one region of a theatre (`Caucasus_r1`, `Caucasus_Beslan`):
+            // its map is the theatre, the name recordings and missions use.
+            if let Some(t) = str_of(&v, "theatre") {
+                m.map = Some(dcs_theatre(&t).to_owned());
+            }
             if let Some(maps) = v.get("maps").and_then(Value::as_array) {
                 for mp in maps {
                     if let (Some(file), Some(r)) = (str_of(mp, "file"), mp.get("gameRect")) {
@@ -1036,6 +1050,22 @@ mod tests {
         assert_eq!(theatre_at(Some("dcs"), 50.5, 1.5), Some("TheChannel"));
         assert_eq!(theatre_at(Some("il2"), 45.0, 38.0), Some("Kuban"));
         assert_eq!(theatre_at(Some("dcs"), 0.0, 0.0), None);
+    }
+
+    #[test]
+    fn dcs_levels_are_their_theatre() {
+        let dir = tempfile::tempdir().unwrap();
+        for (stem, theatre) in [("Caucasus_r1", "Caucasus"), ("GermanyCW_r2", "GermanyColdWar"), ("Normandy-Caen", "Normandy")] {
+            std::fs::write(dir.path().join(format!("{stem}.glb")), b"glTF").unwrap();
+            std::fs::write(dir.path().join(format!("{stem}.json")), format!(r#"{{"tool":"heat3d_ext_dcs","theatre":"{theatre}","level":"{stem}"}}"#)).unwrap();
+        }
+        let m = read_level(&dir.path().join("Caucasus_r1.glb")).unwrap();
+        assert_eq!((m.map.as_deref(), m.title.as_deref()), (Some("Caucasus"), Some("Caucasus_r1")));
+        assert_eq!(read_level(&dir.path().join("GermanyCW_r2.glb")).unwrap().map.as_deref(), Some("GermanyCW"));
+        assert_eq!(read_level(&dir.path().join("Normandy-Caen.glb")).unwrap().map.as_deref(), Some("Normandy"));
+        // A level without a theatre keeps its own name.
+        std::fs::write(dir.path().join("de_alpha.glb"), b"glTF").unwrap();
+        assert_eq!(read_level(&dir.path().join("de_alpha.glb")).unwrap().map.as_deref(), Some("de_alpha"));
     }
 
     #[test]

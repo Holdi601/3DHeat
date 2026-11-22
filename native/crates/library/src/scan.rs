@@ -152,7 +152,8 @@ pub fn level_pictures(lib: &Library) -> HashMap<(String, String), Vec<(String, [
                 Some((p["file"].as_str()?.to_owned(), [r.first()?.as_f64()? as f32, r.get(1)?.as_f64()? as f32, r.get(2)?.as_f64()? as f32, r.get(3)?.as_f64()? as f32]))
             })
             .collect();
-        out.insert((g, m.to_ascii_lowercase()), pics);
+        // Several levels of one map (a DCS theatre's regions): all their pictures, the best is picked per item.
+        out.entry((g, m.to_ascii_lowercase())).or_insert_with(Vec::new).extend(pics);
     }
     out
 }
