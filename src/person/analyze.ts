@@ -36,6 +36,10 @@ export interface PersonFilter {
   /** From where against the victim's facing: front, side, back. */
   from?: ('front' | 'side' | 'back')[] | null;
   penetrated?: 'yes' | 'no' | null;
+  /** Surface materials a traced shot passed (a hit passing any of them). */
+  wallSurfaces?: string[] | null;
+  /** Solid a traced shot passed in all, centimetres. */
+  wallThickness?: Range | null;
   kill?: 'yes' | 'no' | null;
   won?: 'won' | 'lost' | null;
   helmet?: 'yes' | 'no' | null;
@@ -64,6 +68,9 @@ export interface RegionStat {
   absorbed: number;
   absorbedN: number;
 }
+
+/** A traced shot's surface materials, from the shooter on (`wood_panel;concrete`). */
+export const surfacesOf = (v: string): string[] => (v ? v.split(';').filter(Boolean) : []);
 
 const inSet = (list: string[] | null | undefined, v: string) => !list || !list.length || list.includes(v);
 const inRange = (r: Range | null | undefined, v: number) => !r || (Number.isFinite(v) && v >= r[0] && v <= r[1]);
@@ -113,6 +120,16 @@ export function compileFilter(s: PersonStore, f: PersonFilter): (i: number) => b
   if (f.calibre) tests.push((i) => inRange(f.calibre, c.num.calibre[i]));
   if (f.from?.length) tests.push((i) => (f.from as string[]).includes(sideOfAngle(c.num.angle[i])));
   if (f.penetrated) tests.push((i) => c.int.penetrated[i] === (f.penetrated === 'yes' ? 1 : 0));
+  if (f.wallSurfaces?.length) {
+    // The dictionary holds each hit's materials as one text: the codes naming any material picked.
+    const want = new Set(f.wallSurfaces), codes = new Set<number>();
+    s.dicts.wallSurfaces.list.forEach((v, code) => {
+      if (surfacesOf(v).some((m) => want.has(m))) codes.add(code);
+    });
+    const ids = c.txt.wallSurfaces;
+    tests.push((i) => codes.has(ids[i]));
+  }
+  if (f.wallThickness) tests.push((i) => c.int.wallMm[i] >= 0 && inRange(f.wallThickness, c.int.wallMm[i] / 10));
   if (f.kill) tests.push((i) => c.int.kill[i] === (f.kill === 'yes' ? 1 : 0));
   if (f.won) tests.push((i) => c.int.won[i] === (f.won === 'won' ? 1 : 0));
   if (f.helmet) tests.push((i) => c.int.helmet[i] === (f.helmet === 'yes' ? 1 : 0));
@@ -452,6 +469,15 @@ export function facetsOf(s: PersonStore): Facets {
     const m = s.mapOf(i);
     if (m) maps.set(m, (maps.get(m) ?? 0) + 1);
   }
+  // The materials a traced shot passed, each on its own (a hit through wood and concrete counts in both).
+  const codes = new Uint32Array(s.dicts.wallSurfaces.list.length);
+  const ids = s.cols.txt.wallSurfaces;
+  for (let i = 0; i < s.n; i++) codes[ids[i]]++;
+  const surfaces = new Map<string, number>();
+  codes.forEach((n, code) => {
+    if (n) for (const m of new Set(surfacesOf(s.dicts.wallSurfaces.list[code]))) surfaces.set(m, (surfaces.get(m) ?? 0) + n);
+  });
+  out.wallSurfaces = [...surfaces.entries()].sort((a, b) => b[1] - a[1]);
   out.game = [...games.entries()].sort((a, b) => b[1] - a[1]);
   out.map = [...maps.entries()].sort((a, b) => b[1] - a[1]);
   return out;
@@ -476,6 +502,194 @@ export function coverageOf(s: PersonStore, rows?: ArrayLike<number>): Coverage {
     for (const f of SOURCE_FIELDS) e.fields[f][c.src[f][i]]++;
   }
   return out;
+}
+
+// ---------------------------------------------------------------------------
+// The hits as rows for the dashboards, and one hit for its card.
+
+export interface PersonRows {
+  n: number;
+  total: number;
+  time: Float32Array;
+  x: Float32Array;
+  y: Float32Array;
+  z: Float32Array;
+  match: Uint32Array;
+  matchLabels: string[];
+  player: Uint32Array;
+  playerLabels: string[];
+  team: Uint32Array;
+  teamLabels: string[];
+  cats: { name: string; codes: Uint32Array; labels: string[] }[];
+  nums: { name: string; data: Float32Array }[];
+}
+
+/** A hit's traced thickness in centimetres (NaN not traced). */
+const wallCm = (s: PersonStore, i: number) => (s.cols.int.wallMm[i] >= 0 ? s.cols.int.wallMm[i] / 10 : NaN);
+
+/** The hits `all` (indices) as a table for the dashboards: an even sample past `limit`. */
+export function hitRows(store: PersonStore, all: Uint32Array, limit: number): PersonRows {
+  const n = Math.min(all.length, limit);
+  const pick = (k: number) => all[n === all.length ? k : Math.floor((k * all.length) / n)];
+  const c = store.cols;
+  const f32 = () => new Float32Array(n);
+  const time = f32(), x = f32(), y = f32(), z = f32();
+  const match = new Uint32Array(n), player = new Uint32Array(n), team = new Uint32Array(n);
+  const playerLabels = store.dicts.victim.list, teamLabels = store.dicts.victimSide.list;
+  const catNames = {
+    game: 'game', map: 'map', weapon: 'weapon', weaponClass: 'weapon class', ammo: 'ammo', ammoType: 'ammo type', armor: 'armour', victim: 'victim', shooter: 'shooter', victimSide: 'side', shooterSide: 'shooter side', victimRole: 'role', victimState: 'victim state', shooterState: 'shooter state', region: 'region', zone: 'zone', from: 'from', wallSurfaces: 'material passed',
+  } as const;
+  const cats = Object.entries(catNames).map(([key, name]) => ({ key, name, codes: new Uint32Array(n), labels: [] as string[] }));
+  const catOf = (key: string) => cats.find((q) => q.key === key)!;
+  const mapDict = new Map<string, number>(), gameLabels = [...GAMES] as string[], regionLabels = ['', 'head', 'chest', 'stomach', 'left_arm', 'right_arm', 'left_leg', 'right_leg'], zoneLabels = ['', 'head', 'body', 'legs'], fromLabels = ['', 'front', 'side', 'back'];
+  const mapLabels: string[] = [''];
+  const numNames = ['distance', 'angle', 'elevation', 'damage', 'damageRaw', 'whole', 'armorDamage', 'absorbed', 'armorBefore', 'calibre', 'victimSpeed', 'shooterSpeed', 'kill', 'headshot', 'penetrated', 'wallCount', 'wallThickness', 'wallGrates', 'helmet', 'won', 'round'] as const;
+  const nums = numNames.map((name) => ({ name, data: f32() }));
+  const numOf = (name: string) => nums.find((v) => v.name === name)!.data;
+  const flag = (v: number) => (v < 0 ? NaN : v);
+  for (let k = 0; k < n; k++) {
+    const i = pick(k);
+    time[k] = c.num.time[i];
+    x[k] = c.num.x[i];
+    y[k] = c.num.y[i];
+    z[k] = c.num.z[i];
+    match[k] = store.match[i];
+    player[k] = c.txt.victim[i];
+    team[k] = c.txt.victimSide[i];
+    catOf('game').codes[k] = c.int.game[i];
+    const mp = store.mapOf(i);
+    let mc = mapDict.get(mp);
+    if (mc === undefined) {
+      mc = mapLabels.length;
+      mapLabels.push(mp);
+      mapDict.set(mp, mc);
+    }
+    catOf('map').codes[k] = mc;
+    for (const key of ['weapon', 'weaponClass', 'ammo', 'ammoType', 'armor', 'victim', 'shooter', 'victimSide', 'shooterSide', 'victimRole', 'victimState', 'shooterState', 'wallSurfaces'] as const) catOf(key).codes[k] = c.txt[key][i];
+    const g = c.int.hitgroup[i];
+    catOf('region').codes[k] = regionOfGroup(g) + 1;
+    catOf('zone').codes[k] = zoneOfGroup(g) + 1;
+    const side = sideOfAngle(c.num.angle[i]);
+    catOf('from').codes[k] = side ? fromLabels.indexOf(side) : 0;
+    numOf('distance')[k] = c.num.distance[i];
+    numOf('angle')[k] = c.num.angle[i];
+    numOf('elevation')[k] = c.num.elevation[i];
+    numOf('damage')[k] = c.num.damage[i];
+    numOf('damageRaw')[k] = c.num.damageRaw[i];
+    numOf('whole')[k] = wholeDamage(store, i);
+    numOf('armorDamage')[k] = c.num.armorDamage[i];
+    numOf('absorbed')[k] = c.num.absorbed[i];
+    numOf('armorBefore')[k] = c.num.armorBefore[i];
+    numOf('calibre')[k] = c.num.calibre[i];
+    numOf('victimSpeed')[k] = c.num.victimSpeed[i];
+    numOf('shooterSpeed')[k] = c.num.shooterSpeed[i];
+    numOf('kill')[k] = flag(c.int.kill[i]);
+    numOf('headshot')[k] = g ? (zoneOfGroup(g) === 0 ? 1 : 0) : NaN;
+    numOf('penetrated')[k] = flag(c.int.penetrated[i]);
+    numOf('wallCount')[k] = flag(c.int.walls[i]);
+    numOf('wallThickness')[k] = wallCm(store, i);
+    numOf('wallGrates')[k] = flag(c.int.grates[i]);
+    numOf('helmet')[k] = flag(c.int.helmet[i]);
+    numOf('won')[k] = flag(c.int.won[i]);
+    numOf('round')[k] = c.int.round[i];
+  }
+  catOf('game').labels = gameLabels;
+  catOf('map').labels = mapLabels;
+  for (const key of ['weapon', 'weaponClass', 'ammo', 'ammoType', 'armor', 'victim', 'shooter', 'shooterSide', 'victimRole', 'victimState', 'shooterState'] as const) catOf(key).labels = store.dicts[key].list;
+  catOf('victimSide').labels = store.dicts.victimSide.list;
+  catOf('wallSurfaces').labels = store.dicts.wallSurfaces.list.map((v) => surfacesOf(v).join(', '));
+  catOf('region').labels = regionLabels;
+  catOf('zone').labels = zoneLabels;
+  catOf('from').labels = fromLabels;
+  return {
+    n,
+    total: all.length,
+    time,
+    x,
+    y,
+    z,
+    match,
+    matchLabels: store.matches.map((mm) => mm.id),
+    player,
+    playerLabels,
+    team,
+    teamLabels,
+    cats: cats.map(({ name, codes, labels }) => ({ name, codes, labels })),
+    nums,
+  };
+}
+
+/** One hit's whole record, for its card (NaN, -1 and '' not known; sources by name). */
+export interface PersonHitDetail {
+  index: number;
+  game: string;
+  map: string;
+  match: string;
+  time: number;
+  round: number;
+  victim: string;
+  victimSide: string;
+  shooter: string;
+  shooterSide: string;
+  weapon: string;
+  weaponClass: string;
+  ammo: string;
+  hitgroup: string;
+  damage: number;
+  damageRaw: number;
+  armor: string;
+  absorbed: number;
+  helmet: number;
+  distance: number;
+  distanceSource: string;
+  angle: number;
+  kill: number;
+  smoke: number;
+  /** Through a wall: 1, 0, -1 not known; its source (`derived` for CS2: traced through the map). */
+  penetrated: number;
+  penetrationSource: string;
+  /** The trace: solid objects passed, their thickness in all (cm), the materials in order, fences and grates (-1, NaN not traced). */
+  walls: number;
+  wallCm: number;
+  surfaces: string[];
+  grates: number;
+}
+
+export function hitDetail(s: PersonStore, i: number): PersonHitDetail | null {
+  if (!(i >= 0 && i < s.n)) return null;
+  const c = s.cols;
+  return {
+    index: i,
+    game: s.gameOf(i),
+    map: s.mapOf(i),
+    match: s.matches[s.match[i]]?.id ?? '',
+    time: c.num.time[i],
+    round: c.int.round[i],
+    victim: s.text('victim', i),
+    victimSide: s.text('victimSide', i),
+    shooter: s.text('shooter', i),
+    shooterSide: s.text('shooterSide', i),
+    weapon: s.text('weapon', i),
+    weaponClass: s.text('weaponClass', i),
+    ammo: s.text('ammo', i),
+    hitgroup: HITGROUPS[c.int.hitgroup[i]] ?? 'unknown',
+    damage: c.num.damage[i],
+    damageRaw: c.num.damageRaw[i],
+    armor: s.text('armor', i),
+    absorbed: c.num.absorbed[i],
+    helmet: c.int.helmet[i],
+    distance: c.num.distance[i],
+    distanceSource: SOURCES[c.src.distance[i]],
+    angle: c.num.angle[i],
+    kill: c.int.kill[i],
+    smoke: c.int.smoke[i],
+    penetrated: c.int.penetrated[i],
+    penetrationSource: SOURCES[c.src.penetration[i]],
+    walls: c.int.walls[i],
+    wallCm: wallCm(s, i),
+    surfaces: surfacesOf(s.text('wallSurfaces', i)),
+    grates: c.int.grates[i],
+  };
 }
 
 export { SOURCES };

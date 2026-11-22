@@ -6,8 +6,16 @@ import { isOcapRecording, ocapHits } from './readOcap';
 import { extractR6Hits } from './readR6';
 import { extractSquadHits } from './readSquad';
 import { PersonStore } from './store';
-import { armourEffect, compileFilter, coverageOf, falloff, headshotRate, regionStats, selected, topBy, wholeDamage } from './analyze';
-import { HG_BODY, HG_HEAD, SRC_DERIVED, SRC_ESTIMATE, SRC_RECORDED, angleFromFacing, hitGroupOf, regionOfGroup, zoneOfGroup, type PersonMatch } from './types';
+import { armourEffect, compileFilter, coverageOf, facetsOf, falloff, headshotRate, hitDetail, hitRows, regionStats, selected, topBy, wholeDamage } from './analyze';
+import { wallText } from './card';
+import { datasetOf, wallbangs } from './dashSource';
+import { catalogOf } from '../dashboards/fields';
+import { finishTile, type TileData } from '../dashboards/finish';
+import { NO_LINK, planTile } from '../dashboards/plan';
+import { Engine, mergePartials, runAll } from '../dashboards/query';
+import { queryColumns, storeOf } from '../dashboards/columns';
+import type { Tile } from '../dashboards/model';
+import { HG_BODY, HG_HEAD, SRC_DERIVED, SRC_ESTIMATE, SRC_RECORDED, SRC_UNKNOWN, angleFromFacing, hitGroupOf, regionOfGroup, zoneOfGroup, type PersonMatch } from './types';
 import { armaAmmo, splitOcapWeapon } from './weapons';
 import { armaMagazineFacts, armaRoleArmour, calibreOfAmmoId, setArmaFacts, type ArmaFact } from './armaGear';
 import { bodyOfPlates, drawBody, genericBody } from './body';
@@ -325,6 +333,123 @@ describe('the analysis', () => {
     expect(cov.cs2.hits).toBe(2);
     expect(cov.cs2.fields.hitgroup[SRC_RECORDED]).toBe(2);
     expect(cov.valorant.fields.distance[SRC_DERIVED]).toBe(2);
+  });
+});
+
+/**
+ * The made-up CS2 table with the shots traced through the map (CS2 tool 1.3.0): the body hit through two surfaces and
+ * a fence, the killing hit (the trace saw a clear line, the game says through a wall), a clear hit, a grenade not traced.
+ */
+function cs2TracedRows() {
+  const rows = cs2Rows();
+  Object.assign(rows.find((r) => r.event === 'hurt' && r.time === 1)!, { wallbang: 1, wallCount: 2, wallThickness: 0.14, wallSurfaces: 'wood_panel;concrete', wallGrates: 1 });
+  Object.assign(rows.find((r) => r.event === 'hurt' && r.time === 2)!, { wallbang: 0, wallCount: 0, wallThickness: 0, wallSurfaces: '', wallGrates: 0 });
+  const hurt = { event: 'hurt', player: 'V', other: 'S', side: 'T', x: 0, y: 0, z: 0, armor: 93, armorDamage: 0, hitgroup: 'stomach', detail: '', won: 0, steamid: '1' };
+  rows.push({ ...hurt, time: 1.5, damage: 10, health: 63, weapon: 'AK-47', wallbang: 0, wallCount: 0, wallThickness: 0, wallSurfaces: '', wallGrates: 0 });
+  rows.push({ ...hurt, time: 1.75, damage: 3, health: 60, weapon: 'hegrenade', wallbang: null, wallCount: null, wallThickness: null, wallSurfaces: '', wallGrates: null });
+  return rows.sort((a, b) => (a.time as number) - (b.time as number));
+}
+
+describe('CS2 wallbangs on every hit', () => {
+  const block = () => extractCs2Hits(columnsOf(cs2TracedRows()), match('cs2'));
+  const at = (b: ReturnType<typeof block>, t: number) => Array.from(b.cols.num.time).indexOf(t);
+  it('takes the traced shot on a hit that did not kill, as derived', () => {
+    const b = block();
+    const i = at(b, 1);
+    const { int: I, src: S } = b.cols;
+    expect(I.penetrated[i]).toBe(1);
+    expect(S.penetration[i]).toBe(SRC_DERIVED);
+    expect(I.walls[i]).toBe(2);
+    expect(I.wallMm[i]).toBe(140);
+    expect(I.grates[i]).toBe(1);
+    expect(b.dicts.wallSurfaces[b.cols.txt.wallSurfaces[i]]).toBe('wood_panel;concrete');
+    // A clear line: not through a wall, derived too.
+    const j = at(b, 1.5);
+    expect(I.penetrated[j]).toBe(0);
+    expect(S.penetration[j]).toBe(SRC_DERIVED);
+    expect(I.walls[j]).toBe(0);
+  });
+  it('keeps the game’s own answer on the killing hit', () => {
+    const b = block();
+    const i = at(b, 2);
+    expect(b.cols.int.kill[i]).toBe(1);
+    expect(b.cols.int.penetrated[i]).toBe(1);
+    expect(b.cols.src.penetration[i]).toBe(SRC_RECORDED);
+    expect(b.cols.int.walls[i]).toBe(0);
+  });
+  it('leaves a hit the tool did not trace, and every hit of an older table, not known', () => {
+    const b = block();
+    const g = at(b, 1.75);
+    expect(b.cols.int.penetrated[g]).toBe(-1);
+    expect(b.cols.src.penetration[g]).toBe(SRC_UNKNOWN);
+    expect(b.cols.int.walls[g]).toBe(-1);
+    expect(b.cols.int.wallMm[g]).toBe(-1);
+    expect(b.cols.txt.wallSurfaces[g]).toBe(0);
+    const old = extractCs2Hits(columnsOf(cs2Rows()), match('cs2'));
+    expect(old.cols.int.penetrated[0]).toBe(-1);
+    expect(old.cols.src.penetration[0]).toBe(SRC_UNKNOWN);
+    expect(old.cols.int.walls[0]).toBe(-1);
+    expect(old.cols.int.grates[0]).toBe(-1);
+    expect(old.cols.int.penetrated[1]).toBe(1);
+    expect(old.cols.src.penetration[1]).toBe(SRC_RECORDED);
+  });
+  const store = () => {
+    const s = new PersonStore();
+    s.add(block());
+    return s;
+  };
+  it('filters by through a wall, the material and the thickness', () => {
+    const s = store();
+    const times = (f: Parameters<typeof selected>[1]) => Array.from(selected(s, f), (i) => s.cols.num.time[i]).sort();
+    expect(times({ penetrated: 'yes' })).toEqual([1, 2]);
+    expect(times({ penetrated: 'no' })).toEqual([1.5]);
+    expect(times({ wallSurfaces: ['concrete'] })).toEqual([1]);
+    expect(times({ wallSurfaces: ['glass'] })).toEqual([]);
+    expect(times({ wallThickness: [10, 20] })).toEqual([1]);
+    expect(times({ wallThickness: [0, 5] })).toEqual([1.5, 2]);
+    expect(facetsOf(s).wallSurfaces).toEqual([
+      ['wood_panel', 1],
+      ['concrete', 1],
+    ]);
+  });
+  it('says it on the hit’s card', () => {
+    const s = store();
+    const card = (t: number) => wallText(hitDetail(s, Array.from(s.cols.num.time.subarray(0, s.n)).indexOf(t))!);
+    expect(card(1)).toBe('yes (2 surfaces: wood_panel, concrete, 14 cm, 1 fence or grate) - traced through the map');
+    expect(card(1.5)).toBe('no - traced through the map');
+    expect(card(2)).toBe('yes - recorded by the game');
+    expect(card(1.75)).toBe('not known');
+    expect(hitDetail(s, s.n)).toBeNull();
+  });
+  it('gives the Wallbangs dashboard its rate, thickness and materials', () => {
+    const s = store();
+    const r = hitRows(s, selected(s, {}), 1000);
+    expect(r.nums.find((x) => x.name === 'wallThickness')!.data[0]).toBeCloseTo(14);
+    const ds = datasetOf(r);
+    const b = wallbangs();
+    const cat = catalogOf(ds, b.dashboard);
+    const page = { ...b.pages[0], filters: [] };
+    const run = (tile: Tile): TileData => {
+      const plan = planTile(cat, b.dashboard, page, tile, { pageId: page.id, selection: null, drill: {}, through: null }, NO_LINK)!;
+      const e = new Engine(storeOf(ds, queryColumns(plan.queries)));
+      const parts = runAll(e.run(plan.queries));
+      const results = new Map(plan.queries.map((q, k) => [q.id, mergePartials(q, [parts[k]])]));
+      return finishTile(cat, tile, plan, results);
+    };
+    const tile = (title: string) => b.tiles.find((x) => x.title === title)!;
+    const kpi = (title: string) => {
+      const d = run(tile(title));
+      if (d.kind !== 'kpi') throw new Error(`not a kpi: ${d.kind}`);
+      return d.value;
+    };
+    // Two of the four hits through a wall (the derived non-lethal one and the recorded kill); 14 cm passed.
+    expect(kpi('Through a wall')).toBeCloseTo(0.5);
+    expect(kpi('Wall passed (cm)')).toBeCloseTo(14);
+    const t = run(tile('By material passed'));
+    if (t.kind !== 'table') throw new Error(`not a table: ${t.kind}`);
+    const row = t.rows.find((x) => x.labels[0] === 'wood_panel, concrete');
+    expect(row?.values[0]).toBe(1);
+    expect(row?.values[1]).toBeCloseTo(14);
   });
 });
 

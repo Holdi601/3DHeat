@@ -7,10 +7,12 @@
  */
 
 import type { ChartData } from '../charts/types';
-import { armourEffect, compileFilter, coverageOf, distanceHistogram, facetsOf, falloff, headshotRate, metricOf, regionStats, topBy, wholeDamage, type Coverage, type Facets, type PersonFilter, type RegionMetric, type RegionStat, type TopField, type TopRow } from './analyze';
+import { armourEffect, compileFilter, coverageOf, distanceHistogram, facetsOf, falloff, headshotRate, hitDetail, hitRows, metricOf, regionStats, topBy, type Coverage, type Facets, type PersonFilter, type PersonHitDetail, type PersonRows, type RegionMetric, type RegionStat, type TopField, type TopRow } from './analyze';
 import { PersonStore } from './store';
 import type { PersonScanReply, PersonScanRequest } from './scanWorker';
-import { GAMES, HITGROUPS, SOURCES, SOURCE_FIELDS, regionOfGroup, sideOfAngle, zoneOfGroup } from './types';
+import { HITGROUPS, SOURCES, SOURCE_FIELDS, regionOfGroup } from './types';
+
+export type { PersonHitDetail, PersonRows };
 
 export interface PersonLoadStats {
   files: number;
@@ -42,29 +44,12 @@ export interface PersonView {
   values: number[];
   lo: number;
   hi: number;
-  /** A sample of hit points on the body (x, y, z in the figure frame, metres) with region and kill. */
-  marks: { x: Float32Array; y: Float32Array; z: Float32Array; region: Int8Array; kill: Int8Array };
+  /** A sample of hit points on the body (x, y, z in the figure frame, metres) with region, kill and the hit's index (for its card). */
+  marks: { x: Float32Array; y: Float32Array; z: Float32Array; region: Int8Array; kill: Int8Array; index: Uint32Array };
   charts: ChartData[];
   tops: Record<TopField, TopRow[]>;
   /** Per game: the share of each field's sources among the kept hits. */
   coverage: Coverage;
-}
-
-export interface PersonRows {
-  n: number;
-  total: number;
-  time: Float32Array;
-  x: Float32Array;
-  y: Float32Array;
-  z: Float32Array;
-  match: Uint32Array;
-  matchLabels: string[];
-  player: Uint32Array;
-  playerLabels: string[];
-  team: Uint32Array;
-  teamLabels: string[];
-  cats: { name: string; codes: Uint32Array; labels: string[] }[];
-  nums: { name: string; data: Float32Array }[];
 }
 
 export type PersonWorkerRequest =
@@ -72,6 +57,7 @@ export type PersonWorkerRequest =
   | { type: 'cancel' }
   | { id: number; type: 'view'; filter: PersonFilter; metric: RegionMetric; mode: 'auto' | 'fine' | 'coarse'; marks: number }
   | { id: number; type: 'rows'; filter: PersonFilter; limit: number }
+  | { id: number; type: 'hit'; index: number }
   | { id: number; type: 'coverage' };
 
 export type PersonWorkerReply =
@@ -207,7 +193,7 @@ function view(q: Extract<PersonWorkerRequest, { type: 'view' }>): PersonView {
   const c = store.cols;
   for (let j = 0; j < rows.length; j++) if (Number.isFinite(c.num.localX[rows[j]])) withPoint.push(rows[j]);
   const m = Math.min(q.marks, withPoint.length);
-  const marks = { x: new Float32Array(m), y: new Float32Array(m), z: new Float32Array(m), region: new Int8Array(m), kill: new Int8Array(m) };
+  const marks = { x: new Float32Array(m), y: new Float32Array(m), z: new Float32Array(m), region: new Int8Array(m), kill: new Int8Array(m), index: new Uint32Array(m) };
   for (let k = 0; k < m; k++) {
     const i = withPoint[Math.floor((k * withPoint.length) / m)];
     marks.x[k] = c.num.localX[i];
@@ -215,6 +201,7 @@ function view(q: Extract<PersonWorkerRequest, { type: 'view' }>): PersonView {
     marks.z[k] = c.num.localZ[i];
     marks.region[k] = regionOfGroup(c.int.hitgroup[i]);
     marks.kill[k] = c.int.kill[i];
+    marks.index[k] = i;
   }
   const tops = {} as Record<TopField, TopRow[]>;
   for (const f of ['weapon', 'shooter', 'victim', 'armor', 'victimRole', 'ammo'] as const) tops[f] = topBy(store, rows, f);
@@ -237,91 +224,7 @@ function view(q: Extract<PersonWorkerRequest, { type: 'view' }>): PersonView {
 
 /** The kept hits as a table for the dashboards: an even sample past `limit`. */
 function rows(q: Extract<PersonWorkerRequest, { type: 'rows' }>): PersonRows {
-  const all = rowsOf(q.filter);
-  const n = Math.min(all.length, q.limit);
-  const pick = (k: number) => all[n === all.length ? k : Math.floor((k * all.length) / n)];
-  const c = store.cols;
-  const f32 = () => new Float32Array(n);
-  const time = f32(), x = f32(), y = f32(), z = f32();
-  const match = new Uint32Array(n), player = new Uint32Array(n), team = new Uint32Array(n);
-  const playerLabels = store.dicts.victim.list, teamLabels = store.dicts.victimSide.list;
-  const catNames = {
-    game: 'game', map: 'map', weapon: 'weapon', weaponClass: 'weapon class', ammo: 'ammo', ammoType: 'ammo type', armor: 'armour', victim: 'victim', shooter: 'shooter', victimSide: 'side', shooterSide: 'shooter side', victimRole: 'role', victimState: 'victim state', shooterState: 'shooter state', region: 'region', zone: 'zone', from: 'from',
-  } as const;
-  const cats = Object.entries(catNames).map(([key, name]) => ({ key, name, codes: new Uint32Array(n), labels: [] as string[] }));
-  const catOf = (key: string) => cats.find((x) => x.key === key)!;
-  const mapDict = new Map<string, number>(), gameLabels = [...GAMES] as string[], regionLabels = ['', 'head', 'chest', 'stomach', 'left_arm', 'right_arm', 'left_leg', 'right_leg'], zoneLabels = ['', 'head', 'body', 'legs'], fromLabels = ['', 'front', 'side', 'back'];
-  const mapLabels: string[] = [''];
-  const numNames = ['distance', 'angle', 'elevation', 'damage', 'damageRaw', 'whole', 'armorDamage', 'absorbed', 'armorBefore', 'calibre', 'victimSpeed', 'shooterSpeed', 'kill', 'headshot', 'penetrated', 'helmet', 'won', 'round'] as const;
-  const nums = numNames.map((name) => ({ name, data: f32() }));
-  const numOf = (name: string) => nums.find((v) => v.name === name)!.data;
-  const flag = (v: number) => (v < 0 ? NaN : v);
-  for (let k = 0; k < n; k++) {
-    const i = pick(k);
-    time[k] = c.num.time[i];
-    x[k] = c.num.x[i];
-    y[k] = c.num.y[i];
-    z[k] = c.num.z[i];
-    match[k] = store.match[i];
-    player[k] = c.txt.victim[i];
-    team[k] = c.txt.victimSide[i];
-    catOf('game').codes[k] = c.int.game[i];
-    const mp = store.mapOf(i);
-    let mc = mapDict.get(mp);
-    if (mc === undefined) {
-      mc = mapLabels.length;
-      mapLabels.push(mp);
-      mapDict.set(mp, mc);
-    }
-    catOf('map').codes[k] = mc;
-    for (const key of ['weapon', 'weaponClass', 'ammo', 'ammoType', 'armor', 'victim', 'shooter', 'victimSide', 'shooterSide', 'victimRole', 'victimState', 'shooterState'] as const) catOf(key).codes[k] = c.txt[key][i];
-    const g = c.int.hitgroup[i];
-    catOf('region').codes[k] = regionOfGroup(g) + 1;
-    catOf('zone').codes[k] = zoneOfGroup(g) + 1;
-    const side = sideOfAngle(c.num.angle[i]);
-    catOf('from').codes[k] = side ? fromLabels.indexOf(side) : 0;
-    numOf('distance')[k] = c.num.distance[i];
-    numOf('angle')[k] = c.num.angle[i];
-    numOf('elevation')[k] = c.num.elevation[i];
-    numOf('damage')[k] = c.num.damage[i];
-    numOf('damageRaw')[k] = c.num.damageRaw[i];
-    numOf('whole')[k] = wholeDamage(store, i);
-    numOf('armorDamage')[k] = c.num.armorDamage[i];
-    numOf('absorbed')[k] = c.num.absorbed[i];
-    numOf('armorBefore')[k] = c.num.armorBefore[i];
-    numOf('calibre')[k] = c.num.calibre[i];
-    numOf('victimSpeed')[k] = c.num.victimSpeed[i];
-    numOf('shooterSpeed')[k] = c.num.shooterSpeed[i];
-    numOf('kill')[k] = flag(c.int.kill[i]);
-    numOf('headshot')[k] = g ? (zoneOfGroup(g) === 0 ? 1 : 0) : NaN;
-    numOf('penetrated')[k] = flag(c.int.penetrated[i]);
-    numOf('helmet')[k] = flag(c.int.helmet[i]);
-    numOf('won')[k] = flag(c.int.won[i]);
-    numOf('round')[k] = c.int.round[i];
-  }
-  catOf('game').labels = gameLabels;
-  catOf('map').labels = mapLabels;
-  for (const key of ['weapon', 'weaponClass', 'ammo', 'ammoType', 'armor', 'victim', 'shooter', 'shooterSide', 'victimRole', 'victimState', 'shooterState'] as const) catOf(key).labels = store.dicts[key].list;
-  catOf('victimSide').labels = store.dicts.victimSide.list;
-  catOf('region').labels = regionLabels;
-  catOf('zone').labels = zoneLabels;
-  catOf('from').labels = fromLabels;
-  return {
-    n,
-    total: all.length,
-    time,
-    x,
-    y,
-    z,
-    match,
-    matchLabels: store.matches.map((mm) => mm.id),
-    player,
-    playerLabels,
-    team,
-    teamLabels,
-    cats: cats.map(({ name, codes, labels }) => ({ name, codes, labels })),
-    nums,
-  };
+  return hitRows(store, rowsOf(q.filter), q.limit);
 }
 
 /** Per game, per field: the hits with each source (for the coverage table). */
@@ -350,11 +253,12 @@ self.onmessage = async (e: MessageEvent<PersonWorkerRequest>) => {
   try {
     if (q.type === 'view') {
       const v = view(q);
-      post({ id: q.id, type: 'answer', value: v }, [v.marks.x.buffer, v.marks.y.buffer, v.marks.z.buffer, v.marks.region.buffer, v.marks.kill.buffer] as ArrayBuffer[]);
+      post({ id: q.id, type: 'answer', value: v }, [v.marks.x.buffer, v.marks.y.buffer, v.marks.z.buffer, v.marks.region.buffer, v.marks.kill.buffer, v.marks.index.buffer] as ArrayBuffer[]);
     } else if (q.type === 'rows') {
       const r = rows(q);
       post({ id: q.id, type: 'answer', value: r }, [r.time, r.x, r.y, r.z, r.match, r.player, r.team, ...r.cats.map((x) => x.codes), ...r.nums.map((x) => x.data)].map((a) => a.buffer as ArrayBuffer));
-    } else if (q.type === 'coverage') post({ id: q.id, type: 'answer', value: coverage() });
+    } else if (q.type === 'hit') post({ id: q.id, type: 'answer', value: hitDetail(store, q.index) });
+    else if (q.type === 'coverage') post({ id: q.id, type: 'answer', value: coverage() });
   } catch (err) {
     post({ id: (q as { id: number }).id, type: 'failed', message: String((err as Error)?.message ?? err) });
   }

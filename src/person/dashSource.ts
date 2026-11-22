@@ -13,7 +13,7 @@ import { makeDashboard, makeTile, newId, registerDashboardSource, registerTempla
 import type { AttributeColumn, Dataset } from '../state/types';
 import type { SourceSelection } from '../dashboards/sources';
 import { onPersonView, patchPersonFilter, personRows, usePersonHits } from './client';
-import type { PersonRows } from './worker';
+import type { PersonRows } from './analyze';
 
 export const PERSON_HITS_SOURCE = 'person-hits';
 const ROW_LIMIT = 400_000;
@@ -22,7 +22,7 @@ let current: Dataset | null = null;
 const listeners = new Set<() => void>();
 let gen = 0;
 
-function datasetOf(r: PersonRows): Dataset {
+export function datasetOf(r: PersonRows): Dataset {
   const n = r.n;
   const attrs: AttributeColumn[] = [];
   for (const c of r.cats) attrs.push({ name: c.name, kind: 'category', data: c.codes, min: 0, max: Math.max(0, c.labels.length - 1), categories: c.labels });
@@ -116,6 +116,9 @@ const M = {
   kill: { id: 'ph-kill', name: 'Kill rate', agg: 'rate', where: 'kill == 1', format: 'pct', ci: CI } as MeasureDef,
   head: { id: 'ph-head', name: 'Headshot share', agg: 'rate', where: 'headshot == 1', format: 'pct', ci: CI } as MeasureDef,
   wall: { id: 'ph-wall', name: 'Through a wall', agg: 'rate', where: 'penetrated == 1', format: 'pct', ci: CI } as MeasureDef,
+  /** CS2: the solid a traced wallbang passed in all, of the hits that passed one. */
+  wallThick: { id: 'ph-wall-thick', name: 'Wall passed (cm)', agg: 'mean', field: F('wallThickness'), where: 'wallCount >= 1', format: 'dec' } as MeasureDef,
+  wallObjects: { id: 'ph-wall-count', name: 'Surfaces passed', agg: 'mean', field: F('wallCount'), where: 'wallCount >= 1', format: 'dec' } as MeasureDef,
   wallKills: { id: 'ph-wall-kills', name: 'Wallbang kills', agg: 'sum', field: F('kill') } as MeasureDef,
   dist: { id: 'ph-dist', name: 'Median distance', agg: 'median', field: F('distance') } as MeasureDef,
 };
@@ -194,15 +197,23 @@ export function whereHit(): DashBundle {
   });
 }
 
-/** Hits through walls: which weapons, how much damage got through, where. */
+/**
+ * Hits through walls: which weapons, how much damage got through, where, through what. Every hit counts, the
+ * non-lethal ones too where the CS2 tool traced the shot through the map (1.3.0 on); the materials and the
+ * thickness are the trace's.
+ */
 export function wallbangs(): DashBundle {
   return bundle('Wallbangs', (f, bin) => {
     const d = bin('distance', 2);
-    f.add('kpi', 8, 3, { title: 'Through a wall', values: [v(M.wall)] });
-    f.add('kpi', 8, 3, { title: 'Hits', values: [v(M.hits)] });
-    f.add('kpi', 8, 3, { title: 'Median distance (m)', values: [v(M.dist)] });
+    const through = () => [{ id: newId('f'), field: F('penetrated'), op: 'range' as const, lo: 1, hi: 1 }];
+    f.add('kpi', 6, 3, { title: 'Through a wall', values: [v(M.wall)] });
+    f.add('kpi', 6, 3, { title: 'Hits', values: [v(M.hits)] });
+    f.add('kpi', 6, 3, { title: 'Wall passed (cm)', values: [v(M.wallThick)] });
+    f.add('kpi', 6, 3, { title: 'Median distance (m)', values: [v(M.dist)] });
     f.add('bar', 12, 10, { title: 'Through a wall by weapon', axis: [F('weapon')], values: [v(M.wall)], opts: { top: 15 } });
-    f.add('table', 12, 10, { title: 'Wallbangs', axis: [F('weapon')], values: [v(M.hits), v(M.whole), v(M.kill)], filters: [{ id: newId('f'), field: F('penetrated'), op: 'range', lo: 1, hi: 1 }], opts: { top: 20, dataBars: true } });
+    f.add('table', 12, 10, { title: 'Wallbangs', axis: [F('weapon')], values: [v(M.hits), v(M.whole), v(M.kill), v(M.wallThick)], filters: through(), opts: { top: 20, dataBars: true } });
+    f.add('table', 12, 10, { title: 'By material passed', axis: [F('material passed')], values: [v(M.hits), v(M.wallThick), v(M.wallObjects), v(M.whole), v(M.kill)], filters: through(), opts: { top: 20, dataBars: true } });
+    f.add('bar', 12, 10, { title: 'Damage through each material', axis: [F('material passed')], values: [v(M.whole)], filters: through(), opts: { top: 12 } });
     f.add('line', 24, 9, { title: 'Through a wall over distance', axis: [d], values: [v(M.wall)] });
   });
 }

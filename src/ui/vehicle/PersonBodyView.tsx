@@ -8,15 +8,15 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { int, num, t } from '../../i18n';
-import { usePersonHits } from '../../person/client';
-import { bodyOfPack, drawBody, genericBody, rampCss, type Body } from '../../person/body';
+import { showPersonHit, usePersonHits } from '../../person/client';
+import { bodyOfPack, drawBody, genericBody, rampCss, type Body, type BodyPicker } from '../../person/body';
 import { platesVersion } from '../../vehicle/plates';
 import { REGIONS, ZONE_OF_REGION, ZONES } from '../../person/types';
 
 export function PersonBodyView() {
   const s = usePersonHits();
   const canvas = useRef<HTMLCanvasElement>(null);
-  const picker = useRef<(x: number, y: number) => number>(() => -1);
+  const picker = useRef<BodyPicker>(Object.assign(() => -1, { mark: () => -1 }));
   const [yaw, setYaw] = useState(0);
   const [hover, setHover] = useState(-1);
   const [size, setSize] = useState({ w: 600, h: 600 });
@@ -82,7 +82,7 @@ export function PersonBodyView() {
     picker.current = drawBody(ctx, size.w, size.h, body, { yaw, pitch: 8, fill, noData: '#5a5f68', background: bg.startsWith('#') ? bg : '#14161a', hover: hoverRegion, marks });
   }, [body, yaw, fill, hover, size, r]);
 
-  const drag = useRef<{ x: number; yaw: number } | null>(null);
+  const drag = useRef<{ x: number; y: number; yaw: number } | null>(null);
   const regionText = (k: number) => {
     if (!r || k < 0) return null;
     const name = REGIONS[k];
@@ -106,7 +106,7 @@ export function PersonBodyView() {
         ref={canvas}
         style={{ width: '100%', height: '100%', display: 'block', cursor: drag.current ? 'grabbing' : 'grab' }}
         onPointerDown={(e) => {
-          drag.current = { x: e.clientX, yaw };
+          drag.current = { x: e.clientX, y: e.clientY, yaw };
           (e.target as HTMLElement).setPointerCapture(e.pointerId);
         }}
         onPointerMove={(e) => {
@@ -116,7 +116,15 @@ export function PersonBodyView() {
             setHover(picker.current(e.clientX - rect.left, e.clientY - rect.top));
           }
         }}
-        onPointerUp={() => (drag.current = null)}
+        onPointerUp={(e) => {
+          // A click (no drag): the mark under the pointer opens its hit's card.
+          const d = drag.current;
+          drag.current = null;
+          if (!d || !r || Math.hypot(e.clientX - d.x, e.clientY - d.y) > 4) return;
+          const rect = (e.target as HTMLElement).getBoundingClientRect();
+          const k = picker.current.mark(e.clientX - rect.left, e.clientY - rect.top);
+          if (k >= 0 && k < r.marks.index.length) void showPersonHit(r.marks.index[k]);
+        }}
         onPointerLeave={() => setHover(-1)}
       />
       <div className="vehicle-hud person-hud" data-phits="hud">
@@ -133,6 +141,7 @@ export function PersonBodyView() {
           </>
         )}
         {hover >= 0 && <div className="vehicle-hud-sub" data-phits="hover">{regionText(hover)}</div>}
+        {r && r.marks.x.length > 0 && <div className="hint">{t('phits.hud.pickMark')}</div>}
         <div className="row wrap" style={{ marginTop: 6 }}>
           <button onClick={() => setYaw(0)}>{t('phits.hud.front')}</button>
           <button onClick={() => setYaw(90)}>{t('phits.hud.side')}</button>

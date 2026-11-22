@@ -13,8 +13,9 @@ import { localizeChart } from '../../charts/format';
 import type { ChartData } from '../../charts/types';
 import { int, num, t } from '../../i18n';
 import { formatBytes } from '../../data/memory';
-import { cancelPersonHits, loadPersonHits, patchPerson, patchPersonFilter, usePersonHits, type PersonHitsState } from '../../person/client';
-import { REGION_METRICS, type Facets, type PersonFilter, type Range, type RegionMetric, type TopField, type TopRow } from '../../person/analyze';
+import { cancelPersonHits, loadPersonHits, patchPerson, patchPersonFilter, showPersonHit, usePersonHits, type PersonHitsState } from '../../person/client';
+import { REGION_METRICS, type Facets, type PersonFilter, type PersonHitDetail, type Range, type RegionMetric, type TopField, type TopRow } from '../../person/analyze';
+import { wallText } from '../../person/card';
 import type { PersonView } from '../../person/worker';
 import { PERSON_FILES } from '../../person/scan';
 import { REGIONS, SOURCE_FIELDS, SOURCES, ZONES } from '../../person/types';
@@ -209,6 +210,7 @@ export function PersonHitPanel() {
       <TaskGroup task="explore" className="vehicle-panel">
         {loadSection}
         <BodySection r={r} metric={s.metric} mode={s.mode} region={s.region} figure={s.figure} />
+        {s.detail && <HitCard d={s.detail} />}
         <Later frames={2}>
           <FilterSection f={f} flt={s.filter} />
         </Later>
@@ -295,6 +297,9 @@ const FilterSection = memo(function FilterSection({ f, flt }: { f: Facets; flt: 
       <RangeField label={t('phits.filter.angle')} value={flt.angle} onChange={(v) => patchPersonFilter({ angle: v })} />
       <Chips label={t('phits.filter.from')} items={[['front', 0], ['side', 0], ['back', 0]]} picked={flt.from} onChange={(v) => patchPersonFilter({ from: v as PersonFilter['from'] })} />
       <Tri label={t('phits.filter.penetrated')} value={flt.penetrated} options={[['yes', t('phits.yes')], ['no', t('phits.no')]]} onChange={(v) => patchPersonFilter({ penetrated: v as PersonFilter['penetrated'] })} />
+      {/* What a traced shot passed (CS2 tool 1.3.0 on): only where the loaded hits have it. */}
+      <Chips label={t('phits.filter.wallSurfaces')} items={f.wallSurfaces} picked={flt.wallSurfaces} onChange={(v) => patchPersonFilter({ wallSurfaces: v })} />
+      {(f.wallSurfaces?.length ?? 0) > 0 && <RangeField label={t('phits.filter.wallThickness')} value={flt.wallThickness} onChange={(v) => patchPersonFilter({ wallThickness: v })} />}
       <Tri label={t('phits.filter.kill')} value={flt.kill} options={[['yes', t('phits.yes')], ['no', t('phits.no')]]} onChange={(v) => patchPersonFilter({ kill: v as PersonFilter['kill'] })} />
       <Tri label={t('phits.filter.won')} value={flt.won} options={[['won', t('phits.won')], ['lost', t('phits.lost')]]} onChange={(v) => patchPersonFilter({ won: v as PersonFilter['won'] })} />
       <Chips label={t('phits.filter.side')} items={f.victimSide} picked={flt.sides} onChange={(v) => patchPersonFilter({ sides: v })} />
@@ -311,6 +316,39 @@ const FilterSection = memo(function FilterSection({ f, flt }: { f: Facets; flt: 
       <Check label={t('phits.filter.teamHits')} checked={!!flt.teamHits} onChange={(v) => patchPersonFilter({ teamHits: v })} />
       <button className="link" onClick={() => patchPerson({ filter: {} })}>
         {t('phits.filter.clear')}
+      </button>
+    </Section>
+  );
+});
+
+const REGION_WORDS = new Set<string>([...REGIONS, ...ZONES]);
+
+/** The hit picked on the body: who, with what, where, how much, through what. */
+const HitCard = memo(function HitCard({ d }: { d: PersonHitDetail }) {
+  const src = (x: string) => <span className={`vhits-src vhits-src-${x}`}>{t(`phits.source.${x}`)}</span>;
+  const yesNo = (v: number) => (v === 1 ? t('phits.yes') : v === 0 ? t('phits.no') : '-');
+  const side = (name: string, s: string) => (s ? `${name} (${s})` : name);
+  const where = REGION_WORDS.has(d.hitgroup) ? t(`phits.region.${d.hitgroup}`) : d.hitgroup === 'unknown' ? '-' : d.hitgroup.replace(/_/g, ' ');
+  const damage = [dec(d.damage), Number.isFinite(d.damageRaw) && d.damageRaw !== d.damage ? t('phits.hit.raw', { n: dec(d.damageRaw) }) : '', Number.isFinite(d.absorbed) && d.absorbed > 0 ? t('phits.hit.kept', { n: dec(d.absorbed) }) : ''].filter(Boolean).join(' · ');
+  return (
+    <Section title={t('phits.hit.title')} defaultOpen>
+      <table className="vhits-table" data-phits="hit">
+        <tbody>
+          <tr><th>{t('phits.hit.who')}</th><td>{t('phits.hit.shotBy', { shooter: side(d.shooter || '-', d.shooterSide), victim: side(d.victim || '-', d.victimSide) })}</td></tr>
+          <tr><th>{t('phits.field.weapon')}</th><td>{[d.weapon, d.weaponClass, d.ammo].filter(Boolean).join(' · ') || '-'}</td></tr>
+          <tr><th>{t('phits.field.hitgroup')}</th><td>{where}</td></tr>
+          <tr><th>{t('phits.field.damage')}</th><td>{damage}</td></tr>
+          <tr><th>{t('phits.field.armor')}</th><td>{[d.armor, d.helmet === 1 ? t('phits.hit.helmet') : ''].filter(Boolean).join(' · ') || '-'}</td></tr>
+          <tr><th>{t('phits.field.distance')}</th><td>{Number.isFinite(d.distance) ? <>{dec(d.distance, 1)} {src(d.distanceSource)}</> : '-'}</td></tr>
+          <tr><th>{t('phits.field.angle')}</th><td>{Number.isFinite(d.angle) ? `${dec(d.angle)}°` : '-'}</td></tr>
+          <tr><th>{t('phits.field.penetration')}</th><td data-phits="wall">{wallText(d)}</td></tr>
+          {d.smoke >= 0 && <tr><th>{t('phits.hit.smoke')}</th><td>{yesNo(d.smoke)}</td></tr>}
+          <tr><th>{t('phits.field.kill')}</th><td>{yesNo(d.kill)}</td></tr>
+          <tr><th>{t('phits.hit.match')}</th><td>{[d.match, d.map, d.round > 0 ? t('phits.hit.round', { n: d.round }) : '', Number.isFinite(d.time) ? `${dec(d.time, 1)} s` : ''].filter(Boolean).join(' · ')}</td></tr>
+        </tbody>
+      </table>
+      <button className="link" onClick={() => void showPersonHit(null)}>
+        {t('phits.hit.close')}
       </button>
     </Section>
   );

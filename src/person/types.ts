@@ -136,6 +136,12 @@ export const INT_COLUMNS = [
   'round',
   /** Shooter and victim on one side. */
   'team',
+  /** Solid objects the traced shot passed (CS2 tool 1.3.0 `wallCount`), -1 not traced. */
+  'walls',
+  /** Solid traversed in all, millimetres (`wallThickness`, metres in the table; capped at 32,767), -1 not traced. */
+  'wallMm',
+  /** Bullet-passing surfaces crossed that are not walls - fences, grates (`wallGrates`), -1 not traced. */
+  'grates',
 ] as const;
 export type IntColumn = (typeof INT_COLUMNS)[number];
 
@@ -160,6 +166,8 @@ export const TEXT_COLUMNS = [
   'shooterState',
   /** The victim's agent, operator or kit. */
   'victimRole',
+  /** The surface materials the traced shot passed, from the shooter on, joined with `;` (`wood_panel;concrete`). */
+  'wallSurfaces',
 ] as const;
 export type TextColumn = (typeof TEXT_COLUMNS)[number];
 

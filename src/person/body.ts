@@ -162,8 +162,11 @@ interface Projected {
   p: [number, number, number, number, number, number];
 }
 
-/** The view: the body turned and fitted to the canvas; returns a picker of the region at a pixel. */
-export function drawBody(ctx: CanvasRenderingContext2D, w: number, h: number, body: Body, look: BodyLook): (x: number, y: number) => number {
+/** A picker of the region at a pixel (-1 none), and of the mark drawn nearest a pixel (`mark`, -1 none within a few pixels). */
+export type BodyPicker = ((x: number, y: number) => number) & { mark: (x: number, y: number) => number };
+
+/** The view: the body turned and fitted to the canvas; returns a picker of the region and the mark at a pixel. */
+export function drawBody(ctx: CanvasRenderingContext2D, w: number, h: number, body: Body, look: BodyLook): BodyPicker {
   ctx.fillStyle = look.background;
   ctx.fillRect(0, 0, w, h);
   const yaw = (look.yaw * Math.PI) / 180, pitch = (look.pitch * Math.PI) / 180;
@@ -234,6 +237,7 @@ export function drawBody(ctx: CanvasRenderingContext2D, w: number, h: number, bo
   }
   // Marks on the side facing the viewer.
   const m = look.marks;
+  const drawn: number[] = [];
   if (m) {
     for (let k = 0; k < m.x.length; k++) {
       const p = project(m.x[k], m.y[k], m.z[k]);
@@ -242,16 +246,30 @@ export function drawBody(ctx: CanvasRenderingContext2D, w: number, h: number, bo
       ctx.beginPath();
       ctx.arc(p[0], p[1], 2.2, 0, Math.PI * 2);
       ctx.fill();
+      drawn.push(k, p[0], p[1]);
     }
   }
   // The picker: the front-most triangle under a pixel.
-  return (x: number, y: number) => {
+  const pick = (x: number, y: number) => {
     for (let k = tris.length - 1; k >= 0; k--) {
       const p = tris[k].p;
       if (inTri(x, y, p)) return tris[k].region;
     }
     return -1;
   };
+  // The mark nearest a pixel, the last drawn (on top) where two are as near.
+  const mark = (x: number, y: number) => {
+    let best = -1, bestD = 6 * 6;
+    for (let j = 0; j < drawn.length; j += 3) {
+      const d = (drawn[j + 1] - x) ** 2 + (drawn[j + 2] - y) ** 2;
+      if (d <= bestD) {
+        bestD = d;
+        best = drawn[j];
+      }
+    }
+    return best;
+  };
+  return Object.assign(pick, { mark });
 }
 
 function inTri(x: number, y: number, p: Projected['p']): boolean {

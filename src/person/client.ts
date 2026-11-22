@@ -7,7 +7,7 @@
 
 import { create } from 'zustand';
 import { detectBudgets } from '../data/memory';
-import type { Facets, PersonFilter, RegionMetric } from './analyze';
+import type { Facets, PersonFilter, PersonHitDetail, RegionMetric } from './analyze';
 import type { PersonLoadStats, PersonRows, PersonView, PersonWorkerReply, PersonWorkerRequest } from './worker';
 
 export interface PersonHitsState {
@@ -25,6 +25,8 @@ export interface PersonHitsState {
   /** The region (or zone) picked, -1 none. */
   region: number;
   result: PersonView | null;
+  /** The hit picked on the body (its mark), for its card. */
+  detail: PersonHitDetail | null;
   busy: boolean;
   set: (p: Partial<PersonHitsState>) => void;
 }
@@ -41,6 +43,7 @@ export const usePersonHits = create<PersonHitsState>((set) => ({
   marks: 1500,
   region: -1,
   result: null,
+  detail: null,
   busy: false,
   set: (p) => set(p),
 }));
@@ -89,7 +92,7 @@ export function loadPersonHits(files: File[], add = false): void {
   const w = ensure();
   const budget = Math.min(3.5 * 2 ** 30, detectBudgets().ram / 2);
   const jobs = Math.max(1, Math.min(4, (navigator.hardwareConcurrency || 4) - 2));
-  usePersonHits.getState().set({ active: true, error: null, ...(add ? {} : { result: null, facets: null }) });
+  usePersonHits.getState().set({ active: true, error: null, detail: null, ...(add ? {} : { result: null, facets: null }) });
   w.postMessage({ type: 'load', files, add, jobs, budget, cache: true } satisfies PersonWorkerRequest);
 }
 
@@ -135,6 +138,13 @@ export function patchPersonFilter(p: Partial<PersonFilter>): void {
 export function patchPerson(p: Partial<PersonHitsState>): void {
   usePersonHits.getState().set(p);
   scheduleView();
+}
+
+/** A hit's whole record for its card (a mark picked on the body); null clears the card. */
+export async function showPersonHit(index: number | null): Promise<void> {
+  if (index === null || index < 0) return usePersonHits.getState().set({ detail: null });
+  const d = await askPerson<PersonHitDetail | null>({ type: 'hit', index });
+  usePersonHits.getState().set({ detail: d });
 }
 
 export function personRows(limit: number): Promise<PersonRows> {

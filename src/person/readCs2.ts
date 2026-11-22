@@ -13,8 +13,8 @@ import type { TableColumns } from './table';
 
 /** Rows a CS2 load reads, and their columns (those a file lacks are left out). */
 export const CS2_EVENTS = ['hurt', 'kill', 'position'];
-export const CS2_NUMBERS = ['state_helmet', 'round', 'x', 'y', 'z', 'dirX', 'dirY', 'dirZ', 'damage', 'health', 'armor', 'armorDamage', 'penetrated', 'throughSmoke', 'distance', 'hitLocalX', 'hitLocalY', 'hitLocalZ', 'hitDirX', 'hitDirY', 'hitDirZ', 'helmet', 'walking', 'duck', 'airborne', 'scoped', 'won', 'headshot', 'attackerX', 'attackerY', 'attackerZ', 'attackerSpeed', 'victimSpeed', 'armorBefore'];
-export const CS2_TEXTS = ['event', 'player', 'other', 'side', 'weapon', 'hitgroup', 'detail', 'attackerSide'];
+export const CS2_NUMBERS = ['state_helmet', 'round', 'x', 'y', 'z', 'dirX', 'dirY', 'dirZ', 'damage', 'health', 'armor', 'armorDamage', 'penetrated', 'throughSmoke', 'distance', 'hitLocalX', 'hitLocalY', 'hitLocalZ', 'hitDirX', 'hitDirY', 'hitDirZ', 'helmet', 'walking', 'duck', 'airborne', 'scoped', 'won', 'headshot', 'attackerX', 'attackerY', 'attackerZ', 'attackerSpeed', 'victimSpeed', 'armorBefore', 'wallbang', 'wallCount', 'wallThickness', 'wallGrates'];
+export const CS2_TEXTS = ['event', 'player', 'other', 'side', 'weapon', 'hitgroup', 'detail', 'attackerSide', 'wallSurfaces'];
 
 /** Whether a table's columns are a CS2 match table's (it has the hurt rows' own columns). */
 export function isCs2Table(available: Set<string>): boolean {
@@ -195,12 +195,24 @@ export function extractCs2Hits(c: TableColumns, match: PersonMatch): PersonBlock
       const list = killAt.get(`${victim}|${t.toFixed(3)}`);
       if (list) killRow = list.find((k) => txt('player', k) === shooter) ?? list[0];
     }
-    // Through a wall: recorded on the kill (the converter's newer tables have it on every hit).
+    // Through a wall: the game's own on the kill (recorded, it wins for the killing hit); on every other hit the shot
+    // traced through the map's collision by the CS2 tool (1.3.0 `wallbang`, derived). Not traced (no map geometry, a
+    // grenade, fire or a fall): not known, as in older tables.
     const pen = Number.isFinite(num('penetrated', r)) ? num('penetrated', r) : killRow >= 0 ? num('penetrated', killRow) : NaN;
+    const traced = num('wallbang', r);
     if (Number.isFinite(pen)) {
       I.penetrated[i] = pen > 0 ? 1 : 0;
       S.penetration[i] = SRC_RECORDED;
+    } else if (Number.isFinite(traced)) {
+      I.penetrated[i] = traced > 0 ? 1 : 0;
+      S.penetration[i] = SRC_DERIVED;
     }
+    // What the trace passed, kept on the killing hit too: solid objects, their thickness in all, the materials, fences.
+    const walls = num('wallCount', r), thick = num('wallThickness', r), grates = num('wallGrates', r);
+    if (Number.isFinite(walls)) I.walls[i] = Math.min(32767, Math.max(0, Math.round(walls)));
+    if (Number.isFinite(thick)) I.wallMm[i] = Math.min(32767, Math.max(0, Math.round(thick * 1000)));
+    if (Number.isFinite(grates)) I.grates[i] = Math.min(32767, Math.max(0, Math.round(grates)));
+    b.text(i, 'wallSurfaces', txt('wallSurfaces', r));
     const smoke = Number.isFinite(num('throughSmoke', r)) ? num('throughSmoke', r) : killRow >= 0 ? num('throughSmoke', killRow) : NaN;
     if (Number.isFinite(smoke)) I.smoke[i] = smoke > 0 ? 1 : 0;
     // The shooter's place: on the row (newer tables), else their sample.
