@@ -13,7 +13,7 @@ rayon.workspace = true
 # Vulkan (the default) and DX12 (the Windows fallback) only: no Metal, GL or web backends.
 wgpu = { version = "27", default-features = false, features = ["std", "parking_lot", "dx12", "vulkan", "wgsl"] }
 bytemuck = "1"
-pollster = "0.4"
+pollster = "1.0"
 parking_lot = "0.12"
 
 [dev-dependencies]
