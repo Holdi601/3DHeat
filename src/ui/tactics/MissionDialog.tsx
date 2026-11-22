@@ -7,6 +7,7 @@ import { theatreOf, writeDcsMiz, type ExportWarning, type MissionExportSummary }
 import { writeArmaMission } from '../../tactics/missions/armaWrite';
 import { ARMA3_WORLDS } from '../../tactics/missions/arma';
 import { writeIl2Mission } from '../../tactics/missions/il2Write';
+import { BMS_THEATRES, writeBmsDtc } from '../../tactics/missions/bms';
 import { REFORGER_WORLDS, writeReforgerLayer } from '../../tactics/missions/reforgerWrite';
 import { catalogItems } from '../panels/autoLevel';
 import { LEVEL_FOLDER, levelNameOf } from './missionLevel';
@@ -98,7 +99,7 @@ type Base = 'patch' | 'new';
 type Written = { bytes: Uint8Array; summary: MissionExportSummary; ext?: string };
 
 /** The games a plan is written back for, with what differs between them. */
-export type MissionFormat = 'dcs' | 'wt' | 'arma' | 'il2' | 'reforger';
+export type MissionFormat = 'dcs' | 'wt' | 'arma' | 'il2' | 'reforger' | 'bms';
 interface FormatDef {
   /** The reader's id (`Plan.mission.format`). */
   id: string;
@@ -116,6 +117,7 @@ const FORMATS: Record<MissionFormat, FormatDef> = {
   arma: { id: 'arma-sqm', game: 'Arma 3', ext: '.sqm', type: 'text/plain', write: (m, o, target) => writeArmaMission(m, o, target), targets: Object.keys(ARMA3_WORLDS) },
   il2: { id: 'il2-mission', game: 'IL-2 Great Battles', ext: '.Mission', type: 'text/plain', write: async (m, o, target) => writeIl2Mission(m, o, target), targets: [] },
   reforger: { id: 'reforger-layer', game: 'Arma Reforger', ext: '.layer', type: 'text/plain', write: async (m, o, target) => writeReforgerLayer(m, o, target), targets: REFORGER_WORLDS },
+  bms: { id: 'bms-dtc', game: 'Falcon BMS', ext: '.ini', type: 'text/plain', write: async (m, o, target) => writeBmsDtc(m, o, target), targets: BMS_THEATRES },
 };
 const FORMAT_KEYS = Object.keys(FORMATS) as MissionFormat[];
 
@@ -130,6 +132,8 @@ function formatOf(missionFormat: string | undefined, game: string): MissionForma
 function fileName(f: FormatDef, base: Base, stem: string, ext: string, map: string): string {
   const safe = (s: string) => s.replace(/[\\/:*?"<>|]+/g, '_');
   // Arma 3 reads a mission from its folder's mission.sqm, a .pbo by its name: <mission>.<world>.pbo.
+  // BMS reads the cartridge by the pilot's callsign: the name stays.
+  if (f.id === 'bms-dtc') return `${safe(stem) || 'pilot'}.ini`;
   if (f.id === 'arma-sqm') return ext === '.pbo' ? `${safe(stem.replace(/\.[A-Za-z0-9_]+$/, ''))}_3DHeat.${safe(levelNameOf(map) || 'Altis')}.pbo` : 'mission.sqm';
   return base === 'patch' ? `${safe(stem)} (3DHeat)${ext}` : `${safe(stem)}${ext}`;
 }
@@ -195,7 +199,7 @@ export function MissionSaveDialog({ onClose }: { onClose: () => void }) {
 
   const pick = async (file: File) => {
     const bytes = new Uint8Array(await file.arrayBuffer());
-    const name = file.name.replace(/\.(miz|blk|sqm|mission|layer|ent)$/i, '');
+    const name = file.name.replace(/\.(miz|blk|sqm|mission|msnbin|layer|ent|ini)$/i, '');
     keepMissionFile(name, bytes);
     setPicked({ name, bytes, format });
     setBase('patch');
@@ -243,7 +247,7 @@ export function MissionSaveDialog({ onClose }: { onClose: () => void }) {
       {source && !original && <div className="hint">{t('tactics.mission.missing', { name: source })}</div>}
       <div className="tactics-tools">
         <button type="button" onClick={() => fileRef.current?.click()}>
-          {t('tactics.mission.pick', { ext: format === 'arma' ? '.sqm / .pbo' : f.ext })}
+          {t('tactics.mission.pick', { ext: format === 'arma' ? '.sqm / .pbo' : format === 'il2' ? '.Mission / .msnbin' : f.ext })}
         </button>
         {mode === 'new' && format !== 'dcs' && (
           <label className="field mission-theatre">
@@ -272,7 +276,7 @@ export function MissionSaveDialog({ onClose }: { onClose: () => void }) {
       <input
         ref={fileRef}
         type="file"
-        accept={format === 'arma' ? '.sqm,.pbo' : format === 'reforger' ? '.layer,.ent' : f.ext}
+        accept={format === 'arma' ? '.sqm,.pbo' : format === 'reforger' ? '.layer,.ent' : format === 'il2' ? '.Mission,.msnbin' : f.ext}
         style={{ display: 'none' }}
         onChange={(e) => {
           const file = e.target.files?.[0];

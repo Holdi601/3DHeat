@@ -31,7 +31,7 @@ import { confirmDialog } from '../shell/kit';
 import { TaskBar, TaskGroup } from '../shell/Shell';
 
 /** The mission formats the board writes back (`MissionSaveDialog`). */
-const WRITABLE = new Set(['dcs-miz', 'wt-blk', 'arma-sqm', 'il2-mission', 'reforger-layer']);
+const WRITABLE = new Set(['dcs-miz', 'wt-blk', 'arma-sqm', 'il2-mission', 'reforger-layer', 'bms-dtc']);
 
 /**
  * The tactics board's sidebar: the plan's game, name and side on top, then by

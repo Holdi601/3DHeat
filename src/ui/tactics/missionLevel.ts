@@ -26,6 +26,8 @@ export const LEVEL_FOLDER: Record<string, string> = {
   'arma-sqm': 'arma3',
   'il2-mission': 'il2',
   'reforger-layer': 'arma-reforger',
+  // No Falcon BMS (Korea) level exists yet; one would sit here, in the theatre's metres.
+  'bms-dtc': 'falcon-bms',
 };
 
 export interface MissionLevel {

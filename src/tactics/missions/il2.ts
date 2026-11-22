@@ -36,12 +36,13 @@
  * -(game x). A level tied to the earth moves the mission onto itself when it
  * is loaded with it (`placement.ts`).
  *
- * `.msnbin` (the binary form the game itself runs) is not read: the editor
- * opens it and saves the text form.
+ * `.msnbin` (the binary form the game runs and ships its missions in) is
+ * written out as this text first (`il2Bin.ts`) and read the same way.
  */
 
 import { figureFor } from '../../figures/match';
 import { CATALOG } from '../../figures/catalog';
+import { il2BinaryText, isIl2Binary } from './il2Bin';
 import type { MissionGroup, MissionImporter, MissionInfo, MissionPlace, MissionState, MissionTask, MissionUnit, MissionWaypoint, UnitCategory } from './index';
 
 // ---------------------------------------------------------------------------
@@ -525,7 +526,7 @@ export function readIl2Mission(text: string, file: string): MissionState {
   return {
     format: 'il2-mission',
     game: 'air',
-    title: file.replace(/^.*[\\/]/, '').replace(/\.mission$/i, ''),
+    title: file.replace(/^.*[\\/]/, '').replace(/\.(mission|msnbin)$/i, ''),
     map: map ? `IL-2: ${map}` : '',
     sides: SIDES.map((s) => ({ ...s })),
     groups,
@@ -537,11 +538,16 @@ export function readIl2Mission(text: string, file: string): MissionState {
 
 export const il2Mission: MissionImporter = {
   id: 'il2-mission',
-  name: 'IL-2 Great Battles (.Mission)',
+  name: 'IL-2 Great Battles (.Mission, .msnbin)',
   accepts: (name) => name.endsWith('.mission') || name.endsWith('.msnbin'),
   read: async (bytes, name) => {
-    if (/\.msnbin$/i.test(name) || (bytes.length >= 4 && bytes[0] < 9 && bytes[1] === 0 && bytes[2] === 0 && bytes[3] === 0))
-      throw new Error('this is the binary form of the mission (.msnbin) the game runs: open it in the IL-2 mission editor and load the .Mission text file it saves beside it');
-    return readIl2Mission(new TextDecoder('utf-8').decode(bytes), name.split(/[\\/]/).pop() ?? name);
+    const file = name.split(/[\\/]/).pop() ?? name;
+    if (isIl2Binary(bytes)) {
+      const m = readIl2Mission(il2BinaryText(bytes), file);
+      m.notes.unshift("read from the binary .msnbin; it is written back as the editor's text .Mission");
+      return m;
+    }
+    if (/\.msnbin$/i.test(name)) throw new Error('not an IL-2 binary mission (.msnbin) this reader knows');
+    return readIl2Mission(new TextDecoder('utf-8').decode(bytes), file);
   },
 };

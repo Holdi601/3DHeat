@@ -259,6 +259,10 @@ export function planToMission(plan: Plan): MissionState {
     groups.push({ name: d.name, side: d.side, category: d.category, units, route, ...(d.link ? { ref: d.link.ref } : {}), ...(d.link?.country ? { country: d.link.country } : {}) });
   }
 
+  // Lines drawn on the board (strokes), for the games whose missions hold lines.
+  const lines = plan.drawings
+    .filter((d) => d.kind === 'stroke' && d.points.length >= 2 && shown(plan, d))
+    .map((d, i) => ({ name: `Line ${i + 1}`, points: d.points.map((p) => ({ x: p.x / upm, y: p.y / upm, z: p.z / upm })) }));
   const notes: string[] = [];
   if (skipped) notes.push(`skipped:${skipped}`);
   if (flags.has('start')) notes.push('start');
@@ -271,6 +275,7 @@ export function planToMission(plan: Plan): MissionState {
     groups,
     places: plan.areas.filter((a) => shown(plan, a)).map((a) => ({ name: a.label || 'Zone', kind: 'zone' as const, at: { x: a.centre.x / upm, y: a.centre.y / upm, z: a.centre.z / upm }, radius: a.radius / upm, side: a.team })),
     notes,
+    ...(lines.length ? { lines } : {}),
     ...(link?.info ? { info: link.info } : {}),
     ...(removed.length ? { removed } : {}),
   };

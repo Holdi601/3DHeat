@@ -8,8 +8,9 @@
  * where the mission puts it, every group's route its route in the first step.
  *
  * A reader for another game implements `MissionImporter` and is added to
- * `IMPORTERS`; nothing else changes. Falcon BMS (.cam/.tac campaign files)
- * is not read: see docs/mission-planner.md.
+ * `IMPORTERS`; nothing else changes. Falcon BMS campaign and TE files
+ * (.cam, .tac) are read as far as their text part goes; a pilot's data
+ * cartridge (.ini) is read and written (`bms.ts`).
  */
 
 import { BASE_LAYER, baseLayer, emptyPlan, newId, type Plan, type PlanFigure, type PlanTeam, type Vec3 } from '../plan';
@@ -24,6 +25,7 @@ import { wtBlk } from './wt';
 import { ocapRecording } from './ocap';
 import { il2Mission } from './il2';
 import { reforgerLayer } from './reforger';
+import { bmsDtc } from './bms';
 import type { MissionInfo, PlanMission } from '../missionLink';
 import type { MissionPlacement } from './placement';
 
@@ -117,6 +119,13 @@ export interface MissionPlace {
   text?: string;
 }
 
+/** A line the mission draws (a Falcon BMS cartridge's FLOT lines), board coordinates. */
+export interface MissionLine {
+  name: string;
+  points: Vec3[];
+  side?: string;
+}
+
 export interface MissionState {
   /** Which reader read it. */
   format: string;
@@ -128,6 +137,8 @@ export interface MissionState {
   sides: PlanTeam[];
   groups: MissionGroup[];
   places: MissionPlace[];
+  /** Lines it draws, where the game has them. */
+  lines?: MissionLine[];
   /** What could not be read, said plainly (a unit type without a figure, a binarised file). */
   notes: string[];
   /** Start time, date, weather and briefing, where the file has them. */
@@ -146,10 +157,10 @@ export interface MissionImporter {
   read: (bytes: Uint8Array, name: string) => Promise<MissionState>;
 }
 
-export const IMPORTERS: MissionImporter[] = [dcsMiz, armaSqm, ocapRecording, wtBlk, il2Mission, reforgerLayer];
+export const IMPORTERS: MissionImporter[] = [dcsMiz, armaSqm, ocapRecording, wtBlk, il2Mission, reforgerLayer, bmsDtc];
 
 /** The file chooser's accept list. */
-export const MISSION_ACCEPT = '.miz,.sqm,.pbo,.json,.gz,.jsonl,.blk,.mission,.msnbin,.layer,.ent';
+export const MISSION_ACCEPT = '.miz,.sqm,.pbo,.json,.gz,.jsonl,.blk,.mission,.msnbin,.layer,.ent,.ini,.cam,.tac';
 
 /** Reads a mission file with the reader that takes its name; refuses one no reader takes. */
 export async function readMission(name: string, bytes: Uint8Array): Promise<MissionState> {
@@ -192,7 +203,7 @@ export function missionToPlan(m: MissionState): Plan {
   if (m.places.length) plan.layers.push({ id: placesLayer, name: 'Mission places', visible: true, locked: false });
   const team = (id: string) => (sides.some((s) => s.id === id) ? id : sides[0].id);
   const aimed: [PlanTask, string][] = [];
-  const link: PlanMission = { format: m.format, source: m.title, map: m.map, ...(m.info ? { info: m.info } : {}), ...(m.placement ? { placement: m.placement } : {}), ...(m.places.length ? { placesLayer } : {}), groups: [] };
+  const link: PlanMission = { format: m.format, source: m.title, map: m.map, ...(m.info ? { info: m.info } : {}), ...(m.placement ? { placement: m.placement } : {}), ...(m.places.length || m.lines?.length ? { placesLayer } : {}), groups: [] };
   for (const g of m.groups) {
     const layer = layerOfSide.get(g.side);
     const lead = g.units[0];
@@ -275,6 +286,10 @@ export function missionToPlan(m: MissionState): Plan {
       plan.notes.push({ id: newId('n'), step: 0, at: p.at, text: p.text ? `${p.name}: ${p.text}` : p.name, show: 'always', ...(p.kind === 'bullseye' ? { color: [0.6, 0.85, 1] as [number, number, number] } : {}), ...layer });
     }
   }
+  // Lines the mission draws, on the places layer.
+  for (const l of m.lines ?? [])
+    plan.drawings.push({ id: newId('d'), step: 0, kind: 'stroke', points: l.points.map((p) => ({ ...p })), color: [0.95, 0.85, 0.3], width: 150, always: true, layer: placesLayer });
+  if (m.lines?.length && !plan.layers.some((x) => x.id === placesLayer)) plan.layers.push({ id: placesLayer, name: 'Mission places', visible: true, locked: false });
   // Tasks on another group (followed, escorted, attacked): the lead of the group the mission names.
   const leadOf = new Map<string, string>();
   for (const g of link.groups) if (g.units[0]) leadOf.set(g.ref, g.units[0].figure);

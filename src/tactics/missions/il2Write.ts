@@ -50,6 +50,7 @@ import {
   readIl2Mission,
   type Il2Block,
 } from './il2';
+import { il2BinaryText, isIl2Binary } from './il2Bin';
 import type { MissionGroup, MissionState, MissionWaypoint, UnitCategory } from './index';
 
 /** Script and model of IL-2 units by type, for new units (the game's own names; planes follow one pattern). */
@@ -604,6 +605,13 @@ export function newIl2MissionText(map: string, m: MissionState): { text: string;
 /** The mission for a plan: `original` patched when given, else a new mission on `map`. */
 export function writeIl2Mission(m: MissionState, original: Uint8Array | null, map?: string): { bytes: Uint8Array; summary: MissionExportSummary } {
   const enc = new TextEncoder();
+  if (original && isIl2Binary(original)) {
+    // A binary mission is written back as the editor's text of it (`il2Bin.ts` says why not as .msnbin).
+    const text = il2BinaryText(original);
+    const r = patchIl2MissionText(text, m);
+    r.summary.warnings.push({ code: 'il2-binary' });
+    return { bytes: enc.encode(r.text), summary: r.summary };
+  }
   if (original) {
     const text = new TextDecoder('utf-8').decode(original);
     const r = patchIl2MissionText(text, m);
