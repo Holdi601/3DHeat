@@ -171,5 +171,16 @@
   "session.cmd.followOff": "Free everyone's camera",
   "session.cmd.mark.pin": "Marks: set a note",
   "session.cmd.mark.draw": "Marks: draw",
-  "session.cmd.mark.erase": "Marks: erase"
+  "session.cmd.mark.erase": "Marks: erase",
+  "session.public.lead": "Looss Leit ausserhalb vun dengem Netzwierk mat engem Link bäitrieden, an dräi Schrëtt.",
+  "session.public.step.read": "Wat erreechbar gëtt",
+  "session.public.step.start": "Bestätegen a starten",
+  "session.public.failedTodo": "Kuck d’Internetverbindung vun dësem Computer no oder wiel uewen en anere Wee, da prouf nach eng Kéier.",
+  "session.public.retry": "Nach eng Kéier probéieren",
+  "session.todo.badPassword": "Fro den Host no dem Passwuert, da tritt nees bäi.",
+  "session.todo.unreachable": "Kuck d’Serveradress no (den Host gesäit se a sengem Sessiounspanel) an ob de Server leeft, da tritt nees bäi.",
+  "session.todo.protocol": "Aktualiséier 3DHeat hei oder um Server, da tritt nees bäi.",
+  "session.todo.full": "Fro den Host, Plaz ze maachen, da tritt nees bäi.",
+  "session.todo.dropped": "Tritt nees bäi; den Host léisst dech aus dem Waardesall eran.",
+  "session.todo.refused": "Kuck Adress a Passwuert no, da tritt nees bäi."
 }

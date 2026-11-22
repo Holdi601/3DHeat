@@ -171,5 +171,16 @@
   "session.cmd.followOff": "Free everyone's camera",
   "session.cmd.mark.pin": "Marks: set a note",
   "session.cmd.mark.draw": "Marks: draw",
-  "session.cmd.mark.erase": "Marks: erase"
+  "session.cmd.mark.erase": "Marks: erase",
+  "session.public.lead": "Lasă persoane din afara rețelei tale să se alăture printr-un link, în trei pași.",
+  "session.public.step.read": "Ce devine accesibil",
+  "session.public.step.start": "Confirmă și pornește",
+  "session.public.failedTodo": "Verifică conexiunea la internet a acestui calculator sau alege altă cale mai sus, apoi încearcă din nou.",
+  "session.public.retry": "Încearcă din nou",
+  "session.todo.badPassword": "Cere parola gazdei, apoi alătură-te din nou.",
+  "session.todo.unreachable": "Verifică adresa serverului (gazda o vede în panoul sesiunii) și că serverul rulează, apoi alătură-te din nou.",
+  "session.todo.protocol": "Actualizează 3DHeat aici sau pe server, apoi alătură-te din nou.",
+  "session.todo.full": "Roagă gazda să facă loc, apoi alătură-te din nou.",
+  "session.todo.dropped": "Alătură-te din nou; gazda te lasă să intri din sala de așteptare.",
+  "session.todo.refused": "Verifică adresa și parola, apoi alătură-te din nou."
 }

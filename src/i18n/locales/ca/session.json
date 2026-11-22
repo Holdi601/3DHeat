@@ -171,5 +171,16 @@
   "session.cmd.followOff": "Free everyone's camera",
   "session.cmd.mark.pin": "Marks: set a note",
   "session.cmd.mark.draw": "Marks: draw",
-  "session.cmd.mark.erase": "Marks: erase"
+  "session.cmd.mark.erase": "Marks: erase",
+  "session.public.lead": "Deixa que persones de fora de la teva xarxa s’uneixin amb un enllaç, en tres passos.",
+  "session.public.step.read": "Què queda accessible",
+  "session.public.step.start": "Confirma i inicia",
+  "session.public.failedTodo": "Comprova la connexió a Internet d’aquest ordinador o tria una altra manera a dalt, i torna-ho a provar.",
+  "session.public.retry": "Torna-ho a provar",
+  "session.todo.badPassword": "Demana la contrasenya a l’amfitrió i torna a unir-te.",
+  "session.todo.unreachable": "Comprova l’adreça del servidor (l’amfitrió la veu al seu tauler de sessió) i que el servidor funcioni, i torna a unir-te.",
+  "session.todo.protocol": "Actualitza 3DHeat aquí o al servidor i torna a unir-te.",
+  "session.todo.full": "Demana a l’amfitrió que faci lloc i torna a unir-te.",
+  "session.todo.dropped": "Torna a unir-te; l’amfitrió et deixa entrar des de la sala d’espera.",
+  "session.todo.refused": "Comprova l’adreça i la contrasenya i torna a unir-te."
 }

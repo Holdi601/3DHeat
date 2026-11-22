@@ -171,5 +171,16 @@
   "session.cmd.followOff": "Free everyone's camera",
   "session.cmd.mark.pin": "Marks: set a note",
   "session.cmd.mark.draw": "Marks: draw",
-  "session.cmd.mark.erase": "Marks: erase"
+  "session.cmd.mark.erase": "Marks: erase",
+  "session.public.lead": "Låt personer utanför ditt nätverk gå med via en länk, i tre steg.",
+  "session.public.step.read": "Vad som blir nåbart",
+  "session.public.step.start": "Bekräfta och starta",
+  "session.public.failedTodo": "Kontrollera datorns internetanslutning eller välj ett annat sätt ovan, och försök igen.",
+  "session.public.retry": "Försök igen",
+  "session.todo.badPassword": "Be värden om lösenordet och gå med igen.",
+  "session.todo.unreachable": "Kontrollera serveradressen (värden ser den i sin sessionspanel) och att servern körs, och gå med igen.",
+  "session.todo.protocol": "Uppdatera 3DHeat här eller på servern och gå med igen.",
+  "session.todo.full": "Be värden att göra plats och gå med igen.",
+  "session.todo.dropped": "Gå med igen; värden släpper in dig från väntrummet.",
+  "session.todo.refused": "Kontrollera adressen och lösenordet och gå med igen."
 }

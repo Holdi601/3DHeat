@@ -171,5 +171,16 @@
   "session.cmd.followOff": "Free everyone's camera",
   "session.cmd.mark.pin": "Marks: set a note",
   "session.cmd.mark.draw": "Marks: draw",
-  "session.cmd.mark.erase": "Marks: erase"
+  "session.cmd.mark.erase": "Marks: erase",
+  "session.public.lead": "Leiskite žmonėms už jūsų tinklo ribų prisijungti nuoroda, trimis žingsniais.",
+  "session.public.step.read": "Kas tampa pasiekiama",
+  "session.public.step.start": "Patvirtinti ir pradėti",
+  "session.public.failedTodo": "Patikrinkite šio kompiuterio interneto ryšį arba pasirinkite kitą būdą aukščiau ir bandykite dar kartą.",
+  "session.public.retry": "Bandyti dar kartą",
+  "session.todo.badPassword": "Paprašykite šeimininko slaptažodžio ir prisijunkite iš naujo.",
+  "session.todo.unreachable": "Patikrinkite serverio adresą (šeimininkas jį mato savo sesijos skydelyje) ir ar serveris veikia, tada prisijunkite iš naujo.",
+  "session.todo.protocol": "Atnaujinkite 3DHeat čia arba serveryje ir prisijunkite iš naujo.",
+  "session.todo.full": "Paprašykite šeimininko padaryti vietos ir prisijunkite iš naujo.",
+  "session.todo.dropped": "Prisijunkite iš naujo; šeimininkas įleis jus iš laukimo kambario.",
+  "session.todo.refused": "Patikrinkite adresą ir slaptažodį ir prisijunkite iš naujo."
 }

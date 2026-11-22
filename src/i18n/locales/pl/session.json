@@ -171,5 +171,16 @@
   "session.cmd.followOff": "Free everyone's camera",
   "session.cmd.mark.pin": "Marks: set a note",
   "session.cmd.mark.draw": "Marks: draw",
-  "session.cmd.mark.erase": "Marks: erase"
+  "session.cmd.mark.erase": "Marks: erase",
+  "session.public.lead": "Pozwól osobom spoza twojej sieci dołączyć przez link, w trzech krokach.",
+  "session.public.step.read": "Co stanie się dostępne",
+  "session.public.step.start": "Potwierdź i uruchom",
+  "session.public.failedTodo": "Sprawdź połączenie internetowe tego komputera albo wybierz inny sposób powyżej i spróbuj ponownie.",
+  "session.public.retry": "Spróbuj ponownie",
+  "session.todo.badPassword": "Poproś gospodarza o hasło i dołącz ponownie.",
+  "session.todo.unreachable": "Sprawdź adres serwera (gospodarz widzi go w panelu sesji) i czy serwer działa, a potem dołącz ponownie.",
+  "session.todo.protocol": "Zaktualizuj 3DHeat tutaj lub na serwerze i dołącz ponownie.",
+  "session.todo.full": "Poproś gospodarza o zrobienie miejsca i dołącz ponownie.",
+  "session.todo.dropped": "Dołącz ponownie; gospodarz wpuści cię z poczekalni.",
+  "session.todo.refused": "Sprawdź adres i hasło, a potem dołącz ponownie."
 }

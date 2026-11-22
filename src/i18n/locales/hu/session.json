@@ -171,5 +171,16 @@
   "session.cmd.followOff": "Free everyone's camera",
   "session.cmd.mark.pin": "Marks: set a note",
   "session.cmd.mark.draw": "Marks: draw",
-  "session.cmd.mark.erase": "Marks: erase"
+  "session.cmd.mark.erase": "Marks: erase",
+  "session.public.lead": "Engedd, hogy a hálózatodon kívüli emberek linkkel csatlakozzanak, három lépésben.",
+  "session.public.step.read": "Mi válik elérhetővé",
+  "session.public.step.start": "Megerősítés és indítás",
+  "session.public.failedTodo": "Ellenőrizd a gép internetkapcsolatát, vagy válassz fent másik módot, majd próbáld újra.",
+  "session.public.retry": "Újra",
+  "session.todo.badPassword": "Kérd el a jelszót a házigazdától, majd csatlakozz újra.",
+  "session.todo.unreachable": "Ellenőrizd a szerver címét (a házigazda látja a munkamenet-paneljén), és hogy fut-e a szerver, majd csatlakozz újra.",
+  "session.todo.protocol": "Frissítsd a 3DHeatet itt vagy a szerveren, majd csatlakozz újra.",
+  "session.todo.full": "Kérd meg a házigazdát, hogy csináljon helyet, majd csatlakozz újra.",
+  "session.todo.dropped": "Csatlakozz újra; a házigazda beenged a váróteremből.",
+  "session.todo.refused": "Ellenőrizd a címet és a jelszót, majd csatlakozz újra."
 }

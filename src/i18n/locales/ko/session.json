@@ -171,5 +171,16 @@
   "session.cmd.followOff": "Free everyone's camera",
   "session.cmd.mark.pin": "Marks: set a note",
   "session.cmd.mark.draw": "Marks: draw",
-  "session.cmd.mark.erase": "Marks: erase"
+  "session.cmd.mark.erase": "Marks: erase",
+  "session.public.lead": "네트워크 밖의 사람도 링크로 참여할 수 있게 합니다. 세 단계입니다.",
+  "session.public.step.read": "공개되는 것",
+  "session.public.step.start": "확인하고 시작",
+  "session.public.failedTodo": "이 컴퓨터의 인터넷 연결을 확인하거나 위에서 다른 방법을 고른 뒤 다시 시도하세요.",
+  "session.public.retry": "다시 시도",
+  "session.todo.badPassword": "호스트에게 비밀번호를 물어본 뒤 다시 참여하세요.",
+  "session.todo.unreachable": "서버 주소(호스트의 세션 패널에 표시됨)와 서버가 실행 중인지 확인한 뒤 다시 참여하세요.",
+  "session.todo.protocol": "여기 또는 서버의 3DHeat를 업데이트한 뒤 다시 참여하세요.",
+  "session.todo.full": "호스트에게 자리를 비워 달라고 한 뒤 다시 참여하세요.",
+  "session.todo.dropped": "다시 참여하세요. 호스트가 대기실에서 들여보내 줍니다.",
+  "session.todo.refused": "주소와 비밀번호를 확인한 뒤 다시 참여하세요."
 }

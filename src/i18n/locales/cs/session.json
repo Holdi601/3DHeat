@@ -171,5 +171,16 @@
   "session.cmd.followOff": "Free everyone's camera",
   "session.cmd.mark.pin": "Marks: set a note",
   "session.cmd.mark.draw": "Marks: draw",
-  "session.cmd.mark.erase": "Marks: erase"
+  "session.cmd.mark.erase": "Marks: erase",
+  "session.public.lead": "Nech lidi mimo svou síť připojit se odkazem, ve třech krocích.",
+  "session.public.step.read": "Co bude dostupné",
+  "session.public.step.start": "Potvrdit a spustit",
+  "session.public.failedTodo": "Zkontroluj připojení tohoto počítače k internetu nebo zvol výše jiný způsob a zkus to znovu.",
+  "session.public.retry": "Zkusit znovu",
+  "session.todo.badPassword": "Požádej hostitele o heslo a připoj se znovu.",
+  "session.todo.unreachable": "Zkontroluj adresu serveru (hostitel ji vidí ve svém panelu relace) a že server běží, pak se připoj znovu.",
+  "session.todo.protocol": "Aktualizuj 3DHeat tady nebo na serveru a připoj se znovu.",
+  "session.todo.full": "Požádej hostitele, aby udělal místo, a připoj se znovu.",
+  "session.todo.dropped": "Připoj se znovu; hostitel tě pustí z čekárny.",
+  "session.todo.refused": "Zkontroluj adresu a heslo a připoj se znovu."
 }

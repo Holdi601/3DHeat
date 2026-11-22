@@ -171,5 +171,16 @@
   "session.cmd.followOff": "Free everyone's camera",
   "session.cmd.mark.pin": "Marks: set a note",
   "session.cmd.mark.draw": "Marks: draw",
-  "session.cmd.mark.erase": "Marks: erase"
+  "session.cmd.mark.erase": "Marks: erase",
+  "session.public.lead": "Lig do dhaoine lasmuigh de do líonra páirt a ghlacadh le nasc, i dtrí chéim.",
+  "session.public.step.read": "Cad a bheidh inrochtana",
+  "session.public.step.start": "Deimhnigh agus tosaigh",
+  "session.public.failedTodo": "Seiceáil nasc idirlín an ríomhaire seo nó roghnaigh bealach eile thuas, ansin bain triail eile as.",
+  "session.public.retry": "Bain triail eile as",
+  "session.todo.badPassword": "Iarr an pasfhocal ar an óstach, ansin glac páirt arís.",
+  "session.todo.unreachable": "Seiceáil seoladh an fhreastalaí (feiceann an t-óstach é ina phainéal seisiúin) agus go bhfuil an freastalaí ag rith, ansin glac páirt arís.",
+  "session.todo.protocol": "Nuashonraigh 3DHeat anseo nó ar an bhfreastalaí, ansin glac páirt arís.",
+  "session.todo.full": "Iarr ar an óstach spás a dhéanamh, ansin glac páirt arís.",
+  "session.todo.dropped": "Glac páirt arís; ligeann an t-óstach isteach thú ón seomra feithimh.",
+  "session.todo.refused": "Seiceáil an seoladh agus an pasfhocal, ansin glac páirt arís."
 }

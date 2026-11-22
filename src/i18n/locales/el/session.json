@@ -171,5 +171,16 @@
   "session.cmd.followOff": "Free everyone's camera",
   "session.cmd.mark.pin": "Marks: set a note",
   "session.cmd.mark.draw": "Marks: draw",
-  "session.cmd.mark.erase": "Marks: erase"
+  "session.cmd.mark.erase": "Marks: erase",
+  "session.public.lead": "Άφησε άτομα εκτός του δικτύου σου να συμμετέχουν με σύνδεσμο, σε τρία βήματα.",
+  "session.public.step.read": "Τι γίνεται προσβάσιμο",
+  "session.public.step.start": "Επιβεβαίωση και έναρξη",
+  "session.public.failedTodo": "Έλεγξε τη σύνδεση στο διαδίκτυο αυτού του υπολογιστή ή διάλεξε άλλο τρόπο παραπάνω και δοκίμασε ξανά.",
+  "session.public.retry": "Δοκίμασε ξανά",
+  "session.todo.badPassword": "Ζήτα τον κωδικό από τον οικοδεσπότη και συνδέσου ξανά.",
+  "session.todo.unreachable": "Έλεγξε τη διεύθυνση του διακομιστή (ο οικοδεσπότης τη βλέπει στο πάνελ συνεδρίας του) και ότι ο διακομιστής τρέχει, μετά συνδέσου ξανά.",
+  "session.todo.protocol": "Ενημέρωσε το 3DHeat εδώ ή στον διακομιστή και συνδέσου ξανά.",
+  "session.todo.full": "Ζήτα από τον οικοδεσπότη να κάνει χώρο και συνδέσου ξανά.",
+  "session.todo.dropped": "Συνδέσου ξανά· ο οικοδεσπότης σε αφήνει να μπεις από την αίθουσα αναμονής.",
+  "session.todo.refused": "Έλεγξε τη διεύθυνση και τον κωδικό και συνδέσου ξανά."
 }

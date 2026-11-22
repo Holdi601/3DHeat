@@ -171,5 +171,16 @@
   "session.cmd.followOff": "Free everyone's camera",
   "session.cmd.mark.pin": "Marks: set a note",
   "session.cmd.mark.draw": "Marks: draw",
-  "session.cmd.mark.erase": "Marks: erase"
+  "session.cmd.mark.erase": "Marks: erase",
+  "session.public.lead": "Ħalli nies barra n-netwerk tiegħek jingħaqdu b’link, fi tliet passi.",
+  "session.public.step.read": "X’isir aċċessibbli",
+  "session.public.step.start": "Ikkonferma u ibda",
+  "session.public.failedTodo": "Iċċekkja l-konnessjoni tal-internet ta’ din il-magna jew agħżel mod ieħor hawn fuq, imbagħad erġa’ pprova.",
+  "session.public.retry": "Erġa’ pprova",
+  "session.todo.badPassword": "Itlob il-password lill-ospitant, imbagħad erġa’ ingħaqad.",
+  "session.todo.unreachable": "Iċċekkja l-indirizz tas-server (l-ospitant jarah fil-panew tas-sessjoni tiegħu) u li s-server qed jaħdem, imbagħad erġa’ ingħaqad.",
+  "session.todo.protocol": "Aġġorna 3DHeat hawn jew fuq is-server, imbagħad erġa’ ingħaqad.",
+  "session.todo.full": "Itlob lill-ospitant jagħmel il-post, imbagħad erġa’ ingħaqad.",
+  "session.todo.dropped": "Erġa’ ingħaqad; l-ospitant idaħħlek mill-kamra tal-istennija.",
+  "session.todo.refused": "Iċċekkja l-indirizz u l-password, imbagħad erġa’ ingħaqad."
 }

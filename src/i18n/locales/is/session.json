@@ -171,5 +171,16 @@
   "session.cmd.followOff": "Free everyone's camera",
   "session.cmd.mark.pin": "Marks: set a note",
   "session.cmd.mark.draw": "Marks: draw",
-  "session.cmd.mark.erase": "Marks: erase"
+  "session.cmd.mark.erase": "Marks: erase",
+  "session.public.lead": "Leyfðu fólki utan netsins þíns að taka þátt með tengli, í þremur skrefum.",
+  "session.public.step.read": "Hvað verður aðgengilegt",
+  "session.public.step.start": "Staðfesta og hefja",
+  "session.public.failedTodo": "Athugaðu nettengingu þessarar tölvu eða veldu aðra leið hér að ofan og reyndu aftur.",
+  "session.public.retry": "Reyna aftur",
+  "session.todo.badPassword": "Biddu gestgjafann um lykilorðið og tengstu aftur.",
+  "session.todo.unreachable": "Athugaðu vistfang þjónsins (gestgjafinn sér það í lotuspjaldinu) og að þjónninn sé í gangi, og tengstu aftur.",
+  "session.todo.protocol": "Uppfærðu 3DHeat hér eða á þjóninum og tengstu aftur.",
+  "session.todo.full": "Biddu gestgjafann að rýma til og tengstu aftur.",
+  "session.todo.dropped": "Tengstu aftur; gestgjafinn hleypir þér inn úr biðstofunni.",
+  "session.todo.refused": "Athugaðu vistfangið og lykilorðið og tengstu aftur."
 }

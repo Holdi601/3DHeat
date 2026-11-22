@@ -171,5 +171,16 @@
   "session.cmd.followOff": "Free everyone's camera",
   "session.cmd.mark.pin": "Marks: set a note",
   "session.cmd.mark.draw": "Marks: draw",
-  "session.cmd.mark.erase": "Marks: erase"
+  "session.cmd.mark.erase": "Marks: erase",
+  "session.public.lead": "让你网络之外的人通过链接加入，只需三步。",
+  "session.public.step.read": "哪些内容会被访问到",
+  "session.public.step.start": "确认并开始",
+  "session.public.failedTodo": "请检查这台电脑的网络连接，或在上方换一种方式，然后重试。",
+  "session.public.retry": "重试",
+  "session.todo.badPassword": "向主持人索要密码，然后重新加入。",
+  "session.todo.unreachable": "请检查服务器地址（主持人可在其会话面板中看到）以及服务器是否在运行，然后重新加入。",
+  "session.todo.protocol": "请更新这里或服务器上的 3DHeat，然后重新加入。",
+  "session.todo.full": "请主持人腾出位置，然后重新加入。",
+  "session.todo.dropped": "重新加入；主持人会从等候室放你进来。",
+  "session.todo.refused": "请检查地址和密码，然后重新加入。"
 }

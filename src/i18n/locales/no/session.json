@@ -171,5 +171,16 @@
   "session.cmd.followOff": "Free everyone's camera",
   "session.cmd.mark.pin": "Marks: set a note",
   "session.cmd.mark.draw": "Marks: draw",
-  "session.cmd.mark.erase": "Marks: erase"
+  "session.cmd.mark.erase": "Marks: erase",
+  "session.public.lead": "La folk utenfor nettverket ditt bli med via en lenke, i tre trinn.",
+  "session.public.step.read": "Hva som blir tilgjengelig",
+  "session.public.step.start": "Bekreft og start",
+  "session.public.failedTodo": "Sjekk internettforbindelsen til denne maskinen, eller velg en annen måte over, og prøv igjen.",
+  "session.public.retry": "Prøv igjen",
+  "session.todo.badPassword": "Be verten om passordet, og bli med igjen.",
+  "session.todo.unreachable": "Sjekk serveradressen (verten ser den i øktpanelet sitt) og at serveren kjører, og bli med igjen.",
+  "session.todo.protocol": "Oppdater 3DHeat her eller på serveren, og bli med igjen.",
+  "session.todo.full": "Be verten om å gi plass, og bli med igjen.",
+  "session.todo.dropped": "Bli med igjen; verten slipper deg inn fra venterommet.",
+  "session.todo.refused": "Sjekk adressen og passordet, og bli med igjen."
 }

@@ -171,5 +171,16 @@
   "session.cmd.followOff": "Free everyone's camera",
   "session.cmd.mark.pin": "Marks: set a note",
   "session.cmd.mark.draw": "Marks: draw",
-  "session.cmd.mark.erase": "Marks: erase"
+  "session.cmd.mark.erase": "Marks: erase",
+  "session.public.lead": "Anna verkkosi ulkopuolisten liittyä linkillä, kolmessa vaiheessa.",
+  "session.public.step.read": "Mikä tulee saataville",
+  "session.public.step.start": "Vahvista ja aloita",
+  "session.public.failedTodo": "Tarkista tämän koneen internetyhteys tai valitse yltä toinen tapa ja yritä uudelleen.",
+  "session.public.retry": "Yritä uudelleen",
+  "session.todo.badPassword": "Pyydä isännältä salasana ja liity uudelleen.",
+  "session.todo.unreachable": "Tarkista palvelimen osoite (isäntä näkee sen istuntopaneelissaan) ja että palvelin on käynnissä, ja liity uudelleen.",
+  "session.todo.protocol": "Päivitä 3DHeat täällä tai palvelimella ja liity uudelleen.",
+  "session.todo.full": "Pyydä isäntää tekemään tilaa ja liity uudelleen.",
+  "session.todo.dropped": "Liity uudelleen; isäntä päästää sinut sisään odotushuoneesta.",
+  "session.todo.refused": "Tarkista osoite ja salasana ja liity uudelleen."
 }

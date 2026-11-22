@@ -171,5 +171,16 @@
   "session.cmd.followOff": "Free everyone's camera",
   "session.cmd.mark.pin": "Marks: set a note",
   "session.cmd.mark.draw": "Marks: draw",
-  "session.cmd.mark.erase": "Marks: erase"
+  "session.cmd.mark.erase": "Marks: erase",
+  "session.public.lead": "Дозволи људима ван твоје мреже да се придруже преко линка, у три корака.",
+  "session.public.step.read": "Шта постаје доступно",
+  "session.public.step.start": "Потврди и покрени",
+  "session.public.failedTodo": "Провери интернет везу овог рачунара или горе изабери други начин, па покушај поново.",
+  "session.public.retry": "Покушај поново",
+  "session.todo.badPassword": "Затражи лозинку од домаћина, па се поново придружи.",
+  "session.todo.unreachable": "Провери адресу сервера (домаћин је види у свом панелу сесије) и да ли сервер ради, па се поново придружи.",
+  "session.todo.protocol": "Ажурирај 3DHeat овде или на серверу, па се поново придружи.",
+  "session.todo.full": "Замоли домаћина да направи места, па се поново придружи.",
+  "session.todo.dropped": "Поново се придружи; домаћин те пушта из чекаонице.",
+  "session.todo.refused": "Провери адресу и лозинку, па се поново придружи."
 }

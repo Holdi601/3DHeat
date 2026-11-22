@@ -171,5 +171,16 @@
   "session.cmd.followOff": "Free everyone's camera",
   "session.cmd.mark.pin": "Marks: set a note",
   "session.cmd.mark.draw": "Marks: draw",
-  "session.cmd.mark.erase": "Marks: erase"
+  "session.cmd.mark.erase": "Marks: erase",
+  "session.public.lead": "Deixe pessoas fora da sua rede entrarem com um link, em três passos.",
+  "session.public.step.read": "O que fica acessível",
+  "session.public.step.start": "Confirmar e iniciar",
+  "session.public.failedTodo": "Verifique a ligação à Internet deste computador ou escolha outra forma acima e tente de novo.",
+  "session.public.retry": "Tentar de novo",
+  "session.todo.badPassword": "Peça a palavra-passe ao anfitrião e entre de novo.",
+  "session.todo.unreachable": "Verifique o endereço do servidor (o anfitrião vê-o no painel da sessão) e se o servidor está a correr, e entre de novo.",
+  "session.todo.protocol": "Atualize o 3DHeat aqui ou no servidor e entre de novo.",
+  "session.todo.full": "Peça ao anfitrião para abrir espaço e entre de novo.",
+  "session.todo.dropped": "Entre de novo; o anfitrião deixa-o entrar a partir da sala de espera.",
+  "session.todo.refused": "Verifique o endereço e a palavra-passe e entre de novo."
 }

@@ -171,5 +171,16 @@
   "session.cmd.followOff": "Free everyone's camera",
   "session.cmd.mark.pin": "Marks: set a note",
   "session.cmd.mark.draw": "Marks: draw",
-  "session.cmd.mark.erase": "Marks: erase"
+  "session.cmd.mark.erase": "Marks: erase",
+  "session.public.lead": "Dovoli ljudem zunaj tvojega omrežja, da se pridružijo s povezavo, v treh korakih.",
+  "session.public.step.read": "Kaj postane dosegljivo",
+  "session.public.step.start": "Potrdi in zaženi",
+  "session.public.failedTodo": "Preveri internetno povezavo tega računalnika ali zgoraj izberi drug način in poskusi znova.",
+  "session.public.retry": "Poskusi znova",
+  "session.todo.badPassword": "Gostitelja prosi za geslo in se znova pridruži.",
+  "session.todo.unreachable": "Preveri naslov strežnika (gostitelj ga vidi na svoji plošči seje) in ali strežnik teče, nato se znova pridruži.",
+  "session.todo.protocol": "Posodobi 3DHeat tukaj ali na strežniku in se znova pridruži.",
+  "session.todo.full": "Gostitelja prosi, naj naredi prostor, in se znova pridruži.",
+  "session.todo.dropped": "Znova se pridruži; gostitelj te spusti iz čakalnice.",
+  "session.todo.refused": "Preveri naslov in geslo ter se znova pridruži."
 }

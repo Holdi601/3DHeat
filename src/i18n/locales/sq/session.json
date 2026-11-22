@@ -171,5 +171,16 @@
   "session.cmd.followOff": "Free everyone's camera",
   "session.cmd.mark.pin": "Marks: set a note",
   "session.cmd.mark.draw": "Marks: draw",
-  "session.cmd.mark.erase": "Marks: erase"
+  "session.cmd.mark.erase": "Marks: erase",
+  "session.public.lead": "Lejo njerëz jashtë rrjetit tënd të bashkohen me një lidhje, në tre hapa.",
+  "session.public.step.read": "Çfarë bëhet e arritshme",
+  "session.public.step.start": "Konfirmo dhe nis",
+  "session.public.failedTodo": "Kontrollo lidhjen me internetin e këtij kompjuteri ose zgjidh një mënyrë tjetër më sipër, pastaj provo sërish.",
+  "session.public.retry": "Provo sërish",
+  "session.todo.badPassword": "Kërkoji fjalëkalimin pritësit, pastaj bashkohu sërish.",
+  "session.todo.unreachable": "Kontrollo adresën e serverit (pritësi e sheh në panelin e seancës) dhe që serveri punon, pastaj bashkohu sërish.",
+  "session.todo.protocol": "Përditëso 3DHeat këtu ose në server, pastaj bashkohu sërish.",
+  "session.todo.full": "Kërkoji pritësit të bëjë vend, pastaj bashkohu sërish.",
+  "session.todo.dropped": "Bashkohu sërish; pritësi të lejon të hysh nga dhoma e pritjes.",
+  "session.todo.refused": "Kontrollo adresën dhe fjalëkalimin, pastaj bashkohu sërish."
 }

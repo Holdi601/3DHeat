@@ -171,5 +171,16 @@
   "session.cmd.followOff": "Free everyone's camera",
   "session.cmd.mark.pin": "Marks: set a note",
   "session.cmd.mark.draw": "Marks: draw",
-  "session.cmd.mark.erase": "Marks: erase"
+  "session.cmd.mark.erase": "Marks: erase",
+  "session.public.lead": "Ağınızın dışındaki kişilerin bir bağlantıyla katılmasına üç adımda izin verin.",
+  "session.public.step.read": "Neler erişilebilir olur",
+  "session.public.step.start": "Onayla ve başlat",
+  "session.public.failedTodo": "Bu bilgisayarın internet bağlantısını denetleyin ya da yukarıdan başka bir yol seçin, sonra yeniden deneyin.",
+  "session.public.retry": "Yeniden dene",
+  "session.todo.badPassword": "Parolayı ev sahibinden isteyin, sonra yeniden katılın.",
+  "session.todo.unreachable": "Sunucu adresini (ev sahibi bunu oturum panelinde görür) ve sunucunun çalıştığını denetleyin, sonra yeniden katılın.",
+  "session.todo.protocol": "3DHeat’i burada ya da sunucuda güncelleyin, sonra yeniden katılın.",
+  "session.todo.full": "Ev sahibinden yer açmasını isteyin, sonra yeniden katılın.",
+  "session.todo.dropped": "Yeniden katılın; ev sahibi sizi bekleme odasından içeri alır.",
+  "session.todo.refused": "Adresi ve parolayı denetleyin, sonra yeniden katılın."
 }

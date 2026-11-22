@@ -171,5 +171,16 @@
   "session.cmd.followOff": "Free everyone's camera",
   "session.cmd.mark.pin": "Marks: set a note",
   "session.cmd.mark.draw": "Marks: draw",
-  "session.cmd.mark.erase": "Marks: erase"
+  "session.cmd.mark.erase": "Marks: erase",
+  "session.public.lead": "Laat mensen buiten je netwerk meedoen met een link, in drie stappen.",
+  "session.public.step.read": "Wat bereikbaar wordt",
+  "session.public.step.start": "Bevestigen en starten",
+  "session.public.failedTodo": "Controleer de internetverbinding van deze computer of kies hierboven een andere manier, en probeer het opnieuw.",
+  "session.public.retry": "Opnieuw proberen",
+  "session.todo.badPassword": "Vraag de host om het wachtwoord en doe opnieuw mee.",
+  "session.todo.unreachable": "Controleer het serveradres (de host ziet het in zijn sessiepaneel) en of de server draait, en doe opnieuw mee.",
+  "session.todo.protocol": "Werk 3DHeat hier of op de server bij en doe opnieuw mee.",
+  "session.todo.full": "Vraag de host om ruimte te maken en doe opnieuw mee.",
+  "session.todo.dropped": "Doe opnieuw mee; de host laat je binnen vanuit de wachtruimte.",
+  "session.todo.refused": "Controleer het adres en het wachtwoord en doe opnieuw mee."
 }
