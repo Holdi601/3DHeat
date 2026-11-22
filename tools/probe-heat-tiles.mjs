@@ -39,18 +39,24 @@ const browser = await chromium.launch(
 );
 try {
   const page = await browser.newPage({ viewport: { width: 1600, height: 900 } });
-  // The host's side: tiles by id from the pack, as `ReadHeatTiles` answers.
-  await page.exposeFunction('__tileRead', (ids) => {
-    const out = [];
+  // The host's side: tiles by id from the pack, as `ReadHeatTiles` answers, as
+  // binary (u32 count, then u32 length + bytes per tile; length 0 = empty).
+  await page.route('**/__heat3d_tiles', (route) => {
+    const ids = JSON.parse(route.request().postData() ?? '[]');
+    const parts = [Buffer.alloc(4)];
+    parts[0].writeUInt32LE(ids.length);
     for (const id of ids) {
       const big = BigInt(id);
       const l = Number(big >> 56n);
       const y = Number((big >> 28n) & 0x0fffffffn);
       const x = Number(big & 0x0fffffffn);
       const at = l <= meta.leaf_level ? meta.index[l]?.[String(y * (1 << l) + x)] : undefined;
-      out.push(at ? pack.subarray(at[0], at[0] + at[1]).toString('base64') : null);
+      const len = Buffer.alloc(4);
+      len.writeUInt32LE(at ? at[1] : 0);
+      parts.push(len);
+      if (at) parts.push(pack.subarray(at[0], at[0] + at[1]));
     }
-    return out;
+    return route.fulfill({ status: 200, contentType: 'application/octet-stream', body: Buffer.concat(parts) });
   });
   await page.goto(url);
   await page.waitForFunction(() => globalThis.__3dheat_engine, null, { timeout: 120_000 });
@@ -72,13 +78,21 @@ try {
     async ({ info, seconds }) => {
       const { HeatTileSource } = await import('/src/render/heatTiles/source.ts');
       const eng = globalThis.__3dheat_engine;
-      const b64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
       const transport = {
         query: async () => info,
         read: async (_key, ids) => {
-          const got = await globalThis.__tileRead(ids.map(String));
+          const res = await fetch('/__heat3d_tiles', { method: 'POST', body: JSON.stringify(ids.map(String)) });
+          const buf = await res.arrayBuffer();
+          const dv = new DataView(buf);
           const batch = { tiles: [], empty: [], pending: [], deferred: [] };
-          ids.forEach((id, i) => (got[i] ? batch.tiles.push({ id, bytes: b64(got[i]), estimate: false }) : batch.empty.push(id)));
+          let at = 4;
+          for (const id of ids) {
+            const n = dv.getUint32(at, true);
+            at += 4;
+            if (n === 0) batch.empty.push(id);
+            else batch.tiles.push({ id, bytes: new Uint8Array(buf, at, n), estimate: false });
+            at += n;
+          }
           return batch;
         },
       };

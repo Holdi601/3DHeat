@@ -64,6 +64,28 @@ export interface HeatTileOptions {
   maxTiles?: number;
   /** A cell this many pixels before a finer level is wanted. */
   cellPx?: number;
+  decoder?: TileDecoder;
+}
+
+/** Tiles decoded off the main thread where workers exist (the page), in place otherwise (tests). */
+export type TileDecoder = (tiles: Uint8Array[]) => Promise<(DecodedTile | null)[]>;
+
+function workerDecoder(): TileDecoder {
+  if (typeof Worker === 'undefined') return async (tiles) => tiles.map((b) => decodeTile(b));
+  const worker = new Worker(new URL('./decodeWorker.ts', import.meta.url), { type: 'module' });
+  const waiting = new Map<number, (t: (DecodedTile | null)[]) => void>();
+  let seq = 0;
+  worker.onmessage = (e: MessageEvent<{ seq: number; tiles: (DecodedTile | null)[] }>) => {
+    waiting.get(e.data.seq)?.(e.data.tiles);
+    waiting.delete(e.data.seq);
+  };
+  return (tiles) =>
+    new Promise((resolve) => {
+      const n = ++seq;
+      waiting.set(n, resolve);
+      // Copied, not transferred: the bytes may be views into a larger reply.
+      worker.postMessage({ seq: n, tiles: tiles.map((b) => b.slice()) });
+    });
 }
 
 interface Cached {
@@ -86,13 +108,16 @@ export class HeatTileSource {
   private readonly empty = new Set<string>();
   private readonly wanted: TileRef[] = [];
   private inFlight = 0;
+  /** Tiles asked for and not answered yet: never asked twice at once. */
+  private readonly asked = new Set<string>();
   private tokens: number;
   private lastRefill = performance.now();
   private clock = 0;
   private disposed = false;
   private polling: ReturnType<typeof setTimeout> | null = null;
   private pumpTimer: ReturnType<typeof setTimeout> | null = null;
-  private readonly opts: Required<HeatTileOptions>;
+  private readonly opts: Required<Omit<HeatTileOptions, 'decoder'>>;
+  private readonly decode: TileDecoder;
 
   constructor(
     private readonly transport: TileTransport,
@@ -108,6 +133,7 @@ export class HeatTileSource {
       ...options,
     };
     this.tokens = this.opts.bytesPerSecond * 0.5;
+    this.decode = options.decoder ?? workerDecoder();
   }
 
   /** Asks the host for the pyramid and keeps asking while it builds. */
@@ -200,7 +226,7 @@ export class HeatTileSource {
         tiles.push(this.drawOf(info, t, hit.tile, [0, 0, 1, 1]));
         continue;
       }
-      this.wanted.push(t);
+      if (!this.asked.has(k)) this.wanted.push(t);
       // Meanwhile: the nearest ancestor we have, the part over this tile.
       for (let l = t.level - 1; l >= 0; l--) {
         const d = t.level - l;
@@ -263,7 +289,10 @@ export class HeatTileSource {
       );
       return;
     }
-    const ids = this.wanted.slice(0, 64).map((t) => tileId(t.level, t.x, t.y));
+    const take = this.wanted.slice(0, 64);
+    const keys = take.map((t) => tileKey(t.level, t.x, t.y));
+    for (const k of keys) this.asked.add(k);
+    const ids = take.map((t) => tileId(t.level, t.x, t.y));
     if (ids.length === 0) return;
     this.wanted.length = 0;
     const budget = Math.floor(Math.min(this.tokens, 4 << 20));
@@ -272,16 +301,15 @@ export class HeatTileSource {
     const key = info.key;
     this.transport
       .read(key, ids, budget)
-      .then((batch) => {
+      .then(async (batch) => {
         if (this.disposed || this.info?.key !== key) return;
         let got = 0;
-        for (const t of batch.tiles) {
-          got += t.bytes.length;
-          const tile = decodeTile(t.bytes);
-          this.cache.set(tileKey(tile.level, tile.x, tile.y), {
-            tile,
-            used: this.clock,
-          });
+        for (const t of batch.tiles) got += t.bytes.length;
+        const decoded = await this.decode(batch.tiles.map((t) => t.bytes));
+        if (this.disposed || this.info?.key !== key) return;
+        for (const tile of decoded) {
+          if (!tile) continue;
+          this.cache.set(tileKey(tile.level, tile.x, tile.y), { tile, used: this.clock });
           this.stats.tiles++;
         }
         for (const id of batch.empty) {
@@ -299,6 +327,7 @@ export class HeatTileSource {
       .catch(() => {})
       .finally(() => {
         this.inFlight--;
+        for (const k of keys) this.asked.delete(k);
       });
   }
 
