@@ -777,7 +777,8 @@ const TILE_BUILDS_REMOTE: usize = 2;
 const TILE_LEVEL_REMOTE: u32 = 6;
 
 impl Core {
-    fn tile_store(&self) -> Result<Arc<crate::tiles::TileStore>> {
+    /// The heat-tile store (opened on first use): the native viewport reads tiles by key there.
+    pub fn tile_store(&self) -> Result<Arc<crate::tiles::TileStore>> {
         self.tiles
             .get_or_init(|| {
                 let budget = std::env::var("HEAT3D_TILE_CACHE_BYTES").ok().and_then(|v| v.parse().ok()).unwrap_or(8u64 << 30);

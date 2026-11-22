@@ -17,6 +17,9 @@ import { SAMPLE_BLOCK, type ActiveFilter, type FrameParams } from '../types';
 import { INSTANCE_STRIDE, type FigureBatch } from '../../figures/instances';
 import type { ViewMode } from '../../state/types';
 import { PERSON_FILTER_COLUMN } from '../filterTables';
+import { CURVE_LUT_SIZE } from '../../state/curve';
+import { holeTexels, type HeatTileDraw } from '../heatTiles/source';
+import { TILE_INST_FLOATS } from '../webgpu/heatTilesPass';
 
 export const PACKET_MAGIC = 0x46563348; // "H3VF"
 export const PACKET_VERSION = 1;
@@ -81,6 +84,15 @@ export const SECTION = {
    * visibility words' count and the words when they changed (0 otherwise).
    */
   tracks: 20,
+  /**
+   * Heat from tiles (`FrameParams.heatTiles`, Stage 6): the pyramid's key (a string; the viewport
+   * reads its tiles from the core by it), the pass's 16 numbers after the view (ground, scale,
+   * kernel on, perspective, radius, least and most pixels, pixels a unit, centre, edge, falloff,
+   * smooth, keep mass, neutral L, curve on, hole weight), 0 or 1 and the curve (`CURVE_LUT_SIZE`),
+   * the weights' components, their key, count and floats, then the tile count and per tile its
+   * level, x, y and `TILE_INST_FLOATS` floats as the WebGPU pass packs an instance (the layer 0).
+   */
+  heatTiles: 21,
 } as const;
 
 /** The frame's numbers, in packet order, with how many floats each takes. */
@@ -322,6 +334,63 @@ export class PacketWriter {
   view(): Uint8Array {
     return new Uint8Array(this.buf, 0, this.at * 4);
   }
+}
+
+/** A string's 32-bit FNV-1a: a short key for the weights, sent instead of their text. */
+function fnv(s: string): number {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 0x01000193);
+  return h >>> 0;
+}
+
+/** `SECTION.heatTiles` for the native viewport (see there), the section opened and closed here. */
+export function writeHeatTiles(w: PacketWriter, d: HeatTileDraw, neutralL: number): void {
+  const k = d.kernel;
+  w.open(SECTION.heatTiles);
+  w.string(d.pyramid);
+  const curve = !!k?.curve && k.curve.length === CURVE_LUT_SIZE;
+  w.floats([
+    d.ground,
+    d.scale,
+    k ? 1 : 0,
+    k?.perspective ? 1 : 0,
+    k?.radius ?? 0,
+    k?.minPx ?? 0,
+    k?.maxPx ?? 0,
+    k?.pxPerUnit ?? 0,
+    k?.centre ?? 0,
+    k?.edge ?? 0,
+    Math.max(0.01, k?.falloff ?? 1),
+    k?.smoothRamp ? 1 : 0,
+    k?.keepMass ? 1 : 0,
+    neutralL,
+    curve ? 1 : 0,
+    d.hole ? d.holeWeight : 1,
+  ]);
+  w.word(curve ? 1 : 0);
+  if (curve) w.floats(k!.curve!);
+  const wt = d.weights;
+  w.word(wt ? wt.components : 1);
+  w.word(wt ? fnv(wt.key) : 0);
+  w.word(wt ? wt.w.length : 0);
+  if (wt) w.floats(wt.w);
+  w.word(d.tiles.length);
+  for (const t of d.tiles) {
+    const [l, x, y] = t.key.split('/').map(Number);
+    w.word(l);
+    w.word(x);
+    w.word(y);
+    const f = w.reserveFloats(TILE_INST_FLOATS);
+    f.set(t.rect, 0);
+    f.set(t.uv, 4);
+    // With the kernel a cell's count is its rows' heat; without, density (the viewport adds the team colours' scale).
+    f[8] = k ? 1 : t.perCount;
+    f[9] = 0;
+    f[10] = t.cell;
+    f[11] = k ? t.reach : 0;
+    f.set(holeTexels(t, d.hole), 12);
+  }
+  w.close();
 }
 
 /** The frame's numbers (`FRAME_FIELDS`), into an open section. */

@@ -311,6 +311,8 @@ pub struct Renderer {
     m_merge: wgpu::ShaderModule,
     /// The GPU tracks (`tracks.rs`).
     pub tracks: crate::tracks::Tracks,
+    /// Heat from tiles (`heattiles.rs`).
+    pub tiles: crate::heattiles::HeatTiles,
     filter_pass: wgpu::ComputePipeline,
     bin: Option<HeatBin>,
     // Targets.
@@ -635,6 +637,7 @@ impl Renderer {
             m_decay,
             m_merge,
             tracks,
+            tiles: Default::default(),
             filter_pass,
             bin,
             width: 0,
@@ -1606,6 +1609,15 @@ impl Renderer {
         let target = if direct { heat_view.clone() } else { scratch_view.clone() };
         if !extend || fresh {
             Self::clear_target(encoder, &target, if direct { "clear heat" } else { "clear heat scratch" });
+        }
+        // Heat from tiles (Stage 6) under the rows, where the target was just cleared; not the rate map's.
+        if !field && p.heat_tiles.is_none() {
+            self.tiles.pending = false;
+        }
+        if !field && !extend && !p.flag(F_RATE_ON) {
+            if let (Some(t), Some(fr)) = (p.heat_tiles.as_ref(), p.frame.as_ref()) {
+                self.tiles.draw(&self.device, &self.queue, encoder, &target, format, t, &fr[F_VIEW_PROJ..F_VIEW_PROJ + 16]);
+            }
         }
         let weight = p.f(F_SAMPLE_WEIGHT) * p.f(F_HEAT_GAIN);
         if p.plan.is_empty() {

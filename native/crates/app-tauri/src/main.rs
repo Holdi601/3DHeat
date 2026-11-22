@@ -160,6 +160,7 @@ fn main() {
             viewport::viewport_mesh,
             viewport::viewport_glyphs,
             viewport::viewport_tracks,
+            viewport::viewport_heat_tiles,
             viewport::viewport_times
         ])
         .register_asynchronous_uri_scheme_protocol("heat3d", move |_ctx, request, responder| {

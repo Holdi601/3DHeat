@@ -40,7 +40,7 @@ import {
   type Renderer,
   type ActiveFilter,
 } from '../types';
-import { teamPaletteIndex } from '../colors';
+import { TEAM_LIGHTNESS, teamPaletteIndex } from '../colors';
 import { filterColumnData, packFilterTable, packSignTables } from '../filterTables';
 import { CURVE_LUT_SIZE } from '../../state/curve';
 import { MAX_GPU_VOLUMES, VOLUME_BLOCK_FLOATS } from '../../volumes/gpu';
@@ -51,7 +51,7 @@ import { ViewshedPlan } from '../../ranges/viewshed';
 import { SHELL_FLOATS, shellMesh } from '../../ranges/shells';
 import { SHELL_UNIFORM_BYTES } from '../../ranges/shellShaders';
 import { FACES, GROUND_UNIFORM_BYTES, MAX_VIEWS, VIEW_FACE } from '../../ranges/viewshedShaders';
-import { PacketWriter, SECTION, coreColumnName, writeFigures, writeFilters, writeFrame, writePlan } from './framePacket';
+import { PacketWriter, SECTION, coreColumnName, writeFigures, writeFilters, writeFrame, writeHeatTiles, writePlan } from './framePacket';
 import { INSTANCE_STRIDE, MESH_STRIDE, type FigureMesh } from '../../figures/instances';
 import { symbolAtlas } from '../symbols/atlas';
 import { markResident, nextToUpload, playbackStarting, setMeshUploader, uploadsWaiting } from '../../figures/residency';
@@ -99,6 +99,8 @@ interface Snapshot {
   gpuBytes?: number;
   levelBytes?: number;
   filtersPending?: boolean;
+  /** Heat tiles the last frame wanted still being read or decoded (`heattiles.rs`). */
+  tilesPending?: boolean;
   binned?: boolean;
   backend?: string;
   adapter?: string;
@@ -235,7 +237,7 @@ export class NativeRenderer implements Renderer {
    * counters are asked for between frames, as no frame may be sent to carry them back.
    */
   get uploadsPending(): boolean {
-    const pending = (this.snap.filtersPending ?? false) || this.dataPending;
+    const pending = (this.snap.filtersPending ?? false) || (this.snap.tilesPending ?? false) || this.dataPending;
     if (pending) this.pollSnapshot();
     return pending || this.uploading;
   }
@@ -253,6 +255,7 @@ export class NativeRenderer implements Renderer {
   }
 
   private polling = false;
+  private tileStoreSent = false;
 
   private pollSnapshot(): void {
     if (this.polling) return;
@@ -614,6 +617,14 @@ export class NativeRenderer implements Renderer {
       if (!p.figureBatches?.length) this.meshFrame++;
       this.tracks.write(w, p, (m) => this.meshFor(m), all);
       if (!p.figureBatches?.length) this.evictMeshes();
+    }
+    // Heat from tiles: the viewport reads them from the core by the pyramid's key (told of the store once).
+    if (p.heatTiles && p.heatTiles.tiles.length > 0 && !p.heat.rate) {
+      if (!this.tileStoreSent) {
+        this.tileStoreSent = true;
+        void this.invoke('viewport_heat_tiles').catch((e: unknown) => console.warn('native viewport: heat tiles', e));
+      }
+      writeHeatTiles(w, p.heatTiles, TEAM_LIGHTNESS);
     }
     if (p.cubes && p.cubeCount > 0) {
       w.open(SECTION.cubes);

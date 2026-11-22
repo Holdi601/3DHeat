@@ -324,6 +324,122 @@ fn draws_heat_offscreen() {
     assert!(lit > 100 && total.is_finite() && total > 0.0, "no heat drawn: {lit} lit, total {total}");
 }
 
+/// Heat from tiles (`heattiles.rs`): a one-tile pyramid in a tile store, read by key, decoded off the
+/// render thread, drawn with no rows loaded - bilinear, then as the rows' sprites with a hole and
+/// team colours - and the heat read back.
+#[test]
+fn draws_heat_tiles_offscreen() {
+    use heat3d_core::tiles::{encode_tile, tile_id, Meta, TileStore, TILE};
+    use heat3d_viewport::heattiles::TilesFrame;
+    let required = std::env::var("HEAT3D_GPU_SMOKE").is_ok_and(|v| v == "1");
+    let adapter = match heat3d_viewport::viewport::adapter(None) {
+        Ok((_, a, _)) => a,
+        Err(e) => {
+            assert!(!required, "HEAT3D_GPU_SMOKE=1 but no adapter: {e:#}");
+            return;
+        }
+    };
+    if !required && matches!(adapter.get_info().device_type, wgpu::DeviceType::Cpu | wgpu::DeviceType::VirtualGpu | wgpu::DeviceType::Other) {
+        return;
+    }
+    // A pyramid of one level-0 tile, two channels: every cell 1 in the first, 2 in the second.
+    let root = std::env::temp_dir().join(format!("heat3d-viewport-tiles-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&root);
+    let key = "smoke";
+    let mut cells = vec![1u32; TILE * TILE * 2];
+    cells[TILE * TILE..].fill(2);
+    let bytes = encode_tile(0, 0, 0, 2, &cells, false);
+    std::fs::create_dir_all(root.join(key)).unwrap();
+    std::fs::write(root.join(key).join("tiles.bin"), &bytes).unwrap();
+    let meta = Meta { key: key.into(), size: 1.0, channels: 2, index: vec![[(0u32, [0u64, bytes.len() as u64])].into_iter().collect()], bytes: bytes.len() as u64, ..Default::default() };
+    std::fs::write(root.join(key).join("meta.json"), serde_json::to_vec(&meta).unwrap()).unwrap();
+    let store = Arc::new(TileStore::open(root.clone(), 1 << 30).unwrap());
+
+    let mut r = Renderer::new(&adapter, wgpu::TextureFormat::Rgba8Unorm).expect("renderer");
+    let scope = r.device.push_error_scope(wgpu::ErrorFilter::Validation);
+    r.clear_dataset(false);
+    r.tiles.set_store(store);
+    let out = r.device.create_texture(&wgpu::TextureDescriptor {
+        label: Some("out"),
+        size: wgpu::Extent3d { width: SIDE, height: SIDE, depth_or_array_layers: 1 },
+        mip_level_count: 1,
+        sample_count: 1,
+        dimension: wgpu::TextureDimension::D2,
+        format: wgpu::TextureFormat::Rgba8Unorm,
+        usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC,
+        view_formats: &[],
+    });
+    let view = out.create_view(&Default::default());
+    // The unit square, its texture whole; a count a unit of density (bilinear, no kernel).
+    let mut inst = [0f32; TILE_INST_FLOATS as usize];
+    inst[..8].copy_from_slice(&[0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0]);
+    inst[8] = 1.0;
+    inst[10] = 1.0 / TILE as f32;
+    inst[12..].copy_from_slice(&[1e9, 1e9, -1e9, -1e9]);
+    let mut uniform = [0f32; 16];
+    uniform[1] = 1.0;
+    let tiles = TilesFrame { key: key.into(), uniform, curve: None, components: 1, wkey: 0, weights: Vec::new(), tiles: vec![(tile_id(0, 0, 0), inst)] };
+    let mut p = packet();
+    p.plan.clear();
+    p.ranges = None;
+    p.heat_tiles = Some(tiles.clone());
+    // Until the tile is read, decoded and uploaded.
+    for seq in 0..200 {
+        p.seq = seq + 1;
+        r.draw(&[p.clone()], &view, (SIDE, SIDE), false);
+        if !r.tiles.pending {
+            break;
+        }
+        std::thread::sleep(std::time::Duration::from_millis(5));
+    }
+    assert!(!r.tiles.pending, "the tile never arrived");
+    // As the rows' sprites, a hole over the left half weighing nothing, the ramp's curve; then team colours.
+    let mut k = tiles.clone();
+    k.uniform[2..13].copy_from_slice(&[1.0, 0.0, 0.01, 1.0, 32.0, 32.0, 1.0, 0.0, 1.0, 0.0, 1.0]);
+    k.uniform[14] = 1.0;
+    k.uniform[15] = 0.0;
+    k.curve = Some((0..CURVE_LUT_SIZE).map(|i| 1.0 - i as f32 / (CURVE_LUT_SIZE - 1) as f32).collect());
+    k.tiles[0].1[11] = 0.01;
+    k.tiles[0].1[12..].copy_from_slice(&[0.0, 0.0, 128.0, 256.0]);
+    let mut team = k.clone();
+    team.components = 4;
+    team.wkey = 9;
+    team.weights = vec![1.0, 0.5, 0.0, 0.7, 1.0, -0.5, 0.0, 0.7];
+    for t in [k, team] {
+        p.heat_tiles = Some(t);
+        for _ in 0..200 {
+            p.seq += 1;
+            r.draw(&[p.clone()], &view, (SIDE, SIDE), false);
+            if !r.tiles.pending {
+                break;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(5));
+        }
+        assert!(!r.tiles.pending, "the tile never arrived");
+    }
+    // The plain heat again, read back: every cell 3 rows a unit of density over the square.
+    p.heat_tiles = Some(tiles);
+    let heat: Arc<Mutex<Option<Option<Vec<f32>>>>> = Arc::default();
+    let h = heat.clone();
+    r.request_heat(0, Box::new(move |v| *h.lock().unwrap() = Some(v)));
+    p.seq += 1;
+    r.draw(&[p], &view, (SIDE, SIDE), false);
+    let error = pollster::block_on(scope.pop());
+    assert!(error.is_none(), "validation error: {error:?}");
+    for _ in 0..500 {
+        let _ = r.device.poll(wgpu::PollType::wait_indefinitely());
+        r.poll();
+        if heat.lock().unwrap().is_some() {
+            break;
+        }
+    }
+    let field = heat.lock().unwrap().take().flatten().expect("the heat read back");
+    let lit = field.iter().filter(|v| **v > 0.0).count();
+    eprintln!("tile heat: {} values, {lit} lit, max {}", field.len(), field.iter().cloned().fold(0f32, f32::max));
+    assert!(lit > field.len() / 2, "the tile drew {lit} of {}", field.len());
+    let _ = std::fs::remove_dir_all(&root);
+}
+
 /// The heat modes (`heatmodes.rs`): the chunk's bearings and segment starts, then line heat with
 /// playback, the wedges with the direction field's arrows and streams, and the rate map.
 fn heat_modes(r: &mut Renderer, view: &wgpu::TextureView) {

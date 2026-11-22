@@ -70,6 +70,8 @@ pub struct Packet {
     pub ranges: Option<Ranges>,
     /// The GPU tracks' frame (`SECTION_TRACKS`).
     pub tracks: Option<TracksFrame>,
+    /// Heat from tiles (`SECTION_HEAT_TILES`, `heattiles.rs`).
+    pub heat_tiles: Option<crate::heattiles::TilesFrame>,
 }
 
 /// `SECTION_TRACKS`: the store's id, the place shader's uniform, the visibility bits when they
@@ -377,6 +379,26 @@ pub fn decode(bytes: &[u8]) -> Result<Packet> {
                 };
                 p.tracks = Some(TracksFrame { id, uniform, vis, glyphs });
             }
+            SECTION_HEAT_TILES => {
+                let f = |w: &[u32]| w.iter().map(|x| f32::from_bits(*x)).collect::<Vec<f32>>();
+                let key = s.string()?;
+                let mut uniform = [0f32; 16];
+                uniform.copy_from_slice(&f(s.slice(16)?));
+                let curve = if s.take()? == 1 { Some(f(s.slice(CURVE_LUT_SIZE as usize)?)) } else { None };
+                let components = s.take()?;
+                let wkey = s.take()?;
+                let n = s.take()? as usize;
+                let weights = f(s.slice(n)?);
+                let n = s.take()? as usize;
+                let mut tiles = Vec::with_capacity(n);
+                for _ in 0..n {
+                    let (l, x, y) = (s.take()?, s.take()?, s.take()?);
+                    let mut inst = [0f32; TILE_INST_FLOATS as usize];
+                    inst.copy_from_slice(&f(s.slice(TILE_INST_FLOATS as usize)?));
+                    tiles.push((heat3d_core::tiles::tile_id(l, x, y), inst));
+                }
+                p.heat_tiles = Some(crate::heattiles::TilesFrame { key, uniform, curve, components, wkey, weights, tiles });
+            }
             SECTION_CUBES => {
                 let n = s.take()? as usize;
                 p.cubes = s.slice(n * 8)?.iter().map(|w| f32::from_bits(*w)).collect();
@@ -390,6 +412,24 @@ pub fn decode(bytes: &[u8]) -> Result<Packet> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn heat_tiles_section() {
+        // Key "ab", 16 numbers, no curve, one component, two channels' weights, one tile.
+        let mut body = vec![2u32, u32::from_le_bytes([b'a', b'b', 0, 0])];
+        body.extend((0..16).map(|i| (i as f32).to_bits()));
+        body.extend([0, 1, 7, 2, 1f32.to_bits(), (-1f32).to_bits(), 1, 3, 5, 6]);
+        body.extend((0..TILE_INST_FLOATS).map(|i| (i as f32 * 0.5).to_bits()));
+        let mut w = vec![PACKET_MAGIC, PACKET_VERSION, 1, 1, SECTION_HEAT_TILES, body.len() as u32];
+        w.extend_from_slice(&body);
+        let bytes: Vec<u8> = w.iter().flat_map(|x| x.to_le_bytes()).collect();
+        let t = decode(&bytes).unwrap().heat_tiles.unwrap();
+        assert_eq!((t.key.as_str(), t.uniform[15], t.curve.is_none(), t.components, t.wkey), ("ab", 15.0, true, 1, 7));
+        assert_eq!(t.weights, vec![1.0, -1.0]);
+        assert_eq!(t.tiles.len(), 1);
+        assert_eq!(t.tiles[0].0, heat3d_core::tiles::tile_id(3, 5, 6));
+        assert_eq!(t.tiles[0].1[2], 1.0);
+    }
 
     #[test]
     fn plan_runs_expand() {

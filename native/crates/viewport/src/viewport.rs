@@ -57,6 +57,8 @@ pub enum Msg {
     /// The GPU tracks' store, a message at a time (`Tracks::message`).
     Tracks(Vec<u8>),
     Times(Reply<String>),
+    /// The core's heat-tile store: the tiles a frame's `SECTION_HEAT_TILES` names are read there.
+    TileStore(Arc<heat3d_core::tiles::TileStore>),
     Hide(bool),
     Stop,
     // Internal: from the loader threads.
@@ -383,6 +385,7 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                         crate::note(&format!("viewport: {e:#}"));
                     }
                 }
+                Msg::TileStore(store) => r.tiles.set_store(store),
                 Msg::Probe(x, y, reply) => {
                     r.request_probe(x, y, reply);
                     want_capture = true;
@@ -473,8 +476,8 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
         r.poll();
         let s = &r.stats;
         snap.lock().json = format!(
-            "{{\"residentRows\":{},\"droppedRows\":{},\"gpuBytes\":{},\"levelBytes\":{},\"frames\":{},\"binned\":{},\"filtersPending\":{},\"lastSeq\":{},\"dataGen\":{},\"rowsTaken\":{},\"tracksBytes\":{},\"tracksReady\":{},\"backend\":{:?},\"adapter\":{:?},\"heatFormat\":{:?}}}",
-            r.resident_rows, r.dropped_rows, r.gpu_bytes, r.level_bytes(), s.frames, s.binned, s.filters_pending, s.last_seq, data.page_gen, r.modes.taken, r.tracks.bytes(), r.tracks.ready_id(), s.backend, s.adapter, s.heat_format
+            "{{\"residentRows\":{},\"droppedRows\":{},\"gpuBytes\":{},\"levelBytes\":{},\"frames\":{},\"binned\":{},\"filtersPending\":{},\"tilesPending\":{},\"lastSeq\":{},\"dataGen\":{},\"rowsTaken\":{},\"tracksBytes\":{},\"tracksReady\":{},\"backend\":{:?},\"adapter\":{:?},\"heatFormat\":{:?}}}",
+            r.resident_rows, r.dropped_rows, r.gpu_bytes, r.level_bytes(), s.frames, s.binned, s.filters_pending, r.tiles.pending, s.last_seq, data.page_gen, r.modes.taken, r.tracks.bytes(), r.tracks.ready_id(), s.backend, s.adapter, s.heat_format
         );
     }
 }

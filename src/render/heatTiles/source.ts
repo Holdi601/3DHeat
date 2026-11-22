@@ -88,6 +88,9 @@ export interface HeatTileDraw {
    */
   hole: [number, number, number, number] | null;
   holeWeight: number;
+  /** The pyramid's key, and the weights its channels are drawn with: the native viewport decodes the tiles itself. */
+  pyramid: string;
+  weights: ChannelWeights | null;
 }
 
 /**
@@ -331,6 +334,8 @@ export class HeatTileSource {
         weighing: false,
         hole: null,
         holeWeight: 1,
+        pyramid: info.key,
+        weights: this.weights,
       };
     const frame: PyramidFrame = { ...info, leafLevel: readable };
     const ground = groundRect(view.viewProj, this.placement.ground);
@@ -399,6 +404,8 @@ export class HeatTileSource {
       weighing: this.stale.length > 0,
       hole: null,
       holeWeight: 1,
+      pyramid: info.key,
+      weights: this.weights,
     };
   }
 

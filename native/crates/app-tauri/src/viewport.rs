@@ -163,6 +163,13 @@ pub fn viewport_tracks(window: WebviewWindow, request: Request<'_>) {
     with(&window, |v| v.send(Msg::Tracks(bytes)));
 }
 
+/// The core's heat-tile store, where the viewport reads the tiles a frame draws by the pyramid's key.
+#[tauri::command]
+pub fn viewport_heat_tiles(window: WebviewWindow, base: tauri::State<'_, crate::ViewerBase>) -> Result<(), String> {
+    let store = base.core.tile_store().map_err(|e| format!("{e:#}"))?;
+    with(&window, |v| v.send(Msg::TileStore(store))).ok_or_else(|| "no viewport".to_owned())
+}
+
 /// The glyph atlas the page made (raw RGBA8, `ATLAS_WIDTH` x `ATLAS_HEIGHT`).
 #[tauri::command]
 pub fn viewport_glyphs(window: WebviewWindow, request: Request<'_>) {

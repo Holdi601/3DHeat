@@ -19,6 +19,7 @@ pub const SECTION_TOP: u32 = 13;
 pub const SECTION_OVERLAYS: u32 = 14;
 pub const SECTION_RANGES: u32 = 15;
 pub const SECTION_TRACKS: u32 = 20;
+pub const SECTION_HEAT_TILES: u32 = 21;
 pub const SAMPLE_BLOCK: u32 = 4096;
 pub const MAX_PLAN_BLOCKS: u32 = 65536;
 pub const CHUNK_ROWS: u32 = 8388608;
