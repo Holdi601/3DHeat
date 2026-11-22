@@ -1,5 +1,8 @@
 # Update pull requests for known-vulnerable and outdated dependencies.
 # Pull requests only: nothing is merged without review.
+# Minor and patch updates come once a week as one grouped pull request per
+# ecosystem; major updates still come one by one. Security updates are not
+# grouped: each arrives as soon as its advisory does.
 version: 2
 updates:
   - package-ecosystem: cargo
@@ -7,15 +10,27 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    groups:
+      cargo-minor-patch:
+        applies-to: version-updates
+        update-types: [minor, patch]
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    groups:
+      npm-minor-patch:
+        applies-to: version-updates
+        update-types: [minor, patch]
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    groups:
+      actions-minor-patch:
+        applies-to: version-updates
+        update-types: [minor, patch]
   - package-ecosystem: docker
     directory: /deploy/reverse-proxy
     schedule:
