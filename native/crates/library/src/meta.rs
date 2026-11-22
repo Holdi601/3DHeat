@@ -1015,9 +1015,17 @@ fn read_full(f: &mut File, buf: &mut [u8]) -> std::io::Result<usize> {
 
 /// The full SHA-256 of a file.
 pub fn full_hash(path: &Path) -> Result<String> {
-    let mut f = BufReader::with_capacity(1 << 20, File::open(path)?);
+    let mut f = File::open(path)?;
     let mut h = Sha256::new();
-    std::io::copy(&mut f, &mut h)?;
+    let mut buf = vec![0u8; 1 << 20];
+    loop {
+        match f.read(&mut buf) {
+            Ok(0) => break,
+            Ok(k) => h.update(&buf[..k]),
+            Err(e) if e.kind() == std::io::ErrorKind::Interrupted => {}
+            Err(e) => return Err(e.into()),
+        }
+    }
     Ok(hex(&h.finalize()))
 }
 

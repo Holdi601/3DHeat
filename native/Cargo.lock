@@ -1899,7 +1899,7 @@ dependencies = [
  "ryu-js",
  "serde",
  "serde_json",
- "sha2 0.10.9",
+ "sha2 0.11.1",
 ]
 
 [[package]]
@@ -1913,7 +1913,7 @@ dependencies = [
  "rustls",
  "serde",
  "serde_json",
- "sha2 0.10.9",
+ "sha2 0.11.1",
  "tar",
  "tokio",
  "zip",
@@ -1934,7 +1934,7 @@ dependencies = [
  "rusqlite",
  "serde",
  "serde_json",
- "sha2 0.10.9",
+ "sha2 0.11.1",
  "snap",
  "tempfile",
  "walkdir",
@@ -2003,7 +2003,7 @@ dependencies = [
  "rustls",
  "serde",
  "serde_json",
- "sha2 0.10.9",
+ "sha2 0.11.1",
  "subtle",
  "tokio",
  "tokio-rustls",
