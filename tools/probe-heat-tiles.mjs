@@ -11,6 +11,16 @@
  *
  *   node tools/probe-heat-tiles.mjs --cache <dir> [--key <key>] [--backend webgl2|webgpu]
  *        [--url http://127.0.0.1:5291/] [--seconds 8] [--shot out.png]
+ *
+ *   node tools/probe-heat-tiles.mjs --parity [--rows 2] [--backend webgpu|webgl2] [--only <name>]
+ *       Rows against tiles of the same rows: synthetic rows loaded, a pyramid
+ *       binned from them in the page, one channel per group (served in the
+ *       core's tile format, zstd raw blocks, decoded by the app's worker), and the heat field
+ *       read with the rows alone and with the tiles added (tiles = the
+ *       difference), top-down at three zooms, per heat setting and mode (heat,
+ *       team colours, difference, a hidden group). Compared as in
+ *       probe-heat-binning: p50/p90/p99 of the lit texels, the total and SSIM
+ *       of the field as the ramp shows it; exits 1 past the gates.
  */
 
 import { readFileSync, readdirSync } from 'node:fs';
@@ -21,6 +31,11 @@ const arg = (k, d) => {
   const i = process.argv.indexOf(`--${k}`);
   return i > 0 ? process.argv[i + 1] : d;
 };
+if (process.argv.includes('--parity')) {
+  await parity();
+  process.exit(process.exitCode ?? 0);
+}
+
 const cache = arg('cache');
 if (!cache) throw new Error('--cache <dir>');
 const key = arg('key', readdirSync(cache).find((d) => !d.startsWith('.')));
@@ -152,4 +167,285 @@ try {
   console.log(JSON.stringify({ backend, key: meta.key, rows: meta.rows_counted, leaf: meta.leaf_level, pyramidBytes: meta.bytes, ...r }, null, 1));
 } finally {
   await browser.close();
+}
+
+// ---------------------------------------------------------------- parity
+
+function quantile(sorted, q) {
+  return sorted.length ? sorted[Math.min(sorted.length - 1, Math.floor(q * sorted.length))] : 0;
+}
+
+/** Mean SSIM over 8x8 windows (stride 4) holding heat, of `v / (v + k)` (the field as the ramp shows it). */
+function ssim(a, b, w, h, k) {
+  const map = (v) => Math.abs(v) / (Math.abs(v) + k);
+  const C1 = 0.01 ** 2;
+  const C2 = 0.03 ** 2;
+  let sum = 0;
+  let n = 0;
+  for (let y = 0; y + 8 <= h; y += 4) {
+    for (let x = 0; x + 8 <= w; x += 4) {
+      let ma = 0;
+      let mb = 0;
+      let any = false;
+      for (let j = 0; j < 8; j++)
+        for (let i = 0; i < 8; i++) {
+          const p = (y + j) * w + x + i;
+          const va = map(a[p]);
+          const vb = map(b[p]);
+          if (va > 0 || vb > 0) any = true;
+          ma += va;
+          mb += vb;
+        }
+      if (!any) continue;
+      ma /= 64;
+      mb /= 64;
+      let sa = 0;
+      let sb = 0;
+      let sab = 0;
+      for (let j = 0; j < 8; j++)
+        for (let i = 0; i < 8; i++) {
+          const p = (y + j) * w + x + i;
+          const da = map(a[p]) - ma;
+          const db = map(b[p]) - mb;
+          sa += da * da;
+          sb += db * db;
+          sab += da * db;
+        }
+      sum += ((2 * ma * mb + C1) * (2 * (sab / 63) + C2)) / ((ma * ma + mb * mb + C1) * (sa / 63 + sb / 63 + C2));
+      n++;
+    }
+  }
+  return n ? sum / n : 1;
+}
+
+function compare(a, b, w, h) {
+  const lit = [];
+  const litB = [];
+  let ta = 0;
+  let tb = 0;
+  for (let i = 0; i < a.length; i++) {
+    // Magnitudes: a difference's signed total is near 0 by design.
+    ta += Math.abs(a[i]);
+    tb += Math.abs(b[i]);
+    if (a[i] !== 0) {
+      lit.push(Math.abs(a[i]));
+      litB.push(Math.abs(b[i]));
+    }
+  }
+  lit.sort((x, y) => x - y);
+  litB.sort((x, y) => x - y);
+  const rel = (x, y) => (x === 0 && y === 0 ? 0 : Math.abs(y - x) / Math.max(1e-30, Math.abs(x)));
+  const q = (p) => ({ ref: quantile(lit, p), got: quantile(litB, p), err: rel(quantile(lit, p), quantile(litB, p)) });
+  return { p50: q(0.5), p90: q(0.9), p99: q(0.99), total: rel(ta, tb), ssim: ssim(a, b, w, h, Math.max(1e-30, quantile(lit, 0.9))), lit: lit.length };
+}
+
+async function parity() {
+  const PARITY_CASES = [
+    { name: 'heat', heat: {} },
+    { name: 'radius 30', heat: { radius: 30 } },
+    { name: 'radius 6', heat: { radius: 6 } },
+    { name: 'hard disc, linear', heat: { edgeIntensity: 0.4, falloff: 1, smoothRamp: false } },
+    { name: 'min clamp 4 px', heat: { radius: 1, minPixelRadius: 4 } },
+    { name: 'not zoom invariant', heat: { radius: 1, minPixelRadius: 4, zoomInvariant: false } },
+    { name: 'team colours', heat: {}, mode: 'heat-teams' },
+    // Signed: where the sides nearly cancel, a row's place in its cell moves the small rest (10% on the quantiles).
+    { name: 'difference', heat: {}, mode: 'heat-difference', split: [[0, 1, 2, 3], [4, 5, 6, 7]], tol: 0.1 },
+    { name: 'difference, one side', heat: {}, mode: 'heat-difference', split: [[0, 1, 2, 3, 4, 5, 6, 7], []] },
+    { name: 'a group hidden', heat: {}, hide: 2 },
+  ];
+  /** Fractions of the data's half-width the view spans: all of it, a quarter, a sixteenth. */
+  const ZOOMS = [1, 0.25, 0.0625];
+  const backend = arg('backend', 'webgpu');
+  const rows = Number(arg('rows', 2)) * 1e6;
+  const only = arg('only', null);
+  const url = arg('url', `http://127.0.0.1:5291/?backend=${backend}`);
+  const browser = await chromium.launch({
+    channel: 'chromium',
+    headless: true,
+    args: ['--enable-unsafe-webgpu', '--ignore-gpu-blocklist', '--enable-gpu', '--use-angle=d3d11'],
+  });
+  let failed = 0;
+  try {
+    const page = await browser.newPage({ viewport: { width: 1024, height: 768 } });
+    await page.routeWebSocket(/./, () => {});
+    page.on('pageerror', (e) => console.log('pageerror:', e.message));
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 180_000 });
+    await page.waitForFunction(() => Boolean(globalThis.__3dheat_engine?.live?.backend && globalThis.__3dheat_engine.live.backend !== 'none'), null, { timeout: 120_000 });
+    await page.evaluate(async (rows) => {
+      const H = globalThis.__3dheat;
+      const st = H.useStore.getState();
+      const ds = H.generateSynthetic({ ...H.DEFAULT_SYNTH, rows });
+      st.setDataset(ds);
+      const live = globalThis.__3dheat_engine.live;
+      while (live.residentRows + live.droppedRows < ds.count) await new Promise((r) => requestAnimationFrame(r));
+      st.patchBudget({ adaptive: false, exact: true, heatScale: 1 });
+      st.patchCamera({ projection: 'orthographic' });
+      // The pyramid of the same rows (world X / Z), one channel per group, leaf level 4: 4096 cells across.
+      const leaf = 4;
+      const groups = ds.teamLabels.length;
+      let x0 = Infinity;
+      let z0 = Infinity;
+      let x1 = -Infinity;
+      let z1 = -Infinity;
+      for (let i = 0; i < ds.count; i++) {
+        x0 = Math.min(x0, ds.px[i]);
+        x1 = Math.max(x1, ds.px[i]);
+        z0 = Math.min(z0, ds.pz[i]);
+        z1 = Math.max(z1, ds.pz[i]);
+      }
+      const size = Math.max(x1 - x0, z1 - z0) * 1.001;
+      // Cell counts per level, the channels of a cell side by side: level -> { n, g (n * n * groups) }.
+      const levels = [];
+      let n = 256 << leaf;
+      let g = new Uint32Array(n * n * groups);
+      for (let i = 0; i < ds.count; i++) {
+        const cx = Math.min(n - 1, Math.floor(((ds.px[i] - x0) / size) * n));
+        const cz = Math.min(n - 1, Math.floor(((ds.pz[i] - z0) / size) * n));
+        g[(cz * n + cx) * groups + (ds.teamId ? ds.teamId[i] : 0)]++;
+      }
+      levels[leaf] = { n, g };
+      for (let l = leaf - 1; l >= 0; l--) {
+        const up = levels[l + 1];
+        n = up.n / 2;
+        g = new Uint32Array(n * n * groups);
+        const r = up.n * groups;
+        for (let y = 0; y < n; y++)
+          for (let x = 0; x < n; x++)
+            for (let c = 0; c < groups; c++) {
+              const a = (2 * y * up.n + 2 * x) * groups + c;
+              g[(y * n + x) * groups + c] = up.g[a] + up.g[a + groups] + up.g[a + r] + up.g[a + r + groups];
+            }
+        levels[l] = { n, g };
+      }
+      const info = { key: 'parity', x0, y0: z0, size, leafLevel: leaf, complete: true, estimateLevels: 0, levelMax: [], rowsCounted: ds.count, fraction: 1, how: 'probe', error: '', channelNames: ds.teamLabels.slice() };
+      // A tile as the core writes it (native/crates/core/src/tiles.rs): the 32-byte header, then a zstd
+      // frame of u32 cells channel after channel - raw blocks, so the page needs no compressor.
+      const tileBytes = (l, tx, ty) => {
+        const { n: ln, g: lg } = levels[l];
+        const raw = new Uint32Array(256 * 256 * groups);
+        let max = 0;
+        for (let y = 0; y < 256; y++)
+          for (let x = 0; x < 256; x++)
+            for (let c = 0; c < groups; c++) {
+              const v = lg[((ty * 256 + y) * ln + tx * 256 + x) * groups + c];
+              raw[c * 65536 + y * 256 + x] = v;
+              if (v > max) max = v;
+            }
+        if (max === 0) return null;
+        const body = new Uint8Array(raw.buffer);
+        const blocks = Math.ceil(body.length / 131072);
+        const out = new Uint8Array(32 + 13 + blocks * 3 + body.length);
+        const dv = new DataView(out.buffer);
+        out.set([0x48, 0x33, 0x44, 0x54, 1, 4, groups, 0, l]);
+        dv.setUint32(12, tx, true);
+        dv.setUint32(16, ty, true);
+        dv.setUint32(20, max, true);
+        dv.setUint32(24, body.length, true);
+        let at = 32;
+        dv.setUint32(at, 0xfd2fb528, true);
+        out[at + 4] = 0xe0;
+        dv.setBigUint64(at + 5, BigInt(body.length), true);
+        at += 13;
+        for (let k = 0; k < blocks; k++) {
+          const part = body.subarray(k * 131072, Math.min(body.length, (k + 1) * 131072));
+          const head = (part.length << 3) | (k === blocks - 1 ? 1 : 0);
+          out.set([head & 0xff, (head >> 8) & 0xff, (head >> 16) & 0xff], at);
+          out.set(part, at + 3);
+          at += 3 + part.length;
+        }
+        return out;
+      };
+      const transport = {
+        query: async () => info,
+        read: async (_key, ids) => {
+          const batch = { tiles: [], empty: [], pending: [], deferred: [] };
+          for (const id of ids) {
+            const bytes = tileBytes(Number(id >> 56n), Number(id & 0x0fffffffn), Number((id >> 28n) & 0x0fffffffn));
+            if (bytes) batch.tiles.push({ id, bytes, estimate: false });
+            else batch.empty.push(id);
+          }
+          return batch;
+        },
+      };
+      const { HeatTileSource } = await import('/src/render/heatTiles/source.ts');
+      globalThis.__parity = { info, transport, HeatTileSource, centre: [x0 + size / 2, z0 + size / 2], half: size / 2 };
+    }, rows);
+    console.log(`parity: ${rows} synthetic rows, ${backend}`);
+    for (const c of PARITY_CASES.filter((c) => !only || c.name.includes(only))) {
+      for (const zoom of ZOOMS) {
+        const r = await page.evaluate(
+          async ({ heat, zoom, mode, split, hide }) => {
+            const H = globalThis.__3dheat;
+            const eng = globalThis.__3dheat_engine;
+            const st = H.useStore.getState();
+            const P = globalThis.__parity;
+            const raf = () => new Promise((r) => requestAnimationFrame(r));
+            const base = JSON.parse(JSON.stringify(st.heat));
+            st.patchHeat(heat);
+            if (mode) st.setMode(mode);
+            if (split) st.setTeamSplit(...split);
+            if (hide !== undefined) st.toggleTeam(hide, false);
+            eng.camera.setOrientationDegrees(0, -89.9);
+            eng.frameAround(P.centre[0], 0, P.centre[1], P.half * zoom);
+            const field = async () => {
+              for (let i = 0; i < 6; i++) {
+                eng.camera.moved = true;
+                eng.invalidate(2);
+                await raf();
+              }
+              for (let i = 0; i < 20; i++) await raf();
+              return { f: await eng.renderer.readHeatField(eng.live.backend === 'webgl2' ? 1e9 : 0, true), w: eng.renderer.heatWidth, h: eng.renderer.heatHeight };
+            };
+            const rowsOnly = await field();
+            const src = new P.HeatTileSource(P.transport, { sx: 1, sz: 1, ground: 0 }, {}, () => eng.invalidate(1));
+            eng.setHeatTiles(src);
+            src.start();
+            // Until every tile the view wants is in and uploaded.
+            let last = -1;
+            let still = 0;
+            for (let k = 0; k < 600 && still < 15; k++) {
+              await raf();
+              still = src.stats.tiles === last ? still + 1 : 0;
+              last = src.stats.tiles;
+            }
+            const both = await field();
+            eng.setHeatTiles(null);
+            src.dispose();
+            const level = src.stats.drawnLevel;
+            const cells = src.stats.radiusCells;
+            st.patchHeat(base);
+            if (mode) st.setMode('heat');
+            if (hide !== undefined) st.toggleTeam(hide, true);
+            const tiles = new Float32Array(both.f.length);
+            for (let i = 0; i < tiles.length; i++) tiles[i] = both.f[i] - rowsOnly.f[i];
+            return { rows: Array.from(rowsOnly.f), tiles: Array.from(tiles), w: rowsOnly.w, h: rowsOnly.h, level, cells };
+          },
+          { heat: c.heat, zoom, mode: c.mode, split: c.split, hide: c.hide },
+        );
+        // Every channel the target holds (team colours: heat, a, b, L); judged by the worst.
+        const ch = r.rows.length / (r.w * r.h);
+        let m = null;
+        for (let k = 0; k < ch; k++) {
+          const pick = (f) => Float32Array.from({ length: r.w * r.h }, (_, i) => f[i * ch + k]);
+          const mk = compare(pick(r.rows), pick(r.tiles), r.w, r.h);
+          if (mk.lit > 0 && (!m || mk.ssim < m.ssim)) m = mk;
+        }
+        m ??= compare(r.rows, r.tiles, r.w, r.h);
+        const f = (v) => (v * 100).toFixed(1) + '%';
+        // Judged where the LOD could refine to the sprite (2-4 cells a radius, heatTiles/lod.ts KERNEL_CELLS):
+        // coarser (past the leaf), the rows show detail the counts no longer hold - the view switches to rows there.
+        // SSIM stays under 1 where single sprites show: a row's place inside its cell is gone.
+        const judged = r.cells >= 2;
+        const bad = judged && (m.lit === 0 || m.p50.err > (c.tol ?? 0.05) || m.p90.err > (c.tol ?? 0.05) || m.p99.err > (c.tol ?? 0.05) || m.total > 0.05 || m.ssim < 0.92);
+        if (bad) failed++;
+        console.log(`  ${bad ? 'FAIL' : judged ? 'ok  ' : 'info'} ${c.name}, zoom 1/${1 / zoom} (level ${r.level}, ${r.cells.toFixed(1)} cells a radius): p50 ${f(m.p50.err)} p90 ${f(m.p90.err)} p99 ${f(m.p99.err)} total ${f(m.total)} ssim ${m.ssim.toFixed(4)} (${m.lit} texels)`);
+      }
+    }
+  } finally {
+    await browser.close();
+  }
+  if (failed) {
+    console.log(`${failed} parity check(s) failed`);
+    process.exitCode = 1;
+  }
 }

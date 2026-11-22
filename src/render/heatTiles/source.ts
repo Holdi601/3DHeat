@@ -7,8 +7,8 @@
  * is drawn from its nearest ancestor that is.
  */
 
-import { selectTiles, tileWorldRect, type LodView, type PyramidFrame, type TilePlacement, type TileRef } from './lod';
-import { decodeTile, tileId, tileKey, tileOf, TILE, type DecodedTile } from './tileFormat';
+import { kernelRadius, rectDepths, selectTiles, tileWorldRect, type LodView, type PyramidFrame, type SpriteSize, type TilePlacement, type TileRef } from './lod';
+import { decodeTile, tileId, tileKey, tileOf, TILE, type ChannelWeights, type DecodedTile } from './tileFormat';
 
 export interface PyramidInfo extends PyramidFrame {
   key: string;
@@ -20,6 +20,8 @@ export interface PyramidInfo extends PyramidFrame {
   fraction: number;
   how: string;
   error: string;
+  /** The split column's value of each channel (one empty name without a split). */
+  channelNames?: string[];
 }
 
 export interface TileBatch {
@@ -38,12 +40,19 @@ export interface TileTransport {
 export interface HeatTileDrawTile {
   key: string;
   counts: Float32Array;
+  /** Four-component weights: (heat, a, b, L) as half floats, times `amp` (tileFormat.ts `DecodedTile.rgba`). */
+  rgba: Uint16Array | null;
+  amp: number;
   /** World X / Z rectangle drawn. */
   rect: [number, number, number, number];
   /** The part of the tile's texture over `rect` (an ancestor drawn for a missing tile). */
   uv: [number, number, number, number];
   /** 1 / a cell's world area: counts to density. */
   perCount: number;
+  /** A drawn cell's world size. */
+  cell: number;
+  /** How far past `rect` the tile's cells reach when drawn with the kernel (world units; 0 without one). */
+  reach: number;
   estimate: boolean;
   /** The level whose cells are drawn. */
   level: number;
@@ -54,9 +63,38 @@ export interface HeatTileDraw {
   ground: number;
   /** Changes whenever anything drawn changes. */
   version: number;
-  /** Heat per unit density (the engine's kernel area times the frame's weight); set by the engine. */
+  /**
+   * Heat per count (the frame's weight), or per unit density without
+   * `kernel` (times the kernel's area); set by the engine.
+   */
   scale: number;
+  /**
+   * The sprite the cells are drawn with, as the rows' splat draws one (a
+   * cell's count at its centre, spread by the sprite's ramp): heat that looks
+   * like the rows' at any zoom where the cells are finer than the sprite.
+   * Null draws the cells as density, bilinear.
+   */
+  kernel: TileKernel | null;
+  /** 4: the tiles carry (heat, a, b, L) for team colours (`rgba`); 1: heat only. */
+  components: 1 | 4;
+  /** Tiles still being weighed anew (the channel weights changed): draw again soon. */
+  weighing: boolean;
 }
+
+/** The rows' sprite for the tile draw (`webgpu/heatTilesPass.ts`). */
+export interface TileKernel extends SpriteSize {
+  pxPerUnit: number;
+  perspective: boolean;
+  centre: number;
+  edge: number;
+  falloff: number;
+  smoothRamp: boolean;
+  /** Keep each sprite's heat when the pixel clamp resizes it (the rows' `zoomInvariant`). */
+  keepMass: boolean;
+}
+
+/** A drawn cell's sprite at least this many cells wide: past the leaf, cells are smooth blobs, not dots. */
+export const KERNEL_MIN_CELLS = 1.25;
 
 export interface HeatTileOptions {
   /** Bytes per second the source may ask for. */
@@ -70,10 +108,10 @@ export interface HeatTileOptions {
 }
 
 /** Tiles decoded off the main thread where workers exist (the page), in place otherwise (tests). */
-export type TileDecoder = (tiles: Uint8Array[]) => Promise<(DecodedTile | null)[]>;
+export type TileDecoder = (tiles: Uint8Array[], weights: ChannelWeights | null) => Promise<(DecodedTile | null)[]>;
 
 function workerDecoder(): TileDecoder {
-  if (typeof Worker === 'undefined') return async (tiles) => tiles.map((b) => decodeTile(b));
+  if (typeof Worker === 'undefined') return async (tiles, weights) => tiles.map((b) => decodeTile(b, weights));
   const worker = new Worker(new URL('./decodeWorker.ts', import.meta.url), { type: 'module' });
   const waiting = new Map<number, (t: (DecodedTile | null)[]) => void>();
   let seq = 0;
@@ -81,18 +119,22 @@ function workerDecoder(): TileDecoder {
     waiting.get(e.data.seq)?.(e.data.tiles);
     waiting.delete(e.data.seq);
   };
-  return (tiles) =>
+  return (tiles, weights) =>
     new Promise((resolve) => {
       const n = ++seq;
       waiting.set(n, resolve);
-      // Copied, not transferred: the bytes may be views into a larger reply.
-      worker.postMessage({ seq: n, tiles: tiles.map((b) => b.slice()) });
+      // Copied, not transferred: the bytes may be views into a larger reply, or kept to weigh again.
+      worker.postMessage({ seq: n, tiles: tiles.map((b) => b.slice()), weights });
     });
 }
 
 interface Cached {
   tile: DecodedTile;
   used: number;
+  /** A split tile's bytes, to weigh its channels again when the weights change. */
+  bytes: Uint8Array | null;
+  /** The weights `tile` was decoded with ('' summed). */
+  wkey: string;
 }
 
 export class HeatTileSource {
@@ -107,6 +149,12 @@ export class HeatTileSource {
     startedAt: performance.now(),
     /** The finest level the last frame drew (-1: none). */
     drawnLevel: -1,
+    /**
+     * With a kernel: the fewest cells per sprite radius among the tiles the last
+     * frame drew (where each is nearest the eye); Infinity without. Under
+     * `KERNEL_CELLS` the cells are coarser than the sprite: rows would show more.
+     */
+    radiusCells: Infinity,
   };
   private readonly cache = new Map<string, Cached>();
   private readonly empty = new Set<string>();
@@ -122,6 +170,9 @@ export class HeatTileSource {
   private pumpTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly opts: Required<Omit<HeatTileOptions, 'decoder'>>;
   private readonly decode: TileDecoder;
+  private weights: ChannelWeights | null = null;
+  private weighing = false;
+  private readonly stale: string[] = [];
 
   constructor(
     private readonly transport: TileTransport,
@@ -138,6 +189,18 @@ export class HeatTileSource {
     };
     this.tokens = this.opts.bytesPerSecond * 0.5;
     this.decode = options.decoder ?? workerDecoder();
+  }
+
+  /**
+   * How the channels of a split pyramid are drawn (null: summed). Tiles
+   * decoded with other weights are weighed again in the decoder a batch at a
+   * time and drawn with their old weights meanwhile (not at all when the
+   * component count changed).
+   */
+  setChannelWeights(w: ChannelWeights | null): void {
+    if ((w?.key ?? '') === (this.weights?.key ?? '')) return;
+    this.weights = w;
+    this.bump();
   }
 
   /** Asks the host for the pyramid and keeps asking while it builds. */
@@ -200,8 +263,8 @@ export class HeatTileSource {
     this.onChange();
   }
 
-  /** What to draw for this view; asks for what is missing. */
-  frame(view: LodView): HeatTileDraw | null {
+  /** What to draw for this view; asks for what is missing. With `kernel` the tiles are drawn as the rows' sprites (see `HeatTileDraw.kernel`). */
+  frame(view: LodView, kernel: TileKernel | null = null): HeatTileDraw | null {
     const info = this.info;
     if (!info || !info.key || info.size <= 0) return null;
     const readable = info.complete ? info.leafLevel : info.estimateLevels - 1;
@@ -211,26 +274,42 @@ export class HeatTileSource {
         ground: this.placement.ground,
         version: this.version,
         scale: 0,
+        kernel,
+        components: this.weights?.components ?? 1,
+        weighing: false,
       };
     const frame: PyramidFrame = { ...info, leafLevel: readable };
-    const want = selectTiles(frame, this.placement, {
+    const lod: LodView = {
       ...view,
       cellPx: this.opts.cellPx,
       maxTiles: this.opts.maxTiles,
-    });
+      kernel: kernel ?? undefined,
+    };
+    const want = selectTiles(frame, this.placement, lod);
     const tiles: HeatTileDrawTile[] = [];
     this.wanted.length = 0;
+    this.stale.length = 0;
+    this.stats.radiusCells = Infinity;
     const now = ++this.clock;
+    const wkey = this.weights?.key ?? '';
+    const components = this.weights?.components ?? 1;
+    /** Whether a cached tile can be drawn now; queues it to be weighed anew when its weights are old. */
+    const usable = (k: string, c: Cached): boolean => {
+      if (c.wkey !== wkey && c.bytes) this.stale.push(k);
+      return !c.tile.rgba === (components === 1);
+    };
     for (const t of want) {
       const k = tileKey(t.level, t.x, t.y);
       if (this.empty.has(k)) continue;
       const hit = this.cache.get(k);
       if (hit) {
         hit.used = now;
-        tiles.push(this.drawOf(info, t, hit.tile, [0, 0, 1, 1]));
-        continue;
+        if (usable(k, hit)) {
+          tiles.push(this.drawOf(info, t, hit.tile, [0, 0, 1, 1], lod, kernel));
+          continue;
+        }
       }
-      if (!this.asked.has(k)) this.wanted.push(t);
+      if (!hit && !this.asked.has(k)) this.wanted.push(t);
       // Meanwhile: the nearest ancestor we have, the part over this tile.
       for (let l = t.level - 1; l >= 0; l--) {
         const d = t.level - l;
@@ -239,16 +318,17 @@ export class HeatTileSource {
         const ak = tileKey(l, ax, ay);
         if (this.empty.has(ak)) break;
         const a = this.cache.get(ak);
-        if (!a) continue;
+        if (!a || !usable(ak, a)) continue;
         a.used = now;
         const f = 1 / (1 << d);
         const ou = (t.x - (ax << d)) * f;
         const ov = (t.y - (ay << d)) * f;
-        tiles.push(this.drawOf(info, t, a.tile, [ou, ov, ou + f, ov + f]));
+        tiles.push(this.drawOf(info, t, a.tile, [ou, ov, ou + f, ov + f], lod, kernel));
         break;
       }
     }
     if (this.wanted.length > 0) this.pump();
+    if (this.stale.length > 0) this.weigh();
     let finest = -1;
     for (const d of tiles) finest = Math.max(finest, d.level);
     this.stats.drawnLevel = finest;
@@ -257,23 +337,67 @@ export class HeatTileSource {
       ground: this.placement.ground,
       version: this.version,
       scale: 0,
+      kernel,
+      components,
+      weighing: this.stale.length > 0,
     };
   }
 
-  private drawOf(info: PyramidInfo, t: TileRef, tile: DecodedTile, uv: [number, number, number, number]): HeatTileDrawTile {
+  /** Weighs a batch of the tiles the last frame found with old weights. */
+  private weigh(): void {
+    if (this.weighing || this.disposed) return;
+    const keys = [...new Set(this.stale)].slice(0, 24);
+    const entries = keys.map((k) => this.cache.get(k)).filter((c): c is Cached => !!c?.bytes);
+    if (entries.length === 0) return;
+    const weights = this.weights;
+    const key = this.info?.key;
+    this.weighing = true;
+    void this.decode(
+      entries.map((c) => c.bytes!),
+      weights,
+    )
+      .then((tiles) => {
+        if (this.disposed || this.info?.key !== key) return;
+        tiles.forEach((tile, i) => {
+          if (!tile) return;
+          entries[i].tile = tile;
+          entries[i].wkey = weights?.key ?? '';
+        });
+        this.bump();
+      })
+      .catch(() => {})
+      .finally(() => {
+        this.weighing = false;
+      });
+  }
+
+  private drawOf(info: PyramidInfo, t: TileRef, tile: DecodedTile, uv: [number, number, number, number], view: LodView, kernel: TileKernel | null): HeatTileDrawTile {
     const cell = info.size / (1 << tile.level) / TILE;
     const area = Math.abs(cell * cell * this.placement.sx * this.placement.sz);
+    const cellWorld = Math.sqrt(area);
     // The data's v grows along world Z by sz; texture rows grow along v. A flip is the rect's.
     const rect = tileWorldRect(info, this.placement, t);
     let [u0, v0, u1, v1] = uv;
     if (this.placement.sx < 0) [u0, u1] = [u1, u0];
     if (this.placement.sz < 0) [v0, v1] = [v1, v0];
+    let reach = 0;
+    if (kernel) {
+      // The widest sprite over the tile: the clamp to a least pixel radius widens it with distance.
+      const [near, far] = rectDepths(rect, this.placement.ground, view);
+      const rNear = kernelRadius(kernel, kernel.pxPerUnit, kernel.perspective, near);
+      reach = Math.max(rNear, kernelRadius(kernel, kernel.pxPerUnit, kernel.perspective, far), KERNEL_MIN_CELLS * cellWorld);
+      if (cellWorld > 0) this.stats.radiusCells = Math.min(this.stats.radiusCells, rNear / cellWorld);
+    }
     return {
       key: tileKey(tile.level, tile.x, tile.y),
       counts: tile.counts,
+      rgba: tile.rgba ?? null,
+      amp: tile.amp ?? 1,
       rect,
       uv: [u0, v0, u1, v1],
       perCount: area > 0 ? 1 / area : 0,
+      cell: cellWorld,
+      reach,
       estimate: tile.estimate,
       level: tile.level,
     };
@@ -313,11 +437,18 @@ export class HeatTileSource {
         if (this.disposed || this.info?.key !== key) return;
         let got = 0;
         for (const t of batch.tiles) got += t.bytes.length;
-        const decoded = await this.decode(batch.tiles.map((t) => t.bytes));
+        const weights = this.weights;
+        const decoded = await this.decode(
+          batch.tiles.map((t) => t.bytes),
+          weights,
+        );
         if (this.disposed || this.info?.key !== key) return;
-        for (const tile of decoded) {
+        for (let i = 0; i < decoded.length; i++) {
+          const tile = decoded[i];
           if (!tile) continue;
-          this.cache.set(tileKey(tile.level, tile.x, tile.y), { tile, used: this.clock });
+          // A split tile keeps its bytes (a copy: they may be a view into the reply) to be weighed again.
+          const bytes = tile.channels > 1 ? batch.tiles[i].bytes.slice() : null;
+          this.cache.set(tileKey(tile.level, tile.x, tile.y), { tile, used: this.clock, bytes, wkey: weights?.key ?? '' });
           this.stats.tiles++;
         }
         for (const id of batch.empty) {

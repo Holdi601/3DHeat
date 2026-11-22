@@ -3289,7 +3289,8 @@ export class WebgpuRenderer implements Renderer {
       clear.end();
     }
     // Heat from tiles (Stage 6) under the rows: only where the target was just cleared.
-    if (!field && params.heatTiles && (!extend || fresh) && (format === 'r32float' || format === 'r16float')) {
+    // Any heat target but the rate map's (its channels are sums the tiles do not carry).
+    if (!field && params.heatTiles && (!extend || fresh) && !params.heat.rate) {
       (this.heatTiles ??= new GpuHeatTiles(this.device)).draw(encoder, target, format, params.heatTiles, params.viewProj);
     }
 

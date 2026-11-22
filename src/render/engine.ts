@@ -94,6 +94,7 @@ import { useInspectStore } from '../state/inspectStore';
 import { effectiveGpuBudget } from './budget';
 import { buildActiveFilters, frameSignTables, matchScales, sideCountSteps, sideScales, type SideCounts, type SplitTable } from './filterTables';
 import type { HeatTileSource } from './heatTiles/source';
+import { tileChannelWeights } from './heatTiles/channels';
 import { overallShare } from './rateMap';
 import { ExposureFollower } from './exposureFollow';
 import { publishSplitStatus } from '../state/splitStatus';
@@ -4374,19 +4375,45 @@ export class Engine {
     const lookOn = !raceTab && s.mode === 'team' && !!this.dataset && useReplayStore.getState().look.on;
     // Heat tiles for this view: LOD rings about the camera, coarse first (heatTiles/lod.ts).
     let heatTiles: FrameParams['heatTiles'] = null;
+    const tileChannels = this.heatTileSource?.info?.channelNames ?? [];
+    const teamColors = heatMode === 'heat-teams' && ((this.dataset?.teamLabels.length ?? 0) > 0 || (!this.dataset && tileChannels.length > 1));
     if (this.heatTileSource && !raceTab) {
-      const d = this.heatTileSource.frame({
-        viewProj: this.viewProjArr,
-        cameraPos: this.camPos,
-        perspective: s.camera.projection === 'perspective',
-        pxPerUnit: this.projArr[5] * height * 0.5,
-        cellPx: 0,
-        maxTiles: 0,
-      });
+      // A split pyramid's channels under the rows' group rules (heatTiles/channels.ts).
+      this.heatTileSource.setChannelWeights(
+        tileChannelWeights({
+          names: tileChannels,
+          groups: this.dataset?.teamLabels ?? null,
+          mode: heatMode,
+          teamSign,
+          positive: s.positiveTeams,
+          negative: s.negativeTeams,
+          visibility: s.teamVisibility,
+          splitMode: split.mode,
+          splitScale,
+          teamColors,
+        }),
+      );
+      const perspective = s.camera.projection === 'perspective';
+      const pxPerUnit = this.projArr[5] * height * 0.5;
+      // The cells drawn as the rows' sprites (heatTiles/source.ts, `kernel`); the ramp's curve is not followed.
+      const d = this.heatTileSource.frame(
+        { viewProj: this.viewProjArr, cameraPos: this.camPos, perspective, pxPerUnit, cellPx: 0, maxTiles: 0 },
+        {
+          radius: h.radius,
+          minPx: h.minPixelRadius,
+          maxPx: h.maxPixelRadius,
+          pxPerUnit,
+          perspective,
+          centre: h.centerIntensity,
+          edge: h.edgeIntensity,
+          falloff: h.falloff,
+          smoothRamp: h.smoothRamp,
+          keepMass: h.zoomInvariant,
+        },
+      );
       if (d) {
-        // Density times the sprite's area: what the splat of the same rows would add up to.
-        const kernelArea = Math.PI * h.radius * h.radius * 0.5 * (h.centerIntensity + h.edgeIntensity);
-        d.scale = sampleWeight * this.frameGain * kernelArea;
+        // A count is that many rows' sprites: the splat's weight per row.
+        d.scale = sampleWeight * this.frameGain;
         heatTiles = d;
         // Tiles alone (no rows): exposed from them once their first view is drawn, as a load is.
         if (!this.dataset && d.tiles.length > 0 && this.heatTileMetered !== this.heatTileSource && this.heatTileSource.info?.complete) {
@@ -4424,7 +4451,7 @@ export class Engine {
         groundProjected: h.groundProjected,
         groundY,
         signed: heatMode === 'heat-difference' || !!weight?.signed,
-        teamColors: heatMode === 'heat-teams' && (this.dataset?.teamLabels.length ?? 0) > 0,
+        teamColors,
         rate: rateMap
           ? {
               overall: overallShare(this.sideCounts.positive, this.sideCounts.negative),

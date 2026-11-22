@@ -2642,8 +2642,9 @@ export class Webgl2Renderer implements Renderer {
       gl.clear(gl.COLOR_BUFFER_BIT);
     }
     // Heat from tiles (Stage 6) under the rows: only where the target was just cleared.
-    if (!field && params.heatTiles && (!extend || fresh) && this.heatChannels === 1) {
-      (this.heatTiles ??= new GlHeatTiles(gl)).draw(params.heatTiles, params.viewProj);
+    // Any heat target but the rate map's (its channels are sums the tiles do not carry).
+    if (!field && params.heatTiles && (!extend || fresh) && !params.heat.rate) {
+      (this.heatTiles ??= new GlHeatTiles(gl)).draw(params.heatTiles, params.viewProj, this.heatChannels === 4);
     }
 
     const weight = params.sampleWeight * params.heatGain;

@@ -4,6 +4,11 @@
  * `cellPx` pixels where it is nearest the camera, so tiles get finer towards
  * the eye and coarser towards the horizon; tiles outside the frustum are
  * dropped. Bounded: at most `maxTiles`, the largest on screen refined first.
+ *
+ * With a heat kernel (`kernel`) a tile is not split once its children's cells
+ * would be smaller than the sprite's radius over `KERNEL_CELLS`: the tiles are
+ * drawn convolved with the sprite (`kernelRadius`), which smooths away any
+ * detail finer than that, and the draw reads at most a few cells each way.
  */
 
 import { TILE } from './tileFormat';
@@ -31,6 +36,30 @@ export interface LodView {
   pxPerUnit: number;
   cellPx: number;
   maxTiles: number;
+  /** The heat sprite the tiles are drawn with, when they are (see `kernelRadius`). */
+  kernel?: SpriteSize;
+}
+
+/** A heat sprite's size as the rows' splat draws it: a world radius, clamped to a pixel range on screen. */
+export interface SpriteSize {
+  radius: number;
+  minPx: number;
+  /** 0: no upper clamp. */
+  maxPx: number;
+}
+
+/** Cells per sprite radius the LOD refines to, at most. */
+export const KERNEL_CELLS = 4;
+
+/**
+ * The world radius a sprite is drawn with at view depth `depth` (parallel:
+ * any): its pixel radius clamped as the splat clamps it, back in world units.
+ */
+export function kernelRadius(k: SpriteSize, pxPerUnit: number, perspective: boolean, depth: number): number {
+  const d = perspective ? Math.max(1e-6, depth) : 1;
+  const px = (k.radius * pxPerUnit) / d;
+  const clamped = Math.max(k.minPx, k.maxPx > 0 ? Math.min(k.maxPx, px) : px);
+  return (clamped * d) / Math.max(1e-12, pxPerUnit);
 }
 
 export interface TileRef {
@@ -73,35 +102,47 @@ function outside(vp: Float32Array, r: [number, number, number, number], y: numbe
   return l === 4 || rr === 4 || b === 4 || t === 4 || n === 4;
 }
 
-/** Pixels one cell of `t` covers where the tile is nearest the eye. */
-function cellPixels(p: PyramidFrame, place: TilePlacement, v: LodView, t: TileRef): number {
-  const r = tileWorldRect(p, place, t);
-  const cell = (r[2] - r[0]) / TILE;
-  if (!v.perspective) return cell * v.pxPerUnit;
+/** A rectangle's nearest and farthest distance from the eye (parallel: 1 and 1). */
+export function rectDepths(r: readonly number[], ground: number, v: Pick<LodView, 'cameraPos' | 'perspective'>): [number, number] {
+  if (!v.perspective) return [1, 1];
   const e = v.cameraPos;
+  const dy = e[1] - ground;
   const dx = Math.max(r[0] - e[0], 0, e[0] - r[2]);
   const dz = Math.max(r[1] - e[2], 0, e[2] - r[3]);
-  const dy = e[1] - place.ground;
-  const d = Math.max(1e-6, Math.hypot(dx, dy, dz));
-  return (cell / d) * v.pxPerUnit;
+  const fx = Math.max(Math.abs(r[0] - e[0]), Math.abs(r[2] - e[0]));
+  const fz = Math.max(Math.abs(r[1] - e[2]), Math.abs(r[3] - e[2]));
+  return [Math.max(1e-6, Math.hypot(dx, dy, dz)), Math.max(1e-6, Math.hypot(fx, dy, fz))];
+}
+
+/**
+ * Pixels one cell of `t` covers where the tile is nearest the eye, and
+ * whether its children's cells would still be no finer than the kernel needs.
+ */
+function cellPixels(p: PyramidFrame, place: TilePlacement, v: LodView, t: TileRef): { px: number; finer: boolean } {
+  const r = tileWorldRect(p, place, t);
+  const cell = (r[2] - r[0]) / TILE;
+  const d = rectDepths(r, place.ground, v)[0];
+  const px = v.perspective ? (cell / d) * v.pxPerUnit : cell * v.pxPerUnit;
+  const finer = !v.kernel || cell / 2 >= kernelRadius(v.kernel, v.pxPerUnit, v.perspective, d) / KERNEL_CELLS;
+  return { px, finer };
 }
 
 /** The tiles to draw, coarsest first. */
 export function selectTiles(p: PyramidFrame, place: TilePlacement, v: LodView): TileRef[] {
-  const open: { t: TileRef; px: number }[] = [];
+  const open: { t: TileRef; px: number; finer: boolean }[] = [];
   const done: TileRef[] = [];
   const visible = (t: TileRef) => !outside(v.viewProj, tileWorldRect(p, place, t), place.ground);
   const root = { level: 0, x: 0, y: 0 };
   if (!visible(root)) return [];
-  open.push({ t: root, px: cellPixels(p, place, v, root) });
+  open.push({ t: root, ...cellPixels(p, place, v, root) });
   while (open.length > 0) {
     // The tile largest on screen next.
     let k = 0;
     for (let i = 1; i < open.length; i++) if (open[i].px > open[k].px) k = i;
-    const { t, px } = open[k];
+    const { t, px, finer } = open[k];
     open[k] = open[open.length - 1];
     open.pop();
-    if (px <= v.cellPx || t.level >= p.leafLevel || done.length + open.length + 4 > v.maxTiles) {
+    if (px <= v.cellPx || !finer || t.level >= p.leafLevel || done.length + open.length + 4 > v.maxTiles) {
       done.push(t);
       continue;
     }
@@ -111,7 +152,7 @@ export function selectTiles(p: PyramidFrame, place: TilePlacement, v: LodView): 
         x: t.x * 2 + (c & 1),
         y: t.y * 2 + (c >> 1),
       };
-      if (visible(ch)) open.push({ t: ch, px: cellPixels(p, place, v, ch) });
+      if (visible(ch)) open.push({ t: ch, ...cellPixels(p, place, v, ch) });
     }
   }
   done.sort((a, b) => a.level - b.level);
