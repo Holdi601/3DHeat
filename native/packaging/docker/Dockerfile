@@ -15,8 +15,9 @@ RUN npm run build
 
 # ---- the server
 FROM rust:1-bookworm AS server
+# The whole repository: crates read files beside native/ (the extractors index, for one).
+COPY . /src
 WORKDIR /src/native
-COPY native/ ./
 RUN cargo build --release --locked -p heat3d-server \
  && install -D -m 755 target/release/3dheat /out/3dheat \
  && mkdir -p /out/state
