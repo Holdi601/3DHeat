@@ -16,9 +16,10 @@
  *   AType 16, 17, 18  a bot gone, an object's new place, a bail-out
  *             (BOTID, PARENTID)
  *
- * A hit on a bot (`BotPilot_...`, `BotGunner_...`) is a hit on its aircraft's
- * crew: it counts on the aircraft, with the crew effects (`pilot` or
- * `gunner`, `crewKilled` on the bot's kill). The report has no hit point,
+ * A hit on a bot (`BotPilot_...`, `BotGunner_...`, a tank's
+ * `BotTank<tank>_Driver`...) is a hit on its aircraft's or tank's crew: it
+ * counts on the vehicle, with the crew effects (`pilot`, `gunner`, `driver`,
+ * `commander`, `loader`, `machineGunner`; `crewKilled` on the bot's kill). The report has no hit point,
  * no way in and no speed: those stay unknown; a distance only where both
  * places were written within half a second of the hit (derived).
  */
@@ -127,12 +128,30 @@ function coalitions(cntrs: string): Map<string, string> {
   return out;
 }
 
+/** A crew member's role on its aircraft or tank, '' for an object that is not a bot. */
+export type Crew = '' | 'pilot' | 'gunner' | 'driver' | 'commander' | 'loader' | 'machineGunner';
+
+/**
+ * The role of a bot by its object type: an aircraft's `BotPilot_...`, `BotGunner_...`; a tank's (IL-2 Tank Crew)
+ * `BotTank<tank>_Driver`, `_Commander`, `_Gunner` (and `_CoAimer`), `_Loader`, `_Loader1`, `_Radist` (the radio
+ * operator, who mans the bow machine gun) and `_MGunner`.
+ */
+export function crewRole(type: string): Crew {
+  const ty = type.toLowerCase();
+  if (/^botpilot/.test(ty)) return 'pilot';
+  if (/^bottank/.test(ty) || /^botdriver/.test(ty)) {
+    const role = /_([a-z]+)\d*$/.exec(ty)?.[1] ?? (/^botdriver/.test(ty) ? 'driver' : '');
+    return role === 'driver' ? 'driver' : role === 'commander' ? 'commander' : role === 'loader' ? 'loader' : role === 'radist' || role === 'mgunner' ? 'machineGunner' : role === 'gunner' || role === 'coaimer' ? 'gunner' : 'gunner';
+  }
+  return /^botgunner|^botcrew/.test(ty) ? 'gunner' : '';
+}
+
 /** The hits of one mission report (its pieces read together, in order). */
 export function il2ReportHits(text: string, match: HitMatch): Omit<HitBlock, 'rows' | 'kept' | 'ms' | 'native'> {
   const lines = text.split(/\r?\n/);
   const objs = new Map<string, Obj>();
   let sides = new Map<string, string>();
-  interface Hit { t: number; aid: string; tid: string; victim: string; ammo: string; crew: '' | 'pilot' | 'gunner'; dmg: number }
+  interface Hit { t: number; aid: string; tid: string; victim: string; ammo: string; crew: Crew; dmg: number }
   const hits: Hit[] = [];
   const kills: { t: number; aid: string; tid: string }[] = [];
   const bails: { t: number; parent: string }[] = [];
@@ -145,10 +164,7 @@ export function il2ReportHits(text: string, match: HitMatch): Omit<HitBlock, 'ro
     }
     return at;
   };
-  const crewOf = (id: string): '' | 'pilot' | 'gunner' => {
-    const ty = objs.get(id)?.type ?? '';
-    return /^botpilot/i.test(ty) ? 'pilot' : /^botgunner|^botcrew/i.test(ty) ? 'gunner' : '';
-  };
+  const crewOf = (id: string): Crew => crewRole(objs.get(id)?.type ?? '');
   const place = (id: string, p: [number, number, number] | null, t: number) => {
     const o = objs.get(id);
     if (o && p) {

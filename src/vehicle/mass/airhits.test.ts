@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { AcmiEventFinder, toUnitFrame, type AcmiEvent } from '../../data/acmiEvents';
 import { dcsAmmo, il2Ammo } from './ammo';
 import { extractAcmiHits, labelParts, type AcmiScanColumns } from './scanAcmi';
-import { groupIl2Reports, il2Fields, il2Match, il2ReportHits } from './il2Report';
+import { crewRole, groupIl2Reports, il2Fields, il2Match, il2ReportHits } from './il2Report';
 import { rayEntry } from './geometry';
 import { HitStore, SRC_DERIVED } from './store';
 import { armourKnown, EFFECT_BIT, FLAG_DIR, FLAG_DIST, FLAG_LOCAL, FLAG_VICTIM_AI, FLAG2_DAMAGE, FLAG2_DIR_DERIVED, FLAG2_LOCAL_EST, FLAG2_RESULT_DERIVED, FLAG2_SPEED, R_KILL, R_UNKNOWN, type HitMatch } from './types';
@@ -259,6 +259,47 @@ describe('IL-2 mission reports', () => {
     const m = il2Match(report, 'missionReport(2026-01-02_03-04-05)[0].txt', 0);
     expect(m.map).toBe('test');
     expect(m.started).toBe(Date.UTC(2026, 0, 2, 3, 4, 5));
+  });
+
+  it("puts a tank's hits, its crew and the kill on the tank (IL-2 Tank Crew)", () => {
+    const tank = [
+      'T:0 AType:0 GDate:1943.7.5 GTime:5:0:0 MFile:Multiplayer/test.Mission MID: GType:2 CNTRS:0:0,101:1,201:2 SETTS:0 MODS:0 PRESET:0 AQMID:0 ROUNDS: 1 POINTS: 0',
+      'T:10 AType:12 ID:300 TYPE:T-34/76 UTZ (1943) COUNTRY:101 NAME:Tank PID:-1',
+      'T:10 AType:12 ID:301 TYPE:BotTankT3476UTZ43_Driver COUNTRY:101 NAME:Driver PID:300',
+      'T:10 AType:12 ID:302 TYPE:BotTankT3476UTZ43_Radist COUNTRY:101 NAME:Radio PID:300',
+      'T:12 AType:12 ID:400 TYPE:Pz.Kpfw.IV Ausf.G COUNTRY:201 NAME:Tank PID:-1',
+      'T:5000 AType:2 AMMO:SHELL_GER_75_CV AID:400 TID:300',
+      'T:5000 AType:3 DMG:0.300 AID:400 TID:300 POS(1000.0,10.0,3000.0)',
+      'T:5000 AType:2 AMMO:SHELL_GER_75_CV AID:400 TID:301',
+      'T:5000 AType:2 AMMO:SHELL_GER_75_CV AID:400 TID:302',
+      'T:5050 AType:4 AID:400 TID:301 POS(1000.0,10.0,3000.0)',
+      'T:6000 AType:2 AMMO:SHELL_GER_75_HV AID:400 TID:300',
+      'T:6000 AType:4 AID:400 TID:300 POS(1000.0,10.0,3000.0)',
+    ].join('\n');
+    const b = il2ReportHits(tank, il2Match(tank, 'missionReport(2026-01-02_03-04-05)[0].txt', 0));
+    const c = b.cols;
+    expect(c.n).toBe(2);
+    expect(b.vehicles[c.victim[0]]).toBe('T-34/76 UTZ (1943)');
+    expect(b.vehicles[c.attacker[0]]).toBe('Pz.Kpfw.IV Ausf.G');
+    expect(c.calibre[0]).toBe(750);
+    expect(b.ammoTypes[c.ammoType[0]]).toBe('APHE');
+    expect(b.ammoTypes[c.ammoType[1]]).toBe('APCR');
+    expect(c.effects[0] & EFFECT_BIT.driver).toBeTruthy();
+    expect(c.effects[0] & EFFECT_BIT.machineGunner).toBeTruthy();
+    expect(c.effects[0] & EFFECT_BIT.crewKilled).toBeTruthy();
+    expect(c.effects[1] & EFFECT_BIT.killingShot).toBeTruthy();
+    expect(c.result[1]).toBe(R_KILL);
+  });
+
+  it('names the crew roles of aircraft and tanks', () => {
+    expect(crewRole('BotPilot_Yak1')).toBe('pilot');
+    expect(crewRole('BotGunner_He111')).toBe('gunner');
+    expect(crewRole('BotTankPz4G_Commander')).toBe('commander');
+    expect(crewRole('BotTankPz4G_Loader1')).toBe('loader');
+    expect(crewRole('BotTankPz4G_MGunner')).toBe('machineGunner');
+    expect(crewRole('BotTankPz4G_CoAimer')).toBe('gunner');
+    expect(crewRole('BotDriver1')).toBe('driver');
+    expect(crewRole('Pz.Kpfw.IV Ausf.G')).toBe('');
   });
 
   it('reads a mission in pieces as one', async () => {

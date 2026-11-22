@@ -57,7 +57,7 @@ A shell is a point mass under gravity and quadratic drag. Flat fire (darts, tank
 
 ## DCS World and IL-2
 
-The same analysis reads a DCS World recording converted by the Tacview converter (`.3dheat`, [hits the converter works out](tacview-acmi.md#hits-the-converter-works-out)), IL-2 Sturmovik mission reports (`missionReport(<date>)[<n>].txt`, written by a server or the game with `mission_text_log = 1` in its `startup.cfg`; the pieces of one mission are read as one) and the Tacview recordings IL-2 writes itself (`tacviewrecord = 1` in `startup.cfg`, files in `data\Tracks`), converted like a DCS World one. Aircraft are vehicles like any other: a model without armour plates shows its outer surface instead, an aircraft's cut into nose, fuselage, wings and tail, so hits on its parts can be told apart.
+The same analysis reads a DCS World recording converted by the Tacview converter (`.3dheat`, [hits the converter works out](tacview-acmi.md#hits-the-converter-works-out)), IL-2 Sturmovik mission reports (`missionReport(<date>)[<n>].txt`, written by a server or the game with `mission_text_log = 1` in its `startup.cfg`; the pieces of one mission are read as one) and the Tacview recordings IL-2 writes itself (`tacviewrecord = 1` in `startup.cfg`, files in `data\Tracks`), converted like a DCS World one. IL-2's tanks (Tank Crew and the AI's) are read the same way, as targets and as shooters: a tank gun's round by its object name (`SHELL_GER_75_CV` 75 mm APHE, `_HV` APCR, `_HT` HEAT, `_HE` HE). Aircraft are vehicles like any other: a model without armour plates shows its outer surface instead, an aircraft's cut into nose, fuselage, wings and tail, so hits on its parts can be told apart.
 
 | Value | DCS World (Tacview recording) | IL-2 (mission report) |
 |---|---|---|
@@ -70,7 +70,7 @@ The same analysis reads a DCS World recording converted by the Tacview converter
 | Damage | not in the recording | recorded: the share of the unit's strength each hit took (`DMG`) |
 | Lethal, killing shot | derived: the unit's death the converter worked out, by the hit's shooter | recorded kills (`AType 4`), tied to the shooter's last hit |
 | Result | `kill` on the killing shot (derived from the death); every other hit unknown. Neither game records whether a hit went through, so the penetration rate leaves these kills out and stays empty | the same |
-| Crew | a bail-out: an ejection from the unit after a hit (derived) | the pilot or a gunner hit, a crew member killed (hits and kills on the aircraft's bots), a bail-out |
+| Crew | a bail-out: an ejection from the unit after a hit (derived) | the pilot or a gunner hit, a crew member killed (hits and kills on the aircraft's bots), a bail-out; a tank's (Tank Crew) driver, commander, gunner, loader and radio operator / machine gunner the same way (`BotTank<tank>_Driver`...) |
 | Fire, modules, the part struck | not in the recording; the plate under the estimated point stands for the part | not in the report |
 
 An IL-2 aircraft's plates are the game's damage-model pieces; their part numbers name the region on the plate card (`Cf.10200`: fuselage 1, bottom; `Ailer_L.12240`: left aileron; `14143`: engine 1).
