@@ -101,6 +101,7 @@ import { Brand, More, TaskBar, TaskGroup, WorkspaceBar } from './ui/shell/Shell'
 import { CommandPalette } from './ui/shell/CommandPalette';
 import { ShortcutSheet } from './ui/shell/ShortcutSheet';
 import { LibraryView } from './library/LibraryView';
+import { useLibrary } from './library/store';
 import { QuickBar } from './ui/shell/QuickBar';
 import { ConfirmHost, ToastHost, toast } from './ui/shell/kit';
 import { typesCharacter, typing, viewHasKeys } from './ui/viewKeys';
@@ -160,6 +161,8 @@ let viewKeysHinted = -Infinity;
  * the key to do nothing without a word.
  */
 function hintViewKeys(): void {
+  // The Library over the view takes its own keys (a rating, a flag): the view's hint would only confuse there.
+  if (useLibrary.getState().open) return;
   const now = performance.now();
   if (now - viewKeysHinted < 20_000) return;
   viewKeysHinted = now;

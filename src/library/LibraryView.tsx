@@ -132,6 +132,9 @@ function Welcome() {
       <button type="button" className="primary big" onClick={() => set({ addOpen: true })} data-usage="cmd:lib.welcomeAdd">
         {t('library.welcome.add')}
       </button>
+      <button type="button" className="ghost" onClick={() => set({ view: 'maps' })} data-usage="cmd:lib.welcomeMaps">
+        {t('library.welcome.maps')}
+      </button>
       <p className="lib-hint">{t('library.add.privacy')}</p>
     </div>
   );
@@ -177,6 +180,8 @@ function TopBar() {
     return () => window.removeEventListener('heat3d:library-search', f);
   }, []);
   const n = selected.size || (focus !== null ? 1 : 0);
+  // Before the first folder there is nothing to search, sort, convert or open: the welcome's one button is the way on.
+  const empty = status !== null && status.roots === 0;
   const tabs: LibView[] = ['items', 'maps', 'dupes', 'settings'];
   const jobs = status?.jobs;
   const open = (how: OpenHow) => void openItems(targets(), how);
@@ -193,7 +198,7 @@ function TopBar() {
           </button>
         ))}
       </nav>
-      {view === 'items' && (
+      {view === 'items' && !empty && (
         <>
           <input ref={search} className="lib-search" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('library.search')} aria-label={t('library.search')} />
           <select value={sort} onChange={(e) => setSort(e.target.value, desc)} aria-label={t('library.sort.label')}>
@@ -218,20 +223,24 @@ function TopBar() {
         </>
       )}
       <span className="lib-spacer" />
-      <button type="button" className={`lib-queue-btn${jobs && (jobs.running || jobs.queued) ? ' busy' : ''}`} onClick={() => set({ queueOpen: !useLibrary.getState().queueOpen })} data-usage="cmd:lib.queue">
-        {t('library.queue.button')}
-        {jobs && jobs.running + jobs.queued > 0 && <span className="lib-count on">{jobs.running + jobs.queued}</span>}
-        {jobs && jobs.failed > 0 && <span className="lib-count bad">{jobs.failed}</span>}
-      </button>
-      <button type="button" disabled={!n} onClick={() => void convertItems(targets())} data-usage="cmd:lib.convert">
-        {t('library.act.convertN', { count: n })}
-      </button>
-      <span className="lib-split">
-        <button type="button" className="primary" disabled={!n} onClick={() => open('view')} data-usage="cmd:lib.open">
-          {t('library.act.openN', { count: n })}
-        </button>
-        <OpenMenu disabled={!n} onPick={open} />
-      </span>
+      {!empty && (
+        <>
+          <button type="button" className={`lib-queue-btn${jobs && (jobs.running || jobs.queued) ? ' busy' : ''}`} onClick={() => set({ queueOpen: !useLibrary.getState().queueOpen })} data-usage="cmd:lib.queue">
+            {t('library.queue.button')}
+            {jobs && jobs.running + jobs.queued > 0 && <span className="lib-count on">{jobs.running + jobs.queued}</span>}
+            {jobs && jobs.failed > 0 && <span className="lib-count bad">{jobs.failed}</span>}
+          </button>
+          <button type="button" disabled={!n} onClick={() => void convertItems(targets())} data-usage="cmd:lib.convert">
+            {t('library.act.convertN', { count: n })}
+          </button>
+          <span className="lib-split">
+            <button type="button" className="primary" disabled={!n} onClick={() => open('view')} data-usage="cmd:lib.open">
+              {t('library.act.openN', { count: n })}
+            </button>
+            <OpenMenu disabled={!n} onPick={open} />
+          </span>
+        </>
+      )}
       {!standalone && (
         <button type="button" className="ghost" onClick={() => useLibrary.getState().setOpen(false)} title={`${t('library.back')} (Esc)`} data-usage="cmd:lib.close">
           {t('library.back')}
@@ -412,7 +421,7 @@ export function LibraryView() {
       <div className="lib-body">
         {available === false ? (
           <NotHere />
-        ) : empty ? (
+        ) : empty && view === 'items' ? (
           <Welcome />
         ) : view === 'items' ? (
           <>

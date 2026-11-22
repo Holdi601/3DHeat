@@ -65,6 +65,11 @@ export function installHint(hint: string | null): ReactNode {
   return null;
 }
 
+/** What to do about a failed job: its own hint, or else the log and Retry. */
+function failedHint(hint: string | null): ReactNode {
+  return installHint(hint) ?? <div className="lib-hint">{t('library.hint.retry')}</div>;
+}
+
 function JobRow({ j }: { j: Job }) {
   const [log, setLog] = useState<string | null>(null);
   const pct = j.progress === null ? null : Math.round(j.progress * 100);
@@ -103,7 +108,7 @@ function JobRow({ j }: { j: Job }) {
         </div>
       )}
       {j.message && j.state !== 'done' && <div className={`lib-job-msg ${j.state === 'failed' ? 'bad' : ''}`}>{j.message}</div>}
-      {j.state === 'failed' && installHint(j.hint)}
+      {j.state === 'failed' && failedHint(j.hint)}
       {j.state === 'done' && j.finished && <div className="lib-job-msg">{`${j.message ?? ''} · ${date(j.finished)}`}</div>}
       {log !== null && <pre className="lib-log">{log || t('library.job.noLog')}</pre>}
     </div>

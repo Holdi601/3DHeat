@@ -180,6 +180,18 @@
   background: var(--accent-hover);
 }
 
+/* The panes' button rule above is more specific than .primary: the main action there keeps its colour too. */
+.lib-root-view .lib-pane button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+  font-weight: var(--fw-medium);
+}
+
+.lib-root-view .lib-pane button.primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
 .lib-root-view button.ghost {
   background: transparent;
   border-color: transparent;
@@ -1158,24 +1170,61 @@ button.lib-chip {
   gap: var(--sp-3);
 }
 
+/* A job's state as a badge: a dot in its colour and the word. */
 .lib-job-state {
+  --tone: var(--text-faint);
+  flex: 0 0 auto;
   width: 72px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 1px 7px;
+  border-radius: var(--r-pill);
+  border: 1px solid color-mix(in srgb, var(--tone) 40%, transparent);
+  background: color-mix(in srgb, var(--tone) 10%, transparent);
   font-size: var(--fs-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-faint);
+  font-weight: var(--fw-medium);
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.lib-job-state::before {
+  content: '';
+  flex: 0 0 auto;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--r-pill);
+  background: var(--tone);
 }
 
 .lib-job-state.running {
-  color: var(--accent);
+  --tone: var(--accent);
+}
+
+.lib-job-state.running::before {
+  box-shadow: 0 0 6px var(--tone);
+  animation: lib-job-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes lib-job-pulse {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lib-job-state.running::before {
+    animation: none;
+  }
 }
 
 .lib-job-state.done {
-  color: var(--good);
+  --tone: var(--good);
 }
 
 .lib-job-state.failed {
-  color: var(--bad);
+  --tone: var(--bad);
 }
 
 .lib-job-label {
@@ -1570,6 +1619,28 @@ button.lib-chip {
 
 @media (max-width: 1100px) {
   .lib-insp {
+    display: none;
+  }
+
+  /* A narrow window: the top bar wraps onto a second row instead of cutting off Convert and Open. */
+  .lib-top {
+    height: auto;
+    min-height: 52px;
+    flex-wrap: wrap;
+    padding-top: var(--sp-2);
+    padding-bottom: var(--sp-2);
+  }
+
+  .lib-search {
+    flex: 1 1 160px;
+  }
+
+  .lib-top select {
+    width: auto;
+    max-width: 220px;
+  }
+
+  .lib-zoom {
     display: none;
   }
 }

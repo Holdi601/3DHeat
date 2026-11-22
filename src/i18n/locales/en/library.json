@@ -264,5 +264,8 @@
   "library.status.deep": "{count} files still read in the background",
   "library.status.outdated": "{count, plural, one {# made by an older converter} other {# made by an older converter}}",
   "library.status.unconverted": "{count, plural, one {# replay not converted} other {# replays not converted}}",
-  "library.status.lastScan": "Last look: {count} files in {seconds} s"
+  "library.status.lastScan": "Last look: {count} files in {seconds} s",
+  "library.maps.needs": "needs {id}",
+  "library.hint.retry": "The log says what went wrong. Fix that, then press Retry.",
+  "library.welcome.maps": "Set up the maps of your games first"
 }

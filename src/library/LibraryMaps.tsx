@@ -263,11 +263,14 @@ export function LibraryMaps() {
                     <div key={w.map} className="lib-maprow">
                       <span className="lib-maprow-name">{w.map}</span>
                       <span className="lib-hint">{t('library.maps.uses', { count: w.uses })}</span>
-                      {x && (
+                      {/* Not installed: the one Install is in the extractor's box above, each map only says what it needs. */}
+                      {x?.installed ? (
                         <button type="button" className="small" onClick={() => void extract(x, g, [w.map])} data-usage="cmd:lib.extractMissing">
-                          {x.installed ? t('library.maps.extractMissing') : t('library.hint.install', { id: x.id })}
+                          {t('library.maps.extractMissing')}
                         </button>
-                      )}
+                      ) : x ? (
+                        <span className="lib-tag">{t('library.maps.needs', { id: x.id })}</span>
+                      ) : null}
                     </div>
                   );
                 })}
