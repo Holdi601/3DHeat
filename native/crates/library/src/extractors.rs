@@ -113,14 +113,6 @@ pub fn load(data_dir: &Path) -> Vec<Extractor> {
             extract: ["extract", "{maps}", "-o", "{levels}"].map(String::from).to_vec(),
         })
         .collect();
-    // Each reader's own command line today (its CLI in exporters/ext/<repo>): the replay readers
-    // that take replays without a verb, and those with `convert`. The manager itself runs only
-    // `status --json`, `extract ... --progress-json` and `--check --json`; `convert` is the Library's.
-    for x in out.iter_mut() {
-        if matches!(x.id.as_str(), "heat3d-warthunder" | "heat3d-wows" | "heat3d-wot" | "heat3d-squad" | "heat3d-r6") {
-            x.convert = ["{input}", "-o", "{out}"].map(String::from).to_vec();
-        }
-    }
     // What the Extractors manager installed (native/crates/extractors, docs/extractors.md):
     // `<data>/extractors/<id>/current` names the version, `<data>/extractors/<id>/<version>/<id>/<id>[.exe]` is the program.
     for x in out.iter_mut() {
@@ -134,6 +126,8 @@ pub fn load(data_dir: &Path) -> Vec<Extractor> {
             x.env = vec![("HEAT3D_MANAGED".into(), "1".into())];
         }
     }
+    // The readers that name their own `convert` in the list.
+    let mut own_convert: Vec<String> = Vec::new();
     for e in doc.get("extractors").and_then(Value::as_array).into_iter().flatten() {
         let Some(id) = e.get("id").and_then(Value::as_str) else { continue };
         if local_only(id) {
@@ -188,6 +182,9 @@ pub fn load(data_dir: &Path) -> Vec<Extractor> {
         if let Some(m) = e.get("maps").and_then(Value::as_bool) {
             x.maps = m;
         }
+        if e.get("convert").is_some() {
+            own_convert.push(x.id.clone());
+        }
         for (key, verb) in [("convert", &mut x.convert), ("info", &mut x.info), ("status", &mut x.status), ("extract", &mut x.extract)] {
             match e.get(key) {
                 Some(Value::Array(_)) => *verb = strings(e.get(key)),
@@ -196,9 +193,23 @@ pub fn load(data_dir: &Path) -> Vec<Extractor> {
             }
         }
     }
+    // Every reader takes `convert <replay> -o <out>` since its window release; an
+    // older install of these takes the replay without a verb.
+    for x in out.iter_mut() {
+        let Some((_, first)) = WITH_CONVERT.iter().find(|(id, _)| *id == x.id) else { continue };
+        if own_convert.contains(&x.id) {
+            continue;
+        }
+        if x.version.as_deref().is_some_and(|v| compare_versions(v, first) == std::cmp::Ordering::Less) {
+            x.convert = ["{input}", "-o", "{out}"].map(String::from).to_vec();
+        }
+    }
     out.retain(|x| !local_only(&x.id));
     out
 }
+
+/// The replay readers that once took replays without a verb, and their first release with `convert`.
+const WITH_CONVERT: &[(&str, &str)] = &[("heat3d-warthunder", "0.4.0"), ("heat3d-wows", "0.3.0"), ("heat3d-wot", "0.3.0"), ("heat3d-squad", "0.3.0"), ("heat3d-r6", "0.7.0")];
 
 /// The extractor that converts `format` of `game`: installed ones first.
 pub fn converter_for<'a>(all: &'a [Extractor], game: Option<&str>, format: &str) -> Option<&'a Extractor> {
@@ -281,5 +292,30 @@ mod tests {
         assert_eq!(output_current(&all, "heat3d-wt-replay", Some("0.2.0")), Some(false));
         assert_eq!(output_current(&all, "heat3d-wt-replay", Some("0.2.4")), Some(true));
         assert_eq!(output_current(&all, "acmi-to-parquet", Some("0.1.0")), None);
+        // An old War Thunder reader takes the replay without a verb; one not installed gets `convert`.
+        assert_eq!(fill(&wt.convert, Some("r.wrpl"), Some("out"), &[], None), vec!["r.wrpl", "-o", "out"]);
+        let wows = all.iter().find(|x| x.id == "heat3d-wows").unwrap();
+        assert_eq!(fill(&wows.convert, Some("r.wowsreplay"), Some("out"), &[], None), vec!["convert", "r.wowsreplay", "-o", "out"]);
+    }
+
+    #[test]
+    fn readers_from_their_window_release_take_convert() {
+        let dir = tempfile::tempdir().unwrap();
+        let file = dir.path().join("extractors").join("installed.json");
+        std::fs::create_dir_all(file.parent().unwrap()).unwrap();
+        std::fs::write(
+            &file,
+            r#"{"extractors":[
+                {"id":"heat3d-warthunder","version":"0.4.0","exe":"wt.exe"},
+                {"id":"heat3d-r6","version":"v0.6.0","exe":"r6.exe"},
+                {"id":"heat3d-squad","version":"0.2.0","exe":"sq.exe","convert":["convert","{input}","-o","{out}"]}
+            ]}"#,
+        )
+        .unwrap();
+        let all = load(dir.path());
+        let verb = |id: &str| all.iter().find(|x| x.id == id).unwrap().convert.first().cloned().unwrap_or_default();
+        assert_eq!(verb("heat3d-warthunder"), "convert");
+        assert_eq!(verb("heat3d-r6"), "{input}");
+        assert_eq!(verb("heat3d-squad"), "convert");
     }
 }
