@@ -2072,7 +2072,7 @@ dependencies = [
  "hyper-util",
  "if-addrs",
  "prost",
- "rand 0.9.5",
+ "rand 0.10.4",
  "rcgen",
  "rustls",
  "serde",
