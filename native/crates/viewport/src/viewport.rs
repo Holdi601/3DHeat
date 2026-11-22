@@ -197,11 +197,14 @@ struct Data {
     fetching: Arc<AtomicBool>,
     /// The page's dataset count (`Msg::CoreDataset::gen`).
     page_gen: u32,
+    /// Chunks and filter columns the page sends in parts (`loader::Parts`).
+    chunk_parts: loader::Parts,
+    column_parts: loader::Parts,
 }
 
 fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::SurfaceConfiguration, rx: Receiver<Msg>, tx: Sender<Msg>, snap: Arc<Mutex<Snapshot>>) {
     let fifo = config.present_mode == wgpu::PresentMode::Fifo;
-    let mut data = Data { generation: Arc::new(AtomicU64::new(0)), core: None, fetching: Arc::new(AtomicBool::new(false)), page_gen: 0 };
+    let mut data = Data { generation: Arc::new(AtomicU64::new(0)), core: None, fetching: Arc::new(AtomicBool::new(false)), page_gen: 0, chunk_parts: Default::default(), column_parts: Default::default() };
     let mut hidden = false;
     let mut dirty = true;
     // While the page sends frames, a present every display refresh (Fifo paces it): a refresh no
@@ -290,12 +293,15 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                     data.page_gen = gen;
                     data.generation.fetch_add(1, Ordering::SeqCst);
                     data.core = None;
+                    data.chunk_parts.clear();
+                    data.column_parts.clear();
                     r.tracks.clear();
                     r.clear_dataset(has_time);
                     dirty = true;
                 }
-                Msg::PageChunk(bytes) => match PageChunk::parse(&bytes) {
-                    Ok(c) => {
+                Msg::PageChunk(part) => match data.chunk_parts.take(&part).and_then(|m| m.map(|b| PageChunk::parse(&b)).transpose()) {
+                    Ok(None) => {}
+                    Ok(Some(c)) => {
                         let c = c.upload(&r.device);
                         r.add_chunk(c);
                     }
@@ -314,14 +320,15 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                     Ok(_) => {}
                     Err(e) => eprintln!("viewport: {e:#}"),
                 },
-                Msg::PageColumn(bytes) => match loader::page_column(&r.device, &bytes) {
-                    Ok((chunk, name, Some(buf))) => {
+                Msg::PageColumn(part) => match data.column_parts.take(&part).and_then(|m| m.map(|b| loader::page_column(&r.device, &b)).transpose()) {
+                    Ok(None) => {}
+                    Ok(Some((chunk, name, Some(buf)))) => {
                         r.add_column(chunk, name, buf);
                         r.columns_settled();
                         // Composited again so the counters (filtersPending) follow.
                         dirty = true;
                     }
-                    Ok((chunk, name, None)) => {
+                    Ok(Some((chunk, name, None))) => {
                         r.column_failed(chunk, &name);
                         dirty = true;
                     }

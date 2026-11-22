@@ -35,7 +35,12 @@
  *            the GPU tracks off (`?gputracks=0`), every unit placed on the CPU - compared with the
  *            GPU path's picture of the same backend (reported, not gated: the CPU path picks its
  *            figures' detail by its own rules). Without --dir (only tracks cases) no files load,
- *            and the frames below are taken on the synthetic load, the GPU tracks on
+ *            and the frames below are taken on the synthetic load, the GPU tracks on.
+            --detach <s>: the tracks case's store built with the probe let go of the page (no
+            picture, its times only) - attached, a 10k-match store took 13-15 s natively
+            because Playwright holds each new worker (the model worker) until it has attached,
+            behind the DevTools events of the page's IPC; detached 3.2 s, as the web.
+            --profile 1: the page's CPU profile of the tracks case to --out
  *   exposure the first auto-exposure after each load (the first and three loads of the same
  *            files again, the same view): every one within 1 % of the web's first - a meter
  *            that read the field before all rows were drawn, or before the frame it meant,
@@ -409,7 +414,34 @@ async function run(rows, backend) {
       // Which case a run is in, should the page go away during it.
       console.error(`${backend} ${rows / 1e6}M: ${c}`);
       if (TRACK_CASES.includes(c)) {
+        // --profile: the page's CPU profile while the case runs (the store's build and send), for DevTools.
+        // Its times are the probe's, not the app's (see --detach).
+        const prof = arg('profile', null) !== null && c === 'tracks';
+        if (prof) {
+          await cdp.send('Profiler.enable');
+          await cdp.send('Profiler.setSamplingInterval', { interval: 500 });
+          await cdp.send('Profiler.start');
+        }
+        if (arg('detach', null) !== null && c === 'tracks') {
+          // --detach: the store built with no DevTools client on the page. Playwright holds every new
+          // worker until it has attached to it, and while the page sends large IPC bodies (each one an
+          // event on the DevTools socket) that took 15 s - the model worker, and the store with it,
+          // waited for the probe, not the app. Started, let go, read back after --detach seconds.
+          await page.evaluate(`(${tracksCase})(${JSON.stringify({ c, matches, units: unitsPerMatch })}).then((r) => { globalThis.__tracksDetached = { readyMs: r.readyMs, info: r.info, gpu: r.gpu, diag: r.diag }; }); 0`);
+          await browser.close();
+          await sleep(Number(arg('detach', 40)) * 1000);
+          browser = await chromium.connectOverCDP(`http://127.0.0.1:${PORT}`);
+          page = browser.contexts().flatMap((x) => x.pages()).find((p) => /tauri\.localhost|127\.0\.0\.1/.test(p.url()));
+          parity[c] = (await page.evaluate(() => globalThis.__tracksDetached ?? null)) ?? { readyMs: NaN, info: null, gpu: false, diag: 'not done' };
+          continue;
+        }
         parity[c] = await page.evaluate(tracksCase, { c, matches, units: unitsPerMatch });
+        if (prof) {
+          const { profile } = await cdp.send('Profiler.stop');
+          const file = join(out, `${matches}x${unitsPerMatch}-tracks-${backend}.cpuprofile`);
+          writeFileSync(file, JSON.stringify(profile));
+          console.log(`${backend}: CPU profile -> ${file}`);
+        }
         continue;
       }
       parity[c] = await page.evaluate(async (c) => {
@@ -690,7 +722,8 @@ for (const rows of loads) {
       summary.push({ rows, case: 'tracks-cpu', backend: r.backend, picture: pic });
     }
   }
-  for (const c of web && nat ? cases.filter((c) => c !== 'exposure' && c !== 'tracks-cpu') : []) {
+  // --detach takes the tracks case's times only, no picture to compare.
+  for (const c of web && nat ? cases.filter((c) => c !== 'exposure' && c !== 'tracks-cpu' && !(c === 'tracks' && arg('detach', null) !== null)) : []) {
     const a = web.parity[c];
     const b = nat.parity[c];
     if (a.picture) writeFileSync(join(out, `${m}-${c}-web.png`), png(a.picture.width, a.picture.height, Uint8Array.from(a.picture.rgba)));

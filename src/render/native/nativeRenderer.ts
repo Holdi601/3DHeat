@@ -385,7 +385,29 @@ export class NativeRenderer implements Renderer {
         await new Promise((r) => setTimeout(r, 0));
       }
       if (gen !== this.datasetGen) return;
-      await this.invoke('viewport_chunk', new Uint8Array(bytes)).catch((e: unknown) => console.warn('native viewport: chunk', e));
+      await this.sendParts('viewport_chunk', new Uint8Array(bytes), () => gen === this.datasetGen).catch((e: unknown) => console.warn('native viewport: chunk', e));
+    }
+  }
+
+  private partId = 0;
+
+  /**
+   * A large message in parts of `ROW_SLICE_BYTES` (`loader::Parts`): WebView2 reads one large IPC
+   * body slowly and meanwhile starts no worker and serves no other request - a 10k-match load's
+   * 40 MB chunk held the model worker back 15 s, and the GPU tracks' store with it. Each part:
+   * message id, total bytes, offset, 0, then its bytes; one after the other, while `go` holds.
+   */
+  private async sendParts(cmd: string, bytes: Uint8Array, go: () => boolean = () => true): Promise<void> {
+    const id = (this.partId = (this.partId + 1) >>> 0);
+    for (let at = 0; at === 0 || at < bytes.byteLength; ) {
+      if (at > 0 && !go()) return;
+      const n = Math.min(ROW_SLICE_BYTES, bytes.byteLength - at);
+      const part = new Uint8Array(16 + n);
+      new Uint32Array(part.buffer, 0, 4).set([id, bytes.byteLength, at, 0]);
+      part.set(bytes.subarray(at, at + n), 16);
+      await this.invoke(cmd, part);
+      at += n;
+      if (n === 0) break;
     }
   }
 
@@ -414,7 +436,7 @@ export class NativeRenderer implements Renderer {
           const out = new Float32Array(buf, (3 + nameWords) * 4, rows);
           for (let i = 0; i < rows; i++) out[i] = src[start + i];
         }
-        void this.invoke('viewport_column', new Uint8Array(buf)).catch((e: unknown) => console.warn('native viewport: column', e));
+        void this.sendParts('viewport_column', new Uint8Array(buf)).catch((e: unknown) => console.warn('native viewport: column', e));
       }
     }
   }

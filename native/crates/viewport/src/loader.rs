@@ -165,6 +165,44 @@ impl PageChunk {
     }
 }
 
+/// Messages the page sends in parts (`nativeRenderer.ts` `sendParts`): WebView2 takes one large
+/// IPC body slowly and, while it does, starts no worker and serves no other request (a 40 MB
+/// chunk held a 10k-match load's model worker back 15 s), so a chunk or column comes in slices
+/// of at most 4 MB, each with a 16-byte head: message id, total bytes, offset, 0. Slices of one
+/// message may arrive in any order; the message is whole when every byte is in.
+#[derive(Default)]
+pub struct Parts {
+    open: HashMap<u32, (Vec<u8>, usize)>,
+}
+
+impl Parts {
+    /// Takes a slice; the whole message once its last bytes are in.
+    pub fn take(&mut self, slice: &[u8]) -> anyhow::Result<Option<Vec<u8>>> {
+        const HEAD: usize = 16;
+        anyhow::ensure!(slice.len() >= HEAD, "part header");
+        let w = |k: usize| u32::from_le_bytes([slice[k * 4], slice[k * 4 + 1], slice[k * 4 + 2], slice[k * 4 + 3]]);
+        let (id, total, offset) = (w(0), w(1) as usize, w(2) as usize);
+        let body = &slice[HEAD..];
+        anyhow::ensure!(offset + body.len() <= total, "part past its message ({offset} + {} > {total})", body.len());
+        if offset == 0 && body.len() == total {
+            return Ok(Some(body.to_vec()));
+        }
+        let (buf, got) = self.open.entry(id).or_insert_with(|| (vec![0; total], 0));
+        anyhow::ensure!(buf.len() == total, "part of message {id} with another size");
+        buf[offset..offset + body.len()].copy_from_slice(body);
+        *got += body.len();
+        if *got < total {
+            return Ok(None);
+        }
+        Ok(self.open.remove(&id).map(|(b, _)| b))
+    }
+
+    /// Drops the messages still coming in (a new dataset: their rows are the old one's).
+    pub fn clear(&mut self) {
+        self.open.clear();
+    }
+}
+
 /// A filter column the page sent for one chunk: chunk, rows (0: the page has no such column),
 /// the name's length and bytes (padded to words), then the rows as f32.
 pub fn page_column(device: &wgpu::Device, bytes: &[u8]) -> anyhow::Result<(usize, String, Option<wgpu::Buffer>)> {
@@ -183,4 +221,28 @@ pub fn page_column(device: &wgpu::Device, bytes: &[u8]) -> anyhow::Result<(usize
         })
     });
     Ok((chunk, name, buf))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::Parts;
+
+    fn part(id: u32, total: usize, offset: usize, body: &[u8]) -> Vec<u8> {
+        let mut v = [id, total as u32, offset as u32, 0].iter().flat_map(|w| w.to_le_bytes()).collect::<Vec<u8>>();
+        v.extend_from_slice(body);
+        v
+    }
+
+    #[test]
+    fn parts_make_the_message_in_any_order() {
+        let msg: Vec<u8> = (0..10u8).collect();
+        let mut p = Parts::default();
+        assert_eq!(p.take(&part(1, 10, 0, &msg)).unwrap(), Some(msg.clone()));
+        assert_eq!(p.take(&part(2, 10, 6, &msg[6..])).unwrap(), None);
+        assert_eq!(p.take(&part(3, 10, 0, &msg[..4])).unwrap(), None);
+        assert_eq!(p.take(&part(2, 10, 0, &msg[..6])).unwrap(), Some(msg.clone()));
+        assert!(p.take(&part(3, 10, 8, &msg[..4])).is_err());
+        p.clear();
+        assert_eq!(p.take(&part(3, 10, 4, &msg[4..])).unwrap(), None);
+    }
 }
