@@ -69,7 +69,11 @@
  * real counterpart, `armaUnits.ts`), Won (1 on the side the mission's end
  * names as the winner, 0 on the other fighting sides; empty without a
  * winner), Winner and EndReason (the end message), Date (when the recording
- * began) and Duration (seconds recorded).
+ * began) and Duration (seconds recorded). An Arma 3 vehicle's TurretYaw and
+ * GunPitch (degrees, the yaw right of the hull's heading and up from level)
+ * are toward where its crew's shots went, at the frames they fired: the
+ * recording keeps no turret, but its shots say where the guns pointed (a
+ * shot without a height says no pitch).
  *
  * Arma Reforger: OCAP2's recorder for Reforger (github.com/OCAP2/addon-reforger,
  * its receiver's `builder.go`, 2026-02) writes the same layout, with
@@ -192,6 +196,8 @@ interface State {
   role: string;
   group: string;
   side: string;
+  /** The entry kept no height (the original layout's people): a unit riding a vehicle then takes the vehicle's. */
+  flat?: boolean;
 }
 
 const str = (v: unknown): string => (typeof v === 'string' ? v : v === undefined || v === null ? '' : String(v));
@@ -244,6 +250,7 @@ function decode(t: Track, i: number, prev: State | null): State | null {
     x,
     y,
     z: numOr(p[t.upY ? 1 : 2], 0),
+    ...(p.length < 3 ? { flat: true } : {}),
     dir: numOr(r[1], 0),
     alive: numOr(r[2], 1),
     inVehicle: 0,
@@ -538,6 +545,8 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
   const MULT = new GrowableF64();
   const WON = new GrowableF64();
   const YAW = reforger ? new GrowableF64() : null;
+  const TYAW = new GrowableF64();
+  const GPITCH = new GrowableF64();
   const S = { Object: [] as string[], Side: [] as string[], Vehicle: [] as string[], Type: [] as string[], Riding: [] as string[], Group: [] as string[], Role: [] as string[], Event: [] as string[], Killer: [] as string[], Victim: [] as string[], Weapon: [] as string[], Text: [] as string[], Color: [] as string[], Shape: [] as string[], GameDate: [] as string[], UTC: [] as string[], Faction: [] as string[], Unit: [] as string[], Detail: [] as string[] };
   // What each vehicle is, worked out once.
   const unitOf = new Map<number, string>();
@@ -600,17 +609,36 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
     return lastSide.get(t.e.id!) ?? (str(t.e.side) || 'CIV');
   };
 
+  // Where each Arma 3 vehicle's crew shot, per frame: what its turret and gun pointed at (the last shot of a frame).
+  const aims = new Map<number, Map<number, number[]>>();
+  if (!reforger)
+    for (const t of tracks.values()) {
+      const fired = t.e.framesFired;
+      if (!t.unit || !Array.isArray(fired)) continue;
+      for (const ff of fired) {
+        if (!Array.isArray(ff) || typeof ff[0] !== 'number' || !Array.isArray(ff[1])) continue;
+        const s = stateAt(t.e.id!, ff[0]);
+        const v = s ? vehicleOf(t.e.id!, ff[0], s) : null;
+        if (!v) continue;
+        const p = ff[1] as unknown[];
+        let m = aims.get(v.id!);
+        if (!m) aims.set(v.id!, (m = new Map()));
+        m.set(ff[0], [numOr(p[0], NaN), numOr(p[1], NaN), numOr(p[2], NaN)]);
+      }
+    }
+
   const push = (t: Track, f: number, s: State, ev?: EventCols) => {
     if (ev?.side !== undefined) s = { ...s, side: ev.side };
     const e = t.e;
+    const v = t.unit ? vehicleOf(e.id!, f, s) : null;
     TIME.push(f * delay);
     FRAME.push(f);
     X.push(s.x);
     Y.push(s.y);
-    Z.push(s.z);
+    // A rider with no height of its own (the original layout) is as high as its vehicle: a helicopter's crew in it.
+    Z.push(v && s.flat ? (stateAt(v.id!, f)?.z ?? s.z) : s.z);
     HEAD.push(s.dir);
     ALIVE.push(s.alive);
-    const v = t.unit ? vehicleOf(e.id!, f, s) : null;
     INVEH.push(t.unit ? (v || s.inVehicle ? 1 : 0) : NaN);
     CREW.push(t.unit ? NaN : s.crew.length);
     PLAYER.push(t.unit ? s.isPlayer : NaN);
@@ -623,7 +651,22 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
     S.Unit.push(unitWord(e));
     WON.push(winner && FIGHTING.has(side) && e.type !== 'mission' && e.type !== 'marker' ? (side === winner ? 1 : 0) : NaN);
     YAW?.push(180 - s.dir);
-    S.Vehicle.push(t.unit ? '' : str(e.name));
+    // The turret toward the crew's shot of this frame: its bearing less the hull's heading, its rise over the distance.
+    const aim = !t.unit && !ev ? aims.get(e.id!)?.get(f) : undefined;
+    if (aim && Number.isFinite(aim[0]) && Number.isFinite(aim[1])) {
+      const dx = aim[0] - s.x;
+      const dy = aim[1] - s.y;
+      let yaw = ((Math.atan2(dx, dy) * 180) / Math.PI - s.dir) % 360;
+      if (yaw > 180) yaw -= 360;
+      if (yaw <= -180) yaw += 360;
+      TYAW.push(yaw);
+      GPITCH.push(Number.isFinite(aim[2]) ? (Math.atan2(aim[2] - s.z, Math.hypot(dx, dy)) * 180) / Math.PI : NaN);
+    } else {
+      TYAW.push(NaN);
+      GPITCH.push(NaN);
+    }
+    // A marker's text or the mission names no vehicle (a marker "A2-1 Tigris" is no tank to draw).
+    S.Vehicle.push(t.unit || e.type === 'marker' || e.type === 'mission' ? '' : str(e.name));
     S.Type.push(typeWord(e, t.unit));
     S.Riding.push(v ? str(v.name) : '');
     S.Group.push(t.unit ? s.group : '');
@@ -800,13 +843,14 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
   // The recording's own fields, but for what the table already holds row by row.
   const own: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(doc as Record<string, unknown>)) if (!['entities', 'events', 'Markers', 'times'].includes(k)) own[k] = v;
-  const columns = ['Time', 'Frame', 'X', 'Y', 'Z', 'Object', 'Side', 'Heading', 'Vehicle', 'Type', 'Alive', 'InVehicle', 'Riding', 'Crew', 'Group', 'Role', 'Player', 'Shots', 'Event', 'Killer', 'Victim', 'Weapon', 'Distance', 'Mission', 'World', 'Recording', 'TargetX', 'TargetY', 'TargetZ', 'Text', 'Color', 'Shape', 'GameDate', 'UTC', 'TimeMultiplier', 'Info', 'Game', 'Map', 'Faction', 'Unit', 'Won', 'Winner', 'EndReason', 'Date', 'Duration', 'Detail', ...(YAW ? ['Yaw'] : [])];
+  const columns = ['Time', 'Frame', 'X', 'Y', 'Z', 'Object', 'Side', 'Heading', 'Vehicle', 'Type', 'Alive', 'InVehicle', 'Riding', 'Crew', 'Group', 'Role', 'Player', 'Shots', 'Event', 'Killer', 'Victim', 'Weapon', 'Distance', 'Mission', 'World', 'Recording', 'TargetX', 'TargetY', 'TargetZ', 'Text', 'Color', 'Shape', 'GameDate', 'UTC', 'TimeMultiplier', 'Info', 'Game', 'Map', 'Faction', 'Unit', 'Won', 'Winner', 'EndReason', 'Date', 'Duration', 'Detail', 'TurretYaw', 'GunPitch', ...(YAW ? ['Yaw'] : [])];
   const data: (Float64Array | string[])[] = [
     TIME.finish(), FRAME.finish(), X.finish(), Y.finish(), Z.finish(), S.Object, S.Side, HEAD.finish(), S.Vehicle, S.Type,
     ALIVE.finish(), INVEH.finish(), S.Riding, CREW.finish(), S.Group, S.Role, PLAYER.finish(), SHOTS.finish(),
     S.Event, S.Killer, S.Victim, S.Weapon, DIST.finish(), fill(mission), fill(world), fill(recording),
     TX.finish(), TY.finish(), TZ.finish(), S.Text, S.Color, S.Shape, S.GameDate, S.UTC, MULT.finish(), fill(JSON.stringify(own)),
     fill(game), fill(map), S.Faction, S.Unit, WON.finish(), fill(winner), fill(endText), fill(date), new Float64Array(n).fill(duration), S.Detail,
+    TYAW.finish(), GPITCH.finish(),
     ...(YAW ? [YAW.finish()] : []),
   ];
   return { columns, data, numeric: data.map((d) => d instanceof Float64Array), rows: n, title: mission, world, captureDelay: delay, reforger, game, map };
@@ -841,7 +885,7 @@ export function ocapHints(t?: Pick<OcapTable, 'reforger'>): {
       angleUnit: 'degrees',
       // Unit before Vehicle: the figures take the first name they know. Date, Duration and EndReason, the same on
       // every row of a recording, stay in the table for the mapping step and the mass analysis.
-      extra: ['Unit', 'Vehicle', 'Type', 'Game', 'Map', 'Faction', 'Won', 'Winner', 'Event', 'Alive', 'InVehicle', 'Riding', 'Group', 'Role', 'Player', 'Shots', 'Killer', 'Victim', 'Weapon', 'Distance', 'Crew', 'Mission', 'World', 'Frame', 'TargetX', 'TargetY', 'TargetZ', 'Text', 'Color', 'Shape', 'GameDate', 'TimeMultiplier'],
+      extra: ['Unit', 'Vehicle', 'Type', 'Game', 'Map', 'Faction', 'Won', 'Winner', 'Event', 'Alive', 'InVehicle', 'Riding', 'Group', 'Role', 'Player', 'Shots', 'Killer', 'Victim', 'Weapon', 'Distance', 'Crew', 'Mission', 'World', 'Frame', 'TargetX', 'TargetY', 'TargetZ', 'Text', 'Color', 'Shape', 'GameDate', 'TimeMultiplier', 'TurretYaw', 'GunPitch'],
     },
   };
 }

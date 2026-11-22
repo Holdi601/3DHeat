@@ -180,9 +180,19 @@ describe('recordings without heights on the ground', () => {
     expect(drainSteps(heightlessSessionsSteps(d))).toEqual([1]);
     // ...but for a few events with a place of their own.
     const b = [...d.sessionId!.keys()].filter((r) => d.sessionId![r] === 1);
-    for (const r of b.slice(0, 10)) d.py[r] = 123;
+    for (const r of b.slice(0, 10)) d.py[r] = 123.4;
     expect(drainSteps(heightlessSessionsSteps(d))).toEqual([1]);
-    for (const r of b.slice(0, 100)) d.py[r] = 123;
+    for (const r of b.slice(0, 100)) d.py[r] = 123.4;
+    expect(drainSteps(heightlessSessionsSteps(d))).toEqual([]);
+    // OCAP's original layout: people at 0, vehicles at their height above the ground in whole metres (a quarter of
+    // the rows here: the aircraft's).
+    for (const r of b) d.py[r] = d.personId![r] % 4 === 3 ? 150 + (r % 40) : 0;
+    expect(drainSteps(heightlessSessionsSteps(d))).toEqual([1]);
+    // A height with a fraction says the heights are real ones.
+    d.py[b[5]] = 0.25;
+    expect(drainSteps(heightlessSessionsSteps(d))).toEqual([]);
+    // Most rows off 0 say nothing, whole or not.
+    for (const r of b) d.py[r] = d.personId![r] % 4 === 0 ? 0 : 12;
     expect(drainSteps(heightlessSessionsSteps(d))).toEqual([]);
     // Too few rows say nothing.
     const few = { ...d, count: FLAT_MIN_ROWS - 1, sessionId: new Uint32Array(d.count).fill(1) } as Dataset;
@@ -193,7 +203,7 @@ describe('recordings without heights on the ground', () => {
     const d = matches(lv.ground, 0);
     const b = [...d.sessionId!.keys()].filter((r) => d.sessionId![r] === 1);
     for (const r of b) d.py[r] = 0;
-    d.py[b[0]] = 123; // an event with a height of its own
+    d.py[b[0]] = 123.4; // an event with a height of its own
     const out = drainSteps(groundedHeightsSteps(d, g, [1]))!;
     for (let r = 0; r < d.count; r++) {
       if (d.sessionId![r] === 1 && r !== b[0]) expect(Math.abs(out.py[r] - lv.ground(d.px[r], d.pz[r]))).toBeLessThan(0.05);
@@ -203,5 +213,19 @@ describe('recordings without heights on the ground', () => {
     // Ground under the sea (a boat at sea level over the sea floor): left at sea level.
     const sea = drainSteps(surfaceGridSteps(lv.vertices.map((v, i) => (i % 6 === 1 ? v - 20 : v)), lv.indices, { minX: 0, maxX: 400, minZ: 0, maxZ: 400 }, 1))!;
     expect(drainSteps(groundedHeightsSteps(d, sea, [1]))).toBeNull();
+  });
+
+  it('puts whole-metre heights (OCAP original layout: above the ground) that far over the drawn ground', () => {
+    const d = matches(lv.ground, 0);
+    const b = [...d.sessionId!.keys()].filter((r) => d.sessionId![r] === 1);
+    // People at 0, the aircraft 150 m and more over the ground, a car rounded down to -1.
+    for (const r of b) d.py[r] = d.personId![r] % 4 === 3 ? 150 + (r % 40) : 0;
+    d.py[b[1]] = -1;
+    const before = d.py.slice();
+    expect(drainSteps(heightlessSessionsSteps(d))).toEqual([1]);
+    const out = drainSteps(groundedHeightsSteps(d, g, [1]))!;
+    for (const r of b) expect(Math.abs(out.py[r] - (lv.ground(d.px[r], d.pz[r]) + Math.max(0, before[r])))).toBeLessThan(0.05);
+    for (let r = 0; r < d.count; r++) if (d.sessionId![r] === 0) expect(out.py[r]).toBe(d.py[r]);
+    expect(out.grounded).toEqual([{ session: 1, label: 'match B', rows: 1600 }]);
   });
 });

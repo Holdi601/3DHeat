@@ -148,6 +148,52 @@ describe('OCAP', () => {
     expect(col<Float64Array>('InVehicle')[alpha[5]]).toBe(0);
   });
 
+  it('puts a rider of the original layout (no height of its own) as high as its vehicle', () => {
+    // A helicopter at its height above the ground, whole metres, its pilot east and north only.
+    const rec = {
+      worldName: 'Malden',
+      captureDelay: 1,
+      endFrame: 2,
+      entities: [
+        { id: 0, type: 'unit', name: 'Pilot', side: 'WEST', startFrameNum: 0, positions: [[[10, 20], 0, 1, 0, 'Pilot', 1], [[10, 20], 0, 1, 1, 'Pilot', 1], [[50, 60], 0, 1, 1, 'Pilot', 1]] },
+        { id: 1, type: 'vehicle', name: 'Heli', class: 'heli', startFrameNum: 0, positions: [[[10, 20, 0], 0, 1, []], [[10, 20, 3], 0, 1, [0]], [[50, 60, 150], 0, 1, [0]]] },
+      ],
+      events: [],
+    };
+    const u = parseOcap(JSON.stringify(rec), 'old');
+    const c = <T extends Float64Array | string[]>(name: string) => u.data[u.columns.indexOf(name)] as T;
+    const pilot = [...c<string[]>('Object').keys()].filter((i) => c<string[]>('Object')[i] === 'Pilot #0');
+    expect(pilot.map((i) => c<Float64Array>('Z')[i])).toEqual([0, 3, 150]);
+  });
+
+  it("turns an Arma 3 vehicle's turret and gun toward where its crew's shots went", () => {
+    // A tank heading east (90), its gunner shooting at frame 1 to the south (right of the hull) and up, at frame 2
+    // north-east with no height (the original layout: no pitch).
+    const rec = {
+      worldName: 'Altis',
+      captureDelay: 1,
+      endFrame: 2,
+      entities: [
+        { id: 0, type: 'unit', name: 'Gunner', side: 'WEST', startFrameNum: 0, positions: [[[100, 100, 10], 90, 1, 1, 'Gunner', 1], [[100, 100, 10], 90, 1, 1, 'Gunner', 1], [[100, 100, 10], 90, 1, 1, 'Gunner', 1]], framesFired: [[1, [100, 0, 110]], [2, [200, 200]]] },
+        { id: 1, type: 'vehicle', name: 'Slammer', class: 'tank', startFrameNum: 0, positions: [[[100, 100, 10], 90, 1, [0]], [[100, 100, 10], 90, 1, [0]], [[100, 100, 10], 90, 1, [0]]] },
+      ],
+      events: [],
+    };
+    const u = parseOcap(JSON.stringify(rec), 'aim');
+    const c = <T extends Float64Array | string[]>(name: string) => u.data[u.columns.indexOf(name)] as T;
+    const tank = [...c<string[]>('Object').keys()].filter((i) => c<string[]>('Object')[i] === 'Slammer #1');
+    const yaw = tank.map((i) => c<Float64Array>('TurretYaw')[i]);
+    const pitch = tank.map((i) => c<Float64Array>('GunPitch')[i]);
+    expect(yaw[0]).toBeNaN();
+    expect(yaw[1]).toBeCloseTo(90);
+    expect(pitch[1]).toBeCloseTo(45);
+    expect(yaw[2]).toBeCloseTo(-45);
+    expect(pitch[2]).toBeNaN();
+    // The gunner's own rows say nothing of a turret.
+    const gunner = [...c<string[]>('Object').keys()].filter((i) => c<string[]>('Object')[i] === 'Gunner #0');
+    expect(gunner.every((i) => Number.isNaN(c<Float64Array>('TurretYaw')[i]))).toBe(true);
+  });
+
   it('places events where they happened, naming both sides', () => {
     // The full account is the Detail; the Event its kind, a word a filter can list.
     const ev = col<string[]>('Detail');
@@ -209,6 +255,10 @@ describe('OCAP', () => {
     const fig = (i: number) => figureFor([veh[i]], [type[i]]);
     expect(fig(rowsOf('Alpha #0')[0])).toBe('soldier');
     expect(fig(rowsOf('Hunter #2')[0])).not.toBeNull();
+    // A marker's text names no vehicle, whatever it says.
+    const mines = col<string[]>('Object').indexOf('marker Mines #M1');
+    expect(mines).toBeGreaterThanOrEqual(0);
+    expect(veh[mines]).toBe('');
   });
 
   it('loads into a block by its own hints, north-up with headings as yaw', async () => {

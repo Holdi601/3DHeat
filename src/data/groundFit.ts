@@ -232,28 +232,39 @@ export function* snappedHeightsSteps(d: Dataset, g: HeightGrid, k: number, groun
 export const FLAT_MIN_ROWS = MIN_SAMPLES;
 /** The share of a session's rows at height 0 that says so: a few events with a place of their own may carry one. */
 export const FLAT_SHARE = 0.99;
+/**
+ * The share at height 0 that says so when every other row's height is a whole number of metres: OCAP's original
+ * layout keeps no height for people and a vehicle's height above the ground rounded to the metre (a parked car 0 or
+ * 1, a helicopter 204), so a recording with many vehicles has a tenth or more of its rows off 0.
+ */
+export const FLAT_SHARE_WHOLE = 0.5;
 
 /**
  * The sessions recorded without heights: (nearly) every row at height 0,
  * exactly - what a reader fills in where the file has none (OCAP recordings
- * of Arma 3 from 2017 and before keep east and north only) - on
- * `FLAT_MIN_ROWS` rows or more. Nothing says where their units were above
- * the ground, so those rows go on the level's ground (`groundedHeightsSteps`).
+ * of Arma 3 in the original layout keep east and north only) - on
+ * `FLAT_MIN_ROWS` rows or more; or most rows at 0 and every other at a whole
+ * number of metres (the same layout's vehicles: their height above the
+ * ground). Nothing says where their units were above sea level, so those rows
+ * go on the level's ground (`groundedHeightsSteps`).
  */
 export function* heightlessSessionsSteps(d: Dataset): Generator<void, number[], void> {
   const sessions = d.sessionId && d.sessionLabels.length ? d.sessionLabels.length : 1;
   const zero = new Uint32Array(sessions);
   const rows = new Uint32Array(sessions);
+  const fraction = new Uint32Array(sessions);
   for (let r = 0; r < d.count; r++) {
     if ((r & (STEP - 1)) === STEP - 1) yield;
     const y = d.py[r];
     if (!Number.isFinite(y)) continue;
     const s = d.sessionId ? d.sessionId[r] : 0;
     if (y === 0) zero[s]++;
+    else if (y !== Math.round(y)) fraction[s]++;
     rows[s]++;
   }
   const out: number[] = [];
-  for (let s = 0; s < sessions; s++) if (rows[s] >= FLAT_MIN_ROWS && zero[s] >= FLAT_SHARE * rows[s]) out.push(s);
+  for (let s = 0; s < sessions; s++)
+    if (rows[s] >= FLAT_MIN_ROWS && (zero[s] >= FLAT_SHARE * rows[s] || (zero[s] >= FLAT_SHARE_WHOLE * rows[s] && fraction[s] === 0))) out.push(s);
   return out;
 }
 
@@ -269,10 +280,14 @@ export interface GroundedSession {
 /**
  * The heights of `d` with the rows at height 0 of `sessions`
  * (`heightlessSessionsSteps`) on the level's drawn ground `g` - every unit,
- * aircraft too: the recording does not say how high anything was. Never
- * under 0: over the sea a boat keeps the sea level instead of sinking to the
- * sea floor. Rows off the level, and rows with a height of their own, stay as
- * they were. Null when no row moved.
+ * aircraft too: the recording does not say how high anything was. In a
+ * session whose other heights are all whole metres (OCAP's original layout)
+ * those are heights above the ground: such a row goes that far above the
+ * drawn ground (a helicopter 204 m over the hill it flies over; a rounded
+ * -1 on it). Never under 0: over the sea a boat keeps its height over the sea
+ * instead of sinking to the sea floor. Rows off the level, and rows with a
+ * height of their own (not whole metres), stay as they were. Null when no
+ * row moved.
  */
 export function* groundedHeightsSteps(
   d: Dataset,
@@ -280,16 +295,24 @@ export function* groundedHeightsSteps(
   sessions: readonly number[],
 ): Generator<void, { py: Float32Array; grounded: GroundedSession[] } | null, void> {
   const want = new Set(sessions);
+  // The sessions with a height of their own somewhere: their rows off 0 keep it.
+  const own = new Set<number>();
+  for (let r = 0; r < d.count; r++) {
+    if ((r & (STEP - 1)) === STEP - 1) yield;
+    const y = d.py[r];
+    if (y !== 0 && Number.isFinite(y) && y !== Math.round(y)) own.add(d.sessionId ? d.sessionId[r] : 0);
+  }
   const moved = new Map<number, number>();
   let py: Float32Array | null = null;
   for (let r = 0; r < d.count; r++) {
     if ((r & (STEP - 1)) === STEP - 1) yield;
     const s = d.sessionId ? d.sessionId[r] : 0;
-    if (!want.has(s) || d.py[r] !== 0) continue;
+    const y = d.py[r];
+    if (!want.has(s) || !Number.isFinite(y) || (y !== 0 && own.has(s))) continue;
     const h = surfaceAt(g, d.px[r], d.pz[r]);
     if (!Number.isFinite(h) || !(h > 0)) continue;
     py ??= d.py.slice();
-    py[r] = h;
+    py[r] = h + Math.max(0, y);
     moved.set(s, (moved.get(s) ?? 0) + 1);
   }
   if (!py) return null;
