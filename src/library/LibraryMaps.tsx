@@ -237,76 +237,79 @@ export function LibraryMaps() {
           </button>
         )}
       </div>
-      {games.map((g) => {
-        const levels = d.levels.filter((l) => (l.game ?? '') === g);
-        const without = d.withoutLevel.filter((w) => w.game === g);
-        const viaManager = managed(g);
-        // The manager runs the extractors it installed; the library's own runner only stands in where there is none.
-        const xs = d.extractors.filter((x) => x.games.includes(g) && !viaManager.some((v) => v.x.id === x.id));
-        const { mark, hue } = gameMark(g);
-        return (
-          <section key={g || 'none'} className="lib-game">
-            <h3>
-              <span className="lib-badge" style={{ ['--hue' as string]: String(hue) }}>
-                {mark}
-              </span>
-              {gameName(g)}
-              <span className="lib-hint">{t('library.maps.count', { count: levels.filter((l) => l.kind === 'level').length })}</span>
-            </h3>
-            {mgr && viaManager.map(({ x, mg }) => <ManagedBox key={`${x.id}:${mg.game}`} x={x} mg={mg} route={mgr.route} onChange={() => setTick((n) => n + 1)} />)}
-            {xs.map((x) => (
-              <ExtractorBox key={x.id} x={x} game={g} onCheck={() => void check(x.id)} />
-            ))}
-            {without.length > 0 && (
-              <div className="lib-without">
-                <div className="lib-side-title">{t('library.maps.without', { count: without.length })}</div>
-                {without.slice(0, 30).map((w) => {
-                  const x = xs.find((e) => e.installed) ?? xs[0];
-                  return (
-                    <div key={w.map} className="lib-maprow">
-                      <span className="lib-maprow-name">{w.map}</span>
-                      <span className="lib-hint">{t('library.maps.uses', { count: w.uses })}</span>
-                      {/* Not installed: the one Install is in the extractor's box above, each map only says what it needs. */}
-                      {x?.installed ? (
-                        <button type="button" className="small" onClick={() => void extract(x, g, [w.map])} data-usage="cmd:lib.extractMissing">
-                          {t('library.maps.extractMissing')}
-                        </button>
-                      ) : x ? (
-                        <span className="lib-tag">{t('library.maps.needs', { id: x.id })}</span>
-                      ) : null}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-            <div className="lib-levels">
-              {levels.map((l) => (
-                <div key={l.id} className={`lib-level${l.missing ? ' missing' : ''}`} title={l.path}>
-                  <div className="lib-level-pic">
-                    {l.thumb && token ? <img src={thumbSrc(token, l.id)} alt="" loading="lazy" /> : <div className="lib-thumb-none small" style={{ ['--hue' as string]: String(hue) }}><span>{mark}</span></div>}
-                  </div>
-                  <div className="lib-level-meta">
-                    <div className="lib-title">{l.kind === 'models' ? `${t('library.maps.pack')}: ${l.name}` : l.map ?? l.name}</div>
-                    <div className="lib-sub">
-                      {size(l.size)}
-                      {l.extractor ? ` · ${l.extractor}` : ''}
-                      {l.gameVersion ? ` · ${l.gameVersion}` : ''}
-                    </div>
-                    <div className="lib-sub">
-                      {l.kind === 'level' && (
-                        <button type="button" className="lib-link" onClick={() => useLibrary.getState().setFilter({ game: [g], map: [l.map ?? ''] })} disabled={!l.uses}>
-                          {t('library.maps.uses', { count: l.uses })}
-                        </button>
-                      )}
-                      {l.sha256 && <code title={l.sha256}> {l.sha256.slice(0, 10)}</code>}
-                    </div>
-                  </div>
-                </div>
+      {/* The games side by side as the window allows: a wide screen is not one long row each. */}
+      <div className="lib-games">
+        {games.map((g) => {
+          const levels = d.levels.filter((l) => (l.game ?? '') === g);
+          const without = d.withoutLevel.filter((w) => w.game === g);
+          const viaManager = managed(g);
+          // The manager runs the extractors it installed; the library's own runner only stands in where there is none.
+          const xs = d.extractors.filter((x) => x.games.includes(g) && !viaManager.some((v) => v.x.id === x.id));
+          const { mark, hue } = gameMark(g);
+          return (
+            <section key={g || 'none'} className="lib-game">
+              <h3>
+                <span className="lib-badge" style={{ ['--hue' as string]: String(hue) }}>
+                  {mark}
+                </span>
+                {gameName(g)}
+                <span className="lib-hint">{t('library.maps.count', { count: levels.filter((l) => l.kind === 'level').length })}</span>
+              </h3>
+              {mgr && viaManager.map(({ x, mg }) => <ManagedBox key={`${x.id}:${mg.game}`} x={x} mg={mg} route={mgr.route} onChange={() => setTick((n) => n + 1)} />)}
+              {xs.map((x) => (
+                <ExtractorBox key={x.id} x={x} game={g} onCheck={() => void check(x.id)} />
               ))}
-            </div>
-          </section>
-        );
-      })}
+              {without.length > 0 && (
+                <div className="lib-without">
+                  <div className="lib-side-title">{t('library.maps.without', { count: without.length })}</div>
+                  {without.slice(0, 30).map((w) => {
+                    const x = xs.find((e) => e.installed) ?? xs[0];
+                    return (
+                      <div key={w.map} className="lib-maprow">
+                        <span className="lib-maprow-name">{w.map}</span>
+                        <span className="lib-hint">{t('library.maps.uses', { count: w.uses })}</span>
+                        {/* Not installed: the one Install is in the extractor's box above, each map only says what it needs. */}
+                        {x?.installed ? (
+                          <button type="button" className="small" onClick={() => void extract(x, g, [w.map])} data-usage="cmd:lib.extractMissing">
+                            {t('library.maps.extractMissing')}
+                          </button>
+                        ) : x ? (
+                          <span className="lib-tag">{t('library.maps.needs', { id: x.id })}</span>
+                        ) : null}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              <div className="lib-levels">
+                {levels.map((l) => (
+                  <div key={l.id} className={`lib-level${l.missing ? ' missing' : ''}`} title={l.path}>
+                    <div className="lib-level-pic">
+                      {l.thumb && token ? <img src={thumbSrc(token, l.id)} alt="" loading="lazy" /> : <div className="lib-thumb-none small" style={{ ['--hue' as string]: String(hue) }}><span>{mark}</span></div>}
+                    </div>
+                    <div className="lib-level-meta">
+                      <div className="lib-title">{l.kind === 'models' ? `${t('library.maps.pack')}: ${l.name}` : l.map ?? l.name}</div>
+                      <div className="lib-sub">
+                        {size(l.size)}
+                        {l.extractor ? ` · ${l.extractor}` : ''}
+                        {l.gameVersion ? ` · ${l.gameVersion}` : ''}
+                      </div>
+                      <div className="lib-sub">
+                        {l.kind === 'level' && (
+                          <button type="button" className="lib-link" onClick={() => useLibrary.getState().setFilter({ game: [g], map: [l.map ?? ''] })} disabled={!l.uses}>
+                            {t('library.maps.uses', { count: l.uses })}
+                          </button>
+                        )}
+                        {l.sha256 && <code title={l.sha256}> {l.sha256.slice(0, 10)}</code>}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          );
+        })}
+      </div>
       {!games.length && <div className="lib-pane-msg">{t('library.maps.none')}</div>}
     </div>
   );
@@ -320,7 +323,7 @@ export function LibraryDupes() {
   }, []);
   if (!d) return <div className="lib-pane-msg">{t('library.loading')}</div>;
   return (
-    <div className="lib-pane">
+    <div className="lib-pane lib-narrow">
       <div className="lib-pane-head">
         <h2>{t('library.dupes.title')}</h2>
         <span className="lib-hint">{t('library.dupes.summary', { count: d.groups.length, size: size(d.wastedBytes) })}</span>
@@ -359,7 +362,7 @@ export function LibrarySettings() {
     await lib.setSettings(next).catch((e: Error) => toast(e.message, 'bad'));
   };
   return (
-    <div className="lib-pane lib-settings">
+    <div className="lib-pane lib-narrow lib-settings">
       <div className="lib-pane-head">
         <h2>{t('library.settings.title')}</h2>
       </div>

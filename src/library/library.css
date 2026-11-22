@@ -1362,8 +1362,20 @@ button.lib-chip {
   color: var(--text-faint);
 }
 
+.lib-games {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 620px), 1fr));
+  gap: var(--sp-4);
+  align-items: start;
+}
+
+/* Each game a card of its own. */
 .lib-game {
-  margin-bottom: var(--sp-6);
+  min-width: 0;
+  padding: var(--sp-3) var(--sp-4) var(--sp-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: color-mix(in srgb, var(--panel) 60%, transparent);
 }
 
 .lib-game h3 {
@@ -1482,8 +1494,17 @@ button.lib-chip {
   background: var(--panel);
 }
 
+/* A pane of one column (settings, duplicates): centred in a wide window, its scrollbar still at the edge. */
+.lib-pane.lib-narrow {
+  padding-left: max(var(--sp-6), calc((100% - 860px) / 2));
+  padding-right: max(var(--sp-6), calc((100% - 860px) / 2));
+}
+
+.lib-narrow .lib-pane-msg {
+  padding: var(--sp-6) 0;
+}
+
 .lib-settings {
-  max-width: 760px;
   display: flex;
   flex-direction: column;
   gap: var(--sp-3);
