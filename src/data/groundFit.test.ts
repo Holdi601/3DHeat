@@ -172,28 +172,36 @@ describe('recordings without heights on the ground', () => {
   const lv = level();
   const g = drainSteps(surfaceGridSteps(lv.vertices, lv.indices, { minX: 0, maxX: 400, minZ: 0, maxZ: 400 }, 1))!;
 
-  it('finds the sessions whose every row is at one height, and only those', () => {
+  it('finds the sessions whose rows are at height 0, and only those', () => {
     const d = matches(lv.ground, 0);
     expect(drainSteps(heightlessSessionsSteps(d))).toEqual([]);
-    // Match B recorded without heights (OCAP's first layout): every row at 0, aircraft too.
+    // Match B recorded without heights (OCAP's first layout): every row at 0, aircraft too...
     for (let r = 0; r < d.count; r++) if (d.sessionId![r] === 1) d.py[r] = 0;
     expect(drainSteps(heightlessSessionsSteps(d))).toEqual([1]);
+    // ...but for a few events with a place of their own.
+    const b = [...d.sessionId!.keys()].filter((r) => d.sessionId![r] === 1);
+    for (const r of b.slice(0, 10)) d.py[r] = 123;
+    expect(drainSteps(heightlessSessionsSteps(d))).toEqual([1]);
+    for (const r of b.slice(0, 100)) d.py[r] = 123;
+    expect(drainSteps(heightlessSessionsSteps(d))).toEqual([]);
     // Too few rows say nothing.
     const few = { ...d, count: FLAT_MIN_ROWS - 1, sessionId: new Uint32Array(d.count).fill(1) } as Dataset;
     expect(drainSteps(heightlessSessionsSteps(few))).toEqual([]);
   });
 
-  it('puts every unit of such a session on the drawn ground, never under the height recorded', () => {
+  it('puts every unit of such a session on the drawn ground, never under the sea', () => {
     const d = matches(lv.ground, 0);
-    for (let r = 0; r < d.count; r++) if (d.sessionId![r] === 1) d.py[r] = 0;
+    const b = [...d.sessionId!.keys()].filter((r) => d.sessionId![r] === 1);
+    for (const r of b) d.py[r] = 0;
+    d.py[b[0]] = 123; // an event with a height of its own
     const out = drainSteps(groundedHeightsSteps(d, g, [1]))!;
     for (let r = 0; r < d.count; r++) {
-      if (d.sessionId![r] === 1) expect(Math.abs(out.py[r] - lv.ground(d.px[r], d.pz[r]))).toBeLessThan(0.05);
+      if (d.sessionId![r] === 1 && r !== b[0]) expect(Math.abs(out.py[r] - lv.ground(d.px[r], d.pz[r]))).toBeLessThan(0.05);
       else expect(out.py[r]).toBe(d.py[r]);
     }
-    expect(out.grounded).toEqual([{ session: 1, label: 'match B', rows: 1600 }]);
-    // Recorded above the ground (a boat at sea level over the sea floor): left at the height recorded.
-    for (let r = 0; r < d.count; r++) if (d.sessionId![r] === 1) d.py[r] = 50;
-    expect(drainSteps(groundedHeightsSteps(d, g, [1]))).toBeNull();
+    expect(out.grounded).toEqual([{ session: 1, label: 'match B', rows: 1599 }]);
+    // Ground under the sea (a boat at sea level over the sea floor): left at sea level.
+    const sea = drainSteps(surfaceGridSteps(lv.vertices.map((v, i) => (i % 6 === 1 ? v - 20 : v)), lv.indices, { minX: 0, maxX: 400, minZ: 0, maxZ: 400 }, 1))!;
+    expect(drainSteps(groundedHeightsSteps(d, sea, [1]))).toBeNull();
   });
 });

@@ -228,32 +228,32 @@ export function* snappedHeightsSteps(d: Dataset, g: HeightGrid, k: number, groun
   return py ? { py, snap: { rows, most } } : null;
 }
 
-/** Rows a session needs before all of them at one height says it was recorded without heights. */
+/** Rows a session needs before its rows at height 0 say it was recorded without heights. */
 export const FLAT_MIN_ROWS = MIN_SAMPLES;
+/** The share of a session's rows at height 0 that says so: a few events with a place of their own may carry one. */
+export const FLAT_SHARE = 0.99;
 
 /**
- * The sessions recorded without heights: every row at one and the same height
- * (what a reader fills in where the file has none - OCAP recordings of Arma 3
- * from 2017 and before keep east and north only), on `FLAT_MIN_ROWS` rows or
- * more. Nothing says where their units were above the ground, so all of them
- * go on the level's ground (`groundedHeightsSteps`).
+ * The sessions recorded without heights: (nearly) every row at height 0,
+ * exactly - what a reader fills in where the file has none (OCAP recordings
+ * of Arma 3 from 2017 and before keep east and north only) - on
+ * `FLAT_MIN_ROWS` rows or more. Nothing says where their units were above
+ * the ground, so those rows go on the level's ground (`groundedHeightsSteps`).
  */
 export function* heightlessSessionsSteps(d: Dataset): Generator<void, number[], void> {
   const sessions = d.sessionId && d.sessionLabels.length ? d.sessionLabels.length : 1;
-  const first = new Float64Array(sessions).fill(NaN);
-  const flat = new Uint8Array(sessions).fill(1);
+  const zero = new Uint32Array(sessions);
   const rows = new Uint32Array(sessions);
   for (let r = 0; r < d.count; r++) {
     if ((r & (STEP - 1)) === STEP - 1) yield;
     const y = d.py[r];
     if (!Number.isFinite(y)) continue;
     const s = d.sessionId ? d.sessionId[r] : 0;
-    if (Number.isNaN(first[s])) first[s] = y;
-    else if (y !== first[s]) flat[s] = 0;
+    if (y === 0) zero[s]++;
     rows[s]++;
   }
   const out: number[] = [];
-  for (let s = 0; s < sessions; s++) if (flat[s] && rows[s] >= FLAT_MIN_ROWS) out.push(s);
+  for (let s = 0; s < sessions; s++) if (rows[s] >= FLAT_MIN_ROWS && zero[s] >= FLAT_SHARE * rows[s]) out.push(s);
   return out;
 }
 
@@ -267,11 +267,12 @@ export interface GroundedSession {
 }
 
 /**
- * The heights of `d` with every row of `sessions` (`heightlessSessionsSteps`)
- * on the level's drawn ground `g` - every unit, aircraft too: the recording
- * does not say how high anything was. Never under the height recorded: over
- * the sea a boat keeps the sea level the recording holds instead of sinking to
- * the sea floor. Rows off the level stay as they were. Null when no row moved.
+ * The heights of `d` with the rows at height 0 of `sessions`
+ * (`heightlessSessionsSteps`) on the level's drawn ground `g` - every unit,
+ * aircraft too: the recording does not say how high anything was. Never
+ * under 0: over the sea a boat keeps the sea level instead of sinking to the
+ * sea floor. Rows off the level, and rows with a height of their own, stay as
+ * they were. Null when no row moved.
  */
 export function* groundedHeightsSteps(
   d: Dataset,
@@ -284,9 +285,9 @@ export function* groundedHeightsSteps(
   for (let r = 0; r < d.count; r++) {
     if ((r & (STEP - 1)) === STEP - 1) yield;
     const s = d.sessionId ? d.sessionId[r] : 0;
-    if (!want.has(s)) continue;
+    if (!want.has(s) || d.py[r] !== 0) continue;
     const h = surfaceAt(g, d.px[r], d.pz[r]);
-    if (!Number.isFinite(h) || !(h > d.py[r])) continue;
+    if (!Number.isFinite(h) || !(h > 0)) continue;
     py ??= d.py.slice();
     py[r] = h;
     moved.set(s, (moved.get(s) ?? 0) + 1);
