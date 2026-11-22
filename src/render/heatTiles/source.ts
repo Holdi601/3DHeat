@@ -45,6 +45,8 @@ export interface HeatTileDrawTile {
   /** 1 / a cell's world area: counts to density. */
   perCount: number;
   estimate: boolean;
+  /** The level whose cells are drawn. */
+  level: number;
 }
 
 export interface HeatTileDraw {
@@ -103,6 +105,8 @@ export class HeatTileSource {
     requests: 0,
     firstTileMs: -1,
     startedAt: performance.now(),
+    /** The finest level the last frame drew (-1: none). */
+    drawnLevel: -1,
   };
   private readonly cache = new Map<string, Cached>();
   private readonly empty = new Set<string>();
@@ -245,6 +249,9 @@ export class HeatTileSource {
       }
     }
     if (this.wanted.length > 0) this.pump();
+    let finest = -1;
+    for (const d of tiles) finest = Math.max(finest, d.level);
+    this.stats.drawnLevel = finest;
     return {
       tiles,
       ground: this.placement.ground,
@@ -268,6 +275,7 @@ export class HeatTileSource {
       uv: [u0, v0, u1, v1],
       perCount: area > 0 ? 1 / area : 0,
       estimate: tile.estimate,
+      level: tile.level,
     };
   }
 

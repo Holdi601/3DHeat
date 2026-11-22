@@ -2044,3 +2044,8 @@ html.native-viewport .stage {
 :where(html.native-viewport .app > :not(.stage)) {
   background-color: var(--bg);
 }
+
+/* Heat from tiles (render/heatTiles/tileHeat.ts): under the level chip when both show. */
+.auto-level + .tile-heat-status {
+  top: 86px;
+}

@@ -16,6 +16,7 @@ import { useNotes } from '../notes/store';
 import { EMPTY_BOOK, readBook, type NotesBook } from '../notes/model';
 import { registerSharedDoc } from './shared';
 import { MARK_COLLS, emptyMarks, useMarks, type MarksState } from './marks';
+import { useTileHeatShare } from '../render/heatTiles/tileHeat';
 
 let registered = false;
 
@@ -69,5 +70,15 @@ export function registerBuiltInDocs(): void {
     set: (state) => useNotes.setState((s) => ({ book: readBook(state as NotesBook), rev: s.rev + 1 })),
     empty: () => EMPTY_BOOK,
     hasContent: (state) => ((state as NotesBook).notes?.length ?? 0) + ((state as NotesBook).docs?.length ?? 0) > 0,
+  });
+  // The host's heat from tiles (Stage 6): the pyramid's key and where it lies, so
+  // members draw the same heat, read through the session's gateway by key only.
+  registerSharedDoc({
+    key: 'heattiles',
+    colls: [],
+    get: () => useTileHeatShare.getState().doc,
+    set: (state) => useTileHeatShare.setState({ doc: { ...(state as object) } }),
+    empty: () => ({}),
+    hasContent: (state) => !!(state as { key?: string }).key,
   });
 }

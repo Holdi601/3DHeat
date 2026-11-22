@@ -105,5 +105,13 @@
   "app.nativeViewport.setting": "Native viewport (preview)",
   "app.nativeViewport.hint": "Draws the heat and the level's ground with the app's own renderer (Vulkan, DX12 as the fallback) under the page, with the rows taken straight from the app's core. A preview: figures, tracks, trails, structures, image levels and world tiles are not drawn there yet. Applies when the window loads again.",
   "app.nativeViewport.reload": "Reload now",
-  "app.nativeViewport.active": "The native viewport draws this window."
+  "app.nativeViewport.active": "The native viewport draws this window.",
+  "app.tileHeat.tiles": "Heat from tiles",
+  "app.tileHeat.level": "level {level} of {leaf}",
+  "app.tileHeat.waiting": "waiting for the first tiles",
+  "app.tileHeat.rows": "{rows} rows",
+  "app.tileHeat.building": "counting {percent} %",
+  "app.tileHeat.host": "the host's",
+  "app.tileHeat.stop": "stop",
+  "app.tileHeat.about": "Every row is counted into a pyramid of tiles; the view draws coarse tiles far away and finer ones up close. Nothing is loaded into memory."
 }

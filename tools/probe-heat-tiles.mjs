@@ -76,7 +76,8 @@ try {
   };
   const r = await page.evaluate(
     async ({ info, seconds }) => {
-      const { HeatTileSource } = await import('/src/render/heatTiles/source.ts');
+      // As the app starts it (render/heatTiles/tileHeat.ts): status line, start screen down, camera framed.
+      const { startTileHeat } = await import('/src/render/heatTiles/tileHeat.ts');
       const eng = globalThis.__3dheat_engine;
       const transport = {
         query: async () => info,
@@ -96,13 +97,11 @@ try {
           return batch;
         },
       };
-      const src = new HeatTileSource(transport, { sx: 1, sz: 1, ground: 0 }, {}, () => eng.invalidate(1));
       const cx = info.x0 + info.size / 2;
       const cz = info.y0 + info.size / 2;
       eng.frameAround(cx, 0, cz, info.size / 2);
       const t0 = performance.now();
-      eng.setHeatTiles(src);
-      src.start();
+      const src = startTileHeat(eng, transport, { sx: 1, sz: 1, ground: 0 }, 'files');
       // Until the first view settles: nothing more asked for a while.
       let lastBytes = -1;
       let still = 0;

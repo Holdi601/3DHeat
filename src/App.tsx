@@ -54,6 +54,8 @@ import { SoftwareRenderingWarning } from './ui/SoftwareRenderingWarning';
 import { DevToolsPanel } from './ui/panels/DevToolsPanel';
 import { dropData, StartScreen } from './ui/panels/OpenData';
 import { LoadCard } from './ui/panels/LoadCard';
+import { TileHeatStatus } from './ui/panels/TileHeatStatus';
+import { useTileHeat } from './render/heatTiles/tileHeat';
 import { AutoLevelChip, useAutoLevel } from './ui/panels/autoLevel';
 import { tacticsGameFor } from './tactics/games';
 import { usePendingLoad } from './state/pendingLoad';
@@ -178,6 +180,8 @@ export function App() {
   const setMode = useStore((s) => s.setMode);
   const dataset = useStore((s) => s.dataset);
   const pendingPick = usePendingLoad((s) => !!s.pending);
+  // Heat from tiles draws without rows: the start screen stands down as for a load.
+  const tileHeat = useTileHeat((s) => s.on);
   const setPlaying = useStore((s) => s.setPlaying);
   const tab = useRaceStore((s) => s.tab);
   const raceTab = tab === 'race';
@@ -742,9 +746,10 @@ export function App() {
               <InspectHud />
               <NotesLayer />
               {/* Nothing loaded: open real data (ui/panels/OpenData.tsx); a pick waiting: load it (LoadCard.tsx). */}
-              {!dataset && !pendingPick && <StartScreen />}
+              {!dataset && !pendingPick && !tileHeat && <StartScreen />}
               <LoadCard />
               <AutoLevelChip />
+              <TileHeatStatus />
                 </>
               )}
               <DashboardWindow />

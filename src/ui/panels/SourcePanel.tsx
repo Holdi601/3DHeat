@@ -47,6 +47,8 @@ import { useEngine } from '../EngineContext';
 import { setPendingLoad } from '../../state/pendingLoad';
 import { pickIdentity, type PickIdentity } from '../../data/pickIdentity';
 import { noteWantedLevel } from './autoLevel';
+import { inNativeApp } from '../../data/native/core';
+import { startPickTileHeat, stopTileHeat, tilesPossible, useTileHeat } from '../../render/heatTiles/tileHeat';
 
 const NO_COLUMNS: string[] = [];
 
@@ -116,6 +118,11 @@ export function SourcePanel() {
   const dropRef = useRef<HTMLDivElement>(null);
   /** Files handed over to be loaded at once (a session file's data): loaded as soon as they can be. */
   const autoLoad = useRef(false);
+  /** The pick is drawn from tiles (too many rows to load, or asked for): the load card stands down. */
+  const [tiledPick, setTiledPick] = useState(false);
+  const tileHeatOn = useTileHeat((s) => s.on && s.from === 'files');
+  /** Tiles were started for this pick once: not again by themselves after Stop. */
+  const autoTiled = useRef(false);
 
   const patch = (p: Partial<ColumnMapping>) =>
     setMapping((m) => (m ? { ...m, ...p } : m));
@@ -138,6 +145,9 @@ export function SourcePanel() {
       setSkipped(bad);
       setPicked(accepted);
       setLoadedPick(false);
+      setTiledPick(false);
+      autoTiled.current = false;
+      if (useTileHeat.getState().from === 'files') stopTileHeat();
       const who = pickIdentity(chosen, accepted);
       setIdentity(who);
       // The level the files are on, to load by itself once they are (`autoLevel.ts`).
@@ -262,6 +272,9 @@ export function SourcePanel() {
       // The unit index a few milliseconds a frame, before the first render would build it all at once.
       setLoad({ active: true, label: t('heat.sourcePanel.indexing'), fraction: null, rowsSoFar: ds.count, error: null });
       await prepareUnits(ds);
+      // Rows instead of tiles: the rows draw the heat now.
+      if (useTileHeat.getState().from === 'files') stopTileHeat();
+      setTiledPick(false);
       setDataset(ds);
       // What the data is, by content, for the session and its file.
       noteDataFiles(picked.map((p) => p.file));
@@ -335,10 +348,31 @@ export function SourcePanel() {
     setPlan(null);
     setIdentity(null);
   };
+  /**
+   * Heat from tiles (Stage 6): this computer's core counts every row into a
+   * tile pyramid and the view asks for the tiles it shows. Parquet in the
+   * native app; on by itself when the rows would not fit (a stride needed).
+   */
+  const canTile = tilesPossible(inNativeApp(), preview, mapping) && !!validation?.ok && !!plan?.ready && !loadActive;
+  const tooManyRows = !!fullFit && (fullFit.verdict === 'too-big' || (fullFit.suggestedStride ?? 1) > 1);
+  const showTiles = async () => {
+    if (!engine || !mapping) return;
+    autoTiled.current = true;
+    const ok = await startPickTileHeat(engine, picked.map((p) => p.file), mapping, preview, true);
+    if (ok) setTiledPick(true);
+  };
+  useEffect(() => {
+    if (canTile && tooManyRows && !autoTiled.current && !loadedPick) void showTiles();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canTile, tooManyRows, loadedPick]);
+  // Stopped from the status line: the pick waits for Load again.
+  useEffect(() => {
+    if (!tileHeatOn) setTiledPick(false);
+  }, [tileHeatOn]);
   const pickName = picked.length ? describeSelection(picked) : '';
   const pickBytes = picked.length ? totalBytes(picked) : 0;
   useEffect(() => {
-    if (!picked.length || loadedPick) {
+    if (!picked.length || loadedPick || tiledPick) {
       setPendingLoad(null);
       return;
     }
@@ -362,7 +396,7 @@ export function SourcePanel() {
       () => goRef.current(),
       () => dismissRef.current(),
     );
-  }, [picked.length, loadedPick, pickName, pickBytes, identity, size, loadRows, loadSeconds, preview, columnsState, plan?.ready, fit?.verdict, stride, canLoad]);
+  }, [picked.length, loadedPick, tiledPick, pickName, pickBytes, identity, size, loadRows, loadSeconds, preview, columnsState, plan?.ready, fit?.verdict, stride, canLoad]);
   // The card goes with the panel's pick.
   useEffect(() => () => setPendingLoad(null), []);
   useEffect(() => {
@@ -555,6 +589,15 @@ export function SourcePanel() {
           </div>
         )}
 
+        {canTile && !tiledPick && (
+          <div className="field">
+            <button type="button" data-testid="source-tiles" onClick={() => void showTiles()} title={t('heat.sourcePanel.tilesTitle')}>
+              {t('heat.sourcePanel.tiles')}
+            </button>
+            <div className="hint">{tooManyRows ? t('heat.sourcePanel.tilesTooMany') : t('heat.sourcePanel.tilesHint')}</div>
+          </div>
+        )}
+        {tiledPick && <div className="hint">{t('heat.sourcePanel.tilesOn')}</div>}
         {mapping && preview && (
           <button className="primary" disabled={!canLoad} onClick={doLoad}>
             {fit?.verdict === 'too-big'

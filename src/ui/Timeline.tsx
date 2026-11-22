@@ -10,6 +10,7 @@ import { MAX_SPEED, MIN_SPEED, parseSpeed, saveSpeed, speedDigits, speedOptions 
 import { NumberBox } from './NumberBox';
 import { realDate, seriesAt } from '../data/series';
 import type { Dataset } from '../state/types';
+import { useTileHeat } from '../render/heatTiles/tileHeat';
 
 const windowModes = (): Array<{ value: WindowMode; label: string; title: string }> => [
   {
@@ -91,6 +92,7 @@ function SpeedControl({ speed, onSpeed }: { speed: number; onSpeed: (v: number) 
 export function Timeline() {
   const engine = useEngine();
   const dataset = useStore((s) => s.dataset);
+  const tileHeat = useTileHeat((s) => s.on);
   const timeline = useStore((s) => s.timeline);
   const seek = useStore((s) => s.seek);
   const setPlaying = useStore((s) => s.setPlaying);
@@ -327,7 +329,9 @@ export function Timeline() {
         <span className="progress-note">
           {dataset
             ? dataset.name
-            : t('heat.timeline.empty')}
+            : tileHeat
+              ? t('heat.timeline.tiles')
+              : t('heat.timeline.empty')}
         </span>
       </div>
     </>

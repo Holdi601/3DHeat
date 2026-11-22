@@ -924,5 +924,11 @@
   "heat.groundFit.groundedToastMany": "{n} recordings without heights: their units are drawn on the level's ground (see the source panel)",
   "heat.groundFit.grounded": "Recorded without heights: {match} ({rows} rows) - every unit drawn on the level's ground, aircraft too (the recording does not say how high anything was)",
   "heat.groundFit.fixed": "Height corrected by {metres} to the level: {match} (its ground units all sat that far off the terrain, spread {spread} m; converted with a wrong height offset - convert it again to fix the file)",
-  "heat.sourcePanel.mappingAdvanced": "Advanced: column mapping"
+  "heat.sourcePanel.mappingAdvanced": "Advanced: column mapping",
+  "heat.sourcePanel.tiles": "Heat from tiles",
+  "heat.sourcePanel.tilesTitle": "This computer's core counts every row into tiles once; the view asks only for the tiles it shows, finer where you look. For data too big to load.",
+  "heat.sourcePanel.tilesTooMany": "Too many rows to load them all: the heat is drawn from tiles of every row.",
+  "heat.sourcePanel.tilesHint": "Every row counted, nothing loaded: for data too big for memory.",
+  "heat.sourcePanel.tilesOn": "The heat is drawn from tiles of every row. Load reads the rows instead.",
+  "heat.timeline.tiles": "Heat from tiles: every row at once, no timeline"
 }

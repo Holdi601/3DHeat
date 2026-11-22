@@ -853,5 +853,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Heat aus Kacheln",
+  "heat.sourcePanel.tilesTitle": "Der Kern dieses Rechners zählt jede Zeile einmal in Kacheln; die Ansicht holt nur die Kacheln, die sie zeigt, feiner, wo du hinsiehst. Für Daten, die zu groß zum Laden sind.",
+  "heat.sourcePanel.tilesTooMany": "Zu viele Zeilen, um alle zu laden: die Heat kommt aus Kacheln aller Zeilen.",
+  "heat.sourcePanel.tilesHint": "Jede Zeile gezählt, nichts geladen: für Daten, die nicht in den Speicher passen.",
+  "heat.sourcePanel.tilesOn": "Die Heat kommt aus Kacheln aller Zeilen. Laden liest stattdessen die Zeilen.",
+  "heat.timeline.tiles": "Heat aus Kacheln: alle Zeilen auf einmal, keine Zeitleiste"
 }

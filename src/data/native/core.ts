@@ -26,6 +26,8 @@ import {
 export interface CoreEndpoint {
   url: string;
   key: string;
+  /** A session member's token: the host's core through the session's gateway, with a member's rights. */
+  bearer?: string;
 }
 
 /** The app's `heat3d` scheme: Tauri serves one as `http://<scheme>.localhost` on Windows. */
@@ -96,6 +98,7 @@ export async function call<C extends NonNullable<Body['case']>>(at: CoreEndpoint
   try {
     const headers: Record<string, string> = { 'content-type': 'text/plain' };
     if (at.key) headers['x-heat3d-key'] = at.key;
+    if (at.bearer) headers.authorization = `Bearer ${at.bearer}`;
     res = await fetch(at.url, { method: 'POST', body: req, headers });
   } catch (err) {
     // No core at this address (or none reachable from here): the caller reads the file itself.
