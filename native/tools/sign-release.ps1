@@ -118,7 +118,7 @@ try {
   gh release upload $Tag --repo $Repo --clobber @($sigs + $latest + $sumsFile)
   Write-Output ""
   Write-Output "Signed and uploaded to the draft $Tag : $($sigs.Count) signatures, latest.json, SHA256SUMS."
-  Write-Output "Not published. Publishing makes the updaters offer $version: gh release edit $Tag --repo $Repo --draft=false"
+  Write-Output "Not published. Publishing makes the updaters offer ${version}: gh release edit $Tag --repo $Repo --draft=false"
 } finally {
   Remove-Item -Recurse -Force -ErrorAction SilentlyContinue $work
 }
