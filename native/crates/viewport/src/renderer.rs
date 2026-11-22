@@ -499,7 +499,7 @@ impl Renderer {
             }),
         );
         let filter_pass = compute(&device, &m_filter, "main");
-        let figures = crate::figures::Figures::new(&device);
+        let figures = crate::figures::Figures::new(&device, out_format);
         let m_line = module(&device, "line", W_LINE);
         const LINE_ATTRS: [wgpu::VertexAttribute; 2] = wgpu::vertex_attr_array![0 => Float32x3, 1 => Float32x4];
         let line = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
@@ -794,6 +794,9 @@ impl Renderer {
         }
         if let Some(f) = &p.filters {
             self.want_filters(f.clone());
+        }
+        if let Some(top) = &p.top {
+            self.figures.take_top(&self.device, top);
         }
         if let Some(v) = &p.values {
             self.value_cols = v.clone();
@@ -1177,12 +1180,16 @@ impl Renderer {
         // see-through, depth tested but not writing depth (`SEE_THROUGH_BELOW`); the far-off glyphs
         // over all of it; the overlay last.
         if let Some((cube, look, rel, plain, glyph)) = &fig_groups {
+            self.figures.draw_under(&mut pass, p, &figs, plain);
             self.figures.draw_cubes(&mut pass, &figs, cube, look.as_ref());
             self.figures.draw(&mut pass, &figs, rel, false);
             self.figures.draw_tris(&mut pass, &figs, plain, false);
             self.figures.draw_trails(&mut pass, &figs, plain);
             self.figures.draw(&mut pass, &figs, rel, true);
             self.figures.draw_tris(&mut pass, &figs, plain, true);
+            if !p.top.as_ref().is_some_and(|t| t.under) {
+                self.figures.draw_ground(&mut pass, p, plain);
+            }
             if let Some(g) = glyph {
                 self.figures.draw_glyphs(&mut pass, &figs, g);
             }
@@ -1934,6 +1941,7 @@ impl Renderer {
     fn composite_into(&mut self, encoder: &mut wgpu::CommandEncoder, p: &Packet, out: &wgpu::TextureView, out_size: (u32, u32), _capture: bool) {
         let pipe = self.composite.clone();
         let g = self.composite_group(p, &pipe);
+        let top = self.top_group(p);
         let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
             label: Some("composite"),
             color_attachments: &[Some(wgpu::RenderPassColorAttachment {
@@ -1957,7 +1965,20 @@ impl Renderer {
             pass.set_pipeline(&pipe);
             pass.set_bind_group(0, &g, &[]);
             pass.draw(0..3, 0..1);
+            if let Some((lines, group)) = &top {
+                self.figures.draw_top(&mut pass, p, *lines, group);
+            }
         }
+    }
+
+    /// What the lines and marks over the finished picture need: their per-frame lines placed, and the
+    /// plain scene uniforms (`topLines`). None when the packet has none.
+    fn top_group(&mut self, p: &Packet) -> Option<(Option<(u32, u64)>, wgpu::BindGroup)> {
+        p.top.as_ref()?;
+        let lines = self.figures.push_top(&self.device, &self.queue, p);
+        let u = self.scene_uniform(p, (1e9, 1e9 + 1.0), 0.0, 1.0, false, false);
+        let off = self.ring.push(&u, 256);
+        Some((lines, self.figures.group(&self.device, &self.ring.buf, off)))
     }
 
     /// The composite again into an offscreen copy, read back (`captureFrame`).
@@ -1968,6 +1989,7 @@ impl Renderer {
         let (tex, view) = tex2d(&self.device, "capture", w, h, format, wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC);
         let pipe = self.composite.clone();
         let g = self.composite_group(p, &pipe);
+        let top = self.top_group(p);
         {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("capture"),
@@ -1984,6 +2006,9 @@ impl Renderer {
             pass.set_pipeline(&pipe);
             pass.set_bind_group(0, &g, &[]);
             pass.draw(0..3, 0..1);
+            if let Some((lines, group)) = &top {
+                self.figures.draw_top(&mut pass, p, *lines, group);
+            }
         }
         let stride = align(w as u64 * 4, 256) as u32;
         let buffer = self.device.create_buffer(&wgpu::BufferDescriptor {

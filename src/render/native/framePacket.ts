@@ -51,6 +51,13 @@ export const SECTION = {
    * `viewport_glyphs`).
    */
   symbols: 12,
+  /**
+   * The objectives' marks and the lines over the finished picture, seven floats a vertex:
+   * `topVerts` (count, floats); `topStatic` (version, count, then 1 and the floats when the
+   * version is new to the viewport, else 0); `topTris` and `groundTris` (count, then 1 and the
+   * floats when the array is new, else 0); `objectivesUnder` (0, or 1, a line count, its floats).
+   */
+  top: 13,
 } as const;
 
 /** The frame's numbers, in packet order, with how many floats each takes. */

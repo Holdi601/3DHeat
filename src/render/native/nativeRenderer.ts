@@ -18,9 +18,10 @@
  * time window, lifetimes, the slice and the distance cull, a model level's ground, the box
  * replay's figures (placed on the CPU: `gpuTracksMaxBytes` is 0 here) and cubes, their meshes
  * sent a slice a frame as `GpuFigures` writes them, the far-off glyphs the CPU placed, the
- * scene's triangles, the trails and the overlay lines. Not yet: GPU tracks, structures and
- * their occlusion layers, image levels, world tiles, line heat, directions, the rate map,
- * the objectives and the lines over the finished picture.
+ * scene's triangles, the trails and the overlay lines, the objectives' marks and the lines
+ * over the finished picture. Not yet: GPU tracks, structures and their occlusion layers,
+ * image levels, world tiles, line heat, directions, the rate map, the zones' discs, spawn
+ * marks, ranges, volume contours.
  */
 
 import type { Dataset } from '../../state/types';
@@ -427,6 +428,7 @@ export class NativeRenderer implements Renderer {
       w.reserveFloats(g.count * INSTANCE_STRIDE).set(g.data.subarray(0, g.count * INSTANCE_STRIDE));
       w.close();
     }
+    this.writeTop(p, all);
     const tris = p.sceneTris && p.sceneTriVertCount > 0 ? p.sceneTriVertCount : 0;
     const trails = p.trailVerts && p.trailVertCount > 0 ? p.trailVertCount : 0;
     const overlay = p.overlayVerts && p.overlayVertCount > 0 ? p.overlayVertCount : 0;
@@ -498,6 +500,63 @@ export class NativeRenderer implements Renderer {
       this.resend = true;
     }
     return { gpuMs: null };
+  }
+
+  // ------------------------------------------------------------ marks over the picture
+
+  /** What the viewport holds of the kept arrays (`topStatic` by version, `topTris`/`groundTris` by identity). */
+  private topSent: { version: number; tris: Float32Array | null; trisN: number; ground: Float32Array | null; groundN: number } = {
+    version: -1,
+    tris: null,
+    trisN: 0,
+    ground: null,
+    groundN: 0,
+  };
+
+  /** The `top` section, when anything in it is drawn; the kept arrays only when new to the viewport. */
+  private writeTop(p: FrameParams, all: boolean): void {
+    const top = p.topVerts && p.topVertCount ? p.topVertCount : 0;
+    const st = p.topStatic && p.topStatic.count ? p.topStatic : null;
+    const tris = p.topTris && p.topTriCount ? p.topTriCount : 0;
+    const ground = p.groundTris && p.groundTriCount ? p.groundTriCount : 0;
+    const under = p.objectivesUnder ?? null;
+    if (!top && !st && !tris && !ground && !under) return;
+    if (all) this.topSent = { version: -1, tris: null, trisN: 0, ground: null, groundN: 0 };
+    const s = this.topSent;
+    const w = this.writer;
+    const floats = (data: Float32Array, n: number) => w.reserveFloats(n * 7).set(data.subarray(0, n * 7));
+    w.open(SECTION.top);
+    w.word(top);
+    if (top) floats(p.topVerts!, top);
+    w.word(st ? st.version >>> 0 : 0);
+    w.word(st ? st.count : 0);
+    const stNew = !!st && st.version !== s.version;
+    w.word(stNew ? 1 : 0);
+    if (stNew) {
+      floats(st.data, st.count);
+      s.version = st.version;
+    }
+    w.word(tris);
+    const trisNew = tris > 0 && (s.tris !== p.topTris || s.trisN !== tris);
+    w.word(trisNew ? 1 : 0);
+    if (trisNew) {
+      floats(p.topTris!, tris);
+      s.tris = p.topTris!;
+      s.trisN = tris;
+    }
+    w.word(ground);
+    const groundNew = ground > 0 && (s.ground !== p.groundTris || s.groundN !== ground);
+    w.word(groundNew ? 1 : 0);
+    if (groundNew) {
+      floats(p.groundTris!, ground);
+      s.ground = p.groundTris!;
+      s.groundN = ground;
+    }
+    const ul = under && under.lines && under.lineCount ? under.lineCount : 0;
+    w.word(under ? 1 : 0);
+    w.word(ul);
+    if (ul) floats(under!.lines!, ul);
+    w.close();
   }
 
   // ------------------------------------------------------------ figure meshes

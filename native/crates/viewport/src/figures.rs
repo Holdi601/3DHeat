@@ -11,7 +11,7 @@ use std::collections::HashMap;
 use wgpu::util::DeviceExt;
 
 use crate::generated::*;
-use crate::packet::Packet;
+use crate::packet::{Packet, Top};
 use crate::renderer::{DEPTH_FORMAT, SCENE_FORMAT};
 
 const W_FIGURE: &str = include_str!("../wgsl/figure.wgsl");
@@ -50,11 +50,14 @@ pub struct FigureFrame {
     overlay: Option<(u32, u64)>,
     /// Instance count and byte offset of the far-off glyphs.
     glyphs: Option<(u32, u64)>,
+    /// The objectives under the units' lines (`objectivesUnder`), and whether any objective mark is drawn.
+    under_lines: Option<(u32, u64)>,
+    objectives: bool,
 }
 
 impl FigureFrame {
     pub fn is_empty(&self) -> bool {
-        self.batches.is_empty() && self.cubes.is_none() && self.tris.is_none() && self.trails.is_none() && self.overlay.is_none() && self.glyphs.is_none()
+        self.batches.is_empty() && self.cubes.is_none() && self.tris.is_none() && self.trails.is_none() && self.overlay.is_none() && self.glyphs.is_none() && !self.objectives
     }
 }
 
@@ -75,6 +78,15 @@ pub struct Figures {
     glyph_layout: wgpu::BindGroupLayout,
     atlas: Option<wgpu::TextureView>,
     sampler: wgpu::Sampler,
+    /// Over the finished picture, into the output (`topLines`, `topTriangles`), and the objectives'
+    /// triangles under the units (no depth test, none written).
+    top_line: wgpu::RenderPipeline,
+    top_tri: wgpu::RenderPipeline,
+    under_tri: wgpu::RenderPipeline,
+    /// The kept arrays: `topStatic` (its version), `topTris`, `groundTris`.
+    top_static: Option<(u32, wgpu::Buffer)>,
+    top_tris: Option<wgpu::Buffer>,
+    ground_tris: Option<wgpu::Buffer>,
     cube_vb: wgpu::Buffer,
     cube_ib: wgpu::Buffer,
     look_vb: wgpu::Buffer,
@@ -120,7 +132,8 @@ fn cube_geometry() -> (Vec<f32>, Vec<u16>) {
 }
 
 impl Figures {
-    pub fn new(device: &wgpu::Device) -> Self {
+    /// `out_format`: the window's, for what is drawn over the finished picture.
+    pub fn new(device: &wgpu::Device, out_format: wgpu::TextureFormat) -> Self {
         let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("scene uniforms"),
             entries: &[wgpu::BindGroupLayoutEntry {
@@ -228,7 +241,7 @@ impl Figures {
         let ring = VertexRing { buf: Self::ring_buffer(device, 1 << 20), data: Vec::with_capacity(1 << 20) };
         let m_line = module("line", W_LINE);
         const LINE_ATTRS: [wgpu::VertexAttribute; 2] = wgpu::vertex_attr_array![0 => Float32x3, 1 => Float32x4];
-        let line = |topology: wgpu::PrimitiveTopology, always: bool, alpha_pass: f64| {
+        let line = |topology: wgpu::PrimitiveTopology, always: bool, alpha_pass: f64, format: wgpu::TextureFormat, depth: bool| {
             let tris = topology == wgpu::PrimitiveTopology::TriangleList;
             let constants = [("alphaPass", alpha_pass)];
             let options = wgpu::PipelineCompilationOptions { constants: &constants, ..Default::default() };
@@ -244,13 +257,13 @@ impl Figures {
                 fragment: Some(wgpu::FragmentState {
                     module: &m_line,
                     entry_point: Some("fsLine"),
-                    targets: &[Some(wgpu::ColorTargetState { format: SCENE_FORMAT, blend: Some(alpha_blend()), write_mask: wgpu::ColorWrites::ALL })],
+                    targets: &[Some(wgpu::ColorTargetState { format, blend: Some(alpha_blend()), write_mask: wgpu::ColorWrites::ALL })],
                     compilation_options: options,
                 }),
                 primitive: wgpu::PrimitiveState { topology, ..Default::default() },
-                depth_stencil: Some(wgpu::DepthStencilState {
+                depth_stencil: depth.then(|| wgpu::DepthStencilState {
                     format: DEPTH_FORMAT,
-                    depth_write_enabled: tris && alpha_pass < 1.5,
+                    depth_write_enabled: tris && alpha_pass > 0.5 && alpha_pass < 1.5,
                     depth_compare: if always { wgpu::CompareFunction::Always } else { wgpu::CompareFunction::GreaterEqual },
                     stencil: Default::default(),
                     bias: Default::default(),
@@ -260,10 +273,14 @@ impl Figures {
                 cache: None,
             })
         };
-        let tri = line(wgpu::PrimitiveTopology::TriangleList, false, 1.0);
-        let tri_see = line(wgpu::PrimitiveTopology::TriangleList, false, 2.0);
-        let trail = line(wgpu::PrimitiveTopology::LineList, false, 0.0);
-        let overlay = line(wgpu::PrimitiveTopology::LineList, true, 0.0);
+        let (tl, ll, sf) = (wgpu::PrimitiveTopology::TriangleList, wgpu::PrimitiveTopology::LineList, SCENE_FORMAT);
+        let tri = line(tl, false, 1.0, sf, true);
+        let tri_see = line(tl, false, 2.0, sf, true);
+        let trail = line(ll, false, 0.0, sf, true);
+        let overlay = line(ll, true, 0.0, sf, true);
+        let under_tri = line(tl, true, 0.0, sf, true);
+        let top_line = line(ll, false, 0.0, out_format, false);
+        let top_tri = line(tl, false, 0.0, out_format, false);
         let glyph_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("glyphs"),
             entries: &[
@@ -308,7 +325,7 @@ impl Figures {
             cache: None,
         });
         let sampler = device.create_sampler(&wgpu::SamplerDescriptor { mag_filter: wgpu::FilterMode::Linear, min_filter: wgpu::FilterMode::Linear, ..Default::default() });
-        Self { layout, solid, see, cube, look, tri, tri_see, trail, overlay, glyph, glyph_layout, atlas: None, sampler, cube_vb, cube_ib, look_vb, meshes: HashMap::new(), ring, bytes: 0 }
+        Self { layout, solid, see, cube, look, tri, tri_see, trail, overlay, glyph, glyph_layout, atlas: None, sampler, top_line, top_tri, under_tri, top_static: None, top_tris: None, ground_tris: None, cube_vb, cube_ib, look_vb, meshes: HashMap::new(), ring, bytes: 0 }
     }
 
     fn ring_buffer(device: &wgpu::Device, size: u64) -> wgpu::Buffer {
@@ -402,8 +419,10 @@ impl Figures {
         let inst_bytes = (p.instances.len() * 4) as u64;
         let cube_bytes = (p.cubes.len() * 4) as u64;
         let glyph_bytes = p.glyphs.as_ref().map_or(0, |g| g.instances.len() * 4) as u64;
-        let geo_bytes = ((p.tris.len() + p.trails.len() + p.overlay.len()) * 4) as u64 + glyph_bytes;
-        if inst_bytes + cube_bytes + geo_bytes == 0 {
+        let under_bytes = p.top.as_ref().map_or(0, |t| t.under_lines.len() * 4) as u64;
+        let geo_bytes = ((p.tris.len() + p.trails.len() + p.overlay.len()) * 4) as u64 + glyph_bytes + under_bytes;
+        let objectives = p.top.as_ref().is_some_and(|t| t.ground_count > 0 || t.under);
+        if inst_bytes + cube_bytes + geo_bytes == 0 && !objectives {
             return f;
         }
         self.reserve(device, queue, inst_bytes + cube_bytes + geo_bytes);
@@ -428,6 +447,12 @@ impl Figures {
         f.tris = geo(&p.tris);
         f.trails = geo(&p.trails);
         f.overlay = geo(&p.overlay);
+        if let Some(top) = &p.top {
+            f.objectives = top.ground_count > 0 || top.under;
+            if top.under && !top.under_lines.is_empty() {
+                f.under_lines = Some(((top.under_lines.len() / 7) as u32, self.push(bytemuck::cast_slice(&top.under_lines))));
+            }
+        }
         // Glyphs only once the atlas is here.
         if let (Some(g), true) = (&p.glyphs, self.atlas.is_some()) {
             if !g.instances.is_empty() {
@@ -555,5 +580,76 @@ impl Figures {
         pass.set_bind_group(0, group, &[]);
         pass.set_vertex_buffer(0, self.ring.buf.slice(at..));
         pass.draw(0..6, 0..n);
+    }
+
+    /// A packet's kept arrays over the picture and on the ground, when new.
+    pub fn take_top(&mut self, device: &wgpu::Device, top: &Top) {
+        let mk = |label: &str, v: &[f32]| device.create_buffer_init(&wgpu::util::BufferInitDescriptor { label: Some(label), contents: bytemuck::cast_slice(v), usage: wgpu::BufferUsages::VERTEX });
+        if let Some(d) = top.static_data.as_ref().filter(|d| !d.is_empty()) {
+            self.top_static = Some((top.static_version, mk("static top lines", d)));
+        }
+        if let Some(d) = top.tris_data.as_ref().filter(|d| !d.is_empty()) {
+            self.top_tris = Some(mk("top triangles", d));
+        }
+        if let Some(d) = top.ground_data.as_ref().filter(|d| !d.is_empty()) {
+            self.ground_tris = Some(mk("ground triangles", d));
+        }
+    }
+
+    /// The objectives' see-through triangles laid on the ground: depth tested, not written
+    /// (`drawObjectivesOnGround`).
+    pub fn draw_ground(&self, pass: &mut wgpu::RenderPass<'_>, p: &Packet, group: &wgpu::BindGroup) {
+        let Some(top) = &p.top else { return };
+        if let (true, Some(b)) = (top.ground_count > 0, &self.ground_tris) {
+            pass.set_pipeline(&self.tri_see);
+            pass.set_bind_group(0, group, &[]);
+            pass.set_vertex_buffer(0, b.slice(..));
+            pass.draw(0..top.ground_count, 0..1);
+        }
+    }
+
+    /// The objectives under the units (`drawObjectivesUnder`), before anything stands on them: the
+    /// ground marks depth tested, then the edges and lines that show through the ground, without depth.
+    pub fn draw_under(&self, pass: &mut wgpu::RenderPass<'_>, p: &Packet, f: &FigureFrame, group: &wgpu::BindGroup) {
+        let Some(top) = p.top.as_ref().filter(|t| t.under) else { return };
+        self.draw_ground(pass, p, group);
+        if let (true, Some(b)) = (top.tris_count > 0, &self.top_tris) {
+            pass.set_pipeline(&self.under_tri);
+            pass.set_bind_group(0, group, &[]);
+            pass.set_vertex_buffer(0, b.slice(..));
+            pass.draw(0..top.tris_count, 0..1);
+        }
+        self.lines(pass, &self.overlay, f.under_lines, group);
+    }
+
+    /// The lines over the picture into the per-frame buffer (`topVerts`), for `draw_top`.
+    pub fn push_top(&mut self, device: &wgpu::Device, queue: &wgpu::Queue, p: &Packet) -> Option<(u32, u64)> {
+        let lines = &p.top.as_ref()?.lines;
+        if lines.is_empty() {
+            return None;
+        }
+        self.reserve(device, queue, (lines.len() * 4) as u64);
+        Some(((lines.len() / 7) as u32, self.push(bytemuck::cast_slice(lines))))
+    }
+
+    /// Over the finished picture, in the composite pass (`composite`): the objectives' triangles
+    /// (unless they went under the units), the lines, the kept lines.
+    pub fn draw_top(&self, pass: &mut wgpu::RenderPass<'_>, p: &Packet, lines: Option<(u32, u64)>, group: &wgpu::BindGroup) {
+        let Some(top) = &p.top else { return };
+        if let (true, false, Some(b)) = (top.tris_count > 0, top.under, &self.top_tris) {
+            pass.set_pipeline(&self.top_tri);
+            pass.set_bind_group(0, group, &[]);
+            pass.set_vertex_buffer(0, b.slice(..));
+            pass.draw(0..top.tris_count, 0..1);
+        }
+        self.lines(pass, &self.top_line, lines, group);
+        if let (true, Some((v, b))) = (top.static_count > 0, &self.top_static) {
+            if *v == top.static_version {
+                pass.set_pipeline(&self.top_line);
+                pass.set_bind_group(0, group, &[]);
+                pass.set_vertex_buffer(0, b.slice(..));
+                pass.draw(0..top.static_count, 0..1);
+            }
+        }
     }
 }

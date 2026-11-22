@@ -62,6 +62,24 @@ pub struct Packet {
     /// The far-off glyphs the CPU placed: style, mode, ticks, the sides' colours (64 floats), the
     /// instances (`INSTANCE_STRIDE` floats each).
     pub glyphs: Option<Glyphs>,
+    /// The objectives' marks and the lines over the finished picture.
+    pub top: Option<Top>,
+}
+
+/// `SECTION_TOP`: seven floats a vertex throughout. The kept arrays come only when new.
+#[derive(Clone, Default)]
+pub struct Top {
+    pub lines: Vec<f32>,
+    pub static_version: u32,
+    pub static_count: u32,
+    pub static_data: Option<Vec<f32>>,
+    pub tris_count: u32,
+    pub tris_data: Option<Vec<f32>>,
+    pub ground_count: u32,
+    pub ground_data: Option<Vec<f32>>,
+    /// The objectives drawn under the units, in the scene (`FrameParams.objectivesUnder`).
+    pub under: bool,
+    pub under_lines: Vec<f32>,
 }
 
 #[derive(Clone, Default)]
@@ -195,6 +213,29 @@ pub fn decode(bytes: &[u8]) -> Result<Packet> {
                 let n = s.take()? as usize;
                 let instances = f(s.slice(n * INSTANCE_STRIDE as usize)?);
                 p.glyphs = Some(Glyphs { style: head[0], mode: head[1], ticks: head[2], sides, instances });
+            }
+            SECTION_TOP => {
+                let f = |w: &[u32]| w.iter().map(|x| f32::from_bits(*x)).collect::<Vec<f32>>();
+                let mut t = Top::default();
+                let n = s.take()? as usize;
+                t.lines = f(s.slice(n * 7)?);
+                t.static_version = s.take()?;
+                t.static_count = s.take()?;
+                if s.take()? == 1 {
+                    t.static_data = Some(f(s.slice(t.static_count as usize * 7)?));
+                }
+                t.tris_count = s.take()?;
+                if s.take()? == 1 {
+                    t.tris_data = Some(f(s.slice(t.tris_count as usize * 7)?));
+                }
+                t.ground_count = s.take()?;
+                if s.take()? == 1 {
+                    t.ground_data = Some(f(s.slice(t.ground_count as usize * 7)?));
+                }
+                t.under = s.take()? == 1;
+                let n = s.take()? as usize;
+                t.under_lines = f(s.slice(n * 7)?);
+                p.top = Some(t);
             }
             SECTION_CUBES => {
                 let n = s.take()? as usize;

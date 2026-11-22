@@ -7,7 +7,7 @@ use std::sync::{Arc, Mutex};
 
 use heat3d_viewport::generated::*;
 use heat3d_viewport::loader::PageChunk;
-use heat3d_viewport::packet::{Packet, PlanEntry};
+use heat3d_viewport::packet::{Glyphs, Packet, PlanEntry, Top};
 use heat3d_viewport::wgpu;
 use heat3d_viewport::Renderer;
 
@@ -68,11 +68,56 @@ fn packet() -> Packet {
         frame: Some(f),
         plan: vec![PlanEntry { chunk: 0, min_row: 0, max_row: SIDE * SIDE, starts: vec![0] }],
         color_lut: Some(vec![255; (LUT_WIDTH * LUT_HEIGHT * 4) as usize]),
-        // A cube and a triangle, so their pipelines draw too.
+        // A cube, a figure, a glyph, a triangle, a trail, the objectives' marks and the lines over
+        // the picture, so every scene pipeline draws too.
         cubes: vec![0.5, 0.5, 0.5, 1.0, 0.0, 0.0, 0.0, 0.0],
-        tris: vec![0.1, 0.5, 0.1, 1.0, 1.0, 1.0, 1.0, 0.9, 0.5, 0.1, 1.0, 1.0, 1.0, 1.0, 0.5, 0.5, 0.9, 1.0, 1.0, 1.0, 1.0],
+        figures: vec![(7, 1)],
+        instances: instance(),
+        tris: tri(),
+        trails: tri()[..14].to_vec(),
+        overlay: tri()[..14].to_vec(),
+        glyphs: Some(Glyphs { style: 0.0, mode: 0.0, ticks: 0.0, sides: vec![1.0; 64], instances: instance() }),
+        top: Some(Top {
+            lines: tri()[..14].to_vec(),
+            static_version: 1,
+            static_count: 2,
+            static_data: Some(tri()[..14].to_vec()),
+            tris_count: 3,
+            tris_data: Some(tri()),
+            ground_count: 3,
+            ground_data: Some(tri()),
+            under: false,
+            under_lines: Vec::new(),
+        }),
         ..Default::default()
     }
+}
+
+/// Three vertices, seven floats each (xyz, rgba).
+fn tri() -> Vec<f32> {
+    vec![0.1, 0.5, 0.1, 1.0, 1.0, 1.0, 1.0, 0.9, 0.5, 0.1, 1.0, 1.0, 1.0, 1.0, 0.5, 0.5, 0.9, 1.0, 1.0, 1.0, 1.0]
+}
+
+/// One figure instance in the middle of the box (`INSTANCE_STRIDE` floats).
+fn instance() -> Vec<f32> {
+    vec![0.5, 0.5, 0.5, 0.1, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, -100.0]
+}
+
+/// A one-triangle figure mesh (`MESH_STRIDE` floats a vertex), sent as the page sends it.
+fn mesh_slice() -> Vec<u8> {
+    let mut v = Vec::new();
+    for p in [[0.0f32, 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]] {
+        v.extend_from_slice(&p);
+        v.extend_from_slice(&[0.8, 0.8, 0.8, 1.0, 0.0, 1.0, 0.0, 0.5, 1.0]);
+        v.extend_from_slice(&[0.0; 12]);
+    }
+    let bytes: &[u8] = bytemuck::cast_slice(&v);
+    let mut out = Vec::new();
+    for w in [7u32, 3, bytes.len() as u32, 0] {
+        out.extend_from_slice(&w.to_le_bytes());
+    }
+    out.extend_from_slice(bytes);
+    out
 }
 
 #[test]
@@ -98,6 +143,8 @@ fn draws_heat_offscreen() {
     r.clear_dataset(false);
     let c = chunk().upload(&r.device);
     r.add_chunk(c);
+    r.figures.mesh_slice(&r.device, &r.queue, &mesh_slice()).expect("mesh");
+    r.figures.set_atlas(&r.device, &r.queue, &vec![255u8; (ATLAS_WIDTH * ATLAS_HEIGHT * 4) as usize]).expect("atlas");
     let out = r.device.create_texture(&wgpu::TextureDescriptor {
         label: Some("out"),
         size: wgpu::Extent3d { width: SIDE, height: SIDE, depth_or_array_layers: 1 },
@@ -112,16 +159,20 @@ fn draws_heat_offscreen() {
     let heat: Arc<Mutex<Option<Option<Vec<f32>>>>> = Arc::default();
     let h = heat.clone();
     r.request_heat(0, Box::new(move |v| *h.lock().unwrap() = Some(v)));
+    let picture: Arc<Mutex<Option<bool>>> = Arc::default();
+    let pc = picture.clone();
+    r.request_capture(Box::new(move |c| *pc.lock().unwrap() = Some(c.is_some_and(|c| c.rgba.len() == (SIDE * SIDE * 4) as usize))));
     r.draw(&[packet()], &view, (SIDE, SIDE), false);
     let error = pollster::block_on(r.device.pop_error_scope());
     assert!(error.is_none(), "validation error: {error:?}");
     for _ in 0..500 {
         let _ = r.device.poll(wgpu::PollType::wait_indefinitely());
         r.poll();
-        if heat.lock().unwrap().is_some() {
+        if heat.lock().unwrap().is_some() && picture.lock().unwrap().is_some() {
             break;
         }
     }
+    assert_eq!(*picture.lock().unwrap(), Some(true), "the picture read back");
     let field = heat.lock().unwrap().take().flatten().expect("the heat read back");
     let lit = field.iter().filter(|v| **v > 0.0).count();
     let total: f32 = field.iter().sum();

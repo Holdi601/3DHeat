@@ -15,6 +15,7 @@ pub const SECTION_FIGURES: u32 = 9;
 pub const SECTION_CUBES: u32 = 10;
 pub const SECTION_GEOMETRY: u32 = 11;
 pub const SECTION_SYMBOLS: u32 = 12;
+pub const SECTION_TOP: u32 = 13;
 pub const SAMPLE_BLOCK: u32 = 4096;
 pub const MAX_PLAN_BLOCKS: u32 = 65536;
 pub const CHUNK_ROWS: u32 = 8388608;
