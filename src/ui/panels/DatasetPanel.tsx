@@ -19,6 +19,7 @@ export function DatasetSummary() {
   const busy = useStore((s) => s.load.active);
   const fit = useGroundFit();
   const fixes = fit.dataset === dataset ? fit.fixes : [];
+  const grounded = fit.dataset === dataset ? fit.grounded : [];
   if (!dataset) return null;
   return (
     <div className="field dataset-summary" data-testid="dataset-summary">
@@ -49,6 +50,14 @@ export function DatasetSummary() {
         <div className="hint" style={{ color: 'var(--warm)' }}>
           {fixes.map((f) => (
             <div key={f.session}>· {t('heat.groundFit.fixed', { match: f.label || '-', metres: signed(f.metres), spread: num(f.spread, 1) })}</div>
+          ))}
+        </div>
+      )}
+      {/* Recordings without heights whose units were put on the level's ground: said for as long as they are shown so. */}
+      {grounded.length > 0 && (
+        <div className="hint" style={{ color: 'var(--warm)' }}>
+          {grounded.map((g) => (
+            <div key={g.session}>· {t('heat.groundFit.grounded', { match: g.label || '-', rows: formatCount(g.rows) })}</div>
           ))}
         </div>
       )}

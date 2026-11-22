@@ -919,6 +919,9 @@
   "heat.groundFit.metres": "{v} m",
   "heat.groundFit.toastOne": "Height of match {match} corrected by {metres} to the level: its ground units sat off the terrain",
   "heat.groundFit.toastMany": "Heights of {n} matches corrected to the level: their ground units sat off the terrain (see the source panel)",
+  "heat.groundFit.groundedToastOne": "{match} was recorded without heights: its units are drawn on the level's ground",
+  "heat.groundFit.groundedToastMany": "{n} recordings without heights: their units are drawn on the level's ground (see the source panel)",
+  "heat.groundFit.grounded": "Recorded without heights: {match} ({rows} rows) - every unit drawn on the level's ground, aircraft too (the recording does not say how high anything was)",
   "heat.groundFit.fixed": "Height corrected by {metres} to the level: {match} (its ground units all sat that far off the terrain, spread {spread} m; converted with a wrong height offset - convert it again to fix the file)",
   "heat.sourcePanel.mappingAdvanced": "Advanced: column mapping"
 }

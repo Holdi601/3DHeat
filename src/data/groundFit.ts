@@ -228,6 +228,78 @@ export function* snappedHeightsSteps(d: Dataset, g: HeightGrid, k: number, groun
   return py ? { py, snap: { rows, most } } : null;
 }
 
+/** Rows a session needs before all of them at one height says it was recorded without heights. */
+export const FLAT_MIN_ROWS = MIN_SAMPLES;
+
+/**
+ * The sessions recorded without heights: every row at one and the same height
+ * (what a reader fills in where the file has none - OCAP recordings of Arma 3
+ * from 2017 and before keep east and north only), on `FLAT_MIN_ROWS` rows or
+ * more. Nothing says where their units were above the ground, so all of them
+ * go on the level's ground (`groundedHeightsSteps`).
+ */
+export function* heightlessSessionsSteps(d: Dataset): Generator<void, number[], void> {
+  const sessions = d.sessionId && d.sessionLabels.length ? d.sessionLabels.length : 1;
+  const first = new Float64Array(sessions).fill(NaN);
+  const flat = new Uint8Array(sessions).fill(1);
+  const rows = new Uint32Array(sessions);
+  for (let r = 0; r < d.count; r++) {
+    if ((r & (STEP - 1)) === STEP - 1) yield;
+    const y = d.py[r];
+    if (!Number.isFinite(y)) continue;
+    const s = d.sessionId ? d.sessionId[r] : 0;
+    if (Number.isNaN(first[s])) first[s] = y;
+    else if (y !== first[s]) flat[s] = 0;
+    rows[s]++;
+  }
+  const out: number[] = [];
+  for (let s = 0; s < sessions; s++) if (flat[s] && rows[s] >= FLAT_MIN_ROWS) out.push(s);
+  return out;
+}
+
+/** A session recorded without heights, put on the level's ground. */
+export interface GroundedSession {
+  /** Session index, -1 when the data has no sessions. */
+  session: number;
+  label: string;
+  /** Rows put on the ground. */
+  rows: number;
+}
+
+/**
+ * The heights of `d` with every row of `sessions` (`heightlessSessionsSteps`)
+ * on the level's drawn ground `g` - every unit, aircraft too: the recording
+ * does not say how high anything was. Never under the height recorded: over
+ * the sea a boat keeps the sea level the recording holds instead of sinking to
+ * the sea floor. Rows off the level stay as they were. Null when no row moved.
+ */
+export function* groundedHeightsSteps(
+  d: Dataset,
+  g: HeightGrid,
+  sessions: readonly number[],
+): Generator<void, { py: Float32Array; grounded: GroundedSession[] } | null, void> {
+  const want = new Set(sessions);
+  const moved = new Map<number, number>();
+  let py: Float32Array | null = null;
+  for (let r = 0; r < d.count; r++) {
+    if ((r & (STEP - 1)) === STEP - 1) yield;
+    const s = d.sessionId ? d.sessionId[r] : 0;
+    if (!want.has(s)) continue;
+    const h = surfaceAt(g, d.px[r], d.pz[r]);
+    if (!Number.isFinite(h) || !(h > d.py[r])) continue;
+    py ??= d.py.slice();
+    py[r] = h;
+    moved.set(s, (moved.get(s) ?? 0) + 1);
+  }
+  if (!py) return null;
+  const grounded = [...moved].map(([s, rows]) => ({
+    session: d.sessionId ? s : -1,
+    label: d.sessionId ? (d.sessionLabels[s] ?? '') : (d.name ?? ''),
+    rows,
+  }));
+  return { py, grounded };
+}
+
 // Tacview's types are tags joined by `+`: a parachuting pilot is `Ground+Light+Human+Air+Parachutist`, in the air.
 const AIR_OR_OTHER = /aircraft|airplane|plane|fighter|bomber|attacker|heli|drone|uav|jet|glider|bomb|rocket|missile|shell|projectile|effect|weapon|camera|parachut|(^|\+)air(\+|$)/i;
 const DRIVES_OR_SAILS = /tank|spaa|apc|ifv|ground|vehicle|truck|car\b|artillery|atgm|howitzer|spg|armou?r|ship|boat|destroyer|cruiser|frigate|battleship|submarine|naval|carrier|corvette|barge/i;

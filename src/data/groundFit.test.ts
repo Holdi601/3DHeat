@@ -1,6 +1,24 @@
 import { describe, expect, it } from 'vitest';
 import type { AttributeColumn, Dataset } from '../state/types';
-import { drainSteps, fixedHeightsSteps, fixesOf, groundChecksSteps, groundPersons, heightAt, heightGridSteps, MAX_SPREAD, MIN_SHIFT, SNAP_OVER, SNAP_UNDER, snappedHeightsSteps, surfaceAt, surfaceGridSteps } from './groundFit';
+import {
+  drainSteps,
+  fixedHeightsSteps,
+  fixesOf,
+  FLAT_MIN_ROWS,
+  groundChecksSteps,
+  groundedHeightsSteps,
+  groundPersons,
+  heightAt,
+  heightGridSteps,
+  heightlessSessionsSteps,
+  MAX_SPREAD,
+  MIN_SHIFT,
+  SNAP_OVER,
+  SNAP_UNDER,
+  snappedHeightsSteps,
+  surfaceAt,
+  surfaceGridSteps,
+} from './groundFit';
 
 /** A rolling ground over 0..400 m: a grid of corners 2 m apart, six floats each (position, normal), two triangles a cell. */
 function level(): { vertices: Float32Array; indices: Uint32Array; ground: (x: number, z: number) => number } {
@@ -147,5 +165,35 @@ describe('ground units on the ground as drawn', () => {
     expect(groundPersons(d)).toBeNull();
     kind.categories = ['Ground+Heavy+Armor+Vehicle+Tank', 'Air+FixedWing'];
     expect(groundPersons(d)![0]).toBe(1);
+  });
+});
+
+describe('recordings without heights on the ground', () => {
+  const lv = level();
+  const g = drainSteps(surfaceGridSteps(lv.vertices, lv.indices, { minX: 0, maxX: 400, minZ: 0, maxZ: 400 }, 1))!;
+
+  it('finds the sessions whose every row is at one height, and only those', () => {
+    const d = matches(lv.ground, 0);
+    expect(drainSteps(heightlessSessionsSteps(d))).toEqual([]);
+    // Match B recorded without heights (OCAP's first layout): every row at 0, aircraft too.
+    for (let r = 0; r < d.count; r++) if (d.sessionId![r] === 1) d.py[r] = 0;
+    expect(drainSteps(heightlessSessionsSteps(d))).toEqual([1]);
+    // Too few rows say nothing.
+    const few = { ...d, count: FLAT_MIN_ROWS - 1, sessionId: new Uint32Array(d.count).fill(1) } as Dataset;
+    expect(drainSteps(heightlessSessionsSteps(few))).toEqual([]);
+  });
+
+  it('puts every unit of such a session on the drawn ground, never under the height recorded', () => {
+    const d = matches(lv.ground, 0);
+    for (let r = 0; r < d.count; r++) if (d.sessionId![r] === 1) d.py[r] = 0;
+    const out = drainSteps(groundedHeightsSteps(d, g, [1]))!;
+    for (let r = 0; r < d.count; r++) {
+      if (d.sessionId![r] === 1) expect(Math.abs(out.py[r] - lv.ground(d.px[r], d.pz[r]))).toBeLessThan(0.05);
+      else expect(out.py[r]).toBe(d.py[r]);
+    }
+    expect(out.grounded).toEqual([{ session: 1, label: 'match B', rows: 1600 }]);
+    // Recorded above the ground (a boat at sea level over the sea floor): left at the height recorded.
+    for (let r = 0; r < d.count; r++) if (d.sessionId![r] === 1) d.py[r] = 50;
+    expect(drainSteps(groundedHeightsSteps(d, g, [1]))).toBeNull();
   });
 });
