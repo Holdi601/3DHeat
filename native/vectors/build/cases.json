@@ -170,7 +170,10 @@
    ],
    "extraNumeric": {
     "serial": false
-   }
+   },
+   "byHand": [
+    "serial"
+   ]
   },
   "stride": 1
  }

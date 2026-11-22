@@ -25,12 +25,13 @@
  * performance one (that is tools/probe-session-perf.mjs).
  */
 import { chromium } from 'playwright';
-import { spawn } from 'node:child_process';
+import { execFileSync, spawn } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
-import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync, statSync } from 'node:fs';
 import { request } from 'node:http';
 import { tmpdir } from 'node:os';
-import { join as joinPath } from 'node:path';
+import { dirname, join as joinPath } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { startProxy } from './proxy-chain.mjs';
 
 const ARGS = process.argv.slice(2).filter((a) => !a.startsWith('--'));
@@ -39,6 +40,23 @@ const N = Math.max(2, Math.min(20, Number(ARGS[0] ?? process.env.CLIENTS ?? 6)))
 const APP = process.env.APP ?? 'http://127.0.0.1:5275/';
 const BIN = process.env.HEAT3D_SERVE_BIN ?? ['E:/cargo-targets/3dheat/release/3dheat.exe', 'E:/cargo-targets/3dheat/debug/3dheat.exe'].find(existsSync);
 if (!BIN) throw new Error('no 3dheat binary: cargo build -p heat3d-server in native/, or set HEAT3D_SERVE_BIN');
+// A server built before the last change to the session code or its protocol
+// speaks an older protocol (one without the challenge, say): the viewers then
+// wait for a message that never comes and the run fails at the host's join,
+// which looks like a bug in the change under test.
+{
+  const root = joinPath(dirname(fileURLToPath(import.meta.url)), '..');
+  let changed = 0;
+  try {
+    // The last commit to them, not the files' times: a fresh checkout's files are all new.
+    changed = 1000 * Number(execFileSync('git', ['log', '-1', '--format=%ct', '--', 'native/crates/session/src', 'native/crates/server/src', 'native/proto/heat3d/session'], { cwd: root, encoding: 'utf8' }).trim() || 0);
+  } catch {
+    /* no git here: no check */
+  }
+  if (!process.env.HEAT3D_SERVE_BIN && statSync(BIN).mtimeMs < changed) {
+    throw new Error(`${BIN} is older than the last change to the session server: rebuild it (cargo build --release -p heat3d-server in native/), or set HEAT3D_SERVE_BIN`);
+  }
+}
 const PORT = Number(process.env.SESSION_PORT ?? 7900 + Math.floor(Math.random() * 90));
 const SERVER = `http://127.0.0.1:${PORT}`;
 const PROXY_PORT = Number(process.env.PROXY_PORT ?? PORT + 1);

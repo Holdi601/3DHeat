@@ -195,7 +195,7 @@ const cases = [
   {
     name: 'look vectors, a category past the ceiling, names worn twice',
     files: ['e.parquet'],
-    mapping: { x: 'x', y: 'y', z: 'z', time: 'time', personId: 'player', teamId: 'team', sessionId: 'round', lookMode: 'vector', dirX: 'dx', dirY: 'dy', dirZ: 'dz', extra: ['serial'], extraNumeric: { serial: false } },
+    mapping: { x: 'x', y: 'y', z: 'z', time: 'time', personId: 'player', teamId: 'team', sessionId: 'round', lookMode: 'vector', dirX: 'dx', dirY: 'dy', dirZ: 'dz', extra: ['serial'], extraNumeric: { serial: false }, byHand: ['serial'] },
     stride: 1,
   },
 ];
