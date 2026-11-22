@@ -5,7 +5,7 @@
 //! each time it happens again.
 
 use argon2::{Algorithm, Argon2, Params, PasswordHash, PasswordHasher, PasswordVerifier, Version};
-use rand::RngCore;
+use rand::Rng;
 use std::collections::HashMap;
 use std::net::IpAddr;
 
