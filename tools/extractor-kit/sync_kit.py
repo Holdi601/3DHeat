@@ -16,6 +16,8 @@ import sys
 from pathlib import Path
 
 KIT = Path(__file__).resolve().parent
+BRAND = KIT.parent.parent / "public" / "brand" / "png"  # the 3DHeat logo the window draws (*.png is not kept in tools/)
+BRAND_FILES = ("icon-32.png", "icon-64.png", "icon-256.png", "lockup-32.png", "lockup-64.png", "logo-128.png")
 FILES = {  # kit path -> repo path ({pkg} = the tool's package)
     "app": "{pkg}/app",
     "tools/build_standalone.py": "tools/build_standalone.py",
@@ -56,6 +58,12 @@ def sync(repo: Path, icons: Path | None = None) -> list[Path]:
         else:
             d.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(s, d)
+            written.append(d)
+    for name in BRAND_FILES:
+        if (BRAND / name).is_file():
+            d = repo / pkg / "app" / "assets" / name
+            d.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(BRAND / name, d)
             written.append(d)
     return written
 

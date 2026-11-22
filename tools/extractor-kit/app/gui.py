@@ -32,8 +32,8 @@ from .manifest import game_status
 from .spec import Spec, Task, game_folders, load_settings, save_settings, standard_checks
 from .theme import BRAND_BAR, HeatBar, Theme, app_id, badge, dot, dpi_aware, load_png, mix, title_bar
 
-STATE_TEXT = {"new": "New", "changed": "Changed by a game update", "outdated": "Made by an older version",
-              "current": "Up to date", "missing": "Gone from the game"}
+STATE_TEXT = {"new": "New", "changed": "Game update", "outdated": "Older version",
+              "current": "Up to date", "missing": "Gone from the game"}  # short: the heading above says it in full
 PENDING = ("new", "changed", "outdated")
 APP_PAGE = "https://holdi601.github.io/3DHeat/"
 URL = re.compile(r"https?://[^\s)\"']+")
@@ -518,6 +518,22 @@ class App:
         box.bind("<Configure>", wrap, add="+")
         return lab
 
+    def wrap_beside(self, lab, bar) -> None:
+        """A label on the left of an action bar that wraps into the room the bar's right-hand buttons leave."""
+        px = self.theme.px
+
+        def wrap(e):
+            try:
+                used = sum(w.winfo_reqwidth() + px(8) for w in bar.pack_slaves()
+                           if w is not lab and w.pack_info().get("side") == "right")
+                w = max(px(80), e.width - used - px(12))
+                if lab.winfo_exists() and abs(int(lab.cget("wraplength") or 0) - w) > 2:
+                    lab.config(wraplength=w)
+            except Exception:
+                pass
+
+        bar.bind("<Configure>", wrap, add="+")
+
     def heading(self, parent, title: str, sub: str = "", right=None):
         px = self.theme.px
         row = self.frame(parent)
@@ -543,6 +559,7 @@ class App:
 
     # ------------------------------------------------------------- step 1
     def page_setup(self) -> None:
+        self._compact = 0 < self._window_height() < self.theme.px(760)
         px, spec = self.theme.px, self.spec
         games = ", ".join(g.label for g in spec.games)
         if spec.games and spec.has_maps():
@@ -560,8 +577,10 @@ class App:
         self.primary = lambda: self.show("choose")
         self.button(bar, "Check again", self.refresh, "Ghost").pack(side="right", padx=(0, px(8)))
         if problems:
-            self.label(bar, f"{len(problems)} thing{'s' if len(problems) != 1 else ''} to look at; "
-                       "you can still go on and use what works.", size=9.5, fg="warn").pack(side="left")
+            hint = self.label(bar, f"{len(problems)} thing{'s' if len(problems) != 1 else ''} to look at; "
+                              "you can still go on and use what works.", size=9.5, fg="warn")
+            hint.pack(side="left", fill="x", expand=True)
+            self.wrap_beside(hint, bar)
         else:
             self.label(bar, "All set.", size=9.5, fg="good").pack(side="left")
 
@@ -573,7 +592,7 @@ class App:
             if chk not in fine:
                 self._check_card(list_, chk)
         if fine:
-            card = self.card(list_, pad=12)
+            card = self.card(list_, pad=10 if self._compact else 12)
             card.pack(fill="x", pady=(0, px(8)))
             row = self.frame(card, "panel")
             row.pack(fill="x", padx=px(4))
@@ -586,7 +605,7 @@ class App:
         if self._window_height() > px(760):
             self._how_it_works(list_)
         # where the maps go
-        card = self.card(list_)
+        card = self.card(list_, pad=10 if self._compact else 16)
         card.pack(fill="x", pady=(0, px(8)))
         dot(self.theme, card, self.c("accent"), self.c("panel")).grid(row=0, column=0, rowspan=2, sticky="n",
                                                                          padx=(0, px(12)), pady=(px(5), 0))
@@ -643,19 +662,35 @@ class App:
         kind = "Card" if chk.ok else ("WarnCard" if chk.id == "disk" else "BadCard")
         bg = {"Card": "panel", "WarnCard": "warn_fill", "BadCard": "bad_fill"}[kind]
         surface = f"{kind}."
-        card = self.card(parent, kind)
+        card = self.card(parent, kind, pad=10 if self._compact else 16)
         card.pack(fill="x", pady=(0, px(8)))
         tone = "good" if chk.ok else ("warn" if chk.id == "disk" else "bad")
         dot(self.theme, card, self.c(tone), self.c(bg)).grid(row=0, column=0, rowspan=2, sticky="n",
                                                                padx=(0, px(12)), pady=(px(5), 0))
-        self.label(card, chk.label, size=10.5, weight="bold", bg=bg).grid(row=0, column=1, sticky="w")
+        head = self.label(card, chk.label, size=10.5, weight="bold", bg=bg, wrap=560)
+        head.grid(row=0, column=1, sticky="we")
+        self.autowrap(head, card, px(300))
         detail = chk.detail
         url = URL.search(detail or "")
         if not chk.ok and chk.id.startswith("game:"):
             detail = detail or "Not found on this computer."
-        dl = self.label(card, detail, size=9.5, fg="dim", bg=bg, wrap=580)
-        dl.grid(row=1, column=1, sticky="we")
+        box = self.frame(card, bg)
+        box.grid(row=1, column=1, sticky="we")
+        dl = self.label(box, detail, size=9.5, fg="dim", bg=bg, wrap=580)
+        dl.pack(fill="x", anchor="w")
         self.autowrap(dl, card, px(300))
+        short = self._first_sentence(detail or "")
+        if self._compact and short != detail and len(detail) > 120:  # a short window: the gist, the rest on a click
+            dl.config(text=short)
+            more = self.link(box, "Show more", lambda: None, bg=bg)
+            more.pack(anchor="w")
+
+            def fold(_=None, lab=dl, link=more, full=detail, gist=short):
+                opened = link.cget("text") == "Show less"
+                lab.config(text=gist if opened else full)
+                link.config(text="Show more" if opened else "Show less")
+
+            more.bind("<Button-1>", fold)
         acts = self.frame(card, bg)
         acts.grid(row=0, column=2, rowspan=2, sticky="e", padx=(px(12), 0))
         if chk.id.startswith("game:"):
@@ -668,6 +703,11 @@ class App:
         elif not chk.ok and chk.id == "disk":
             self.button(acts, "Choose another folder…", self.choose_levels, "Secondary", surface).pack(side="right")
         card.columnconfigure(1, weight=1)
+
+    @staticmethod
+    def _first_sentence(text: str) -> str:
+        m = next((m for m in re.finditer(r"[.;:](\s|$)", text) if m.start() > 20), None)
+        return text[:m.start() + 1] if m else text
 
     # ------------------------------------------------------------- step 2
     def page_choose(self) -> None:
@@ -745,7 +785,7 @@ class App:
         cols = ("pick", "map", "state", "made")
         tree = ttk.Treeview(card, columns=cols, show="headings", selectmode="browse", takefocus=True)
         for col, text, width, stretch, least in (("pick", "", 44, False, 36), ("map", "MAP", 360, True, 160),
-                                                 ("state", "STATE", 200, True, 120), ("made", "MADE WITH", 96, False, 70)):
+                                                 ("state", "STATE", 170, True, 130), ("made", "MADE WITH", 96, False, 70)):
             tree.heading(col, text=text, anchor="w")
             tree.column(col, width=px(width), minwidth=px(least), stretch=stretch, anchor="center" if col == "pick" else "w")
         sb = ttk.Scrollbar(card, orient="vertical", command=tree.yview)
@@ -901,8 +941,9 @@ class App:
         tile.pack(fill="x", pady=(0, px(8)))
         kind = {"live": "●  runs until you stop it", "quick": "shows a short answer", "open": "opens a folder"}.get(
             t.kind, "converts, then opens in 3DHeat")
-        a = self.label(tile, t.label, size=10.5, weight="bold", bg=bg, wrap=255)
-        a.pack(anchor="w", padx=px(14), pady=(px(10), 0))
+        a = self.label(tile, t.label, size=10.5, weight="bold", bg=bg, wrap=200)
+        a.pack(fill="x", anchor="w", padx=px(14), pady=(px(10), 0))
+        self.autowrap(a, tile, px(30))
         b = self.label(tile, kind, size=8.5, fg="bad" if t.kind == "live" else "faint", bg=bg)
         b.pack(anchor="w", padx=px(14), pady=(0, px(10)))
 
@@ -937,9 +978,11 @@ class App:
         card.pack(side="left", fill="both", expand=True)
         head = self.frame(card, "panel")
         head.pack(fill="x")
-        self.label(head, t.label, size=14, weight="bold", bg="panel", family=self.theme.display).pack(side="left")
+        title = self.label(head, t.label, size=14, weight="bold", bg="panel", family=self.theme.display, wrap=500)
+        title.pack(fill="x", anchor="w")
+        self.autowrap(title, head, px(4))
         if t.kind == "live":
-            self.label(head, "  ● runs until you stop it", size=9, fg="bad", bg="panel").pack(side="left")
+            self.label(card, "●  runs until you stop it", size=9, fg="bad", bg="panel").pack(anchor="w", pady=(px(2), 0))
         if t.help:
             h = self.label(card, t.help[0].upper() + t.help[1:] + ("" if t.help.endswith(".") else "."), size=10, fg="dim",
                            bg="panel", wrap=600)
@@ -951,8 +994,9 @@ class App:
             grid = self.frame(card, "panel")
             grid.pack(fill="x", pady=(px(16), 0))
             for r, i in enumerate(t.inputs):
-                self.label(grid, i.label, size=9.5, weight="bold", fg="dim", bg="panel").grid(
-                    row=3 * r, column=0, sticky="w", pady=(px(8) if r else 0, px(3)))
+                lab = self.label(grid, i.label, size=9.5, weight="bold", fg="dim", bg="panel", wrap=400)
+                lab.grid(row=3 * r, column=0, columnspan=2, sticky="we", pady=(px(8) if r else 0, px(3)))
+                self.autowrap(lab, grid, px(4))
                 var = self.tk.StringVar(value=vals.get(i.key, ""))
                 vars_[i.key] = var
                 if i.kind == "choice" and i.choices:
@@ -970,7 +1014,9 @@ class App:
                         self.button(grid, "Browse…", lambda i=i, v=var: self._browse(i, v), "Secondary", "Card.").grid(
                             row=3 * r + 1, column=1, sticky="e", padx=(px(8), 0))
                 if i.hint:
-                    self.label(grid, i.hint, size=8.5, fg="faint", bg="panel").grid(row=3 * r + 2, column=0, sticky="w")
+                    hl = self.label(grid, i.hint, size=8.5, fg="faint", bg="panel", wrap=400)
+                    hl.grid(row=3 * r + 2, column=0, columnspan=2, sticky="we")
+                    self.autowrap(hl, grid, px(4))
             grid.columnconfigure(0, weight=1)
         self.inputs[t.id] = vars_
         acts = self.frame(card, "panel")
