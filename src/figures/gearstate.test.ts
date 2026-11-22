@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Dataset } from '../state/types';
-import { gearColumns, gearUpKeys } from './gearstate';
+import { gearColumns, gearUpKeys, gearUpRows, GEAR_UP_HELI, GEAR_UP_PLANE } from './gearstate';
 import { gearUpPitch, NO_PITCH, spinPitch, articulate, GEAR_UP_BELOW } from './instances';
 
 /** A flight of one aircraft: taxi, take-off roll, climb, cruise, approach, landing; one sample a second. */
@@ -36,6 +36,25 @@ describe('landing gear', () => {
     expect([...up.subarray(0, 14)].every((u) => u === 0)).toBe(true);
     expect([...up.subarray(15, 25)].every((u) => u === 1)).toBe(true);
     expect([...up.subarray(26)].every((u) => u === 0)).toBe(true);
+  });
+
+  it("tells every row of a load, an aeroplane's limits and a helicopter's apart", () => {
+    // A helicopter cruising 150 m up at 22 m/s: gear down by an aeroplane's limits (slow and low), up by its own.
+    const n = 600;
+    const d = {
+      px: Float32Array.from({ length: n }, (_, i) => (i < 10 ? 0 : (i - 10) * 22)),
+      py: Float32Array.from({ length: n }, (_, i) => (i < 10 ? 20 : 170)),
+      pz: new Float32Array(n),
+      time: Float32Array.from({ length: n }, (_, i) => i),
+      personId: new Uint32Array(n),
+      personLabels: ['heli'],
+      count: n,
+      attrs: [],
+    } as unknown as Dataset;
+    const up = gearUpRows(d)!;
+    expect(up[0]).toBe(0);
+    expect(up[300] & GEAR_UP_HELI).toBe(GEAR_UP_HELI);
+    expect(up[300] & GEAR_UP_PLANE).toBe(0);
   });
 
   it("follows the data's gear column where there is one", () => {

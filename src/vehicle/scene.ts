@@ -15,7 +15,7 @@
 import { paintPlates, type Plate, type PlateCount } from './plates';
 import { lapColor, VertexBuffer, type Rgb, type Vec3 } from '../race/geometry';
 import { CATALOG } from '../figures/catalog';
-import { ownModelIn } from '../figures/figurepack';
+import { ownGameModel, ownGameModelNamed } from '../figures/figurepack';
 import { TemplateCache, type Template } from '../figures/kit';
 import { figureFor, figureForClass } from '../figures/match';
 import type { Outcome, VehicleHit, VehicleInfo } from './hits';
@@ -55,7 +55,8 @@ export const OUTCOME_COLOURS: Record<Outcome, Rgb> = {
 export function figureOfVehicle(v: Pick<VehicleInfo, 'id' | 'name' | 'kind'>, game: string | null = null): string {
   // A Dota 2 hero stands as a person: its hits have no point, the figure only says whose they are.
   if (v.id === 'soldier' || v.kind === 'person' || v.kind === 'hero') return 'soldier';
-  const own = game ? ownModelIn(game, v.id) : undefined;
+  // The recording's own game's model by its id, else by its name (an Arma 3 "Motorboat" is no other game's boat).
+  const own = game ? (ownGameModel(game, v.id) ?? ownGameModelNamed(game, v.id) ?? (v.name ? ownGameModelNamed(game, v.name) : undefined)) : undefined;
   if (own && CATALOG[own]) return own;
   const types = v.kind ? [v.kind] : [];
   const f = figureFor([v.id, v.name, ...[v.id, v.name].map(bareName)].filter(Boolean), types);

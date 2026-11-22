@@ -220,11 +220,16 @@ export function installModelPackIndex<E extends Entry & { domain?: string; cls?:
   // Reforger's `LAV25`): the alias table keeps the first, and a recording of the other game is drawn with its own
   // (`packGameOf`, `ownModelIn`).
   const claimed = new Map<string, Map<string, string>>();
+  // Each game's units by id, so one listed twice counts once (an id another unit of the game has as an alias still
+  // counts: Arma 3's "HEMTT Repair" shares its file with "HEMTT Box", which lists it, and keeps its own names).
+  const seen = new Set<string>();
+  namesByGame.clear();
   for (const [pi, pack] of index.packs.entries()) {
     if (!pack || typeof pack.game !== 'string' || typeof pack.units !== 'object') continue;
     for (const [unit, info] of Object.entries(pack.units)) {
-      const id = unit.toLowerCase();
-      if (!info || typeof info.tag !== 'string' || claimed.get(id)?.has(pack.game)) continue;
+      const id = unit.trim().toLowerCase();
+      if (!info || typeof info.tag !== 'string' || seen.has(`${pack.game}:${id}`)) continue;
+      seen.add(`${pack.game}:${id}`);
       // A static object (a barrier, a building, a container) and an item stand for no unit: `kinFor` gives none.
       const kin = kinFor(id, info, entry, aliases, byClass);
       if (!kin) continue;
@@ -232,7 +237,11 @@ export function installModelPackIndex<E extends Entry & { domain?: string; cls?:
       const ix = { tag: info.tag, at: `${MODEL_PACK_ROUTE}/u/${encodeURIComponent(pack.game)}/${encodeURIComponent(id)}` };
       indexed.set(name, ix);
       names.push(name);
-      for (const k of [id, ...(info.aliases ?? []).map((a) => a.toLowerCase())]) {
+      // The vehicle's names in its own game's recordings (an Arma 3 vehicle without a real counterpart: "Motorboat").
+      let named = namesByGame.get(pack.game);
+      if (!named) namesByGame.set(pack.game, (named = new Map()));
+      for (const n of [info.name, ...(info.names ?? [])]) if (typeof n === 'string' && n.trim() && !named.has(n.trim().toLowerCase())) named.set(n.trim().toLowerCase(), name);
+      for (const k of [id, ...(info.aliases ?? []).map((a) => a.trim().toLowerCase())]) {
         units[k] ??= name;
         let by = claimed.get(k);
         if (!by) claimed.set(k, (by = new Map()));
@@ -302,6 +311,8 @@ export function installModelPackIndex<E extends Entry & { domain?: string; cls?:
 const ownByGame = new Map<string, Map<string, string>>();
 /** Each pack's unit ids (and aliases), by game. */
 const idsByGame = new Map<string, Set<string>>();
+/** Each pack's vehicle names (real and display names, lower case), by game: the first unit of each name. */
+const namesByGame = new Map<string, Map<string, string>>();
 let packIndexStamp = 0;
 
 /** Changes whenever a model packs' index is installed: what `packGameOf` and `ownModelIn` answered may have changed. */
@@ -332,6 +343,30 @@ export function packGameOf(names: Iterable<string>): string | null {
  */
 export function ownModelIn(game: string, id: string): string | undefined {
   return ownByGame.get(id.toLowerCase())?.get(game);
+}
+
+/**
+ * The model `game`'s pack has of a name (a unit id or an alias of one), as the recording of that game draws it: its
+ * own game's model before any figure another of the recording's names would find (an Arma 3 recording names a vehicle
+ * by its real counterpart, "Patria AMV", a catalogue figure, beside its own name, "AMV-7 Marshall", the pack's).
+ * Undefined where `game`'s pack has no unit of that name.
+ */
+export function ownGameModel(game: string, id: string): string | undefined {
+  const k = id.trim().toLowerCase();
+  const own = ownByGame.get(k)?.get(game);
+  if (own) return own;
+  if (!idsByGame.get(game)?.has(k)) return undefined;
+  const a = aliasTable?.[k];
+  return a && a.includes(`@model:${game}:`) ? a : undefined;
+}
+
+/**
+ * The model `game`'s pack has of a vehicle by its name (a real or display name, `name` and `names` in the pack), for
+ * names no unit has as an id or alias: asked after `ownGameModel` has had every name of a row, so the most particular
+ * name wins ("HEMTT Fuel" before "HEMTT").
+ */
+export function ownGameModelNamed(game: string, name: string): string | undefined {
+  return namesByGame.get(game)?.get(name.trim().toLowerCase());
 }
 
 /**
@@ -444,6 +479,7 @@ export function removeFigurePack<E extends Entry>(catalog: Record<string, E>, bu
   aliased.clear();
   ownByGame.clear();
   idsByGame.clear();
+  namesByGame.clear();
   indexed.clear();
   fetched.clear();
   fetching.clear();

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { figureFromModelGlb, isOwnModel, kinFor, modelVariantName, packSide, platesFromModelGlb, sidesMeet, vehicleKey, type ModelPackIndex } from './modelpack';
 import { buildMeshFigure } from './meshfig';
-import { installModelPackIndex, ownModelIn, packGameOf, removeFigurePack } from './figurepack';
+import { installModelPackIndex, ownGameModel, ownGameModelNamed, ownModelIn, packGameOf, removeFigurePack } from './figurepack';
 import type { Template } from './kit';
 
 /** A box as a glb mesh: 8 corners, 12 triangles. */
@@ -199,9 +199,63 @@ describe('model pack', () => {
     expect(ownModelIn('battlefield-4', 'LAV25')).toBe(bf4);
     expect(ownModelIn('arma-reforger', 'M1025')).toBeUndefined();
     expect(ownModelIn('warthunder', 'LAV25')).toBeUndefined();
+    // The recording's own game's model of any of its names, an id of one pack alone too.
+    expect(ownGameModel('arma-reforger', 'LAV25')).toBe(reforger);
+    expect(ownGameModel('arma-reforger', 'm1025')).toBe(aliases.m1025);
+    expect(aliases.m1025).toContain('@model:arma-reforger:');
+    expect(ownGameModel('battlefield-4', 'M1025')).toBeUndefined();
     removeFigurePack(catalog);
     expect(ownModelIn('arma-reforger', 'LAV25')).toBeUndefined();
+    expect(ownGameModel('arma-reforger', 'M1025')).toBeUndefined();
     expect(aliases.lav25).toBe('lav-25');
+  });
+
+  it("draws an Arma 3 vehicle as its own model, not its real counterpart's figure", () => {
+    const own = (): Template => ({ team: new Float32Array(0), fixed: new Float32Array(0), min: [0, 0, 0], max: [1, 1, 1], anchor: 'ground', triangles: 0 });
+    const catalog: Record<string, { domain: string; cls: string; build: () => Template }> = {
+      'patria-amv': { domain: 'ground', cls: 'apc-wheeled', build: own },
+      ifv: { domain: 'ground', cls: 'ifv', build: own },
+      truck: { domain: 'ground', cls: 'truck', build: own },
+      'patrol-boat': { domain: 'sea', cls: 'patrol-boat', build: own },
+    };
+    const aliases: Record<string, string> = {};
+    const truck = (name: string, al: string[]) => ({ tag: name, domain: 'ground', kind: 'truck', name: 'HEMTT', names: [name], aliases: al });
+    const index: ModelPackIndex = {
+      version: 1,
+      packs: [
+        // Another game's boat that answers to "motorboat".
+        { game: 'othergame', units: { s38: { tag: 'w', domain: 'sea', kind: 'boat', name: 'S-38', aliases: ['motorboat'] } } },
+        {
+          game: 'arma3',
+          units: {
+            B_APC_Wheeled_01_cannon_F: { tag: 'a', domain: 'ground', kind: 'ifv', name: 'Patria AMV', names: ['AMV-7 Marshall'], aliases: ['amv-7 marshall'] },
+            // Two classes of one file list each other; a display name with a space at its end.
+            B_Truck_01_box_F: truck('HEMTT Box', ['B_Truck_01_Repair_F', 'hemtt box']),
+            B_Truck_01_Repair_F: truck('HEMTT Repair', ['B_Truck_01_box_F', 'hemtt repair']),
+            B_Truck_01_fuel_F: truck('HEMTT Fuel ', ['hemtt fuel ']),
+            // No real counterpart: its display name is its name, no alias.
+            C_Boat_Civil_01_F: { tag: 'b', domain: 'sea', kind: 'boat', name: 'Motorboat' },
+          },
+        },
+      ],
+    };
+    installModelPackIndex(catalog, index, undefined, aliases);
+    const model = 'ifv@model:arma3:b_apc_wheeled_01_cannon_f';
+    // The recording names it "Patria AMV" (Unit, the real vehicle: a figure of its own) and "AMV-7 Marshall" (Vehicle).
+    expect(packGameOf(['Patria AMV', 'AMV-7 Marshall'])).toBe('arma3');
+    expect(ownGameModel('arma3', 'AMV-7 Marshall')).toBe(model);
+    expect(ownGameModel('arma3', 'b_apc_wheeled_01_cannon_f')).toBe(model);
+    expect(ownGameModel('warthunder', 'AMV-7 Marshall')).toBeUndefined();
+    expect(ownGameModel('arma3', 'HEMTT Repair')).toBe('truck@model:arma3:b_truck_01_repair_f');
+    expect(ownGameModel('arma3', 'HEMTT Fuel')).toBe('truck@model:arma3:b_truck_01_fuel_f');
+    // By name only after every id: "HEMTT" is the first HEMTT's; "Motorboat" this game's, not the other game's boat.
+    expect(ownGameModel('arma3', 'HEMTT')).toBeUndefined();
+    expect(ownGameModelNamed('arma3', 'HEMTT')).toBe('truck@model:arma3:b_truck_01_box_f');
+    expect(ownGameModel('arma3', 'Motorboat')).toBeUndefined();
+    expect(ownGameModelNamed('arma3', 'Motorboat')).toBe('patrol-boat@model:arma3:c_boat_civil_01_f');
+    expect(ownGameModelNamed('arma3', 'Patria AMV')).toBe(model);
+    removeFigurePack(catalog);
+    expect(ownGameModelNamed('arma3', 'Motorboat')).toBeUndefined();
   });
 
   it('finds a stand-in figure by the type word when the unit has no alias', () => {

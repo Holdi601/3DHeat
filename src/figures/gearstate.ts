@@ -11,7 +11,7 @@
  */
 
 import type { Dataset } from '../state/types';
-import { personRows } from '../data/flight';
+import { personRowsSteps } from '../data/flight';
 import { sliced, type SliceJob } from '../data/slices';
 
 /** On the ground below this height, metres. */
@@ -74,17 +74,20 @@ export function gearUpKeys(d: Dataset, c: GearColumns, rows: ArrayLike<number>, 
   }
 }
 
-/** Rows beyond which the CPU figures (small loads; larger ones are the GPU tracks') leave the gear down. */
-const ROWS_ESTIMATED = 500_000;
 const rowCache = new WeakMap<Dataset, Uint8Array | null>();
 const rowJobs = new WeakMap<Dataset, SliceJob<Uint8Array | null>>();
 
+/** `gearUpRows`' bits: up by an aeroplane's limits, up by a helicopter's. */
+export const GEAR_UP_PLANE = 1;
+export const GEAR_UP_HELI = 2;
+
 /**
  * Whether the gear is up at a dataset row, for the CPU figures (`replay.ts`): the gear column where it says, else the
- * same estimate as the tracks' keys, worked out once for the whole dataset on first asking, a slice a frame
- * (`undefined` meanwhile: the gear stays down; the first model with gear to arrive while a recording played held a
- * frame for it). The CPU figures draw small loads; a larger one keeps its gear down. Null when the data can say
- * nothing. Ask once a frame: each asking works a step at least.
+ * same estimate as the tracks' keys, by an aeroplane's limits (`GEAR_UP_PLANE`) and by a helicopter's
+ * (`GEAR_UP_HELI`), worked out once for the whole dataset on first asking, a slice a frame (`undefined` meanwhile:
+ * the gear stays down; the first model with gear to arrive while a recording played held a frame for it). The CPU
+ * figures draw loads of few units, however many rows (an Arma recording: a few hundred units, a million rows). Null
+ * when the data can say nothing. Ask once a frame: each asking works a step at least.
  */
 export function gearUpRows(d: Dataset): Uint8Array | null | undefined {
   return sliced(rowCache, rowJobs, d, () => gearRowsSteps(d));
@@ -92,18 +95,23 @@ export function gearUpRows(d: Dataset): Uint8Array | null | undefined {
 
 function* gearRowsSteps(d: Dataset): SliceJob<Uint8Array | null> {
   const c = gearColumns(d);
-  if (!c || !d.personId || d.count > ROWS_ESTIMATED) return null;
-  const pr = personRows(d);
-  yield;
+  if (!c || !d.personId) return null;
+  const pr = yield* personRowsSteps(d);
   if (!pr) return null;
   const up = new Uint8Array(d.count);
-  let tmp = new Uint8Array(0);
+  let plane = new Uint8Array(0);
+  let heli = new Uint8Array(0);
+  const units = d.entitySize ? d.entitySize / 0.8 : 1;
   let since = 0;
   for (let p = 0; p + 1 < pr.start.length; p++) {
     const rows = pr.rows.subarray(pr.start[p], pr.start[p + 1]);
-    if (tmp.length < rows.length) tmp = new Uint8Array(rows.length);
-    gearUpKeys(d, c, rows, d.entitySize ? d.entitySize / 0.8 : 1, false, tmp, 0);
-    for (let k = 0; k < rows.length; k++) up[rows[k]] = tmp[k];
+    if (plane.length < rows.length) {
+      plane = new Uint8Array(rows.length);
+      heli = new Uint8Array(rows.length);
+    }
+    gearUpKeys(d, c, rows, units, false, plane, 0);
+    gearUpKeys(d, c, rows, units, true, heli, 0);
+    for (let k = 0; k < rows.length; k++) up[rows[k]] = (plane[k] ? GEAR_UP_PLANE : 0) | (heli[k] ? GEAR_UP_HELI : 0);
     if ((since += rows.length) > 0x4000) {
       since = 0;
       yield;
