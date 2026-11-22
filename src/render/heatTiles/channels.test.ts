@@ -52,6 +52,22 @@ describe('heat tile channels', () => {
     expect(Array.from(w.w.slice(4))).toEqual(Array.from(new Float32Array([1, a, b, L])));
   });
 
+  it('the other channel: on no side of the difference, neutral in team colours, never a group', () => {
+    const names = ['blue', 'red', ''];
+    // Tiles alone, no side lists: the named channels split as the store's default (first half +).
+    const d = tileChannelWeights(rules({ names, other: true, mode: 'heat-difference' }))!;
+    expect(Array.from(d.w)).toEqual([1, -1, 0]);
+    const t = tileChannelWeights(rules({ names, other: true, mode: 'heat-teams', teamColors: true }))!;
+    // Two groups' colours, as with two named channels; the other one without hue.
+    expect(Array.from(t.w.slice(4, 8))).toEqual(Array.from(new Float32Array([1, teamHeatLab(1, 2)[1], teamHeatLab(1, 2)[2], teamHeatLab(1, 2)[0]])));
+    expect(Array.from(t.w.slice(8))).toEqual(Array.from(new Float32Array([1, 0, 0, 0.7])));
+    // With rows: found by label; the other channel is no group even when a group is named "".
+    const g = tileChannelWeights(rules({ names, other: true, groups: ['red', ''], teamSign: new Int8Array([0, 0]) }));
+    expect(Array.from(g!.w)).toEqual([1, 0, 1]);
+    // Plain heat: the sum, no weights.
+    expect(tileChannelWeights(rules({ names, other: true }))).toBeNull();
+  });
+
   it('decodes a split tile with weights, one component and four', () => {
     const bytes = new Uint8Array(readFileSync(resolve(__dirname, '../../../native/vectors/tiles/tile.bin')));
     // Cell 1 holds 3 and 4 in the two channels.

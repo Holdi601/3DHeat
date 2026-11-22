@@ -649,7 +649,9 @@ message HeatTileQuery {
   string y = 4;
   // The filter, the time window as a range on the time column.
   repeated RowFilterClause filter = 5;
-  // Optional: one channel per listed value of this text column.
+  // Optional: one channel per listed value of this text column (at most 15),
+  // and one more for every other value and none. No values listed: the column's
+  // most common values (in a sample of the row groups), sorted.
   string split = 6;
   repeated string split_values = 7;
   // The finest level built (0-7); 0 picks the core's default.
@@ -691,6 +693,8 @@ message HeatPyramid {
   string error = 20;
   // Answered from the cache.
   bool cached = 21;
+  // The last channel holds a split's other rows (its name is empty).
+  bool other_channel = 22;
 }
 
 // A session member reads only pyramids shared with it: the host's (`share`)

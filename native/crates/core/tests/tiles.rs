@@ -108,13 +108,15 @@ fn pyramid_counts_and_deltas() {
         })
         .collect();
     let store = Arc::new(TileStore::open(dir.join("cache"), 1 << 30).unwrap());
-    let split = Some(Split { column: "team".into(), values: vec!["red".into(), "blue".into()] });
+    // "red" listed: blue rows go to the other channel.
+    let split = Some(Split { column: "team".into(), values: vec!["red".into()] });
     let q = |filter: Vec<Clause>| TileQuery { files: files.clone(), x: "x".into(), y: "y".into(), filter, split: split.clone(), leaf_level: 1 };
 
     // Full: every row in its cell and channel.
     let all = wait(&store, &q(vec![]));
     assert_eq!(all.meta.how, "full");
     assert_eq!(all.meta.rows_counted, 15_000);
+    assert_eq!((all.meta.channels, all.meta.other, all.meta.channel_names.clone()), (2, true, vec!["red".to_string(), String::new()]));
     let m = &all.meta;
     let n = TILE << m.leaf_level;
     let brute = |lo: f64, hi: f64| {
@@ -152,6 +154,17 @@ fn pyramid_counts_and_deltas() {
     // Asked again: cached.
     let again = store.query(q(w(10_600.0, 11_900.0))).unwrap();
     assert!(again.cached && again.complete && again.meta.how == "delta");
+
+    // No values listed: the column's values found in the rows, sorted, then the other channel (empty here).
+    let auto = TileQuery { split: Some(Split { column: "team".into(), values: vec![] }), ..q(vec![]) };
+    let st = wait(&store, &auto);
+    assert_eq!(st.meta.channel_names, vec!["blue".to_string(), "red".to_string(), String::new()]);
+    let c = leaf_counts(&store, &st.meta.key, st.meta.leaf_level, 3);
+    let plane = n * n;
+    let b = brute(f64::NEG_INFINITY, f64::INFINITY);
+    assert_eq!(&c[..plane], &b[plane..]);
+    assert_eq!(&c[plane..2 * plane], &b[..plane]);
+    assert!(c[2 * plane..].iter().all(|&v| v == 0));
     let _ = std::fs::remove_dir_all(&dir);
 }
 

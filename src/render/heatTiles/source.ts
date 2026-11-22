@@ -22,6 +22,8 @@ export interface PyramidInfo extends PyramidFrame {
   error: string;
   /** The split column's value of each channel (one empty name without a split). */
   channelNames?: string[];
+  /** The last channel holds the split's rows of any other value (or none); its name is empty. */
+  otherChannel?: boolean;
 }
 
 export interface TileBatch {
@@ -91,6 +93,10 @@ export interface TileKernel extends SpriteSize {
   smoothRamp: boolean;
   /** Keep each sprite's heat when the pixel clamp resizes it (the rows' `zoomInvariant`). */
   keepMass: boolean;
+  /** The ramp's custom curve (`state/curve.ts` LUT, centre first) in place of falloff/smooth; null: none. */
+  curve?: Float32Array | null;
+  /** Changes when `curve`'s values do (the LUT is reused in place). */
+  curveKey?: string;
 }
 
 /** A drawn cell's sprite at least this many cells wide: past the leaf, cells are smooth blobs, not dots. */

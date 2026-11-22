@@ -817,7 +817,7 @@ impl Core {
         if !access.paths {
             level = level.min(TILE_LEVEL_REMOTE);
         }
-        let split = (!q.split.is_empty()).then(|| crate::tiles::Split { column: q.split.clone(), values: q.split_values.iter().take(16).cloned().collect() });
+        let split = (!q.split.is_empty()).then(|| crate::tiles::Split { column: q.split.clone(), values: q.split_values.iter().take(crate::tiles::SPLIT_NAMED).cloned().collect() });
         let query = crate::tiles::TileQuery { files, x: q.x, y: q.y, filter: clauses_of(&q.filter), split, leaf_level: level };
         let store = self.tile_store()?;
         if !access.paths && store.build_of(&query.key()).is_none() && store.builds_running() >= TILE_BUILDS_REMOTE {
@@ -860,6 +860,7 @@ fn pyramid_of(st: crate::tiles::Status) -> Body {
         leaf_level: m.leaf_level,
         channels: m.channels,
         channel_names: m.channel_names,
+        other_channel: m.other,
         rows_total: m.rows_total,
         rows_counted: m.rows_counted,
         fraction: st.fraction,

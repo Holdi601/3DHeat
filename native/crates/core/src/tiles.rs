@@ -62,6 +62,12 @@ pub const DEFAULT_LEVEL: u32 = 5;
 pub const ESTIMATE_LEVELS: u32 = 4;
 /// Share of the row groups read before the estimate is published.
 const SAMPLE_SHARE: usize = 16;
+/// A split's named channels at most; every other value (and null) goes to one more, "other".
+pub const SPLIT_NAMED: usize = 15;
+/// A split's grid and levels stay under this (a channel more is a grid more): past it the leaf is coarser.
+const SPLIT_GRID_BYTES: u64 = 2 << 30;
+/// Row groups (of the shuffled order) whose split column names the channels of a split without listed values.
+const DISCOVER_GROUPS: usize = 256;
 
 /// `level << 56 | y << 28 | x`.
 pub fn tile_id(level: u32, x: u32, y: u32) -> u64 {
@@ -72,6 +78,9 @@ pub fn tile_of(id: u64) -> (u32, u32, u32) {
     ((id >> 56) as u32, ((id >> 28) & 0x0fff_ffff) as u32, (id & 0x0fff_ffff) as u32)
 }
 
+/// One channel per value of a text column, and one more ("other") for the rows of
+/// any other value or none. No values: the column's most common ones (at most
+/// `SPLIT_NAMED`, in the rows a sample of the row groups keeps), sorted.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Split {
     pub column: String,
@@ -128,7 +137,7 @@ impl TileQuery {
     pub fn base(&self) -> String {
         let mut files: Vec<String> = self.files.iter().map(|p| file_stamp(p)).collect();
         files.sort();
-        let split = self.split.as_ref().map(|s| format!("{}\u{1f}{}", s.column, s.values.join("\u{1e}"))).unwrap_or_default();
+        let split = self.split.as_ref().map(|s| format!("{}\u{1f}{}\u{1f}other", s.column, s.values.join("\u{1e}"))).unwrap_or_default();
         format!("heat-tiles-1\u{1d}{}\u{1d}{}\u{1d}{}\u{1d}{}\u{1d}{}", files.join("\u{1e}"), self.x, self.y, split, self.leaf_level)
     }
 
@@ -152,6 +161,9 @@ pub struct Meta {
     pub leaf_level: u32,
     pub channels: u32,
     pub channel_names: Vec<String>,
+    /// The last channel holds a split's other rows (its name is empty).
+    #[serde(default)]
+    pub other: bool,
     pub rows_total: u64,
     pub rows_counted: u64,
     pub level_max: Vec<u32>,
@@ -368,9 +380,10 @@ fn extent(sources: &[Source], x: &str, y: &str) -> Result<(f64, f64, f64)> {
 }
 
 /// Bins one row group's rows that `clauses` keep, adding `sign` (1, or u32::MAX to subtract);
-/// `touched` (a bit per leaf tile) gets the tiles a row went into.
+/// `touched` (a bit per leaf tile) gets the tiles a row went into. With a split,
+/// `names` are its named channels; the rows of any other value go to the channel after them.
 #[allow(clippy::too_many_arguments)]
-fn bin_group(src: &Source, g: usize, q: &TileQuery, clauses: &[Clause], frame: &Frame, grid: &[AtomicU32], sign: u32, touched: Option<&[AtomicBits]>) -> Result<u64> {
+fn bin_group(src: &Source, g: usize, q: &TileQuery, names: &[String], clauses: &[Clause], frame: &Frame, grid: &[AtomicU32], sign: u32, touched: Option<&[AtomicBits]>) -> Result<u64> {
     let mut specs = vec![Spec { name: q.x.clone(), kind: Kind::F64 }, Spec { name: q.y.clone(), kind: Kind::F64 }];
     if let Some(s) = &q.split {
         specs.push(Spec { name: s.column.clone(), kind: Kind::Dict });
@@ -378,8 +391,8 @@ fn bin_group(src: &Source, g: usize, q: &TileQuery, clauses: &[Clause], frame: &
     let cols = src.file.read_group_where(g, &specs, clauses)?;
     let (Out::F64(xs), Out::F64(ys)) = (&cols[0], &cols[1]) else { bail!("x/y not numeric") };
     let channel: Option<(Vec<i32>, &[u32])> = match (&q.split, cols.get(2)) {
-        (Some(s), Some(Out::Dict(d))) => {
-            let map = d.labels.iter().map(|l| s.values.iter().position(|v| v == l).map(|i| i as i32).unwrap_or(-1)).collect();
+        (Some(_), Some(Out::Dict(d))) => {
+            let map = d.labels.iter().map(|l| names.iter().position(|v| v == l).unwrap_or(names.len()) as i32).collect();
             Some((map, &d.ids))
         }
         _ => None,
@@ -421,6 +434,42 @@ fn bin_group(src: &Source, g: usize, q: &TileQuery, clauses: &[Clause], frame: &
         }
     }
     Ok(counted)
+}
+
+/// A split's named channels when it lists none: its column's most common values
+/// in the rows `clauses` keep of the first groups of `order`, sorted.
+fn discover(sources: &[Source], order: &[(usize, usize)], column: &str, clauses: &[Clause]) -> Result<Vec<String>> {
+    let spec = [Spec { name: column.to_owned(), kind: Kind::Dict }];
+    let counts = order[..order.len().min(DISCOVER_GROUPS)]
+        .par_iter()
+        .map(|&(f, g)| -> Result<HashMap<String, u64>> {
+            let cols = sources[f].file.read_group_where(g, &spec, clauses)?;
+            let mut m = HashMap::new();
+            if let Some(Out::Dict(d)) = cols.first() {
+                let mut per = vec![0u64; d.labels.len()];
+                for &id in &d.ids {
+                    per[id as usize] += 1;
+                }
+                for (l, c) in d.labels.iter().zip(per) {
+                    if c > 0 {
+                        *m.entry(l.clone()).or_insert(0) += c;
+                    }
+                }
+            }
+            Ok(m)
+        })
+        .try_reduce(HashMap::new, |mut a, b| {
+            for (k, v) in b {
+                *a.entry(k).or_insert(0) += v;
+            }
+            Ok(a)
+        })?;
+    let mut v: Vec<(String, u64)> = counts.into_iter().collect();
+    v.sort_by(|a, b| b.1.cmp(&a.1).then_with(|| a.0.cmp(&b.0)));
+    // Null reads as "": those rows are the other channel's.
+    let mut names: Vec<String> = v.into_iter().filter(|(l, _)| !l.is_empty()).take(SPLIT_NAMED).map(|(l, _)| l).collect();
+    names.sort();
+    Ok(names)
 }
 
 /// Visit order: a fixed shuffle, so any prefix is a fair sample of the files.
@@ -532,15 +581,30 @@ fn fitting_level(want: u32, channels: usize, budget: u64) -> u32 {
 fn run_build(q: TileQuery, key: String, dir: PathBuf, base: Option<(Meta, PathBuf)>, build: Arc<Build>, threads: Option<&rayon::ThreadPool>) -> Result<Meta> {
     let t0 = Instant::now();
     let sources = open_sources(&q.files)?;
-    let channels = q.split.as_ref().map(|s| s.values.len().clamp(1, 16)).unwrap_or(1);
-    let channel_names = q.split.as_ref().map(|s| s.values.clone()).unwrap_or_else(|| vec!["".into()]);
     let filter = canonical(&q.filter);
     let rows_total: u64 = sources.iter().map(|s| s.file.rows()).sum();
+    let all: Vec<(usize, usize)> = sources.iter().enumerate().flat_map(|(f, s)| (0..s.file.row_groups()).map(move |g| (f, g))).collect();
+    // Groups the statistics rule out hold no rows of the filter's; the rest in a fixed shuffle.
+    let order = shuffled(all.iter().copied().filter(|&(f, g)| sources[f].file.group_may_match(g, &filter)).collect());
+    // A split's named channels (a delta keeps its base's), then one for the other rows.
+    let names: Vec<String> = match (&q.split, &base) {
+        (None, _) => Vec::new(),
+        (Some(_), Some((m, _))) => m.channel_names[..m.channel_names.len().saturating_sub(m.other as usize)].to_vec(),
+        (Some(s), None) if s.values.is_empty() => discover(&sources, &order, &s.column, &filter)?,
+        (Some(s), None) => s.values.iter().take(SPLIT_NAMED).cloned().collect(),
+    };
+    let other = q.split.is_some();
+    let channels = names.len() + other as usize;
+    let channels = channels.max(1);
+    let channel_names = if other { names.iter().cloned().chain([String::new()]).collect() } else { vec![String::new()] };
     let (x0, y0, size, leaf) = match &base {
         Some((m, _)) => (m.x0, m.y0, m.size, m.leaf_level),
         None => {
             let (x0, y0, size) = extent(&sources, &q.x, &q.y)?;
-            let budget = (crate::memory::available_bytes() / 3).max(256 << 20);
+            let mut budget = (crate::memory::available_bytes() / 3).max(256 << 20);
+            if channels > 1 {
+                budget = budget.min(SPLIT_GRID_BYTES);
+            }
             (x0, y0, size, fitting_level(q.leaf_level, channels, budget))
         }
     };
@@ -556,10 +620,10 @@ fn run_build(q: TileQuery, key: String, dir: PathBuf, base: Option<(Meta, PathBu
         leaf_level: leaf,
         channels: channels as u32,
         channel_names,
+        other,
         rows_total,
         ..Default::default()
     };
-    let all: Vec<(usize, usize)> = sources.iter().enumerate().flat_map(|(f, s)| (0..s.file.row_groups()).map(move |g| (f, g))).collect();
     meta.groups = all.len() as u64;
     build.status.lock().unwrap().meta = meta.clone();
 
@@ -573,7 +637,7 @@ fn run_build(q: TileQuery, key: String, dir: PathBuf, base: Option<(Meta, PathBu
                 if failed.lock().unwrap().is_some() {
                     return;
                 }
-                match bin_group(&sources[f], g, &q, clauses, &frame, grid, sign, touched) {
+                match bin_group(&sources[f], g, &q, &names, clauses, &frame, grid, sign, touched) {
                     Ok(c) => {
                         if sign == 1 {
                             counted.fetch_add(c, Ordering::Relaxed);
@@ -616,10 +680,7 @@ fn run_build(q: TileQuery, key: String, dir: PathBuf, base: Option<(Meta, PathBu
         pack_delta(&grid, &bits, bm, bdir)?
     } else {
         meta.how = "full".into();
-        // Groups the statistics rule out hold no rows of the filter's.
-        let candidates: Vec<(usize, usize)> = all.iter().copied().filter(|&(f, g)| sources[f].file.group_may_match(g, &filter)).collect();
-        let candidate_rows: u64 = candidates.iter().map(|&(f, g)| sources[f].file.group_rows(g)).sum();
-        let order = shuffled(candidates);
+        let candidate_rows: u64 = order.iter().map(|&(f, g)| sources[f].file.group_rows(g)).sum();
         let first = order.len().div_ceil(SAMPLE_SHARE).max(1).min(order.len());
         let atoms = grid.atomics();
         visit(&order[..first], &filter, 1, atoms, None);
@@ -1118,6 +1179,14 @@ mod tests {
         let l = pyramid(g.cells, 1, 1);
         assert_eq!(l[0].iter().map(|&v| v as u64).sum::<u64>(), 6);
         assert_eq!(l[0][150 * TILE + 200], 5);
+    }
+
+    #[test]
+    fn a_split_keeps_its_grid_bounded() {
+        // Two teams and the other channel keep the plain leaf; more channels give up levels, never memory.
+        assert_eq!(fitting_level(5, 3, SPLIT_GRID_BYTES), 5);
+        assert_eq!(fitting_level(5, 4, SPLIT_GRID_BYTES), 4);
+        assert_eq!(fitting_level(5, SPLIT_NAMED + 1, SPLIT_GRID_BYTES), 3);
     }
 
     #[test]

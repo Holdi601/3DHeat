@@ -10,7 +10,7 @@
  * (no rows loaded) the channel's place in the list is its group id.
  */
 
-import { teamHeatLab } from '../colors';
+import { TEAM_LIGHTNESS, teamHeatLab } from '../colors';
 import type { ChannelWeights } from './tileFormat';
 
 export interface ChannelRules {
@@ -21,7 +21,10 @@ export interface ChannelRules {
   mode: string;
   /** Per group: +1, -1 or 0 (frameSignTables); null draws every group, unsigned. */
   teamSign: Int8Array | null;
-  /** The group lists of the difference's sides: used when there is no group table (tiles alone). */
+  /**
+   * The group lists of the difference's sides: used when there is no group table (tiles alone);
+   * both empty splits the named channels as the store's default does (first half +, rest -).
+   */
   positive: readonly number[];
   negative: readonly number[];
   visibility: Readonly<Record<number, boolean>>;
@@ -29,7 +32,12 @@ export interface ChannelRules {
   splitMode: number;
   splitScale: readonly [number, number];
   teamColors: boolean;
+  /** The last channel holds the rows of no listed group (`PyramidInfo.otherChannel`). */
+  other?: boolean;
 }
+
+/** The other channel's colour in team colours: no hue, the team circle's lightness. */
+const OTHER_LAB: [number, number, number] = [TEAM_LIGHTNESS, 0, 0];
 
 /** The weights for these rules, or null when the plain sum is what the rows would draw. */
 export function tileChannelWeights(r: ChannelRules): ChannelWeights | null {
@@ -37,14 +45,17 @@ export function tileChannelWeights(r: ChannelRules): ChannelWeights | null {
   if (n < 2) return null;
   const difference = r.mode === 'heat-difference' && r.splitMode === 0;
   const components = r.teamColors ? 4 : 1;
-  const count = r.groups ? r.groups.length : n;
+  const named = r.other ? n - 1 : n;
+  const count = r.groups ? r.groups.length : named;
   const w = new Float32Array(n * components);
   let plain = !r.teamColors;
   for (let c = 0; c < n; c++) {
-    const id = r.groups ? r.groups.indexOf(r.names[c]) : c;
+    // The other channel's rows belong to no group the rows name (or to one past the split's channels).
+    const id = c >= named ? -1 : r.groups ? r.groups.indexOf(r.names[c]) : c;
     let sign: number;
     if (id < 0) sign = difference ? 0 : 1;
     else if (r.teamSign) sign = id < r.teamSign.length ? r.teamSign[id] : 1;
+    else if (difference && r.positive.length + r.negative.length === 0) sign = id < Math.max(1, Math.ceil(named / 2)) ? 1 : -1;
     else if (difference) sign = r.positive.includes(id) ? 1 : r.negative.includes(id) ? -1 : 0;
     else sign = r.visibility[id] === false ? 0 : 1;
     if (difference && !r.teamSign && r.visibility[id] === false) sign = 0;
@@ -54,7 +65,7 @@ export function tileChannelWeights(r: ChannelRules): ChannelWeights | null {
       w[c] = sign;
       continue;
     }
-    const [L, a, b] = teamHeatLab(Math.max(0, id), count);
+    const [L, a, b] = id < 0 ? OTHER_LAB : teamHeatLab(id, count);
     w.set([sign, sign * a, sign * b, sign * L], c * 4);
   }
   if (plain) return null;

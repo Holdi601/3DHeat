@@ -4391,11 +4391,12 @@ export class Engine {
           splitMode: split.mode,
           splitScale,
           teamColors,
+          other: !!this.heatTileSource.info?.otherChannel,
         }),
       );
       const perspective = s.camera.projection === 'perspective';
       const pxPerUnit = this.projArr[5] * height * 0.5;
-      // The cells drawn as the rows' sprites (heatTiles/source.ts, `kernel`); the ramp's curve is not followed.
+      // The cells drawn as the rows' sprites (heatTiles/source.ts, `kernel`), the ramp's curve too.
       const d = this.heatTileSource.frame(
         { viewProj: this.viewProjArr, cameraPos: this.camPos, perspective, pxPerUnit, cellPx: 0, maxTiles: 0 },
         {
@@ -4409,6 +4410,8 @@ export class Engine {
           falloff: h.falloff,
           smoothRamp: h.smoothRamp,
           keepMass: h.zoomInvariant,
+          curve: h.useCurve ? this.curveLut : null,
+          curveKey: this.curveSig,
         },
       );
       if (d) {

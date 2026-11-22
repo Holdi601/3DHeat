@@ -22,6 +22,7 @@
 import { TEAM_LIGHTNESS } from '../colors';
 import { KERNEL_MIN_CELLS, type HeatTileDraw } from '../heatTiles/source';
 import { TILE } from '../heatTiles/tileFormat';
+import { CURVE_LUT_SIZE } from '../../state/curve';
 
 const LAYERS = 192;
 /** Half-float RGBA layers (512 KB each), made the first time team colours draw. */
@@ -38,12 +39,14 @@ struct U {
   ground: f32, scale: f32, kernelOn: f32, perspective: f32,
   radius: f32, minPx: f32, maxPx: f32, pxPerUnit: f32,
   centre: f32, edge: f32, falloff: f32, smoothRamp: f32,
-  keepMass: f32, neutralL: f32, k2: f32, k3: f32,
+  keepMass: f32, neutralL: f32, useCurve: f32, k3: f32,
 };
 struct Inst { rect: vec4<f32>, uv: vec4<f32>, k: f32, layer: f32, cell: f32, reach: f32 };
 @group(0) @binding(0) var<uniform> u: U;
 @group(0) @binding(1) var<storage, read> inst: array<Inst>;
 @group(0) @binding(2) var tiles: texture_2d_array<f32>;
+// The ramp's curve as the rows' splat reads it (centre at 0, rim at the end), linear between entries.
+@group(0) @binding(3) var<storage, read> curve: array<f32, ${CURVE_LUT_SIZE}>;
 struct VOut {
   @builtin(position) pos: vec4<f32>,
   @location(0) uv: vec2<f32>,
@@ -81,8 +84,15 @@ fn cell(p: vec2<i32>, layer: i32) -> vec4<f32> {
   return vec4<f32>(v.r, 0.0, 0.0, 0.0);
 }
 fn ramp(d: f32) -> f32 {
-  var t = pow(1.0 - d, u.falloff);
-  if (u.smoothRamp > 0.5) { t = smoothstep(0.0, 1.0, t); }
+  var t: f32;
+  if (u.useCurve > 0.5) {
+    let f = clamp(d, 0.0, 1.0) * ${CURVE_LUT_SIZE - 1}.0;
+    let i = u32(floor(f));
+    t = mix(curve[i], curve[min(i + 1u, ${CURVE_LUT_SIZE - 1}u)], f - floor(f));
+  } else {
+    t = pow(1.0 - d, u.falloff);
+    if (u.smoothRamp > 0.5) { t = smoothstep(0.0, 1.0, t); }
+  }
   return mix(u.edge, u.centre, t);
 }
 fn shade(v: vec4<f32>) -> vec4<f32> {
@@ -196,9 +206,16 @@ export class GpuHeatTiles {
   private readonly heat: Bank;
   private rgba: Bank | null = null;
   private frame = 0;
+  private readonly curve: GPUBuffer;
+  private curveKey = '';
 
   constructor(private readonly device: GPUDevice) {
     this.heat = new Bank(device, false, LAYERS);
+    this.curve = device.createBuffer({
+      label: 'heat tiles curve',
+      size: CURVE_LUT_SIZE * 4,
+      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+    });
     this.uniform = device.createBuffer({
       label: 'heat tiles uniform',
       size: 128,
@@ -296,6 +313,13 @@ export class GpuHeatTiles {
     const k = d.kernel;
     if (k) {
       u.set([1, k.perspective ? 1 : 0, k.radius, k.minPx, k.maxPx, k.pxPerUnit, k.centre, k.edge, Math.max(0.01, k.falloff), k.smoothRamp ? 1 : 0, k.keepMass ? 1 : 0], 18);
+      if (k.curve && k.curve.length === CURVE_LUT_SIZE) {
+        u[30] = 1;
+        if (k.curveKey !== this.curveKey) {
+          this.curveKey = k.curveKey ?? '';
+          this.device.queue.writeBuffer(this.curve, 0, k.curve as unknown as BufferSource);
+        }
+      }
     }
     u[29] = format.startsWith('rgba') ? TEAM_LIGHTNESS : 0;
     this.device.queue.writeBuffer(this.uniform, 0, u as unknown as BufferSource);
@@ -307,6 +331,7 @@ export class GpuHeatTiles {
           { binding: 0, resource: { buffer: this.uniform } },
           { binding: 1, resource: { buffer: this.inst } },
           { binding: 2, resource: bank.view },
+          { binding: 3, resource: { buffer: this.curve } },
         ],
       });
       bank.bindFormat = format;
@@ -327,5 +352,6 @@ export class GpuHeatTiles {
     this.rgba?.destroy();
     this.uniform.destroy();
     this.inst.destroy();
+    this.curve.destroy();
   }
 }

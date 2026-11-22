@@ -10,6 +10,7 @@
 import { TEAM_LIGHTNESS } from '../colors';
 import { KERNEL_MIN_CELLS, type HeatTileDraw } from '../heatTiles/source';
 import { TILE } from '../heatTiles/tileFormat';
+import { CURVE_LUT_SIZE } from '../../state/curve';
 
 const LAYERS = 192;
 /** Half-float RGBA layers, made the first time team colours draw. */
@@ -47,6 +48,9 @@ uniform vec4 uUv;
 uniform float uCell;
 uniform float uKernelOn, uPersp, uRadius, uMinPx, uMaxPx, uPpu, uCentre, uEdge, uFalloff, uSmooth, uKeepMass, uNeutralL;
 uniform int uFour;
+// The ramp's curve as the rows' splat reads it (centre at 0, rim at the end), linear between entries.
+uniform float uUseCurve;
+uniform sampler2D uCurve;
 in vec2 vUv;
 in float vDepth;
 out vec4 outColor;
@@ -57,8 +61,15 @@ vec4 cell(ivec2 p) {
 // Heat alone: neutral in a team colour target (uNeutralL is 0 for a one-channel one).
 vec4 shade(vec4 v) { return uFour == 1 ? v : vec4(v.r, 0.0, 0.0, v.r * uNeutralL); }
 float ramp(float d) {
-  float t = pow(1.0 - d, uFalloff);
-  if (uSmooth > 0.5) t = smoothstep(0.0, 1.0, t);
+  float t;
+  if (uUseCurve > 0.5) {
+    float f = clamp(d, 0.0, 1.0) * ${CURVE_LUT_SIZE - 1}.0;
+    int i = int(floor(f));
+    t = mix(texelFetch(uCurve, ivec2(i, 0), 0).r, texelFetch(uCurve, ivec2(min(i + 1, ${CURVE_LUT_SIZE - 1}), 0), 0).r, f - floor(f));
+  } else {
+    t = pow(1.0 - d, uFalloff);
+    if (uSmooth > 0.5) t = smoothstep(0.0, 1.0, t);
+  }
   return mix(uEdge, uCentre, t);
 }
 void main() {
@@ -129,10 +140,19 @@ export class GlHeatTiles {
     gl.linkProgram(p);
     if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(`heat tiles program: ${gl.getProgramInfoLog(p)}`);
     this.prog = p;
-    this.loc = Object.fromEntries(['uViewProj', 'uGround', 'uRect', 'uUv', 'uTiles', 'uLayer', 'uK', 'uReach', 'uCell', 'uKernelOn', 'uPersp', 'uRadius', 'uMinPx', 'uMaxPx', 'uPpu', 'uCentre', 'uEdge', 'uFalloff', 'uSmooth', 'uKeepMass', 'uNeutralL', 'uFour'].map((n) => [n, gl.getUniformLocation(p, n)]));
+    this.loc = Object.fromEntries(['uViewProj', 'uGround', 'uRect', 'uUv', 'uTiles', 'uLayer', 'uK', 'uReach', 'uCell', 'uKernelOn', 'uPersp', 'uRadius', 'uMinPx', 'uMaxPx', 'uPpu', 'uCentre', 'uEdge', 'uFalloff', 'uSmooth', 'uKeepMass', 'uNeutralL', 'uFour', 'uUseCurve', 'uCurve'].map((n) => [n, gl.getUniformLocation(p, n)]));
     this.heat = this.bank(false, LAYERS);
     this.vao = gl.createVertexArray()!;
+    this.curve = gl.createTexture()!;
+    gl.bindTexture(gl.TEXTURE_2D, this.curve);
+    gl.texStorage2D(gl.TEXTURE_2D, 1, gl.R32F, CURVE_LUT_SIZE, 1);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.bindTexture(gl.TEXTURE_2D, null);
   }
+
+  private readonly curve: WebGLTexture;
+  private curveKey = '';
 
   private bank(four: boolean, layers: number): Bank {
     const gl = this.gl;
@@ -203,6 +223,17 @@ export class GlHeatTiles {
       gl.uniform1f(this.loc.uSmooth, k.smoothRamp ? 1 : 0);
       gl.uniform1f(this.loc.uKeepMass, k.keepMass ? 1 : 0);
     }
+    const curve = !!k?.curve && k.curve.length === CURVE_LUT_SIZE;
+    gl.uniform1f(this.loc.uUseCurve, curve ? 1 : 0);
+    gl.activeTexture(gl.TEXTURE1);
+    // Put back after: the renderer's own passes may count on what unit 1 holds (a state query, no GPU wait).
+    const unit1 = gl.getParameter(gl.TEXTURE_BINDING_2D) as WebGLTexture | null;
+    gl.bindTexture(gl.TEXTURE_2D, this.curve);
+    if (curve && k!.curveKey !== this.curveKey) {
+      this.curveKey = k!.curveKey ?? '';
+      gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, CURVE_LUT_SIZE, 1, gl.RED, gl.FLOAT, k!.curve!);
+    }
+    gl.uniform1i(this.loc.uCurve, 1);
     gl.activeTexture(gl.TEXTURE0);
     gl.uniform1i(this.loc.uTiles, 0);
     gl.enable(gl.BLEND);
@@ -230,6 +261,9 @@ export class GlHeatTiles {
     }
     gl.bindVertexArray(null);
     gl.disable(gl.BLEND);
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, unit1);
+    gl.activeTexture(gl.TEXTURE0);
   }
 
   dispose(): void {
@@ -237,5 +271,6 @@ export class GlHeatTiles {
     if (this.rgba) this.gl.deleteTexture(this.rgba.tex);
     this.gl.deleteProgram(this.prog);
     this.gl.deleteVertexArray(this.vao);
+    this.gl.deleteTexture(this.curve);
   }
 }

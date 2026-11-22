@@ -58,7 +58,29 @@ export interface TileEngine {
   frameAround(x: number, y: number, z: number, radius: number): void;
 }
 
-let current: { src: HeatTileSource; engine: TileEngine; timer: ReturnType<typeof setInterval>; share: TileHeatShare | null; following: string } | null = null;
+/** A pick drawn from tiles: what its query is made of, so a mode that tells groups apart can ask again split. */
+interface Pick {
+  files: File[];
+  mapping: ColumnMapping;
+  preview: SourcePreview | null;
+  share: boolean;
+  split: boolean;
+}
+
+let current: {
+  src: HeatTileSource;
+  engine: TileEngine;
+  timer: ReturnType<typeof setInterval>;
+  share: TileHeatShare | null;
+  following: string;
+  pick?: Pick;
+  unsubscribe?: () => void;
+} | null = null;
+
+/** Heat modes that draw each group in its own way: they want a pyramid split by the group column. */
+export function modeWantsSplit(mode: string): boolean {
+  return mode === 'heat-teams' || mode === 'heat-difference';
+}
 
 /** The shared document's state: the host's pyramid while it draws one, else nothing. */
 export const useTileHeatShare = create<{ doc: Partial<TileHeatShare> }>(() => ({ doc: {} }));
@@ -86,10 +108,10 @@ function publish(src: HeatTileSource, from: 'files' | 'session'): void {
  * camera frames the pyramid once its square is known. `share` puts it in the
  * session document for the members (files only).
  */
-export function startTileHeat(engine: TileEngine, transport: TileTransport, place: TilePlacement, from: 'files' | 'session', share = false): HeatTileSource {
+export function startTileHeat(engine: TileEngine, transport: TileTransport, place: TilePlacement, from: 'files' | 'session', share = false, frame = true): HeatTileSource {
   stopTileHeat();
   const src = new HeatTileSource(transport, place, {}, () => engine.invalidate(1));
-  let framed = false;
+  let framed = !frame;
   const tick = () => {
     if (current?.src !== src) return;
     const i = src.info;
@@ -98,8 +120,8 @@ export function startTileHeat(engine: TileEngine, transport: TileTransport, plac
       const cx = place.sx * (i.x0 + i.size / 2);
       const cz = place.sz * (i.y0 + i.size / 2);
       engine.frameAround(cx, place.ground, cz, (Math.abs(place.sx) * i.size) / 2);
-      if (current.share) useTileHeatShare.setState({ doc: { ...current.share, key: i.key } });
     }
+    if (current.share && i?.key && useTileHeatShare.getState().doc.key !== i.key) useTileHeatShare.setState({ doc: { ...current.share, key: i.key } });
     publish(src, from);
   };
   // A quarter second is often enough for a status line, and costs nothing on the frame path.
@@ -113,6 +135,7 @@ export function startTileHeat(engine: TileEngine, transport: TileTransport, plac
 export function stopTileHeat(): void {
   if (!current) return;
   clearInterval(current.timer);
+  current.unsubscribe?.();
   current.src.dispose();
   if (current.engine.heatTiles() === current.src) current.engine.setHeatTiles(null);
   if (current.share) useTileHeatShare.setState({ doc: {} });
@@ -151,8 +174,12 @@ export function tilesPossible(native: boolean, preview: SourcePreview | null, ma
   return native && preview?.format === 'parquet' && !!mapping && !!tilePlacement(mapping, preview);
 }
 
-/** The core's query for a pick: its files by token, the horizontal columns, the load's pre-filter. */
-export async function pickQuery(files: File[], mapping: ColumnMapping, preview: SourcePreview | null, share: boolean): Promise<{ query: HeatTileQueryInit; place: TilePlacement } | null> {
+/**
+ * The core's query for a pick: its files by token, the horizontal columns, the
+ * load's pre-filter; with `split`, a channel per value of the group column (the
+ * core finds the values, the rest in an "other" channel).
+ */
+export async function pickQuery(files: File[], mapping: ColumnMapping, preview: SourcePreview | null, share: boolean, split = false): Promise<{ query: HeatTileQueryInit; place: TilePlacement } | null> {
   const p = tilePlacement(mapping, preview);
   if (!p) return null;
   const { nativeRefs } = await import('../../data/native/files');
@@ -166,18 +193,52 @@ export async function pickQuery(files: File[], mapping: ColumnMapping, preview: 
       y: p.y,
       filter: activeClauses(mapping.rowFilter).map(clauseOf),
       share,
+      ...(split && mapping.teamId ? { split: mapping.teamId, splitValues: [] } : {}),
     },
     place: p.place,
   };
 }
 
-/** Heat from tiles for a pick, on this computer's core. False when it cannot be. */
-export async function startPickTileHeat(engine: TileEngine, files: File[], mapping: ColumnMapping, preview: SourcePreview | null, share: boolean): Promise<boolean> {
-  const q = await pickQuery(files, mapping, preview, share);
+/**
+ * Heat from tiles for a pick, on this computer's core. False when it cannot be.
+ * Split by the group column while the heat mode tells groups apart (`split`,
+ * else the store's mode); a later switch to such a mode asks again split, the
+ * camera left where it is. A split pyramid stays when the mode no longer needs
+ * it: summed, it is the plain heat.
+ */
+export async function startPickTileHeat(
+  engine: TileEngine,
+  files: File[],
+  mapping: ColumnMapping,
+  preview: SourcePreview | null,
+  share: boolean,
+  split?: boolean,
+  frame = true,
+): Promise<boolean> {
+  const { useStore } = await import('../../state/store');
+  const { heatModeFor } = await import('../../data/lines');
+  const modeNow = () => {
+    const s = useStore.getState();
+    return heatModeFor(s.mode, s.lines);
+  };
+  const wantSplit = !!mapping.teamId && (split ?? modeWantsSplit(modeNow()));
+  const q = await pickQuery(files, mapping, preview, share, wantSplit);
   if (!q) return false;
   const { coreEndpoint } = await import('../../data/native/core');
   const { heatTileTransport } = await import('./transport');
-  startTileHeat(engine, heatTileTransport(await coreEndpoint(), q.query), q.place, 'files', share);
+  const src = startTileHeat(engine, heatTileTransport(await coreEndpoint(), q.query), q.place, 'files', share, frame);
+  if (current?.src !== src) return true;
+  const pick: Pick = { files, mapping, preview, share, split: wantSplit };
+  current.pick = pick;
+  if (!wantSplit && mapping.teamId) {
+    current.unsubscribe = useStore.subscribe((s, prev) => {
+      if (s.mode === prev.mode && s.lines === prev.lines) return;
+      if (current?.pick !== pick || !modeWantsSplit(heatModeFor(s.mode, s.lines))) return;
+      current.unsubscribe?.();
+      current.unsubscribe = undefined;
+      void startPickTileHeat(engine, files, mapping, preview, share, true, false);
+    });
+  }
   return true;
 }
 
