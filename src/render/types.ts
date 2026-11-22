@@ -8,7 +8,8 @@ import type { Level } from './level';
 import type { WorldTile } from '../world/tileSet';
 import type { RateParams } from './rateMap';
 
-export type BackendKind = 'webgpu' | 'webgl2';
+/** `native`: the native app's own viewport (Stage 5, preview; src/render/native/nativeRenderer.ts). */
+export type BackendKind = 'webgpu' | 'webgl2' | 'native';
 
 /** Rows per stochastic sampling block. Contiguous so texture reads stay coalesced. */
 export const SAMPLE_BLOCK = 4096;

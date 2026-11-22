@@ -655,7 +655,7 @@ export interface LiveStats {
   candidateRows: number;
   /** Frames merged into the current progressive accumulation. */
   accumFrames: number;
-  backend: 'webgpu' | 'webgl2' | 'none';
+  backend: 'webgpu' | 'webgl2' | 'native' | 'none';
 }
 
 export interface LoadProgress {

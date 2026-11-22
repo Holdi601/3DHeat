@@ -41,19 +41,19 @@ export const BIN_RMAX = 16;
 /** Cells round the target, so a row just off screen still adds its rim. */
 export const BIN_APRON = BIN_RMAX + 1;
 /** Radius step of the kernel table, texels. */
-const LUT_STEP = 0.125;
-const LUT_LEVELS = BIN_RMAX / LUT_STEP + 2;
+export const LUT_STEP = 0.125;
+export const LUT_LEVELS = BIN_RMAX / LUT_STEP + 2;
 /** Offsets 0..BIN_RMAX on each axis. */
-const LUT_SIDE = BIN_RMAX + 1;
+export const LUT_SIDE = BIN_RMAX + 1;
 /** Tile of the radius bound, texels. */
-const TILE = 16;
+export const TILE = 16;
 /** Fixed-point scales: a row's weight, and weight times radius. */
-const SCALE_W = 65536;
-const SCALE_R = 2048;
+export const SCALE_W = 65536;
+export const SCALE_R = 2048;
 /** Plan entries (chunks in one frame) the list can serve. */
 export const BIN_SLOTS = 256;
 /** Words before the list's rows: counters, then capacities. */
-const LIST_HEAD = BIN_SLOTS * 2;
+export const LIST_HEAD = BIN_SLOTS * 2;
 /** Rows the list holds across a frame. */
 export const BIN_LIST_ROWS = 4 * 1024 * 1024;
 
@@ -66,9 +66,9 @@ export const BIN_LIST_ROWS = 4 * 1024 * 1024;
 export const BIN_SPARSE = 8;
 
 /** Bits of `BinParams.grid.w`. */
-const BIN_RADIUS = 1;
-const BIN_ABS = 2;
-const BIN_TEAM = 4;
+export const BIN_RADIUS = 1;
+export const BIN_ABS = 2;
+export const BIN_TEAM = 4;
 
 /** Replace `from` with `to` in `src`, exactly once, or fail loudly at load. */
 function swapOnce(src: string, from: string, to: string, what: string): string {
@@ -290,7 +290,7 @@ export function listHeatWgsl(): string {
 }
 
 /** The grid in floats, its mean radius per cell, and the largest kernel reach a tile. */
-const RESOLVE_WGSL = /* wgsl */ `
+export const RESOLVE_WGSL = /* wgsl */ `
 ${PARAMS_WGSL}
 @group(0) @binding(0) var<uniform> bp : BinParams;
 @group(0) @binding(1) var<storage, read> bins : array<u32>;
@@ -372,7 +372,7 @@ fn csDilate(@builtin(global_invocation_id) g : vec3<u32>) {
  * texel offset (ox, oy) from the cell of a row of radius r anywhere in it. A
  * table over radius steps; the fold interpolates between two.
  */
-const LUT_WGSL = /* wgsl */ `
+export const LUT_WGSL = /* wgsl */ `
 struct LutParams {
   // centre intensity, edge intensity, falloff, flags (rowCfg.w bits)
   shape : vec4<f32>,
@@ -424,7 +424,7 @@ fn csLut(@builtin(global_invocation_id) g : vec3<u32>) {
 `;
 
 /** The fold: each texel gathers the cells within reach, through the averaged kernel. */
-const FOLD_WGSL = /* wgsl */ `
+export const FOLD_WGSL = /* wgsl */ `
 ${PARAMS_WGSL}
 @group(0) @binding(0) var<uniform> bp : BinParams;
 @group(0) @binding(1) var sums : texture_2d<f32>;
@@ -527,7 +527,7 @@ fn csArgs(@builtin(local_invocation_index) i : u32) {
 `;
 
 /** Most bytes the grid's sums may take; see `GpuHeatBin.fits`. */
-const BIN_MAX_BYTES = 768 * 1024 * 1024;
+export const BIN_MAX_BYTES = 768 * 1024 * 1024;
 
 /** 64-bit sums a cell: weight and its offset in x and y, the radius, |weight|, the three colour sums. */
 function channelsFor(f: { perspective: boolean; signed: boolean; team: boolean }): number {

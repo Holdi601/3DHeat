@@ -19,6 +19,8 @@ tauri-build = { version = "2", features = [] }
 heat3d-core.workspace = true
 heat3d-server.workspace = true
 heat3d-library.workspace = true
+# The native viewport (Stage 5 preview): wgpu under the page.
+heat3d-viewport.workspace = true
 # The folder picker of the Library (Windows' own dialog; the desktop portal on Wayland).
 rfd = "0.18"
 tauri = { version = "2", features = [] }

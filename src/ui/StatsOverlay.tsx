@@ -37,7 +37,7 @@ export function StatsOverlay() {
   useAnimationFrame(() => {
     if (!engine) return;
     const l = engine.live;
-    setText(backend, l.backend === 'webgpu' ? 'WebGPU' : l.backend === 'webgl2' ? 'WebGL2' : '—');
+    setText(backend, l.backend === 'webgpu' ? 'WebGPU' : l.backend === 'webgl2' ? 'WebGL2' : l.backend === 'native' ? 'Native (wgpu)' : '—');
     setText(fps, l.fps > 0 ? num(l.fps, 0) : '—');
     setText(frame, t('heat.statsOverlay.ms', { value: num(l.frameMs, 1) }));
     setText(splats, formatCount(l.splats));

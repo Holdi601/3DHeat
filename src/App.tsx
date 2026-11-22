@@ -327,7 +327,7 @@ export function App() {
     // isolated from a rendering problem without editing code.
     const forced = new URLSearchParams(window.location.search).get('backend');
     const preference: BackendPreference =
-      forced === 'webgl2' || forced === 'webgpu' ? forced : 'auto';
+      forced === 'webgl2' || forced === 'webgpu' || forced === 'native' ? forced : 'auto';
 
     void e.init(preference).then(() => {
       if (cancelled) return;

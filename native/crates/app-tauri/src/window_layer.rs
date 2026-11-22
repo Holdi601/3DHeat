@@ -1,7 +1,7 @@
 //! How the window is layered, per platform.
 //!
-//! Stage 2a draws everything in the webview, so the window is one webview. The
-//! layering is fixed now because the native viewport (Stage 5) depends on it:
+//! The page draws everything itself unless it starts the native viewport (Stage 5,
+//! `viewport.rs`, a preview behind a setting); the layering for that:
 //!
 //! - **Windows:** the webview covers the window, transparent where the viewport
 //!   shows, and wgpu draws into the window below it (measured in the spike).
@@ -20,8 +20,18 @@ pub fn prepare() {
     linux::prepare();
 }
 
-/// Once the window exists.
-pub fn attach(_window: &WebviewWindow) {}
+/// Once the window exists: the native viewport, when the page starts one, follows its size.
+pub fn attach(window: &WebviewWindow) {
+    let w = window.as_ref().window();
+    window.on_window_event(move |e| {
+        if let tauri::WindowEvent::Resized(s) = e {
+            crate::viewport::resized(&w, s.width, s.height);
+        }
+        if let tauri::WindowEvent::ScaleFactorChanged { new_inner_size, .. } = e {
+            crate::viewport::resized(&w, new_inner_size.width, new_inner_size.height);
+        }
+    });
+}
 
 #[cfg(target_os = "linux")]
 #[allow(dead_code)]

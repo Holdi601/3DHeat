@@ -2,8 +2,9 @@ import { Webgl2Renderer } from './webgl2/renderer';
 import { WebgpuRenderer } from './webgpu/renderer';
 import { GpuInitError, type BackendKind, type Renderer } from './types';
 import { t } from '../i18n';
+import { NativeRenderer, nativeViewportWanted } from './native/nativeRenderer';
 
-export type BackendPreference = 'auto' | 'webgpu' | 'webgl2';
+export type BackendPreference = 'auto' | 'webgpu' | 'webgl2' | 'native';
 
 export interface RendererCreation {
   renderer: Renderer;
@@ -31,13 +32,24 @@ export async function createRenderer(
 ): Promise<RendererCreation> {
   let fallbackReason: string | null = null;
 
+  // The native app's viewport (Stage 5, preview), when the setting asks for it; the web engine otherwise.
+  if (preference === 'native' || (preference === 'auto' && nativeViewportWanted())) {
+    try {
+      const renderer = await NativeRenderer.create(canvas);
+      return { renderer, backend: 'native', fallbackReason: null };
+    } catch (err) {
+      fallbackReason = err instanceof Error ? err.message : String(err);
+      console.warn(`native viewport unavailable, the web engine draws: ${fallbackReason}`);
+    }
+  }
+
   if (preference !== 'webgl2') {
     if (!navigator.gpu) {
       fallbackReason = t('render.backend.unavailable', { api: 'WebGPU' });
     } else {
       try {
         const renderer = await WebgpuRenderer.create(canvas);
-        return { renderer, backend: 'webgpu', fallbackReason: null };
+        return { renderer, backend: 'webgpu', fallbackReason };
       } catch (err) {
         fallbackReason = err instanceof Error ? err.message : String(err);
       }

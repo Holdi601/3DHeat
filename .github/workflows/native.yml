@@ -48,9 +48,9 @@ jobs:
           git diff --exit-code -- ../src/data/native/gen
       - name: Core tests
         working-directory: native
-        run: cargo test -p heat3d-core -p heat3d-proto -p heat3d-library -p heat3d-session -p heat3d-server -p heat3d-extractors
-      - name: Viewer tests of the shared vectors
-        run: npx vitest run src/data/containerVectors.test.ts
+        run: cargo test -p heat3d-core -p heat3d-proto -p heat3d-library -p heat3d-session -p heat3d-server -p heat3d-extractors -p heat3d-viewport
+      - name: Viewer tests of the shared vectors and the native viewport's shader copies
+        run: npx vitest run src/data/containerVectors.test.ts src/render/native/shaderExport.test.ts
       - name: Icons
         working-directory: native
         run: |

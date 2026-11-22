@@ -14,6 +14,17 @@ fn main() {
                 "update_check",
                 "update_now",
                 "update_settings",
+                "viewport_start",
+                "viewport_stop",
+                "viewport_frame",
+                "viewport_dataset",
+                "viewport_chunk",
+                "viewport_column",
+                "viewport_level",
+                "viewport_hide",
+                "viewport_capture",
+                "viewport_read_heat",
+                "viewport_times",
             ])),
     )
     .expect("the app's build manifest");

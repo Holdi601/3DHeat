@@ -30,6 +30,7 @@ mod protocol;
 mod requirements;
 mod shared;
 mod update;
+mod viewport;
 mod window_layer;
 
 use std::sync::Arc;
@@ -130,6 +131,7 @@ fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_updater::Builder::new().build())
         .manage(update::State::default())
+        .manage(viewport::Viewports::default())
         .invoke_handler(tauri::generate_handler![
             core_endpoint,
             memory::host_memory,
@@ -141,7 +143,18 @@ fn main() {
             update::update_now,
             update::update_settings,
             pick_folder,
-            open_viewer
+            open_viewer,
+            viewport::viewport_start,
+            viewport::viewport_stop,
+            viewport::viewport_frame,
+            viewport::viewport_dataset,
+            viewport::viewport_chunk,
+            viewport::viewport_column,
+            viewport::viewport_level,
+            viewport::viewport_hide,
+            viewport::viewport_capture,
+            viewport::viewport_read_heat,
+            viewport::viewport_times
         ])
         .register_asynchronous_uri_scheme_protocol("heat3d", move |_ctx, request, responder| {
             let core = scheme_core.clone();

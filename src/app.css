@@ -2031,3 +2031,16 @@ button.link:disabled {
   flex: 1;
   min-width: 0;
 }
+
+/* The native viewport (Stage 5 preview, src/render/native/nativeRenderer.ts) draws under the
+   page: the stage lets it through, everything else keeps its colour. */
+html.native-viewport,
+html.native-viewport body,
+html.native-viewport #root,
+html.native-viewport .app,
+html.native-viewport .stage {
+  background: transparent;
+}
+:where(html.native-viewport .app > :not(.stage)) {
+  background-color: var(--bg);
+}

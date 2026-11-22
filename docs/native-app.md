@@ -8,7 +8,7 @@ nav_order: 20
 
 3DHeat also runs as a desktop app. It is the same viewer, with every feature of the browser version, in a window of its own. Behind it sits a native core that reads your files with every core of the machine and has the machine's whole memory to work with.
 
-The app is new (Stage 2c of the native version). Today the core reads the files and, for Parquet tables, builds the whole dataset; the heat is still drawn by the viewer in the window, from chunks the core packed. A native viewport comes later.
+The app is new (Stage 2c of the native version). Today the core reads the files and, for Parquet tables, builds the whole dataset; the heat is drawn by the viewer in the window, from chunks the core packed. A native viewport, where the app draws the view itself, is in preview behind a setting (see [Native viewport (preview)](#native-viewport-preview)).
 
 ## System requirements
 
@@ -143,6 +143,34 @@ Moving bytes from the core into the page: about 0.6 GB/s through the app's loopb
 
 What limits a load now: the core's memory (about 40 bytes a row at its peak), and the GPU budget (12 bytes a row of chunks), both of them what the machine has free (see below). The page no longer does.
 
+## Native viewport (preview)
+
+Settings > **Native viewport (preview)** lets the app draw the 3D view itself instead of the page. It is off by default, and it applies when the window loads again (the setting offers **Reload now**). Windows only for now.
+
+With it on, the window has two layers. The app's own renderer draws into the window with the graphics card's native interface (Vulkan, with DirectX 12 as the fallback), and the page lies on top of it, transparent where the view is. Every panel, button and label is still the page, and the page still gets every click, drag and key: it moves the camera as before and sends each frame to the app, with the camera, the heat settings, the filters, the time window and the mode in it. The app draws that frame with the very shaders the page's WebGPU engine runs (the same WGSL, compiled by wgpu instead of the browser), so the picture is the same.
+
+The rows of a load the core built go to the graphics card straight from the core: nothing of them passes through the page. A load the page built (CSV, Tacview, a mixed selection) is packed by the page and handed over chunk by chunk.
+
+What the preview draws:
+
+- the heat as points, binned on the GPU or splatted exactly as the web engine decides, in plain heat, team colours and the difference by group
+- filters (any number, folded into one bit a row on the GPU; changing one moves no rows), the time window, lifetimes and their fade, the slice and the distance cut
+- the accumulation across frames, the colour ramp, the floor and the response curve; the exposure reads the native heat
+- a model level's ground (the mesh, relief, contours and its colours), the grid and the axes
+
+What it does not draw yet: figures, unit tracks, trails, structures and the wall layers that dim heat behind them, image levels, world tiles, line heat, direction wedges and arrows, the rate map, objectives, zones, spawn marks, depth of field, volume outlines and the other lines drawn over the picture. Those parts of the view are missing while the preview is on. Picking a heat value under the cursor reads nothing yet.
+
+Measured on the PC above (`native/tools/probe-native-viewport.mjs`: the same app and the same load, once with the page's WebGPU engine, once with the native viewport), 10 million rows of the synthetic row-ceiling table, while another 3D program shared the graphics card:
+
+| | Web engine (WebView2) | Native viewport |
+|---|---|---|
+| Heat field after converging (plain, team colours, a filter, a time window) | | identical: p50, p90 and p99 of the lit texels within 0.01 %, SSIM 1.000 |
+| The picture | | 0.1/255 apart on average, 0.4 % of pixels by more than 8/255 (line edges) |
+| Until every row is on the GPU | 1.3 s | 1.1 to 2.4 s |
+| Frames with the camera turning and the timeline playing (p50 / p99 / max) | 16.7 / 17.3 / 17.9 ms | the page 16.7 / 18.1 / 19.2 ms, the viewport's presents 16.6 / 19.2 / 22.8 ms (DX12) and 16.8 / 23.4 / 24.4 ms (Vulkan), none past 25 ms |
+
+The viewport presents each of the page's frames as it comes (mailbox), so the page's clock paces the view. With vsync of its own (Fifo) it fell into the 14/21 ms beat of this PC's mixed 60 and 144 Hz screens, and under Vulkan held a frame for four refreshes now and then. Loads of 100 million rows and more were not measured yet.
+
 ## Memory budget
 
 The app budgets what the machine has free, not a fixed share of it, and reads it again every five seconds:
@@ -186,6 +214,7 @@ Everything lives in `native/`, a Rust workspace:
 | `crates/session` | the multiplayer session server (roles, waiting room, presence, the shared layers' op log); its messages are in `proto/heat3d/session/v1` |
 | `crates/server` | the data API over HTTP and WebSocket, the window's loopback server, and `3dheat serve` (session plus data API, headless) |
 | `crates/app-tauri` | the desktop app (`3DHeat`), a thin layer: the window, loaded from its own loopback server (`/v1` with a key only the window gets), the file handover, and the server embedded |
+| `crates/viewport` | the native viewport (preview): the web engine's WGSL on wgpu (Vulkan, DX12 fallback), fed one packet a frame by the page (`src/render/native/framePacket.ts`) and the rows straight from the core. The shaders and the packet's layout are exported from the TypeScript (`src/render/native/shaderExport.ts`; after a shader change `UPDATE_WGSL=1 npx vitest run src/render/native/shaderExport.test.ts`), and `cargo test -p heat3d-viewport` checks naga compiles every one |
 
 `vectors/` holds test inputs both sides are held to: `.3dheat` files read by the TypeScript and the Rust reader (`container/`), and Parquet loads built by the viewer's build and by the core's (`build/`: `node native/vectors/make-build-vectors.mjs` makes the files, `UPDATE_VECTORS=1 npx vitest run src/data/native/buildVectors.test.ts` writes what the viewer builds of them, `cargo test -p heat3d-core --test build_vectors` checks the core against it).
 

@@ -638,6 +638,11 @@ impl Core {
         self.built.lock().unwrap().get(&handle).cloned().ok_or_else(|| anyhow!("no dataset {handle}"))
     }
 
+    /// A dataset built here, for the native viewport: it packs the chunks straight into GPU memory.
+    pub fn built_dataset(&self, handle: u64) -> Option<Arc<crate::dataset::Dataset>> {
+        self.built.lock().unwrap().get(&handle).cloned()
+    }
+
     /// Memory for `bytes` the window will see: shared when asked and possible, else none (the payload).
     fn shared_memory(&self, want: bool, bytes: usize) -> Result<Option<(Arc<dyn SharedSink>, Arc<dyn SharedMemory>)>> {
         match (want, self.shared_sink()) {

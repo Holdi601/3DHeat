@@ -1,0 +1,21 @@
+[package]
+name = "heat3d-viewport"
+description = "3DHeat's native viewport: the engine's WGSL drawn with wgpu (Vulkan, DX12 fallback) under the app's page"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+heat3d-core.workspace = true
+anyhow.workspace = true
+rayon.workspace = true
+# Vulkan (the default) and DX12 (the Windows fallback) only: no Metal, GL or web backends.
+wgpu = { version = "27", default-features = false, features = ["std", "parking_lot", "dx12", "vulkan", "wgsl"] }
+bytemuck = "1"
+pollster = "0.4"
+parking_lot = "0.12"
+
+[dev-dependencies]
+naga = { version = "27", features = ["wgsl-in"] }
+

@@ -20,6 +20,7 @@ import { SessionButton } from '../session/SessionButton';
 import { LibraryButton } from '../../library/LibraryView';
 import { UsageSettingsRow } from '../usage/UsageUI';
 import { AppUpdateSettingsRow } from '../AppUpdate';
+import { NativeViewportSettingsRow } from '../NativeViewportSetting';
 import { Icon, type IconName } from './Icon';
 import { WORKSPACES, type Workspace } from './keys';
 import { taskOf, useShell, WORKSPACE_TASKS, type Task, type Theme } from './shellStore';
@@ -316,6 +317,7 @@ export function SettingsMenu() {
           </div>
           <UsageSettingsRow onOpen={() => setOpen(false)} />
           <AppUpdateSettingsRow onOpen={() => setOpen(false)} />
+          <NativeViewportSettingsRow />
         </div>
       )}
     </div>

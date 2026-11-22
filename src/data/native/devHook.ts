@@ -11,6 +11,7 @@
  *   play(on)                the timeline playing or not
  *   parity(files, mapping)  the same load built by the core and by the page, every column compared
  *   budget(gpu?)            the budgets, the live reading and the rows on the GPU; with `gpu`, that GPU budget chosen
+ *   store()                 the app's state store, for probes that set a view up (`native/tools/probe-native-viewport.mjs`)
  */
 
 import { call, coreEndpoint } from './core';
@@ -98,6 +99,10 @@ export function installNativeHook(): void {
         residentRows: l?.residentRows ?? 0,
         droppedRows: l?.droppedRows ?? 0,
       };
+    },
+
+    async store() {
+      return (await import('../../state/store')).useStore;
     },
 
     async play(on: boolean) {
