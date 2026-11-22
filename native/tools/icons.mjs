@@ -22,3 +22,16 @@ const png = join(icons, 'source.png');
 writeFileSync(png, await page.screenshot({ omitBackground: true }));
 await browser.close();
 execFileSync(process.execPath, [join(here, '..', 'node_modules', '@tauri-apps', 'cli', 'tauri.js'), 'icon', png, '-o', icons], { stdio: 'inherit' });
+// Which icon.svg these were made from: the app's build.rs refuses icons made from another one
+// (a stale icon.ico survives a checkout, as the icons are not committed).
+writeFileSync(join(icons, 'source.stamp'), `${svgStamp(svg)}\n`);
+
+/** FNV-1a 64 of the SVG with its line ends as LF, in hex; build.rs computes the same. */
+function svgStamp(text) {
+  let h = 0xcbf29ce484222325n;
+  for (const b of Buffer.from(text.replace(/\r/g, ''), 'utf8')) {
+    h ^= BigInt(b);
+    h = (h * 0x100000001b3n) & 0xffffffffffffffffn;
+  }
+  return h.toString(16).padStart(16, '0');
+}
