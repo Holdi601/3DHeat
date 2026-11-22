@@ -220,7 +220,9 @@ export function detectRangeGame(name: string, columns: readonly string[], labels
   const cols = new Set(columns.map((c) => c.toLowerCase()));
   const has = (...c: string[]) => c.some((x) => cols.has(x.toLowerCase()));
   const hinted =
-    /\.wrpl\b|war ?thunder/i.test(name) || has('hitOutcome', 'ammoName', 'aimHeading') ? 'wt'
+    // Gunner, HEAT, PC!'s recorder writes War Thunder's hit columns too; its own `penetrationLevel` tells it apart.
+    /\bghpc\b|gunner,? ?heat/i.test(name) || has('penetrationLevel') ? 'ghpc'
+    : /\.wrpl\b|war ?thunder/i.test(name) || has('hitOutcome', 'ammoName', 'aimHeading') ? 'wt'
     : /\.acmi\b|\bdcs\b/i.test(name) || (has('Type') && has('Coalition', 'Parent')) ? 'dcs'
     : /\.dem\b|\bcs2\b|counter-?strike/i.test(name) || has('cashSpent', 'roundStartEquipment') ? 'cs2'
     : /wotreplay|world of tanks/i.test(name) ? 'wot'
@@ -235,6 +237,8 @@ export function detectRangeGame(name: string, columns: readonly string[], labels
     : /il-?2|sturmovik/i.test(name) ? 'il2'
     : null;
   if (hinted && games.has(hinted)) return games.get(hinted)!;
+  // A game with no catalogue of its own yet: none, rather than another game's by its weapon names.
+  if (hinted === 'ghpc') return null;
   // Otherwise the game whose own names match most of the table's, at least two.
   const score = new Map<GameCatalogue, number>();
   for (const l of labels) for (const g of games.values()) if (longest(g.weapons, l.trim())[0]) score.set(g, (score.get(g) ?? 0) + 1);

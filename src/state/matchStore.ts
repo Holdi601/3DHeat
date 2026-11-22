@@ -7,6 +7,7 @@
 import { create } from 'zustand';
 import { parseMatchDoc, type MatchDoc } from '../match/matchDoc';
 import { isWtMatch, parseWtMatch, type GameMatch } from '../match/wtMatch';
+import { isGhpcMatch, parseGhpcMatch } from '../match/ghpcMatch';
 import { isContainer, openContainer } from '../data/container';
 import { isObjectivesFile, loadObjectiveFiles, useObjectivesStore } from './objectivesStore';
 import { parseObjectives } from '../match/objectives';
@@ -90,8 +91,8 @@ export const useMatchStore = create<MatchState>((set, get) => ({
           if (objectives.length) useObjectivesStore.getState().addLite([{ match: String(j.match ?? ''), objectives }]);
           continue;
         }
-        if (isWtMatch(json)) {
-          const g = parseWtMatch(json as Record<string, unknown>);
+        if (isWtMatch(json) || isGhpcMatch(json)) {
+          const g = isWtMatch(json) ? parseWtMatch(json as Record<string, unknown>) : parseGhpcMatch(json as Record<string, unknown>);
           const at = games.findIndex((x) => x.match === g.match);
           if (at >= 0) games[at] = g;
           else games.push(g);

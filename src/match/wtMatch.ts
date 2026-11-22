@@ -33,7 +33,7 @@ export interface GameKill {
 }
 
 export interface GameMatch {
-  game: 'warthunder';
+  game: 'warthunder' | 'ghpc';
   match: string;
   map: string;
   mission: string;

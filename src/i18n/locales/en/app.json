@@ -99,6 +99,7 @@
   "app.autoLevel.loading": "Loading level {name}…",
   "app.autoLevel.chip": "Level: {name} (auto)",
   "app.autoLevel.change": "change",
+  "app.autoLevel.fromTracks": "{map}, ground traced from the units' tracks",
   "app.loadCard.about": "loads in about {duration}",
   "app.loadCard.reading": "Reading the files"
 }

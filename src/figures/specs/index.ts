@@ -21,6 +21,7 @@ import { BF_ALIASES } from './aliases-bf';
 import { WT_ALIASES } from './aliases-wt';
 import { IL2_ALIASES } from './aliases-il2';
 import { WOWS_ALIASES } from './aliases-wows';
+import { GHPC_ALIASES } from './aliases-ghpc';
 import { MUNITIONS } from './munitions';
 import { PROPS } from './props';
 import { HELIS } from './helis';
@@ -54,7 +55,7 @@ export interface SpecSet {
 }
 
 /** Every spec set, in order; a later set's entry replaces an earlier one of the same name. */
-export const SPEC_SETS: SpecSet[] = [GENERIC, AIR_DEFENCE, GROUND_MODERN, GROUND_WW2, TANKS, PROPS, HELIS, AIRCRAFT, SHIPS, JET_VARIANTS, JET_VARIANTS_WORLD, JET_ATTACK, HELI_VARIANTS, ARMOUR_MODERN, ARMOUR_WW2, PROP_VARIANTS, AIR_EXTRA, SHIP_CLASSES, MUNITIONS, DCS_ALIASES, BF_ALIASES, WT_ALIASES, IL2_ALIASES, WOWS_ALIASES, TACTICAL];
+export const SPEC_SETS: SpecSet[] = [GENERIC, AIR_DEFENCE, GROUND_MODERN, GROUND_WW2, TANKS, PROPS, HELIS, AIRCRAFT, SHIPS, JET_VARIANTS, JET_VARIANTS_WORLD, JET_ATTACK, HELI_VARIANTS, ARMOUR_MODERN, ARMOUR_WW2, PROP_VARIANTS, AIR_EXTRA, SHIP_CLASSES, MUNITIONS, GHPC_ALIASES, DCS_ALIASES, BF_ALIASES, WT_ALIASES, IL2_ALIASES, WOWS_ALIASES, TACTICAL];
 // Swing wings at their sweeps, from the figures as the sets above leave them.
 SPEC_SETS.push(swingStates(SPEC_SETS));
 // Gun armed ground figures ended at their published length with the gun forward.

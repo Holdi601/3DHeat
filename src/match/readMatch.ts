@@ -16,6 +16,7 @@ import { summarizeTable } from '../mass/summarize';
 import { SUMMARY_FORMAT, type MatchSummary, type SummaryHead } from '../mass/types';
 import { parseMatchDoc, type MatchDoc } from './matchDoc';
 import { isWtMatch, parseWtMatch, type GameMatch } from './wtMatch';
+import { isGhpcMatch, parseGhpcMatch } from './ghpcMatch';
 
 export type MatchRead =
   | { kind: 'doc'; doc: MatchDoc }
@@ -39,6 +40,7 @@ const asyncBuffer = (file: Blob) => ({ byteLength: file.size, slice: (s: number,
 function fromDoc(j: unknown, text: () => string, name: string): MatchRead | null {
   if (!j || typeof j !== 'object') return null;
   if (isWtMatch(j)) return { kind: 'game', game: parseWtMatch(j as Record<string, unknown>) };
+  if (isGhpcMatch(j)) return { kind: 'game', game: parseGhpcMatch(j as Record<string, unknown>) };
   if ((j as { format?: unknown }).format === 'heat3d-cs2-match') return { kind: 'doc', doc: parseMatchDoc(text(), name) };
   return null;
 }

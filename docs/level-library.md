@@ -37,6 +37,13 @@ tool (their part names end in ` @battlefield-4/<Level>`). For a table whose
 and loads it by itself when no level is loaded yet; a name both games use
 (`MP_Naval`) shows both and loads neither by itself.
 
+A Gunner, HEAT, PC! mission (from the Watcher's recorder mod) names its map,
+but no extractor writes that game's maps yet. Until a level of that name is in
+the levels folder, the viewer traces a ground from where the mission's ground
+units drove. The ground follows the heights of their tracks, is filled between
+them, and is flat when there are too few samples. The chip over the view says
+*ground traced from the units' tracks*. A level you load replaces it.
+
 ## What is stored
 
 | Kind | Stored | Not stored |

@@ -132,7 +132,7 @@ export interface VehicleHit {
   kind: HitKind;
 }
 
-export type HitSource = 'warthunder' | 'cs2' | 'wot' | 'wows' | 'squad' | 'ocap' | 'acmi' | 'il2' | 'dota' | 'generic' | 'none';
+export type HitSource = 'warthunder' | 'ghpc' | 'cs2' | 'wot' | 'wows' | 'squad' | 'ocap' | 'acmi' | 'il2' | 'dota' | 'generic' | 'none';
 
 export interface HitSet {
   hits: VehicleHit[];
@@ -212,8 +212,11 @@ const WOWS_IMPACT = /^impact$/i;
 const MODULE = /^module_destroyed$/i;
 const MARK = /^hit_(critical|severe)$/i;
 const PART = /(\d+)\s*$/;
-/** The War Thunder converter's `hitOutcome` as an outcome: a penetration did damage, a non-penetration none. */
-const WT_OUTCOME: Record<string, Outcome> = { kill: 'kill', critical: 'critical', penetration: 'damage', nonpenetration: 'nodamage' };
+/**
+ * The War Thunder converter's `hitOutcome` as an outcome: a penetration did damage, a non-penetration none.
+ * Gunner, HEAT, PC!'s recorder writes the same words, and `ricochet` for a round that glanced off.
+ */
+const WT_OUTCOME: Record<string, Outcome> = { kill: 'kill', critical: 'critical', penetration: 'damage', nonpenetration: 'nodamage', ricochet: 'nodamage' };
 
 /** A unit vector from three columns at a row, or null. */
 function unit(a: Num, b: Num, c: Num, r: number): Vec3 | null {
@@ -298,6 +301,8 @@ export function* hitsSteps(d: Dataset): Generator<void, HitSet, void> {
   const abilityCol = find(d, 'inflictor', 'ability') ? text(d, 'inflictor', 'ability') : heroCol ? text(d, 'text') : null;
   // Squad: the actor a row is about, its blueprint, the damage type.
   const squad = !!find(d, 'entity') && !!find(d, 'pawn');
+  // Gunner, HEAT, PC!'s recorder: War Thunder's `shot` rows, told apart by the game's own penetration level.
+  const ghpc = !!find(d, 'penetrationLevel');
   const entityCol = text(d, 'entity');
   const pawnCol = text(d, 'pawn');
   const detailCol = text(d, 'detail');
@@ -617,12 +622,14 @@ export function* hitsSteps(d: Dataset): Generator<void, HitSet, void> {
       part: fin(part),
       code: wt ? (Number.isFinite(flag) ? String(flag) : Number.isFinite(part) ? String(Math.floor(part / 256)) : '') : reason(r),
       outcome: wt ? (WT_OUTCOME[wtOutcome(r)] ?? 'hit') : 'hit',
+      // Where the data says how far (Gunner, HEAT, PC!'s recorder, shooter to impact).
+      distance: fin(distCol(r)),
       calibre: fin(calibreCol(r)),
       ammoType: ammoTypeCol(r) || null,
       ammoName: ammoNameCol(r) || null,
       ammoSlot: ammoSlotCol(r) || null,
     });
-    sources.add(wt ? 'warthunder' : WOWS_IMPACT.test(ev) ? 'wows' : 'generic');
+    sources.add(wt ? (ghpc ? 'ghpc' : 'warthunder') : WOWS_IMPACT.test(ev) ? 'wows' : 'generic');
   }
 
   yield;

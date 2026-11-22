@@ -10,6 +10,10 @@
  * which theatre it is (`theatreOfData`), and that theatre is streamed under
  * it as the level panel's "Stream theatre" would.
  *
+ * A game with no map extractor yet (Gunner, HEAT, PC!) gets a ground traced
+ * from where its ground units drove (`trackGround`), until a level of its map
+ * is in the levels folder.
+ *
  * Once per pick, after the data is loaded, and only while no level is: a
  * level the person chose is never replaced. A small chip over the view says
  * which level was picked, with a way to change it.
@@ -30,6 +34,7 @@ import type { WorldLabel } from '../../world/backdrop';
 import { eastNorthOf, planeInverse } from '../../world/tiles';
 import { worldToData } from '../../render/pose';
 import { groundPersons } from '../../data/groundFit';
+import { trackGround } from '../../data/trackGround';
 import type { LoadedModel } from '../../data/modelLoader';
 import { reveal } from '../shell/commands';
 import { CATALOG_ROUTE } from './CatalogSection';
@@ -55,6 +60,9 @@ export function noteWantedLevel(game: string | null, map: string | null): void {
 
 /** Games whose levels the level panel picks by itself already (Siege by map version, Battlefield by map column). */
 const OWN_PICKERS = /^(r6|battlefield-)/i;
+
+/** Games with no map extractor yet: without a level of their map, a ground traced from the units' tracks. */
+const TRACK_GROUND_GAMES = /^ghpc$/i;
 
 /** Games whose recordings are on the real earth, under a theatre streamed as the level. */
 const THEATRE_GAMES = /^(tacview|dcs|il2)$/i;
@@ -202,6 +210,16 @@ async function pickLevel(d: Dataset): Promise<void> {
   if ((game && THEATRE_GAMES.test(game)) || d.geo?.theatre) {
     if (await streamTheatreUnder(d)) return;
     if (levelTaken()) return void useAutoLevel.setState({ status: 'none' });
+  }
+  if (game && TRACK_GROUND_GAMES.test(game) && !levelTaken() && useStore.getState().dataset === d) {
+    const g = trackGround(d);
+    if (g) {
+      const label = t('app.autoLevel.fromTracks', { map: wanted?.map || d.name });
+      const lv = modelLevelFrom(label, g.model);
+      useStore.getState().setLevel(lv);
+      useAutoLevel.setState({ status: 'loaded', level: lv.name, label });
+      return;
+    }
   }
   useAutoLevel.setState({ status: 'none' });
 }

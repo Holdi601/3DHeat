@@ -33,6 +33,7 @@ The figure shows the hits where the data gives a point or a body part. The break
 | Source | Point on the unit | Shooter | Weapon | Damage / outcome |
 |---|---|---|---|---|
 | War Thunder | yes, in the unit's frame, with the shot's way | yes | the shooter's vehicle | critical, severe, modules destroyed, killing shot |
+| Gunner, HEAT, PC! (the Watcher's recorder mod) | yes, in the unit's frame, with the shot's way, the plate, the impact angle and speed | yes | the round (name, kind, calibre) | penetration or not, ricochet, crew and parts knocked out, fires, killing shot |
 | CS2 | body part (hitgroup) | yes | yes | damage, armour, health left |
 | World of Tanks | yes (component box, entry and exit) | yes | - | damage or none (bounce, no penetration) |
 | World of Warships | yes, in the ship's frame | yes | hit type | - |

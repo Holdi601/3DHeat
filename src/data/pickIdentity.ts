@@ -28,6 +28,7 @@ const GAME_NAMES: Record<string, string> = {
   r6: 'Rainbow Six Siege',
   wows: 'World of Warships',
   wot: 'World of Tanks',
+  ghpc: 'Gunner, HEAT, PC!',
   il2: 'IL-2 Sturmovik',
   'battlefield-1': 'Battlefield 1',
   'battlefield-4': 'Battlefield 4',
