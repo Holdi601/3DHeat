@@ -33,6 +33,7 @@ BADGES: dict[str, tuple[str, str, str, str]] = {
     "heat3d-wows": ("WOWS", "WS", "#0f7c8c", "#ffffff"),
     "heat3d-wot": ("WOT", "WO", "#8a5a2b", "#ffffff"),
     "heat3d-acrally": ("ACR", "AR", "#c0392b", "#ffffff"),
+    "heat3d-assettocorsa": ("AC", "AC", "#ad1457", "#ffffff"),
     "heat3d-beamng": ("BNG", "BN", "#f36f21", "#14110a"),
     "heat3d-il2": ("IL2", "IL", "#5b7c99", "#ffffff"),
     "heat3d-riot": ("LOL", "LO", "#c89b3c", "#14110a"),
