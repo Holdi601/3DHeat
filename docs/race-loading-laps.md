@@ -14,7 +14,7 @@ A lap file is a recording of one drive: where the car was and what the driver di
 
 1. Open the **Race analysis** tab.
 2. Just looking? Press **Demo laps** (see [Demo laps](#demo-laps)).
-3. Your own laps: record them in the game with a recorder (see [File formats](#file-formats)). The recorder writes one file per lap.
+3. Your own laps: record them in the game with a recorder (see [File formats](#file-formats)). The recorder writes one file per lap, or for the Assetto Corsa games one file per session with every lap in it.
 4. Press **Load lap files…** and pick two or more files of the same course, or press **Folder…** and pick the folder that holds them. You can also drop files or folders on the 3D view.
 5. Click a lap in the list to see where it loses time.
 
@@ -40,6 +40,7 @@ buttons, one line each; the others still load.
 The format is told from the content, not the file name. In plain words:
 
 - **heat3d-lap** is the file the 3DHeat recorder writes for most games.
+- **heat3d-session** is a whole session in one file: the Assetto Corsa recorders and the Assetto Corsa replay converter write it. Every lap in it loads, and so do the other cars it holds.
 - **FH Companion** is a free tool that records Forza Horizon laps. It writes a lap file and, beside it, a `.json.tele.gz` file (the same lap with every tyre's data, gzip-compressed). Pick both together.
 - **iRacing `.ibt`** is iRacing's own telemetry file; switch logging on in the car with Alt+L and load the file as it is.
 - A **lap CSV** is a plain table, one row per moment.
@@ -47,6 +48,7 @@ The format is told from the content, not the file name. In plain words:
 | Format | Typical source | Read by |
 |---|---|---|
 | `heat3d-lap` JSON | `heat3d_capture telemetry --game ...` (Forza Horizon and Motorsport over Data Out, AC / ACC / AC EVO / AC Rally, EA SPORTS WRC, DiRT Rally 2.0 / 1, DiRT 4, Richard Burns Rally, BeamNG.drive) | `fromHeat3dLap` |
+| `heat3d-session` JSON | `heat3d_capture telemetry --game ac / acc / acevo` (one file per session), `heat3d-ac convert` (an Assetto Corsa replay) | `fromHeat3dSession` |
 | FH Companion lap `.json` | FH Companion's lap library | `fromFhCompanion` |
 | FH Companion telemetry `.json.tele.gz` | beside each FH Companion lap file | `readForzaTelemetry` |
 | iRacing `.ibt` | iRacing's own telemetry files (logging on with Alt+L in the car) | `readIbt` |
@@ -56,6 +58,29 @@ How each game is recorded and what it sends is documented by the recorders:
 [GameCapture: games](https://github.com/Holdi601/3DHeat-GameCapture/blob/main/docs/games.md)
 and [GameCapture: the lap format](https://github.com/Holdi601/3DHeat-GameCapture/blob/main/docs/lap-format.md).
 See also [Other racing games](other-games.md).
+
+## Session files
+
+A `heat3d-session` file holds a whole session: its `laps` (each one a
+`heat3d-lap` document) and, where the game publishes them, the other cars
+(`others`). Every lap loads as a lap of its own, named `<file> #1`, `#2` ...
+in its source.
+
+**The other cars** are cut into laps where they cross the line the session's
+own first complete lap starts at: the closest sample of each pass within 15 m,
+heading the same way; between two passes a complete lap, before the first and
+after the last a partial run (kept when 300 m or longer). A session with no
+complete lap of its own keeps each other car as one partial run. An other car
+is named as the file names it (a replay's driver), else `#<id>`.
+
+**Layouts.** An Assetto Corsa track's layouts are separate courses: a lap of
+`ks_nurburgring` on `layout_gp_a` is of the course `ks_nurburgring
+layout_gp_a`. Forza's `layout` field means something else (its packet's
+layout) and is not read this way.
+
+**Cars.** An Assetto Corsa lap names its car by the car's folder
+(`ktm_xbow_r`); that is also its id, and a car file made from the same
+install (`heat3d-ac cars`) draws exactly that car.
 
 ## Folders and courses
 

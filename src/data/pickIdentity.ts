@@ -35,7 +35,8 @@ const GAME_NAMES: Record<string, string> = {
   'arma-reforger': 'Arma Reforger',
   arma3: 'Arma 3',
   forza: 'Forza',
-  acrally: 'EA Sports WRC',
+  acrally: 'Assetto Corsa Rally',
+  'assetto-corsa': 'Assetto Corsa',
   beamng: 'BeamNG.drive',
 };
 

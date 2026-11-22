@@ -12,6 +12,8 @@ import { num, t } from '../i18n';
 export interface CarInfo {
   /** The game's car id. */
   ordinal?: number;
+  /** The game's car id where it is a name (an Assetto Corsa car's folder), matched against a car file's keys. */
+  id?: string;
   name?: string;
   /** Class letter (Forza: D..X). */
   class?: string;

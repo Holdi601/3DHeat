@@ -145,6 +145,13 @@ export function matchCar(car: CarInfo, game: string, packs: CarPack[]): CarMatch
       if (same) return { kind: 'exact', ...own, pack, car: same };
     }
   }
+  if (car.id !== undefined) {
+    for (const pack of packs) {
+      if (pack.game !== game) continue;
+      const same = pack.cars.find((c) => c.key === car.id);
+      if (same) return { kind: 'exact', ...own, pack, car: same };
+    }
+  }
   if (openWheel) return { kind: 'openWheel', ...own };
   const all = packs.flatMap((pack) => pack.cars.map((c) => ({ pack, c })));
   if (!all.length) return { kind: 'plain', ...own };

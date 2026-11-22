@@ -27,6 +27,9 @@ const GAMES: Record<string, GameInfo> = {
   bf1: { name: 'Battlefield 1', mark: 'BF1', hue: 30 },
   forza: { name: 'Forza', mark: 'FZ', hue: 330 },
   acrally: { name: 'Assetto Corsa Rally', mark: 'ACR', hue: 0 },
+  ac: { name: 'Assetto Corsa', mark: 'AC', hue: 8 },
+  acc: { name: 'Assetto Corsa Competizione', mark: 'ACC', hue: 16 },
+  acevo: { name: 'Assetto Corsa EVO', mark: 'ACE', hue: 4 },
   beamng: { name: 'BeamNG.drive', mark: 'BNG', hue: 25 },
   reforger: { name: 'Arma Reforger', mark: 'AR', hue: 80 },
   hllv: { name: 'Hell Let Loose: Vietnam', mark: 'HLL', hue: 60 },
@@ -44,7 +47,7 @@ export function canonGame(raw: string | null | undefined): string {
     'war-thunder': 'warthunder', wt: 'warthunder', 'dcs-world': 'dcs', 'counter-strike-2': 'cs2', csgo: 'cs2', dota: 'dota2', 'dota-2': 'dota2',
     'rainbow-six-siege': 'r6', siege: 'r6', 'world-of-warships': 'wows', 'world-of-tanks': 'wot', 'il-2': 'il2', 'il-2-sturmovik': 'il2',
     'battlefield-6': 'bf6', 'battlefield-4': 'bf4', 'battlefield-1': 'bf1', 'forza-horizon': 'forza', 'forza-motorsport': 'forza',
-    'assetto-corsa-rally': 'acrally', 'beamng-drive': 'beamng', 'arma-reforger': 'reforger', 'league-of-legends': 'lol',
+    'assetto-corsa-rally': 'acrally', 'assetto-corsa': 'ac', 'assetto-corsa-competizione': 'acc', 'assetto-corsa-evo': 'acevo', 'beamng-drive': 'beamng', 'arma-reforger': 'reforger', 'league-of-legends': 'lol',
   };
   if (alias[s]) return alias[s];
   return GAMES[s] ? s : '';

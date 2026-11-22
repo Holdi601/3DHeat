@@ -13,7 +13,8 @@ The viewer reads laps from many racing games, not just one. This page lists them
 | Game | Recorder | Slip in the file? | World mirrored? | Notes |
 |---|---|---|---|---|
 | Forza Horizon 4/5/6, Forza Motorsport | `heat3d_capture telemetry` (Data Out over UDP), or FH Companion's lap files plus their `.tele.gz` | yes, per wheel (normalised) | yes (left-handed world) | the `.tele.gz` beside each FH Companion lap gives every wheel's slip; the lap file alone does not |
-| Assetto Corsa, ACC, AC EVO, AC Rally | `heat3d_capture telemetry --game ac / acc / acevo / acrally` (shared memory) | yes, per wheel | measured from the laps | also ABS and traction control acting, wheel loads, temperatures |
+| Assetto Corsa, ACC, AC EVO, AC Rally | `heat3d_capture telemetry --game ac / acc / acevo / acrally` (shared memory): one session file with every lap; ACC and AC EVO also the other cars' positions | yes, per wheel | measured from the laps | also ABS and traction control acting, wheel loads, temperatures, sectors, pit and valid-lap flags |
+| Assetto Corsa replays | `heat3d-ac convert <replay>` ([3DHeat Assetto Corsa](https://github.com/Holdi601/3DHeat-Ext-AssettoCorsa), the game's own `.acreplay` files) | no | measured from the laps | every car of the replay: position, speed, pedals, gear, rpm, wheel speeds and loads; the steering worked out from the front wheels |
 | EA SPORTS WRC, DiRT Rally 2.0 / 1, DiRT 4 | `heat3d_capture telemetry --game wrc / dirtrally2 / dirtrally / dirt4` (UDP) | no, worked out from wheel speeds | measured from the laps | rally: loose ground and jumps are judged differently |
 | Richard Burns Rally | `heat3d_capture telemetry --game rbr` (NGP UDP) | no | measured from the laps | no wheel speeds |
 | BeamNG.drive | `heat3d_capture telemetry --game beamng` (a mod) | no, worked out from wheel speeds | measured from the laps | |
@@ -23,7 +24,7 @@ The viewer reads laps from many racing games, not just one. This page lists them
 ## How to record a lap
 
 1. Pick your game in the table and set it up as the recorder's page for that game says (a setting in the game, a mod, or nothing at all for iRacing). The steps differ per game, so they are in the recorders' documents: [GameCapture: games](https://github.com/Holdi601/3DHeat-GameCapture/blob/main/docs/games.md).
-2. Start the recorder, then drive. It writes one file per lap.
+2. Start the recorder, then drive. It writes one file per lap (the Assetto Corsa games: one file per session, with every lap in it).
 3. In the **Race analysis** tab press **Load lap files…** and pick two or more laps of the same course (see [Loading laps](race-loading-laps.md)).
 
 For rally games the recorder gives one file per stage run, and for Forza the easiest start is FH Companion's library with its `.tele.gz` files beside the lap files.

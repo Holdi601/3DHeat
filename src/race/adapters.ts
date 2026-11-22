@@ -48,6 +48,7 @@ export function readLaps(text: string, source: string): LapTrace[] {
 function fromJson(document: unknown, source: string): LapTrace[] {
   const doc = document as Record<string, unknown>;
   if (doc && doc.format === 'heat3d-lap') return [fromHeat3dLap(doc, source)];
+  if (doc && doc.format === 'heat3d-session') return fromHeat3dSession(doc, source);
   const lap = doc?.Lap as Record<string, unknown> | undefined;
   if (lap && Array.isArray(lap.samples)) return [fromFhCompanion(doc, source)];
   throw new UnreadableLap(t('race.ui.lapFile.unknownJson', { file: source }));
@@ -64,17 +65,21 @@ function fromHeat3dLap(doc: Record<string, unknown>, source: string): LapTrace {
   const raw = (doc.channels ?? {}) as Record<string, unknown>;
   const channels: Record<string, Float32Array> = {};
   for (const [name, values] of Object.entries(raw)) {
-    if (Array.isArray(values)) channels[name] = column(values);
+    if (Array.isArray(values) || ArrayBuffer.isView(values)) channels[name] = column(values);
   }
   if (!channels.time || !channels.x || !channels.z) {
     throw new UnreadableLap(t('race.ui.lapFile.noPositionChannels', { file: source }));
   }
   channels.distance ??= pathDistance(channels);
   const car = (doc.car ?? {}) as Record<string, number | string>;
+  const game = String(doc.game ?? 'unknown');
+  const kunos = /^assetto-corsa/.test(game);
   const lap = (doc.lap ?? {}) as Record<string, unknown>;
   const num = (v: number | string | undefined) => (typeof v === 'number' ? v : undefined);
   const info: CarInfo = {
     ordinal: num(car.carOrdinal),
+    // The Assetto Corsa games name a car by its folder (`ktm_xbow_r`): that is its id too.
+    id: typeof car.id === 'string' ? car.id : kunos && typeof car.name === 'string' && /^[a-z0-9_-]+$/.test(car.name) ? car.name : undefined,
     name: typeof car.name === 'string' ? car.name : undefined,
     class: forzaClass(num(car.carClass)),
     pi: num(car.carPI),
@@ -96,12 +101,14 @@ function fromHeat3dLap(doc: Record<string, unknown>, source: string): LapTrace {
             ? 'peak'
             : 'physical'),
   };
+  // An Assetto Corsa track's layouts are courses of their own (Forza's `layout` is its packet's).
+  const layout = kunos && typeof doc.layout === 'string' && doc.layout ? doc.layout : '';
   return finish({
     id: newId(),
     label: '',
     source,
-    game: String(doc.game ?? 'unknown'),
-    track: typeof doc.track === 'string' ? doc.track : undefined,
+    game,
+    track: typeof doc.track === 'string' ? (layout ? `${doc.track} ${layout}` : doc.track) : undefined,
     car: info,
     seconds,
     complete: lap.complete !== false,
@@ -109,6 +116,118 @@ function fromHeat3dLap(doc: Record<string, unknown>, source: string): LapTrace {
     count: channels.time.length,
     meta,
   });
+}
+
+/**
+ * A whole session in one file (`heat3d-session`: the Assetto Corsa recorders,
+ * the AC replay reader): every lap in it, and the other cars, cut into laps
+ * where they cross the line the session's own complete laps begin at (whole
+ * runs when the session has no complete lap).
+ */
+function fromHeat3dSession(doc: Record<string, unknown>, source: string): LapTrace[] {
+  const shared: Record<string, unknown> = { game: doc.game, track: doc.track, layout: doc.layout, car: doc.car };
+  const laps: LapTrace[] = [];
+  const list = Array.isArray(doc.laps) ? doc.laps : [];
+  list.forEach((raw, i) => {
+    if (!raw || typeof raw !== 'object') return;
+    const merged: Record<string, unknown> = { ...shared, ...(raw as Record<string, unknown>) };
+    for (const key of ['game', 'track', 'layout', 'car']) merged[key] ??= shared[key];
+    laps.push(fromHeat3dLap(merged, list.length > 1 ? `${source} #${i + 1}` : source));
+  });
+  const line = startLine(laps);
+  for (const raw of Array.isArray(doc.others) ? doc.others : []) {
+    if (!raw || typeof raw !== 'object') continue;
+    const other = raw as Record<string, unknown>;
+    const given = (other.channels ?? {}) as Record<string, unknown>;
+    const channels: Record<string, Float32Array> = {};
+    for (const [name, values] of Object.entries(given)) {
+      if (Array.isArray(values)) channels[name] = column(values);
+    }
+    const { time, x, z } = channels;
+    if (!time || !x || !z || time.length < 2) continue;
+    const car =
+      other.car && typeof other.car === 'object'
+        ? (other.car as Record<string, unknown>)
+        : { name: `#${String(other.id ?? laps.length + 1)}` };
+    const pieces = line ? cutAtLine(channels, line) : [{ from: 0, to: time.length - 1, complete: false }];
+    for (const piece of pieces) {
+      const cut: Record<string, Float32Array> = {};
+      for (const [name, values] of Object.entries(channels)) cut[name] = values.slice(piece.from, piece.to + 1);
+      const lap = { complete: piece.complete, seconds: time[piece.to] - time[piece.from] };
+      laps.push(fromHeat3dLap({ ...shared, car, lap, meta: other.meta, channels: cut }, `${source} ${String(car.name ?? '')}`));
+    }
+  }
+  if (!laps.length) throw new UnreadableLap(t('race.ui.lapFile.noSamples', { file: source }));
+  return laps;
+}
+
+interface StartLine {
+  x: number;
+  z: number;
+  dx: number;
+  dz: number;
+}
+
+/** Where the session's first complete lap begins, and which way it leaves. */
+function startLine(laps: LapTrace[]): StartLine | null {
+  const lap = laps.find((l) => l.complete);
+  if (!lap) return null;
+  const { x, z } = lap.channels;
+  for (let i = 1; i < lap.count; i++) {
+    const dx = x[i] - x[0];
+    const dz = z[i] - z[0];
+    const d = Math.hypot(dx, dz);
+    if (d > 5) return { x: x[0], z: z[0], dx: dx / d, dz: dz / d };
+  }
+  return null;
+}
+
+/**
+ * A run cut where it passes the line: the closest sample of each pass within
+ * `radius` metres, heading the line's way. Between two passes a complete lap;
+ * before the first and after the last a part, kept when `minimum` metres long.
+ */
+export function cutAtLine(
+  channels: Record<string, Float32Array>,
+  line: StartLine,
+  radius = 15,
+  minimum = 300,
+): Array<{ from: number; to: number; complete: boolean }> {
+  const { x, z } = channels;
+  const n = x.length;
+  const crossings: number[] = [];
+  let best = -1;
+  let bestD = Infinity;
+  for (let i = 0; i < n; i++) {
+    const d = Math.hypot(x[i] - line.x, z[i] - line.z);
+    if (d < radius) {
+      if (d < bestD) {
+        best = i;
+        bestD = d;
+      }
+    } else if (best >= 0) {
+      const j = Math.min(n - 1, best + 1);
+      const k = Math.max(0, best - 1);
+      if ((x[j] - x[k]) * line.dx + (z[j] - z[k]) * line.dz > 0) crossings.push(best);
+      best = -1;
+      bestD = Infinity;
+    }
+  }
+  const metres = (a: number, b: number) => {
+    let m = 0;
+    for (let i = a + 1; i <= b; i++) m += Math.hypot(x[i] - x[i - 1], z[i] - z[i - 1]);
+    return m;
+  };
+  const pieces: Array<{ from: number; to: number; complete: boolean }> = [];
+  const bounds = [0, ...crossings, n - 1];
+  for (let k = 0; k + 1 < bounds.length; k++) {
+    const from = bounds[k];
+    const to = bounds[k + 1];
+    if (to <= from) continue;
+    const complete = k > 0 && k + 2 < bounds.length;
+    if (complete || metres(from, to) >= minimum) pieces.push({ from, to, complete });
+  }
+  return pieces;
 }
 
 /** FH Companion's field names, to the canonical ones. `LatG`/`LongG` are m/s². */
