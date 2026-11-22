@@ -17,6 +17,7 @@ import { LanguagePicker } from '../LanguagePicker';
 import { MotionSetting } from '../MotionSetting';
 import { UnitsPicker } from '../UnitsPicker';
 import { SessionButton } from '../session/SessionButton';
+import { LibraryButton } from '../../library/LibraryView';
 import { UsageSettingsRow } from '../usage/UsageUI';
 import { AppUpdateSettingsRow } from '../AppUpdate';
 import { Icon, type IconName } from './Icon';
@@ -76,6 +77,7 @@ export function Brand() {
         <span className="search-text">{t('shell.palette.button')}</span>
         <kbd>Ctrl K</kbd>
       </button>
+      <LibraryButton />
       <SessionButton />
       <HelpButton />
       <HeaderOverflow />

@@ -12,6 +12,7 @@ path = "src/main.rs"
 
 [dependencies]
 heat3d-core.workspace = true
+heat3d-library.workspace = true
 heat3d-session.workspace = true
 heat3d-extractors.workspace = true
 heat3d-sandbox = { path = "../sandbox" }
@@ -27,3 +28,4 @@ reqwest = { version = "0.13", default-features = false, features = ["rustls-no-p
 rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12"] }
 base64 = "0.22"
 minisign-verify = "0.2"
+tower = { version = "0.5", features = ["util"] }

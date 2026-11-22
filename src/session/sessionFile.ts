@@ -269,6 +269,8 @@ export async function downloadSession(engine: Engine | null, pack: boolean, name
   a.click();
   a.remove();
   window.setTimeout(() => URL.revokeObjectURL(url), 10_000);
+  // The Library links the session to the items it was made from (src/library/open.ts).
+  window.dispatchEvent(new CustomEvent('heat3d:session-saved', { detail: a.download }));
 }
 
 const AUTOSAVE_KEY = 'heat3d.session.autosave';

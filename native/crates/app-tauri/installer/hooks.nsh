@@ -50,4 +50,10 @@
     MessageBox MB_ICONEXCLAMATION|MB_OK "$R7" /SD IDOK
   ${EndIf}
   Delete $R8
+  ; The 3DHeat Library's own Start menu entry (the app with --library, docs/library.md).
+  CreateShortcut "$SMPROGRAMS\3DHeat Library.lnk" "$INSTDIR\3dheat-app.exe" "--library" "$INSTDIR\3dheat-app.exe" 0
+!macroend
+
+!macro NSIS_HOOK_POSTUNINSTALL
+  Delete "$SMPROGRAMS\3DHeat Library.lnk"
 !macroend

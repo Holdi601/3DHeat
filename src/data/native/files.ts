@@ -32,6 +32,11 @@ function bridge(): WebviewBridge | null {
 }
 
 const tokens = new WeakMap<File, string | null>();
+
+/** A file whose path the host already knows (the Library's files come with their token): the core reads it in place. */
+export function setNativeToken(file: File, token: string): void {
+  tokens.set(file, token);
+}
 const waiting = new Map<number, (tokens: Array<string | null>) => void>();
 let listening = false;
 let nextId = 1;
@@ -39,7 +44,7 @@ let nextId = 1;
 /** Tokens for `files`, null where the host cannot read a file itself. */
 export async function nativeTokens(files: File[]): Promise<Array<string | null>> {
   const b = bridge();
-  if (!b) return files.map(() => null);
+  if (!b) return files.map((f) => tokens.get(f) ?? null);
   const unknown = [...new Set(files.filter((f) => !tokens.has(f)))];
   if (unknown.length) {
     if (!listening) {

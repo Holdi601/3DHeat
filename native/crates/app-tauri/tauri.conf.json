@@ -70,7 +70,10 @@
         ],
         "recommends": [
           "mesa-vulkan-drivers"
-        ]
+        ],
+        "files": {
+          "/usr/share/applications/3dheat-library.desktop": "linux/3dheat-library.desktop"
+        }
       },
       "rpm": {
         "depends": [

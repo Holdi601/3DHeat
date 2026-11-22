@@ -18,6 +18,9 @@ tauri-build = { version = "2", features = [] }
 [dependencies]
 heat3d-core.workspace = true
 heat3d-server.workspace = true
+heat3d-library.workspace = true
+# The folder picker of the Library (Windows' own dialog; the desktop portal on Wayland).
+rfd = "0.18"
 tauri = { version = "2", features = [] }
 serde.workspace = true
 serde_json.workspace = true

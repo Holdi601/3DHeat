@@ -20,6 +20,7 @@ async fn main() {
         Some("healthcheck") => heat3d_server::cli::healthcheck(&args.collect::<Vec<_>>()),
         Some("--version") | Some("-V") => println!("3dheat {}", heat3d_server::update::current()),
         Some("gateway") => heat3d_server::cli::gateway().await,
+        Some("library") => heat3d_server::library::cli(args.collect()).await,
         Some("sandbox-check") => heat3d_server::cli::sandbox_check().await,
         Some("gateway-probe") => heat3d_server::cli::gateway_probe(&args.collect::<Vec<_>>()),
         Some("-h") | Some("--help") | None => println!("{}", heat3d_server::cli::HELP),

@@ -170,6 +170,10 @@ The app and the browser version host multiplayer sessions with one server, `3dhe
 
 Beside the window, the session uses the same core as the window: what the host loaded, the session can serve. A browser from another machine can only use files the host shared, never name a path on the host.
 
+## The Library
+
+`3dheat-app --library` opens the Library in a window of its own (the Start menu entry **3DHeat Library**); in the viewer, the Library button at the top of the side panel opens it over the view. It catalogues your replays, recordings, matches and levels, converts them with the installed converters, and opens them in 3DHeat: [The Library](library.md).
+
 ## For developers
 
 Everything lives in `native/`, a Rust workspace:
@@ -178,6 +182,7 @@ Everything lives in `native/`, a Rust workspace:
 |---|---|
 | `crates/proto` | the protocol between a viewer and a core (`proto/heat3d/v1/heat3d.proto`), generated for Rust at build time; `npm run proto` in `native/` generates the TypeScript side into `src/data/native/gen` |
 | `crates/core` | the readers, the parallel sort, the dataset build (`build.rs`: everything the viewer's build does after reading), the built datasets held by handle (`dataset.rs`: columns, chunks packed on request, columns read on demand), and the request handler. No Tauri in it. `cargo test -p heat3d-core` |
+| `crates/library` | the Library ([The Library](library.md)): the SQLite catalogue of replays, recordings, matches and levels, the scanner and metadata readers, thumbnails, and the conversion queue that runs the installed converters. `cargo test -p heat3d-library` |
 | `crates/session` | the multiplayer session server (roles, waiting room, presence, the shared layers' op log); its messages are in `proto/heat3d/session/v1` |
 | `crates/server` | the data API over HTTP and WebSocket, the window's loopback server, and `3dheat serve` (session plus data API, headless) |
 | `crates/app-tauri` | the desktop app (`3DHeat`), a thin layer: the window, loaded from its own loopback server (`/v1` with a key only the window gets), the file handover, and the server embedded |

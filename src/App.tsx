@@ -100,6 +100,7 @@ import { guardBrowserKeys } from './ui/browserKeys';
 import { Brand, More, TaskBar, TaskGroup, WorkspaceBar } from './ui/shell/Shell';
 import { CommandPalette } from './ui/shell/CommandPalette';
 import { ShortcutSheet } from './ui/shell/ShortcutSheet';
+import { LibraryView } from './library/LibraryView';
 import { QuickBar } from './ui/shell/QuickBar';
 import { ConfirmHost, ToastHost, toast } from './ui/shell/kit';
 import { typesCharacter, typing, viewHasKeys } from './ui/viewKeys';
@@ -758,6 +759,7 @@ export function App() {
 
         <CommandPalette />
         <ShortcutSheet />
+        <LibraryView />
         <ConfirmHost />
         <UsageHost />
         <div className="timeline-bar">{vehicleTab ? null : planTab ? <BoardBar /> : raceTab ? <RaceBar /> : <Timeline />}</div>

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=3DHeat Library
+GenericName=Replay library
+Comment=Manage and convert replays, Tacview recordings, demos and extracted levels
+Exec=3dheat-app --library
+Icon=3dheat-app
+Terminal=false
+Categories=Utility;

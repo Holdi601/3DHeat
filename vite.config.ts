@@ -1179,6 +1179,12 @@ export default defineConfig({
      * is wanted.
      */
     host: '127.0.0.1',
+    /**
+     * The Library's catalogue (src/library/api.ts) from `3dheat library serve`, when
+     * `HEAT3D_LIBRARY_URL` names it (http://127.0.0.1:<port>); the app's window
+     * reaches the same API on its own server. Loopback to loopback only.
+     */
+    proxy: process.env.HEAT3D_LIBRARY_URL ? { '/__heat3d/library': { target: process.env.HEAT3D_LIBRARY_URL, changeOrigin: false } } : undefined,
     // No COOP/COEP headers. They make the page cross-origin isolated, which only
     // SharedArrayBuffer (and finer timers) would need, and nothing here uses
     // either: the workers hand their typed arrays to the page by transfer, which

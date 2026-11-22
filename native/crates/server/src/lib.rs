@@ -9,12 +9,15 @@
 //!   known by a key only the window is told.
 //! - `cli`: `3dheat serve`, the session server with `/v1` mounted, headless or
 //!   from the app (`3dheat-app serve`, or `3dheat-app --host` beside the window).
+//! - `library`: the Library's catalogue at `/__heat3d/library`, on the window's
+//!   server only (and `3dheat library serve` for the development server).
 //!
 //! Who may do what (`Access`): the owner may name files by path; everyone else
 //! uses only files the host shared. Without a key, a request from this machine
 //! is the owner's; with one, only a request carrying it.
 
 pub mod cli;
+pub mod library;
 pub mod public;
 pub mod update;
 pub mod usage;
@@ -124,11 +127,26 @@ async fn session(mut s: WebSocket, core: Arc<Core>, access: Access) {
 /// (WebView2 does not hand a custom scheme to nested workers, and hands its
 /// answers over at about 0.1 GB/s, a loopback port at several times that).
 pub async fn spawn_local(core: Arc<Core>, web: Option<PathBuf>, owner_key: String) -> Result<SocketAddr> {
+    spawn_local_with(core, web, owner_key, None).await
+}
+
+/// `spawn_local`, with the Library's catalogue at `/__heat3d/library` (by the same key).
+pub async fn spawn_local_with(core: Arc<Core>, web: Option<PathBuf>, owner_key: String, library: Option<Arc<heat3d_library::Library>>) -> Result<SocketAddr> {
     let listener = tokio::net::TcpListener::bind(SocketAddr::from(([127, 0, 0, 1], 0))).await.context("binding a loopback port")?;
     let addr = listener.local_addr()?;
     // The Extractors panel's route (docs/extractors.md): this window only, by the same key.
     let extractors = heat3d_extractors::router(heat3d_extractors::Manager::shared(), heat3d_extractors::Auth::Key(Arc::from(owner_key.as_str())));
-    let mut app = Router::new().nest_service("/v1", data_router(core, Some(owner_key), true)).nest_service("/__heat3d/extractors", extractors);
+    let mut app = Router::new().nest_service("/v1", data_router(core.clone(), Some(owner_key.clone()), true)).nest_service("/__heat3d/extractors", extractors);
+    if let Some(lib) = library {
+        // Answered to other origins too (the development server's page in `tauri dev`): only with the window's key.
+        let cors = tower_http::cors::CorsLayer::new()
+            .allow_origin(tower_http::cors::Any)
+            .allow_methods([axum::http::Method::GET, axum::http::Method::POST, axum::http::Method::PUT, axum::http::Method::DELETE])
+            .allow_headers([header::CONTENT_TYPE, header::RANGE, axum::http::HeaderName::from_static("x-heat3d-key"), axum::http::HeaderName::from_static("x-heat3d-library")])
+            .expose_headers([axum::http::HeaderName::from_static("x-heat3d-token"), axum::http::HeaderName::from_static("x-heat3d-name")])
+            .max_age(std::time::Duration::from_secs(86_400));
+        app = app.nest("/__heat3d/library", library::router(lib, core, Some(owner_key)).layer(cors));
+    }
     if let Some(dir) = web {
         let index = dir.join("index.html");
         app = app.fallback_service(ServeDir::new(dir).fallback(ServeFile::new(index)));
