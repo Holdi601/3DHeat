@@ -73,7 +73,8 @@
  * GunPitch (degrees, the yaw right of the hull's heading and up from level)
  * are toward where its crew's shots went, at the frames they fired: the
  * recording keeps no turret, but its shots say where the guns pointed (a
- * shot without a height says no pitch).
+ * shot without a height says no pitch). Not an aircraft's (helicopters'
+ * door guns fire out of either side).
  *
  * Arma Reforger: OCAP2's recorder for Reforger (github.com/OCAP2/addon-reforger,
  * its receiver's `builder.go`, 2026-02) writes the same layout, with
@@ -610,6 +611,7 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
   };
 
   // Where each Arma 3 vehicle's crew shot, per frame: what its turret and gun pointed at (the last shot of a frame).
+  // Not an aircraft's: its pilot's guns and rockets point where it flies, its door gunners out of either side.
   const aims = new Map<number, Map<number, number[]>>();
   if (!reforger)
     for (const t of tracks.values()) {
@@ -619,7 +621,7 @@ export function parseOcap(text: string, name = 'recording'): OcapTable {
         if (!Array.isArray(ff) || typeof ff[0] !== 'number' || !Array.isArray(ff[1])) continue;
         const s = stateAt(t.e.id!, ff[0]);
         const v = s ? vehicleOf(t.e.id!, ff[0], s) : null;
-        if (!v) continue;
+        if (!v || /heli|plane|parachute/i.test(str(v.class))) continue;
         const p = ff[1] as unknown[];
         let m = aims.get(v.id!);
         if (!m) aims.set(v.id!, (m = new Map()));

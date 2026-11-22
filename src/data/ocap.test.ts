@@ -192,6 +192,11 @@ describe('OCAP', () => {
     // The gunner's own rows say nothing of a turret.
     const gunner = [...c<string[]>('Object').keys()].filter((i) => c<string[]>('Object')[i] === 'Gunner #0');
     expect(gunner.every((i) => Number.isNaN(c<Float64Array>('TurretYaw')[i]))).toBe(true);
+    // A helicopter's crew turns no turret (door guns fire out of either side).
+    rec.entities[1].class = 'heli';
+    const h = parseOcap(JSON.stringify(rec), 'aim');
+    const hy = h.data[h.columns.indexOf('TurretYaw')] as Float64Array;
+    expect(hy.every((x) => Number.isNaN(x))).toBe(true);
   });
 
   it('places events where they happened, naming both sides', () => {
