@@ -2040,7 +2040,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "axum",
- "base64 0.22.1",
+ "base64 0.23.1",
  "heat3d-core",
  "heat3d-extractors",
  "heat3d-library",
