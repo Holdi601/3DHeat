@@ -1,5 +1,5 @@
 import type { HeightGrid } from '../data/groundFit';
-import { worldTiles, type WorldTile } from './tileSet';
+import { worldTiles } from './tileSet';
 import {
   decodeTile,
   inflate,
@@ -8,13 +8,14 @@ import {
   type TerrainTileData,
 } from './terrainFormat';
 import { morphRange, NODE_CELLS, nodeSize, selectNodes, type LodGrid, type LodNode } from './terrainLod';
-import { RECORD_BYTES, waterTile } from './terrainObjects';
+import { RECORD_BYTES, waterTile, type TerrainBoxes } from './terrainObjects';
 import type { ObjectsWorkerRequest } from './terrainObjectsWorker';
 
 /**
  * A tiled terrain (`terrainFormat.ts`) being drawn: which tiles are wanted,
  * loaded, on the GPU; the nodes to draw this frame (`terrainLod.ts`); the
- * placed objects round the camera as world tiles (`tileSet.ts`); and heights
+ * placed objects round the camera as instanced boxes (`terrainObjects.ts`), the
+ * sea as a world tile (`tileSet.ts`); and heights
  * for whoever asks (the ground check, a click on the ground).
  *
  * Coarse first: a tile is fetched only when the node above it wants to split,
@@ -42,8 +43,10 @@ export const UPLOADS_PER_FRAME = 8;
 const OBJECT_REACH = 2500;
 const OBJECT_REACH_MAX = 6000;
 const OBJECT_BOXES = 300_000;
-/** Boxes a world tile, at most (about a megabyte of buffers). */
-const OBJECT_CHUNK = 1500;
+/** A cell built stays until it is this many times the reach away. */
+const OBJECT_KEEP = 1.5;
+/** Changes to the placed objects handed to the renderer at most this often, milliseconds. */
+const OBJECT_PUBLISH_MS = 400;
 
 interface TileEntry {
   key: number;
@@ -94,6 +97,8 @@ export class TerrainStream {
   readonly palette: Float32Array;
   /** Called when something new can be drawn (a tile arrived, objects built). */
   onChange: (() => void) | null = null;
+  /** The placed objects round the camera drawn; off lets them all go (the sea stays). */
+  showObjects = true;
   /** Bumped when the drawn set changes for a reason the camera does not show. */
   version = 0;
   readonly stats = { fetched: 0, bytes: 0, uploads: 0, evicted: 0, failed: 0, firstDraw: 0, objectCells: 0, boxes: 0 };
@@ -354,7 +359,7 @@ export class TerrainStream {
       out[i++] = m1;
     }
     if (!this.stats.firstDraw && choice.nodes.length) this.stats.firstDraw = performance.now() - this.started;
-    this.objects.update(cam);
+    this.objects.update(cam, this.showObjects);
     return { instances: out, count: choice.nodes.length };
   }
 
@@ -505,6 +510,16 @@ export class TerrainStream {
 
   // ------------------------------------------------------------- objects
 
+  /** The placed objects round the camera, a set per cell (`terrainObjects.ts`), and its version. */
+  boxes: readonly TerrainBoxes[] = [];
+  boxVersion = 0;
+
+  /** For `ObjectCells`. */
+  setBoxes(sets: readonly TerrainBoxes[]): void {
+    this.boxes = sets;
+    this.boxVersion++;
+  }
+
   /** For `ObjectCells`. */
   readRange(offset: number, length: number): Promise<ArrayBuffer> {
     return this.reader.range(offset, length);
@@ -523,7 +538,7 @@ export class TerrainStream {
 
 /**
  * The placed objects round the camera: the cells within reach (and within the
- * box budget, nearest first) read and built into world tiles in a worker, the
+ * box budget, nearest first) read and turned into instanced boxes in a worker, the
  * rest let go; the sea as one more tile.
  */
 let streams = 0;
@@ -532,22 +547,21 @@ class ObjectCells {
   /** This stream's tiles' prefix: two streams of one map never take each other's. */
   private readonly prefix = `terrain:${++streams}:`;
   private worker: Worker | null = null;
-  /** By cell: its tiles, in pieces of at most `OBJECT_CHUNK` boxes. */
-  private readonly built = new Map<string, WorldTile[]>();
-  /** Cells being built: the pieces still to come and those here. */
-  private readonly parts = new Map<string, { need: number; tiles: WorldTile[] }>();
+  /** By cell: its boxes. */
+  private readonly built = new Map<string, TerrainBoxes>();
   private readonly loading = new Set<string>();
   private lastAt: [number, number, number] | null = null;
-  private readonly water: WorldTile | null;
   private published = '';
 
   constructor(private readonly s: TerrainStream) {
     const ix = s.index;
-    this.water = ix.water ? waterTile(`${this.prefix}water`, ix.extent, ix.water.y) : null;
-    this.publish();
+    // The sea, once: one world tile over the map.
+    if (ix.water) worldTiles.replace([waterTile(`${this.prefix}water`, ix.extent, ix.water.y)]);
   }
 
   dispose(): void {
+    if (this.timer !== null) clearTimeout(this.timer);
+    this.timer = null;
     this.worker?.terminate();
     this.worker = null;
     this.built.clear();
@@ -559,28 +573,30 @@ class ObjectCells {
     if (this.worker || typeof Worker === 'undefined' || !this.s.index.instances) return this.worker;
     this.worker = new Worker(new URL('./terrainObjectsWorker.ts', import.meta.url), { type: 'module' });
     this.worker.postMessage({ kind: 'models', models: this.s.index.instances.models } satisfies ObjectsWorkerRequest);
-    this.worker.onmessage = (e: MessageEvent<WorldTile>) => {
-      const tile = e.data;
-      const cell = tile.id.slice(0, tile.id.lastIndexOf('#'));
-      const part = this.parts.get(cell);
-      if (!part) return;
-      part.tiles.push(tile);
-      if (part.tiles.length < part.need) return;
-      // A cell shows whole, once all its pieces are built.
-      this.parts.delete(cell);
-      this.loading.delete(cell);
-      if (this.s.gone || !this.wanted.has(cell)) return;
-      this.built.set(cell, part.tiles);
-      this.publish();
+    this.worker.onmessage = (e: MessageEvent<TerrainBoxes>) => {
+      const boxes = e.data;
+      this.loading.delete(boxes.id);
+      if (this.s.gone || !this.wanted.has(boxes.id)) return;
+      this.built.set(boxes.id, boxes);
+      this.schedule();
     };
     return this.worker;
   }
 
   private wanted = new Set<string>();
 
-  update(cam: [number, number, number]): void {
+  update(cam: [number, number, number], show: boolean): void {
     const inst = this.s.index.instances;
     if (!inst) return;
+    if (!show) {
+      if (this.built.size || this.wanted.size) {
+        this.wanted = new Set();
+        this.built.clear();
+        this.lastAt = null;
+        this.schedule();
+      }
+      return;
+    }
     // Every 50 m the camera moves, not every frame.
     if (this.lastAt && Math.hypot(cam[0] - this.lastAt[0], cam[1] - this.lastAt[1], cam[2] - this.lastAt[2]) < 50) return;
     this.lastAt = cam;
@@ -594,7 +610,8 @@ class ObjectCells {
         const d = Math.max(0, Math.hypot(x - cam[0], z - cam[2]) - inst.cell * 0.71);
         return { id: `${this.prefix}obj:${cx},${cz}`, off, count, d };
       })
-      .filter((c) => c.d <= reach)
+      // A cell already here stays until it is half as far again: a camera going to and fro does not churn them.
+      .filter((c) => c.d <= (this.built.has(c.id) || this.loading.has(c.id) ? reach * OBJECT_KEEP : reach))
       .sort((a, b) => a.d - b.d);
     const next = new Set<string>();
     let boxes = 0;
@@ -612,7 +629,22 @@ class ObjectCells {
         dropped = true;
       }
     }
-    if (dropped) this.publish();
+    if (dropped) this.schedule();
+  }
+
+  private timer: ReturnType<typeof setTimeout> | null = null;
+
+  /**
+   * Publishes the changed set a moment later, with whatever else changes
+   * meanwhile: each change of the set costs the renderer a frame's
+   * worth of work, so cells arriving one by one are handed over together.
+   */
+  private schedule(): void {
+    if (this.timer !== null) return;
+    this.timer = setTimeout(() => {
+      this.timer = null;
+      if (!this.s.gone) this.publish();
+    }, OBJECT_PUBLISH_MS);
   }
 
   private async load(id: string, off: number, count: number): Promise<void> {
@@ -625,27 +657,20 @@ class ObjectCells {
         this.loading.delete(id);
         return;
       }
-      // In pieces: one big town as one tile was megabytes to upload in one frame.
-      const pieces = Math.ceil(count / OBJECT_CHUNK);
-      this.parts.set(id, { need: pieces, tiles: [] });
-      for (let k = 0; k < pieces; k++) {
-        const n = Math.min(OBJECT_CHUNK, count - k * OBJECT_CHUNK);
-        const records = buf.slice(k * OBJECT_CHUNK * RECORD_BYTES, (k * OBJECT_CHUNK + n) * RECORD_BYTES);
-        w.postMessage({ kind: 'build', id: `${id}#${k}`, records, count: n } satisfies ObjectsWorkerRequest, [records]);
-      }
+      w.postMessage({ kind: 'build', id, records: buf, count } satisfies ObjectsWorkerRequest, [buf]);
     } catch {
       this.loading.delete(id);
     }
   }
 
   private publish(): void {
-    const tiles = [...(this.water ? [this.water] : []), ...[...this.built.values()].flat()];
-    const key = tiles.map((t) => t.id).join('|');
+    const sets = [...this.built.values()];
+    const key = sets.map((t) => t.id).join('|');
     if (key === this.published) return;
     this.published = key;
-    worldTiles.replace(tiles);
-    this.s.stats.objectCells = this.built.size;
-    this.s.stats.boxes = tiles.reduce((n, t) => n + t.structureIndices.length / 36, 0);
+    this.s.setBoxes(sets);
+    this.s.stats.objectCells = sets.length;
+    this.s.stats.boxes = sets.reduce((n, t) => n + t.count, 0);
     this.s.changed();
   }
 }

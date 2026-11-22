@@ -6,7 +6,7 @@ import { modelLevelFrom } from './LevelPanel';
 /**
  * A tiled terrain (`<Level>.terrain.json` + `.terrain.bin`, src/world/terrainFormat.ts)
  * as the level: no arrays of its own - the ground comes from the height tiles
- * round the camera, the placed objects and the sea as world tiles - only its
+ * round the camera, the placed objects as instanced boxes, the sea as a world tile - only its
  * extent and the look a big extracted map wants (in its ground's colours, the
  * relief scaled to its heights, building edges off).
  */

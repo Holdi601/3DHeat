@@ -196,8 +196,8 @@ export interface ModelLevel {
   stream?: { theatre: string; runways: boolean; imagery: boolean; dcs?: DcsGroundData | null };
   /**
    * A tiled terrain (src/world/terrainStream.ts): the ground drawn from its
-   * height tiles round the camera, the placed objects and the sea as world
-   * tiles. The level's own arrays are then empty. Absent on every other level.
+   * height tiles round the camera, the placed objects as instanced boxes, the
+   * sea as a world tile. The level's own arrays are then empty. Absent on every other level.
    */
   terrain?: TerrainStream;
 

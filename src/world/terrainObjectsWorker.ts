@@ -1,8 +1,8 @@
 /// <reference lib="webworker" />
-import { objectsTile } from './terrainObjects';
+import { objectBoxes } from './terrainObjects';
 import type { TerrainModel } from './terrainFormat';
 
-/** Builds a tiled terrain's object cells into box meshes off the page's thread (`terrainStream.ts`). */
+/** Turns a tiled terrain's object cells into instanced boxes off the page's thread (`terrainStream.ts`). */
 
 export type ObjectsWorkerRequest =
   | { kind: 'models'; models: TerrainModel[] }
@@ -16,7 +16,6 @@ self.onmessage = (e: MessageEvent<ObjectsWorkerRequest>) => {
     models = m.models;
     return;
   }
-  const tile = objectsTile(m.id, m.records, m.count, models);
-  const transfer = [tile.vertices.buffer, tile.colours.buffer, tile.structureIndices.buffer, tile.structureEdges.buffer] as ArrayBuffer[];
-  (self as unknown as Worker).postMessage(tile, [...new Set(transfer)]);
+  const boxes = objectBoxes(m.id, m.records, m.count, models);
+  (self as unknown as Worker).postMessage(boxes, [boxes.instances.buffer as ArrayBuffer]);
 };

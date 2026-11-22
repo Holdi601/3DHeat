@@ -20,9 +20,10 @@ import { LUT_HEIGHT, LUT_WIDTH, teamPaletteIndex } from '../colors';
 import { floatToHalf, halfToFloat } from '../half';
 import { forcedHeatPrecision } from '../webgl2/glutil';
 import { buildEdgeList, type Level } from '../level';
-import { boxOutsideFrustum, diffWorldTiles, frustumPlanes, textureBytes } from '../worldTiles';
+import { boxOutsideFrustum, diffWorldTiles, frustumPlanes, textureBytes, worldTileBufferBytes } from '../worldTiles';
 import type { WorldTile } from '../../world/tileSet';
 import { GpuTerrain } from './terrain';
+import { GpuBoxes, type BoxCell } from './boxes';
 import { filterColumnData, packFilterTable, packSignTables, PERSON_FILTER_COLUMN } from '../filterTables';
 import { FilterStaging, type StageOps } from '../filterStaging';
 import {
@@ -81,6 +82,13 @@ const MAX_BLOCKS = MAX_PLAN_BLOCKS;
 const BLOCK_SHIFT = Math.log2(SAMPLE_BLOCK);
 /** Milliseconds a frame spends making queued world tiles; see `flushTiles`. */
 const TILE_UPLOAD_MS = 3;
+/**
+ * Bytes of world tiles made a frame, at most (one tile always). Time alone let
+ * a dozen megabytes through in a frame when many small tiles came at once - a
+ * tiled terrain's buildings - and the copies, done after the page's part of the
+ * frame, cost the next vsync.
+ */
+const TILE_UPLOAD_BYTES = 1024 * 1024;
 /** Milliseconds a frame spends packing and writing a dataset that is arriving; see `flushDataUpload`. */
 const DATA_UPLOAD_MS = 3;
 /** Rows read or packed between checks of the clock: small, as the first slices run before the code is optimised. */
@@ -260,7 +268,7 @@ export class WebgpuRenderer implements Renderer {
   }
 
   get levelBytes(): number {
-    return this.levelOwnBytes + this.tileBytes + (this.terrain?.bytes ?? 0);
+    return this.levelOwnBytes + this.tileBytes + (this.terrain?.bytes ?? 0) + (this.boxes?.bytes ?? 0);
   }
 
   private dataset: Dataset | null = null;
@@ -537,8 +545,12 @@ export class WebgpuRenderer implements Renderer {
   /** A tiled terrain's ground (`terrain.ts`), made with the first one. */
   private terrain: GpuTerrain | null = null;
   private frameTerrain: FrameParams['terrain'] | null = null;
+  /** A tiled terrain's placed objects (`boxes.ts`), and the cells of them in view this frame. */
+  private boxes: GpuBoxes | null = null;
+  private frameBoxes: BoxCell[] = [];
   /** The terrain's (empty) texture group: it draws nothing textured. */
-  private terrainAtlas: { pipeline: GPURenderPipeline; group: GPUBindGroup } | null = null;
+  private readonly boxPlanes = new Float32Array(20);
+  private readonly plainAtlas = new Map<GPURenderPipeline, GPUBindGroup>();
   private readonly planes = new Float32Array(20);
   private tilePlaceholder: GPUBuffer | null = null;
   /** Bumped per level so a late atlas is not uploaded onto the next level. */
@@ -2146,10 +2158,12 @@ export class WebgpuRenderer implements Renderer {
   private flushTiles(): void {
     const until = performance.now() + TILE_UPLOAD_MS;
     let made = 0;
-    while (this.tileQueue.length > 0 && (made === 0 || performance.now() < until)) {
+    let bytes = 0;
+    while (this.tileQueue.length > 0 && (made === 0 || (performance.now() < until && bytes < TILE_UPLOAD_BYTES))) {
       const tile = this.tileQueue.shift()!;
       // Removed or replaced while it waited.
       if (this.tileSources.get(tile.id) !== tile || this.tileMeshes.has(tile.id)) continue;
+      bytes += worldTileBufferBytes(tile);
       const mesh = this.uploadMesh(tile, tile.bounds, true, `tile ${tile.id}`);
       this.tileMeshes.set(tile.id, mesh);
       this.tileBytes += mesh.bytes;
@@ -2344,21 +2358,22 @@ export class WebgpuRenderer implements Renderer {
     return group;
   }
 
-  /** The tiled terrain's texture group: the placeholder atlas (its vertex stage reads no tile table). */
-  private terrainAtlasGroup(pipeline: GPURenderPipeline): GPUBindGroup {
+  /** The texture group of a pipeline that draws nothing textured and reads no tile table (the tiled terrain's ground and boxes). */
+  private plainAtlasGroup(pipeline: GPURenderPipeline): GPUBindGroup {
     this.ensureAtlasPlaceholders();
-    if (this.terrainAtlas?.pipeline !== pipeline) {
-      const group = this.device.createBindGroup({
-        label: 'terrain atlas',
+    let group = this.plainAtlas.get(pipeline);
+    if (!group) {
+      group = this.device.createBindGroup({
+        label: 'plain atlas',
         layout: pipeline.getBindGroupLayout(1),
         entries: [
           { binding: 0, resource: this.atlasPlaceholder!.createView() },
           { binding: 1, resource: this.atlasSamplerCache! },
         ],
       });
-      this.terrainAtlas = { pipeline, group };
+      this.plainAtlas.set(pipeline, group);
     }
-    return this.terrainAtlas.group;
+    return group;
   }
 
   private ensureAtlasPlaceholders(): void {
@@ -2579,9 +2594,18 @@ export class WebgpuRenderer implements Renderer {
     this.frameMeshes = this.meshesInView(params);
     const model = params.level?.kind === 'model' ? params.level : null;
     this.frameTerrain = model ? (params.terrain ?? null) : null;
+    this.frameBoxes = [];
     if (model && params.terrain) {
+      const st = params.terrain.stream;
       this.terrain ??= new GpuTerrain(this.device, SCENE_FORMAT, DEPTH_FORMAT, GPU_DEPTH_TEST, alphaBlend());
-      this.terrain.prepare(params.terrain.stream);
+      this.terrain.prepare(st);
+      this.boxes ??= new GpuBoxes(this.device, SCENE_FORMAT, DEPTH_FORMAT, GPU_DEPTH_TEST, alphaBlend());
+      this.boxes.sync(st, st.boxes, st.boxVersion);
+      // More cells to write: the next frame is wanted even with the camera still.
+      if (this.boxes.pending) st.onChange?.();
+      this.frameBoxes = this.boxes.inView(frustumPlanes(params.viewProj, this.boxPlanes));
+    } else {
+      this.boxes?.clear();
     }
     const slots = model ? this.pushMeshUniforms(params, model) : null;
     const mapOffset = params.level?.kind === 'image' ? this.pushMapUniform(params, params.level) : 0;
@@ -2745,6 +2769,12 @@ export class WebgpuRenderer implements Renderer {
       pass.setIndexBuffer(m.structBuffer, 'uint32');
       pass.drawIndexed(m.structCount);
     }
+    if (this.boxes && this.frameBoxes.length) {
+      pass.setPipeline(this.boxes.depth);
+      pass.setBindGroup(0, this.sceneBindGroup(this.boxes.depth, 'structdepth:boxes', slots.seal[0]));
+      pass.setBindGroup(1, this.plainAtlasGroup(this.boxes.depth));
+      this.boxes.draw(pass, this.frameBoxes);
+    }
   }
 
   private pushMapUniform(
@@ -2804,7 +2834,7 @@ export class WebgpuRenderer implements Renderer {
       );
     }
     const anyTexture = this.frameMeshes.some((m) => m.texture !== null);
-    const anyBare = this.frameMeshes.some((m) => m.texture === null);
+    const anyBare = this.frameMeshes.some((m) => m.texture === null) || this.frameBoxes.length > 0;
     // [without a texture, with one]. Only the answers some mesh needs are pushed.
     const pair = (push: (textured: boolean) => number): [number, number] => [
       anyBare ? push(false) : 0,
@@ -2971,7 +3001,7 @@ export class WebgpuRenderer implements Renderer {
         pass,
         this.frameTerrain.frame,
         this.sceneBindGroup(this.terrain.pipeline, 'terrain', slots.terrain),
-        this.terrainAtlasGroup(this.terrain.pipeline),
+        this.plainAtlasGroup(this.terrain.pipeline),
       );
     }
 
@@ -3023,6 +3053,14 @@ export class WebgpuRenderer implements Renderer {
       pass.setIndexBuffer(m.structBuffer, 'uint32');
       pass.drawIndexed(m.structCount);
     }
+    // A tiled terrain's objects, with the same look: untextured shells (or solid, with the solid pass).
+    if (this.boxes && this.frameBoxes.length && level.tiles.faces) {
+      const boxPipe = pipeline === this.structPipeline ? this.boxes.shell : this.boxes.solid;
+      pass.setPipeline(boxPipe);
+      pass.setBindGroup(0, this.sceneBindGroup(boxPipe, `${key}:boxes`, slots.struct[0]));
+      pass.setBindGroup(1, this.plainAtlasGroup(boxPipe));
+      this.boxes.draw(pass, this.frameBoxes);
+    }
   }
 
   /**
@@ -3036,7 +3074,7 @@ export class WebgpuRenderer implements Renderer {
     if (params.heat.occlusion <= 0) return 0;
     if (params.level?.kind !== 'model') return 0;
     // A wall on a world tile is as much a surface to count as one on the level.
-    if (!this.frameMeshes.some((m) => m.structBuffer && m.structCount > 0)) return 0;
+    if (!this.frameMeshes.some((m) => m.structBuffer && m.structCount > 0) && !this.frameBoxes.length) return 0;
     return this.peelViews.length;
   }
 
@@ -3086,7 +3124,7 @@ export class WebgpuRenderer implements Renderer {
     });
     const model = params.level?.kind === 'model' ? params.level : null;
     const meshes = model ? this.frameMeshes.filter((m) => m.structBuffer && m.structCount > 0) : [];
-    if (model && meshes.length > 0) {
+    if (model && (meshes.length > 0 || this.frameBoxes.length > 0)) {
       // The structures' own uniform slots, so the slice applies here as it does
       // to the seal: a wall cut open must stop counting as a wall. And the
       // texture, as in the seal: a leaf card's cut-out texels are no wall,
@@ -3102,6 +3140,12 @@ export class WebgpuRenderer implements Renderer {
         this.setMeshBuffers(pass, m);
         pass.setIndexBuffer(m.structBuffer!, 'uint32');
         pass.drawIndexed(m.structCount);
+      }
+      if (this.boxes && this.frameBoxes.length) {
+        pass.setPipeline(this.boxes.depth);
+        pass.setBindGroup(0, this.sceneBindGroup(this.boxes.depth, 'structonly:boxes', offsets[0]));
+        pass.setBindGroup(1, this.plainAtlasGroup(this.boxes.depth));
+        this.boxes.draw(pass, this.frameBoxes);
       }
     }
     // Ended even with nothing drawn: the pass is what clears the target to 1.0,
@@ -3155,6 +3199,19 @@ export class WebgpuRenderer implements Renderer {
         pass.setVertexBuffer(2, m.tileBuffer);
         pass.setIndexBuffer(m.structBuffer!, 'uint32');
         pass.drawIndexed(m.structCount);
+      }
+      if (this.boxes && this.frameBoxes.length) {
+        const boxPeel = this.boxes.peel;
+        pass.setPipeline(boxPeel);
+        pass.setBindGroup(
+          0,
+          this.cachedBindGroup(`peelbox:${i}:${offsets[0]}:${this.depthGeneration}`, boxPeel.getBindGroupLayout(0), () => [
+            { binding: 0, resource: this.uniforms.binding(offsets[0], PEEL_UNIFORM_BYTES) },
+            { binding: 1, resource: source },
+          ]),
+        );
+        pass.setBindGroup(1, this.plainAtlasGroup(boxPeel));
+        this.boxes.draw(pass, this.frameBoxes);
       }
       pass.end();
       prev = this.peelViews[i];
@@ -4836,6 +4893,8 @@ export class WebgpuRenderer implements Renderer {
     this.disposed = true;
     this.terrain?.destroy();
     this.terrain = null;
+    this.boxes?.destroy();
+    this.boxes = null;
     this.heatBin?.dispose();
     this.heatTiles?.destroy();
     this.heatTiles = null;

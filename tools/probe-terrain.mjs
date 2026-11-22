@@ -30,6 +30,8 @@ const DATA = opt('data');
 const base = opt('url') ?? 'http://127.0.0.1:5303/';
 const MESH = argv.includes('--mesh');
 const FIGURES = argv.includes('--figures');
+/** The tiled terrain without its placed objects (to tell their cost from the ground's). */
+const NO_OBJECTS = argv.includes('--no-objects');
 const SHOT = opt('shot');
 /** Only the load and the screenshots: a look, no flight. */
 const QUICK = argv.includes('--quick');
@@ -75,7 +77,8 @@ if (MESH) {
     await r.fulfill({ response: res, json: ix });
   });
 }
-await page.goto(base, { waitUntil: 'domcontentloaded', timeout: 180_000 });
+// Timestamp queries on (WebGPU): each frame's GPU time beside its main-thread time.
+await page.goto(base + (base.includes('?') ? '&' : '?') + 'gpuprof', { waitUntil: 'domcontentloaded', timeout: 180_000 });
 await page.waitForFunction(() => Boolean(globalThis.__3dheat_engine && globalThis.__3dheat), null, { timeout: 180_000 });
 await page.waitForTimeout(2000);
 const before = memoryOf();
@@ -121,11 +124,12 @@ const load = await page.evaluate(async (file) => {
 console.log(`${MESH ? 'mesh   ' : 'tiled  '} level ${load.level} (${load.terrain ? 'tiled terrain' : 'one mesh'}), ${load.rows.toLocaleString()} rows`);
 console.log(`  data loaded ${(load.tData / 1000).toFixed(1)} s, level set ${(load.tLevel / 1000).toFixed(1)} s, ground drawn ${load.tGround === null ? '-' : (load.tGround / 1000).toFixed(1)} s (from the load's start)`);
 
-const fly = QUICK ? null : await page.evaluate(async (figures) => {
+const fly = QUICK ? null : await page.evaluate(async ([figures, noObjects]) => {
   const h = globalThis.__3dheat;
   const eng = globalThis.__3dheat_engine;
   const st = h.useStore.getState();
   const lv = st.level;
+  if (lv.terrain && noObjects) lv.terrain.showObjects = false;
   const b = lv.bounds;
   const cx = (b.minX + b.maxX) / 2;
   const cz = (b.minZ + b.maxZ) / 2;
@@ -144,14 +148,24 @@ const fly = QUICK ? null : await page.evaluate(async (figures) => {
     c.moved = true;
   };
   const phases = [];
+  eng.timeFrames(true);
+  const mark = { cpu: eng.frameWork.n, gpu: eng.gpuFrames?.n ?? 0 };
+  const long = [];
+  const t = lv.terrain;
+  const snap = () => (t ? { up: t.stats.uploads, f: t.stats.fetched, cells: t.stats.objectCells, boxes: t.stats.boxes, v: t.version } : null);
   const run = async (label, n, at) => {
     const gaps = [];
     let last = performance.now();
+    let prev = snap();
     for (let i = 0; i < n; i++) {
       at(i / n);
       await new Promise((r) => requestAnimationFrame(r));
       const now = performance.now();
       gaps.push(now - last);
+      const cur = snap();
+      // What changed over a long frame: tiles uploaded or fetched, object cells built.
+      if (now - last > 25 && long.length < 40) long.push({ label, i, ms: Math.round(now - last), d: cur && prev ? { up: cur.up - prev.up, f: cur.f - prev.f, cells: cur.cells - prev.cells, boxes: cur.boxes - prev.boxes } : null });
+      prev = cur;
       last = now;
     }
     phases.push({ label, gaps: gaps.slice(2) });
@@ -175,22 +189,37 @@ const fly = QUICK ? null : await page.evaluate(async (figures) => {
     return { p50: s[s.length >> 1], p99: s[Math.floor(s.length * 0.99)], max: s[s.length - 1], over20: g.filter((x) => x > 20).length, n: g.length };
   };
   const all = phases.flatMap((p) => p.gaps);
-  const t = lv.terrain;
+  // The frames' own work, which a busy machine does not stretch: main thread and GPU.
+  for (let i = 0; i < 8; i++) await new Promise((r) => requestAnimationFrame(r));
+  const take = (ring, from) => {
+    if (!ring) return [];
+    const out = [];
+    for (let i = Math.max(from, ring.n - ring.ms.length); i < ring.n; i++) out.push(ring.ms[i % ring.ms.length]);
+    return out;
+  };
+  const cpu = take({ n: eng.frameWork.n, ms: eng.frameWork.cpu }, mark.cpu);
+  const gpu = take(eng.gpuFrames, mark.gpu);
   return {
     phases: phases.map((p) => ({ label: p.label, ...stats(p.gaps) })),
     all: stats(all),
+    cpu: cpu.length ? stats(cpu) : null,
+    gpu: gpu.length ? stats(gpu) : null,
     heapMB: performance.memory ? Math.round(performance.memory.usedJSHeapSize / 2 ** 20) : null,
     levelMB: Math.round(eng.live.levelBytes / 2 ** 20),
     terrain: t ? { ...t.counts, ...t.stats } : null,
+    long,
     backend: eng.backendName ?? null,
   };
-}, FIGURES);
+}, [FIGURES, NO_OBJECTS]);
 const after = memoryOf();
 if (fly) report(fly);
 function report(fly) {
 const f = (s) => `p50 ${s.p50.toFixed(1)} / p99 ${s.p99.toFixed(1)} / max ${s.max.toFixed(1)} ms, ${s.over20} of ${s.n} over 20 ms`;
 for (const p of fly.phases) console.log(`  ${p.label.padEnd(18)} ${f(p)}`);
 console.log(`  ${'all'.padEnd(18)} ${f(fly.all)}`);
+const w = (s) => (s ? `p50 ${s.p50.toFixed(2)} / p99 ${s.p99.toFixed(2)} / max ${s.max.toFixed(2)} ms (${s.n} frames)` : '-');
+console.log(`  work: main thread ${w(fly.cpu)}; GPU ${w(fly.gpu)}`);
+if (argv.includes('--trace')) for (const l of fly.long) console.log(`    long frame ${l.label} #${l.i}: ${l.ms} ms ${JSON.stringify(l.d)}`);
 console.log(`  JS heap ${fly.heapMB} MB; level on the GPU (renderer's count) ${fly.levelMB} MB`);
 if (before && after) console.log(`  browser RAM ${before.ramMB} -> ${after.ramMB} MB, dedicated GPU memory ${before.gpuMB} -> ${after.gpuMB} MB`);
 if (fly.terrain) {

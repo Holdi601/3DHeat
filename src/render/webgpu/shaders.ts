@@ -1768,3 +1768,56 @@ fn vsTerrain(
   return out;
 }
 `;
+
+/**
+ * A tiled terrain's placed objects (src/world/terrainObjects.ts): one unit cube
+ * drawn once per object, each instance the affine map of the cube onto its box
+ * (three rows: the box's edges and its corner). Uploaded as 48 bytes an object
+ * and drawn with one call per cell of the map, in every pass the level's
+ * structures go through (faces, depth seal, structure depth, peel layers), with
+ * the level's own fragment stages.
+ */
+const BOX_VS_WGSL = /* wgsl */ `
+fn boxPoint(c : vec3<f32>, r0 : vec4<f32>, r1 : vec4<f32>, r2 : vec4<f32>) -> vec3<f32> {
+  return vec3<f32>(dot(r0.xyz, c) + r0.w, dot(r1.xyz, c) + r1.w, dot(r2.xyz, c) + r2.w);
+}
+`;
+
+export const BOX_WGSL = MESH_WGSL + BOX_VS_WGSL + /* wgsl */ `
+@vertex
+fn vsBox(
+  // the unit cube's corner (0..1) and its face's normal
+  @location(0) corner : vec3<f32>,
+  @location(1) normal : vec3<f32>,
+  @location(5) r0 : vec4<f32>,
+  @location(6) r1 : vec4<f32>,
+  @location(7) r2 : vec4<f32>,
+) -> MeshOut {
+  var out : MeshOut;
+  let world = boxPoint(corner, r0, r1, r2);
+  let n = vec3<f32>(dot(r0.xyz, normal), dot(r1.xyz, normal), dot(r2.xyz, normal));
+  out.normal = normalize(n + vec3<f32>(0.0, 1e-6, 0.0));
+  out.world = world;
+  out.colour = vec3<f32>(0.75);
+  out.uv = vec2<f32>(-1.0);
+  out.tile = vec4<f32>(0.0);
+  out.pos = u.viewProj * vec4<f32>(world, 1.0);
+  return out;
+}
+`;
+
+export const PEEL_BOX_WGSL = PEEL_WGSL + BOX_VS_WGSL + /* wgsl */ `
+@vertex
+fn vsPeelBox(
+  @location(0) corner : vec3<f32>,
+  @location(5) r0 : vec4<f32>,
+  @location(6) r1 : vec4<f32>,
+  @location(7) r2 : vec4<f32>,
+) -> PeelOut {
+  var out : PeelOut;
+  out.pos = u.viewProj * vec4<f32>(boxPoint(corner, r0, r1, r2), 1.0);
+  out.uv = vec2<f32>(-1.0);
+  out.tile = vec4<f32>(0.0);
+  return out;
+}
+`;

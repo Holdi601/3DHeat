@@ -1721,3 +1721,49 @@ void main() {
   gl_Position = uViewProj * vec4(world, 1.0);
 }
 `;
+
+/**
+ * A tiled terrain's placed objects: one unit cube instanced per object, each
+ * instance three rows of the affine map onto its box (src/world/terrainObjects.ts).
+ * Drawn with MESH_FS in the structure passes, and with PEEL_FS (PEEL_BOX_VS)
+ * in the depth-peel layers. The WebGPU renderer's `vsBox` does the same.
+ */
+export const BOX_VS = `#version 300 es
+precision highp float;
+layout(location = 0) in vec3 aCorner;
+layout(location = 1) in vec3 aNormal;
+layout(location = 5) in vec4 aR0;
+layout(location = 6) in vec4 aR1;
+layout(location = 7) in vec4 aR2;
+uniform mat4 uViewProj;
+out vec3 vNormal;
+out vec3 vWorld;
+out vec3 vColour;
+out vec2 vUv;
+out vec4 vTile;
+void main() {
+  vec3 world = vec3(dot(aR0.xyz, aCorner) + aR0.w, dot(aR1.xyz, aCorner) + aR1.w, dot(aR2.xyz, aCorner) + aR2.w);
+  vNormal = normalize(vec3(dot(aR0.xyz, aNormal), dot(aR1.xyz, aNormal), dot(aR2.xyz, aNormal)) + vec3(0.0, 1e-6, 0.0));
+  vWorld = world;
+  vColour = vec3(0.75);
+  vUv = vec2(-1.0);
+  vTile = vec4(0.0);
+  gl_Position = uViewProj * vec4(world, 1.0);
+}
+`;
+
+export const PEEL_BOX_VS = `#version 300 es
+precision highp float;
+layout(location = 0) in vec3 aCorner;
+layout(location = 5) in vec4 aR0;
+layout(location = 6) in vec4 aR1;
+layout(location = 7) in vec4 aR2;
+uniform mat4 uViewProj;
+out vec2 vUv;
+out vec4 vTile;
+void main() {
+  vUv = vec2(-1.0);
+  vTile = vec4(0.0);
+  gl_Position = uViewProj * vec4(dot(aR0.xyz, aCorner) + aR0.w, dot(aR1.xyz, aCorner) + aR1.w, dot(aR2.xyz, aCorner) + aR2.w, 1.0);
+}
+`;

@@ -3,7 +3,7 @@ import { deflateSync } from 'node:zlib';
 import { blobReader, decodeTile, inflate, parseTerrainIndex, urlReader, type TerrainIndex } from './terrainFormat';
 import { boxDistance, lodRange, morphRange, nodeGrid, nodeRect, nodeSize, NODE_CELLS, selectNodes, type LodGrid, type LodNode } from './terrainLod';
 import { TerrainStream } from './terrainStream';
-import { objectsTile, RECORD_BYTES, waterTile } from './terrainObjects';
+import { BOX_FLOATS, objectBoxes, RECORD_BYTES, unitCube, waterTile } from './terrainObjects';
 import { classify, linkLayouts, type CatalogItem } from '../data/catalogIndex';
 
 /**
@@ -241,7 +241,12 @@ describe('terrain stream', () => {
 });
 
 describe('terrain objects', () => {
-  it('builds each record as its model box, turned, tipped and scaled', () => {
+  /** Where an instance puts corner (cx, cy, cz) of the unit cube, as the shaders do. */
+  const at = (b: Float32Array, i: number, c: number[]) =>
+    [0, 1, 2].map((r) => b[i * BOX_FLOATS + r * 4] * c[0] + b[i * BOX_FLOATS + r * 4 + 1] * c[1] + b[i * BOX_FLOATS + r * 4 + 2] * c[2] + b[i * BOX_FLOATS + r * 4 + 3]);
+  const round = (v: number[]) => v.map((x) => Math.round(x * 1000) / 1000 + 0);
+
+  it('maps the unit cube onto the model box of each record, turned, tipped and scaled', () => {
     const buf = new ArrayBuffer(RECORD_BYTES * 2);
     const dv = new DataView(buf);
     const put = (r: number, x: number, y: number, z: number, yaw: number, model: number, ux: number, uz: number, scale: number) => {
@@ -257,15 +262,15 @@ describe('terrain objects', () => {
     };
     put(0, 100, 10, -200, 90, 0, 0, 0, 1);
     put(1, 0, 0, 0, 0, 0, 0, 0, 2);
-    const tile = objectsTile('t', buf, 2, [{ box: [-1, 0, -2, 1, 3, 2] }]);
-    expect(tile.structureIndices.length).toBe(72);
-    expect(tile.structureEdges.length).toBe(48);
-    // Turned 90 degrees about +y: x' = z, z' = -x; corner 0 (-1, 0, -2) goes to (-2, 0, 1).
-    expect([tile.vertices[0], tile.vertices[1], tile.vertices[2]].map((v) => Math.round(v * 1000) / 1000)).toEqual([98, 10, -199]);
-    // Scaled twice: corner 7 (1, 3, 2) of the second box.
-    const v7 = (8 + 7) * 6;
-    expect([tile.vertices[v7], tile.vertices[v7 + 1], tile.vertices[v7 + 2]]).toEqual([2, 6, 4]);
-    expect(tile.bounds.maxY).toBe(13);
+    const b = objectBoxes('t', buf, 2, [{ box: [-1, 0, -2, 1, 3, 2] }]);
+    expect(b.count).toBe(2);
+    // Turned 90 degrees about +y: x' = z, z' = -x; the box's low corner (-1, 0, -2) goes to (-2, 0, 1).
+    expect(round(at(b.instances, 0, [0, 0, 0]))).toEqual([98, 10, -199]);
+    expect(round(at(b.instances, 0, [1, 1, 1]))).toEqual([102, 13, -201]);
+    // Scaled twice: the high corner (1, 3, 2) of the second.
+    expect(round(at(b.instances, 1, [1, 1, 1]))).toEqual([2, 6, 4]);
+    expect(b.bounds.maxY).toBe(13);
+    expect(b.bounds.minX).toBeCloseTo(-2);
   });
 
   it('tips a box onto its up axis', () => {
@@ -273,10 +278,26 @@ describe('terrain objects', () => {
     const dv = new DataView(buf);
     dv.setInt8(16, 127); // up = +x: the box lies on its side
     dv.setUint16(18, 4096, true);
-    const tile = objectsTile('t', buf, 1, [{ box: [0, 0, 0, 0, 1, 0] }]);
-    // Corner 2 is (0, 1, 0): turned onto +x.
-    expect(tile.vertices[2 * 6]).toBeCloseTo(1, 3);
-    expect(tile.vertices[2 * 6 + 1]).toBeCloseTo(0, 3);
+    const b = objectBoxes('t', buf, 1, [{ box: [0, 0, 0, 1, 1, 1] }]);
+    // Its top (0, 1, 0) is turned onto +x.
+    const p = at(b.instances, 0, [0, 1, 0]);
+    expect(p[0]).toBeCloseTo(1, 3);
+    expect(p[1]).toBeCloseTo(0, 3);
+  });
+
+  it('draws every box with one cube of 24 corners, a face its own normal', () => {
+    const { vertices, indices } = unitCube();
+    expect(vertices.length).toBe(24 * 6);
+    expect(indices.length).toBe(36);
+    for (let f = 0; f < 6; f++) {
+      const n = vertices.slice(f * 24 + 3, f * 24 + 6);
+      for (let k = 0; k < 4; k++) {
+        const c = vertices.slice((f * 4 + k) * 6, (f * 4 + k) * 6 + 3);
+        // Each corner of a face lies on the face its normal points out of.
+        const axis = [0, 1, 2].find((a) => n[a] !== 0)!;
+        expect(c[axis]).toBe(n[axis] > 0 ? 1 : 0);
+      }
+    }
   });
 
   it('covers the extent with the sea', () => {

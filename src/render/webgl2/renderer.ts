@@ -75,9 +75,10 @@ import {
 } from './shaders';
 import { buildEdgeList, type Level } from '../level';
 import { IndexUpload, type LevelIndexSets } from '../levelIndices';
-import { boxOutsideFrustum, diffWorldTiles, frustumPlanes, textureBytes } from '../worldTiles';
+import { boxOutsideFrustum, diffWorldTiles, frustumPlanes, textureBytes, worldTileBufferBytes } from '../worldTiles';
 import type { WorldTile } from '../../world/tileSet';
 import { GlTerrain } from './terrain';
+import { GlBoxes, type GlBoxCell } from './boxes';
 import { num, t } from '../../i18n';
 import { GlFrameTimer, type FrameRing } from './frameTimer';
 import { GlHeatTiles } from './heatTilesPass';
@@ -435,6 +436,10 @@ export class Webgl2Renderer implements Renderer {
   /** A tiled terrain's ground (`terrain.ts`), made with the first one, and this frame's. */
   private terrain: GlTerrain | null = null;
   private frameTerrain: FrameParams['terrain'] | null = null;
+  /** A tiled terrain's placed objects (`boxes.ts`), and the cells of them in view this frame. */
+  private boxes: GlBoxes | null = null;
+  private frameBoxes: GlBoxCell[] = [];
+  private readonly boxPlanes = new Float32Array(20);
   private readonly planes = new Float32Array(20);
   /**
    * Bumped on every level change, so an atlas that finishes decoding after the
@@ -465,7 +470,7 @@ export class Webgl2Renderer implements Renderer {
   }
 
   get levelBytes(): number {
-    return this.levelOwnBytes + this.tileBytes + (this.terrain?.bytes ?? 0);
+    return this.levelOwnBytes + this.tileBytes + (this.terrain?.bytes ?? 0) + (this.boxes?.bytes ?? 0);
   }
 
   /** The GPU tracks' room here: their keys in integer textures, a square of the largest. */
@@ -1117,10 +1122,12 @@ export class Webgl2Renderer implements Renderer {
   private flushTiles(): void {
     const until = performance.now() + TILE_UPLOAD_MS;
     let made = 0;
-    while (this.tileQueue.length > 0 && (made === 0 || performance.now() < until)) {
+    let bytes = 0;
+    while (this.tileQueue.length > 0 && (made === 0 || (performance.now() < until && bytes < TILE_UPLOAD_BYTES))) {
       const tile = this.tileQueue.shift()!;
       // Removed or replaced while it waited.
       if (this.tileSources.get(tile.id) !== tile || this.tileMeshes.has(tile.id)) continue;
+      bytes += worldTileBufferBytes(tile);
       const mesh = this.uploadMesh(tile, tile.bounds, true);
       if (tile.image && tile.uvs) {
         mesh.texture = this.uploadTileImage(tile.image);
@@ -1712,9 +1719,18 @@ export class Webgl2Renderer implements Renderer {
 
     this.frameMeshes = this.meshesInView(params);
     this.frameTerrain = params.level?.kind === 'model' ? (params.terrain ?? null) : null;
+    this.frameBoxes = [];
     if (this.frameTerrain) {
+      const st = this.frameTerrain.stream;
       this.terrain ??= new GlTerrain(this.gl);
-      this.terrain.prepare(this.frameTerrain.stream);
+      this.terrain.prepare(st);
+      this.boxes ??= new GlBoxes(this.gl);
+      this.boxes.sync(st, st.boxes, st.boxVersion);
+      // More cells to write: the next frame is wanted even with the camera still.
+      if (this.boxes.pending) st.onChange?.();
+      this.frameBoxes = this.boxes.inView(frustumPlanes(params.viewProj, this.boxPlanes));
+    } else {
+      this.boxes?.clear();
     }
     // Level geometry first, with depth writes on, so heat sprites behind a wall
     // are correctly hidden by it. Its see-through shells come after the figures
@@ -1870,7 +1886,8 @@ export class Webgl2Renderer implements Renderer {
     if (params.heat.occlusion <= 0) return;
     if (params.level?.kind !== 'model') return;
     const meshes = this.frameMeshes.filter((m) => m.structIbo && m.structCount > 0);
-    if (meshes.length === 0) return;
+    const boxes = this.frameBoxes;
+    if (meshes.length === 0 && boxes.length === 0) return;
     if (this.peelFbo.length === 0) return;
 
     const { prog, u } = this.peelProg;
@@ -1899,6 +1916,21 @@ export class Webgl2Renderer implements Renderer {
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, prev);
         this.drawStructures(m);
+      }
+      if (boxes.length && this.boxes) {
+        const pb = this.boxes.peel;
+        gl.useProgram(pb.prog);
+        pb.u.mat4('uViewProj', params.viewProj);
+        pb.u.f2('uViewport', this.width, this.height);
+        pb.u.i1('uPrevDepth', 0);
+        pb.u.f1('uTexture', 0);
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, this.blankTex());
+        pb.u.i1('uAtlas', 1);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, prev);
+        this.boxes.draw(boxes);
+        gl.useProgram(prog);
       }
       prev = this.peelDepth[i];
     }
@@ -1932,7 +1964,7 @@ export class Webgl2Renderer implements Renderer {
     gl.clear(gl.DEPTH_BUFFER_BIT);
     const meshes =
       params.level?.kind === 'model' ? this.frameMeshes.filter((m) => m.structIbo && m.structCount > 0) : [];
-    if (meshes.length > 0) {
+    if (meshes.length > 0 || this.frameBoxes.length > 0) {
       const { prog, u } = this.meshProg;
       gl.useProgram(prog);
       gl.colorMask(false, false, false, false);
@@ -1950,6 +1982,7 @@ export class Webgl2Renderer implements Renderer {
         this.bindAtlas(u, m, true, 2);
         this.drawStructures(m);
       }
+      this.drawBoxesDepth(params);
       gl.colorMask(true, true, true, true);
     }
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.sceneFbo);
@@ -1975,7 +2008,7 @@ export class Webgl2Renderer implements Renderer {
   private sealStructureDepth(params: FrameParams): void {
     if (params.level?.kind !== 'model') return;
     const meshes = this.frameMeshes.filter((m) => m.structIbo && m.structCount > 0);
-    if (meshes.length === 0) return;
+    if (meshes.length === 0 && this.frameBoxes.length === 0) return;
     const gl = this.gl;
     const { prog, u } = this.meshProg;
     gl.colorMask(false, false, false, false);
@@ -2002,7 +2035,26 @@ export class Webgl2Renderer implements Renderer {
       this.bindAtlas(u, m, true, 2);
       this.drawStructures(m);
     }
+    this.drawBoxesDepth(params);
     gl.colorMask(true, true, true, true);
+  }
+
+  /** The tiled terrain's objects into the depth only (colour masked by the caller), with the structures' slice and cull. */
+  private drawBoxesDepth(params: FrameParams): void {
+    if (!this.boxes || !this.frameBoxes.length) return;
+    const gl = this.gl;
+    const { prog, u } = this.boxes.mesh;
+    gl.useProgram(prog);
+    u.mat4('uViewProj', params.viewProj);
+    u.f3('uCameraPos', params.cameraPos[0], params.cameraPos[1], params.cameraPos[2]);
+    this.setSlice(u, params.slice);
+    this.setCull(u, params);
+    this.setRelief(u, null);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, this.blankTex());
+    u.i1('uAtlas', 0);
+    u.f1('uTexture', 0);
+    this.boxes.draw(this.frameBoxes);
   }
 
   /**
@@ -2300,7 +2352,9 @@ export class Webgl2Renderer implements Renderer {
     // drawn with the shells.
     const solid = s.textured && s.faceOpacity >= 0.999;
     const faces = solid === shells ? [] : meshes.filter((m) => m.structIbo && m.structCount > 0 && (m.tile ? look.faces : s.showFaces));
-    if (faces.length > 0) {
+    // A tiled terrain's objects, with the same look (`boxes.ts`).
+    const boxFaces = solid === shells || !look.faces ? [] : this.frameBoxes;
+    if (faces.length > 0 || boxFaces.length > 0) {
       if (!solid) {
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -2327,6 +2381,28 @@ export class Webgl2Renderer implements Renderer {
       for (const m of faces) {
         this.bindAtlas(u, m, s.textured, 2);
         this.drawStructures(m);
+      }
+      if (boxFaces.length && this.boxes) {
+        const b = this.boxes.mesh;
+        gl.useProgram(b.prog);
+        b.u.mat4('uViewProj', params.viewProj);
+        b.u.f3('uCameraPos', params.cameraPos[0], params.cameraPos[1], params.cameraPos[2]);
+        if (s.textured) b.u.f3('uTint', 1, 1, 1);
+        else b.u.f3('uTint', s.tint[0], s.tint[1], s.tint[2]);
+        b.u.f1('uOpacity', s.faceOpacity);
+        b.u.f1('uBrightness', level.brightness);
+        b.u.f1('uFresnel', s.textured ? 0 : 1);
+        b.u.f1('uFlatNormals', s.flat ? 1 : 0);
+        b.u.f1('uVertexColour', 0);
+        this.setRelief(b.u, null);
+        this.setSlice(b.u, params.slice);
+        this.setCull(b.u, params);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, this.blankTex());
+        b.u.i1('uAtlas', 0);
+        b.u.f1('uTexture', 0);
+        this.boxes.draw(boxFaces);
+        gl.useProgram(prog);
       }
       gl.depthMask(true);
       gl.disable(gl.BLEND);
@@ -3880,6 +3956,8 @@ export class Webgl2Renderer implements Renderer {
     const gl = this.gl;
     this.terrain?.dispose();
     this.terrain = null;
+    this.boxes?.dispose();
+    this.boxes = null;
     for (const j of this.pendingChunks) {
       for (const t of j.posTex) gl.deleteTexture(t);
       for (const t of j.timeTex ?? []) gl.deleteTexture(t);
@@ -3999,6 +4077,13 @@ const BAND_SHIFT = 20;
 const BAND_ROWS = 1 << BAND_SHIFT;
 /** Milliseconds a frame spends making queued world tiles; see `flushTiles`. */
 const TILE_UPLOAD_MS = 3;
+/**
+ * Bytes of world tiles made a frame, at most (one tile always). Time alone let
+ * a dozen megabytes through in a frame when many small tiles came at once - a
+ * tiled terrain's buildings - and the copies, done after the page's part of the
+ * frame, cost the next vsync.
+ */
+const TILE_UPLOAD_BYTES = 1024 * 1024;
 /** Rows read or packed between checks of the clock: whole texture rows, few of them, as the first slices run before the code is optimised. */
 const DATA_SLICE_ROWS = 2 * ROW_TEX_WIDTH;
 
