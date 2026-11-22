@@ -9,6 +9,7 @@ import { createHash } from 'node:crypto';
 import { brotliCompressSync, constants as zlibConstants, gzipSync } from 'node:zlib';
 import { encodePackFigure, type PackFigure } from './src/figures/figurepackBin.ts';
 import { figureFromModelGlb, platesFromModelGlb } from './src/figures/modelpack.ts';
+import { preferFromCookie, preferredModels } from './src/figures/modelprefer.ts';
 import { classify, glbExtras, jsonExtras, linkLayouts, type CatalogIndex, type CatalogItem } from './src/data/catalogIndex.ts';
 import { buildCommandIndex } from './tools/commandIndex.ts';
 import { checkBatch, LIMITS } from './src/usage/schema.ts';
@@ -304,6 +305,7 @@ function modelPack(): Plugin {
   }
   const packs = new Map<string, Pack>();
   const bodies = new Map<string, Buffer>();
+  let swapMemo: { key: string; map: ReturnType<typeof preferredModels> } | null = null;
   const load = (p: string): Pack | null => {
     const st = statSync(p);
     const key = `${p}|${st.size}|${st.mtimeMs}`;
@@ -403,6 +405,16 @@ function modelPack(): Plugin {
       const m = /^\/u\/([^/]+)\/(.+)$/.exec(url.pathname);
       const unit = m ? decodeURIComponent(m[2]).toLowerCase() : null;
       const pack = m ? all.find((k) => k.game === decodeURIComponent(m[1]).toLowerCase() && unit! in k.files) : undefined;
+      // A preferred game (the page's cookie, `modelprefer.ts`): other games' units of a vehicle it has drawn with its model.
+      const prefer = preferFromCookie(req.headers.cookie);
+      const swapKey = `${prefer}|${all.map((k) => k.key).join('|')}`;
+      if (swapMemo?.key !== swapKey) swapMemo = { key: swapKey, map: preferredModels(all, prefer) };
+      const swap = swapMemo.map;
+      const swapped = (k: Pack, u: string) => {
+        const to = swap.get(`${k.game}|${u}`);
+        const q = to && all.find((x) => x.game === to.game);
+        return q && to ? { pack: q, unit: to.unit, tag: `${k.units[u].tag}-${q.units[to.unit].tag}` } : null;
+      };
       if (url.pathname !== '/' && !pack) {
         res.statusCode = 404;
         res.end();
@@ -422,14 +434,18 @@ function modelPack(): Plugin {
         return true;
       };
       if (!pack || unit === null) {
-        const index = JSON.stringify({ version: 1, packs: all.map((k) => ({ game: k.game, units: k.units })) });
+        const units = (k: Pack) =>
+          swap.size ? Object.fromEntries(Object.entries(k.units).map(([u, e]) => [u, { ...e, tag: swapped(k, u)?.tag ?? e.tag }])) : k.units;
+        const index = JSON.stringify({ version: 1, packs: all.map((k) => ({ game: k.game, units: units(k) })) });
         res.setHeader('Content-Type', 'application/json');
         res.setHeader('Cache-Control', 'no-cache');
         if (fresh(`"${createHash('sha1').update(index).digest('hex').slice(0, 20)}"`)) return;
         res.end(index);
         return;
       }
-      const tag = pack.units[unit].tag;
+      const sw = swapped(pack, unit);
+      const tag = sw?.tag ?? pack.units[unit].tag;
+      const from = sw ? { dir: sw.pack.dir, file: sw.pack.files[sw.unit], scale: sw.pack.scale } : { dir: pack.dir, file: pack.files[unit], scale: pack.scale };
       res.setHeader('Cache-Control', url.searchParams.get('v') === tag ? 'public, max-age=31536000, immutable' : 'no-cache');
       res.setHeader('Content-Type', 'application/octet-stream');
       res.setHeader('Vary', 'Accept-Encoding');
@@ -441,7 +457,7 @@ function modelPack(): Plugin {
       if (!body) {
         let raw: Buffer;
         try {
-          raw = Buffer.from(encodePackFigure(figureFromModelGlb(readFileSync(`${pack.dir}/${pack.files[unit]}`), pack.scale)));
+          raw = Buffer.from(encodePackFigure(figureFromModelGlb(readFileSync(`${from.dir}/${from.file}`), from.scale)));
         } catch {
           res.statusCode = 404;
           res.end();

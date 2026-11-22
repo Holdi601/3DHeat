@@ -5,6 +5,55 @@ import type { SymbolStyle } from '../../render/symbols/affiliation';
 import { Check, Segmented, Select, Slider } from '../controls';
 import { OUTCOME_COLOURS } from '../../vehicle/scene';
 import { OUTCOMES } from '../../vehicle/hits';
+import { useEffect, useState } from 'react';
+import { fetchModelPackIndex } from '../../figures/modelpack';
+import { modelPreference, setModelPreference } from '../../figures/modelprefer';
+
+/**
+ * Which game's model a unit is drawn with where several games' packs have the same vehicle: each game's own (the
+ * default) or one game's first (an IL-2 Bf 109 K-4 with the DCS model). Shown when the server has two or more packs;
+ * the choice applies once the page is loaded again (every thread installs the packs once).
+ */
+function ModelSource() {
+  const [games, setGames] = useState<string[]>([]);
+  const [value, setValue] = useState(modelPreference);
+  const [changed, setChanged] = useState(false);
+  useEffect(() => {
+    let live = true;
+    void fetchModelPackIndex().then((ix) => {
+      if (live && ix) setGames([...new Set(ix.packs.map((p) => p.game))].sort());
+    });
+    return () => {
+      live = false;
+    };
+  }, []);
+  if (games.length < 2) return null;
+  return (
+    <>
+      <Select<string>
+        label={t('units.models.prefer')}
+        value={value}
+        options={[{ value: '', label: t('units.models.preferOwn') }, ...games.map((g) => ({ value: g, label: t('units.models.preferGame', { game: g }) }))]}
+        onChange={(v) => {
+          setModelPreference(v ?? '');
+          setValue(v ?? '');
+          setChanged(true);
+        }}
+      />
+      <div className="hint">
+        {t('units.models.preferHint')}
+        {changed && (
+          <>
+            {' '}
+            <button type="button" className="link" onClick={() => location.reload()}>
+              {t('units.models.reload')}
+            </button>
+          </>
+        )}
+      </div>
+    </>
+  );
+}
 
 const swatch = (c: readonly number[]) => `rgb(${c.map((v) => Math.round(Math.min(1, v) * 255)).join(',')})`;
 
@@ -65,6 +114,7 @@ export function FigureControls({ toggle = true }: { toggle?: boolean }) {
             format={(v) => (v < 0.5 ? t('heat.teamPanel.trueSize') : t('heat.teamPanel.pixels', { value: num(v, 0) }))}
             hint={t('heat.teamPanel.figurePixelsHint')}
           />
+          <ModelSource />
           <div className="field">
             <div className="label">
               <span>{t('far.label')}</span>

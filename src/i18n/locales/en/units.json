@@ -86,5 +86,10 @@
   "units.buildings.solid": "Solid buildings",
   "units.buildings.solidTitle": "The level's buildings solid, in their own colours",
   "units.buildings.seeThrough": "See-through",
-  "units.buildings.seeThroughTitle": "The buildings as see-through shells, as the heat views draw them, so what is inside shows"
+  "units.buildings.seeThroughTitle": "The buildings as see-through shells, as the heat views draw them, so what is inside shows",
+  "units.models.prefer": "Unit models from",
+  "units.models.preferOwn": "Each game's own",
+  "units.models.preferGame": "{{game}} first",
+  "units.models.preferHint": "Where two games have a model of the same vehicle, this game's is drawn (an IL-2 Bf 109 K-4 with the DCS model, or the other way round). Applies when the page is loaded again.",
+  "units.models.reload": "Reload now"
 }
