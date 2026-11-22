@@ -304,6 +304,14 @@ async function run(rows, backend) {
           picture: cap ? { width: cap.width, height: cap.height, rgba: Array.from(cap.rgba) } : null,
           binned: eng.renderer.heatBinned ?? eng.renderer.binned ?? null,
           saturation: eng.shownSaturation ?? useStore.getState().heat.saturation,
+          // The heat under the cursor at the hottest texel (`probeHeat`, the readout's one texel).
+          cursor: await (async () => {
+            if (!f) return null;
+            const w = eng.canvas.width || 1, h = eng.canvas.height || 1, ch = Math.max(1, Math.round(f.length / (w * h)));
+            let best = 0;
+            for (let i = 0; i < w * h; i++) if (f[i * ch] > f[best * ch]) best = i;
+            return eng.renderer.probeHeat((best % w) + 0.5, Math.floor(best / w) + 0.5, 1);
+          })(),
         };
         st.patchHeat(base.heat);
         st.patchBudget(base.budget);
@@ -396,7 +404,7 @@ for (const rows of loads) {
     const bad = v.lit === 0 || v.p50.err > 0.01 || v.p90.err > 0.01 || v.p99.err > 0.01 || v.ssim < 0.99;
     if (bad) failed++;
     console.log(
-      `  ${bad ? 'FAIL' : 'ok  '} ${m} ${c}: field p50 ${pct(v.p50.err)} p90 ${pct(v.p90.err)} p99 ${pct(v.p99.err)} total ${pct(v.total)} ssim ${v.ssim.toFixed(4)} (${v.lit} texels, binned web ${a.binned} native ${b.binned}, exposure web ${a.saturation?.toPrecision(4)} native ${b.saturation?.toPrecision(4)})` +
+      `  ${bad ? 'FAIL' : 'ok  '} ${m} ${c}: field p50 ${pct(v.p50.err)} p90 ${pct(v.p90.err)} p99 ${pct(v.p99.err)} total ${pct(v.total)} ssim ${v.ssim.toFixed(4)} (${v.lit} texels, binned web ${a.binned} native ${b.binned}, exposure web ${a.saturation?.toPrecision(4)} native ${b.saturation?.toPrecision(4)}, cursor web ${a.cursor?.toPrecision(4)} native ${b.cursor?.toPrecision(4)})` +
         (pic ? `; picture mean ${pic.mean.toFixed(2)}/255, p99 ${pic.p99}, ${pct(pic.offShare)} off by > 8` : '; no picture'),
     );
     summary.push({ rows, case: c, field: v, picture: pic });
