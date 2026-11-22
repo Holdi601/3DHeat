@@ -10,6 +10,7 @@ pub const SECTION_CURVE_LUT: u32 = 4;
 pub const SECTION_SIGNS: u32 = 5;
 pub const SECTION_FILTERS: u32 = 6;
 pub const SECTION_VOLUMES: u32 = 7;
+pub const SECTION_VALUES: u32 = 8;
 pub const SAMPLE_BLOCK: u32 = 4096;
 pub const MAX_PLAN_BLOCKS: u32 = 65536;
 pub const CHUNK_ROWS: u32 = 8388608;

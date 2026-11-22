@@ -29,6 +29,8 @@ export const SECTION = {
   signs: 5,
   filters: 6,
   volumes: 7,
+  /** The difference split's column and the value weight's (core names, '' for none). */
+  values: 8,
 } as const;
 
 /** The frame's numbers, in packet order, with how many floats each takes. */

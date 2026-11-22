@@ -14,8 +14,8 @@
  * built is packed here as the WebGPU renderer packs it and sent chunk by chunk.
  *
  * Drawn natively so far: the heat (points; binned or splatted as on the web),
- * team colours and the difference by group, filters, time window, lifetimes,
- * the slice and the distance cull, a model level's ground. Not yet: figures,
+ * team colours, the difference (by group or a column), value weights, filters,
+ * time window, lifetimes, the slice and the distance cull, a model level's ground. Not yet: figures,
  * tracks, trails, structures and their occlusion layers, image levels, world
  * tiles, line heat, directions, the rate map, overlays drawn into the canvas.
  */
@@ -110,6 +110,7 @@ export class NativeRenderer implements Renderer {
   private filterGen = 0;
   private signs = new Float32Array(0);
   private volumeKey = '';
+  private valuesKey = '';
   private sentColumns = new Set<string>();
   private inFlight = 0;
   /** A packet was not sent: the next one carries every table again. */
@@ -176,6 +177,7 @@ export class NativeRenderer implements Renderer {
     this.dataset = dataset;
     const gen = ++this.datasetGen;
     this.filterKeys = null;
+    this.valuesKey = '\u0001';
     this.sentColumns.clear();
     this.snap = { ...this.snap, residentRows: 0, droppedRows: 0 };
     const hasTime = !!(dataset?.time && dataset.lifetime);
@@ -373,6 +375,19 @@ export class NativeRenderer implements Renderer {
       writeFilters(w, p.filters, packFilterTable(p.filters), ++this.filterGen);
       w.close();
     }
+    // The split's and the weight's columns: read per row from the chunks' own columns, as filters are.
+    const split = p.splitMode === 0 ? '' : (p.splitColumn ?? '');
+    const weight = p.weightColumn ?? '';
+    const valuesKey = `${split}\u0000${weight}`;
+    if (valuesKey !== this.valuesKey || all) {
+      this.valuesKey = valuesKey;
+      const cols = [split, weight].filter(Boolean).map((c) => ({ column: c }) as ActiveFilter);
+      this.sendPageColumns(cols);
+      w.open(SECTION.values);
+      w.string(split ? coreColumnName(split) : '');
+      w.string(weight ? coreColumnName(weight) : '');
+      w.close();
+    }
     const vol = p.volumes ?? null;
     const volKey = vol ? vol.key : '';
     if (volKey !== this.volumeKey || all) {
@@ -417,12 +432,27 @@ export class NativeRenderer implements Renderer {
     return this.gpuMs;
   }
 
-  readHeatAt(): number | null {
-    return null;
+  private probeValue: number | null = null;
+  private probePending = false;
+
+  /** The last sample, asking for the next one: a cursor readout, as the WebGPU renderer's. */
+  readHeatAt(canvasX: number, canvasY: number, divisor: number): number | null {
+    if (!this.probePending) void this.probeHeat(canvasX, canvasY, divisor);
+    return this.probeValue;
   }
 
-  async probeHeat(): Promise<number | null> {
-    return null;
+  async probeHeat(canvasX: number, canvasY: number, divisor: number): Promise<number | null> {
+    if (this.probePending) return this.probeValue;
+    this.probePending = true;
+    try {
+      const raw = (await this.invoke('viewport_probe', { x: canvasX, y: canvasY })) as number | null;
+      this.probeValue = typeof raw === 'number' && Number.isFinite(raw) ? raw / Math.max(1, divisor) : null;
+    } catch {
+      this.probeValue = null;
+    } finally {
+      this.probePending = false;
+    }
+    return this.probeValue;
   }
 
   /** `allChannels`: every channel of every texel, signed (the parity probe), as the WebGPU renderer's. */

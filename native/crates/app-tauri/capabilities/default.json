@@ -26,6 +26,7 @@
     "allow-viewport-hide",
     "allow-viewport-capture",
     "allow-viewport-read-heat",
+    "allow-viewport-probe",
     "allow-viewport-times"
   ],
   "remote": {

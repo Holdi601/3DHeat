@@ -82,6 +82,11 @@ pub struct GpuChunk {
     pub pass_keys: Vec<String>,
     /// Filter columns, by the core's name, one f32 a row.
     pub columns: HashMap<String, wgpu::Buffer>,
+    /// The split's and the weight's columns end to end (`filterValues`, binding 5), and for which.
+    pub values: Option<wgpu::Buffer>,
+    pub values_key: String,
+    pub split_slot: i32,
+    pub weight_slot: i32,
     pub bytes: u64,
 }
 
@@ -240,6 +245,7 @@ struct Readback {
 enum ReadKind {
     Capture { width: u32, height: u32, stride: u32, bgra: bool, reply: Reply<Option<Captured>> },
     Heat { width: u32, height: u32, stride: u32, channels: u32, max: usize, reply: Reply<Option<Vec<f32>>> },
+    Probe { reply: Reply<Option<f32>> },
 }
 
 pub struct Renderer {
@@ -295,6 +301,8 @@ pub struct Renderer {
     /// Columns a chunk cannot have (the dataset has none such): their filter is left out there.
     failed_columns: std::collections::HashSet<(usize, String)>,
     has_time: bool,
+    /// The difference split's column and the value weight's, as the last packet named them.
+    value_cols: (String, String),
     // State carried between packets.
     last_frame: Option<Packet>,
     curve_dirty: bool,
@@ -302,6 +310,7 @@ pub struct Renderer {
     readbacks: Vec<Readback>,
     pending_capture: Option<Reply<Option<Captured>>>,
     pending_heat: Option<(usize, Reply<Option<Vec<f32>>>)>,
+    pending_probe: Option<(f32, f32, Reply<Option<f32>>)>,
     pub stats: Stats,
     last_present: Option<Instant>,
 }
@@ -595,12 +604,14 @@ impl Renderer {
             missing_columns: Vec::new(),
             failed_columns: Default::default(),
             has_time: false,
+            value_cols: (String::new(), String::new()),
             last_frame: None,
             curve_dirty: true,
             binned: false,
             readbacks: Vec::new(),
             pending_capture: None,
             pending_heat: None,
+            pending_probe: None,
             stats,
             last_present: None,
         })
@@ -633,11 +644,11 @@ impl Renderer {
         self.resident_rows += c.rows as u64;
         self.gpu_bytes += c.bytes;
         // Filters already asked for need this chunk's columns too; until they come it is not drawn.
-        if let Some(set) = self.wanted.as_ref().or(self.applied.as_ref()) {
-            for f in &set.filters {
-                if !self.missing_columns.iter().any(|(k, n)| *k == i && *n == f.column) {
-                    self.missing_columns.push((i, f.column.clone()));
-                }
+        let mut names: Vec<String> = self.wanted.as_ref().or(self.applied.as_ref()).map(|set| set.filters.iter().map(|f| f.column.clone()).collect()).unwrap_or_default();
+        names.extend([self.value_cols.0.clone(), self.value_cols.1.clone()].into_iter().filter(|n| !n.is_empty()));
+        for name in names {
+            if !self.missing_columns.iter().any(|(k, n)| *k == i && *n == name) {
+                self.missing_columns.push((i, name));
             }
         }
         self.chunks[i] = Some(c);
@@ -780,6 +791,67 @@ impl Renderer {
         if let Some(f) = &p.filters {
             self.want_filters(f.clone());
         }
+        if let Some(v) = &p.values {
+            self.value_cols = v.clone();
+            for name in [v.0.clone(), v.1.clone()] {
+                if name.is_empty() {
+                    continue;
+                }
+                for c in self.chunks.iter().flatten() {
+                    let k = (c.index, name.clone());
+                    if !c.columns.contains_key(&name) && !self.failed_columns.contains(&k) && !self.missing_columns.contains(&k) {
+                        self.missing_columns.push(k);
+                    }
+                }
+            }
+        }
+    }
+
+    /// `ensureFilterValues` with no filters (they are pass bits): the split's column, then the
+    /// weight's, copied on the GPU from the chunk's own columns into one buffer. The slots (-1 for
+    /// a column the dataset does not have), or None while a column is still on its way: the chunk
+    /// is then left out, as with filters, rather than drawn unsplit or unweighted.
+    fn ensure_values(&mut self, encoder: &mut wgpu::CommandEncoder, chunk: usize) -> Option<(i32, i32)> {
+        let (split, weight) = self.value_cols.clone();
+        let key = format!("{split}#{weight}");
+        let device = self.device.clone();
+        let split_failed = self.failed_columns.contains(&(chunk, split.clone()));
+        let weight_failed = self.failed_columns.contains(&(chunk, weight.clone()));
+        let Some(Some(c)) = self.chunks.get_mut(chunk) else { return None };
+        if c.values_key == key {
+            return Some((c.split_slot, c.weight_slot));
+        }
+        let mut srcs: Vec<wgpu::Buffer> = Vec::new();
+        let mut slots = [-1i32, -1i32];
+        for (k, (name, gone)) in [(&split, split_failed), (&weight, weight_failed)].into_iter().enumerate() {
+            if name.is_empty() || gone {
+                continue;
+            }
+            let b = c.columns.get(name)?;
+            slots[k] = srcs.len() as i32;
+            srcs.push(b.clone());
+        }
+        let row_bytes = c.rows as u64 * 4;
+        if let Some(old) = c.values.take() {
+            self.gpu_bytes = self.gpu_bytes.saturating_sub(old.size());
+        }
+        if !srcs.is_empty() {
+            let buf = device.create_buffer(&wgpu::BufferDescriptor {
+                label: Some("filter values"),
+                size: (row_bytes * srcs.len() as u64).max(4),
+                usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+                mapped_at_creation: false,
+            });
+            for (k, src) in srcs.iter().enumerate() {
+                encoder.copy_buffer_to_buffer(src, 0, &buf, k as u64 * row_bytes, row_bytes);
+            }
+            self.gpu_bytes += buf.size();
+            c.values = Some(buf);
+        }
+        c.values_key = key;
+        c.split_slot = slots[0];
+        c.weight_slot = slots[1];
+        Some((slots[0], slots[1]))
     }
 
     /// New filters: drawn once every drawn chunk has their columns, the old ones until then
@@ -895,6 +967,9 @@ impl Renderer {
         }
         if self.pending_heat.is_some() {
             self.read_heat(&mut encoder);
+        }
+        if self.pending_probe.is_some() {
+            self.probe(&mut encoder);
         }
         if !self.ring.data.is_empty() {
             self.queue.write_buffer(&self.ring.buf, 0, &self.ring.data);
@@ -1173,8 +1248,17 @@ impl Renderer {
                 offsets.push(None);
                 continue;
             }
+            let Some((split_slot, weight_slot)) = self.ensure_values(encoder, e.chunk as usize) else {
+                offsets.push(None);
+                continue;
+            };
+            // A column split without its column on this chunk leaves the chunk out (as on the web).
+            if p.f(F_SPLIT_MODE) as u32 != 0 && split_slot < 0 {
+                offsets.push(None);
+                continue;
+            }
             let lanes = bin_bases.as_ref().map(|b| [b[i], e.chunk, i as u32, sprites[i]]);
-            let u = self.heat_uniform(p, e.chunk as usize, e.min_row, e.max_row, weight, bases[i], lanes);
+            let u = self.heat_uniform(p, e.chunk as usize, e.min_row, e.max_row, weight, bases[i], lanes, (split_slot, weight_slot));
             offsets.push(Some(self.ring.push(&u, HEAT_STRIDE)));
         }
 
@@ -1221,7 +1305,7 @@ impl Renderer {
             wgpu::BindGroupEntry { binding: 2, resource: c.times.as_ref().unwrap_or(&self.empty).as_entire_binding() },
             wgpu::BindGroupEntry { binding: 3, resource: blocks.as_entire_binding() },
             wgpu::BindGroupEntry { binding: 4, resource: self.sign_buf.as_entire_binding() },
-            wgpu::BindGroupEntry { binding: 5, resource: self.empty.as_entire_binding() },
+            wgpu::BindGroupEntry { binding: 5, resource: c.values.as_ref().unwrap_or(&self.empty).as_entire_binding() },
             wgpu::BindGroupEntry { binding: 6, resource: c.pass_bits.as_ref().unwrap_or(&self.empty).as_entire_binding() },
             wgpu::BindGroupEntry { binding: 9, resource: wgpu::BindingResource::TextureView(depth) },
             wgpu::BindGroupEntry { binding: 10, resource: wgpu::BindingResource::TextureView(depth) },
@@ -1245,7 +1329,8 @@ impl Renderer {
 
     /// `writeHeatUniform`, lane for lane.
     #[allow(clippy::too_many_arguments)]
-    fn heat_uniform(&self, p: &Packet, chunk: usize, min_row: u32, max_row: u32, weight: f32, block_base: u32, bin_lanes: Option<[u32; 4]>) -> Vec<u8> {
+    fn heat_uniform(&self, p: &Packet, chunk: usize, min_row: u32, max_row: u32, weight: f32, block_base: u32, bin_lanes: Option<[u32; 4]>, slots: (i32, i32)) -> Vec<u8> {
+        let (split_slot, weight_slot) = slots;
         let c = self.chunks[chunk].as_ref().unwrap();
         let f = p.frame.as_ref().unwrap();
         let mut u = [0f32; HEAT_UNIFORM_BYTES as usize / 4];
@@ -1326,7 +1411,7 @@ impl Renderer {
         put(56, c.rows as u32, &mut ints);
         put(57, block_base, &mut ints);
         u[58] = p.f(F_CULL_FAR);
-        put(59, p.f(F_SPLIT_MODE) as u32, &mut ints);
+        put(59, p.f(F_SPLIT_MODE) as u32 | ((split_slot.max(0) as u32) << 8), &mut ints);
         u[60..63].copy_from_slice(&f[F_CAMERA_POS..F_CAMERA_POS + 3]);
         u[63] = p.f(F_CULL_NEAR);
         u[64] = p.f(F_SPLIT_POSITIVE);
@@ -1366,7 +1451,7 @@ impl Renderer {
         u[98] = 1.0;
         u[99] = 0.0;
         u[100] = 0.0;
-        u[101] = -1.0;
+        u[101] = if weight_slot >= 0 { weight_slot as f32 } else { -1.0 };
         u[102] = p.f(F_WEIGHT_SCALE);
         u[103] = p.f(F_PALETTE);
         for k in ints {
@@ -1871,6 +1956,33 @@ impl Renderer {
         self.readbacks.push(Readback { buffer, ready: Arc::new(0.into()), kind: ReadKind::Heat { width: w, height: h, stride, channels, max, reply } });
     }
 
+    /// The heat under one canvas pixel (`probeHeat`): the texel the heat target has there.
+    fn probe(&mut self, encoder: &mut wgpu::CommandEncoder) {
+        let Some((cx, cy, reply)) = self.pending_probe.take() else { return };
+        let hx = (cx / self.width.max(1) as f32 * self.heat_w as f32).floor();
+        let hy = (cy / self.height.max(1) as f32 * self.heat_h as f32).floor();
+        if hx < 0.0 || hy < 0.0 || hx >= self.heat_w as f32 || hy >= self.heat_h as f32 {
+            reply(None);
+            return;
+        }
+        let buffer = self.device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("probe"),
+            size: 256,
+            usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        encoder.copy_texture_to_buffer(
+            wgpu::TexelCopyTextureInfo { texture: &self.heat().tex, mip_level: 0, origin: wgpu::Origin3d { x: hx as u32, y: hy as u32, z: 0 }, aspect: Default::default() },
+            wgpu::TexelCopyBufferInfo { buffer: &buffer, layout: wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(256), rows_per_image: None } },
+            wgpu::Extent3d { width: 1, height: 1, depth_or_array_layers: 1 },
+        );
+        self.readbacks.push(Readback { buffer, ready: Arc::new(0.into()), kind: ReadKind::Probe { reply } });
+    }
+
+    pub fn request_probe(&mut self, x: f32, y: f32, reply: Reply<Option<f32>>) {
+        self.pending_probe = Some((x, y, reply));
+    }
+
     pub fn request_capture(&mut self, reply: Reply<Option<Captured>>) {
         self.pending_capture = Some(reply);
     }
@@ -1922,6 +2034,19 @@ impl Renderer {
                     });
                     r.buffer.unmap();
                     reply(out);
+                }
+                ReadKind::Probe { reply } => {
+                    let out = ok.then(|| {
+                        let d = r.buffer.slice(..).get_mapped_range();
+                        // R, the density, is first in every format.
+                        if self.heat_f32 {
+                            f32::from_le_bytes([d[0], d[1], d[2], d[3]])
+                        } else {
+                            half_to_f32(u16::from_le_bytes([d[0], d[1]]))
+                        }
+                    });
+                    r.buffer.unmap();
+                    reply(out.filter(|v| v.is_finite()));
                 }
                 ReadKind::Heat { width, height, stride, channels, max, reply } => {
                     let out = ok.then(|| {

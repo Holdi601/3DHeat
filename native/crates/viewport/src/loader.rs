@@ -63,6 +63,10 @@ pub fn upload_chunk(device: &wgpu::Device, ds: &Dataset, i: usize) -> anyhow::Re
         pass_bits: None,
         pass_keys: Vec::new(),
         columns: HashMap::new(),
+        values: None,
+        values_key: String::new(),
+        split_slot: -1,
+        weight_slot: -1,
         bytes,
     })
 }
@@ -142,6 +146,10 @@ impl PageChunk {
             pass_bits: None,
             pass_keys: Vec::new(),
             columns: HashMap::new(),
+            values: None,
+            values_key: String::new(),
+            split_slot: -1,
+            weight_slot: -1,
             bytes,
         }
     }

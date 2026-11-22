@@ -47,6 +47,8 @@ pub struct Packet {
     pub signs: Option<Vec<f32>>,
     pub filters: Option<FilterSet>,
     pub volumes: Option<Vec<f32>>,
+    /// The difference split's column and the value weight's (core names, empty for none).
+    pub values: Option<(String, String)>,
 }
 
 impl Packet {
@@ -130,6 +132,11 @@ pub fn decode(bytes: &[u8]) -> Result<Packet> {
             SECTION_CURVE_LUT => p.curve_lut = Some(body.iter().map(|w| f32::from_bits(*w)).collect()),
             SECTION_SIGNS => p.signs = Some(body.iter().map(|w| f32::from_bits(*w)).collect()),
             SECTION_VOLUMES => p.volumes = Some(body.iter().map(|w| f32::from_bits(*w)).collect()),
+            SECTION_VALUES => {
+                let split = s.string()?;
+                let weight = s.string()?;
+                p.values = Some((split, weight));
+            }
             SECTION_FILTERS => {
                 let generation = s.take()?;
                 let n = s.take()?;

@@ -160,6 +160,23 @@ pub async fn viewport_read_heat(window: WebviewWindow, max: usize) -> Result<Res
     Ok(Response::new(v.iter().flat_map(|x| x.to_le_bytes()).collect::<Vec<u8>>()))
 }
 
+/// The heat under one canvas pixel (`probeHeat`; the page divides it).
+#[tauri::command]
+pub async fn viewport_probe(window: WebviewWindow, x: f32, y: f32) -> Result<Option<f32>, String> {
+    let (tx, rx) = std::sync::mpsc::channel();
+    with(&window, |v| {
+        v.send(Msg::Probe(
+            x,
+            y,
+            Box::new(move |c| {
+                let _ = tx.send(c);
+            }),
+        ))
+    })
+    .ok_or("no viewport")?;
+    tauri::async_runtime::spawn_blocking(move || rx.recv_timeout(std::time::Duration::from_secs(5)).ok().flatten()).await.map_err(|e| e.to_string())
+}
+
 /// Present intervals and CPU times since the last call (the parity probe).
 #[tauri::command]
 pub async fn viewport_times(window: WebviewWindow) -> Result<String, String> {

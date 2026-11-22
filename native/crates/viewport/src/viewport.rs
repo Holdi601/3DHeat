@@ -41,6 +41,8 @@ pub enum Msg {
     Level(Option<LevelMesh>),
     Capture(Reply<Option<Captured>>),
     ReadHeat(usize, Reply<Option<Vec<f32>>>),
+    /// The heat under a canvas pixel.
+    Probe(f32, f32, Reply<Option<f32>>),
     Times(Reply<String>),
     Hide(bool),
     Stop,
@@ -312,6 +314,10 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                     want_capture = true;
                 }
                 Msg::ReadHeat(max, reply) => r.request_heat(max, reply),
+                Msg::Probe(x, y, reply) => {
+                    r.request_probe(x, y, reply);
+                    want_capture = true;
+                }
                 Msg::Times(reply) => {
                     let (iv, cpu) = r.take_times();
                     let list = |v: &[f32]| v.iter().map(|x| format!("{x:.3}")).collect::<Vec<_>>().join(",");

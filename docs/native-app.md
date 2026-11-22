@@ -153,12 +153,12 @@ The rows of a load the core built go to the graphics card straight from the core
 
 What the preview draws:
 
-- the heat as points, binned on the GPU or splatted exactly as the web engine decides, in plain heat, team colours and the difference by group
+- the heat as points, binned on the GPU or splatted exactly as the web engine decides, in plain heat, team colours and the difference (by group, or split by a column), and heat weighed by a value column
 - filters (any number, folded into one bit a row on the GPU; changing one moves no rows), the time window, lifetimes and their fade, the slice and the distance cut
 - the accumulation across frames, the colour ramp, the floor and the response curve; the exposure reads the native heat
 - a model level's ground (the mesh, relief, contours and its colours), the grid and the axes
 
-What it does not draw yet: figures, unit tracks, trails, structures and the wall layers that dim heat behind them, image levels, world tiles, line heat, direction wedges and arrows, the rate map, objectives, zones, spawn marks, depth of field, volume outlines and the other lines drawn over the picture. Those parts of the view are missing while the preview is on. Picking a heat value under the cursor reads nothing yet.
+What it does not draw yet: figures, unit tracks, trails, structures and the wall layers that dim heat behind them, image levels, world tiles, line heat, direction wedges and arrows, the rate map, objectives, zones, spawn marks, depth of field, volume outlines and the other lines drawn over the picture. Those parts of the view are missing while the preview is on. The heat under the cursor is read from the viewport.
 
 Measured on the PC above (`native/tools/probe-native-viewport.mjs`: the same app and the same load, once with the page's WebGPU engine, once with the native viewport), 10 million rows of the synthetic row-ceiling table, while another 3D program shared the graphics card:
 

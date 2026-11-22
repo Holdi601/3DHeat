@@ -24,6 +24,7 @@ fn main() {
                 "viewport_hide",
                 "viewport_capture",
                 "viewport_read_heat",
+                "viewport_probe",
                 "viewport_times",
             ])),
     )

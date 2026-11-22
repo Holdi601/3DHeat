@@ -10,7 +10,7 @@
  * row-ceiling tables (`tools/probe-row-ceiling.mjs`; synthetic) the way a person
  * picks files, so the core builds the dataset, and then:
  *
- *   parity   per case (plain heat, team colours, a filter, a time window): the
+ *   parity   per case (plain heat, team colours, a filter, a time window, a column split): the
  *            converged heat field of each, compared as `tools/probe-heat-binning.mjs`
  *            compares its two paths - p50/p90/p99 of the lit texels within 1 %,
  *            SSIM >= 0.99 - and the composited pictures (mean and 99th percentile of
@@ -40,7 +40,7 @@ const dir = arg('dir', null);
 const loads = String(arg('rows', '10')).split(',').map((r) => Number(r) * 1e6);
 const out = resolve(arg('out', join(process.env.TEMP ?? '.', 'heat3d-native-viewport')));
 const secs = Number(arg('seconds', 8));
-const cases = String(arg('cases', 'heat,teams,filter,window')).split(',').filter((c) => c && c !== 'none');
+const cases = String(arg('cases', 'heat,teams,filter,window,split')).split(',').filter((c) => c && c !== 'none');
 const backends = String(arg('backends', 'webgpu,native')).split(',');
 const PORT = Number(arg('port', 9336));
 const PER_FILE = 10_000_000;
@@ -251,6 +251,15 @@ async function run(rows, backend) {
           const a = st.dataset.attrs.find((x) => x.kind === 'number') ?? null;
           if (a) st.setFilters([{ kind: 'range', column: a.name, min: a.min + (a.max - a.min) * 0.25, max: a.min + (a.max - a.min) * 0.75 }]);
         }
+        if (c === 'split') {
+          // The difference split by the first measure's range: lower half against upper half.
+          const a = st.dataset.attrs.find((x) => x.kind === 'number') ?? null;
+          if (a) {
+            const mid = a.min + (a.max - a.min) / 2;
+            st.setSplit({ kind: 'range', column: a.name, positive: [a.min, mid], negative: [mid, a.max] });
+            st.setMode('heat-difference');
+          }
+        }
         if (c === 'window') {
           const t = st.dataset.time;
           let lo = Infinity, hi = -Infinity;
@@ -279,6 +288,7 @@ async function run(rows, backend) {
         st.setMode(base.mode);
         st.patchTimeline({ mode: base.timeline.mode, window: base.timeline.window, windowSeconds: base.timeline.windowSeconds });
         if (c === 'filter') st.setFilters([]);
+        if (c === 'split') st.setSplit({ kind: 'teams' });
         return out;
       }, c);
     }
