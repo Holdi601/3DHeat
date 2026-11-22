@@ -173,12 +173,23 @@ impl HeatModes {
         }
         let key = (r.kind, r.chunk as usize);
         if r.offset == 0 {
+            // A buffer the card has no room for is invalid, and every slice written into it an
+            // error: that chunk keeps its discs (or points) instead (seen at 100M rows with other
+            // programs on the card).
+            let oom = device.push_error_scope(wgpu::ErrorFilter::OutOfMemory);
+            let invalid = device.push_error_scope(wgpu::ErrorFilter::Validation);
             let buf = device.create_buffer(&wgpu::BufferDescriptor {
                 label: Some(if r.kind == ROW_LINES { "line starts" } else { "bearings" }),
                 size: r.total as u64,
                 usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
                 mapped_at_creation: false,
             });
+            let error = pollster::block_on(invalid.pop()).or(pollster::block_on(oom.pop()));
+            if let Some(e) = error {
+                self.arriving.remove(&key);
+                crate::note(&format!("viewport: no room for chunk {}'s per-row data ({} bytes): {e}", r.chunk, r.total));
+                return;
+            }
             self.arriving.insert(key, buf);
         }
         let Some(buf) = self.arriving.get(&key) else { return };

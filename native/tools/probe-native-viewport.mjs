@@ -406,6 +406,8 @@ async function run(rows, backend) {
     // The tracks cases last: they replace the load with their own.
     const order = [...fileCases.filter((c) => c !== 'exposure'), ...TRACK_CASES.filter((c) => cases.includes(c))];
     for (const c of order) {
+      // Which case a run is in, should the page go away during it.
+      console.error(`${backend} ${rows / 1e6}M: ${c}`);
       if (TRACK_CASES.includes(c)) {
         parity[c] = await page.evaluate(tracksCase, { c, matches, units: unitsPerMatch });
         continue;
