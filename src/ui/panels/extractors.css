@@ -1,0 +1,443 @@
+/*
+ * The Extractors panel (ExtractorsPanel.tsx): one card per extractor with its
+ * state as a badge, one primary action for that state, the quieter ones
+ * beside it, and every problem said with what to do and the button that does it.
+ */
+
+.extractors {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.ext-where {
+  display: flex;
+  flex-direction: column;
+  overflow-wrap: anywhere;
+}
+
+/* The first-time steps: shown until an extractor is installed. */
+.ext-steps {
+  margin: 0;
+  padding: var(--sp-2) var(--sp-3);
+  list-style: none;
+  counter-reset: ext-step;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--line));
+  border-radius: var(--r-md);
+  background: var(--accent-fill);
+  font-size: var(--fs-sm);
+  line-height: 1.4;
+}
+
+.ext-steps li {
+  display: flex;
+  gap: var(--sp-2);
+  align-items: baseline;
+}
+
+.ext-steps li::before {
+  counter-increment: ext-step;
+  content: counter(ext-step);
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: var(--r-pill);
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+}
+
+.ext-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.ext-auto {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-sm);
+  color: var(--text-dim);
+}
+
+.ext-count {
+  display: inline-block;
+  min-width: 16px;
+  margin-left: 2px;
+  padding: 0 5px;
+  border-radius: var(--r-pill);
+  background: var(--accent-ink);
+  color: var(--accent);
+  font-size: var(--fs-xs);
+  line-height: 16px;
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------- a card */
+
+.ext-card {
+  --tone: var(--text-faint);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: var(--sp-3);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--panel-2);
+  overflow: hidden;
+  transition: border-color var(--motion-fast) var(--motion-ease);
+}
+
+/* The state's colour along the card's left edge. */
+.ext-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(var(--tone), transparent 90%);
+  opacity: 0.85;
+}
+
+.ext-card:hover,
+.ext-card:focus-within {
+  border-color: var(--line-strong);
+}
+
+.ext-card.good,
+.ext-badge.good,
+.ext-chip.good {
+  --tone: var(--good);
+}
+
+.ext-card.accent,
+.ext-badge.accent,
+.ext-chip.accent {
+  --tone: var(--accent);
+}
+
+.ext-card.bad,
+.ext-badge.bad,
+.ext-chip.bad {
+  --tone: var(--bad);
+}
+
+.ext-chip.warn {
+  --tone: var(--warn);
+}
+
+.ext-card.muted::before {
+  opacity: 0.35;
+}
+
+.ext-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-2);
+}
+
+.ext-card-name {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ext-card-name strong {
+  font-size: var(--fs-md);
+  font-weight: var(--fw-bold);
+  overflow-wrap: anywhere;
+}
+
+/* The state in a word, with a dot in its colour. */
+.ext-badge {
+  --tone: var(--text-faint);
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: var(--r-pill);
+  border: 1px solid color-mix(in srgb, var(--tone) 40%, transparent);
+  background: color-mix(in srgb, var(--tone) 12%, transparent);
+  color: var(--text);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  white-space: nowrap;
+}
+
+.ext-badge .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--r-pill);
+  background: var(--tone);
+  box-shadow: 0 0 6px var(--tone);
+}
+
+.ext-card[data-status='busy'] .ext-badge .dot,
+.ext-card[data-status='extracting'] .ext-badge .dot {
+  animation: ext-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes ext-pulse {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ext-card .ext-badge .dot {
+    animation: none !important;
+  }
+}
+
+.ext-ver {
+  overflow-wrap: anywhere;
+}
+
+/* ------------------------------------------------- progress and problems */
+
+.ext-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ext-progress-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+}
+
+.ext-step {
+  margin-right: 6px;
+  color: var(--accent);
+  font-weight: var(--fw-medium);
+}
+
+.ext-problem {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid color-mix(in srgb, var(--bad) 40%, transparent);
+  border-left: 3px solid var(--bad);
+  border-radius: var(--r-sm);
+  background: color-mix(in srgb, var(--bad) 9%, transparent);
+  font-size: var(--fs-sm);
+}
+
+.ext-problem-text {
+  color: var(--bad);
+  overflow-wrap: anywhere;
+}
+
+.ext-problem-todo {
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+
+.ext-problem button,
+.ext-todo button {
+  margin-top: 2px;
+}
+
+.ext-checks {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--fs-sm);
+}
+
+.ext-checks li.ok {
+  color: var(--good);
+}
+
+.ext-checks li.bad {
+  color: var(--bad);
+}
+
+.ext-todo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+/* ----------------------------------------------------------- maps, actions */
+
+.extractor-maps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.ext-game {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: var(--sp-2);
+  border-top: 1px solid var(--line-soft);
+}
+
+.ext-game-head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-sm);
+}
+
+.ext-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.ext-chip {
+  --tone: var(--text-faint);
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  border-radius: var(--r-pill);
+  border: 1px solid color-mix(in srgb, var(--tone) 35%, transparent);
+  background: color-mix(in srgb, var(--tone) 10%, transparent);
+  color: var(--text-dim);
+  font-size: var(--fs-xs);
+  white-space: nowrap;
+}
+
+.ext-chip.accent,
+.ext-chip.good,
+.ext-chip.warn,
+.ext-chip.bad {
+  color: var(--text);
+}
+
+.ext-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+/* The quieter actions of an installed extractor, after the main one. */
+.ext-more {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.extractors button.small {
+  padding: 3px 8px;
+  font-size: var(--fs-sm);
+}
+
+.ext-pick {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2px;
+  max-height: 240px;
+  overflow: auto;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--panel);
+}
+
+.ext-pick-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 3px 4px;
+  border-radius: var(--r-xs);
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+
+.ext-pick-row:hover {
+  background: var(--surface-hover);
+}
+
+.ext-pick-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ext-pick > button {
+  margin-top: 4px;
+  align-self: flex-start;
+}
+
+/* ---------------------------------------------------- the update dialog */
+
+.ext-ask-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ext-notes {
+  max-height: 200px;
+  overflow: auto;
+  padding: var(--sp-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--panel-2);
+  color: var(--text-dim);
+  font-size: var(--fs-sm);
+  white-space: pre-wrap;
+}
+
+/* ------------------------------------------- without a manager: the links */
+
+.ext-get {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ext-get li {
+  display: flex;
+  flex-direction: column;
+  padding: 6px var(--sp-2);
+  border-radius: var(--r-sm);
+  border: 1px solid transparent;
+}
+
+.ext-get li:hover {
+  background: var(--surface-hover);
+  border-color: var(--line);
+}
+
+.ext-get a {
+  color: var(--accent);
+  font-weight: var(--fw-medium);
+  text-decoration: none;
+}
+
+.ext-get a:hover {
+  text-decoration: underline;
+}

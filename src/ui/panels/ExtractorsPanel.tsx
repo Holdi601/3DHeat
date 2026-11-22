@@ -16,6 +16,8 @@ import {
   type State,
 } from '../../extractors/manager';
 import { Section } from '../controls';
+import { Dialog } from '../shell/kit';
+import './extractors.css';
 
 /**
  * The extractors (docs/extractors.md): separate programs that turn a game's
@@ -113,17 +115,27 @@ function ExtractorsBody() {
   if (!route || !state) return <GetThem />;
 
   const updates = offeredUpdates(state.extractors);
+  const none = !state.extractors.some((x) => x.installed);
   return (
     <div className="extractors">
       <div className="hint">{t('extractors.intro')}</div>
-      <div className="hint mono" title={state.data}>
-        {t('extractors.levels', { dir: state.levels })}
-        {state.free != null && <> · {t('extractors.free', { size: formatBytes(state.free) })}</>}
+      <div className="ext-where hint" title={state.data}>
+        <span className="mono">{t('extractors.levels', { dir: state.levels })}</span>
+        {state.free != null && <span>{t('extractors.free', { size: formatBytes(state.free) })}</span>}
       </div>
-      <div className="row wrap" style={{ margin: '6px 0' }}>
-        <button disabled={!updates.length} onClick={() => setAsking(updates)}>
-          {t('extractors.updateAll')}
-        </button>
+      {none && (
+        <ol className="ext-steps" aria-label={t('extractors.start.title')}>
+          <li>{t('extractors.start.step1')}</li>
+          <li>{t('extractors.start.step2')}</li>
+          <li>{t('extractors.start.step3')}</li>
+        </ol>
+      )}
+      <div className="ext-toolbar">
+        {updates.length > 0 && (
+          <button className="primary" onClick={() => setAsking(updates)}>
+            {t('extractors.updateAll')} <span className="ext-count">{updates.length}</span>
+          </button>
+        )}
         <button
           onClick={() => {
             // A fresh look: the manager forgets the map status too, and the panel asks again.
@@ -133,20 +145,20 @@ function ExtractorsBody() {
         >
           {t('extractors.refresh')}
         </button>
+        <label className="ext-auto" title={t('extractors.autoUpdateTitle')}>
+          <input
+            type="checkbox"
+            checked={autoWant ?? state.settings?.autoUpdate ?? false}
+            onChange={(e) => {
+              // Shown at once; the manager's answer replaces it.
+              setAutoWant(e.target.checked);
+              void act(`/settings?autoUpdate=${e.target.checked ? 1 : 0}`).finally(() => setAutoWant(null));
+            }}
+          />
+          {t('extractors.autoUpdate')}
+        </label>
       </div>
-      <label className="row" title={t('extractors.autoUpdateTitle')}>
-        <input
-          type="checkbox"
-          checked={autoWant ?? state.settings?.autoUpdate ?? false}
-          onChange={(e) => {
-            // Shown at once; the manager's answer replaces it.
-            setAutoWant(e.target.checked);
-            void act(`/settings?autoUpdate=${e.target.checked ? 1 : 0}`).finally(() => setAutoWant(null));
-          }}
-        />
-        {t('extractors.autoUpdate')}
-      </label>
-      {error && <div className="err">{error}</div>}
+      {error && <Problem text={error} todo={t('extractors.fix.manager')} fix={t('extractors.fix.retry')} onFix={() => void reload().then(() => setError(null))} />}
       {state.extractors.map((x) => (
         <Extractor key={x.id} x={x} act={act} ask={() => setAsking([x])} />
       ))}
@@ -155,105 +167,142 @@ function ExtractorsBody() {
   );
 }
 
+/** Something that went wrong, said plainly, with what to do and the button that does it. */
+function Problem({ text, todo, fix, onFix, disabled }: { text: string; todo: string; fix?: string; onFix?: () => void; disabled?: boolean }) {
+  return (
+    <div className="ext-problem" role="alert">
+      <div className="ext-problem-text">{text}</div>
+      <div className="ext-problem-todo">{todo}</div>
+      {fix && onFix && (
+        <button className="small" disabled={disabled} onClick={onFix}>
+          {fix}
+        </button>
+      )}
+    </div>
+  );
+}
+
 /** Update now / Later / Skip this version, with the versions and their release notes. */
 function UpdateAsk({ items, act, close }: { items: Item[]; act: Act; close: () => void }) {
   const one = items.length === 1;
   return (
-    <div
-      className="extractors-ask"
-      role="dialog"
-      aria-modal="true"
-      aria-label={t('extractors.ask.title')}
-      onKeyDown={(e) => e.key === 'Escape' && close()}
-      style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'var(--scrim)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-    >
-      <div style={{ background: 'var(--panel)', border: '1px solid var(--line-strong)', borderRadius: 8, padding: 16, width: 'min(560px, 92vw)', maxHeight: '80vh', overflow: 'auto' }}>
-        <strong>{t('extractors.ask.title')}</strong>
-        {items.map((x) => (
-          <div key={x.id} data-ask={x.id} style={{ marginTop: 10 }}>
-            <div>
-              {t('extractors.ask.version', { name: x.name, installed: x.installed ?? '–', latest: x.latest ?? '–' })}
-              {x.published && <span className="hint"> · {x.published.slice(0, 10)}</span>}
-            </div>
-            <div className="hint" style={{ whiteSpace: 'pre-wrap', maxHeight: 200, overflow: 'auto', marginTop: 4, padding: 6, border: '1px solid var(--line)' }}>
-              {x.notes?.trim() || t('extractors.ask.noNotes')}
-            </div>
+    <Dialog title={t('extractors.ask.title')} onClose={close} className="extractors-ask">
+      {items.map((x) => (
+        <div key={x.id} data-ask={x.id} className="ext-ask-item">
+          <div>
+            <strong>{t('extractors.ask.version', { name: x.name, installed: x.installed ?? '–', latest: x.latest ?? '–' })}</strong>
+            {x.published && <span className="hint"> · {x.published.slice(0, 10)}</span>}
           </div>
-        ))}
-        <div className="row wrap" style={{ marginTop: 12 }}>
-          <button
-            className="primary"
-            autoFocus
-            onClick={() => {
-              close();
-              void (one ? act(`/install/${items[0].id}?version=${encodeURIComponent(items[0].latest ?? '')}`) : act(`/update-all${onlyQuery(items)}`));
-            }}
-          >
-            {t('extractors.ask.now')}
-          </button>
-          <button onClick={close}>{t('extractors.ask.later')}</button>
-          <button
-            onClick={() => {
-              close();
-              void (async () => {
-                for (const x of items) await act(`/skip/${x.id}?version=${encodeURIComponent(x.latest ?? '')}`);
-              })();
-            }}
-          >
-            {one ? t('extractors.ask.skip') : t('extractors.ask.skipAll')}
-          </button>
+          <div className="ext-notes">{x.notes?.trim() || t('extractors.ask.noNotes')}</div>
         </div>
+      ))}
+      <div className="dialog-actions">
+        <button
+          onClick={() => {
+            close();
+            void (async () => {
+              for (const x of items) await act(`/skip/${x.id}?version=${encodeURIComponent(x.latest ?? '')}`);
+            })();
+          }}
+        >
+          {one ? t('extractors.ask.skip') : t('extractors.ask.skipAll')}
+        </button>
+        <button onClick={close}>{t('extractors.ask.later')}</button>
+        <button
+          className="primary"
+          autoFocus
+          onClick={() => {
+            close();
+            void (one ? act(`/install/${items[0].id}?version=${encodeURIComponent(items[0].latest ?? '')}`) : act(`/update-all${onlyQuery(items)}`));
+          }}
+        >
+          {t('extractors.ask.now')}
+        </button>
       </div>
-    </div>
+    </Dialog>
   );
 }
+
+/** The colour of each state's badge and card edge. */
+const TONE: Record<string, string> = { unsupported: 'muted', missing: 'muted', installed: 'good', update: 'accent', running: 'accent', busy: 'accent', extracting: 'accent', error: 'bad' };
+/** The install's steps in order, for "Step n of 5". */
+const PHASES = ['lookup', 'download', 'verify', 'unpack', 'check'];
 
 function Extractor({ x, act, ask: askUpdate }: { x: Item; act: Act; ask: () => void }) {
   const status = statusOf(x);
   const job = x.job;
   const busy = status === 'busy' || status === 'extracting';
+  const failed = job?.phase === 'failed';
+  const badChecks = x.check?.checks.filter((c) => !c.ok) ?? [];
+  const tone = TONE[status] ?? 'muted';
   return (
-    <div className="extractor" data-extractor={x.id} data-status={status} style={{ borderTop: '1px solid var(--line)', padding: '6px 0' }}>
-      <div className="row between">
-        <strong>{x.name}</strong>
-        <span className="hint">{t(`extractors.status.${status}`)}</span>
-      </div>
-      <div className="hint">
-        {x.games.join(', ')} · {x.what}
-      </div>
-      <div className="hint mono">
-        {t('extractors.versions', { installed: x.installed ?? '–', latest: x.latest ?? '–' })}
+    <article className={`ext-card ${tone}`} data-extractor={x.id} data-status={status}>
+      <header className="ext-card-head">
+        <div className="ext-card-name">
+          <strong>{x.name}</strong>
+          <span className="hint">{x.games.join(', ')}</span>
+        </div>
+        <span className={`ext-badge ${tone}`}>
+          <span className="dot" aria-hidden="true" />
+          {t(`extractors.status.${status}`)}
+        </span>
+      </header>
+      <div className="hint">{x.what}</div>
+      <div className="hint mono ext-ver">
+        {x.installed
+          ? t('extractors.versions', { installed: x.installed, latest: x.latest ?? '–' })
+          : x.latest
+            ? x.latestSize && x.supported
+              ? t('extractors.latestSize', { latest: x.latest, size: formatBytes(x.latestSize) })
+              : t('extractors.latestOnly', { latest: x.latest })
+            : !x.latestError && t('extractors.versions', { installed: '–', latest: '–' })}
         {x.skipped && <> · {t('extractors.skipped')}</>}
-        {x.latestError && !x.latest && <> · {x.latestError}</>}
+        {x.latestError && !x.latest && <>{x.installed ? ' · ' : ''}{x.latestError}</>}
       </div>
       {status === 'busy' && job && (
-        <>
+        <div className="ext-progress" role="status">
           <div className="hint">
+            <span className="ext-step">{t('extractors.phase.step', { n: Math.max(1, PHASES.indexOf(job.phase) + 1), total: PHASES.length })}</span>
             {t(`extractors.phase.${job.phase}`)}
             {job.phase === 'download' && job.total > 0 && ` ${formatBytes(job.done)} / ${formatBytes(job.total)}`}
           </div>
           <div className="bar">
             <div style={{ width: job.total > 0 ? `${Math.min(100, (100 * job.done) / job.total)}%` : '100%', opacity: job.total > 0 ? 1 : 0.5 }} />
           </div>
-        </>
+        </div>
       )}
-      {job?.phase === 'failed' && <div className="err">{job.error}</div>}
-      {x.check?.error && <div className="err">{x.check.error}</div>}
+      {failed && (
+        <Problem
+          text={job?.error || t('extractors.phase.failed')}
+          todo={t('extractors.fix.install')}
+          fix={t('extractors.fix.retry')}
+          onFix={() => void act(`/install/${x.id}${x.installed && x.latest ? `?version=${encodeURIComponent(x.latest)}` : ''}`)}
+        />
+      )}
+      {x.check?.error && <Problem text={x.check.error} todo={t('extractors.fix.check')} fix={t('extractors.fix.checkAgain')} disabled={busy} onFix={() => void act(`/check/${x.id}`)} />}
       {x.check && x.check.checks.length > 0 && (
-        <ul className="hint" style={{ margin: '2px 0', paddingLeft: 16 }}>
+        <ul className="ext-checks">
           {x.check.checks.map((c) => (
-            <li key={c.id} style={{ color: c.ok ? undefined : 'var(--warm)' }}>
+            <li key={c.id} className={c.ok ? 'ok' : 'bad'}>
               {c.ok ? '✓' : '✗'} {c.label}
-              {c.detail && ` — ${c.detail}`}
+              {c.detail && <span className="hint"> — {c.detail}</span>}
             </li>
           ))}
         </ul>
       )}
+      {badChecks.length > 0 && !x.check?.error && (
+        <div className="ext-todo">
+          <span className="hint">{t('extractors.fix.checks')}</span>
+          <button className="small" disabled={busy} onClick={() => void act(`/check/${x.id}`)}>
+            {t('extractors.fix.checkAgain')}
+          </button>
+        </div>
+      )}
       {x.installed && <Maps x={x} act={act} busy={busy} />}
       {x.supported ? (
-        <div className="row wrap">
-          {!x.installed && (
-            <button className="primary" disabled={busy} onClick={() => void act(`/install/${x.id}`)}>
+        <div className="ext-actions">
+          {!x.installed && !busy && !failed && x.latest && (
+            <button className="primary" onClick={() => void act(`/install/${x.id}`)}>
               {t('extractors.install')}
             </button>
           )}
@@ -268,17 +317,17 @@ function Extractor({ x, act, ask: askUpdate }: { x: Item; act: Act; ask: () => v
             </button>
           )}
           {x.installed && (
-            <>
-              <button disabled={busy || x.running} onClick={() => void act(`/run/${x.id}`)}>
+            <span className="ext-more">
+              <button className="ghost small" disabled={busy || x.running} onClick={() => void act(`/run/${x.id}`)} title={t('extractors.runTitle')}>
                 {t('extractors.run')}
               </button>
-              <button disabled={busy} onClick={() => void act(`/check/${x.id}`)}>
+              <button className="ghost small" disabled={busy} onClick={() => void act(`/check/${x.id}`)} title={t('extractors.checkTitle')}>
                 {t('extractors.check')}
               </button>
-              <button disabled={busy || x.running} onClick={() => void act(`/remove/${x.id}`)}>
+              <button className="ghost small danger" disabled={busy || x.running} onClick={() => void act(`/remove/${x.id}`)}>
                 {t('extractors.remove')}
               </button>
-            </>
+            </span>
           )}
         </div>
       ) : (
@@ -288,7 +337,7 @@ function Extractor({ x, act, ask: askUpdate }: { x: Item; act: Act; ask: () => v
           </a>
         </div>
       )}
-    </div>
+    </article>
   );
 }
 
@@ -299,33 +348,50 @@ function Maps({ x, act, busy }: { x: Item; act: Act; busy: boolean }) {
   const ex = x.extract;
   const games = (x.status?.games ?? []).filter((g) => g.maps.length > 0 || g.counts.new + g.counts.changed + g.counts.outdated > 0);
   const last = ex?.maps[ex.maps.length - 1];
+  const failedMaps = ex && !ex.running ? ex.maps.filter((m) => m.state === 'failed') : [];
+  // Extracting the failed ones again needs their game: plain when the extractor has one.
+  const oneGame = x.status?.games.length === 1 ? x.status.games[0].game : null;
   return (
     <div className="extractor-maps">
-      {x.status?.error && <div className="err">{x.status.error}</div>}
+      {x.status?.error && (
+        <Problem text={x.status.error} todo={t('extractors.fix.status')} fix={t('extractors.fix.lookAgain')} disabled={busy || x.running} onFix={() => void act(`/status/${x.id}?fresh=1`)} />
+      )}
       {ex?.running && (
-        <>
-          <div className="hint" data-extract-progress>
-            {t('extractors.maps.progress', { done: ex.ok + ex.failed, total: ex.total })}
-            {last && ` · ${last.id} ${last.state === 'ok' ? '✓' : '✗'}`}
+        <div className="ext-progress" role="status">
+          <div className="ext-progress-row">
+            <span className="hint" data-extract-progress>
+              {t('extractors.maps.progress', { done: ex.ok + ex.failed, total: ex.total })}
+              {last && ` · ${last.id} ${last.state === 'ok' ? '✓' : '✗'}`}
+            </span>
+            <button className="small" onClick={() => void act(`/cancel/${x.id}`)}>
+              {t('extractors.maps.stop')}
+            </button>
           </div>
           <div className="bar">
             <div style={{ width: ex.total > 0 ? `${Math.min(100, (100 * (ex.ok + ex.failed)) / ex.total)}%` : '100%', opacity: ex.total > 0 ? 1 : 0.5 }} />
           </div>
-          <button onClick={() => void act(`/cancel/${x.id}`)}>{t('extractors.maps.stop')}</button>
-        </>
+        </div>
       )}
       {ex && !ex.running && (ex.ok > 0 || ex.failed > 0 || ex.error) && (
         <div className="hint" data-extract-done>
           {t('extractors.maps.done', { ok: ex.ok, failed: ex.failed })}
           {ex.error && ` · ${ex.error}`}
-          {ex.maps
-            .filter((m) => m.state === 'failed')
-            .map((m) => (
-              <div key={m.index} style={{ color: 'var(--warm)' }}>
-                ✗ {m.id}
-                {m.detail && ` — ${m.detail}`}
-              </div>
-            ))}
+        </div>
+      )}
+      {failedMaps.length > 0 && (
+        <div className="ext-problem" role="alert">
+          {failedMaps.map((m) => (
+            <div key={m.index} className="ext-problem-text">
+              ✗ {m.id}
+              {m.detail && ` — ${m.detail}`}
+            </div>
+          ))}
+          <div className="ext-problem-todo">{t('extractors.fix.mapsFailed')}</div>
+          {oneGame && (
+            <button className="small" disabled={busy || x.running} onClick={() => void act(`/extract/${x.id}`, { game: oneGame, maps: failedMaps.map((m) => m.id) })}>
+              {t('extractors.fix.extractAgain')}
+            </button>
+          )}
         </div>
       )}
       {games.map((g) => (
@@ -370,31 +436,41 @@ function MapGameRow({
   const c = g.counts;
   const redo = c.changed + c.outdated;
   return (
-    <div data-game={g.game} style={{ margin: '4px 0' }}>
-      <div className="hint" data-map-counts>
-        {g.label}: {t('extractors.maps.new', { n: c.new })}
-        {c.changed > 0 && ` · ${t('extractors.maps.changed', { n: c.changed })}`}
-        {c.outdated > 0 && ` · ${t('extractors.maps.outdated', { n: c.outdated })}`}
-        {c.missing > 0 && ` · ${t('extractors.maps.missing', { n: c.missing })}`}
-        {!g.found && ` · ${t('extractors.maps.notFound')}`}
+    <div className="ext-game" data-game={g.game}>
+      <div className="ext-game-head">
+        <strong>{g.label}</strong>
+        {!g.found && <span className="ext-chip bad">{t('extractors.maps.notFound')}</span>}
       </div>
-      <div className="row wrap">
-        <button className="primary" disabled={busy || !c.new} onClick={() => void act(`/extract/${x.id}`, { game: g.game, new: true })}>
-          {t('extractors.maps.extract')}
-        </button>
+      <div className="ext-chips" data-map-counts>
+        <span className={`ext-chip${c.new ? ' accent' : ''}`}>{t('extractors.maps.new', { n: c.new })}</span>
+        {c.changed > 0 && <span className="ext-chip warn">{t('extractors.maps.changed', { n: c.changed })}</span>}
+        {c.outdated > 0 && <span className="ext-chip warn">{t('extractors.maps.outdated', { n: c.outdated })}</span>}
+        {c.current > 0 && <span className="ext-chip good">{t('extractors.maps.current', { n: c.current })}</span>}
+        {c.missing > 0 && <span className="ext-chip">{t('extractors.maps.missing', { n: c.missing })}</span>}
+      </div>
+      <div className="ext-actions">
+        {c.new > 0 && (
+          <button className="primary" disabled={busy} onClick={() => void act(`/extract/${x.id}`, { game: g.game, new: true })}>
+            {t('extractors.maps.extractNew', { n: c.new })}
+          </button>
+        )}
         {redo > 0 && (
-          <button disabled={busy} onClick={() => void act(`/extract/${x.id}`, { game: g.game, changed: true, outdated: true })}>
+          <button className={c.new ? undefined : 'primary'} disabled={busy} onClick={() => void act(`/extract/${x.id}`, { game: g.game, changed: true, outdated: true })}>
             {t('extractors.maps.redo')}
           </button>
         )}
-        {g.maps.length > 0 && <button onClick={() => setPicking(!picking)}>{t('extractors.maps.choose')}</button>}
+        {g.maps.length > 0 && (
+          <button className="ghost small" aria-expanded={picking} onClick={() => setPicking(!picking)}>
+            {t('extractors.maps.choose')}
+          </button>
+        )}
       </div>
       {picking && (
-        <div style={{ maxHeight: 220, overflow: 'auto', margin: '4px 0' }}>
+        <div className="ext-pick">
           {g.maps
             .filter((m) => m.state !== 'missing')
             .map((m) => (
-              <label key={m.id} className="row hint" data-map={m.id}>
+              <label key={m.id} className="ext-pick-row" data-map={m.id}>
                 <input
                   type="checkbox"
                   checked={picked.has(m.id)}
@@ -405,10 +481,12 @@ function MapGameRow({
                     setPicked(n);
                   }}
                 />
-                {m.title} · {t(`extractors.mapState.${m.state}`)}
+                <span className="ext-pick-name">{m.title}</span>
+                <span className={`ext-chip ${m.state === 'new' ? 'accent' : m.state === 'current' ? 'good' : 'warn'}`}>{t(`extractors.mapState.${m.state}`)}</span>
               </label>
             ))}
           <button
+            className="primary"
             disabled={busy || !picked.size}
             onClick={() => {
               void act(`/extract/${x.id}`, { game: g.game, maps: [...picked] });
@@ -428,13 +506,13 @@ function GetThem() {
   return (
     <div className="extractors">
       <div className="hint">{t('extractors.get.intro')}</div>
-      <ul className="hint" style={{ margin: '4px 0', paddingLeft: 16 }}>
+      <ul className="ext-get">
         {INDEX.map((x) => (
           <li key={x.id}>
             <a href={releasesUrl(x.repo)} target="_blank" rel="noreferrer">
               {x.name}
-            </a>{' '}
-            — {x.what}
+            </a>
+            <span className="hint">{x.what}</span>
           </li>
         ))}
       </ul>

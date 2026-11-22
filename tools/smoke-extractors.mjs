@@ -136,7 +136,7 @@ try {
     // The status was taken before the install file: a fresh look takes it again.
     await section.getByRole('button', { name: 'Look for updates' }).click();
     await counts('2 new maps available');
-    await row(section, 'heat3d-alpha').getByRole('button', { name: 'Extract', exact: true }).click();
+    await row(section, 'heat3d-alpha').getByRole('button', { name: /^Extract \d+ new maps?$/ }).click();
     await row(section, 'heat3d-alpha').locator('[data-extract-done]').getByText('Extracted 2, failed 0').waitFor({ timeout: WAIT });
     await counts('0 new maps available');
     expect(existsSync(join(SCRATCH, 'levels', 'fakegame', 'm2.glb')), 'no m2.glb');
@@ -169,7 +169,7 @@ try {
     await row(section, 'heat3d-alpha').getByRole('button', { name: 'Update', exact: true }).click();
     await dialog.getByRole('button', { name: 'Skip this version' }).click();
     await row(section, 'heat3d-alpha').getByText('this version skipped').waitFor({ timeout: WAIT });
-    expect(await section.getByRole('button', { name: 'Update all' }).isDisabled(), 'Update all still offers a skipped version');
+    expect((await section.getByRole('button', { name: 'Update all' }).count()) === 0, 'Update all still offers a skipped version');
     const kept = JSON.parse(readFileSync(join(SCRATCH, 'data', 'extractors', 'manager.json'), 'utf8'));
     expect(kept.skip['heat3d-alpha'] === '1.1.0', JSON.stringify(kept));
     await row(section, 'heat3d-alpha').getByRole('button', { name: 'Offer again' }).click();
