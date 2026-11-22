@@ -88,7 +88,7 @@ fn backends() -> Vec<wgpu::Backends> {
 pub fn adapter(make: Option<&MakeSurface>) -> anyhow::Result<(wgpu::Instance, wgpu::Adapter, Option<wgpu::Surface<'static>>)> {
     let mut last = anyhow::anyhow!("no GPU adapter");
     for b in backends() {
-        let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor { backends: b, ..wgpu::InstanceDescriptor::from_env_or_default() });
+        let instance = wgpu::Instance::new(wgpu::InstanceDescriptor { backends: b, ..wgpu::InstanceDescriptor::new_without_display_handle_from_env() });
         let surface = match make.map(|m| m(&instance)) {
             Some(Ok(s)) => Some(s),
             Some(Err(e)) => {
@@ -101,6 +101,8 @@ pub fn adapter(make: Option<&MakeSurface>) -> anyhow::Result<(wgpu::Instance, wg
             power_preference: wgpu::PowerPreference::HighPerformance,
             compatible_surface: surface.as_ref(),
             force_fallback_adapter: false,
+            // The card's own limits, not rounded down to a bucket: one binding per chunk wants all of it.
+            apply_limit_buckets: false,
         })) {
             Ok(a) => return Ok((instance, a, surface)),
             Err(e) => last = e.into(),
@@ -154,6 +156,7 @@ impl Viewport {
                 },
                 desired_maximum_frame_latency: std::env::var("HEAT3D_VIEWPORT_LATENCY").ok().and_then(|v| v.parse().ok()).unwrap_or(2),
                 alpha_mode: alpha,
+                color_space: wgpu::SurfaceColorSpace::Auto,
                 view_formats: vec![],
             };
             surface.configure(&renderer.device, &config);
@@ -194,6 +197,8 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
     // packet reached shows the last picture again rather than skipping, so the display's cadence
     // is the viewport's and not the beat between the page's clock and the display's.
     let mut active_until = std::time::Instant::now();
+    // Where a frame goes that the surface does not take this time (`CurrentSurfaceTexture::Occluded`).
+    let mut offscreen: Option<(wgpu::Texture, wgpu::TextureView, (u32, u32))> = None;
     loop {
         let active = std::time::Instant::now() < active_until;
         let first = if active {
@@ -375,28 +380,52 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
             continue;
         }
         dirty = false;
-        let frame = match surface.get_current_texture() {
-            Ok(f) => f,
-            Err(wgpu::SurfaceError::Outdated | wgpu::SurfaceError::Lost) => {
+        let (frame, view) = match surface.get_current_texture() {
+            // Suboptimal still shows, as before (the surface is set up again on the next resize).
+            wgpu::CurrentSurfaceTexture::Success(f) | wgpu::CurrentSurfaceTexture::Suboptimal(f) => {
+                let v = f.texture.create_view(&Default::default());
+                (Some(f), v)
+            }
+            wgpu::CurrentSurfaceTexture::Outdated | wgpu::CurrentSurfaceTexture::Lost => {
                 surface.configure(&r.device, &config);
                 dirty = true;
                 // The packets' heat passes still count: drawn on the next frame.
                 continue;
             }
-            Err(e) => {
-                eprintln!("viewport: surface: {e:?}");
-                std::thread::sleep(Duration::from_millis(2));
-                continue;
+            other => {
+                // Not shown this time (the window covered, or the compositor slow): drawn offscreen
+                // all the same, so the heat passes and the read-backs the page waits on go on.
+                if matches!(other, wgpu::CurrentSurfaceTexture::Validation) {
+                    eprintln!("viewport: surface: validation error");
+                    std::thread::sleep(Duration::from_millis(2));
+                    continue;
+                }
+                if offscreen.as_ref().is_none_or(|o| o.2 != (config.width, config.height)) {
+                    let t = r.device.create_texture(&wgpu::TextureDescriptor {
+                        label: Some("viewport offscreen"),
+                        size: wgpu::Extent3d { width: config.width.max(1), height: config.height.max(1), depth_or_array_layers: 1 },
+                        mip_level_count: 1,
+                        sample_count: 1,
+                        dimension: wgpu::TextureDimension::D2,
+                        format: config.format,
+                        usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
+                        view_formats: &[],
+                    });
+                    let v = t.create_view(&Default::default());
+                    offscreen = Some((t, v, (config.width, config.height)));
+                }
+                (None, offscreen.as_ref().unwrap().1.clone())
             }
         };
-        let view = frame.texture.create_view(&Default::default());
         if hidden {
             r.draw(&[], &view, (config.width, config.height), false);
         } else {
             r.draw(&packets, &view, (config.width, config.height), false);
         }
-        frame.present();
-        r.presented();
+        if let Some(f) = frame {
+            r.queue.present(f);
+            r.presented();
+        }
         r.poll();
         let s = &r.stats;
         snap.lock().json = format!(

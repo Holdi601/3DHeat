@@ -20,6 +20,23 @@ fn mapped(device: &wgpu::Device, label: &str, bytes: u64) -> wgpu::Buffer {
     })
 }
 
+/// `n` values of a buffer mapped at creation, as a slice the core packs into in place.
+///
+/// wgpu hands mapped memory out write-only (it may be write-combining, slow to read back). The
+/// core's packers write each value of the slice front to back, so a plain slice over the mapping
+/// keeps the rows' one trip from the core to the GPU without a copy in between.
+fn with_mapped<T: bytemuck::Pod, R>(buf: &wgpu::Buffer, n: usize, f: impl FnOnce(&mut [T]) -> R) -> R {
+    let mut view = buf.slice(..).get_mapped_range_mut().expect("mapped at creation");
+    let mut w = view.slice(..);
+    assert!(n * std::mem::size_of::<T>() <= w.len(), "mapping too small");
+    let ptr = w.as_raw_element_ptr().as_ptr();
+    assert!(ptr.align_offset(std::mem::align_of::<T>()) == 0, "mapping misaligned");
+    // SAFETY: the mapping is live, at least n values long and aligned (checked above), and
+    // nothing else touches it until `view` drops after `f`.
+    let s = unsafe { std::slice::from_raw_parts_mut(ptr as *mut T, n) };
+    f(s)
+}
+
 /// Whether the core's dataset has per-row times (and so lifetimes) in its chunks.
 pub fn has_times(ds: &Dataset) -> bool {
     !ds.chunks.is_empty() && ds.chunk_bytes(0, true).is_ok()
@@ -31,17 +48,13 @@ pub fn upload_chunk(device: &wgpu::Device, ds: &Dataset, i: usize) -> anyhow::Re
     let rows = info.rows;
     let positions = mapped(device, "chunk positions", rows as u64 * 8);
     {
-        let mut range = positions.slice(..).get_mapped_range_mut();
-        let words: &mut [u32] = bytemuck::cast_slice_mut(&mut range[..rows * 8]);
-        ds.pack(i, false, words)?;
+        with_mapped::<u32, _>(&positions, rows * 2, |words| ds.pack(i, false, words))?;
     }
     positions.unmap();
     let times = if has_times(ds) {
         let t = mapped(device, "chunk times", rows as u64 * 4);
         {
-            let mut range = t.slice(..).get_mapped_range_mut();
-            let words: &mut [u32] = bytemuck::cast_slice_mut(&mut range[..rows * 4]);
-            ds.pack(i, true, words)?;
+            with_mapped::<u32, _>(&t, rows, |words| ds.pack(i, true, words))?;
         }
         t.unmap();
         Some(t)
@@ -76,11 +89,7 @@ pub fn upload_chunk(device: &wgpu::Device, ds: &Dataset, i: usize) -> anyhow::Re
 pub fn upload_column(device: &wgpu::Device, ds: &Arc<Dataset>, chunk: usize, name: &str) -> anyhow::Result<Option<wgpu::Buffer>> {
     let rows = ds.chunks[chunk].rows;
     let buf = mapped(device, "filter column", rows as u64 * 4);
-    let ok = {
-        let mut range = buf.slice(..).get_mapped_range_mut();
-        let out: &mut [f32] = bytemuck::cast_slice_mut(&mut range[..rows * 4]);
-        ds.chunk_column(name, chunk, out)?
-    };
+    let ok = with_mapped::<f32, _>(&buf, rows, |out| ds.chunk_column(name, chunk, out))?;
     buf.unmap();
     Ok(ok.then_some(buf))
 }

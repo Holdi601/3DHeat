@@ -139,7 +139,7 @@ fn draws_heat_offscreen() {
         return;
     }
     let mut r = Renderer::new(&adapter, wgpu::TextureFormat::Rgba8Unorm).expect("renderer");
-    r.device.push_error_scope(wgpu::ErrorFilter::Validation);
+    let scope = r.device.push_error_scope(wgpu::ErrorFilter::Validation);
     r.clear_dataset(false);
     let c = chunk().upload(&r.device);
     r.add_chunk(c);
@@ -163,7 +163,7 @@ fn draws_heat_offscreen() {
     let pc = picture.clone();
     r.request_capture(Box::new(move |c| *pc.lock().unwrap() = Some(c.is_some_and(|c| c.rgba.len() == (SIDE * SIDE * 4) as usize))));
     r.draw(&[packet()], &view, (SIDE, SIDE), false);
-    let error = pollster::block_on(r.device.pop_error_scope());
+    let error = pollster::block_on(scope.pop());
     assert!(error.is_none(), "validation error: {error:?}");
     for _ in 0..500 {
         let _ = r.device.poll(wgpu::PollType::wait_indefinitely());

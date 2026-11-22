@@ -359,7 +359,7 @@ fn render_pipe(
     fs: &str,
     format: wgpu::TextureFormat,
     blend: Option<wgpu::BlendState>,
-    buffers: &[wgpu::VertexBufferLayout],
+    buffers: &[Option<wgpu::VertexBufferLayout>],
     depth: Option<wgpu::DepthStencilState>,
 ) -> wgpu::RenderPipeline {
     device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
@@ -375,7 +375,7 @@ fn render_pipe(
         primitive: wgpu::PrimitiveState { topology: wgpu::PrimitiveTopology::TriangleList, ..Default::default() },
         depth_stencil: depth,
         multisample: Default::default(),
-        multiview: None,
+        multiview_mask: None,
         cache: None,
     })
 }
@@ -421,7 +421,7 @@ impl Renderer {
         let sampler = device.create_sampler(&wgpu::SamplerDescriptor {
             mag_filter: wgpu::FilterMode::Linear,
             min_filter: wgpu::FilterMode::Linear,
-            mipmap_filter: wgpu::FilterMode::Linear,
+            mipmap_filter: wgpu::MipmapFilterMode::Linear,
             address_mode_u: wgpu::AddressMode::ClampToEdge,
             address_mode_v: wgpu::AddressMode::ClampToEdge,
             ..Default::default()
@@ -488,12 +488,12 @@ impl Renderer {
             "fsMesh",
             SCENE_FORMAT,
             Some(alpha_blend),
-            &[vbuf(24, &POS_NORMAL), vbuf(12, &COLOUR), vbuf(8, &UV), vbuf(4, &TILE)],
+            &[Some(vbuf(24, &POS_NORMAL)), Some(vbuf(12, &COLOUR)), Some(vbuf(8, &UV)), Some(vbuf(4, &TILE))],
             // Reverse-Z: nearer is larger, an equal depth passes (`GPU_DEPTH_TEST`).
             Some(wgpu::DepthStencilState {
                 format: DEPTH_FORMAT,
-                depth_write_enabled: true,
-                depth_compare: wgpu::CompareFunction::GreaterEqual,
+                depth_write_enabled: Some(true),
+                depth_compare: Some(wgpu::CompareFunction::GreaterEqual),
                 stencil: Default::default(),
                 bias: Default::default(),
             }),
@@ -505,7 +505,7 @@ impl Renderer {
         let line = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: Some("line"),
             layout: None,
-            vertex: wgpu::VertexState { module: &m_line, entry_point: Some("vsLine"), buffers: &[vbuf(28, &LINE_ATTRS)], compilation_options: Default::default() },
+            vertex: wgpu::VertexState { module: &m_line, entry_point: Some("vsLine"), buffers: &[Some(vbuf(28, &LINE_ATTRS))], compilation_options: Default::default() },
             fragment: Some(wgpu::FragmentState {
                 module: &m_line,
                 entry_point: Some("fsLine"),
@@ -515,13 +515,13 @@ impl Renderer {
             primitive: wgpu::PrimitiveState { topology: wgpu::PrimitiveTopology::LineList, ..Default::default() },
             depth_stencil: Some(wgpu::DepthStencilState {
                 format: DEPTH_FORMAT,
-                depth_write_enabled: false,
-                depth_compare: wgpu::CompareFunction::GreaterEqual,
+                depth_write_enabled: Some(false),
+                depth_compare: Some(wgpu::CompareFunction::GreaterEqual),
                 stencil: Default::default(),
                 bias: Default::default(),
             }),
             multisample: Default::default(),
-            multiview: None,
+            multiview_mask: None,
             cache: None,
         });
 
@@ -964,6 +964,7 @@ impl Renderer {
                     depth_stencil_attachment: None,
                     timestamp_writes: None,
                     occlusion_query_set: None,
+                    multiview_mask: None,
                 });
                 drop(pass);
                 self.queue.submit(Some(encoder.finish()));
@@ -1156,6 +1157,7 @@ impl Renderer {
             }),
             timestamp_writes: None,
             occlusion_query_set: None,
+            multiview_mask: None,
         });
         if let (Some((g0, g1)), Some(l)) = (&groups, &self.level) {
             pass.set_pipeline(&self.mesh);
@@ -1255,6 +1257,7 @@ impl Renderer {
             depth_stencil_attachment: None,
             timestamp_writes: None,
             occlusion_query_set: None,
+            multiview_mask: None,
         });
     }
 
@@ -1355,6 +1358,7 @@ impl Renderer {
                 depth_stencil_attachment: None,
                 timestamp_writes: None,
                 occlusion_query_set: None,
+                multiview_mask: None,
             });
             pass.set_pipeline(&pipe);
             for (i, g) in groups.iter().enumerate() {
@@ -1846,6 +1850,7 @@ impl Renderer {
             depth_stencil_attachment: None,
             timestamp_writes: None,
             occlusion_query_set: None,
+            multiview_mask: None,
         });
         pass.set_pipeline(fold_pipe);
         pass.set_bind_group(0, &fold_g, &[]);
@@ -1891,6 +1896,7 @@ impl Renderer {
                 depth_stencil_attachment: None,
                 timestamp_writes: None,
                 occlusion_query_set: None,
+                multiview_mask: None,
             });
             pass.set_pipeline(pipe);
             pass.set_bind_group(0, g, &[]);
@@ -1953,6 +1959,7 @@ impl Renderer {
             depth_stencil_attachment: None,
             timestamp_writes: None,
             occlusion_query_set: None,
+            multiview_mask: None,
         });
         let x = p.f(F_VIEW_X).max(0.0);
         let y = p.f(F_VIEW_Y).max(0.0);
@@ -2002,6 +2009,7 @@ impl Renderer {
                 depth_stencil_attachment: None,
                 timestamp_writes: None,
                 occlusion_query_set: None,
+                multiview_mask: None,
             });
             pass.set_pipeline(&pipe);
             pass.set_bind_group(0, &g, &[]);
@@ -2112,7 +2120,7 @@ impl Renderer {
             match r.kind {
                 ReadKind::Capture { width, height, stride, bgra, reply } => {
                     let out = ok.then(|| {
-                        let data = r.buffer.slice(..).get_mapped_range();
+                        let data = r.buffer.slice(..).get_mapped_range().expect("mapped");
                         let mut rgba = Vec::with_capacity((width * height * 4) as usize);
                         for y in 0..height as usize {
                             let row = &data[y * stride as usize..y * stride as usize + width as usize * 4];
@@ -2131,7 +2139,7 @@ impl Renderer {
                 }
                 ReadKind::Probe { reply } => {
                     let out = ok.then(|| {
-                        let d = r.buffer.slice(..).get_mapped_range();
+                        let d = r.buffer.slice(..).get_mapped_range().expect("mapped");
                         // R, the density, is first in every format.
                         if self.heat_f32 {
                             f32::from_le_bytes([d[0], d[1], d[2], d[3]])
@@ -2144,7 +2152,7 @@ impl Renderer {
                 }
                 ReadKind::Heat { width, height, stride, channels, max, reply } => {
                     let out = ok.then(|| {
-                        let data = r.buffer.slice(..).get_mapped_range();
+                        let data = r.buffer.slice(..).get_mapped_range().expect("mapped");
                         let texel = if self.heat_f32 { 4 } else { 2 };
                         let at = |x: usize, y: usize, c: usize| -> f32 {
                             let b = y * stride as usize + (x * channels as usize + c) * texel;

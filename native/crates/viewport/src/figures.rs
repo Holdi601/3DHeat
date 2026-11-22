@@ -105,7 +105,7 @@ fn alpha_blend() -> wgpu::BlendState {
 
 /// Reverse-Z: nearer is larger, an equal depth passes (`GPU_DEPTH_TEST`).
 fn depth(write: bool) -> Option<wgpu::DepthStencilState> {
-    Some(wgpu::DepthStencilState { format: DEPTH_FORMAT, depth_write_enabled: write, depth_compare: wgpu::CompareFunction::GreaterEqual, stencil: Default::default(), bias: Default::default() })
+    Some(wgpu::DepthStencilState { format: DEPTH_FORMAT, depth_write_enabled: Some(write), depth_compare: Some(wgpu::CompareFunction::GreaterEqual), stencil: Default::default(), bias: Default::default() })
 }
 
 /// The cube's 24 corners (position, normal) and 36 indices (`buildCubeGeometry`).
@@ -143,7 +143,7 @@ impl Figures {
                 count: None,
             }],
         });
-        let pl = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("scene uniforms"), bind_group_layouts: &[&layout], push_constant_ranges: &[] });
+        let pl = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("scene uniforms"), bind_group_layouts: &[Some(&layout)], immediate_size: 0 });
         let module = |label: &str, src: &str| device.create_shader_module(wgpu::ShaderModuleDescriptor { label: Some(label), source: wgpu::ShaderSource::Wgsl(src.into()) });
         let m_fig = module("figures", W_FIGURE);
         let m_cube = module("cube", W_CUBE);
@@ -161,8 +161,8 @@ impl Figures {
                     module: &m_fig,
                     entry_point: Some("vsFigure"),
                     buffers: &[
-                        wgpu::VertexBufferLayout { array_stride: MESH_STRIDE as u64 * 4, step_mode: wgpu::VertexStepMode::Vertex, attributes: &MESH_ATTRS },
-                        wgpu::VertexBufferLayout { array_stride: INSTANCE_STRIDE as u64 * 4, step_mode: wgpu::VertexStepMode::Instance, attributes: &INST_ATTRS },
+                        Some(wgpu::VertexBufferLayout { array_stride: MESH_STRIDE as u64 * 4, step_mode: wgpu::VertexStepMode::Vertex, attributes: &MESH_ATTRS }),
+                        Some(wgpu::VertexBufferLayout { array_stride: INSTANCE_STRIDE as u64 * 4, step_mode: wgpu::VertexStepMode::Instance, attributes: &INST_ATTRS }),
                     ],
                     compilation_options: options.clone(),
                 },
@@ -175,7 +175,7 @@ impl Figures {
                 primitive: wgpu::PrimitiveState { topology: wgpu::PrimitiveTopology::TriangleList, ..Default::default() },
                 depth_stencil: depth(write),
                 multisample: Default::default(),
-                multiview: None,
+                multiview_mask: None,
                 cache: None,
             })
         };
@@ -191,8 +191,8 @@ impl Figures {
                 module: &m_cube,
                 entry_point: Some("vsCube"),
                 buffers: &[
-                    wgpu::VertexBufferLayout { array_stride: 24, step_mode: wgpu::VertexStepMode::Vertex, attributes: &CUBE_VERT },
-                    wgpu::VertexBufferLayout { array_stride: 32, step_mode: wgpu::VertexStepMode::Instance, attributes: &CUBE_INST },
+                    Some(wgpu::VertexBufferLayout { array_stride: 24, step_mode: wgpu::VertexStepMode::Vertex, attributes: &CUBE_VERT }),
+                    Some(wgpu::VertexBufferLayout { array_stride: 32, step_mode: wgpu::VertexStepMode::Instance, attributes: &CUBE_INST }),
                 ],
                 compilation_options: Default::default(),
             },
@@ -205,7 +205,7 @@ impl Figures {
             primitive: wgpu::PrimitiveState { topology: wgpu::PrimitiveTopology::TriangleList, ..Default::default() },
             depth_stencil: depth(true),
             multisample: Default::default(),
-            multiview: None,
+            multiview_mask: None,
             cache: None,
         });
         const LOOK_VERT: [wgpu::VertexAttribute; 1] = wgpu::vertex_attr_array![0 => Float32];
@@ -217,8 +217,8 @@ impl Figures {
                 module: &m_look,
                 entry_point: Some("vsLook"),
                 buffers: &[
-                    wgpu::VertexBufferLayout { array_stride: 4, step_mode: wgpu::VertexStepMode::Vertex, attributes: &LOOK_VERT },
-                    wgpu::VertexBufferLayout { array_stride: 32, step_mode: wgpu::VertexStepMode::Instance, attributes: &LOOK_INST },
+                    Some(wgpu::VertexBufferLayout { array_stride: 4, step_mode: wgpu::VertexStepMode::Vertex, attributes: &LOOK_VERT }),
+                    Some(wgpu::VertexBufferLayout { array_stride: 32, step_mode: wgpu::VertexStepMode::Instance, attributes: &LOOK_INST }),
                 ],
                 compilation_options: Default::default(),
             },
@@ -231,7 +231,7 @@ impl Figures {
             primitive: wgpu::PrimitiveState { topology: wgpu::PrimitiveTopology::LineList, ..Default::default() },
             depth_stencil: depth(false),
             multisample: Default::default(),
-            multiview: None,
+            multiview_mask: None,
             cache: None,
         });
         let (cv, ci) = cube_geometry();
@@ -251,7 +251,7 @@ impl Figures {
                 vertex: wgpu::VertexState {
                     module: &m_line,
                     entry_point: Some("vsLine"),
-                    buffers: &[wgpu::VertexBufferLayout { array_stride: 28, step_mode: wgpu::VertexStepMode::Vertex, attributes: &LINE_ATTRS }],
+                    buffers: &[Some(wgpu::VertexBufferLayout { array_stride: 28, step_mode: wgpu::VertexStepMode::Vertex, attributes: &LINE_ATTRS })],
                     compilation_options: options.clone(),
                 },
                 fragment: Some(wgpu::FragmentState {
@@ -263,13 +263,13 @@ impl Figures {
                 primitive: wgpu::PrimitiveState { topology, ..Default::default() },
                 depth_stencil: depth.then(|| wgpu::DepthStencilState {
                     format: DEPTH_FORMAT,
-                    depth_write_enabled: tris && alpha_pass > 0.5 && alpha_pass < 1.5,
-                    depth_compare: if always { wgpu::CompareFunction::Always } else { wgpu::CompareFunction::GreaterEqual },
+                    depth_write_enabled: Some(tris && alpha_pass > 0.5 && alpha_pass < 1.5),
+                    depth_compare: Some(if always { wgpu::CompareFunction::Always } else { wgpu::CompareFunction::GreaterEqual }),
                     stencil: Default::default(),
                     bias: Default::default(),
                 }),
                 multisample: Default::default(),
-                multiview: None,
+                multiview_mask: None,
                 cache: None,
             })
         };
@@ -299,7 +299,7 @@ impl Figures {
                 wgpu::BindGroupLayoutEntry { binding: 2, visibility: wgpu::ShaderStages::VERTEX | wgpu::ShaderStages::FRAGMENT, ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering), count: None },
             ],
         });
-        let gl = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("glyphs"), bind_group_layouts: &[&glyph_layout], push_constant_ranges: &[] });
+        let gl = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("glyphs"), bind_group_layouts: &[Some(&glyph_layout)], immediate_size: 0 });
         let m_sym = module("glyphs", W_SYMBOL);
         // SYMBOL_BLEND: premultiplied.
         let premul = wgpu::BlendComponent { src_factor: wgpu::BlendFactor::One, dst_factor: wgpu::BlendFactor::OneMinusSrcAlpha, operation: wgpu::BlendOperation::Add };
@@ -309,7 +309,7 @@ impl Figures {
             vertex: wgpu::VertexState {
                 module: &m_sym,
                 entry_point: Some("vsGlyph"),
-                buffers: &[wgpu::VertexBufferLayout { array_stride: INSTANCE_STRIDE as u64 * 4, step_mode: wgpu::VertexStepMode::Instance, attributes: &INST_ATTRS }],
+                buffers: &[Some(wgpu::VertexBufferLayout { array_stride: INSTANCE_STRIDE as u64 * 4, step_mode: wgpu::VertexStepMode::Instance, attributes: &INST_ATTRS })],
                 compilation_options: Default::default(),
             },
             fragment: Some(wgpu::FragmentState {
@@ -319,9 +319,9 @@ impl Figures {
                 compilation_options: Default::default(),
             }),
             primitive: wgpu::PrimitiveState { topology: wgpu::PrimitiveTopology::TriangleList, ..Default::default() },
-            depth_stencil: Some(wgpu::DepthStencilState { format: DEPTH_FORMAT, depth_write_enabled: false, depth_compare: wgpu::CompareFunction::Always, stencil: Default::default(), bias: Default::default() }),
+            depth_stencil: Some(wgpu::DepthStencilState { format: DEPTH_FORMAT, depth_write_enabled: Some(false), depth_compare: Some(wgpu::CompareFunction::Always), stencil: Default::default(), bias: Default::default() }),
             multisample: Default::default(),
-            multiview: None,
+            multiview_mask: None,
             cache: None,
         });
         let sampler = device.create_sampler(&wgpu::SamplerDescriptor { mag_filter: wgpu::FilterMode::Linear, min_filter: wgpu::FilterMode::Linear, ..Default::default() });
