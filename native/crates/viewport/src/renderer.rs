@@ -23,6 +23,8 @@ use crate::packet::{FilterSet, Packet};
 pub const SCENE_FORMAT: wgpu::TextureFormat = wgpu::TextureFormat::Rgba8Unorm;
 pub const DEPTH_FORMAT: wgpu::TextureFormat = wgpu::TextureFormat::Depth32Float;
 /// What the scene clears to (`SCENE_CLEAR` in the WebGPU renderer).
+/// How long a heat read waits for the packet it names before it takes what is drawn.
+const HEAT_WAIT: std::time::Duration = std::time::Duration::from_millis(250);
 const SCENE_CLEAR: [f64; 3] = [0.086, 0.09, 0.102];
 const SCENE_UNIFORM_BYTES: usize = 64 + 16 * 8;
 const BIN_PARAM_BYTES: usize = 96;
@@ -311,7 +313,9 @@ pub struct Renderer {
     binned: bool,
     readbacks: Vec<Readback>,
     pending_capture: Option<Reply<Option<Captured>>>,
-    pending_heat: Option<(usize, Reply<Option<Vec<f32>>>)>,
+    /// Heat reads asked for: at most `max` values, once packet `after` is drawn, asked when
+    /// (`request_heat_after`). Several may wait - the exposure's meter and its follower each read.
+    pending_heat: Vec<(usize, u32, Instant, Reply<Option<Vec<f32>>>)>,
     pending_probe: Option<(f32, f32, Reply<Option<f32>>)>,
     pub stats: Stats,
     last_present: Option<Instant>,
@@ -614,7 +618,7 @@ impl Renderer {
             binned: false,
             readbacks: Vec::new(),
             pending_capture: None,
-            pending_heat: None,
+            pending_heat: Vec::new(),
             pending_probe: None,
             stats,
             last_present: None,
@@ -979,7 +983,7 @@ impl Renderer {
         if capture || self.pending_capture.is_some() {
             self.capture(&mut encoder, &p);
         }
-        if self.pending_heat.is_some() {
+        if !self.pending_heat.is_empty() {
             self.read_heat(&mut encoder);
         }
         if self.pending_probe.is_some() {
@@ -2036,7 +2040,16 @@ impl Renderer {
 
     /// The heat target read back, sampled to at most `max` values (`readHeatField`).
     fn read_heat(&mut self, encoder: &mut wgpu::CommandEncoder) {
-        let Some((max, reply)) = self.pending_heat.take() else { return };
+        let (seq, asked) = (self.stats.last_seq, Instant::now());
+        let (ready, waiting): (Vec<_>, Vec<_>) =
+            std::mem::take(&mut self.pending_heat).into_iter().partition(|a| seq >= a.1 || asked - a.2 > HEAT_WAIT);
+        self.pending_heat = waiting;
+        for (max, _, _, reply) in ready {
+            self.read_heat_one(encoder, max, reply);
+        }
+    }
+
+    fn read_heat_one(&mut self, encoder: &mut wgpu::CommandEncoder, max: usize, reply: Reply<Option<Vec<f32>>>) {
         let (w, h) = (self.heat_w, self.heat_h);
         let channels = match self.heat_format {
             wgpu::TextureFormat::Rgba32Float | wgpu::TextureFormat::Rgba16Float => 4,
@@ -2090,7 +2103,21 @@ impl Renderer {
     }
 
     pub fn request_heat(&mut self, max: usize, reply: Reply<Option<Vec<f32>>>) {
-        self.pending_heat = Some((max, reply));
+        self.request_heat_after(max, 0, reply);
+    }
+
+    /// As `request_heat`, read only once packet `after` is drawn: the page meters the frame it
+    /// has just sent, and that packet may still be on its way. Reads asked meanwhile all wait
+    /// their turn (one replacing another answered the first with nothing: the first exposure
+    /// after a load then kept the analytic estimate, 3.6x the metered one).
+    pub fn request_heat_after(&mut self, max: usize, after: u32, reply: Reply<Option<Vec<f32>>>) {
+        self.pending_heat.push((max, after, Instant::now(), reply));
+    }
+
+    /// A heat read still waiting for its packet after `HEAT_WAIT`: served from whatever is drawn
+    /// (a packet the page dropped, or a page that started its numbering over).
+    pub fn heat_overdue(&self) -> bool {
+        self.pending_heat.iter().any(|a| a.2.elapsed() > HEAT_WAIT)
     }
 
     fn map_readbacks(&mut self) {

@@ -467,6 +467,10 @@ export class Engine {
   private lastStoreFlySpeed = Number.NaN;
   /** Rendered frames remaining before the automatic exposure pass. */
   private autoExposePending = 0;
+  /** Auto-exposures metered so far (probes wait for the first after a load). */
+  exposuresMetered = 0;
+  /** Meters that got no field since the last `meterSoon`; see `autoExpose`. */
+  private meterRetries = 0;
   /** The filters the exposure was last metered for: a change meters it again. */
   private meteredFilters: FilterSpec[] | null = null;
   private meteredFilterKey = '';
@@ -1755,6 +1759,7 @@ export class Engine {
   private meterSoon(): void {
     if (snapshot().heat.exposureLocked) return;
     this.autoExposePending = AUTO_EXPOSE_AFTER_FRAMES;
+    this.meterRetries = 0;
   }
 
   /**
@@ -1787,6 +1792,13 @@ export class Engine {
     // accumulation a moment to converge first.
     this.forceRenderFrames = Math.max(this.forceRenderFrames, 2);
     const samples = await renderer.readHeatField(EXPOSURE_SAMPLES);
+    // No field to meter: a read already under way (the follower's) takes the one readback there
+    // is. Metered again a couple of frames on, or the load keeps the analytic estimate, which
+    // was 3.6x the metered value on the row-ceiling load.
+    if (!samples && this.dataset && this.meterRetries++ < 3) {
+      this.autoExposePending = 2;
+      return null;
+    }
     // Undo the half-float range scaling, so the exposure is metered in the same
     // units the saturation point is expressed in.
     const gain = this.currentGain();
@@ -1797,6 +1809,7 @@ export class Engine {
     if (result.saturation !== null) {
       useStore.getState().patchHeat({ saturation: result.saturation });
     }
+    this.exposuresMetered++;
     return result;
   }
 

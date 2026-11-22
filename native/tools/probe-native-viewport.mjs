@@ -3,7 +3,7 @@
  *
  *   node native/tools/probe-native-viewport.mjs --dir <rowceiling folder> --rows 10,100
  *        [--exe <3dheat-app.exe>] [--out <folder>] [--seconds 8]
- *        [--cases heat,teams,filter,window,split,figures,cubes|none]
+ *        [--cases exposure,heat,teams,filter,window,split,figures,cubes|none]
  *        [--backends webgpu,native]
  *
  * For each load, starts the built app twice - the web engine (WebGPU in the app's
@@ -18,6 +18,10 @@
  *            the per-pixel difference, pixels off by more than 8/255); both written
  *            as PNG to --out. The box replay (figures, cubes) has no heat: its pictures
  *            alone, within 1/255 on average and 1 % of pixels
+ *   exposure the first auto-exposure after each load (the first and three loads of the same
+ *            files again, the same view): every one within 1 % of the web's first - a meter
+ *            that read the field before all rows were drawn, or before the frame it meant,
+ *            exposes differently while the converged fields still agree
  *   frames   camera orbit with the timeline playing: the page's frame intervals, and
  *            for the native viewport its own present intervals (p50 / p99 / max, the
  *            no-frame-drops rule: judged by p99 and max)
@@ -42,7 +46,7 @@ const dir = arg('dir', null);
 const loads = String(arg('rows', '10')).split(',').map((r) => Number(r) * 1e6);
 const out = resolve(arg('out', join(process.env.TEMP ?? '.', 'heat3d-native-viewport')));
 const secs = Number(arg('seconds', 8));
-const cases = String(arg('cases', 'heat,teams,filter,window,split,figures,cubes')).split(',').filter((c) => c && c !== 'none');
+const cases = String(arg('cases', 'exposure,heat,teams,filter,window,split,figures,cubes')).split(',').filter((c) => c && c !== 'none');
 const backends = String(arg('backends', 'webgpu,native')).split(',');
 const PORT = Number(arg('port', 9336));
 const PER_FILE = 10_000_000;
@@ -224,21 +228,33 @@ async function run(rows, backend) {
       extraNumeric: Object.fromEntries(extra.map((c) => [c, true])),
       axes: { up: 'z', flipX: false, flipY: false, flipZ: false, scale: 1 },
     };
-    const load = await page.evaluate(async (m) => {
-      const t0 = performance.now();
-      const files = [...document.getElementById('__probe_files').files];
-      const r = await globalThis.__heat3dNative.loadFiles(files, 1, m, true);
-      const eng = globalThis.__3dheat_engine;
-      const until = performance.now() + 600_000;
-      await new Promise((res) => setTimeout(res, 300));
-      // The native renderer counts the rows it planned at once: its `dataPending` says when they are on the GPU.
-      while (performance.now() < until && (eng.live.residentRows + eng.live.droppedRows < r.rows || eng.renderer.dataPending)) await new Promise((res) => setTimeout(res, 20));
-      return { rows: r.rows, loadMs: performance.now() - t0, resident: eng.live.residentRows, dropped: eng.live.droppedRows };
-    }, mapping);
+    const loadOnce = () =>
+      page.evaluate(async (m) => {
+        const useStore = await globalThis.__heat3dNative.store();
+        const t0 = performance.now();
+        const files = [...document.getElementById('__probe_files').files];
+        const eng = globalThis.__3dheat_engine;
+        const metered = eng.exposuresMetered ?? 0;
+        const r = await globalThis.__heat3dNative.loadFiles(files, 1, m, true);
+        const until = performance.now() + 600_000;
+        await new Promise((res) => setTimeout(res, 300));
+        // The native renderer counts the rows it planned at once: its `dataPending` says when they are on the GPU.
+        while (performance.now() < until && (eng.live.residentRows + eng.live.droppedRows < r.rows || eng.renderer.dataPending)) await new Promise((res) => setTimeout(res, 20));
+        const loadMs = performance.now() - t0;
+        // The first auto-exposure of this load (metered a few frames after the rows are all drawn).
+        for (const end = performance.now() + 30_000; (eng.exposuresMetered ?? 0) === metered && performance.now() < end; ) await new Promise((res) => setTimeout(res, 20));
+        const exposure = (eng.exposuresMetered ?? 0) > metered ? useStore.getState().heat.saturation : null;
+        return { rows: r.rows, loadMs, resident: eng.live.residentRows, dropped: eng.live.droppedRows, exposure };
+      }, mapping);
+    const load = await loadOnce();
+    // The same files again, three times: the meter must not catch a load still arriving (a snapshot
+    // of the last load's rows) nor a frame other than the one it meant.
+    const exposures = [load.exposure];
+    if (cases.includes('exposure')) for (let i = 0; i < 3; i++) exposures.push((await loadOnce()).exposure);
 
     // Parity: converged fields and pictures, case by case, the same steps in both runs.
     const parity = {};
-    for (const c of cases) {
+    for (const c of cases.filter((c) => c !== 'exposure')) {
       parity[c] = await page.evaluate(async (c) => {
         const useStore = await globalThis.__heat3dNative.store();
         const eng = globalThis.__3dheat_engine;
@@ -351,7 +367,7 @@ async function run(rows, backend) {
       };
       return { page: stats(dts), present: native ? stats(native.intervals) : null, cpu: native ? stats(native.cpu) : null, splats: eng.live.splats };
     }, secs);
-    return { backend, rows, load, parity, frames, errors: errors.slice(0, 5), log: log.slice(-1500) };
+    return { backend, rows, load, exposures, parity, frames, errors: errors.slice(0, 5), log: log.slice(-1500) };
   } finally {
     await browser?.close().catch(() => {});
     app.kill();
@@ -377,7 +393,22 @@ for (const rows of loads) {
         (r.errors.length ? `; errors: ${r.errors.join(' | ')}` : ''),
     );
   }
-  for (const c of web && nat ? cases : []) {
+  if (!(web && nat) && cases.includes('exposure')) {
+    const r = web ?? nat;
+    console.log(`  ${m} exposure (${r.backend} alone): first auto-exposure ${r.exposures.map((v) => (v === null ? 'none' : v.toPrecision(5))).join(' ')}`);
+  }
+  if (web && nat && cases.includes('exposure')) {
+    // Each native load's first exposure against the web's first (the web's own repeats as a control).
+    const ref = web.exposures[0];
+    const off = (v) => (ref && v ? Math.abs(v / ref - 1) : Infinity);
+    const worst = Math.max(...nat.exposures.map(off));
+    const bad = !(worst <= 0.01);
+    if (bad) failed++;
+    const list = (a) => a.map((v) => (v === null ? 'none' : v.toPrecision(5))).join(' ');
+    console.log(`  ${bad ? 'FAIL' : 'ok  '} ${m} exposure: first auto-exposure web ${list(web.exposures)}; native ${list(nat.exposures)}; worst ${pct(worst)}`);
+    summary.push({ rows, case: 'exposure', web: web.exposures, native: nat.exposures, worst });
+  }
+  for (const c of web && nat ? cases.filter((c) => c !== 'exposure') : []) {
     const a = web.parity[c];
     const b = nat.parity[c];
     if (a.picture) writeFileSync(join(out, `${m}-${c}-web.png`), png(a.picture.width, a.picture.height, Uint8Array.from(a.picture.rgba)));

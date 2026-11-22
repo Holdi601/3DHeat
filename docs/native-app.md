@@ -155,7 +155,7 @@ What the preview draws:
 
 - the heat as points, binned on the GPU or splatted exactly as the web engine decides, in plain heat, team colours and the difference (by group, or split by a column), and heat weighed by a value column
 - filters (any number, folded into one bit a row on the GPU; changing one moves no rows), the time window, lifetimes and their fade, the slice and the distance cut
-- the accumulation across frames, the colour ramp, the floor and the response curve; the exposure reads the native heat
+- the accumulation across frames, the colour ramp, the floor and the response curve; the exposure reads the native heat, of the frame the page has just sent and only once the whole load is drawn, so a load's first exposure is the web engine's
 - a model level's ground (the mesh, relief, contours and its colours), the grid and the axes
 - the box replay: units as their figures (each model sent to the app once, a slice a frame, then drawn instanced from the frame's positions) or as cubes with their look lines, the weapons and effects drawn on the figures, the far-off symbols, the trails, and the ruler's and probe's lines
 - the objectives' marks on the ground, under the units or over the picture, and the other lines drawn over the finished picture (the mass analysis' places, the movement analysis' maneuvers)

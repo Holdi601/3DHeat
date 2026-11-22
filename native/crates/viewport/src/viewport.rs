@@ -28,19 +28,24 @@ pub enum Msg {
     CoreDataset {
         ds: Option<Arc<Dataset>>,
         budget: u64,
+        /// The page's count of datasets, echoed in the snapshot (`dataGen`): a snapshot from
+        /// before this one says nothing about its rows.
+        gen: u32,
     },
     /// A load the page built: its chunks follow as `PageChunk`s.
     PageDataset {
         rows: u64,
         has_time: bool,
         budget: u64,
+        gen: u32,
     },
     PageChunk(Vec<u8>),
     /// One chunk's rows of a filter column the page holds (a load the page built).
     PageColumn(Vec<u8>),
     Level(Option<LevelMesh>),
     Capture(Reply<Option<Captured>>),
-    ReadHeat(usize, Reply<Option<Vec<f32>>>),
+    /// The heat field once the page's packet `after` (its sequence number) is drawn.
+    ReadHeat(usize, u32, Reply<Option<Vec<f32>>>),
     /// The heat under a canvas pixel.
     Probe(f32, f32, Reply<Option<f32>>),
     /// A slice of a figure mesh (`Figures::mesh_slice`).
@@ -186,11 +191,13 @@ struct Data {
     generation: Arc<AtomicU64>,
     core: Option<Arc<Dataset>>,
     fetching: Arc<AtomicBool>,
+    /// The page's dataset count (`Msg::CoreDataset::gen`).
+    page_gen: u32,
 }
 
 fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::SurfaceConfiguration, rx: Receiver<Msg>, tx: Sender<Msg>, snap: Arc<Mutex<Snapshot>>) {
     let fifo = config.present_mode == wgpu::PresentMode::Fifo;
-    let mut data = Data { generation: Arc::new(AtomicU64::new(0)), core: None, fetching: Arc::new(AtomicBool::new(false)) };
+    let mut data = Data { generation: Arc::new(AtomicU64::new(0)), core: None, fetching: Arc::new(AtomicBool::new(false)), page_gen: 0 };
     let mut hidden = false;
     let mut dirty = true;
     // While the page sends frames, a present every display refresh (Fifo paces it): a refresh no
@@ -235,7 +242,8 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                     hidden = h;
                     dirty = true;
                 }
-                Msg::CoreDataset { ds, budget } => {
+                Msg::CoreDataset { ds, budget, gen: page_gen } => {
+                    data.page_gen = page_gen;
                     let gen = data.generation.fetch_add(1, Ordering::SeqCst) + 1;
                     r.clear_dataset(ds.as_ref().is_some_and(|d| loader::has_times(d)));
                     data.core = ds.clone();
@@ -273,7 +281,8 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                     }
                     dirty = true;
                 }
-                Msg::PageDataset { has_time, .. } => {
+                Msg::PageDataset { has_time, gen, .. } => {
+                    data.page_gen = gen;
                     data.generation.fetch_add(1, Ordering::SeqCst);
                     data.core = None;
                     r.clear_dataset(has_time);
@@ -328,7 +337,10 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                     r.request_capture(reply);
                     want_capture = true;
                 }
-                Msg::ReadHeat(max, reply) => r.request_heat(max, reply),
+                Msg::ReadHeat(max, after, reply) => {
+                    r.request_heat_after(max, after, reply);
+                    dirty = true;
+                }
                 Msg::Glyphs(bytes) => {
                     if let Err(e) = r.figures.set_atlas(&r.device, &r.queue, &bytes) {
                         eprintln!("viewport: {e:#}");
@@ -376,7 +388,7 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
         if !packets.is_empty() && fifo {
             active_until = std::time::Instant::now() + Duration::from_millis(500);
         }
-        if packets.is_empty() && !want_capture && !dirty && !active {
+        if packets.is_empty() && !want_capture && !dirty && !active && !r.heat_overdue() {
             continue;
         }
         dirty = false;
@@ -429,8 +441,8 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
         r.poll();
         let s = &r.stats;
         snap.lock().json = format!(
-            "{{\"residentRows\":{},\"droppedRows\":{},\"gpuBytes\":{},\"levelBytes\":{},\"frames\":{},\"binned\":{},\"filtersPending\":{},\"lastSeq\":{},\"backend\":{:?},\"adapter\":{:?},\"heatFormat\":{:?}}}",
-            r.resident_rows, r.dropped_rows, r.gpu_bytes, r.level_bytes(), s.frames, s.binned, s.filters_pending, s.last_seq, s.backend, s.adapter, s.heat_format
+            "{{\"residentRows\":{},\"droppedRows\":{},\"gpuBytes\":{},\"levelBytes\":{},\"frames\":{},\"binned\":{},\"filtersPending\":{},\"lastSeq\":{},\"dataGen\":{},\"backend\":{:?},\"adapter\":{:?},\"heatFormat\":{:?}}}",
+            r.resident_rows, r.dropped_rows, r.gpu_bytes, r.level_bytes(), s.frames, s.binned, s.filters_pending, s.last_seq, data.page_gen, s.backend, s.adapter, s.heat_format
         );
     }
 }

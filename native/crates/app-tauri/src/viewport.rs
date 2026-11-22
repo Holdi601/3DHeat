@@ -77,11 +77,12 @@ pub fn viewport_frame(window: WebviewWindow, request: Request<'_>) -> String {
 /// The dataset to draw: a core-built one by handle (rows straight from the core), or a load
 /// the page built (`rows`, its chunks following through `viewport_chunk`), or none.
 #[tauri::command]
-pub fn viewport_dataset(window: WebviewWindow, base: tauri::State<'_, crate::ViewerBase>, handle: Option<u64>, rows: u64, has_time: bool, budget: u64) -> Result<(), String> {
+pub fn viewport_dataset(window: WebviewWindow, base: tauri::State<'_, crate::ViewerBase>, handle: Option<u64>, rows: u64, has_time: bool, budget: u64, gen: Option<u32>) -> Result<(), String> {
+    let gen = gen.unwrap_or(0);
     let msg = match handle {
-        Some(h) => Msg::CoreDataset { ds: Some(base.core.built_dataset(h).ok_or_else(|| format!("no dataset {h} in the core"))?), budget },
-        None if rows > 0 => Msg::PageDataset { rows, has_time, budget },
-        None => Msg::CoreDataset { ds: None, budget },
+        Some(h) => Msg::CoreDataset { ds: Some(base.core.built_dataset(h).ok_or_else(|| format!("no dataset {h} in the core"))?), budget, gen },
+        None if rows > 0 => Msg::PageDataset { rows, has_time, budget, gen },
+        None => Msg::CoreDataset { ds: None, budget, gen },
     };
     with(&window, |v| v.send(msg)).ok_or_else(|| "no viewport".to_owned())
 }
@@ -165,11 +166,13 @@ pub async fn viewport_capture(window: WebviewWindow) -> Result<Response, String>
     Ok(Response::new(out))
 }
 
-/// The heat field, subsampled to at most `max` non-zero values (f32), for the exposure.
+/// The heat field, subsampled to at most `max` values (f32), for the exposure; read once the
+/// page's packet `after` is drawn (0: at the next frame), as the web engine reads the frame it
+/// has just submitted - the packets and this command may reach the viewport in either order.
 #[tauri::command]
-pub async fn viewport_read_heat(window: WebviewWindow, max: usize) -> Result<Response, String> {
+pub async fn viewport_read_heat(window: WebviewWindow, max: usize, after: Option<u32>) -> Result<Response, String> {
     let (tx, rx) = std::sync::mpsc::channel();
-    with(&window, |v| v.send(Msg::ReadHeat(max, Box::new(move |c| drop(tx.send(c)))))).ok_or("no viewport")?;
+    with(&window, |v| v.send(Msg::ReadHeat(max, after.unwrap_or(0), Box::new(move |c| drop(tx.send(c)))))).ok_or("no viewport")?;
     let got = tauri::async_runtime::spawn_blocking(move || rx.recv_timeout(std::time::Duration::from_secs(10)).ok().flatten()).await.map_err(|e| e.to_string())?;
     let v = got.ok_or("no heat")?;
     Ok(Response::new(v.iter().flat_map(|x| x.to_le_bytes()).collect::<Vec<u8>>()))

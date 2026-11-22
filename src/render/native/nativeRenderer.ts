@@ -80,6 +80,8 @@ export function setNativeViewport(on: boolean): void {
 }
 
 interface Snapshot {
+  /** The `setDataset` count the viewport last took (`datasetGen`): rows of an older one say nothing. */
+  dataGen?: number;
   residentRows?: number;
   droppedRows?: number;
   gpuBytes?: number;
@@ -113,7 +115,11 @@ export class NativeRenderer implements Renderer {
   private seq = 0;
   private snap: Snapshot = {};
   private dataset: Dataset | null = null;
-  private datasetGen = 0;
+  // From a random start: a viewport still running from this window's last page must not take a
+  // count of ours for one of its own.
+  private datasetGen = Math.floor(Math.random() * 2 ** 30);
+  /** The last packet sent (`viewport_frame`); a heat read waits until the viewport drew it. */
+  private sentSeq = 0;
   /** Rows of the dataset the budget lets onto the GPU, whole chunks. */
   private planned = 0;
   private filterKeys: string[] | null = null;
@@ -163,7 +169,10 @@ export class NativeRenderer implements Renderer {
 
   /** Rows still on their way to the GPU. */
   get dataPending(): boolean {
-    return this.planned > 0 && (this.snap.residentRows ?? 0) < this.planned;
+    // Until a snapshot from after this dataset arrives, its rows count as on their way: a
+    // `viewport_frame` answers with the snapshot of the last draw, which may predate the
+    // dataset and still count the last one's rows (the first exposure then metered part of the load).
+    return this.planned > 0 && (this.snap.dataGen !== this.datasetGen || (this.snap.residentRows ?? 0) < this.planned);
   }
 
   get gpuBytesUsed(): number {
@@ -238,6 +247,7 @@ export class NativeRenderer implements Renderer {
       rows: native ? native.rows : (dataset?.count ?? 0),
       hasTime,
       budget: Math.max(0, Math.floor(this.gpuBudgetBytes)),
+      gen,
     })
       .then(() => {
         if (dataset && !native && gen === this.datasetGen) void this.sendPageChunks(dataset, gen);
@@ -488,6 +498,7 @@ export class NativeRenderer implements Renderer {
     // One packet in flight at most past the first few: a page that outruns the app would only queue frames.
     if (this.inFlight < 3) {
       this.inFlight++;
+      this.sentSeq = this.seq;
       const t0 = performance.now();
       void this.invoke('viewport_frame', w.view().slice())
         .then((s) => {
@@ -689,7 +700,8 @@ export class NativeRenderer implements Renderer {
   /** `allChannels`: every channel of every texel, signed (the parity probe), as the WebGPU renderer's. */
   async readHeatField(maxSamples: number, allChannels = false): Promise<Float32Array | null> {
     try {
-      const got = (await this.invoke('viewport_read_heat', { max: allChannels ? 0 : Math.max(1, maxSamples) })) as ArrayBuffer;
+      // The field of the frame just sent, as the web engine reads the frame it has just submitted.
+      const got = (await this.invoke('viewport_read_heat', { max: allChannels ? 0 : Math.max(1, maxSamples), after: this.sentSeq })) as ArrayBuffer;
       return got && got.byteLength >= 4 ? new Float32Array(got) : null;
     } catch {
       return null;
