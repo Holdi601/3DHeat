@@ -49,6 +49,7 @@ import { pickIdentity, type PickIdentity } from '../../data/pickIdentity';
 import { noteWantedLevel } from './autoLevel';
 import { inNativeApp } from '../../data/native/core';
 import { startPickTileHeat, stopTileHeat, tilesPossible, useTileHeat } from '../../render/heatTiles/tileHeat';
+import { WINDOW_MAX_ROWS } from '../../render/heatTiles/rowWindow';
 
 const NO_COLUMNS: string[] = [];
 
@@ -358,7 +359,9 @@ export function SourcePanel() {
   const showTiles = async () => {
     if (!engine || !mapping) return;
     autoTiled.current = true;
-    const ok = await startPickTileHeat(engine, picked.map((p) => p.file), mapping, preview, true);
+    // Zoomed in, the rows of the ground in view stand in for the tiles when they fit what a load may take.
+    const fitRows = fullFit && fullFit.verdict !== 'too-big' ? Math.floor(keptRows / Math.max(1, fullFit.suggestedStride ?? 1)) : 0;
+    const ok = await startPickTileHeat(engine, picked.map((p) => p.file), mapping, preview, true, undefined, true, Math.min(WINDOW_MAX_ROWS, fitRows || 1e6));
     if (ok) setTiledPick(true);
   };
   useEffect(() => {

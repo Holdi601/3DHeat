@@ -113,5 +113,7 @@
   "app.tileHeat.building": "counting {percent} %",
   "app.tileHeat.host": "the host's",
   "app.tileHeat.stop": "stop",
-  "app.tileHeat.about": "Every row is counted into a pyramid of tiles; the view draws coarse tiles far away and finer ones up close. Nothing is loaded into memory."
+  "app.tileHeat.windowLoading": "loading the rows in view",
+  "app.tileHeat.windowRows": "{rows} rows in view drawn as rows",
+  "app.tileHeat.about": "Every row is counted into a pyramid of tiles; the view draws coarse tiles far away and finer ones up close. Zoomed in closer than the finest tiles, the rows of the ground in view are loaded and drawn instead."
 }

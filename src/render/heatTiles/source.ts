@@ -7,7 +7,7 @@
  * is drawn from its nearest ancestor that is.
  */
 
-import { kernelRadius, rectDepths, selectTiles, tileWorldRect, type LodView, type PyramidFrame, type SpriteSize, type TilePlacement, type TileRef } from './lod';
+import { groundRect, kernelRadius, rectDepths, selectTiles, tileWorldRect, type LodView, type PyramidFrame, type SpriteSize, type TilePlacement, type TileRef } from './lod';
 import { decodeTile, tileId, tileKey, tileOf, TILE, type ChannelWeights, type DecodedTile } from './tileFormat';
 
 export interface PyramidInfo extends PyramidFrame {
@@ -81,6 +81,48 @@ export interface HeatTileDraw {
   components: 1 | 4;
   /** Tiles still being weighed anew (the channel weights changed): draw again soon. */
   weighing: boolean;
+  /**
+   * Where rows draw instead (`rowWindow.ts`): world X / Z min, max; the cells
+   * whose centre lies inside weigh `holeWeight` (0 once the rows have faded in).
+   * Set by the engine each frame.
+   */
+  hole: [number, number, number, number] | null;
+  holeWeight: number;
+}
+
+/**
+ * The rows that stand in for the tiles in part of the view (`rowWindow.ts`),
+ * as the engine fades between them: `dataset` is the store's rows of `rect`.
+ */
+export interface TileRowWindow {
+  /** World X / Z min, max: leaf cells' edges. */
+  rect: [number, number, number, number];
+  dataset: object;
+  /** Fading the rows in, or out again. */
+  dir: 'in' | 'out';
+  /** When the fade began (performance.now()); -1 until the rows are on the GPU. */
+  t0: number;
+  /** The fade is over (the engine sets it). */
+  done: boolean;
+}
+
+/** How long a fade between tiles and rows takes. */
+export const ROW_FADE_MS = 300;
+
+const NO_HOLE = [1e9, 1e9, -1e9, -1e9];
+
+/** The hole over a drawn tile in its texture's cells (min, max; empty when none): what the passes test cell centres against. */
+export function holeTexels(t: Pick<HeatTileDrawTile, 'rect' | 'uv'>, hole: readonly number[] | null): number[] {
+  if (!hole) return NO_HOLE;
+  const [x0, z0, x1, z1] = t.rect;
+  const [u0, v0, u1, v1] = t.uv;
+  const tu = (x: number) => (u0 + ((x - x0) / (x1 - x0 || 1)) * (u1 - u0)) * TILE;
+  const tv = (z: number) => (v0 + ((z - z0) / (z1 - z0 || 1)) * (v1 - v0)) * TILE;
+  const a = tu(hole[0]);
+  const b = tu(hole[2]);
+  const c = tv(hole[1]);
+  const d = tv(hole[3]);
+  return [Math.min(a, b), Math.min(c, d), Math.max(a, b), Math.max(c, d)];
 }
 
 /** The rows' sprite for the tile draw (`webgpu/heatTilesPass.ts`). */
@@ -161,7 +203,11 @@ export class HeatTileSource {
      * `KERNEL_CELLS` the cells are coarser than the sprite: rows would show more.
      */
     radiusCells: Infinity,
+    /** The ground the last frame showed (world X / Z min, max), within the pyramid's square; null: to the horizon. */
+    viewRect: null as [number, number, number, number] | null,
   };
+  /** Rows drawn in part of the view instead of tiles (`rowWindow.ts`); null: tiles alone. */
+  window: TileRowWindow | null = null;
   private readonly cache = new Map<string, Cached>();
   private readonly empty = new Set<string>();
   private readonly wanted: TileRef[] = [];
@@ -283,8 +329,13 @@ export class HeatTileSource {
         kernel,
         components: this.weights?.components ?? 1,
         weighing: false,
+        hole: null,
+        holeWeight: 1,
       };
     const frame: PyramidFrame = { ...info, leafLevel: readable };
+    const ground = groundRect(view.viewProj, this.placement.ground);
+    const square = tileWorldRect(info, this.placement, { level: 0, x: 0, y: 0 });
+    this.stats.viewRect = ground && [Math.max(ground[0], square[0]), Math.max(ground[1], square[1]), Math.min(ground[2], square[2]), Math.min(ground[3], square[3])];
     const lod: LodView = {
       ...view,
       cellPx: this.opts.cellPx,
@@ -346,7 +397,50 @@ export class HeatTileSource {
       kernel,
       components,
       weighing: this.stale.length > 0,
+      hole: null,
+      holeWeight: 1,
     };
+  }
+
+  /**
+   * About how many rows lie in `rect` (world X / Z min, max): the finest level
+   * whose tiles over it are all here, each tile's rows by the share of it the
+   * rectangle covers. Null when not even the root is here.
+   */
+  rowsIn(rect: readonly number[]): number | null {
+    const info = this.info;
+    if (!info || !info.key) return null;
+    const top = info.complete ? info.leafLevel : info.estimateLevels - 1;
+    for (let l = top; l >= 0; l--) {
+      const side = 1 << l;
+      const s = info.size / side;
+      // The tiles over the rectangle in data (u, v): back from world by the placement.
+      const u = [rect[0] / this.placement.sx, rect[2] / this.placement.sx].sort((a, b) => a - b);
+      const v = [rect[1] / this.placement.sz, rect[3] / this.placement.sz].sort((a, b) => a - b);
+      const tx0 = Math.max(0, Math.floor((u[0] - info.x0) / s));
+      const tx1 = Math.min(side - 1, Math.floor((u[1] - info.x0) / s));
+      const ty0 = Math.max(0, Math.floor((v[0] - info.y0) / s));
+      const ty1 = Math.min(side - 1, Math.floor((v[1] - info.y0) / s));
+      if ((tx1 - tx0 + 1) * (ty1 - ty0 + 1) > 256) continue;
+      let sum = 0;
+      let all = true;
+      for (let ty = ty0; ty <= ty1 && all; ty++) {
+        for (let tx = tx0; tx <= tx1; tx++) {
+          const k = tileKey(l, tx, ty);
+          if (this.empty.has(k)) continue;
+          const c = this.cache.get(k);
+          if (!c) {
+            all = false;
+            break;
+          }
+          const ou = Math.max(0, Math.min(u[1], info.x0 + (tx + 1) * s) - Math.max(u[0], info.x0 + tx * s));
+          const ov = Math.max(0, Math.min(v[1], info.y0 + (ty + 1) * s) - Math.max(v[0], info.y0 + ty * s));
+          sum += (c.tile.rows * ou * ov) / (s * s);
+        }
+      }
+      if (all) return sum;
+    }
+    return null;
   }
 
   /** Weighs a batch of the tiles the last frame found with old weights. */

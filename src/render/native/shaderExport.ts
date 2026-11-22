@@ -85,6 +85,8 @@ import { SHELL_FLOATS } from '../../ranges/shells';
 import { FINISH_WGSL, MARKS_WGSL, PLACE_WGSL, TRAIL_WGSL } from '../gpuTracks/shader';
 import { TRACKS_UNIFORM_BYTES, TRAIL_ROOM } from '../gpuTracks/gpuLayout';
 import { TRACK_U32 } from '../gpuTracks/store';
+import { HEAT_TILES_WGSL, TILE_INST_FLOATS, TILE_LAYERS, TILE_LAYERS_RGBA, TILE_UPLOADS_PER_FRAME } from '../webgpu/heatTilesPass';
+import { TILE as HEAT_TILE } from '../heatTiles/tileFormat';
 import { CAPTURE_UNIFORM_BYTES, CAPTURE_WGSL, GROUND_UNIFORM_BYTES, GROUND_WGSL, MAX_VIEWS, VIEW_FACE, VIEW_LAYERS } from '../../ranges/viewshedShaders';
 
 /** The shaders, by file name. */
@@ -121,6 +123,7 @@ export function nativeShaders(): Record<string, string> {
     'tracks_finish.wgsl': FINISH_WGSL,
     'tracks_marks.wgsl': MARKS_WGSL,
     'tracks_trail.wgsl': TRAIL_WGSL,
+    'heat_tiles.wgsl': HEAT_TILES_WGSL,
   };
 }
 
@@ -177,6 +180,11 @@ export function nativeConstants(): string {
   int('TRACKS_UNIFORM_BYTES', TRACKS_UNIFORM_BYTES);
   int('TRACKS_TRAIL_ROOM', TRAIL_ROOM);
   int('TRACK_U32', TRACK_U32);
+  int('TILE_LAYERS', TILE_LAYERS);
+  int('TILE_LAYERS_RGBA', TILE_LAYERS_RGBA);
+  int('TILE_UPLOADS_PER_FRAME', TILE_UPLOADS_PER_FRAME);
+  int('TILE_INST_FLOATS', TILE_INST_FLOATS);
+  int('TILE_SIDE', HEAT_TILE);
   for (const [k, v] of Object.entries({
     FLAG_PERSPECTIVE,
     FLAG_GROUND_PROJECTED,

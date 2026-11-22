@@ -16,6 +16,8 @@ export interface DecodedTile {
   channels: number;
   estimate: boolean;
   max: number;
+  /** Rows in the tile, every channel, unweighted (what a load of its square would read). */
+  rows: number;
   /** Counts per cell, channels summed (what the heat draws), or weighed by `ChannelWeights` with one component. */
   counts: Float32Array;
   /**
@@ -88,7 +90,10 @@ export function decodeTile(bytes: Uint8Array, weights: ChannelWeights | null = n
   const raw = zstd(bytes.subarray(HEADER), new Uint8Array(rawLen));
   const cells = width === 4 ? new Uint32Array(raw.buffer, raw.byteOffset, rawLen / 4) : new Uint16Array(raw.buffer, raw.byteOffset, rawLen / 2);
   const n = TILE * TILE;
+  let rows = 0;
+  for (let i = 0; i < cells.length; i++) rows += cells[i];
   const head = {
+    rows,
     level: bytes[8],
     x: dv.getUint32(12, true),
     y: dv.getUint32(16, true),

@@ -700,7 +700,12 @@ interface AppState {
   showGrid: boolean;
   showAxes: boolean;
 
-  setDataset: (d: Dataset | null) => void;
+  /**
+   * `keepView`: rows standing in for heat tiles in part of the view
+   * (`render/heatTiles/rowWindow.ts`): the dataset alone changes - sprite size,
+   * exposure, camera, mode, filters and sides stay as the tiles had them.
+   */
+  setDataset: (d: Dataset | null, opts?: { keepView?: boolean }) => void;
   setLevel: (l: Level | null) => void;
   patchLevel: (p: Partial<ImageLevel> & Partial<ModelLevel>) => void;
   setLoad: (p: Partial<LoadProgress>) => void;
@@ -938,7 +943,11 @@ export const useStore = create<AppState>((set) => ({
   showGrid: true,
   showAxes: true,
 
-  setDataset: (d) => {
+  setDataset: (d, opts) => {
+    if (opts?.keepView) {
+      set({ dataset: d });
+      return;
+    }
     // Who won, wherever the source says it some other way than a 0/1 per row
     // (a winner column, words, empty event rows): the outcome filters, the
     // win-rate map and the won-vs-lost split then read it like any `won`.

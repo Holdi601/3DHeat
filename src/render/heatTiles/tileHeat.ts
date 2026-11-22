@@ -18,6 +18,7 @@ import type { ColumnMapping } from '../../state/types';
 import type { SourcePreview } from '../../data/sourcePreview';
 import { activeClauses } from '../../data/rowFilter';
 import type { TilePlacement } from './lod';
+import { RowWindow, WINDOW_MAX_ROWS, type RowWindowState } from './rowWindow';
 import { HeatTileSource, type TileTransport } from './source';
 import type { HeatTileQueryInit } from './transport';
 
@@ -36,9 +37,12 @@ export interface TileHeatState {
   error: string;
   /** The pyramid's key and square: what the session document carries. */
   key: string;
+  /** Rows in place of the tiles where the view is zoomed in (`rowWindow.ts`): loading them, drawn, or going back. */
+  window: RowWindowState;
+  windowRows: number;
 }
 
-const OFF: TileHeatState = { on: false, from: null, level: -1, leaf: 0, rows: 0, fraction: 0, complete: false, bytes: 0, error: '', key: '' };
+const OFF: TileHeatState = { on: false, from: null, level: -1, leaf: 0, rows: 0, fraction: 0, complete: false, bytes: 0, error: '', key: '', window: 'tiles', windowRows: 0 };
 
 export const useTileHeat = create<TileHeatState>(() => ({ ...OFF }));
 
@@ -75,6 +79,7 @@ let current: {
   following: string;
   pick?: Pick;
   unsubscribe?: () => void;
+  rowWindow?: RowWindow;
 } | null = null;
 
 /** Heat modes that draw each group in its own way: they want a pyramid split by the group column. */
@@ -98,6 +103,8 @@ function publish(src: HeatTileSource, from: 'files' | 'session'): void {
     bytes: src.stats.bytes,
     error: i?.error ?? '',
     key: i?.key ?? '',
+    window: current?.rowWindow?.state ?? 'tiles',
+    windowRows: current?.rowWindow?.rows ?? 0,
   };
   const was = useTileHeat.getState();
   if ((Object.keys(next) as (keyof TileHeatState)[]).some((k) => next[k] !== was[k])) useTileHeat.setState(next);
@@ -122,6 +129,7 @@ export function startTileHeat(engine: TileEngine, transport: TileTransport, plac
       engine.frameAround(cx, place.ground, cz, (Math.abs(place.sx) * i.size) / 2);
     }
     if (current.share && i?.key && useTileHeatShare.getState().doc.key !== i.key) useTileHeatShare.setState({ doc: { ...current.share, key: i.key } });
+    current.rowWindow?.tick();
     publish(src, from);
   };
   // A quarter second is often enough for a status line, and costs nothing on the frame path.
@@ -136,6 +144,7 @@ export function stopTileHeat(): void {
   if (!current) return;
   clearInterval(current.timer);
   current.unsubscribe?.();
+  current.rowWindow?.dispose();
   current.src.dispose();
   if (current.engine.heatTiles() === current.src) current.engine.setHeatTiles(null);
   if (current.share) useTileHeatShare.setState({ doc: {} });
@@ -214,6 +223,7 @@ export async function startPickTileHeat(
   share: boolean,
   split?: boolean,
   frame = true,
+  maxRows = WINDOW_MAX_ROWS,
 ): Promise<boolean> {
   const { useStore } = await import('../../state/store');
   const { heatModeFor } = await import('../../data/lines');
@@ -230,13 +240,24 @@ export async function startPickTileHeat(
   if (current?.src !== src) return true;
   const pick: Pick = { files, mapping, preview, share, split: wantSplit };
   current.pick = pick;
+  // Zoomed in past the leaf: the rows of the ground in view instead (rowWindow.ts).
+  const axes = tilePlacement(mapping, preview);
+  if (axes && preview) {
+    const { loader } = await import('../../data/loader');
+    if (current?.src !== src) return true;
+    current.rowWindow = new RowWindow(src, { files, mapping, columns: preview.columns, x: axes.x, y: axes.y, maxRows }, {
+      ingest: (f, m, columns, expected) => loader.ingest(f, m, columns, files[0]?.name ?? '', 1, expected),
+      dataset: () => useStore.getState().dataset,
+      setDataset: (d) => useStore.getState().setDataset(d, { keepView: true }),
+    });
+  }
   if (!wantSplit && mapping.teamId) {
     current.unsubscribe = useStore.subscribe((s, prev) => {
       if (s.mode === prev.mode && s.lines === prev.lines) return;
       if (current?.pick !== pick || !modeWantsSplit(heatModeFor(s.mode, s.lines))) return;
       current.unsubscribe?.();
       current.unsubscribe = undefined;
-      void startPickTileHeat(engine, files, mapping, preview, share, true, false);
+      void startPickTileHeat(engine, files, mapping, preview, share, true, false, maxRows);
     });
   }
   return true;

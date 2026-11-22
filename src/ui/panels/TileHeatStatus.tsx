@@ -24,6 +24,8 @@ export function TileHeatStatus() {
   const fraction = useTileHeat((s) => s.fraction);
   const complete = useTileHeat((s) => s.complete);
   const error = useTileHeat((s) => s.error);
+  const rowWindow = useTileHeat((s) => s.window);
+  const windowRows = useTileHeat((s) => s.windowRows);
   const doc = useTileHeatShare((s) => s.doc);
   const joined = useSessionStore((s) => s.state === 'joined');
 
@@ -41,6 +43,8 @@ export function TileHeatStatus() {
     rows > 0 ? t('app.tileHeat.rows', { rows: formatCount(rows) }) : null,
     !complete && !error ? t('app.tileHeat.building', { percent: int(Math.round(fraction * 100)) }) : null,
     from === 'session' ? t('app.tileHeat.host') : null,
+    // Zoomed in: the rows of the ground in view drawn instead (rowWindow.ts).
+    rowWindow === 'loading' ? t('app.tileHeat.windowLoading') : rowWindow === 'rows' ? t('app.tileHeat.windowRows', { rows: formatCount(windowRows) }) : null,
   ].filter(Boolean);
   return (
     <div className="auto-level tile-heat-status" data-testid="tile-heat-status" title={t('app.tileHeat.about')}>

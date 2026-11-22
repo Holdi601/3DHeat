@@ -8,7 +8,7 @@
  */
 
 import { TEAM_LIGHTNESS } from '../colors';
-import { KERNEL_MIN_CELLS, type HeatTileDraw } from '../heatTiles/source';
+import { holeTexels, KERNEL_MIN_CELLS, type HeatTileDraw } from '../heatTiles/source';
 import { TILE } from '../heatTiles/tileFormat';
 import { CURVE_LUT_SIZE } from '../../state/curve';
 
@@ -51,12 +51,17 @@ uniform int uFour;
 // The ramp's curve as the rows' splat reads it (centre at 0, rim at the end), linear between entries.
 uniform float uUseCurve;
 uniform sampler2D uCurve;
+// The cells (texel units, min / max) where rows draw instead, weighing uHoleW.
+uniform vec4 uHole;
+uniform float uHoleW;
 in vec2 vUv;
 in float vDepth;
 out vec4 outColor;
 vec4 cell(ivec2 p) {
   vec4 v = texelFetch(uTiles, ivec3(clamp(p, ivec2(0), ivec2(${TILE - 1})), uLayer), 0);
-  return uFour == 1 ? v : vec4(v.r, 0.0, 0.0, 0.0);
+  vec2 c = vec2(p) + 0.5;
+  float w = all(greaterThanEqual(c, uHole.xy)) && all(lessThan(c, uHole.zw)) ? uHoleW : 1.0;
+  return uFour == 1 ? v * w : vec4(v.r * w, 0.0, 0.0, 0.0);
 }
 // Heat alone: neutral in a team colour target (uNeutralL is 0 for a one-channel one).
 vec4 shade(vec4 v) { return uFour == 1 ? v : vec4(v.r, 0.0, 0.0, v.r * uNeutralL); }
@@ -140,7 +145,7 @@ export class GlHeatTiles {
     gl.linkProgram(p);
     if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(`heat tiles program: ${gl.getProgramInfoLog(p)}`);
     this.prog = p;
-    this.loc = Object.fromEntries(['uViewProj', 'uGround', 'uRect', 'uUv', 'uTiles', 'uLayer', 'uK', 'uReach', 'uCell', 'uKernelOn', 'uPersp', 'uRadius', 'uMinPx', 'uMaxPx', 'uPpu', 'uCentre', 'uEdge', 'uFalloff', 'uSmooth', 'uKeepMass', 'uNeutralL', 'uFour', 'uUseCurve', 'uCurve'].map((n) => [n, gl.getUniformLocation(p, n)]));
+    this.loc = Object.fromEntries(['uViewProj', 'uGround', 'uRect', 'uUv', 'uTiles', 'uLayer', 'uK', 'uReach', 'uCell', 'uKernelOn', 'uPersp', 'uRadius', 'uMinPx', 'uMaxPx', 'uPpu', 'uCentre', 'uEdge', 'uFalloff', 'uSmooth', 'uKeepMass', 'uNeutralL', 'uFour', 'uUseCurve', 'uCurve', 'uHole', 'uHoleW'].map((n) => [n, gl.getUniformLocation(p, n)]));
     this.heat = this.bank(false, LAYERS);
     this.vao = gl.createVertexArray()!;
     this.curve = gl.createTexture()!;
@@ -234,6 +239,7 @@ export class GlHeatTiles {
       gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, CURVE_LUT_SIZE, 1, gl.RED, gl.FLOAT, k!.curve!);
     }
     gl.uniform1i(this.loc.uCurve, 1);
+    gl.uniform1f(this.loc.uHoleW, d.hole ? d.holeWeight : 1);
     gl.activeTexture(gl.TEXTURE0);
     gl.uniform1i(this.loc.uTiles, 0);
     gl.enable(gl.BLEND);
@@ -257,6 +263,7 @@ export class GlHeatTiles {
       gl.uniform1f(this.loc.uK, (k ? 1 : t.perCount) * (four ? t.amp : 1) * d.scale);
       gl.uniform1f(this.loc.uCell, t.cell);
       gl.uniform1f(this.loc.uReach, k ? t.reach : 0);
+      gl.uniform4fv(this.loc.uHole, holeTexels(t, d.hole));
       gl.drawArrays(gl.TRIANGLES, 0, 6);
     }
     gl.bindVertexArray(null);

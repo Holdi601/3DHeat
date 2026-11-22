@@ -102,6 +102,36 @@ function outside(vp: Float32Array, r: [number, number, number, number], y: numbe
   return l === 4 || rr === 4 || b === 4 || t === 4 || n === 4;
 }
 
+/**
+ * The ground the view shows (world X / Z min, max): where the four screen
+ * corners' rays meet the plane at `ground`. Null when a corner looks above
+ * the horizon (the view reaches without end).
+ */
+export function groundRect(vp: Float32Array, ground: number): [number, number, number, number] | null {
+  const r: [number, number, number, number] = [Infinity, Infinity, -Infinity, -Infinity];
+  for (let i = 0; i < 4; i++) {
+    const sx = i & 1 ? 1 : -1;
+    const sy = i & 2 ? 1 : -1;
+    // clip.x = sx * clip.w and clip.y = sy * clip.w on the plane: two equations in x, z.
+    const a = vp[0] - sx * vp[3];
+    const b = vp[8] - sx * vp[11];
+    const c = -((vp[4] - sx * vp[7]) * ground + vp[12] - sx * vp[15]);
+    const d = vp[1] - sy * vp[3];
+    const e = vp[9] - sy * vp[11];
+    const f = -((vp[5] - sy * vp[7]) * ground + vp[13] - sy * vp[15]);
+    const det = a * e - b * d;
+    if (Math.abs(det) < 1e-30) return null;
+    const x = (c * e - b * f) / det;
+    const z = (a * f - c * d) / det;
+    if (vp[3] * x + vp[7] * ground + vp[11] * z + vp[15] <= 0) return null;
+    r[0] = Math.min(r[0], x);
+    r[1] = Math.min(r[1], z);
+    r[2] = Math.max(r[2], x);
+    r[3] = Math.max(r[3], z);
+  }
+  return r;
+}
+
 /** A rectangle's nearest and farthest distance from the eye (parallel: 1 and 1). */
 export function rectDepths(r: readonly number[], ground: number, v: Pick<LodView, 'cameraPos' | 'perspective'>): [number, number] {
   if (!v.perspective) return [1, 1];

@@ -20,28 +20,29 @@
  */
 
 import { TEAM_LIGHTNESS } from '../colors';
-import { KERNEL_MIN_CELLS, type HeatTileDraw } from '../heatTiles/source';
+import { holeTexels, KERNEL_MIN_CELLS, type HeatTileDraw } from '../heatTiles/source';
 import { TILE } from '../heatTiles/tileFormat';
 import { CURVE_LUT_SIZE } from '../../state/curve';
 
-const LAYERS = 192;
+export const TILE_LAYERS = 192;
 /** Half-float RGBA layers (512 KB each), made the first time team colours draw. */
-const LAYERS_RGBA = 160;
-const UPLOADS_PER_FRAME = 6;
-const INST_FLOATS = 12;
+export const TILE_LAYERS_RGBA = 160;
+export const TILE_UPLOADS_PER_FRAME = 6;
+export const TILE_INST_FLOATS = 16;
 /** Cells each way a pixel reads at most (the LOD keeps the sprite within `KERNEL_CELLS`). */
 const KERNEL_TAPS = 5;
 
-const WGSL = /* wgsl */ `
+export const HEAT_TILES_WGSL = /* wgsl */ `
 override FOUR: bool = false;
 struct U {
   viewProj: mat4x4<f32>,
   ground: f32, scale: f32, kernelOn: f32, perspective: f32,
   radius: f32, minPx: f32, maxPx: f32, pxPerUnit: f32,
   centre: f32, edge: f32, falloff: f32, smoothRamp: f32,
-  keepMass: f32, neutralL: f32, useCurve: f32, k3: f32,
+  keepMass: f32, neutralL: f32, useCurve: f32, holeW: f32,
 };
-struct Inst { rect: vec4<f32>, uv: vec4<f32>, k: f32, layer: f32, cell: f32, reach: f32 };
+// hole: the cells (texel units, min / max) where rows draw instead, weighing u.holeW.
+struct Inst { rect: vec4<f32>, uv: vec4<f32>, k: f32, layer: f32, cell: f32, reach: f32, hole: vec4<f32> };
 @group(0) @binding(0) var<uniform> u: U;
 @group(0) @binding(1) var<storage, read> inst: array<Inst>;
 @group(0) @binding(2) var tiles: texture_2d_array<f32>;
@@ -55,6 +56,7 @@ struct VOut {
   @location(3) depth: f32,
   @location(4) @interpolate(flat) span: vec4<i32>,
   @location(5) @interpolate(flat) cell: f32,
+  @location(6) @interpolate(flat) hole: vec4<f32>,
 };
 @vertex fn vs(@builtin(vertex_index) vi: u32, @builtin(instance_index) ii: u32) -> VOut {
   var corners = array<vec2<f32>, 6>(vec2(0.0, 0.0), vec2(1.0, 0.0), vec2(0.0, 1.0), vec2(0.0, 1.0), vec2(1.0, 0.0), vec2(1.0, 1.0));
@@ -76,12 +78,15 @@ struct VOut {
   let b = max(t.uv.xy, t.uv.zw) * ${TILE}.0;
   o.span = vec4<i32>(vec2<i32>(round(a)), vec2<i32>(round(b)));
   o.cell = t.cell;
+  o.hole = t.hole;
   return o;
 }
-fn cell(p: vec2<i32>, layer: i32) -> vec4<f32> {
+fn cell(p: vec2<i32>, layer: i32, hole: vec4<f32>) -> vec4<f32> {
   let v = textureLoad(tiles, clamp(p, vec2<i32>(0), vec2<i32>(${TILE - 1})), layer, 0);
-  if (FOUR) { return v; }
-  return vec4<f32>(v.r, 0.0, 0.0, 0.0);
+  let c = vec2<f32>(p) + 0.5;
+  let w = select(1.0, u.holeW, all(c >= hole.xy) && all(c < hole.zw));
+  if (FOUR) { return v * w; }
+  return vec4<f32>(v.r * w, 0.0, 0.0, 0.0);
 }
 fn ramp(d: f32) -> f32 {
   var t: f32;
@@ -108,8 +113,8 @@ fn shade(v: vec4<f32>) -> vec4<f32> {
     let b = floor(pb);
     let f = pb - b;
     let q = vec2<i32>(b);
-    let v = mix(mix(cell(q, i.layer), cell(q + vec2<i32>(1, 0), i.layer), f.x),
-                mix(cell(q + vec2<i32>(0, 1), i.layer), cell(q + vec2<i32>(1, 1), i.layer), f.x), f.y);
+    let v = mix(mix(cell(q, i.layer, i.hole), cell(q + vec2<i32>(1, 0), i.layer, i.hole), f.x),
+                mix(cell(q + vec2<i32>(0, 1), i.layer, i.hole), cell(q + vec2<i32>(1, 1), i.layer, i.hole), f.x), f.y);
     return shade(v * i.k);
   }
   // The rows' sprite radius at this depth (their pixel clamp), never under KERNEL_MIN_CELLS cells.
@@ -129,7 +134,7 @@ fn shade(v: vec4<f32>) -> vec4<f32> {
       if (any(q < i.span.xy) || any(q >= i.span.zw)) { continue; }
       let d = length(p - (vec2<f32>(q) + 0.5)) / rTex;
       if (d >= 1.0) { continue; }
-      acc += cell(q, i.layer) * ramp(d);
+      acc += cell(q, i.layer, i.hole) * ramp(d);
     }
   }
   return shade(acc * (i.k * kept * kept));
@@ -210,7 +215,7 @@ export class GpuHeatTiles {
   private curveKey = '';
 
   constructor(private readonly device: GPUDevice) {
-    this.heat = new Bank(device, false, LAYERS);
+    this.heat = new Bank(device, false, TILE_LAYERS);
     this.curve = device.createBuffer({
       label: 'heat tiles curve',
       size: CURVE_LUT_SIZE * 4,
@@ -224,14 +229,14 @@ export class GpuHeatTiles {
     this.inst = this.makeInst(this.instCap);
     this.module = device.createShaderModule({
       label: 'heat tiles',
-      code: WGSL,
+      code: HEAT_TILES_WGSL,
     });
   }
 
   private makeInst(n: number): GPUBuffer {
     return this.device.createBuffer({
       label: 'heat tile instances',
-      size: n * INST_FLOATS * 4,
+      size: n * TILE_INST_FLOATS * 4,
       usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
     });
   }
@@ -277,9 +282,9 @@ export class GpuHeatTiles {
     d.uploadsPending = false;
     if (d.tiles.length === 0 || d.scale === 0) return;
     const four = d.components === 4;
-    const bank = four ? (this.rgba ??= new Bank(this.device, true, LAYERS_RGBA)) : this.heat;
-    const budget = { left: UPLOADS_PER_FRAME };
-    const data = new Float32Array(d.tiles.length * INST_FLOATS);
+    const bank = four ? (this.rgba ??= new Bank(this.device, true, TILE_LAYERS_RGBA)) : this.heat;
+    const budget = { left: TILE_UPLOADS_PER_FRAME };
+    const data = new Float32Array(d.tiles.length * TILE_INST_FLOATS);
     let n = 0;
     for (const t of d.tiles) {
       const texels = four ? t.rgba : t.counts;
@@ -289,7 +294,7 @@ export class GpuHeatTiles {
         d.uploadsPending = true;
         continue;
       }
-      const o = n * INST_FLOATS;
+      const o = n * TILE_INST_FLOATS;
       data.set(t.rect, o);
       data.set(t.uv, o + 4);
       // With the kernel a cell's count is its rows' heat; without, density. Team colour layers are scaled to 1.
@@ -297,6 +302,7 @@ export class GpuHeatTiles {
       data[o + 9] = layer;
       data[o + 10] = t.cell;
       data[o + 11] = d.kernel ? t.reach : 0;
+      data.set(holeTexels(t, d.hole), o + 12);
       n++;
     }
     if (n === 0) return;
@@ -305,7 +311,7 @@ export class GpuHeatTiles {
       while (this.instCap < n) this.instCap *= 2;
       this.inst = this.makeInst(this.instCap);
     }
-    this.device.queue.writeBuffer(this.inst, 0, data as unknown as BufferSource, 0, n * INST_FLOATS);
+    this.device.queue.writeBuffer(this.inst, 0, data as unknown as BufferSource, 0, n * TILE_INST_FLOATS);
     const u = new Float32Array(32);
     u.set(viewProj.subarray(0, 16), 0);
     u[16] = d.ground;
@@ -322,6 +328,7 @@ export class GpuHeatTiles {
       }
     }
     u[29] = format.startsWith('rgba') ? TEAM_LIGHTNESS : 0;
+    u[31] = d.hole ? d.holeWeight : 1;
     this.device.queue.writeBuffer(this.uniform, 0, u as unknown as BufferSource);
     const pipeline = this.pipeline(format, four);
     if (!bank.bind || bank.bindFormat !== format || bank.bindInst !== this.inst) {

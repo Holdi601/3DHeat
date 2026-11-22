@@ -252,6 +252,10 @@ async function parity() {
     { name: 'difference', heat: {}, mode: 'heat-difference', split: [[0, 1, 2, 3], [4, 5, 6, 7]], tol: 0.1 },
     { name: 'difference, one side', heat: {}, mode: 'heat-difference', split: [[0, 1, 2, 3, 4, 5, 6, 7], []] },
     { name: 'a group hidden', heat: {}, hide: 2 },
+    // The ramp's custom curve (a ring: hollow centre), drawn by the tile kernel as by the splat.
+    { name: 'curve ring', heat: {}, curve: 'Ring' },
+    // The last group in the pyramid's other channel: on neither side of the difference, as its rows.
+    { name: 'other channel, difference', heat: {}, mode: 'heat-difference', split: [[0, 1, 2, 3], [4, 5, 6]], other: true, tol: 0.1 },
   ];
   /** Fractions of the data's half-width the view spans: all of it, a quarter, a sixteenth. */
   const ZOOMS = [1, 0.25, 0.0625];
@@ -370,11 +374,15 @@ async function parity() {
       const { HeatTileSource } = await import('/src/render/heatTiles/source.ts');
       globalThis.__parity = { info, transport, HeatTileSource, centre: [x0 + size / 2, z0 + size / 2], half: size / 2 };
     }, rows);
+    if (process.argv.includes('--switch')) {
+      if (await switchProbe(page)) process.exitCode = 1;
+      return;
+    }
     console.log(`parity: ${rows} synthetic rows, ${backend}`);
     for (const c of PARITY_CASES.filter((c) => !only || c.name.includes(only))) {
       for (const zoom of ZOOMS) {
         const r = await page.evaluate(
-          async ({ heat, zoom, mode, split, hide }) => {
+          async ({ heat, zoom, mode, split, hide, curve, other }) => {
             const H = globalThis.__3dheat;
             const eng = globalThis.__3dheat_engine;
             const st = H.useStore.getState();
@@ -382,6 +390,7 @@ async function parity() {
             const raf = () => new Promise((r) => requestAnimationFrame(r));
             const base = JSON.parse(JSON.stringify(st.heat));
             st.patchHeat(heat);
+            if (curve) st.patchHeat({ useCurve: true, curve: (await import('/src/state/curve.ts')).CURVE_PRESETS[curve] });
             if (mode) st.setMode(mode);
             if (split) st.setTeamSplit(...split);
             if (hide !== undefined) st.toggleTeam(hide, false);
@@ -397,7 +406,9 @@ async function parity() {
               return { f: await eng.renderer.readHeatField(eng.live.backend === 'webgl2' ? 1e9 : 0, true), w: eng.renderer.heatWidth, h: eng.renderer.heatHeight };
             };
             const rowsOnly = await field();
-            const src = new P.HeatTileSource(P.transport, { sx: 1, sz: 1, ground: 0 }, {}, () => eng.invalidate(1));
+            // The other channel: the last group unnamed, flagged as the core flags it.
+            const info = other ? { ...P.info, channelNames: [...P.info.channelNames.slice(0, -1), ''], otherChannel: true } : P.info;
+            const src = new P.HeatTileSource({ ...P.transport, query: async () => info }, { sx: 1, sz: 1, ground: 0 }, {}, () => eng.invalidate(1));
             eng.setHeatTiles(src);
             src.start();
             // Until every tile the view wants is in and uploaded.
@@ -420,7 +431,7 @@ async function parity() {
             for (let i = 0; i < tiles.length; i++) tiles[i] = both.f[i] - rowsOnly.f[i];
             return { rows: Array.from(rowsOnly.f), tiles: Array.from(tiles), w: rowsOnly.w, h: rowsOnly.h, level, cells };
           },
-          { heat: c.heat, zoom, mode: c.mode, split: c.split, hide: c.hide },
+          { heat: c.heat, zoom, mode: c.mode, split: c.split, hide: c.hide, curve: c.curve, other: c.other },
         );
         // Every channel the target holds (team colours: heat, a, b, L); judged by the worst.
         const ch = r.rows.length / (r.w * r.h);
@@ -448,4 +459,135 @@ async function parity() {
     console.log(`${failed} parity check(s) failed`);
     process.exitCode = 1;
   }
+}
+
+/**
+ * `--parity --switch`: the switch from tiles to rows and back (rowWindow.ts)
+ * on the parity page. The synthetic rows go into a CSV the app's loader reads
+ * as a pick would be read; zoomed in past the leaf the window loads the rows
+ * of the ground in view and fades them in. Checks: the field after the switch
+ * equals the rows' own (they draw the whole view), the exposure and camera did
+ * not move, frames during the load and the fade (p99, max, over 25 ms), and
+ * zoomed out again the tiles draw alone and the rows are let go.
+ */
+async function switchProbe(page) {
+  const r = await page.evaluate(async () => {
+    const H = globalThis.__3dheat;
+    const eng = globalThis.__3dheat_engine;
+    const P = globalThis.__parity;
+    const st = () => H.useStore.getState();
+    const raf = () => new Promise((res) => requestAnimationFrame(res));
+    const ds = st().dataset;
+    const field = async () => {
+      for (let i = 0; i < 6; i++) {
+        eng.camera.moved = true;
+        eng.invalidate(2);
+        await raf();
+      }
+      for (let i = 0; i < 20; i++) await raf();
+      return Array.from(await eng.renderer.readHeatField(eng.live.backend === 'webgl2' ? 1e9 : 0, true));
+    };
+    // The rows as a CSV pick: x and y the ground (up z), z the height, the group's label.
+    const parts = ['x,y,z,team\n'];
+    for (let i = 0; i < ds.count; i += 100_000) {
+      let s = '';
+      for (let k = i; k < Math.min(ds.count, i + 100_000); k++) s += `${ds.px[k]},${ds.pz[k]},${ds.py[k]},${ds.teamLabels[ds.teamId[k]]}\n`;
+      parts.push(s);
+    }
+    const file = new File(parts, 'switch.csv', { type: 'text/csv' });
+    eng.camera.setOrientationDegrees(0, -89.9);
+    // A sixteenth of the half-width: past the leaf (under 2 cells a radius), as in the parity table.
+    eng.frameAround(P.centre[0], 0, P.centre[1], P.half * 0.0625);
+    const rowsOnly = await field();
+    st().setDataset(null);
+    await raf();
+    const src = new P.HeatTileSource(P.transport, { sx: 1, sz: 1, ground: 0 }, {}, () => eng.invalidate(1));
+    eng.setHeatTiles(src);
+    src.start();
+    let last = -1;
+    let still = 0;
+    for (let k = 0; k < 600 && still < 15; k++) {
+      await raf();
+      still = src.stats.tiles === last ? still + 1 : 0;
+      last = src.stats.tiles;
+    }
+    const tilesOnly = await field();
+    const cellsBefore = src.stats.radiusCells;
+    const saturation = st().heat.saturation;
+    const radius = st().heat.radius;
+    const camBefore = Array.from(eng.camPos);
+    const { RowWindow } = await import('/src/render/heatTiles/rowWindow.ts');
+    const { loader } = await import('/src/data/loader.ts');
+    const { emptyColumnMapping } = await import('/src/state/types.ts');
+    const mapping = { ...emptyColumnMapping(), x: 'x', y: 'y', z: 'z', teamId: 'team' };
+    const win = new RowWindow(src, { files: [file], mapping, columns: ['x', 'y', 'z', 'team'], x: 'x', y: 'y', maxRows: 8e6 }, {
+      ingest: (f, m, c, e) => loader.ingest(f, m, c, 'switch', 1, e),
+      dataset: () => st().dataset,
+      setDataset: (d) => st().setDataset(d, { keepView: true }),
+    });
+    // Frames from here until the fade is over, the view kept still (the engine draws while loading and fading).
+    const frames = [];
+    let prev = performance.now();
+    let going = true;
+    const loop = (t) => {
+      frames.push(t - prev);
+      prev = t;
+      eng.invalidate(1);
+      if (going) requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+    const t0 = performance.now();
+    let loadedAt = 0;
+    while (performance.now() - t0 < 90_000) {
+      win.tick();
+      if (win.state === 'rows' && !loadedAt) loadedAt = performance.now();
+      if (win.state === 'rows' && src.window?.done) break;
+      await new Promise((res) => setTimeout(res, 50));
+    }
+    going = false;
+    const state = win.state;
+    const windowRows = win.rows;
+    const after = await field();
+    const kept = { saturation: st().heat.saturation === saturation, radius: st().heat.radius === radius, camera: Array.from(eng.camPos).every((v, i) => Math.abs(v - camBefore[i]) < 1e-3) };
+    // Zoomed out: back to tiles, the rows let go.
+    eng.frameAround(P.centre[0], 0, P.centre[1], P.half);
+    for (let k = 0; k < 40; k++) {
+      await raf();
+      win.tick();
+      await new Promise((res) => setTimeout(res, 30));
+      if (win.state === 'tiles') break;
+    }
+    const back = { state: win.state, dataset: st().dataset === null, window: src.window === null };
+    win.dispose();
+    eng.setHeatTiles(null);
+    src.dispose();
+    st().setDataset(ds);
+    const w = eng.renderer.heatWidth;
+    const h = eng.renderer.heatHeight;
+    return { rowsOnly, tilesOnly, after, w, h, frames, state, windowRows, loadMs: loadedAt - t0, fadeMs: performance.now() - loadedAt, cellsBefore, kept, back };
+  });
+  const ch = r.rowsOnly.length / (r.w * r.h);
+  const pick = (f) => Float32Array.from({ length: r.w * r.h }, (_, i) => f[i * ch]);
+  const rowsVsAfter = compare(pick(r.rowsOnly), pick(r.after), r.w, r.h);
+  const rowsVsTiles = compare(pick(r.rowsOnly), pick(r.tilesOnly), r.w, r.h);
+  const fr = r.frames.slice(2).sort((a, b) => a - b);
+  const q = (p) => fr[Math.min(fr.length - 1, Math.floor(p * fr.length))] ?? 0;
+  const over = fr.filter((v) => v > 25).length;
+  const f = (v) => (v * 100).toFixed(1) + '%';
+  console.log(`switch: ${r.cellsBefore.toFixed(2)} cells a radius, window ${r.state} with ${r.windowRows} rows, load ${(r.loadMs / 1000).toFixed(2)} s`);
+  console.log(`  tiles alone vs rows: p50 ${f(rowsVsTiles.p50.err)} p99 ${f(rowsVsTiles.p99.err)} total ${f(rowsVsTiles.total)} ssim ${rowsVsTiles.ssim.toFixed(4)}`);
+  console.log(`  after the switch vs rows: p50 ${f(rowsVsAfter.p50.err)} p99 ${f(rowsVsAfter.p99.err)} total ${f(rowsVsAfter.total)} ssim ${rowsVsAfter.ssim.toFixed(4)}`);
+  console.log(`  kept: ${JSON.stringify(r.kept)}; back zoomed out: ${JSON.stringify(r.back)}`);
+  console.log(`  frames while loading and fading (${fr.length}): p50 ${q(0.5).toFixed(1)} p99 ${q(0.99).toFixed(1)} max ${q(1).toFixed(1)} ms, ${over} over 25 ms`);
+  const bad =
+    r.state !== 'rows' ||
+    rowsVsAfter.ssim < 0.99 ||
+    rowsVsAfter.total > 0.01 ||
+    !r.kept.saturation ||
+    !r.kept.radius ||
+    !r.kept.camera ||
+    r.back.state !== 'tiles' ||
+    !r.back.dataset;
+  console.log(bad ? 'switch: FAIL' : 'switch: ok');
+  return bad ? 1 : 0;
 }

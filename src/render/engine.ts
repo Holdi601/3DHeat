@@ -93,7 +93,7 @@ import { lookAtDistance, lookAtPitch, type Vec3 } from './pose';
 import { useInspectStore } from '../state/inspectStore';
 import { effectiveGpuBudget } from './budget';
 import { buildActiveFilters, frameSignTables, matchScales, sideCountSteps, sideScales, type SideCounts, type SplitTable } from './filterTables';
-import type { HeatTileSource } from './heatTiles/source';
+import { ROW_FADE_MS, type HeatTileSource } from './heatTiles/source';
 import { tileChannelWeights } from './heatTiles/channels';
 import { overallShare } from './rateMap';
 import { ExposureFollower } from './exposureFollow';
@@ -2976,6 +2976,9 @@ export class Engine {
 
     if (s.dataset !== this.dataset) {
       const prevDataset = this.dataset;
+      // Rows standing in for heat tiles (heatTiles/rowWindow.ts), or let go again: the view and
+      // its exposure stay as the tiles had them, and the sprites as many as before.
+      const tileRows = !!this.heatTileSource && (s.dataset ? this.heatTileSource.window?.dataset === s.dataset : prevDataset !== null && this.heatTileSource.window?.dataset === prevDataset);
       this.dataset = s.dataset;
       this.cursor = s.dataset ? new TrackCursor(s.dataset) : null;
       this.teamPalette = teamPaletteFor(s.dataset);
@@ -3014,10 +3017,12 @@ export class Engine {
       // it replaces can leave the interesting part of the data in the bottom
       // quarter of the ramp, and a first-time user has no reason to suspect the
       // saturation slider rather than the data.
-      this.autoExposePending = 0;
-      if (s.dataset) this.meterSoon();
-      // A new scene's cost is unknown: its sprites ramp up from a few.
-      this.prevSprites = RAMP_START_SPRITES;
+      if (!tileRows) {
+        this.autoExposePending = 0;
+        if (s.dataset) this.meterSoon();
+        // A new scene's cost is unknown: its sprites ramp up from a few.
+        this.prevSprites = RAMP_START_SPRITES;
+      }
       this.geometrySig = '';
       // The renderer dropped the routes with the old dataset's buffers.
       this.linesKey = '';
@@ -3030,7 +3035,7 @@ export class Engine {
       // previous one happened to be pointing at. Not one made from the same
       // data: the figure overlay standing in for it, its teams lined up anew -
       // a mode switch keeps the camera where the viewer put it.
-      if (s.dataset && !sameData(prevDataset, s.dataset)) {
+      if (s.dataset && !tileRows && !sameData(prevDataset, s.dataset)) {
         const box = actionBounds(s.dataset);
         this.camera.frame(this.toDisplay(box), s.camera.fov, false);
         // The fly speed of the load's calibration (data/calibrate.ts: twelve
@@ -3593,9 +3598,23 @@ export class Engine {
     // units the buffer is written in, so a change to it invalidates everything
     // already accumulated.
     this.frameGain = this.heatGain(renderer, h);
+    // Rows standing in for the tiles in part of the view (heatTiles/rowWindow.ts): the
+    // two fade into each other once the rows are on the GPU, each frame drawn whole.
+    let rowFade = 1;
+    let tileHole: [number, number, number, number] | null = null;
+    const win = this.heatTileSource?.window ?? null;
+    if (win && win.dataset === this.dataset && this.dataset) {
+      if (win.t0 < 0 && !((renderer as { dataPending?: boolean }).dataPending ?? false)) win.t0 = now;
+      const a = win.t0 < 0 ? 0 : Math.min(1, (now - win.t0) / ROW_FADE_MS);
+      rowFade = win.dir === 'in' ? a : 1 - a;
+      tileHole = win.rect;
+      if (a >= 1) win.done = true;
+      else this.invalidate(1);
+    }
     const geometrySig = [
       // Tiles arrived or still uploading: drawn again.
       this.heatTileSource ? `tiles:${this.heatTileSource.version}:${this.heatTileSeq}` : '',
+      tileHole ? `hole:${tileHole.join(',')}:${rowFade}` : '',
       raceTab ? 'race' : s.mode === 'heat-lines' ? `heat-lines|${heatMode}` : s.mode,
       // Which routes line heat draws.
       this.linesKey,
@@ -4415,8 +4434,10 @@ export class Engine {
         },
       );
       if (d) {
-        // A count is that many rows' sprites: the splat's weight per row.
-        d.scale = sampleWeight * this.frameGain;
+        // A count is that many rows' sprites, every frame whole: a row's weight when all are drawn.
+        d.scale = this.frameGain;
+        d.hole = tileHole;
+        d.holeWeight = 1 - rowFade;
         heatTiles = d;
         // Tiles alone (no rows): exposed from them once their first view is drawn, as a load is.
         if (!this.dataset && d.tiles.length > 0 && this.heatTileMetered !== this.heatTileSource && this.heatTileSource.info?.complete) {
@@ -4489,7 +4510,8 @@ export class Engine {
       plan,
       candidateRows,
       submittedSprites: submitted,
-      sampleWeight,
+      // Rows fading in for (or out to) the tiles weigh their share.
+      sampleWeight: sampleWeight * rowFade,
       accumMode,
       compositeOnly,
       blendAlpha,
