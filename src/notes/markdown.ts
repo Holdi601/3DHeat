@@ -162,6 +162,15 @@ const isTableSep = (l: string) => {
   const t = l.trim().replace(/^\|/, '').replace(/\|$/, '');
   return t.split('|').every((c) => /^:?-{2,}:?$/.test(c.trim()));
 };
+/**
+ * A list item's mark and words; a task's box and words. The words are the
+ * rest of the line whatever it holds (`[^]`, not `.`): a `.` stops at a line
+ * separator (U+2028) inside the line, and `\s+` then gave the spaces back one
+ * by one, each try reading the rest again - a long run of spaces made the
+ * line quadratic.
+ */
+const LIST_ITEM = /^\s*([-*+]|\d+[.)])\s+([^]*)$/;
+const TASK = /^\[( |x|X)\]\s+([^]*)$/;
 const cells = (l: string) =>
   l
     .trim()
@@ -230,15 +239,15 @@ function render(src: string, o: MarkdownOptions, depth: number): string {
       out.push(`<blockquote>${render(body.join('\n'), o, depth + 1)}</blockquote>`);
       continue;
     }
-    const li = /^\s*([-*+]|\d+[.)])\s+(.*)$/.exec(l);
+    const li = LIST_ITEM.exec(l);
     if (li) {
       endPara();
       const ordered = /\d/.test(li[1]);
       const items: string[] = [];
       while (i < lines.length) {
-        const m = /^\s*([-*+]|\d+[.)])\s+(.*)$/.exec(lines[i]);
+        const m = LIST_ITEM.exec(lines[i]);
         if (!m || /\d/.test(m[1]) !== ordered) break;
-        const task = /^\[( |x|X)\]\s+(.*)$/.exec(m[2]);
+        const task = TASK.exec(m[2]);
         items.push(task ? `<li class="task"><input type="checkbox" disabled${task[1] !== ' ' ? ' checked' : ''}> ${inline(task[2], o)}</li>` : `<li>${inline(m[2], o)}</li>`);
         i++;
       }

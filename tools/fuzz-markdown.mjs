@@ -6,8 +6,10 @@
  * lists, tasks, quotes, tables, fences, rules, block lines) mixed with raw
  * HTML, entities, URL schemes, control and direction characters and long
  * repeats. Every output must pass the allowlist (tools/html-allowlist.ts),
- * nothing may throw, and no input may take more than the time budget (a
- * pattern that backtracks shows up as one that does).
+ * nothing may throw, and no input may take more than its time limit: the
+ * budget (ms), or for a long input 12 times what an ordinary note of its
+ * length takes on this machine (measured at the start), whichever is more -
+ * a pattern that backtracks shows up as one that does.
  *
  *   node tools/fuzz-markdown.mjs [--seconds 600] [--workers 4] [--seed 1] [--budget 50] [--out <dir>] [--module <markdown.ts>]
  *
@@ -44,7 +46,7 @@ if (isMainThread) {
   const budget = Number(args.budget ?? 50);
   const out = args.out || join(tmpdir(), `fuzz-markdown-${seed}`);
   const started = Date.now();
-  const totals = { seed, seconds, workers, budgetMs: budget, inputs: 0, markdown: 0, inline: 0, plainText: 0, svg: 0, failures: 0, slow: 0, throws: 0, maxMs: 0, maxInput: 0, bytes: 0, out };
+  const totals = { seed, seconds, workers, budgetMs: budget, inputs: 0, markdown: 0, inline: 0, plainText: 0, svg: 0, failures: 0, slow: 0, throws: 0, maxMs: 0, maxShareOfLimit: 0, usPerChar: 0, maxInput: 0, bytes: 0, out };
   const failures = [];
   let done = 0;
   const file = fileURLToPath(import.meta.url);
@@ -60,9 +62,14 @@ if (isMainThread) {
         console.error(`[fail] ${m.kind}: ${m.what.slice(0, 200)} (input ${m.input.length} chars)`);
         return;
       }
+      if (m.type === 'calibrated') {
+        totals.usPerChar = Math.max(totals.usPerChar, +m.usPerChar.toFixed(3));
+        return;
+      }
       if (m.type === 'progress' || m.type === 'done') {
         for (const k of ['inputs', 'markdown', 'inline', 'plainText', 'svg', 'failures', 'slow', 'throws', 'bytes']) totals[k] += m.delta[k];
         totals.maxMs = Math.max(totals.maxMs, m.delta.maxMs);
+        totals.maxShareOfLimit = Math.max(totals.maxShareOfLimit, m.delta.maxShare);
         totals.maxInput = Math.max(totals.maxInput, m.delta.maxInput);
       }
       if (m.type === 'progress') console.error(`[${Math.round((Date.now() - started) / 1000)} s] ${totals.inputs} inputs, ${totals.failures} failures, slowest ${totals.maxMs.toFixed(1)} ms`);
@@ -283,14 +290,34 @@ if (isMainThread) {
 
   const TITLES = ['"><img src=x onerror=alert(1)>', '<script>alert(1)</script>', 'Round one', '', null];
   const opts = { title: () => pick(TITLES) };
-  const delta = () => ({ inputs: 0, markdown: 0, inline: 0, plainText: 0, svg: 0, failures: 0, slow: 0, throws: 0, maxMs: 0, maxInput: 0, bytes: 0 });
+  const delta = () => ({ inputs: 0, markdown: 0, inline: 0, plainText: 0, svg: 0, failures: 0, slow: 0, throws: 0, maxMs: 0, maxShare: 0, maxInput: 0, bytes: 0 });
   let d = delta();
   const fail = (kind, what, input) => {
     d.failures++;
     parentPort.postMessage({ type: 'failure', kind, what, input, seed });
   };
+  // The runner's speed: a fixed, ordinary note of 64K characters read a few
+  // times, the least time per character. A long input may take SCALE times
+  // that per character (the worst ordinary inputs take about 2.5 times), never
+  // less than the budget: a slow runner gives a big ordinary note more time,
+  // while a pattern that backtracks still stands out (it grows with the
+  // square of the length - the U+2029 list line took 60 times its share at
+  // 15K characters, and more the longer it gets).
+  const SCALE = 12;
+  const sample = '# Round *one*\n\nSome **bold** and `code` with [a link](https://example.org) and <b>raw</b> &amp; text.\n- item _one_\n- [x] task\n> quote\n| a | b |\n|---|---|\n| 1 | 2 |\n\n';
+  const reference = sample.repeat(Math.ceil(65536 / sample.length)).slice(0, 65536);
+  let msPerChar = Infinity;
+  for (let k = 0; k < 7; k++) {
+    const t0 = performance.now();
+    markdownToHtml(reference);
+    msPerChar = Math.min(msPerChar, (performance.now() - t0) / reference.length);
+  }
+  parentPort.postMessage({ type: 'calibrated', usPerChar: msPerChar * 1000 });
+  const limit = (input) => Math.max(budget, SCALE * msPerChar * input.length);
+
   /** Runs one call; its time is the least of three tries when it looks slow, so a pause of the collector is no failure. */
   const timed = (kind, f, input) => {
+    const most = limit(input);
     let out;
     let ms = Infinity;
     for (let tries = 0; tries < 3; tries++) {
@@ -303,12 +330,13 @@ if (isMainThread) {
         return null;
       }
       ms = Math.min(ms, performance.now() - t0);
-      if (ms <= budget) break;
+      if (ms <= most) break;
     }
     d.maxMs = Math.max(d.maxMs, ms);
-    if (ms > budget) {
+    d.maxShare = Math.max(d.maxShare, ms / most);
+    if (ms > most) {
       d.slow++;
-      fail(`${kind}-slow`, `${ms.toFixed(1)} ms`, input);
+      fail(`${kind}-slow`, `${ms.toFixed(1)} ms, limit ${most.toFixed(1)} ms`, input);
     }
     return out;
   };
