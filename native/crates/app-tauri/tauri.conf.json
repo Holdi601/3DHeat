@@ -52,7 +52,9 @@
         "installerHooks": "installer/hooks.nsh",
         "installerIcon": "icons/icon.ico",
         "headerImage": "installer/nsis-header.bmp",
-        "sidebarImage": "installer/nsis-sidebar.bmp"
+        "sidebarImage": "installer/nsis-sidebar.bmp",
+        "uninstallerIcon": "icons/icon.ico",
+        "uninstallerHeaderImage": "installer/nsis-header.bmp"
       },
       "wix": {
         "bannerPath": "installer/wix-banner.bmp",

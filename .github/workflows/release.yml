@@ -246,8 +246,13 @@ jobs:
           tag=${{ needs.version.outputs.tag }}
           if gh release view "$tag" --json isDraft -q .isDraft > state.txt 2>/dev/null; then
             if [ "$(cat state.txt)" != true ]; then echo "::error::release $tag is already published; not touched"; exit 1; fi
+            # A rebuilt draft holds only this build: older files (signatures and
+            # latest.json of a previous build included) go, and it targets this commit.
+            gh release view "$tag" --json assets -q '.assets[].name' | while read -r a; do
+              [ -e "files/$a" ] || gh release delete-asset "$tag" "$a" --yes
+            done
             gh release upload "$tag" files/* --clobber
-            gh release edit "$tag" --draft=true --notes-file notes.md
+            gh release edit "$tag" --draft=true --target "$GITHUB_SHA" --notes-file notes.md
           else
             gh release create "$tag" files/* --draft --target "$GITHUB_SHA" --title "3DHeat ${{ needs.version.outputs.version }}" --notes-file notes.md
           fi

@@ -384,7 +384,10 @@ check('every member ends with the same marks', same.length === 0, same.join(',')
   await S(host, () => window.__heat3dSession.marks.getState().remove('pin-host'));
   await wait(1500);
   const gone = !(await pinsOf(observer)).includes('pin-host');
-  await host.page.setInputFiles('.session-panel input[type=file]', file);
+  // "Open session" makes its file input on the click (chooseSessionFile): the chooser it opens takes the file.
+  const open = host.page.locator('.session-panel .session-sec button', { hasText: 'Open session' }).first();
+  const [chooser] = await Promise.all([host.page.waitForEvent('filechooser', { timeout: 60_000 }), open.click({ timeout: 60_000 })]);
+  await chooser.setFiles(file);
   await wait(2500);
   const onServer = await (await fetch(`${SERVER}/api/docs`, { headers: { Authorization: `Bearer ${TOKEN}` } })).json();
   const serverHas = (onServer.docs.marks?.colls.pins ?? []).some((p) => p.id === 'pin-host');
