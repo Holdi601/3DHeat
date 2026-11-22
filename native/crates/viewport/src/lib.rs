@@ -9,6 +9,8 @@
 
 pub mod figures;
 pub mod generated;
+pub mod heatmodes;
+pub mod occlusion;
 pub mod loader;
 pub mod overlays;
 pub mod ranges;

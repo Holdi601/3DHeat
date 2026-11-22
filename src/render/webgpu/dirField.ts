@@ -22,7 +22,7 @@ struct FieldUniforms {
 @group(0) @binding(2) var fieldSamp : sampler;
 `;
 
-const ARROW_WGSL = /* wgsl */ `
+export const ARROW_WGSL = /* wgsl */ `
 ${COMMON}
 struct ArrowOut {
   @builtin(position) pos : vec4<f32>,
@@ -77,7 +77,7 @@ fn fsArrow(in : ArrowOut) -> @location(0) vec4<f32> {
 }
 `;
 
-const STREAM_WGSL = /* wgsl */ `
+export const STREAM_WGSL = /* wgsl */ `
 ${COMMON}
 @vertex
 fn vsStream(@builtin(vertex_index) vid : u32) -> @builtin(position) vec4<f32> {

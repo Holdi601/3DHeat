@@ -93,11 +93,16 @@ pub struct GpuChunk {
     pub bytes: u64,
 }
 
-/// The level's ground mesh: interleaved position + normal, optional colour, ground indices.
+/// The level's mesh: interleaved position + normal, optional colour, ground indices; the
+/// structures' triangles and edges and the water's triangles (`occlusion.rs`).
+#[derive(Default)]
 pub struct LevelMesh {
     pub vertices: Vec<f32>,
     pub colours: Option<Vec<f32>>,
     pub indices: Vec<u32>,
+    pub structure: Vec<u32>,
+    pub edges: Vec<u32>,
+    pub water: Vec<u32>,
 }
 
 struct GpuLevel {
@@ -108,6 +113,17 @@ struct GpuLevel {
     indices: wgpu::Buffer,
     count: u32,
     bytes: u64,
+}
+
+/// This frame's bind groups for the level's water and structures (`occlusion_groups`).
+#[derive(Default)]
+struct OccGroups {
+    water: Option<(wgpu::BindGroup, wgpu::BindGroup)>,
+    faces: Option<(wgpu::BindGroup, wgpu::BindGroup)>,
+    wire: Option<wgpu::BindGroup>,
+    seal: Option<(wgpu::BindGroup, wgpu::BindGroup)>,
+    /// Drawn once: after the trails where there are figures, else after the scene's solid parts.
+    shells_drawn: std::cell::Cell<bool>,
 }
 
 struct HeatSet {
@@ -285,6 +301,14 @@ pub struct Renderer {
     pub overlays: crate::overlays::Overlays,
     /// The engagement ranges (`ranges.rs`).
     pub ranges: crate::ranges::Ranges,
+    /// Line heat, the wedges' bearings and the direction field (`heatmodes.rs`).
+    pub modes: crate::heatmodes::HeatModes,
+    /// The level's structures and water, the structure depth and the peeled layers (`occlusion.rs`).
+    pub occ: crate::occlusion::Occlusion,
+    /// The heat shader, kept for the formats made on first use (the direction field's).
+    m_splat: wgpu::ShaderModule,
+    m_decay: wgpu::ShaderModule,
+    m_merge: wgpu::ShaderModule,
     filter_pass: wgpu::ComputePipeline,
     bin: Option<HeatBin>,
     // Targets.
@@ -326,7 +350,7 @@ pub struct Renderer {
     last_present: Option<Instant>,
 }
 
-fn tex2d(device: &wgpu::Device, label: &str, w: u32, h: u32, format: wgpu::TextureFormat, usage: wgpu::TextureUsages) -> (wgpu::Texture, wgpu::TextureView) {
+pub(crate) fn tex2d(device: &wgpu::Device, label: &str, w: u32, h: u32, format: wgpu::TextureFormat, usage: wgpu::TextureUsages) -> (wgpu::Texture, wgpu::TextureView) {
     let t = device.create_texture(&wgpu::TextureDescriptor {
         label: Some(label),
         size: wgpu::Extent3d { width: w.max(1), height: h.max(1), depth_or_array_layers: 1 },
@@ -341,7 +365,7 @@ fn tex2d(device: &wgpu::Device, label: &str, w: u32, h: u32, format: wgpu::Textu
     (t, v)
 }
 
-fn module(device: &wgpu::Device, label: &str, src: &str) -> wgpu::ShaderModule {
+pub(crate) fn module(device: &wgpu::Device, label: &str, src: &str) -> wgpu::ShaderModule {
     device.create_shader_module(wgpu::ShaderModuleDescriptor { label: Some(label), source: wgpu::ShaderSource::Wgsl(src.into()) })
 }
 
@@ -356,12 +380,12 @@ fn compute(device: &wgpu::Device, m: &wgpu::ShaderModule, entry: &str) -> wgpu::
     })
 }
 
-const ADD: wgpu::BlendState = wgpu::BlendState {
+pub(crate) const ADD: wgpu::BlendState = wgpu::BlendState {
     color: wgpu::BlendComponent { src_factor: wgpu::BlendFactor::One, dst_factor: wgpu::BlendFactor::One, operation: wgpu::BlendOperation::Add },
     alpha: wgpu::BlendComponent { src_factor: wgpu::BlendFactor::One, dst_factor: wgpu::BlendFactor::One, operation: wgpu::BlendOperation::Add },
 };
 
-fn render_pipe(
+pub(crate) fn render_pipe(
     device: &wgpu::Device,
     m: &wgpu::ShaderModule,
     vs: &str,
@@ -511,6 +535,8 @@ impl Renderer {
         let figures = crate::figures::Figures::new(&device, out_format);
         let overlays = crate::overlays::Overlays::new(&device, out_format);
         let ranges = crate::ranges::Ranges::new(&device);
+        let modes = crate::heatmodes::HeatModes::new(&device, out_format);
+        let occ = crate::occlusion::Occlusion::new(&device);
         let m_line = module(&device, "line", W_LINE);
         const LINE_ATTRS: [wgpu::VertexAttribute; 2] = wgpu::vertex_attr_array![0 => Float32x3, 1 => Float32x4];
         let line = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
@@ -600,6 +626,11 @@ impl Renderer {
             figures,
             overlays,
             ranges,
+            modes,
+            occ,
+            m_splat,
+            m_decay,
+            m_merge,
             filter_pass,
             bin,
             width: 0,
@@ -651,6 +682,7 @@ impl Renderer {
         self.missing_columns.clear();
         self.failed_columns.clear();
         self.has_time = has_time;
+        self.modes.clear();
     }
 
     pub fn add_chunk(&mut self, c: GpuChunk) {
@@ -685,6 +717,7 @@ impl Renderer {
     }
 
     pub fn set_level(&mut self, level: Option<&LevelMesh>) {
+        self.occ.set_level(&self.device, level.filter(|l| !l.indices.is_empty() && l.vertices.len() >= 6));
         self.level = level.filter(|l| !l.indices.is_empty() && l.vertices.len() >= 6).map(|l| {
             let n = l.vertices.len() / 6;
             let vb = |label: &str, data: &[u8], usage: wgpu::BufferUsages| {
@@ -715,7 +748,7 @@ impl Renderer {
     }
 
     pub fn level_bytes(&self) -> u64 {
-        self.level.as_ref().map_or(0, |l| l.bytes)
+        self.level.as_ref().map_or(0, |l| l.bytes + self.occ.bytes)
     }
 
     /// The filter columns the asked-for filters still need, chunk by chunk (fetched by the caller).
@@ -957,8 +990,13 @@ impl Renderer {
             self.ensure_targets(width, height, p.f(F_HEAT_SCALE).max(1e-3), channels);
             if !p.flag(F_COMPOSITE_ONLY) {
                 self.draw_scene(&mut encoder, p);
+                self.structure_depth(&mut encoder, p);
+                self.peel_layers(&mut encoder, p);
                 if p.f(F_MODE) as u32 != 4 {
-                    self.draw_heat(&mut encoder, p);
+                    self.draw_heat(&mut encoder, p, false);
+                    if p.f(F_DIR_FIELD) > 0.0 {
+                        self.draw_heat(&mut encoder, p, true);
+                    }
                 } else {
                     self.clear_heat(&mut encoder);
                 }
@@ -1016,7 +1054,7 @@ impl Renderer {
         self.stats.frames += 1;
         self.stats.resident_rows = self.resident_rows;
         self.stats.dropped_rows = self.dropped_rows;
-        self.stats.gpu_bytes = self.gpu_bytes;
+        self.stats.gpu_bytes = self.gpu_bytes + self.modes.bytes;
         self.stats.level_bytes = self.level_bytes();
         self.stats.binned = self.binned;
     }
@@ -1144,6 +1182,7 @@ impl Renderer {
         };
         let ov = self.overlay_groups(p, true, (0.0, 0.0));
         let rg = self.range_groups(encoder, p);
+        let occ = self.occlusion_groups(p);
         let scene = &self.scene.as_ref().unwrap().1;
         let depth = &self.depth.as_ref().unwrap().1;
         let groups = ground.map(|off| {
@@ -1190,6 +1229,10 @@ impl Renderer {
             pass.set_vertex_buffer(3, l.tiles.slice(..));
             pass.set_index_buffer(l.indices.slice(..), wgpu::IndexFormat::Uint32);
             pass.draw_indexed(0..l.count, 0, 0..1);
+            // Water next: a surface, so it writes depth, with its own tint (`drawLevel`).
+            if let (Some(g), Some(w)) = (&occ.water, &self.occ.water) {
+                crate::occlusion::draw_set(&mut pass, &self.mesh, g, w);
+            }
         }
         if let (Some(g), Some((_, buf, n))) = (&grid_group, &self.grid) {
             if *n > 0 {
@@ -1224,9 +1267,11 @@ impl Renderer {
             self.figures.draw(&mut pass, &figs, rel, false);
             self.figures.draw_tris(&mut pass, &figs, plain, false);
             self.figures.draw_trails(&mut pass, &figs, plain);
+            self.draw_shells(&mut pass, &occ);
             self.figures.draw(&mut pass, &figs, rel, true);
             self.figures.draw_tris(&mut pass, &figs, plain, true);
         }
+        self.draw_shells(&mut pass, &occ);
         if !under {
             // `drawObjectivesOnGround`: the ground triangles, then the zones' discs on the ground.
             if let Some(plain) = plain {
@@ -1245,6 +1290,199 @@ impl Renderer {
             }
             self.figures.draw_overlay(&mut pass, &figs, plain);
         }
+        // Last in the pass, and depth only: what changes is the depth the heat pass samples, so a
+        // wall occludes the heat behind it (`sealStructures`).
+        if let (Some(g), Some(s), Some(l)) = (&occ.seal, &self.occ.structure, &self.level) {
+            Self::level_buffers(l).set(&mut pass);
+            crate::occlusion::draw_set(&mut pass, &self.occ.seal, g, s);
+        }
+    }
+
+    /// The see-through structures, faces then edges, after everything solid (`drawLevel` shells).
+    fn draw_shells(&self, pass: &mut wgpu::RenderPass<'_>, occ: &OccGroups) {
+        if occ.shells_drawn.get() {
+            return;
+        }
+        occ.shells_drawn.set(true);
+        if let (Some(g), Some(s), Some(l)) = (&occ.faces, &self.occ.structure, &self.level) {
+            Self::level_buffers(l).set(pass);
+            crate::occlusion::draw_set(pass, &self.occ.faces, g, s);
+        }
+        if let (Some(g), Some(e), Some(l)) = (&occ.wire, &self.occ.edges, &self.level) {
+            pass.set_pipeline(&self.occ.wire);
+            pass.set_bind_group(0, g, &[]);
+            pass.set_vertex_buffer(0, l.vertices.slice(..));
+            pass.set_index_buffer(e.buf.slice(..), wgpu::IndexFormat::Uint32);
+            pass.draw_indexed(0..e.count, 0, 0..1);
+        }
+    }
+
+    /// A level surface's uniform (`pushSceneUniform` with a tint, a rim and flat shading).
+    fn level_uniform(&mut self, p: &Packet, opacity: f32, tint: [f32; 3], fresnel: f32, flat: bool) -> u64 {
+        let mut u = self.scene_uniform(p, (1e9, 1e9 + 1.0), opacity, p.f(F_LEVEL_BRIGHTNESS), false, false);
+        let mut put = |lane: usize, v: f32| u[lane * 4..lane * 4 + 4].copy_from_slice(&v.to_le_bytes());
+        put(24, tint[0]);
+        put(25, tint[1]);
+        put(26, tint[2]);
+        put(27, fresnel);
+        put(35, if flat { 1.0 } else { 0.0 });
+        self.ring.push(&u, 256)
+    }
+
+    /// The mesh pipelines' two bind groups (the uniform, the atlas placeholder) for `pipe`.
+    fn mesh_groups(&self, pipe: &wgpu::RenderPipeline, off: u64) -> (wgpu::BindGroup, wgpu::BindGroup) {
+        let g0 = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("level"),
+            layout: &pipe.get_bind_group_layout(0),
+            entries: &[wgpu::BindGroupEntry { binding: 0, resource: self.ring.binding(off, SCENE_UNIFORM_BYTES) }],
+        });
+        (g0, self.atlas_group(pipe))
+    }
+
+    fn atlas_group(&self, pipe: &wgpu::RenderPipeline) -> wgpu::BindGroup {
+        self.device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("atlas"),
+            layout: &pipe.get_bind_group_layout(1),
+            entries: &[
+                wgpu::BindGroupEntry { binding: 0, resource: wgpu::BindingResource::TextureView(&self.atlas_view) },
+                wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::Sampler(&self.sampler) },
+                wgpu::BindGroupEntry { binding: 2, resource: self.atlas_tiles.as_entire_binding() },
+            ],
+        })
+    }
+
+    /// This frame's bind groups for the water, the structures' faces, edges and seal (`pushMeshUniforms`).
+    fn occlusion_groups(&mut self, p: &Packet) -> OccGroups {
+        let mut g = OccGroups::default();
+        if !p.flag(F_LEVEL_ON) || self.level.is_none() {
+            return g;
+        }
+        let f = p.frame.as_ref().unwrap();
+        let tint = [f[F_STRUCT_TINT], f[F_STRUCT_TINT + 1], f[F_STRUCT_TINT + 2]];
+        let flat = p.flag(F_STRUCT_FLAT);
+        if self.occ.water.is_some() && p.flag(F_WATER_SHOW) {
+            let wt = [f[F_WATER_TINT], f[F_WATER_TINT + 1], f[F_WATER_TINT + 2]];
+            let off = self.level_uniform(p, p.f(F_WATER_OPACITY), wt, 0.0, false);
+            g.water = Some(self.mesh_groups(&self.mesh, off));
+        }
+        if self.occ.structure.is_some() {
+            if p.flag(F_STRUCT_FACES) {
+                let off = self.level_uniform(p, p.f(F_STRUCT_FACE_OPACITY), tint, 1.0, flat);
+                g.faces = Some(self.mesh_groups(&self.occ.faces, off));
+            }
+            let off = self.level_uniform(p, p.f(F_STRUCT_FACE_OPACITY), tint, 1.0, flat);
+            g.seal = Some(self.mesh_groups(&self.occ.seal, off));
+        }
+        if self.occ.edges.is_some() && p.flag(F_STRUCT_WIRE) {
+            let off = self.level_uniform(p, p.f(F_STRUCT_WIRE_OPACITY), tint, 0.0, false);
+            g.wire = Some(self.device.create_bind_group(&wgpu::BindGroupDescriptor {
+                label: Some("structure wire"),
+                layout: &self.occ.wire.get_bind_group_layout(0),
+                entries: &[wgpu::BindGroupEntry { binding: 0, resource: self.ring.binding(off, SCENE_UNIFORM_BYTES) }],
+            }));
+        }
+        g
+    }
+
+    /// `renderStructureDepth`: the nearest structure surface in a target of its own, when points
+    /// behind the terrain are cut. Cleared even with nothing drawn: no structure in front of anything.
+    fn structure_depth(&mut self, encoder: &mut wgpu::CommandEncoder, p: &Packet) {
+        if !p.flag(F_HIDE_BEHIND_GROUND) {
+            return;
+        }
+        let groups = (p.flag(F_LEVEL_ON) && self.level.is_some() && self.occ.structure.is_some()).then(|| {
+            let f = p.frame.as_ref().unwrap();
+            let tint = [f[F_STRUCT_TINT], f[F_STRUCT_TINT + 1], f[F_STRUCT_TINT + 2]];
+            let off = self.level_uniform(p, p.f(F_STRUCT_FACE_OPACITY), tint, 1.0, p.flag(F_STRUCT_FLAT));
+            self.mesh_groups(&self.occ.seal, off)
+        });
+        let scene = &self.scene.as_ref().unwrap().1;
+        let sd = &self.struct_depth.as_ref().unwrap().1;
+        let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+            label: Some("structure depth"),
+            color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                view: scene,
+                resolve_target: None,
+                depth_slice: None,
+                ops: wgpu::Operations { load: wgpu::LoadOp::Load, store: wgpu::StoreOp::Store },
+            })],
+            depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+                view: sd,
+                depth_ops: Some(wgpu::Operations { load: wgpu::LoadOp::Clear(0.0), store: wgpu::StoreOp::Store }),
+                stencil_ops: None,
+            }),
+            timestamp_writes: None,
+            occlusion_query_set: None,
+            multiview_mask: None,
+        });
+        if let (Some(g), Some(l), Some(s)) = (&groups, &self.level, &self.occ.structure) {
+            Self::level_buffers(l).set(&mut pass);
+            crate::occlusion::draw_set(&mut pass, &self.occ.seal, g, s);
+        }
+    }
+
+    /// `peelDepthLayers`: each layer the structures behind the one before, the scene's depth first.
+    fn peel_layers(&mut self, encoder: &mut wgpu::CommandEncoder, p: &Packet) {
+        let layers = self.peel_count(p);
+        if layers == 0 {
+            return;
+        }
+        self.occ.ensure_layers(&self.device, self.width, self.height);
+        let f = p.frame.as_ref().unwrap();
+        let mut u = [0f32; PEEL_UNIFORM_BYTES as usize / 4];
+        u[..16].copy_from_slice(&f[F_VIEW_PROJ..F_VIEW_PROJ + 16]);
+        u[16] = self.width as f32;
+        u[17] = self.height as f32;
+        u[18] = PEEL_EPSILON_REVERSE;
+        // No atlas natively yet: no cut-out texels.
+        u[19] = 0.0;
+        let off = self.ring.push(bytemuck::cast_slice(&u), 256);
+        let atlas = self.atlas_group(&self.occ.peel);
+        let (Some(l), Some(s)) = (&self.level, &self.occ.structure) else { return };
+        let depth = &self.depth.as_ref().unwrap().1;
+        for i in 0..layers as usize {
+            let prev = if i == 0 { depth } else { self.occ.layer(i - 1).unwrap() };
+            let g0 = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
+                label: Some("depth peel"),
+                layout: &self.occ.peel.get_bind_group_layout(0),
+                entries: &[
+                    wgpu::BindGroupEntry { binding: 0, resource: self.ring.binding(off, PEEL_UNIFORM_BYTES as usize) },
+                    wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::TextureView(prev) },
+                ],
+            });
+            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("depth peel"),
+                color_attachments: &[],
+                depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+                    view: self.occ.layer(i).unwrap(),
+                    depth_ops: Some(wgpu::Operations { load: wgpu::LoadOp::Clear(0.0), store: wgpu::StoreOp::Store }),
+                    stencil_ops: None,
+                }),
+                timestamp_writes: None,
+                occlusion_query_set: None,
+                multiview_mask: None,
+            });
+            pass.set_pipeline(&self.occ.peel);
+            pass.set_bind_group(0, &g0, &[]);
+            pass.set_bind_group(1, &atlas, &[]);
+            pass.set_vertex_buffer(0, l.vertices.slice(..));
+            pass.set_vertex_buffer(1, l.uvs.slice(..));
+            pass.set_vertex_buffer(2, l.tiles.slice(..));
+            pass.set_index_buffer(s.buf.slice(..), wgpu::IndexFormat::Uint32);
+            pass.draw_indexed(0..s.count, 0, 0..1);
+        }
+    }
+
+    /// How many peeled layers the heat reads this frame (`activeLayers`).
+    fn peel_count(&self, p: &Packet) -> u32 {
+        if !p.flag(F_LEVEL_ON) || self.level.is_none() {
+            return 0;
+        }
+        self.occ.active_layers(p.f(F_OCCLUSION))
+    }
+
+    fn level_buffers(l: &GpuLevel) -> crate::occlusion::LevelBuffers<'_> {
+        crate::occlusion::LevelBuffers { vertices: &l.vertices, colours: &l.colours, uvs: &l.uvs, tiles: &l.tiles }
     }
 
     /// The ground grid and the axes (`buildGridVertices`), made again when they change.
@@ -1315,26 +1553,41 @@ impl Renderer {
     }
 
     /// `drawHeat`: the accumulation, the filters, binned or splatted.
-    fn draw_heat(&mut self, encoder: &mut wgpu::CommandEncoder, p: &Packet) {
+    /// The heat pass (`drawHeat`), or with `field` the same sprites into the direction field's
+    /// own small target, accumulated the same way.
+    fn draw_heat(&mut self, encoder: &mut wgpu::CommandEncoder, p: &Packet, field: bool) {
         let alpha = p.f(F_BLEND_ALPHA).clamp(0.0, 1.0);
         let accum = p.f(F_ACCUM) as u32;
         let extend = accum == 3;
         if accum != 0 && !extend && alpha <= 0.0 {
             return;
         }
-        let direct = extend || accum == 0 || alpha >= 1.0;
-        let (heat_view, scratch_view) = {
-            let h = self.heat();
-            (h.view.clone(), h.scratch_view.clone())
+        let mut fresh = false;
+        let mut field_size = None;
+        if field {
+            self.modes.ensure_field(&self.device, p.f(F_DIR_CELL), self.heat_w, self.heat_h, self.height);
+            let f = self.modes.field.as_mut().unwrap();
+            fresh = std::mem::replace(&mut f.fresh, false);
+            field_size = Some((f.width, f.height));
+            self.heat_pipes_for(crate::heatmodes::FIELD_FORMAT);
+        }
+        let format = if field { crate::heatmodes::FIELD_FORMAT } else { self.heat_format };
+        let direct = extend || accum == 0 || alpha >= 1.0 || fresh;
+        let (heat_view, scratch_view) = match self.modes.field.as_ref().filter(|_| field) {
+            Some(f) => (f.view.clone(), f.scratch_view.clone()),
+            None => {
+                let h = self.heat();
+                (h.view.clone(), h.scratch_view.clone())
+            }
         };
         let target = if direct { heat_view.clone() } else { scratch_view.clone() };
-        if !extend {
+        if !extend || fresh {
             Self::clear_target(encoder, &target, if direct { "clear heat" } else { "clear heat scratch" });
         }
         let weight = p.f(F_SAMPLE_WEIGHT) * p.f(F_HEAT_GAIN);
         if p.plan.is_empty() {
             if !direct {
-                self.merge_heat(encoder, alpha, &heat_view, &scratch_view);
+                self.merge_heat(encoder, alpha, &heat_view, &scratch_view, format);
             }
             return;
         }
@@ -1352,18 +1605,22 @@ impl Renderer {
             self.queue.write_buffer(&self.block_buf, 0, bytemuck::cast_slice(&packed));
         }
 
-        let lines = false;
-        let bin_frame = self.bin_frame(p, lines, weight);
+        // Line heat where there are routes to draw; points otherwise, not nothing.
+        let lines = p.flag(F_LINE_HEAT) && !self.modes.lines.is_empty() && !field;
+        let bin_frame = if field { None } else { self.bin_frame(p, lines, weight) };
         let sprites: Vec<u32> = p.plan.iter().map(|e| e.starts.len().min(MAX_PLAN_BLOCKS as usize) as u32 * SAMPLE_BLOCK).collect();
         let bin_bases = bin_frame.as_ref().map(|f| self.bin_begin(encoder, f, &sprites));
-        self.binned = bin_frame.is_some();
-        if let Some(b) = &mut self.bin {
-            b.idle = if bin_frame.is_some() { 0 } else { b.idle + 1 };
-            if b.idle == BIN_RELEASE_FRAMES {
-                b.bins = None;
-                b.grid = None;
+        if !field {
+            self.binned = bin_frame.is_some();
+            if let Some(b) = &mut self.bin {
+                b.idle = if bin_frame.is_some() { 0 } else { b.idle + 1 };
+                if b.idle == BIN_RELEASE_FRAMES {
+                    b.bins = None;
+                    b.grid = None;
+                }
             }
         }
+        let want_dirs = field || (p.flag(F_DIRECTION_ON) && p.f(F_DIR_HALF) < std::f32::consts::PI);
 
         let mut offsets: Vec<Option<u64>> = Vec::new();
         for (i, e) in p.plan.iter().enumerate() {
@@ -1385,18 +1642,23 @@ impl Renderer {
                 continue;
             }
             let lanes = bin_bases.as_ref().map(|b| [b[i], e.chunk, i as u32, sprites[i]]);
-            let u = self.heat_uniform(p, e.chunk as usize, e.min_row, e.max_row, weight, bases[i], lanes, (split_slot, weight_slot));
+            let has_dirs = want_dirs && self.modes.dirs.contains_key(&(e.chunk as usize));
+            let u = self.heat_uniform(p, e.chunk as usize, e.min_row, e.max_row, weight, bases[i], lanes, (split_slot, weight_slot), field_size, has_dirs);
             offsets.push(Some(self.ring.push(&u, HEAT_STRIDE)));
         }
 
         if let Some(f) = bin_frame {
             self.bin_heat(encoder, p, &f, &target, &offsets, &sprites);
         } else {
-            let pipe = self.splat[&self.heat_format].clone();
-            let groups: Vec<Option<wgpu::BindGroup>> =
-                p.plan.iter().zip(&offsets).map(|(e, o)| o.map(|off| self.heat_group(&pipe.get_bind_group_layout(0), e.chunk as usize, off, &self.block_buf, false))).collect();
+            let pipe = if lines { self.modes.line_pipe(&self.device, format) } else { self.splat[&format].clone() };
+            let groups: Vec<Option<wgpu::BindGroup>> = p
+                .plan
+                .iter()
+                .zip(&offsets)
+                .map(|(e, o)| o.map(|off| self.heat_group(&pipe.get_bind_group_layout(0), e.chunk as usize, off, &self.block_buf, false, lines)))
+                .collect();
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                label: Some("heat"),
+                label: Some(if field { "direction field" } else { "heat" }),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                     view: &target,
                     resolve_target: None,
@@ -1412,18 +1674,33 @@ impl Renderer {
             for (i, g) in groups.iter().enumerate() {
                 if let Some(g) = g {
                     pass.set_bind_group(0, g, &[]);
-                    pass.draw(0..sprites[i] * 3, 0..1);
+                    pass.draw(0..sprites[i] * if lines { 18 } else { 3 }, 0..1);
                 }
             }
         }
         if !direct {
-            self.merge_heat(encoder, alpha, &heat_view, &scratch_view);
+            self.merge_heat(encoder, alpha, &heat_view, &scratch_view, format);
         }
+    }
+
+    /// The splat's, decay's and merge's pipelines into `format`, made on first use (the direction
+    /// field's half-float target where the heat is float32).
+    fn heat_pipes_for(&mut self, format: wgpu::TextureFormat) {
+        if self.splat.contains_key(&format) {
+            return;
+        }
+        let decay_blend = wgpu::BlendState {
+            color: wgpu::BlendComponent { src_factor: wgpu::BlendFactor::Zero, dst_factor: wgpu::BlendFactor::Src, operation: wgpu::BlendOperation::Add },
+            alpha: wgpu::BlendComponent { src_factor: wgpu::BlendFactor::Zero, dst_factor: wgpu::BlendFactor::Src, operation: wgpu::BlendOperation::Add },
+        };
+        self.splat.insert(format, render_pipe(&self.device, &self.m_splat, "vsHeat", "fsHeat", format, Some(ADD), &[], None));
+        self.decay.insert(format, render_pipe(&self.device, &self.m_decay, "vsFullscreen", "fsDecay", format, Some(decay_blend), &[], None));
+        self.merge.insert(format, render_pipe(&self.device, &self.m_merge, "vsFullscreen", "fsMerge", format, Some(ADD), &[], None));
     }
 
     /// The splat's bindings for one chunk (`heatEntries`), `blocks` at binding 3. Bindings the
     /// pipeline's shader does not use are left out, as its derived layout has none of them.
-    fn heat_group(&self, layout: &wgpu::BindGroupLayout, chunk: usize, offset: u64, blocks: &wgpu::Buffer, bin: bool) -> wgpu::BindGroup {
+    fn heat_group(&self, layout: &wgpu::BindGroupLayout, chunk: usize, offset: u64, blocks: &wgpu::Buffer, bin: bool, lines: bool) -> wgpu::BindGroup {
         let c = self.chunks[chunk].as_ref().unwrap();
         let depth = &self.depth.as_ref().unwrap().1;
         let sd = &self.struct_depth.as_ref().unwrap().1;
@@ -1436,16 +1713,19 @@ impl Renderer {
             wgpu::BindGroupEntry { binding: 5, resource: c.values.as_ref().unwrap_or(&self.empty).as_entire_binding() },
             wgpu::BindGroupEntry { binding: 6, resource: c.pass_bits.as_ref().unwrap_or(&self.empty).as_entire_binding() },
             wgpu::BindGroupEntry { binding: 9, resource: wgpu::BindingResource::TextureView(depth) },
-            wgpu::BindGroupEntry { binding: 10, resource: wgpu::BindingResource::TextureView(depth) },
-            wgpu::BindGroupEntry { binding: 11, resource: wgpu::BindingResource::TextureView(depth) },
-            wgpu::BindGroupEntry { binding: 12, resource: wgpu::BindingResource::TextureView(depth) },
+            wgpu::BindGroupEntry { binding: 10, resource: wgpu::BindingResource::TextureView(self.occ.layer(0).unwrap_or(depth)) },
+            wgpu::BindGroupEntry { binding: 11, resource: wgpu::BindingResource::TextureView(self.occ.layer(1).unwrap_or(depth)) },
+            wgpu::BindGroupEntry { binding: 12, resource: wgpu::BindingResource::TextureView(self.occ.layer(2).unwrap_or(depth)) },
             wgpu::BindGroupEntry { binding: 13, resource: wgpu::BindingResource::TextureView(sd) },
             wgpu::BindGroupEntry { binding: 15, resource: self.volume_buf.as_entire_binding() },
         ];
         if !bin {
             entries.push(wgpu::BindGroupEntry { binding: 7, resource: wgpu::BindingResource::TextureView(&self.curve_view) });
             entries.push(wgpu::BindGroupEntry { binding: 8, resource: wgpu::BindingResource::Sampler(&self.sampler) });
-            entries.push(wgpu::BindGroupEntry { binding: 16, resource: self.empty.as_entire_binding() });
+            entries.push(wgpu::BindGroupEntry { binding: 16, resource: self.modes.dirs.get(&chunk).unwrap_or(&self.empty).as_entire_binding() });
+            if lines {
+                entries.push(wgpu::BindGroupEntry { binding: 14, resource: self.modes.lines.get(&chunk).unwrap_or(&self.empty).as_entire_binding() });
+            }
         } else {
             let b = self.bin.as_ref().unwrap();
             entries.push(wgpu::BindGroupEntry { binding: 17, resource: b.params.as_entire_binding() });
@@ -1457,7 +1737,19 @@ impl Renderer {
 
     /// `writeHeatUniform`, lane for lane.
     #[allow(clippy::too_many_arguments)]
-    fn heat_uniform(&self, p: &Packet, chunk: usize, min_row: u32, max_row: u32, weight: f32, block_base: u32, bin_lanes: Option<[u32; 4]>, slots: (i32, i32)) -> Vec<u8> {
+    fn heat_uniform(
+        &self,
+        p: &Packet,
+        chunk: usize,
+        min_row: u32,
+        max_row: u32,
+        weight: f32,
+        block_base: u32,
+        bin_lanes: Option<[u32; 4]>,
+        slots: (i32, i32),
+        field: Option<(u32, u32)>,
+        has_dirs: bool,
+    ) -> Vec<u8> {
         let (split_slot, weight_slot) = slots;
         let c = self.chunks[chunk].as_ref().unwrap();
         let f = p.frame.as_ref().unwrap();
@@ -1465,12 +1757,17 @@ impl Renderer {
         let mut i = [0u32; HEAT_UNIFORM_BYTES as usize / 4];
         let mut ints: Vec<usize> = Vec::new();
         u[..16].copy_from_slice(&f[F_VIEW_PROJ..F_VIEW_PROJ + 16]);
-        let (pass_w, pass_h) = (self.heat_w as f32, self.heat_h as f32);
+        let (pass_w, pass_h) = match field {
+            Some((w, h)) => (w as f32, h as f32),
+            None => (self.heat_w as f32, self.heat_h as f32),
+        };
         u[16] = pass_w;
         u[17] = pass_h;
         let tpp = pass_h / (self.height.max(1) as f32);
         let min_px = p.f(F_MIN_PX);
-        u[18] = min_px.min(1.0).max(min_px * tpp);
+        // A direction-field cell is many pixels: a sprite under most of one is held at three
+        // quarters of a cell (see `writeHeatUniform`).
+        u[18] = if field.is_some() { 0.75 } else { min_px.min(1.0).max(min_px * tpp) };
         u[19] = (p.f(F_MAX_PX) * tpp).max(1.0);
         u[20..23].copy_from_slice(&c.aabb_min);
         u[23] = if p.flag(F_LIFE_ON) { p.f(F_LIFE_FADE) } else { 0.0 };
@@ -1517,6 +1814,9 @@ impl Renderer {
         if p.flag(F_ZOOM_INVARIANT) {
             flags |= FLAG_CONSERVE;
         }
+        if has_dirs {
+            flags |= FLAG_HAS_DIRS;
+        }
         let mut put = |k: usize, v: u32, ints: &mut Vec<usize>| {
             i[k] = v;
             ints.push(k);
@@ -1557,8 +1857,8 @@ impl Renderer {
         u[75] = if slice { p.f(F_SLICE_OUTSIDE) } else { 1.0 };
         u[76] = p.f(F_OCCLUDED_EXTRA);
         u[77] = p.f(F_OCCLUSION_FLOOR);
-        // No peeled layers yet (structures are not drawn natively).
-        u[78] = 0.0;
+        // How many peeled layers hold structures this frame (`activeLayers`).
+        u[78] = self.peel_count(p) as f32;
         u[79] = if p.flag(F_HIDE_BEHIND_GROUND) { 1.0 } else { 0.0 };
         u[80..83].copy_from_slice(&f[F_CAMERA_FORWARD..F_CAMERA_FORWARD + 3]);
         u[83] = if p.flag(F_CULL_PLANAR) { 1.0 } else { 0.0 };
@@ -1566,19 +1866,21 @@ impl Renderer {
         u[85] = p.f(F_TEAM_SLICES).max(1.0);
         u[86] = p.f(F_SPLIT_SCALE);
         u[87] = p.f(F_SPLIT_SCALE + 1);
-        u[88] = 0.0;
-        u[89] = 0.0;
-        u[90] = 0.0;
-        u[91] = 0.0;
-        u[92] = 1.0;
-        u[93] = 1.0;
-        u[94] = 1.0;
-        u[95] = 0.0;
-        u[96] = std::f32::consts::PI;
-        u[97] = 0.0;
-        u[98] = 1.0;
-        u[99] = 0.0;
-        u[100] = 0.0;
+        // The box line heat's segment starts are quantised to, and playback's playhead and tail
+        // (only where this chunk has row times).
+        let lb = &self.modes.line_box;
+        let trail = p.f(F_LINE_TRAIL_TAIL) > 0.0 && c.times.is_some();
+        u[88..91].copy_from_slice(&lb[..3]);
+        u[91] = if trail { p.f(F_LINE_TRAIL_NOW) } else { 0.0 };
+        u[92..95].copy_from_slice(&lb[3..]);
+        u[95] = if trail { p.f(F_LINE_TRAIL_TAIL) } else { 0.0 };
+        // Directional heat: the field pass draws discs, the heat pass the wedge.
+        let dir = p.flag(F_DIRECTION_ON) && field.is_none();
+        u[96] = if dir { p.f(F_DIR_HALF) } else { std::f32::consts::PI };
+        u[97] = if dir { p.f(F_DIR_SOFT) } else { 0.0 };
+        u[98] = if dir { p.f(F_DIR_NORM) } else { 1.0 };
+        u[99] = if field.is_some() { 1.0 } else { 0.0 };
+        u[100] = if dir { p.f(F_DIR_CENTROID) } else { 0.0 };
         u[101] = if weight_slot >= 0 { weight_slot as f32 } else { -1.0 };
         u[102] = p.f(F_WEIGHT_SCALE);
         u[103] = p.f(F_PALETTE);
@@ -1812,9 +2114,9 @@ impl Renderer {
         let list_pipe = b.list_pipe[&format].clone();
         let list_layout = list_pipe.get_bind_group_layout(0);
         let bin_groups: Vec<Option<wgpu::BindGroup>> =
-            p.plan.iter().zip(offsets).map(|(e, o)| o.map(|off| self.heat_group(&bin_layout, e.chunk as usize, off, &self.block_buf, true))).collect();
+            p.plan.iter().zip(offsets).map(|(e, o)| o.map(|off| self.heat_group(&bin_layout, e.chunk as usize, off, &self.block_buf, true, false))).collect();
         let list_groups: Vec<Option<wgpu::BindGroup>> =
-            p.plan.iter().zip(offsets).map(|(e, o)| o.map(|off| self.heat_group(&list_layout, e.chunk as usize, off, &b.list, false))).collect();
+            p.plan.iter().zip(offsets).map(|(e, o)| o.map(|off| self.heat_group(&list_layout, e.chunk as usize, off, &b.list, false, false))).collect();
         let grid = b.grid.as_ref().unwrap();
         let bins = b.bins.as_ref().unwrap();
         let d = &self.device;
@@ -1913,8 +2215,7 @@ impl Renderer {
     }
 
     /// `mergeHeat`: acc = acc * (1 - a) + scratch * a.
-    fn merge_heat(&mut self, encoder: &mut wgpu::CommandEncoder, alpha: f32, view: &wgpu::TextureView, scratch: &wgpu::TextureView) {
-        let format = self.heat_format;
+    fn merge_heat(&mut self, encoder: &mut wgpu::CommandEncoder, alpha: f32, view: &wgpu::TextureView, scratch: &wgpu::TextureView, format: wgpu::TextureFormat) {
         let d_off = self.ring.push(bytemuck::cast_slice(&[1.0 - alpha, 0.0, 0.0, 0.0]), 256);
         let m_off = self.ring.push(bytemuck::cast_slice(&[alpha, 0.0, 0.0, 0.0]), 256);
         let decay = &self.decay[&format];
@@ -1971,6 +2272,12 @@ impl Renderer {
         u[12] = if p.flag(F_PERSPECTIVE) { 1.0 } else { 0.0 };
         u[13] = if p.flag(F_TEAM_COLORS) { 1.0 } else { 0.0 };
         u[14] = p.f(F_TEAM_BOOST);
+        // The rate map's (render/rateMap.ts): composite-only, so moving them never restarts the accumulation.
+        u[15] = if p.flag(F_RATE_ON) { 1.0 } else { 0.0 };
+        u[16] = p.f(F_RATE_OVERALL);
+        u[17] = p.f(F_RATE_PRIOR);
+        u[18] = p.f(F_RATE_MIN);
+        u[19] = p.f(F_RATE_SPAN);
         u
     }
 
@@ -1998,6 +2305,20 @@ impl Renderer {
         let top = self.top_group(p);
         let origin = (p.f(F_VIEW_X).max(0.0), p.f(F_VIEW_Y).max(0.0));
         let ov = self.overlay_groups(p, false, origin);
+        let field = if p.f(F_MODE) as u32 != 4 {
+            self.modes.field_groups(
+                &self.device,
+                &self.queue,
+                &self.sampler,
+                p.f(F_DIR_FIELD) as u32,
+                1.0 / p.f(F_HEAT_GAIN).max(1e-9),
+                p.f(F_SATURATION),
+                p.f(F_DIR_TIME),
+                (self.width, self.height),
+            )
+        } else {
+            Default::default()
+        };
         let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
             label: Some("composite"),
             color_attachments: &[Some(wgpu::RenderPassColorAttachment {
@@ -2022,6 +2343,7 @@ impl Renderer {
             pass.set_pipeline(&pipe);
             pass.set_bind_group(0, &g, &[]);
             pass.draw(0..3, 0..1);
+            field.draw(&mut pass);
             self.draw_over(&mut pass, p, &top, &ov);
         }
     }

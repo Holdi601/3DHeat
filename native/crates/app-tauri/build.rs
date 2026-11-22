@@ -48,6 +48,7 @@ fn main() {
                 "viewport_dataset",
                 "viewport_chunk",
                 "viewport_column",
+                "viewport_rows",
                 "viewport_level",
                 "viewport_hide",
                 "viewport_capture",

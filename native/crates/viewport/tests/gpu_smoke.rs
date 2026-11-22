@@ -1,12 +1,15 @@
 //! The renderer on a real adapter - or lavapipe, Mesa's software Vulkan, in CI: every pipeline made
-//! (heat, binning, composite, level, lines, figures, cubes, zones, spawn marks, volume contours,
-//! engagement ranges with a view taken from the level), one frame of heat drawn offscreen with
+//! (heat, binning, composite, level with its structures and water, the structure depth and
+//! the peeled layers, lines, figures, cubes, zones, spawn marks, volume contours,
+//! engagement ranges with a view taken from the level, line heat, wedges with the direction
+//! field over them, the rate map), one frame of heat drawn offscreen with
 //! no validation error, and the heat read back. Skipped where no adapter is found, unless
 //! `HEAT3D_GPU_SMOKE=1` asks for one (the Linux CI job, with lavapipe installed).
 
 use std::sync::{Arc, Mutex};
 
 use heat3d_viewport::generated::*;
+use heat3d_viewport::heatmodes::{RowData, ROW_DIRS, ROW_LINES};
 use heat3d_viewport::loader::PageChunk;
 use heat3d_viewport::packet::{Contours, Glyphs, Overlays, Packet, PlanEntry, Ranges, Spawns, Top, Zones};
 use heat3d_viewport::LevelMesh;
@@ -65,6 +68,20 @@ fn packet() -> Packet {
     f[F_SHOW_GRID] = 1.0;
     f[F_GRID_SPACING] = 0.1;
     f[F_GRID_EXTENT] = 1.0;
+    // The level, its structures (faces, edges) and water, occluding the heat behind the wall.
+    f[F_LEVEL_ON] = 1.0;
+    f[F_LEVEL_OPACITY] = 1.0;
+    f[F_LEVEL_BRIGHTNESS] = 1.0;
+    f[F_STRUCT_FACE_OPACITY] = 0.3;
+    f[F_STRUCT_WIRE_OPACITY] = 0.6;
+    f[F_STRUCT_TINT..F_STRUCT_TINT + 3].copy_from_slice(&[0.8, 0.9, 1.0]);
+    f[F_STRUCT_FACES] = 1.0;
+    f[F_STRUCT_WIRE] = 1.0;
+    f[F_WATER_OPACITY] = 0.8;
+    f[F_WATER_SHOW] = 1.0;
+    f[F_OCCLUSION] = 0.8;
+    f[F_OCCLUSION_FLOOR] = 0.1;
+    f[F_OCCLUDED_EXTRA] = 0.5;
     Packet {
         seq: 1,
         frame: Some(f),
@@ -204,7 +221,19 @@ fn draws_heat_offscreen() {
     for (x, z) in [(0.0f32, 0.0f32), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)] {
         vertices.extend_from_slice(&[x, 0.4, z, 0.0, 1.0, 0.0]);
     }
-    r.set_level(Some(&LevelMesh { vertices, colours: None, indices: vec![0, 1, 2, 0, 2, 3] }));
+    // A wall standing across the middle (structures: faces, edges) and a pool (water), so the
+    // structures' shells, their seal, the structure depth and the peeled layers draw too.
+    for (x, y, z) in [(0.0f32, 0.4f32, 0.5f32), (1.0, 0.4, 0.5), (1.0, 0.9, 0.5), (0.0, 0.9, 0.5)] {
+        vertices.extend_from_slice(&[x, y, z, 0.0, 0.0, 1.0]);
+    }
+    r.set_level(Some(&LevelMesh {
+        vertices,
+        colours: None,
+        indices: vec![0, 1, 2, 0, 2, 3],
+        structure: vec![4, 5, 6, 4, 6, 7],
+        edges: vec![4, 5, 5, 6, 6, 7, 7, 4],
+        water: vec![0, 1, 2],
+    }));
     r.figures.set_atlas(&r.device, &r.queue, &vec![255u8; (ATLAS_WIDTH * ATLAS_HEIGHT * 4) as usize]).expect("atlas");
     let out = r.device.create_texture(&wgpu::TextureDescriptor {
         label: Some("out"),
@@ -225,6 +254,7 @@ fn draws_heat_offscreen() {
     r.request_capture(Box::new(move |c| *pc.lock().unwrap() = Some(c.is_some_and(|c| c.rgba.len() == (SIDE * SIDE * 4) as usize))));
     r.draw(&[packet(), packet_under()], &view, (SIDE, SIDE), false);
     r.draw(&[packet()], &view, (SIDE, SIDE), false);
+    heat_modes(&mut r, &view);
     let error = pollster::block_on(scope.pop());
     assert!(error.is_none(), "validation error: {error:?}");
     for _ in 0..500 {
@@ -240,4 +270,68 @@ fn draws_heat_offscreen() {
     let total: f32 = field.iter().sum();
     eprintln!("heat: {} values, {lit} lit, total {total}", field.len());
     assert!(lit > 100 && total.is_finite() && total > 0.0, "no heat drawn: {lit} lit, total {total}");
+}
+
+/// The heat modes (`heatmodes.rs`): the chunk's bearings and segment starts, then line heat with
+/// playback, the wedges with the direction field's arrows and streams, and the rate map.
+fn heat_modes(r: &mut Renderer, view: &wgpu::TextureView) {
+    let rows = (SIDE * SIDE) as usize;
+    let line_box = [0.0, 0.0, 0.0, 1.0, 1.0, 1.0];
+    r.modes.put(&r.device, &r.queue, RowData::whole(ROW_DIRS, 0, line_box, (0..rows).map(|i| (i % 255) as u8).collect()));
+    // Each row's segment from the row before it on its line of the grid (flag 1), routes starting
+    // at the first column (flag 2).
+    let mut starts = Vec::with_capacity(rows * 12);
+    for i in 0..rows {
+        let col = i % SIDE as usize;
+        let prev = if col == 0 { i } else { i - 1 };
+        let x = ((prev % SIDE as usize) as f32 / (SIDE - 1) as f32 * 65535.0) as u32;
+        let z = ((prev / SIDE as usize) as f32 / (SIDE - 1) as f32 * 65535.0) as u32;
+        let flags = if col == 0 { 3u32 } else { 1 };
+        starts.extend_from_slice(&(x | (32768 << 16)).to_le_bytes());
+        starts.extend_from_slice(&(z | (flags << 16)).to_le_bytes());
+        starts.extend_from_slice(&1f32.to_le_bytes());
+    }
+    // In two slices, as the page sends a chunk.
+    let half = starts.len() / 2 / 4 * 4;
+    let mut second = RowData::whole(ROW_LINES, 0, line_box, starts[half..].to_vec());
+    second.total = starts.len() as u32;
+    second.offset = half as u32;
+    let mut first = RowData::whole(ROW_LINES, 0, line_box, starts[..half].to_vec());
+    first.total = starts.len() as u32;
+    r.modes.put(&r.device, &r.queue, first);
+    assert!(r.modes.lines.is_empty(), "a chunk half in is not drawn with");
+    r.modes.put(&r.device, &r.queue, second);
+    assert_eq!(r.modes.lines.len(), 1);
+    let mut lines = packet();
+    lines.seq = 3;
+    let f = lines.frame.as_mut().unwrap();
+    f[F_MODE] = 3.0;
+    f[F_LINE_HEAT] = 1.0;
+    f[F_LINE_TRAIL_NOW] = 0.5;
+    f[F_LINE_TRAIL_TAIL] = 2.0;
+    let mut wedges = packet();
+    wedges.seq = 4;
+    let f = wedges.frame.as_mut().unwrap();
+    f[F_DIRECTION_ON] = 1.0;
+    f[F_DIR_HALF] = 0.6;
+    f[F_DIR_SOFT] = 0.1;
+    f[F_DIR_NORM] = 2.0;
+    f[F_DIR_CENTROID] = 0.3;
+    f[F_DIR_FIELD] = 3.0;
+    f[F_DIR_CELL] = 8.0;
+    f[F_DIR_TIME] = 1.5;
+    // And the structure depth, for the cut behind the terrain.
+    f[F_HIDE_BEHIND_GROUND] = 1.0;
+    let mut rate = packet();
+    rate.seq = 5;
+    let f = rate.frame.as_mut().unwrap();
+    f[F_MODE] = 1.0;
+    f[F_USE_TEAM_SIGN] = 1.0;
+    f[F_RATE_ON] = 1.0;
+    f[F_RATE_OVERALL] = 0.5;
+    f[F_RATE_MIN] = 1.0;
+    f[F_RATE_SPAN] = 0.2;
+    for p in [lines, wedges, rate] {
+        r.draw(&[p], view, (SIDE, SIDE), false);
+    }
 }

@@ -3,7 +3,7 @@
  *
  *   node native/tools/probe-native-viewport.mjs --dir <rowceiling folder> --rows 10,100
  *        [--exe <3dheat-app.exe>] [--out <folder>] [--seconds 8]
- *        [--cases exposure,heat,teams,filter,window,split,figures,cubes,overlays|none]
+ *        [--cases exposure,heat,teams,filter,window,split,figures,cubes,overlays,lines,directions,rate,structures|none]
  *        [--backends webgpu,native]
  *
  * For each load, starts the built app twice - the web engine (WebGPU in the app's
@@ -20,7 +20,13 @@
  *            alone, within 1/255 on average and 1 % of pixels. overlays: synthetic capture
  *            zones (on the ground and over the picture), spawn marks with their lines and three
  *            range shells (two spheres, a cone) put into every frame's parameters, over the
- *            plain heat: the pictures, as the box replay
+ *            plain heat: the pictures, as the box replay. lines: line heat (each person's route).
+ *            directions: 90 degree wedges by movement with the direction field's arrows and
+ *            streamlines (held still) over them. rate: the column split as a rate map. These three
+ *            gate as the heat cases, the field and the picture. structures: a synthetic model
+ *            level (ground under the rows, a lake, a grid of see-through walls with their edges)
+ *            with occlusion on, so the walls dim the heat behind them through the peeled
+ *            layers, and the cut behind the ground reads the structure depth
  *   exposure the first auto-exposure after each load (the first and three loads of the same
  *            files again, the same view): every one within 1 % of the web's first - a meter
  *            that read the field before all rows were drawn, or before the frame it meant,
@@ -49,7 +55,7 @@ const dir = arg('dir', null);
 const loads = String(arg('rows', '10')).split(',').map((r) => Number(r) * 1e6);
 const out = resolve(arg('out', join(process.env.TEMP ?? '.', 'heat3d-native-viewport')));
 const secs = Number(arg('seconds', 8));
-const cases = String(arg('cases', 'exposure,heat,teams,filter,window,split,figures,cubes,overlays')).split(',').filter((c) => c && c !== 'none');
+const cases = String(arg('cases', 'exposure,heat,teams,filter,window,split,figures,cubes,overlays,lines,directions,rate,structures')).split(',').filter((c) => c && c !== 'none');
 const backends = String(arg('backends', 'webgpu,native')).split(',');
 const PORT = Number(arg('port', 9336));
 const PER_FILE = 10_000_000;
@@ -183,7 +189,9 @@ function comparePictures(a, b) {
 async function run(rows, backend) {
   const picked = files(rows);
   const app = spawn(exe, [], {
-    env: { ...process.env, WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS: `--remote-debugging-port=${PORT}` },
+    // A WebView2 profile of the probe's own: another app started meanwhile (another probe) shares
+    // the default one, and its browser process took this run's page down with it.
+    env: { ...process.env, WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS: `--remote-debugging-port=${PORT}`, WEBVIEW2_USER_DATA_FOLDER: join(out, `webview2-${PORT}`) },
     stdio: ['ignore', 'pipe', 'pipe'],
   });
   let log = '';
@@ -206,6 +214,8 @@ async function run(rows, backend) {
     }
     const errors = [];
     page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
+    page.on('crash', () => console.error(`${backend}: the page crashed`));
+    browser.on('disconnected', () => console.error(`${backend}: the browser went away (app alive: ${app.exitCode === null})`));
     await page.waitForFunction(() => !!globalThis.__3dheat_engine?.live?.backend && globalThis.__3dheat_engine.live.backend !== 'none', null, { timeout: 60_000 });
     // The setting, then the page again so the engine starts with it.
     await page.evaluate((on) => localStorage.setItem('heat3d.nativeViewport', on ? 'on' : 'off'), backend === 'native');
@@ -273,13 +283,48 @@ async function run(rows, backend) {
           const a = st.dataset.attrs.find((x) => x.kind === 'number') ?? null;
           if (a) st.setFilters([{ kind: 'range', column: a.name, min: a.min + (a.max - a.min) * 0.25, max: a.min + (a.max - a.min) * 0.75 }]);
         }
-        if (c === 'split') {
+        if (c === 'lines') st.setMode('heat-lines');
+        if (c === 'structures') {
+          // A synthetic level in display space: the ground just under the rows, a lake in one corner,
+          // and a 4 x 4 grid of walls (two crossing quads each) as tall as the rows' height span.
+          const b = eng.toDisplay(eng.dataset.bounds);
+          const y0 = b.minY - (b.maxY - b.minY) * 0.02, y1 = b.maxY;
+          const v = [], ground = [], structure = [], edges = [], water = [];
+          const vert = (x, y, z, nx, ny, nz) => (v.push(x, y, z, nx, ny, nz), v.length / 6 - 1);
+          const quad = (a, bb, cc, d, tri, edge) => {
+            tri.push(a, bb, cc, a, cc, d);
+            edge?.push(a, bb, bb, cc, cc, d, d, a);
+          };
+          const sx = b.maxX - b.minX, sz = b.maxZ - b.minZ;
+          quad(vert(b.minX, y0, b.minZ, 0, 1, 0), vert(b.maxX, y0, b.minZ, 0, 1, 0), vert(b.maxX, y0, b.maxZ, 0, 1, 0), vert(b.minX, y0, b.maxZ, 0, 1, 0), ground);
+          const wy = y0 + (b.maxY - b.minY) * 0.001;
+          quad(vert(b.minX, wy, b.minZ, 0, 1, 0), vert(b.minX + sx * 0.2, wy, b.minZ, 0, 1, 0), vert(b.minX + sx * 0.2, wy, b.minZ + sz * 0.2, 0, 1, 0), vert(b.minX, wy, b.minZ + sz * 0.2, 0, 1, 0), water);
+          for (let i = 0; i < 4; i++)
+            for (let k = 0; k < 4; k++) {
+              const cx = b.minX + sx * (0.125 + i * 0.25), cz = b.minZ + sz * (0.125 + k * 0.25), hx = sx * 0.08, hz = sz * 0.08;
+              quad(vert(cx - hx, y0, cz, 0, 0, 1), vert(cx + hx, y0, cz, 0, 0, 1), vert(cx + hx, y1, cz, 0, 0, 1), vert(cx - hx, y1, cz, 0, 0, 1), structure, edges);
+              quad(vert(cx, y0, cz - hz, 1, 0, 0), vert(cx, y0, cz + hz, 1, 0, 0), vert(cx, y1, cz + hz, 1, 0, 0), vert(cx, y1, cz - hz, 1, 0, 0), structure, edges);
+            }
+          st.setLevel({
+            kind: 'model', name: 'probe level', vertices: new Float32Array(v), indices: new Uint32Array(ground),
+            structureIndices: new Uint32Array(structure), structureEdges: new Uint32Array(edges), waterIndices: new Uint32Array(water),
+            triangles: (ground.length + structure.length + water.length) / 3, structureTriangles: structure.length / 3, waterTriangles: water.length / 3,
+            sourceTriangles: (ground.length + structure.length + water.length) / 3,
+            bounds: { minX: b.minX, maxX: b.maxX, minY: y0, maxY: y1, minZ: b.minZ, maxZ: b.maxZ },
+            opacity: 1, desaturate: 0, brightness: 1, wireframe: false,
+            structureOpacity: 0.25, structureWireOpacity: 0.6, showStructureFaces: true, showStructureWire: true, showWater: true,
+          });
+          st.patchHeat({ occlusion: 0.85, occlusionFloor: 0.1, hideBehindGround: true });
+        }
+        if (c === 'directions') st.patchHeat({ wedgeOpening: 90, wedgeSoftness: 0.2, dirField: 'both', dirFieldAnimate: false });
+        if (c === 'split' || c === 'rate') {
           // The difference split by the first measure's range: lower half against upper half.
           const a = st.dataset.attrs.find((x) => x.kind === 'number') ?? null;
           if (a) {
             const mid = a.min + (a.max - a.min) / 2;
             st.setSplit({ kind: 'range', column: a.name, positive: [a.min, mid], negative: [mid, a.max] });
             st.setMode('heat-difference');
+            if (c === 'rate') st.patchHeat({ splitRate: true });
           }
         }
         if (c === 'figures' || c === 'cubes') {
@@ -354,6 +399,15 @@ async function run(rows, backend) {
           st.patchTimeline({ mode: 'play', window: 'fixed', windowSeconds: (hi - lo) * 0.2 });
           st.seek(lo + (hi - lo) * 0.5);
         }
+        // The bearings worked out (`DirectionController`), and every row's per-row data on the GPU
+        // (the wedges' bearings, line heat's segment starts) before the camera
+        // moves: the exposure's follower meters once it comes to rest, and must meter all of it.
+        for (const end = performance.now() + 120_000; performance.now() < end; ) {
+          await raf();
+          eng.invalidate(2);
+          if (c === 'directions' && !eng.directions?.data) continue;
+          if (!eng.renderer.uploadsPending) break;
+        }
         for (let i = 0; i < 8; i++) {
           eng.camera.moved = true;
           eng.invalidate(2);
@@ -377,6 +431,9 @@ async function run(rows, backend) {
           h: eng.canvas.height || Math.round(eng.canvas.clientHeight * devicePixelRatio),
           picture: cap ? { width: cap.width, height: cap.height, rgba: Array.from(cap.rgba) } : null,
           binned: eng.renderer.heatBinned ?? eng.renderer.binned ?? null,
+          // Rows with a bearing (the wedges and the field have something to turn), routes drawn.
+          dirRows: c === 'directions' && eng.directions?.data ? eng.directions.data.angles.reduce((n, a) => n + (a !== 255 ? 1 : 0), 0) : null,
+          segments: c === 'lines' ? (eng.live.lines?.segments ?? null) : null,
           saturation: eng.shownSaturation ?? useStore.getState().heat.saturation,
           // The heat under the cursor at the hottest texel (`probeHeat`, the readout's one texel).
           cursor: await (async () => {
@@ -392,7 +449,8 @@ async function run(rows, backend) {
         st.setMode(base.mode);
         st.patchTimeline({ mode: base.timeline.mode, window: base.timeline.window, windowSeconds: base.timeline.windowSeconds });
         if (c === 'filter') st.setFilters([]);
-        if (c === 'split') st.setSplit({ kind: 'teams' });
+        if (c === 'split' || c === 'rate') st.setSplit({ kind: 'teams' });
+        if (c === 'structures') st.setLevel(null);
         st.patchTeam(base.team);
         unwrap?.();
         return out;
@@ -427,6 +485,11 @@ async function run(rows, backend) {
       return { page: stats(dts), present: native ? stats(native.intervals) : null, cpu: native ? stats(native.cpu) : null, splats: eng.live.splats };
     }, secs);
     return { backend, rows, load, exposures, parity, frames, errors: errors.slice(0, 5), log: log.slice(-1500) };
+  } catch (e) {
+    // The app's own output says why a page went away (a crash, a panic in the viewport).
+    throw new Error(`${backend} ${rows / 1e6}M: ${e.message}
+app log:
+${log.slice(-3000)}`);
   } finally {
     await browser?.close().catch(() => {});
     app.kill();
@@ -495,7 +558,7 @@ for (const rows of loads) {
     const bad = v.lit === 0 || v.p50.err > 0.01 || v.p90.err > 0.01 || v.p99.err > 0.01 || v.ssim < 0.99;
     if (bad) failed++;
     console.log(
-      `  ${bad ? 'FAIL' : 'ok  '} ${m} ${c}: field p50 ${pct(v.p50.err)} p90 ${pct(v.p90.err)} p99 ${pct(v.p99.err)} total ${pct(v.total)} ssim ${v.ssim.toFixed(4)} (${v.lit} texels, binned web ${a.binned} native ${b.binned}, exposure web ${a.saturation?.toPrecision(4)} native ${b.saturation?.toPrecision(4)}, cursor web ${a.cursor?.toPrecision(4)} native ${b.cursor?.toPrecision(4)})` +
+      `  ${bad ? 'FAIL' : 'ok  '} ${m} ${c}: field p50 ${pct(v.p50.err)} p90 ${pct(v.p90.err)} p99 ${pct(v.p99.err)} total ${pct(v.total)} ssim ${v.ssim.toFixed(4)} (${v.lit} texels, binned web ${a.binned} native ${b.binned}, exposure web ${a.saturation?.toPrecision(4)} native ${b.saturation?.toPrecision(4)}, cursor web ${a.cursor?.toPrecision(4)} native ${b.cursor?.toPrecision(4)}${a.dirRows !== null && a.dirRows !== undefined ? `, rows with a bearing ${a.dirRows}` : ''}${a.segments !== null && a.segments !== undefined ? `, segments ${a.segments}` : ''})` +
         (pic ? `; picture mean ${pic.mean.toFixed(2)}/255, p99 ${pic.p99}, ${pct(pic.offShare)} off by > 8` : '; no picture'),
     );
     summary.push({ rows, case: c, field: v, picture: pic });

@@ -22,6 +22,7 @@
     "allow-viewport-dataset",
     "allow-viewport-chunk",
     "allow-viewport-column",
+    "allow-viewport-rows",
     "allow-viewport-level",
     "allow-viewport-hide",
     "allow-viewport-capture",

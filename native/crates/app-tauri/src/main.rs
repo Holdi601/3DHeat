@@ -150,6 +150,7 @@ fn main() {
             viewport::viewport_dataset,
             viewport::viewport_chunk,
             viewport::viewport_column,
+            viewport::viewport_rows,
             viewport::viewport_level,
             viewport::viewport_hide,
             viewport::viewport_capture,

@@ -19,14 +19,15 @@
  * replay's figures (placed on the CPU: `gpuTracksMaxBytes` is 0 here) and cubes, their meshes
  * sent a slice a frame as `GpuFigures` writes them, the far-off glyphs the CPU placed, the
  * scene's triangles, the trails and the overlay lines, the objectives' marks and the lines
- * over the finished picture. Not yet: GPU tracks, structures and their occlusion layers,
- * image levels, world tiles, line heat, directions, the rate map, the zones' discs, spawn
- * marks, ranges, volume contours.
+ * over the finished picture, the zones' discs, spawn marks, ranges, volume contours; the level's
+ * water and structures with the heat's occlusion behind them (seal, structure depth, peeled
+ * layers); line heat, the wedges and the direction field (their per-row data sent a chunk at a
+ * time, `sendRowData`), the rate map. Not yet: GPU tracks, textures, image levels, world tiles.
  */
 
 import type { Dataset } from '../../state/types';
 import type { Level } from '../level';
-import type { LineData } from '../../data/lines';
+import { packLineStarts, type LineData } from '../../data/lines';
 import type { WorldTile } from '../../world/tileSet';
 import {
   CHUNK_ROWS,
@@ -89,6 +90,8 @@ export function setNativeViewport(on: boolean): void {
 interface Snapshot {
   /** The `setDataset` count the viewport last took (`datasetGen`): rows of an older one say nothing. */
   dataGen?: number;
+  /** `viewport_rows` messages the viewport has taken (`sendRowData`). */
+  rowsTaken?: number;
   residentRows?: number;
   droppedRows?: number;
   gpuBytes?: number;
@@ -100,6 +103,11 @@ interface Snapshot {
 }
 
 const SIGN_SCRATCH = new Float32Array(FILTER_MASK_WIDTH * 2);
+/** `viewport_rows` kinds. */
+const ROW_DIRS = 0;
+const ROW_LINES = 1;
+/** Bytes of per-row data in one `viewport_rows` message at most. */
+const ROW_SLICE_BYTES = 4 * 1024 * 1024;
 const DATA_SLICE_ROWS = 262_144;
 /** Figure mesh bytes sent in one frame at most, as `GpuFigures` writes them; less while playback starts. */
 const MESH_BYTES_PER_FRAME = 2 * 1024 * 1024;
@@ -179,7 +187,14 @@ export class NativeRenderer implements Renderer {
     // Until a snapshot from after this dataset arrives, its rows count as on their way: a
     // `viewport_frame` answers with the snapshot of the last draw, which may predate the
     // dataset and still count the last one's rows (the first exposure then metered part of the load).
-    return this.planned > 0 && (this.snap.dataGen !== this.datasetGen || (this.snap.residentRows ?? 0) < this.planned);
+    // Per-row data on its way counts too: line heat metered before its segment starts land
+    // exposed for points (the line heat's exposure was 17x the web's).
+    return (this.planned > 0 && (this.snap.dataGen !== this.datasetGen || (this.snap.residentRows ?? 0) < this.planned)) || this.rowsPending;
+  }
+
+  /** Bearings or segment starts sent and not yet taken by the viewport. */
+  private get rowsPending(): boolean {
+    return this.rowsSending > 0 || (this.snap.rowsTaken ?? 0) < this.rowsSent;
   }
 
   get gpuBytesUsed(): number {
@@ -203,6 +218,18 @@ export class NativeRenderer implements Renderer {
     const pending = (this.snap.filtersPending ?? false) || this.dataPending;
     if (pending) this.pollSnapshot();
     return pending || this.uploading;
+  }
+
+  /** Per-row data sends still running (`sendRowData`), and the messages sent in all. */
+  private rowsSending = 0;
+  private rowsSent = 0;
+  /**
+   * Moves as each chunk's bearings or segment starts are taken by the viewport: the heat drawn
+   * meanwhile took that chunk's rows as discs or points, so the engine starts the accumulation
+   * over (as the web's `chunkDirs` does).
+   */
+  get dataGeneration(): number {
+    return this.snap.rowsTaken ?? 0;
   }
 
   private polling = false;
@@ -232,6 +259,9 @@ export class NativeRenderer implements Renderer {
   setDataset(dataset: Dataset | null): void {
     this.dataset = dataset;
     const gen = ++this.datasetGen;
+    // Per-row data was the old rows'; the engine sends the new ones' after this.
+    this.lines = null;
+    this.angles = null;
     this.filterKeys = null;
     this.valuesKey = '\u0001';
     this.sentColumns.clear();
@@ -249,7 +279,7 @@ export class NativeRenderer implements Renderer {
       left -= n * perRow;
       this.planned += n;
     }
-    void this.invoke('viewport_dataset', {
+    this.datasetSent = this.invoke('viewport_dataset', {
       handle: native ? native.handle : null,
       rows: native ? native.rows : (dataset?.count ?? 0),
       hasTime,
@@ -261,6 +291,9 @@ export class NativeRenderer implements Renderer {
       })
       .catch((e: unknown) => console.warn('native viewport: dataset', e));
   }
+
+  /** The last `viewport_dataset`: per-row data for it goes after it. */
+  private datasetSent: Promise<unknown> = Promise.resolve();
 
   /** A load the page built: packed as `WebgpuRenderer.flushDataUpload` packs it, sent a chunk at a time. */
   private async sendPageChunks(ds: Dataset, gen: number): Promise<void> {
@@ -365,9 +398,104 @@ export class NativeRenderer implements Renderer {
     }
   }
 
-  setLines(_lines: LineData | null): void {}
+  /** The routes line heat draws (`setLines`), and the rows' bearings the wedges turn by (`setDirections`). */
+  private lines: LineData | null = null;
+  private angles: Uint8Array | null = null;
+  /** Bumped by each `setLines`/`setDirections`, so an older send stops between chunks. */
+  private rowDataSeq = [0, 0];
 
-  setDirections(_angles: Uint8Array | null): void {}
+  setLines(lines: LineData | null): void {
+    const ds = this.dataset;
+    this.lines = lines && ds && lines.flags.length === ds.count ? lines : null;
+    void this.sendRowData(ROW_LINES);
+  }
+
+  setDirections(angles: Uint8Array | null): void {
+    const ds = this.dataset;
+    this.angles = angles && ds && angles.length === ds.count ? angles : null;
+    void this.sendRowData(ROW_DIRS);
+  }
+
+  /**
+   * The viewport's chunks as the page's rows: a load the page built in `CHUNK_ROWS` pieces; one
+   * the core built only where the page holds every row (`pageStep` 1), by the core's chunks. Null
+   * where the page's rows index nothing there (as `fullNative` on the web).
+   */
+  private chunkRows(): { start: number; rows: number }[] | null {
+    const ds = this.dataset;
+    if (!ds) return null;
+    const native = ds.native ?? null;
+    if (native) return native.pageStep === 1 && native.rows === ds.count ? native.chunks.map((c) => ({ start: c.start, rows: c.rows })) : null;
+    return Array.from({ length: Math.ceil(ds.count / CHUNK_ROWS) }, (_, i) => ({ start: i * CHUNK_ROWS, rows: Math.min(CHUNK_ROWS, ds.count - i * CHUNK_ROWS) }));
+  }
+
+  /**
+   * One kind of per-row data to the viewport (`viewport_rows`), a chunk at a time in slices of
+   * `ROW_SLICE_BYTES` (a whole chunk's segment starts in one message took WebView2's browser
+   * process down): a 12-word header (kind, dataset count, chunk, bytes, the chunk's total, the
+   * offset, the line box's min and size), then the bytes. A chunk of `u32::MAX` drops every
+   * chunk's of that kind first.
+   */
+  private async sendRowData(kind: number): Promise<void> {
+    const seq = ++this.rowDataSeq[kind];
+    const gen = this.datasetGen;
+    const lines = this.lines;
+    const box = lines ? [...lines.min, ...lines.size] : [0, 0, 0, 1, 1, 1];
+    // Counted from the call on: the exposure waits for these rows (`dataPending`).
+    this.rowsSending++;
+    const send = (chunk: number, data: Uint8Array | null, total = 0, offset = 0) => {
+      const n = data ? data.byteLength : 0;
+      const buf = new ArrayBuffer(48 + n);
+      const h = new Uint32Array(buf, 0, 6);
+      h[0] = kind;
+      h[1] = gen >>> 0;
+      h[2] = chunk >>> 0;
+      h[3] = n;
+      h[4] = total;
+      h[5] = offset;
+      new Float32Array(buf, 24, 6).set(box);
+      if (data) new Uint8Array(buf, 48, n).set(data);
+      this.rowsSent++;
+      return this.invoke('viewport_rows', new Uint8Array(buf)).catch((e: unknown) => console.warn('native viewport: rows', e));
+    };
+    try {
+      await this.datasetSent;
+      await this.sendRowChunks(kind, seq, gen, send);
+    } finally {
+      this.rowsSending--;
+    }
+  }
+
+  private async sendRowChunks(
+    kind: number,
+    seq: number,
+    gen: number,
+    send: (chunk: number, data: Uint8Array | null, total?: number, offset?: number) => Promise<unknown>,
+  ): Promise<void> {
+    const ds = this.dataset;
+    const lines = this.lines;
+    const angles = this.angles;
+    await send(0xffffffff, null);
+    const chunks = this.chunkRows();
+    if (!ds || !chunks || (kind === ROW_LINES ? !lines : !angles)) return;
+    for (let ci = 0; ci < chunks.length; ci++) {
+      if (seq !== this.rowDataSeq[kind] || gen !== this.datasetGen) return;
+      const { start, rows } = chunks[ci];
+      let data: Uint8Array;
+      if (kind === ROW_LINES) {
+        data = new Uint8Array(packLineStarts(ds, lines!, start, rows, 3).buffer);
+      } else {
+        // `chunkDirs`: a byte a row, 255 (no bearing) past the rows to the word.
+        data = new Uint8Array((Math.max(4, rows) + 3) & ~3).fill(255);
+        data.set(angles!.subarray(start, start + rows));
+      }
+      for (let at = 0; at < data.byteLength; at += ROW_SLICE_BYTES) {
+        if (seq !== this.rowDataSeq[kind] || gen !== this.datasetGen) return;
+        await send(ci, data.subarray(at, Math.min(data.byteLength, at + ROW_SLICE_BYTES)), data.byteLength, at);
+        await new Promise((r) => setTimeout(r, 0));
+      }
+    }
+  }
 
   setLevel(level: Level | null): void {
     this.rangeLevel = level && level.kind === 'model' && level.indices.length > 0 ? level : null;
@@ -377,15 +505,30 @@ export class NativeRenderer implements Renderer {
     }
     const nv = level.vertices.length;
     const colours = level.colours && level.colours.length >= (nv / 6) * 3 ? level.colours.subarray(0, (nv / 6) * 3) : null;
-    const ni = level.indices.length;
-    const buf = new ArrayBuffer(12 + nv * 4 + (colours ? colours.length * 4 : 0) + ni * 4);
-    const head = new Uint32Array(buf, 0, 3);
+    // The ground, then the structures (faces and edges) and the water: the viewport draws them,
+    // seals the structures' depth and peels their layers for the heat's occlusion.
+    const none = new Uint32Array(0);
+    const sets = [level.indices, level.structureIndices ?? none, level.structureEdges ?? none, level.waterIndices ?? none];
+    const words = sets.reduce((a, x) => a + x.length, 0);
+    const buf = new ArrayBuffer(24 + nv * 4 + (colours ? colours.length * 4 : 0) + words * 4);
+    const head = new Uint32Array(buf, 0, 6);
     head[0] = nv;
-    head[1] = ni;
+    head[1] = sets[0].length;
     head[2] = colours ? 1 : 0;
-    new Float32Array(buf, 12, nv).set(level.vertices);
-    if (colours) new Float32Array(buf, 12 + nv * 4, colours.length).set(colours);
-    new Uint32Array(buf, 12 + nv * 4 + (colours ? colours.length * 4 : 0), ni).set(level.indices);
+    head[3] = sets[1].length;
+    head[4] = sets[2].length;
+    head[5] = sets[3].length;
+    let at = 24;
+    new Float32Array(buf, at, nv).set(level.vertices);
+    at += nv * 4;
+    if (colours) {
+      new Float32Array(buf, at, colours.length).set(colours);
+      at += colours.length * 4;
+    }
+    for (const set of sets) {
+      new Uint32Array(buf, at, set.length).set(set);
+      at += set.length * 4;
+    }
     void this.invoke('viewport_level', new Uint8Array(buf)).catch((e: unknown) => console.warn('native viewport: level', e));
   }
 

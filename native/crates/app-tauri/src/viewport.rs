@@ -101,6 +101,14 @@ pub fn viewport_column(window: WebviewWindow, request: Request<'_>) {
     with(&window, |v| v.send(Msg::PageColumn(bytes)));
 }
 
+/// One chunk's per-row data for the heat modes (raw; `heatmodes::RowData::parse`): bearings or
+/// line heat's segment starts.
+#[tauri::command]
+pub fn viewport_rows(window: WebviewWindow, request: Request<'_>) {
+    let bytes = raw(&request).to_vec();
+    with(&window, |v| v.send(Msg::Rows(bytes)));
+}
+
 /// A slice of a figure mesh (raw: id, vertices, total bytes, offset, then the bytes; a total of 0
 /// lets the mesh go, and id `u32::MAX` with it every mesh).
 #[tauri::command]
@@ -116,24 +124,12 @@ pub fn viewport_glyphs(window: WebviewWindow, request: Request<'_>) {
     with(&window, |v| v.send(Msg::Glyphs(bytes)));
 }
 
-/// The level's ground (raw: vertex floats, index count, has colours; then positions+normals,
-/// colours, indices), or an empty body for none.
+/// The level (raw, `LevelMesh::parse`: the ground, structures, their edges and the water), or an
+/// empty body for none.
 #[tauri::command]
 pub fn viewport_level(window: WebviewWindow, request: Request<'_>) {
     let b = raw(&request);
-    let level = (b.len() >= 12).then(|| {
-        let w = |k: usize| u32::from_le_bytes([b[k * 4], b[k * 4 + 1], b[k * 4 + 2], b[k * 4 + 3]]) as usize;
-        let (nv, ni, has_colours) = (w(0), w(1), w(2) != 0);
-        let floats = |at: usize, n: usize| -> Vec<f32> { b[at..at + n * 4].chunks_exact(4).map(|c| f32::from_le_bytes([c[0], c[1], c[2], c[3]])).collect() };
-        let mut at = 12;
-        let vertices = floats(at, nv);
-        at += nv * 4;
-        let nc = if has_colours { nv / 2 } else { 0 };
-        let colours = has_colours.then(|| floats(at, nc));
-        at += nc * 4;
-        let indices = b[at..at + ni * 4].chunks_exact(4).map(|c| u32::from_le_bytes([c[0], c[1], c[2], c[3]])).collect();
-        LevelMesh { vertices, colours, indices }
-    });
+    let level = LevelMesh::parse(b);
     with(&window, |v| v.send(Msg::Level(level)));
 }
 

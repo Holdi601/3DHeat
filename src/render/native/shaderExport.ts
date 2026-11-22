@@ -55,12 +55,19 @@ import {
   FLAG_USE_TEAM_SIGN,
   HEAT_UNIFORM_BYTES,
   HEAT_WGSL,
+  LINE_HEAT_WGSL,
   LINE_WGSL,
   LOOK_WGSL,
   MERGE_WGSL,
   MESH_WGSL,
+  PEEL_UNIFORM_BYTES,
+  PEEL_WGSL,
+  WIRE_WGSL,
 } from '../webgpu/shaders';
-import { CHUNK_ROWS, FILTER_MASK_WIDTH, MAX_PLAN_BLOCKS, SAMPLE_BLOCK } from '../types';
+import { ARROW_WGSL, STREAM_WGSL } from '../webgpu/dirField';
+import { FIELD_ARROW_VERTS } from '../dirFieldShared';
+import { CHUNK_ROWS, FILTER_MASK_WIDTH, HEAT_DEPTH_LAYERS, MAX_PLAN_BLOCKS, SAMPLE_BLOCK } from '../types';
+import { PEEL_EPSILON_REVERSE } from '../depth';
 import { LUT_HEIGHT, LUT_WIDTH } from '../colors';
 import { CURVE_LUT_SIZE } from '../../state/curve';
 import { VOLUME_BLOCK_FLOATS } from '../../volumes/gpu';
@@ -81,6 +88,9 @@ import { CAPTURE_UNIFORM_BYTES, CAPTURE_WGSL, GROUND_UNIFORM_BYTES, GROUND_WGSL,
 export function nativeShaders(): Record<string, string> {
   return {
     'heat_splat.wgsl': HEAT_WGSL,
+    'heat_line.wgsl': LINE_HEAT_WGSL,
+    'dir_arrow.wgsl': ARROW_WGSL,
+    'dir_stream.wgsl': STREAM_WGSL,
     'heat_bin.wgsl': binWgsl(),
     'heat_list.wgsl': listHeatWgsl(),
     'heat_resolve.wgsl': RESOLVE_WGSL,
@@ -91,6 +101,8 @@ export function nativeShaders(): Record<string, string> {
     'merge.wgsl': MERGE_WGSL,
     'composite.wgsl': COMPOSITE_WGSL,
     'mesh.wgsl': MESH_WGSL,
+    'wire.wgsl': WIRE_WGSL,
+    'peel.wgsl': PEEL_WGSL,
     'line.wgsl': LINE_WGSL,
     'figure.wgsl': figureWgsl(),
     'cube.wgsl': CUBE_WGSL,
@@ -151,6 +163,10 @@ export function nativeConstants(): string {
   int('MAX_VIEWS', MAX_VIEWS);
   int('VIEW_FACE', VIEW_FACE);
   int('VIEW_LAYERS', VIEW_LAYERS);
+  int('FIELD_ARROW_VERTS', FIELD_ARROW_VERTS);
+  int('HEAT_DEPTH_LAYERS', HEAT_DEPTH_LAYERS);
+  int('PEEL_UNIFORM_BYTES', PEEL_UNIFORM_BYTES);
+  flt('PEEL_EPSILON_REVERSE', PEEL_EPSILON_REVERSE);
   for (const [k, v] of Object.entries({
     FLAG_PERSPECTIVE,
     FLAG_GROUND_PROJECTED,

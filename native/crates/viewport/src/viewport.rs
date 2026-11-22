@@ -42,6 +42,8 @@ pub enum Msg {
     PageChunk(Vec<u8>),
     /// One chunk's rows of a filter column the page holds (a load the page built).
     PageColumn(Vec<u8>),
+    /// One chunk's per-row data for the heat modes (`heatmodes::RowData`).
+    Rows(Vec<u8>),
     Level(Option<LevelMesh>),
     Capture(Reply<Option<Captured>>),
     /// The heat field once the page's packet `after` (its sequence number) is drawn.
@@ -295,6 +297,19 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                     }
                     Err(e) => eprintln!("viewport: {e:#}"),
                 },
+                Msg::Rows(bytes) => match {
+                    // Counted whatever they hold: the page waits until every one it sent is taken.
+                    r.modes.taken += 1;
+                    crate::heatmodes::RowData::parse(&bytes)
+                } {
+                    // Rows of an older dataset say nothing about this one's.
+                    Ok(rows) if rows.gen == data.page_gen => {
+                        r.modes.put(&r.device, &r.queue, rows);
+                        dirty = true;
+                    }
+                    Ok(_) => {}
+                    Err(e) => eprintln!("viewport: {e:#}"),
+                },
                 Msg::PageColumn(bytes) => match loader::page_column(&r.device, &bytes) {
                     Ok((chunk, name, Some(buf))) => {
                         r.add_column(chunk, name, buf);
@@ -441,8 +456,8 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
         r.poll();
         let s = &r.stats;
         snap.lock().json = format!(
-            "{{\"residentRows\":{},\"droppedRows\":{},\"gpuBytes\":{},\"levelBytes\":{},\"frames\":{},\"binned\":{},\"filtersPending\":{},\"lastSeq\":{},\"dataGen\":{},\"backend\":{:?},\"adapter\":{:?},\"heatFormat\":{:?}}}",
-            r.resident_rows, r.dropped_rows, r.gpu_bytes, r.level_bytes(), s.frames, s.binned, s.filters_pending, s.last_seq, data.page_gen, s.backend, s.adapter, s.heat_format
+            "{{\"residentRows\":{},\"droppedRows\":{},\"gpuBytes\":{},\"levelBytes\":{},\"frames\":{},\"binned\":{},\"filtersPending\":{},\"lastSeq\":{},\"dataGen\":{},\"rowsTaken\":{},\"backend\":{:?},\"adapter\":{:?},\"heatFormat\":{:?}}}",
+            r.resident_rows, r.dropped_rows, r.gpu_bytes, r.level_bytes(), s.frames, s.binned, s.filters_pending, s.last_seq, data.page_gen, r.modes.taken, s.backend, s.adapter, s.heat_format
         );
     }
 }

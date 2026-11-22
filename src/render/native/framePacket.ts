@@ -153,9 +153,35 @@ export const FRAME_FIELDS: ReadonlyArray<readonly [string, number]> = [
   ['reliefElevRange', 1],
   ['reliefLowY', 1],
   ['reliefHighY', 1],
+  /** The model level's structures and water (`LevelDraw.structure`, `.water`). */
+  ['structFaceOpacity', 1],
+  ['structWireOpacity', 1],
+  ['structTint', 3],
+  ['structFaces', 1],
+  ['structWire', 1],
+  ['structFlat', 1],
+  ['waterOpacity', 1],
+  ['waterTint', 3],
+  ['waterShow', 1],
   ['rateOn', 1],
   ['directionOn', 1],
   ['lineHeat', 1],
+  /** The rate map's composite settings (`HeatParams.rate`, render/rateMap.ts). */
+  ['rateOverall', 1],
+  ['ratePrior', 1],
+  ['rateMin', 1],
+  ['rateSpan', 1],
+  /** Directional heat (`FrameParams.direction`): the wedge, and the field over the heat. */
+  ['dirHalf', 1],
+  ['dirSoft', 1],
+  ['dirNorm', 1],
+  ['dirCentroid', 1],
+  ['dirField', 1],
+  ['dirCell', 1],
+  ['dirTime', 1],
+  /** Line heat's playback (`FrameParams.lineTrail`): the playhead and the tail, 0 off. */
+  ['lineTrailNow', 1],
+  ['lineTrailTail', 1],
   ['timeLo', 1],
   ['timeHi', 1],
   ['dofBlur', 1],
@@ -379,10 +405,33 @@ export function writeFrame(w: PacketWriter, p: FrameParams, palette: number, vie
     set('reliefElevRange', lv.relief.elevationRange);
     set('reliefLowY', lv.relief.lowY);
     set('reliefHighY', lv.relief.highY);
+    set('structFaceOpacity', lv.structure.faceOpacity);
+    set('structWireOpacity', lv.structure.wireOpacity);
+    f.set(lv.structure.tint, FRAME_AT.structTint);
+    set('structFaces', lv.structure.showFaces);
+    set('structWire', lv.structure.showWire);
+    set('structFlat', lv.structure.flat);
+    set('waterOpacity', lv.water.opacity);
+    f.set(lv.water.tint, FRAME_AT.waterTint);
+    set('waterShow', lv.water.show);
   }
   set('rateOn', h.rate !== null);
   set('directionOn', !!p.direction && p.direction.half < Math.PI);
   set('lineHeat', p.lineHeat);
+  set('rateOverall', h.rate?.overall ?? 0.5);
+  set('ratePrior', h.rate?.prior ?? 0);
+  set('rateMin', h.rate?.minSamples ?? 0);
+  set('rateSpan', h.rate?.span ?? 1);
+  const dir = p.direction ?? null;
+  set('dirHalf', dir ? dir.half : Math.PI);
+  set('dirSoft', dir?.soft ?? 0);
+  set('dirNorm', dir?.norm ?? 1);
+  set('dirCentroid', dir?.centroid ?? 0);
+  set('dirField', dir?.field ?? 0);
+  set('dirCell', dir?.cell ?? 0);
+  set('dirTime', dir?.time ?? -1);
+  set('lineTrailNow', p.lineTrail?.now ?? 0);
+  set('lineTrailTail', p.lineTrail?.tail ?? 0);
   set('timeLo', p.timeLo);
   set('timeHi', p.timeHi);
   set('dofBlur', p.dof ? p.dof.maxBlur : 0);
