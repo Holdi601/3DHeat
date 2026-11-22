@@ -5,12 +5,16 @@
  * The recording keeps per hit who was hit, by whom, with which weapon and
  * magazine (`L85A3 [5.56 mm AP]`), and the distance; and per kill the same.
  * It has no hit zone, no damage and no loadout. Derived here: the calibre and
- * type from the magazine's name, the angle against the way the victim faced
+ * type from the magazine's name (or, where the install's catalogue lists the
+ * magazine, from the ammunition it loads), the armour as an estimate where the
+ * unit's role is a soldier class of the game (its default vest and helmet,
+ * `armaGear.ts`), the angle against the way the victim faced
  * (both units' places at that frame, the victim's bearing), both units' speed,
  * and whether the victim's side won (the mission's end, where it names one).
  */
 
-import { angleFromFacing, BlockBuilder, SRC_DERIVED, SRC_RECORDED, type PersonBlock, type PersonMatch } from './types';
+import { angleFromFacing, BlockBuilder, SRC_DERIVED, SRC_ESTIMATE, SRC_RECORDED, type PersonBlock, type PersonMatch } from './types';
+import { armaMagazineFacts, armaRoleArmour } from './armaGear';
 import { armaAmmo, classOfName, splitOcapWeapon } from './weapons';
 
 interface Entity {
@@ -97,6 +101,12 @@ export function ocapHits(doc: Recording, match: PersonMatch): PersonBlock {
     b.text(i, 'shooterSide', sSide);
     I.team[i] = vSide && vSide === sSide ? 1 : 0;
     b.text(i, 'victimRole', victim.role ?? '');
+    // The armour: the default vest and helmet of the game's soldier of that role and side (an estimate: no loadout recorded).
+    const arm = armaRoleArmour(victim.side ?? '', victim.role ?? '');
+    if (arm) {
+      b.text(i, 'armor', [arm.vest, arm.helmet].filter(Boolean).join(' + ') || 'none');
+      S.armor[i] = SRC_ESTIMATE;
+    }
     I.kill[i] = kind === 'killed' ? 1 : 0;
     S.kill[i] = SRC_RECORDED;
     if (kind === 'hit') lastHit.set(key, { i, f });
@@ -108,11 +118,17 @@ export function ocapHits(doc: Recording, match: PersonMatch): PersonBlock {
       b.text(i, 'ammo', magazine);
       b.text(i, 'weaponClass', classOfName(weapon));
       const a = armaAmmo(magazine, weapon);
-      if (a) {
+      const facts = armaMagazineFacts(magazine);
+      if (a && Number.isFinite(a.calibre)) {
         N.calibre[i] = a.calibre;
         S.calibre[i] = SRC_DERIVED;
-        b.text(i, 'ammoType', a.ammoType);
-      }
+        b.text(i, 'ammoType', a.ammoType || facts?.ammoType || '');
+      } else if (facts && Number.isFinite(facts.calibre)) {
+        // The install's catalogue: the magazine's ammunition, its calibre in its class name.
+        N.calibre[i] = facts.calibre;
+        S.calibre[i] = SRC_DERIVED;
+        b.text(i, 'ammoType', a?.ammoType || facts.ammoType);
+      } else if (a) b.text(i, 'ammoType', a.ammoType);
     }
     if (Number.isFinite(metres)) {
       N.distance[i] = metres;

@@ -494,6 +494,9 @@ const UNIT_CATALOG_ROUTE = '/__heat3d/unit-catalogs';
  * vehicle's name and its further names, domain; type, rank and battle rating where given), as `{ version: 1, games: [{ game, items }] }`. Read
  * again when a file changes; 204 without any.
  */
+/** Catalogue kinds that are no units (Arma 3's ammunition, magazines, gear, soldiers): served apart, at CATALOG_FACTS_ROUTE. */
+const FACT_KINDS = new Set(['ammo', 'magazine', 'vest', 'helmet', 'uniform', 'man']);
+
 function unitCatalogs(): Plugin {
   const cache = new Map<string, { key: string; game: string; items: unknown[] }>();
   const keep = ['id', 'name', 'kind', 'class', 'nation', 'key', 'domain'] as const;
@@ -513,7 +516,7 @@ function unitCatalogs(): Plugin {
           const doc = JSON.parse(readFileSync(file, 'utf8')) as { format?: string; version?: number; game?: string; items?: Record<string, unknown>[] };
           if (doc?.format !== '3dheat-catalog' || doc.version !== 1 || !Array.isArray(doc.items)) continue;
           const items = doc.items
-            .filter((it) => it && typeof it.id === 'string' && typeof it.name === 'string')
+            .filter((it) => it && typeof it.id === 'string' && typeof it.name === 'string' && !FACT_KINDS.has(String(it.kind ?? '')))
             .map((it) => {
               const out: Record<string, unknown> = Object.fromEntries(keep.filter((k) => typeof it[k] === 'string' && it[k] !== '').map((k) => [k, it[k]]));
               // Further names of the vehicle (a short form, another designation), for matching across games.
@@ -552,6 +555,51 @@ function unitCatalogs(): Plugin {
     });
   };
   return { name: 'heat3d-unit-catalogs', configureServer: handler, configurePreviewServer: handler };
+}
+
+const CATALOG_FACTS_ROUTE = '/__heat3d/catalog-facts';
+
+/**
+ * A game's catalogue items that are no units, whole (`<levels>/<game>/catalog.json`, kinds in FACT_KINDS): Arma 3's
+ * ammunition with its damage numbers, magazines, vests and headgear with their armour, soldiers with their default
+ * gear, for the person-hit analysis (src/person/armaGear.ts). `GET CATALOG_FACTS_ROUTE/<game>`: `{ game, items }`, 204
+ * without any. Kept on this machine only.
+ */
+function catalogFacts(): Plugin {
+  const cache = new Map<string, { key: string; body: string | null }>();
+  const handler = (server: ViteDevServer | { middlewares: ViteDevServer['middlewares'] }) => {
+    server.middlewares.use(CATALOG_FACTS_ROUTE, (req, res) => {
+      const game = decodeURIComponent((req.url ?? '').replace(/^\//, '').split('?')[0]);
+      const root = levelsRoot();
+      const file = root && /^[\w-]+$/.test(game) ? `${root}/${game}/catalog.json` : '';
+      let body: string | null = null;
+      try {
+        if (file && existsSync(file)) {
+          const st = statSync(file);
+          const key = `${st.size}|${st.mtimeMs}`;
+          let hit = cache.get(file);
+          if (hit?.key !== key) {
+            const doc = JSON.parse(readFileSync(file, 'utf8')) as { format?: string; items?: Record<string, unknown>[] };
+            const items = doc?.format === '3dheat-catalog' && Array.isArray(doc.items) ? doc.items.filter((it) => it && typeof it.id === 'string' && FACT_KINDS.has(String(it.kind ?? ''))) : [];
+            hit = { key, body: items.length ? JSON.stringify({ game, items }) : null };
+            cache.set(file, hit);
+          }
+          body = hit.body;
+        }
+      } catch {
+        body = null;
+      }
+      if (!body) {
+        res.statusCode = 204;
+        res.end();
+        return;
+      }
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Cache-Control', 'no-cache');
+      res.end(body);
+    });
+  };
+  return { name: 'heat3d-catalog-facts', configureServer: handler, configurePreviewServer: handler };
 }
 
 /** Where the page asks for the catalogue folder's index (src/ui/panels/CatalogSection.tsx). */
@@ -1170,7 +1218,7 @@ function usageStats(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [react(), commandIndex(), usageStats(), hostMemory(), selfUpdate(), figurePack(), modelPack(), unitCatalogs(), localRanges(), levelLayouts(), catalogFolder(), campaignFiles()],
+  plugins: [react(), commandIndex(), usageStats(), hostMemory(), selfUpdate(), figurePack(), modelPack(), unitCatalogs(), catalogFacts(), localRanges(), levelLayouts(), catalogFolder(), campaignFiles()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

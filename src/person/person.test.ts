@@ -9,6 +9,7 @@ import { PersonStore } from './store';
 import { armourEffect, compileFilter, coverageOf, falloff, headshotRate, regionStats, selected, topBy, wholeDamage } from './analyze';
 import { HG_BODY, HG_HEAD, SRC_DERIVED, SRC_ESTIMATE, SRC_RECORDED, angleFromFacing, hitGroupOf, regionOfGroup, zoneOfGroup, type PersonMatch } from './types';
 import { armaAmmo, splitOcapWeapon } from './weapons';
+import { armaMagazineFacts, armaRoleArmour, calibreOfAmmoId, setArmaFacts, type ArmaFact } from './armaGear';
 import { bodyOfPlates, drawBody, genericBody } from './body';
 
 const match = (game: PersonMatch['game'] = ''): PersonMatch => ({ id: 'm', file: 0, game, map: 'test map', mode: '', started: NaN, converterVersion: '', gameVersion: '' });
@@ -203,6 +204,44 @@ describe('Arma 3 (OCAP)', () => {
     expect(I.won[0]).toBe(0);
     expect(I.hitgroup[0]).toBe(0);
     expect(S.damage[0]).toBe(0);
+  });
+});
+
+describe('Arma 3 catalogue facts', () => {
+  const facts: ArmaFact[] = [
+    { id: '30Rnd_65x39_caseless_mag', kind: 'magazine', name: '6.5 mm 30Rnd STANAG Mag', short: '6.5 mm', ammo: 'B_65x39_Caseless' },
+    { id: 'B_65x39_Caseless', kind: 'ammo', name: 'B_65x39_Caseless', class: 'bullet', hit: 10, caliber: 1, typicalSpeed: 820 },
+    { id: 'V_PlateCarrier1_rgr', kind: 'vest', name: 'Carrier Lite (Green)', protection: { HitChest: { armor: 16, passThrough: 0.3 } } },
+    { id: 'H_HelmetB', kind: 'helmet', name: 'Combat Helmet', protection: { HitHead: { armor: 6, passThrough: 0.5 } } },
+    { id: 'B_Soldier_F', kind: 'man', name: 'Rifleman', side: 'west', vest: 'V_PlateCarrier1_rgr', helmet: 'H_HelmetB' },
+  ];
+  it('reads a magazine by its short name and a role by its soldier', () => {
+    setArmaFacts(facts);
+    expect(armaMagazineFacts('6.5 mm')).toMatchObject({ ammo: 'B_65x39_Caseless', hit: 10, typicalSpeed: 820, calibre: 6.5 });
+    expect(armaMagazineFacts('7N10')).toBeNull();
+    expect(armaRoleArmour('WEST', 'Rifleman')).toEqual({ vest: 'Carrier Lite (Green)', helmet: 'Combat Helmet', chest: 16, head: 6 });
+    expect(armaRoleArmour('EAST', 'Rifleman')).toBeNull();
+    expect(calibreOfAmmoId('B_556x45_Ball')).toBeCloseTo(5.56);
+    expect(calibreOfAmmoId('B_127x99_Ball')).toBeCloseTo(12.7);
+    expect(calibreOfAmmoId('B_9x21_Ball')).toBe(9);
+    setArmaFacts(null);
+  });
+
+  it('puts the estimated armour and the catalogue calibre on an OCAP hit', () => {
+    setArmaFacts(facts);
+    const rec = {
+      captureDelay: 1,
+      entities: [
+        { id: 0, type: 'unit', name: 'V', side: 'WEST', role: 'Rifleman', startFrameNum: 0, positions: [[[0, 0, 0], 0, 1, 0, 'V', 1]] },
+        { id: 1, type: 'unit', name: 'S', side: 'EAST', startFrameNum: 0, positions: [[[0, 100, 0], 180, 1, 0, 'S', 1]] },
+      ],
+      events: [[0, 'hit', 0, [1, 'MX [6.5 mm 30Rnd STANAG Mag]'], 100]],
+    };
+    const b = ocapHits(rec as never, match());
+    expect(b.dicts.armor[b.cols.txt.armor[0]]).toBe('Carrier Lite (Green) + Combat Helmet');
+    expect(b.cols.src.armor[0]).toBe(SRC_ESTIMATE);
+    expect(b.cols.num.calibre[0]).toBeCloseTo(6.5);
+    setArmaFacts(null);
   });
 });
 

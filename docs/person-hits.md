@@ -42,9 +42,9 @@ Every value carries its source, hit by hit: **recorded** (in the data), **derive
 | Where on the body | recorded: the event's hit group (head, chest, stomach, arms, legs; `generic` for grenades and fire) | recorded: head, body or legs (`GENERAL` for abilities) | not in the recording | recorded for kills: headshot or not | not in the table |
 | Damage (health) | recorded: health lost; `dmg_health` before the cap | derived: the recorded hit less the shield's share | not in the recording | not in the replay | recorded where the converter writes the soldier's damage record (squad-demo 0.2.0), else not known |
 | Armour kept off | derived: twice the armour lost (the game's armour bonus of 0.5) | derived: the shield takes two thirds of each hit until it is gone (checked on the snapshots) | not known | not known | Squad has no armour |
-| Armour worn | recorded: armour before the hit, the helmet (kevlar, kevlar + helmet, none) | derived: the shield before the hit and the most the player had that round (light, heavy, regen) | not known (OCAP keeps no loadout) | not known (the operator is recorded, its rating is not in the replay) | - |
+| Armour worn | recorded: armour before the hit, the helmet (kevlar, kevlar + helmet, none) | derived: the shield before the hit and the most the player had that round (light, heavy, regen) | estimate: OCAP keeps no loadout; where the unit's role is the display name of one of the game's soldiers on that side (`Rifleman`), that soldier's default vest and helmet from your install's catalogue (`heat3d-arma3-maps catalog` 0.4.0); a mission's own role names (`2IC`, `GPMG`) and mod units stay not known | not known (the operator is recorded, its rating is not in the replay) | - |
 | Weapon | recorded | recorded (newer files); derived from what the shooter held at the snapshot before (older files) | recorded, with the magazine | recorded, with its class | recorded where written |
-| Calibre, ammunition type | estimate: the real weapon's cartridge (CS2's files give damage, armour ratio and range modifier, not a calibre) | not known (fictional weapons) | derived: from the magazine's name (`5.56 mm AP`, `7N10`) | not known | not known |
+| Calibre, ammunition type | estimate: the real weapon's cartridge (CS2's files give damage, armour ratio and range modifier, not a calibre) | not known (fictional weapons) | derived: from the magazine's name (`5.56 mm AP`, `7N10`), or from the ammunition the magazine loads where your install's catalogue lists it (`6.5 mm 30Rnd STANAG Mag`: `B_65x39_Caseless`, 6.5 mm) | not known | not known |
 | Distance | recorded for kills (the game's own); derived from the players' places for other hits | derived: both players' places (5 a second in newer files, else once a second) | recorded | derived: the killer's place on the kill row, the victim's on the death row | not known |
 | Angle against the victim's facing | derived: the victim's facing and the shooter's place written on the hit (CS2 tool 1.2.0); in older tables the shot's traced way in the victim's frame (the event's own view angles, within 1.3 degrees of the former for nine hits in ten), else the samples | derived: the victim's view and the shooter's place | derived: the victim's bearing and the shooter's place at that frame | derived: the victim's last sample | not known |
 | Through a wall | recorded for kills (`penetrated`) | recorded (newer files: `wallPen`) | not known | not known | not known |
@@ -103,8 +103,8 @@ Measured on this project's test machine (real GPU, dev build):
 |---|---|---|
 | CS2 tool 1.2.0 | the victim's facing and the shooter's place and side on every `hurt` row | done; tables converted before keep working, convert again for exact angles |
 | squad-demo 0.2.0 | the soldier's last damage record on `wounded` and `death` rows (damage, damage type, the shooter, the weapon) | proposed |
-| arma3-maps (catalogue) | ammunition (calibre, hit value, typical speed), magazines, vests' and helmets' armour per hit point | proposed; OCAP records no loadout, so armour stays unknown per hit until a recorder writes loadouts |
-| CS2 tool | whether a non-lethal hit went through a wall: the game's `player_hurt` does not say it; it needs the shot traced through the map | proposed |
+| arma3-maps 0.4.0 (catalogue) | ammunition (hit value, penetration factor, typical speed), magazines, vests', helmets' and uniforms' armour per hit point, soldiers with their default gear | done: calibre for catalogued magazines, the role's default armour as an estimate; the armour per hit stays an estimate until a recorder writes loadouts |
+| CS2 tool | whether a non-lethal hit went through a wall: the game's `player_hurt` does not say it; it needs the shot traced through the map's collision mesh, with the bullet-passing surfaces (fences, grates) kept apart, which the map export merges today | planned |
 
 ## For developers
 
@@ -113,6 +113,7 @@ Measured on this project's test machine (real GPU, dev build):
 | `src/person/types.ts` | The hit columns, hit groups, regions and zones, value sources, the block builder |
 | `src/person/readCs2.ts`, `readValorant.ts`, `readOcap.ts`, `readR6.ts`, `readSquad.ts` | One game's hits from its columns or document (pure; tested on made-up data) |
 | `src/person/weapons.ts` | Weapon classes, calibres and ammunition types per game; OCAP magazine names |
+| `src/person/armaGear.ts` | Arma 3's magazines, ammunition, vests, helmets and soldiers from the install's catalogue (`/__heat3d/catalog-facts/arma3` on the dev and preview servers) |
 | `src/person/scan.ts`, `table.ts` | One file: which game, only the rows and columns needed |
 | `src/person/store.ts`, `analyze.ts` | The worker's columns; filters, region statistics, charts, top lists, coverage |
 | `src/person/worker.ts`, `scanWorker.ts` | The analysis worker and its pool of readers (with the cache) |

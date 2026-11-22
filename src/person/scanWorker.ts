@@ -6,10 +6,11 @@
  */
 
 import { scanPersonFile } from './scan';
+import { armaFactsStamp, loadArmaFacts } from './armaGear';
 import { INT_COLUMNS, NUM_COLUMNS, SOURCE_FIELDS, TEXT_COLUMNS, allocColumns, transferList, type PersonBlock } from './types';
 
 /** Bumped when what a scan keeps changes: older cached blocks are read again. */
-export const PERSON_SCAN_VERSION = 1;
+export const PERSON_SCAN_VERSION = 2;
 
 export type PersonScanRequest = { type: 'scan'; index: number; file: File; cache: boolean };
 export type PersonScanReply = { type: 'block'; index: number; block: PersonBlock | null; cached: boolean; error?: string };
@@ -30,7 +31,8 @@ function openDb(): Promise<IDBDatabase | null> {
   return db;
 }
 
-const keyOf = (f: File) => `${PERSON_SCAN_VERSION}|${f.name}|${f.size}|${f.lastModified}`;
+// The Arma 3 catalogue facts in use are part of the key: a new catalogue reads the recordings again.
+const keyOf = (f: File) => `${PERSON_SCAN_VERSION}|${armaFactsStamp()}|${f.name}|${f.size}|${f.lastModified}`;
 
 type Stored = Omit<PersonBlock, 'cols'> & { cols: { n: number; buffers: ArrayBuffer[] } };
 
@@ -83,6 +85,7 @@ self.onmessage = async (e: MessageEvent<PersonScanRequest>) => {
   if (q.type !== 'scan') return;
   const post = (r: PersonScanReply) => (self as unknown as Worker).postMessage(r, r.block ? transferList(r.block.cols) : []);
   try {
+    await loadArmaFacts();
     if (q.cache) {
       const had = await cached(q.file);
       if (had !== undefined) return post({ type: 'block', index: q.index, block: had ? { ...had, match: { ...had.match, file: q.index } } : null, cached: true });
