@@ -271,7 +271,7 @@ pub fn scan_root(lib: &Library, root_id: i64, root: &Path) -> Result<Stats> {
         p.changed = changed.len() as u64;
     });
     let t1 = Instant::now();
-    let levels_root = lib.levels_dir();
+    let levels_root = crate::normal_path(&lib.levels_dir());
     let levels = level_index(&levels_root);
     let pool = rayon::ThreadPoolBuilder::new()
         // A network share: a few files at a time, so the NAS keeps serving everyone else.
@@ -326,11 +326,13 @@ pub fn add_files(lib: &Library, paths: &[PathBuf]) -> Result<Vec<i64>> {
         let v = st.query_map([], |r| Ok((r.get(0)?, r.get(1)?)))?.collect::<rusqlite::Result<_>>()?;
         v
     };
-    let levels_root = lib.levels_dir();
+    let levels_root = crate::normal_path(&lib.levels_dir());
     let levels = level_index(&levels_root);
     let pictures = level_pictures(lib);
     let mut batch = Vec::new();
     for p in paths {
+        // Spelled as a scan of its folder spells it, or the same file becomes a second item.
+        let p = &crate::normal_path(p);
         let Some(class) = classify(p) else { continue };
         let Ok(md) = std::fs::metadata(p) else { continue };
         let root = roots.iter().filter(|(_, r)| p.starts_with(r)).max_by_key(|(_, r)| r.len()).map(|(id, _)| *id);

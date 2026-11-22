@@ -390,6 +390,14 @@ impl Drop for Reader<'_> {
     }
 }
 
+/// A path in the one spelling the catalogue keeps: absolute, links and Windows'
+/// short 8.3 names resolved (`RUNNER~1` and `runneradmin` are one folder), so a file
+/// found by a scan and the same file named by a job are one item. Unchanged when it
+/// cannot be resolved (not there now).
+pub fn normal_path(p: &Path) -> PathBuf {
+    std::fs::canonicalize(p).map(strip_verbatim).unwrap_or_else(|_| p.to_path_buf())
+}
+
 /// `\\?\C:\x` -> `C:\x` (what `canonicalize` gives on Windows).
 fn strip_verbatim(p: PathBuf) -> PathBuf {
     let s = p.to_string_lossy();
