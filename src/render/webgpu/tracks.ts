@@ -10,9 +10,8 @@ import { GPU_DEPTH_TEST } from '../depth';
 import { INSTANCE_STRIDE } from '../../figures/instances';
 import { KEY_U32, KEYS_PER_BUFFER, sameKeys, type GpuTrackStore } from '../gpuTracks/store';
 import { FINISH_WGSL, MARKS_WGSL, PLACE_WGSL, TRAIL_WGSL } from '../gpuTracks/shader';
-import { TRAIL_SEGMENTS_GL } from '../gpuTracks/glsl';
 import { visWords } from '../gpuTracks/visibility';
-import { TRACKS_UNIFORM_BYTES, trackRuns, writeTracksUniform } from '../gpuTracks/gpuLayout';
+import { TRACKS_UNIFORM_BYTES, TRAIL_ROOM, TRAIL_SEGMENTS, trackRuns, writeTracksUniform } from '../gpuTracks/gpuLayout';
 import type { GpuFigures } from './figures';
 import type { GpuSymbols } from './symbols';
 import type { SymbolParams } from '../types';
@@ -66,11 +65,6 @@ const U_BYTES = TRACKS_UNIFORM_BYTES;
 /** Bytes a write of the keys carries, and milliseconds a frame may spend on them; see `flushWrites`. */
 const TRACK_WRITE_BYTES = 4 * 1024 * 1024;
 const TRACK_WRITE_MS = 3;
-
-/** Trail vertices the buffer holds: 32 bytes each, 128 MB. */
-const TRAIL_ROOM = 4_000_000;
-/** Most trail segments a unit: the same on WebGL2 (`gpuTracks/glsl.ts`). */
-const TRAIL_SEGMENTS = TRAIL_SEGMENTS_GL;
 
 interface Uploaded {
   store: GpuTrackStore;

@@ -96,7 +96,7 @@ pub struct Figures {
     pub bytes: u64,
 }
 
-fn alpha_blend() -> wgpu::BlendState {
+pub(crate) fn alpha_blend() -> wgpu::BlendState {
     wgpu::BlendState {
         color: wgpu::BlendComponent { src_factor: wgpu::BlendFactor::SrcAlpha, dst_factor: wgpu::BlendFactor::OneMinusSrcAlpha, operation: wgpu::BlendOperation::Add },
         alpha: wgpu::BlendComponent { src_factor: wgpu::BlendFactor::One, dst_factor: wgpu::BlendFactor::OneMinusSrcAlpha, operation: wgpu::BlendOperation::Add },
@@ -104,7 +104,7 @@ fn alpha_blend() -> wgpu::BlendState {
 }
 
 /// Reverse-Z: nearer is larger, an equal depth passes (`GPU_DEPTH_TEST`).
-fn depth(write: bool) -> Option<wgpu::DepthStencilState> {
+pub(crate) fn depth(write: bool) -> Option<wgpu::DepthStencilState> {
     Some(wgpu::DepthStencilState { format: DEPTH_FORMAT, depth_write_enabled: Some(write), depth_compare: Some(wgpu::CompareFunction::GreaterEqual), stencil: Default::default(), bias: Default::default() })
 }
 
@@ -590,6 +590,15 @@ impl Figures {
         pass.set_bind_group(0, group, &[]);
         pass.set_vertex_buffer(0, self.ring.buf.slice(at..));
         pass.draw(0..6, 0..n);
+    }
+
+    /// The GPU tracks' glyph run (`GpuSymbols.drawIndirect`): instances from `at` bytes in
+    /// `instances`, the count in `args` at `args_at`, six vertices an instance.
+    pub fn draw_glyphs_indirect(&self, pass: &mut wgpu::RenderPass<'_>, group: &wgpu::BindGroup, instances: &wgpu::Buffer, at: u64, args: &wgpu::Buffer, args_at: u64) {
+        pass.set_pipeline(&self.glyph);
+        pass.set_bind_group(0, group, &[]);
+        pass.set_vertex_buffer(0, instances.slice(at..));
+        pass.draw_indirect(args, args_at);
     }
 
     /// A packet's kept arrays over the picture and on the ground, when new.

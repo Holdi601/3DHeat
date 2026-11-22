@@ -72,13 +72,16 @@ pub struct Packet {
     pub tracks: Option<TracksFrame>,
 }
 
-/// `SECTION_TRACKS`: the store's id, the place shader's uniform, the visibility bits when they changed.
+/// `SECTION_TRACKS`: the store's id, the place shader's uniform, the visibility bits when they
+/// changed, the far-off glyphs' settings when the frame draws glyphs.
 #[derive(Clone, Default)]
 pub struct TracksFrame {
     pub id: u32,
     /// `TRACKS_UNIFORM_BYTES / 4` words.
     pub uniform: Vec<u32>,
     pub vis: Option<Vec<u32>>,
+    /// Style, mode, ticks and the sides' colours for the glyphs' run (no instances: those are the GPU's).
+    pub glyphs: Option<Glyphs>,
 }
 
 /// `SECTION_RANGES`: the page packs every uniform; the shell mesh comes once.
@@ -363,7 +366,16 @@ pub fn decode(bytes: &[u8]) -> Result<Packet> {
                 let uniform = s.slice(TRACKS_UNIFORM_BYTES as usize / 4)?.to_vec();
                 let n = s.take()? as usize;
                 let vis = (n > 0).then(|| s.slice(n).map(|v| v.to_vec())).transpose()?;
-                p.tracks = Some(TracksFrame { id, uniform, vis });
+                let glyphs = if s.take()? != 0 {
+                    let head = s.slice(3)?;
+                    let f = |w: u32| f32::from_bits(w);
+                    let (style, mode, ticks) = (f(head[0]), f(head[1]), f(head[2]));
+                    let sides = s.slice(64)?.iter().map(|w| f(*w)).collect();
+                    Some(Glyphs { style, mode, ticks, sides, instances: Vec::new() })
+                } else {
+                    None
+                };
+                p.tracks = Some(TracksFrame { id, uniform, vis, glyphs });
             }
             SECTION_CUBES => {
                 let n = s.take()? as usize;

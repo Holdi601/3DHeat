@@ -7,12 +7,17 @@
  */
 
 import { DART_MESHES } from '../symbols/darts';
+import { TRAIL_SEGMENTS_GL } from './glsl';
 import { visWords } from './visibility';
 import type { GpuTrackStore } from './store';
 import type { GpuTracksParams } from '../types';
 
 /** Uniform bytes (`U` in `PLACE_WGSL`). */
 export const TRACKS_UNIFORM_BYTES = 192;
+/** Trail vertices the tracks' trail buffer holds, 32 bytes each (128 MB): the web's and the viewport's (`TRACKS_TRAIL_ROOM`). */
+export const TRAIL_ROOM = 4_000_000;
+/** Most trail segments a unit: the same on WebGL2 (`glsl.ts`). */
+export const TRAIL_SEGMENTS = TRAIL_SEGMENTS_GL;
 /** Pixels across a death's marker. */
 export const MARKER_PX = 9;
 

@@ -34,7 +34,9 @@
  *            on both backends; the pictures, as the box replay. tracks-cpu: the same load with
  *            the GPU tracks off (`?gputracks=0`), every unit placed on the CPU - compared with the
  *            GPU path's picture of the same backend (reported, not gated: the CPU path picks its
- *            figures' detail by its own rules). Without --dir (only tracks cases) no files load,
+ *            figures' detail by its own rules). tracks-trails: the GPU path with 30 s trails, drop
+            lines and a death's mark on every tenth unit (the trail and marks passes); tracks-symbols:
+            far off as map symbols (the glyphs' run). Both gated as tracks. Without --dir (only tracks cases) no files load,
  *            and the frames below are taken on the synthetic load, the GPU tracks on.
             --detach <s>: the tracks case's store built with the probe let go of the page (no
             picture, its times only) - attached, a 10k-match store took 13-15 s natively
@@ -73,7 +75,7 @@ const backends = String(arg('backends', 'webgpu,native')).split(',');
 const PORT = Number(arg('port', 9336));
 const matches = Number(arg('matches', 1000));
 const unitsPerMatch = Number(arg('units', 20));
-const TRACK_CASES = ['tracks', 'tracks-cpu'];
+const TRACK_CASES = ['tracks', 'tracks-cpu', 'tracks-trails', 'tracks-symbols'];
 const fileCases = cases.filter((c) => !TRACK_CASES.includes(c));
 const loads = fileCases.length ? String(arg('rows', '10')).split(',').map((r) => Number(r) * 1e6) : [0];
 const PER_FILE = 10_000_000;
@@ -268,7 +270,7 @@ async function tracksCase({ c, matches, units }) {
   else url.searchParams.delete('gputracks');
   history.replaceState(null, '', url.href);
   st().setMode('team');
-  st().patchTeam({ figures: true, showRawSamples: false, trailSeconds: 0, farMode: 'figure', figureScale: 1 });
+  st().patchTeam({ figures: true, showRawSamples: false, trailSeconds: 0, farMode: c === 'tracks-symbols' ? 'symbol' : 'figure', figureScale: 1 });
   st().patchTimeline({ mode: 'play', window: 'cumulative', playing: false });
   st().patchBudget({ adaptive: false, exact: true, heatScale: 1 });
   st().seek(((SAMPLES - 1) * DT) / 2);
@@ -278,12 +280,53 @@ async function tracksCase({ c, matches, units }) {
   // The triangle budget too: when a mesh's run fills, which units still get it is the GPU threads'
   // order (an atomic counter), so two runs of the same backend differ where it overflows. Room for
   // every unit in every run makes the picture the same each time.
+  // tracks-trails: 30 s of trail, drop lines to the floor and a death's mark (the marks pass) on
+  // each unit shown where it was 30 s in - the marks put on the store as the lean overlay puts its
+  // markers there, once (the same store each frame, or the native page would send it again).
+  // These cases show about 400 units (trails) or 150 (glyphs, 20 px each) by the visibility bits:
+  // where they overlap, which glyph or blended line lands last is the GPU threads' order, different
+  // run to run.
+  const step = Math.max(1, Math.floor(P / (c === 'tracks-symbols' ? 150 : 400)));
+  let marked = null;
+  let shown = null;
+  const withMarks = (s) => {
+    const n = Math.ceil(P / step);
+    const data = new Float32Array(n * 4);
+    const colour = new Uint32Array(n);
+    for (let k = 0; k < n; k++) {
+      const i = 6 * P + k * step; // the sample at 30 s
+      data.set([px[i] ?? 0, py[i] ?? 0, pz[i] ?? 0, 30], k * 4);
+      colour[k] = k % 2 ? 0xffff4020 : 0xff2040ff;
+    }
+    return { ...s, markers: { count: n, data, colour } };
+  };
+  const visibleOf = (s) => {
+    const words = Math.ceil(s.tracks / 32);
+    const v = new Uint32Array(2 * words);
+    for (let p = 0; p < P; p += step) {
+      const t = s.trackOf[p];
+      if (t >= 0) v[t >>> 5] |= 1 << (t & 31);
+    }
+    return v;
+  };
+  const { px, py, pz } = st().dataset;
   rd.render = function (p) {
-    return orig.call(this, p.gpuTracks ? { ...p, gpuTracks: { ...p.gpuTracks, dartPx: 2, triangleBudget: 1e12 } } : p);
+    let g = p.gpuTracks;
+    if (!g) return orig.call(this, p);
+    g = { ...g, dartPx: 2, triangleBudget: 1e12 };
+    if (c === 'tracks-trails') {
+      if (!marked || marked.src !== g.store) marked = { src: g.store, store: withMarks(g.store) };
+      g = { ...g, store: marked.store, trailSeconds: 30, dropFloor: 150, markerSeconds: 1e9 };
+    }
+    if (c === 'tracks-trails' || c === 'tracks-symbols') {
+      if (!shown || shown.src !== g.store) shown = { src: g.store, v: visibleOf(g.store) };
+      g = { ...g, visible: shown.v };
+    }
+    return orig.call(this, { ...p, gpuTracks: g });
   };
   // The store built and over to the GPU (both backends), then still frames.
   const t0 = performance.now();
-  if (c === 'tracks') while (performance.now() - t0 < 120_000 && (!eng.gpuTracksInfo() || rd.uploadsPending)) await raf();
+  if (c !== 'tracks-cpu') while (performance.now() - t0 < 120_000 && (!eng.gpuTracksInfo() || rd.uploadsPending)) await raf();
   const readyMs = performance.now() - t0;
   for (let i = 0; i < 30; i++) await raf();
   // The same view in every case, once the load has settled (a new load frames itself).
@@ -306,8 +349,8 @@ async function tracksCase({ c, matches, units }) {
     w: eng.canvas.width,
     h: eng.canvas.height,
     picture: cap ? { width: cap.width, height: cap.height, rgba: Array.from(cap.rgba) } : null,
-    info: c === 'tracks' ? info : null,
-    gpu: c === 'tracks' ? !!info : false,
+    info: c !== 'tracks-cpu' ? info : null,
+    gpu: c !== 'tracks-cpu' ? !!info : false,
     readyMs,
     // The native viewport's own word on the store (`viewport_snapshot`): whole there, and its bytes.
     diag: { ds: eng.dataset?.count ?? null, store: st().dataset?.count ?? null, yaw: eng.camera.yawDegrees, pitch: eng.camera.pitchDegrees, gpuTracks: !!eng.gpuTracksParams, sentStore: rd.tracks ? rd.tracks.store === eng.gpuTracksParams?.store : null, slices: rd.tracks?.slices?.length ?? null, w: eng.canvas.clientWidth, h: eng.canvas.clientHeight },
@@ -660,6 +703,17 @@ async function run(rows, backend) {
       };
       return { page: stats(dts), present: native ? stats(native.intervals) : null, cpu: native ? stats(native.cpu) : null, splats: eng.live.splats };
     }, secs);
+    // Memory after the motion: the app's private bytes (the native viewport is in it), its WebView2's
+    // processes (this run's profile), the page's JS heap.
+    const profile = join(out, `webview2-${PORT}`).replace(/'/g, "''");
+    const ps = spawnSync(
+      'powershell',
+      ['-NoProfile', '-Command', `$a = Get-CimInstance Win32_Process; $app = ($a | ? { $_.ProcessId -eq ${app.pid} }).PrivatePageCount; $wv = ($a | ? { $_.Name -eq 'msedgewebview2.exe' -and $_.CommandLine -like '*${profile}*' } | Measure-Object PrivatePageCount -Sum).Sum; "$app $wv"`],
+      { encoding: 'utf8' },
+    );
+    const [appB, wvB] = (ps.stdout || '').trim().split(/\s+/).map(Number);
+    const jsHeap = await page.evaluate(() => performance.memory?.usedJSHeapSize ?? null).catch(() => null);
+    frames.memory = { appMB: appB ? Math.round(appB / 1e6) : null, webviewMB: wvB ? Math.round(wvB / 1e6) : null, jsHeapMB: jsHeap ? Math.round(jsHeap / 1e6) : null };
     return { backend, rows, load, exposures, parity, frames, errors: errors.slice(0, 5), log: log.slice(-6000) };
   } catch (e) {
     // The app's own output says why a page went away (a crash, a panic in the viewport).
@@ -688,6 +742,7 @@ for (const rows of loads) {
     console.log(
       `${m} ${r.backend}: load ${(r.load.loadMs / 1000).toFixed(1)} s (${r.load.resident} resident, ${r.load.dropped} dropped); page frames p50 ${f1(fr.page?.p50)} p99 ${f1(fr.page?.p99)} max ${f1(fr.page?.max)} ms` +
         (fr.present ? `; native presents p50 ${f1(fr.present.p50)} p99 ${f1(fr.present.p99)} max ${f1(fr.present.max)} ms (${fr.present.over25} over 25 ms of ${fr.present.n}), encode p99 ${f1(fr.cpu?.p99)} ms` : '') +
+        (fr.memory ? `; memory app ${fr.memory.appMB} MB, WebView2 ${fr.memory.webviewMB} MB, JS heap ${fr.memory.jsHeapMB} MB` : '') +
         (r.errors.length ? `; errors: ${r.errors.join(' | ')}` : ''),
     );
     const vl = join(out, `${r.backend}-viewport.log`);
@@ -713,8 +768,11 @@ for (const rows of loads) {
     // The CPU path against the GPU path on the same backend: reported only.
     const g = r.parity.tracks;
     const cp = r.parity['tracks-cpu'];
-    if (g) console.log(`  ${r.backend} tracks: ${g.gpu ? 'GPU tracks' : 'NOT on the GPU'} ${JSON.stringify(g.info)}, ready in ${(g.readyMs / 1000).toFixed(1)} s, ${JSON.stringify(g.diag)}${g.viewport ? `, viewport ${JSON.stringify(g.viewport)}` : ''}`);
-    for (const [k, v] of [['tracks', g], ['tracks-cpu', cp]]) if (v?.picture) writeFileSync(join(out, `${m}-${k}-${r.backend}.png`), png(v.picture.width, v.picture.height, Uint8Array.from(v.picture.rgba)));
+    for (const k of ['tracks', 'tracks-trails', 'tracks-symbols']) {
+      const v = r.parity[k];
+      if (v) console.log(`  ${r.backend} ${k}: ${v.gpu ? 'GPU tracks' : 'NOT on the GPU'} ${JSON.stringify(v.info)}, ready in ${(v.readyMs / 1000).toFixed(1)} s, ${JSON.stringify(v.diag)}${v.viewport ? `, viewport ${JSON.stringify(v.viewport)}` : ''}`);
+    }
+    for (const [k, v] of TRACK_CASES.map((k) => [k, r.parity[k]])) if (v?.picture) writeFileSync(join(out, `${m}-${k}-${r.backend}.png`), png(v.picture.width, v.picture.height, Uint8Array.from(v.picture.rgba)));
     if (g?.picture && cp?.picture) {
       const pic = comparePictures({ ...g.picture, rgba: Uint8Array.from(g.picture.rgba) }, { ...cp.picture, rgba: Uint8Array.from(cp.picture.rgba) });
       writeFileSync(join(out, `${m}-tracks-cpu-${r.backend}.png`), png(cp.picture.width, cp.picture.height, Uint8Array.from(cp.picture.rgba)));
@@ -732,7 +790,7 @@ for (const rows of loads) {
       a.picture && { ...a.picture, rgba: Uint8Array.from(a.picture.rgba) },
       b.picture && { ...b.picture, rgba: Uint8Array.from(b.picture.rgba) },
     );
-    if (c === 'figures' || c === 'cubes' || c === 'overlays' || c === 'tracks') {
+    if (c === 'figures' || c === 'cubes' || c === 'overlays' || c.startsWith('tracks')) {
       // No heat in the box replay: the pictures alone, within a pixel's rounding at the figures' edges.
       // The overlays: their pictures over the heat, compared the same way.
       const bad = !pic || pic.mean > 1 || pic.offShare > 0.01;

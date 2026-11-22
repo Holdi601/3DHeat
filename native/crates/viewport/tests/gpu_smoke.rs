@@ -195,11 +195,14 @@ fn mesh_slice() -> Vec<u8> {
 
 /// A GPU tracks store of one track drawn with the mesh above (`nativeTracks.ts` messages): the
 /// begin message, then each array in one slice. The track has no keys, so nothing is placed; the
-/// passes, bindings and indirect draws are what is checked.
+/// passes (place, marks, finish), bindings and indirect draws (meshes, trails, glyphs) are what is checked.
 fn tracks_messages() -> Vec<Vec<u8>> {
     let le = |w: &[u32]| w.iter().flat_map(|x| x.to_le_bytes()).collect::<Vec<u8>>();
-    let want = [64u32, 16, 16, 16];
-    let mut begin = vec![0u32, 5, 1, 1, 4, want[0], want[1], want[2], want[3], 7];
+    // Tracks, keys, keys (2), attitudes, one death's mark and its colour.
+    let want = [64u32, 16, 16, 16, 16, 4];
+    let mut begin = vec![0u32, 5, 1, 1, 4];
+    begin.extend_from_slice(&want);
+    begin.push(7);
     begin.extend_from_slice(&[0, 1, 1, 1]);
     begin.extend_from_slice(&[3, 0, 0, 0, 6, 0, 0, 0]);
     let mut out = vec![le(&begin)];
@@ -224,7 +227,14 @@ fn tracks_frame() -> TracksFrame {
     uniform[28] = 1;
     uniform[29] = 1;
     uniform[37] = 1;
-    TracksFrame { id: 5, uniform, vis: Some(vec![1, 0, 0, 0]) }
+    // Trails, the marks' pass (one mark), room for both.
+    uniform[30] = TRACKS_TRAIL_ROOM;
+    uniform[31] = 8;
+    uniform[32] = f(5.0);
+    uniform[34] = f(5.0);
+    uniform[35] = f(9.0);
+    uniform[36] = 1;
+    TracksFrame { id: 5, uniform, vis: Some(vec![1, 0, 0, 0]), glyphs: Some(Glyphs { style: 0.0, mode: 2.0, ticks: 0.0, sides: vec![1.0; 64], instances: Vec::new() }) }
 }
 
 #[test]

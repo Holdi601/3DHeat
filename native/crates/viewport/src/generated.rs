@@ -56,6 +56,7 @@ pub const HEAT_DEPTH_LAYERS: u32 = 3;
 pub const PEEL_UNIFORM_BYTES: u32 = 80;
 pub const PEEL_EPSILON_REVERSE: f32 = 0.00002;
 pub const TRACKS_UNIFORM_BYTES: u32 = 192;
+pub const TRACKS_TRAIL_ROOM: u32 = 4000000;
 pub const TRACK_U32: u32 = 16;
 pub const FLAG_PERSPECTIVE: u32 = 1;
 pub const FLAG_GROUND_PROJECTED: u32 = 2;

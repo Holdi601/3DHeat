@@ -9,8 +9,11 @@
 //! run's count into the indirect draws, and the scene pass draws one indirect instanced draw a
 //! mesh with the figures' pipeline (`figures.rs`, meshes resident by id). No CPU work per unit.
 //!
-//! Not yet (first step): trails and drop lines, the deaths' marks, the glyphs' run. The trail
-//! buffer is a stub the uniform gives no room in.
+//! Trails, drop lines and weapon streaks: the place shader writes them as line segments into
+//! the trail buffer (`TRACKS_TRAIL_ROOM` vertices, as the web), the deaths' marks pass
+//! (`tracks_marks.wgsl`, from the store's markers) adds theirs, finish writes the vertex count
+//! into an indirect line draw. The far-off glyphs' run (after the meshes' runs in the
+//! instances) is drawn with the figures' glyph pipeline, one indirect quad draw.
 
 use crate::figures::Figures;
 use crate::generated::*;
@@ -18,6 +21,11 @@ use crate::packet::TracksFrame;
 
 const W_PLACE: &str = include_str!("../wgsl/tracks_place.wgsl");
 const W_FINISH: &str = include_str!("../wgsl/tracks_finish.wgsl");
+const W_MARKS: &str = include_str!("../wgsl/tracks_marks.wgsl");
+const W_TRAIL: &str = include_str!("../wgsl/tracks_trail.wgsl");
+/// The arrays the page sends: tracks (+ aim keys), keys, keys past the first buffer, attitudes,
+/// the deaths' marks (x, y, z, time) and their colours.
+const ARRAYS: usize = 6;
 
 /// Message kinds (`nativeTracks.ts`).
 const BEGIN: u32 = 0;
@@ -30,18 +38,24 @@ struct Store {
     meshes: Vec<u32>,
     run_first: Vec<u32>,
     run_room: Vec<u32>,
-    /// tracks (+ aim keys), keysA, keysA1, keysB; the bytes each will hold and has.
+    /// Where the glyphs' run starts in the instances (after the meshes' runs, `gpuLayout.ts`).
+    glyph_first: u32,
+    /// The `ARRAYS`; the bytes each will hold and has.
     bufs: Vec<wgpu::Buffer>,
-    want: [u64; 4],
-    got: [u64; 4],
+    want: [u64; ARRAYS],
+    got: [u64; ARRAYS],
     counts: wgpu::Buffer,
     args: wgpu::Buffer,
     args_init: wgpu::Buffer,
     args_bytes: u64,
     instances: wgpu::Buffer,
     vis: wgpu::Buffer,
+    trail: wgpu::Buffer,
+    trail_args: wgpu::Buffer,
     place_group: wgpu::BindGroup,
     finish_group: wgpu::BindGroup,
+    /// The marks pass's bindings and how many marks, when the store has any.
+    marks: Option<(wgpu::BindGroup, u32)>,
     bytes: u64,
 }
 
@@ -54,13 +68,15 @@ impl Store {
 pub struct Tracks {
     place: wgpu::ComputePipeline,
     finish: wgpu::ComputePipeline,
+    marks: wgpu::ComputePipeline,
+    trail_pipeline: wgpu::RenderPipeline,
     uniform: wgpu::Buffer,
     mesh_count: wgpu::Buffer,
-    trail: wgpu::Buffer,
-    trail_args: wgpu::Buffer,
     store: Option<Store>,
     /// Whether this frame placed the units (the scene pass draws them).
     placed: bool,
+    /// Whether this frame's trails draw (`writeTracksUniform`'s `trailsOn`).
+    trails_on: bool,
 }
 
 fn compute(device: &wgpu::Device, label: &str, src: &str, entry: &str) -> wgpu::ComputePipeline {
@@ -91,13 +107,35 @@ impl Tracks {
     pub fn new(device: &wgpu::Device) -> Self {
         let place = compute(device, "tracks place", W_PLACE, "place");
         let finish = compute(device, "tracks finish", W_FINISH, "finish");
+        let marks = compute(device, "tracks marks", W_MARKS, "marks");
+        // The trails: position + colour a vertex, a line list, blended, depth tested but not written (`GpuTracks.create`).
+        let tm = device.create_shader_module(wgpu::ShaderModuleDescriptor { label: Some("tracks trail"), source: wgpu::ShaderSource::Wgsl(W_TRAIL.into()) });
+        let attrs = wgpu::vertex_attr_array![0 => Float32x4, 1 => Float32x4];
+        let trail_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+            label: Some("tracks trail"),
+            layout: None,
+            vertex: wgpu::VertexState {
+                module: &tm,
+                entry_point: Some("vsTrail"),
+                compilation_options: Default::default(),
+                buffers: &[Some(wgpu::VertexBufferLayout { array_stride: 32, step_mode: wgpu::VertexStepMode::Vertex, attributes: &attrs })],
+            },
+            fragment: Some(wgpu::FragmentState {
+                module: &tm,
+                entry_point: Some("fsTrail"),
+                compilation_options: Default::default(),
+                targets: &[Some(wgpu::ColorTargetState { format: crate::renderer::SCENE_FORMAT, blend: Some(crate::figures::alpha_blend()), write_mask: wgpu::ColorWrites::ALL })],
+            }),
+            primitive: wgpu::PrimitiveState { topology: wgpu::PrimitiveTopology::LineList, ..Default::default() },
+            depth_stencil: crate::figures::depth(false),
+            multisample: Default::default(),
+            multiview_mask: None,
+            cache: None,
+        });
         let buf = |label: &str, size: u64, usage: wgpu::BufferUsages| device.create_buffer(&wgpu::BufferDescriptor { label: Some(label), size, usage, mapped_at_creation: false });
         let uniform = buf("tracks uniforms", TRACKS_UNIFORM_BYTES as u64, wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST);
         let mesh_count = buf("tracks mesh count", 16, wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST);
-        let s = wgpu::BufferUsages::STORAGE;
-        let trail = buf("track trails (none yet)", 64, s);
-        let trail_args = buf("track trail draw", 16, s);
-        Self { place, finish, uniform, mesh_count, trail, trail_args, store: None, placed: false }
+        Self { place, finish, marks, trail_pipeline, uniform, mesh_count, store: None, placed: false, trails_on: false }
     }
 
     /// GPU bytes the store holds.
@@ -120,10 +158,10 @@ impl Tracks {
         anyhow::ensure!(b.len() >= 8 && b.len() % 4 == 0, "tracks message of {} bytes", b.len());
         match words(b, 0) {
             BEGIN => {
-                anyhow::ensure!(b.len() >= 9 * 4, "tracks begin");
+                let head = 5 + ARRAYS;
+                anyhow::ensure!(b.len() >= head * 4, "tracks begin");
                 let (id, tracks, m, vis_words) = (words(b, 1), words(b, 2), words(b, 3) as usize, words(b, 4) as u64);
-                let want = [words(b, 5) as u64, words(b, 6) as u64, words(b, 7) as u64, words(b, 8) as u64];
-                let head = 9;
+                let want: [u64; ARRAYS] = std::array::from_fn(|i| words(b, 5 + i) as u64);
                 anyhow::ensure!(b.len() / 4 == head + m + (m + 1) * 2 + (m + 1) * 4, "tracks begin of {} words for {m} meshes", b.len() / 4);
                 let all: Vec<u32> = (0..b.len() / 4).map(|k| words(b, k)).collect();
                 let meshes = all[head..head + m].to_vec();
@@ -140,7 +178,7 @@ impl Tracks {
                 let (id, which, at) = (words(b, 1), words(b, 2) as usize, words(b, 3) as u64);
                 let Some(s) = self.store.as_mut().filter(|s| s.id == id) else { return Ok(()) };
                 let data = &b[16..];
-                anyhow::ensure!(which < 4 && at + data.len() as u64 <= s.want[which], "tracks slice out of bounds");
+                anyhow::ensure!(which < ARRAYS && at + data.len() as u64 <= s.want[which], "tracks slice out of bounds");
                 queue.write_buffer(&s.bufs[which], at, data);
                 // A recolour sends the tracks' table again over what is there: counted once.
                 s.got[which] = s.got[which].max(at + data.len() as u64);
@@ -163,7 +201,7 @@ impl Tracks {
         run_room: Vec<u32>,
         runs: &[u32],
         args: &[u32],
-        want: [u64; 4],
+        want: [u64; ARRAYS],
         vis_words: u64,
         total: u64,
     ) -> Store {
@@ -172,7 +210,7 @@ impl Tracks {
         let buf = |label: &str, size: u64, usage: wgpu::BufferUsages| {
             device.create_buffer(&wgpu::BufferDescriptor { label: Some(label), size: size.max(16).next_multiple_of(4), usage, mapped_at_creation: false })
         };
-        let bufs: Vec<wgpu::Buffer> = ["tracks", "track keys", "track keys (2)", "track attitudes"].iter().zip(want).map(|(l, n)| buf(l, n, s | dst)).collect();
+        let bufs: Vec<wgpu::Buffer> = ["tracks", "track keys", "track keys (2)", "track attitudes", "track marks", "track mark colours"].iter().zip(want).map(|(l, n)| buf(l, n, s | dst)).collect();
         let m = meshes.len();
         let runs_buf = buf("track runs", (runs.len() * 4) as u64, s | dst);
         queue.write_buffer(&runs_buf, 0, bytemuck::cast_slice(runs));
@@ -183,7 +221,11 @@ impl Tracks {
         queue.write_buffer(&args_init, 0, bytemuck::cast_slice(args));
         let instances = buf("track instances", (total * INSTANCE_STRIDE as u64 * 4).max(64), s | wgpu::BufferUsages::VERTEX);
         let vis = buf("track visibility", vis_words * 4, s | dst);
-        queue.write_buffer(&self.mesh_count, 0, bytemuck::cast_slice(&[m as u32, 0, 0, 0]));
+        let trail = buf("track trails", TRACKS_TRAIL_ROOM as u64 * 32, s | wgpu::BufferUsages::VERTEX);
+        let trail_args = buf("track trail draw", 16, s | wgpu::BufferUsages::INDIRECT | dst);
+        // One instance; finish writes the vertex count.
+        queue.write_buffer(&trail_args, 0, bytemuck::cast_slice(&[0u32, 1, 0, 0]));
+        queue.write_buffer(&self.mesh_count, 0, bytemuck::cast_slice(&[m as u32, TRACKS_TRAIL_ROOM, 0, 0]));
         let place_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("tracks place"),
             layout: &self.place.get_bind_group_layout(0),
@@ -195,7 +237,7 @@ impl Tracks {
                 e(4, &runs_buf),
                 e(5, &counts),
                 e(6, &instances),
-                e(7, &self.trail),
+                e(7, &trail),
                 e(8, &vis),
                 e(9, &bufs[2]),
             ],
@@ -203,25 +245,43 @@ impl Tracks {
         let finish_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("tracks finish"),
             layout: &self.finish.get_bind_group_layout(0),
-            entries: &[e(0, &runs_buf), e(1, &counts), e(2, &args_buf), e(3, &self.mesh_count), e(4, &self.trail_args)],
+            entries: &[e(0, &runs_buf), e(1, &counts), e(2, &args_buf), e(3, &self.mesh_count), e(4, &trail_args)],
         });
-        let bytes = bufs.iter().map(|b| b.size()).sum::<u64>() + runs_buf.size() + counts.size() + 2 * args_bytes + instances.size() + vis.size();
-        Store { id, tracks, meshes, run_first, run_room, bufs, want, got: [0; 4], counts, args: args_buf, args_init, args_bytes, instances, vis, place_group, finish_group, bytes }
+        // A mark is a vec4 (x, y, z, time).
+        let mark_count = (want[4] / 16) as u32;
+        let marks = (mark_count > 0).then(|| {
+            let g = device.create_bind_group(&wgpu::BindGroupDescriptor {
+                label: Some("tracks marks"),
+                layout: &self.marks.get_bind_group_layout(0),
+                entries: &[e(0, &self.uniform), e(1, &bufs[4]), e(2, &bufs[5]), e(3, &counts), e(4, &trail)],
+            });
+            (g, mark_count)
+        });
+        let bytes = bufs.iter().map(|b| b.size()).sum::<u64>() + runs_buf.size() + counts.size() + 2 * args_bytes + instances.size() + vis.size() + trail.size();
+        Store { id, tracks, meshes, run_first, run_room, glyph_first: runs[m * 2], bufs, want, got: [0; ARRAYS], counts, args: args_buf, args_init, args_bytes, instances, vis, trail, trail_args, place_group, finish_group, marks, bytes }
+    }
+
+    /// A packet's visibility bits, sent only when they change: taken from every packet, the ones
+    /// not drawn (an earlier packet of a present, a composite-only frame) too, or they were lost.
+    pub fn take_vis(&mut self, queue: &wgpu::Queue, f: &TracksFrame) {
+        let (Some(v), Some(s)) = (&f.vis, self.store.as_ref()) else { return };
+        if f.id != s.id {
+            return;
+        }
+        let n = (v.len() as u64 * 4).min(s.vis.size()) as usize / 4;
+        queue.write_buffer(&s.vis, 0, bytemuck::cast_slice(&v[..n]));
     }
 
     /// Places every unit for this packet's frame: a compute pass before the scene pass that draws
     /// them. False when the packet has no tracks or the store is not whole here yet.
     pub fn compute(&mut self, queue: &wgpu::Queue, encoder: &mut wgpu::CommandEncoder, f: Option<&TracksFrame>) -> bool {
         self.placed = false;
+        self.trails_on = false;
         let (Some(f), Some(s)) = (f, self.store.as_ref()) else { return false };
         if f.id != s.id || !s.whole() {
             return false;
         }
         queue.write_buffer(&self.uniform, 0, bytemuck::cast_slice(&f.uniform));
-        if let Some(v) = &f.vis {
-            let n = (v.len() as u64 * 4).min(s.vis.size()) as usize / 4;
-            queue.write_buffer(&s.vis, 0, bytemuck::cast_slice(&v[..n]));
-        }
         // Counters to zero and the draws' instance counts with them, in the encoder: each packet of a
         // present places afresh.
         encoder.clear_buffer(&s.counts, 0, None);
@@ -230,6 +290,16 @@ impl Tracks {
         pass.set_pipeline(&self.place);
         pass.set_bind_group(0, &s.place_group, &[]);
         dispatch(&mut pass, s.tracks);
+        // The uniform's lanes as `writeTracksUniform` fills them: the marks' seconds (0: their pass
+        // does not run), trail seconds, weapons' streak, drop lines.
+        let lane = |k: usize| f32::from_bits(f.uniform[k]);
+        let mark_seconds = lane(34);
+        if let Some((g, n)) = s.marks.as_ref().filter(|_| mark_seconds > 0.0) {
+            pass.set_pipeline(&self.marks);
+            pass.set_bind_group(0, g, &[]);
+            dispatch(&mut pass, *n);
+        }
+        self.trails_on = lane(32) > 0.0 || lane(33) > 0.0 || mark_seconds > 0.0 || f.uniform[38] != 0;
         pass.set_pipeline(&self.finish);
         pass.set_bind_group(0, &s.finish_group, &[]);
         pass.dispatch_workgroups((s.meshes.len() as u32 + 2).div_ceil(64), 1, 1);
@@ -260,5 +330,27 @@ impl Tracks {
             pass.set_vertex_buffer(1, s.instances.slice(s.run_first[i] as u64 * INSTANCE_STRIDE as u64 * 4..));
             pass.draw_indirect(&s.args, i as u64 * 16);
         }
+    }
+
+    /// The trails, drop lines, streaks and marks, inside the scene pass after the units: one
+    /// indirect line draw (`drawTrails`), with the scene uniform at `plain` in `ring`.
+    pub fn draw_trails(&self, pass: &mut wgpu::RenderPass<'_>, device: &wgpu::Device, ring: &wgpu::Buffer, plain: u64) {
+        let Some(s) = self.store.as_ref().filter(|_| self.placed && self.trails_on) else { return };
+        let g = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("tracks trail"),
+            layout: &self.trail_pipeline.get_bind_group_layout(0),
+            entries: &[wgpu::BindGroupEntry { binding: 0, resource: wgpu::BindingResource::Buffer(wgpu::BufferBinding { buffer: ring, offset: plain, size: wgpu::BufferSize::new(crate::figures::SCENE_UNIFORM_BYTES) }) }],
+        });
+        pass.set_pipeline(&self.trail_pipeline);
+        pass.set_bind_group(0, &g, &[]);
+        pass.set_vertex_buffer(0, s.trail.slice(..));
+        pass.draw_indirect(&s.trail_args, 0);
+    }
+
+    /// The far-off glyphs' run (symbols, weapons, decoys), over everything in the scene: one
+    /// indirect quad draw with the glyph pipeline (`drawGlyphs`); its count is after the meshes' draws.
+    pub fn draw_glyphs(&self, pass: &mut wgpu::RenderPass<'_>, figures: &Figures, group: &wgpu::BindGroup) {
+        let Some(s) = self.store.as_ref().filter(|_| self.placed) else { return };
+        figures.draw_glyphs_indirect(pass, group, &s.instances, s.glyph_first as u64 * INSTANCE_STRIDE as u64 * 4, &s.args, s.meshes.len() as u64 * 16);
     }
 }

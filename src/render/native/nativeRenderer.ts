@@ -128,7 +128,7 @@ export class NativeRenderer implements Renderer {
   gpuBudgetBytes = 2 * 1024 ** 3;
 
   /** The GPU tracks (`nativeTracks.ts`): the store sent once, each frame its uniform. */
-  private readonly tracks = new NativeTracks((bytes) => void this.invoke('viewport_tracks', bytes).catch((e: unknown) => console.warn('native viewport: tracks', e)));
+  private readonly tracks = new NativeTracks((bytes) => this.invoke('viewport_tracks', bytes).catch((e: unknown) => console.warn('native viewport: tracks', e)));
 
   /** The keys' x, y, z, t in one binding (8 bytes a key), within half the GPU budget. */
   get gpuTracksMaxBytes(): number {
@@ -623,7 +623,8 @@ export class NativeRenderer implements Renderer {
     }
     // The far-off glyphs the CPU placed, once the atlas is over (it is made once, on the page).
     const glyphs = p.symbols?.cpu && p.symbols.cpu.count > 0 ? p.symbols : null;
-    if (glyphs && !this.atlasSent) {
+    // The GPU tracks' glyph run draws with the same atlas.
+    if ((glyphs || (p.symbols && p.gpuTracks)) && !this.atlasSent) {
       const pixels = symbolAtlas();
       if (pixels) {
         this.atlasSent = true;

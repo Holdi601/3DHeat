@@ -987,6 +987,9 @@ impl Renderer {
         let last_scene = packets.iter().rposition(|p| p.frame.is_some() && !p.flag(F_COMPOSITE_ONLY));
         for (i, p) in packets.iter().enumerate() {
             self.take_tables(p);
+            if let Some(t) = &p.tracks {
+                self.tracks.take_vis(&self.queue, t);
+            }
             if p.frame.is_none() {
                 continue;
             }
@@ -1170,7 +1173,7 @@ impl Renderer {
             }
             let plain = self.scene_uniform(p, far, 0.0, 1.0, false, false);
             // The glyphs' uniforms (`GpuSymbols.write`): the view, the canvas, the style, the camera, the sides.
-            let glyph = p.glyphs.as_ref().filter(|_| crate::figures::Figures::has_glyphs(&figs)).map(|gl| {
+            let mut glyph_uniform = |gl: &crate::packet::Glyphs| {
                 let f = p.frame.as_ref().unwrap();
                 let mut u = vec![0f32; SYMBOL_UNIFORM_FLOATS as usize];
                 u[..16].copy_from_slice(&f[F_VIEW_PROJ..F_VIEW_PROJ + 16]);
@@ -1184,11 +1187,15 @@ impl Renderer {
                 let n = gl.sides.len().min(64);
                 u[28..28 + n].copy_from_slice(&gl.sides[..n]);
                 self.ring.push(bytemuck::cast_slice(&u), 256)
-            });
+            };
+            let glyph = p.glyphs.as_ref().filter(|_| crate::figures::Figures::has_glyphs(&figs)).map(&mut glyph_uniform);
+            // The GPU tracks' glyph run, with the frame's symbol settings (`drawGlyphs`).
+            let track_glyph = p.tracks.as_ref().and_then(|t| t.glyphs.as_ref()).filter(|_| tracks_on).map(glyph_uniform);
             let (c, l, r, o) = (self.ring.push(&cube, 256), self.ring.push(&look, 256), self.ring.push(&rel, 256), self.ring.push(&plain, 256));
             let g = |off| self.figures.group(&self.device, &self.ring.buf, off);
             let glyph = glyph.and_then(|off| self.figures.glyph_group(&self.device, &self.ring.buf, off));
-            Some((g(c), p.flag(F_SHOW_LOOK).then(|| g(l)), g(r), g(o), glyph))
+            let track_glyph = track_glyph.and_then(|off| self.figures.glyph_group(&self.device, &self.ring.buf, off));
+            Some((g(c), p.flag(F_SHOW_LOOK).then(|| g(l)), g(r), g(o), glyph, track_glyph, o))
         };
         let ov = self.overlay_groups(p, true, (0.0, 0.0));
         let rg = self.range_groups(encoder, p);
@@ -1272,10 +1279,11 @@ impl Renderer {
                 self.figures.draw_under_lines(&mut pass, &figs, plain);
             }
         }
-        if let Some((cube, look, rel, plain, _)) = &fig_groups {
+        if let Some((cube, look, rel, plain, _, _, plain_at)) = &fig_groups {
             self.figures.draw_cubes(&mut pass, &figs, cube, look.as_ref());
             self.figures.draw(&mut pass, &figs, rel, false);
             self.tracks.draw(&mut pass, &self.figures, plain, false);
+            self.tracks.draw_trails(&mut pass, &self.device, &self.ring.buf, *plain_at);
             self.figures.draw_tris(&mut pass, &figs, plain, false);
             self.figures.draw_trails(&mut pass, &figs, plain);
             self.draw_shells(&mut pass, &occ);
@@ -1296,7 +1304,10 @@ impl Renderer {
             self.ranges.draw_ground(&mut pass, Some(g), &l.vertices, &l.indices, l.count);
         }
         self.ranges.draw_shells(&mut pass, p, rg.shell.as_ref());
-        if let Some((_, _, _, plain, glyph)) = &fig_groups {
+        if let Some((_, _, _, plain, glyph, track_glyph, _)) = &fig_groups {
+            if let Some(g) = track_glyph {
+                self.tracks.draw_glyphs(&mut pass, &self.figures, g);
+            }
             if let Some(g) = glyph {
                 self.figures.draw_glyphs(&mut pass, &figs, g);
             }

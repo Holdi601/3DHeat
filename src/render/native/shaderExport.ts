@@ -82,8 +82,8 @@ import { CONTOUR_UNIFORM_BYTES, volumeContourWgsl } from '../volumeContours';
 import { MAX_GPU_VOLUMES } from '../../volumes/gpu';
 import { SHELL_UNIFORM_BYTES, SHELL_WGSL } from '../../ranges/shellShaders';
 import { SHELL_FLOATS } from '../../ranges/shells';
-import { FINISH_WGSL, PLACE_WGSL } from '../gpuTracks/shader';
-import { TRACKS_UNIFORM_BYTES } from '../gpuTracks/gpuLayout';
+import { FINISH_WGSL, MARKS_WGSL, PLACE_WGSL, TRAIL_WGSL } from '../gpuTracks/shader';
+import { TRACKS_UNIFORM_BYTES, TRAIL_ROOM } from '../gpuTracks/gpuLayout';
 import { TRACK_U32 } from '../gpuTracks/store';
 import { CAPTURE_UNIFORM_BYTES, CAPTURE_WGSL, GROUND_UNIFORM_BYTES, GROUND_WGSL, MAX_VIEWS, VIEW_FACE, VIEW_LAYERS } from '../../ranges/viewshedShaders';
 
@@ -119,6 +119,8 @@ export function nativeShaders(): Record<string, string> {
     'range_capture.wgsl': CAPTURE_WGSL,
     'tracks_place.wgsl': PLACE_WGSL,
     'tracks_finish.wgsl': FINISH_WGSL,
+    'tracks_marks.wgsl': MARKS_WGSL,
+    'tracks_trail.wgsl': TRAIL_WGSL,
   };
 }
 
@@ -173,6 +175,7 @@ export function nativeConstants(): string {
   int('PEEL_UNIFORM_BYTES', PEEL_UNIFORM_BYTES);
   flt('PEEL_EPSILON_REVERSE', PEEL_EPSILON_REVERSE);
   int('TRACKS_UNIFORM_BYTES', TRACKS_UNIFORM_BYTES);
+  int('TRACKS_TRAIL_ROOM', TRAIL_ROOM);
   int('TRACK_U32', TRACK_U32);
   for (const [k, v] of Object.entries({
     FLAG_PERSPECTIVE,

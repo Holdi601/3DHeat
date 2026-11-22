@@ -12,14 +12,15 @@
  * indirect instanced draw a mesh with its figure pipeline. The CPU does nothing
  * per unit.
  *
- * Not yet here (the web has them): trails, drop lines and weapon streaks, the
- * deaths' marks, the far-off glyphs' run. The trail room is 0 (nothing is
- * written there) and the marks pass does not run.
+ * The trails, drop lines and weapon streaks the place shader writes, the deaths'
+ * marks (their own pass, from the store's markers sent with the keys) and the
+ * far-off glyphs' run are drawn as the web draws them: the trail room is the
+ * web's (`TRAIL_ROOM`), and the frame's symbol settings ride in the section.
  */
 
 import { INSTANCE_STRIDE, type FigureMesh } from '../../figures/instances';
 import { KEY_U32, KEYS_PER_BUFFER, sameKeys, type GpuTrackStore } from '../gpuTracks/store';
-import { TRACKS_UNIFORM_BYTES, trackRuns, writeTracksUniform } from '../gpuTracks/gpuLayout';
+import { TRACKS_UNIFORM_BYTES, TRAIL_ROOM, TRAIL_SEGMENTS, trackRuns, writeTracksUniform } from '../gpuTracks/gpuLayout';
 import { visWords } from '../gpuTracks/visibility';
 import { SECTION, type PacketWriter } from './framePacket';
 import type { FrameParams } from '../types';
@@ -39,7 +40,7 @@ interface Slice {
   at: number;
 }
 
-type Send = (bytes: Uint8Array) => void;
+type Send = (bytes: Uint8Array) => Promise<unknown>;
 
 export class NativeTracks {
   private store: GpuTrackStore | null = null;
@@ -55,18 +56,32 @@ export class NativeTracks {
 
   /** Whether the store is still on its way. */
   get uploading(): boolean {
-    return this.slices.length > 0;
+    return this.slices.length > 0 || this.posting > 0;
+  }
+
+  /**
+   * Messages one after the other: IPC calls in flight together may arrive in any order, and a
+   * slice ahead of its store's begin message was dropped (the store never whole: nothing drawn).
+   */
+  private chain: Promise<unknown> = Promise.resolve();
+  private posting = 0;
+  private post(bytes: Uint8Array): void {
+    this.posting++;
+    this.chain = this.chain.then(() => this.send(bytes)).finally(() => this.posting--);
   }
 
   /** The viewport lets its store go (a new dataset): the next frame's store goes over again. */
   reset(): void {
-    if (this.store) this.send(new Uint8Array(new Uint32Array([FREE, this.id]).buffer));
+    if (this.store) this.post(new Uint8Array(new Uint32Array([FREE, this.id]).buffer));
     this.store = null;
     this.slices = [];
     this.bytes = 0;
   }
 
-  /** The store's arrays as the viewport's buffers take them, in their order (tracks, keys, keys past the first buffer, attitudes; `webgpu/tracks.ts` upload). */
+  /**
+   * The store's arrays as the viewport's buffers take them, in their order (tracks, keys, keys past
+   * the first buffer, attitudes, the deaths' marks and their colours; `webgpu/tracks.ts` upload).
+   */
   private arrays(s: GpuTrackStore): Uint32Array[] {
     let trackWords: Uint32Array = s.trackData;
     // The turret and gun keys after the tracks in the same buffer (`store.ts`).
@@ -77,7 +92,9 @@ export class NativeTracks {
     }
     const keysA = s.keysA.subarray(0, Math.min(s.keys, KEYS_PER_BUFFER) * KEY_U32);
     const keysA1 = s.keys > KEYS_PER_BUFFER ? s.keysA.subarray(KEYS_PER_BUFFER * KEY_U32, s.keys * KEY_U32) : new Uint32Array(4);
-    return [trackWords, keysA, keysA1, s.keysB];
+    const mk = s.markers && s.markers.count ? s.markers : null;
+    const marks = mk ? new Uint32Array(mk.data.buffer, mk.data.byteOffset, mk.data.length) : new Uint32Array(0);
+    return [trackWords, keysA, keysA1, s.keysB, marks, mk ? mk.colour : new Uint32Array(0)];
   }
 
   private queue(buffer: number, a: Uint32Array): void {
@@ -94,16 +111,16 @@ export class NativeTracks {
     const r = trackRuns(s, triangleBudget);
     this.runRoom = r.runRoom;
     const M = s.meshes.length;
-    const head = 9;
+    const head = 11;
     const w = new Uint32Array(head + M + r.runsData.length + r.argsInit.length);
     w.set([BEGIN, this.id, s.tracks, M, Math.max(4, 2 * visWords(s))], 0);
     arrays.forEach((a, i) => (w[5 + i] = a.byteLength));
     for (let m = 0; m < M; m++) w[head + m] = s.meshes[m].id;
     w.set(r.runsData, head + M);
     w.set(r.argsInit, head + M + r.runsData.length);
-    this.send(new Uint8Array(w.buffer));
-    arrays.forEach((a, i) => this.queue(i, a));
-    this.bytes = arrays.reduce((n, a) => n + a.byteLength, 0) + r.total * INSTANCE_STRIDE * 4;
+    this.post(new Uint8Array(w.buffer));
+    arrays.forEach((a, i) => a.byteLength > 0 && this.queue(i, a));
+    this.bytes = arrays.reduce((n, a) => n + a.byteLength, 0) + r.total * INSTANCE_STRIDE * 4 + TRAIL_ROOM * 32;
   }
 
   /** Slices while this frame's time lasts (at least one). */
@@ -116,7 +133,7 @@ export class NativeTracks {
       const msg = new Uint8Array(16 + n);
       new Uint32Array(msg.buffer, 0, 4).set([SLICE, this.id, sl.buffer, sl.at]);
       msg.set(sl.data.subarray(sl.at, sl.at + n), 16);
-      this.send(msg);
+      this.post(msg);
       sl.at += n;
       sent += n;
       if (sl.at >= sl.data.byteLength) this.slices.shift();
@@ -134,17 +151,19 @@ export class NativeTracks {
     if (!g) return;
     const s = g.store;
     if (this.store && this.store !== s && sameKeys(this.store, s) && this.slices.length === 0) {
-      // Recoloured: only the tracks' table again, not the keys.
+      // Recoloured: only the tracks' table (and the marks' colours) again, not the keys.
       this.store = s;
-      this.queue(0, this.arrays(s)[0]);
+      const a = this.arrays(s);
+      this.queue(0, a[0]);
+      if (a[5].length) this.queue(5, a[5]);
     }
     if (this.store !== s) this.begin(s, g.triangleBudget);
-    if (this.slices.length > 0) {
-      this.flush();
-      if (this.slices.length > 0) return;
-    }
+    if (this.slices.length > 0) this.flush();
+    // Not until every message is taken: a frame's IPC call is not in the chain, and a section ahead
+    // of its store lost its visibility bits (sent once) - nothing was drawn.
+    if (this.slices.length > 0 || this.posting > 0) return;
     for (let m = 0; m < s.meshes.length; m++) if (this.runRoom[m] > 0) meshFor(s.meshes[m]);
-    writeTracksUniform(this.u, g, p.viewProj, p.cameraPos, { trailRoom: 0, trailSegments: 0, marks: false });
+    writeTracksUniform(this.u, g, p.viewProj, p.cameraPos, { trailRoom: TRAIL_ROOM, trailSegments: TRAIL_SEGMENTS, marks: (s.markers?.count ?? 0) > 0 });
     w.open(SECTION.tracks);
     w.word(this.id);
     w.words(new Uint32Array(this.u));
@@ -157,6 +176,15 @@ export class NativeTracks {
       w.word(0);
     }
     this.visSent = vis;
+    // The far-off glyphs' run, drawn with the frame's symbol settings when there are any (`drawGlyphs`).
+    const sym = p.symbols ?? null;
+    w.word(sym ? 1 : 0);
+    if (sym) {
+      w.float(sym.style);
+      w.float(sym.mode);
+      w.float(sym.ticks ? 1 : 0);
+      w.reserveFloats(64).set(sym.sides.subarray(0, 64));
+    }
     w.close();
   }
 }
