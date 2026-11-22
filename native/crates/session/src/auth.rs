@@ -4,8 +4,7 @@
 //! address (an IPv6 /64 counts as one) lock it out for 15 minutes, doubling
 //! each time it happens again.
 
-use argon2::password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString};
-use argon2::{Algorithm, Argon2, Params, Version};
+use argon2::{Algorithm, Argon2, Params, PasswordHash, PasswordHasher, PasswordVerifier, Version};
 use rand::RngCore;
 use std::collections::HashMap;
 use std::net::IpAddr;
@@ -46,9 +45,8 @@ fn argon(cost: Cost) -> Argon2<'static> {
 pub fn hash_password(pw: &str, cost: Cost) -> String {
     let mut salt = [0u8; 16];
     rand::rng().fill_bytes(&mut salt);
-    let salt = SaltString::encode_b64(&salt).expect("salt");
     argon(cost)
-        .hash_password(pw.as_bytes(), &salt)
+        .hash_password_with_salt(pw.as_bytes(), &salt)
         .expect("argon2 hash")
         .to_string()
 }
@@ -200,6 +198,22 @@ mod tests {
         assert!(verify_password("correct horse battery", &h));
         assert!(!verify_password("correct horse batterz", &h));
         assert!(!verify_password("x", "not a hash"));
+    }
+
+    /// Hashes made by argon2 0.5.3 (the version before 0.6), at the test cost
+    /// and at the production cost: a session password set before the update
+    /// still opens the session after it.
+    #[test]
+    fn hashes_from_argon2_0_5_still_verify() {
+        const OLD_TEST: &str = "$argon2id$v=19$m=256,t=1,p=1$AwMDAwMDAwMDAwMDAwMDAw$C07KR1iqM21zQfTPtkrF8KQWFzLCikxO+kfCXdYmhk4";
+        const OLD_STRONG: &str = "$argon2id$v=19$m=65536,t=3,p=1$paWlpaWlpaWlpaWlpaWlpQ$VcRbbC7rzPVq0aqisEQv7/mghCusGWrwuDSKl1pR2Fw";
+        for h in [OLD_TEST, OLD_STRONG] {
+            assert!(verify_password("correct horse battery", h), "{h}");
+            assert!(!verify_password("correct horse batterz", h), "{h}");
+        }
+        // The same salt and cost give the same string as 0.5.3 did.
+        let a = argon(Cost::TEST).hash_password_with_salt(b"correct horse battery", &[3u8; 16]).unwrap();
+        assert_eq!(a.to_string(), OLD_TEST);
     }
 
     #[test]
