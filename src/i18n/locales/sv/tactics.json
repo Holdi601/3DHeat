@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} har ingen DCS-uppgift.",
   "tactics.dcs.warn.game-task": "{group}: {what} är ingen uppgift som tavlan kan skriva; den utelämnas.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# figur är ingen enhet (markörer, vapen) och skrivs inte.} other {# figurer är inga enheter (markörer, vapen) och skrivs inte.}}",
-  "tactics.dcs.warn.start": "Uppgifter som ska starta senare än sin vägpunkt startar vid vägpunkten i DCS."
+  "tactics.dcs.warn.start": "Uppgifter som ska starta senare än sin vägpunkt startar vid vägpunkten i DCS.",
+  "tactics.wt.open": "Öppna War Thunder-uppdrag…",
+  "tactics.wt.openHint": "Ett War Thunder-användaruppdrag (.blk, så som Mission Editor sparar det) som tavla: varje armé på ett eget lager, varje enhet med sina vägpunkter. ”Spara som War Thunder-uppdrag” skriver tillbaka tavlan i det.",
+  "tactics.wt.save": "Spara som War Thunder-uppdrag…",
+  "tactics.wt.saveHint": "Skriver tavlan som ett War Thunder-användaruppdrag: in i uppdraget den kom från, eller som ett nytt uppdrag på en nivå.",
+  "tactics.wt.saveTitle": "Spara som War Thunder-uppdrag",
+  "tactics.wt.level": "Nivå",
+  "tactics.wt.pick": "Välj en .blk…",
+  "tactics.wt.missing": "{name}.blk är inte öppnad i den här sessionen: välj den igen för att skriva in i den, eller skriv ett nytt uppdrag.",
+  "tactics.wt.write": "Spara .blk",
+  "tactics.dcs.warn.wt-task": "{group}: {what} behöver en trigger i War Thunders Mission Editor; den skrivs inte.",
+  "tactics.dcs.warn.wt-count": "{group}: en War Thunder-enhet är en flight eller pluton; {n, plural, one {# figur på tavlan förblir} other {# figurer på tavlan förblir}} en enhet.",
+  "tactics.dcs.warn.wt-player": "Ingen blå enhet för spelaren: välj en i Mission Editor."
 }

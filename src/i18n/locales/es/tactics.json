@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} no tiene tarea de DCS.",
   "tactics.dcs.warn.game-task": "{group}: {what} no es una tarea que la pizarra pueda escribir; se omite.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# figura no es una unidad (marcadores, armas) y no se escribe.} other {# figuras no son unidades (marcadores, armas) y no se escriben.}}",
-  "tactics.dcs.warn.start": "Las tareas que deben empezar más tarde que su punto de paso empiezan en el punto de paso en DCS."
+  "tactics.dcs.warn.start": "Las tareas que deben empezar más tarde que su punto de paso empiezan en el punto de paso en DCS.",
+  "tactics.wt.open": "Abrir misión de War Thunder…",
+  "tactics.wt.openHint": "Una misión de usuario de War Thunder (.blk, tal como la guarda el Mission Editor) como pizarra: cada ejército en su propia capa, cada unidad con sus puntos de paso. «Guardar como misión de War Thunder» vuelve a escribir la pizarra en ella.",
+  "tactics.wt.save": "Guardar como misión de War Thunder…",
+  "tactics.wt.saveHint": "Escribe la pizarra como misión de usuario de War Thunder: en la misión de la que vino o como misión nueva en un nivel.",
+  "tactics.wt.saveTitle": "Guardar como misión de War Thunder",
+  "tactics.wt.level": "Nivel",
+  "tactics.wt.pick": "Elegir un .blk…",
+  "tactics.wt.missing": "{name}.blk no está abierto en esta sesión: elígelo de nuevo para escribir en él, o escribe una misión nueva.",
+  "tactics.wt.write": "Guardar .blk",
+  "tactics.dcs.warn.wt-task": "{group}: {what} necesita un disparador en el Mission Editor de War Thunder; no se escribe.",
+  "tactics.dcs.warn.wt-count": "{group}: una unidad de War Thunder es un vuelo o un pelotón; {n, plural, one {# figura de la pizarra sigue siendo} other {# figuras de la pizarra siguen siendo}} una sola unidad.",
+  "tactics.dcs.warn.wt-player": "No hay unidad azul para el jugador: elige una en el Mission Editor."
 }

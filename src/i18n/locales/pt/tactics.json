@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} não tem tarefa DCS.",
   "tactics.dcs.warn.game-task": "{group}: {what} não é uma tarefa que o quadro consiga escrever; fica de fora.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# figura não é uma unidade (marcadores, armas) e não é escrita.} other {# figuras não são unidades (marcadores, armas) e não são escritas.}}",
-  "tactics.dcs.warn.start": "As tarefas definidas para começar mais tarde do que o seu ponto de passagem começam no ponto de passagem no DCS."
+  "tactics.dcs.warn.start": "As tarefas definidas para começar mais tarde do que o seu ponto de passagem começam no ponto de passagem no DCS.",
+  "tactics.wt.open": "Abrir missão War Thunder…",
+  "tactics.wt.openHint": "Uma missão de utilizador War Thunder (.blk, tal como o Mission Editor a guarda) como quadro: cada exército na sua própria camada, cada unidade com os seus pontos de passagem. «Guardar como missão War Thunder» volta a escrever o quadro nela.",
+  "tactics.wt.save": "Guardar como missão War Thunder…",
+  "tactics.wt.saveHint": "Escreve o quadro como missão de utilizador War Thunder: na missão de onde veio, ou como nova missão num nível.",
+  "tactics.wt.saveTitle": "Guardar como missão War Thunder",
+  "tactics.wt.level": "Nível",
+  "tactics.wt.pick": "Escolher um .blk…",
+  "tactics.wt.missing": "{name}.blk não está aberto nesta sessão: escolha-o de novo para escrever nele, ou escreva uma nova missão.",
+  "tactics.wt.write": "Guardar .blk",
+  "tactics.dcs.warn.wt-task": "{group}: {what} precisa de um gatilho no Mission Editor do War Thunder; não é escrito.",
+  "tactics.dcs.warn.wt-count": "{group}: uma unidade War Thunder é um voo ou um pelotão; {n, plural, one {# figura no quadro continua a ser} other {# figuras no quadro continuam a ser}} uma só unidade.",
+  "tactics.dcs.warn.wt-player": "Nenhuma unidade azul para o jogador: escolha uma no Mission Editor."
 }

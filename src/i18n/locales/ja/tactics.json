@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} に対応するDCSのタスクがありません。",
   "tactics.dcs.warn.game-task": "{group}: {what} はボードが書き込めるタスクではないため、省きます。",
   "tactics.dcs.warn.skipped": "{n, plural, other {#個のフィギュア}}はユニットではない（マーカー、武器）ため、書き込まれません。",
-  "tactics.dcs.warn.start": "ウェイポイントより後に開始するよう設定したタスクは、DCSではウェイポイントで開始します。"
+  "tactics.dcs.warn.start": "ウェイポイントより後に開始するよう設定したタスクは、DCSではウェイポイントで開始します。",
+  "tactics.wt.open": "War Thunderミッションを開く…",
+  "tactics.wt.openHint": "War Thunderのユーザーミッション（.blk、Mission Editorが保存する形式）をボードとして開きます。各軍は専用のレイヤーに、各ユニットはウェイポイントとともに置かれます。「War Thunderミッションとして保存」でボードをミッションに書き戻せます。",
+  "tactics.wt.save": "War Thunderミッションとして保存…",
+  "tactics.wt.saveHint": "ボードをWar Thunderのユーザーミッションとして書き出します。元のミッションに書き込むか、レベルを選んで新しいミッションにします。",
+  "tactics.wt.saveTitle": "War Thunderミッションとして保存",
+  "tactics.wt.level": "レベル",
+  "tactics.wt.pick": ".blk を選ぶ…",
+  "tactics.wt.missing": "{name}.blk はこのセッションで開かれていません。書き込むにはもう一度選ぶか、新しいミッションとして書き出してください。",
+  "tactics.wt.write": ".blk を保存",
+  "tactics.dcs.warn.wt-task": "{group}: {what} にはWar ThunderのMission Editorでトリガーが必要なため、書き込まれません。",
+  "tactics.dcs.warn.wt-count": "{group}: War Thunderのユニットは1つの編隊または小隊です。{n, plural, other {ボード上の#個のフィギュア}}は1ユニットのままです。",
+  "tactics.dcs.warn.wt-player": "プレイヤー用の青ユニットがありません。Mission Editorで選んでください。"
 }

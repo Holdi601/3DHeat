@@ -5,6 +5,7 @@ import { usePlanStore } from '../../state/planStore';
 import { planToMission } from '../../tactics/missions/fromPlan';
 import { theatreOf, writeDcsMiz, type ExportWarning, type MissionExportSummary } from '../../tactics/missions/dcsWrite';
 import { keepMissionFile, missionFile } from '../../tactics/missions/sources';
+import { writeWtBlk } from '../../tactics/missions/wtWrite';
 import type { MissionState } from '../../tactics/missions';
 import { THEATRES } from '../../world/theatres';
 
@@ -88,20 +89,30 @@ export function MissionOpenedDialog({ mission, onClose }: { mission: MissionStat
 
 type Base = 'patch' | 'new';
 
+/** The games a plan is written back for, with what differs between them. */
+export type MissionFormat = 'dcs' | 'wt';
+const FORMATS: Record<MissionFormat, { id: string; ext: string; type: string; title: string; pick: string; missing: string; write: string }> = {
+  dcs: { id: 'dcs-miz', ext: '.miz', type: 'application/zip', title: 'tactics.dcs.saveTitle', pick: 'tactics.dcs.pick', missing: 'tactics.dcs.missing', write: 'tactics.dcs.write' },
+  wt: { id: 'wt-blk', ext: '.blk', type: 'text/plain', title: 'tactics.wt.saveTitle', pick: 'tactics.wt.pick', missing: 'tactics.wt.missing', write: 'tactics.wt.write' },
+};
+
 /**
- * Save as DCS mission: into the mission the plan came from (or another .miz
- * picked here), or as a new mission for a theatre; what will change, what
- * stays, and what the mission cannot hold, before the file is written.
+ * Save as DCS (or War Thunder) mission: into the mission the plan came from
+ * (or another file picked here), or as a new mission for a theatre or level;
+ * what will change, what stays, and what the mission cannot hold, before the
+ * file is written.
  */
-export function MissionSaveDialog({ onClose }: { onClose: () => void }) {
+export function MissionSaveDialog({ onClose, format = 'dcs' }: { onClose: () => void; format?: MissionFormat }) {
+  const f = FORMATS[format];
   const plan = usePlanStore((s) => s.plan);
   const link = plan.mission;
-  const source = link?.format === 'dcs-miz' ? link.source : '';
+  const source = link?.format === f.id ? link.source : '';
   const [picked, setPicked] = useState<{ name: string; bytes: Uint8Array } | null>(null);
   const original = picked?.bytes ?? (source ? missionFile(source) : null);
   const [base, setBase] = useState<Base>(original ? 'patch' : 'new');
   const guess = theatreOf(link?.map ?? plan.level);
   const [theatre, setTheatre] = useState(DCS_THEATRES.find((th) => th.id.toLowerCase() === guess.toLowerCase())?.id ?? DCS_THEATRES[0].id);
+  const [level, setLevel] = useState((link?.format === 'wt-blk' ? link.map : plan.level).replace(/^War Thunder:\s*/i, '').replace(/\.[a-z0-9]+$/i, ''));
   const mission = useMemo(() => planToMission(plan), [plan]);
   const [result, setResult] = useState<{ bytes: Uint8Array; summary: MissionExportSummary } | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -112,7 +123,8 @@ export function MissionSaveDialog({ onClose }: { onClose: () => void }) {
     let live = true;
     setBusy(true);
     setError(null);
-    writeDcsMiz(mission, base === 'patch' ? original : null, theatre)
+    const write = format === 'wt' ? Promise.resolve().then(() => writeWtBlk(mission, base === 'patch' ? original : null, level.trim())) : writeDcsMiz(mission, base === 'patch' ? original : null, theatre);
+    write
       .then((r) => live && setResult(r))
       .catch((e) => {
         if (!live) return;
@@ -123,11 +135,11 @@ export function MissionSaveDialog({ onClose }: { onClose: () => void }) {
     return () => {
       live = false;
     };
-  }, [mission, base, original, theatre]);
+  }, [mission, base, original, theatre, level, format]);
 
-  const pick = async (f: File) => {
-    const bytes = new Uint8Array(await f.arrayBuffer());
-    const name = f.name.replace(/\.miz$/i, '');
+  const pick = async (file: File) => {
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    const name = file.name.replace(/\.(miz|blk)$/i, '');
     keepMissionFile(name, bytes);
     setPicked({ name, bytes });
     setBase('patch');
@@ -137,9 +149,9 @@ export function MissionSaveDialog({ onClose }: { onClose: () => void }) {
     if (!result) return;
     const stem = (base === 'patch' ? (picked?.name ?? source) : plan.title || 'mission').replace(/[\\/:*?"<>|]+/g, '_');
     const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([result.bytes.slice()], { type: 'application/zip' }));
+    a.href = URL.createObjectURL(new Blob([result.bytes.slice()], { type: f.type }));
     // Always a new file: the original stays as it was.
-    a.download = base === 'patch' ? `${stem} (3DHeat).miz` : `${stem}.miz`;
+    a.download = base === 'patch' ? `${stem} (3DHeat)${f.ext}` : `${stem}${f.ext}`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     onClose();
@@ -149,7 +161,7 @@ export function MissionSaveDialog({ onClose }: { onClose: () => void }) {
   const warnings = s ? warningLines([...planWarnings(mission), ...s.warnings]) : [];
   const nothing = s && base === 'patch' && !s.changed.length && !s.added.length && !s.removed.length;
   return (
-    <Dialog title={t('tactics.dcs.saveTitle')} onClose={onClose} className="mission-dialog">
+    <Dialog title={t(f.title)} onClose={onClose} className="mission-dialog">
       <div className="mission-base" role="radiogroup" aria-label={t('tactics.dcs.base')}>
         <span>{t('tactics.dcs.base')}</span>
         <label>
@@ -161,12 +173,18 @@ export function MissionSaveDialog({ onClose }: { onClose: () => void }) {
           {t('tactics.dcs.base.new')}
         </label>
       </div>
-      {source && !original && <div className="hint">{t('tactics.dcs.missing', { name: source })}</div>}
+      {source && !original && <div className="hint">{t(f.missing, { name: source })}</div>}
       <div className="tactics-tools">
         <button type="button" onClick={() => fileRef.current?.click()}>
-          {t('tactics.dcs.pick')}
+          {t(f.pick)}
         </button>
-        {base === 'new' && (
+        {base === 'new' && format === 'wt' && (
+          <label className="field mission-theatre">
+            <span>{t('tactics.wt.level')}</span>
+            <input type="text" value={level} placeholder="avg_poland" onChange={(e) => setLevel(e.target.value)} />
+          </label>
+        )}
+        {base === 'new' && format === 'dcs' && (
           <label className="field mission-theatre">
             <span>{t('tactics.dcs.theatre')}</span>
             <select value={theatre} onChange={(e) => setTheatre(e.target.value)}>
@@ -182,7 +200,7 @@ export function MissionSaveDialog({ onClose }: { onClose: () => void }) {
       <input
         ref={fileRef}
         type="file"
-        accept=".miz"
+        accept={f.ext}
         style={{ display: 'none' }}
         onChange={(e) => {
           const f = e.target.files?.[0];
@@ -217,7 +235,7 @@ export function MissionSaveDialog({ onClose }: { onClose: () => void }) {
           {t('shell.confirm.cancel')}
         </button>
         <button type="button" className="primary" disabled={!result || busy} onClick={save}>
-          {t('tactics.dcs.write')}
+          {t(f.write)}
         </button>
       </div>
     </Dialog>

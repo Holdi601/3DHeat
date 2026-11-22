@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} nie ma zadania DCS.",
   "tactics.dcs.warn.game-task": "{group}: {what} nie jest zadaniem, które tablica może zapisać; zostaje pominięte.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# figura to nie jednostka (znaczniki, broń); nie zostanie zapisana.} few {# figury to nie jednostki (znaczniki, broń); nie zostaną zapisane.} many {# figur to nie jednostki (znaczniki, broń); nie zostaną zapisane.} other {# figury to nie jednostki (znaczniki, broń); nie zostaną zapisane.}}",
-  "tactics.dcs.warn.start": "Zadania ustawione na start później niż ich punkt trasy w DCS zaczynają się w punkcie trasy."
+  "tactics.dcs.warn.start": "Zadania ustawione na start później niż ich punkt trasy w DCS zaczynają się w punkcie trasy.",
+  "tactics.wt.open": "Otwórz misję War Thunder…",
+  "tactics.wt.openHint": "Misja użytkownika War Thunder (.blk, tak jak zapisuje ją Mission Editor) jako tablica: każda armia na własnej warstwie, każda jednostka ze swoimi punktami trasy. „Zapisz jako misję War Thunder” zapisuje tablicę z powrotem do niej.",
+  "tactics.wt.save": "Zapisz jako misję War Thunder…",
+  "tactics.wt.saveHint": "Zapisuje tablicę jako misję użytkownika War Thunder: do misji, z której pochodzi, albo jako nową misję na poziomie.",
+  "tactics.wt.saveTitle": "Zapisz jako misję War Thunder",
+  "tactics.wt.level": "Poziom",
+  "tactics.wt.pick": "Wybierz .blk…",
+  "tactics.wt.missing": "{name}.blk nie jest otwarty w tej sesji: wybierz go ponownie, aby do niego zapisać, albo zapisz nową misję.",
+  "tactics.wt.write": "Zapisz .blk",
+  "tactics.dcs.warn.wt-task": "{group}: {what} wymaga wyzwalacza w Mission Editorze War Thundera; nie jest zapisywane.",
+  "tactics.dcs.warn.wt-count": "{group}: jednostka War Thundera to jeden lot lub pluton; {n, plural, one {# figura na tablicy pozostaje} few {# figury na tablicy pozostają} many {# figur na tablicy pozostaje} other {# figury na tablicy pozostaje}} jedną jednostką.",
+  "tactics.dcs.warn.wt-player": "Brak niebieskiej jednostki dla gracza: wybierz ją w Mission Editorze."
 }

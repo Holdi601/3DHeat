@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group} : {what} n'a pas de tâche DCS.",
   "tactics.dcs.warn.game-task": "{group} : {what} n'est pas une tâche que le tableau peut écrire ; elle est omise.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# figurine n'est pas une unité (marqueurs, armes) et n'est pas écrite.} other {# figurines ne sont pas des unités (marqueurs, armes) et ne sont pas écrites.}}",
-  "tactics.dcs.warn.start": "Les tâches réglées pour commencer après leur point de passage commencent au point de passage dans DCS."
+  "tactics.dcs.warn.start": "Les tâches réglées pour commencer après leur point de passage commencent au point de passage dans DCS.",
+  "tactics.wt.open": "Ouvrir une mission War Thunder…",
+  "tactics.wt.openHint": "Une mission utilisateur War Thunder (.blk, telle que le Mission Editor l'enregistre) comme tableau : chaque armée sur sa propre couche, chaque unité avec ses points de passage. « Enregistrer comme mission War Thunder » réécrit le tableau dedans.",
+  "tactics.wt.save": "Enregistrer comme mission War Thunder…",
+  "tactics.wt.saveHint": "Écrit le tableau comme mission utilisateur War Thunder : dans la mission d'origine, ou comme nouvelle mission sur un niveau.",
+  "tactics.wt.saveTitle": "Enregistrer comme mission War Thunder",
+  "tactics.wt.level": "Niveau",
+  "tactics.wt.pick": "Choisir un .blk…",
+  "tactics.wt.missing": "{name}.blk n'est pas ouvert dans cette session : choisissez-le à nouveau pour écrire dedans, ou écrivez une nouvelle mission.",
+  "tactics.wt.write": "Enregistrer le .blk",
+  "tactics.dcs.warn.wt-task": "{group} : {what} nécessite un déclencheur dans le Mission Editor de War Thunder ; il n'est pas écrit.",
+  "tactics.dcs.warn.wt-count": "{group} : une unité War Thunder est un vol ou un peloton ; {n, plural, one {# figurine du tableau reste} other {# figurines du tableau restent}} une seule unité.",
+  "tactics.dcs.warn.wt-player": "Aucune unité bleue pour le joueur : choisissez-en une dans le Mission Editor."
 }

@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} hat keine DCS-Aufgabe.",
   "tactics.dcs.warn.game-task": "{group}: {what} ist keine Aufgabe, die das Brett schreiben kann; sie wird weggelassen.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# Figur ist keine Einheit (Markierungen, Waffen) und wird nicht geschrieben.} other {# Figuren sind keine Einheiten (Markierungen, Waffen) und werden nicht geschrieben.}}",
-  "tactics.dcs.warn.start": "Aufgaben, die später als ihr Wegpunkt beginnen sollen, beginnen in DCS am Wegpunkt."
+  "tactics.dcs.warn.start": "Aufgaben, die später als ihr Wegpunkt beginnen sollen, beginnen in DCS am Wegpunkt.",
+  "tactics.wt.open": "War-Thunder-Mission öffnen…",
+  "tactics.wt.openHint": "Eine War-Thunder-Benutzermission (.blk, wie der Missionseditor sie speichert) als Brett: jede Armee auf eigener Ebene, jede Einheit mit ihren Wegpunkten. „Als War-Thunder-Mission speichern“ schreibt das Brett wieder hinein.",
+  "tactics.wt.save": "Als War-Thunder-Mission speichern…",
+  "tactics.wt.saveHint": "Schreibt das Brett als War-Thunder-Benutzermission: in die Mission, aus der es kam, oder als neue Mission auf einem Level.",
+  "tactics.wt.saveTitle": "Als War-Thunder-Mission speichern",
+  "tactics.wt.level": "Level",
+  "tactics.wt.pick": ".blk wählen…",
+  "tactics.wt.missing": "{name}.blk ist in dieser Sitzung nicht geöffnet: Wähle sie erneut, um hineinzuschreiben, oder schreibe eine neue Mission.",
+  "tactics.wt.write": ".blk speichern",
+  "tactics.dcs.warn.wt-task": "{group}: {what} braucht einen Trigger im Missionseditor von War Thunder; es wird nicht geschrieben.",
+  "tactics.dcs.warn.wt-count": "{group}: Eine War-Thunder-Einheit ist ein Schwarm oder Zug; {n, plural, one {# Figur auf dem Brett bleibt} other {# Figuren auf dem Brett bleiben}} eine Einheit.",
+  "tactics.dcs.warn.wt-player": "Keine blaue Einheit für den Spieler: Wähle eine im Missionseditor."
 }

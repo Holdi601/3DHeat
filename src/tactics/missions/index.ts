@@ -20,6 +20,7 @@ import { CATALOG } from '../../figures/catalog';
 import { figureLabel } from '../names';
 import { dcsMiz } from './dcs';
 import { armaSqm } from './arma';
+import { wtBlk } from './wt';
 import { ocapRecording } from './ocap';
 import type { MissionInfo, PlanMission } from '../missionLink';
 
@@ -140,10 +141,10 @@ export interface MissionImporter {
   read: (bytes: Uint8Array, name: string) => Promise<MissionState>;
 }
 
-export const IMPORTERS: MissionImporter[] = [dcsMiz, armaSqm, ocapRecording];
+export const IMPORTERS: MissionImporter[] = [dcsMiz, armaSqm, ocapRecording, wtBlk];
 
 /** The file chooser's accept list. */
-export const MISSION_ACCEPT = '.miz,.sqm,.json,.gz,.jsonl';
+export const MISSION_ACCEPT = '.miz,.sqm,.json,.gz,.jsonl,.blk';
 
 /** Reads a mission file with the reader that takes its name; refuses one no reader takes. */
 export async function readMission(name: string, bytes: Uint8Array): Promise<MissionState> {

@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}：{what} 没有对应的 DCS 任务。",
   "tactics.dcs.warn.game-task": "{group}：{what} 不是战术板能写入的任务，已略去。",
   "tactics.dcs.warn.skipped": "{n, plural, other {# 个图标}}不是单位（标记、武器），不会写入。",
-  "tactics.dcs.warn.start": "设置为晚于其路径点开始的任务，在 DCS 中会在路径点处开始。"
+  "tactics.dcs.warn.start": "设置为晚于其路径点开始的任务，在 DCS 中会在路径点处开始。",
+  "tactics.wt.open": "打开 War Thunder 任务…",
+  "tactics.wt.openHint": "将 War Thunder 用户任务（.blk，即 Mission Editor 保存的格式）作为战术板：每支军队在各自的图层上，每个单位带有其路径点。“另存为 War Thunder 任务”会把战术板写回其中。",
+  "tactics.wt.save": "另存为 War Thunder 任务…",
+  "tactics.wt.saveHint": "将战术板写成 War Thunder 用户任务：写入它来自的任务，或作为某个关卡上的新任务。",
+  "tactics.wt.saveTitle": "另存为 War Thunder 任务",
+  "tactics.wt.level": "关卡",
+  "tactics.wt.pick": "选择 .blk…",
+  "tactics.wt.missing": "{name}.blk 在本次会话中未打开：请重新选择它以写入其中，或写成新任务。",
+  "tactics.wt.write": "保存 .blk",
+  "tactics.dcs.warn.wt-task": "{group}：{what} 需要在 War Thunder 的 Mission Editor 中设置触发器；不会写入。",
+  "tactics.dcs.warn.wt-count": "{group}：War Thunder 的一个单位就是一个编队或排；{n, plural, other {战术板上的 # 个图标}}仍为一个单位。",
+  "tactics.dcs.warn.wt-player": "没有供玩家使用的蓝方单位：请在 Mission Editor 中选择一个。"
 }

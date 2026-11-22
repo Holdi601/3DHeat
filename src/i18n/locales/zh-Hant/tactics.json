@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}：{what} 沒有對應的 DCS 任務。",
   "tactics.dcs.warn.game-task": "{group}：{what} 不是戰術板能寫入的任務，已略去。",
   "tactics.dcs.warn.skipped": "{n, plural, other {# 個圖示}}不是單位（標記、武器），不會寫入。",
-  "tactics.dcs.warn.start": "設定為晚於其路徑點開始的任務，在 DCS 中會在路徑點處開始。"
+  "tactics.dcs.warn.start": "設定為晚於其路徑點開始的任務，在 DCS 中會在路徑點處開始。",
+  "tactics.wt.open": "開啟 War Thunder 任務…",
+  "tactics.wt.openHint": "將 War Thunder 使用者任務（.blk，即 Mission Editor 儲存的格式）作為戰術板：每支軍隊在各自的圖層上，每個單位帶有其路徑點。「另存為 War Thunder 任務」會把戰術板寫回其中。",
+  "tactics.wt.save": "另存為 War Thunder 任務…",
+  "tactics.wt.saveHint": "將戰術板寫成 War Thunder 使用者任務：寫入它來自的任務，或作為某個關卡上的新任務。",
+  "tactics.wt.saveTitle": "另存為 War Thunder 任務",
+  "tactics.wt.level": "關卡",
+  "tactics.wt.pick": "選取 .blk…",
+  "tactics.wt.missing": "{name}.blk 在本次工作階段中未開啟：請重新選取它以寫入其中，或寫成新任務。",
+  "tactics.wt.write": "儲存 .blk",
+  "tactics.dcs.warn.wt-task": "{group}：{what} 需要在 War Thunder 的 Mission Editor 中設定觸發器；不會寫入。",
+  "tactics.dcs.warn.wt-count": "{group}：War Thunder 的一個單位就是一個編隊或排；{n, plural, other {戰術板上的 # 個圖示}}仍為一個單位。",
+  "tactics.dcs.warn.wt-player": "沒有供玩家使用的藍方單位：請在 Mission Editor 中選取一個。"
 }

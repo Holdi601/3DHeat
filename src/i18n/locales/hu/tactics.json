@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} nem felel meg egyetlen DCS-feladatnak sem.",
   "tactics.dcs.warn.game-task": "{group}: {what} nem olyan feladat, amelyet a tábla ki tud írni; kimarad.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# figura nem egység (jelölők, fegyverek), és nem kerül kiírásra.} other {# figura nem egység (jelölők, fegyverek), és nem kerül kiírásra.}}",
-  "tactics.dcs.warn.start": "Az útpontjuknál későbbre időzített feladatok a DCS-ben az útpontnál indulnak."
+  "tactics.dcs.warn.start": "Az útpontjuknál későbbre időzített feladatok a DCS-ben az útpontnál indulnak.",
+  "tactics.wt.open": "War Thunder-küldetés megnyitása…",
+  "tactics.wt.openHint": "Egy War Thunder felhasználói küldetés (.blk, ahogy a Mission Editor menti) táblaként: minden hadsereg a saját rétegén, minden egység az útpontjaival. A „Mentés War Thunder-küldetésként” visszaírja bele a táblát.",
+  "tactics.wt.save": "Mentés War Thunder-küldetésként…",
+  "tactics.wt.saveHint": "A táblát War Thunder felhasználói küldetésként írja ki: abba a küldetésbe, amelyből jött, vagy új küldetésként egy pályára.",
+  "tactics.wt.saveTitle": "Mentés War Thunder-küldetésként",
+  "tactics.wt.level": "Pálya",
+  "tactics.wt.pick": ".blk kiválasztása…",
+  "tactics.wt.missing": "A(z) {name}.blk nincs megnyitva ebben a munkamenetben: válaszd ki újra, hogy beleírhass, vagy írj új küldetést.",
+  "tactics.wt.write": ".blk mentése",
+  "tactics.dcs.warn.wt-task": "{group}: {what} triggert igényel a War Thunder Mission Editorában; nem kerül kiírásra.",
+  "tactics.dcs.warn.wt-count": "{group}: egy War Thunder-egység egy kötelék vagy szakasz; {n, plural, one {a táblán lévő # figura} other {a táblán lévő # figura}} egy egység marad.",
+  "tactics.dcs.warn.wt-player": "Nincs kék egység a játékosnak: válassz egyet a Mission Editorban."
 }

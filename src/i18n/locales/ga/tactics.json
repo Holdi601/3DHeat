@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: níl tasc DCS ag {what}.",
   "tactics.dcs.warn.game-task": "{group}: ní tasc é {what} is féidir leis an gclár a scríobh; fágtar amach é.",
   "tactics.dcs.warn.skipped": "{n, plural, one {Ní aonad é # figiúr (marcóirí, airm) agus ní scríobhtar é.} two {Ní aonaid iad # fhigiúr (marcóirí, airm) agus ní scríobhtar iad.} few {Ní aonaid iad # fhigiúr (marcóirí, airm) agus ní scríobhtar iad.} many {Ní aonaid iad # bhfigiúr (marcóirí, airm) agus ní scríobhtar iad.} other {Ní aonaid iad # figiúr (marcóirí, airm) agus ní scríobhtar iad.}}",
-  "tactics.dcs.warn.start": "Tosaíonn tascanna atá socraithe le tosú níos déanaí ná a bpointe bealaigh ag an bpointe bealaigh in DCS."
+  "tactics.dcs.warn.start": "Tosaíonn tascanna atá socraithe le tosú níos déanaí ná a bpointe bealaigh ag an bpointe bealaigh in DCS.",
+  "tactics.wt.open": "Oscail misean War Thunder…",
+  "tactics.wt.openHint": "Misean úsáideora War Thunder (.blk, mar a shábhálann an Mission Editor é) mar chlár: gach arm ar a chiseal féin, gach aonad lena phointí bealaigh. Scríobhann “Sábháil mar mhisean War Thunder” an clár ar ais isteach ann.",
+  "tactics.wt.save": "Sábháil mar mhisean War Thunder…",
+  "tactics.wt.saveHint": "Scríobhann sé an clár mar mhisean úsáideora War Thunder: isteach sa mhisean as ar tháinig sé, nó mar mhisean nua ar leibhéal.",
+  "tactics.wt.saveTitle": "Sábháil mar mhisean War Thunder",
+  "tactics.wt.level": "Leibhéal",
+  "tactics.wt.pick": "Roghnaigh .blk…",
+  "tactics.wt.missing": "Níl {name}.blk oscailte sa seisiún seo: roghnaigh arís é chun scríobh isteach ann, nó scríobh misean nua.",
+  "tactics.wt.write": "Sábháil .blk",
+  "tactics.dcs.warn.wt-task": "{group}: tá truicear de dhíth ar {what} i Mission Editor War Thunder; ní scríobhtar é.",
+  "tactics.dcs.warn.wt-count": "{group}: is eitilt nó buíon amháin é aonad War Thunder; {n, plural, one {fanann # figiúr ar an gclár} two {fanann # fhigiúr ar an gclár} few {fanann # fhigiúr ar an gclár} many {fanann # bhfigiúr ar an gclár} other {fanann # figiúr ar an gclár}} ina n-aonad amháin.",
+  "tactics.dcs.warn.wt-player": "Níl aonad gorm ann don imreoir: roghnaigh ceann sa Mission Editor."
 }

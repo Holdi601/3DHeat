@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} için DCS'de bir görev yok.",
   "tactics.dcs.warn.game-task": "{group}: {what} tahtanın yazabileceği bir görev değil; dışarıda bırakıldı.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# figür birim değil (işaretler, silahlar) ve yazılmaz.} other {# figür birim değil (işaretler, silahlar) ve yazılmaz.}}",
-  "tactics.dcs.warn.start": "Yol noktalarından daha geç başlaması ayarlanan görevler DCS'de yol noktasında başlar."
+  "tactics.dcs.warn.start": "Yol noktalarından daha geç başlaması ayarlanan görevler DCS'de yol noktasında başlar.",
+  "tactics.wt.open": "War Thunder görevi aç…",
+  "tactics.wt.openHint": "Tahta olarak bir War Thunder kullanıcı görevi (.blk, Mission Editor'ın kaydettiği hâliyle): her ordu kendi katmanında, her birim yol noktalarıyla. “War Thunder görevi olarak kaydet” tahtayı yeniden onun içine yazar.",
+  "tactics.wt.save": "War Thunder görevi olarak kaydet…",
+  "tactics.wt.saveHint": "Tahtayı War Thunder kullanıcı görevi olarak yazar: geldiği görevin içine ya da bir bölümde yeni bir görev olarak.",
+  "tactics.wt.saveTitle": "War Thunder görevi olarak kaydet",
+  "tactics.wt.level": "Bölüm",
+  "tactics.wt.pick": ".blk seç…",
+  "tactics.wt.missing": "{name}.blk bu oturumda açık değil: içine yazmak için yeniden seçin ya da yeni bir görev yazın.",
+  "tactics.wt.write": ".blk kaydet",
+  "tactics.dcs.warn.wt-task": "{group}: {what} için War Thunder'ın Mission Editor'ında bir tetikleyici gerekir; yazılmaz.",
+  "tactics.dcs.warn.wt-count": "{group}: War Thunder'da bir birim tek bir uçuş ya da takımdır; {n, plural, one {tahtadaki # figür} other {tahtadaki # figür}} tek birim olarak kalır.",
+  "tactics.dcs.warn.wt-player": "Oyuncu için mavi birim yok: Mission Editor'da bir tane seçin."
 }

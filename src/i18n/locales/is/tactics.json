@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} hefur ekkert DCS-verkefni.",
   "tactics.dcs.warn.game-task": "{group}: {what} er ekki verkefni sem taflan getur skrifað; því er sleppt.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# fígúra er ekki eining (merki, vopn) og er ekki skrifuð.} other {# fígúrur eru ekki einingar (merki, vopn) og eru ekki skrifaðar.}}",
-  "tactics.dcs.warn.start": "Verkefni sem eiga að hefjast seinna en leiðarpunktur þeirra hefjast við leiðarpunktinn í DCS."
+  "tactics.dcs.warn.start": "Verkefni sem eiga að hefjast seinna en leiðarpunktur þeirra hefjast við leiðarpunktinn í DCS.",
+  "tactics.wt.open": "Opna War Thunder-leiðangur…",
+  "tactics.wt.openHint": "Notendaleiðangur úr War Thunder (.blk, eins og Mission Editor vistar hann) sem tafla: hver her á eigin lagi, hver eining með sínum leiðarpunktum. „Vista sem War Thunder-leiðangur“ skrifar töfluna aftur inn í hann.",
+  "tactics.wt.save": "Vista sem War Thunder-leiðangur…",
+  "tactics.wt.saveHint": "Skrifar töfluna sem notendaleiðangur í War Thunder: inn í leiðangurinn sem hún kom úr, eða sem nýjan leiðangur á borði.",
+  "tactics.wt.saveTitle": "Vista sem War Thunder-leiðangur",
+  "tactics.wt.level": "Borð",
+  "tactics.wt.pick": "Velja .blk…",
+  "tactics.wt.missing": "{name}.blk er ekki opin í þessari lotu: veldu hana aftur til að skrifa inn í hana, eða skrifaðu nýjan leiðangur.",
+  "tactics.wt.write": "Vista .blk",
+  "tactics.dcs.warn.wt-task": "{group}: {what} þarf kveikju í Mission Editor War Thunder; það er ekki skrifað.",
+  "tactics.dcs.warn.wt-count": "{group}: eining í War Thunder er eitt flug eða ein sveit; {n, plural, one {# fígúra á töflunni verður áfram} other {# fígúrur á töflunni verða áfram}} ein eining.",
+  "tactics.dcs.warn.wt-player": "Engin blá eining fyrir leikmanninn: veldu eina í Mission Editor."
 }

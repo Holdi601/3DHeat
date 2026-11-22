@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} huet keng DCS-Aufgab.",
   "tactics.dcs.warn.game-task": "{group}: {what} ass keng Aufgab, déi d'Briet schreiwe kann; se gëtt ewechgelooss.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# Figur ass keng Eenheet (Markéierungen, Waffen) a gëtt net geschriwwen.} other {# Figuren sinn keng Eenheeten (Markéierungen, Waffen) a ginn net geschriwwen.}}",
-  "tactics.dcs.warn.start": "Aufgaben, déi méi spéit wéi hire Weepunkt ufänke sollen, fänken an DCS um Weepunkt un."
+  "tactics.dcs.warn.start": "Aufgaben, déi méi spéit wéi hire Weepunkt ufänke sollen, fänken an DCS um Weepunkt un.",
+  "tactics.wt.open": "War-Thunder-Missioun opmaachen…",
+  "tactics.wt.openHint": "Eng War-Thunder-Benotzermissioun (.blk, wéi de Mission Editor se späichert) als Briet: all Arméi op hirer eegener Schicht, all Eenheet mat hire Weepunkten. „Als War-Thunder-Missioun späicheren“ schreift d'Briet erëm dran.",
+  "tactics.wt.save": "Als War-Thunder-Missioun späicheren…",
+  "tactics.wt.saveHint": "Schreift d'Briet als War-Thunder-Benotzermissioun: an d'Missioun, aus där et koum, oder als nei Missioun op engem Level.",
+  "tactics.wt.saveTitle": "Als War-Thunder-Missioun späicheren",
+  "tactics.wt.level": "Level",
+  "tactics.wt.pick": ".blk wielen…",
+  "tactics.wt.missing": "{name}.blk ass an dëser Sessioun net op: wielt se nach eng Kéier, fir dran ze schreiwen, oder schreift eng nei Missioun.",
+  "tactics.wt.write": ".blk späicheren",
+  "tactics.dcs.warn.wt-task": "{group}: {what} brauch en Trigger am Mission Editor vu War Thunder; et gëtt net geschriwwen.",
+  "tactics.dcs.warn.wt-count": "{group}: Eng War-Thunder-Eenheet ass ee Fluch oder ee Zuch; {n, plural, one {# Figur um Briet bleift} other {# Figuren um Briet bleiwen}} eng Eenheet.",
+  "tactics.dcs.warn.wt-player": "Keng blo Eenheet fir de Spiller: wielt eng am Mission Editor."
 }

@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} nemá úlohu DCS.",
   "tactics.dcs.warn.game-task": "{group}: {what} nie je úloha, ktorú tabuľa vie zapísať; vynecháva sa.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# figúrka nie je jednotka (značky, zbrane) a nezapíše sa.} few {# figúrky nie sú jednotky (značky, zbrane) a nezapíšu sa.} many {# figúrky nie sú jednotky (značky, zbrane) a nezapíšu sa.} other {# figúrok nie je jednotkami (značky, zbrane) a nezapíše sa.}}",
-  "tactics.dcs.warn.start": "Úlohy nastavené tak, aby začali neskôr ako ich bod trasy, začínajú v DCS na bode trasy."
+  "tactics.dcs.warn.start": "Úlohy nastavené tak, aby začali neskôr ako ich bod trasy, začínajú v DCS na bode trasy.",
+  "tactics.wt.open": "Otvoriť misiu War Thunder…",
+  "tactics.wt.openHint": "Používateľská misia War Thunder (.blk, ako ju ukladá Mission Editor) ako tabuľa: každá armáda na vlastnej vrstve, každá jednotka so svojimi bodmi trasy. „Uložiť ako misiu War Thunder“ zapíše tabuľu späť do nej.",
+  "tactics.wt.save": "Uložiť ako misiu War Thunder…",
+  "tactics.wt.saveHint": "Zapíše tabuľu ako používateľskú misiu War Thunder: do misie, z ktorej pochádza, alebo ako novú misiu na leveli.",
+  "tactics.wt.saveTitle": "Uložiť ako misiu War Thunder",
+  "tactics.wt.level": "Level",
+  "tactics.wt.pick": "Vybrať .blk…",
+  "tactics.wt.missing": "{name}.blk nie je v tejto relácii otvorený: vyberte ho znova, aby ste doň mohli zapísať, alebo zapíšte novú misiu.",
+  "tactics.wt.write": "Uložiť .blk",
+  "tactics.dcs.warn.wt-task": "{group}: {what} potrebuje spúšťač v Mission Editore War Thunderu; nezapíše sa.",
+  "tactics.dcs.warn.wt-count": "{group}: jednotka War Thunderu je jeden let alebo čata; {n, plural, one {# figúrka na tabuli zostáva} few {# figúrky na tabuli zostávajú} many {# figúrky na tabuli zostáva} other {# figúrok na tabuli zostáva}} jednou jednotkou.",
+  "tactics.dcs.warn.wt-player": "Žiadna modrá jednotka pre hráča: vyberte ju v Mission Editore."
 }

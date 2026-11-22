@@ -1,14 +1,14 @@
 ---
-title: Mission planner (DCS)
+title: Mission planner
 parent: Tactics board
 nav_order: 3
 ---
 
-# Mission planner (DCS)
+# Mission planner
 
-The [tactics board](tactics-board.md) can open a DCS World mission, let you change it on the map, and write it back as a mission DCS loads: routes moved, waypoints added, tasks given, new flights and ground groups placed, groups taken out. Everything else in the mission stays as the mission editor wrote it.
+The [tactics board](tactics-board.md) can open a DCS World mission or a War Thunder user mission, let you change it on the map, and write it back as a mission the game loads: routes moved, waypoints added, tasks given, new flights and ground groups placed, groups taken out. Everything else in the mission stays as the mission editor wrote it.
 
-Both buttons are in the board's **File** section.
+The buttons are in the board's **File** section. DCS comes first below; [War Thunder](#war-thunder-user-missions) works the same way with what its missions hold.
 
 ## Open DCS mission…
 
@@ -74,9 +74,27 @@ An aircraft's waypoint drawn on the ground (where a click on the map puts it) is
 
 A new group's main task follows its tasks (SEAD, CAS, Ground Attack, Fighter Sweep, Intercept, Escort, CAP); a mission's own groups keep theirs. A ground patrol, a ground sweep and the board's other tasks (seize, breach, phase lines …) have no DCS task; they are listed as warnings and the route is written without them.
 
+## War Thunder user missions
+
+**Open War Thunder mission…** reads a user mission as the mission editor saves it: a text `.blk` from the game's `UserMissions` folder. **Save as War Thunder mission…** writes the board back into it (saved as `<name> (3DHeat).blk`), or makes a new single mission on a level you name (the level's file name, such as the one in the mission's `level` line, without `levels/` and `.bin`).
+
+| In the mission | On the board |
+|---|---|
+| Unit blocks in `units`: aircraft (`armada`), tanks and wheeled vehicles, infantry, ships, structures | One figure per block, named as the block, on its army's layer (army 1 Blue, army 2 Red), where its matrix puts it and facing where it faces. A block stands for a whole flight or platoon (`count`); it stays one figure. |
+| A unit's `way` waypoints | Its route, with each waypoint's speed |
+| `attack_type` (fire at will, return fire, hold fire) | The unit's weapons state |
+| Level, time of day, weather, date | Kept with the plan; the summary shows them |
+| `areas` | Spheres, boxes and cylinders as areas, points as notes, on the **Mission places** layer |
+
+War Thunder's world is x east, y up, z north, and the War Thunder levels lie in the viewer with z mirrored, so a mission falls on its level where it belongs.
+
+Writing back works as for DCS: a unit block the board left as it was stays byte for byte; a moved or turned unit gets a new matrix, a moved waypoint a new position, a changed weapons state a new `attack_type`, a figure changed to another kind a new `unit_class`; waypoints added or taken away rewrite the unit's `way` block (the waypoints that stay keep their text); a figure no block holds becomes a new unit block; a block whose figure was taken off the board is taken out. Triggers, objectives and areas stay as they were.
+
+War Thunder gives units their tasks in the mission's triggers, not at their waypoints, so only the weapons state is written; every other board task is listed in the summary as one to set in the mission editor. A new mission makes the first Blue unit the player's.
+
 ## Not yet
 
-- The board does not load the theatre's level by itself; load it from the level panel.
+- The board does not load the theatre's or level's level by itself; load it from the level panel.
 - Trigger zones and markers drawn on the board are not written into the mission.
-- New missions have not yet been flown in DCS by this project; the patched missions were checked by reading them back over several hundred missions.
-- War Thunder user missions (`.blk`) are the next format.
+- Missions written by the board have not yet been flown in the games by this project; the writers were checked by reading the results back, over several hundred missions of each game.
+- War Thunder's triggers (attack orders, spawns, objectives) are not read onto the board.

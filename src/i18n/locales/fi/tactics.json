@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} ei vastaa mitään DCS-tehtävää.",
   "tactics.dcs.warn.game-task": "{group}: {what} ei ole tehtävä, jonka taulu voi kirjoittaa; se jätetään pois.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# hahmo ei ole yksikkö (merkit, aseet), eikä sitä kirjoiteta.} other {# hahmoa ei ole yksiköitä (merkit, aseet), eikä niitä kirjoiteta.}}",
-  "tactics.dcs.warn.start": "Tehtävät, joiden on määrä alkaa myöhemmin kuin niiden reittipiste, alkavat DCS:ssä reittipisteessä."
+  "tactics.dcs.warn.start": "Tehtävät, joiden on määrä alkaa myöhemmin kuin niiden reittipiste, alkavat DCS:ssä reittipisteessä.",
+  "tactics.wt.open": "Avaa War Thunder -missio…",
+  "tactics.wt.openHint": "War Thunderin käyttäjämissio (.blk, sellaisena kuin Mission Editor sen tallentaa) tauluksi: jokainen armeija omalle tasolleen, jokainen yksikkö reittipisteineen. ”Tallenna War Thunder -missiona” kirjoittaa taulun takaisin siihen.",
+  "tactics.wt.save": "Tallenna War Thunder -missiona…",
+  "tactics.wt.saveHint": "Kirjoittaa taulun War Thunderin käyttäjämissioksi: siihen missioon, josta se tuli, tai uudeksi missioksi jollekin kentälle.",
+  "tactics.wt.saveTitle": "Tallenna War Thunder -missiona",
+  "tactics.wt.level": "Kenttä",
+  "tactics.wt.pick": "Valitse .blk…",
+  "tactics.wt.missing": "{name}.blk ei ole auki tässä istunnossa: valitse se uudelleen kirjoittaaksesi siihen, tai kirjoita uusi missio.",
+  "tactics.wt.write": "Tallenna .blk",
+  "tactics.dcs.warn.wt-task": "{group}: {what} tarvitsee triggerin War Thunderin Mission Editorissa; sitä ei kirjoiteta.",
+  "tactics.dcs.warn.wt-count": "{group}: War Thunderin yksikkö on yksi lento tai joukkue; {n, plural, one {# taulun hahmo pysyy} other {# taulun hahmoa pysyy}} yhtenä yksikkönä.",
+  "tactics.dcs.warn.wt-player": "Pelaajalle ei ole sinistä yksikköä: valitse sellainen Mission Editorissa."
 }

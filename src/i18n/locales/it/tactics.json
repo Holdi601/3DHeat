@@ -280,7 +280,7 @@
   "tactics.rotateLeft": "Turn left",
   "tactics.rotateRight": "Turn right",
   "tactics.dcs.open": "Apri missione DCS…",
-  "tactics.dcs.openHint": "Una missione DCS World (.miz) come lavagna: ogni coalizione sul proprio livello, ogni gruppo con le sue unità, il percorso e i compiti. «Salva come missione DCS» riscrive la lavagna al suo interno.",
+  "tactics.dcs.openHint": "Una missione DCS World (.miz) come lavagna: ogni coalizione sul proprio strato, ogni gruppo con le sue unità, il percorso e i compiti. «Salva come missione DCS» riscrive la lavagna al suo interno.",
   "tactics.dcs.save": "Salva come missione DCS…",
   "tactics.dcs.saveHint": "Scrive la lavagna come missione DCS World: nella missione da cui proviene o come nuova missione per un teatro.",
   "tactics.dcs.saveTitle": "Salva come missione DCS",
@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} non ha un compito DCS.",
   "tactics.dcs.warn.game-task": "{group}: {what} non è un compito che la lavagna può scrivere; viene tralasciato.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# figura non è un'unità (indicatori, armi) e non viene scritta.} other {# figure non sono unità (indicatori, armi) e non vengono scritte.}}",
-  "tactics.dcs.warn.start": "I compiti impostati per iniziare dopo il loro waypoint in DCS iniziano al waypoint."
+  "tactics.dcs.warn.start": "I compiti impostati per iniziare dopo il loro waypoint in DCS iniziano al waypoint.",
+  "tactics.wt.open": "Apri missione War Thunder…",
+  "tactics.wt.openHint": "Una missione utente di War Thunder (.blk, come la salva il Mission Editor) come lavagna: ogni esercito sul proprio strato, ogni unità con i suoi waypoint. «Salva come missione War Thunder» riscrive la lavagna al suo interno.",
+  "tactics.wt.save": "Salva come missione War Thunder…",
+  "tactics.wt.saveHint": "Scrive la lavagna come missione utente di War Thunder: nella missione da cui proviene o come nuova missione su un livello.",
+  "tactics.wt.saveTitle": "Salva come missione War Thunder",
+  "tactics.wt.level": "Livello",
+  "tactics.wt.pick": "Scegli un .blk…",
+  "tactics.wt.missing": "{name}.blk non è aperto in questa sessione: sceglilo di nuovo per scriverci dentro, oppure scrivi una nuova missione.",
+  "tactics.wt.write": "Salva .blk",
+  "tactics.dcs.warn.wt-task": "{group}: {what} richiede un trigger nel Mission Editor di War Thunder; non viene scritto.",
+  "tactics.dcs.warn.wt-count": "{group}: un'unità di War Thunder è un volo o un plotone; {n, plural, one {# figura sulla lavagna resta} other {# figure sulla lavagna restano}} una sola unità.",
+  "tactics.dcs.warn.wt-player": "Nessuna unità blu per il giocatore: scegline una nel Mission Editor."
 }

@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} har ingen DCS-oppgave.",
   "tactics.dcs.warn.game-task": "{group}: {what} er ikke en oppgave tavlen kan skrive; den utelates.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# figur er ikke en enhet (markører, våpen) og skrives ikke.} other {# figurer er ikke enheter (markører, våpen) og skrives ikke.}}",
-  "tactics.dcs.warn.start": "Oppgaver som skal starte senere enn veipunktet sitt, starter ved veipunktet i DCS."
+  "tactics.dcs.warn.start": "Oppgaver som skal starte senere enn veipunktet sitt, starter ved veipunktet i DCS.",
+  "tactics.wt.open": "Åpne War Thunder-oppdrag…",
+  "tactics.wt.openHint": "Et War Thunder-brukeroppdrag (.blk, slik Mission Editor lagrer det) som tavle: hver hær på sitt eget lag, hver enhet med sine veipunkter. «Lagre som War Thunder-oppdrag» skriver tavlen tilbake i det.",
+  "tactics.wt.save": "Lagre som War Thunder-oppdrag…",
+  "tactics.wt.saveHint": "Skriver tavlen som et War Thunder-brukeroppdrag: inn i oppdraget den kom fra, eller som et nytt oppdrag på et nivå.",
+  "tactics.wt.saveTitle": "Lagre som War Thunder-oppdrag",
+  "tactics.wt.level": "Nivå",
+  "tactics.wt.pick": "Velg en .blk…",
+  "tactics.wt.missing": "{name}.blk er ikke åpnet i denne økten: velg den igjen for å skrive inn i den, eller skriv et nytt oppdrag.",
+  "tactics.wt.write": "Lagre .blk",
+  "tactics.dcs.warn.wt-task": "{group}: {what} trenger en trigger i War Thunders Mission Editor; den skrives ikke.",
+  "tactics.dcs.warn.wt-count": "{group}: en War Thunder-enhet er én flight eller tropp; {n, plural, one {# figur på tavlen forblir} other {# figurer på tavlen forblir}} én enhet.",
+  "tactics.dcs.warn.wt-player": "Ingen blå enhet for spilleren: velg en i Mission Editor."
 }

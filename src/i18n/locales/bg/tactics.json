@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} няма задача в DCS.",
   "tactics.dcs.warn.game-task": "{group}: {what} не е задача, която дъската може да запише; пропуска се.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# фигура не е единица (маркери, оръжия) и не се записва.} other {# фигури не са единици (маркери, оръжия) и не се записват.}}",
-  "tactics.dcs.warn.start": "Задачите, зададени да започнат по-късно от пътната си точка, в DCS започват в пътната точка."
+  "tactics.dcs.warn.start": "Задачите, зададени да започнат по-късно от пътната си точка, в DCS започват в пътната точка.",
+  "tactics.wt.open": "Отваряне на мисия War Thunder…",
+  "tactics.wt.openHint": "Потребителска мисия War Thunder (.blk, както я записва Mission Editor) като дъска: всяка армия на свой слой, всяка единица със своите пътни точки. „Запазване като мисия War Thunder“ записва дъската обратно в нея.",
+  "tactics.wt.save": "Запазване като мисия War Thunder…",
+  "tactics.wt.saveHint": "Записва дъската като потребителска мисия War Thunder: в мисията, от която е дошла, или като нова мисия на ниво.",
+  "tactics.wt.saveTitle": "Запазване като мисия War Thunder",
+  "tactics.wt.level": "Ниво",
+  "tactics.wt.pick": "Избор на .blk…",
+  "tactics.wt.missing": "{name}.blk не е отворен в тази сесия: изберете го отново, за да запишете в него, или запишете нова мисия.",
+  "tactics.wt.write": "Запазване на .blk",
+  "tactics.dcs.warn.wt-task": "{group}: {what} изисква тригер в Mission Editor на War Thunder; не се записва.",
+  "tactics.dcs.warn.wt-count": "{group}: единица в War Thunder е един полет или взвод; {n, plural, one {# фигура на дъската остава} other {# фигури на дъската остават}} една единица.",
+  "tactics.dcs.warn.wt-player": "Няма синя единица за играча: изберете една в Mission Editor."
 }

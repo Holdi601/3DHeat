@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} — у DCS немає відповідного завдання.",
   "tactics.dcs.warn.game-task": "{group}: {what} — не завдання, яке дошка може записати; пропущено.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# фігура не є юнітом (позначки, зброя) і не записується.} few {# фігури не є юнітами (позначки, зброя) і не записуються.} many {# фігур не є юнітами (позначки, зброя) і не записуються.} other {# фігури не є юнітами (позначки, зброя) і не записуються.}}",
-  "tactics.dcs.warn.start": "Завдання, що мають початися пізніше за свою шляхову точку, у DCS починаються на шляховій точці."
+  "tactics.dcs.warn.start": "Завдання, що мають початися пізніше за свою шляхову точку, у DCS починаються на шляховій точці.",
+  "tactics.wt.open": "Відкрити місію War Thunder…",
+  "tactics.wt.openHint": "Користувацька місія War Thunder (.blk, як її зберігає Mission Editor) як дошка: кожна армія на власному шарі, кожен юніт зі своїми шляховими точками. «Зберегти як місію War Thunder» записує дошку назад у неї.",
+  "tactics.wt.save": "Зберегти як місію War Thunder…",
+  "tactics.wt.saveHint": "Записує дошку як користувацьку місію War Thunder: у місію, з якої вона прийшла, або як нову місію на рівні.",
+  "tactics.wt.saveTitle": "Зберегти як місію War Thunder",
+  "tactics.wt.level": "Рівень",
+  "tactics.wt.pick": "Вибрати .blk…",
+  "tactics.wt.missing": "{name}.blk не відкрито в цьому сеансі: виберіть його знову, щоб записати в нього, або запишіть нову місію.",
+  "tactics.wt.write": "Зберегти .blk",
+  "tactics.dcs.warn.wt-task": "{group}: {what} — потрібен тригер у Mission Editor War Thunder; не записується.",
+  "tactics.dcs.warn.wt-count": "{group}: юніт War Thunder — це одна ланка або взвод; {n, plural, one {# фігура на дошці лишається} few {# фігури на дошці лишаються} many {# фігур на дошці лишаються} other {# фігури на дошці лишаються}} одним юнітом.",
+  "tactics.dcs.warn.wt-player": "Немає синього юніта для гравця: виберіть його в Mission Editor."
 }

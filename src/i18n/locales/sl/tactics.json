@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} nima naloge DCS.",
   "tactics.dcs.warn.game-task": "{group}: {what} ni naloga, ki bi jo tabla lahko zapisala; izpuščena je.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# figura ni enota (oznake, orožje) in se ne zapiše.} two {# figuri nista enoti (oznake, orožje) in se ne zapišeta.} few {# figure niso enote (oznake, orožje) in se ne zapišejo.} other {# figur ni enot (oznake, orožje) in se ne zapiše.}}",
-  "tactics.dcs.warn.start": "Naloge, nastavljene za začetek pozneje od svoje točke poti, se v DCS začnejo na točki poti."
+  "tactics.dcs.warn.start": "Naloge, nastavljene za začetek pozneje od svoje točke poti, se v DCS začnejo na točki poti.",
+  "tactics.wt.open": "Odpri misijo War Thunder…",
+  "tactics.wt.openHint": "Uporabniška misija War Thunder (.blk, kot jo shrani Mission Editor) kot tabla: vsaka vojska na svoji plasti, vsaka enota s svojimi točkami poti. »Shrani kot misijo War Thunder« zapiše tablo nazaj vanjo.",
+  "tactics.wt.save": "Shrani kot misijo War Thunder…",
+  "tactics.wt.saveHint": "Zapiše tablo kot uporabniško misijo War Thunder: v misijo, iz katere je prišla, ali kot novo misijo na nivoju.",
+  "tactics.wt.saveTitle": "Shrani kot misijo War Thunder",
+  "tactics.wt.level": "Nivo",
+  "tactics.wt.pick": "Izberi .blk…",
+  "tactics.wt.missing": "{name}.blk v tej seji ni odprt: znova ga izberite, da vanj zapišete, ali zapišite novo misijo.",
+  "tactics.wt.write": "Shrani .blk",
+  "tactics.dcs.warn.wt-task": "{group}: {what} potrebuje sprožilec v Mission Editorju igre War Thunder; ne zapiše se.",
+  "tactics.dcs.warn.wt-count": "{group}: enota v War Thunderju je en let ali vod; {n, plural, one {# figura na tabli ostane} two {# figuri na tabli ostaneta} few {# figure na tabli ostanejo} other {# figur na tabli ostane}} ena enota.",
+  "tactics.dcs.warn.wt-player": "Ni modre enote za igralca: izberite eno v Mission Editorju."
 }

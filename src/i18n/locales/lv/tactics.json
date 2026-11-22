@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} – DCS nav atbilstoša uzdevuma.",
   "tactics.dcs.warn.game-task": "{group}: {what} nav uzdevums, ko tāfele var ierakstīt; tas tiek izlaists.",
   "tactics.dcs.warn.skipped": "{n, plural, zero {# figūras nav vienības (marķieri, ieroči) un netiek ierakstītas.} one {# figūra nav vienība (marķieri, ieroči) un netiek ierakstīta.} other {# figūras nav vienības (marķieri, ieroči) un netiek ierakstītas.}}",
-  "tactics.dcs.warn.start": "Uzdevumi, kam iestatīts sākties vēlāk par to ceļa punktu, DCS sākas ceļa punktā."
+  "tactics.dcs.warn.start": "Uzdevumi, kam iestatīts sākties vēlāk par to ceļa punktu, DCS sākas ceļa punktā.",
+  "tactics.wt.open": "Atvērt War Thunder misiju…",
+  "tactics.wt.openHint": "War Thunder lietotāja misija (.blk, kā to saglabā Mission Editor) kā tāfele: katra armija savā slānī, katra vienība ar saviem ceļa punktiem. “Saglabāt kā War Thunder misiju” ieraksta tāfeli atpakaļ tajā.",
+  "tactics.wt.save": "Saglabāt kā War Thunder misiju…",
+  "tactics.wt.saveHint": "Ieraksta tāfeli kā War Thunder lietotāja misiju: misijā, no kuras tā nāca, vai kā jaunu misiju kādā līmenī.",
+  "tactics.wt.saveTitle": "Saglabāt kā War Thunder misiju",
+  "tactics.wt.level": "Līmenis",
+  "tactics.wt.pick": "Izvēlēties .blk…",
+  "tactics.wt.missing": "{name}.blk šajā sesijā nav atvērts: izvēlies to vēlreiz, lai tajā ierakstītu, vai ieraksti jaunu misiju.",
+  "tactics.wt.write": "Saglabāt .blk",
+  "tactics.dcs.warn.wt-task": "{group}: {what} – vajadzīgs trigeris War Thunder Mission Editor; netiek ierakstīts.",
+  "tactics.dcs.warn.wt-count": "{group}: War Thunder vienība ir viens lidojums vai vads; {n, plural, zero {# figūras uz tāfeles paliek} one {# figūra uz tāfeles paliek} other {# figūras uz tāfeles paliek}} viena vienība.",
+  "tactics.dcs.warn.wt-player": "Spēlētājam nav zilas vienības: izvēlies to Mission Editor."
 }

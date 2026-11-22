@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} no té tasca de DCS.",
   "tactics.dcs.warn.game-task": "{group}: {what} no és una tasca que la pissarra pugui escriure; queda fora.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# figura no és una unitat (marcadors, armes) i no s'escriu.} other {# figures no són unitats (marcadors, armes) i no s'escriuen.}}",
-  "tactics.dcs.warn.start": "Les tasques que han de començar més tard que el seu punt de pas comencen al punt de pas a DCS."
+  "tactics.dcs.warn.start": "Les tasques que han de començar més tard que el seu punt de pas comencen al punt de pas a DCS.",
+  "tactics.wt.open": "Obre una missió de War Thunder…",
+  "tactics.wt.openHint": "Una missió d'usuari de War Thunder (.blk, tal com la desa el Mission Editor) com a pissarra: cada exèrcit a la seva pròpia capa, cada unitat amb els seus punts de pas. «Desa com a missió de War Thunder» hi torna a escriure la pissarra.",
+  "tactics.wt.save": "Desa com a missió de War Thunder…",
+  "tactics.wt.saveHint": "Escriu la pissarra com a missió d'usuari de War Thunder: a la missió d'on ve, o com a missió nova en un nivell.",
+  "tactics.wt.saveTitle": "Desa com a missió de War Thunder",
+  "tactics.wt.level": "Nivell",
+  "tactics.wt.pick": "Tria un .blk…",
+  "tactics.wt.missing": "{name}.blk no és obert en aquesta sessió: torna'l a triar per escriure-hi, o escriu una missió nova.",
+  "tactics.wt.write": "Desa el .blk",
+  "tactics.dcs.warn.wt-task": "{group}: {what} necessita un activador al Mission Editor de War Thunder; no s'escriu.",
+  "tactics.dcs.warn.wt-count": "{group}: una unitat de War Thunder és un vol o una secció; {n, plural, one {# figura de la pissarra continua sent} other {# figures de la pissarra continuen sent}} una sola unitat.",
+  "tactics.dcs.warn.wt-player": "Cap unitat blava per al jugador: tria'n una al Mission Editor."
 }

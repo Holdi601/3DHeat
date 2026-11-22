@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} ei vasta ühelegi DCS-i ülesandele.",
   "tactics.dcs.warn.game-task": "{group}: {what} pole ülesanne, mida laud saab kirjutada; see jäetakse välja.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# kuju ei ole üksus (tähised, relvad) ja seda ei kirjutata.} other {# kuju ei ole üksused (tähised, relvad) ja neid ei kirjutata.}}",
-  "tactics.dcs.warn.start": "Ülesanded, mis peaksid algama hiljem kui nende teekonnapunkt, algavad DCS-is teekonnapunktis."
+  "tactics.dcs.warn.start": "Ülesanded, mis peaksid algama hiljem kui nende teekonnapunkt, algavad DCS-is teekonnapunktis.",
+  "tactics.wt.open": "Ava War Thunderi missioon…",
+  "tactics.wt.openHint": "War Thunderi kasutajamissioon (.blk, nagu Mission Editor selle salvestab) lauaks: iga armee oma kihil, iga üksus oma teekonnapunktidega. „Salvesta War Thunderi missioonina“ kirjutab laua sinna tagasi.",
+  "tactics.wt.save": "Salvesta War Thunderi missioonina…",
+  "tactics.wt.saveHint": "Kirjutab laua War Thunderi kasutajamissioonina: missiooni, kust see tuli, või uue missioonina mõnele tasemele.",
+  "tactics.wt.saveTitle": "Salvesta War Thunderi missioonina",
+  "tactics.wt.level": "Tase",
+  "tactics.wt.pick": "Vali .blk…",
+  "tactics.wt.missing": "{name}.blk pole selles seansis avatud: vali see uuesti, et sinna kirjutada, või kirjuta uus missioon.",
+  "tactics.wt.write": "Salvesta .blk",
+  "tactics.dcs.warn.wt-task": "{group}: {what} vajab War Thunderi Mission Editoris päästikut; seda ei kirjutata.",
+  "tactics.dcs.warn.wt-count": "{group}: War Thunderi üksus on üks lend või rühm; {n, plural, one {# kuju laual jääb} other {# kuju laual jäävad}} üheks üksuseks.",
+  "tactics.dcs.warn.wt-player": "Mängijale pole sinist üksust: vali see Mission Editoris."
 }

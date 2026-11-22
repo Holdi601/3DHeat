@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} нема DCS задатак.",
   "tactics.dcs.warn.game-task": "{group}: {what} није задатак који табла може да упише; изостављен је.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# фигура није јединица (ознаке, оружје) и не уписује се.} few {# фигуре нису јединице (ознаке, оружје) и не уписују се.} other {# фигура нису јединице (ознаке, оружје) и не уписују се.}}",
-  "tactics.dcs.warn.start": "Задаци подешени да почну касније од своје тачке пута у DCS-у почињу на тачки пута."
+  "tactics.dcs.warn.start": "Задаци подешени да почну касније од своје тачке пута у DCS-у почињу на тачки пута.",
+  "tactics.wt.open": "Отвори War Thunder мисију…",
+  "tactics.wt.openHint": "Корисничка War Thunder мисија (.blk, онако како је чува Mission Editor) као табла: свака армија на свом слоју, свака јединица са својим тачкама пута. „Сачувај као War Thunder мисију“ уписује таблу назад у њу.",
+  "tactics.wt.save": "Сачувај као War Thunder мисију…",
+  "tactics.wt.saveHint": "Уписује таблу као корисничку War Thunder мисију: у мисију из које је дошла или као нову мисију на нивоу.",
+  "tactics.wt.saveTitle": "Сачувај као War Thunder мисију",
+  "tactics.wt.level": "Ниво",
+  "tactics.wt.pick": "Изабери .blk…",
+  "tactics.wt.missing": "{name}.blk није отворен у овој сесији: изаберите га поново да бисте уписали у њега или упишите нову мисију.",
+  "tactics.wt.write": "Сачувај .blk",
+  "tactics.dcs.warn.wt-task": "{group}: {what} захтева окидач у Mission Editor-у War Thunder-а; не уписује се.",
+  "tactics.dcs.warn.wt-count": "{group}: јединица у War Thunder-у је један лет или вод; {n, plural, one {# фигура на табли остаје} few {# фигуре на табли остају} other {# фигура на табли остаје}} једна јединица.",
+  "tactics.dcs.warn.wt-player": "Нема плаве јединице за играча: изаберите једну у Mission Editor-у."
 }

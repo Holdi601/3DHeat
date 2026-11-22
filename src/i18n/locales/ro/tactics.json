@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} nu are sarcină DCS.",
   "tactics.dcs.warn.game-task": "{group}: {what} nu este o sarcină pe care tabla o poate scrie; este omisă.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# figură nu este unitate (marcaje, arme) și nu se scrie.} few {# figuri nu sunt unități (marcaje, arme) și nu se scriu.} other {# de figuri nu sunt unități (marcaje, arme) și nu se scriu.}}",
-  "tactics.dcs.warn.start": "Sarcinile setate să înceapă mai târziu decât punctul lor de traseu încep în DCS la punctul de traseu."
+  "tactics.dcs.warn.start": "Sarcinile setate să înceapă mai târziu decât punctul lor de traseu încep în DCS la punctul de traseu.",
+  "tactics.wt.open": "Deschide misiune War Thunder…",
+  "tactics.wt.openHint": "O misiune de utilizator War Thunder (.blk, așa cum o salvează Mission Editor) ca tablă: fiecare armată pe stratul ei, fiecare unitate cu punctele ei de traseu. „Salvează ca misiune War Thunder” scrie tabla înapoi în ea.",
+  "tactics.wt.save": "Salvează ca misiune War Thunder…",
+  "tactics.wt.saveHint": "Scrie tabla ca misiune de utilizator War Thunder: în misiunea din care provine sau ca misiune nouă pe un nivel.",
+  "tactics.wt.saveTitle": "Salvează ca misiune War Thunder",
+  "tactics.wt.level": "Nivel",
+  "tactics.wt.pick": "Alegeți un .blk…",
+  "tactics.wt.missing": "{name}.blk nu este deschis în această sesiune: alegeți-l din nou pentru a scrie în el sau scrieți o misiune nouă.",
+  "tactics.wt.write": "Salvează .blk",
+  "tactics.dcs.warn.wt-task": "{group}: {what} are nevoie de un declanșator în Mission Editor din War Thunder; nu se scrie.",
+  "tactics.dcs.warn.wt-count": "{group}: o unitate War Thunder este un zbor sau un pluton; {n, plural, one {# figură de pe tablă rămâne} few {# figuri de pe tablă rămân} other {# de figuri de pe tablă rămân}} o singură unitate.",
+  "tactics.dcs.warn.wt-player": "Nicio unitate albastră pentru jucător: alegeți una în Mission Editor."
 }

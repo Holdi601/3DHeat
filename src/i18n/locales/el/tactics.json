@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} δεν έχει εργασία DCS.",
   "tactics.dcs.warn.game-task": "{group}: {what} δεν είναι εργασία που μπορεί να γράψει ο πίνακας· παραλείπεται.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# φιγούρα δεν είναι μονάδα (σημάδια, όπλα) και δεν γράφεται.} other {# φιγούρες δεν είναι μονάδες (σημάδια, όπλα) και δεν γράφονται.}}",
-  "tactics.dcs.warn.start": "Οι εργασίες που έχουν οριστεί να ξεκινούν αργότερα από το σημείο διαδρομής τους ξεκινούν στο σημείο διαδρομής στο DCS."
+  "tactics.dcs.warn.start": "Οι εργασίες που έχουν οριστεί να ξεκινούν αργότερα από το σημείο διαδρομής τους ξεκινούν στο σημείο διαδρομής στο DCS.",
+  "tactics.wt.open": "Άνοιγμα αποστολής War Thunder…",
+  "tactics.wt.openHint": "Μια αποστολή χρήστη War Thunder (.blk, όπως την αποθηκεύει το Mission Editor) ως πίνακας: κάθε στρατός στο δικό του επίπεδο, κάθε μονάδα με τα σημεία διαδρομής της. Η «Αποθήκευση ως αποστολή War Thunder» γράφει τον πίνακα πίσω σε αυτήν.",
+  "tactics.wt.save": "Αποθήκευση ως αποστολή War Thunder…",
+  "tactics.wt.saveHint": "Γράφει τον πίνακα ως αποστολή χρήστη War Thunder: στην αποστολή από την οποία προήλθε ή ως νέα αποστολή σε μια πίστα.",
+  "tactics.wt.saveTitle": "Αποθήκευση ως αποστολή War Thunder",
+  "tactics.wt.level": "Πίστα",
+  "tactics.wt.pick": "Επιλογή .blk…",
+  "tactics.wt.missing": "Το {name}.blk δεν είναι ανοιχτό σε αυτή τη συνεδρία: επιλέξτε το ξανά για να γράψετε σε αυτό ή γράψτε μια νέα αποστολή.",
+  "tactics.wt.write": "Αποθήκευση .blk",
+  "tactics.dcs.warn.wt-task": "{group}: {what} χρειάζεται ένα trigger στο Mission Editor του War Thunder· δεν γράφεται.",
+  "tactics.dcs.warn.wt-count": "{group}: μια μονάδα War Thunder είναι ένα σμήνος ή μια διμοιρία· {n, plural, one {# φιγούρα στον πίνακα μένει} other {# φιγούρες στον πίνακα μένουν}} μία μονάδα.",
+  "tactics.dcs.warn.wt-player": "Καμία μπλε μονάδα για τον παίκτη: επιλέξτε μία στο Mission Editor."
 }

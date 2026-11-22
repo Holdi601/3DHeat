@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} har ingen DCS-opgave.",
   "tactics.dcs.warn.game-task": "{group}: {what} er ikke en opgave, tavlen kan skrive; den udelades.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# figur er ikke en enhed (markører, våben) og skrives ikke.} other {# figurer er ikke enheder (markører, våben) og skrives ikke.}}",
-  "tactics.dcs.warn.start": "Opgaver, der er sat til at starte senere end deres waypoint, starter ved waypointet i DCS."
+  "tactics.dcs.warn.start": "Opgaver, der er sat til at starte senere end deres waypoint, starter ved waypointet i DCS.",
+  "tactics.wt.open": "Åbn War Thunder-mission…",
+  "tactics.wt.openHint": "En War Thunder-brugermission (.blk, som Mission Editor gemmer den) som tavle: hver hær på sit eget lag, hver enhed med sine waypoints. »Gem som War Thunder-mission« skriver tavlen tilbage i den.",
+  "tactics.wt.save": "Gem som War Thunder-mission…",
+  "tactics.wt.saveHint": "Skriver tavlen som War Thunder-brugermission: ind i den mission, den kom fra, eller som en ny mission på en bane.",
+  "tactics.wt.saveTitle": "Gem som War Thunder-mission",
+  "tactics.wt.level": "Bane",
+  "tactics.wt.pick": "Vælg en .blk…",
+  "tactics.wt.missing": "{name}.blk er ikke åben i denne session: vælg den igen for at skrive ind i den, eller skriv en ny mission.",
+  "tactics.wt.write": "Gem .blk",
+  "tactics.dcs.warn.wt-task": "{group}: {what} kræver en trigger i War Thunders Mission Editor; den skrives ikke.",
+  "tactics.dcs.warn.wt-count": "{group}: en War Thunder-enhed er én flight eller deling; {n, plural, one {# figur på tavlen forbliver} other {# figurer på tavlen forbliver}} én enhed.",
+  "tactics.dcs.warn.wt-player": "Ingen blå enhed til spilleren: vælg en i Mission Editor."
 }

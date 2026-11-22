@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} m'għandux kompitu DCS.",
   "tactics.dcs.warn.game-task": "{group}: {what} mhuwiex kompitu li l-bord jista' jikteb; jitħalla barra.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# figura mhix unità (markaturi, armi) u ma tinkitibx.} two {# figuri mhumiex unitajiet (markaturi, armi) u ma jinkitbux.} few {# figuri mhumiex unitajiet (markaturi, armi) u ma jinkitbux.} many {# figura mhumiex unitajiet (markaturi, armi) u ma jinkitbux.} other {# figura mhumiex unitajiet (markaturi, armi) u ma jinkitbux.}}",
-  "tactics.dcs.warn.start": "Kompiti li għandhom jibdew aktar tard mill-waypoint tagħhom jibdew fil-waypoint f'DCS."
+  "tactics.dcs.warn.start": "Kompiti li għandhom jibdew aktar tard mill-waypoint tagħhom jibdew fil-waypoint f'DCS.",
+  "tactics.wt.open": "Iftaħ missjoni War Thunder…",
+  "tactics.wt.openHint": "Missjoni tal-utent ta' War Thunder (.blk, kif jissejvjaha l-Mission Editor) bħala bord: kull armata fuq is-saff tagħha, kull unità bil-waypoints tagħha. “Issejvja bħala missjoni War Thunder” jikteb il-bord lura fiha.",
+  "tactics.wt.save": "Issejvja bħala missjoni War Thunder…",
+  "tactics.wt.saveHint": "Jikteb il-bord bħala missjoni tal-utent ta' War Thunder: fil-missjoni li ġie minnha, jew bħala missjoni ġdida fuq livell.",
+  "tactics.wt.saveTitle": "Issejvja bħala missjoni War Thunder",
+  "tactics.wt.level": "Livell",
+  "tactics.wt.pick": "Agħżel .blk…",
+  "tactics.wt.missing": "{name}.blk mhux miftuħ f'din is-sessjoni: erġa' agħżlu biex tikteb fih, jew ikteb missjoni ġdida.",
+  "tactics.wt.write": "Issejvja .blk",
+  "tactics.dcs.warn.wt-task": "{group}: {what} jeħtieġ trigger fil-Mission Editor ta' War Thunder; ma jinkitibx.",
+  "tactics.dcs.warn.wt-count": "{group}: unità ta' War Thunder hija titjira jew plutun wieħed; {n, plural, one {# figura fuq il-bord tibqa'} two {# figuri fuq il-bord jibqgħu} few {# figuri fuq il-bord jibqgħu} many {# figura fuq il-bord jibqgħu} other {# figura fuq il-bord jibqgħu}} unità waħda.",
+  "tactics.dcs.warn.wt-player": "L-ebda unità blu għall-plejer: agħżel waħda fil-Mission Editor."
 }

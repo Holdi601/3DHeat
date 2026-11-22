@@ -329,5 +329,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} has no DCS task.",
   "tactics.dcs.warn.game-task": "{group}: {what} is not a task the board can write; it is left out.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# figure is} other {# figures are}} not a unit (markers, weapons) and not written.",
-  "tactics.dcs.warn.start": "Tasks set to start later than their waypoint start at the waypoint in DCS."
+  "tactics.dcs.warn.start": "Tasks set to start later than their waypoint start at the waypoint in DCS.",
+  "tactics.wt.open": "Open War Thunder mission…",
+  "tactics.wt.openHint": "A War Thunder user mission (.blk, as the mission editor saves it) as the board: each army on its own layer, every unit with its waypoints. Save as War Thunder mission writes the board back into it.",
+  "tactics.wt.save": "Save as War Thunder mission…",
+  "tactics.wt.saveHint": "Writes the board as a War Thunder user mission: into the mission it came from, or as a new mission on a level.",
+  "tactics.wt.saveTitle": "Save as War Thunder mission",
+  "tactics.wt.level": "Level",
+  "tactics.wt.pick": "Pick a .blk…",
+  "tactics.wt.missing": "{name}.blk is not open in this session: pick it again to write into it, or write a new mission.",
+  "tactics.wt.write": "Save .blk",
+  "tactics.dcs.warn.wt-task": "{group}: {what} needs a trigger in War Thunder's mission editor; it is not written.",
+  "tactics.dcs.warn.wt-count": "{group}: a War Thunder unit is one flight or platoon; {n, plural, one {# figure} other {# figures}} on the board stay one unit.",
+  "tactics.dcs.warn.wt-player": "No Blue unit for the player: choose one in the mission editor."
 }

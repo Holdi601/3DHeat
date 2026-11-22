@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} heeft geen DCS-taak.",
   "tactics.dcs.warn.game-task": "{group}: {what} is geen taak die het bord kan schrijven; die wordt weggelaten.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# figuur is geen eenheid (markeringen, wapens) en wordt niet geschreven.} other {# figuren zijn geen eenheden (markeringen, wapens) en worden niet geschreven.}}",
-  "tactics.dcs.warn.start": "Taken die later moeten beginnen dan hun waypoint, beginnen in DCS bij het waypoint."
+  "tactics.dcs.warn.start": "Taken die later moeten beginnen dan hun waypoint, beginnen in DCS bij het waypoint.",
+  "tactics.wt.open": "War Thunder-missie openen…",
+  "tactics.wt.openHint": "Een War Thunder-gebruikersmissie (.blk, zoals de Mission Editor die opslaat) als bord: elk leger op een eigen laag, elke eenheid met zijn waypoints. ‘Opslaan als War Thunder-missie’ schrijft het bord er weer in terug.",
+  "tactics.wt.save": "Opslaan als War Thunder-missie…",
+  "tactics.wt.saveHint": "Schrijft het bord als War Thunder-gebruikersmissie: in de missie waar het vandaan kwam, of als nieuwe missie op een level.",
+  "tactics.wt.saveTitle": "Opslaan als War Thunder-missie",
+  "tactics.wt.level": "Level",
+  "tactics.wt.pick": "Kies een .blk…",
+  "tactics.wt.missing": "{name}.blk is niet geopend in deze sessie: kies hem opnieuw om erin te schrijven, of schrijf een nieuwe missie.",
+  "tactics.wt.write": ".blk opslaan",
+  "tactics.dcs.warn.wt-task": "{group}: {what} heeft een trigger nodig in de Mission Editor van War Thunder; het wordt niet geschreven.",
+  "tactics.dcs.warn.wt-count": "{group}: een War Thunder-eenheid is één vlucht of peloton; {n, plural, one {# figuur op het bord blijft} other {# figuren op het bord blijven}} één eenheid.",
+  "tactics.dcs.warn.wt-player": "Geen blauwe eenheid voor de speler: kies er een in de Mission Editor."
 }

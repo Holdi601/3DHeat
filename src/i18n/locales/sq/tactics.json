@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} nuk ka detyrë DCS.",
   "tactics.dcs.warn.game-task": "{group}: {what} nuk është detyrë që tabela mund ta shkruajë; lihet jashtë.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# figurë nuk është njësi (shënjues, armë) dhe nuk shkruhet.} other {# figura nuk janë njësi (shënjues, armë) dhe nuk shkruhen.}}",
-  "tactics.dcs.warn.start": "Detyrat e caktuara të nisin më vonë se pika e tyre e rrugës nisin në DCS te pika e rrugës."
+  "tactics.dcs.warn.start": "Detyrat e caktuara të nisin më vonë se pika e tyre e rrugës nisin në DCS te pika e rrugës.",
+  "tactics.wt.open": "Hap mision War Thunder…",
+  "tactics.wt.openHint": "Një mision përdoruesi War Thunder (.blk, siç e ruan Mission Editor) si tabelë: çdo ushtri në shtresën e vet, çdo njësi me pikat e veta të rrugës. „Ruaje si mision War Thunder“ e shkruan tabelën përsëri në të.",
+  "tactics.wt.save": "Ruaje si mision War Thunder…",
+  "tactics.wt.saveHint": "E shkruan tabelën si mision përdoruesi War Thunder: në misionin nga erdhi, ose si mision të ri në një nivel.",
+  "tactics.wt.saveTitle": "Ruaje si mision War Thunder",
+  "tactics.wt.level": "Niveli",
+  "tactics.wt.pick": "Zgjidh një .blk…",
+  "tactics.wt.missing": "{name}.blk nuk është i hapur në këtë seancë: zgjidhe përsëri për të shkruar në të, ose shkruaj një mision të ri.",
+  "tactics.wt.write": "Ruaj .blk",
+  "tactics.dcs.warn.wt-task": "{group}: {what} ka nevojë për një nxitës në Mission Editor të War Thunder; nuk shkruhet.",
+  "tactics.dcs.warn.wt-count": "{group}: një njësi War Thunder është një fluturim ose një togë; {n, plural, one {# figurë në tabelë mbetet} other {# figura në tabelë mbeten}} një njësi.",
+  "tactics.dcs.warn.wt-player": "Asnjë njësi blu për lojtarin: zgjidh një në Mission Editor."
 }

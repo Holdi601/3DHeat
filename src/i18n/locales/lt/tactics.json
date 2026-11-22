@@ -326,5 +326,17 @@
   "tactics.dcs.warn.no-task": "{group}: {what} – DCS nėra atitinkamos užduoties.",
   "tactics.dcs.warn.game-task": "{group}: {what} – ne užduotis, kurią lenta gali įrašyti; praleidžiama.",
   "tactics.dcs.warn.skipped": "{n, plural, one {# figūra nėra vienetas (žymekliai, ginklai) ir neįrašoma.} few {# figūros nėra vienetai (žymekliai, ginklai) ir neįrašomos.} many {# figūros nėra vienetai (žymekliai, ginklai) ir neįrašoma.} other {# figūrų nėra vienetai (žymekliai, ginklai) ir neįrašoma.}}",
-  "tactics.dcs.warn.start": "Užduotys, nustatytos prasidėti vėliau nei jų kelio taškas, DCS prasideda kelio taške."
+  "tactics.dcs.warn.start": "Užduotys, nustatytos prasidėti vėliau nei jų kelio taškas, DCS prasideda kelio taške.",
+  "tactics.wt.open": "Atidaryti War Thunder misiją…",
+  "tactics.wt.openHint": "War Thunder naudotojo misija (.blk, kaip ją įrašo Mission Editor) kaip lenta: kiekviena armija savo sluoksnyje, kiekvienas vienetas su savo kelio taškais. „Įrašyti kaip War Thunder misiją“ įrašo lentą atgal į ją.",
+  "tactics.wt.save": "Įrašyti kaip War Thunder misiją…",
+  "tactics.wt.saveHint": "Įrašo lentą kaip War Thunder naudotojo misiją: į misiją, iš kurios ji atėjo, arba kaip naują misiją lygyje.",
+  "tactics.wt.saveTitle": "Įrašyti kaip War Thunder misiją",
+  "tactics.wt.level": "Lygis",
+  "tactics.wt.pick": "Pasirinkti .blk…",
+  "tactics.wt.missing": "{name}.blk šioje sesijoje neatidarytas: pasirinkite jį dar kartą, kad galėtumėte į jį įrašyti, arba įrašykite naują misiją.",
+  "tactics.wt.write": "Įrašyti .blk",
+  "tactics.dcs.warn.wt-task": "{group}: {what} – reikia trigerio War Thunder Mission Editor; neįrašoma.",
+  "tactics.dcs.warn.wt-count": "{group}: War Thunder vienetas yra vienas skrydis arba būrys; {n, plural, one {# figūra lentoje lieka} few {# figūros lentoje lieka} many {# figūros lentoje lieka} other {# figūrų lentoje lieka}} vienu vienetu.",
+  "tactics.dcs.warn.wt-player": "Žaidėjui nėra mėlyno vieneto: pasirinkite jį per Mission Editor."
 }
