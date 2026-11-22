@@ -77,6 +77,7 @@ if (import.meta.env.DEV) {
       'data/automap': () => import('./data/automap'),
       'tactics/missions': () => import('./tactics/missions'),
       'vehicle/mass/client': () => import('./vehicle/mass/client'),
+      'person/client': () => import('./person/client'),
     } as Record<string, () => Promise<unknown>>,
     generateSynthetic,
     DEFAULT_SYNTH,

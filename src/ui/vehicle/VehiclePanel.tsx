@@ -21,6 +21,8 @@ import { useColumnStore } from '../../data/columnStore';
 import { useHitMass } from '../../vehicle/mass/client';
 import { HitMassPanel } from './HitMassPanel';
 import { installVehicleDashboards } from '../../vehicle/mass/dashSource';
+import { usePersonHits } from '../../person/client';
+import { PersonHitPanel } from './PersonHitPanel';
 
 // The hit analysis's dashboard source and starter dashboards (docs/vehicle-hits.md).
 installVehicleDashboards();
@@ -43,18 +45,26 @@ function tally(hits: VehicleHit[], key: (h: VehicleHit) => string): [string, num
  */
 export function VehiclePanel() {
   const mass = useHitMass((m) => m.active);
-  return mass ? <HitMassPanel /> : <VehicleDatasetPanel />;
+  const person = usePersonHits((m) => m.active);
+  return person ? <PersonHitPanel /> : mass ? <HitMassPanel /> : <VehicleDatasetPanel />;
 }
 
 /** The way into the hit analysis over many matches (docs/vehicle-hits.md). */
 function HitMassEntry() {
   const had = useHitMass((m) => m.stats);
+  const hadPerson = usePersonHits((m) => m.stats);
   return (
     <TaskGroup task="explore" className="vehicle-panel">
       <Section title={t('vhits.entry.title')} defaultOpen={false}>
         <div className="hint">{t('vhits.entry.hint')}</div>
         <button onClick={() => useHitMass.getState().set({ active: true })} data-vhits="enter">
           {had ? t('vhits.entry.back') : t('vhits.entry.open')}
+        </button>
+      </Section>
+      <Section title={t('phits.entry.title')} defaultOpen={false}>
+        <div className="hint">{t('phits.entry.hint')}</div>
+        <button onClick={() => usePersonHits.getState().set({ active: true })} data-phits="enter">
+          {hadPerson ? t('phits.entry.back') : t('phits.entry.open')}
         </button>
       </Section>
     </TaskGroup>

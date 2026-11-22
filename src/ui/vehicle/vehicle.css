@@ -391,3 +391,14 @@
 .vhits-chart { margin: 6px 0 10px; }
 .vhits-top { margin-bottom: 10px; }
 .vhits-src { font-size: 0.8em; padding: 0 4px; border-radius: 3px; border: 1px solid currentColor; opacity: 0.8; }
+
+/* The person-hit analysis's body, over the whole view (PersonBodyView.tsx). */
+.person-body {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  z-index: 2;
+}
+.person-hud {
+  pointer-events: auto;
+}

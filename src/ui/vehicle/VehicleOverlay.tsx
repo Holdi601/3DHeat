@@ -17,6 +17,8 @@ import { flyTo } from '../replay/replayView';
 import { unitsPerMetre } from '../replay/replayData';
 import type { Dataset } from '../../state/types';
 import { legendStops, useHitMass, vehicleName } from '../../vehicle/mass/client';
+import { usePersonHits } from '../../person/client';
+import { PersonBodyView } from './PersonBodyView';
 
 /** mm:ss.s from the start of the recording. */
 function clock(s: number): string {
@@ -33,7 +35,8 @@ function clock(s: number): string {
  */
 export function VehicleOverlay() {
   const mass = useHitMass((m) => m.active);
-  return mass ? <HitMassHud /> : <VehicleDatasetOverlay />;
+  const person = usePersonHits((m) => m.active);
+  return person ? <PersonBodyView /> : mass ? <HitMassHud /> : <VehicleDatasetOverlay />;
 }
 
 /** Over the view in the hit analysis: the vehicle, its hits and the plates' colour key. */

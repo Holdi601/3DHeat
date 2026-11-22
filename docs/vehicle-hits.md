@@ -6,7 +6,7 @@ nav_order: 5
 
 # Vehicle hits over many matches
 
-The **hit analysis** in the **Vehicles** tab loads only the hits on vehicles from thousands of War Thunder matches - or DCS World recordings and IL-2 mission reports, aircraft included ([below](#dcs-world-and-il-2)) - and shows them on one vehicle's armour plates. Use it to see where a tank is weak, which shells go through at which angle and speed, and what a penetration usually does there.
+The **hit analysis** in the **Vehicles** tab loads only the hits on vehicles from thousands of War Thunder matches - or DCS World recordings and IL-2 mission reports, aircraft included ([below](#dcs-world-and-il-2)) - and shows them on one vehicle's armour plates. Use it to see where a tank is weak, which shells go through at which angle and speed, and what a penetration usually does there. Hits on players and soldiers have their own analysis: [hits on people](person-hits.md).
 
 ## Try it
 
