@@ -57,6 +57,7 @@ message ClientMsg {
     InviteNew invite = 17;
     SettingsSet settings = 18;
     Dataset dataset = 19;
+    ViewSync view = 20;
   }
 }
 
@@ -160,9 +161,9 @@ message LookHere {
 
 enum FollowMode {
   FOLLOW_OFF = 0;
-  // Members follow the leader's camera and may stop.
+  // Members are asked to follow the leader's camera; each may say no and stop.
   FOLLOW = 1;
-  // Members follow and cannot stop.
+  // Kept for older clients: viewers now treat it as FOLLOW (a request, never forced).
   ENFORCE = 2;
 }
 
@@ -199,6 +200,33 @@ message AdminAction {
 
 message Ping {
   double t = 1;
+}
+
+// View sync: a member's view settings and playback, relayed to the others
+// and never stored. The settings travel as JSON text; each viewer checks
+// what arrives against what it knows before taking any of it.
+enum ViewKind {
+  VIEW_UNSPECIFIED = 0;
+  // Settings or playback changed (for members who keep their view in sync).
+  VIEW_CHANGE = 1;
+  // The whole view, answering VIEW_WANT.
+  VIEW_STATE = 2;
+  // "Switch to my view": a request the member may take or decline.
+  VIEW_ASK = 3;
+  // "Send me your view" (joining, or looking through someone's eyes).
+  VIEW_WANT = 4;
+  // The playback clock while playing, so everyone stays at the same time.
+  VIEW_CLOCK = 5;
+  // "Stop following me": everyone following the sender stops.
+  VIEW_RELEASE = 6;
+}
+
+message ViewSync {
+  // Members it is for; none means everyone.
+  repeated uint32 to = 1;
+  ViewKind kind = 2;
+  // A JSON object, at most 48 KiB.
+  string json = 3;
 }
 
 message InviteNew {
@@ -254,6 +282,7 @@ message ServerMsg {
     Notice notice = 17;
     InviteList invites = 18;
     Challenge challenge = 19;
+    ViewEvent view = 20;
   }
 }
 
@@ -361,6 +390,17 @@ message Closed {
 
 message Pong {
   double t = 1;
+  // The server's clock, milliseconds since 1970: viewers line their playback up on it.
+  int64 server_ms = 2;
+}
+
+message ViewEvent {
+  uint32 from = 1;
+  string from_name = 2;
+  ViewKind kind = 3;
+  string json = 4;
+  // When the server passed it on, its clock, milliseconds since 1970.
+  int64 at = 5;
 }
 
 message InviteMade {

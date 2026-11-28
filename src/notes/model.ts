@@ -25,6 +25,8 @@ export const NOTES_SCHEMA = 'heat3d.notes/1';
 
 export interface DataNote {
   id: string;
+  /** Kept to this viewer in a session (not shared); absent or false: everyone in the session has it. */
+  private?: boolean;
   title: string;
   /** Markdown. */
   text: string;
@@ -64,6 +66,8 @@ export type NewBlock = DocBlock extends infer B ? (B extends DocBlock ? Omit<B, 
 
 export interface AnalysisDoc {
   id: string;
+  /** Kept to this viewer in a session (not shared); absent or false: everyone in the session has it. */
+  private?: boolean;
   title: string;
   /** Markdown; `{{block:<id>}}` lines place the blocks. */
   body: string;
@@ -121,6 +125,7 @@ export function readNote(v: unknown): DataNote | null {
     ...(o.view && typeof o.view === 'object' ? { view: o.view } : {}),
     ...(typeof o.tab === 'string' && /^(heat|match|plan|race|vehicle)$/.test(o.tab) ? { tab: o.tab } : {}),
     ...(shot ? { shot } : {}),
+    ...(o.private === true ? { private: true } : {}),
   };
 }
 
@@ -176,7 +181,16 @@ export function readDoc(v: unknown): AnalysisDoc | null {
       const x = readBlock(b, k);
       if (x) blocks[k] = x;
     }
-  return { id: o.id.slice(0, 80), title: str(o.title, 200), body: str(o.body, 1_000_000), blocks, author: str(o.author, 80), created: time(o.created), updated: time(o.updated ?? o.created) };
+  return {
+    id: o.id.slice(0, 80),
+    title: str(o.title, 200),
+    body: str(o.body, 1_000_000),
+    blocks,
+    author: str(o.author, 80),
+    created: time(o.created),
+    updated: time(o.updated ?? o.created),
+    ...(o.private === true ? { private: true } : {}),
+  };
 }
 
 /** A book from JSON: `{schema, notes, docs}` or the two lists; what is not a note or a document is left out. */

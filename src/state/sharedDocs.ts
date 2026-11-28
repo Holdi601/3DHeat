@@ -44,6 +44,15 @@ export interface SharedDoc {
   empty(): object;
   /** Whether a state has anything worth keeping. */
   hasContent?(state: object): boolean;
+  /**
+   * Text fields that several people may type in at once, by collection: an
+   * edit of one merges with the others' instead of replacing them
+   * (`session/textMerge.ts`). An entity with `private: true` is never shared
+   * in a session (any document): it stays with the viewer who made it.
+   */
+  text?: Readonly<Record<string, readonly string[]>>;
+  /** Which entities are private, when that is not each one's own `private` (a private dashboard's pages and tiles). */
+  privacy?: (state: object) => (coll: string, e: Record<string, unknown>) => boolean;
 }
 
 const docs = new Map<string, SharedDoc>();

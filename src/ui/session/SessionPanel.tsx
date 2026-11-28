@@ -1,7 +1,7 @@
 /**
  * The session panel: joining (name, password, the server), and once in,
- * the members with their roles, the waiting room, follow, "look here",
- * marks, invites, bans, the host's settings, the host's data, and saving
+ * the members with their roles, the waiting room, view sync, follow,
+ * "look here", marks, invites, bans, the host's settings, the host's data, and saving
  * and opening the session. Every button a role cannot use is left out; the
  * server checks again anyway.
  */
@@ -14,7 +14,7 @@ import { publishData } from '../../session/assets';
 import { appInvoke } from '../../appHost';
 import { loadedData, handData } from '../../session/dataRefs';
 import { useLevelRequest } from '../../session/levelRequest';
-import { useMarks, browserKey, type MarkTool } from '../../session/marks';
+import { useMarks, eraseAll, eraseMine, type MarkTool } from '../../session/marks';
 import { downloadSession, readAutosave, readSessionBlob, SESSION_EXT } from '../../session/sessionFile';
 import { applyPending, closeOpenReport, findMissingData, restoreSession, useSessionOpen } from '../../session/sessionOpen';
 import type { Engine } from '../../render/engine';
@@ -210,6 +210,7 @@ function MemberRow({ m }: { m: SessionMember }) {
   const me = useSessionStore((s) => s.me);
   const myRole = useSessionStore((s) => s.role);
   const followPeer = useSessionStore((s) => s.followPeer);
+  const peek = useSessionStore((s) => s.peek);
   const [open, setOpen] = useState(false);
   const canModerate = rankOf(myRole) >= rankOf('admin') && rankOf(myRole) > rankOf(m.role) && m.id !== me;
   const grantable = ROLES.filter((r) => r !== 'host' && (myRole === 'host' ? true : rankOf(r) < rankOf('admin')));
@@ -225,15 +226,30 @@ function MemberRow({ m }: { m: SessionMember }) {
         {m.muted && <span className="session-flag">{t('session.muted')}</span>}
         {!m.connected && <span className="session-flag">{t('session.away')}</span>}
         {!self && m.connected && (
-          <button
-            type="button"
-            className={`ghost small${followPeer === m.id ? ' on' : ''}`}
-            title={t('session.followThem')}
-            aria-pressed={followPeer === m.id}
-            onClick={() => useSessionStore.getState().patch({ followPeer: followPeer === m.id ? null : m.id })}
-          >
-            {followPeer === m.id ? t('session.stopFollow') : t('session.follow')}
-          </button>
+          <>
+            <button
+              type="button"
+              className={`ghost small icon-btn${peek === m.id ? ' on' : ''}`}
+              title={peek === m.id ? t('session.peek.back') : t('session.peek.see', { name: m.name })}
+              aria-label={peek === m.id ? t('session.peek.back') : t('session.peek.see', { name: m.name })}
+              aria-pressed={peek === m.id}
+              onClick={() => (peek === m.id ? session.endPeek() : session.peek(m.id))}
+            >
+              <Icon name="eye" size={14} />
+            </button>
+            <button type="button" className="ghost small icon-btn" title={t('session.sync.askOne', { name: m.name })} aria-label={t('session.sync.askOne', { name: m.name })} onClick={() => session.askSync([m.id])}>
+              <Icon name="sync" size={14} />
+            </button>
+            <button
+              type="button"
+              className={`ghost small${followPeer === m.id && peek === null ? ' on' : ''}`}
+              title={t('session.followThem')}
+              aria-pressed={followPeer === m.id && peek === null}
+              onClick={() => session.followMember(followPeer === m.id && peek === null ? null : m.id)}
+            >
+              {followPeer === m.id && peek === null ? t('session.stopFollow') : t('session.follow')}
+            </button>
+          </>
         )}
         {canModerate && (
           <button type="button" className="ghost small" aria-expanded={open} onClick={() => setOpen(!open)} aria-label={t('session.moderate', { name: m.name })}>
@@ -334,32 +350,57 @@ function WaitingRoom() {
   );
 }
 
-function FollowControls() {
-  const follow = useSessionStore((s) => s.follow);
-  const me = useSessionStore((s) => s.me);
+/** View sync: keep the view in sync with everyone, take the host's changes only when asked, go back, ask others. */
+function SyncSection() {
+  const sync = useSessionStore((s) => s.sync);
+  const back = useSessionStore((s) => s.syncBack);
   const role = useSessionStore((s) => s.role);
-  if (rankOf(role) < rankOf('admin')) return null;
-  const mine = follow.leader === me;
+  const members = useSessionStore((s) => s.members);
+  const host = members.find((m) => m.role === 'host' && m.connected);
   return (
-    <section className="session-sec">
-      <h3>{t('session.followSec')}</h3>
-      <div className="seg">
-        <button type="button" className={follow.mode === 'off' ? 'on' : ''} aria-pressed={follow.mode === 'off'} onClick={() => session.setFollow('off')}>
-          {t('session.follow.off')}
+    <section className="session-sec session-sync-sec">
+      <h3>{t('session.sync.title')}</h3>
+      <label className="session-check session-sync-main">
+        <input type="checkbox" checked={sync.on} onChange={(e) => session.setSync({ on: e.target.checked })} />
+        {t('session.sync.keep')}
+      </label>
+      <p className="session-hint">{t(sync.on ? 'session.sync.onHint' : 'session.sync.offHint')}</p>
+      {role !== 'host' && sync.on && (
+        <>
+          <label className="session-check">
+            <input type="checkbox" checked={sync.camera} onChange={(e) => session.setSync({ camera: e.target.checked })} />
+            {t('session.sync.camera')}
+          </label>
+          <label className="session-check">
+            <input type="checkbox" checked={sync.askHost} onChange={(e) => session.setSync({ askHost: e.target.checked })} />
+            {t('session.sync.askHost')}
+          </label>
+        </>
+      )}
+      <div className="session-actions">
+        <button type="button" className="small" disabled={!back} onClick={() => session.syncBack()}>
+          {t('session.sync.back')}
         </button>
-        <button type="button" className={follow.mode === 'follow' && mine ? 'on' : ''} aria-pressed={follow.mode === 'follow' && mine} onClick={() => session.setFollow('follow', me ?? 0)}>
-          {t('session.follow.follow')}
+        <button type="button" className="small" onClick={() => session.askSync()}>
+          {t('session.sync.askAll')}
         </button>
-        <button type="button" className={follow.mode === 'enforce' && mine ? 'on' : ''} aria-pressed={follow.mode === 'enforce' && mine} onClick={() => session.setFollow('enforce', me ?? 0)}>
-          {t('session.follow.enforce')}
-        </button>
+        {host && role !== 'host' && (
+          <button type="button" className="small" onClick={() => session.askSync([host.id])}>
+            {t('session.sync.askHostBtn')}
+          </button>
+        )}
       </div>
     </section>
   );
 }
 
+/** "Look where I look" and "follow me": requests each member takes or declines; and letting everyone go again. */
 function LookHere() {
   const [note, setNote] = useState('');
+  const role = useSessionStore((s) => s.role);
+  const follow = useSessionStore((s) => s.follow);
+  const me = useSessionStore((s) => s.me);
+  const admin = rankOf(role) >= rankOf('admin');
   return (
     <section className="session-sec">
       <h3>{t('session.look.title')}</h3>
@@ -368,10 +409,14 @@ function LookHere() {
         <button type="button" className="primary" onClick={() => session.lookHere({ note })}>
           {t('session.look.send')}
         </button>
-        <button type="button" onClick={() => session.lookHere({ note, follow: true })}>
+        <button type="button" onClick={() => (admin ? session.setFollow('follow', me ?? 0) : session.lookHere({ note, follow: true }))}>
           {t('session.look.followMe')}
         </button>
+        <button type="button" onClick={() => session.releaseFollowers()}>
+          {t('session.look.release')}
+        </button>
       </div>
+      {admin && follow.mode !== 'off' && follow.leader === me && <p className="session-hint">{t('session.look.askedAll')}</p>}
       <p className="session-hint">{t('session.look.limit')}</p>
     </section>
   );
@@ -405,7 +450,7 @@ export function MarkTools() {
           {t('session.marks.show')}
         </label>
         {canDraw && (
-          <button type="button" className="small" onClick={() => useMarks.getState().removeWhere((k) => k === browserKey())}>
+          <button type="button" className="small" onClick={eraseMine}>
             {t('session.marks.eraseMine')}
           </button>
         )}
@@ -413,7 +458,7 @@ export function MarkTools() {
           <button
             type="button"
             className="small"
-            onClick={async () => (await confirmDialog(t('session.marks.eraseAllConfirm'), t('session.marks.eraseAll'))) && useMarks.getState().removeWhere(() => true)}
+            onClick={async () => (await confirmDialog(t('session.marks.eraseAllConfirm'), t('session.marks.eraseAll'))) && eraseAll()}
           >
             {t('session.marks.eraseAll')}
           </button>
@@ -958,7 +1003,7 @@ export function SessionPanel() {
               </ul>
             </section>
             <WaitingRoom />
-            <FollowControls />
+            <SyncSection />
             <LookHere />
             <MarkTools />
             <HostData />

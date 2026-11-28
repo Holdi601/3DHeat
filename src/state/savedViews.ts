@@ -73,7 +73,7 @@ export interface ViewFile {
 
 const KEY = 'heat3d.savedViews';
 
-function filterToSaved(f: FilterSpec, labels: { categories: (column: string) => string[] | undefined; teams: string[]; persons: string[] }): SavedFilter | null {
+export function filterToSaved(f: FilterSpec, labels: { categories: (column: string) => string[] | undefined; teams: string[]; persons: string[] }): SavedFilter | null {
   if (f.kind === 'range') return { by: 'range', column: f.column, min: f.min, max: f.max };
   if (f.kind === 'categories') {
     const cats = labels.categories(f.column);

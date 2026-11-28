@@ -28,16 +28,32 @@ import {
   OpSchema,
   Role,
   ServerMsgSchema,
+  ViewKind,
   type Op,
   type Pose as PoseMsg,
   type ServerMsg,
 } from './proto/heat3d/session/v1/session_pb';
-import { capturePose, pointUnder, poseMoved, presence, presenceClock } from './presence';
+import { capturePose, pointerTarget, poseMoved, presence, presenceClock } from './presence';
 import { browserKey } from './marks';
 import { clearLacks, keepLacksOf, myLacks, noteLacks } from './lacks';
 import { identity, signChallenge } from './identity';
 import { readDocState, SharedSync, type DocState, type OutBatch } from './shared';
-import { useSessionStore, type FollowModeName, type LookRequest, type Pose, type SessionRole } from './store';
+import { useSessionStore, type FollowModeName, type LookRequest, type Pose, type SessionRole, type SessionState } from './store';
+import { ViewSync } from './viewSync';
+import { appSlices } from './viewSlices';
+import { loadedDataset } from '../ui/replay/FigureOverlay';
+import { isOverlay } from '../match/overlay';
+
+type ViewKindName = 'change' | 'state' | 'ask' | 'want' | 'clock' | 'release';
+const VIEW_NUM: Record<ViewKindName, ViewKind> = {
+  change: ViewKind.VIEW_CHANGE,
+  state: ViewKind.VIEW_STATE,
+  ask: ViewKind.VIEW_ASK,
+  want: ViewKind.VIEW_WANT,
+  clock: ViewKind.VIEW_CLOCK,
+  release: ViewKind.VIEW_RELEASE,
+};
+const VIEW_NAME: Partial<Record<number, ViewKindName>> = Object.fromEntries(Object.entries(VIEW_NUM).map(([k, v]) => [v, k as ViewKindName]));
 
 export const PROTO = 1;
 
@@ -162,6 +178,44 @@ class SessionClient {
   private retries = 0;
   private leaving = false;
   sync: SharedSync | null = null;
+  /** The server's clock less this browser's, ms (from the pongs: the one with the shortest round trip). */
+  private clockOffset = 0;
+  private bestRtt = Infinity;
+  /** Asks the host for the session's view once the roster says who the host is (joining, sync turned on, data loaded). */
+  private wantState = false;
+  /** Whose whole view is awaited (joining, sync turned on): taken when it comes. */
+  private awaiting: number | null = null;
+  /** The camera from before looking through someone's eyes. */
+  private peekPose: Pose | null = null;
+  private lastData: unknown = null;
+  private dataAt = 0;
+  private askSeq = 0;
+  readonly view: ViewSync = new ViewSync({
+    slices: () => this.slices(),
+    me: () => useSessionStore.getState().me ?? 0,
+    now: () => performance.now(),
+    serverNow: () => Date.now() + this.clockOffset,
+    send: (kind, json, to) => {
+      this.send({ case: 'view', value: { kind: VIEW_NUM[kind], json, to: to ?? [] } });
+    },
+  });
+  private sliceList: ReturnType<typeof appSlices> | null = null;
+
+  private slices() {
+    return (this.sliceList ??= appSlices(() => this.engine));
+  }
+
+  constructor() {
+    this.view.stateExtra = () => ({ data: useStore.getState().dataset?.name ?? '' });
+    this.view.hostId = () => useSessionStore.getState().members.find((m) => m.role === 'host' && m.connected)?.id ?? null;
+    this.view.onChange = (w) => {
+      const st = useSessionStore.getState();
+      const p = this.view.pending;
+      const patch: Partial<SessionState> = { syncBack: this.view.canGoBack(), syncPending: p ? { from: p.from, keys: Object.keys(p.slices) } : null };
+      if (w.applied && st.peek === null) patch.syncApplied = { from: w.applied.from, keys: w.applied.keys, at: Date.now() };
+      st.patch(patch);
+    };
+  }
 
   setEngine(e: Engine | null): void {
     this.engine = e;
@@ -179,7 +233,34 @@ class SessionClient {
     this.resume = '';
     this.retries = 0;
     const st = useSessionStore.getState();
-    st.patch({ state: 'connecting', error: null, url: wsUrl(opts.url), name: opts.name, members: [], waiting: [], bans: [], invites: [], looks: [], lastInvite: null, followPeer: null, followOptOut: false });
+    st.patch({
+      state: 'connecting',
+      error: null,
+      url: wsUrl(opts.url),
+      name: opts.name,
+      members: [],
+      waiting: [],
+      bans: [],
+      invites: [],
+      looks: [],
+      lastInvite: null,
+      followPeer: null,
+      followSource: null,
+      followAsk: null,
+      followAnswered: null,
+      syncPending: null,
+      syncApplied: null,
+      syncAsks: [],
+      peek: null,
+    });
+    this.view.enabled = st.sync.on;
+    this.view.askHost = st.sync.askHost;
+    this.view.peek = null;
+    this.view.pending = null;
+    this.view.watchers.clear();
+    this.wantState = st.sync.on;
+    this.awaiting = null;
+    this.bestRtt = Infinity;
     this.sync = new SharedSync(
       (b) => this.enqueue(b),
       (n) => useSessionStore.getState().patch({ notice: n ? 'tooBig' : null }),
@@ -188,7 +269,7 @@ class SessionClient {
     void identity();
     this.open();
     this.timers.push(window.setInterval(() => this.tick(), 100));
-    this.timers.push(window.setInterval(() => this.send({ case: 'ping', value: { t: performance.now() } }), 15_000));
+    this.timers.push(window.setInterval(() => this.ping(), 15_000));
   }
 
   /** Leaves the session; a member's own layers come back (the host's stay as the session left them). */
@@ -205,7 +286,10 @@ class SessionClient {
     this.acks.clear();
     presence.clear();
     clearLacks();
-    if (say) useSessionStore.getState().patch({ state: 'off', me: null, role: null, members: [], looks: [], pending: 0, followPeer: null });
+    this.view.pending = null;
+    this.view.peek = null;
+    this.view.watchers.clear();
+    if (say) useSessionStore.getState().patch({ state: 'off', me: null, role: null, members: [], looks: [], pending: 0, followPeer: null, followSource: null, followAsk: null, syncPending: null, syncAsks: [], peek: null });
   }
 
   private open(): void {
@@ -306,17 +390,48 @@ class SessionClient {
     useSessionStore.getState().patch({ pending: this.sync?.pendingCount() ?? 0 });
   }
 
-  /** Ten times a second: edits out, presence out when the camera moved, the queue drained. */
+  private ping(): void {
+    this.send({ case: 'ping', value: { t: performance.now() } });
+  }
+
+  /** Ten times a second: edits out, the view's changes out, presence out when the camera moved, the queue drained. */
   private tick(): void {
     const st = useSessionStore.getState();
     if (st.state !== 'joined') return;
     this.sync?.tick();
     this.drain();
+    // Data loaded or swapped: what loading reset is not a change of this viewer's to send,
+    // and the session's view is asked for again once the data is in (filters go by name).
+    // The data loaded, not the figure overlay standing in for it (a mode, not a load).
+    const shown = useStore.getState().dataset;
+    const data = isOverlay(shown) ? this.lastData : loadedDataset();
+    if (data !== this.lastData) {
+      this.lastData = data;
+      this.dataAt = performance.now();
+      this.view.hold(1000);
+      if (data && st.sync.on && st.role !== 'host') this.wantState = true;
+    }
+    if (this.wantState && performance.now() - this.dataAt > 1200) {
+      const host = this.view.hostId();
+      if (host !== null) {
+        this.wantState = false;
+        if (host !== st.me && st.sync.on && st.peek === null) {
+          this.awaiting = host;
+          this.view.want(host);
+        }
+      }
+    }
+    this.view.tick();
+    // Full sync moves the camera with the host's too (looking around stays free), until it is turned off.
+    if (st.sync.on && st.sync.camera && st.role !== 'host' && st.peek === null && st.followPeer === null) {
+      const host = this.view.hostId();
+      if (host !== null && host !== st.me) st.patch({ followPeer: host, followSource: 'sync', followAsk: null });
+    }
     const e = this.engine;
     if (!e) return;
     const pose = capturePose(e);
     const now = performance.now();
-    const cursor = this.pointer ? pointUnder(e, this.pointer.x, this.pointer.y) : null;
+    const cursor = this.pointer ? pointerTarget(e, this.pointer.x, this.pointer.y) : null;
     // Moved, or a second of nothing (so a late joiner's view of this one settles).
     if (poseMoved(this.lastPose, pose) || cursor || now - this.lastPoseSent > 1000) {
       this.lastPose = pose;
@@ -346,6 +461,7 @@ class SessionClient {
         this.retries = 0;
         const role = ROLE_NAME[w.role] ?? 'viewer';
         st.patch({ state: 'joined', me: w.you, role, error: null, seq: Number(w.seq) });
+        this.ping();
         // The host of `3dheat serve`: its server keeps the usage statistics for the host's browser (by its token).
         if (role === 'host') void import('../usage/recorder').then((u) => u.probeLocal()).catch(() => undefined);
         // The batches not yet numbered go again (the server applies each once).
@@ -395,6 +511,14 @@ class SessionClient {
           for (const id of [...presence.keys()]) if (!here.has(id)) presence.delete(id);
           keepLacksOf(here);
           presenceClock.v++;
+          for (const id of [...this.view.watchers]) if (!here.has(id)) this.view.gone(id);
+          if (this.view.pending && !here.has(this.view.pending.from)) this.view.gone(this.view.pending.from);
+          const s2 = useSessionStore.getState();
+          if (s2.followPeer !== null && !here.has(s2.followPeer)) {
+            if (s2.peek === s2.followPeer) this.endPeek();
+            else s2.patch({ followPeer: null, followSource: null });
+          }
+          if (s2.syncAsks.some((a) => !here.has(a.from))) s2.patch({ syncAsks: s2.syncAsks.filter((a) => here.has(a.from)) });
         }
         break;
       case 'presence': {
@@ -403,9 +527,13 @@ class SessionClient {
           if (it.member === st.me || !it.presence) continue;
           const pose = poseOf(it.presence.pose);
           if (!pose) continue;
+          const cursor = it.presence.hasCursor && it.presence.cursor ? v3(it.presence.cursor) : null;
+          const before = presence.get(it.member);
+          const moved = !before?.cursor || !cursor || Math.hypot(cursor.x - before.cursor.x, cursor.y - before.cursor.y, cursor.z - before.cursor.z) > 1e-3;
           presence.set(it.member, {
             pose,
-            cursor: it.presence.hasCursor && it.presence.cursor ? v3(it.presence.cursor) : null,
+            cursor,
+            cursorMoved: moved ? now : before.cursorMoved,
             tab: it.presence.tab,
             mode: it.presence.mode,
             at: now,
@@ -457,9 +585,55 @@ class SessionClient {
         st.patch({ looks: [...st.looks.slice(-4), req] });
         break;
       }
-      case 'follow':
-        st.patch({ follow: { mode: FOLLOW_NAME[b.value.mode] ?? 'off', leader: b.value.leader }, followOptOut: false });
+      case 'follow': {
+        // A request, never forced: "enforce" from an older viewer is asked about as well.
+        const mode = FOLLOW_NAME[b.value.mode] ?? 'off';
+        const leader = b.value.leader;
+        if (mode === 'off' || leader === 0) {
+          st.patch({ follow: { mode: 'off', leader: 0 }, followAsk: null, followAnswered: null, ...(st.followSource === 'session' ? { followPeer: null, followSource: null } : {}) });
+        } else {
+          // The same request again (a reconnect) is not asked twice; a stop is never undone by it.
+          const ask = leader !== st.me && st.followAnswered !== leader && st.followPeer !== leader;
+          st.patch({ follow: { mode: 'follow', leader }, followAsk: ask ? leader : null });
+        }
         break;
+      }
+      case 'view': {
+        const v = b.value;
+        const kind = VIEW_NAME[v.kind];
+        if (!kind || v.from === st.me) break;
+        const at = Number(v.at);
+        if (kind === 'state') {
+          if (st.peek === v.from) {
+            this.view.takeState(v.from, v.json, at, false);
+            try {
+              const d = (JSON.parse(v.json) as { data?: unknown }).data;
+              st.patch({ peekData: typeof d === 'string' ? d.slice(0, 200) : '' });
+            } catch {
+              /* no name */
+            }
+          } else if (this.awaiting === v.from && st.sync.on && st.peek === null) {
+            this.awaiting = null;
+            this.view.takeState(v.from, v.json, at);
+          }
+          break;
+        }
+        if (kind === 'release') {
+          if (st.followPeer === v.from && st.followSource !== 'peek') {
+            st.patch({ followPeer: null, followSource: null, notice: 'released' });
+            if (st.follow.leader === v.from) st.patch({ followAnswered: v.from });
+          }
+          break;
+        }
+        if (kind === 'ask') {
+          if (st.peek !== null) break;
+          const name = st.members.find((m) => m.id === v.from)?.name ?? v.fromName;
+          st.patch({ syncAsks: [...st.syncAsks.filter((a) => a.from !== v.from).slice(-3), { id: ++this.askSeq, from: v.from, fromName: name, json: v.json, at }] });
+          break;
+        }
+        this.view.receive(v.from, kind, v.json, at);
+        break;
+      }
       case 'ack': {
         const a = b.value;
         const p = this.acks.get(a.rid);
@@ -476,7 +650,7 @@ class SessionClient {
             // Refused whole: it falls away. (Refused in part, the part let through has come back numbered already.)
             this.sync?.refused(p.batch.id);
             st.patch({ notice: errKey(a.code) });
-          }
+          } else this.sync?.acked(p.batch.id);
           st.patch({ pending: this.sync?.pendingCount() ?? 0 });
         } else if (a.code !== Err.OK) {
           st.patch({ notice: errKey(a.code), retryMs: a.retryMs });
@@ -524,8 +698,15 @@ class SessionClient {
         if (b.value.kind === NoticeKind.TOKEN_ROTATED) break;
         st.patch({ notice: b.value.kind === NoticeKind.LOGIN_FLOOD ? 'loginFlood' : b.value.kind === NoticeKind.STATE_REPLACED ? 'stateReplaced' : b.value.kind === NoticeKind.YOU_CHANGED ? 'youChanged' : null });
         break;
-      case 'pong':
+      case 'pong': {
+        const rtt = performance.now() - b.value.t;
+        const server = Number(b.value.serverMs);
+        if (server > 0 && rtt >= 0 && rtt < 10_000 && rtt <= this.bestRtt * 1.5 + 5) {
+          this.bestRtt = Math.min(this.bestRtt, rtt);
+          this.clockOffset = server + rtt / 2 - Date.now();
+        }
         break;
+      }
     }
   }
 
@@ -545,7 +726,101 @@ class SessionClient {
   }
 
   setFollow(mode: FollowModeName, leader = 0): void {
-    this.request({ case: 'follow', value: { mode: FOLLOW_NUM[mode], leader } }, 'follow');
+    // Nobody is forced: what used to lock cameras is a request like the other.
+    this.request({ case: 'follow', value: { mode: FOLLOW_NUM[mode === 'enforce' ? 'follow' : mode], leader } }, 'follow');
+  }
+
+  /** Follows member `id`'s camera (null stops); `source` says why. */
+  followMember(id: number | null, source: 'session' | 'peer' = 'peer'): void {
+    const st = useSessionStore.getState();
+    if (st.peek !== null) this.endPeek();
+    // Stopping the camera that full sync moves turns that part of sync off (the panel shows it).
+    if (st.followSource === 'sync' && st.followPeer !== id) this.setSync({ camera: false });
+    if (id === null) {
+      // Stopping the session's "follow me" is an answer to it: it is not asked again.
+      st.patch({ followPeer: null, followSource: null, ...(st.followSource === 'session' ? { followAnswered: st.follow.leader } : {}) });
+    } else st.patch({ followPeer: id, followSource: source, followAsk: null, ...(source === 'session' ? { followAnswered: id } : {}) });
+  }
+
+  /** The session's "follow me" answered. */
+  answerFollow(yes: boolean): void {
+    const st = useSessionStore.getState();
+    const leader = st.followAsk;
+    if (leader === null) return;
+    if (yes) this.followMember(leader, 'session');
+    else st.patch({ followAsk: null, followAnswered: leader });
+  }
+
+  /** Everyone following this viewer stops (and the session's "follow me", if it was this viewer's). */
+  releaseFollowers(): void {
+    const st = useSessionStore.getState();
+    if (st.follow.mode !== 'off' && st.follow.leader === st.me) this.setFollow('off');
+    this.send({ case: 'view', value: { kind: ViewKind.VIEW_RELEASE, json: '{}', to: [] } });
+  }
+
+  // ------------------------------------------------------------ view sync
+
+  /** Keeps this viewer's view in sync with everyone's, or not; turned on, it takes the session's view. */
+  setSync(p: { on?: boolean; askHost?: boolean; camera?: boolean }): void {
+    const st = useSessionStore.getState();
+    const sync = { ...st.sync, ...p };
+    st.patch({ sync });
+    if ((!sync.on || !sync.camera) && st.followSource === 'sync') st.patch({ followPeer: null, followSource: null });
+    this.view.enabled = sync.on;
+    this.view.askHost = sync.askHost;
+    if (p.on === false && this.view.pending) this.view.answer(false);
+    if (p.on === true && st.state === 'joined' && st.role !== 'host') this.wantState = true;
+  }
+
+  /** The host's waiting changes: 'take', 'ignore', or 'never' (ignore, and stop keeping in sync). */
+  answerSync(a: 'take' | 'ignore' | 'never'): void {
+    this.view.answer(a === 'take');
+    if (a === 'never') this.setSync({ on: false });
+  }
+
+  /** "Switch to my view" for the members named (everyone when none are). */
+  askSync(to: number[] = []): void {
+    this.view.ask(to);
+  }
+
+  /** A "switch to my view" answered. */
+  answerAsk(id: number, take: boolean): void {
+    const st = useSessionStore.getState();
+    const a = st.syncAsks.find((x) => x.id === id);
+    st.patch({ syncAsks: st.syncAsks.filter((x) => x.id !== id) });
+    if (a && take) {
+      if (st.peek !== null) this.endPeek();
+      this.view.takeState(a.from, a.json, a.at);
+    }
+  }
+
+  /** Back to the view before the last change from someone else. */
+  syncBack(): void {
+    if (useSessionStore.getState().peek !== null) this.endPeek();
+    else this.view.back();
+    useSessionStore.getState().patch({ syncApplied: null, syncBack: this.view.canGoBack() });
+  }
+
+  /** Looks through member `id`'s eyes for a while: their camera, view and data; `endPeek` comes back. */
+  peek(id: number): void {
+    const st = useSessionStore.getState();
+    if (st.peek === id) return;
+    if (st.peek !== null) this.endPeek();
+    const e = this.engine;
+    this.peekPose = e ? capturePose(e) : null;
+    this.view.startPeek(id);
+    st.patch({ peek: id, peekData: '', followPeer: id, followSource: 'peek', syncApplied: null });
+  }
+
+  endPeek(): void {
+    const st = useSessionStore.getState();
+    if (st.peek === null) return;
+    this.view.endPeek();
+    st.patch({ peek: null, peekData: '', ...(st.followSource === 'peek' ? { followPeer: null, followSource: null } : {}), syncBack: this.view.canGoBack() });
+    const e = this.engine;
+    const pose = this.peekPose;
+    this.peekPose = null;
+    if (e && pose) e.setCameraPose(pose.position, pose.forward);
   }
 
   admin(kind: 'mute' | 'unmute' | 'kick' | 'ban' | 'unban' | 'setRole' | 'admit' | 'deny' | 'revokeInvite', target: number, extra: { durationMs?: number; role?: SessionRole; ref?: number } = {}): void {

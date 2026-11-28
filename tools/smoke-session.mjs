@@ -284,20 +284,20 @@ if (lv) {
   check('look here is limited to 3 a minute', n === 3, `${n} arrived`);
 }
 
-// ------------------------------------------------------------ follow and enforce
+// ------------------------------------------------------------ follow: full sync, then a request, never forced
 const fv = clients[0];
-await S(host, () => window.__heat3dSession.client.setFollow('follow', 0));
 await S(host, () => window.__3dheat_engine.setCameraPose({ x: 123, y: 45, z: -67 }, { x: 0, y: -0.3, z: -1 }));
 await wait(2500);
 let cam = await S(fv, () => window.__3dheat_engine.cameraPose().position);
-check('members follow the host\'s camera', Math.hypot(cam.x - 123, cam.y - 45, cam.z + 67) < 2, JSON.stringify(cam));
+check("members follow the host's camera (full sync, on by default)", Math.hypot(cam.x - 123, cam.y - 45, cam.z + 67) < 2, JSON.stringify(cam));
+await S(fv, () => window.__heat3dSession.client.followMember(null));
 await S(host, () => window.__heat3dSession.client.setFollow('enforce', 0));
-await wait(500);
-await S(fv, () => window.__heat3dSession.store.getState().patch({ followOptOut: true }));
+await wait(800);
 await S(fv, () => window.__3dheat_engine.setCameraPose({ x: -500, y: 10, z: 500 }, null));
-await wait(3000);
+await wait(2500);
 cam = await S(fv, () => window.__3dheat_engine.cameraPose().position);
-check('an enforced camera comes back to the host\'s', Math.hypot(cam.x - 123, cam.y - 45, cam.z + 67) < 2, JSON.stringify(cam));
+const asked = await S(fv, () => window.__heat3dSession.store.getState().followAsk);
+check('"lock" is only a request now: the member is asked and keeps its own camera', asked !== null && Math.hypot(cam.x + 500, cam.z - 500) < 2, JSON.stringify(cam));
 await S(host, () => window.__heat3dSession.client.setFollow('off'));
 await wait(500);
 

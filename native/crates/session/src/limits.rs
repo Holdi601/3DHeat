@@ -63,6 +63,10 @@ pub struct Budgets {
     pub look: Bucket,
     /// Moderation and settings.
     pub admin: Bucket,
+    /// View sync messages (settings, playback, its clock); over it they are refused.
+    pub view: Bucket,
+    /// "Switch to my view" requests: three a minute, as "look here".
+    pub view_ask: Bucket,
     /// Invite links made.
     pub invites: Bucket,
     /// Messages refused for the message budget in a row: past a point the client is cut off.
@@ -81,6 +85,8 @@ impl Budgets {
             presence: Bucket::new(40.0, 30.0, now_ms),
             look: Bucket::per_minute(LOOK_PER_MINUTE, now_ms),
             admin: Bucket::new(20.0, 2.0, now_ms),
+            view: Bucket::new(30.0, 10.0, now_ms),
+            view_ask: Bucket::per_minute(LOOK_PER_MINUTE, now_ms),
             invites: Bucket::new(10.0, 0.2, now_ms),
             strikes: 0,
         }

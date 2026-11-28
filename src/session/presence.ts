@@ -12,7 +12,10 @@ type V3 = { x: number; y: number; z: number };
 
 export interface PeerPresence {
   pose: Pose;
+  /** What their pointer points at in the world. */
   cursor: V3 | null;
+  /** When it last moved, `performance.now()` (a pointer left still fades out). */
+  cursorMoved: number;
   tab: string;
   mode: string;
   /** When it arrived, `performance.now()`. */
@@ -71,6 +74,12 @@ export function applyPose(engine: Engine, pose: Pose, k = 1): void {
   const cur = engine.cameraPose();
   const lerp = (a: V3, b: V3): V3 => ({ x: a.x + (b.x - a.x) * k, y: a.y + (b.y - a.y) * k, z: a.z + (b.z - a.z) * k });
   engine.setCameraPose(lerp(cur.position, pose.position), lerp(cur.forward, pose.forward));
+}
+
+/** What the pointer points at in the world: the level, a unit, else the floor of the action (`Engine.pointAt`). */
+export function pointerTarget(engine: Engine, cssX: number, cssY: number): V3 | null {
+  const p = engine.pointAt(cssX, cssY);
+  return p ? { x: p.x, y: p.y, z: p.z } : null;
 }
 
 /** The world point under a canvas position: the level's surface, else the ground plane y = 0. */

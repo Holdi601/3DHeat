@@ -7,15 +7,18 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { t, useLang } from '../../i18n';
+import { list, t, useLang } from '../../i18n';
 import type { Engine } from '../../render/engine';
 import { session } from '../../session/client';
 import { registerBuiltInDocs } from '../../session/docs';
-import { browserKey, useMarks } from '../../session/marks';
+import { browserKey, eraseAll, eraseMine, isMine, useMarks } from '../../session/marks';
 import { applyPose, cameraSig, pointUnder, presence, presenceClock, sameSig } from '../../session/presence';
 import { autosave } from '../../session/sessionFile';
 import { rankOf, useSessionStore, type LookRequest } from '../../session/store';
 import { useRaceStore } from '../../state/raceStore';
+import { useStore } from '../../state/store';
+import { SLICE_WORDS } from '../../session/viewSlices';
+import { Icon } from '../shell/Icon';
 import { usePlanStore } from '../../state/planStore';
 import { useAnimationFrame, useEngine } from '../EngineContext';
 import { toast } from '../shell/kit';
@@ -47,7 +50,11 @@ interface PeerEls {
   frustum: SVGPathElement;
   dot: SVGCircleElement;
   label: SVGTextElement;
-  cursor: SVGPathElement;
+  /** The pointer in the world: the ray from their camera, a ring on what it hit, a stalk and the name. */
+  ray: SVGPathElement;
+  ring: SVGPathElement;
+  stalk: SVGPathElement;
+  tip: SVGCircleElement;
   cursorLabel: SVGTextElement;
 }
 
@@ -55,39 +62,53 @@ function makePeer(svg: SVGSVGElement, color: string): PeerEls {
   const g = document.createElementNS(SVG, 'g');
   g.setAttribute('class', 'peer');
   g.style.setProperty('--c', color);
-  const frustum = document.createElementNS(SVG, 'path');
-  frustum.setAttribute('class', 'peer-frustum');
-  const dot = document.createElementNS(SVG, 'circle');
+  const el = <K extends 'path' | 'circle' | 'text'>(tag: K, cls: string) => {
+    const e = document.createElementNS(SVG, tag);
+    e.setAttribute('class', cls);
+    return e;
+  };
+  const frustum = el('path', 'peer-frustum');
+  const dot = el('circle', 'peer-dot');
   dot.setAttribute('r', '5');
-  dot.setAttribute('class', 'peer-dot');
-  const label = document.createElementNS(SVG, 'text');
-  label.setAttribute('class', 'peer-label');
-  const cursor = document.createElementNS(SVG, 'path');
-  cursor.setAttribute('class', 'peer-cursor');
-  const cursorLabel = document.createElementNS(SVG, 'text');
-  cursorLabel.setAttribute('class', 'peer-label small');
-  g.append(frustum, dot, label, cursor, cursorLabel);
+  const label = el('text', 'peer-label');
+  const ray = el('path', 'peer-ray');
+  const ring = el('path', 'peer-ring');
+  const stalk = el('path', 'peer-stalk');
+  const tip = el('circle', 'peer-tip');
+  tip.setAttribute('r', '3.5');
+  const cursorLabel = el('text', 'peer-label small');
+  const pointer = document.createElementNS(SVG, 'g');
+  pointer.setAttribute('class', 'peer-pointer');
+  pointer.append(ray, ring, stalk, tip, cursorLabel);
+  g.append(frustum, dot, label, pointer);
   svg.appendChild(g);
-  return { g, frustum, dot, label, cursor, cursorLabel };
+  return { g, frustum, dot, label, ray, ring, stalk, tip, cursorLabel };
 }
+
+/** A pointer left still this long fades out, ms. */
+const POINTER_STILL_MS = 5000;
 
 /** The other members' cameras and pointers over the view. */
 function PresenceOverlay({ engine }: { engine: Engine }) {
   const svg = useRef<SVGSVGElement>(null);
   const els = useRef(new Map<number, PeerEls>());
-  const last = useRef<{ sig: number[] | null; v: number }>({ sig: null, v: -1 });
+  const last = useRef<{ sig: number[] | null; v: number; fade: number }>({ sig: null, v: -1, fade: 0 });
   const joined = useSessionStore((s) => s.state === 'joined');
   useAnimationFrame(() => {
     const root = svg.current;
     if (!root) return;
     const sig = cameraSig(engine);
-    if (sameSig(last.current.sig, sig) && last.current.v === presenceClock.v) return;
-    last.current = { sig, v: presenceClock.v };
+    // A still pointer fades: the overlay looks again every half second for it.
+    const fade = Math.floor(performance.now() / 500);
+    if (sameSig(last.current.sig, sig) && last.current.v === presenceClock.v && last.current.fade === fade) return;
+    last.current = { sig, v: presenceClock.v, fade };
     const st = useSessionStore.getState();
     const tab = useRaceStore.getState().tab;
     const me = engine.cameraPose().position;
+    const now = performance.now();
     if (els.current.size && els.current.values().next().value?.g.parentNode !== root) els.current.clear();
     const seen = new Set<number>();
+    const xy = (q: { x: number; y: number }) => `${q.x.toFixed(1)} ${q.y.toFixed(1)}`;
     for (const [id, p] of presence) {
       // Only those in the same workspace: a board's camera means nothing over a heatmap.
       if (p.tab && p.tab !== tab) continue;
@@ -115,8 +136,8 @@ function PresenceOverlay({ engine }: { engine: Engine }) {
       let path = '';
       if (apex && cs.every(Boolean)) {
         const pts = cs as { x: number; y: number }[];
-        for (const q of pts) path += `M${apex.x.toFixed(1)} ${apex.y.toFixed(1)}L${q.x.toFixed(1)} ${q.y.toFixed(1)}`;
-        path += `M${pts.map((q) => `${q.x.toFixed(1)} ${q.y.toFixed(1)}`).join('L')}Z`;
+        for (const q of pts) path += `M${xy(apex)}L${xy(q)}`;
+        path += `M${pts.map(xy).join('L')}Z`;
       }
       e.frustum.setAttribute('d', path);
       if (apex) {
@@ -129,17 +150,41 @@ function PresenceOverlay({ engine }: { engine: Engine }) {
       } else {
         e.dot.style.display = e.label.style.display = 'none';
       }
-      const cur = p.cursor ? engine.project(p.cursor.x, p.cursor.y, p.cursor.z) : null;
-      if (cur) {
-        const x = cur.x.toFixed(1);
-        const y = cur.y.toFixed(1);
-        e.cursor.setAttribute('d', `M${x} ${y}l0 14l4 -4l6 0z`);
-        e.cursorLabel.setAttribute('x', (cur.x + 10).toFixed(1));
-        e.cursorLabel.setAttribute('y', (cur.y + 22).toFixed(1));
+      // The pointer as a point in the world: a ring lying on what the ray hit, sized
+      // for this viewer's distance so it reads at any zoom, a stalk up from it with the
+      // name on top, and the ray from their camera to it.
+      const q = p.cursor;
+      const tip = q ? engine.project(q.x, q.y, q.z) : null;
+      const pointer = e.tip.parentNode as SVGGElement;
+      if (q && tip) {
+        const dist = Math.max(0.5, Math.hypot(q.x - me.x, q.y - me.y, q.z - me.z));
+        const r = dist * 0.018;
+        let ring = '';
+        let pen = false;
+        for (let i = 0; i <= 24; i++) {
+          const a = (i / 24) * Math.PI * 2;
+          const s = engine.project(q.x + Math.cos(a) * r, q.y, q.z + Math.sin(a) * r);
+          if (!s) {
+            pen = false;
+            continue;
+          }
+          ring += `${pen ? 'L' : 'M'}${xy(s)}`;
+          pen = true;
+        }
+        e.ring.setAttribute('d', ring);
+        const top = engine.project(q.x, q.y + r * 3, q.z);
+        e.stalk.setAttribute('d', top ? `M${xy(tip)}L${xy(top)}` : '');
+        e.tip.setAttribute('cx', tip.x.toFixed(1));
+        e.tip.setAttribute('cy', tip.y.toFixed(1));
+        const at = top ?? tip;
+        e.cursorLabel.setAttribute('x', (at.x + 6).toFixed(1));
+        e.cursorLabel.setAttribute('y', (at.y - 4).toFixed(1));
         if (e.cursorLabel.textContent !== name) e.cursorLabel.textContent = name;
-        e.cursor.style.display = e.cursorLabel.style.display = '';
+        e.ray.setAttribute('d', apex ? `M${xy(apex)}L${xy(tip)}` : '');
+        pointer.style.display = '';
+        pointer.style.opacity = now - p.cursorMoved > POINTER_STILL_MS ? '0' : '1';
       } else {
-        e.cursor.style.display = e.cursorLabel.style.display = 'none';
+        pointer.style.display = 'none';
       }
     }
     for (const [id, e] of els.current) {
@@ -255,7 +300,7 @@ function MarksOverlay({ engine }: { engine: Engine }) {
     const r = engine.canvas.getBoundingClientRect();
     return { x: e.clientX - r.left, y: e.clientY - r.top };
   };
-  const mayErase = (key: string) => state !== 'joined' || key === browserKey() || rankOf(role) >= rankOf('elevated');
+  const mayErase = (key: string) => state !== 'joined' || isMine(key) || rankOf(role) >= rankOf('elevated');
   const nearest = (x: number, y: number): string | null => {
     const doc = useMarks.getState().doc;
     let best: string | null = null;
@@ -355,50 +400,227 @@ function LookCard({ r, engine }: { r: LookRequest; engine: Engine }) {
           className="primary small"
           onClick={() => {
             applyPose(engine, r.pose);
-            if (r.follow) useSessionStore.getState().patch({ followPeer: r.from });
+            if (r.follow) session.followMember(r.from, 'peer');
             drop();
           }}
         >
           {r.follow ? t('session.look.acceptFollow') : t('session.look.accept')}
         </button>
         <button type="button" className="small" onClick={drop}>
-          {t('session.look.dismiss')}
+          {r.follow ? t('session.look.decline') : t('session.look.dismiss')}
         </button>
       </div>
     </div>
   );
 }
 
-/** Follows the leader's camera, smoothly, while following. */
-function FollowDriver({ engine }: { engine: Engine }) {
-  useLang();
-  const st = useSessionStore();
-  const sessionLeader = st.follow.mode !== 'off' && st.follow.leader !== st.me && (st.follow.mode === 'enforce' || !st.followOptOut) ? st.follow.leader : null;
-  const leader = st.followPeer ?? sessionLeader;
-  const enforced = st.follow.mode === 'enforce' && st.follow.leader !== st.me && st.state === 'joined';
-  const lastT = useRef(0);
-  useAnimationFrame(() => {
-    const id = useSessionStore.getState().followPeer ?? sessionLeader;
-    const p = id !== null ? presence.get(id) : undefined;
-    const now = performance.now();
-    const dt = lastT.current ? Math.min(1000, now - lastT.current) : 16;
-    lastT.current = now;
-    // Smoothed by time, not by frames: a slow frame catches up as far as a fast one would have.
-    if (p) applyPose(engine, p.pose, 1 - Math.exp(-dt / 70));
-  }, st.state === 'joined' && leader !== null);
-  if (st.state !== 'joined' || leader === null) return null;
-  const name = st.members.find((m) => m.id === leader)?.name ?? '';
+const nameOf = (id: number) => useSessionStore.getState().members.find((m) => m.id === id)?.name ?? '?';
+
+/** What changed, in words: "the heat settings and the filters". */
+function whatChanged(keys: string[]): string {
+  const words = [...new Set(keys.map((k) => SLICE_WORDS[k] ?? 'other'))];
+  return list(words.map((w) => t(`session.sync.what.${w}`)));
+}
+
+/** The session's "follow me" (from the host or an admin): followed only when this viewer says yes. */
+function FollowAskCard() {
+  const leader = useSessionStore((s) => s.followAsk);
+  useSessionStore((s) => s.members);
+  if (leader === null) return null;
   return (
-    <div className="session-follow-bar" role="status">
-      {enforced && st.followPeer === null ? t('session.followBar.enforced', { name }) : t('session.followBar.following', { name })}
-      {!(enforced && st.followPeer === null) && (
-        <button type="button" className="small" onClick={() => st.patch(st.followPeer !== null ? { followPeer: null } : { followOptOut: true })}>
-          {t('session.stopFollow')}
+    <div className="session-look" role="alert">
+      <div className="session-look-who" style={{ color: memberColor(leader) }}>
+        {t('session.look.asksFollow', { name: nameOf(leader) })}
+      </div>
+      <div className="session-hint">{t('session.followBar.hint')}</div>
+      <div className="session-actions">
+        <button type="button" className="primary small" onClick={() => session.answerFollow(true)}>
+          {t('session.look.acceptFollow')}
         </button>
+        <button type="button" className="small" onClick={() => session.answerFollow(false)}>
+          {t('session.look.decline')}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/** The host changed the view: take it too, not this time, or never. */
+function SyncPendingCard() {
+  const p = useSessionStore((s) => s.syncPending);
+  if (!p) return null;
+  return (
+    <div className="session-look session-sync-card" role="alert">
+      <div className="session-look-who" style={{ color: memberColor(p.from) }}>
+        {t('session.sync.hostChanged', { name: nameOf(p.from), what: whatChanged(p.keys) })}
+      </div>
+      <div className="session-actions">
+        <button type="button" className="primary small" onClick={() => session.answerSync('take')}>
+          {t('session.sync.applyToo')}
+        </button>
+        <button type="button" className="small" onClick={() => session.answerSync('ignore')}>
+          {t('session.sync.ignore')}
+        </button>
+        <button type="button" className="small" onClick={() => session.answerSync('never')}>
+          {t('session.sync.ignoreAll')}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/** "Switch to my view" from someone. */
+function SyncAskCards() {
+  const asks = useSessionStore((s) => s.syncAsks);
+  useEffect(() => {
+    if (!asks.length) return;
+    const id = window.setTimeout(() => {
+      const cut = Date.now() - 60_000;
+      const st = useSessionStore.getState();
+      st.patch({ syncAsks: st.syncAsks.filter((a) => a.at > cut) });
+    }, 61_000);
+    return () => window.clearTimeout(id);
+  }, [asks]);
+  return (
+    <>
+      {asks.map((a) => (
+        <div key={a.id} className="session-look session-sync-card" role="alert">
+          <div className="session-look-who" style={{ color: memberColor(a.from) }}>
+            {t('session.sync.asks', { name: a.fromName })}
+          </div>
+          <div className="session-actions">
+            <button type="button" className="primary small" onClick={() => session.answerAsk(a.id, true)}>
+              {t('session.sync.switch')}
+            </button>
+            <button type="button" className="small" onClick={() => session.answerAsk(a.id, false)}>
+              {t('session.look.decline')}
+            </button>
+          </div>
+        </div>
+      ))}
+    </>
+  );
+}
+
+/** A change from someone went in: who, what, and a way back, for a few seconds. */
+function SyncAppliedNote() {
+  const a = useSessionStore((s) => s.syncApplied);
+  const back = useSessionStore((s) => s.syncBack);
+  const [, tick] = useState(0);
+  useEffect(() => {
+    if (!a) return;
+    const id = window.setTimeout(() => tick((n) => n + 1), 6100);
+    return () => window.clearTimeout(id);
+  }, [a]);
+  if (!a || Date.now() - a.at > 6000) return null;
+  return (
+    <div className="session-look session-sync-note" role="status">
+      <div>{t('session.sync.changed', { name: nameOf(a.from), what: whatChanged(a.keys) })}</div>
+      {back && (
+        <div className="session-actions">
+          <button type="button" className="small" onClick={() => session.syncBack()}>
+            {t('session.sync.back')}
+          </button>
+        </div>
       )}
     </div>
   );
 }
+
+/** Looking through a member's eyes: whose, their data, and the way back. */
+function PeekBar() {
+  const peek = useSessionStore((s) => s.peek);
+  const data = useSessionStore((s) => s.peekData);
+  useSessionStore((s) => s.members);
+  if (peek === null) return null;
+  const mine = useStore.getState().dataset?.name ?? '';
+  return (
+    <div className="session-follow-bar session-peek-bar" role="status" style={{ borderColor: memberColor(peek) }}>
+      <Icon name="eye" size={16} />
+      <span>
+        {t('session.peek.seeing', { name: nameOf(peek) })}
+        {data && data !== mine ? ` ${t('session.peek.otherData', { data })}` : ''}
+      </span>
+      <button type="button" className="primary small" onClick={() => session.endPeek()}>
+        {t('session.peek.back')}
+      </button>
+    </div>
+  );
+}
+
+/**
+ * Follows the leader's camera while this viewer said yes to it: their place,
+ * smoothly, and their look until this viewer turns the camera itself - from
+ * then on it looks around freely from where they are, until it asks for
+ * their look again. Stop (or the X) ends it at once.
+ */
+function FollowDriver({ engine }: { engine: Engine }) {
+  useLang();
+  const leader = useSessionStore((s) => (s.state === 'joined' ? s.followPeer : null));
+  const peek = useSessionStore((s) => s.peek);
+  useSessionStore((s) => s.members);
+  const lastT = useRef(0);
+  const own = useRef(false);
+  const lastSet = useRef<V3 | null>(null);
+  const [freeLook, setFreeLook] = useState(false);
+  useEffect(() => {
+    own.current = false;
+    lastSet.current = null;
+    setFreeLook(false);
+  }, [leader]);
+  useAnimationFrame(() => {
+    const id = useSessionStore.getState().followPeer;
+    const p = id !== null ? presence.get(id) : undefined;
+    const now = performance.now();
+    const dt = lastT.current ? Math.min(1000, now - lastT.current) : 16;
+    lastT.current = now;
+    if (!p) return;
+    // The camera turned since the last frame, and not by this: the viewer looks around.
+    const f = engine.cameraPose().forward;
+    const was = lastSet.current;
+    if (was && !own.current && Math.hypot(f.x - was.x, f.y - was.y, f.z - was.z) > 2e-3) {
+      own.current = true;
+      setFreeLook(true);
+    }
+    // Smoothed by time, not by frames: a slow frame catches up as far as a fast one would have.
+    const k = 1 - Math.exp(-dt / 70);
+    if (own.current) {
+      const c = engine.cameraPose().position;
+      const q = p.pose.position;
+      engine.setCameraPose({ x: c.x + (q.x - c.x) * k, y: c.y + (q.y - c.y) * k, z: c.z + (q.z - c.z) * k }, null);
+    } else applyPose(engine, p.pose, k);
+    lastSet.current = engine.cameraPose().forward;
+  }, leader !== null);
+  if (leader === null || peek !== null) return null;
+  const stop = () => session.followMember(null);
+  return (
+    <div className="session-follow-bar" role="status">
+      <span>{t('session.followBar.following', { name: nameOf(leader) })}</span>
+      {freeLook ? (
+        <button
+          type="button"
+          className="small"
+          onClick={() => {
+            own.current = false;
+            lastSet.current = null;
+            setFreeLook(false);
+          }}
+        >
+          {t('session.followBar.theirLook')}
+        </button>
+      ) : (
+        <span className="session-hint">{t('session.followBar.lookAround')}</span>
+      )}
+      <button type="button" className="small" onClick={stop}>
+        {t('session.stopFollow')}
+      </button>
+      <button type="button" className="ghost icon-btn" aria-label={t('session.stopFollow')} title={t('session.stopFollow')} onClick={stop}>
+        <Icon name="close" size={14} />
+      </button>
+    </div>
+  );
+}
+
 
 /** Says what the session said: refusals, notices. */
 function Notices() {
@@ -424,7 +646,7 @@ export function SessionLayer() {
     registerRoomDoc();
     // For the multi-client smoke test (tools/smoke-session.mjs) and the console.
     const hook = (window as unknown as { __heat3dSession?: Record<string, unknown> }).__heat3dSession;
-    if (hook) Object.assign(hook, { marks: useMarks, plan: usePlanStore });
+    if (hook) Object.assign(hook, { marks: useMarks, plan: usePlanStore, eraseMine, eraseAll, isMine, browserKey });
     const i = urlIntent();
     if (i.host) {
       let name = 'Host';
@@ -485,13 +707,16 @@ export function SessionLayer() {
       <MarksOverlay engine={engine} />
       <PresenceOverlay engine={engine} />
       <FollowDriver engine={engine} />
-      {looks.length > 0 && (
-        <div className="session-looks">
-          {looks.map((r) => (
-            <LookCard key={r.id} r={r} engine={engine} />
-          ))}
-        </div>
-      )}
+      <PeekBar />
+      <div className="session-looks">
+        <FollowAskCard />
+        <SyncPendingCard />
+        <SyncAskCards />
+        <SyncAppliedNote />
+        {looks.map((r) => (
+          <LookCard key={r.id} r={r} engine={engine} />
+        ))}
+      </div>
       <SessionPanel />
       <RoomPrompts />
       <Notices />

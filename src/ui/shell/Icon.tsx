@@ -43,6 +43,8 @@ const PATHS = {
   cursor: 'M5 3l14 7-6 2-2 6L5 3Z',
   note: 'M5 3h10l4 4v14H5V3Zm10 0v4h4M8 11h8M8 15h8M8 19h5',
   people: 'M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-6 9a6 6 0 0 1 12 0m1-9a3 3 0 1 0 0-6m2.5 15a6 6 0 0 0-3.5-5.5',
+  eye: 'M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Zm10 3a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z',
+  sync: 'M4 10a8 8 0 0 1 14.5-3.5L20 8m0-4v4h-4m4 6a8 8 0 0 1-14.5 3.5L4 16m0 4v-4h4',
 } as const;
 
 export type IconName = keyof typeof PATHS;

@@ -10,6 +10,7 @@
  * (`dashboards/client.ts`), for the page this window shows.
  */
 
+import { ShareToggle } from '../session/ShareToggle';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { t, useLang } from '../../i18n';
 import { useRaceStore } from '../../state/raceStore';
@@ -245,6 +246,7 @@ function Header({ dash, pages, page }: { dash: Dashboard; pages: Page[]; page: P
         <button type="button" className="dash-btn icon" aria-label={t('dash.head.redo')} title={t('dash.head.redoTip')} disabled={!redo} onClick={() => st.redoEdit(dash.id)}>
           ↷
         </button>
+        <ShareToggle isPrivate={!!dash.private} onChange={(p) => st.patchDash(dash.id, { private: p ? true : undefined })} />
         <span className="grow" />
         <button type="button" className={`dash-btn${dash.link.followView ? ' on' : ''}`} aria-pressed={dash.link.followView} title={t('dash.link.followTip')} onClick={() => link('followView')}>
           {t('dash.link.follow')}

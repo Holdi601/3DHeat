@@ -22,6 +22,7 @@
  */
 
 import { applyDocOps, diffDocs, type DocOp } from '../tactics/ops';
+import { applySplice, readSplice, spliceOf, textHash } from './textMerge';
 import { registerSharedDoc as registerInApp, sharedDoc as appDoc, sharedDocs as appDocs, type SharedDoc as AppSharedDoc } from '../state/sharedDocs';
 
 type Fields = Record<string, unknown>;
@@ -178,6 +179,69 @@ interface DocSync {
   pending: OutBatch[];
   /** The viewer's state as of the last send or rebase: edits since are the next batch. */
   base: object;
+  /** The document without its private entities, for the state it was read from. */
+  memo?: { from: object; shared: object };
+  /** Corrections of merged text owed to the server (the host's, `correct`). */
+  fixes?: DocOp[];
+  /** The document as the server keeps it (text as sent), for a document with merging text. */
+  server?: object;
+  /** Corrections sent, by entity field: not sent again for the same text. */
+  sent?: Map<string, string>;
+}
+
+type Ent = Record<string, unknown>;
+
+/** Fields an edit carries beside a text field: its splice (`sp_`), or that it only corrects the server (`fx_`). */
+const SPLICE = 'sp_';
+const FIX = 'fx_';
+
+/** An entity this viewer keeps to itself (`private: true`): never sent, kept through what arrives. */
+const isPrivate = (e: unknown) => !!e && typeof e === 'object' && (e as Ent).private === true;
+
+type PrivateTest = (coll: string, e: Ent) => boolean;
+const testOf = (d: Pick<SharedDoc, 'privacy'>, state: object): PrivateTest => d.privacy?.(state) ?? ((_c, e) => isPrivate(e));
+
+/** A document without its private entities (the same object when it has none). */
+export function sharedPart(state: object, colls: readonly string[], d: Pick<SharedDoc, 'privacy'> = {}): object {
+  const st = state as Record<string, unknown>;
+  const test = testOf(d, state);
+  let out: Record<string, unknown> | null = null;
+  for (const c of colls) {
+    const xs = st[c];
+    if (!Array.isArray(xs) || !xs.some((x) => test(c, x as Ent))) continue;
+    out ??= { ...st };
+    out[c] = xs.filter((x) => !test(c, x as Ent));
+  }
+  return out ?? state;
+}
+
+/** `state` with this viewer's private entities of `own` put back (where `state` has no entity of that id). */
+function withPrivate(state: object, own: object, colls: readonly string[], d: Pick<SharedDoc, 'privacy'>): object {
+  const mine = own as Record<string, unknown>;
+  const test = testOf(d, own);
+  let out: Record<string, unknown> | null = null;
+  for (const c of colls) {
+    const xs = mine[c];
+    if (!Array.isArray(xs)) continue;
+    const priv = (xs as Ent[]).filter((x) => test(c, x));
+    if (!priv.length) continue;
+    out ??= { ...(state as Record<string, unknown>) };
+    const cur = (Array.isArray(out[c]) ? out[c] : []) as Ent[];
+    const ids = new Set(cur.map((x) => x.id));
+    out[c] = [...cur, ...priv.filter((x) => !ids.has(x.id))];
+  }
+  return out ?? state;
+}
+
+/** An entity without the fields that only travel (splices, corrections). */
+function clean(e: Ent): Ent {
+  let out: Ent | null = null;
+  for (const k of Object.keys(e)) {
+    if (!k.startsWith(SPLICE) && !k.startsWith(FIX)) continue;
+    out ??= { ...e };
+    delete out[k];
+  }
+  return out ?? e;
 }
 
 /**
@@ -247,6 +311,13 @@ export class SharedSync {
         continue;
       }
       s.confirmed = fromDocState(st ?? { meta: {}, colls: {} }, d);
+      if (d.text) {
+        s.server = s.confirmed;
+        s.sent = undefined;
+        const c = { ...(s.confirmed as Record<string, unknown>) };
+        for (const coll of Object.keys(d.text)) if (Array.isArray(c[coll])) c[coll] = (c[coll] as Ent[]).map(clean);
+        s.confirmed = c;
+      }
       this.rebase(s);
     }
     this.started = true;
@@ -270,18 +341,40 @@ export class SharedSync {
       return;
     }
     this.flush(s);
-    s.confirmed = applyDocOps(s.confirmed, ops, s.doc.colls);
+    s.confirmed = this.applyOps(s, s.confirmed, ops);
+    if (s.doc.text) {
+      s.server = applyDocOps(s.server ?? s.doc.empty(), ops, s.doc.colls);
+      this.correct(s);
+    }
     const i = s.pending.findIndex((b) => b.id === id);
     if (i >= 0) {
       const [mine] = s.pending.splice(i, 1);
       // Ours, whole (the host dropped none of it), and nothing of anyone else's came between: the viewer has this already.
-      if (i === 0 && mine.ops.length === ops.length) return;
+      if (i === 0 && mine.ops.length === ops.length && !s.fixes?.length) return;
     }
     this.rebase(s);
   }
 
   /** The host refused a batch of ours: it falls away. */
   refused(id: string): void {
+    for (const s of this.byKey.values()) {
+      const i = s.pending.findIndex((b) => b.id === id);
+      if (i < 0) continue;
+      this.flush(s);
+      s.pending.splice(i, 1);
+      this.rebase(s);
+    }
+  }
+
+  /**
+   * The server took a batch of ours (its ack). Its numbered copy comes before
+   * the ack, so it is normally gone from `pending` by now; still there, the
+   * copy never reached this viewer (the connection dropped between the two
+   * and a snapshot caught it up, which has it). It waits no longer: left
+   * waiting it would be laid over every later state, and a mark erased by
+   * someone else would come back here.
+   */
+  acked(id: string): void {
     for (const s of this.byKey.values()) {
       const i = s.pending.findIndex((b) => b.id === id);
       if (i < 0) continue;
@@ -323,11 +416,118 @@ export class SharedSync {
     this.rebase(s);
   }
 
+  /** The document as this viewer shares it: without its private entities. */
+  private read(s: DocSync): object {
+    const d = s.doc!;
+    const cur = d.get();
+    if (s.memo?.from === cur) return s.memo.shared;
+    const shared = sharedPart(cur, d.colls, d);
+    s.memo = { from: cur, shared };
+    return shared;
+  }
+
+  /** Puts a state in, with this viewer's private entities kept. */
+  private write(s: DocSync, state: object): void {
+    const d = s.doc!;
+    d.set(withPrivate(state, d.get(), d.colls, d));
+    s.memo = { from: d.get(), shared: state };
+  }
+
+  /** The text fields of a collection that merge (`SharedDoc.text`). */
+  private textFields(s: DocSync, coll: string): readonly string[] {
+    return s.doc?.text?.[coll] ?? [];
+  }
+
+  /**
+   * Operations laid onto a state: a text field's edit laid onto the text as
+   * it is now (its splice), not over it; a correction for the server left out.
+   * Every viewer does this in the session's order, so all end at the same text.
+   */
+  private applyOps(s: DocSync, state: object, ops: DocOp[]): object {
+    const colls = s.doc!.colls;
+    if (!s.doc?.text) return applyDocOps(state, ops, colls);
+    const out: DocOp[] = [];
+    for (const o of ops) {
+      if (o.op === 'add') {
+        out.push({ ...o, value: clean(o.value) });
+        continue;
+      }
+      if (o.op !== 'set' || !Object.keys(o.fields).some((k) => k.startsWith(SPLICE) || k.startsWith(FIX))) {
+        out.push(o);
+        continue;
+      }
+      const fields: Ent = {};
+      const cur = ((state as Record<string, Ent[]>)[o.coll] ?? []).find((e) => e.id === o.id);
+      for (const [k, v] of Object.entries(o.fields)) {
+        if (k.startsWith(SPLICE) || k.startsWith(FIX)) continue;
+        if (o.fields[FIX + k] !== undefined) continue;
+        const sp = readSplice(o.fields[SPLICE + k]);
+        const now = cur?.[k];
+        fields[k] = sp && typeof v === 'string' && typeof now === 'string' ? applySplice(now, sp, v) : v;
+      }
+      if (Object.keys(fields).length || o.unset?.length) out.push({ ...o, fields });
+    }
+    return applyDocOps(state, out, colls);
+  }
+
+  /** Each text field's edit with its splice, from what the field was at the last send. */
+  private withSplices(s: DocSync, ops: DocOp[]): DocOp[] {
+    if (!s.doc?.text) return ops;
+    return ops.map((o) => {
+      if (o.op !== 'set') return o;
+      const tf = this.textFields(s, o.coll);
+      if (!tf.length) return o;
+      const was = ((s.base as Record<string, Ent[]>)[o.coll] ?? []).find((e) => e.id === o.id);
+      let fields: Ent | null = null;
+      for (const f of tf) {
+        const v = o.fields[f];
+        const before = was?.[f];
+        if (typeof v !== 'string' || typeof before !== 'string') continue;
+        const sp = spliceOf(before, v);
+        if (!sp) continue;
+        fields ??= { ...o.fields };
+        fields[SPLICE + f] = sp;
+      }
+      return fields ? { ...o, fields } : o;
+    });
+  }
+
+  /**
+   * The server keeps a text field as it was sent; the viewers keep it merged
+   * (`applyOps`). Where the two differ, the host sends the merged text as a
+   * correction, which the viewers skip and the server stores - so whoever
+   * joins later gets the merged text too. Checked again after every batch
+   * until they agree (a correction overtaken by another edit is followed by
+   * the next).
+   */
+  private correct(s: DocSync): void {
+    if (!this.host || !s.doc?.text || !s.server) return;
+    for (const coll of Object.keys(s.doc.text)) {
+      const fieldsOf = this.textFields(s, coll);
+      const raw = new Map(((((s.server as Record<string, Ent[]>)[coll] ?? []) as Ent[]).map((e) => [e.id, e])));
+      for (const e of ((s.confirmed as Record<string, Ent[]>)[coll] ?? []) as Ent[]) {
+        const r = raw.get(e.id);
+        if (!r) continue;
+        const fields: Ent = {};
+        for (const f of fieldsOf) {
+          if (typeof e[f] !== 'string' || r[f] === e[f]) continue;
+          const key = `${coll}/${String(e.id)}/${f}`;
+          if (s.sent?.get(key) === e[f]) continue;
+          (s.sent ??= new Map()).set(key, e[f] as string);
+          fields[f] = e[f];
+          fields[FIX + f] = textHash(e[f] as string);
+        }
+        if (Object.keys(fields).length) (s.fixes ??= []).push({ op: 'set', coll, id: String(e.id), fields });
+      }
+    }
+  }
+
   private flush(s: DocSync): void {
     if (!s.doc) return;
-    const cur = s.doc.get();
-    if (cur === s.base) return;
-    const ops = diffDocs(s.base, cur, s.doc.colls);
+    const cur = this.read(s);
+    if (cur === s.base && !s.fixes?.length) return;
+    const ops = [...(cur === s.base ? [] : this.withSplices(s, diffDocs(s.base, cur, s.doc.colls))), ...(s.fixes ?? [])];
+    s.fixes = undefined;
     s.base = cur;
     if (!ops.length) return;
     const { chunks, tooBig } = chunkOps(ops);
@@ -342,19 +542,19 @@ export class SharedSync {
   private rebase(s: DocSync): void {
     if (!s.doc) return;
     let local = s.confirmed;
-    for (const b of s.pending) local = applyDocOps(local, b.ops, s.doc.colls);
+    for (const b of s.pending) local = this.applyOps(s, local, b.ops);
     // Every collection there, even one nobody has added to yet.
     const missing = s.doc.colls.filter((c) => !Array.isArray((local as Record<string, unknown>)[c]));
     if (missing.length) local = { ...local, ...Object.fromEntries(missing.map((c) => [c, []])) };
     s.base = local;
-    s.doc.set(local);
+    this.write(s, local);
   }
 
   /** Every document as it travels: for the session file, with those no module here knows. */
   states(): Record<string, DocState> {
     const out: Record<string, DocState> = {};
     for (const s of this.byKey.values()) {
-      if (s.doc) out[s.key] = toDocState(s.doc.get(), s.doc.colls);
+      if (s.doc) out[s.key] = toDocState(this.read(s), s.doc.colls);
       else if (s.raw) out[s.key] = s.raw;
     }
     return out;

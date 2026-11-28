@@ -9,7 +9,7 @@ use arbitrary::Arbitrary;
 use heat3d_session::auth::Cost;
 use heat3d_session::proto::{
     self, client_msg, AdminAction, Batch, ClientMsg, Dataset, FollowSet, Hello, InviteNew,
-    LookHere, Op, Ping, Pose, Presence, SettingsSet, Vec3,
+    LookHere, Op, Ping, Pose, Presence, SettingsSet, Vec3, ViewSync,
 };
 use heat3d_session::session::{Config, Session};
 use libfuzzer_sys::fuzz_target;
@@ -195,6 +195,11 @@ enum Body {
         level_hash: String,
         published: bool,
     },
+    View {
+        to: Vec<u32>,
+        kind: i32,
+        json: Json,
+    },
     Empty,
 }
 
@@ -341,6 +346,15 @@ fn build(b: &Body) -> Option<client_msg::Body> {
             level_hash: level_hash.clone(),
             published: *published,
         }),
+        Body::View { to, kind, json: j } => {
+            let mut text = String::new();
+            json(j, 0, &mut text);
+            client_msg::Body::View(ViewSync {
+                to: to.clone(),
+                kind: *kind,
+                json: text,
+            })
+        }
         Body::Empty => return None,
     })
 }

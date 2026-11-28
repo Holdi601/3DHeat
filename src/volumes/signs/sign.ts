@@ -15,6 +15,8 @@ export type SignMode = 'billboard' | 'fixed';
 
 export interface Sign {
   id: string;
+  /** Kept to this viewer in a session; absent: everyone in the session has it. */
+  private?: boolean;
   volumeId: string;
   /** Empty: said from the spec. */
   title: string;
@@ -95,5 +97,6 @@ export function parseSign(raw: unknown): Sign | null {
     collapsed: !!o.collapsed,
     upToNow: !!o.upToNow,
     table: !!o.table,
+    ...(o.private === true ? { private: true } : {}),
   };
 }

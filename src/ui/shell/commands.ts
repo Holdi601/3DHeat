@@ -383,14 +383,12 @@ export function buildCommands(engine: Engine | null): Command[] {
     action(`session.mark.${x}`, t(`session.cmd.mark.${x}`), () => useMarks.getState().setTool(useMarks.getState().tool === x ? 'off' : x), undefined, words);
   if (ss.state === 'joined') {
     action('session.look', t('session.cmd.look'), () => session.lookHere({}), undefined, words);
-    action('session.followMe', t('session.cmd.followMe'), () => session.lookHere({ follow: true }), undefined, words);
-    if (ss.followPeer !== null || (ss.follow.mode === 'follow' && ss.follow.leader !== ss.me))
-      action('session.stopFollow', t('session.stopFollow'), () => ss.patch(ss.followPeer !== null ? { followPeer: null } : { followOptOut: true }), undefined, words);
-    if (rankOf(ss.role) >= rankOf('admin')) {
-      action('session.everyoneFollow', t('session.cmd.everyoneFollow'), () => session.setFollow('follow', ss.me ?? 0), undefined, words);
-      action('session.enforce', t('session.cmd.enforce'), () => session.setFollow('enforce', ss.me ?? 0), undefined, words);
-      action('session.followOff', t('session.cmd.followOff'), () => session.setFollow('off'), undefined, words);
-    }
+    action('session.followMe', t('session.cmd.followMe'), () => (rankOf(ss.role) >= rankOf('admin') ? session.setFollow('follow', ss.me ?? 0) : session.lookHere({ follow: true })), undefined, words);
+    action('session.release', t('session.cmd.release'), () => session.releaseFollowers(), undefined, words);
+    if (ss.followPeer !== null) action('session.stopFollow', t('session.stopFollow'), () => session.followMember(null), undefined, words);
+    action('session.sync', t(ss.sync.on ? 'session.cmd.syncOff' : 'session.cmd.syncOn'), () => session.setSync({ on: !ss.sync.on }), undefined, words);
+    if (ss.syncBack) action('session.syncBack', t('session.sync.back'), () => session.syncBack(), undefined, words);
+    action('session.askSync', t('session.cmd.askSync'), () => session.askSync(), undefined, words);
     action('session.leave', t('session.leave'), () => session.leave(), undefined, words);
   }
 

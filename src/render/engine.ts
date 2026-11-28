@@ -1353,6 +1353,43 @@ export class Engine {
     return { x: ray.origin.x + ray.dir.x * t, y: planeY, z: ray.origin.z + ray.dir.z * t };
   }
 
+  /**
+   * What the pointer points at, for the others in a session to see: where
+   * the view ray first meets the level (its ground, buildings and objects),
+   * a unit's figure, or else the floor of the action; null off the scene.
+   */
+  pointAt(cssX: number, cssY: number): { x: number; y: number; z: number } | null {
+    const ray = this.rayAt(cssX, cssY);
+    if (!ray) return null;
+    const o = ray.origin;
+    const d = ray.dir;
+    let best = Infinity;
+    const surf = this.inspector.surfaceHit(ray);
+    if (surf) best = Math.hypot(surf.x - o.x, surf.y - o.y, surf.z - o.z);
+    best = Math.min(best, this.figureDistance(ray, cssX, cssY));
+    if (best === Infinity) {
+      const floor = this.dataset && this.cameraWorld === 'data' ? actionBounds(this.dataset).minY : 0;
+      const t = Math.abs(d.y) > 1e-9 ? (floor - o.y) / d.y : -1;
+      if (t > 0) best = t;
+    }
+    if (!Number.isFinite(best)) return null;
+    return { x: o.x + d.x * best, y: o.y + d.y * best, z: o.z + d.z * best };
+  }
+
+  /** How far along a ray the nearest unit's figure is (Infinity for none). */
+  private figureDistance(ray: { origin: Vec3; dir: Vec3 }, cssX: number, cssY: number): number {
+    if (!this.dataset?.personId) return Infinity;
+    if (this.gpuTracksParams) {
+      this.gpuUnitAt(ray, cssX, cssY, true);
+      return this.gpuPick?.t ?? Infinity;
+    }
+    if (!this.figureBatches) return Infinity;
+    const o: [number, number, number] = [ray.origin.x, ray.origin.y, ray.origin.z];
+    const d: [number, number, number] = [ray.dir.x, ray.dir.y, ray.dir.z];
+    const box = this.figureReplay.hit(o, d);
+    return box >= 0 ? this.figureReplay.entry(box, o, d) : Infinity;
+  }
+
   /** A click on the tactics board: the point on the level, and what is there, to the board's store. */
   private boardClick(cssX: number, cssY: number, additive = false): void {
     const at = this.worldAt(cssX, cssY);
@@ -2095,7 +2132,7 @@ export class Engine {
     this.pickRange(p, ray, scan, to);
     if (scan.next < st.tracks) return this.gpuPick?.person ?? null;
     const person = scan.best >= 0 ? st.personOf[scan.best] : null;
-    this.gpuPick = { key, person };
+    this.gpuPick = { key, person, t: scan.best >= 0 ? scan.bestT : Infinity };
     if (scan === this.gpuScan) this.gpuScan = null;
     return person;
   }
@@ -2148,7 +2185,7 @@ export class Engine {
     scan.next = i;
   }
 
-  private gpuPick: { key: string; person: number | null } | null = null;
+  private gpuPick: { key: string; person: number | null; t: number } | null = null;
   /** A hover's pass through the units, a slice a frame (`gpuUnitAt`). */
   private gpuScan: PickScan | null = null;
   private readonly pickPose = emptyPose();

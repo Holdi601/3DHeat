@@ -5,7 +5,7 @@ use heat3d_session::auth::{self, Cost};
 use heat3d_session::proto::{
     self, client_msg, server_msg, AdminAction, AdminKind, Batch, ClientMsg, CloseReason,
     FollowMode, FollowSet, Hello, InviteNew, LookHere, Op, OpKind, Pose, Presence, Role, ServerMsg,
-    SettingsSet, Vec3,
+    SettingsSet, Vec3, ViewKind, ViewSync,
 };
 use heat3d_session::session::{Config, ConnId, MemberId, Out, Session, Target};
 use std::net::IpAddr;
@@ -1354,4 +1354,100 @@ fn the_shared_documents_have_a_size_cap() {
     }
     assert!(too_large, "the cap held");
     assert!(s.docs_json().len() < 260_000);
+}
+
+fn view(kind: ViewKind, to: Vec<MemberId>, json: &str) -> client_msg::Body {
+    client_msg::Body::View(ViewSync {
+        to,
+        kind: kind as i32,
+        json: json.into(),
+    })
+}
+
+fn view_events(outs: &[Out], conn: ConnId, s: &Session) -> Vec<proto::ViewEvent> {
+    bodies(outs, conn, s)
+        .into_iter()
+        .filter_map(|b| match b {
+            server_msg::Body::View(v) => Some(v),
+            _ => None,
+        })
+        .collect()
+}
+
+#[test]
+fn view_sync_is_relayed_to_whom_it_names_and_checked() {
+    let mut w = World::new(true);
+    let (host, host_id) = w.host();
+    let (a, a_id) = w.member(host, "a", Role::Viewer, 2);
+    let (b, _) = w.member(host, "b", Role::Draw, 3);
+    // To everyone but the sender, stamped with the server's clock and the sender.
+    let outs = w.send(a, view(ViewKind::ViewChange, vec![], r#"{"v":1,"s":{"mode":"heat-lines"}}"#));
+    assert_eq!(ack_code(&outs, a, &w.s), Some(proto::Err::Ok));
+    for c in [host, b] {
+        let ev = view_events(&outs, c, &w.s);
+        assert_eq!(ev.len(), 1);
+        assert_eq!(ev[0].from, a_id);
+        assert_eq!(ev[0].from_name, "a");
+        assert_eq!(ev[0].kind, ViewKind::ViewChange as i32);
+        assert_eq!(ev[0].at, w.now);
+    }
+    assert!(view_events(&outs, a, &w.s).is_empty());
+    // Only to whom it names.
+    let outs = w.send(a, view(ViewKind::ViewWant, vec![host_id], ""));
+    assert_eq!(view_events(&outs, host, &w.s).len(), 1);
+    assert!(view_events(&outs, b, &w.s).is_empty());
+    // Not JSON, not an object, too big, no kind: refused, nothing passed on.
+    for (k, j) in [
+        (ViewKind::ViewChange, "not json".to_string()),
+        (ViewKind::ViewChange, "[1,2]".to_string()),
+        (ViewKind::ViewChange, format!(r#"{{"x":"{}"}}"#, "y".repeat(50 * 1024))),
+        (ViewKind::ViewUnspecified, "{}".to_string()),
+    ] {
+        let outs = w.send(a, view(k, vec![], &j));
+        assert_eq!(ack_code(&outs, a, &w.s), Some(proto::Err::Invalid));
+        assert!(view_events(&outs, host, &w.s).is_empty());
+    }
+    let outs = w.send(a, client_msg::Body::View(ViewSync { kind: 99, ..Default::default() }));
+    assert_eq!(ack_code(&outs, a, &w.s), Some(proto::Err::BadMessage));
+    // "Switch to my view" three a minute, as "look here"; the host has no such limit.
+    for _ in 0..3 {
+        let outs = w.send(a, view(ViewKind::ViewAsk, vec![], "{}"));
+        assert_eq!(ack_code(&outs, a, &w.s), Some(proto::Err::Ok));
+    }
+    let outs = w.send(a, view(ViewKind::ViewAsk, vec![], "{}"));
+    assert_eq!(ack_code(&outs, a, &w.s), Some(proto::Err::RateLimited));
+    for _ in 0..5 {
+        let outs = w.send(host, view(ViewKind::ViewAsk, vec![], "{}"));
+        assert_eq!(ack_code(&outs, host, &w.s), Some(proto::Err::Ok));
+    }
+    // A flood of changes runs out of budget.
+    w.now += 60_000;
+    let refused = (0..60)
+        .filter(|_| {
+            let outs = w.send(b, view(ViewKind::ViewClock, vec![], "{}"));
+            ack_code(&outs, b, &w.s) == Some(proto::Err::RateLimited)
+        })
+        .count();
+    assert!(refused > 0);
+    // Muted: no sharing, but asking for someone's view still works.
+    w.now += 60_000;
+    w.send(host, admin(AdminKind::Mute, a_id, Role::Unspecified));
+    let outs = w.send(a, view(ViewKind::ViewChange, vec![], "{}"));
+    assert_eq!(ack_code(&outs, a, &w.s), Some(proto::Err::Muted));
+    let outs = w.send(a, view(ViewKind::ViewWant, vec![host_id], "{}"));
+    assert_eq!(ack_code(&outs, a, &w.s), Some(proto::Err::Ok));
+}
+
+#[test]
+fn pong_carries_the_server_clock() {
+    let mut w = World::new(false);
+    let (host, _) = w.host();
+    let outs = w.send(host, client_msg::Body::Ping(proto::Ping { t: 5.0 }));
+    let pong = bodies(&outs, host, &w.s).into_iter().find_map(|b| match b {
+        server_msg::Body::Pong(p) => Some(p),
+        _ => None,
+    });
+    let p = pong.expect("pong");
+    assert_eq!(p.t, 5.0);
+    assert_eq!(p.server_ms, w.now);
 }

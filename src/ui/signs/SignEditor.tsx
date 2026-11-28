@@ -7,6 +7,7 @@
  * filters and time window.
  */
 
+import { ShareToggle } from '../session/ShareToggle';
 import { sendChartBlock, type ChartBlock } from '../../charts/block';
 import { num, t } from '../../i18n';
 import { useStore } from '../../state/store';
@@ -88,6 +89,7 @@ export function SignEditor({ volume }: { volume: Volume }) {
             <button type="button" className="vsign-item-name" onClick={() => st.openEditor(volume.id, s.id)} title={t('charts.panel.editTitle')}>
               {signTitle(s)}
             </button>
+            <ShareToggle compact isPrivate={!!s.private} onChange={(p) => st.update(s.id, { private: p ? true : undefined })} />
             <button type="button" title={t('charts.sign.removeTitle')} onClick={() => st.remove(s.id)}>
               ✕
             </button>

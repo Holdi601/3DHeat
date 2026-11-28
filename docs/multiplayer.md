@@ -70,26 +70,43 @@ The button at the top of the side panel shows the connection: green connected, a
 | Layer | Who changes it |
 |---|---|
 | **Presence**: each member's camera (a frustum with their name, in their colour) and pointer, in the same workspace | Everyone, by moving |
+| **The view** (for those who keep it in sync): the workspace, the mode, heat, difference and team settings, the figures, lines, filters, the slice, layers, the replay display, the race, match, tactics and vehicle views, and playback | Everyone (the host's changes are asked about) |
 | **Marks**: notes set on the scene and freehand drawings (the panel's *Marks*, or the command palette) | Draw-only and up: their own; elevated and up: anyone's |
 | **The tactics board**: figures, routes, tasks, layers, keyframes, notes, drawings | Elevated and up; draw-only: their own drawings and notes on it |
-| **Data notes and analysis documents**, chart signs, and any other layer that registers itself | As for marks: draw-only and up their own, elevated and up anyone's |
-| **Follow**: everyone follows one camera, or is locked to it | Admin and host |
+| **Data notes and analysis documents**, chart signs, BI dashboards, volumes, replay bookmarks, and any other layer that registers itself; each note, analysis, dashboard or chart is shared or private | As for marks: draw-only and up their own, elevated and up anyone's |
+| **Follow me** for everyone (each member says yes or no) | Admin and host |
 
 Shared layers are changed by small operations - add this, set that field, delete that - which the host numbers in the order they arrive and sends to everyone. Where two members change the same field at the same moment, the one the host received last is kept, for both. A change the host refuses (the role does not allow it, the member is muted) disappears from the member's screen again.
 
-**Look here.** *Ask everyone to look* sends your camera to the others with a note; each one decides to **Look** (their camera jumps to yours) or to dismiss it. *Ask everyone to follow me* asks them to follow your camera until they stop. At most three such requests a minute per member.
+**The pointer.** Where your mouse points, the others see a point in the world: a ring lying on what the ray from your camera hits (the level's ground, a building, a unit's figure, else the floor of the action), a short stalk with your name, and a dashed line from your camera to it. A pointer left still fades out after a few seconds.
 
-**Follow and lock.** An admin can have everyone follow a camera (members may stop following) or lock everyone to it (they cannot). A bar at the top says whom you follow.
+**Shared or private.** A note, a written analysis, a dashboard or a chart sign is shared by default: everyone in the session has it. **Keep to myself** beside it makes it private (only you have it; it leaves the others' screens), **Share** shares it again in one click. Several people can type in the same note or analysis at once: each edit travels as the place it was made and what it changed, and is laid onto the text as it is by then, so nobody's words are lost; the host keeps the server's copy up to date, so whoever joins later gets the merged text.
+
+**View sync.** *Keep my view in sync with everyone* is on for everyone who joins (full sync: the view below, the host's camera, playback, marks and the pointer); turning it off is the one box at the top of the panel's *View sync*. While it is on, a change anyone makes to the mode, the settings, the filters or playback reaches everyone who keeps in sync, in every workspace (heatmap, difference, team, figure overlay, lines, race, match, tactics, vehicles). Joining (or turning it on) takes the session's view from the host. *Move my camera with the host's* (on with it) keeps you where the host is while you look around freely; stopping on the follow bar turns that box off, and you move your own camera again.
+
+- When the **host** changes something, a card asks: **Apply too** (take it), **Ignore** (not this time) or **Ignore all from now on** (sync off). *Ask me before I take the host's changes* in the panel turns the question off.
+- A change that went in says who made it, with **Back to my previous view**, also in the panel and the command palette: it puts your own view back for you alone.
+- Turned off, your view is your own: other people's changes do not reach you and yours do not reach them.
+- **Ask everyone to switch to my view** (or the host, or one member with the arrows button in their row) sends your whole view; each one switches or says no.
+- Playback is shared in time: play, pause, seek, speed and direction travel with the server's clock, so a member whose message took 80 ms starts 80 ms further on, and while it plays the member who started it says the time every two seconds so a slow machine catches up. The race and tactics playbacks work the same way.
+- Names, not numbers: a filter is sent by its values' names, a team by its label, a match by its name, as a saved view is, so the same data loaded on two machines means the same. Whatever arrives is checked against the viewer's own settings (only fields it has, of the same types, within sizes) before it goes in.
+
+**Look where I look.** *Ask everyone to look where I look* sends your camera with a note; each one decides to **Look** (their camera jumps to yours) or to dismiss it. At most three such requests a minute per member.
+
+**Follow me.** *Ask everyone to follow me* is a request too: each member answers **Follow** or **No thanks**, nobody is forced. While following, you are where they are but look around freely (drag); *Look where they look* takes their look again. **Stop following** or the **X** on the bar at the top ends it at once, and the same request is not asked again. *Let everyone go* stops everyone following you.
+
+**See what they see.** The eye in a member's row shows their view for a while: their camera, their settings, and the name of their data if it is not yours; their changes keep coming while you look. **Back to my view** (on the bar at the top) brings your own view and camera back.
 
 ## Roles
 
 | | Host | Admin | Elevated | Draw only | Viewer |
 |---|---|---|---|---|---|
 | Own camera and filters, see the others | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Look here, follow me (3 a minute) | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Look here, follow me, switch to my view (3 a minute) | ✓ | ✓ | ✓ | ✓ | ✓ |
+| View sync, see a member's view | ✓ | ✓ | ✓ | ✓ | ✓ |
 | Own marks and drawings, erase them | ✓ | ✓ | ✓ | ✓ | — |
 | Erase anyone's, edit the tactics board, set the session's data | ✓ | ✓ | ✓ | — | — |
-| Follow / lock everyone's camera | ✓ | ✓ | — | — | — |
+| Ask everyone to follow (for members joining later too) | ✓ | ✓ | — | — | — |
 | Let in from the waiting room, invite links, mute, remove, ban, unban, give roles | ✓ | ✓ (up to elevated, never against admins or the host) | — | — | — |
 | Password, waiting room, publish data, open a session file into the session | ✓ | — | — | — | — |
 
@@ -148,7 +165,7 @@ What the gateway gives up:
 | Before the hello | 5 seconds; 8 such connections from one address, 256 in all; they hold no place in the session |
 | Members, waiting room | 32 members (3 from one address), 16 waiting; the host always gets in |
 | A message | 64 KiB, checked before decoding; no compression (no decompression bombs) |
-| Per member | messages, bytes, batches, presence, look-here and follow (3 a minute), moderation and invites each have a budget; a flood is cut off; one that falls 8 MB behind is cut off; a slow one loses only presence frames |
+| Per member | messages, bytes, batches, presence, look-here and follow (3 a minute), view sync (10 a second, 48 KiB each; "switch to my view" 3 a minute), moderation and invites each have a budget; a flood is cut off; one that falls 8 MB behind is cut off; a slow one loses only presence frames |
 | The shared layers | 1 MiB a second of operations for the whole session (every change goes to everyone), 64 MiB of documents in all, 16,000 characters per text, 512 operations per batch, 32 documents |
 | Uploads | the host's only; 8 GiB each, two at a time; a session file 64 MiB |
 
@@ -161,6 +178,7 @@ What the gateway gives up:
 ### What members send
 
 - **Checked on the server**, before anything is done with it: its size, then its shape, then its values (finite coordinates inside the world, names and notes normalised and stripped of control and direction-override characters, no `__proto__`-style keys, bounded depth and length), then the sender's role (each operation of a batch on its own: what the role may not do is dropped and said), mute and budgets.
+- **View sync is passed on, never kept.** The server checks a view message's kind, its size (48 KiB), that it is a JSON object, the sender's mute and budget, and sends it to the members named; each viewer then takes from it only the fields its own settings have, of the same types and within sizes, and matches names against its own data.
 - **Shown as text.** Names, notes and labels are never markup. Notes and analysis documents are Markdown, rendered by the viewer's own renderer, which escapes all HTML, allows links only to `http`, `https`, `mailto` and the viewer's own places, and renders 64 KiB at most; pictures in notes must be raster images. Exported and printed analyses carry their own content security policy.
 - **The page** has a strict content security policy (scripts only from the server itself, no frames, no plugins, no inline script), `nosniff`, no referrer, `frame-ancestors 'none'`, and HSTS with a real certificate. The WebSocket opens only from the server's own origin (and the origins you allow), so another site's page cannot use a member's browser to talk to it.
 - **Files** go out only if the host published them, by their SHA-256, as `application/octet-stream` and an attachment; there are no paths. The data API (`/v1`) answers members only, with a member's rights (never a file by path). The desktop app's own window server answers its window only. The local usage statistics (`/__heat3d/usage`, off unless switched on) answer the host's own browser only, by the host's token; a member's request never reaches them.

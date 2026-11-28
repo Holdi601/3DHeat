@@ -411,6 +411,13 @@ registerSharedDoc({
   },
   empty: () => ({ dashboards: [], pages: [], tiles: [] }),
   hasContent: (state) => Array.isArray((state as DashDoc).dashboards) && (state as DashDoc).dashboards.length > 0,
+  // A private dashboard keeps its pages and tiles to itself too.
+  privacy: (state) => {
+    const d = state as Partial<DashDoc>;
+    const dashes = new Set((d.dashboards ?? []).filter((x) => x.private === true).map((x) => x.id));
+    const pages = new Set((d.pages ?? []).filter((p) => dashes.has(p.dashId)).map((p) => p.id));
+    return (coll, e) => (coll === 'dashboards' ? e.private === true : coll === 'pages' ? dashes.has(e.dashId as string) : coll === 'tiles' ? pages.has(e.pageId as string) : false);
+  },
 });
 
 /** Each batch of this viewer's own edits, as it is made. */

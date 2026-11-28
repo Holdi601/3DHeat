@@ -128,6 +128,21 @@ describe('the shared layers', () => {
     expect(s.strokes).toEqual([]);
   });
 
+  it('a batch whose numbered copy was lost in a reconnect is not laid over later states', () => {
+    const a = viewer({ pins: [] }, () => {});
+    a.sync.snapshot({ marks: { meta: {}, colls: { pins: [] } } }, false);
+    a.edit((s) => ({ ...s, pins: [{ id: 'm1' }] }));
+    a.sync.tick();
+    const [sent] = a.sync.unconfirmed();
+    // The server applied it, the copy never arrived; the snapshot after the reconnect has it.
+    a.sync.snapshot({ marks: toDocState({ pins: [{ id: 'm1' }] }, ['pins']) }, false);
+    a.sync.acked(sent.id);
+    expect(a.sync.pendingCount()).toBe(0);
+    // Someone erases everything: it stays erased here.
+    a.sync.remote('marks', 'other', [{ op: 'del', coll: 'pins', id: 'm1' }]);
+    expect(a.get().pins).toEqual([]);
+  });
+
   it('cuts big edits into batches that fit a message', () => {
     const ops: DocOp[] = Array.from({ length: 1000 }, (_, i) => ({ op: 'add', coll: 'pins', id: `p${i}`, value: { id: `p${i}`, text: 'x'.repeat(100) } }));
     const { chunks, tooBig } = chunkOps(ops);

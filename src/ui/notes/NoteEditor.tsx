@@ -5,6 +5,8 @@
  * renders on typing only, and the view behind it goes on drawing.
  */
 
+import { ShareToggle } from '../session/ShareToggle';
+import { merge3 } from '../../session/textMerge';
 import { useMemo, useState } from 'react';
 import { t, useLang } from '../../i18n';
 import { anchorSubject, resolveAnchor } from '../../notes/anchors';
@@ -39,17 +41,21 @@ function Editor({ note, isNew }: { note: DataNote; isNew: boolean }) {
   const [color, setColor] = useState(note.color);
   const [shot, setShot] = useState(note.shot);
   const [preview, setPreview] = useState(false);
+  const [priv, setPriv] = useState(!!note.private);
   const [busy, setBusy] = useState(false);
   const choices = useNotes((s) => (isNew ? s.choices : null));
   const close = () => useNotes.getState().set({ editing: null, draft: null, choices: null });
   const resolved = useMemo(() => resolveAnchor(dataset, note.anchor), [dataset, note.anchor]);
   const save = () => {
+    // Someone else may have changed the note while it was open here: both edits stay.
+    const now = useNotes.getState().book.notes.find((n) => n.id === note.id);
     const patch = {
-      title: title.trim() || anchorSubject(note.anchor).slice(0, 80),
-      text,
+      title: (now && !isNew ? merge3(note.title, title.trim(), now.title) : title.trim()) || anchorSubject(note.anchor).slice(0, 80),
+      text: now && !isNew ? merge3(note.text, text, now.text) : text,
       tags: [...new Set(tags.split(',').map((x) => x.trim()).filter(Boolean))].slice(0, 20),
       color,
       ...(shot ? { shot } : {}),
+      private: priv ? true : undefined,
     };
     const s = useNotes.getState();
     if (isNew) {
@@ -163,6 +169,7 @@ function Editor({ note, isNew }: { note: DataNote; isNew: boolean }) {
             {t('notes.delete')}
           </button>
         )}
+        <ShareToggle isPrivate={priv} onChange={setPriv} />
         <span style={{ flex: 1 }} />
         <button type="button" onClick={close}>
           {t('notes.cancel')}

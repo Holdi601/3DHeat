@@ -60,6 +60,16 @@ export interface LookRequest {
   at: number;
 }
 
+/** "Switch to my view" from someone: taken or declined. */
+export interface SyncAsk {
+  id: number;
+  from: number;
+  fromName: string;
+  /** Their view as it travelled. */
+  json: string;
+  at: number;
+}
+
 export interface InviteInfo {
   id: number;
   token: string;
@@ -92,10 +102,28 @@ export interface SessionState {
   members: SessionMember[];
   info: SessionInfoState | null;
   follow: { mode: FollowModeName; leader: number };
-  /** Following someone this viewer chose to (accepted "follow me"), apart from the session's follow. */
+  /** The member whose camera this viewer follows (it said yes to a request, chose to, or looks through their eyes); null for none. */
   followPeer: number | null;
-  /** Stopped following the session's (not enforced) follow. */
-  followOptOut: boolean;
+  /** Why: the session's "follow me" taken, a member's request or choice, looking through their eyes. */
+  followSource: 'session' | 'peer' | 'peek' | 'sync' | null;
+  /** The session's "follow me" waiting for an answer: its leader. */
+  followAsk: number | null;
+  /** The leader whose session "follow me" this viewer answered (yes or no): not asked again. */
+  followAnswered: number | null;
+  /** View sync: on, keeps this viewer's view in sync with everyone's; ask before taking the host's changes; move the camera with the host's. */
+  sync: { on: boolean; askHost: boolean; camera: boolean };
+  /** The host's changes waiting for an answer: who, and what they changed (slice keys). */
+  syncPending: { from: number; keys: string[] } | null;
+  /** The last change from someone else that went in (for a moment, with a way back). */
+  syncApplied: { from: number; keys: string[]; at: number } | null;
+  /** A view to go back to. */
+  syncBack: boolean;
+  /** "Switch to my view" requests. */
+  syncAsks: SyncAsk[];
+  /** Looking through this member's eyes (their camera, view and data), or null. */
+  peek: number | null;
+  /** The name of the data they have loaded while looking through their eyes ('' when not known). */
+  peekData: string;
   looks: LookRequest[];
   waiting: { id: number; name: string; since: number }[];
   bans: { id: number; name: string; until: number }[];
@@ -126,7 +154,16 @@ export const useSessionStore = create<SessionState>((set) => ({
   info: null,
   follow: { mode: 'off', leader: 0 },
   followPeer: null,
-  followOptOut: false,
+  followSource: null,
+  followAsk: null,
+  followAnswered: null,
+  sync: { on: true, askHost: true, camera: true },
+  syncPending: null,
+  syncApplied: null,
+  syncBack: false,
+  syncAsks: [],
+  peek: null,
+  peekData: '',
   looks: [],
   waiting: [],
   bans: [],

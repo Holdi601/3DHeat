@@ -108,6 +108,32 @@ export const useMarks = create<MarksStore>((set, get) => ({
 }));
 
 /**
+ * Whether a mark's key is this browser's: its proven key, or the named one
+ * it had before the proven key was loaded (marks set before joining carry
+ * that one). "Erase mine" and the erase tool go by it; the server decides
+ * by its own record of who made each mark.
+ */
+export function isMine(key: string): boolean {
+  if (!key) return false;
+  if (key === identityHex()) return true;
+  try {
+    return key === localStorage.getItem('heat3d.session.key');
+  } catch {
+    return key === 'u:local';
+  }
+}
+
+/** Erases this browser's own marks. */
+export function eraseMine(): void {
+  useMarks.getState().removeWhere(isMine);
+}
+
+/** Erases every mark (in a session: elevated members and up; the server refuses the rest). */
+export function eraseAll(): void {
+  useMarks.getState().removeWhere(() => true);
+}
+
+/**
  * This browser's key: the marks set here carry it, and the session server
  * knows a member's own entities by it across reconnects. The Ed25519 key's
  * hex once it is loaded (`identity.ts`; the server sees it proven), else a

@@ -220,6 +220,8 @@ export interface DashLink {
 
 export interface Dashboard {
   id: string;
+  /** Kept to this viewer in a session (with its pages and tiles); absent: everyone in the session has it. */
+  private?: boolean;
   name: string;
   theme: 'auto' | 'dark' | 'light';
   filters?: FilterDef[];
@@ -373,6 +375,7 @@ export function parseDashboard(v: unknown): Dashboard | null {
       ? v.hierarchies.filter(isObj).filter((h) => typeof h.id === 'string').slice(0, 50).map((h) => ({ id: String(h.id).slice(0, 64), name: str(h.name) ?? 'Hierarchy', levels: strs(h.levels, 8) ?? [] }))
       : undefined,
     link: { followView: link.followView !== false, driveView: link.driveView === true, volume: link.volume === true },
+    private: v.private === true ? true : undefined,
     source: str(v.source, 64),
     workspace: str(v.workspace, 32),
     at: num(v.at) ?? Date.now(),

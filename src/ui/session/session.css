@@ -482,7 +482,33 @@
   stroke-width: 1.5;
 }
 
-.peer-cursor {
+/* The pointer as a point in the world: the ray from their camera, a ring on what it hit, a stalk, a tip. */
+.peer-pointer {
+  transition: opacity 0.6s ease;
+}
+
+.peer-ray {
+  fill: none;
+  stroke: var(--c);
+  stroke-width: 1;
+  stroke-opacity: 0.55;
+  stroke-dasharray: 4 5;
+}
+
+.peer-ring {
+  fill: var(--c);
+  fill-opacity: 0.22;
+  stroke: var(--c);
+  stroke-width: 2;
+}
+
+.peer-stalk {
+  fill: none;
+  stroke: var(--c);
+  stroke-width: 2;
+}
+
+.peer-tip {
   fill: var(--c);
   stroke: rgba(0, 0, 0, 0.7);
   stroke-width: 1;
@@ -557,7 +583,9 @@
   position: absolute;
   left: var(--sp-3);
   bottom: var(--sp-6);
-  z-index: var(--z-hud);
+  /* Over the quick bar: an answer to a request must never be under a button. */
+  z-index: calc(var(--z-dock) + 1);
+  pointer-events: none;
   display: flex;
   flex-direction: column;
   gap: var(--sp-2);
@@ -566,6 +594,7 @@
 }
 
 .session-look {
+  pointer-events: auto;
   display: flex;
   flex-direction: column;
   gap: var(--sp-2);
@@ -586,12 +615,38 @@
   overflow-wrap: anywhere;
 }
 
+.session-sync-card .session-actions,
+.session-sync-note .session-actions {
+  flex-wrap: wrap;
+}
+
+.session-sync-note {
+  font-size: var(--fs-sm);
+}
+
+.session-sync-main {
+  font-weight: var(--fw-bold);
+}
+
+.session-peek-bar {
+  border-width: 2px;
+}
+
+.session-follow-bar .session-hint {
+  margin: 0;
+}
+
 .session-follow-bar {
   position: absolute;
-  top: var(--sp-3);
+  /* Under the quick bar at the top, not behind it: its stop and X must be reachable. */
+  top: 60px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: var(--z-hud);
+  /* Over the side panels too: the way back is always in reach. */
+  z-index: calc(var(--z-panel) + 1);
+  max-width: calc(100% - 2 * var(--sp-3));
+  flex-wrap: wrap;
+  justify-content: center;
   display: flex;
   align-items: center;
   gap: var(--sp-2);
@@ -702,4 +757,34 @@
   max-width: 100%;
   white-space: normal;
   text-align: left;
+
+/* A narrow view: the quick bar stands down the left edge; the requests sit clear of it. */
+@container stage (max-width: 760px) {
+  .session-follow-bar {
+    top: var(--sp-3);
+  }
+
+  .session-looks {
+    left: 64px;
+    max-width: calc(100% - 64px - var(--sp-3));
+  }
+}
+
+/* Shared or private, beside a note, an analysis, a dashboard or a chart. */
+.share-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  font-size: var(--fs-sm);
+}
+
+.share-toggle .share-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-dim);
+}
+
+.share-toggle.private .share-state {
+  color: var(--warn, var(--accent));
 }

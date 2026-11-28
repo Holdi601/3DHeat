@@ -15,7 +15,9 @@
  * changes of the document only.
  */
 
+import { ShareToggle } from '../session/ShareToggle';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { merge3, moveCaret } from '../../session/textMerge';
 import { createRoot, type Root } from 'react-dom/client';
 import { ChartView } from '../../charts/ChartView';
 import { applyMarkFilter } from '../signs/markFilter';
@@ -71,10 +73,32 @@ function Window({ doc }: { doc: AnalysisDoc }) {
   const dirty = useRef(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // A change from elsewhere (a peer, an inserted block) comes in when nothing typed here is waiting.
+  // The text what is typed here is based on: a change from elsewhere (someone else typing in
+  // a session, an inserted block) is merged with what is typed here, never thrown away.
+  const base = useRef(doc.body);
+  const keepCaret = useRef<number | null>(null);
   useEffect(() => {
-    if (!dirty.current) setBody(doc.body);
+    if (doc.body === base.current) return;
+    if (!dirty.current) {
+      base.current = doc.body;
+      setBody(doc.body);
+      return;
+    }
+    const mine = bodyRef.current;
+    const merged = merge3(base.current, mine, doc.body);
+    const el = text.current;
+    if (el && document.activeElement === el) keepCaret.current = moveCaret(mine, merged, el.selectionStart);
+    base.current = doc.body;
+    bodyRef.current = merged;
+    setBody(merged);
   }, [doc.body]);
+  useLayoutEffect(() => {
+    const at = keepCaret.current;
+    const el = text.current;
+    if (at === null || !el) return;
+    keepCaret.current = null;
+    el.setSelectionRange(at, at);
+  }, [body]);
   useEffect(() => {
     if (document.activeElement?.getAttribute('data-doc-title') !== 'yes') setTitle(doc.title);
   }, [doc.title]);
@@ -85,7 +109,15 @@ function Window({ doc }: { doc: AnalysisDoc }) {
     if (!dirty.current) return;
     dirty.current = false;
     const cur = useNotes.getState().book.docs.find((d) => d.id === doc.id);
-    if (cur && cur.body !== bodyRef.current) useNotes.getState().updateDoc(doc.id, { body: bodyRef.current });
+    if (!cur) return;
+    // What came in meanwhile stays: this viewer's typing is laid onto it.
+    const merged = merge3(base.current, bodyRef.current, cur.body);
+    base.current = merged;
+    if (merged !== bodyRef.current) {
+      bodyRef.current = merged;
+      setBody(merged);
+    }
+    if (cur.body !== merged) useNotes.getState().updateDoc(doc.id, { body: merged });
   };
   const bodyRef = useRef(body);
   bodyRef.current = body;
@@ -349,6 +381,7 @@ function Window({ doc }: { doc: AnalysisDoc }) {
             aria-label={t('notes.doc.title')}
             title={t('notes.doc.title')}
           />
+          <ShareToggle isPrivate={!!doc.private} onChange={(p) => useNotes.getState().updateDoc(doc.id, { private: p ? true : undefined })} />
           <div className="seg" role="group" aria-label={t('notes.doc.layout')}>
             {(['write', 'split', 'preview'] as Mode[]).map((m) => (
               <button key={m} type="button" className={mode === m ? 'on' : ''} aria-pressed={mode === m} onClick={() => setMode(m)} title={t(`notes.doc.mode.${m}Title`)}>

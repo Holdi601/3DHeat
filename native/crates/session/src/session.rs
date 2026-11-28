@@ -21,7 +21,8 @@ use crate::proto::{
     CloseReason, Dataset, Denied, DocState, FollowMode, FollowSet, FollowState, Hello, InviteList,
     InviteMade, InviteNew, LookEvent, LookHere, Member as MemberMsg, Notice, NoticeKind, Pong,
     Pose, Presence, PresenceFrame, PresenceOf, Role, Roster, Sequenced, ServerMsg, SessionInfo,
-    SettingsSet, Snapshot, Waiter as WaiterMsg, Waiting, WaitingList, Welcome,
+    SettingsSet, Snapshot, ViewEvent, ViewKind, ViewSync, Waiter as WaiterMsg, Waiting, WaitingList,
+    Welcome,
 };
 use crate::roles::{self, at_least};
 use crate::text;
@@ -35,6 +36,9 @@ pub const PROTO: u32 = 1;
 const STRIKES_MAX: u32 = 50;
 /// Batches kept for members coming back after a short drop.
 const LOG_KEEP: usize = 10_000;
+/// A view sync message's JSON, at most (the frame is 64 KiB).
+pub const VIEW_JSON_BYTES: usize = 48 * 1024;
+
 /// Batch ids remembered, so a batch sent again is applied once.
 const SEEN_KEEP: usize = 20_000;
 /// Connections waiting for their hello, at most: in all, and from one address.
@@ -808,6 +812,7 @@ impl Session {
                 Target::Conn(conn),
                 msg(server_msg::Body::Pong(Pong {
                     t: if p.t.is_finite() { p.t } else { 0.0 },
+                    server_ms: now_ms,
                 })),
             )];
         }
@@ -830,7 +835,73 @@ impl Session {
             client_msg::Body::Invite(i) => self.invite(conn, rid, me, i, now_ms),
             client_msg::Body::Settings(s) => self.settings(conn, rid, me, s),
             client_msg::Body::Dataset(d) => self.dataset_set(conn, rid, me, d),
+            client_msg::Body::View(v) => self.view(conn, rid, me, v, now_ms),
         }
+    }
+
+    /// View sync: passed on to the members named (or everyone), never kept.
+    /// Any role may share its view; a muted member only asks for others'.
+    fn view(&mut self, conn: ConnId, rid: u32, me: MemberId, v: ViewSync, now_ms: i64) -> Vec<Out> {
+        let Ok(kind) = ViewKind::try_from(v.kind) else {
+            return vec![ack(conn, rid, proto::Err::BadMessage, 0)];
+        };
+        if kind == ViewKind::ViewUnspecified || v.to.len() > 64 || v.json.len() > VIEW_JSON_BYTES {
+            return vec![ack(conn, rid, proto::Err::Invalid, 0)];
+        }
+        // An object, or nothing: the viewers read it as one.
+        if !v.json.is_empty()
+            && !matches!(serde_json::from_str::<serde_json::Value>(&v.json), Ok(serde_json::Value::Object(_)))
+        {
+            return vec![ack(conn, rid, proto::Err::Invalid, 0)];
+        }
+        if kind != ViewKind::ViewWant && self.muted(me, now_ms) {
+            return vec![ack(conn, rid, proto::Err::Muted, 0)];
+        }
+        let host = self.role(me) == Role::Host;
+        if let Some(c) = self.conns.get_mut(&conn) {
+            if let Err(wait) = c.budgets.view.take(1.0, now_ms) {
+                return vec![ack(conn, rid, proto::Err::RateLimited, wait)];
+            }
+            if kind == ViewKind::ViewAsk && !host {
+                if let Err(wait) = c.budgets.view_ask.take(1.0, now_ms) {
+                    return vec![ack(conn, rid, proto::Err::RateLimited, wait)];
+                }
+            }
+        }
+        let to: Vec<MemberId> = if v.to.is_empty() {
+            self.members
+                .values()
+                .filter(|m| m.conn.is_some() && m.id != me)
+                .map(|m| m.id)
+                .collect()
+        } else {
+            v.to.iter()
+                .copied()
+                .filter(|t| *t != me && self.members.get(t).is_some_and(|m| m.conn.is_some()))
+                .collect()
+        };
+        let from_name = self
+            .members
+            .get(&me)
+            .map(|m| m.name.clone())
+            .unwrap_or_default();
+        let mut out = Vec::with_capacity(2);
+        if !to.is_empty() {
+            out.push(Out::Send(
+                Target::Members(to),
+                msg(server_msg::Body::View(ViewEvent {
+                    from: me,
+                    from_name,
+                    kind: kind as i32,
+                    json: v.json,
+                    at: now_ms,
+                })),
+            ));
+        }
+        if rid != 0 {
+            out.push(ack(conn, rid, proto::Err::Ok, 0));
+        }
+        out
     }
 
     fn muted(&self, me: MemberId, now_ms: i64) -> bool {
