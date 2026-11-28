@@ -23,7 +23,7 @@ rand = "0.10"
 sha2 = "0.11"
 hex = "0.4"
 subtle = "2.6"
-ed25519-dalek = { version = "2.1", default-features = false, features = ["std", "fast"] }
+ed25519-dalek = { version = "3", default-features = false, features = ["alloc", "fast", "zeroize"] }
 unicode-normalization = "0.1"
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "sync", "time", "signal", "fs", "io-util", "io-std"] }
 axum = { version = "0.8", features = ["ws"] }
@@ -39,5 +39,5 @@ bytes = "1"
 tower = { version = "0.5", features = ["util"] }
 
 [dev-dependencies]
-ed25519-dalek = { version = "2.1", features = ["rand_core"] }
+ed25519-dalek = { version = "3", features = ["rand_core"] }
 tokio-tungstenite = "0.30"
