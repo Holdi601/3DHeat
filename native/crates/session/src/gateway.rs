@@ -85,12 +85,13 @@ pub struct NetLimits {
 impl Default for NetLimits {
     fn default() -> Self {
         Self {
-            conns_per_addr: 64,
-            conns: 1024,
+            // A team behind one office or home address: each member a WebSocket and a few requests at a time.
+            conns_per_addr: 256,
+            conns: 4096,
             requests_burst: 400.0,
             requests_per_sec: 100.0,
-            upgrades_burst: 20.0,
-            upgrades_per_sec: 1.0,
+            upgrades_burst: 60.0,
+            upgrades_per_sec: 5.0,
         }
     }
 }

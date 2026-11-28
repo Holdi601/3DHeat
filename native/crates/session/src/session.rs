@@ -48,8 +48,14 @@ pub const PENDING_PER_ADDR: usize = 8;
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub struct Config {
     pub name: String,
+    /// Members at most; 0: no fixed number (the connection limit and the per-member budgets bound it).
     pub max_clients: usize,
+    /// Clients from one address not let in yet (waiting room, a password join), at most: flood protection.
     pub max_per_addr: usize,
+    /// Members from one address once in (by an invite link, admitted, the password): a team behind one office
+    /// or home address all get in.
+    #[serde(default = "members_per_addr")]
+    pub max_members_per_addr: usize,
     pub waiting_room: bool,
     pub tls: bool,
     pub exposed: bool,
@@ -62,18 +68,27 @@ pub struct Config {
     pub max_state_bytes: usize,
 }
 
+fn members_per_addr() -> usize {
+    256
+}
+
+/// From this many members on, presence frames are thinned: each member's pose goes out at most every
+/// `members / BIG_ROOM` ticks (ten a second below it), so the traffic grows with the room, not its square.
+pub const BIG_ROOM: usize = 24;
+
 impl Default for Config {
     fn default() -> Self {
         Self {
             name: "3DHeat session".into(),
-            max_clients: 32,
+            max_clients: 0,
             max_per_addr: 3,
+            max_members_per_addr: members_per_addr(),
             waiting_room: true,
             tls: false,
             exposed: false,
             cost: Cost::STRONG,
             grace_ms: 120_000,
-            max_waiting: 16,
+            max_waiting: 64,
             max_state_bytes: 64 * 1024 * 1024,
         }
     }
@@ -197,6 +212,9 @@ pub struct Session {
     dataset: Option<Dataset>,
     next_look: u64,
     gone: Vec<MemberId>,
+    /// Clock ticks so far, and whether anyone moved since the last whole presence frame.
+    ticks: u64,
+    moved_since_full: bool,
     /// The documents' JSON size, an estimate from above (exact after each recount).
     state_bytes: usize,
     /// Bytes of operations a second the whole session takes in: every batch goes out to everyone.
@@ -288,6 +306,8 @@ impl Session {
             dataset: None,
             next_look: 1,
             gone: Vec::new(),
+            ticks: 0,
+            moved_since_full: false,
             state_bytes: 0,
             op_bytes: crate::limits::Bucket::new(4.0 * 1024.0 * 1024.0, 1024.0 * 1024.0, 0),
         }
@@ -419,11 +439,25 @@ impl Session {
     }
 
     /// Connections in the session (waiting or joined) from `addr`.
-    fn placed_from(&self, addr: &str) -> usize {
+    /// Clients from `addr` not let in yet (in the waiting room).
+    fn waiting_from(&self, addr: &str) -> usize {
         self.conns
             .values()
-            .filter(|c| c.addr == addr && !matches!(c.state, ConnState::New))
+            .filter(|c| c.addr == addr && matches!(c.state, ConnState::Waiting(_)))
             .count()
+    }
+
+    /// Members from `addr`, in.
+    fn joined_from(&self, addr: &str) -> usize {
+        self.conns
+            .values()
+            .filter(|c| c.addr == addr && !matches!(c.state, ConnState::New | ConnState::Waiting(_)))
+            .count()
+    }
+
+    /// The session has as many members as the host allowed (none when the host set no number).
+    fn full(&self) -> bool {
+        self.cfg.max_clients > 0 && self.joined_count() >= self.cfg.max_clients
     }
 
     fn banned(&self, name: &str, key: &str, addr: &str, loopback: bool, now_ms: i64) -> bool {
@@ -536,7 +570,7 @@ impl Session {
             out.push(audit(now_ms, "banned_refused", serde_json::json!({ "name": name, "addr": addr })));
             return out;
         }
-        if self.placed_from(&addr) >= self.cfg.max_per_addr {
+        if self.joined_from(&addr) >= self.cfg.max_members_per_addr {
             return denied(conn, proto::Err::Full, 5000);
         }
         // An invite: its role, past the waiting room. A key that joined with
@@ -552,7 +586,7 @@ impl Session {
                 out.push(audit(now_ms, "auth_failed", serde_json::json!({ "how": "invite", "addr": addr })));
                 return out;
             };
-            if self.joined_count() >= self.cfg.max_clients {
+            if self.full() {
                 return denied(conn, proto::Err::Full, 5000);
             }
             let inv = &mut self.invites[i];
@@ -600,7 +634,7 @@ impl Session {
         }
         // Without a password nobody joins unasked: the waiting room always.
         if self.cfg.waiting_room || self.password.is_none() {
-            if self.waiters.len() >= self.cfg.max_waiting {
+            if self.waiters.len() >= self.cfg.max_waiting || self.waiting_from(&addr) >= self.cfg.max_per_addr {
                 return denied(conn, proto::Err::Full, 10_000);
             }
             let id = self.next_member;
@@ -625,7 +659,7 @@ impl Session {
                 audit(now_ms, "waiting", serde_json::json!({ "waiter": id, "name": name, "addr": addr })),
             ];
         }
-        if self.joined_count() >= self.cfg.max_clients {
+        if self.full() {
             return denied(conn, proto::Err::Full, 5000);
         }
         let id = self.add_member(name.clone(), Role::Viewer, key);
@@ -1220,7 +1254,7 @@ impl Session {
                 if !roles::may_grant(role, give) {
                     return vec![ack(conn, rid, proto::Err::Forbidden, 0)];
                 }
-                if self.joined_count() >= self.cfg.max_clients {
+                if self.full() {
                     return vec![ack(conn, rid, proto::Err::Full, 0)];
                 }
                 self.waiters.remove(&a.target);
@@ -1422,7 +1456,8 @@ impl Session {
             id: self.next_invite,
             token: auth::token(),
             role: give,
-            uses: i.uses.clamp(1, 100),
+            // A link for a whole team: up to a thousand people.
+            uses: i.uses.clamp(1, 1000),
             expires: now_ms + ttl,
             label: text::clean(&i.label, text::NOTE_CHARS, false),
             redeemed: Vec::new(),
@@ -1539,16 +1574,35 @@ impl Session {
         if roster {
             out.push(self.roster_msg());
         }
-        // When anyone moved, everyone's pose: a client that skipped a frame
-        // is whole again with the next one.
+        // Who moved since the last frame, and once a second everyone's pose
+        // (a client that skipped a frame is whole again within a second). A
+        // big room is thinned: a frame every few ticks, so what goes out grows
+        // with the room, not with its square.
+        self.ticks = self.ticks.wrapping_add(1);
+        let joined = self.joined_count();
+        let every = (joined / BIG_ROOM).clamp(1, 10) as u64;
+        let full = self.ticks % 10 == 0;
         let moved = self.members.values().any(|m| m.dirty);
+        self.moved_since_full |= moved;
         let gone = std::mem::take(&mut self.gone);
-        if !moved && gone.is_empty() {
+        let due = self.ticks % every == 0 || full;
+        if (!moved && !(full && self.moved_since_full) && gone.is_empty()) || (!due && gone.is_empty()) {
+            if !gone.is_empty() {
+                self.gone = gone;
+            }
             return (None, out);
+        }
+        let whole = full && self.moved_since_full;
+        if full {
+            self.moved_since_full = false;
         }
         let mut items = Vec::new();
         for m in self.members.values_mut() {
+            let send = whole || m.dirty;
             m.dirty = false;
+            if !send {
+                continue;
+            }
             if let (Some(p), Some(_)) = (&m.presence, m.conn) {
                 items.push(PresenceOf {
                     member: m.id,

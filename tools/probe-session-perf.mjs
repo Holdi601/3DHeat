@@ -14,7 +14,7 @@
  * and loadgen builds (cargo build --release -p heat3d-server -p heat3d-session --examples in native/).
  */
 import { chromium } from 'playwright';
-import { spawn } from 'node:child_process';
+import { execFileSync, spawn } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -30,7 +30,19 @@ const TOKEN = randomBytes(32).toString('hex');
 const state = mkdtempSync(join(tmpdir(), 'heat3d-session-perf-'));
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
-const server = spawn(`${TARGET}/3dheat.exe`, ['serve', '--plain-http', '--port', String(PORT), '--test-cost', '--host-token', TOKEN, '--allow-origin', new URL(APP).origin, '--max-per-addr', '64', '--max-clients', '64', '--state-dir', state], { stdio: 'ignore' });
+// The defaults: no fixed member cap, the members all from one address (as a team behind one office address).
+const server = spawn(`${TARGET}/3dheat.exe`, ['serve', '--plain-http', '--port', String(PORT), '--test-cost', '--host-token', TOKEN, '--allow-origin', new URL(APP).origin, '--state-dir', state, '--no-update-check'], { stdio: 'ignore' });
+
+/** The server's and its gateway's CPU seconds and memory (Windows): [cpu s, working set MiB]. */
+function serverUse() {
+  try {
+    const ps = `$p = Get-CimInstance Win32_Process | ? { $_.ProcessId -eq ${server.pid} -or $_.ParentProcessId -eq ${server.pid} }; $c = 0; $m = 0; foreach ($x in $p) { $g = Get-Process -Id $x.ProcessId -ErrorAction SilentlyContinue; if ($g) { $c += $g.CPU; $m += $g.WorkingSet64 } }; "$c $m"`;
+    const [c, m] = execFileSync('powershell', ['-NoProfile', '-Command', ps], { encoding: 'utf8' }).trim().split(/\s+/).map(Number);
+    return [c, m / 1048576];
+  } catch {
+    return [NaN, NaN];
+  }
+}
 for (let i = 0; i < 100; i++) {
   try {
     if ((await fetch(`${SERVER}/session.json`)).ok) break;
@@ -91,9 +103,19 @@ const invite = await page.evaluate(() => globalThis.__heat3dSession.store.getSta
 const gen = spawn(`${TARGET}/examples/loadgen.exe`, [`ws://127.0.0.1:${PORT}/ws`, String(MEMBERS), invite, String(SECONDS + 15)], { stdio: ['ignore', 'pipe', 'inherit'] });
 let genOut = '';
 gen.stdout.on('data', (d) => (genOut += d));
-await wait(5000);
+await wait(Math.max(5000, MEMBERS * 120));
 const peers = await page.evaluate(() => globalThis.__heat3dSession.presence.size);
+const [cpu0] = serverUse();
+const t0 = performance.now();
+// The host page's own work on the session's messages: long tasks while it is in the session.
+await page.evaluate(() => {
+  globalThis.__longTasks = [];
+  new PerformanceObserver((l) => globalThis.__longTasks.push(...l.getEntries().map((e) => e.duration))).observe({ type: 'longtask', buffered: false });
+});
 const loaded = await measure(SECONDS * 60);
+const [cpu1, mem1] = serverUse();
+const longTasks = await page.evaluate(() => globalThis.__longTasks);
+console.log(`server + gateway: ${(((cpu1 - cpu0) / ((performance.now() - t0) / 1000)) * 100).toFixed(1)} % of one core, ${mem1.toFixed(0)} MiB; host page long tasks ${longTasks.length} (max ${Math.max(0, ...longTasks).toFixed(0)} ms)`);
 const marks = await page.evaluate(() => globalThis.__heat3dSession.marks.getState().doc.pins.length);
 console.log(`in session: ${fmt(loaded)}  (${peers} others' cameras shown, ${marks} marks arrived)`);
 await new Promise((r) => gen.on('exit', r));

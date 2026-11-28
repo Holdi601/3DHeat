@@ -629,7 +629,7 @@ function Invites() {
         </label>
         <label className="session-field">
           <span>{t('session.invite.uses')}</span>
-          <input type="number" min={1} max={100} value={uses} onChange={(e) => setUses(Math.max(1, Math.min(100, Number(e.target.value) || 1)))} />
+          <input type="number" min={1} max={1000} value={uses} onChange={(e) => setUses(Math.max(1, Math.min(1000, Number(e.target.value) || 1)))} />
         </label>
         <label className="session-field">
           <span>{t('session.invite.hours')}</span>

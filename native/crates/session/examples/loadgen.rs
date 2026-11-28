@@ -37,9 +37,21 @@ async fn main() {
             joined.clone(),
         );
         tasks.push(tokio::spawn(async move {
-            let Ok((ws, _)) = tokio_tungstenite::connect_async(url.as_str()).await else {
-                eprintln!("member {i}: no connection");
-                return;
+            // Refused (a burst of upgrades from one address is cut at its budget): again a little later, as a
+            // browser's viewer does.
+            let mut tries = 0;
+            let ws = loop {
+                match tokio_tungstenite::connect_async(url.as_str()).await {
+                    Ok((ws, _)) => break ws,
+                    Err(_) if tries < 120 => {
+                        tries += 1;
+                        tokio::time::sleep(Duration::from_millis(500 + 37 * (i as u64 % 13))).await;
+                    }
+                    Err(_) => {
+                        eprintln!("member {i}: no connection");
+                        return;
+                    }
+                }
             };
             let (mut tx, mut rx) = ws.split();
             let hello = ClientMsg {

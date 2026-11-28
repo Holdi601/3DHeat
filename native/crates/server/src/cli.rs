@@ -29,10 +29,14 @@ OPTIONS:
     --password-env VAR     The session password, from an environment variable (at least 12 characters)
     --password-file FILE   The session password, from the first line of a file
     --no-waiting-room      Members with the password join at once (invite links always do)
-    --max-clients N        Connections at most (default 32)
-    --max-per-addr N       Connections from one address at most (default 3)
-    --max-waiting N        Clients in the waiting room at most (default 16)
-    --max-connections N    TCP connections at most, all clients together (default 1024)
+    --max-clients N        Members at most (default: no fixed number; the connection limit and
+                           the per-member budgets bound it)
+    --max-per-addr N       Clients from one address not let in yet (waiting room) at most (default 3)
+    --max-members-per-addr N
+                           Members from one address once in (invite link, admitted) at most
+                           (default 256: a team behind one office address)
+    --max-waiting N        Clients in the waiting room at most (default 64)
+    --max-connections N    TCP connections at most, all clients together (default 4096)
     --publish FILE         Publish a file for members to fetch by its hash (repeatable; the first is the session's data)
     --cert FILE --key FILE Use this certificate (PEM) instead of the self-signed one
     --plain-http           No TLS: only on this machine (binds 127.0.0.1)
@@ -381,6 +385,11 @@ pub async fn serve(rest: Vec<String>, core: Arc<Core>, default_web: Option<PathB
                 cfg.session.max_per_addr = val(&mut i, "--max-per-addr")
                     .parse()
                     .unwrap_or_else(|_| fail("--max-per-addr: a number"))
+            }
+            "--max-members-per-addr" => {
+                cfg.session.max_members_per_addr = val(&mut i, "--max-members-per-addr")
+                    .parse()
+                    .unwrap_or_else(|_| fail("--max-members-per-addr: a number"))
             }
             "--max-waiting" => {
                 cfg.session.max_waiting = val(&mut i, "--max-waiting")

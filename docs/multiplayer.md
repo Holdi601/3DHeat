@@ -34,9 +34,10 @@ The session server is one program, `3dheat` (built in `native/` with `cargo buil
 | `--bind ADDR` | The address to listen on: all of this machine's (`0.0.0.0`) by default. |
 | `--password-env VAR` / `--password-file FILE` | The session password (at least 12 characters), from an environment variable or a file - never on the command line, where other programs can read it. |
 | `--no-waiting-room` | Members with the password join at once. Without a password there is always a waiting room. |
-| `--max-clients N`, `--max-per-addr N` | Members at most: 32, and 3 from one address. |
-| `--max-waiting N` | Clients in the waiting room at most (16). The host, invite links and members coming back still get in. |
-| `--max-connections N` | TCP connections at most, all clients together (1024; 64 from one address). |
+| `--max-clients N` | Members at most. By default there is no fixed number: big teams join, bounded by the connection limit and each member's budgets. Set it to cap the session. |
+| `--max-per-addr N`, `--max-members-per-addr N` | From one address: clients not let in yet (the waiting room) at most (3), and members once in by an invite link, the password or admitted (256, so a team behind one office or home address all get in). |
+| `--max-waiting N` | Clients in the waiting room at most (64). The host, invite links and members coming back still get in. |
+| `--max-connections N` | TCP connections at most, all clients together (4096; 256 from one address). |
 | `--publish FILE` | Makes a file fetchable by the members, by its content hash; the first is announced as the session's data. |
 | `--cert FILE --key FILE` | A real certificate (PEM), e.g. from Let's Encrypt, instead of the self-signed one. |
 | `--plain-http` | No TLS, on this machine only (`127.0.0.1`), for trying it out. |
@@ -157,13 +158,14 @@ What the gateway gives up:
 
 | What | Limit |
 |---|---|
-| TCP connections | 1024 in all, 64 from one address (an IPv6 /64 counts as one); the core refuses the rest before a byte is read |
+| TCP connections | 4096 in all, 256 from one address (an IPv6 /64 counts as one); the core refuses the rest before a byte is read |
 | TLS handshake, a request's head | 10 seconds each; a head is 16 KiB at most |
 | A quiet connection | closed after 75 seconds; one whose client stops reading, after 30 seconds of no progress |
 | HTTP requests | 400 at once, then 100 a second, from one address; then *429* |
-| WebSocket upgrades | 20 at once, then one a second, from one address |
+| WebSocket upgrades | 60 at once, then five a second, from one address (a team joining from one office address) |
 | Before the hello | 5 seconds; 8 such connections from one address, 256 in all; they hold no place in the session |
-| Members, waiting room | 32 members (3 from one address), 16 waiting; the host always gets in |
+| Members, waiting room | no fixed number of members unless the host sets one (`--max-clients`); 256 members from one address; 64 waiting, 3 of them from one address; the host always gets in |
+| Presence | each member's camera ten times a second; only who moved goes out, everyone once a second; from 24 members on each member's pose is thinned (every `members / 24` ticks, at most one a second), so the traffic grows with the room, not its square |
 | A message | 64 KiB, checked before decoding; no compression (no decompression bombs) |
 | Per member | messages, bytes, batches, presence, look-here and follow (3 a minute), view sync (10 a second, 48 KiB each; "switch to my view" 3 a minute), moderation and invites each have a budget; a flood is cut off; one that falls 8 MB behind is cut off; a slow one loses only presence frames |
 | The shared layers | 1 MiB a second of operations for the whole session (every change goes to everyone), 64 MiB of documents in all, 16,000 characters per text, 512 operations per batch, 32 documents |
@@ -173,7 +175,7 @@ What the gateway gives up:
 
 - **The browser's key.** Each browser makes an Ed25519 key pair once and keeps it in IndexedDB, its private half not extractable. Joining, the server sends a fresh challenge and the browser signs it: the server then knows the browser by its public key, not by anything the browser merely says. A member's own marks stay their own by it, a resume token works only from the browser that was given it (a copied token is useless), bans hold to it (and to the address and name), and an invite link used up still lets back in the browsers that joined with it. A browser without Ed25519 (or without IndexedDB) names a random key instead, which the server keeps apart (`u:...`) so it can never pass for a proven one.
 - **Passwords** are kept only as an argon2id hash (64 MiB, 3 passes), never in the gateway's environment, and checked two at a time at most, one per address, eight waiting at most (a guess past that is turned away at once, so a flood of guesses cannot pile up work that outlasts it). Five wrong passwords from one address (an IPv6 /64 counts as one) lock it out for 15 minutes, twice as long each time it happens again; many failures across addresses slow every login down and tell the host. A wrong password, invite or host token all get the same answer.
-- **Tokens** (the host's, resume and invite tokens) are 256 random bits, compared in constant time. Invite links expire (a day by default, a week at most) and are used up; a member's token changes when their role does; the host's travels only in the address's fragment and is taken out of the address bar at once.
+- **Tokens** (the host's, resume and invite tokens) are 256 random bits, compared in constant time. Invite links expire (a day by default, a week at most) and are used up (one link may let in up to 1,000 people: a whole team); a member's token changes when their role does; the host's travels only in the address's fragment and is taken out of the address bar at once.
 
 ### What members send
 

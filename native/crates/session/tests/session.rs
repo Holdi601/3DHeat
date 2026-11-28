@@ -1451,3 +1451,88 @@ fn pong_carries_the_server_clock() {
     assert_eq!(p.t, 5.0);
     assert_eq!(p.server_ms, w.now);
 }
+
+#[test]
+fn a_team_behind_one_address_gets_in_with_no_fixed_member_cap() {
+    // The defaults: no fixed number of members; flood protection per address for those not in yet.
+    let cfg = Config { cost: Cost::TEST, ..Config::default() };
+    assert_eq!(cfg.max_clients, 0);
+    let mut s = Session::new(cfg, "h".repeat(64));
+    s.set_password_hash(Some(auth::hash_password(PW, Cost::TEST)));
+    s.connect(1, ip(1), 0).unwrap();
+    s.hello_checked(1, &Hello { proto: 1, name: "Host".into(), host_token: "h".repeat(64), ..Default::default() }, 0);
+    let host = s.member_of(1).unwrap();
+    // Forty colleagues behind one office address, by password through the waiting room, a few at a time.
+    let office = ip(77);
+    let mut c = 10u64;
+    let mut admitted = 0;
+    let mut t = 0i64;
+    while admitted < 40 {
+        // A host lets people in at a person's pace (its actions have a budget a second).
+        t += 2_000;
+        let mut waiting = Vec::new();
+        for _ in 0..3 {
+            c += 1;
+            s.connect(c, office, t).unwrap();
+            let outs = s.hello_checked(c, &hello(&format!("m{c}")), t);
+            if let Some(w) = bodies(&outs, c, &s).into_iter().find_map(|b| match b {
+                server_msg::Body::Waiting(w) => Some(w.you),
+                _ => None,
+            }) {
+                waiting.push(w);
+            }
+        }
+        // A fourth at once from the same address waits for its turn: flood protection holds for those not in yet.
+        c += 1;
+        s.connect(c, office, t).unwrap();
+        let outs = s.hello_checked(c, &hello(&format!("m{c}")), t);
+        assert!(bodies(&outs, c, &s).iter().any(|b| matches!(b, server_msg::Body::Denied(d) if d.code == proto::Err::Full as i32)));
+        s.disconnect(c, t);
+        assert_eq!(waiting.len(), 3);
+        for w in waiting {
+            let outs = s.message(1, ClientMsg { rid: 7, body: Some(admin(AdminKind::Admit, w, Role::Viewer)) }, 100, t);
+            assert_eq!(ack_code(&outs, 1, &s), Some(proto::Err::Ok));
+            admitted += 1;
+        }
+    }
+    assert!(s.joined_count() >= 41, "{}", s.joined_count());
+    let _ = host;
+}
+
+#[test]
+fn big_rooms_thin_presence_and_send_only_who_moved() {
+    let mut w = World::new(false);
+    let (host, _) = w.host();
+    let mut members = Vec::new();
+    for i in 0..60u8 {
+        members.push(w.member(host, &format!("m{i}"), Role::Viewer, 10 + i).0);
+    }
+    let moving = |w: &mut World, conns: &[ConnId]| {
+        for &c in conns {
+            w.send(c, client_msg::Body::Presence(Presence { pose: Some(pose()), tab: "heat".into(), ..Default::default() }));
+        }
+    };
+    // Everyone moving every tick: 61 members, a frame every second tick at most, never more than 61 poses in one.
+    let mut frames = 0;
+    let mut most = 0;
+    for _ in 0..20 {
+        moving(&mut w, &members);
+        if let (Some(ServerMsg { body: Some(server_msg::Body::Presence(f)) }), _) = w.s.tick(w.now) {
+            frames += 1;
+            most = most.max(f.items.len());
+        }
+    }
+    assert!(frames <= 12, "{frames} frames in 20 ticks");
+    assert!(most <= 61);
+    // Only one moving (the others still): its pose alone, except in the once-a-second whole frame.
+    let mut small = 0;
+    for _ in 0..20 {
+        moving(&mut w, &members[..1]);
+        if let (Some(ServerMsg { body: Some(server_msg::Body::Presence(f)) }), _) = w.s.tick(w.now) {
+            if f.items.len() == 1 {
+                small += 1;
+            }
+        }
+    }
+    assert!(small >= 6, "{small} frames with only the one who moved");
+}
