@@ -12,6 +12,7 @@ import { t, useLang } from './i18n';
 import type { BackendPreference } from './render/createRenderer';
 import { Engine } from './render/engine';
 import { useStore } from './state/store';
+import { enterReplay } from './match/enterReplay';
 import { useHelpStore } from './state/helpStore';
 import { raceClock, useRaceStore } from './state/raceStore';
 import { loadLapFiles } from './ui/race/actions';
@@ -234,7 +235,10 @@ export function App() {
     // The figures need a person column: without one the Match tab opens on its heat.
     const st = useStore.getState();
     const figures = !st.dataset || !modeBlockedReason('team', datasetCapabilities(st.dataset));
-    if (tab === 'match') setMode(figures ? 'team' : lastHeat.current);
+    if (tab === 'match') {
+      if (figures) enterReplay();
+      else setMode(lastHeat.current);
+    }
     else if (tab === 'heat') setMode(heatTabMode.current);
     // A level's painted buildings: solid in the replay (as chosen there), see-through over the heat.
     if (tab === 'match') applyBuildings(useReplayStore.getState().buildings === 'solid');
@@ -540,7 +544,7 @@ export function App() {
                     },
                     { value: 'heat', label: t('app.matchView.heat'), title: t('app.matchView.heatTitle') },
                   ]}
-                  onChange={(v) => setMode(v === 'replay' ? 'team' : lastHeat.current)}
+                  onChange={(v) => (v === 'replay' ? enterReplay() : setMode(lastHeat.current))}
                 />
                 {matchView === 'heat' && (
                   <div style={{ marginTop: 8 }}>

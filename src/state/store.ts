@@ -1,6 +1,6 @@
 import { resolveTeamPalette, saveTeamPalettePref, savedTeamPalettePref, setTeamPaletteId, teamPaletteId, type TeamPaletteId, type TeamPalettePref } from '../render/colors';
 import { deriveOutcome } from '../data/outcome';
-import { lineUpSides, teamSidesSaved } from '../data/teamSides';
+import { isUnassignedTeam, lineUpSides, teamSidesSaved } from '../data/teamSides';
 import { create } from 'zustand';
 import { calibrate, cameraForExtent } from '../data/calibrate';
 import { clampBudgets, detectBudgets, type Budgets } from '../data/memory';
@@ -744,6 +744,19 @@ interface AppState {
   toggle: (key: 'showGrid' | 'showAxes') => void;
 }
 
+/**
+ * The difference's default sides: the first half of the teams +, the rest −. Groups that are no team (nobody's
+ * units, `0`, none) take no side: a War Thunder battle's teams 1 and 2 with its unowned radars as a third group
+ * put both teams on + and the radars on − (2026-11-28).
+ */
+export function defaultTeamSplit(labels: readonly string[]): { positive: number[]; negative: number[] } {
+  const all = labels.map((_, i) => i);
+  const teams = all.filter((i) => !isUnassignedTeam(labels[i]));
+  const list = teams.length >= 2 ? teams : all;
+  const half = Math.max(1, Math.ceil(list.length / 2));
+  return { positive: list.slice(0, half), negative: list.slice(half) };
+}
+
 /** Whether a budget sits at the detected figure (the user has not moved it). */
 function atDetected(value: number, detected: number): boolean {
   return Math.abs(value - detected) <= Math.max(1, detected * 0.001);
@@ -966,9 +979,7 @@ export const useStore = create<AppState>((set) => ({
       if (!d) return { dataset: null };
       const cap = datasetCapabilities(d);
       const teamCount = d.teamLabels.length;
-      // Default difference split: first half of teams positive, rest negative.
-      const half = Math.max(1, Math.ceil(teamCount / 2));
-      const all = Array.from({ length: teamCount }, (_, i) => i);
+      const sides = defaultTeamSplit(d.teamLabels);
       // The split carries over when it still has two sides in the new data. With
       // fewer than two groups a retained column is split instead - the file of
       // origin first - so data without groups still has a difference to show.
@@ -985,8 +996,8 @@ export const useStore = create<AppState>((set) => ({
         dataset: d,
         filters: [],
         teamVisibility: {},
-        positiveTeams: all.slice(0, half),
-        negativeTeams: all.slice(half),
+        positiveTeams: sides.positive,
+        negativeTeams: sides.negative,
         split,
         heat: { ...s.heat, radius: cal.radius, saturation: cal.saturation, teamPaletteActive: paletteFor(s.heat.teamPalette, d) },
         team: {

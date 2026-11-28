@@ -7,7 +7,7 @@ import {
   teamNeutralColor,
 } from '../../render/colors';
 import { heatModeFor } from '../../data/lines';
-import { useStore } from '../../state/store';
+import { defaultTeamSplit, useStore } from '../../state/store';
 import { TeamPalettePicker } from './HeatPanel';
 import { Check, Rich, Section, Slider } from '../controls';
 import { int, num, t } from '../../i18n';
@@ -226,9 +226,8 @@ export function TeamsList() {
         {difference && (
           <button
             onClick={() => {
-              const half = Math.ceil(dataset.teamLabels.length / 2);
-              const all = dataset.teamLabels.map((_, i) => i);
-              setTeamSplit(all.slice(0, half), all.slice(half));
+              const sides = defaultTeamSplit(dataset.teamLabels);
+              setTeamSplit(sides.positive, sides.negative);
             }}
           >
             {t('heat.teamsList.splitEvenly')}

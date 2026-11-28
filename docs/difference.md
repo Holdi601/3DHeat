@@ -8,7 +8,7 @@ nav_order: 5
 
 Red where team A was more, blue where team B was, nothing where they were equal.
 
-**Difference** (key 2) is signed heat. Rows of one population add heat; rows of another subtract it. Where the two overlap evenly the result is zero and fully transparent; where one dominates it shows in that side's colours - by default warm (transparent → red → yellow → white) for the **+** side and cool (transparent → blue → light blue → white) for the **−** side. The [colour scale](colour-and-exposure.md#the-colour-scale) over the view names both sides and says what the colours mean in numbers.
+**Difference** (key 2) is signed heat. Rows of one population add heat; rows of another subtract it. Where the two overlap evenly the result is zero and fully transparent; where one dominates it shows in that side's colours - by default warm (transparent → red → yellow → white) for the **+** side and cool (transparent → blue → violet → pink) for the **−** side, so the strongest of either side never looks alike. The [colour scale](colour-and-exposure.md#the-colour-scale) over the view names both sides and says what the colours mean in numbers.
 
 ![Difference heat: red where the + side was more, green and blue where the - side was more](assets/img/en/difference-split.webp)
 
@@ -104,7 +104,7 @@ A value in both ranges counts as +. The ranges do not have to cover the column; 
 
 ## Colours
 
-The **Heat colours** section shows two ramp editors in this mode: **Positive (additive teams)** and **Negative (subtractive teams)**, each with its own reset button (*Reset to transparent → red → yellow → white*, *Reset to transparent → blue → light blue → white*). The two arms are one warm and one cool hue around nothing, each lighter as it grows, so they stay apart for colour-blind readers too. The composite takes the absolute value of the net heat through the [saturation point and response](colour-and-exposure.md), and picks the negative ramp where the net is below zero. See [Colour and exposure](colour-and-exposure.md#the-ramp-editor).
+The **Heat colours** section shows two ramp editors in this mode: **Positive (additive teams)** and **Negative (subtractive teams)**, the positive one with its reset button (*Reset to transparent → red → yellow → white*), the negative one with ready-made scales: **Blue → pink** (the default), **Blue → white** (the scale before 2026-11-28) and **Green → purple** (the first one). The two arms are one warm and one cool arm around nothing, each lighter as it grows; the − arm ends in pink, not white, so the strongest of either side never looks alike, and pink stays apart from every + colour for colour-blind readers too. The composite takes the absolute value of the net heat through the [saturation point and response](colour-and-exposure.md), and picks the negative ramp where the net is below zero. See [Colour and exposure](colour-and-exposure.md#the-ramp-editor).
 
 Use the *Linear* density response when the size of the difference matters: it is the only response where equal colour means equal count.
 

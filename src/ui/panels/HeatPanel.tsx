@@ -3,7 +3,7 @@ import { estimateSaturation } from '../../data/calibrate';
 import { isUnassignedLabel, rgbToCss, teamHeatColor, teamNeutralColor, teamPaletteColor, TEAM_PALETTE_PREFS, TEAM_PALETTES, type TeamPalettePref } from '../../render/colors';
 import { heatModeFor } from '../../data/lines';
 import { useStore } from '../../state/store';
-import { DEFAULT_NEGATIVE_RAMP, DEFAULT_POSITIVE_RAMP } from '../../state/types';
+import { DEFAULT_POSITIVE_RAMP, NEGATIVE_RAMP_PRESETS } from '../../state/types';
 import { Check, Rich, Section, Segmented, Slider } from '../controls';
 import { CurveEditor } from '../CurveEditor';
 import { DirectionSection } from './DirectionSection';
@@ -337,11 +337,14 @@ export function HeatPanel() {
               </div>
             </div>
             <RampEditor stops={heat.scheme.negative} onChange={(s) => setRamp('negative', s)} />
-            <button
-              onClick={() => setRamp('negative', DEFAULT_NEGATIVE_RAMP.map((s) => ({ ...s })))}
-            >
-              {t('heat.heatPanel.resetNegative')}
-            </button>
+            <div className="hint">{t('heat.heatPanel.negativePresets')}</div>
+            <div className="row" style={{ gap: 4, flexWrap: 'wrap' }}>
+              {NEGATIVE_RAMP_PRESETS.map((p) => (
+                <button key={p.id} onClick={() => setRamp('negative', p.stops.map((s) => ({ ...s })))}>
+                  {t(`heat.heatPanel.negativePreset.${p.id}`)}
+                </button>
+              ))}
+            </div>
           </>
         )}
       </Section>

@@ -230,6 +230,14 @@ const HEAT_LEVEL_MIN = 8;
 /** Drawn frames between trims, enough for a smoothed cost to show the last one. */
 const HEAT_LEVEL_HOLD = 12;
 
+/**
+ * The sprites a frame may draw: a window played over time draws every row in it, whatever the budget or the camera
+ * (`engine.ts`, 2026-11-28: a thinned played window broke tracks into dots at the smallest camera move).
+ */
+export function playedBudget(budget: number, rows: number, played: boolean): number {
+  return played ? Math.max(budget, rows) : budget;
+}
+
 export function planFrame(opts: PlanOptions): SampleResult {
   const { rowLo, rowHi, splatsPerFrame, frameIndex } = opts;
   const candidateRows = Math.max(0, rowHi - rowLo);

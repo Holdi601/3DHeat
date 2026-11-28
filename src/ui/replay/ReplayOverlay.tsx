@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { followWheel } from './followWheel';
 import { useStore } from '../../state/store';
 import { braa, useReplayStore } from '../../state/replayStore';
 import { useInspectStore } from '../../state/inspectStore';
@@ -115,8 +116,7 @@ export function ReplayOverlay() {
       e.stopPropagation();
       const perNotch = e.deltaMode === 1 ? 3 : e.deltaMode === 2 ? 1 : 100;
       const notches = Math.max(-4, Math.min(4, e.deltaY / perNotch));
-      const r = useReplayStore.getState();
-      r.setFollowDistance(r.followDistance * 1.18 ** notches);
+      followWheel(engine.camera, notches);
     };
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mousedown', onDown);

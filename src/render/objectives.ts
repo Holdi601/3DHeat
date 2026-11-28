@@ -541,6 +541,8 @@ export interface ObjectiveFrame {
   t: number;
   /** A replay team's colour (1, 2). */
   teamColor: (team: number) => [number, number, number];
+  /** The colour of an objective's own team (a spawn's, a base's), where it is numbered otherwise than the owners; else `teamColor`. */
+  staticTeamColor?: (team: number) => [number, number, number];
   ground: GroundAt | null;
   /** Whether the ground can be asked yet (the level's surface is indexed). */
   ready: () => boolean;
@@ -624,7 +626,7 @@ export class ObjectiveLayerDraw {
     for (const p of placed) {
       const o = p.o;
       if (!f.layers[o.layer]) continue;
-      const teamRgb = o.team ? f.teamColor(o.team) : NEUTRAL;
+      const teamRgb = o.team ? (f.staticTeamColor ?? f.teamColor)(o.team) : NEUTRAL;
       if (o.layer === 'zones') {
         // Its owner and the capture at the playhead: the replay's, when one battle is shown.
         const st = this.zoneState(o, f, one);
@@ -715,7 +717,8 @@ export class ObjectiveLayerDraw {
    */
   private buildTris(f: ObjectiveFrame, placed: Placed[], one: ObjectiveSource | null): void {
     const layers = OBJECTIVE_LAYER_LIST.map((l) => (f.layers[l] ? 1 : 0)).join('');
-    const look = `${layers}|${f.xray}|${f.teamColor(1).join(',')}|${f.teamColor(2).join(',')}`;
+    const own = f.staticTeamColor ?? f.teamColor;
+    const look = `${layers}|${f.xray}|${f.teamColor(1).join(',')}|${f.teamColor(2).join(',')}|${own(1).join(',')}|${own(2).join(',')}`;
     if (this.markFor !== placed || this.markKey !== look) {
       this.markFor = placed;
       this.markKey = look;
@@ -765,7 +768,7 @@ export class ObjectiveLayerDraw {
     for (const p of placed) {
       const o = p.o;
       if (!f.layers[o.layer]) continue;
-      const rgb = o.layer === 'targets' ? TARGET : o.team ? f.teamColor(o.team) : NEUTRAL;
+      const rgb = o.layer === 'targets' ? TARGET : o.team ? (f.staticTeamColor ?? f.teamColor)(o.team) : NEUTRAL;
       if (p.fill) gv = appendTris(g, gv, p.fill, rgb, o.team ? 0.12 : 0.06);
       if (!p.discs.length) continue;
       for (const d of p.discs) {

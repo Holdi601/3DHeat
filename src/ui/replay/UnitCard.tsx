@@ -214,7 +214,7 @@ function UnitCardView({ unitKey, second }: { unitKey: string; second: boolean })
           )}
           <button
             className="link"
-            onClick={() => (second ? clearLook() : r().select(null))}
+            onClick={() => (second ? clearLook() : r().closeCard(unit.key))}
             title={second ? t('replay.lookAt.clearTitle') : t('replay.card.close')}
           >
             ×

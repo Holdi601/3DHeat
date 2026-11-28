@@ -35,7 +35,8 @@ import { useReplayStore } from '../state/replayStore';
 import { useMatchStore } from '../state/matchStore';
 import { useObjectivesStore } from '../state/objectivesStore';
 import { wantObjectives, wantTimeline } from '../state/objectivesLazy';
-import { objectivesOfOneMode, type Objective } from '../match/objectives';
+import { objectivesOfOneMode, toWorld, type Objective } from '../match/objectives';
+import { replayTeamIndex, sessionOfMatch, teamPointsOf, teamsBySpawns } from '../data/teamSpawns';
 import { ObjectiveLayerDraw, objectiveSources, stateKey, type ObjectiveSource } from './objectives';
 import { withPlaceLines } from '../mass/placeLines';
 import { withManeuverLines } from '../insights/maneuver/lines';
@@ -84,7 +85,7 @@ import {
 import { appendCross, buildOverlay, screenToPlane, type MeasureState } from './measure';
 import { endsOf } from '../data/despawn';
 import { deadAt, deathsOf } from '../data/deaths';
-import { BudgetController, candidateRange, HeatLevel, nextExactCap, nextHeatCap, planFrame } from './sampling';
+import { BudgetController, candidateRange, HeatLevel, nextExactCap, nextHeatCap, planFrame, playedBudget } from './sampling';
 import { Inspector, type PickContext } from './inspector';
 import type { DrawnRows } from './pick';
 import type { HeatReading, RowWeight, SpriteKernel } from './heatStack';
@@ -2592,12 +2593,19 @@ export class Engine {
         offset = d && d.epochMs === null ? (d.timeOrigin ?? 0) : 0;
       }
     }
+    const spawnTeams =
+      d && layout
+        ? teamsBySpawns(d, teamPointsOf(layout.spawnPoints, (p) => (p.team ? { team: p.team, x: p.position[0], z: p.position[2] } : null)), s.team.session >= 0 ? s.team.session : null)
+        : null;
     return this.spawnLayer.build({
       layout,
       mode: sd.mode,
       lines: sd.lines,
       filter: { owner: sd.owner, team: sd.team, stage: sd.stage },
+      // The layout's teams are the mission's sides; which data team took each in the match(es) shown: by where they spawned.
       teamColor: (team) => {
+        const m = spawnTeams ? spawnTeams.get(team) : undefined;
+        if (m !== undefined) return teamMemberColor(m, 0, 1);
         const i = (d?.teamLabels ?? []).indexOf(String(team));
         return i >= 0 ? teamMemberColor(i, 0, 1) : teamMemberColor(Math.max(0, team - 1), 0, 1);
       },
@@ -2627,6 +2635,22 @@ export class Engine {
           return this.inspector.surfaceHit(ray)?.y ?? null;
         }
       : null;
+    const played = s.team.session >= 0 ? s.team.session : null;
+    // The first battle with team spawns: its spawns are the ones laid on the ground (the others' same spawns are
+    // left out as repeats), and a played match's own document may have none beside the map's shared objectives.
+    const first = sources.find((src) => src.objectives.some((o) => o.layer === 'spawns' && o.team));
+    const staticTeams =
+      d && first
+        ? teamsBySpawns(
+            d,
+            teamPointsOf(first.objectives, (o) => {
+              if (o.layer !== 'spawns' || !o.team) return null;
+              const w = first.world ? o.position : toWorld(o.position, d.axes);
+              return { team: o.team, x: w[0], z: w[2] };
+            }),
+            first.world ? played : (sessionOfMatch(d, first.match) ?? played),
+          )
+        : null;
     return this.objectiveDraw.build(
       {
         sources,
@@ -2634,12 +2658,21 @@ export class Engine {
         layers: useObjectivesStore.getState().layers,
         t: this.playhead,
         // A replay's team (1, 2) in the colour its units have; a source may name the team label a number stands for.
+        // The replay's numbers as the side line-up moved them in the battle shown (`data/teamSpawns.ts`).
         teamColor: (team) => {
-          const i = (d?.teamLabels ?? []).indexOf((sources.length === 1 ? sources[0].ownerLabels?.[team] : undefined) ?? String(team));
+          const one = sources.length === 1 ? sources[0] : null;
+          const i = d ? replayTeamIndex(d, team, one ? (one.world ? played : sessionOfMatch(d, one.match)) : null, one?.ownerLabels?.[team]) : -1;
           // A level's layout on data without its team numbers: the first two team colours.
-          if (i < 0 && sources.length === 1 && sources[0].world && team > 0) return teamMemberColor(team - 1, 0, 1);
+          if (i < 0 && one?.world && team > 0) return teamMemberColor(team - 1, 0, 1);
           return i >= 0 ? teamMemberColor(i, 0, 1) : [0.86, 0.86, 0.82];
         },
+        // A spawn's or base's own team: the mission's side, which the game may have given either team; by where they spawned.
+        staticTeamColor: staticTeams
+          ? (team) => {
+              const m = staticTeams.get(team);
+              return m !== undefined ? teamMemberColor(m, 0, 1) : [0.86, 0.86, 0.82];
+            }
+          : undefined,
         ground,
         ready: () => {
           if (level?.kind !== 'model') return true;
@@ -3893,6 +3926,12 @@ export class Engine {
         splatBudget = Math.min(splatBudget, limit);
       }
     }
+    // Played over time, every row in the window is drawn, every frame, whatever the camera does (2026-11-28). The
+    // cap above thinned a moving or freshly grown window to a sample of its rows: a track that reads as a line
+    // still came apart into weighted dots with the smallest camera move, and a growing window kept the thinned
+    // base it was laid down with. A played window is what the camera follows - nobody reads its frames as a
+    // sample - and its rows are bounded by the playhead; the draw plan's own ceiling still holds.
+    if (this.dataset && s.mode !== 'team') splatBudget = playedBudget(splatBudget, planHi - planLo, !showAll);
 
     if (this.dataset && s.mode !== 'team') {
       // A run of accumulation keeps the sprite count it started with and takes

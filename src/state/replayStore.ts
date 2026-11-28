@@ -401,6 +401,8 @@ interface ReplayState extends Saved {
   stopFollow: () => void;
   setFollowDistance: (d: number) => void;
   select: (unit: string | null) => void;
+  /** The unit card's ×: the card goes, and with it the follow of that unit (2026-11-28: it kept following). */
+  closeCard: (unit: string) => void;
   /** Shift-click on a label: first the one to measure from, then the one to measure to; again clears. */
   pick: (person: number) => void;
   clearPair: () => void;
@@ -515,6 +517,10 @@ export const useReplayStore = create<ReplayState>((set, get) => {
     stopFollow: () => set({ follow: null, followUnit: null }),
     setFollowDistance: (followDistance) => set({ followDistance: Math.max(2, Math.min(20000, followDistance)) }),
     select: (selected) => set({ selected }),
+    closeCard: (unit) => {
+      const s = get();
+      set({ selected: s.selected === unit ? null : s.selected, ...(s.followUnit === unit ? { follow: null, followUnit: null } : {}) });
+    },
     pick: (person) => {
       const s = get();
       if (s.pairFrom === null) set({ pairFrom: person, pair: null });

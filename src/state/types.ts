@@ -560,18 +560,44 @@ export const DEFAULT_POSITIVE_RAMP: ColorStop[] = [
 ];
 
 /**
- * transparent -> blue -> light blue -> white: one cool hue, lighter as it grows,
- * the mirror of the warm + arm. A diverging scale is two hues around nothing;
- * the green -> cyan -> blue -> purple it replaces was four, and its faint green
- * end met the faint red of the + side where red and green are hardest to tell
- * apart.
+ * transparent -> blue -> violet -> pink: one cool arm, lighter as it grows,
+ * against the warm + arm. Its strongest end is pink, not white: a white end on
+ * both arms made the most of either side look alike (2026-11-28). Pink against
+ * every + stop passes the dataviz validator's colour-blind and normal-vision
+ * separation (worst: the orange-red stop, ΔE 20.8 deutan) and reads on the dark
+ * scene (contrast >= 3:1); black would not (1.2:1).
  */
 export const DEFAULT_NEGATIVE_RAMP: ColorStop[] = [
   { pos: 0.0, rgb: [0, 0, 0], alpha: 0 },
   { pos: 0.15, rgb: [20, 70, 190], alpha: 0.55 },
   { pos: 0.45, rgb: [30, 125, 245], alpha: 0.85 },
-  { pos: 0.72, rgb: [110, 190, 255], alpha: 0.95 },
-  { pos: 1.0, rgb: [225, 245, 255], alpha: 1 },
+  { pos: 0.72, rgb: [150, 110, 255], alpha: 0.95 },
+  { pos: 1.0, rgb: [255, 95, 210], alpha: 1 },
+];
+
+/** The − arm's earlier scales, still to be picked: blue to white (2026-11-21), green to purple (the first). */
+export const NEGATIVE_RAMP_PRESETS: { id: 'pink' | 'white' | 'green'; stops: ColorStop[] }[] = [
+  { id: 'pink', stops: DEFAULT_NEGATIVE_RAMP },
+  {
+    id: 'white',
+    stops: [
+      { pos: 0.0, rgb: [0, 0, 0], alpha: 0 },
+      { pos: 0.15, rgb: [20, 70, 190], alpha: 0.55 },
+      { pos: 0.45, rgb: [30, 125, 245], alpha: 0.85 },
+      { pos: 0.72, rgb: [110, 190, 255], alpha: 0.95 },
+      { pos: 1.0, rgb: [225, 245, 255], alpha: 1 },
+    ],
+  },
+  {
+    id: 'green',
+    stops: [
+      { pos: 0.0, rgb: [0, 0, 0], alpha: 0 },
+      { pos: 0.15, rgb: [0, 170, 60], alpha: 0.55 },
+      { pos: 0.45, rgb: [0, 190, 200], alpha: 0.85 },
+      { pos: 0.72, rgb: [40, 80, 255], alpha: 0.95 },
+      { pos: 1.0, rgb: [170, 60, 255], alpha: 1 },
+    ],
+  },
 ];
 
 /** Base hues teams cycle through; each team gets a shade ramp of one hue. */
