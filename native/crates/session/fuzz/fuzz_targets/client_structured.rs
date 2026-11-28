@@ -145,6 +145,7 @@ enum Body {
         has_cursor: bool,
         tab: String,
         mode: String,
+        lacks: String,
     },
     Batch {
         doc: String,
@@ -241,12 +242,14 @@ fn build(b: &Body) -> Option<client_msg::Body> {
             has_cursor,
             tab,
             mode,
+            lacks,
         } => client_msg::Body::Presence(Presence {
             pose: pose.p(),
             cursor: cursor.p(),
             has_cursor: *has_cursor,
             tab: tab.clone(),
             mode: mode.clone(),
+            lacks: lacks.clone(),
         }),
         Body::Batch { doc, id, ops, at } => client_msg::Body::Batch(Batch {
             doc: doc.clone(),
