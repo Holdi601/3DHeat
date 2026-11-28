@@ -1,7 +1,7 @@
 //! Builds heat-tile pyramids the way a session host does and prints what it took.
 //!
 //!   heat3d-tiles <file|folder>... [--rows N] [--x x --y y] [--level L] [--cache DIR]
-//!                [--range col:min:max]... [--set col:a,b]... [--split col:a,b]
+//!                [--range col:min:max]... [--set col:a,b]... [--split col:[a,b]]
 //!                [--window time:lo:hi]... [--view N]
 //!
 //! Builds the pyramid of the filter (cold unless cached), then for every
@@ -54,7 +54,8 @@ fn main() -> Result<()> {
             "--set" | "--split" => {
                 let v = val()?;
                 let (c, vals) = v.split_once(':').ok_or_else(|| anyhow::anyhow!("{a} col:a,b"))?;
-                let values: Vec<String> = vals.split(',').map(String::from).collect();
+                // `--split col:` (no values): the core finds the column's most common ones.
+                let values: Vec<String> = vals.split(',').filter(|v| !v.is_empty() || a == "--set").map(String::from).collect();
                 if a == "--set" {
                     filter.push(Clause::Set { column: c.into(), values });
                 } else {
