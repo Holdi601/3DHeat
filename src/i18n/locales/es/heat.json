@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Calor desde teselas",
+  "heat.sourcePanel.tilesTitle": "El núcleo de este ordenador cuenta cada fila en teselas una sola vez; la vista solo pide las teselas que muestra, más finas donde miras. Para datos demasiado grandes para cargar.",
+  "heat.sourcePanel.tilesTooMany": "Demasiadas filas para cargarlas todas: el calor se dibuja desde teselas de todas las filas.",
+  "heat.sourcePanel.tilesHint": "Todas las filas contadas, nada cargado: para datos demasiado grandes para la memoria.",
+  "heat.sourcePanel.tilesOn": "El calor se dibuja desde teselas de todas las filas. Cargar lee las filas.",
+  "heat.timeline.tiles": "Calor desde teselas: todas las filas a la vez, sin línea de tiempo"
 }

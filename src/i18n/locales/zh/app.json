@@ -36,5 +36,15 @@
   "app.matchView.heat": "热力图",
   "app.matchView.heatTitle": "所选对局的热度：在哪里、在哪里击杀、在哪里阵亡",
   "app.mode.overlay.label": "模型叠加",
-  "app.mode.overlay.title": "将每个选中的对局或回合以模型显示，各自从自己的开始处播放，叠加在同一条时间轴上"
+  "app.mode.overlay.title": "将每个选中的对局或回合以模型显示，各自从自己的开始处播放，叠加在同一条时间轴上",
+  "app.tileHeat.tiles": "来自瓦片的热度",
+  "app.tileHeat.level": "第 {level} 级，共 {leaf} 级",
+  "app.tileHeat.waiting": "正在等待第一批瓦片",
+  "app.tileHeat.rows": "{rows} 行",
+  "app.tileHeat.building": "正在统计 {percent} %",
+  "app.tileHeat.host": "来自主机",
+  "app.tileHeat.stop": "停止",
+  "app.tileHeat.windowLoading": "正在载入视野中的行",
+  "app.tileHeat.windowRows": "视野中的 {rows} 行以行绘制",
+  "app.tileHeat.about": "每一行都被统计进瓦片金字塔；远处画粗瓦片，近处画细瓦片。放大到比最细的瓦片还近时，会载入视野中地面的行并改为绘制它们。"
 }

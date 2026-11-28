@@ -36,5 +36,15 @@
   "app.matchView.heat": "熱圖",
   "app.matchView.heatTitle": "所選對戰的熱度：在哪裡、在哪裡擊殺、在哪裡陣亡",
   "app.mode.overlay.label": "模型疊加",
-  "app.mode.overlay.title": "將每個選取的對戰或回合以模型顯示，各自從自己的開始處播放，疊加在同一條時間軸上"
+  "app.mode.overlay.title": "將每個選取的對戰或回合以模型顯示，各自從自己的開始處播放，疊加在同一條時間軸上",
+  "app.tileHeat.tiles": "來自圖磚的熱度",
+  "app.tileHeat.level": "第 {level} 級，共 {leaf} 級",
+  "app.tileHeat.waiting": "正在等待第一批圖磚",
+  "app.tileHeat.rows": "{rows} 列",
+  "app.tileHeat.building": "正在統計 {percent} %",
+  "app.tileHeat.host": "來自主機",
+  "app.tileHeat.stop": "停止",
+  "app.tileHeat.windowLoading": "正在載入視野中的列",
+  "app.tileHeat.windowRows": "視野中的 {rows} 列以列繪製",
+  "app.tileHeat.about": "每一列都被統計進圖磚金字塔；遠處畫粗圖磚，近處畫細圖磚。放大到比最細的圖磚還近時，會載入視野中地面的列並改為繪製它們。"
 }

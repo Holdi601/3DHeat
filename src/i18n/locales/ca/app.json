@@ -36,5 +36,15 @@
   "app.matchView.heat": "Mapa de calor",
   "app.matchView.heatTitle": "La calor de les partides triades: on eren, on van fer baixes i on van morir",
   "app.mode.overlay.label": "Figures superposades",
-  "app.mode.overlay.title": "Cada partida o ronda triada com a figures, cadascuna des del seu propi inici, superposades en una sola línia de temps"
+  "app.mode.overlay.title": "Cada partida o ronda triada com a figures, cadascuna des del seu propi inici, superposades en una sola línia de temps",
+  "app.tileHeat.tiles": "Calor des de rajoles",
+  "app.tileHeat.level": "nivell {level} de {leaf}",
+  "app.tileHeat.waiting": "esperant les primeres rajoles",
+  "app.tileHeat.rows": "{rows} files",
+  "app.tileHeat.building": "comptant {percent} %",
+  "app.tileHeat.host": "de l’amfitrió",
+  "app.tileHeat.stop": "atura",
+  "app.tileHeat.windowLoading": "carregant les files de la vista",
+  "app.tileHeat.windowRows": "{rows} files de la vista dibuixades com a files",
+  "app.tileHeat.about": "Cada fila es compta en una piràmide de rajoles; la vista dibuixa rajoles grosses de lluny i més fines de prop. Si t’hi acostes més que les rajoles més fines, es carreguen i es dibuixen les files del terreny de la vista."
 }

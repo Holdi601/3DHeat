@@ -36,5 +36,15 @@
   "app.matchView.heat": "ヒートマップ",
   "app.matchView.heatTitle": "選んだマッチのヒート：どこにいて、どこで倒し、どこで倒されたか",
   "app.mode.overlay.label": "フィギュアオーバーレイ",
-  "app.mode.overlay.title": "選んだマッチやラウンドをすべてフィギュアで、それぞれ自身の開始時点から、1本のタイムライン上に重ねて表示"
+  "app.mode.overlay.title": "選んだマッチやラウンドをすべてフィギュアで、それぞれ自身の開始時点から、1本のタイムライン上に重ねて表示",
+  "app.tileHeat.tiles": "タイルからのヒート",
+  "app.tileHeat.level": "レベル {level} / {leaf}",
+  "app.tileHeat.waiting": "最初のタイルを待っています",
+  "app.tileHeat.rows": "{rows} 行",
+  "app.tileHeat.building": "集計中 {percent} %",
+  "app.tileHeat.host": "ホストのもの",
+  "app.tileHeat.stop": "止める",
+  "app.tileHeat.windowLoading": "見えている行を読み込み中",
+  "app.tileHeat.windowRows": "見えている {rows} 行を行として描画",
+  "app.tileHeat.about": "すべての行をタイルのピラミッドに数えます。遠くは粗いタイル、近くは細かいタイルで描きます。いちばん細かいタイルよりも近くまでズームすると、見えている地面の行を読み込んで代わりに描きます。"
 }

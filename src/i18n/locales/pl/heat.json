@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Ciepło z kafelków",
+  "heat.sourcePanel.tilesTitle": "Rdzeń tego komputera raz liczy każdy wiersz do kafelków; widok prosi tylko o kafelki, które pokazuje, drobniejsze tam, gdzie patrzysz. Dla danych za dużych do wczytania.",
+  "heat.sourcePanel.tilesTooMany": "Za dużo wierszy, by wczytać wszystkie: ciepło jest rysowane z kafelków wszystkich wierszy.",
+  "heat.sourcePanel.tilesHint": "Każdy wiersz policzony, nic nie wczytano: dla danych za dużych dla pamięci.",
+  "heat.sourcePanel.tilesOn": "Ciepło jest rysowane z kafelków wszystkich wierszy. Wczytaj zamiast tego czyta wiersze.",
+  "heat.timeline.tiles": "Ciepło z kafelków: wszystkie wiersze naraz, bez osi czasu"
 }

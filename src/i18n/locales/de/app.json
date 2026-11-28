@@ -77,5 +77,7 @@
   "app.tileHeat.building": "zählt {percent} %",
   "app.tileHeat.host": "vom Host",
   "app.tileHeat.stop": "beenden",
-  "app.tileHeat.about": "Jede Zeile wird in eine Kachelpyramide gezählt; die Ansicht zeichnet grobe Kacheln in der Ferne und feinere aus der Nähe. Nichts wird in den Speicher geladen."
+  "app.tileHeat.about": "Jede Zeile wird in eine Kachelpyramide gezählt; die Ansicht zeichnet grobe Kacheln in der Ferne und feinere aus der Nähe. Näher herangezoomt als die feinsten Kacheln, werden die Zeilen des Bodens im Bild geladen und stattdessen gezeichnet.",
+  "app.tileHeat.windowLoading": "lädt die Zeilen im Bild",
+  "app.tileHeat.windowRows": "{rows} Zeilen im Bild als Zeilen gezeichnet"
 }

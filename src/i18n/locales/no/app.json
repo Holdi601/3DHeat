@@ -36,5 +36,15 @@
   "app.matchView.heat": "Varmekart",
   "app.matchView.heatTitle": "Varmen fra de valgte kampene: hvor de var, drepte og døde",
   "app.mode.overlay.label": "Figuroverlegg",
-  "app.mode.overlay.title": "Hver valgt kamp eller runde som figurer, hver fra sin egen start, lagt over hverandre på én tidslinje"
+  "app.mode.overlay.title": "Hver valgt kamp eller runde som figurer, hver fra sin egen start, lagt over hverandre på én tidslinje",
+  "app.tileHeat.tiles": "Varme fra fliser",
+  "app.tileHeat.level": "nivå {level} av {leaf}",
+  "app.tileHeat.waiting": "venter på de første flisene",
+  "app.tileHeat.rows": "{rows} rader",
+  "app.tileHeat.building": "teller {percent} %",
+  "app.tileHeat.host": "fra verten",
+  "app.tileHeat.stop": "stopp",
+  "app.tileHeat.windowLoading": "laster radene i visningen",
+  "app.tileHeat.windowRows": "{rows} rader i visningen tegnet som rader",
+  "app.tileHeat.about": "Hver rad telles inn i en pyramide av fliser; visningen tegner grove fliser langt unna og finere nær. Zoomer du nærmere enn de fineste flisene, lastes radene fra bakken i visningen og tegnes i stedet."
 }

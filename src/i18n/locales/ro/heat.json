@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Căldură din dale",
+  "heat.sourcePanel.tilesTitle": "Nucleul acestui computer numără fiecare rând în dale o singură dată; vederea cere doar dalele pe care le arată, mai fine unde te uiți. Pentru date prea mari pentru încărcare.",
+  "heat.sourcePanel.tilesTooMany": "Prea multe rânduri pentru a le încărca pe toate: căldura e desenată din dalele tuturor rândurilor.",
+  "heat.sourcePanel.tilesHint": "Fiecare rând numărat, nimic încărcat: pentru date prea mari pentru memorie.",
+  "heat.sourcePanel.tilesOn": "Căldura e desenată din dalele tuturor rândurilor. Încarcă citește în schimb rândurile.",
+  "heat.timeline.tiles": "Căldură din dale: toate rândurile deodată, fără cronologie"
 }

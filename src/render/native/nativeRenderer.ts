@@ -240,6 +240,11 @@ export class NativeRenderer implements Renderer {
     return this.snap.filtersPending ?? false;
   }
 
+  /** Heat tiles the last frame wanted that the viewport had not read or uploaded yet. */
+  get tilesPending(): boolean {
+    return this.snap.tilesPending ?? false;
+  }
+
   /**
    * Filter, split or weight columns, or rows, still on their way to the viewport. The engine
    * draws a fresh frame when this turns false, so a still view takes them in; meanwhile the

@@ -36,5 +36,15 @@
   "app.matchView.heat": "Lämpökartta",
   "app.matchView.heatTitle": "Valittujen otteluiden lämpökartta: missä oltiin, tapettiin ja kuoltiin",
   "app.mode.overlay.label": "Hahmot päällekkäin",
-  "app.mode.overlay.title": "Jokainen valittu ottelu tai erä hahmoina, kukin omasta alustaan, päällekkäin yhdellä aikajanalla"
+  "app.mode.overlay.title": "Jokainen valittu ottelu tai erä hahmoina, kukin omasta alustaan, päällekkäin yhdellä aikajanalla",
+  "app.tileHeat.tiles": "Lämpö laatoista",
+  "app.tileHeat.level": "taso {level}/{leaf}",
+  "app.tileHeat.waiting": "odottaa ensimmäisiä laattoja",
+  "app.tileHeat.rows": "{rows} riviä",
+  "app.tileHeat.building": "laskee {percent} %",
+  "app.tileHeat.host": "isännältä",
+  "app.tileHeat.stop": "lopeta",
+  "app.tileHeat.windowLoading": "ladataan näkymän rivejä",
+  "app.tileHeat.windowRows": "{rows} näkymän riviä piirretty riveinä",
+  "app.tileHeat.about": "Jokainen rivi lasketaan laattapyramidiin; näkymä piirtää kauas karkeat laatat ja lähelle tarkemmat. Kun zoomaat lähemmäs kuin tarkimmat laatat, näkymän maaston rivit ladataan ja piirretään niiden tilalle."
 }

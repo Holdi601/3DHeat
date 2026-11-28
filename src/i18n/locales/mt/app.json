@@ -36,5 +36,15 @@
   "app.matchView.heat": "Heatmap",
   "app.matchView.heatTitle": "Is-sħana tal-partiti magħżula: fejn kienu, fejn qatlu u fejn mietu",
   "app.mode.overlay.label": "Figuri fuq xulxin",
-  "app.mode.overlay.title": "Kull partita jew round magħżul bħala figuri, kull wieħed mill-bidu tiegħu, imqiegħda fuq xulxin fuq timeline waħda"
+  "app.mode.overlay.title": "Kull partita jew round magħżul bħala figuri, kull wieħed mill-bidu tiegħu, imqiegħda fuq xulxin fuq timeline waħda",
+  "app.tileHeat.tiles": "Sħana mill-madum",
+  "app.tileHeat.level": "livell {level} minn {leaf}",
+  "app.tileHeat.waiting": "qed jistenna l-ewwel madum",
+  "app.tileHeat.rows": "{rows} ringiela",
+  "app.tileHeat.building": "qed jgħodd {percent} %",
+  "app.tileHeat.host": "tal-ospitant",
+  "app.tileHeat.stop": "waqqaf",
+  "app.tileHeat.windowLoading": "qed jitgħabbew ir-ringieli li jidhru",
+  "app.tileHeat.windowRows": "{rows} ringiela li jidhru miġbuda bħala ringieli",
+  "app.tileHeat.about": "Kull ringiela tingħadd f’piramida ta’ madum; il-veduta tiġbed madum oħxon mill-bogħod u irqaq mill-qrib. Jekk tersaq eqreb mill-irqaq madum, ir-ringieli tal-art li tidher jitgħabbew u jinġibdu minflokhom."
 }

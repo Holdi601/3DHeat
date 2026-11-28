@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Toplota iz pločica",
+  "heat.sourcePanel.tilesTitle": "Jezgro ovog računara jednom broji svaki red u pločice; pogled traži samo pločice koje prikazuje, finije gdje gledaš. Za podatke prevelike za učitavanje.",
+  "heat.sourcePanel.tilesTooMany": "Previše redova da se svi učitaju: toplota se crta iz pločica svih redova.",
+  "heat.sourcePanel.tilesHint": "Svaki red prebrojan, ništa učitano: za podatke prevelike za memoriju.",
+  "heat.sourcePanel.tilesOn": "Toplota se crta iz pločica svih redova. Učitaj umjesto toga čita redove.",
+  "heat.timeline.tiles": "Toplota iz pločica: svi redovi odjednom, bez vremenske linije"
 }

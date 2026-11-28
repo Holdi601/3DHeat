@@ -36,5 +36,15 @@
   "app.matchView.heat": "Mapa de calor",
   "app.matchView.heatTitle": "O calor das partidas escolhidas: onde estiveram, mataram e morreram",
   "app.mode.overlay.label": "Figuras sobrepostas",
-  "app.mode.overlay.title": "Cada partida ou ronda escolhida como figuras, cada uma a partir do seu próprio início, sobrepostas numa única linha temporal"
+  "app.mode.overlay.title": "Cada partida ou ronda escolhida como figuras, cada uma a partir do seu próprio início, sobrepostas numa única linha temporal",
+  "app.tileHeat.tiles": "Calor a partir de mosaicos",
+  "app.tileHeat.level": "nível {level} de {leaf}",
+  "app.tileHeat.waiting": "à espera dos primeiros mosaicos",
+  "app.tileHeat.rows": "{rows} linhas",
+  "app.tileHeat.building": "a contar {percent} %",
+  "app.tileHeat.host": "do anfitrião",
+  "app.tileHeat.stop": "parar",
+  "app.tileHeat.windowLoading": "a carregar as linhas à vista",
+  "app.tileHeat.windowRows": "{rows} linhas à vista desenhadas como linhas",
+  "app.tileHeat.about": "Cada linha é contada numa pirâmide de mosaicos; a vista desenha mosaicos grossos ao longe e mais finos de perto. Se aproximares mais do que os mosaicos mais finos, as linhas do terreno à vista são carregadas e desenhadas no seu lugar."
 }

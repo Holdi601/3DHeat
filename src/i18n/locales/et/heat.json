@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Soojus paanidest",
+  "heat.sourcePanel.tilesTitle": "Selle arvuti tuum loeb iga rea korra paanidesse; vaade küsib ainult neid paane, mida näitab, peenemaid sinna, kuhu vaatad. Andmetele, mis on laadimiseks liiga suured.",
+  "heat.sourcePanel.tilesTooMany": "Liiga palju ridu, et kõiki laadida: soojus joonistatakse kõigi ridade paanidest.",
+  "heat.sourcePanel.tilesHint": "Iga rida loetud, midagi pole laaditud: andmetele, mis mällu ei mahu.",
+  "heat.sourcePanel.tilesOn": "Soojus joonistatakse kõigi ridade paanidest. Laadi loeb selle asemel ridu.",
+  "heat.timeline.tiles": "Soojus paanidest: kõik read korraga, ajajoont pole"
 }

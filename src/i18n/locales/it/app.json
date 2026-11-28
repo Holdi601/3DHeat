@@ -36,5 +36,15 @@
   "app.matchView.heat": "Mappa di calore",
   "app.matchView.heatTitle": "Il calore delle partite scelte: dove sono stati, hanno ucciso e sono morti",
   "app.mode.overlay.label": "Figure sovrapposte",
-  "app.mode.overlay.title": "Ogni partita o round scelto come figure, ciascuno dal proprio inizio, sovrapposti su un'unica timeline"
+  "app.mode.overlay.title": "Ogni partita o round scelto come figure, ciascuno dal proprio inizio, sovrapposti su un'unica timeline",
+  "app.tileHeat.tiles": "Calore da riquadri",
+  "app.tileHeat.level": "livello {level} di {leaf}",
+  "app.tileHeat.waiting": "in attesa dei primi riquadri",
+  "app.tileHeat.rows": "{rows} righe",
+  "app.tileHeat.building": "conteggio {percent} %",
+  "app.tileHeat.host": "dell’host",
+  "app.tileHeat.stop": "ferma",
+  "app.tileHeat.windowLoading": "caricamento delle righe in vista",
+  "app.tileHeat.windowRows": "{rows} righe in vista disegnate come righe",
+  "app.tileHeat.about": "Ogni riga viene contata in una piramide di riquadri; la vista disegna riquadri grossi da lontano e più fini da vicino. Se ingrandisci più dei riquadri più fini, le righe del terreno in vista vengono caricate e disegnate al loro posto."
 }

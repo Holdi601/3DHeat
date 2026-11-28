@@ -36,5 +36,15 @@
   "app.matchView.heat": "Toplotni zemljevid",
   "app.matchView.heatTitle": "Toplota izbranih tekem: kje so bili, ubijali in umrli",
   "app.mode.overlay.label": "Prekrivanje figur",
-  "app.mode.overlay.title": "Vsaka izbrana tekma ali runda kot figure, vsaka od svojega začetka, prekrite ena čez drugo na eni časovnici"
+  "app.mode.overlay.title": "Vsaka izbrana tekma ali runda kot figure, vsaka od svojega začetka, prekrite ena čez drugo na eni časovnici",
+  "app.tileHeat.tiles": "Toplota iz ploščic",
+  "app.tileHeat.level": "raven {level} od {leaf}",
+  "app.tileHeat.waiting": "čaka na prve ploščice",
+  "app.tileHeat.rows": "{rows} vrstic",
+  "app.tileHeat.building": "štetje {percent} %",
+  "app.tileHeat.host": "od gostitelja",
+  "app.tileHeat.stop": "ustavi",
+  "app.tileHeat.windowLoading": "nalagajo se vrstice v pogledu",
+  "app.tileHeat.windowRows": "{rows} vrstic v pogledu narisanih kot vrstice",
+  "app.tileHeat.about": "Vsaka vrstica se prešteje v piramido ploščic; pogled od daleč riše grobe ploščice, od blizu pa finejše. Če povečaš bolj, kot segajo najfinejše ploščice, se vrstice tal v pogledu naložijo in narišejo namesto njih."
 }

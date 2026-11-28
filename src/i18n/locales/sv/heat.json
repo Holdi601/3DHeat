@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Värme från rutor",
+  "heat.sourcePanel.tilesTitle": "Den här datorns kärna räknar in varje rad i rutor en gång; vyn ber bara om rutorna den visar, finare där du tittar. För data som är för stor att läsa in.",
+  "heat.sourcePanel.tilesTooMany": "För många rader för att läsa in alla: värmen ritas från rutor av alla rader.",
+  "heat.sourcePanel.tilesHint": "Varje rad räknad, inget inläst: för data som är för stor för minnet.",
+  "heat.sourcePanel.tilesOn": "Värmen ritas från rutor av alla rader. Läs in läser raderna i stället.",
+  "heat.timeline.tiles": "Värme från rutor: alla rader på en gång, ingen tidslinje"
 }

@@ -36,5 +36,15 @@
   "app.matchView.heat": "Isı haritası",
   "app.matchView.heatTitle": "Seçilen maçların ısısı: nerede bulundukları, nerede öldürdükleri ve nerede öldükleri",
   "app.mode.overlay.label": "Figür bindirme",
-  "app.mode.overlay.title": "Seçilen her maç ya da raunt figürler olarak, her biri kendi başlangıcından, tek bir zaman çizelgesinde üst üste"
+  "app.mode.overlay.title": "Seçilen her maç ya da raunt figürler olarak, her biri kendi başlangıcından, tek bir zaman çizelgesinde üst üste",
+  "app.tileHeat.tiles": "Karolardan ısı",
+  "app.tileHeat.level": "seviye {level} / {leaf}",
+  "app.tileHeat.waiting": "ilk karolar bekleniyor",
+  "app.tileHeat.rows": "{rows} satır",
+  "app.tileHeat.building": "sayılıyor {percent} %",
+  "app.tileHeat.host": "sunucudan",
+  "app.tileHeat.stop": "durdur",
+  "app.tileHeat.windowLoading": "görünen satırlar yükleniyor",
+  "app.tileHeat.windowRows": "görünen {rows} satır satır olarak çizildi",
+  "app.tileHeat.about": "Her satır bir karo piramidine sayılır; görünüm uzakta kaba, yakında daha ince karolar çizer. En ince karolardan daha yakına yakınlaştırınca, görünen zeminin satırları yüklenir ve onların yerine çizilir."
 }

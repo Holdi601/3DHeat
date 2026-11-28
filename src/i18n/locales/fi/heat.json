@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Lämpö laatoista",
+  "heat.sourcePanel.tilesTitle": "Tämän tietokoneen ydin laskee jokaisen rivin laattoihin kerran; näkymä pyytää vain näyttämänsä laatat, tarkempina siellä, minne katsot. Datalle, joka on liian suuri ladattavaksi.",
+  "heat.sourcePanel.tilesTooMany": "Liian monta riviä kaikkien lataamiseen: lämpö piirretään kaikkien rivien laatoista.",
+  "heat.sourcePanel.tilesHint": "Jokainen rivi laskettu, mitään ei ladattu: datalle, joka ei mahdu muistiin.",
+  "heat.sourcePanel.tilesOn": "Lämpö piirretään kaikkien rivien laatoista. Lataa lukee sen sijaan rivit.",
+  "heat.timeline.tiles": "Lämpö laatoista: kaikki rivit kerralla, ei aikajanaa"
 }

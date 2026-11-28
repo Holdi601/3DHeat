@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Hő csempékből",
+  "heat.sourcePanel.tilesTitle": "A gép magja minden sort egyszer csempékbe számol; a nézet csak a mutatott csempéket kéri, finomabbat ott, ahová nézel. Betöltéshez túl nagy adatokhoz.",
+  "heat.sourcePanel.tilesTooMany": "Túl sok sor ahhoz, hogy mind betöltődjön: a hő minden sor csempéiből rajzolódik.",
+  "heat.sourcePanel.tilesHint": "Minden sor megszámolva, semmi sincs betöltve: memóriába nem férő adatokhoz.",
+  "heat.sourcePanel.tilesOn": "A hő minden sor csempéiből rajzolódik. A Betöltés helyette a sorokat olvassa.",
+  "heat.timeline.tiles": "Hő csempékből: minden sor egyszerre, idővonal nélkül"
 }

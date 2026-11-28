@@ -36,5 +36,15 @@
   "app.matchView.heat": "Heatmap",
   "app.matchView.heatTitle": "D’Heat vun de gewielte Matcher: wou se waren, ëmbruecht hunn a gestuerwe sinn",
   "app.mode.overlay.label": "Figuren-Overlay",
-  "app.mode.overlay.title": "All gewielte Match oder all gewielt Ronn als Figuren, all vu sengem eegene Start, openeen geluecht op enger Zäitlinn"
+  "app.mode.overlay.title": "All gewielte Match oder all gewielt Ronn als Figuren, all vu sengem eegene Start, openeen geluecht op enger Zäitlinn",
+  "app.tileHeat.tiles": "Heat aus Kachelen",
+  "app.tileHeat.level": "Stuf {level} vu {leaf}",
+  "app.tileHeat.waiting": "waart op déi éischt Kachelen",
+  "app.tileHeat.rows": "{rows} Zeilen",
+  "app.tileHeat.building": "zielt {percent} %",
+  "app.tileHeat.host": "vum Host",
+  "app.tileHeat.stop": "stoppen",
+  "app.tileHeat.windowLoading": "lued d’Zeilen am Bild",
+  "app.tileHeat.windowRows": "{rows} Zeilen am Bild als Zeilen gezeechent",
+  "app.tileHeat.about": "All Zeil gëtt an eng Kachelpyramid gezielt; d’Usiicht zeechent grob Kachelen wäit ewech a méi fein vun no. Méi no gezoomt wéi déi feinste Kachelen, ginn d’Zeilen vum Buedem am Bild geluede an amplaz gezeechent."
 }

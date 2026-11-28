@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Heat aus Kachelen",
+  "heat.sourcePanel.tilesTitle": "De Kär vun dësem Computer zielt all Zeil eemol a Kachelen; d’Usiicht freet just no de Kachelen, déi se weist, méi fein do, wou s du hikucks. Fir Donnéeën, déi ze grouss zum Lueden sinn.",
+  "heat.sourcePanel.tilesTooMany": "Ze vill Zeilen, fir all ze lueden: d’Heat gëtt aus Kachelen vun all Zeil gezeechent.",
+  "heat.sourcePanel.tilesHint": "All Zeil gezielt, näischt gelueden: fir Donnéeën, déi net an de Späicher passen.",
+  "heat.sourcePanel.tilesOn": "D’Heat gëtt aus Kachelen vun all Zeil gezeechent. Lueden liest amplaz d’Zeilen.",
+  "heat.timeline.tiles": "Heat aus Kachelen: all Zeilen op eemol, keng Zäitlinn"
 }

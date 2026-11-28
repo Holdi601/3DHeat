@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Calore da riquadri",
+  "heat.sourcePanel.tilesTitle": "Il nucleo di questo computer conta ogni riga nei riquadri una sola volta; la vista chiede solo i riquadri che mostra, più fini dove guardi. Per dati troppo grandi da caricare.",
+  "heat.sourcePanel.tilesTooMany": "Troppe righe per caricarle tutte: il calore è disegnato da riquadri di tutte le righe.",
+  "heat.sourcePanel.tilesHint": "Ogni riga contata, niente caricato: per dati troppo grandi per la memoria.",
+  "heat.sourcePanel.tilesOn": "Il calore è disegnato da riquadri di tutte le righe. Carica legge invece le righe.",
+  "heat.timeline.tiles": "Calore da riquadri: tutte le righe insieme, nessuna linea temporale"
 }

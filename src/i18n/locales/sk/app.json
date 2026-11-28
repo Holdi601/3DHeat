@@ -36,5 +36,15 @@
   "app.matchView.heat": "Heatmapa",
   "app.matchView.heatTitle": "Teplo vybraných zápasov: kde boli, kde zabíjali a kde zomreli",
   "app.mode.overlay.label": "Prekrytie figúrok",
-  "app.mode.overlay.title": "Každý vybraný zápas alebo kolo ako figúrky, každé od vlastného začiatku, položené cez seba na jednej časovej osi"
+  "app.mode.overlay.title": "Každý vybraný zápas alebo kolo ako figúrky, každé od vlastného začiatku, položené cez seba na jednej časovej osi",
+  "app.tileHeat.tiles": "Teplo z dlaždíc",
+  "app.tileHeat.level": "úroveň {level} z {leaf}",
+  "app.tileHeat.waiting": "čaká na prvé dlaždice",
+  "app.tileHeat.rows": "{rows} riadkov",
+  "app.tileHeat.building": "počíta sa {percent} %",
+  "app.tileHeat.host": "od hostiteľa",
+  "app.tileHeat.stop": "zastaviť",
+  "app.tileHeat.windowLoading": "načítavajú sa riadky v pohľade",
+  "app.tileHeat.windowRows": "{rows} riadkov v pohľade nakreslených ako riadky",
+  "app.tileHeat.about": "Každý riadok sa započíta do pyramídy dlaždíc; zďaleka pohľad kreslí hrubé dlaždice, zblízka jemnejšie. Keď priblížiš viac, než majú najjemnejšie dlaždice, riadky terénu v pohľade sa načítajú a nakreslia namiesto nich."
 }

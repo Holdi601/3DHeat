@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Šiluma iš plytelių",
+  "heat.sourcePanel.tilesTitle": "Šio kompiuterio branduolys kiekvieną eilutę suskaičiuoja į plyteles vieną kartą; vaizdas prašo tik rodomų plytelių, smulkesnių ten, kur žiūri. Duomenims, per dideliems įkelti.",
+  "heat.sourcePanel.tilesTooMany": "Per daug eilučių, kad būtų įkeltos visos: šiluma piešiama iš visų eilučių plytelių.",
+  "heat.sourcePanel.tilesHint": "Kiekviena eilutė suskaičiuota, nieko neįkelta: duomenims, netelpantiems į atmintį.",
+  "heat.sourcePanel.tilesOn": "Šiluma piešiama iš visų eilučių plytelių. Įkelti vietoj to skaito eilutes.",
+  "heat.timeline.tiles": "Šiluma iš plytelių: visos eilutės iš karto, be laiko juostos"
 }

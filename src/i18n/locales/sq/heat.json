@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Nxehtësi nga pllakat",
+  "heat.sourcePanel.tilesTitle": "Bërthama e këtij kompjuteri numëron çdo rresht në pllaka një herë; pamja kërkon vetëm pllakat që tregon, më të holla aty ku shikon. Për të dhëna shumë të mëdha për t’u ngarkuar.",
+  "heat.sourcePanel.tilesTooMany": "Shumë rreshta për t’i ngarkuar të gjithë: nxehtësia vizatohet nga pllakat e të gjithë rreshtave.",
+  "heat.sourcePanel.tilesHint": "Çdo rresht i numëruar, asgjë e ngarkuar: për të dhëna shumë të mëdha për kujtesën.",
+  "heat.sourcePanel.tilesOn": "Nxehtësia vizatohet nga pllakat e të gjithë rreshtave. Ngarko lexon rreshtat në vend të kësaj.",
+  "heat.timeline.tiles": "Nxehtësi nga pllakat: të gjithë rreshtat njëherësh, pa vijë kohore"
 }

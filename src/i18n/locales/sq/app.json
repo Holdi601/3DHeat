@@ -36,5 +36,15 @@
   "app.matchView.heat": "Harta e nxehtësisë",
   "app.matchView.heatTitle": "Nxehtësia e ndeshjeve të zgjedhura: ku ishin, ku vranë dhe ku vdiqën",
   "app.mode.overlay.label": "Mbivendosje figurash",
-  "app.mode.overlay.title": "Çdo ndeshje ose raund i zgjedhur si figura, secili nga fillimi i vet, të mbivendosura në një vijë kohore të vetme"
+  "app.mode.overlay.title": "Çdo ndeshje ose raund i zgjedhur si figura, secili nga fillimi i vet, të mbivendosura në një vijë kohore të vetme",
+  "app.tileHeat.tiles": "Nxehtësi nga pllakat",
+  "app.tileHeat.level": "niveli {level} nga {leaf}",
+  "app.tileHeat.waiting": "po pret pllakat e para",
+  "app.tileHeat.rows": "{rows} rreshta",
+  "app.tileHeat.building": "po numëron {percent} %",
+  "app.tileHeat.host": "e hostit",
+  "app.tileHeat.stop": "ndalo",
+  "app.tileHeat.windowLoading": "po ngarkohen rreshtat në pamje",
+  "app.tileHeat.windowRows": "{rows} rreshta në pamje të vizatuar si rreshta",
+  "app.tileHeat.about": "Çdo rresht numërohet në një piramidë pllakash; pamja vizaton pllaka të trasha larg dhe më të holla afër. Nëse zmadhon më shumë se pllakat më të holla, rreshtat e tokës në pamje ngarkohen dhe vizatohen në vend të tyre."
 }

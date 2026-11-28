@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Calor a partir de mosaicos",
+  "heat.sourcePanel.tilesTitle": "O núcleo deste computador conta cada linha em mosaicos uma só vez; a vista só pede os mosaicos que mostra, mais finos onde olhas. Para dados grandes demais para carregar.",
+  "heat.sourcePanel.tilesTooMany": "Linhas a mais para carregar todas: o calor é desenhado a partir de mosaicos de todas as linhas.",
+  "heat.sourcePanel.tilesHint": "Todas as linhas contadas, nada carregado: para dados grandes demais para a memória.",
+  "heat.sourcePanel.tilesOn": "O calor é desenhado a partir de mosaicos de todas as linhas. Carregar lê as linhas em vez disso.",
+  "heat.timeline.tiles": "Calor a partir de mosaicos: todas as linhas de uma vez, sem linha temporal"
 }

@@ -36,5 +36,15 @@
   "app.matchView.heat": "Šilumos žemėlapis",
   "app.matchView.heatTitle": "Pasirinktų rungtynių šiluma: kur jie buvo, žudė ir mirė",
   "app.mode.overlay.label": "Figūrų sutapdinimas",
-  "app.mode.overlay.title": "Kiekvienos pasirinktos rungtynės ar raundas figūromis, kiekvienas nuo savo pradžios, uždėti vienas ant kito vienoje laiko juostoje"
+  "app.mode.overlay.title": "Kiekvienos pasirinktos rungtynės ar raundas figūromis, kiekvienas nuo savo pradžios, uždėti vienas ant kito vienoje laiko juostoje",
+  "app.tileHeat.tiles": "Šiluma iš plytelių",
+  "app.tileHeat.level": "{level} lygis iš {leaf}",
+  "app.tileHeat.waiting": "laukiama pirmųjų plytelių",
+  "app.tileHeat.rows": "{rows} eil.",
+  "app.tileHeat.building": "skaičiuojama {percent} %",
+  "app.tileHeat.host": "iš šeimininko",
+  "app.tileHeat.stop": "stabdyti",
+  "app.tileHeat.windowLoading": "įkeliamos matomos eilutės",
+  "app.tileHeat.windowRows": "{rows} matomų eilučių nupiešta kaip eilutės",
+  "app.tileHeat.about": "Kiekviena eilutė suskaičiuojama į plytelių piramidę; toli vaizdas piešia stambias plyteles, arti – smulkesnes. Priartinus labiau nei smulkiausios plytelės, matomos žemės eilutės įkeliamos ir nupiešiamos vietoj jų."
 }

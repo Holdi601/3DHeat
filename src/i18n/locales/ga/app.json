@@ -36,5 +36,15 @@
   "app.matchView.heat": "Léarscáil teasa",
   "app.matchView.heatTitle": "Teas na gcluichí roghnaithe: cá raibh siad, cár mharaigh siad agus cár bhásaigh siad",
   "app.mode.overlay.label": "Forleagan figiúirí",
-  "app.mode.overlay.title": "Gach cluiche nó babhta roghnaithe mar fhigiúirí, gach ceann óna thús féin, leagtha ar a chéile ar amlíne amháin"
+  "app.mode.overlay.title": "Gach cluiche nó babhta roghnaithe mar fhigiúirí, gach ceann óna thús féin, leagtha ar a chéile ar amlíne amháin",
+  "app.tileHeat.tiles": "Teas ó thíleanna",
+  "app.tileHeat.level": "leibhéal {level} as {leaf}",
+  "app.tileHeat.waiting": "ag fanacht leis na chéad tíleanna",
+  "app.tileHeat.rows": "{rows} ró",
+  "app.tileHeat.building": "ag comhaireamh {percent} %",
+  "app.tileHeat.host": "ón óstach",
+  "app.tileHeat.stop": "stop",
+  "app.tileHeat.windowLoading": "na rónna san amharc á lódáil",
+  "app.tileHeat.windowRows": "{rows} ró san amharc tarraingthe mar rónna",
+  "app.tileHeat.about": "Comhairtear gach ró i bpirimid tíleanna; tarraingíonn an t-amharc tíleanna garbha i bhfad uait agus cinn níos míne gar duit. Má zúmálann tú níos gaire ná na tíleanna is míne, lódáiltear agus tarraingítear rónna na talún san amharc ina n-áit."
 }

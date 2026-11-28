@@ -36,5 +36,15 @@
   "app.matchView.heat": "Hitakort",
   "app.matchView.heatTitle": "Hitinn úr völdu leikjunum: hvar þeir voru, drápu og dóu",
   "app.mode.overlay.label": "Fígúruyfirlögn",
-  "app.mode.overlay.title": "Hver valinn leikur eða lota sem fígúrur, hvert frá eigin byrjun, lagt hvert yfir annað á einni tímalínu"
+  "app.mode.overlay.title": "Hver valinn leikur eða lota sem fígúrur, hvert frá eigin byrjun, lagt hvert yfir annað á einni tímalínu",
+  "app.tileHeat.tiles": "Hiti úr reitum",
+  "app.tileHeat.level": "stig {level} af {leaf}",
+  "app.tileHeat.waiting": "bíður eftir fyrstu reitunum",
+  "app.tileHeat.rows": "{rows} raðir",
+  "app.tileHeat.building": "telur {percent} %",
+  "app.tileHeat.host": "frá hýslinum",
+  "app.tileHeat.stop": "stöðva",
+  "app.tileHeat.windowLoading": "hleður röðunum í sýn",
+  "app.tileHeat.windowRows": "{rows} raðir í sýn teiknaðar sem raðir",
+  "app.tileHeat.about": "Hver röð er talin í pýramída af reitum; sýnin teiknar grófa reiti langt í burtu og fínni nálægt. Ef þú þysjar nær en fínustu reitirnir leyfa eru raðir jarðarinnar í sýn hlaðnar og teiknaðar í staðinn."
 }

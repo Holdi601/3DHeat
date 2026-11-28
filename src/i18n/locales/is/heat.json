@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Hiti úr reitum",
+  "heat.sourcePanel.tilesTitle": "Kjarni þessarar tölvu telur hverja röð í reiti einu sinni; sýnin biður aðeins um reitina sem hún sýnir, fínni þar sem þú horfir. Fyrir gögn sem eru of stór til að hlaða.",
+  "heat.sourcePanel.tilesTooMany": "Of margar raðir til að hlaða þeim öllum: hitinn er teiknaður úr reitum allra raða.",
+  "heat.sourcePanel.tilesHint": "Hver röð talin, ekkert hlaðið: fyrir gögn sem eru of stór fyrir minnið.",
+  "heat.sourcePanel.tilesOn": "Hitinn er teiknaður úr reitum allra raða. Hlaða les raðirnar í staðinn.",
+  "heat.timeline.tiles": "Hiti úr reitum: allar raðir í einu, engin tímalína"
 }

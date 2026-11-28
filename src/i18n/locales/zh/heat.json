@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "来自瓦片的热度",
+  "heat.sourcePanel.tilesTitle": "这台电脑的核心把每一行统计进瓦片一次；视图只请求它显示的瓦片，你看的地方更细。适用于大到无法载入的数据。",
+  "heat.sourcePanel.tilesTooMany": "行太多，无法全部载入：热度由所有行的瓦片绘制。",
+  "heat.sourcePanel.tilesHint": "所有行都已统计，什么也没载入：适用于内存装不下的数据。",
+  "heat.sourcePanel.tilesOn": "热度由所有行的瓦片绘制。“载入”会改为读取这些行。",
+  "heat.timeline.tiles": "来自瓦片的热度：所有行一次显示，没有时间轴"
 }

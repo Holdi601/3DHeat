@@ -59,6 +59,8 @@ struct Done {
     slot: Slot,
     /// None: the tile holds no rows (or could not be read).
     texels: Option<Texels>,
+    /// Read from the build's coarse estimate: read again once the pyramid is whole.
+    estimate: bool,
 }
 
 /// A float as IEEE half bits, round to nearest (as `tileFormat.ts` `toHalf`).
@@ -137,14 +139,14 @@ fn worker(jobs: mpsc::Receiver<Job>, done: mpsc::Sender<Done>) {
                 out = r
                     .tiles
                     .par_iter()
-                    .map(|(id, b, _)| Done { key: j.key.clone(), slot: (*id, j.wkey), texels: weigh(b, &j.weights, j.components) })
+                    .map(|(id, b, est)| Done { key: j.key.clone(), slot: (*id, j.wkey), texels: weigh(b, &j.weights, j.components), estimate: *est })
                     .collect();
                 for id in r.empty.iter() {
-                    out.push(Done { key: j.key.clone(), slot: (*id, j.wkey), texels: None });
+                    out.push(Done { key: j.key.clone(), slot: (*id, j.wkey), texels: None, estimate: false });
                 }
                 // Pending (still building) or deferred: asked again by a later frame.
                 for id in r.pending.iter().chain(r.deferred.iter()) {
-                    out.push(Done { key: j.key.clone(), slot: (*id, u32::MAX), texels: None });
+                    out.push(Done { key: j.key.clone(), slot: (*id, u32::MAX), texels: None, estimate: false });
                 }
             }
             Err(e) => crate::note(&format!("viewport: heat tiles: {e:#}")),
@@ -230,6 +232,8 @@ pub struct HeatTiles {
     ready: HashMap<Slot, Texels>,
     /// Holding no rows: never drawn, never asked again.
     empty: HashSet<u64>,
+    /// Tiles of the build's estimate (drawn until the pyramid is whole, then read again).
+    estimates: HashSet<u64>,
     asked: HashSet<Slot>,
     key: String,
     heat: Option<Bank>,
@@ -254,6 +258,7 @@ impl Default for HeatTiles {
             done,
             ready: HashMap::new(),
             empty: HashSet::new(),
+            estimates: HashSet::new(),
             asked: HashSet::new(),
             key: String::new(),
             heat: None,
@@ -321,6 +326,7 @@ impl HeatTiles {
             self.key = t.key.clone();
             self.ready.clear();
             self.empty.clear();
+            self.estimates.clear();
             self.asked.clear();
             if let Some(b) = &mut self.heat {
                 b.clear();
@@ -336,6 +342,9 @@ impl HeatTiles {
             match d.texels {
                 Some(x) => {
                     self.asked.remove(&d.slot);
+                    if d.estimate {
+                        self.estimates.insert(d.slot.0);
+                    }
                     self.ready.insert(d.slot, x);
                 }
                 None if d.slot.1 == u32::MAX => {
@@ -345,6 +354,20 @@ impl HeatTiles {
                 None => {
                     self.asked.remove(&d.slot);
                     self.empty.insert(d.slot.0);
+                }
+            }
+        }
+        // The pyramid whole: what the estimate gave is read again (as the page drops its estimate tiles).
+        if !self.estimates.is_empty() && self.frame % 8 == 0 && store.is_complete(&self.key) {
+            let est = std::mem::take(&mut self.estimates);
+            self.ready.retain(|s, _| !est.contains(&s.0));
+            self.asked.retain(|s| !est.contains(&s.0));
+            for b in [&mut self.heat, &mut self.rgba].into_iter().flatten() {
+                let gone: Vec<Slot> = b.layers.keys().filter(|s| est.contains(&s.0)).copied().collect();
+                for s in gone {
+                    if let Some((l, _, _)) = b.layers.remove(&s) {
+                        b.free.push(l);
+                    }
                 }
             }
         }

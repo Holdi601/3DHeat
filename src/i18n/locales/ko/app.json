@@ -36,5 +36,15 @@
   "app.matchView.heat": "히트맵",
   "app.matchView.heatTitle": "선택한 매치의 히트: 어디에 있었고, 어디서 처치하고 어디서 죽었는지",
   "app.mode.overlay.label": "피규어 오버레이",
-  "app.mode.overlay.title": "선택한 모든 매치나 라운드를 피규어로, 각각 자기 시작 지점부터 하나의 타임라인에 겹쳐 표시"
+  "app.mode.overlay.title": "선택한 모든 매치나 라운드를 피규어로, 각각 자기 시작 지점부터 하나의 타임라인에 겹쳐 표시",
+  "app.tileHeat.tiles": "타일로 그린 히트",
+  "app.tileHeat.level": "레벨 {level} / {leaf}",
+  "app.tileHeat.waiting": "첫 타일을 기다리는 중",
+  "app.tileHeat.rows": "{rows}개 행",
+  "app.tileHeat.building": "세는 중 {percent} %",
+  "app.tileHeat.host": "호스트의 것",
+  "app.tileHeat.stop": "멈추기",
+  "app.tileHeat.windowLoading": "보이는 행을 불러오는 중",
+  "app.tileHeat.windowRows": "보이는 {rows}개 행을 행으로 그림",
+  "app.tileHeat.about": "모든 행을 타일 피라미드에 셉니다. 멀리는 거친 타일, 가까이는 고운 타일로 그립니다. 가장 고운 타일보다 더 가까이 확대하면 보이는 땅의 행을 불러와 대신 그립니다."
 }

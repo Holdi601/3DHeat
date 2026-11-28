@@ -1027,6 +1027,11 @@ impl TileStore {
         self.build_of(key).map(|b| b.status())
     }
 
+    /// Whether the pyramid of `key` is whole (built and cached): cheap, no copy of its index.
+    pub fn is_complete(&self, key: &str) -> bool {
+        self.entries.lock().unwrap().contains_key(key)
+    }
+
     /// Builds queued or running.
     pub fn builds_running(&self) -> usize {
         self.builds.lock().unwrap().len()

@@ -17,6 +17,7 @@ import { lang, num, t, useLang } from '../i18n';
 import { heatScale, type HeatScale } from '../render/heatScale';
 import { overallShare } from '../render/rateMap';
 import { useSplitStatus } from '../state/splitStatus';
+import { useTileHeat } from '../render/heatTiles/tileHeat';
 import { useStore } from '../state/store';
 import type { ColorStop } from '../state/types';
 import { useEngine } from './EngineContext';
@@ -57,6 +58,10 @@ export function HeatLegend() {
   const negativeTeams = useStore((s) => s.negativeTeams);
   const status = useSplitStatus();
   const shown = useStore((s) => s.heat.showLegend);
+  // Heat from tiles alone (no rows loaded): a count is one row's sprite, so the numbers hold; the
+  // sides are the pyramid's groups.
+  const tilesOn = useTileHeat((s) => s.on);
+  const channels = useTileHeat((s) => s.channels);
 
   const difference = mode === 'heat-difference';
   const rate = difference && heat.splitRate;
@@ -88,12 +93,13 @@ export function HeatLegend() {
     [heat.saturation, heat.response, heat.floor, heat.radius, heat.minPixelRadius, heat.maxPixelRadius, heat.zoomInvariant, heat.centerIntensity, heat.edgeIntensity, heat.falloff, heat.smoothRamp, heat.useCurve, heat.curve, heat.weightBy, mode, shares, counts.per, counts.positive, counts.negative],
   );
 
-  if (!dataset || !shown || (mode !== 'heat-simple' && mode !== 'heat-difference' && mode !== 'heat-lines')) return null;
+  if ((!dataset && !tilesOn) || !shown || (mode !== 'heat-simple' && mode !== 'heat-difference' && mode !== 'heat-lines')) return null;
 
   // What each side of a difference is.
-  const wl = difference ? wonLostOf(split, dataset) : null;
+  const wl = difference && dataset ? wonLostOf(split, dataset) : null;
+  const labels = dataset?.teamLabels ?? channels;
   const teamNames = (ix: number[]) => {
-    const names = ix.map((i) => String(dataset.teamLabels[i] ?? i));
+    const names = ix.map((i) => String(labels[i] ?? i));
     return names.length > 2 ? t('heat.legend.teams', { first: names[0], more: names.length - 1 }) : names.join(', ');
   };
   const plusName = wl ? t('heat.legend.won') : split.kind === 'teams' ? teamNames(positiveTeams) || '+' : t('heat.legend.plus');

@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Teplo z dlaždíc",
+  "heat.sourcePanel.tilesTitle": "Jadro tohto počítača raz započíta každý riadok do dlaždíc; pohľad si pýta len dlaždice, ktoré ukazuje, jemnejšie tam, kam sa pozeráš. Pre dáta príliš veľké na načítanie.",
+  "heat.sourcePanel.tilesTooMany": "Príliš veľa riadkov na načítanie všetkých: teplo sa kreslí z dlaždíc všetkých riadkov.",
+  "heat.sourcePanel.tilesHint": "Každý riadok započítaný, nič načítané: pre dáta príliš veľké pre pamäť.",
+  "heat.sourcePanel.tilesOn": "Teplo sa kreslí z dlaždíc všetkých riadkov. Načítať namiesto toho číta riadky.",
+  "heat.timeline.tiles": "Teplo z dlaždíc: všetky riadky naraz, bez časovej osi"
 }

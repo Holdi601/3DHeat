@@ -1879,11 +1879,12 @@ impl Renderer {
         if !extend || fresh {
             Self::clear_target(encoder, &target, if direct { "clear heat" } else { "clear heat scratch" });
         }
-        // Heat from tiles (Stage 6) under the rows, where the target was just cleared; not the rate map's.
+        // Heat from tiles (Stage 6) under the rows, where the target was just cleared (a growing
+        // window's first frame too, as the page's pass); not the rate map's.
         if !field && p.heat_tiles.is_none() {
             self.tiles.pending = false;
         }
-        if !field && !extend && !p.flag(F_RATE_ON) {
+        if !field && (!extend || fresh) && !p.flag(F_RATE_ON) {
             if let (Some(t), Some(fr)) = (p.heat_tiles.as_ref(), p.frame.as_ref()) {
                 self.tiles.draw(&self.device, &self.queue, encoder, &target, format, t, &fr[F_VIEW_PROJ..F_VIEW_PROJ + 16]);
             }

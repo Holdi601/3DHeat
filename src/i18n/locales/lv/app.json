@@ -36,5 +36,15 @@
   "app.matchView.heat": "Siltumkarte",
   "app.matchView.heatTitle": "Izvēlēto maču siltums: kur viņi bija, nogalināja un krita",
   "app.mode.overlay.label": "Figūru pārklājums",
-  "app.mode.overlay.title": "Katrs izvēlētais mačs vai raunds kā figūras, katrs no sava sākuma, uzlikti cits uz cita vienā laika joslā"
+  "app.mode.overlay.title": "Katrs izvēlētais mačs vai raunds kā figūras, katrs no sava sākuma, uzlikti cits uz cita vienā laika joslā",
+  "app.tileHeat.tiles": "Siltums no flīzēm",
+  "app.tileHeat.level": "līmenis {level} no {leaf}",
+  "app.tileHeat.waiting": "gaida pirmās flīzes",
+  "app.tileHeat.rows": "{rows} rindas",
+  "app.tileHeat.building": "skaita {percent} %",
+  "app.tileHeat.host": "no saimnieka",
+  "app.tileHeat.stop": "apturēt",
+  "app.tileHeat.windowLoading": "ielādē redzamās rindas",
+  "app.tileHeat.windowRows": "{rows} redzamās rindas uzzīmētas kā rindas",
+  "app.tileHeat.about": "Katra rinda tiek saskaitīta flīžu piramīdā; skats tālumā zīmē rupjas flīzes, tuvumā – smalkākas. Pietuvinot vairāk nekā smalkākās flīzes, redzamās zemes rindas tiek ielādētas un uzzīmētas to vietā."
 }

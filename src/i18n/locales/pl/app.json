@@ -36,5 +36,15 @@
   "app.matchView.heat": "Mapa cieplna",
   "app.matchView.heatTitle": "Ciepło wybranych meczów: gdzie byli, zabijali i ginęli",
   "app.mode.overlay.label": "Nałożone figury",
-  "app.mode.overlay.title": "Każdy wybrany mecz lub runda jako figury, każde od własnego początku, nałożone na siebie na jednej osi czasu"
+  "app.mode.overlay.title": "Każdy wybrany mecz lub runda jako figury, każde od własnego początku, nałożone na siebie na jednej osi czasu",
+  "app.tileHeat.tiles": "Ciepło z kafelków",
+  "app.tileHeat.level": "poziom {level} z {leaf}",
+  "app.tileHeat.waiting": "czeka na pierwsze kafelki",
+  "app.tileHeat.rows": "{rows} wierszy",
+  "app.tileHeat.building": "liczenie {percent} %",
+  "app.tileHeat.host": "od gospodarza",
+  "app.tileHeat.stop": "zatrzymaj",
+  "app.tileHeat.windowLoading": "wczytywanie wierszy w widoku",
+  "app.tileHeat.windowRows": "{rows} wierszy w widoku narysowanych jako wiersze",
+  "app.tileHeat.about": "Każdy wiersz jest liczony do piramidy kafelków; widok rysuje grube kafelki z daleka, a drobniejsze z bliska. Gdy przybliżysz bardziej niż najdrobniejsze kafelki, wiersze terenu w widoku są wczytywane i rysowane zamiast nich."
 }

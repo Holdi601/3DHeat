@@ -36,5 +36,15 @@
   "app.matchView.heat": "Heatmap",
   "app.matchView.heatTitle": "De warmte van de gekozen matches: waar ze waren, doodden en stierven",
   "app.mode.overlay.label": "Figurenoverlay",
-  "app.mode.overlay.title": "Elke gekozen match of ronde als figuren, elk vanaf de eigen start, over elkaar gelegd op één tijdlijn"
+  "app.mode.overlay.title": "Elke gekozen match of ronde als figuren, elk vanaf de eigen start, over elkaar gelegd op één tijdlijn",
+  "app.tileHeat.tiles": "Warmte uit tegels",
+  "app.tileHeat.level": "niveau {level} van {leaf}",
+  "app.tileHeat.waiting": "wacht op de eerste tegels",
+  "app.tileHeat.rows": "{rows} rijen",
+  "app.tileHeat.building": "telt {percent} %",
+  "app.tileHeat.host": "van de host",
+  "app.tileHeat.stop": "stoppen",
+  "app.tileHeat.windowLoading": "laadt de rijen in beeld",
+  "app.tileHeat.windowRows": "{rows} rijen in beeld als rijen getekend",
+  "app.tileHeat.about": "Elke rij wordt geteld in een piramide van tegels; de weergave tekent grove tegels ver weg en fijnere dichtbij. Zoom je verder in dan de fijnste tegels, dan worden de rijen van de grond in beeld geladen en in plaats daarvan getekend."
 }

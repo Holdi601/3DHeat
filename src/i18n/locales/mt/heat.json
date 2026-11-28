@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Sħana mill-madum",
+  "heat.sourcePanel.tilesTitle": "Il-qalba ta’ dan il-kompjuter tgħodd kull ringiela f’madum darba; il-veduta titlob biss il-madum li turi, irqaq fejn tħares. Għal data kbira wisq biex titgħabba.",
+  "heat.sourcePanel.tilesTooMany": "Ringieli wisq biex jitgħabbew kollha: is-sħana tinġibed minn madum ta’ kull ringiela.",
+  "heat.sourcePanel.tilesHint": "Kull ringiela magħduda, xejn mgħobbi: għal data kbira wisq għall-memorja.",
+  "heat.sourcePanel.tilesOn": "Is-sħana tinġibed minn madum ta’ kull ringiela. Għabbi jaqra r-ringieli minflok.",
+  "heat.timeline.tiles": "Sħana mill-madum: ir-ringieli kollha f’daqqa, mingħajr linja taż-żmien"
 }

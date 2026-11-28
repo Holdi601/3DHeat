@@ -36,5 +36,15 @@
   "app.matchView.heat": "Mapa de calor",
   "app.matchView.heatTitle": "El calor de las partidas elegidas: dónde estuvieron, mataron y murieron",
   "app.mode.overlay.label": "Figuras superpuestas",
-  "app.mode.overlay.title": "Cada partida o ronda elegida como figuras, cada una desde su propio inicio, superpuestas en una sola línea de tiempo"
+  "app.mode.overlay.title": "Cada partida o ronda elegida como figuras, cada una desde su propio inicio, superpuestas en una sola línea de tiempo",
+  "app.tileHeat.tiles": "Calor desde teselas",
+  "app.tileHeat.level": "nivel {level} de {leaf}",
+  "app.tileHeat.waiting": "esperando las primeras teselas",
+  "app.tileHeat.rows": "{rows} filas",
+  "app.tileHeat.building": "contando {percent} %",
+  "app.tileHeat.host": "del anfitrión",
+  "app.tileHeat.stop": "parar",
+  "app.tileHeat.windowLoading": "cargando las filas de la vista",
+  "app.tileHeat.windowRows": "{rows} filas de la vista dibujadas como filas",
+  "app.tileHeat.about": "Cada fila se cuenta en una pirámide de teselas; la vista dibuja teselas gruesas a lo lejos y más finas de cerca. Si te acercas más que las teselas más finas, se cargan y dibujan las filas del terreno a la vista."
 }

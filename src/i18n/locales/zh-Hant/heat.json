@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "來自圖磚的熱度",
+  "heat.sourcePanel.tilesTitle": "這台電腦的核心把每一列統計進圖磚一次；視圖只請求它顯示的圖磚，你看的地方更細。適用於大到無法載入的資料。",
+  "heat.sourcePanel.tilesTooMany": "列太多，無法全部載入：熱度由所有列的圖磚繪製。",
+  "heat.sourcePanel.tilesHint": "所有列都已統計，什麼也沒載入：適用於記憶體裝不下的資料。",
+  "heat.sourcePanel.tilesOn": "熱度由所有列的圖磚繪製。「載入」會改為讀取這些列。",
+  "heat.timeline.tiles": "來自圖磚的熱度：所有列一次顯示，沒有時間軸"
 }

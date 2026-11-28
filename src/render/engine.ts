@@ -4690,7 +4690,9 @@ export class Engine {
     renderer.render(params);
     // Views of the engagement ranges still to take: more frames until they are.
     if (renderer.rangesPending && params.ranges) this.forceRenderFrames = Math.max(this.forceRenderFrames, 1);
-    if (heatTiles?.uploadsPending) {
+    // The native viewport reads and uploads the tiles itself: drawn again until it has them all
+    // (a still view would otherwise hold the first frame's, drawn before they were in).
+    if (heatTiles && (heatTiles.uploadsPending || ((renderer as { tilesPending?: boolean }).tilesPending ?? false))) {
       this.heatTileSeq++;
       this.forceRenderFrames = Math.max(this.forceRenderFrames, 1);
     }
@@ -4708,7 +4710,10 @@ export class Engine {
     // never reach the threshold at all.
     // Not while the dataset is still arriving: a field of part of it would be
     // exposed too bright for the whole.
-    const dataPending = (renderer as { dataPending?: boolean }).dataPending ?? false;
+    // Tiles alone: not while the native viewport is still reading the view's tiles (a field of a
+    // few of them would expose far too bright).
+    const tilesWaiting = !this.dataset && ((renderer as { tilesPending?: boolean }).tilesPending ?? false);
+    const dataPending = ((renderer as { dataPending?: boolean }).dataPending ?? false) || tilesWaiting;
     if (this.autoExposePending > 0 && (this.dataset || this.heatTileSource) && !dataPending) {
       this.autoExposePending--;
       if (this.autoExposePending === 0) void this.autoExpose();

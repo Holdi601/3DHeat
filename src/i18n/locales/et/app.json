@@ -36,5 +36,15 @@
   "app.matchView.heat": "Soojuskaart",
   "app.matchView.heatTitle": "Valitud matšide soojus: kus nad olid, tapsid ja surid",
   "app.mode.overlay.label": "Kujude ülekate",
-  "app.mode.overlay.title": "Iga valitud matš või raund kujudena, igaüks oma algusest, üksteise peale laotud ühel ajajoonel"
+  "app.mode.overlay.title": "Iga valitud matš või raund kujudena, igaüks oma algusest, üksteise peale laotud ühel ajajoonel",
+  "app.tileHeat.tiles": "Soojus paanidest",
+  "app.tileHeat.level": "tase {level}/{leaf}",
+  "app.tileHeat.waiting": "ootab esimesi paane",
+  "app.tileHeat.rows": "{rows} rida",
+  "app.tileHeat.building": "loendab {percent} %",
+  "app.tileHeat.host": "hostilt",
+  "app.tileHeat.stop": "peata",
+  "app.tileHeat.windowLoading": "laadib vaates olevaid ridu",
+  "app.tileHeat.windowRows": "{rows} vaates olevat rida joonistatud ridadena",
+  "app.tileHeat.about": "Iga rida loetakse paanide püramiidi; vaade joonistab kaugele jämedad paanid ja lähedale peenemad. Kui suumid lähemale kui peenimad paanid, laaditakse ja joonistatakse vaates oleva maapinna read."
 }

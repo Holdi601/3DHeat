@@ -36,5 +36,15 @@
   "app.matchView.heat": "Hőtérkép",
   "app.matchView.heatTitle": "A kiválasztott meccsek hője: hol voltak, hol öltek és hol haltak meg",
   "app.mode.overlay.label": "Figurás átfedés",
-  "app.mode.overlay.title": "Minden kiválasztott meccs vagy kör figurákként, mindegyik a saját kezdetétől, egymásra helyezve egyetlen idővonalon"
+  "app.mode.overlay.title": "Minden kiválasztott meccs vagy kör figurákként, mindegyik a saját kezdetétől, egymásra helyezve egyetlen idővonalon",
+  "app.tileHeat.tiles": "Hő csempékből",
+  "app.tileHeat.level": "{level}. szint / {leaf}",
+  "app.tileHeat.waiting": "várja az első csempéket",
+  "app.tileHeat.rows": "{rows} sor",
+  "app.tileHeat.building": "számolás {percent} %",
+  "app.tileHeat.host": "a gazdától",
+  "app.tileHeat.stop": "leállítás",
+  "app.tileHeat.windowLoading": "a látott sorok betöltése",
+  "app.tileHeat.windowRows": "{rows} látott sor sorként rajzolva",
+  "app.tileHeat.about": "Minden sort egy csempepiramisba számolunk; a nézet messze durva, közel finomabb csempéket rajzol. Ha a legfinomabb csempéknél közelebb nagyítasz, a látott terület sorai töltődnek be és rajzolódnak helyettük."
 }

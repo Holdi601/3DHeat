@@ -40,9 +40,11 @@ export interface TileHeatState {
   /** Rows in place of the tiles where the view is zoomed in (`rowWindow.ts`): loading them, drawn, or going back. */
   window: RowWindowState;
   windowRows: number;
+  /** The pyramid's groups when split (the last "other" when it has one), for the legend's sides. */
+  channels: readonly string[];
 }
 
-const OFF: TileHeatState = { on: false, from: null, level: -1, leaf: 0, rows: 0, fraction: 0, complete: false, bytes: 0, error: '', key: '', window: 'tiles', windowRows: 0 };
+const OFF: TileHeatState = { on: false, from: null, level: -1, leaf: 0, rows: 0, fraction: 0, complete: false, bytes: 0, error: '', key: '', window: 'tiles', windowRows: 0, channels: [] };
 
 export const useTileHeat = create<TileHeatState>(() => ({ ...OFF }));
 
@@ -90,8 +92,12 @@ export function modeWantsSplit(mode: string): boolean {
 /** The shared document's state: the host's pyramid while it draws one, else nothing. */
 export const useTileHeatShare = create<{ doc: Partial<TileHeatShare> }>(() => ({ doc: {} }));
 
+/** `next` unless it holds what `prev` holds: the store keeps one array while the names stay. */
+const sameList = (prev: readonly string[], next: readonly string[]) => (prev.length === next.length && prev.every((v, i) => v === next[i]) ? prev : next);
+
 function publish(src: HeatTileSource, from: 'files' | 'session'): void {
   const i = src.info;
+  const was = useTileHeat.getState();
   const next: TileHeatState = {
     on: true,
     from,
@@ -105,8 +111,8 @@ function publish(src: HeatTileSource, from: 'files' | 'session'): void {
     key: i?.key ?? '',
     window: current?.rowWindow?.state ?? 'tiles',
     windowRows: current?.rowWindow?.rows ?? 0,
+    channels: sameList(was.channels, i?.channelNames ?? []),
   };
-  const was = useTileHeat.getState();
   if ((Object.keys(next) as (keyof TileHeatState)[]).some((k) => next[k] !== was[k])) useTileHeat.setState(next);
 }
 

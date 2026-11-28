@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Calor des de rajoles",
+  "heat.sourcePanel.tilesTitle": "El nucli d’aquest ordinador compta cada fila en rajoles una sola vegada; la vista només demana les rajoles que mostra, més fines on mires. Per a dades massa grans per carregar.",
+  "heat.sourcePanel.tilesTooMany": "Massa files per carregar-les totes: la calor es dibuixa des de rajoles de totes les files.",
+  "heat.sourcePanel.tilesHint": "Totes les files comptades, res carregat: per a dades massa grans per a la memòria.",
+  "heat.sourcePanel.tilesOn": "La calor es dibuixa des de rajoles de totes les files. Carrega llegeix les files.",
+  "heat.timeline.tiles": "Calor des de rajoles: totes les files alhora, sense línia de temps"
 }

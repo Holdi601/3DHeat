@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Varme fra fliser",
+  "heat.sourcePanel.tilesTitle": "Denne computers kerne tæller hver række ind i fliser én gang; visningen beder kun om de fliser, den viser, finere hvor du kigger. Til data, der er for store at indlæse.",
+  "heat.sourcePanel.tilesTooMany": "For mange rækker til at indlæse dem alle: varmen tegnes fra fliser af alle rækker.",
+  "heat.sourcePanel.tilesHint": "Hver række talt, intet indlæst: til data, der er for store til hukommelsen.",
+  "heat.sourcePanel.tilesOn": "Varmen tegnes fra fliser af alle rækker. Indlæs læser rækkerne i stedet.",
+  "heat.timeline.tiles": "Varme fra fliser: alle rækker på én gang, ingen tidslinje"
 }

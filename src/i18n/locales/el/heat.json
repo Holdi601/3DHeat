@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Θερμότητα από πλακίδια",
+  "heat.sourcePanel.tilesTitle": "Ο πυρήνας αυτού του υπολογιστή μετρά κάθε γραμμή σε πλακίδια μία φορά· η προβολή ζητά μόνο τα πλακίδια που δείχνει, πιο λεπτά εκεί που κοιτάς. Για δεδομένα πολύ μεγάλα για φόρτωση.",
+  "heat.sourcePanel.tilesTooMany": "Πάρα πολλές γραμμές για να φορτωθούν όλες: η θερμότητα σχεδιάζεται από πλακίδια όλων των γραμμών.",
+  "heat.sourcePanel.tilesHint": "Κάθε γραμμή μετρημένη, τίποτα φορτωμένο: για δεδομένα πολύ μεγάλα για τη μνήμη.",
+  "heat.sourcePanel.tilesOn": "Η θερμότητα σχεδιάζεται από πλακίδια όλων των γραμμών. Η Φόρτωση διαβάζει τις γραμμές.",
+  "heat.timeline.tiles": "Θερμότητα από πλακίδια: όλες οι γραμμές μαζί, χωρίς χρονολόγιο"
 }

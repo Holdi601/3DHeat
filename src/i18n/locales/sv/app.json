@@ -36,5 +36,15 @@
   "app.matchView.heat": "Värmekarta",
   "app.matchView.heatTitle": "Värmen från de valda matcherna: var de var, dödade och dog",
   "app.mode.overlay.label": "Figuröverlägg",
-  "app.mode.overlay.title": "Varje vald match eller runda som figurer, var och en från sin egen start, lagda över varandra på en tidslinje"
+  "app.mode.overlay.title": "Varje vald match eller runda som figurer, var och en från sin egen start, lagda över varandra på en tidslinje",
+  "app.tileHeat.tiles": "Värme från rutor",
+  "app.tileHeat.level": "nivå {level} av {leaf}",
+  "app.tileHeat.waiting": "väntar på de första rutorna",
+  "app.tileHeat.rows": "{rows} rader",
+  "app.tileHeat.building": "räknar {percent} %",
+  "app.tileHeat.host": "från värden",
+  "app.tileHeat.stop": "stoppa",
+  "app.tileHeat.windowLoading": "läser in raderna i vyn",
+  "app.tileHeat.windowRows": "{rows} rader i vyn ritade som rader",
+  "app.tileHeat.about": "Varje rad räknas in i en pyramid av rutor; vyn ritar grova rutor långt bort och finare nära. Zoomar du närmare än de finaste rutorna läses raderna från marken i vyn in och ritas i stället."
 }

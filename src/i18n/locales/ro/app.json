@@ -36,5 +36,15 @@
   "app.matchView.heat": "Hartă termică",
   "app.matchView.heatTitle": "Căldura meciurilor alese: unde au fost, unde au eliminat și unde au murit",
   "app.mode.overlay.label": "Figuri suprapuse",
-  "app.mode.overlay.title": "Fiecare meci sau rundă aleasă ca figuri, fiecare de la propriul început, suprapuse pe o singură cronologie"
+  "app.mode.overlay.title": "Fiecare meci sau rundă aleasă ca figuri, fiecare de la propriul început, suprapuse pe o singură cronologie",
+  "app.tileHeat.tiles": "Căldură din dale",
+  "app.tileHeat.level": "nivelul {level} din {leaf}",
+  "app.tileHeat.waiting": "se așteaptă primele dale",
+  "app.tileHeat.rows": "{rows} rânduri",
+  "app.tileHeat.building": "se numără {percent} %",
+  "app.tileHeat.host": "de la gazdă",
+  "app.tileHeat.stop": "oprește",
+  "app.tileHeat.windowLoading": "se încarcă rândurile din vedere",
+  "app.tileHeat.windowRows": "{rows} rânduri din vedere desenate ca rânduri",
+  "app.tileHeat.about": "Fiecare rând e numărat într-o piramidă de dale; vederea desenează dale grosiere departe și mai fine aproape. Dacă mărești mai mult decât cele mai fine dale, rândurile terenului din vedere se încarcă și se desenează în locul lor."
 }

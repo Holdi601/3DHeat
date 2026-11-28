@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Chaleur depuis des tuiles",
+  "heat.sourcePanel.tilesTitle": "Le cœur de cet ordinateur compte chaque ligne dans des tuiles une seule fois ; la vue ne demande que les tuiles qu’elle montre, plus fines là où tu regardes. Pour des données trop grandes à charger.",
+  "heat.sourcePanel.tilesTooMany": "Trop de lignes pour toutes les charger : la chaleur est dessinée depuis des tuiles de toutes les lignes.",
+  "heat.sourcePanel.tilesHint": "Chaque ligne comptée, rien de chargé : pour des données trop grandes pour la mémoire.",
+  "heat.sourcePanel.tilesOn": "La chaleur est dessinée depuis des tuiles de toutes les lignes. Charger lit les lignes à la place.",
+  "heat.timeline.tiles": "Chaleur depuis des tuiles : toutes les lignes à la fois, sans chronologie"
 }

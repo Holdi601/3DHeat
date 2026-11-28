@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Топлина от плочки",
+  "heat.sourcePanel.tilesTitle": "Ядрото на този компютър брои всеки ред в плочки веднъж; изгледът иска само плочките, които показва, по-фини там, където гледаш. За данни, твърде големи за зареждане.",
+  "heat.sourcePanel.tilesTooMany": "Твърде много редове, за да се заредят всички: топлината се рисува от плочки на всички редове.",
+  "heat.sourcePanel.tilesHint": "Всеки ред преброен, нищо заредено: за данни, твърде големи за паметта.",
+  "heat.sourcePanel.tilesOn": "Топлината се рисува от плочки на всички редове. „Зареди“ чете редовете вместо това.",
+  "heat.timeline.tiles": "Топлина от плочки: всички редове наведнъж, без времева линия"
 }

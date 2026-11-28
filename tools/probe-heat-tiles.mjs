@@ -471,13 +471,23 @@ async function parity() {
  * zoomed out again the tiles draw alone and the rows are let go.
  */
 async function switchProbe(page) {
-  const r = await page.evaluate(async () => {
+  // The synthetic load's sprite spans about 8 leaf cells, where the tiles hold its detail and no
+  // switch is wanted (the LOD stops 2-4 cells a radius). --switch-radius: a smaller sprite, as a
+  // person sets it, under 2 leaf cells: what the rows are for.
+  const spriteScale = Number(arg('switch-radius', '0.2'));
+  const r = await page.evaluate(async (spriteScale) => {
     const H = globalThis.__3dheat;
     const eng = globalThis.__3dheat_engine;
     const P = globalThis.__parity;
     const st = () => H.useStore.getState();
     const raf = () => new Promise((res) => requestAnimationFrame(res));
     const ds = st().dataset;
+    const radius0 = st().heat.radius;
+    // On the ground as the tiles are: zoomed in this far the top-down camera sits a few units
+    // over the ground, under the synthetic rows' heights.
+    const heights = ds.py.slice();
+    ds.py.fill(0);
+    st().patchHeat({ radius: radius0 * spriteScale });
     const field = async () => {
       for (let i = 0; i < 6; i++) {
         eng.camera.moved = true;
@@ -496,21 +506,48 @@ async function switchProbe(page) {
     }
     const file = new File(parts, 'switch.csv', { type: 'text/csv' });
     eng.camera.setOrientationDegrees(0, -89.9);
-    // A sixteenth of the half-width: past the leaf (under 2 cells a radius), as in the parity table.
-    eng.frameAround(P.centre[0], 0, P.centre[1], P.half * 0.0625);
+    const settle = async (src) => {
+      let last = -1;
+      let still = 0;
+      for (let k = 0; k < 600 && still < 15; k++) {
+        await raf();
+        still = src.info?.complete && src.stats.tiles > 0 && src.stats.tiles === last ? still + 1 : 0;
+        last = src.stats.tiles;
+      }
+    };
+    const tiles = async () => {
+      const src = new P.HeatTileSource(P.transport, { sx: 1, sz: 1, ground: 0 }, {}, () => eng.invalidate(1));
+      eng.setHeatTiles(src);
+      src.start();
+      await settle(src);
+      return src;
+    };
+    // Zoomed in from a sixteenth of the half-width until past the leaf (under 2 cells a
+    // radius): where the sprite's pixel clamp widens it, the leaf is passed further in.
+    let zoom = 0.0625;
+    const tries = [];
+    st().setDataset(null);
+    await raf();
+    for (let k = 0; k < 10; k++) {
+      eng.frameAround(P.centre[0], 0, P.centre[1], P.half * zoom);
+      const probe = await tiles();
+      const cells = probe.stats.radiusCells;
+      tries.push(`1/${Math.round(1 / zoom)}: ${cells.toFixed(2)} cells at level ${probe.stats.drawnLevel} of ${probe.info?.leafLevel} (radius ${st().heat.radius.toFixed(3)}, px/unit ${(eng.projArr[5] * eng.renderer.heatHeight * 0.5).toFixed(3)})`);
+      eng.setHeatTiles(null);
+      probe.dispose();
+      if (cells < 2) break;
+      zoom /= 2;
+    }
+    // The camera's zoom limits follow the store's dataset: framed again after each change.
+    const frame = () => eng.frameAround(P.centre[0], 0, P.centre[1], P.half * zoom);
+    st().setDataset(ds, { keepView: true });
+    while (eng.live.residentRows + eng.live.droppedRows < ds.count) await raf();
+    frame();
     const rowsOnly = await field();
     st().setDataset(null);
     await raf();
-    const src = new P.HeatTileSource(P.transport, { sx: 1, sz: 1, ground: 0 }, {}, () => eng.invalidate(1));
-    eng.setHeatTiles(src);
-    src.start();
-    let last = -1;
-    let still = 0;
-    for (let k = 0; k < 600 && still < 15; k++) {
-      await raf();
-      still = src.stats.tiles === last ? still + 1 : 0;
-      last = src.stats.tiles;
-    }
+    frame();
+    const src = await tiles();
     const tilesOnly = await field();
     const cellsBefore = src.stats.radiusCells;
     const saturation = st().heat.saturation;
@@ -561,11 +598,13 @@ async function switchProbe(page) {
     win.dispose();
     eng.setHeatTiles(null);
     src.dispose();
+    ds.py.set(heights);
     st().setDataset(ds);
+    st().patchHeat({ radius: radius0 });
     const w = eng.renderer.heatWidth;
     const h = eng.renderer.heatHeight;
-    return { rowsOnly, tilesOnly, after, w, h, frames, state, windowRows, loadMs: loadedAt - t0, fadeMs: performance.now() - loadedAt, cellsBefore, kept, back };
-  });
+    return { rowsOnly, tilesOnly, after, w, h, frames, state, windowRows, loadMs: loadedAt - t0, fadeMs: performance.now() - loadedAt, cellsBefore, kept, back, zoom, tries };
+  }, spriteScale);
   const ch = r.rowsOnly.length / (r.w * r.h);
   const pick = (f) => Float32Array.from({ length: r.w * r.h }, (_, i) => f[i * ch]);
   const rowsVsAfter = compare(pick(r.rowsOnly), pick(r.after), r.w, r.h);
@@ -574,7 +613,8 @@ async function switchProbe(page) {
   const q = (p) => fr[Math.min(fr.length - 1, Math.floor(p * fr.length))] ?? 0;
   const over = fr.filter((v) => v > 25).length;
   const f = (v) => (v * 100).toFixed(1) + '%';
-  console.log(`switch: ${r.cellsBefore.toFixed(2)} cells a radius, window ${r.state} with ${r.windowRows} rows, load ${(r.loadMs / 1000).toFixed(2)} s`);
+  console.log(`switch: zoom 1/${Math.round(1 / r.zoom)}, ${r.cellsBefore.toFixed(2)} cells a radius, window ${r.state} with ${r.windowRows} rows, load ${(r.loadMs / 1000).toFixed(2)} s`);
+  console.log(`  zooms tried: ${r.tries.join('; ')}`);
   console.log(`  tiles alone vs rows: p50 ${f(rowsVsTiles.p50.err)} p99 ${f(rowsVsTiles.p99.err)} total ${f(rowsVsTiles.total)} ssim ${rowsVsTiles.ssim.toFixed(4)}`);
   console.log(`  after the switch vs rows: p50 ${f(rowsVsAfter.p50.err)} p99 ${f(rowsVsAfter.p99.err)} total ${f(rowsVsAfter.total)} ssim ${rowsVsAfter.ssim.toFixed(4)}`);
   console.log(`  kept: ${JSON.stringify(r.kept)}; back zoomed out: ${JSON.stringify(r.back)}`);

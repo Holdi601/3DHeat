@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Siltums no flīzēm",
+  "heat.sourcePanel.tilesTitle": "Šī datora kodols katru rindu vienreiz saskaita flīzēs; skats prasa tikai rādītās flīzes, smalkākas tur, kur skaties. Datiem, kas ir par lielu ielādei.",
+  "heat.sourcePanel.tilesTooMany": "Pārāk daudz rindu, lai ielādētu visas: siltums tiek zīmēts no visu rindu flīzēm.",
+  "heat.sourcePanel.tilesHint": "Katra rinda saskaitīta, nekas nav ielādēts: datiem, kas neietilpst atmiņā.",
+  "heat.sourcePanel.tilesOn": "Siltums tiek zīmēts no visu rindu flīzēm. Ielādēt tā vietā lasa rindas.",
+  "heat.timeline.tiles": "Siltums no flīzēm: visas rindas uzreiz, bez laika joslas"
 }

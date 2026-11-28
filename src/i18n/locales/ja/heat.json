@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "タイルからのヒート",
+  "heat.sourcePanel.tilesTitle": "このコンピューターのコアがすべての行を一度だけタイルに数えます。ビューは表示するタイルだけを求め、見ている所ほど細かくなります。読み込むには大きすぎるデータ向けです。",
+  "heat.sourcePanel.tilesTooMany": "行が多すぎてすべては読み込めません。すべての行のタイルからヒートを描きます。",
+  "heat.sourcePanel.tilesHint": "すべての行を数え、何も読み込みません。メモリーに入らないデータ向けです。",
+  "heat.sourcePanel.tilesOn": "すべての行のタイルからヒートを描いています。「読み込み」は代わりに行を読みます。",
+  "heat.timeline.tiles": "タイルからのヒート: すべての行を一度に、タイムラインなし"
 }

@@ -36,5 +36,15 @@
   "app.matchView.heat": "Toplinska karta",
   "app.matchView.heatTitle": "Toplina odabranih mečeva: gdje su bili, ubijali i ginuli",
   "app.mode.overlay.label": "Preklapanje figura",
-  "app.mode.overlay.title": "Svaki odabrani meč ili runda kao figure, svaki od vlastitog početka, preklopljeni jedni preko drugih na jednoj vremenskoj crti"
+  "app.mode.overlay.title": "Svaki odabrani meč ili runda kao figure, svaki od vlastitog početka, preklopljeni jedni preko drugih na jednoj vremenskoj crti",
+  "app.tileHeat.tiles": "Toplina iz pločica",
+  "app.tileHeat.level": "razina {level} od {leaf}",
+  "app.tileHeat.waiting": "čeka prve pločice",
+  "app.tileHeat.rows": "{rows} redaka",
+  "app.tileHeat.building": "brojanje {percent} %",
+  "app.tileHeat.host": "od domaćina",
+  "app.tileHeat.stop": "zaustavi",
+  "app.tileHeat.windowLoading": "učitavaju se retci u pogledu",
+  "app.tileHeat.windowRows": "{rows} redaka u pogledu nacrtano kao retci",
+  "app.tileHeat.about": "Svaki redak broji se u piramidu pločica; pogled crta grube pločice izdaleka, a finije izbliza. Kad zumiraš bliže od najfinijih pločica, retci tla u pogledu učitaju se i nacrtaju umjesto njih."
 }

@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Toplota iz ploščic",
+  "heat.sourcePanel.tilesTitle": "Jedro tega računalnika enkrat prešteje vsako vrstico v ploščice; pogled zahteva le ploščice, ki jih prikazuje, finejše tam, kamor gledaš. Za podatke, prevelike za nalaganje.",
+  "heat.sourcePanel.tilesTooMany": "Preveč vrstic, da bi naložili vse: toplota se riše iz ploščic vseh vrstic.",
+  "heat.sourcePanel.tilesHint": "Vsaka vrstica prešteta, nič naloženo: za podatke, prevelike za pomnilnik.",
+  "heat.sourcePanel.tilesOn": "Toplota se riše iz ploščic vseh vrstic. Naloži namesto tega bere vrstice.",
+  "heat.timeline.tiles": "Toplota iz ploščic: vse vrstice hkrati, brez časovnice"
 }

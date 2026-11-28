@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Тепло из плиток",
+  "heat.sourcePanel.tilesTitle": "Ядро этого компьютера один раз считает каждую строку в плитки; вид запрашивает только те плитки, что показывает, мельче там, куда ты смотришь. Для данных, слишком больших для загрузки.",
+  "heat.sourcePanel.tilesTooMany": "Слишком много строк, чтобы загрузить все: тепло рисуется из плиток всех строк.",
+  "heat.sourcePanel.tilesHint": "Каждая строка посчитана, ничего не загружено: для данных, не помещающихся в память.",
+  "heat.sourcePanel.tilesOn": "Тепло рисуется из плиток всех строк. «Загрузить» вместо этого читает строки.",
+  "heat.timeline.tiles": "Тепло из плиток: все строки сразу, без шкалы времени"
 }

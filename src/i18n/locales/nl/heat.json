@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Warmte uit tegels",
+  "heat.sourcePanel.tilesTitle": "De kern van deze computer telt elke rij één keer in tegels; de weergave vraagt alleen de tegels die ze toont, fijner waar je kijkt. Voor data die te groot is om te laden.",
+  "heat.sourcePanel.tilesTooMany": "Te veel rijen om ze allemaal te laden: de warmte wordt getekend uit tegels van alle rijen.",
+  "heat.sourcePanel.tilesHint": "Elke rij geteld, niets geladen: voor data die te groot is voor het geheugen.",
+  "heat.sourcePanel.tilesOn": "De warmte wordt getekend uit tegels van alle rijen. Laden leest in plaats daarvan de rijen.",
+  "heat.timeline.tiles": "Warmte uit tegels: alle rijen tegelijk, geen tijdlijn"
 }

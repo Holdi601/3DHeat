@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Цеплыня з плітак",
+  "heat.sourcePanel.tilesTitle": "Ядро гэтага камп’ютара адзін раз падлічвае кожны радок у пліткі; від просіць толькі тыя пліткі, што паказвае, дробней там, куды ты глядзіш. Для даных, завялікіх для загрузкі.",
+  "heat.sourcePanel.tilesTooMany": "Занадта шмат радкоў, каб загрузіць усе: цеплыня малюецца з плітак усіх радкоў.",
+  "heat.sourcePanel.tilesHint": "Кожны радок падлічаны, нічога не загружана: для даных, завялікіх для памяці.",
+  "heat.sourcePanel.tilesOn": "Цеплыня малюецца з плітак усіх радкоў. «Загрузіць» чытае радкі.",
+  "heat.timeline.tiles": "Цеплыня з плітак: усе радкі адначасова, без шкалы часу"
 }

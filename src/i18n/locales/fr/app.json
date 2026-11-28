@@ -36,5 +36,15 @@
   "app.matchView.heat": "Carte de chaleur",
   "app.matchView.heatTitle": "La chaleur des matchs choisis : où ils étaient, ont tué et sont morts",
   "app.mode.overlay.label": "Figurines superposées",
-  "app.mode.overlay.title": "Chaque match ou round choisi en figurines, chacun depuis son propre début, superposés sur une seule chronologie"
+  "app.mode.overlay.title": "Chaque match ou round choisi en figurines, chacun depuis son propre début, superposés sur une seule chronologie",
+  "app.tileHeat.tiles": "Chaleur depuis des tuiles",
+  "app.tileHeat.level": "niveau {level} sur {leaf}",
+  "app.tileHeat.waiting": "en attente des premières tuiles",
+  "app.tileHeat.rows": "{rows} lignes",
+  "app.tileHeat.building": "comptage {percent} %",
+  "app.tileHeat.host": "de l’hôte",
+  "app.tileHeat.stop": "arrêter",
+  "app.tileHeat.windowLoading": "chargement des lignes visibles",
+  "app.tileHeat.windowRows": "{rows} lignes visibles dessinées en lignes",
+  "app.tileHeat.about": "Chaque ligne est comptée dans une pyramide de tuiles ; la vue dessine des tuiles grossières au loin et plus fines de près. Zoomé plus près que les tuiles les plus fines, les lignes du terrain visible sont chargées et dessinées à leur place."
 }

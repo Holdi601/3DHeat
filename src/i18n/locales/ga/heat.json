@@ -848,5 +848,11 @@
   "heat.loadPlan.later": "later",
   "heat.loadPlan.laterTitle": "Leave it in the files and read it when a filter or panel first needs it: no memory until then",
   "heat.loadPlan.laterSuggested": "{count, plural, one {Read the # column later instead} other {Read the # columns later instead}}",
-  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}."
+  "heat.loadPlan.laterNote": "{count, plural, one {# column stays} other {# columns stay}} in the files until something needs {count, plural, one {it} other {them}}.",
+  "heat.sourcePanel.tiles": "Teas ó thíleanna",
+  "heat.sourcePanel.tilesTitle": "Comhaireann croí an ríomhaire seo gach ró i dtíleanna uair amháin; ní iarrann an t-amharc ach na tíleanna a thaispeánann sé, níos míne san áit a bhféachann tú. Do shonraí atá rómhór le lódáil.",
+  "heat.sourcePanel.tilesTooMany": "An iomarca rónna le iad go léir a lódáil: tarraingítear an teas ó thíleanna de gach ró.",
+  "heat.sourcePanel.tilesHint": "Gach ró comhairthe, faic lódáilte: do shonraí atá rómhór don chuimhne.",
+  "heat.sourcePanel.tilesOn": "Tarraingítear an teas ó thíleanna de gach ró. Léann Lódáil na rónna ina ionad sin.",
+  "heat.timeline.tiles": "Teas ó thíleanna: gach ró ag an am céanna, gan amlíne"
 }
