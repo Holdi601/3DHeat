@@ -2197,7 +2197,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "ash",
- "getrandom 0.3.4",
+ "getrandom 0.4.3",
  "gtk",
  "heat3d-core",
  "heat3d-library",
@@ -2228,7 +2228,7 @@ dependencies = [
  "arrow-schema",
  "bytes",
  "flate2",
- "getrandom 0.3.4",
+ "getrandom 0.4.3",
  "half",
  "heat3d-proto",
  "libm",
@@ -2266,7 +2266,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "flate2",
- "getrandom 0.3.4",
+ "getrandom 0.4.3",
  "heat3d-core",
  "memmap2",
  "parquet",
