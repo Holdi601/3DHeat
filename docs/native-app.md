@@ -145,7 +145,7 @@ What limits a load now: the core's memory (about 40 bytes a row at its peak), an
 
 ## Native viewport (preview)
 
-Settings > **Native viewport (preview)** lets the app draw the 3D view itself instead of the page. It is off by default, and it applies when the window loads again (the setting offers **Reload now**). Windows only for now.
+Settings > **Native viewport (preview)** lets the app draw the 3D view itself instead of the page. It is off by default, and it applies when the window loads again (the setting offers **Reload now**). On Linux it is built (Wayland: the app draws into a surface of its own below the page) but not tried on a real desktop yet; if it does not start there, the page draws as before.
 
 With it on, the window has two layers. The app's own renderer draws into the window with the graphics card's native interface (Vulkan, with DirectX 12 as the fallback), and the page lies on top of it, transparent where the view is. Every panel, button and label is still the page, and the page still gets every click, drag and key: it moves the camera as before and sends each frame to the app, with the camera, the heat settings, the filters, the time window and the mode in it. The app draws that frame with the very shaders the page's WebGPU engine runs (the same WGSL, compiled by wgpu instead of the browser), so the picture is the same.
 

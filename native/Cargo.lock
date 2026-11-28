@@ -1915,6 +1915,7 @@ dependencies = [
  "anyhow",
  "ash",
  "getrandom 0.3.4",
+ "gtk",
  "heat3d-core",
  "heat3d-library",
  "heat3d-server",

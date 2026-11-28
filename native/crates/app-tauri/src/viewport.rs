@@ -38,16 +38,25 @@ pub async fn viewport_start(window: WebviewWindow) -> Result<String, String> {
     if let Some(info) = with(&window, |v| v.info.clone()) {
         return Ok(info);
     }
-    // Wayland needs wgpu in a subsurface of its own below the page's surface
-    // (`window_layer::linux::ViewportSurface`); drawn into the window's own surface it would
-    // cover the page. Until that is wired and tried on a real desktop, the web engine draws.
+    #[cfg(not(target_os = "linux"))]
+    let (make, size) = {
+        let size = window.inner_size().map_err(|e| e.to_string())?;
+        let target = window.as_ref().window();
+        let make: heat3d_viewport::viewport::MakeSurface =
+            Box::new(move |instance: &heat3d_viewport::wgpu::Instance| instance.create_surface(target.clone()).map_err(|e| anyhow::anyhow!("{e}")));
+        (make, (size.width, size.height))
+    };
+    // Wayland: wgpu draws into a subsurface of its own below the page's surface
+    // (`window_layer::linux`); drawn into the window's own surface it would cover the page.
     #[cfg(target_os = "linux")]
-    return Err("the native viewport does not run on Linux yet".into());
-    let size = window.inner_size().map_err(|e| e.to_string())?;
-    let target = window.as_ref().window();
-    let make: heat3d_viewport::viewport::MakeSurface =
-        Box::new(move |instance: &heat3d_viewport::wgpu::Instance| instance.create_surface(target.clone()).map_err(|e| anyhow::anyhow!("{e}")));
-    let vp = tauri::async_runtime::spawn_blocking(move || Viewport::start(make, (size.width, size.height))).await.map_err(|e| e.to_string())?.map_err(|e| format!("{e:#}"))?;
+    let (make, size) = linux_surface(&window).await?;
+    let started = tauri::async_runtime::spawn_blocking(move || Viewport::start(make, size)).await.map_err(|e| e.to_string()).and_then(|r| r.map_err(|e| format!("{e:#}")));
+    #[cfg(target_os = "linux")]
+    if started.is_err() {
+        let w = window.as_ref().window();
+        let _ = window.run_on_main_thread(move || crate::window_layer::linux::stop(&w));
+    }
+    let vp = started?;
     let info = vp.info.clone();
     // The page shows the viewport through itself from here on.
     window.set_background_color(Some(tauri::window::Color(0, 0, 0, 0))).map_err(|e| e.to_string())?;
@@ -60,7 +69,37 @@ pub async fn viewport_start(window: WebviewWindow) -> Result<String, String> {
 pub fn viewport_stop(window: WebviewWindow) {
     let vp = window.state::<Viewports>().0.lock().unwrap().remove(window.label());
     drop(vp);
+    // The subsurface goes once its wgpu surface has.
+    #[cfg(target_os = "linux")]
+    {
+        let w = window.as_ref().window();
+        let _ = window.run_on_main_thread(move || crate::window_layer::linux::stop(&w));
+    }
     let _ = window.set_background_color(None);
+}
+
+/// The viewport's subsurface below the page (made on the main thread, where GTK lives), and the
+/// wgpu surface on it from the raw Wayland handles; the size in pixels.
+#[cfg(target_os = "linux")]
+async fn linux_surface(window: &WebviewWindow) -> Result<(heat3d_viewport::viewport::MakeSurface, (u32, u32)), String> {
+    use heat3d_viewport::wgpu::rwh::{RawDisplayHandle, RawWindowHandle, WaylandDisplayHandle, WaylandWindowHandle};
+    let (tx, rx) = std::sync::mpsc::channel();
+    let w = window.as_ref().window();
+    window.run_on_main_thread(move || drop(tx.send(crate::window_layer::linux::start(&w)))).map_err(|e| e.to_string())?;
+    let got = tauri::async_runtime::spawn_blocking(move || rx.recv_timeout(std::time::Duration::from_secs(10))).await.map_err(|e| e.to_string())?;
+    let (display, surface, size) = got.map_err(|_| "the window did not answer".to_owned())??;
+    let make: heat3d_viewport::viewport::MakeSurface = Box::new(move |instance: &heat3d_viewport::wgpu::Instance| {
+        let display = std::ptr::NonNull::new(display as *mut std::ffi::c_void).ok_or_else(|| anyhow::anyhow!("no wl_display"))?;
+        let surface = std::ptr::NonNull::new(surface as *mut std::ffi::c_void).ok_or_else(|| anyhow::anyhow!("no wl_surface"))?;
+        let target = heat3d_viewport::wgpu::SurfaceTargetUnsafe::RawHandle {
+            raw_display_handle: Some(RawDisplayHandle::Wayland(WaylandDisplayHandle::new(display))),
+            raw_window_handle: RawWindowHandle::Wayland(WaylandWindowHandle::new(surface)),
+        };
+        // SAFETY: GTK's display and the subsurface `window_layer::linux` keeps until `viewport_stop`,
+        // after the viewport (and this surface) is gone.
+        unsafe { instance.create_surface_unsafe(target) }.map_err(|e| anyhow::anyhow!("{e}"))
+    });
+    Ok((make, size))
 }
 
 /// One frame (raw packet); answers the viewport's counters as JSON.

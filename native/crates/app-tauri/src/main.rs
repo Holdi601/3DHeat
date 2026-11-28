@@ -78,7 +78,7 @@ async fn open_viewer(app: tauri::AppHandle, base: tauri::State<'_, ViewerBase>, 
     };
     static NEXT: std::sync::atomic::AtomicU32 = std::sync::atomic::AtomicU32::new(1);
     let label = format!("viewer-{}", NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed));
-    let window = tauri::WebviewWindowBuilder::new(&app, label, url)
+    let window = window_layer::options(tauri::WebviewWindowBuilder::new(&app, label, url))
         .title("3DHeat")
         .inner_size(1600.0, 1000.0)
         .min_inner_size(900.0, 600.0)
@@ -190,7 +190,7 @@ fn main() {
                 Some(u) => tauri::WebviewUrl::External(format!("{u}{query}").parse().expect("a loopback URL")),
                 None => tauri::WebviewUrl::App(format!("index.html{query}").into()),
             };
-            let window = tauri::WebviewWindowBuilder::new(app, "main", url)
+            let window = window_layer::options(tauri::WebviewWindowBuilder::new(app, "main", url))
                 .title(if library_window { "3DHeat Library" } else { "3DHeat" })
                 .inner_size(1600.0, 1000.0)
                 .min_inner_size(900.0, 600.0)

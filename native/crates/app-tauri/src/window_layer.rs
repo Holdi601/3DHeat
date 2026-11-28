@@ -20,21 +20,37 @@ pub fn prepare() {
     linux::prepare();
 }
 
+/// How a window is built for that. Linux: an RGBA window from the start (GTK cannot change
+/// its visual later), so the viewport's subsurface can show through the page; `attach` turns
+/// the page opaque again until a viewport starts.
+pub fn options<'a, R: tauri::Runtime, M: tauri::Manager<R>>(b: tauri::WebviewWindowBuilder<'a, R, M>) -> tauri::WebviewWindowBuilder<'a, R, M> {
+    #[cfg(target_os = "linux")]
+    return b.transparent(true);
+    #[cfg(not(target_os = "linux"))]
+    b
+}
+
 /// Once the window exists: the native viewport, when the page starts one, follows its size.
+/// (On Linux the viewport follows the page's own widget instead: `linux::start`.)
 pub fn attach(window: &WebviewWindow) {
-    let w = window.as_ref().window();
-    window.on_window_event(move |e| {
-        if let tauri::WindowEvent::Resized(s) = e {
-            crate::viewport::resized(&w, s.width, s.height);
-        }
-        if let tauri::WindowEvent::ScaleFactorChanged { new_inner_size, .. } = e {
-            crate::viewport::resized(&w, new_inner_size.width, new_inner_size.height);
-        }
-    });
+    #[cfg(not(target_os = "linux"))]
+    {
+        let w = window.as_ref().window();
+        window.on_window_event(move |e| {
+            if let tauri::WindowEvent::Resized(s) = e {
+                crate::viewport::resized(&w, s.width, s.height);
+            }
+            if let tauri::WindowEvent::ScaleFactorChanged { new_inner_size, .. } = e {
+                crate::viewport::resized(&w, new_inner_size.width, new_inner_size.height);
+            }
+        });
+    }
+    // The page opaque (white, the web engine's own background) while the web engine draws.
+    #[cfg(target_os = "linux")]
+    let _ = window.set_background_color(None);
 }
 
 #[cfg(target_os = "linux")]
-#[allow(dead_code)]
 pub mod linux {
     use wayland_client::backend::{Backend, ObjectId};
     use wayland_client::globals::{registry_queue_init, GlobalListContents};
@@ -97,9 +113,9 @@ pub mod linux {
     /// The surface the native viewport draws into: below the window's GTK surface,
     /// taking no input (everything goes to the webview above).
     pub struct ViewportSurface {
-        _conn: Connection,
+        conn: Connection,
         pub surface: WlSurface,
-        _sub: WlSubsurface,
+        sub: WlSubsurface,
     }
 
     impl ViewportSurface {
@@ -124,7 +140,123 @@ pub mod linux {
             region.destroy();
             surface.commit();
             queue.roundtrip(&mut State).ok();
-            Some(Self { _conn: conn, surface, _sub: sub })
+            Some(Self { conn, surface, sub })
+        }
+
+        /// Where the page sits: the subsurface's corner (applied on the parent's next commit)
+        /// and the buffer scale its pictures come in (on its own next commit).
+        fn apply(&self, p: &Place) {
+            self.sub.set_position(p.x, p.y);
+            // wl_surface v3 has the buffer scale; the compositor was bound at up to v4.
+            if self.surface.version() >= 3 {
+                self.surface.set_buffer_scale(p.scale);
+            }
+            let _ = self.conn.flush();
+        }
+
+        /// The raw `wl_display` and `wl_surface` for wgpu, as addresses (they cross threads).
+        fn handles(&self) -> (usize, usize) {
+            (self.conn.backend().display_ptr() as usize, self.surface.id().as_ptr() as usize)
+        }
+    }
+
+    impl Drop for ViewportSurface {
+        fn drop(&mut self) {
+            self.sub.destroy();
+            self.surface.destroy();
+            let _ = self.conn.flush();
+        }
+    }
+
+    /// Where the page's widget sits in the window's surface (logical pixels), the scale,
+    /// and its size in the buffer's pixels.
+    #[derive(Clone, Copy)]
+    struct Place {
+        x: i32,
+        y: i32,
+        scale: i32,
+        width: u32,
+        height: u32,
+    }
+
+    /// GTK draws the window's frame (client-side decorations, their shadow) into the same
+    /// surface, so the page's widget is offset in it; the offset changes when the window is
+    /// maximized or tiled.
+    fn place(vbox: &gtk::Box, top: &gtk::ApplicationWindow) -> Place {
+        use gtk::prelude::*;
+        let (x, y) = vbox.translate_coordinates(top, 0, 0).unwrap_or((0, 0));
+        let a = vbox.allocation();
+        let scale = vbox.scale_factor().max(1);
+        Place { x, y, scale, width: (a.width().max(1) * scale) as u32, height: (a.height().max(1) * scale) as u32 }
+    }
+
+    /// A running viewport's subsurface, and the handlers that keep it under the page.
+    struct Layer {
+        surface: ViewportSurface,
+        handlers: Vec<gtk::glib::SignalHandlerId>,
+    }
+
+    fn layers() -> &'static std::sync::Mutex<std::collections::HashMap<String, Layer>> {
+        static LAYERS: std::sync::OnceLock<std::sync::Mutex<std::collections::HashMap<String, Layer>>> = std::sync::OnceLock::new();
+        LAYERS.get_or_init(Default::default)
+    }
+
+    /// On the main thread: the viewport's subsurface below this window's page, following the
+    /// page's widget from here on. Answers the raw `wl_display` and `wl_surface` for wgpu
+    /// (addresses), and the size in pixels.
+    pub fn start(window: &tauri::Window) -> Result<(usize, usize, (u32, u32)), String> {
+        use gtk::prelude::*;
+        use heat3d_viewport::wgpu::rwh::{HasDisplayHandle, HasWindowHandle, RawDisplayHandle, RawWindowHandle};
+        if layers().lock().unwrap().contains_key(window.label()) {
+            return Err("the viewport's surface is already there".into());
+        }
+        let top = window.gtk_window().map_err(|e| e.to_string())?;
+        let vbox = window.default_vbox().map_err(|e| e.to_string())?;
+        let display = match window.display_handle().map_err(|e| e.to_string())?.as_raw() {
+            RawDisplayHandle::Wayland(d) => d.display.as_ptr(),
+            _ => return Err("the window is not on Wayland".into()),
+        };
+        let parent = match window.window_handle().map_err(|e| e.to_string())?.as_raw() {
+            RawWindowHandle::Wayland(w) => w.surface.as_ptr(),
+            _ => return Err("the window is not on Wayland".into()),
+        };
+        // SAFETY: GTK's own display and the window's surface, both live while the window is.
+        let surface = unsafe { ViewportSurface::create(display, parent) }.ok_or("the compositor gave no subsurface")?;
+        let p = place(&vbox, &top);
+        surface.apply(&p);
+        let (d, s) = surface.handles();
+        let (w, t) = (window.clone(), top.clone());
+        let on_size = vbox.connect_size_allocate(move |b, _| follow(&w, b, &t));
+        let (w, t) = (window.clone(), top.clone());
+        let on_scale = vbox.connect_scale_factor_notify(move |b| follow(&w, b, &t));
+        layers().lock().unwrap().insert(window.label().to_owned(), Layer { surface, handlers: vec![on_size, on_scale] });
+        // The subsurface's place takes effect when GTK commits the window next.
+        top.queue_draw();
+        Ok((d, s, (p.width, p.height)))
+    }
+
+    /// The page's widget moved or resized (or the scale changed): the subsurface and the
+    /// viewport's pictures follow.
+    fn follow(window: &tauri::Window, vbox: &gtk::Box, top: &gtk::ApplicationWindow) {
+        let p = place(vbox, top);
+        if let Some(l) = layers().lock().unwrap().get(window.label()) {
+            l.surface.apply(&p);
+        }
+        crate::viewport::resized(window, p.width, p.height);
+    }
+
+    /// On the main thread, once the viewport (and its wgpu surface) is gone: the subsurface goes.
+    pub fn stop(window: &tauri::Window) {
+        use gtk::prelude::*;
+        let Some(layer) = layers().lock().unwrap().remove(window.label()) else { return };
+        if let Ok(vbox) = window.default_vbox() {
+            for h in layer.handlers {
+                vbox.disconnect(h);
+            }
+        }
+        drop(layer.surface);
+        if let Ok(top) = window.gtk_window() {
+            top.queue_draw();
         }
     }
 }
