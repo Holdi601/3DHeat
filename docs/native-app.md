@@ -176,6 +176,8 @@ Measured on the PC above (`native/tools/probe-native-viewport.mjs`: the same app
 | Until every row is on the GPU | 1.3 s | 1.1 to 2.4 s |
 | Frames with the camera turning and the timeline playing (p50 / p99 / max) | 16.7 / 17.3 / 17.9 ms | the page 16.7 / 18.1 / 19.2 ms, the viewport's presents 16.6 / 19.2 / 22.8 ms (DX12) and 16.8 / 23.4 / 24.4 ms (Vulkan), none past 25 ms |
 
+**Render video** (Camera path & render) works the same with the preview on: same panel, same file types (MP4, MKV, WebM), same sizes, every frame still exact. The app draws each frame of the path, reads the picture back into a small ring of buffers on the graphics card (the view keeps drawing while a picture is on its way) and hands it to the page in shared memory; the page encodes it as before. Measured with `native/tools/probe-native-record.mjs` (10 million rows, 2 s at 30 fps): 1080p took 4.9 s on both engines, each picture back in 24-27 ms (web 31-37 ms); the app's view thread was busy at most 3.9 ms between two presents while it rendered; the native file is 0.9-1.4/255 per pixel from the web engine's file of the same path (H.264 or VP9 at 16 Mbit/s on both).
+
 The viewport presents each of the page's frames as it comes (mailbox), so the page's clock paces the view. With vsync of its own (Fifo) it fell into the 14/21 ms beat of this PC's mixed 60 and 144 Hz screens, and under Vulkan held a frame for four refreshes now and then. Loads of 100 million rows and more were not measured yet.
 
 ## Memory budget

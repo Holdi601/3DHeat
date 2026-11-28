@@ -7,6 +7,7 @@
 //! (`wgsl/`, exported by `src/render/native/shaderExport.ts`), taking the rows
 //! straight from the core's built dataset. See docs/native-app.md.
 
+pub mod capture;
 pub mod figures;
 pub mod generated;
 pub mod heatmodes;

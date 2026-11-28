@@ -362,7 +362,7 @@ fn draws_heat_offscreen() {
     r.request_heat(0, Box::new(move |v| *h.lock().unwrap() = Some(v)));
     let picture: Arc<Mutex<Option<bool>>> = Arc::default();
     let pc = picture.clone();
-    r.request_capture(Box::new(move |c| *pc.lock().unwrap() = Some(c.is_some_and(|c| c.rgba.len() == (SIDE * SIDE * 4) as usize))));
+    r.request_capture(Box::new(move |c| *pc.lock().unwrap() = Some(c.is_some_and(|c| c.rgba().len() == (SIDE * SIDE * 4) as usize))));
     r.draw(&[packet(), packet_under()], &view, (SIDE, SIDE), false);
     r.draw(&[packet()], &view, (SIDE, SIDE), false);
     heat_modes(&mut r, &view);
@@ -683,4 +683,102 @@ fn heat_modes(r: &mut Renderer, view: &wgpu::TextureView) {
     for p in [lines, wedges, rate] {
         r.draw(&[p], view, (SIDE, SIDE), false);
     }
+}
+
+/// Pictures read back through the capture ring (`capture.rs`, a video render's frames): a capture
+/// asked for a packet still to come waits for it; with every slot held by its asker the next one
+/// waits for a slot (the frames go on drawing) and is served once one is given back; the rows are
+/// read on another thread; a BGRA surface gives the same RGBA picture as an RGBA one.
+#[test]
+fn captures_through_the_ring() {
+    let required = std::env::var("HEAT3D_GPU_SMOKE").is_ok_and(|v| v == "1");
+    let adapter = match heat3d_viewport::viewport::adapter(None) {
+        Ok((_, a, _)) => a,
+        Err(e) => {
+            assert!(!required, "HEAT3D_GPU_SMOKE=1 but no adapter: {e:#}");
+            eprintln!("skipped: no GPU adapter ({e:#})");
+            return;
+        }
+    };
+    let info = adapter.get_info();
+    if !required && matches!(info.device_type, wgpu::DeviceType::Cpu | wgpu::DeviceType::VirtualGpu | wgpu::DeviceType::Other) {
+        eprintln!("skipped: a software adapter, and HEAT3D_GPU_SMOKE is not set");
+        return;
+    }
+    type Got = Arc<Mutex<Vec<(char, Option<heat3d_viewport::Captured>)>>>;
+    let mut pictures = Vec::new();
+    for format in [wgpu::TextureFormat::Rgba8Unorm, wgpu::TextureFormat::Bgra8Unorm] {
+        let mut r = Renderer::new(&adapter, format).expect("renderer");
+        let scope = r.device.push_error_scope(wgpu::ErrorFilter::Validation);
+        r.clear_dataset(false);
+        let c = chunk().upload(&r.device);
+        r.add_chunk(c);
+        let out = r.device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("out"),
+            size: wgpu::Extent3d { width: SIDE, height: SIDE, depth_or_array_layers: 1 },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format,
+            usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
+            view_formats: &[],
+        });
+        let view = out.create_view(&Default::default());
+        let got: Got = Arc::default();
+        let ask = |r: &mut Renderer, name: char, after: u32| {
+            let g = got.clone();
+            r.request_capture_after(after, Box::new(move |c| g.lock().unwrap().push((name, c))));
+        };
+        let settle = |r: &mut Renderer| {
+            for _ in 0..20 {
+                let _ = r.device.poll(wgpu::PollType::wait_indefinitely());
+                r.poll();
+            }
+        };
+        // Served in any order (the read-backs land as the driver maps them).
+        let names = |g: &Got| {
+            let mut v: Vec<char> = g.lock().unwrap().iter().map(|(n, _)| *n).collect();
+            v.sort();
+            v.into_iter().collect::<String>()
+        };
+        let mut p = packet();
+        p.ranges = None;
+        ask(&mut r, 'a', 3);
+        p.seq = 1;
+        r.draw(&[p.clone()], &view, (SIDE, SIDE), false);
+        settle(&mut r);
+        assert_eq!(names(&got), "", "a capture of packet 3 served at packet 1");
+        for n in ['b', 'c', 'd'] {
+            ask(&mut r, n, 0);
+        }
+        p.seq = 2;
+        r.draw(&[p.clone()], &view, (SIDE, SIDE), false);
+        settle(&mut r);
+        assert_eq!(names(&got), "bcd");
+        // Packet 3 drawn, but all three slots held: 'a' waits.
+        p.seq = 3;
+        r.draw(&[p.clone()], &view, (SIDE, SIDE), false);
+        settle(&mut r);
+        assert_eq!(names(&got), "bcd", "a capture served with every slot held");
+        assert!(r.capture_overdue(), "a capture waiting for a slot must keep the frames coming");
+        // 'b' read on another thread and given back: 'a' is served at the next frame.
+        let at = got.lock().unwrap().iter().position(|(n, _)| *n == 'b').unwrap();
+        let b = got.lock().unwrap().remove(at).1.expect("b");
+        let b_rgba = std::thread::spawn(move || b.rgba()).join().unwrap();
+        r.draw(&[], &view, (SIDE, SIDE), false);
+        settle(&mut r);
+        assert_eq!(names(&got), "acd");
+        let at = got.lock().unwrap().iter().position(|(n, _)| *n == 'a').unwrap();
+        let a = got.lock().unwrap().remove(at).1.expect("a");
+        let a_rgba = a.rgba();
+        assert_eq!((a.width, a.height), (SIDE, SIDE));
+        assert_eq!(a_rgba.len(), (SIDE * SIDE * 4) as usize);
+        assert!(a_rgba.chunks_exact(4).any(|px| px[..3] != [0, 0, 0]), "a black picture");
+        assert_eq!(a_rgba, b_rgba, "the same packet, another picture");
+        got.lock().unwrap().clear();
+        let error = pollster::block_on(scope.pop());
+        assert!(error.is_none(), "validation error: {error:?}");
+        pictures.push(a_rgba);
+    }
+    assert_eq!(pictures[0], pictures[1], "a BGRA surface's picture is not the RGBA one");
 }

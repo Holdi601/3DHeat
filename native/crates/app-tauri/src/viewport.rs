@@ -221,17 +221,41 @@ pub fn resized(window: &tauri::Window, w: u32, h: u32) {
     }
 }
 
-/// The next frame's picture: width, height (u32 each), then RGBA.
+/// The picture of the page's packet `after` (its sequence number) or the next frame's: width,
+/// height (u32 each), then RGBA. The rows are read from the viewport's mapped read-back here, off
+/// its thread (`capture.rs`), and the slot goes back to its ring when the picture drops.
+///
+/// With `shared` (Windows), the rows go straight into WebView2 shared memory posted to the page
+/// under that id (`src/data/native/shared.ts`) and only the size comes back: a 1080p picture is
+/// 8 MB, and through the IPC it cost a video render about 35 ms a frame.
 #[tauri::command]
-pub async fn viewport_capture(window: WebviewWindow) -> Result<Response, String> {
+pub async fn viewport_capture(window: WebviewWindow, after: Option<u32>, shared: Option<u64>) -> Result<Response, String> {
     let (tx, rx) = std::sync::mpsc::channel();
-    with(&window, |v| v.send(Msg::Capture(Box::new(move |c| drop(tx.send(c)))))).ok_or("no viewport")?;
-    let got = tauri::async_runtime::spawn_blocking(move || rx.recv_timeout(std::time::Duration::from_secs(10)).ok().flatten()).await.map_err(|e| e.to_string())?;
-    let c = got.ok_or("no frame")?;
-    let mut out = Vec::with_capacity(8 + c.rgba.len());
-    out.extend_from_slice(&c.width.to_le_bytes());
-    out.extend_from_slice(&c.height.to_le_bytes());
-    out.extend_from_slice(&c.rgba);
+    with(&window, |v| v.send(Msg::Capture(after.unwrap_or(0), Box::new(move |c| drop(tx.send(c)))))).ok_or("no viewport")?;
+    let out = tauri::async_runtime::spawn_blocking(move || -> Result<Vec<u8>, String> {
+        let c = rx.recv_timeout(std::time::Duration::from_secs(10)).ok().flatten().ok_or("no frame")?;
+        let mut out = Vec::with_capacity(8 + if shared.is_some() { 0 } else { (c.width * c.height * 4) as usize });
+        out.extend_from_slice(&c.width.to_le_bytes());
+        out.extend_from_slice(&c.height.to_le_bytes());
+        match shared {
+            #[cfg(windows)]
+            Some(id) => {
+                use heat3d_core::dataset::SharedSink;
+                let sink = crate::shared::sink::WebviewSink { window };
+                let len = (c.width * c.height * 4) as usize;
+                let mem = sink.create(len).map_err(|e| e.to_string())?;
+                // SAFETY: the sink's memory, `len` bytes, not yet posted: only this thread sees it.
+                let rows = unsafe { std::slice::from_raw_parts_mut(mem.ptr(), len) };
+                c.write_rgba_into(rows);
+                drop(c);
+                sink.post(&mem, id).map_err(|e| e.to_string())?;
+            }
+            _ => c.write_rgba(&mut out),
+        }
+        Ok(out)
+    })
+    .await
+    .map_err(|e| e.to_string())??;
     Ok(Response::new(out))
 }
 

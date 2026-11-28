@@ -254,12 +254,7 @@ impl Stats {
     }
 }
 
-/// A frame read back: RGBA8, top row first.
-pub struct Captured {
-    pub width: u32,
-    pub height: u32,
-    pub rgba: Vec<u8>,
-}
+pub use crate::capture::Captured;
 
 type Reply<T> = Box<dyn FnOnce(T) + Send>;
 
@@ -270,7 +265,7 @@ struct Readback {
 }
 
 enum ReadKind {
-    Capture { width: u32, height: u32, stride: u32, bgra: bool, reply: Reply<Option<Captured>> },
+    Capture { width: u32, height: u32, stride: u32, bgra: bool, free: Arc<std::sync::atomic::AtomicBool>, reply: Reply<Option<Captured>> },
     Heat { width: u32, height: u32, stride: u32, channels: u32, max: usize, reply: Reply<Option<Vec<f32>>> },
     Probe { reply: Reply<Option<f32>> },
 }
@@ -367,7 +362,8 @@ pub struct Renderer {
     curve_dirty: bool,
     binned: bool,
     readbacks: Vec<Readback>,
-    pending_capture: Option<Reply<Option<Captured>>>,
+    /// Pictures asked for and the ring they are read back through (`capture.rs`).
+    captures: crate::capture::CaptureRing,
     /// Heat reads asked for: at most `max` values, once packet `after` is drawn, asked when
     /// (`request_heat_after`). Several may wait - the exposure's meter and its follower each read.
     pending_heat: Vec<(usize, u32, Instant, Reply<Option<Vec<f32>>>)>,
@@ -693,7 +689,7 @@ impl Renderer {
             curve_dirty: true,
             binned: false,
             readbacks: Vec::new(),
-            pending_capture: None,
+            captures: Default::default(),
             pending_heat: Vec::new(),
             pending_probe: None,
             stats,
@@ -1172,7 +1168,7 @@ impl Renderer {
             self.ensure_targets((p.f(F_WIDTH) as u32).max(1), (p.f(F_HEIGHT) as u32).max(1), p.f(F_HEAT_SCALE).max(1e-3), channels);
         }
         self.composite_into(&mut encoder, &p, out, out_size, false);
-        if capture || self.pending_capture.is_some() {
+        if capture || !self.captures.asks.is_empty() {
             self.capture(&mut encoder, &p);
         }
         if !self.pending_heat.is_empty() {
@@ -2738,49 +2734,61 @@ impl Renderer {
         Some((lines, self.figures.group(&self.device, &self.ring.buf, off)))
     }
 
-    /// The composite again into an offscreen copy, read back (`captureFrame`).
+    /// The composite again into an offscreen copy of the render size, read back through the ring
+    /// (`captureFrame`) for each capture whose packet is drawn; one with no free slot waits a frame.
     fn capture(&mut self, encoder: &mut wgpu::CommandEncoder, p: &Packet) {
-        let Some(reply) = self.pending_capture.take() else { return };
+        let due = self.captures.due(self.stats.last_seq);
+        if due.is_empty() {
+            return;
+        }
         let (w, h) = (self.width, self.height);
         let format = self.out_format;
-        let (tex, view) = tex2d(&self.device, "capture", w, h, format, wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC);
-        let pipe = self.composite.clone();
-        let g = self.composite_group(p, &pipe);
-        let top = self.top_group(p);
-        let ov = self.overlay_groups(p, false, (0.0, 0.0));
-        {
-            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                label: Some("capture"),
-                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                    view: &view,
-                    resolve_target: None,
-                    depth_slice: None,
-                    ops: wgpu::Operations { load: wgpu::LoadOp::Clear(wgpu::Color::BLACK), store: wgpu::StoreOp::Store },
-                })],
-                depth_stencil_attachment: None,
-                timestamp_writes: None,
-                occlusion_query_set: None,
-                multiview_mask: None,
-            });
-            pass.set_pipeline(&pipe);
-            pass.set_bind_group(0, &g, &[]);
-            pass.draw(0..3, 0..1);
-            self.draw_over(&mut pass, p, &top, &ov);
-        }
-        let stride = align(w as u64 * 4, 256) as u32;
-        let buffer = self.device.create_buffer(&wgpu::BufferDescriptor {
-            label: Some("capture read"),
-            size: stride as u64 * h as u64,
-            usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
-            mapped_at_creation: false,
-        });
-        encoder.copy_texture_to_buffer(
-            wgpu::TexelCopyTextureInfo { texture: &tex, mip_level: 0, origin: Default::default(), aspect: Default::default() },
-            wgpu::TexelCopyBufferInfo { buffer: &buffer, layout: wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(stride), rows_per_image: None } },
-            wgpu::Extent3d { width: w, height: h, depth_or_array_layers: 1 },
-        );
         let bgra = matches!(format, wgpu::TextureFormat::Bgra8Unorm | wgpu::TextureFormat::Bgra8UnormSrgb);
-        self.readbacks.push(Readback { buffer, ready: Arc::new(0.into()), kind: ReadKind::Capture { width: w, height: h, stride, bgra, reply } });
+        let mut drawn: Option<(wgpu::Texture, wgpu::Buffer, u32, Arc<std::sync::atomic::AtomicBool>)> = None;
+        for ask in due {
+            // Several asks of one frame share its picture's slot only if read back once each: give
+            // each its own slot (a video render asks one at a time).
+            let Some(slot) = self.captures.take(&self.device, (w, h), format) else {
+                self.captures.asks.push(ask);
+                continue;
+            };
+            if drawn.is_none() {
+                let pipe = self.composite.clone();
+                let g = self.composite_group(p, &pipe);
+                let top = self.top_group(p);
+                let ov = self.overlay_groups(p, false, (0.0, 0.0));
+                let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                    label: Some("capture"),
+                    color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                        view: &slot.view,
+                        resolve_target: None,
+                        depth_slice: None,
+                        ops: wgpu::Operations { load: wgpu::LoadOp::Clear(wgpu::Color::BLACK), store: wgpu::StoreOp::Store },
+                    })],
+                    depth_stencil_attachment: None,
+                    timestamp_writes: None,
+                    occlusion_query_set: None,
+                    multiview_mask: None,
+                });
+                pass.set_pipeline(&pipe);
+                pass.set_bind_group(0, &g, &[]);
+                pass.draw(0..3, 0..1);
+                self.draw_over(&mut pass, p, &top, &ov);
+                drop(pass);
+                drawn = Some((slot.tex.clone(), slot.buffer.clone(), slot.stride, slot.free.clone()));
+            }
+            let src = &drawn.as_ref().unwrap().0;
+            encoder.copy_texture_to_buffer(
+                wgpu::TexelCopyTextureInfo { texture: src, mip_level: 0, origin: Default::default(), aspect: Default::default() },
+                wgpu::TexelCopyBufferInfo { buffer: &slot.buffer, layout: wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(slot.stride), rows_per_image: None } },
+                wgpu::Extent3d { width: w, height: h, depth_or_array_layers: 1 },
+            );
+            self.readbacks.push(Readback {
+                buffer: slot.buffer,
+                ready: Arc::new(0.into()),
+                kind: ReadKind::Capture { width: w, height: h, stride: slot.stride, bgra, free: slot.free, reply: ask.reply },
+            });
+        }
     }
 
     /// The heat target read back, sampled to at most `max` values (`readHeatField`).
@@ -2844,7 +2852,19 @@ impl Renderer {
     }
 
     pub fn request_capture(&mut self, reply: Reply<Option<Captured>>) {
-        self.pending_capture = Some(reply);
+        self.request_capture_after(0, reply);
+    }
+
+    /// As `request_capture`, the picture of packet `after` (the page's sequence number) or later:
+    /// a video render parks the camera, sends the frame and asks for exactly that picture.
+    pub fn request_capture_after(&mut self, after: u32, reply: Reply<Option<Captured>>) {
+        self.captures.asks.push(crate::capture::Ask { after, asked: Instant::now(), reply });
+    }
+
+    /// A capture that can be served (waiting for a free slot) or is past its wait for its packet:
+    /// drawn again with what there is.
+    pub fn capture_overdue(&self) -> bool {
+        self.captures.overdue(self.stats.last_seq)
     }
 
     pub fn request_heat(&mut self, max: usize, reply: Reply<Option<Vec<f32>>>) {
@@ -2863,6 +2883,11 @@ impl Renderer {
     /// (a packet the page dropped, or a page that started its numbering over).
     pub fn heat_overdue(&self) -> bool {
         self.pending_heat.iter().any(|a| a.2.elapsed() > HEAT_WAIT)
+    }
+
+    /// Read-backs mapping, not yet handed over (`poll`).
+    pub fn readbacks_pending(&self) -> bool {
+        !self.readbacks.is_empty()
     }
 
     fn map_readbacks(&mut self) {
@@ -2890,24 +2915,14 @@ impl Renderer {
             let r = self.readbacks.swap_remove(i);
             let ok = state == 2;
             match r.kind {
-                ReadKind::Capture { width, height, stride, bgra, reply } => {
-                    let out = ok.then(|| {
-                        let data = r.buffer.slice(..).get_mapped_range().expect("mapped");
-                        let mut rgba = Vec::with_capacity((width * height * 4) as usize);
-                        for y in 0..height as usize {
-                            let row = &data[y * stride as usize..y * stride as usize + width as usize * 4];
-                            if bgra {
-                                for px in row.chunks_exact(4) {
-                                    rgba.extend_from_slice(&[px[2], px[1], px[0], px[3]]);
-                                }
-                            } else {
-                                rgba.extend_from_slice(row);
-                            }
-                        }
-                        Captured { width, height, rgba }
-                    });
-                    r.buffer.unmap();
-                    reply(out);
+                ReadKind::Capture { width, height, stride, bgra, free, reply } => {
+                    // The mapped buffer itself goes over: its rows are read on the asker's thread.
+                    if ok {
+                        reply(Some(crate::capture::handed(width, height, r.buffer, stride, bgra, free)));
+                    } else {
+                        crate::capture::release(&free);
+                        reply(None);
+                    }
                 }
                 ReadKind::Probe { reply } => {
                     let out = ok.then(|| {

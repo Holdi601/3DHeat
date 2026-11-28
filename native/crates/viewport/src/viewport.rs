@@ -48,7 +48,8 @@ pub enum Msg {
     Level(Vec<u8>),
     /// A mesh's ground edges, built off the render thread: mesh id, level token, edges.
     GroundWire(u32, u64, Vec<u32>),
-    Capture(Reply<Option<Captured>>),
+    /// The picture once the page's packet `after` (its sequence number; 0: the next frame) is drawn.
+    Capture(u32, Reply<Option<Captured>>),
     /// The heat field once the page's packet `after` (its sequence number) is drawn.
     ReadHeat(usize, u32, Reply<Option<Vec<f32>>>),
     /// The heat under a canvas pixel.
@@ -221,6 +222,9 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
     let mut active_until = std::time::Instant::now();
     // Where a frame goes that the surface does not take this time (`CurrentSurfaceTexture::Occluded`).
     let mut offscreen: Option<(wgpu::Texture, wgpu::TextureView, (u32, u32))> = None;
+    // Time waited for messages since the last present, and per present (`Msg::Times`).
+    let mut idle = 0f32;
+    let mut idles: Vec<f32> = Vec::new();
     loop {
         let active = std::time::Instant::now() < active_until;
         let first = if active {
@@ -230,7 +234,13 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                 Err(std::sync::mpsc::TryRecvError::Disconnected) => return,
             }
         } else {
-            match rx.recv_timeout(Duration::from_millis(50)) {
+            // A read-back on its way (a video render's picture, a heat read) is handed over at the
+            // next poll: polled again within a couple of milliseconds rather than at the next packet.
+            let wait = if r.readbacks_pending() { 2 } else { 50 };
+            let t = std::time::Instant::now();
+            let got = rx.recv_timeout(Duration::from_millis(wait));
+            idle += t.elapsed().as_secs_f32() * 1e3;
+            match got {
                 Ok(m) => Some(m),
                 Err(RecvTimeoutError::Timeout) => None,
                 Err(RecvTimeoutError::Disconnected) => return,
@@ -377,8 +387,8 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                     r.set_ground_wire(id, token, &edges);
                     dirty = true;
                 }
-                Msg::Capture(reply) => {
-                    r.request_capture(reply);
+                Msg::Capture(after, reply) => {
+                    r.request_capture_after(after, reply);
                     want_capture = true;
                 }
                 Msg::ReadHeat(max, after, reply) => {
@@ -410,7 +420,10 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                 Msg::Times(reply) => {
                     let (iv, cpu) = r.take_times();
                     let list = |v: &[f32]| v.iter().map(|x| format!("{x:.3}")).collect::<Vec<_>>().join(",");
-                    reply(format!("{{\"intervals\":[{}],\"cpu\":[{}],\"frames\":{},\"packets\":{}}}", list(&iv), list(&cpu), r.stats.frames, r.stats.packets));
+                    // `idle`: of each present interval, the time spent waiting for the page (no packet
+                    // came): a long interval that is all idle is a picture with nothing new, not a drop.
+                    let waited = std::mem::take(&mut idles);
+                    reply(format!("{{\"intervals\":[{}],\"cpu\":[{}],\"idle\":[{}],\"frames\":{},\"packets\":{}}}", list(&iv), list(&cpu), list(&waited), r.stats.frames, r.stats.packets));
                 }
             }
         }
@@ -451,7 +464,7 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
         if r.world_pending() {
             dirty = true;
         }
-        if packets.is_empty() && !want_capture && !dirty && !active && !r.heat_overdue() {
+        if packets.is_empty() && !want_capture && !dirty && !active && !r.heat_overdue() && !r.capture_overdue() {
             continue;
         }
         dirty = false;
@@ -500,6 +513,10 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
         if let Some(f) = frame {
             r.queue.present(f);
             r.presented();
+            if idles.len() < 100_000 {
+                idles.push(idle);
+            }
+            idle = 0.0;
         }
         r.poll();
         let s = &r.stats;

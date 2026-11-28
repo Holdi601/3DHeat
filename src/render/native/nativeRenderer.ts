@@ -59,6 +59,7 @@ import { markResident, nextToUpload, playbackStarting, setMeshUploader, uploadsW
 import { NativeTracks } from './nativeTracks';
 import { NativeTerrain } from './nativeTerrain';
 import { ATLAS_MIP_LEVELS, LEVEL_DROP, LEVEL_IMAGE, LEVEL_MAP, LEVEL_NONE, imageLevels, imageMessage, meshMessage } from './levelMessages';
+import { prepareShared, releaseShared, sharedAvailable, takeShared } from '../../data/native/shared';
 import { KEYS_PER_BUFFER } from '../gpuTracks/store';
 
 interface Tauri {
@@ -110,6 +111,8 @@ interface Snapshot {
 }
 
 const SIGN_SCRATCH = new Float32Array(FILTER_MASK_WIDTH * 2);
+/** Shared buffer ids of captured pictures: far above the core's own (a counter from 1). */
+const CAPTURE_SHARED_IDS = 2 ** 48;
 /** `viewport_rows` kinds. */
 const ROW_DIRS = 0;
 const ROW_LINES = 1;
@@ -164,6 +167,8 @@ export class NativeRenderer implements Renderer {
   private datasetGen = Math.floor(Math.random() * 2 ** 30);
   /** The last packet sent (`viewport_frame`); a heat read waits until the viewport drew it. */
   private sentSeq = 0;
+  /** Pictures taken (`captureFrame`): each one's shared buffer id. */
+  private captures = 0;
   /** Rows of the dataset the budget lets onto the GPU, whole chunks. */
   private planned = 0;
   private filterKeys: string[] | null = null;
@@ -1109,11 +1114,24 @@ export class NativeRenderer implements Renderer {
     }
   }
 
+  /**
+   * The picture of the frame just sent (a video render parks the camera, draws, then asks), read
+   * back by the viewport through its ring of mapped buffers - the frame path never waits on it.
+   */
   async captureFrame(): Promise<CapturedFrame | null> {
     try {
-      const got = (await this.invoke('viewport_capture')) as ArrayBuffer;
+      // In shared memory where WebView2 has it (no copy through the IPC: 8 MB a 1080p picture), taken
+      // into the page's own array and given back at once.
+      const shared = sharedAvailable() ? CAPTURE_SHARED_IDS + ++this.captures : null;
+      if (shared !== null) prepareShared();
+      const got = (await this.invoke('viewport_capture', { after: this.sentSeq, shared })) as ArrayBuffer;
       const u = new Uint32Array(got, 0, 2);
-      return { width: u[0], height: u[1], rgba: new Uint8Array(got, 8) };
+      if (shared === null || got.byteLength > 8) return { width: u[0], height: u[1], rgba: new Uint8Array(got, 8) };
+      const buf = await takeShared(shared, 10_000);
+      const rgba = new Uint8Array(u[0] * u[1] * 4);
+      rgba.set(new Uint8Array(buf, 0, rgba.length));
+      releaseShared(buf);
+      return { width: u[0], height: u[1], rgba };
     } catch {
       return null;
     }
