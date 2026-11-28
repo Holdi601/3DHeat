@@ -81,11 +81,20 @@ async fn host_session(base: tauri::State<'_, ViewerBase>) -> Result<String, Stri
         return Err(e);
     }
     let (core, web) = (base.core.clone(), base.web.clone());
+    let mut args = vec!["--open".to_string()];
+    args.extend(window_origin(base.url.as_deref()));
     tauri::async_runtime::spawn(async move {
-        heat3d_server::cli::serve(vec!["--open".into()], core, web).await;
+        heat3d_server::cli::serve(args, core, web).await;
         HOSTING.store(false, std::sync::atomic::Ordering::SeqCst);
     });
     Ok("started".into())
+}
+
+/// `--allow-origin` for this app's window (its loopback server's origin): the window joins the
+/// session the app hosts - as its host, to share what it draws (heat from tiles: the pyramid's
+/// key) - which a session lets in only from its own origin otherwise.
+fn window_origin(served: Option<&str>) -> Vec<String> {
+    served.map(|u| vec!["--allow-origin".to_string(), u.trim_end_matches('/').to_string()]).unwrap_or_default()
 }
 
 /// A viewer window of its own, for items the Library's window opens
@@ -235,8 +244,9 @@ fn main() {
             #[cfg(windows)]
             shared::sink::attach(&window, &core);
             window_layer::attach(&window);
-            if let Some(rest) = host_args.clone() {
-                // A session hosted beside the window, on the same core.
+            if let Some(mut rest) = host_args.clone() {
+                // A session hosted beside the window, on the same core; the window may join it.
+                rest.extend(window_origin(served.as_deref()));
                 let (core, web) = (core.clone(), web.clone());
                 tauri::async_runtime::spawn(heat3d_server::cli::serve(rest, core, web));
             }
