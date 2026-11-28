@@ -87,7 +87,7 @@ pub struct Tracks {
     uniform: wgpu::Buffer,
     mesh_count: wgpu::Buffer,
     store: Option<Store>,
-    /// The core's keys for the store of this id, while that store is drawn (`core_keys`).
+    /// The core's keys for the store of this id, until its begin message takes them (`core_keys`).
     core: Option<(u32, Arc<TrackKeys>)>,
     /// Whether this frame placed the units (the scene pass draws them).
     placed: bool,
@@ -209,7 +209,8 @@ impl Tracks {
                 let run_room: Vec<u32> = (0..m).map(|i| runs[i * 2 + 1]).collect();
                 let total = runs[m * 2] as u64 + runs[m * 2 + 1] as u64;
                 let core = match kind {
-                    BEGIN_CORE => Some(self.core.as_ref().filter(|c| c.0 == id).map(|c| c.1.clone()).ok_or_else(|| anyhow::anyhow!("no core keys for tracks store {id}"))?),
+                    // Taken: once on the GPU the CPU copy goes (a gigabyte at 100M rows).
+                    BEGIN_CORE => Some(self.core.take().filter(|c| c.0 == id).map(|c| c.1).ok_or_else(|| anyhow::anyhow!("no core keys for tracks store {id}"))?),
                     _ => None,
                 };
                 if core.is_none() {

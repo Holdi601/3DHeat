@@ -8,13 +8,14 @@
  *   thin      the page holds every step-th row and its keys are drawn (what the app did before)
  *   corefull  every row on the page, the core's keys anyway (`?coretracks=1`): core keys = page keys
  *
- * Gates: core and corefull pictures equal ref (mean < 0.5/255, < 1 % pixels > 8/255); the core
+ * Gates: core and corefull pictures equal ref (mean <= 1/255, <= 1 % pixels > 8/255, the tracks probe's); the core
  * store holds every sample's key (keys = ref's). Reported: thin vs ref (what thinning cost), the
  * store's build (page and core), frames with orbit + playback (page and native presents,
  * p50/p99/max) for ref and core, units the page has no row of (drawn from the core's keys only).
  *
  *   node native/tools/probe-core-tracks.mjs --matches 1000 --units 20 --samples 40 --step 3
  *        [--seconds 10] [--variants ref,core,thin,corefull] [--data <folder>] [--exe ...] [--out ...]
+ *        [--make-only 1] (the file only)
  *
  * The units circle with a zigzag across their path (a period of four samples), so a curve through
  * every step-th sample visibly misses it. Rows are time-major, as a recording's. Windows, the real
@@ -251,15 +252,16 @@ if (games) console.log(`NOTE a game runs (${games}): frame times do not count`);
 const t0 = Date.now();
 const file = makeFile();
 console.log(`file ${file} (${P} units x ${S} samples = ${(P * S) / 1e6}M rows) ready in ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+if (arg('make-only', null) !== null) process.exit(0);
 
 // The DevTools port must be ours: another app on it (another probe) would be driven instead.
 if (await fetch(`http://127.0.0.1:${PORT}/json/version`).then(() => true, () => false)) throw new Error(`port ${PORT} is taken (another app's DevTools): pass --port`);
-// A fresh WebView2 profile: a kept one serves the viewer it cached (its service worker), not this build's.
-rmSync(join(out, `webview2-${PORT}`), { recursive: true, force: true });
+// A fresh WebView2 profile each run: a kept one serves the viewer it cached (its service worker), not this build's.
+const profile = join(out, `webview2-${PORT}-${Date.now()}`);
 const vlog = join(out, 'viewport.log');
 rmSync(vlog, { force: true });
 const app = spawn(exe, [], {
-  env: { ...process.env, WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS: `--remote-debugging-port=${PORT}`, WEBVIEW2_USER_DATA_FOLDER: join(out, `webview2-${PORT}`), HEAT3D_VIEWPORT_LOG: vlog },
+  env: { ...process.env, WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS: `--remote-debugging-port=${PORT}`, WEBVIEW2_USER_DATA_FOLDER: profile, HEAT3D_VIEWPORT_LOG: vlog },
   stdio: ['ignore', 'pipe', 'pipe'],
 });
 let log = '';
@@ -300,7 +302,7 @@ try {
   await cdp.send('DOM.setFileInputFiles', { nodeId, files: [file] });
   const got = {};
   for (const v of variants) {
-    const r = await page.evaluate(variantInPage, { v, rows: P * S, step, mid: ((S - 1) * DT) / 2, secs, frames: v === 'ref' || v === 'core' || v === 'thin' });
+    const r = await page.evaluate(variantInPage, { v, rows: P * S, step, mid: ((S - 1) * DT) / 2, secs, frames: secs > 0 && (v === 'ref' || v === 'core' || v === 'thin') });
     got[v] = r;
     if (r.picture) writeFileSync(join(out, `${matches}x${units}-${v}.png`), png(r.picture.width, r.picture.height, Uint8Array.from(r.picture.rgba)));
     const f = r.frames;
@@ -312,7 +314,8 @@ try {
     const c = ref ? compare(ref.picture, got[v].picture) : null;
     if (!c) continue;
     const gate = v === 'core' || v === 'corefull';
-    const ok = c.mean < 0.5 && c.offShare < 0.01;
+    // The tracks probe's gate: where figures overlap, which lands on top is the GPU threads' order, run to run.
+    const ok = c.mean <= 1 && c.offShare <= 0.01;
     console.log(`  ${v} vs ref: picture mean ${c.mean.toFixed(2)}/255, ${(c.offShare * 100).toFixed(2)} % > 8/255${gate ? (ok ? '  ok' : '  FAIL') : ' (report)'}`);
     if (gate && !ok) failed = true;
   }
@@ -329,6 +332,13 @@ try {
 } finally {
   await browser?.close().catch(() => {});
   app.kill();
+  // Its WebView2 processes too, then the profile (they hold its files a moment).
+  await sleep(2500);
+  spawnSync('powershell', ['-NoProfile', '-Command', `Get-CimInstance Win32_Process | ? { $_.Name -eq 'msedgewebview2.exe' -and $_.CommandLine -like '*${profile.replace(/'/g, "''")}*' } | % { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }`]);
+  await sleep(500);
+  try {
+    rmSync(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 500 });
+  } catch {}
   if (existsSync(vlog)) {
     const l = readFileSync(vlog, 'utf8').trim();
     if (l) console.log(`viewport log:\n${l.split('\n').slice(0, 20).join('\n')}`);
