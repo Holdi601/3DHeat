@@ -9,6 +9,7 @@
 //! - `build` and `dataset`: the viewer's whole dataset built here, held for the
 //!   viewer to take by column and the engine by packed chunk;
 //! - `tiles`: heat as a tile pyramid built out of core, cached on disk by filter hash;
+//! - `tracks`: the GPU tracks' keys over every row (the page's `gpuTracks/store.ts`, ported);
 //! - `service`: the protocol (`heat3d-proto`) over any transport.
 
 pub mod acmi;
@@ -27,3 +28,4 @@ pub mod source;
 pub mod sort;
 pub mod table;
 pub mod tiles;
+pub mod tracks;

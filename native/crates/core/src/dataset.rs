@@ -323,6 +323,21 @@ impl Dataset {
         got.transpose()
     }
 
+    /// Several columns' values at once, under one read of the columns (`tracks::build_for`).
+    pub fn with_views<R>(&self, names: &[&str], f: impl FnOnce(&[Option<View<'_>>]) -> R) -> R {
+        let cols = self.columns.read().unwrap();
+        let views: Vec<Option<View>> = names.iter().map(|n| cols.get(*n).map(|s| s.view())).collect();
+        f(&views)
+    }
+
+    /// Reads a column left in the files, where it is one not read yet.
+    pub fn ensure_column(&self, name: &str) -> Result<()> {
+        if !self.columns.read().unwrap().contains_key(name) && self.is_on_demand(name) {
+            self.read_on_demand(name)?;
+        }
+        Ok(())
+    }
+
     /// The column now lives in `mem` (the viewer took it whole): the core reads it there.
     pub fn adopt_shared(&self, name: &str, mem: Arc<dyn SharedMemory>) {
         let mut cols = self.columns.write().unwrap();

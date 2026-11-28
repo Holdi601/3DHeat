@@ -1,0 +1,28 @@
+[
+  {
+    "name": "lossless",
+    "maxKeys": 16777216,
+    "units": 1,
+    "persons": 18,
+    "events": "Event",
+    "own": [
+      1,
+      0,
+      0
+    ],
+    "roll": "roll"
+  },
+  {
+    "name": "reduced",
+    "maxKeys": 4200,
+    "units": 2.5,
+    "persons": 18,
+    "events": "Event",
+    "own": [
+      1,
+      0,
+      0
+    ],
+    "roll": "roll"
+  }
+]
