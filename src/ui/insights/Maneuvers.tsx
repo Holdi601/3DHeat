@@ -1,23 +1,28 @@
 /**
  * Maneuvers: how the units of each side moved as groups in a match and the
  * maneuvers they made (`src/insights/maneuver`), on a timeline and in a list.
- * A click goes there - the replay at its start, the camera on its place - and
- * draws it in 3D: the groups' ways as arrows, their outlines, the enemy's
- * front. Each opens its numbers, whether it paid off, and its parallels in
- * doctrine and history from the knowledge base. Counted in its own worker
- * when the tab is first opened on a dataset, and again on request.
+ * A click goes there - the replay at its start, the camera fitted to the ways
+ * of everyone in it over its time - and draws it in 3D: each way as an arrow
+ * in its unit's own colour (a group's in its team's), labelled with whose it
+ * is (`ManeuverLabels.tsx`), the groups' outlines, the enemy's front. Each
+ * opens what the kind means, what happened and whether it worked, in plain
+ * words (`maneuverText.ts`), and its parallels in doctrine and history from
+ * the knowledge base. Counted in its own worker when the tab is first opened
+ * on a dataset, and again on request.
  */
 
 import { useEffect, useMemo, useRef } from 'react';
 import { int, num, t, useLang } from '../../i18n';
 import { citeList, KB_BY_ID } from '../../insights/knowledge';
+import type { Paint } from '../../insights/maneuver/lines';
 import { runManeuvers } from '../../insights/maneuver/run';
 import { shownMatch, useManeuvers, type Level } from '../../insights/maneuver/store';
-import { sideColor } from '../../insights/maneuver/lines';
 import type { Maneuver } from '../../insights/maneuver/types';
+import { viewOf } from '../../insights/maneuver/view';
 import { analysisScope } from '../../insights/run';
 import { toggledSelection } from '../../insights/store';
 import type { Engine } from '../../render/engine';
+import { teamBaseColor, teamMemberColor } from '../../render/colors';
 import { useStore } from '../../state/store';
 import type { Dataset } from '../../state/types';
 import { currentScope, scopeKey } from '../../volumes/scope';
@@ -25,18 +30,35 @@ import { Check, Segmented } from '../controls';
 import { useEngine } from '../EngineContext';
 import { SortControl, SortTh } from '../sort/SortControl';
 import { useSort, useSorted } from '../sort/useSort';
+import { clock, happenedOf, isMissileDefence, ownerName, resultOf, sideName, tagOf, titleOf, whoOf } from './maneuverText';
 import './maneuvers.css';
 
-const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
-const css = (c: [number, number, number], a = 1) => `rgba(${Math.round(c[0] * 255)},${Math.round(c[1] * 255)},${Math.round(c[2] * 255)},${a})`;
+export { maneuverName } from './maneuverText';
 
-/** A maneuver's name in the viewer's language, with its variant. */
-export function maneuverName(m: { kind: string; variant?: string }): string {
-  const k = t(`maneuver.kind.${m.kind}`);
-  return m.variant ? `${k} (${t(`maneuver.variant.${m.variant}`)})` : k;
+type Rgb = [number, number, number];
+const GREY: Rgb = [0.9, 0.9, 0.9];
+const css = (c: Rgb, a = 1) => `rgba(${Math.round(c[0] * 255)},${Math.round(c[1] * 255)},${Math.round(c[2] * 255)},${a})`;
+
+/** A person's colour as the viewer draws its figure and trail (`data/tracks.ts`). */
+function personRgb(d: Dataset, p: number): Rgb {
+  const team = d.personTeam ? d.personTeam[p] : 0;
+  const slot = d.personSlot ? d.personSlot[p] : p;
+  const size = d.teamSizes ? d.teamSizes[team] : d.personLabels.length;
+  return teamMemberColor(team, slot, size);
 }
 
-/** Go to a maneuver: the replay in its match at its start, the camera on its place. */
+const teamRgb = (team: number): Rgb => (team >= 0 ? teamBaseColor(team) : GREY);
+
+/** The viewer's colours and names for the data: a unit's way in its own colour, a group's in its team's. */
+export function paintFor(d: Dataset): Paint {
+  return {
+    owner: (o) => (o.unit >= 0 && o.unit < d.personLabels.length ? personRgb(d, o.unit) : teamRgb(o.team)),
+    team: teamRgb,
+    name: (o) => ownerName(d, o),
+  };
+}
+
+/** Go to a maneuver: the replay in its match at its start, the camera on everyone in it. */
 let timer = 0;
 function goTo(m: Maneuver, start: number, session: number, d: Dataset, engine: Engine | null): void {
   const st = useStore.getState();
@@ -47,9 +69,12 @@ function goTo(m: Maneuver, start: number, session: number, d: Dataset, engine: E
     return;
   }
   if (session >= 0 && d.sessionId && st.team.session !== session) st.patchTeam({ session });
+  // The replay at its start, still, so the reader presses play to watch it.
+  st.patchTimeline({ mode: 'play', playing: false });
   st.seek(start + m.t0);
   if (engine) {
-    engine.frameAround(m.place.x, m.place.y, m.place.z, Math.max(m.place.radius * 1.8, 1));
+    const v = viewOf(m, d.entitySize ? d.entitySize / 0.8 : 1);
+    engine.frameAround(v.x, v.y, v.z, v.r);
     engine.invalidate(2);
   }
 }
@@ -90,6 +115,10 @@ export function Maneuvers() {
   };
 
   const dsId = key.split('|')[0];
+  // The viewer's colours and the units' names, for the 3D ways and their labels.
+  useEffect(() => {
+    if (dataset) useManeuvers.getState().set({ paint: paintFor(dataset) });
+  }, [dataset]);
   useEffect(() => {
     const cur = useManeuvers.getState();
     if (cur.key && cur.key.split('|')[0] !== dsId) cur.set({ report: null, key: null, selected: null });
@@ -110,8 +139,8 @@ export function Maneuvers() {
     [
       { id: 'importance', label: t('ui.sort.importance'), key: (m) => m.confidence, kind: 'number' },
       { id: 'time', label: t('ui.sort.time'), key: (m) => m.t0, kind: 'number', dir: 'asc' },
-      { id: 'kind', label: t('ui.sort.kind'), key: (m) => maneuverName(m) },
-      { id: 'team', label: t('ui.sort.team'), key: (m) => dataset?.teamLabels[m.team] ?? null },
+      { id: 'kind', label: t('ui.sort.kind'), key: (m) => titleOf(m) },
+      { id: 'team', label: t('ui.sort.team'), key: (m) => (dataset ? sideName(dataset.teamLabels, m.team) : null) },
     ],
     'importance',
   );
@@ -165,18 +194,17 @@ export function Maneuvers() {
       )}
       {match && (
         <>
-          <div className="hint">
-            {t('maneuver.summary', { n: int(list.length), groups: int(match.groups.length), ms: int(match.ms) })}
-          </div>
+          <div className="hint mv-hint">{t('mview.summary', { n: list.length })}</div>
           {list.length === 0 ? (
             <div className="hint">{t('maneuver.none')}</div>
           ) : (
             <>
+              <div className="hint mv-hint">{t('mview.hint')}</div>
               <Timeline list={list} duration={match.duration} teams={dataset.teamLabels} selected={st.selected} onPick={pick} />
               {list.length > 1 && <SortControl sort={sort} />}
               <ol className="ins-list mv-list">
                 {sorted.map((m) => (
-                  <ManeuverRow key={m.id} m={m} teams={dataset.teamLabels} open={st.selected === m.id} onPick={() => (toggledSelection(st.selected, m.id) === null ? st.set({ selected: null }) : pick(m))} />
+                  <ManeuverRow key={m.id} m={m} ds={dataset} open={st.selected === m.id} onPick={() => (toggledSelection(st.selected, m.id) === null ? st.set({ selected: null }) : pick(m))} />
                 ))}
               </ol>
               <PaidTable list={list} teams={dataset.teamLabels} />
@@ -221,12 +249,12 @@ function Timeline({ list, duration, teams, selected, onPick }: { list: Maneuver[
             width={Math.max(4, x(m.t1) - x(m.t0))}
             height={lane - 4}
             rx={2}
-            fill={css(sideColor(m.team, teams[m.team]), on ? 1 : 0.35 + 0.5 * m.confidence)}
+            fill={css(teamRgb(m.team), on ? 1 : 0.35 + 0.5 * m.confidence)}
             stroke={on ? 'var(--text, #fff)' : 'none'}
             onClick={() => onPick(m)}
             style={{ cursor: 'pointer' }}
           >
-            <title>{`${clock(m.t0)} ${maneuverName(m)} - ${teams[m.team] ?? '—'}`}</title>
+            <title>{`${clock(m.t0)} ${titleOf(m)} - ${sideName(teams, m.team)}`}</title>
           </rect>
         );
       })}
@@ -234,49 +262,49 @@ function Timeline({ list, duration, teams, selected, onPick }: { list: Maneuver[
   );
 }
 
-function ManeuverRow({ m, teams, open, onPick }: { m: Maneuver; teams: string[]; open: boolean; onPick: () => void }) {
-  const side = teams[m.team] ?? '—';
-  const paid = m.outcome.paid === 1 ? 'yes' : m.outcome.paid === 0 ? 'no' : 'unknown';
+function ManeuverRow({ m, ds, open, onPick }: { m: Maneuver; ds: Dataset; open: boolean; onPick: () => void }) {
+  const tag = tagOf(m);
+  const one = m.units.length === 1 ? m.units[0] : -1;
   return (
     <li className={`ins-item${open ? ' open' : ''}`}>
       <button className="ins-head" onClick={onPick} title={t('maneuver.showTitle')}>
-        <span className="mv-dot" style={{ background: css(sideColor(m.team, side)) }} aria-hidden />
+        <span className="mv-dot" style={{ background: css(one >= 0 && one < ds.personLabels.length ? personRgb(ds, one) : teamRgb(m.team)) }} aria-hidden />
         <span className="ins-text">
-          <b>{clock(m.t0)}</b> {maneuverName(m)} <span className="mv-dim">{side}</span>
+          <b>{clock(m.t0)}</b> {titleOf(m)}
+          <span className="mv-who">{whoOf(ds, m)}</span>
         </span>
         <span className="ins-tags">
           <span className={`ins-conf ${m.level}`}>{t(`maneuver.level.${m.level}`)}</span>
-          <span className={`mv-paid ${paid}`}>{t(`maneuver.paid.${paid}`)}</span>
+          <span className={`mv-tag ${tag}`}>{t(`mview.tag.${tag}`)}</span>
         </span>
       </button>
-      {open && <Details m={m} teams={teams} />}
+      {open && <Details m={m} ds={ds} />}
     </li>
   );
 }
 
-function Details({ m, teams }: { m: Maneuver; teams: string[] }) {
-  const o = m.outcome;
+function Details({ m, ds }: { m: Maneuver; ds: Dataset }) {
   const entries = m.kb.map((id) => KB_BY_ID.get(id)).filter((e): e is NonNullable<typeof e> => !!e);
   return (
     <div className="ins-details">
-      <div>
-        {t('maneuver.outcome', { kills: int(o.kills), losses: int(o.losses), secs: int(o.secs), exchange: num(o.exchange, 2), baseline: num(o.baseline, 2) })}
-        {o.captures > 0 && ` ${t('maneuver.captures', { n: int(o.captures) })}`}
+      <div className="mv-sec">
+        <b>{t('mview.what')}</b>
+        {t(`mview.mean.${m.kind}`)}
       </div>
-      <div className="hint">
-        {t('maneuver.against', { side: m.against >= 0 ? (teams[m.against] ?? '—') : '—', units: int(m.units.length), conf: num(m.confidence * 100, 0) })}
-      </div>
-      <dl>
-        {Object.entries(m.evidence).map(([k, v]) => (
-          <div key={k}>
-            <dt>{k}</dt>
-            <dd>{typeof v === 'number' ? (Number.isInteger(v) ? int(v) : num(v, 2)) : v}</dd>
-          </div>
+      <div className="mv-sec">
+        <b>{t('mview.happened')}</b>
+        {happenedOf(ds, m).map((line, i) => (
+          <div key={i}>{line}</div>
         ))}
-      </dl>
+      </div>
+      <div className="mv-sec">
+        <b>{t('mview.result')}</b>
+        {resultOf(m)}
+      </div>
+      <div className="hint">{t('mview.sure', { pct: `${num(m.confidence * 100, 0)}%` })}</div>
       {entries.length > 0 && (
-        <div className="mv-kb">
-          <div className="hint">{t('maneuver.parallels')}</div>
+        <details className="mv-kb">
+          <summary>{t('mview.more')}</summary>
           <ul>
             {entries.map((e) => (
               <li key={e.id}>
@@ -286,13 +314,13 @@ function Details({ m, teams }: { m: Maneuver; teams: string[] }) {
               </li>
             ))}
           </ul>
-        </div>
+        </details>
       )}
     </div>
   );
 }
 
-/** How often each kind paid off in this match, by side. */
+/** How often each kind worked in this match, by side; a missile defence the data cannot show was meant is not judged. */
 type PaidRow = { kind: Maneuver['kind']; team: number; n: number; paid: number; judged: number };
 
 function PaidTable({ list, teams }: { list: Maneuver[]; teams: string[] }) {
@@ -303,6 +331,7 @@ function PaidTable({ list, teams }: { list: Maneuver[]; teams: string[] }) {
       let r = rows.get(k);
       if (!r) rows.set(k, (r = { kind: m.kind, team: m.team, n: 0, paid: 0, judged: 0 }));
       r.n++;
+      if (isMissileDefence(m) && m.intent !== 'shown') continue;
       if (m.outcome.paid !== null) r.judged++;
       if (m.outcome.paid === 1) r.paid++;
     }
@@ -312,9 +341,9 @@ function PaidTable({ list, teams }: { list: Maneuver[]; teams: string[] }) {
     'maneuvers.paid',
     [
       { id: 'kind', label: t('ui.sort.kind'), key: (r) => t(`maneuver.kind.${r.kind}`) },
-      { id: 'side', label: t('maneuver.col.side'), key: (r) => teams[r.team] ?? null },
+      { id: 'side', label: t('maneuver.col.side'), key: (r) => sideName(teams, r.team) },
       { id: 'count', label: t('ui.sort.count'), key: (r) => r.n, kind: 'number' },
-      { id: 'paid', label: t('maneuver.col.paid'), key: (r) => (r.judged ? r.paid / r.judged : null), kind: 'number' },
+      { id: 'paid', label: t('mview.col.worked'), key: (r) => (r.judged ? r.paid / r.judged : null), kind: 'number' },
     ],
     'count',
   );
@@ -326,19 +355,18 @@ function PaidTable({ list, teams }: { list: Maneuver[]; teams: string[] }) {
           <SortTh sort={sort} id="kind">{t('maneuver.col.kind')}</SortTh>
           <SortTh sort={sort} id="side">{t('maneuver.col.side')}</SortTh>
           <SortTh sort={sort} id="count">{t('maneuver.col.made')}</SortTh>
-          <SortTh sort={sort} id="paid">{t('maneuver.col.paid')}</SortTh>
+          <SortTh sort={sort} id="paid">{t('mview.col.worked')}</SortTh>
         </tr>
       </thead>
       <tbody>
-        {rows
-          .map((r) => (
-            <tr key={`${r.kind}|${r.team}`}>
-              <td>{t(`maneuver.kind.${r.kind}`)}</td>
-              <td>{teams[r.team] ?? '—'}</td>
-              <td>{int(r.n)}</td>
-              <td>{r.judged ? `${int(r.paid)}/${int(r.judged)}` : '—'}</td>
-            </tr>
-          ))}
+        {rows.map((r) => (
+          <tr key={`${r.kind}|${r.team}`}>
+            <td>{t(`maneuver.kind.${r.kind}`)}</td>
+            <td>{sideName(teams, r.team)}</td>
+            <td>{int(r.n)}</td>
+            <td>{r.judged ? `${int(r.paid)}/${int(r.judged)}` : '—'}</td>
+          </tr>
+        ))}
       </tbody>
     </table>
   );

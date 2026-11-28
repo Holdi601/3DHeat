@@ -65,6 +65,15 @@ export interface MatchTracks {
   events: MEvent[];
   /** Engagement range by domain (world units) to use instead of measuring it: a null model keeps its match's. */
   ranges?: number[];
+  /**
+   * The weapons the data follows in flight (missiles, rockets: VEHICLE_CLASSES
+   * `weapon` with position rows), `dom` -1. Where a match has any, a missile
+   * defence is judged against the missiles seen flying at the aircraft, not
+   * against launches alone.
+   */
+  weapons?: UnitTrack[];
+  /** Team slots that are no side (unassigned: neutral map objects): never a side a maneuver is made against. */
+  sideless?: number[];
 }
 
 export const MANEUVER_KINDS = [
@@ -121,8 +130,22 @@ export interface ManeuverOutcome {
   baseline: number;
   /** Seconds it took. */
   secs: number;
-  /** 1 paid off, 0 did not, null cannot tell (nothing happened). */
+  /** 1 worked (took out more than it lost), 0 did not (lost more), null even or nothing happened. */
   paid: 0 | 1 | null;
+  /** Seconds from `from` until the first of its own units was lost, where one was. */
+  lostAfter?: number;
+  /** The time the kills and losses are counted over, seconds into the match: while it ran and a while after. */
+  from?: number;
+  until?: number;
+}
+
+/** Whose way a path of `Maneuver.paths` is: one unit (its track id) or a group (`unit` -1) of `n` units of `team`. */
+export interface PathOwner {
+  unit: number;
+  team: number;
+  n: number;
+  /** A weapon's flight (the missile), not a unit's way. */
+  weapon?: boolean;
 }
 
 export interface Maneuver {
@@ -147,6 +170,17 @@ export interface Maneuver {
   place: { x: number; y: number; z: number; radius: number };
   /** The movement arrows: each a path of points (a group's centroid along its way). */
   paths: [number, number, number][][];
+  /** Beside `paths`: whose way each is. */
+  owners?: PathOwner[];
+  /** The enemy units it answered or was made against, where there are named ones (track ids): the missile's shooter. */
+  foes?: number[];
+  /**
+   * Whether the data shows it was on purpose, for the kinds that claim a
+   * purpose (missile defence): `shown` a missile was seen flying at the
+   * aircraft while it held the angle; `unproven` the data cannot tell (no
+   * missile followed in flight), so it may have been by chance.
+   */
+  intent?: 'shown' | 'unproven';
   /** Outlines of the groups at the key moment (closed rings, ground x, z). */
   outlines: [number, number][][];
   /** The enemy's front at the key moment (a segment, ground x, z), where the kind has one. */

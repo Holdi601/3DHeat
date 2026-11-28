@@ -1,8 +1,8 @@
 /**
  * Maneuvers over many matches: each match's summary (`mass/summarize.ts`)
  * carries a small `maneuvers` section - per kind and side, how many were
- * made at medium confidence or more, how many paid off and how many did not,
- * and the kills and losses in them - and the mass panel adds those up per
+ * made at medium confidence or more, how many worked (took out more than
+ * they lost) and how many did not, and the kills and losses in them - and the mass panel adds those up per
  * map, mode and side: how often each maneuver is made and how often it pays.
  */
 
@@ -22,8 +22,11 @@ export function maneuverSection(m: ManeuverMatch | null): ManeuverSection {
     let r = rows.get(key);
     if (!r) rows.set(key, (r = [x.kind, x.team, 0, 0, 0, 0, 0]));
     r[2]++;
-    if (x.outcome.paid === 1) r[3]++;
-    else if (x.outcome.paid === 0) r[4]++;
+    // A missile defence the data cannot show was meant is counted, not judged.
+    if (x.intent !== 'unproven') {
+      if (x.outcome.paid === 1) r[3]++;
+      else if (x.outcome.paid === 0) r[4]++;
+    }
     r[5] += x.outcome.kills;
     r[6] += x.outcome.losses;
   }

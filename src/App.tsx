@@ -28,6 +28,7 @@ import { useMatchStore } from './state/matchStore';
 import { loadObjectiveFiles } from './state/objectivesStore';
 import { ObjectivesPanel } from './ui/match/ObjectivesPanel';
 import { ObjectiveLabels } from './ui/match/ObjectiveLabels';
+import { ManeuverLabels } from './ui/insights/ManeuverLabels';
 import { MatchPanel } from './ui/match/MatchPanel';
 import { BoardBar, TacticsPanel } from './ui/tactics/TacticsPanel';
 import { LayoutReference } from './ui/tactics/LayoutReference';
@@ -738,6 +739,7 @@ export function App() {
               ) : (
                 <>
               <ObjectiveLabels />
+              <ManeuverLabels />
               <HeatLabels />
               <ReplayOverlay />
               <CasterCinema />

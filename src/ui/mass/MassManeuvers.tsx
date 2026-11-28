@@ -1,7 +1,7 @@
 /**
  * Mass analysis, Maneuvers: how often each maneuver of the movement analysis
  * is made per map, mode and side over the matches the filter keeps, and how
- * often it paid off (Wilson ~95% interval). A click loads the matches it was
+ * often it worked - took out more than it lost (Wilson ~95% interval). A click loads the matches it was
  * made in. Counts come from each match's summary; summaries written before
  * the movement analysis have none (the hint says how many).
  */
@@ -47,7 +47,7 @@ export function MassManeuvers() {
       { id: 'side', label: t('maneuver.col.side'), key: (r) => r.side },
       { id: 'count', label: t('ui.sort.count'), key: (r) => r.n, kind: 'number' },
       { id: 'perMatch', label: t('maneuver.col.perMatch'), key: (r) => (r.of ? r.n / r.of : null), kind: 'number' },
-      { id: 'paid', label: t('maneuver.col.paid'), key: (r) => r.rate, kind: 'number' },
+      { id: 'paid', label: t('mview.col.worked'), key: (r) => r.rate, kind: 'number' },
       { id: 'kd', label: t('maneuver.col.kd'), key: (r) => (r.losses ? r.kills / r.losses : r.kills ? Infinity : null), kind: 'number' },
     ],
     'count',
@@ -71,7 +71,7 @@ export function MassManeuvers() {
             <SortTh sort={sort} id="side">{t('maneuver.col.side')}</SortTh>
             <SortTh sort={sort} id="count">{t('maneuver.col.made')}</SortTh>
             <SortTh sort={sort} id="perMatch">{t('maneuver.col.perMatch')}</SortTh>
-            <SortTh sort={sort} id="paid">{t('maneuver.col.paid')}</SortTh>
+            <SortTh sort={sort} id="paid">{t('mview.col.worked')}</SortTh>
             <SortTh sort={sort} id="kd">{t('maneuver.col.kd')}</SortTh>
           </tr>
         </thead>

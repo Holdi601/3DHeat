@@ -9,11 +9,32 @@
  */
 
 import { create } from 'zustand';
-import type { Maneuver, ManeuverKind } from './types';
+import type { Maneuver, ManeuverKind, PathOwner } from './types';
 
 type Lines = { data: Float32Array; count: number } | null;
+type Rgb = [number, number, number];
 
-export const useManeuverLines = create<{ lines: Lines }>(() => ({ lines: null }));
+/** A word over the 3D view: whose a drawn way is, at its end, in its colour. */
+export interface ManeuverTag {
+  x: number;
+  y: number;
+  z: number;
+  text: string;
+  rgb: Rgb;
+}
+
+export const useManeuverLines = create<{ lines: Lines; tags: ManeuverTag[] }>(() => ({ lines: null, tags: [] }));
+
+/**
+ * How the viewer colours and names what the maneuvers draw: a unit's way in
+ * that unit's own colour (as its figure and trail), a group's in its team's,
+ * and the names for the labels. Given by the panel, which knows the data.
+ */
+export interface Paint {
+  owner(o: PathOwner): Rgb;
+  team(team: number): Rgb;
+  name(o: PathOwner): string;
+}
 
 const SIDES: [number, number, number][] = [
   [0.35, 0.65, 1],
@@ -48,8 +69,31 @@ const ENEMY_OUTLINE: Partial<Record<ManeuverKind, number[]>> = {
   crossingT: [1],
 };
 
+/** The side colours alone, where no paint is given (a narrator, a test). */
+export function plainPaint(teams: string[] = []): Paint {
+  return { owner: (o) => sideColor(o.team, teams[o.team]), team: (t) => sideColor(t, teams[t]), name: () => '' };
+}
+
+/** Whose path `i` of a maneuver is: its owner, else the maneuver's own side. */
+const ownerOf = (m: Maneuver, i: number): PathOwner => m.owners?.[i] ?? { unit: -1, team: m.team, n: m.units.length };
+
+/** The labels of the picked maneuver: each drawn way's owner at the way's end. */
+export function maneuverTags(m: Maneuver | undefined, paint: Paint): ManeuverTag[] {
+  if (!m) return [];
+  const out: ManeuverTag[] = [];
+  m.paths.forEach((p, i) => {
+    if (p.length < 2) return;
+    const o = ownerOf(m, i);
+    const text = paint.name(o);
+    if (!text) return;
+    const e = p[p.length - 1];
+    out.push({ x: e[0], y: e[1], z: e[2], text, rgb: paint.owner(o) });
+  });
+  return out;
+}
+
 /** The lines of maneuvers, `focus` full and the rest at `faint`. */
-export function maneuverLines(list: Maneuver[], focus: string | null, teams: string[] = [], faint = 0.3): Lines {
+export function maneuverLines(list: Maneuver[], focus: string | null, paint: Paint = plainPaint(), faint = 0.3): Lines {
   const out: number[] = [];
   const seg = (a: [number, number, number], b: [number, number, number], c: [number, number, number], alpha: number) => out.push(a[0], a[1], a[2], c[0], c[1], c[2], alpha, b[0], b[1], b[2], c[0], c[1], c[2], alpha);
   // The others faint, each with its first four ways thinned to 12 points and no outlines, so the
@@ -59,13 +103,14 @@ export function maneuverLines(list: Maneuver[], focus: string | null, teams: str
   for (const m of picked ? [picked, ...rest] : rest) {
     const full = m === picked;
     const alpha = focus === null || focus === m.id ? 0.95 : faint;
-    const own = sideColor(m.team, teams[m.team]);
-    const lift = Math.max(m.place.radius * 0.01, 0.5);
-    for (const p0 of full ? m.paths : m.paths.slice(0, 4)) {
+    const own = paint.team(m.team);
+    const lift = 0.5;
+    (full ? m.paths : m.paths.slice(0, 4)).forEach((p0, pi) => {
+      const col = paint.owner(ownerOf(m, pi));
       const p = full || p0.length <= 12 ? p0 : p0.filter((_, i) => i % Math.ceil(p0.length / 12) === 0 || i === p0.length - 1);
       let len = 0;
       for (let i = 1; i < p.length; i++) {
-        seg([p[i - 1][0], p[i - 1][1] + lift, p[i - 1][2]], [p[i][0], p[i][1] + lift, p[i][2]], own, alpha);
+        seg([p[i - 1][0], p[i - 1][1] + lift, p[i - 1][2]], [p[i][0], p[i][1] + lift, p[i][2]], col, alpha);
         len += Math.hypot(p[i][0] - p[i - 1][0], p[i][2] - p[i - 1][2]);
       }
       // The arrowhead: two barbs at the end, a twelfth of the way long.
@@ -81,13 +126,15 @@ export function maneuverLines(list: Maneuver[], focus: string | null, teams: str
           const sn = Math.sin((s * 25 * Math.PI) / 180);
           const bx = -(ux * c - uz * sn) * h;
           const bz = -(ux * sn + uz * c) * h;
-          seg([b[0], b[1] + lift, b[2]], [b[0] + bx, b[1] + lift, b[2] + bz], own, alpha);
+          seg([b[0], b[1] + lift, b[2]], [b[0] + bx, b[1] + lift, b[2] + bz], col, alpha);
         }
       }
-    }
+      // A short post where it starts, so the start is found from any side.
+      if (full && p.length >= 2) seg([p[0][0], p[0][1] + lift, p[0][2]], [p[0][0], p[0][1] + lift + Math.max(len / 20, 2), p[0][2]], col, alpha);
+    });
     const enemy = ENEMY_OUTLINE[m.kind] ?? [];
     (full ? m.outlines : []).forEach((ring, i) => {
-      const col = enemy.includes(i) ? sideColor(m.against, teams[m.against]) : own;
+      const col = enemy.includes(i) ? paint.team(m.against) : own;
       const y = m.place.y + lift;
       for (let k = 0; k < ring.length; k++) {
         const a = ring[k];
@@ -96,8 +143,6 @@ export function maneuverLines(list: Maneuver[], focus: string | null, teams: str
       }
     });
     if (m.front) seg([m.front[0][0], m.place.y + lift, m.front[0][1]], [m.front[1][0], m.place.y + lift, m.front[1][1]], FRONT, alpha);
-    // A mast at the place, so a maneuver far below or above the eye is found.
-    seg([m.place.x, m.place.y, m.place.z], [m.place.x, m.place.y + Math.max(m.place.radius * 0.25, lift * 10), m.place.z], own, alpha);
   }
   return out.length ? { data: Float32Array.from(out), count: out.length / 7 } : null;
 }

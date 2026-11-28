@@ -7,6 +7,8 @@
  */
 
 import { EVENT_KINDS } from '../../data/canonical';
+import { deathsOf } from '../../data/deaths';
+import { isUnassignedLabel } from '../../render/colors';
 import type { Dataset } from '../../state/types';
 import type { CompareScope } from '../../volumes/compare';
 import { chunkAt, COMPARE_CHUNK, prepareCompare } from '../../volumes/compareRun';
@@ -36,12 +38,16 @@ function shooterOf(ds: Dataset): { col: Uint32Array; map: Int32Array } | null {
 export function maneuverOptions(ds: Dataset): { opt: ManeuverOptions; shooter: ReturnType<typeof shooterOf> } {
   const ev = (k: string) => EVENT_KINDS.indexOf(k as (typeof EVENT_KINDS)[number]);
   const shooter = shooterOf(ds);
+  // When each person is dead: a wreck's rows are not movement, and its death rows are one death.
+  const d = deathsOf(ds);
   return {
     opt: {
       // Units in a metre, as the replay reckons it (`replayData.unitsPerMetre`).
       upm: ds.entitySize ? ds.entitySize / 0.8 : 1,
       events: { kill: ev('kill'), death: ev('death'), destroyed: ev('destroyed'), crash: ev('crash'), fire: ev('fire'), launch: ev('launch'), hit: ev('hit'), capture: ev('capture') },
       shooterMap: shooter?.map,
+      ...(d.any ? { dead: { start: d.start, from: d.from, to: d.to } } : {}),
+      sideless: ds.teamLabels.flatMap((l, i) => (isUnassignedLabel(String(l)) ? [i] : [])),
     },
     shooter,
   };

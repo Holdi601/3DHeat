@@ -11,6 +11,10 @@ import { AIR, CLASS_DOMAIN, GROUND, INF, type EvKind, type MatchTracks, type MEv
 export const MIN_GAP = 1;
 /** Samples kept at most over everything (beyond it the gap doubles). */
 const MAX_SAMPLES = 6_000_000;
+/** Seconds between two kept samples of a weapon in flight: a missile's few seconds of flight in enough points to tell where it flies. */
+export const WEAPON_GAP = 0.25;
+/** Weapon samples kept at most: past it no more weapons are followed. */
+const MAX_WEAPON_SAMPLES = 1_000_000;
 
 class Grow {
   a: Float64Array;
@@ -44,6 +48,8 @@ export class ManeuverCollector {
   private t0 = new Map<number, number>();
   private samples = 0;
   private gap = MIN_GAP;
+  private weapons = new Map<number, Acc>();
+  private weaponSamples = 0;
 
   /** Match starts given by the data (session -> data seconds), where known. */
   private given = new Map<number, number>();
@@ -83,6 +89,22 @@ export class ManeuverCollector {
     if (++this.samples > MAX_SAMPLES) this.thin();
   }
 
+  /** A sample of weapon `id` in flight (a missile, a rocket): kept apart from the units. */
+  weapon(id: number, session: number, team: number, t: number, x: number, y: number, z: number): void {
+    if (!(t === t && x === x && z === z) || this.weaponSamples >= MAX_WEAPON_SAMPLES) return;
+    const k = this.key(id, session);
+    let a = this.weapons.get(k);
+    if (!a) this.weapons.set(k, (a = { id, session, team, cls: 13, s: new Grow(16), last: -Infinity }));
+    if (team >= 0) a.team = team;
+    if (t - a.last < WEAPON_GAP || t < a.last) return;
+    a.last = t;
+    a.s.push(t);
+    a.s.push(x);
+    a.s.push(y === y ? y : 0);
+    a.s.push(z);
+    this.weaponSamples++;
+  }
+
   /** An event: its doer (`unit`, -1 unknown) and team, the target's class (-1 unknown). */
   event(kind: EvKind, unit: number, session: number, team: number, t: number, x: number, y: number, z: number, tcls = -1): void {
     if (!(t === t)) return;
@@ -112,29 +134,79 @@ export class ManeuverCollector {
   /** Every match's tracks and events. */
   finish(teams: number): MatchTracks[] {
     const by = new Map<number, UnitTrack[]>();
-    for (const a of this.acc.values()) {
+    const tracks = new Map<number, UnitTrack>();
+    for (const [k, a] of this.acc) {
       const n = a.s.n / 4;
       if (n < 2) continue;
       const dom = a.cls >= 0 && a.cls < CLASS_DOMAIN.length ? CLASS_DOMAIN[a.cls] : domainBySpeed(a.s, n, this.upm);
       if (dom < 0) continue;
-      const tr: UnitTrack = { id: a.id, team: a.team, dom, cls: a.cls, t: new Float64Array(n), x: new Float32Array(n), y: new Float32Array(n), z: new Float32Array(n) };
-      for (let i = 0; i < n; i++) {
-        tr.t[i] = a.s.a[i * 4];
-        tr.x[i] = a.s.a[i * 4 + 1];
-        tr.y[i] = a.s.a[i * 4 + 2];
-        tr.z[i] = a.s.a[i * 4 + 3];
-      }
+      const tr = trackOf(a, dom);
+      tracks.set(k, tr);
       let l = by.get(a.session);
       if (!l) by.set(a.session, (l = []));
       l.push(tr);
     }
+    const weapons = new Map<number, UnitTrack[]>();
+    for (const a of this.weapons.values()) {
+      if (a.s.n / 4 < 2) continue;
+      let l = weapons.get(a.session);
+      if (!l) weapons.set(a.session, (l = []));
+      l.push(trackOf(a, -1));
+    }
     const out: MatchTracks[] = [];
     for (const [session, units] of by) {
-      const events = (this.events.get(session) ?? []).sort((a, b) => a.t - b.t);
-      out.push({ session, t0: this.given.get(session) ?? this.t0.get(session) ?? 0, upm: this.upm, teams, units: units.sort((a, b) => a.id - b.id), events });
+      const events = oneDeathALife((this.events.get(session) ?? []).sort((a, b) => a.t - b.t), (id) => tracks.get(this.key(id, session)));
+      const w = weapons.get(session);
+      out.push({ session, t0: this.given.get(session) ?? this.t0.get(session) ?? 0, upm: this.upm, teams, units: units.sort((a, b) => a.id - b.id), events, ...(w ? { weapons: w.sort((a, b) => a.t[0] - b.t[0]) } : {}) });
     }
     return out.sort((a, b) => a.session - b.session);
   }
+}
+
+function trackOf(a: Acc, dom: number): UnitTrack {
+  const n = a.s.n / 4;
+  const tr: UnitTrack = { id: a.id, team: a.team, dom, cls: a.cls, t: new Float64Array(n), x: new Float32Array(n), y: new Float32Array(n), z: new Float32Array(n) };
+  for (let i = 0; i < n; i++) {
+    tr.t[i] = a.s.a[i * 4];
+    tr.x[i] = a.s.a[i * 4 + 1];
+    tr.y[i] = a.s.a[i * 4 + 2];
+    tr.z[i] = a.s.a[i * 4 + 3];
+  }
+  return tr;
+}
+
+/**
+ * One death a life: a unit's death rows after its first count only once it
+ * has lived again - a sample of it between the two. A game that writes a
+ * destruction as several rows (War Thunder: one `death` and a `dead` row for
+ * each piece of the falling wreck, all read as deaths) loses each unit once,
+ * not five times; a respawned unit's next death still counts. Events in time
+ * order; the others kept as they are.
+ */
+export function oneDeathALife(events: MEvent[], track: (id: number) => UnitTrack | undefined): MEvent[] {
+  const last = new Map<number, number>();
+  return events.filter((e) => {
+    if (e.kind !== 'death' || e.unit < 0) return true;
+    const prev = last.get(e.unit);
+    if (prev !== undefined) {
+      const tr = track(e.unit);
+      // Alive again in between: a sample after the last death (a moment past it) and before this one.
+      let lived = false;
+      if (tr) {
+        let lo = 0;
+        let hi = tr.t.length;
+        while (lo < hi) {
+          const mid = (lo + hi) >> 1;
+          if (tr.t[mid] <= prev + 0.5) lo = mid + 1;
+          else hi = mid;
+        }
+        lived = lo < tr.t.length && tr.t[lo] < e.t;
+      }
+      if (!lived) return false;
+    }
+    last.set(e.unit, e.t);
+    return true;
+  });
 }
 
 /**

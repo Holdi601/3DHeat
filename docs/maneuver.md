@@ -9,10 +9,10 @@ nav_order: 4
 **Insights → Maneuvers** follows how the units of each side move *as groups*
 and names the maneuvers they make - a flank, a pincer, a breakthrough, an
 ambush, a withdrawal, a missile defence, crossing the T - each with how sure
-it is, the numbers behind it, whether it paid off, and its parallels in
-doctrine and history. **Mass analysis → Maneuvers** counts them over
+it is, what happened, whether it worked, and its parallels in doctrine and
+history. **Mass analysis → Maneuvers** counts them over
 thousands of matches: how often each is made per map, mode and side, and how
-often it pays.
+often it works.
 
 Everything is worked out in your browser, in its own worker
 (`src/insights/maneuver`); a match of a few hundred units takes 10-500 ms,
@@ -24,20 +24,27 @@ a two-hour air war with thousands of objects about a second.
   again** after changing filters.
 - **Sure / Likely / Possible** sets the confidence listed (Likely by default).
 - The **timeline** has a lane per side and a bar per maneuver; the **list**
-  below it the same, by time. A click switches to the replay at its start,
-  flies the camera there and draws it in 3D: each group's way as an arrow (a
-  pincer's two arms are its arcs), the groups' outlines at the key moment
-  (the enemy's in its side's colour), the enemy's front as a white line.
+  below it the same, each with who made it (a unit by its name and vehicle,
+  a group by its side and size). A click switches to the replay, paused at
+  its start, fits the camera to the ways of the units that made it over its
+  time (with the enemy's and the missile's where they come near; a shooter
+  far off is named, not fitted) and draws it in 3D: each unit's way as an
+  arrow in that unit's own colour, a group's in its team's, each labelled
+  with whose it is (a pincer's two arms are its arcs), the groups' outlines
+  at the key moment (the enemy's in its side's colour), the enemy's front
+  as a white line.
   **Draw all in 3D** adds the match's other maneuvers, faint. The lines go
   to the graphics card once, when the pick changes, not every frame: with
   480 maneuvers drawn during playback the frame times on a real GPU (WebGL2
   and WebGPU, p99 18.0-18.5 ms, max 19.5-20.8 ms) match those without.
-- An opened maneuver shows its outcome (kills and losses of the units that
-  made it, while it ran and just after, against the side's own exchange over
-  the match), its evidence, and the knowledge base's entries for it - the
-  doctrine and the historical parallels (Cannae for a pincer, Sedan 1940 for
-  a breakthrough, Tsushima for crossing the T, Operation Bolo for a feint...).
-- The small table at the end: per kind and side, made and paid off.
+- An opened maneuver says in plain words what the kind is, what happened,
+  and whether it worked - "Worked: from 0:24 to 2:02 they took out 5 and
+  lost 3", "Didn't work: shot down 37 s later" - with the time the kills and
+  losses were counted over, and, folded away, the knowledge base's entries
+  for it: the doctrine and the historical parallels (Cannae for a pincer,
+  Sedan 1940 for a breakthrough, Tsushima for crossing the T, Operation
+  Bolo for a feint...).
+- The small table at the end: per kind and side, made and how many worked.
 
 ![A pincer on the synthetic demo match: both arms' arrows, the enemy body and its front](assets/img/en/maneuvers.webp)
 
@@ -81,7 +88,7 @@ of unit (infantry a third of the ground's).
 | Screen | one or two units moving ahead of a body of three or more, meeting the enemy first |
 | Interior lines | a side's groups close together between the other's, its units shifting between them |
 | Tempo | a side answering contact (turn, change of speed, first shot) 1.5 times quicker, Mann-Whitney p under 0.05 |
-| Crank, notch, drag, pump | the target of a missile launch turns the shooter to 35-70°, 75-105°, past 140°, or drags and turns back |
+| Crank, notch, drag, pump | an aircraft a missile flies at holds the shooter at 40-70° for 8 s, 75-105° for 6 s, past 140° for 8 s, or drags and turns back; on purpose only when held while the missile was in the air (below) |
 | Air pincer, wall, lead-trail, grinder | a pair splitting onto one enemy; three abreast at the enemy; an element 5-20 km behind another; two orbiting one point apart |
 | Combat air patrol | orbits round a station for three minutes |
 | Energy / angles fight | in a close fight - headings 30° apart, each holding the other on its nose in turn, or a kill between them - height used and climbing, or flat and turning hard while slowing; sure when one killed the other |
@@ -96,18 +103,38 @@ combat air patrol, strike package, line of battle, crossing the T) and the
 entries to read first; older entries carry the new patterns through
 `knowledge/maneuver-tags.ts`. See [The knowledge lens](knowledge.md).
 
-**Paid off** compares the units' exchange while it ran (and a minute after)
-with their side's over the match; a withdrawal pays when it lost fewer units
-after turning than before, a missile defence when the aircraft lives a
-minute, an encirclement when the pocket loses half.
+**Worked** means the units that made it took out more than they lost while
+it ran and a while after (the result names the time); even is neither. A
+withdrawal works when it lost fewer units after turning than before, a
+missile defence when the aircraft lives a minute, an encirclement when the
+pocket loses half.
+
+**Missile defence on purpose.** Where the data follows missiles in flight
+(War Thunder, Tacview), a crank, notch, drag or pump is only looked for
+against a missile seen flying *at* the aircraft - over the first 60% of its
+flight it points within 20° of the aircraft and closes on it at half its own
+speed or more; a missile fired at the ground is no threat to anyone in the
+air. It is named as the manoeuvre ("Crank") only when the angle was held
+for 3 s or more (half a short flight) while that missile was in the air.
+Held only before or after the missile, or where the data has launches but
+no missiles in flight, it is told as what was seen - "Flew at an angle to
+the shooter", "Flew away from the shooter" - never above Likely, and its
+result says whether the aircraft got away, not whether the manoeuvre worked.
+
+**Counting.** Losses are deaths, one a life: a game that writes a
+destruction as several rows (War Thunder: a `death` row and a `dead` row
+for each piece of the falling wreck) loses the unit once, and the wreck's
+position rows until it is removed are not the unit moving (`data/deaths.ts`
+gives the dead spans). A respawned unit's next death counts again.
 
 ## Over many matches
 
 Each match's summary (`src/mass/summarize.ts`, see [Mass analysis](mass-analysis.md))
 carries a small `maneuvers` section: per kind and side, made (at Likely or
-above), paid off, not paid, kills and losses. **Mass analysis → Maneuvers**
-adds them up over the matches the filter keeps - per map and mode, or over
-all - with the paid-off rate's Wilson interval; a row loads the matches it
+above), worked, did not, kills and losses (a missile defence not shown to
+be on purpose is counted, not judged). **Mass analysis → Maneuvers** adds
+them up over the matches the filter keeps - per map and mode, or over all -
+with the rate's Wilson interval; a row loads the matches it
 was made in. Summaries written before the section existed have none: run
 `node tools/3dheat-summarize.mjs <folder> --force` to add it.
 

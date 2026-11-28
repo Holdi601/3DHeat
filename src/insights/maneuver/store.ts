@@ -6,7 +6,7 @@
  */
 
 import { create } from 'zustand';
-import { maneuverLines, useManeuverLines } from './lines';
+import { maneuverLines, maneuverTags, plainPaint, useManeuverLines, type Paint } from './lines';
 import type { Maneuver, ManeuverMatch, ManeuverReport } from './types';
 
 export type Level = 'high' | 'medium' | 'low';
@@ -27,6 +27,8 @@ export interface ManeuverState {
   level: Level;
   /** The sides' names (the dataset's), for their colours. */
   teams: string[];
+  /** The viewer's colours and names for what is drawn (the panel's, from the data); the side colours where none. */
+  paint: Paint | null;
   set: (p: Partial<Omit<ManeuverState, 'set'>>) => void;
 }
 
@@ -41,6 +43,7 @@ export const useManeuvers = create<ManeuverState>((set) => ({
   showAll: false,
   level: 'medium',
   teams: [],
+  paint: null,
   set: (p) => set(p),
 }));
 
@@ -56,8 +59,9 @@ export function shownMatch(s: Pick<ManeuverState, 'report' | 'session' | 'level'
 
 // The 3D lines follow the pick: rebuilt only when the report, match, pick or level changes.
 useManeuvers.subscribe((s, p) => {
-  if (s.report === p.report && s.session === p.session && s.selected === p.selected && s.showAll === p.showAll && s.level === p.level && s.teams === p.teams) return;
+  if (s.report === p.report && s.session === p.session && s.selected === p.selected && s.showAll === p.showAll && s.level === p.level && s.teams === p.teams && s.paint === p.paint) return;
   const { list } = shownMatch(s);
   const drawn = s.showAll ? list : list.filter((m) => m.id === s.selected);
-  useManeuverLines.setState({ lines: drawn.length ? maneuverLines(drawn, s.selected, s.teams) : null });
+  const paint = s.paint ?? plainPaint(s.teams);
+  useManeuverLines.setState({ lines: drawn.length ? maneuverLines(drawn, s.selected, paint) : null, tags: maneuverTags(list.find((m) => m.id === s.selected), paint) });
 });

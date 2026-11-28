@@ -9,7 +9,10 @@
 import { AIR, buildFrame, INF, SCALE, stepOf, surface, timeOf, type Frame } from './frame';
 import { findGroups, hull, stepAt, type Group, type GroupStep, type Groups } from './groups';
 import { linksOf } from './kb';
-import { DOMAINS, type Maneuver, type ManeuverKind, type ManeuverOutcome, type MatchTracks, type MEvent } from './types';
+import { DOMAINS, type Maneuver, type ManeuverKind, type ManeuverOutcome, type MatchTracks, type MEvent, type PathOwner } from './types';
+
+/** A path with whose way it is (`pathOf` a group's, `unitPath` a unit's, by unit index). */
+export type Path = [number, number, number][] & { owner?: { u: number; team: number; n: number; id?: number; weapon?: boolean } };
 
 export interface Contact {
   g: Group;
@@ -292,46 +295,72 @@ export function countIn(list: number[] | undefined, t0: number, t1: number): num
   return n;
 }
 
+/**
+ * Whether it worked, as a player would say it: more of the enemy taken out
+ * than lost (or an objective taken without losing more than it took out) is
+ * 1; more lost than taken out is 0; even, or nothing at all, null.
+ */
+export function workedOf(kills: number, losses: number, captures: number): 0 | 1 | null {
+  if (kills > losses || (captures > 0 && losses <= kills)) return 1;
+  if (losses > kills) return 0;
+  return null;
+}
+
 /** What happened to the units while the maneuver ran and `tail` seconds after (data seconds). */
 export function outcomeOf(ctx: Ctx, units: number[], team: number, t0: number, t1: number, tail: number): ManeuverOutcome {
   let kills = 0;
   let losses = 0;
+  let first = Infinity;
   for (const u of units) {
     kills += countIn(ctx.killsBy.get(u), t0, t1 + tail);
     losses += countIn(ctx.deathsOf.get(u), t0, t1 + tail);
+    for (const t of ctx.deathsOf.get(u) ?? []) if (t >= t0 && t <= t1 + tail && t < first) first = t;
   }
   const captures = countIn(ctx.captures.get(team), t0, t1 + tail);
   const ex = (k: number, l: number) => (l > 0 ? k / l : k + 1);
   const exchange = ex(kills, losses);
   const baseline = ex(ctx.teamKills[team] ?? 0, ctx.teamLosses[team] ?? 0);
-  const paid: 0 | 1 | null = kills + losses + captures === 0 ? null : (exchange >= 1 && exchange >= baseline) || (captures > 0 && losses <= kills) ? 1 : 0;
-  return { kills, losses, captures, exchange: r2(exchange), baseline: r2(baseline), secs: Math.round(t1 - t0), paid };
+  const paid = workedOf(kills, losses, captures);
+  const m0 = ctx.f.m.t0;
+  return { kills, losses, captures, exchange: r2(exchange), baseline: r2(baseline), secs: Math.round(t1 - t0), paid, from: r1(t0 - m0), until: r1(t1 + tail - m0), ...(first < Infinity ? { lostAfter: Math.round(first - t0) } : {}) };
 }
 
 export const r2 = (v: number) => Math.round(v * 100) / 100;
 export const r0 = (v: number) => Math.round(v);
+export const r1 = (v: number) => Math.round(v * 10) / 10;
 
 /** Data seconds of step `s`. */
 export const dataT = (f: Frame, s: number) => f.start + s * f.step;
 
 /** A group's centroid path over steps `[s0, s1]`, at most 24 points, y the mean height. */
-export function pathOf(g: Group, s0: number, s1: number): [number, number, number][] {
+export function pathOf(g: Group, s0: number, s1: number): Path {
   const pts = g.steps.filter((st) => st.s >= s0 && st.s <= s1);
   const k = Math.max(1, Math.ceil(pts.length / 24));
-  const out: [number, number, number][] = [];
+  const out: Path = [];
+  out.owner = { u: -1, team: g.team, n: g.maxSize };
   for (let i = 0; i < pts.length; i += k) out.push([pts[i].cx, pts[i].cy, pts[i].cz]);
   const last = pts[pts.length - 1];
   if (last && out[out.length - 1] !== undefined && (out[out.length - 1][0] !== last.cx || out[out.length - 1][2] !== last.cz)) out.push([last.cx, last.cy, last.cz]);
   return out;
 }
 
-/** A unit's path over steps `[s0, s1]`. */
-export function unitPath(f: Frame, u: number, s0: number, s1: number): [number, number, number][] {
-  const out: [number, number, number][] = [];
-  const k = Math.max(1, Math.ceil((s1 - s0 + 1) / 24));
+/** A unit's path over steps `[s0, s1]` (at most 48 points, its last step kept). */
+export function unitPath(f: Frame, u: number, s0: number, s1: number): Path {
+  const out: Path = [];
+  out.owner = { u, team: f.team[u], n: 1 };
+  const k = Math.max(1, Math.ceil((s1 - s0 + 1) / 48));
+  let last = -1;
   for (let s = s0; s <= s1; s += k) {
     const i = s * f.N + u;
-    if (f.alive[i]) out.push([f.X[i], f.Y[i], f.Z[i]]);
+    if (f.alive[i]) ((out[out.length] = [f.X[i], f.Y[i], f.Z[i]]), (last = s));
+  }
+  // Where it ended: its last placed step.
+  for (let s = Math.min(s1, f.S - 1); s > Math.max(last, s0 - 1); s--) {
+    const i = s * f.N + u;
+    if (f.alive[i]) {
+      out.push([f.X[i], f.Y[i], f.Z[i]]);
+      break;
+    }
   }
   return out;
 }
@@ -367,10 +396,13 @@ export interface Found {
   confidence: number;
   units: number[];
   place: { x: number; y: number; z: number; radius: number };
-  paths: [number, number, number][][];
+  paths: Path[];
   outlines?: [number, number][][];
   front?: [[number, number], [number, number]];
   evidence: Record<string, number | string>;
+  /** The enemy units it answered (unit indices). */
+  foes?: number[];
+  intent?: Maneuver['intent'];
   /** Seconds after the end the outcome still counts; the outcome itself where the kind judges it its own way. */
   tail?: number;
   outcome?: ManeuverOutcome;
@@ -384,6 +416,7 @@ export function emit(ctx: Ctx, x: Found): Maneuver | null {
   const t1 = dataT(f, x.s1);
   const outcome = x.outcome ?? outcomeOf(ctx, x.units, x.team, t0, t1, x.tail ?? secs(x.dom, 60));
   const links = linksOf(x.kind);
+  const drawn = x.paths.filter((p) => p.length >= 2);
   const m: Maneuver = {
     id: `${x.kind}:${x.team}:${Math.round(timeOf(f, x.s0))}:${ctx.out.length}`,
     kind: x.kind,
@@ -397,7 +430,10 @@ export function emit(ctx: Ctx, x: Found): Maneuver | null {
     level: levelOf(c),
     units: x.units.map((u) => f.units[u].id),
     place: { x: r2(x.place.x), y: r2(x.place.y), z: r2(x.place.z), radius: r2(x.place.radius) },
-    paths: x.paths.filter((p) => p.length >= 2).map((p) => p.map(([a, b, c2]) => [r2(a), r2(b), r2(c2)] as [number, number, number])),
+    paths: drawn.map((p) => p.map(([a, b, c2]) => [r2(a), r2(b), r2(c2)] as [number, number, number])),
+    owners: drawn.map((p): PathOwner => (p.owner ? { unit: p.owner.id ?? (p.owner.u >= 0 ? f.units[p.owner.u].id : -1), team: p.owner.team, n: p.owner.n, ...(p.owner.weapon ? { weapon: true } : {}) } : { unit: -1, team: x.team, n: x.units.length })),
+    ...(x.foes?.length ? { foes: x.foes.map((u) => f.units[u].id) } : {}),
+    ...(x.intent ? { intent: x.intent } : {}),
     outlines: (x.outlines ?? []).filter((o) => o.length >= 3).map((o) => o.map(([a, b]) => [r2(a), r2(b)] as [number, number])),
     ...(x.front ? { front: x.front } : {}),
     evidence: x.evidence,

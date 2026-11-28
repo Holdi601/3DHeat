@@ -8,7 +8,7 @@
  */
 
 import { AIR, GROUND, SEA, SCALE } from './frame';
-import { at, centroid, countIn, dataT, emit, foughtBetween, outcomeOf, outlineOf, pathOf, r0, r2, unitPath, type Ctx } from './context';
+import { at, centroid, countIn, dataT, emit, foughtBetween, outcomeOf, outlineOf, pathOf, r0, r1, r2, unitPath, type Ctx, type Path } from './context';
 import { CLS_SPAA } from './types';
 
 const DEG = 180 / Math.PI;
@@ -34,105 +34,349 @@ function offBore(ctx: Ctx, s: number, u: number, x: number, z: number): number {
   return Math.acos(Math.max(-1, Math.min(1, (vx * dx + vz * dz) / (v * d)))) * DEG;
 }
 
+/** Seconds a missile defence is followed after the shot; a pump may take longer to turn back. */
+const ANSWER_S = 45;
+const PUMP_S = 75;
+/** Metres a second below which an aircraft's heading is not read (a hovering helicopter). */
+const MIN_AIR_SPEED = 15;
+
 /**
- * Missile defence: for each launch by an aircraft, its target is the enemy
- * aircraft nearest the shooter's nose (within 35°, 5-100 km). The target's
- * answer over the next 45 s, by the angle between its heading and the
- * shooter: 35-70° held 8 s a crank, 75-105° held 6 s a notch, 140° or more
- * held 8 s a drag, a drag of 5 s turned back to 45° or less within 75 s a
- * pump. Paid off when the target lives a minute after the launch.
+ * A missile seen flying at an aircraft: when it flew (data seconds), where
+ * it came from, the aircraft it flew at and the unit that fired it (-1 not
+ * known: the launch point stands for it).
+ */
+export interface Threat {
+  /** Index into the match's `weapons`. */
+  w: number;
+  t0: number;
+  t1: number;
+  x: number;
+  y: number;
+  z: number;
+  tgt: number;
+  shooter: number;
+  team: number;
+  /** Median degrees between the missile's way and the line to the aircraft over the first part of its flight. */
+  aim: number;
+}
+
+/** Unit `u`'s place at data time `t`, between its steps; null where it is not placed. */
+export function posAt(f: Ctx['f'], u: number, t: number): [number, number, number] | null {
+  const q = (t - f.start) / f.step;
+  const a = Math.floor(q);
+  if (a < 0 || a >= f.S) return null;
+  const b = Math.min(f.S - 1, a + 1);
+  const ka = a * f.N + u;
+  const kb = b * f.N + u;
+  if (!f.alive[ka]) return null;
+  if (!f.alive[kb]) return [f.X[ka], f.Y[ka], f.Z[ka]];
+  const w = q - a;
+  return [f.X[ka] + (f.X[kb] - f.X[ka]) * w, f.Y[ka] + (f.Y[kb] - f.Y[ka]) * w, f.Z[ka] + (f.Z[kb] - f.Z[ka]) * w];
+}
+
+/** Degrees a missile may point off the line to an aircraft (median, first 60% of its flight) and still be flying at it. */
+export const AIM_DEG = 20;
+
+/**
+ * The missiles the data follows that fly at an enemy aircraft: over the
+ * first 60% of the flight the missile's way points at the aircraft (median
+ * within `AIM_DEG`) and closes on it at half its own speed or more, and no
+ * vehicle on the ground is flown at more surely or ends the flight far
+ * nearer the missile (one passing an aircraft on its way to a tank). A missile fired at the ground, or at
+ * nobody, is no threat to any aircraft. Null when the match follows no
+ * weapons at all (only launches are known).
+ */
+export function threatsOf(ctx: Ctx): Threat[] | null {
+  const f = ctx.f;
+  const ws = f.m.weapons;
+  if (!ws || !ws.length) return null;
+  const air = airUnits(ctx);
+  const out: Threat[] = [];
+  const launches = ctx.ev.filter((e) => e.kind === 'launch' && e.unit >= 0 && f.index.has(e.unit));
+  for (let wi = 0; wi < ws.length; wi++) {
+    const w = ws[wi];
+    const n = w.t.length;
+    if (n < 4 || w.t[n - 1] - w.t[0] < 1.5) continue;
+    // Who fired it: a launch at that moment and place, else the nearest unit of its side there.
+    let shooter = -1;
+    let bestD = 500 * f.upm;
+    for (const e of launches) {
+      if (Math.abs(e.t - w.t[0]) > 1.5) continue;
+      const u = f.index.get(e.unit)!;
+      const p = posAt(f, u, w.t[0]);
+      const d = p ? Math.hypot(p[0] - w.x[0], p[1] - w.y[0], p[2] - w.z[0]) : Infinity;
+      if (d < bestD) ((bestD = d), (shooter = u));
+    }
+    if (shooter < 0) {
+      bestD = 300 * f.upm;
+      for (let u = 0; u < f.N; u++) {
+        if (w.team >= 0 && f.team[u] !== w.team) continue;
+        const p = posAt(f, u, w.t[0]);
+        const d = p ? Math.hypot(p[0] - w.x[0], p[1] - w.y[0], p[2] - w.z[0]) : Infinity;
+        if (d < bestD) ((bestD = d), (shooter = u));
+      }
+    }
+    const team = w.team >= 0 ? w.team : shooter >= 0 ? f.team[shooter] : -1;
+    const upto = Math.max(3, Math.floor(n * 0.6));
+    /** Unit u as this missile's target: the median angle off it, whether the missile closes on it, how far it ends from it; null too few samples. */
+    const aimAt = (u: number): { aim: number; closing: boolean; end: number } | null => {
+      const aims: number[] = [];
+      let dFirst = NaN;
+      let dLast = NaN;
+      let flown = 0;
+      for (let i = 1; i < Math.min(n, upto + 1); i++) {
+        const p = posAt(f, u, w.t[i]);
+        if (!p) continue;
+        const vx = w.x[i] - w.x[i - 1];
+        const vy = w.y[i] - w.y[i - 1];
+        const vz = w.z[i] - w.z[i - 1];
+        const dx = p[0] - w.x[i];
+        const dy = p[1] - w.y[i];
+        const dz = p[2] - w.z[i];
+        const nv = Math.hypot(vx, vy, vz);
+        const nd = Math.hypot(dx, dy, dz);
+        if (!(nv > 1e-6) || !(nd > 1e-6)) continue;
+        aims.push(Math.acos(Math.max(-1, Math.min(1, (vx * dx + vy * dy + vz * dz) / (nv * nd)))) * DEG);
+        if (dFirst !== dFirst) dFirst = nd;
+        else flown += nv;
+        dLast = nd;
+      }
+      if (aims.length < 3) return null;
+      aims.sort((p, q) => p - q);
+      const pe = posAt(f, u, w.t[n - 1]);
+      const end = pe ? Math.hypot(pe[0] - w.x[n - 1], pe[1] - w.y[n - 1], pe[2] - w.z[n - 1]) : Infinity;
+      // Closing on it at half the missile's own speed or more, from no further than 60 km.
+      return { aim: aims[aims.length >> 1], closing: dFirst - dLast >= 0.5 * flown && dFirst <= 60000 * f.upm, end };
+    };
+    const enemy = (u: number) => !((team >= 0 && f.team[u] === team) || u === shooter);
+    const at: { u: number; aim: number; end: number }[] = [];
+    for (const u of air) {
+      if (!enemy(u)) continue;
+      const a = aimAt(u);
+      if (a && a.closing && a.aim <= AIM_DEG) at.push({ u, aim: a.aim, end: a.end });
+    }
+    if (!at.length) continue;
+    // Not an aircraft a missile only passed on its way to a vehicle below: no vehicle on the ground it flies at
+    // more surely (3° nearer its way) or ends far nearer to (a third of the way to the aircraft).
+    let ground: { aim: number; end: number } | null = null;
+    for (let u = 0; u < f.N; u++) {
+      if (f.dom[u] === AIR || !enemy(u)) continue;
+      const a = aimAt(u);
+      if (a && a.closing && (!ground || a.aim < ground.aim)) ground = a;
+    }
+    for (const x of at) {
+      if (ground && (ground.aim < x.aim - 3 || ground.end < x.end / 3)) continue;
+      out.push({ w: wi, t0: w.t[0], t1: w.t[n - 1], x: w.x[0], y: w.y[0], z: w.z[0], tgt: x.u, shooter, team, aim: x.aim });
+    }
+  }
+  return out.sort((a, b) => a.t0 - b.t0);
+}
+
+/** A shot at one aircraft: when, by whom (-1 not known) and from where, and the missiles seen in the air at it within 20 s. */
+interface Shot {
+  t: number;
+  tgt: number;
+  sh: number;
+  x: number;
+  y: number;
+  z: number;
+  flights: [number, number][];
+  weapons: number[];
+  /** How sure the shot was at it: degrees off (lower is surer). */
+  score: number;
+}
+
+/**
+ * Missile defence: how an aircraft flew while a missile came at it, by the
+ * angle between its heading and the shooter (where the missile came from):
+ * 40-70° held 8 s a crank, 75-105° held 6 s a notch, 140° or more held 8 s a
+ * drag, a drag of 5 s turned back to 45° or less within 75 s a pump.
+ *
+ * Where the data follows the missiles in flight (`threatsOf`), only a
+ * missile seen flying at the aircraft starts one, and it is `shown` to be on
+ * purpose when the angle was held 3 s or more (half a short flight) while
+ * that missile was in the air; held only before or after it, `unproven`.
+ * Where the data has launches only, the target is the enemy aircraft nearest
+ * the shooter's nose (within 35°, 5-100 km, the shooter within 60° of its own
+ * nose) and nothing shows a missile came at it: `unproven`, never above
+ * medium confidence. Worked when the aircraft still lives a minute after the
+ * shot.
  */
 export function missileDefence(ctx: Ctx): void {
   const f = ctx.f;
   const upm = f.upm;
   const air = airUnits(ctx);
   if (!air.length) return;
-  const last = new Map<number, number>();
-  for (const e of ctx.ev) {
-    if (e.kind !== 'launch' || e.unit < 0) continue;
-    const sh = f.index.get(e.unit);
-    if (sh === undefined || f.dom[sh] !== AIR) continue;
-    const s = Math.max(0, Math.min(f.S - 1, Math.round((e.t - f.start) / f.step)));
-    const ks = s * f.N + sh;
-    if (!f.alive[ks]) continue;
-    let tgt = -1;
-    let best = Infinity;
-    for (const u of air) {
-      if (f.team[u] === f.team[sh]) continue;
-      const k = s * f.N + u;
-      if (!f.alive[k]) continue;
-      const d = Math.hypot(f.X[k] - f.X[ks], f.Z[k] - f.Z[ks], f.Y[k] - f.Y[ks]);
-      if (d < 5000 * upm || d > 100000 * upm) continue;
-      const ob = offBore(ctx, s, sh, f.X[k], f.Z[k]);
-      if (!(ob <= 35)) continue;
-      const score = ob + d / (10000 * upm);
-      if (score < best) ((best = score), (tgt = u));
-    }
-    if (tgt < 0) continue;
-    // A missile fight: the target had the shooter within 60° of its nose at the launch (closing, as in BVR).
-    if (!(offBore(ctx, s, tgt, f.X[ks], f.Z[ks]) <= 60)) continue;
-    // One answer per target per 20 s of launches.
-    const lt = last.get(tgt);
-    if (lt !== undefined && e.t - lt < 20) continue;
-    last.set(tgt, e.t);
-    const steps = Math.round(45 / f.step);
-    const pumpSteps = Math.round(75 / f.step);
-    const ata: number[] = [];
-    for (let q = s; q < Math.min(f.S, s + pumpSteps); q++) {
-      const k = q * f.N + tgt;
-      if (!f.alive[k]) break;
-      const kq = q * f.N + sh;
-      const x = f.alive[kq] ? f.X[kq] : f.X[ks];
-      const z = f.alive[kq] ? f.Z[kq] : f.Z[ks];
-      ata.push(offBore(ctx, q, tgt, x, z));
-    }
-    const run = (lo: number, hi: number, upTo: number) => {
-      let bestRun = 0;
-      let cur = 0;
-      for (let i = 0; i < Math.min(upTo, ata.length); i++) {
-        if (ata[i] >= lo && ata[i] <= hi) bestRun = Math.max(bestRun, ++cur);
-        else cur = 0;
+  const shots: Shot[] = [];
+  const threats = threatsOf(ctx);
+  if (threats) {
+    // One answer an aircraft per 20 s of shots: every missile in the air at it over that time.
+    const open = new Map<number, Shot>();
+    for (const th of threats) {
+      const cur = open.get(th.tgt);
+      if (cur && th.t0 - cur.t < 20) {
+        cur.flights.push([th.t0, th.t1]);
+        cur.weapons.push(th.w);
+        continue;
       }
-      return bestRun * f.step;
-    };
-    const crank = run(35, 70, steps);
-    const notch = run(75, 105, steps);
-    const drag = run(140, 180, steps);
-    // Pump: a drag then back towards the threat.
-    let pump = false;
-    let cur = 0;
-    for (let i = 0; i < ata.length; i++) {
-      if (ata[i] >= 140) cur++;
-      else {
-        if (cur * f.step >= 5 && ata.slice(i).some((a) => a <= 45)) {
-          pump = true;
-          break;
-        }
-        cur = 0;
-      }
+      const sh: Shot = { t: th.t0, tgt: th.tgt, sh: th.shooter, x: th.x, y: th.y, z: th.z, flights: [[th.t0, th.t1]], weapons: [th.w], score: th.aim };
+      open.set(th.tgt, sh);
+      shots.push(sh);
     }
-    const kind = pump ? 'pump' : notch >= 6 ? 'notch' : drag >= 8 ? 'drag' : crank >= 8 ? 'crank' : null;
-    if (!kind) continue;
-    const held = kind === 'pump' ? 10 : kind === 'notch' ? notch : kind === 'drag' ? drag : crank;
-    const died = countIn(ctx.deathsOf.get(tgt), e.t, e.t + 60) > 0;
-    const k = s * f.N + tgt;
-    const range = Math.hypot(f.X[k] - f.X[ks], f.Z[k] - f.Z[ks]);
-    emit(ctx, {
-      kind,
-      team: f.team[tgt],
-      against: f.team[sh],
-      dom: AIR,
-      s0: s,
-      s1: Math.min(f.S - 1, s + ata.length - 1),
-      confidence: 0.55 + 0.25 * clamp01((held - 6) / 12) + 0.2 * clamp01(1 - best / 35),
-      units: [tgt],
-      place: { x: f.X[k], y: f.Y[k], z: f.Z[k], radius: range / 2 },
-      paths: [unitPath(f, tgt, s, s + ata.length - 1), unitPath(f, sh, s, s + ata.length - 1)],
-      outlines: [],
-      evidence: { launchKm: r2(range / upm / 1000), heldS: r0(held), crankS: r0(crank), notchS: r0(notch), dragS: r0(drag), survived: died ? 'no' : 'yes' },
-      outcome: { kills: 0, losses: died ? 1 : 0, captures: 0, exchange: died ? 0 : 1, baseline: 1, secs: r0(ata.length * f.step), paid: died ? 0 : 1 },
-    });
+  } else {
+    const last = new Map<number, number>();
+    for (const e of ctx.ev) {
+      if (e.kind !== 'launch' || e.unit < 0) continue;
+      const sh = f.index.get(e.unit);
+      if (sh === undefined || f.dom[sh] !== AIR) continue;
+      const s = Math.max(0, Math.min(f.S - 1, Math.round((e.t - f.start) / f.step)));
+      const ks = s * f.N + sh;
+      if (!f.alive[ks]) continue;
+      let tgt = -1;
+      let best = Infinity;
+      for (const u of air) {
+        if (f.team[u] === f.team[sh]) continue;
+        const k = s * f.N + u;
+        if (!f.alive[k]) continue;
+        const d = Math.hypot(f.X[k] - f.X[ks], f.Z[k] - f.Z[ks], f.Y[k] - f.Y[ks]);
+        if (d < 5000 * upm || d > 100000 * upm) continue;
+        const ob = offBore(ctx, s, sh, f.X[k], f.Z[k]);
+        if (!(ob <= 35)) continue;
+        const score = ob + d / (10000 * upm);
+        if (score < best) ((best = score), (tgt = u));
+      }
+      if (tgt < 0) continue;
+      // A missile fight: the target had the shooter within 60° of its nose at the launch (closing, as in BVR).
+      if (!(offBore(ctx, s, tgt, f.X[ks], f.Z[ks]) <= 60)) continue;
+      const lt = last.get(tgt);
+      if (lt !== undefined && e.t - lt < 20) continue;
+      last.set(tgt, e.t);
+      shots.push({ t: e.t, tgt, sh, x: f.X[ks], y: f.Y[ks], z: f.Z[ks], flights: [], weapons: [], score: best });
+    }
   }
+  for (const shot of shots) answer(ctx, shot, !!threats);
+}
+
+/** The aircraft's answer to a shot: its angle off the shooter step by step, the kind it held, and whether the data shows it meant it. */
+function answer(ctx: Ctx, shot: Shot, seen: boolean): void {
+  const f = ctx.f;
+  const upm = f.upm;
+  const { tgt, sh } = shot;
+  const s = Math.max(0, Math.min(f.S - 1, Math.round((shot.t - f.start) / f.step)));
+  const steps = Math.round(ANSWER_S / f.step);
+  const pumpSteps = Math.round(PUMP_S / f.step);
+  const ata: number[] = [];
+  for (let q = s; q < Math.min(f.S, s + pumpSteps); q++) {
+    const k = q * f.N + tgt;
+    if (!f.alive[k]) break;
+    // The shooter where it is, else where it fired from.
+    const kq = q * f.N + sh;
+    const x = sh >= 0 && f.alive[kq] ? f.X[kq] : shot.x;
+    const z = sh >= 0 && f.alive[kq] ? f.Z[kq] : shot.z;
+    const v = Math.hypot(ctx.G.VX[k], ctx.G.VZ[k]) / upm;
+    ata.push(v >= MIN_AIR_SPEED ? offBore(ctx, q, tgt, x, z) : NaN);
+  }
+  const t0 = dataT(f, s);
+  /** The longest run of steps within [lo, hi] in the first `upTo`: its seconds and time span (data seconds). */
+  const run = (lo: number, hi: number, upTo: number) => {
+    let best = { secs: 0, a: 0, b: 0 };
+    let start = -1;
+    const n = Math.min(upTo, ata.length);
+    for (let i = 0; i <= n; i++) {
+      const on = i < n && ata[i] >= lo && ata[i] <= hi;
+      if (on && start < 0) start = i;
+      if (!on && start >= 0) {
+        const secs = (i - start) * f.step;
+        if (secs > best.secs) best = { secs, a: t0 + start * f.step, b: t0 + i * f.step };
+        start = -1;
+      }
+    }
+    return best;
+  };
+  const crank = run(40, 70, steps);
+  const notch = run(75, 105, steps);
+  const drag = run(140, 180, steps);
+  // Pump: a drag, then back towards the threat.
+  let pump: { secs: number; a: number; b: number } | null = null;
+  let cur = 0;
+  for (let i = 0; i < ata.length; i++) {
+    if (ata[i] >= 140) cur++;
+    else {
+      if (cur * f.step >= 5 && ata.slice(i).some((a) => a <= 45)) {
+        pump = { secs: cur * f.step, a: t0 + (i - cur) * f.step, b: t0 + i * f.step };
+        break;
+      }
+      cur = 0;
+    }
+  }
+  const kind = pump ? 'pump' : notch.secs >= 6 ? 'notch' : drag.secs >= 8 ? 'drag' : crank.secs >= 8 ? 'crank' : null;
+  if (!kind) return;
+  const held = kind === 'pump' ? pump! : kind === 'notch' ? notch : kind === 'drag' ? drag : crank;
+  // On purpose: the angle held while a missile was in the air at it - 3 s, or half a short flight.
+  let overlap = 0;
+  let flight = 0;
+  for (const [a, b] of shot.flights) {
+    overlap += Math.max(0, Math.min(b, held.b) - Math.max(a, held.a));
+    flight = Math.max(flight, b - a);
+  }
+  const shown = seen && overlap > 0 && overlap >= Math.min(3, flight / 2);
+  // It ends a few seconds after the angle was held or the last missile gone, whichever is later.
+  const until = Math.max(held.b, ...shot.flights.map((x) => x[1])) + 5;
+  const end = Math.min(f.S - 1, s + ata.length - 1, Math.max(s + 1, Math.ceil((until - f.start) / f.step)));
+  const deaths = (ctx.deathsOf.get(tgt) ?? []).filter((t) => t >= shot.t && t <= shot.t + 60);
+  const died = deaths.length > 0;
+  const k = s * f.N + tgt;
+  const range = Math.hypot(f.X[k] - shot.x, f.Z[k] - shot.z);
+  const conf = (seen ? 0.6 : 0.55) + 0.25 * clamp01((held.secs - 6) / 12) + 0.2 * clamp01(1 - shot.score / (seen ? AIM_DEG : 35));
+  const ws = f.m.weapons ?? [];
+  const missilePaths = shot.weapons.slice(0, 4).map((wi) => {
+    const w = ws[wi];
+    const p: Path = [];
+    const every = Math.max(1, Math.ceil(w.t.length / 32));
+    for (let i = 0; i < w.t.length; i += every) p.push([w.x[i], w.y[i], w.z[i]]);
+    const l = w.t.length - 1;
+    if ((l % every) !== 0) p.push([w.x[l], w.y[l], w.z[l]]);
+    p.owner = { u: -1, id: w.id, team: sh >= 0 ? f.team[sh] : w.team, n: 1, weapon: true };
+    return p;
+  });
+  emit(ctx, {
+    kind,
+    team: f.team[tgt],
+    against: sh >= 0 ? f.team[sh] : ws[shot.weapons[0]]?.team ?? -1,
+    dom: AIR,
+    s0: s,
+    s1: end,
+    // Not shown to be on purpose: at most "likely".
+    confidence: shown ? conf : Math.min(conf, 0.74),
+    units: [tgt],
+    foes: sh >= 0 ? [sh] : [],
+    intent: shown ? 'shown' : 'unproven',
+    place: { x: f.X[k], y: f.Y[k], z: f.Z[k], radius: range / 2 },
+    paths: [unitPath(f, tgt, s, end), ...(sh >= 0 ? [unitPath(f, sh, s, end)] : []), ...missilePaths],
+    outlines: [],
+    evidence: {
+      launchKm: r2(range / upm / 1000),
+      heldS: r0(held.secs),
+      crankS: r0(crank.secs),
+      notchS: r0(notch.secs),
+      dragS: r0(drag.secs),
+      missiles: shot.flights.length,
+      heldInFlightS: r0(overlap),
+      survived: died ? 'no' : 'yes',
+    },
+    outcome: {
+      kills: countIn(ctx.killsBy.get(tgt), shot.t, shot.t + 60),
+      losses: died ? 1 : 0,
+      captures: 0,
+      exchange: died ? 0 : 1,
+      baseline: 1,
+      secs: r0((end - s) * f.step),
+      paid: died ? 0 : 1,
+      from: r1(shot.t - f.m.t0),
+      until: r1(shot.t + 60 - f.m.t0),
+      ...(died ? { lostAfter: r0(deaths[0] - shot.t) } : {}),
+    },
+  });
 }
 
 /**

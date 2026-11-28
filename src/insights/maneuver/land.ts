@@ -14,7 +14,7 @@
  */
 
 import { AIR, INF, SEA, SCALE, surface, timeOf } from './frame';
-import { at, centroid, countIn, dataT, emit, foughtBetween, move, outcomeOf, outlineOf, pathOf, r0, r2, secs, speedOf, unitPath, unitsNear, type Contact, type Ctx } from './context';
+import { at, centroid, countIn, dataT, emit, foughtBetween, move, outcomeOf, outlineOf, pathOf, r0, r2, secs, speedOf, unitPath, unitsNear, r1, type Contact, type Ctx, workedOf } from './context';
 import type { Group } from './groups';
 import { findGroups, stepAt } from './groups';
 
@@ -808,7 +808,8 @@ export function feint(ctx: Ctx): void {
       const back = stepsOf(ctx, g.dom, 60);
       // The main effort fought there: kills either way with the enemy at P2.
       if (!foughtBetween(ctx, sm.members, unitsNear(ctx, M.s, p2[0], p2[1], D, g.team, fam), dataT(f, M.s) - 10, dataT(f, M.s) + secs(g.dom, 90), { x: p2[0], z: p2[1], r: D })) continue;
-      const main = outcomeOf(ctx, [...sm.members], g.team, dataT(f, M.s), dataT(f, M.s), secs(g.dom, 90));
+      // Over every unit it names (the feint's and the main effort's), as the result says it.
+      const main = outcomeOf(ctx, [...new Set([...st.members, ...sm.members])], g.team, dataT(f, M.s), dataT(f, M.s), secs(g.dom, 90));
       emit(ctx, {
         kind: 'feint',
         team: g.team,
@@ -992,7 +993,7 @@ export function withdrawal(ctx: Ctx): void {
           paths: pursuers.slice(0, 8).map((u) => unitPath(f, u, sStart, s1)),
           outlines: [],
           evidence: { pursuers: pursuers.length, fleeing: units.length, wayM: r0(way / f.upm) },
-          outcome: { ...po, paid: po.kills > 0 ? 1 : po.losses > 0 ? 0 : null },
+          outcome: po,
         });
       }
     }
@@ -1244,7 +1245,17 @@ export function ambush(ctx: Ctx): void {
       paths: [pathOf(g, Math.max(0, c.s - stepsOf(ctx, g.dom, 30)), c.s)],
       outlines: [outlineOf(f, still, c.s, R * 0.1), outlineOf(f, st.members, c.s, R * 0.1)],
       evidence: { ambushers: still.length, victims: st.members.length, victimLosses: lossA, ambusherLosses: lossB, waitedS: r0(hold * f.step), firstShotLeadS: r0(firstA === Infinity ? burst : firstA - firstB) },
-      outcome: { kills, losses: lossB, captures: 0, exchange: r2(lossB ? kills / lossB : kills + 1), baseline: r2(ctx.teamLosses[c.enemyTeam] ? ctx.teamKills[c.enemyTeam] / ctx.teamLosses[c.enemyTeam] : ctx.teamKills[c.enemyTeam] + 1), secs: burst, paid: 1 },
+      outcome: {
+        kills,
+        losses: lossB,
+        captures: 0,
+        exchange: r2(lossB ? kills / lossB : kills + 1),
+        baseline: r2(ctx.teamLosses[c.enemyTeam] ? ctx.teamKills[c.enemyTeam] / ctx.teamLosses[c.enemyTeam] : ctx.teamKills[c.enemyTeam] + 1),
+        secs: burst,
+        paid: workedOf(kills, lossB, 0),
+        from: r1(T0 - f.m.t0),
+        until: r1(T1 - f.m.t0),
+      },
     });
   }
 }
@@ -1347,7 +1358,11 @@ export function screen(ctx: Ctx): void {
 export function interiorLines(ctx: Ctx): void {
   const f = ctx.f;
   const every = Math.max(1, Math.round(10 / f.step));
-  const teams = [...new Set(Array.from(f.team))].filter((t) => t >= 0);
+  // Sides only: neutral map objects (an unassigned team) are not a side to stand between - while two sides remain.
+  const none = new Set(f.m.sideless ?? []);
+  const all = [...new Set(Array.from(f.team))].filter((t) => t >= 0);
+  const sides = all.filter((t) => !none.has(t));
+  const teams = sides.length >= 2 ? sides : all;
   if (teams.length < 2) return;
   const groupsAt = (team: number, s: number) =>
     ctx.G.list
