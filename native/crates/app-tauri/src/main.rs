@@ -187,6 +187,7 @@ fn main() {
             viewport::viewport_mesh,
             viewport::viewport_glyphs,
             viewport::viewport_tracks,
+            viewport::viewport_core_tracks,
             viewport::viewport_heat_tiles,
             viewport::viewport_times
         ])

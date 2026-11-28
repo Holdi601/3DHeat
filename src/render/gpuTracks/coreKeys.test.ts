@@ -217,8 +217,11 @@ describe('GPU tracks: the core keys vectors', () => {
       const buf = want.buffer.slice(want.byteOffset, want.byteOffset + (CORE_HEAD_U32 + PERSONS * PERSON_U32) * 4);
       const k = parseCoreKeys(buf as ArrayBuffer);
       expect(k.keys).toBe(s.keys);
-      const table = coreTrackTable(s, k);
-      expect(Array.from(table)).toEqual(Array.from(s.trackData.subarray(0, Math.max(1, s.tracks) * TRACK_U32)));
+      const ct = coreTrackTable(s, k);
+      expect(ct.extra).toBe(0);
+      expect(ct.tracks).toBe(s.tracks);
+      expect(Array.from(ct.meshTracks)).toEqual(Array.from(s.meshTracks));
+      expect(Array.from(ct.table)).toEqual(Array.from(s.trackData.subarray(0, Math.max(1, s.tracks) * TRACK_U32)));
     });
   }
 });

@@ -80,3 +80,33 @@ fn core_keys_are_the_page_keys() {
         assert!(exact * 100 >= keys * 99, "{}: {exact} of {keys} attitudes exact", c.name);
     }
 }
+
+/// The core's key build at scale, timed (release, by hand):
+/// `HEAT3D_TRACK_ROWS=100000000 HEAT3D_TRACK_PERSONS=400000 cargo test --release -p heat3d-core --test track_vectors -- --ignored --nocapture`.
+/// Synthetic circles, time-major as a load is, yaw and pitch on every row.
+#[test]
+#[ignore]
+fn core_keys_at_scale() {
+    let env = |k: &str, d: usize| std::env::var(k).ok().and_then(|v| v.parse().ok()).unwrap_or(d);
+    let (n, persons) = (env("HEAT3D_TRACK_ROWS", 10_000_000), env("HEAT3D_TRACK_PERSONS", 20_000));
+    let t = std::time::Instant::now();
+    let (mut px, mut py, mut pz, mut time, mut yaw, mut pitch, mut person) = (vec![0f32; n], vec![0f32; n], vec![0f32; n], vec![0f32; n], vec![0f32; n], vec![0f32; n], vec![0u32; n]);
+    for r in 0..n {
+        let (p, k) = (r % persons, r / persons);
+        let a = p as f32 * 0.37 + k as f32 * 0.02;
+        let rad = 200.0 + (p % 97) as f32 * 7.0;
+        px[r] = (p % 300) as f32 * 30.0 + rad * a.sin();
+        py[r] = 100.0 + (p % 13) as f32;
+        pz[r] = (p / 300) as f32 * 30.0 - rad * a.cos();
+        time[r] = k as f32 * 0.5;
+        yaw[r] = a;
+        pitch[r] = 0.05;
+        person[r] = p as u32;
+    }
+    println!("{n} rows, {persons} persons made in {:.1} s", t.elapsed().as_secs_f64());
+    let inp = TrackInput { px: &px, py: &py, pz: &pz, time: &time, person: &person, yaw: Some(&yaw), pitch: Some(&pitch), roll: None, events: None, shared: None, persons };
+    for _ in 0..2 {
+        let k = build_keys(&inp, &TrackOptions { units: 1.0, max_keys: 1 << 28 }).expect("keys");
+        println!("keys {} of {} samples, tolerance {}, {:.0} MB, built in {:.0} ms", k.keys, k.samples, k.tolerance, k.bytes() as f64 / 1e6, k.build_ms);
+    }
+}

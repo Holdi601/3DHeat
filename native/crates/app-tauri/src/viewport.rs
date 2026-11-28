@@ -163,6 +163,27 @@ pub fn viewport_tracks(window: WebviewWindow, request: Request<'_>) {
     with(&window, |v| v.send(Msg::Tracks(bytes)));
 }
 
+/// The GPU tracks' keys for a core-built dataset, built by the core over every row it holds
+/// (`heat3d_core::tracks`) and handed to the viewport for the page's store `id` (no IPC for the
+/// keys). Answers what the page's track table needs: the keys' count, the chunk spans' words,
+/// the persons, the tolerance and samples and the build's milliseconds, then each person's entry
+/// (`TrackKeys::person_words`); an empty answer when the keys do not fit `maxKeys`.
+#[tauri::command]
+pub async fn viewport_core_tracks(window: WebviewWindow, base: tauri::State<'_, crate::ViewerBase>, handle: u64, id: u32, req: heat3d_core::tracks::TrackRequest) -> Result<Response, String> {
+    let ds = base.core.built_dataset(handle).ok_or_else(|| format!("no dataset {handle} in the core"))?;
+    let built = tauri::async_runtime::spawn_blocking(move || heat3d_core::tracks::build_for(&ds, &req)).await.map_err(|e| e.to_string())?.map_err(|e| format!("{e:#}"))?;
+    let Some(k) = built else { return Ok(Response::new(Vec::new())) };
+    let head = [k.keys as u32, k.chunks.len() as u32, k.persons.len() as u32, (k.tolerance as f32).to_bits(), k.samples as u32, (k.build_ms as f32).to_bits()];
+    let mut out: Vec<u32> = head.to_vec();
+    out.extend(k.person_words());
+    with(&window, |v| v.send(Msg::CoreTracks(id, std::sync::Arc::new(k)))).ok_or("no viewport")?;
+    Ok(Response::new(bytemuck_bytes(&out)))
+}
+
+fn bytemuck_bytes(w: &[u32]) -> Vec<u8> {
+    w.iter().flat_map(|x| x.to_le_bytes()).collect()
+}
+
 /// The core's heat-tile store, where the viewport reads the tiles a frame draws by the pyramid's key.
 #[tauri::command]
 pub fn viewport_heat_tiles(window: WebviewWindow, base: tauri::State<'_, crate::ViewerBase>) -> Result<(), String> {

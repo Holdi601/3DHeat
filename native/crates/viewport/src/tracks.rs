@@ -14,6 +14,16 @@
 //! (`tracks_marks.wgsl`, from the store's markers) adds theirs, finish writes the vertex count
 //! into an indirect line draw. The far-off glyphs' run (after the meshes' runs in the
 //! instances) is drawn with the figures' glyph pipeline, one indirect quad draw.
+//!
+//! A load the core holds more rows of than the page (`pageStep` > 1) is drawn from the core's
+//! keys (`heat3d_core::tracks`, over every row): the app builds them from the dataset handle and
+//! hands them over here (`core_keys`, no IPC), and the page's begin message for such a store
+//! (`BEGIN_CORE`) sends only its track table, which the core's chunk spans follow in the same
+//! buffer; keys and attitudes go from the core's arrays straight into buffers mapped at creation.
+
+use std::sync::Arc;
+
+use heat3d_core::tracks::TrackKeys;
 
 use crate::figures::Figures;
 use crate::generated::*;
@@ -31,6 +41,10 @@ const ARRAYS: usize = 6;
 const BEGIN: u32 = 0;
 const SLICE: u32 = 1;
 const FREE: u32 = 2;
+/// A begin message for a store drawn from the core's keys (`core_keys`, same id).
+const BEGIN_CORE: u32 = 3;
+/// Keys the first key buffer holds (`KEYS_PER_BUFFER` in `store.ts`); the rest go in the second.
+const KEYS_PER_BUFFER: u64 = (1 << 28) - (1 << 16);
 
 struct Store {
     id: u32,
@@ -73,6 +87,8 @@ pub struct Tracks {
     uniform: wgpu::Buffer,
     mesh_count: wgpu::Buffer,
     store: Option<Store>,
+    /// The core's keys for the store of this id, while that store is drawn (`core_keys`).
+    core: Option<(u32, Arc<TrackKeys>)>,
     /// Whether this frame placed the units (the scene pass draws them).
     placed: bool,
     /// Whether this frame's trails draw (`writeTracksUniform`'s `trailsOn`).
@@ -96,6 +112,22 @@ fn dispatch(pass: &mut wgpu::ComputePass<'_>, n: u32) {
 
 fn e(binding: u32, b: &wgpu::Buffer) -> wgpu::BindGroupEntry<'_> {
     wgpu::BindGroupEntry { binding, resource: b.as_entire_binding() }
+}
+
+/// `data` into a buffer mapped at creation, from byte `at`, on every core (it may be a gigabyte).
+fn fill_mapped(buf: &wgpu::Buffer, at: u64, data: &[u32]) {
+    use rayon::prelude::*;
+    if data.is_empty() {
+        return;
+    }
+    let bytes: &[u8] = bytemuck::cast_slice(data);
+    let mut view = buf.slice(at..at + bytes.len() as u64).get_mapped_range_mut().expect("mapped at creation");
+    let mut w = view.slice(..);
+    assert!(bytes.len() <= w.len(), "mapping too small");
+    let ptr = w.as_raw_element_ptr().as_ptr() as usize;
+    // SAFETY: the mapping is live and at least `bytes` long (checked above); each part writes its
+    // own bytes of it, front to back, and nothing else touches it until `view` drops.
+    bytes.par_chunks(1 << 22).enumerate().for_each(|(k, src)| unsafe { std::ptr::copy_nonoverlapping(src.as_ptr(), (ptr as *mut u8).add(k << 22), src.len()) });
 }
 
 fn words(b: &[u8], k: usize) -> u32 {
@@ -135,7 +167,7 @@ impl Tracks {
         let buf = |label: &str, size: u64, usage: wgpu::BufferUsages| device.create_buffer(&wgpu::BufferDescriptor { label: Some(label), size, usage, mapped_at_creation: false });
         let uniform = buf("tracks uniforms", TRACKS_UNIFORM_BYTES as u64, wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST);
         let mesh_count = buf("tracks mesh count", 16, wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST);
-        Self { place, finish, marks, trail_pipeline, uniform, mesh_count, store: None, placed: false, trails_on: false }
+        Self { place, finish, marks, trail_pipeline, uniform, mesh_count, store: None, core: None, placed: false, trails_on: false }
     }
 
     /// GPU bytes the store holds.
@@ -151,13 +183,19 @@ impl Tracks {
     /// Lets the store go (a new dataset).
     pub fn clear(&mut self) {
         self.store = None;
+        self.core = None;
+    }
+
+    /// The core's keys for the store the page begins next with this id (`BEGIN_CORE`).
+    pub fn core_keys(&mut self, id: u32, keys: Arc<TrackKeys>) {
+        self.core = Some((id, keys));
     }
 
     /// One `viewport_tracks` message: a store begun, a slice of one of its arrays, or the store let go.
     pub fn message(&mut self, device: &wgpu::Device, queue: &wgpu::Queue, b: &[u8]) -> anyhow::Result<()> {
         anyhow::ensure!(b.len() >= 8 && b.len() % 4 == 0, "tracks message of {} bytes", b.len());
         match words(b, 0) {
-            BEGIN => {
+            kind @ (BEGIN | BEGIN_CORE) => {
                 let head = 5 + ARRAYS;
                 anyhow::ensure!(b.len() >= head * 4, "tracks begin");
                 let (id, tracks, m, vis_words) = (words(b, 1), words(b, 2), words(b, 3) as usize, words(b, 4) as u64);
@@ -170,8 +208,15 @@ impl Tracks {
                 let run_first: Vec<u32> = (0..m).map(|i| runs[i * 2]).collect();
                 let run_room: Vec<u32> = (0..m).map(|i| runs[i * 2 + 1]).collect();
                 let total = runs[m * 2] as u64 + runs[m * 2 + 1] as u64;
+                let core = match kind {
+                    BEGIN_CORE => Some(self.core.as_ref().filter(|c| c.0 == id).map(|c| c.1.clone()).ok_or_else(|| anyhow::anyhow!("no core keys for tracks store {id}"))?),
+                    _ => None,
+                };
+                if core.is_none() {
+                    self.core = None;
+                }
                 self.store = None;
-                self.store = Some(self.make(device, queue, id, tracks, meshes, run_first, run_room, runs, args, want, vis_words, total));
+                self.store = Some(self.make(device, queue, id, tracks, meshes, run_first, run_room, runs, args, want, vis_words, total, core.as_deref()));
             }
             SLICE => {
                 anyhow::ensure!(b.len() >= 16, "tracks slice");
@@ -204,13 +249,45 @@ impl Tracks {
         want: [u64; ARRAYS],
         vis_words: u64,
         total: u64,
+        core: Option<&TrackKeys>,
     ) -> Store {
         let s = wgpu::BufferUsages::STORAGE;
         let dst = wgpu::BufferUsages::COPY_DST;
         let buf = |label: &str, size: u64, usage: wgpu::BufferUsages| {
             device.create_buffer(&wgpu::BufferDescriptor { label: Some(label), size: size.max(16).next_multiple_of(4), usage, mapped_at_creation: false })
         };
-        let bufs: Vec<wgpu::Buffer> = ["tracks", "track keys", "track keys (2)", "track attitudes", "track marks", "track mark colours"].iter().zip(want).map(|(l, n)| buf(l, n, s | dst)).collect();
+        let labels = ["tracks", "track keys", "track keys (2)", "track attitudes", "track marks", "track mark colours"];
+        let mut want = want;
+        let mut got = [0u64; ARRAYS];
+        let bufs: Vec<wgpu::Buffer> = match core {
+            None => labels.iter().zip(want).map(|(l, n)| buf(l, n, s | dst)).collect(),
+            Some(k) => {
+                // The page sends the table only; the core's chunk spans after it, its keys and
+                // attitudes whole, written now into buffers mapped at creation.
+                let keys = k.keys as u64;
+                let first = keys.min(KEYS_PER_BUFFER) as usize;
+                let a = &k.keys_a[..];
+                let parts: [&[u32]; 4] = [&k.chunks, &a[..first * 2], &a[first * 2..], &k.keys_b];
+                let at0 = want[0];
+                let mut v = Vec::with_capacity(ARRAYS);
+                for (i, l) in labels.iter().enumerate() {
+                    if i < 4 {
+                        let (at, n) = if i == 0 { (at0, at0 + parts[0].len() as u64 * 4) } else { (0, parts[i].len() as u64 * 4) };
+                        let b = device.create_buffer(&wgpu::BufferDescriptor { label: Some(l), size: n.max(16).next_multiple_of(4), usage: s | dst, mapped_at_creation: true });
+                        fill_mapped(&b, at, parts[i]);
+                        b.unmap();
+                        if i > 0 {
+                            want[i] = n;
+                            got[i] = n;
+                        }
+                        v.push(b);
+                    } else {
+                        v.push(buf(l, want[i], s | dst));
+                    }
+                }
+                v
+            }
+        };
         let m = meshes.len();
         let runs_buf = buf("track runs", (runs.len() * 4) as u64, s | dst);
         queue.write_buffer(&runs_buf, 0, bytemuck::cast_slice(runs));
@@ -258,7 +335,7 @@ impl Tracks {
             (g, mark_count)
         });
         let bytes = bufs.iter().map(|b| b.size()).sum::<u64>() + runs_buf.size() + counts.size() + 2 * args_bytes + instances.size() + vis.size() + trail.size();
-        Store { id, tracks, meshes, run_first, run_room, glyph_first: runs[m * 2], bufs, want, got: [0; ARRAYS], counts, args: args_buf, args_init, args_bytes, instances, vis, trail, trail_args, place_group, finish_group, marks, bytes }
+        Store { id, tracks, meshes, run_first, run_room, glyph_first: runs[m * 2], bufs, want, got, counts, args: args_buf, args_init, args_bytes, instances, vis, trail, trail_args, place_group, finish_group, marks, bytes }
     }
 
     /// A packet's visibility bits, sent only when they change: taken from every packet, the ones

@@ -7,14 +7,16 @@
  * track table that goes with its keys: the page's (kinds, meshes, colours,
  * symbol class), with each track's key range, chunk spans, span and gap flag
  * the core's, and its hold and dead span worked out again over the core's
- * first and last key.
+ * first and last key. A person the core has keys for and the page no row of
+ * (thinned by row, a short-lived unit can lose every row) gets a track after
+ * the page's: a far-off dart in its team's colour, as a track of no known kind.
  */
 
 import type { Dataset } from '../../state/types';
 import { positionRows } from '../../figures/motion';
 import { endsOf, holdAfterKeys } from '../../data/despawn';
 import { deathsOf, lastDeadSpan, packDeadSpan } from '../../data/deaths';
-import { FLAG_GAPS, HOLD_ON, setDeadSpan, TRACK_U32, type GpuTrackStore } from './store';
+import { FLAG_GAPS, HOLD_ON, setDeadSpan, TRACK_U32, TrackFigures, type GpuTrackStore } from './store';
 
 /** Words a person's entry takes in the core's answer: first key, count, chunk (u32), span (6 x f32), t0, t1 (f32), flags. */
 export const PERSON_U32 = 12;
@@ -65,23 +67,44 @@ export function parseCoreKeys(buf: ArrayBuffer): CoreKeys {
   return { keys: u[0], chunkU32: u[1], tolerance: f[3], samples: u[4], buildMs: f[5], persons: u.subarray(CORE_HEAD_U32, CORE_HEAD_U32 + n * PERSON_U32) };
 }
 
+/** The tracks drawn from the core's keys: the table, how many, and per mesh how many may draw with it. */
+export interface CoreTable {
+  table: Uint32Array;
+  tracks: number;
+  meshTracks: Uint32Array;
+  /** Tracks of persons the page has no row of (after the page's). */
+  extra: number;
+}
+
 /**
  * The track table (tracks only, `TRACK_U32` a track, at least one) for the core's keys: the
  * page's store's with each track's key range, chunk offset (its spans follow the table in the
- * viewport's buffer), span, gap flag, hold and dead span from the core's entry for its person.
+ * viewport's buffer), span, gap flag, hold and dead span from the core's entry for its person;
+ * then a track for each person with keys the page has no track for.
  */
-export function coreTrackTable(s: GpuTrackStore, k: CoreKeys): Uint32Array {
+export function coreTrackTable(s: GpuTrackStore, k: CoreKeys): CoreTable {
   const d = s.dataset;
-  const head = Math.max(1, s.tracks) * TRACK_U32;
-  const out = s.trackData.slice(0, head);
-  const f = new Float32Array(out.buffer);
   const e = k.persons;
+  const persons = Math.floor(e.length / PERSON_U32);
+  const missing: number[] = [];
+  for (let p = 0; p < persons; p++) if (e[p * PERSON_U32 + 1] > 0 && !(s.trackOf[p] >= 0)) missing.push(p);
+  const tracks = s.tracks + missing.length;
+  const head = Math.max(1, tracks) * TRACK_U32;
+  const out = new Uint32Array(head);
+  out.set(s.trackData.subarray(0, Math.max(1, s.tracks) * TRACK_U32));
+  const f = new Float32Array(out.buffer);
   const ef = new Float32Array(e.buffer, e.byteOffset, e.length);
+  const meshTracks = s.meshTracks.slice();
+  if (missing.length) {
+    const figures = new TrackFigures(d);
+    missing.forEach((p, j) => figures.place(out, f, (s.tracks + j) * TRACK_U32, p, -1, !!d.yaw));
+    for (let m = 0; m < meshTracks.length; m++) meshTracks[m] += figures.meshTracks[m];
+  }
   const ends = endsOf(d);
   const deaths = deathsOf(d);
-  for (let i = 0; i < s.tracks; i++) {
+  for (let i = 0; i < tracks; i++) {
     const o = i * TRACK_U32;
-    const p = s.personOf[i];
+    const p = i < s.tracks ? s.personOf[i] : missing[i - s.tracks];
     const q = p * PERSON_U32;
     if (q + PERSON_U32 > e.length || e[q + 1] === 0) {
       // No keys in the core for it: drawn as none.
@@ -100,5 +123,5 @@ export function coreTrackTable(s: GpuTrackStore, k: CoreKeys): Uint32Array {
     const span = deaths.any ? lastDeadSpan(deaths, p) : null;
     setDeadSpan(out, o, span ? packDeadSpan(span[0], span[1], t0, t1) : 0);
   }
-  return out;
+  return { table: out, tracks, meshTracks, extra: missing.length };
 }

@@ -32,6 +32,7 @@
     "allow-viewport-mesh",
     "allow-viewport-glyphs",
     "allow-viewport-tracks",
+    "allow-viewport-core-tracks",
     "allow-viewport-heat-tiles",
     "allow-viewport-times"
   ],

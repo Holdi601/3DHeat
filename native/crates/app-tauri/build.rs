@@ -58,6 +58,7 @@ fn main() {
                 "viewport_mesh",
                 "viewport_glyphs",
                 "viewport_tracks",
+                "viewport_core_tracks",
                 "viewport_heat_tiles",
                 "viewport_times",
             ])),

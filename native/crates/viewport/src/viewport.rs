@@ -56,6 +56,8 @@ pub enum Msg {
     Glyphs(Vec<u8>),
     /// The GPU tracks' store, a message at a time (`Tracks::message`).
     Tracks(Vec<u8>),
+    /// The GPU tracks' keys the core built (`Tracks::core_keys`), for the store of that id.
+    CoreTracks(u32, Arc<heat3d_core::tracks::TrackKeys>),
     Times(Reply<String>),
     /// The core's heat-tile store: the tiles a frame's `SECTION_HEAT_TILES` names are read there.
     TileStore(Arc<heat3d_core::tiles::TileStore>),
@@ -380,6 +382,7 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                     }
                     dirty = true;
                 }
+                Msg::CoreTracks(id, keys) => r.tracks.core_keys(id, keys),
                 Msg::Mesh(bytes) => {
                     if let Err(e) = r.figures.mesh_slice(&r.device, &r.queue, &bytes) {
                         crate::note(&format!("viewport: {e:#}"));

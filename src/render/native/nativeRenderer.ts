@@ -130,7 +130,11 @@ export class NativeRenderer implements Renderer {
   gpuBudgetBytes = 2 * 1024 ** 3;
 
   /** The GPU tracks (`nativeTracks.ts`): the store sent once, each frame its uniform. */
-  private readonly tracks = new NativeTracks((bytes) => this.invoke('viewport_tracks', bytes).catch((e: unknown) => console.warn('native viewport: tracks', e)));
+  private readonly tracks = new NativeTracks(
+    (bytes) => this.invoke('viewport_tracks', bytes).catch((e: unknown) => console.warn('native viewport: tracks', e)),
+    (args) => this.invoke('viewport_core_tracks', args),
+    () => Math.floor(this.gpuTracksMaxBytes / 8),
+  );
 
   /** The keys' x, y, z, t in one binding (8 bytes a key), within half the GPU budget. */
   get gpuTracksMaxBytes(): number {

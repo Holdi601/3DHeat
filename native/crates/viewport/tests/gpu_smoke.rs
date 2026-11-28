@@ -214,6 +214,52 @@ fn tracks_messages() -> Vec<Vec<u8>> {
     out
 }
 
+/// A store of one track drawn from the core's keys (`BEGIN_CORE`, `Tracks::core_keys`): a unit's
+/// keys built by the core, the page's table (first key, count, chunk spans after the table, span)
+/// and its mark arrays the only arrays sent.
+fn core_tracks(r: &mut Renderer) {
+    use heat3d_core::tracks::{build_keys, TrackInput, TrackOptions};
+    let n = 200;
+    let px: Vec<f32> = (0..n).map(|k| 0.5 + 0.3 * (k as f32 * 0.05).sin()).collect();
+    let pz: Vec<f32> = (0..n).map(|k| 0.5 - 0.3 * (k as f32 * 0.05).cos()).collect();
+    let py = vec![0.5f32; n];
+    let time: Vec<f32> = (0..n).map(|k| k as f32 * 0.5).collect();
+    let yaw: Vec<f32> = (0..n).map(|k| k as f32 * 0.05).collect();
+    let person = vec![0u32; n];
+    let inp = TrackInput { px: &px, py: &py, pz: &pz, time: &time, person: &person, yaw: Some(&yaw), pitch: None, roll: None, events: None, shared: None, persons: 1 };
+    let k = build_keys(&inp, &TrackOptions { units: 1.0, max_keys: 1 << 20 }).expect("core keys");
+    let e = k.persons[0];
+    assert_eq!(e.count as usize, n);
+    r.tracks.core_keys(6, std::sync::Arc::new(k));
+    let le = |w: &[u32]| w.iter().flat_map(|x| x.to_le_bytes()).collect::<Vec<u8>>();
+    let mut table = vec![0u32; 16];
+    table[0] = e.first;
+    table[1] = e.count;
+    table[2] = 0xff0000ff;
+    table[4] = 2.0f32.to_bits();
+    table[5] = 2;
+    table[7] = 16 + e.chunk;
+    for j in 0..6 {
+        table[8 + j] = e.span[j].to_bits();
+    }
+    let want = [64u32, 0, 0, 0, 16, 4];
+    let mut begin = vec![3u32, 6, 1, 1, 4];
+    begin.extend_from_slice(&want);
+    begin.push(7);
+    begin.extend_from_slice(&[0, 1, 1, 1]);
+    begin.extend_from_slice(&[3, 0, 0, 0, 6, 0, 0, 0]);
+    r.tracks.message(&r.device, &r.queue, &le(&begin)).expect("core begin");
+    let mut m = le(&[1, 6, 0, 0]);
+    m.extend(le(&table));
+    r.tracks.message(&r.device, &r.queue, &m).expect("table");
+    for (i, len) in [(4u32, 16usize), (5, 4)] {
+        let mut m = le(&[1, 6, i, 0]);
+        m.extend(std::iter::repeat_n(0u8, len));
+        r.tracks.message(&r.device, &r.queue, &m).expect("marks");
+    }
+    assert_eq!(r.tracks.ready_id(), 6, "the core-keyed store whole");
+}
+
 fn tracks_frame() -> TracksFrame {
     let mut uniform = vec![0u32; TRACKS_UNIFORM_BYTES as usize / 4];
     let f = |v: f32| v.to_bits();
@@ -307,6 +353,11 @@ fn draws_heat_offscreen() {
     let mut with_tracks = packet();
     with_tracks.tracks = Some(tracks_frame());
     r.draw(&[with_tracks.clone(), with_tracks], &view, (SIDE, SIDE), false);
+    // The same drawn from the core's keys.
+    core_tracks(&mut r);
+    let mut with_core = packet();
+    with_core.tracks = Some(TracksFrame { id: 6, ..tracks_frame() });
+    r.draw(&[with_core], &view, (SIDE, SIDE), false);
     let error = pollster::block_on(scope.pop());
     assert!(error.is_none(), "validation error: {error:?}");
     for _ in 0..500 {
