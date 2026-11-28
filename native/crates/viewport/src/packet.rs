@@ -72,6 +72,8 @@ pub struct Packet {
     pub tracks: Option<TracksFrame>,
     /// Heat from tiles (`SECTION_HEAT_TILES`, `heattiles.rs`).
     pub heat_tiles: Option<crate::heattiles::TilesFrame>,
+    /// A tiled terrain's nodes and the placed objects' cells in view (`SECTION_TERRAIN`, `terrain.rs`).
+    pub terrain: Option<crate::terrain::TerrainFrame>,
 }
 
 /// `SECTION_TRACKS`: the store's id, the place shader's uniform, the visibility bits when they
@@ -402,6 +404,14 @@ pub fn decode(bytes: &[u8]) -> Result<Packet> {
             SECTION_CUBES => {
                 let n = s.take()? as usize;
                 p.cubes = s.slice(n * 8)?.iter().map(|w| f32::from_bits(*w)).collect();
+            }
+            SECTION_TERRAIN => {
+                let count = s.take()?;
+                let colours = s.take()? == 1;
+                let nodes = s.slice(count as usize * TERRAIN_INSTANCE_FLOATS as usize)?.iter().map(|w| f32::from_bits(*w)).collect();
+                let n = s.take()? as usize;
+                let cells = s.slice(n)?.to_vec();
+                p.terrain = Some(crate::terrain::TerrainFrame { nodes, count, colours, cells });
             }
             _ => bail!("unknown section {tag}"),
         }

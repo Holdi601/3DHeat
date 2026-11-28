@@ -22,7 +22,8 @@
  * over the finished picture, the zones' discs, spawn marks, ranges, volume contours; the level's
  * water and structures with the heat's occlusion behind them (seal, structure depth, peeled
  * layers); line heat, the wedges and the direction field (their per-row data sent a chunk at a
- * time, `sendRowData`), the rate map. Not yet: the GPU tracks' trails, marks and glyphs, textures, image levels, world tiles.
+ * time, `sendRowData`), the rate map; the level's atlas, image levels, the ground's own edges, world
+ * tiles and a tiled terrain with its placed objects (`levelMessages.ts`, `nativeTerrain.ts`).
  */
 
 import type { Dataset } from '../../state/types';
@@ -56,6 +57,8 @@ import { INSTANCE_STRIDE, MESH_STRIDE, type FigureMesh } from '../../figures/ins
 import { symbolAtlas } from '../symbols/atlas';
 import { markResident, nextToUpload, playbackStarting, setMeshUploader, uploadsWaiting } from '../../figures/residency';
 import { NativeTracks } from './nativeTracks';
+import { NativeTerrain } from './nativeTerrain';
+import { ATLAS_MIP_LEVELS, LEVEL_DROP, LEVEL_IMAGE, LEVEL_MAP, LEVEL_NONE, imageLevels, imageMessage, meshMessage } from './levelMessages';
 import { KEYS_PER_BUFFER } from '../gpuTracks/store';
 
 interface Tauri {
@@ -130,6 +133,8 @@ export class NativeRenderer implements Renderer {
   gpuBudgetBytes = 2 * 1024 ** 3;
 
   /** The GPU tracks (`nativeTracks.ts`): the store sent once, each frame its uniform. */
+  /** A tiled terrain's tiles and placed objects, sent as `GpuTerrain`/`GpuBoxes` upload them. */
+  private readonly terrain = new NativeTerrain((b) => this.sendLevel(b));
   private readonly tracks = new NativeTracks(
     (bytes) => this.invoke('viewport_tracks', bytes).catch((e: unknown) => console.warn('native viewport: tracks', e)),
     (args) => this.invoke('viewport_core_tracks', args),
@@ -547,42 +552,83 @@ export class NativeRenderer implements Renderer {
     }
   }
 
-  setLevel(level: Level | null): void {
-    this.rangeLevel = level && level.kind === 'model' && level.indices.length > 0 ? level : null;
-    if (!level || level.kind !== 'model' || level.indices.length === 0) {
-      void this.invoke('viewport_level', new Uint8Array(0));
-      return;
-    }
-    const nv = level.vertices.length;
-    const colours = level.colours && level.colours.length >= (nv / 6) * 3 ? level.colours.subarray(0, (nv / 6) * 3) : null;
-    // The ground, then the structures (faces and edges) and the water: the viewport draws them,
-    // seals the structures' depth and peels their layers for the heat's occlusion.
-    const none = new Uint32Array(0);
-    const sets = [level.indices, level.structureIndices ?? none, level.structureEdges ?? none, level.waterIndices ?? none];
-    const words = sets.reduce((a, x) => a + x.length, 0);
-    const buf = new ArrayBuffer(24 + nv * 4 + (colours ? colours.length * 4 : 0) + words * 4);
-    const head = new Uint32Array(buf, 0, 6);
-    head[0] = nv;
-    head[1] = sets[0].length;
-    head[2] = colours ? 1 : 0;
-    head[3] = sets[1].length;
-    head[4] = sets[2].length;
-    head[5] = sets[3].length;
-    let at = 24;
-    new Float32Array(buf, at, nv).set(level.vertices);
-    at += nv * 4;
-    if (colours) {
-      new Float32Array(buf, at, colours.length).set(colours);
-      at += colours.length * 4;
-    }
-    for (const set of sets) {
-      new Uint32Array(buf, at, set.length).set(set);
-      at += set.length * 4;
-    }
-    void this.invoke('viewport_level', new Uint8Array(buf)).catch((e: unknown) => console.warn('native viewport: level', e));
+  /** Bumped per level, so an atlas or map that decodes late is not sent for the next one. */
+  private levelToken = 0;
+  /** The level's messages, one after the other (parts of two would interleave and a late one overtake). */
+  private levelChain: Promise<void> = Promise.resolve();
+
+  private sendLevel(bytes: Uint8Array): void {
+    this.levelChain = this.levelChain
+      .then(() => this.sendParts('viewport_level', bytes))
+      .catch((e: unknown) => console.warn('native viewport: level', e));
   }
 
-  setWorldTiles(_tiles: WorldTile[]): void {}
+  setLevel(level: Level | null): void {
+    const token = ++this.levelToken;
+    const stale = () => token !== this.levelToken;
+    this.rangeLevel = level && level.kind === 'model' && level.indices.length > 0 ? level : null;
+    this.sendLevel(new Uint8Array(new Uint32Array([LEVEL_NONE]).buffer));
+    if (!level) return;
+    if (level.kind === 'image') {
+      // The map's picture (`setLevel`'s map texture), one level, as the web copies it.
+      void imageLevels(level.bitmap, 1, stale)
+        .then((img) => {
+          if (img && !stale()) this.sendLevel(imageMessage(LEVEL_MAP, 0, img.width, img.height, img.levels));
+        })
+        .catch((e: unknown) => console.warn('native viewport: map', e));
+      return;
+    }
+    if (level.indices.length === 0) return;
+    // The ground, the structures (faces and edges), the water, the UVs and tiles: the viewport
+    // draws them, seals the structures' depth and peels their layers for the heat's occlusion.
+    this.sendLevel(meshMessage(0, { ...level, uvTiles: level.uvs && level.tileRects ? level.uvTiles : null, bounds: null }));
+    if (level.atlas && level.uvs) {
+      // `loadAtlas`: decoded, its mip levels by the browser's scaler, sent once whole.
+      void imageLevels(level.atlas, ATLAS_MIP_LEVELS, stale)
+        .then((img) => {
+          if (img && !stale()) this.sendLevel(imageMessage(LEVEL_IMAGE, 0, img.width, img.height, img.levels));
+        })
+        .catch(() => {
+          // An atlas that will not decode costs the texture, not the level.
+        });
+    }
+  }
+
+  /** The world tiles sent (`setWorldTiles`): by the tile set's id, the viewport's mesh id and the tile. */
+  private readonly tileMeshes = new Map<string, { id: number; tile: WorldTile }>();
+  private nextTileId = 1;
+
+  /**
+   * The streamed world tiles, as `setWorldTiles` takes them: a tile never changes in place, so the
+   * ones gone (or replaced) are dropped by id and the new ones sent, each a mesh and, once its
+   * levels are scaled (each from its full size, `uploadTileImage`), its image.
+   */
+  setWorldTiles(tiles: WorldTile[]): void {
+    const want = new Map(tiles.map((t) => [t.id, t]));
+    for (const [key, held] of this.tileMeshes) {
+      if (want.get(key) === held.tile) continue;
+      this.tileMeshes.delete(key);
+      this.sendLevel(new Uint8Array(new Uint32Array([LEVEL_DROP, held.id]).buffer));
+    }
+    for (const tile of tiles) {
+      if (this.tileMeshes.has(tile.id)) continue;
+      const id = this.nextTileId;
+      // 0 is the level, 0xffffffff every tile.
+      this.nextTileId = this.nextTileId >= 0xfffffffe ? 1 : this.nextTileId + 1;
+      this.tileMeshes.set(tile.id, { id, tile });
+      this.sendLevel(meshMessage(id, { ...tile, uvTiles: null, tileRects: null }));
+      if (tile.image && tile.uvs) {
+        const stale = () => this.tileMeshes.get(tile.id)?.tile !== tile;
+        void imageLevels(tile.image, Infinity, stale, false)
+          .then((img) => {
+            if (img && !stale()) this.sendLevel(imageMessage(LEVEL_IMAGE, id, img.width, img.height, img.levels));
+          })
+          .catch(() => {
+            // The tile stays untextured, as on the web when its image will not copy.
+          });
+      }
+    }
+  }
 
   prepareFilters(filters: ActiveFilter[]): ActiveFilter[] {
     // The viewport stages them itself: the old ones are drawn until every chunk has the new ones' columns.
@@ -622,6 +668,9 @@ export class NativeRenderer implements Renderer {
       this.tracks.write(w, p, (m) => this.meshFor(m), all);
       if (!p.figureBatches?.length) this.evictMeshes();
     }
+    // A tiled terrain's ground and objects: what arrived sent first, then the frame's nodes and cells.
+    this.terrain.prepare(p);
+    this.terrain.write(w, p, SECTION.terrain);
     // Heat from tiles: the viewport reads them from the core by the pyramid's key (told of the store once).
     if (p.heatTiles && p.heatTiles.tiles.length > 0 && !p.heat.rate) {
       if (!this.tileStoreSent) {

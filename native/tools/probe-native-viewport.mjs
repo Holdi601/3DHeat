@@ -3,8 +3,8 @@
  *
  *   node native/tools/probe-native-viewport.mjs --dir <rowceiling folder> --rows 10,100
  *        [--exe <3dheat-app.exe>] [--out <folder>] [--seconds 8]
- *        [--cases exposure,heat,teams,filter,window,split,figures,cubes,overlays,lines,directions,rate,structures|none]
- *        [--backends webgpu,native] [--matches 1000] [--units 20] [--screen 1]
+ *        [--cases exposure,heat,teams,filter,window,split,figures,cubes,overlays,lines,directions,rate,structures,textured,groundwire,image,tiles,terrain|none]
+ *        [--backends webgpu,native] [--matches 1000] [--units 20] [--screen 1] [--keep <level case>]
  *   node native/tools/probe-native-viewport.mjs --cases tracks,tracks-cpu --matches 1000 --units 20
  *
  * For each load, starts the built app twice - the web engine (WebGPU in the app's
@@ -27,7 +27,16 @@
  *            gate as the heat cases, the field and the picture. structures: a synthetic model
  *            level (ground under the rows, a lake, a grid of see-through walls with their edges)
  *            with occlusion on, so the walls dim the heat behind them through the peeled
- *            layers, and the cut behind the ground reads the structure depth
+ *            layers, and the cut behind the ground reads the structure depth. textured: the same
+ *            level with UVs and a made-up atlas (the walls' repeating tile with cut-out squares),
+ *            ground and structures drawn from it, opaque (the cut-out texels no wall in the seal and
+ *            the peeled layers). groundwire: the ground a 16 x 16 grid with its own edges drawn over
+ *            it. image: an image level (a made-up map quad over the rows' ground). tiles: 3 x 3
+ *            made-up world tiles (ground with colours and an image, a wall pair, ponds) handed to the
+ *            renderer as the tile set's (`setWorldTiles`) over a plain model level. terrain: a
+ *            made-up tiled terrain (a hill, 512 cells, two classes, no placed objects) opened as a
+ *            picked pack (`openTerrainLevel`) and streamed. All gated as the
+ *            heat cases (the field and the picture)
  *   tracks   GPU tracks: a synthetic load built in the page, --matches overlaid matches of --units
  *            units each (made up: circles on an empty map, 2 minutes of samples a unit), the box
  *            replay with figures at the middle of the recording, placed by the GPU (`gpuTracks/`)
@@ -70,8 +79,10 @@ const exe = arg('exe', join(target, 'release', '3dheat-app.exe'));
 const dir = arg('dir', null);
 const out = resolve(arg('out', join(process.env.TEMP ?? '.', 'heat3d-native-viewport')));
 const secs = Number(arg('seconds', 8));
-const cases = String(arg('cases', 'exposure,heat,teams,filter,window,split,figures,cubes,overlays,lines,directions,rate,structures')).split(',').filter((c) => c && c !== 'none');
+const cases = String(arg('cases', 'exposure,heat,teams,filter,window,split,figures,cubes,overlays,lines,directions,rate,structures,textured,groundwire,image,tiles,terrain')).split(',').filter((c) => c && c !== 'none');
 const backends = String(arg('backends', 'webgpu,native')).split(',');
+// The level case whose level (and world tiles) stay on for the frames (orbit + playback over it).
+const keepCase = arg('keep', null);
 const PORT = Number(arg('port', 9336));
 const matches = Number(arg('matches', 1000));
 const unitsPerMatch = Number(arg('units', 20));
@@ -487,7 +498,7 @@ async function run(rows, backend) {
         }
         continue;
       }
-      parity[c] = await page.evaluate(async (c) => {
+      parity[c] = await page.evaluate(async ([c, keep]) => {
         const useStore = await globalThis.__heat3dNative.store();
         const eng = globalThis.__3dheat_engine;
         const st = useStore.getState();
@@ -503,37 +514,194 @@ async function run(rows, backend) {
           if (a) st.setFilters([{ kind: 'range', column: a.name, min: a.min + (a.max - a.min) * 0.25, max: a.min + (a.max - a.min) * 0.75 }]);
         }
         if (c === 'lines') st.setMode('heat-lines');
-        if (c === 'structures') {
-          // A synthetic level in display space: the ground just under the rows, a lake in one corner,
-          // and a 4 x 4 grid of walls (two crossing quads each) as tall as the rows' height span.
+        let unwrap = null;
+        if (c === 'structures' || c === 'textured' || c === 'groundwire' || c === 'tiles') {
+          // A synthetic level in display space: the ground just under the rows (a 16 x 16 grid for
+          // groundwire, its own edges drawn over it), a lake in one corner, and a 4 x 4 grid of walls
+          // (two crossing quads each) as tall as the rows' height span. textured: UVs on all of it
+          // and a made-up atlas (a gradient; the walls' tile repeating a checker with cut-out
+          // squares), the ground and the structures drawn from it, opaque.
           const b = eng.toDisplay(eng.dataset.bounds);
           const y0 = b.minY - (b.maxY - b.minY) * 0.02, y1 = b.maxY;
-          const v = [], ground = [], structure = [], edges = [], water = [];
-          const vert = (x, y, z, nx, ny, nz) => (v.push(x, y, z, nx, ny, nz), v.length / 6 - 1);
+          const v = [], uv = [], tile = [], ground = [], structure = [], edges = [], water = [];
+          const sx = b.maxX - b.minX, sz = b.maxZ - b.minZ;
+          const vert = (x, y, z, nx, ny, nz, u = (x - b.minX) / sx * 0.5 + 0.5, w = (z - b.minZ) / sz * 0.5, t = 0) => (v.push(x, y, z, nx, ny, nz), uv.push(u, w), tile.push(t), v.length / 6 - 1);
           const quad = (a, bb, cc, d, tri, edge) => {
             tri.push(a, bb, cc, a, cc, d);
             edge?.push(a, bb, bb, cc, cc, d, d, a);
           };
-          const sx = b.maxX - b.minX, sz = b.maxZ - b.minZ;
-          quad(vert(b.minX, y0, b.minZ, 0, 1, 0), vert(b.maxX, y0, b.minZ, 0, 1, 0), vert(b.maxX, y0, b.maxZ, 0, 1, 0), vert(b.minX, y0, b.maxZ, 0, 1, 0), ground);
+          const cells = c === 'groundwire' ? 16 : 1;
+          const walls = c === 'tiles' ? 0 : 4;
+          const gv = [];
+          for (let k = 0; k <= cells; k++) for (let i = 0; i <= cells; i++) gv.push(vert(b.minX + (sx * i) / cells, y0, b.minZ + (sz * k) / cells, 0, 1, 0));
+          for (let k = 0; k < cells; k++)
+            for (let i = 0; i < cells; i++) {
+              const at = (ii, kk) => gv[kk * (cells + 1) + ii];
+              quad(at(i, k), at(i + 1, k), at(i + 1, k + 1), at(i, k + 1), ground);
+            }
           const wy = y0 + (b.maxY - b.minY) * 0.001;
           quad(vert(b.minX, wy, b.minZ, 0, 1, 0), vert(b.minX + sx * 0.2, wy, b.minZ, 0, 1, 0), vert(b.minX + sx * 0.2, wy, b.minZ + sz * 0.2, 0, 1, 0), vert(b.minX, wy, b.minZ + sz * 0.2, 0, 1, 0), water);
-          for (let i = 0; i < 4; i++)
-            for (let k = 0; k < 4; k++) {
+          for (let i = 0; i < walls; i++)
+            for (let k = 0; k < walls; k++) {
               const cx = b.minX + sx * (0.125 + i * 0.25), cz = b.minZ + sz * (0.125 + k * 0.25), hx = sx * 0.08, hz = sz * 0.08;
-              quad(vert(cx - hx, y0, cz, 0, 0, 1), vert(cx + hx, y0, cz, 0, 0, 1), vert(cx + hx, y1, cz, 0, 0, 1), vert(cx - hx, y1, cz, 0, 0, 1), structure, edges);
-              quad(vert(cx, y0, cz - hz, 1, 0, 0), vert(cx, y0, cz + hz, 1, 0, 0), vert(cx, y1, cz + hz, 1, 0, 0), vert(cx, y1, cz - hz, 1, 0, 0), structure, edges);
+              // The walls' UVs in the tile's own repeat (3 x 2 over a wall), tile 1.
+              const wv = (x, y, z, nx, nz, u, w) => vert(x, y, z, nx, 0, nz, u, w, 1);
+              quad(wv(cx - hx, y0, cz, 0, 1, 0, 0), wv(cx + hx, y0, cz, 0, 1, 3, 0), wv(cx + hx, y1, cz, 0, 1, 3, 2), wv(cx - hx, y1, cz, 0, 1, 0, 2), structure, edges);
+              quad(wv(cx, y0, cz - hz, 1, 0, 0, 0), wv(cx, y0, cz + hz, 1, 0, 3, 0), wv(cx, y1, cz + hz, 1, 0, 3, 2), wv(cx, y1, cz - hz, 1, 0, 0, 2), structure, edges);
             }
+          let atlas = null;
+          if (c === 'textured') {
+            // 128 x 128: the left half a checker tile with cut-out squares (alpha 0), the right a gradient.
+            const cv = new OffscreenCanvas(128, 128);
+            const g = cv.getContext('2d');
+            const grad = g.createLinearGradient(64, 0, 128, 128);
+            grad.addColorStop(0, '#3a6');
+            grad.addColorStop(0.5, '#c94');
+            grad.addColorStop(1, '#47c');
+            g.fillStyle = grad;
+            g.fillRect(64, 0, 64, 128);
+            for (let y = 0; y < 8; y++)
+              for (let x = 0; x < 4; x++) {
+                g.fillStyle = (x + y) % 3 === 0 ? 'rgba(0,0,0,0)' : (x + y) % 2 ? '#d33' : '#eec';
+                g.clearRect(x * 16, y * 16, 16, 16);
+                g.fillRect(x * 16, y * 16, 16, 16);
+              }
+            atlas = await cv.convertToBlob({ type: 'image/png' });
+          }
           st.setLevel({
             kind: 'model', name: 'probe level', vertices: new Float32Array(v), indices: new Uint32Array(ground),
             structureIndices: new Uint32Array(structure), structureEdges: new Uint32Array(edges), waterIndices: new Uint32Array(water),
+            ...(atlas ? { uvs: new Float32Array(uv), uvTiles: Uint16Array.from(tile), tileRects: new Float32Array([0, 0, 0.5, 1]), atlas, showTexture: true, structureTexture: true } : {}),
             triangles: (ground.length + structure.length + water.length) / 3, structureTriangles: structure.length / 3, waterTriangles: water.length / 3,
             sourceTriangles: (ground.length + structure.length + water.length) / 3,
             bounds: { minX: b.minX, maxX: b.maxX, minY: y0, maxY: y1, minZ: b.minZ, maxZ: b.maxZ },
             opacity: 1, desaturate: 0, brightness: 1, wireframe: false,
-            structureOpacity: 0.25, structureWireOpacity: 0.6, showStructureFaces: true, showStructureWire: true, showWater: true,
+            structureOpacity: atlas ? 1 : 0.25, structureWireOpacity: 0.6, showStructureFaces: true, showStructureWire: true, showWater: true,
+            ...(c === 'groundwire' ? { groundWireOpacity: 0.7 } : {}),
           });
           st.patchHeat({ occlusion: 0.85, occlusionFloor: 0.1, hideBehindGround: true });
+          // The atlas decodes, goes over and is drawn (the native one in parts) before the case is read.
+          if (c === 'groundwire') {
+            // Close in (the edges fade out from 6 % of the level's width, `groundWireFade`): 80 % of the way to the middle.
+            const cp = eng.camera.position, mx = (b.minX + b.maxX) / 2, mz = (b.minZ + b.maxZ) / 2;
+            eng.camera.move(1, 0, 0, Math.hypot(cp.x - mx, cp.y - y0, cp.z - mz) * 0.8);
+          }
+          if (atlas || c === 'groundwire') for (let i = 0; i < 90; i++) await raf();
+          if (c === 'tiles') {
+            // 3 x 3 world tiles over the rows, a little above the level's ground: each its own
+            // 8 x 8 ground grid with captured colours and a made-up 128 x 128 image, one wall pair
+            // (structures + edges) and, in the corner tiles, a pond. Handed to the renderer as the
+            // engine hands it the tile set's (`setWorldTiles`).
+            for (let i = 0; i < 10; i++) await raf();
+            const tiles = [];
+            for (let ti = 0; ti < 3; ti++)
+              for (let tk = 0; tk < 3; tk++) {
+                const x0 = b.minX + (sx * ti) / 3, z0 = b.minZ + (sz * tk) / 3, tx = sx / 3, tz = sz / 3, ty = y0 + (b.maxY - b.minY) * 0.005;
+                const tv = [], tc = [], tu = [], tg = [], ts = [], te = [], tw = [];
+                const V = (x, y, z, nx, ny, nz, u, w) => (tv.push(x, y, z, nx, ny, nz), tc.push(0.4 + 0.2 * ti, 0.5, 0.4 + 0.2 * tk), tu.push(u, w), tv.length / 6 - 1);
+                const Q = (a, bb, cc, d, tri, edge) => {
+                  tri.push(a, bb, cc, a, cc, d);
+                  edge?.push(a, bb, bb, cc, cc, d, d, a);
+                };
+                const n = 8, gi = [];
+                for (let k = 0; k <= n; k++) for (let i = 0; i <= n; i++) gi.push(V(x0 + (tx * i) / n, ty + Math.sin(i + k) * (b.maxY - b.minY) * 0.003, z0 + (tz * k) / n, 0, 1, 0, i / n, k / n));
+                for (let k = 0; k < n; k++) for (let i = 0; i < n; i++) Q(gi[k * (n + 1) + i], gi[k * (n + 1) + i + 1], gi[(k + 1) * (n + 1) + i + 1], gi[(k + 1) * (n + 1) + i], tg);
+                const cx = x0 + tx / 2, cz = z0 + tz / 2, h = (y1 - y0) * 0.6;
+                Q(V(cx - tx * 0.3, ty, cz, 0, 0, 1, 0, 0), V(cx + tx * 0.3, ty, cz, 0, 0, 1, 1, 0), V(cx + tx * 0.3, ty + h, cz, 0, 0, 1, 1, 1), V(cx - tx * 0.3, ty + h, cz, 0, 0, 1, 0, 1), ts, te);
+                Q(V(cx, ty, cz - tz * 0.3, 1, 0, 0, 0, 0), V(cx, ty, cz + tz * 0.3, 1, 0, 0, 1, 0), V(cx, ty + h, cz + tz * 0.3, 1, 0, 0, 1, 1), V(cx, ty + h, cz - tz * 0.3, 1, 0, 0, 0, 1), ts, te);
+                if ((ti + tk) % 2 === 0) Q(V(x0, ty * 1.0001 + 0.01, z0, 0, 1, 0, -1, -1), V(x0 + tx * 0.3, ty * 1.0001 + 0.01, z0, 0, 1, 0, -1, -1), V(x0 + tx * 0.3, ty * 1.0001 + 0.01, z0 + tz * 0.3, 0, 1, 0, -1, -1), V(x0, ty * 1.0001 + 0.01, z0 + tz * 0.3, 0, 1, 0, -1, -1), tw);
+                const cv = new OffscreenCanvas(128, 128);
+                const g = cv.getContext('2d');
+                g.fillStyle = `hsl(${(ti * 3 + tk) * 40}, 55%, 45%)`;
+                g.fillRect(0, 0, 128, 128);
+                g.fillStyle = '#f4f0e0';
+                for (let x = 0; x < 128; x += 32) g.fillRect(x, 0, 4, 128);
+                g.fillRect(0, 60, 128, 8);
+                tiles.push({
+                  id: `probe-${ti}-${tk}`, vertices: new Float32Array(tv), colours: new Float32Array(tc), uvs: new Float32Array(tu), image: await createImageBitmap(cv),
+                  indices: new Uint32Array(tg), structureIndices: new Uint32Array(ts), structureEdges: new Uint32Array(te), waterIndices: new Uint32Array(tw),
+                  bounds: { minX: x0, maxX: x0 + tx, minY: ty - 1, maxY: ty + h + 1, minZ: z0, maxZ: z0 + tz },
+                });
+              }
+            eng.renderer.setWorldTiles(tiles);
+            unwrap = () => eng.renderer.setWorldTiles([]);
+            eng.invalidate?.(2);
+            for (let i = 0; i < 90; i++) await raf();
+          }
+        }
+        if (c === 'terrain') {
+          // A made-up tiled terrain under the rows, written as the extractors write one (as
+          // src/world/terrain.test.ts makes it): a hill on a slope, 512 cells, tiles of 128 with two
+          // samples of apron, every level every second sample, raw; low ground in one class, the
+          // dips in another. Opened as a picked pack opens (`openTerrainLevel`), streamed and drawn.
+          const b = eng.toDisplay(eng.dataset.bounds);
+          const cells = 512, T = 128, A = 2, side = T + 1 + 2 * A;
+          const spacing = Math.max(b.maxX - b.minX, b.maxZ - b.minZ) / cells;
+          const origin = [b.minX, b.minZ];
+          const span = b.maxY - b.minY;
+          const f = (x, z) => b.minY - span * 0.05 + span * 0.25 * Math.exp(-((x - (b.minX + b.maxX) / 2) ** 2 + (z - (b.minZ + b.maxZ) / 2) ** 2) / (spacing * cells * 0.2) ** 2) + Math.sin(x / (spacing * 40)) * span * 0.02;
+          const levels = [], parts = [];
+          let offset = 0;
+          for (let l = 0; cells >> l >= T; l++) {
+            const cl = cells >> l, sl = spacing * 2 ** l, n = cl / T, index = [];
+            for (let tz = 0; tz < n; tz++)
+              for (let tx = 0; tx < n; tx++) {
+                const h = new Float64Array(side * side);
+                for (let bb = 0; bb < side; bb++)
+                  for (let a = 0; a < side; a++) {
+                    const i = Math.min(cl, Math.max(0, tx * T + a - A)), j = Math.min(cl, Math.max(0, tz * T + bb - A));
+                    h[bb * side + a] = f(origin[0] + i * sl, origin[1] + j * sl);
+                  }
+                let lo = Infinity, hi = -Infinity;
+                for (const v of h) (lo = Math.min(lo, v)), (hi = Math.max(hi, v));
+                const step = hi > lo ? (hi - lo) / 65535 : 1;
+                const raw = new Uint8Array(side * side * 3);
+                const dv = new DataView(raw.buffer);
+                for (let k = 0; k < side * side; k++) {
+                  dv.setUint16(k * 2, Math.round((h[k] - lo) / step), true);
+                  raw[side * side * 2 + k] = h[k] < b.minY - span * 0.04 ? 1 : 0;
+                }
+                parts.push(raw);
+                index.push([offset, raw.byteLength, lo, step, lo, hi]);
+                offset += raw.byteLength;
+              }
+            levels.push({ spacing: sl, cells: cl, tiles: n, index });
+          }
+          const bin = new Uint8Array(offset);
+          let at = 0;
+          for (const part of parts) (bin.set(part, at), (at += part.byteLength));
+          const doc = {
+            format: '3dheat-terrain', version: 1, origin, spacing, samples: [cells + 1, cells + 1],
+            extent: [origin[0], origin[1], origin[0] + cells * spacing, origin[1] + cells * spacing],
+            heights: { min: b.minY - span, max: b.maxY }, tile: T, apron: A, side, codec: 'raw',
+            classes: { names: ['low', 'dip'], colours: [[118, 132, 82], [58, 92, 112]] },
+            levels, water: null, instances: null, bin: 'probe.terrain.bin', bytes: offset,
+          };
+          st.setLevel(await globalThis.__heat3dNative.terrainLevel('probe terrain', JSON.stringify(doc), bin.buffer));
+          st.patchHeat({ occlusion: 0.85, occlusionFloor: 0.1, hideBehindGround: true });
+          for (let i = 0; i < 150; i++) await raf();
+        }
+        if (c === 'image') {
+          // An image level: a made-up 512 x 256 map (stripes and a gradient) over the rows' ground,
+          // half see-through, a little desaturated.
+          const b = eng.toDisplay(eng.dataset.bounds);
+          const cv = new OffscreenCanvas(512, 256);
+          const g = cv.getContext('2d');
+          const grad = g.createLinearGradient(0, 0, 512, 256);
+          grad.addColorStop(0, '#264');
+          grad.addColorStop(1, '#d95');
+          g.fillStyle = grad;
+          g.fillRect(0, 0, 512, 256);
+          g.fillStyle = '#eee';
+          for (let x = 0; x < 512; x += 64) g.fillRect(x, 0, 8, 256);
+          for (let y = 0; y < 256; y += 64) g.fillRect(0, y, 512, 6);
+          const bitmap = await createImageBitmap(cv);
+          st.setLevel({
+            kind: 'image', name: 'probe map', bitmap, width: 512, height: 256,
+            anchors: [{ px: 0, py: 0, worldX: b.minX, worldZ: b.minZ }, { px: 512, py: 256, worldX: b.maxX, worldZ: b.maxZ }],
+            elevation: b.minY - (b.maxY - b.minY) * 0.02, opacity: 0.8, desaturate: 0.3, brightness: 1.1, flipZ: false,
+          });
+          for (let i = 0; i < 90; i++) await raf();
         }
         if (c === 'directions') st.patchHeat({ wedgeOpening: 90, wedgeSoftness: 0.2, dirField: 'both', dirFieldAnimate: false });
         if (c === 'split' || c === 'rate') {
@@ -556,7 +724,6 @@ async function run(rows, backend) {
           st.setMode('team');
           st.seek(lo + (hi - lo) * 0.5);
         }
-        let unwrap = null;
         if (c === 'overlays') {
           // Synthetic overlays in every frame's parameters, the same for both backends: three capture
           // zones (the first owned, the second being taken, the third neutral) and six spawn marks.
@@ -669,11 +836,12 @@ async function run(rows, backend) {
         st.patchTimeline({ mode: base.timeline.mode, window: base.timeline.window, windowSeconds: base.timeline.windowSeconds });
         if (c === 'filter') st.setFilters([]);
         if (c === 'split' || c === 'rate') st.setSplit({ kind: 'teams' });
-        if (c === 'structures') st.setLevel(null);
+        // --keep <case>: its level (and tiles) stay for the frames below.
+        if ((c === 'structures' || c === 'textured' || c === 'groundwire' || c === 'image' || c === 'tiles' || c === 'terrain') && c !== keep) st.setLevel(null);
         st.patchTeam(base.team);
-        unwrap?.();
+        if (c !== keep) unwrap?.();
         return out;
-      }, c);
+      }, [c, keepCase]);
     }
 
     // Frames: orbit with the timeline playing, adaptive as a person has it.

@@ -64,6 +64,7 @@ import {
   LINE_HEAT_WGSL,
   LINE_WGSL,
   LOOK_WGSL,
+  MAP_UNIFORM_BYTES,
   MAP_WGSL,
   MESH_WGSL,
   PEEL_UNIFORM_BYTES,
@@ -106,7 +107,6 @@ const DEPTH_FORMAT: GPUTextureFormat = GPU_DEPTH_FORMAT;
 // look, mesh and wire shaders; the ones that do not declare the later fields
 // simply never read them.
 const SCENE_UNIFORM_BYTES = 64 + 16 * 8;
-const MAP_UNIFORM_BYTES = 64 + 16 + 16 + 16;
 
 /** A chunk on its way to the GPU, a slice a frame; see `flushDataUpload`. */
 interface PendingChunk {

@@ -328,7 +328,23 @@ fn draws_heat_offscreen() {
         structure: vec![4, 5, 6, 4, 6, 7],
         edges: vec![4, 5, 5, 6, 6, 7, 7, 4],
         water: vec![0, 1, 2],
+        // Textured (the atlas below, its cut-out texels), the wall's corners through a repeating tile.
+        uvs: Some(vec![0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 2.0, 0.0, 2.0, 2.0, 0.0, 2.0]),
+        uv_tiles: Some(vec![0, 0, 0, 0, 1, 1, 1, 1]),
+        tile_rects: Some(vec![0.0, 0.0, 0.5, 0.5]),
+        bounds: [0.0; 6],
     }));
+    // The level's atlas (`LEVEL_IMAGE`): 4 x 4 and its two smaller levels, half of it cut out.
+    let mut atlas = Vec::new();
+    for w in [LEVEL_IMAGE, 0, 4, 4, 3] {
+        atlas.extend_from_slice(&w.to_le_bytes());
+    }
+    for (i, n) in [16usize, 4, 1].into_iter().enumerate() {
+        for k in 0..n {
+            atlas.extend_from_slice(&[200, 120, 60, if (k + i) % 2 == 0 { 255 } else { 0 }]);
+        }
+    }
+    r.level_message(&atlas).expect("atlas");
     r.figures.set_atlas(&r.device, &r.queue, &vec![255u8; (ATLAS_WIDTH * ATLAS_HEIGHT * 4) as usize]).expect("atlas");
     let out = r.device.create_texture(&wgpu::TextureDescriptor {
         label: Some("out"),
@@ -358,6 +374,120 @@ fn draws_heat_offscreen() {
     let mut with_core = packet();
     with_core.tracks = Some(TracksFrame { id: 6, ..tracks_frame() });
     r.draw(&[with_core], &view, (SIDE, SIDE), false);
+    // The atlas on the ground and the structures (textured, opaque: drawn solid), the ground's own
+    // edges (built as the viewport does off its thread), then the ground as lines.
+    let mut textured = packet();
+    {
+        let f = textured.frame.as_mut().unwrap();
+        f[F_LEVEL_TEXTURE] = 1.0;
+        f[F_STRUCT_TEXTURED] = 1.0;
+        f[F_STRUCT_FACE_OPACITY] = 1.0;
+        f[F_GROUND_WIRE_OPACITY] = 0.5;
+        f[F_GROUND_WIRE_FADE..F_GROUND_WIRE_FADE + 2].copy_from_slice(&[10.0, 20.0]);
+    }
+    r.draw(&[textured.clone()], &view, (SIDE, SIDE), false);
+    let wanted = r.take_wire_wanted();
+    assert_eq!(wanted.len(), 1, "the ground's edges asked for once");
+    for (id, token, idx) in wanted {
+        r.set_ground_wire(id, token, &heat3d_viewport::occlusion::edge_list(&idx));
+    }
+    textured.frame.as_mut().unwrap()[F_LEVEL_WIREFRAME] = 1.0;
+    r.draw(&[textured.clone()], &view, (SIDE, SIDE), false);
+    assert!(r.take_wire_wanted().is_empty(), "the ground's edges asked for once only");
+    // A world tile (`LEVEL_MESH` with an id), its image (`LEVEL_IMAGE`), drawn with the level's
+    // look (every tile switch on), then dropped.
+    let mut tile = Vec::new();
+    let words = |v: &mut Vec<u8>, w: &[u32]| w.iter().for_each(|x| v.extend_from_slice(&x.to_le_bytes()));
+    let floats = |v: &mut Vec<u8>, w: &[f32]| w.iter().for_each(|x| v.extend_from_slice(&x.to_le_bytes()));
+    words(&mut tile, &[LEVEL_MESH, 7, 24, 3, 1, 3, 2, 0, 1, 0, 0, 0]);
+    floats(&mut tile, &[0.0, 0.0, 0.0, 1.0, 1.0, 1.0]);
+    for (x, z) in [(0.0f32, 0.0f32), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)] {
+        floats(&mut tile, &[x, 0.3, z, 0.0, 1.0, 0.0]);
+    }
+    floats(&mut tile, &[0.5; 12]);
+    floats(&mut tile, &[0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0]);
+    words(&mut tile, &[0, 1, 2, 0, 2, 3, 0, 1]);
+    r.level_message(&tile).expect("tile mesh");
+    let mut img = Vec::new();
+    words(&mut img, &[LEVEL_IMAGE, 7, 2, 2, 2]);
+    img.extend_from_slice(&[180u8; 20]);
+    r.level_message(&img).expect("tile image");
+    {
+        let f = textured.frame.as_mut().unwrap();
+        f[F_LEVEL_WIREFRAME] = 0.0;
+        for k in [F_TILES_COLOURS, F_TILES_TEXTURE, F_TILES_WATER, F_TILES_FACES, F_TILES_WIRE] {
+            f[k] = 1.0;
+        }
+    }
+    // Made a few milliseconds a frame: the mesh and its image within a few frames.
+    for _ in 0..10 {
+        r.draw(&[textured.clone()], &view, (SIDE, SIDE), false);
+        if !r.world_pending() {
+            break;
+        }
+    }
+    assert!(!r.world_pending(), "the tile made");
+    for (id, token, idx) in r.take_wire_wanted() {
+        r.set_ground_wire(id, token, &heat3d_viewport::occlusion::edge_list(&idx));
+    }
+    r.draw(&[textured.clone()], &view, (SIDE, SIDE), false);
+    r.level_message(&[LEVEL_DROP.to_le_bytes(), 7u32.to_le_bytes()].concat()).expect("tile dropped");
+    // A tiled terrain (`LEVEL_TERRAIN`: 4 x 4 tiles, 2 layers, a one-quad node grid, a one-triangle
+    // "cube"), a tile's heights and classes, a cell of one box; drawn by a frame's nodes and cells
+    // with occlusion on (the boxes in the seal, the structure depth and the peeled layers).
+    let mut ter = Vec::new();
+    words(&mut ter, &[LEVEL_TERRAIN, 4, 2, 12, 6, 18, 3]);
+    floats(&mut ter, &[0.5; 64]);
+    floats(&mut ter, &[0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0]);
+    words(&mut ter, &[0, 1, 2, 0, 2, 3]);
+    floats(&mut ter, &[0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0]);
+    words(&mut ter, &[0, 1, 2]);
+    r.level_message(&ter).expect("terrain");
+    let mut up = Vec::new();
+    words(&mut up, &[LEVEL_TERRAIN_TILE, 1]);
+    up.extend_from_slice(&[7u8; 32]);
+    up.extend_from_slice(&[2u8; 16]);
+    r.level_message(&up).expect("terrain tile");
+    let mut cell = Vec::new();
+    words(&mut cell, &[LEVEL_BOXES, 3, 1]);
+    floats(&mut cell, &[0.2, 0.0, 0.0, 0.4, 0.0, 0.2, 0.0, 0.4, 0.0, 0.0, 0.2, 0.4]);
+    r.level_message(&cell).expect("boxes");
+    let mut on_terrain = textured.clone();
+    on_terrain.terrain = Some(heat3d_viewport::terrain::TerrainFrame {
+        nodes: vec![0.0, 0.0, 0.25, 0.1, 1.0, 0.0, 0.0, 0.0, 0.3, 0.001, 100.0, 200.0],
+        count: 1,
+        colours: true,
+        cells: vec![3, 99],
+    });
+    {
+        let f = on_terrain.frame.as_mut().unwrap();
+        f[F_HIDE_BEHIND_GROUND] = 1.0;
+        f[F_STRUCT_FACE_OPACITY] = 0.3;
+    }
+    r.draw(&[on_terrain.clone()], &view, (SIDE, SIDE), false);
+    on_terrain.frame.as_mut().unwrap()[F_STRUCT_FACE_OPACITY] = 1.0;
+    r.draw(&[on_terrain], &view, (SIDE, SIDE), false);
+    r.level_message(&[LEVEL_TERRAIN, 0, 0, 0, 0, 0, 0].iter().flat_map(|w| w.to_le_bytes()).collect::<Vec<u8>>()).expect("no terrain");
+    // An image level (`LEVEL_NONE`, then `LEVEL_MAP`): the map quad, 2 x 2.
+    r.level_message(&LEVEL_NONE.to_le_bytes()).expect("no level");
+    let mut map = Vec::new();
+    for w in [LEVEL_MAP, 2, 2] {
+        map.extend_from_slice(&w.to_le_bytes());
+    }
+    map.extend_from_slice(&[90u8; 16]);
+    r.level_message(&map).expect("map");
+    let mut on_map = packet();
+    {
+        let f = on_map.frame.as_mut().unwrap();
+        f[F_LEVEL_ON] = 0.0;
+        f[F_MAP_ON] = 1.0;
+        f[F_MAP_RECT..F_MAP_RECT + 4].copy_from_slice(&[0.0, 0.0, 1.0, 1.0]);
+        f[F_MAP_Y] = 0.4;
+        f[F_MAP_OPACITY] = 1.0;
+        f[F_MAP_DESATURATE] = 0.5;
+        f[F_MAP_BRIGHTNESS] = 1.0;
+    }
+    r.draw(&[on_map], &view, (SIDE, SIDE), false);
     let error = pollster::block_on(scope.pop());
     assert!(error.is_none(), "validation error: {error:?}");
     for _ in 0..500 {

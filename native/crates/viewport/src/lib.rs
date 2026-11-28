@@ -17,6 +17,7 @@ pub mod overlays;
 pub mod ranges;
 pub mod packet;
 pub mod renderer;
+pub mod terrain;
 pub mod tracks;
 pub mod viewport;
 

@@ -11,7 +11,7 @@
 use std::collections::HashMap;
 use std::sync::Mutex;
 
-use heat3d_viewport::{LevelMesh, Msg, Viewport};
+use heat3d_viewport::{Msg, Viewport};
 use tauri::ipc::{InvokeBody, Request, Response};
 use tauri::{Manager, WebviewWindow};
 
@@ -198,13 +198,12 @@ pub fn viewport_glyphs(window: WebviewWindow, request: Request<'_>) {
     with(&window, |v| v.send(Msg::Glyphs(bytes)));
 }
 
-/// The level (raw, `LevelMesh::parse`: the ground, structures, their edges and the water), or an
-/// empty body for none.
+/// A part of one of the level's messages (raw, `loader::Parts`; `src/render/native/levelMessages.ts`:
+/// none, a mesh, its atlas, an image level's picture).
 #[tauri::command]
 pub fn viewport_level(window: WebviewWindow, request: Request<'_>) {
-    let b = raw(&request);
-    let level = LevelMesh::parse(b);
-    with(&window, |v| v.send(Msg::Level(level)));
+    let bytes = raw(&request).to_vec();
+    with(&window, |v| v.send(Msg::Level(bytes)));
 }
 
 /// Shown or not (the page hides it while a view the viewport cannot draw yet is up).

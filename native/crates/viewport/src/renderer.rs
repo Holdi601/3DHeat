@@ -99,29 +99,37 @@ pub struct GpuChunk {
 pub struct LevelMesh {
     pub vertices: Vec<f32>,
     pub colours: Option<Vec<f32>>,
+    /// Texture coordinates (-1: none), the repeating images' numbers and their rectangles.
+    pub uvs: Option<Vec<f32>>,
+    pub uv_tiles: Option<Vec<u32>>,
+    pub tile_rects: Option<Vec<f32>>,
     pub indices: Vec<u32>,
     pub structure: Vec<u32>,
     pub edges: Vec<u32>,
     pub water: Vec<u32>,
+    /// A world tile's bounds (min x, y, z, max x, y, z).
+    pub bounds: [f32; 6],
 }
 
-struct GpuLevel {
-    vertices: wgpu::Buffer,
-    colours: wgpu::Buffer,
-    uvs: wgpu::Buffer,
-    tiles: wgpu::Buffer,
-    indices: wgpu::Buffer,
-    count: u32,
-    bytes: u64,
-}
-
-/// This frame's bind groups for the level's water and structures (`occlusion_groups`).
+/// This frame's uniform slots for the level (`pushMeshUniforms`): `[without a texture, with one]`
+/// where the texture decides, the ground's by `[level, tile]` too.
 #[derive(Default)]
-struct OccGroups {
-    water: Option<(wgpu::BindGroup, wgpu::BindGroup)>,
-    faces: Option<(wgpu::BindGroup, wgpu::BindGroup)>,
-    wire: Option<wgpu::BindGroup>,
-    seal: Option<(wgpu::BindGroup, wgpu::BindGroup)>,
+struct LevelSlots {
+    on: bool,
+    ground: [[u64; 2]; 2],
+    faces: [u64; 2],
+    seal: [u64; 2],
+    wire: u64,
+    ground_wire: Option<u64>,
+    water: u64,
+    /// Textured and fully opaque structures are a surface like the ground: drawn with it.
+    solid: bool,
+    /// An image level's quad.
+    map: Option<u64>,
+    /// A tiled terrain's ground, its nodes written for this frame.
+    terrain: Option<u64>,
+    /// The terrain's placed objects in view (drawn with the structures).
+    boxes: bool,
     /// Drawn once: after the trails where there are figures, else after the scene's solid parts.
     shells_drawn: std::cell::Cell<bool>,
 }
@@ -305,6 +313,8 @@ pub struct Renderer {
     pub modes: crate::heatmodes::HeatModes,
     /// The level's structures and water, the structure depth and the peeled layers (`occlusion.rs`).
     pub occ: crate::occlusion::Occlusion,
+    /// A tiled terrain's ground and placed objects (`terrain.rs`).
+    pub terrain: crate::terrain::Terrain,
     /// The heat shader, kept for the formats made on first use (the direction field's).
     m_splat: wgpu::ShaderModule,
     m_decay: wgpu::ShaderModule,
@@ -330,7 +340,19 @@ pub struct Renderer {
     pub resident_rows: u64,
     pub dropped_rows: u64,
     pub gpu_bytes: u64,
-    level: Option<GpuLevel>,
+    level: Option<crate::occlusion::GpuMesh>,
+    /// The streamed world tiles (`setWorldTiles`) by the page's mesh id, drawn with a model level.
+    world: std::collections::BTreeMap<u32, crate::occlusion::GpuMesh>,
+    /// Tile messages (meshes, images) not made yet: a few milliseconds of them a frame, so a
+    /// streaming burst costs no frame (`flushTiles`).
+    world_queue: std::collections::VecDeque<Vec<u8>>,
+    /// An image level's picture (`LEVEL_MAP`).
+    map: Option<(wgpu::Texture, wgpu::TextureView)>,
+    /// Bumped per level: the ground's edges built for an older one are dropped.
+    level_token: u64,
+    /// Meshes whose ground edges the frame asked for: (mesh id, level token, ground indices), for
+    /// the viewport to build off this thread (`take_wire_wanted`).
+    wire_wanted: Vec<(u32, u64, std::sync::Arc<Vec<u32>>)>,
     /// The filters drawn, and the ones asked for while their columns are on the way.
     applied: Option<FilterSet>,
     wanted: Option<FilterSet>,
@@ -600,6 +622,7 @@ impl Renderer {
             })
         };
 
+        let terrain = crate::terrain::Terrain::new(&device);
         let stats = Stats { adapter: info.name.clone(), backend: format!("{:?}", info.backend), heat_format: format!("{heat_format:?}"), ..Default::default() };
         Ok(Self {
             device,
@@ -632,6 +655,7 @@ impl Renderer {
             overlays,
             ranges,
             modes,
+            terrain,
             occ,
             m_splat,
             m_decay,
@@ -654,6 +678,11 @@ impl Renderer {
             dropped_rows: 0,
             gpu_bytes: 0,
             level: None,
+            world: Default::default(),
+            world_queue: Default::default(),
+            map: None,
+            level_token: 0,
+            wire_wanted: Vec::new(),
             applied: None,
             wanted: None,
             missing_columns: Vec::new(),
@@ -723,42 +752,137 @@ impl Renderer {
         self.missing_columns.retain(|(k, n)| !(*k == chunk && *n == name));
     }
 
+    /// The level as a mesh (none: no level), its texture, edges and map gone with the old one.
     pub fn set_level(&mut self, level: Option<&LevelMesh>) {
-        self.occ.set_level(&self.device, level.filter(|l| !l.indices.is_empty() && l.vertices.len() >= 6));
-        self.level = level.filter(|l| !l.indices.is_empty() && l.vertices.len() >= 6).map(|l| {
-            let n = l.vertices.len() / 6;
-            let vb = |label: &str, data: &[u8], usage: wgpu::BufferUsages| {
-                self.device.create_buffer_init(&wgpu::util::BufferInitDescriptor { label: Some(label), contents: data, usage })
-            };
-            let white;
-            let colours: &[f32] = match &l.colours {
-                Some(c) if c.len() >= n * 3 => c,
-                _ => {
-                    white = vec![1f32; n * 3];
-                    &white
+        self.level_token += 1;
+        self.map = None;
+        self.wire_wanted.clear();
+        self.level = level.and_then(|l| crate::occlusion::GpuMesh::new(&self.device, l, "level", false));
+    }
+
+    /// One of the page's level messages (`src/render/native/levelMessages.ts`): none, the level's
+    /// mesh, its atlas, an image level's picture.
+    pub fn level_message(&mut self, b: &[u8]) -> anyhow::Result<()> {
+        anyhow::ensure!(b.len() >= 4, "level message");
+        let w = |k: usize| -> anyhow::Result<u32> {
+            anyhow::ensure!(b.len() >= k * 4 + 4, "level message head");
+            Ok(u32::from_le_bytes([b[k * 4], b[k * 4 + 1], b[k * 4 + 2], b[k * 4 + 3]]))
+        };
+        match w(0)? {
+            LEVEL_NONE => self.set_level(None),
+            LEVEL_MESH if w(1)? != 0 => self.world_queue.push_back(b.to_vec()),
+            LEVEL_IMAGE if w(1)? != 0 => self.world_queue.push_back(b.to_vec()),
+            LEVEL_MESH => {
+                let l = LevelMesh::parse(&b[8..]).ok_or_else(|| anyhow::anyhow!("level mesh body"))?;
+                self.set_level(Some(&l));
+            }
+            LEVEL_IMAGE => {
+                let (width, height, mips) = (w(2)?, w(3)?, w(4)?);
+                if let Some(m) = self.level.as_mut() {
+                    m.set_image(&self.device, &self.queue, width, height, mips, &b[20..])?;
                 }
-            };
-            let uvs = vec![-1f32; n * 2];
-            let vertices = vb("level verts", bytemuck::cast_slice(&l.vertices), wgpu::BufferUsages::VERTEX);
-            let colours = vb("level colours", bytemuck::cast_slice(colours), wgpu::BufferUsages::VERTEX);
-            let uvs = vb("level uvs", bytemuck::cast_slice(&uvs), wgpu::BufferUsages::VERTEX);
-            let tiles = self.device.create_buffer(&wgpu::BufferDescriptor {
-                label: Some("level tiles (none)"),
-                size: (n * 4).max(4) as u64,
-                usage: wgpu::BufferUsages::VERTEX,
-                mapped_at_creation: false,
-            });
-            let indices = vb("level ground indices", bytemuck::cast_slice(&l.indices), wgpu::BufferUsages::INDEX);
-            let bytes = vertices.size() + colours.size() + uvs.size() + tiles.size() + indices.size();
-            GpuLevel { vertices, colours, uvs, tiles, indices, count: l.indices.len() as u32, bytes }
-        });
+            }
+            LEVEL_TERRAIN | LEVEL_TERRAIN_TILE | LEVEL_BOXES => self.terrain.message(&self.device, &self.queue, b)?,
+            LEVEL_DROP => {
+                let id = w(1)?;
+                let of = |m: &Vec<u8>| u32::from_le_bytes([m[4], m[5], m[6], m[7]]);
+                if id == u32::MAX {
+                    self.world.clear();
+                    self.world_queue.clear();
+                } else {
+                    self.world.remove(&id);
+                    self.world_queue.retain(|m| of(m) != id);
+                }
+            }
+            LEVEL_MAP => {
+                let (width, height) = (w(1)?, w(2)?);
+                let limit = self.device.limits().max_texture_dimension_2d;
+                anyhow::ensure!(width >= 1 && height >= 1 && width <= limit && height <= limit, "map {width} x {height} past the device's {limit}");
+                let n = width as usize * height as usize * 4;
+                anyhow::ensure!(b.len() >= 12 + n, "map pixels short");
+                let (tex, view) = tex2d(&self.device, "map", width, height, wgpu::TextureFormat::Rgba8Unorm, wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST);
+                self.queue.write_texture(
+                    wgpu::TexelCopyTextureInfo { texture: &tex, mip_level: 0, origin: Default::default(), aspect: Default::default() },
+                    &b[12..12 + n],
+                    wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(width * 4), rows_per_image: Some(height) },
+                    wgpu::Extent3d { width, height, depth_or_array_layers: 1 },
+                );
+                self.map = Some((tex, view));
+            }
+            k => anyhow::bail!("level message kind {k}"),
+        }
+        Ok(())
+    }
+
+    /// `flushTiles`: queued tile meshes and images made for up to 3 ms, at least one.
+    fn flush_world(&mut self) {
+        let until = Instant::now() + std::time::Duration::from_millis(3);
+        let mut made = 0;
+        while let Some(m) = self.world_queue.pop_front() {
+            let w = |k: usize| u32::from_le_bytes([m[k * 4], m[k * 4 + 1], m[k * 4 + 2], m[k * 4 + 3]]);
+            let id = w(1);
+            match w(0) {
+                LEVEL_MESH => match LevelMesh::parse(&m[8..]) {
+                    Some(l) => match crate::occlusion::GpuMesh::new(&self.device, &l, "tile", true) {
+                        Some(g) => {
+                            self.world.insert(id, g);
+                        }
+                        None => {
+                            self.world.remove(&id);
+                        }
+                    },
+                    None => crate::note("viewport: tile mesh body"),
+                },
+                LEVEL_IMAGE if m.len() >= 20 => {
+                    if let Some(g) = self.world.get_mut(&id) {
+                        if let Err(e) = g.set_image(&self.device, &self.queue, w(2), w(3), w(4), &m[20..]) {
+                            crate::note(&format!("viewport: tile image: {e:#}"));
+                        }
+                    }
+                }
+                _ => {}
+            }
+            made += 1;
+            if made > 0 && Instant::now() >= until {
+                break;
+            }
+        }
+    }
+
+    /// Whether tile messages wait to be made (another frame is wanted).
+    pub fn world_pending(&self) -> bool {
+        !self.world_queue.is_empty()
+    }
+
+    /// The level's mesh and the world tiles', as `frameMeshes` (every tile, none culled).
+    fn meshes(&self) -> impl Iterator<Item = &crate::occlusion::GpuMesh> {
+        self.level.iter().chain(self.world.values())
+    }
+
+    /// The ground edges asked for since the last call: (mesh id, level token, ground indices).
+    pub fn take_wire_wanted(&mut self) -> Vec<(u32, u64, std::sync::Arc<Vec<u32>>)> {
+        std::mem::take(&mut self.wire_wanted)
+    }
+
+    /// A mesh's ground edges, built off this thread (`edge_list`).
+    pub fn set_ground_wire(&mut self, id: u32, token: u64, edges: &[u32]) {
+        let m = if id == 0 {
+            if token != self.level_token {
+                return;
+            }
+            self.level.as_mut()
+        } else {
+            self.world.get_mut(&id)
+        };
+        if let Some(m) = m {
+            m.set_ground_wire(&self.device, edges);
+        }
     }
 
     pub fn level_bytes(&self) -> u64 {
-        self.level.as_ref().map_or(0, |l| l.bytes + self.occ.bytes)
+        self.meshes().map(|l| l.bytes).sum::<u64>() + self.terrain.bytes + self.map.as_ref().map_or(0, |m| m.0.width() as u64 * m.0.height() as u64 * 4)
     }
 
-    /// The filter columns the asked-for filters still need, chunk by chunk (fetched by the caller).
     pub fn wanted_columns(&self) -> Vec<(usize, String)> {
         self.missing_columns.clone()
     }
@@ -981,6 +1105,7 @@ impl Renderer {
     pub fn draw(&mut self, packets: &[Packet], out: &wgpu::TextureView, out_size: (u32, u32), capture: bool) {
         let t0 = Instant::now();
         self.ring.data.clear();
+        self.flush_world();
         let mut encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some("frame") });
         self.figures.begin();
         let mut last: Option<Packet> = None;
@@ -1130,12 +1255,7 @@ impl Renderer {
     }
 
     fn draw_scene(&mut self, encoder: &mut wgpu::CommandEncoder, p: &Packet, last: bool) {
-        let ground = if p.flag(F_LEVEL_ON) && self.level.is_some() {
-            let u = self.scene_uniform(p, (1e9, 1e9 + 1.0), p.f(F_LEVEL_OPACITY), p.f(F_LEVEL_BRIGHTNESS), true, p.flag(F_LEVEL_COLOURS));
-            Some(self.ring.push(&u, 256))
-        } else {
-            None
-        };
+        let lv = self.level_slots(p);
         let grid_on = p.flag(F_SHOW_GRID) || p.flag(F_SHOW_AXES);
         let grid_off = if grid_on {
             self.ensure_grid(p);
@@ -1202,26 +1322,9 @@ impl Renderer {
         };
         let ov = self.overlay_groups(p, true, (0.0, 0.0));
         let rg = self.range_groups(encoder, p);
-        let occ = self.occlusion_groups(p);
+        let occ = &lv;
         let scene = &self.scene.as_ref().unwrap().1;
         let depth = &self.depth.as_ref().unwrap().1;
-        let groups = ground.map(|off| {
-            let g0 = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
-                label: Some("ground"),
-                layout: &self.mesh.get_bind_group_layout(0),
-                entries: &[wgpu::BindGroupEntry { binding: 0, resource: self.ring.binding(off, SCENE_UNIFORM_BYTES) }],
-            });
-            let g1 = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
-                label: Some("atlas"),
-                layout: &self.mesh.get_bind_group_layout(1),
-                entries: &[
-                    wgpu::BindGroupEntry { binding: 0, resource: wgpu::BindingResource::TextureView(&self.atlas_view) },
-                    wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::Sampler(&self.sampler) },
-                    wgpu::BindGroupEntry { binding: 2, resource: self.atlas_tiles.as_entire_binding() },
-                ],
-            });
-            (g0, g1)
-        });
         let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
             label: Some("scene"),
             color_attachments: &[Some(wgpu::RenderPassColorAttachment {
@@ -1239,21 +1342,22 @@ impl Renderer {
             occlusion_query_set: None,
             multiview_mask: None,
         });
-        if let (Some((g0, g1)), Some(l)) = (&groups, &self.level) {
-            pass.set_pipeline(&self.mesh);
-            pass.set_bind_group(0, g0, &[]);
-            pass.set_bind_group(1, g1, &[]);
-            pass.set_vertex_buffer(0, l.vertices.slice(..));
-            pass.set_vertex_buffer(1, l.colours.slice(..));
-            pass.set_vertex_buffer(2, l.uvs.slice(..));
-            pass.set_vertex_buffer(3, l.tiles.slice(..));
-            pass.set_index_buffer(l.indices.slice(..), wgpu::IndexFormat::Uint32);
-            pass.draw_indexed(0..l.count, 0, 0..1);
-            // Water next: a surface, so it writes depth, with its own tint (`drawLevel`).
-            if let (Some(g), Some(w)) = (&occ.water, &self.occ.water) {
-                crate::occlusion::draw_set(&mut pass, &self.mesh, g, w);
-            }
+        // An image level's quad (`drawLevel`), or the model level's solid parts.
+        if let (Some(off), Some((_, view))) = (lv.map, &self.map) {
+            let g = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
+                label: Some("map"),
+                layout: &self.occ.map.get_bind_group_layout(0),
+                entries: &[
+                    wgpu::BindGroupEntry { binding: 0, resource: self.ring.binding(off, MAP_UNIFORM_BYTES as usize) },
+                    wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::TextureView(view) },
+                    wgpu::BindGroupEntry { binding: 2, resource: wgpu::BindingResource::Sampler(&self.sampler) },
+                ],
+            });
+            pass.set_pipeline(&self.occ.map);
+            pass.set_bind_group(0, &g, &[]);
+            pass.draw(0..6, 0..1);
         }
+        self.draw_level(&mut pass, p, &lv);
         if let (Some(g), Some((_, buf, n))) = (&grid_group, &self.grid) {
             if *n > 0 {
                 pass.set_pipeline(&self.line);
@@ -1289,12 +1393,12 @@ impl Renderer {
             self.tracks.draw_trails(&mut pass, &self.device, &self.ring.buf, *plain_at);
             self.figures.draw_tris(&mut pass, &figs, plain, false);
             self.figures.draw_trails(&mut pass, &figs, plain);
-            self.draw_shells(&mut pass, &occ);
+            self.draw_shells(&mut pass, p, occ);
             self.figures.draw(&mut pass, &figs, rel, true);
             self.tracks.draw(&mut pass, &self.figures, plain, true);
             self.figures.draw_tris(&mut pass, &figs, plain, true);
         }
-        self.draw_shells(&mut pass, &occ);
+        self.draw_shells(&mut pass, p, occ);
         if !under {
             // `drawObjectivesOnGround`: the ground triangles, then the zones' discs on the ground.
             if let Some(plain) = plain {
@@ -1304,7 +1408,9 @@ impl Renderer {
         }
         // The engagement ranges: the ground each unit sees within reach, then the shells over everything solid.
         if let (Some(g), Some(l)) = (&rg.ground, &self.level) {
-            self.ranges.draw_ground(&mut pass, Some(g), &l.vertices, &l.indices, l.count);
+            if let Some(gi) = &l.ground {
+                self.ranges.draw_ground(&mut pass, Some(g), &l.vertices, &gi.buf, gi.count);
+            }
         }
         self.ranges.draw_shells(&mut pass, p, rg.shell.as_ref());
         if let Some((_, _, _, plain, glyph, track_glyph, _)) = &fig_groups {
@@ -1318,95 +1424,233 @@ impl Renderer {
         }
         // Last in the pass, and depth only: what changes is the depth the heat pass samples, so a
         // wall occludes the heat behind it (`sealStructures`).
-        if let (Some(g), Some(s), Some(l)) = (&occ.seal, &self.occ.structure, &self.level) {
-            Self::level_buffers(l).set(&mut pass);
-            crate::occlusion::draw_set(&mut pass, &self.occ.seal, g, s);
+        if lv.on {
+            for m in self.meshes() {
+                if let Some(s) = &m.structure {
+                    self.draw_set(&mut pass, &self.occ.seal, lv.seal[m.texture.is_some() as usize], m, s);
+                }
+            }
+            if let (true, Some(t)) = (lv.boxes, &p.terrain) {
+                self.draw_boxes_with(&mut pass, &self.terrain.depth, lv.seal[0], t);
+            }
         }
+    }
+
+    /// The level's solid parts, first in the scene (`drawLevel` with `shells` false): the ground
+    /// (or its lines), the ground's own edges over it, the water, and textured opaque structures.
+    fn draw_level(&self, pass: &mut wgpu::RenderPass<'_>, p: &Packet, lv: &LevelSlots) {
+        if !lv.on {
+            return;
+        }
+        let ground_pipe = if p.flag(F_LEVEL_WIREFRAME) { &self.occ.ground_lines } else { &self.mesh };
+        for m in self.meshes() {
+            if let Some(g) = &m.ground {
+                let textured = p.flag(if m.tile { F_TILES_TEXTURE } else { F_LEVEL_TEXTURE }) && m.texture.is_some();
+                self.draw_set(pass, ground_pipe, lv.ground[m.tile as usize][textured as usize], m, g);
+            }
+        }
+        if let (Some(off), Some(t)) = (lv.terrain, &p.terrain) {
+            let g0 = self.group0(&self.terrain.pipeline, off);
+            let g1 = self.plain_atlas_group(&self.terrain.pipeline);
+            self.terrain.draw(pass, t, &g0, &g1);
+        }
+        // Its triangle edges over the top, not instead of it.
+        if let Some(off) = lv.ground_wire {
+            let g = self.group0(&self.occ.wire, off);
+            for m in self.meshes() {
+                if let Some(e) = &m.ground_wire {
+                    pass.set_pipeline(&self.occ.wire);
+                    pass.set_bind_group(0, &g, &[]);
+                    pass.set_vertex_buffer(0, m.vertices.slice(..));
+                    pass.set_index_buffer(e.buf.slice(..), wgpu::IndexFormat::Uint32);
+                    pass.draw_indexed(0..e.count, 0, 0..1);
+                }
+            }
+        }
+        // Water next: a surface, so it writes depth, with its own tint.
+        {
+            for m in self.meshes().filter(|m| p.flag(if m.tile { F_TILES_WATER } else { F_WATER_SHOW })) {
+                if let Some(w) = &m.water {
+                    self.draw_set(pass, &self.mesh, lv.water, m, w);
+                }
+            }
+        }
+        if lv.solid {
+            self.draw_faces(pass, p, lv, &self.mesh);
+        }
+    }
+
+    /// The structures' faces with `pipe` (`drawStructureFaces`).
+    fn draw_faces(&self, pass: &mut wgpu::RenderPass<'_>, p: &Packet, lv: &LevelSlots, pipe: &wgpu::RenderPipeline) {
+        for m in self.meshes().filter(|m| p.flag(if m.tile { F_TILES_FACES } else { F_STRUCT_FACES })) {
+            if let Some(s) = &m.structure {
+                self.draw_set(pass, pipe, lv.faces[m.texture.is_some() as usize], m, s);
+            }
+        }
+        // A tiled terrain's objects, with the same look: untextured shells (or solid, with the solid pass).
+        if let (true, true, Some(t)) = (lv.boxes, p.flag(F_TILES_FACES), &p.terrain) {
+            let bp = if std::ptr::eq(pipe, &self.occ.faces) { &self.terrain.shell } else { &self.terrain.solid };
+            self.draw_boxes_with(pass, bp, lv.faces[0], t);
+        }
+    }
+
+    /// The terrain's placed objects in view with one of its box pipelines and a uniform slot.
+    fn draw_boxes_with(&self, pass: &mut wgpu::RenderPass<'_>, pipe: &wgpu::RenderPipeline, off: u64, t: &crate::terrain::TerrainFrame) {
+        pass.set_pipeline(pipe);
+        pass.set_bind_group(0, &self.group0(pipe, off), &[]);
+        pass.set_bind_group(1, &self.plain_atlas_group(pipe), &[]);
+        self.terrain.draw_boxes(pass, t);
+    }
+
+    /// The texture group of a pipeline that draws nothing textured and reads no tile table (the
+    /// tiled terrain's ground and boxes, `plainAtlasGroup`).
+    fn plain_atlas_group(&self, pipe: &wgpu::RenderPipeline) -> wgpu::BindGroup {
+        self.device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("plain atlas"),
+            layout: &pipe.get_bind_group_layout(1),
+            entries: &[
+                wgpu::BindGroupEntry { binding: 0, resource: wgpu::BindingResource::TextureView(&self.atlas_view) },
+                wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::Sampler(&self.occ.atlas_sampler) },
+            ],
+        })
+    }
+
+    /// One index set of a mesh with a mesh pipeline, its uniform slot and the mesh's atlas.
+    fn draw_set(&self, pass: &mut wgpu::RenderPass<'_>, pipe: &wgpu::RenderPipeline, off: u64, m: &crate::occlusion::GpuMesh, set: &crate::occlusion::Indices) {
+        let g0 = self.group0(pipe, off);
+        let g1 = self.atlas_group(pipe, Some(m));
+        m.buffers().set(pass);
+        crate::occlusion::draw_set(pass, pipe, &(g0, g1), set);
     }
 
     /// The see-through structures, faces then edges, after everything solid (`drawLevel` shells).
-    fn draw_shells(&self, pass: &mut wgpu::RenderPass<'_>, occ: &OccGroups) {
-        if occ.shells_drawn.get() {
+    fn draw_shells(&self, pass: &mut wgpu::RenderPass<'_>, p: &Packet, lv: &LevelSlots) {
+        if lv.shells_drawn.get() || !lv.on {
             return;
         }
-        occ.shells_drawn.set(true);
-        if let (Some(g), Some(s), Some(l)) = (&occ.faces, &self.occ.structure, &self.level) {
-            Self::level_buffers(l).set(pass);
-            crate::occlusion::draw_set(pass, &self.occ.faces, g, s);
+        lv.shells_drawn.set(true);
+        if !lv.solid {
+            self.draw_faces(pass, p, lv, &self.occ.faces);
         }
-        if let (Some(g), Some(e), Some(l)) = (&occ.wire, &self.occ.edges, &self.level) {
-            pass.set_pipeline(&self.occ.wire);
-            pass.set_bind_group(0, g, &[]);
-            pass.set_vertex_buffer(0, l.vertices.slice(..));
-            pass.set_index_buffer(e.buf.slice(..), wgpu::IndexFormat::Uint32);
-            pass.draw_indexed(0..e.count, 0, 0..1);
+        let g = self.group0(&self.occ.wire, lv.wire);
+        for m in self.meshes().filter(|m| p.flag(if m.tile { F_TILES_WIRE } else { F_STRUCT_WIRE })) {
+            if let Some(e) = &m.edges {
+                pass.set_pipeline(&self.occ.wire);
+                pass.set_bind_group(0, &g, &[]);
+                pass.set_vertex_buffer(0, m.vertices.slice(..));
+                pass.set_index_buffer(e.buf.slice(..), wgpu::IndexFormat::Uint32);
+                pass.draw_indexed(0..e.count, 0, 0..1);
+            }
         }
     }
 
-    /// A level surface's uniform (`pushSceneUniform` with a tint, a rim and flat shading).
-    fn level_uniform(&mut self, p: &Packet, opacity: f32, tint: [f32; 3], fresnel: f32, flat: bool) -> u64 {
-        let mut u = self.scene_uniform(p, (1e9, 1e9 + 1.0), opacity, p.f(F_LEVEL_BRIGHTNESS), false, false);
+    /// A mesh surface's uniform (`pushSceneUniform` with a tint, a rim, relief, flat shading,
+    /// captured colour and the texture: 1 the ground's, 2 the structures').
+    #[allow(clippy::too_many_arguments)]
+    fn mesh_uniform(&mut self, p: &Packet, fade: (f32, f32), opacity: f32, tint: [f32; 3], fresnel: f32, relief: bool, flat: bool, vertex_colour: bool, texture: f32) -> u64 {
+        let mut u = self.scene_uniform(p, fade, opacity, p.f(F_LEVEL_BRIGHTNESS), relief, vertex_colour);
         let mut put = |lane: usize, v: f32| u[lane * 4..lane * 4 + 4].copy_from_slice(&v.to_le_bytes());
         put(24, tint[0]);
         put(25, tint[1]);
         put(26, tint[2]);
         put(27, fresnel);
         put(35, if flat { 1.0 } else { 0.0 });
+        put(47, texture);
         self.ring.push(&u, 256)
     }
 
-    /// The mesh pipelines' two bind groups (the uniform, the atlas placeholder) for `pipe`.
-    fn mesh_groups(&self, pipe: &wgpu::RenderPipeline, off: u64) -> (wgpu::BindGroup, wgpu::BindGroup) {
-        let g0 = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
+    /// A pipeline's group 0: one uniform slot.
+    fn group0(&self, pipe: &wgpu::RenderPipeline, off: u64) -> wgpu::BindGroup {
+        self.device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("level"),
             layout: &pipe.get_bind_group_layout(0),
             entries: &[wgpu::BindGroupEntry { binding: 0, resource: self.ring.binding(off, SCENE_UNIFORM_BYTES) }],
-        });
-        (g0, self.atlas_group(pipe))
+        })
     }
 
-    fn atlas_group(&self, pipe: &wgpu::RenderPipeline) -> wgpu::BindGroup {
+    /// A mesh pipeline's texture group: the mesh's texture and tile table, or the placeholders.
+    fn atlas_group(&self, pipe: &wgpu::RenderPipeline, m: Option<&crate::occlusion::GpuMesh>) -> wgpu::BindGroup {
+        let view = m.and_then(|m| m.texture.as_ref()).map_or(&self.atlas_view, |t| &t.1);
+        let tiles = m.and_then(|m| m.tile_table.as_ref()).unwrap_or(&self.atlas_tiles);
         self.device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("atlas"),
             layout: &pipe.get_bind_group_layout(1),
             entries: &[
-                wgpu::BindGroupEntry { binding: 0, resource: wgpu::BindingResource::TextureView(&self.atlas_view) },
-                wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::Sampler(&self.sampler) },
-                wgpu::BindGroupEntry { binding: 2, resource: self.atlas_tiles.as_entire_binding() },
+                wgpu::BindGroupEntry { binding: 0, resource: wgpu::BindingResource::TextureView(view) },
+                wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::Sampler(&self.occ.atlas_sampler) },
+                wgpu::BindGroupEntry { binding: 2, resource: tiles.as_entire_binding() },
             ],
         })
     }
 
-    /// This frame's bind groups for the water, the structures' faces, edges and seal (`pushMeshUniforms`).
-    fn occlusion_groups(&mut self, p: &Packet) -> OccGroups {
-        let mut g = OccGroups::default();
-        if !p.flag(F_LEVEL_ON) || self.level.is_none() {
+    /// This frame's uniform slots for the level and the map (`pushMeshUniforms`, `pushMapUniform`).
+    fn level_slots(&mut self, p: &Packet) -> LevelSlots {
+        let mut g = LevelSlots::default();
+        if p.flag(F_MAP_ON) && self.map.is_some() {
+            let f = p.frame.as_ref().unwrap();
+            let mut u = [0f32; MAP_UNIFORM_BYTES as usize / 4];
+            u[..16].copy_from_slice(&f[F_VIEW_PROJ..F_VIEW_PROJ + 16]);
+            u[16..20].copy_from_slice(&f[F_MAP_RECT..F_MAP_RECT + 4]);
+            u[20] = p.f(F_MAP_Y);
+            u[21] = p.f(F_MAP_FLIP_V);
+            u[22] = p.f(F_MAP_OPACITY);
+            u[23] = p.f(F_MAP_DESATURATE);
+            u[24] = p.f(F_MAP_BRIGHTNESS);
+            g.map = Some(self.ring.push(bytemuck::cast_slice(&u), 256));
+        }
+        let terrain = p.terrain.as_ref().filter(|_| p.flag(F_LEVEL_ON) && self.terrain.active());
+        if !p.flag(F_LEVEL_ON) || (self.meshes().next().is_none() && terrain.is_none()) {
             return g;
         }
+        g.on = true;
+        if let Some(t) = terrain {
+            // `pushMeshUniforms`' terrain slot: the level's look, its classes' colours when asked.
+            if self.terrain.prepare(&self.device, &self.queue, t) {
+                g.terrain = Some(self.mesh_uniform(p, (1e9, 1e9 + 1.0), p.f(F_LEVEL_OPACITY), [1.0; 3], 0.0, true, false, t.colours, 0.0));
+            }
+            g.boxes = self.terrain.any_boxes(Some(t));
+        }
+        let far = (1e9, 1e9 + 1.0);
         let f = p.frame.as_ref().unwrap();
         let tint = [f[F_STRUCT_TINT], f[F_STRUCT_TINT + 1], f[F_STRUCT_TINT + 2]];
+        let water_tint = [f[F_WATER_TINT], f[F_WATER_TINT + 1], f[F_WATER_TINT + 2]];
         let flat = p.flag(F_STRUCT_FLAT);
-        if self.occ.water.is_some() && p.flag(F_WATER_SHOW) {
-            let wt = [f[F_WATER_TINT], f[F_WATER_TINT + 1], f[F_WATER_TINT + 2]];
-            let off = self.level_uniform(p, p.f(F_WATER_OPACITY), wt, 0.0, false);
-            g.water = Some(self.mesh_groups(&self.mesh, off));
-        }
-        if self.occ.structure.is_some() {
-            if p.flag(F_STRUCT_FACES) {
-                let off = self.level_uniform(p, p.f(F_STRUCT_FACE_OPACITY), tint, 1.0, flat);
-                g.faces = Some(self.mesh_groups(&self.occ.faces, off));
+        let st = p.flag(F_STRUCT_TEXTURED);
+        let (opacity, face, wire) = (p.f(F_LEVEL_OPACITY), p.f(F_STRUCT_FACE_OPACITY), p.f(F_STRUCT_WIRE_OPACITY));
+        let any_tex = self.meshes().any(|m| m.texture.is_some());
+        let any_bare = self.meshes().any(|m| m.texture.is_none());
+        let any_tile = !self.world.is_empty();
+        for tex in 0..2 {
+            if (tex == 1 && !any_tex) || (tex == 0 && !any_bare && !p.flag(F_LEVEL_TEXTURE) && !p.flag(F_TILES_TEXTURE)) {
+                continue;
             }
-            let off = self.level_uniform(p, p.f(F_STRUCT_FACE_OPACITY), tint, 1.0, flat);
-            g.seal = Some(self.mesh_groups(&self.occ.seal, off));
+            let t = tex == 1;
+            g.ground[0][tex] = self.mesh_uniform(p, far, opacity, [1.0; 3], 0.0, true, false, p.flag(F_LEVEL_COLOURS), if t { 1.0 } else { 0.0 });
+            if any_tile {
+                g.ground[1][tex] = self.mesh_uniform(p, far, opacity, [1.0; 3], 0.0, true, false, p.flag(F_TILES_COLOURS), if t { 1.0 } else { 0.0 });
+            }
+            // Textured structures in their own colours, no rim: surfaces, not shells.
+            g.faces[tex] = self.mesh_uniform(p, far, face, if st { [1.0; 3] } else { tint }, if st { 0.0 } else { 1.0 }, false, flat, st, if st && t { 2.0 } else { 0.0 });
+            // The seal's colour is masked: the texture decides only the cut-out, whenever it has arrived.
+            g.seal[tex] = self.mesh_uniform(p, far, face, tint, 1.0, false, flat, false, if t { 2.0 } else { 0.0 });
         }
-        if self.occ.edges.is_some() && p.flag(F_STRUCT_WIRE) {
-            let off = self.level_uniform(p, p.f(F_STRUCT_WIRE_OPACITY), tint, 0.0, false);
-            g.wire = Some(self.device.create_bind_group(&wgpu::BindGroupDescriptor {
-                label: Some("structure wire"),
-                layout: &self.occ.wire.get_bind_group_layout(0),
-                entries: &[wgpu::BindGroupEntry { binding: 0, resource: self.ring.binding(off, SCENE_UNIFORM_BYTES) }],
-            }));
+        g.wire = self.mesh_uniform(p, far, wire, tint, 0.0, false, false, false, 0.0);
+        let gw = p.f(F_GROUND_WIRE_OPACITY);
+        if gw > 0.0 {
+            g.ground_wire = Some(self.mesh_uniform(p, (f[F_GROUND_WIRE_FADE], f[F_GROUND_WIRE_FADE + 1]), gw, [1.0; 3], 0.0, false, false, false, 0.0));
+            // `ensureGroundWire`: built off this thread, the first time it is asked for.
+            let token = self.level_token;
+            for (id, m) in self.level.iter_mut().map(|m| (0, m)).chain(self.world.iter_mut().map(|(k, m)| (*k, m))) {
+                if m.ground_wire.is_none() && !m.wire_asked {
+                    if let Some(idx) = m.ground_cpu.clone() {
+                        m.wire_asked = true;
+                        self.wire_wanted.push((id, token, idx));
+                    }
+                }
+            }
         }
+        g.water = self.mesh_uniform(p, far, p.f(F_WATER_OPACITY), water_tint, 0.0, false, false, false, 0.0);
+        g.solid = st && face >= 0.999;
         g
     }
 
@@ -1416,11 +1660,14 @@ impl Renderer {
         if !p.flag(F_HIDE_BEHIND_GROUND) {
             return;
         }
-        let groups = (p.flag(F_LEVEL_ON) && self.level.is_some() && self.occ.structure.is_some()).then(|| {
+        let boxes = p.flag(F_LEVEL_ON) && self.terrain.any_boxes(p.terrain.as_ref());
+        let on = p.flag(F_LEVEL_ON) && (self.meshes().any(|m| m.structure.is_some()) || boxes);
+        let offs = on.then(|| {
             let f = p.frame.as_ref().unwrap();
             let tint = [f[F_STRUCT_TINT], f[F_STRUCT_TINT + 1], f[F_STRUCT_TINT + 2]];
-            let off = self.level_uniform(p, p.f(F_STRUCT_FACE_OPACITY), tint, 1.0, p.flag(F_STRUCT_FLAT));
-            self.mesh_groups(&self.occ.seal, off)
+            let (face, flat) = (p.f(F_STRUCT_FACE_OPACITY), p.flag(F_STRUCT_FLAT));
+            let far = (1e9, 1e9 + 1.0);
+            [self.mesh_uniform(p, far, face, tint, 1.0, false, flat, false, 0.0), self.mesh_uniform(p, far, face, tint, 1.0, false, flat, false, 2.0)]
         });
         let scene = &self.scene.as_ref().unwrap().1;
         let sd = &self.struct_depth.as_ref().unwrap().1;
@@ -1441,9 +1688,15 @@ impl Renderer {
             occlusion_query_set: None,
             multiview_mask: None,
         });
-        if let (Some(g), Some(l), Some(s)) = (&groups, &self.level, &self.occ.structure) {
-            Self::level_buffers(l).set(&mut pass);
-            crate::occlusion::draw_set(&mut pass, &self.occ.seal, g, s);
+        if let Some(offs) = offs {
+            for m in self.meshes() {
+                if let Some(s) = &m.structure {
+                    self.draw_set(&mut pass, &self.occ.seal, offs[m.texture.is_some() as usize], m, s);
+                }
+            }
+            if let (true, Some(t)) = (boxes, &p.terrain) {
+                self.draw_boxes_with(&mut pass, &self.terrain.depth, offs[0], t);
+            }
         }
     }
 
@@ -1455,26 +1708,28 @@ impl Renderer {
         }
         self.occ.ensure_layers(&self.device, self.width, self.height);
         let f = p.frame.as_ref().unwrap();
-        let mut u = [0f32; PEEL_UNIFORM_BYTES as usize / 4];
-        u[..16].copy_from_slice(&f[F_VIEW_PROJ..F_VIEW_PROJ + 16]);
-        u[16] = self.width as f32;
-        u[17] = self.height as f32;
-        u[18] = PEEL_EPSILON_REVERSE;
-        // No atlas natively yet: no cut-out texels.
-        u[19] = 0.0;
-        let off = self.ring.push(bytemuck::cast_slice(&u), 256);
-        let atlas = self.atlas_group(&self.occ.peel);
-        let (Some(l), Some(s)) = (&self.level, &self.occ.structure) else { return };
+        // [without a texture, with one]: cfg.w 1 once the atlas has arrived, its cut-out texels no wall.
+        let offs = [0.0f32, 1.0].map(|w| {
+            let mut u = [0f32; PEEL_UNIFORM_BYTES as usize / 4];
+            u[..16].copy_from_slice(&f[F_VIEW_PROJ..F_VIEW_PROJ + 16]);
+            u[16] = self.width as f32;
+            u[17] = self.height as f32;
+            u[18] = PEEL_EPSILON_REVERSE;
+            u[19] = w;
+            self.ring.push(bytemuck::cast_slice(&u), 256)
+        });
         let depth = &self.depth.as_ref().unwrap().1;
         for i in 0..layers as usize {
             let prev = if i == 0 { depth } else { self.occ.layer(i - 1).unwrap() };
-            let g0 = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
-                label: Some("depth peel"),
-                layout: &self.occ.peel.get_bind_group_layout(0),
-                entries: &[
-                    wgpu::BindGroupEntry { binding: 0, resource: self.ring.binding(off, PEEL_UNIFORM_BYTES as usize) },
-                    wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::TextureView(prev) },
-                ],
+            let g0 = offs.map(|off| {
+                self.device.create_bind_group(&wgpu::BindGroupDescriptor {
+                    label: Some("depth peel"),
+                    layout: &self.occ.peel.get_bind_group_layout(0),
+                    entries: &[
+                        wgpu::BindGroupEntry { binding: 0, resource: self.ring.binding(off, PEEL_UNIFORM_BYTES as usize) },
+                        wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::TextureView(prev) },
+                    ],
+                })
             });
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("depth peel"),
@@ -1489,26 +1744,40 @@ impl Renderer {
                 multiview_mask: None,
             });
             pass.set_pipeline(&self.occ.peel);
-            pass.set_bind_group(0, &g0, &[]);
-            pass.set_bind_group(1, &atlas, &[]);
-            pass.set_vertex_buffer(0, l.vertices.slice(..));
-            pass.set_vertex_buffer(1, l.uvs.slice(..));
-            pass.set_vertex_buffer(2, l.tiles.slice(..));
-            pass.set_index_buffer(s.buf.slice(..), wgpu::IndexFormat::Uint32);
-            pass.draw_indexed(0..s.count, 0, 0..1);
+            for l in self.meshes() {
+                let Some(s) = &l.structure else { continue };
+                pass.set_bind_group(0, &g0[l.texture.is_some() as usize], &[]);
+                pass.set_bind_group(1, &self.atlas_group(&self.occ.peel, Some(l)), &[]);
+                pass.set_vertex_buffer(0, l.vertices.slice(..));
+                pass.set_vertex_buffer(1, l.uvs.slice(..));
+                pass.set_vertex_buffer(2, l.tiles.slice(..));
+                pass.set_index_buffer(s.buf.slice(..), wgpu::IndexFormat::Uint32);
+                pass.draw_indexed(0..s.count, 0, 0..1);
+            }
+            if let (true, Some(t)) = (self.terrain.any_boxes(p.terrain.as_ref()), &p.terrain) {
+                // Its own group: a group made from one pipeline's automatic layout is not valid with another's.
+                let bg = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
+                    label: Some("boxes peel"),
+                    layout: &self.terrain.peel.get_bind_group_layout(0),
+                    entries: &[
+                        wgpu::BindGroupEntry { binding: 0, resource: self.ring.binding(offs[0], PEEL_UNIFORM_BYTES as usize) },
+                        wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::TextureView(prev) },
+                    ],
+                });
+                pass.set_pipeline(&self.terrain.peel);
+                pass.set_bind_group(0, &bg, &[]);
+                pass.set_bind_group(1, &self.plain_atlas_group(&self.terrain.peel), &[]);
+                self.terrain.draw_boxes(&mut pass, t);
+            }
         }
     }
 
     /// How many peeled layers the heat reads this frame (`activeLayers`).
     fn peel_count(&self, p: &Packet) -> u32 {
-        if !p.flag(F_LEVEL_ON) || self.level.is_none() {
+        if !p.flag(F_LEVEL_ON) {
             return 0;
         }
-        self.occ.active_layers(p.f(F_OCCLUSION))
-    }
-
-    fn level_buffers(l: &GpuLevel) -> crate::occlusion::LevelBuffers<'_> {
-        crate::occlusion::LevelBuffers { vertices: &l.vertices, colours: &l.colours, uvs: &l.uvs, tiles: &l.tiles }
+        self.occ.active_layers(p.f(F_OCCLUSION), self.meshes().any(|m| m.structure.is_some()) || self.terrain.any_boxes(p.terrain.as_ref()))
     }
 
     /// The ground grid and the axes (`buildGridVertices`), made again when they change.
@@ -2417,7 +2686,9 @@ impl Renderer {
         if !r.captures.is_empty() {
             let offs: Vec<u64> = r.captures.iter().map(|(_, c)| self.ring.push(bytemuck::cast_slice(c), 256)).collect();
             let l = self.level.as_ref().unwrap();
-            self.ranges.take_views(&self.device, encoder, r, &self.ring.buf, &offs, &l.vertices, &l.indices, l.count);
+            if let Some(gi) = &l.ground {
+                self.ranges.take_views(&self.device, encoder, r, &self.ring.buf, &offs, &l.vertices, &gi.buf, gi.count);
+            }
         }
         g
     }

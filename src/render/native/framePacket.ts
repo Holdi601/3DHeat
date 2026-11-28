@@ -93,6 +93,11 @@ export const SECTION = {
    * level, x, y and `TILE_INST_FLOATS` floats as the WebGPU pass packs an instance (the layer 0).
    */
   heatTiles: 21,
+  /**
+   * A tiled terrain (`FrameParams.terrain`, `nativeTerrain.ts`): the node count, 0/1 for the
+   * classes' colours, the nodes, then the placed objects' cells in view (count, ids).
+   */
+  terrain: 22,
 } as const;
 
 /** The frame's numbers, in packet order, with how many floats each takes. */
@@ -181,6 +186,25 @@ export const FRAME_FIELDS: ReadonlyArray<readonly [string, number]> = [
   ['waterOpacity', 1],
   ['waterTint', 3],
   ['waterShow', 1],
+  /** The level's atlas (`LevelDraw.texture`, `.structure.textured`) and the ground's own edges. */
+  ['levelTexture', 1],
+  ['structTextured', 1],
+  ['groundWireOpacity', 1],
+  ['groundWireFade', 2],
+  /** The user's switches as they apply to the world tiles (`LevelDraw.tiles`). */
+  ['tilesColours', 1],
+  ['tilesTexture', 1],
+  ['tilesWater', 1],
+  ['tilesFaces', 1],
+  ['tilesWire', 1],
+  /** An image level (`LevelDraw` of kind image): the map quad, its picture sent by `viewport_level`. */
+  ['mapOn', 1],
+  ['mapRect', 4],
+  ['mapY', 1],
+  ['mapFlipV', 1],
+  ['mapOpacity', 1],
+  ['mapDesaturate', 1],
+  ['mapBrightness', 1],
   ['rateOn', 1],
   ['directionOn', 1],
   ['lineHeat', 1],
@@ -489,6 +513,26 @@ export function writeFrame(w: PacketWriter, p: FrameParams, palette: number, vie
     set('waterOpacity', lv.water.opacity);
     f.set(lv.water.tint, FRAME_AT.waterTint);
     set('waterShow', lv.water.show);
+    set('levelTexture', lv.texture);
+    set('structTextured', lv.structure.textured);
+    set('groundWireOpacity', lv.groundWireOpacity);
+    f[FRAME_AT.groundWireFade] = lv.groundWireFade[0];
+    f[FRAME_AT.groundWireFade + 1] = lv.groundWireFade[1];
+    set('tilesColours', lv.tiles.colours);
+    set('tilesTexture', lv.tiles.texture);
+    set('tilesWater', lv.tiles.water);
+    set('tilesFaces', lv.tiles.faces);
+    set('tilesWire', lv.tiles.wire);
+  }
+  const map = p.level?.kind === 'image' ? p.level : null;
+  set('mapOn', map !== null);
+  if (map) {
+    f.set(map.rect, FRAME_AT.mapRect);
+    set('mapY', map.y);
+    set('mapFlipV', map.flipV);
+    set('mapOpacity', map.opacity);
+    set('mapDesaturate', map.desaturate);
+    set('mapBrightness', map.brightness);
   }
   set('rateOn', h.rate !== null);
   set('directionOn', !!p.direction && p.direction.half < Math.PI);

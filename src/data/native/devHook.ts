@@ -12,6 +12,7 @@
  *   parity(files, mapping)  the same load built by the core and by the page, every column compared
  *   budget(gpu?)            the budgets, the live reading and the rows on the GPU; with `gpu`, that GPU budget chosen
  *   store()                 the app's state store, for probes that set a view up (`native/tools/probe-native-viewport.mjs`)
+ *   terrainLevel(name, index, bin)  a tiled terrain's level from its index text and .bin bytes (the probe's made-up one)
  *   heatTiles(query, place) heat from the core's tile pyramid instead of rows (Stage 6), null stops; then
  *   heatTileStats()         the pyramid, bytes and tiles received, time to the first tile
  */
@@ -129,6 +130,13 @@ export function installNativeHook(): void {
 
     async store() {
       return (await import('../../state/store')).useStore;
+    },
+
+    /** A tiled terrain's level from its index (JSON text) and `.bin` bytes, as a picked pack opens. */
+    async terrainLevel(name: string, indexText: string, bin: ArrayBuffer) {
+      const { openTerrainLevel } = await import('../../ui/panels/terrainLevel');
+      const { blobReader } = await import('../../world/terrainFormat');
+      return openTerrainLevel(name, indexText, blobReader(new Blob([bin])));
     },
 
     async play(on: boolean) {

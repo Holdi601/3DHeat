@@ -57,7 +57,12 @@ import {
   HEAT_WGSL,
   LINE_HEAT_WGSL,
   LINE_WGSL,
+  BOX_WGSL,
   LOOK_WGSL,
+  MAP_UNIFORM_BYTES,
+  PEEL_BOX_WGSL,
+  TERRAIN_WGSL,
+  MAP_WGSL,
   MERGE_WGSL,
   MESH_WGSL,
   PEEL_UNIFORM_BYTES,
@@ -68,6 +73,11 @@ import { ARROW_WGSL, STREAM_WGSL } from '../webgpu/dirField';
 import { FIELD_ARROW_VERTS } from '../dirFieldShared';
 import { CHUNK_ROWS, FILTER_MASK_WIDTH, HEAT_DEPTH_LAYERS, MAX_PLAN_BLOCKS, SAMPLE_BLOCK } from '../types';
 import { PEEL_EPSILON_REVERSE } from '../depth';
+import { ATLAS_MIP_LEVELS } from '../../data/atlas';
+import { LEVEL_DROP, LEVEL_IMAGE, LEVEL_MAP, LEVEL_MESH, LEVEL_NONE } from './levelMessages';
+import { LEVEL_BOXES, LEVEL_TERRAIN, LEVEL_TERRAIN_TILE, TERRAIN_LAYERS } from './nativeTerrain';
+import { BOX_FLOATS } from '../../world/terrainObjects';
+import { INSTANCE_FLOATS as TERRAIN_INSTANCE_FLOATS } from '../../world/terrainStream';
 import { LUT_HEIGHT, LUT_WIDTH } from '../colors';
 import { CURVE_LUT_SIZE } from '../../state/curve';
 import { VOLUME_BLOCK_FLOATS } from '../../volumes/gpu';
@@ -106,6 +116,10 @@ export function nativeShaders(): Record<string, string> {
     'merge.wgsl': MERGE_WGSL,
     'composite.wgsl': COMPOSITE_WGSL,
     'mesh.wgsl': MESH_WGSL,
+    'map.wgsl': MAP_WGSL,
+    'terrain.wgsl': TERRAIN_WGSL,
+    'box.wgsl': BOX_WGSL,
+    'peel_box.wgsl': PEEL_BOX_WGSL,
     'wire.wgsl': WIRE_WGSL,
     'peel.wgsl': PEEL_WGSL,
     'line.wgsl': LINE_WGSL,
@@ -176,6 +190,10 @@ export function nativeConstants(): string {
   int('FIELD_ARROW_VERTS', FIELD_ARROW_VERTS);
   int('HEAT_DEPTH_LAYERS', HEAT_DEPTH_LAYERS);
   int('PEEL_UNIFORM_BYTES', PEEL_UNIFORM_BYTES);
+  int('MAP_UNIFORM_BYTES', MAP_UNIFORM_BYTES);
+  for (const [k, v] of Object.entries({ LEVEL_NONE, LEVEL_MESH, LEVEL_IMAGE, LEVEL_MAP, LEVEL_DROP, LEVEL_TERRAIN, LEVEL_TERRAIN_TILE, LEVEL_BOXES, TERRAIN_LAYERS, BOX_FLOATS })) int(k, v);
+  int('TERRAIN_INSTANCE_FLOATS', TERRAIN_INSTANCE_FLOATS);
+  int('ATLAS_MIP_LEVELS', ATLAS_MIP_LEVELS);
   flt('PEEL_EPSILON_REVERSE', PEEL_EPSILON_REVERSE);
   int('TRACKS_UNIFORM_BYTES', TRACKS_UNIFORM_BYTES);
   int('TRACKS_TRAIL_ROOM', TRAIL_ROOM);

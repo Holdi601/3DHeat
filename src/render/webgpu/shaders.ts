@@ -1371,6 +1371,9 @@ fn fsLook(in : LookOut) -> @location(0) vec4<f32> {
 }
 `;
 
+/** The image level's uniform: the view, the rectangle, (y, flipV, opacity, desaturate), (brightness). */
+export const MAP_UNIFORM_BYTES = 64 + 16 + 16 + 16;
+
 export const MAP_WGSL = /* wgsl */ `
 struct MapUniforms {
   viewProj : mat4x4<f32>,

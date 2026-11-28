@@ -17,7 +17,7 @@ use parking_lot::Mutex;
 
 use crate::loader::{self, PageChunk};
 use crate::packet::{self, Packet};
-use crate::renderer::{Captured, GpuChunk, LevelMesh, Renderer};
+use crate::renderer::{Captured, GpuChunk, Renderer};
 
 type Reply<T> = Box<dyn FnOnce(T) + Send>;
 
@@ -44,7 +44,10 @@ pub enum Msg {
     PageColumn(Vec<u8>),
     /// One chunk's per-row data for the heat modes (`heatmodes::RowData`).
     Rows(Vec<u8>),
-    Level(Option<LevelMesh>),
+    /// A part of one of the page's level messages (`loader::Parts`, then `Renderer::level_message`).
+    Level(Vec<u8>),
+    /// A mesh's ground edges, built off the render thread: mesh id, level token, edges.
+    GroundWire(u32, u64, Vec<u32>),
     Capture(Reply<Option<Captured>>),
     /// The heat field once the page's packet `after` (its sequence number) is drawn.
     ReadHeat(usize, u32, Reply<Option<Vec<f32>>>),
@@ -204,11 +207,12 @@ struct Data {
     /// Chunks and filter columns the page sends in parts (`loader::Parts`).
     chunk_parts: loader::Parts,
     column_parts: loader::Parts,
+    level_parts: loader::Parts,
 }
 
 fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::SurfaceConfiguration, rx: Receiver<Msg>, tx: Sender<Msg>, snap: Arc<Mutex<Snapshot>>) {
     let fifo = config.present_mode == wgpu::PresentMode::Fifo;
-    let mut data = Data { generation: Arc::new(AtomicU64::new(0)), core: None, fetching: Arc::new(AtomicBool::new(false)), page_gen: 0, chunk_parts: Default::default(), column_parts: Default::default() };
+    let mut data = Data { generation: Arc::new(AtomicU64::new(0)), core: None, fetching: Arc::new(AtomicBool::new(false)), page_gen: 0, chunk_parts: Default::default(), column_parts: Default::default(), level_parts: Default::default() };
     let mut hidden = false;
     let mut dirty = true;
     // While the page sends frames, a present every display refresh (Fifo paces it): a refresh no
@@ -359,8 +363,18 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                         dirty = true;
                     }
                 }
-                Msg::Level(l) => {
-                    r.set_level(l.as_ref());
+                Msg::Level(part) => match data.level_parts.take(&part) {
+                    Ok(None) => {}
+                    Ok(Some(b)) => {
+                        if let Err(e) = r.level_message(&b) {
+                            crate::note(&format!("viewport: level: {e:#}"));
+                        }
+                        dirty = true;
+                    }
+                    Err(e) => crate::note(&format!("viewport: level: {e:#}")),
+                },
+                Msg::GroundWire(id, token, edges) => {
+                    r.set_ground_wire(id, token, &edges);
                     dirty = true;
                 }
                 Msg::Capture(reply) => {
@@ -422,9 +436,20 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                 });
             }
         }
+        // The ground's edges a frame asked for (`ensureGroundWire`), built off this thread.
+        for (id, token, idx) in r.take_wire_wanted() {
+            let tx = tx.clone();
+            std::thread::spawn(move || {
+                let _ = tx.send(Msg::GroundWire(id, token, crate::occlusion::edge_list(&idx)));
+            });
+        }
         r.poll();
         if !packets.is_empty() && fifo {
             active_until = std::time::Instant::now() + Duration::from_millis(500);
+        }
+        // Tile meshes still to make: another frame (they are made a few milliseconds a frame).
+        if r.world_pending() {
+            dirty = true;
         }
         if packets.is_empty() && !want_capture && !dirty && !active && !r.heat_overdue() {
             continue;
