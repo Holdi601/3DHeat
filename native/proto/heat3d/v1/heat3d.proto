@@ -661,6 +661,10 @@ message HeatTileQuery {
   string key = 9;
   // The owner only: session members may read this pyramid by its key.
   bool share = 10;
+  // Optional: the vertical column. The answer then holds its lowest and highest
+  // value over the files (their statistics): the ground the heat lies on. Not
+  // part of the key.
+  string z = 11;
 }
 
 message HeatPyramid {
@@ -695,6 +699,10 @@ message HeatPyramid {
   bool cached = 21;
   // The last channel holds a split's other rows (its name is empty).
   bool other_channel = 22;
+  // The query's vertical column over the files, when it named one with statistics.
+  bool has_z = 23;
+  double z_min = 24;
+  double z_max = 25;
 }
 
 // A session member reads only pyramids shared with it: the host's (`share`)

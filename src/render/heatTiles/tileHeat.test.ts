@@ -25,9 +25,9 @@ describe('heat from tiles', () => {
     const m = { ...emptyColumnMapping(), x: 'px', y: 'py', z: 'pz' };
     m.axes = { up: 'z', flipX: false, flipY: true, flipZ: false, scale: 2 };
     const p = tilePlacement(m, preview([['1', '2', '5'], ['0', '0', '3']]));
-    expect(p).toEqual({ x: 'px', y: 'py', place: { sx: 2, sz: -2, ground: 6 } });
+    expect(p).toEqual({ x: 'px', y: 'py', place: { sx: 2, sz: -2, ground: 6 }, vertical: 'pz', sv: 2 });
     m.axes = { up: 'y', flipX: true, flipY: false, flipZ: false, scale: 1 };
-    expect(tilePlacement(m, null)).toEqual({ x: 'px', y: 'pz', place: { sx: -1, sz: 1, ground: 0 } });
+    expect(tilePlacement(m, null)).toEqual({ x: 'px', y: 'pz', place: { sx: -1, sz: 1, ground: 0 }, vertical: 'py', sv: 1 });
     expect(tilesPossible(false, preview([]), m)).toBe(false);
     expect(tilesPossible(true, { ...preview([]), format: 'csv' }, m)).toBe(false);
     expect(tilesPossible(true, preview([]), { ...m, z: null })).toBe(false);
@@ -49,6 +49,18 @@ describe('heat from tiles', () => {
     expect(e.src).toBe(null);
     expect(useTileHeat.getState().on).toBe(false);
     expect(useTileHeatShare.getState().doc).toEqual({});
+  });
+
+  it('lays the heat on the lowest row of all the files once the core says, and shares that ground', async () => {
+    const { engine } = fakeEngine();
+    const z: TileTransport = { ...transport, query: async () => ({ ...info, zRange: [-3, 40] }) };
+    // A flipped vertical axis, scale 2: the lowest world height is the highest value's.
+    const place = { sx: 1, sz: 1, ground: 7 };
+    startTileHeat(engine, z, place, 'files', true, true, -2);
+    await new Promise((r) => setTimeout(r, 300));
+    expect(place.ground).toBe(-80);
+    expect(useTileHeatShare.getState().doc.ground).toBe(-80);
+    stopTileHeat();
   });
 
   it("follows the session host's key, and stops with it", async () => {

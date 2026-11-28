@@ -379,6 +379,21 @@ fn extent(sources: &[Source], x: &str, y: &str) -> Result<(f64, f64, f64)> {
     Ok((cx - size * 0.5, cy - size * 0.5, size))
 }
 
+/// The lowest and highest value of `column` over the files, from their row groups' statistics
+/// (None when a group has none, or there are no rows).
+pub fn column_span(files: &[PathBuf], column: &str) -> Option<(f64, f64)> {
+    let sources = open_sources(files).ok()?;
+    let (mut lo, mut hi) = (f64::INFINITY, f64::NEG_INFINITY);
+    for s in &sources {
+        for g in 0..s.file.row_groups() {
+            let (a, b) = s.file.group_span(g, column)?;
+            lo = lo.min(a);
+            hi = hi.max(b);
+        }
+    }
+    (lo.is_finite() && hi.is_finite()).then_some((lo, hi))
+}
+
 /// Bins one row group's rows that `clauses` keep, adding `sign` (1, or u32::MAX to subtract);
 /// `touched` (a bit per leaf tile) gets the tiles a row went into. With a split,
 /// `names` are its named channels; the rows of any other value go to the channel after them.
@@ -666,12 +681,28 @@ fn run_build(q: TileQuery, key: String, dir: PathBuf, base: Option<(Meta, PathBu
         meta.delta_base = bm.key.clone();
         let old: Vec<Clause> = parse_clauses(&bm.filter);
         counted.store(bm.rows_counted, Ordering::Relaxed);
-        let groups: Vec<(usize, usize)> = all.iter().copied().filter(|&(f, g)| may_differ(&sources[f], g, &old, &filter)).collect();
+        let groups = shuffled(all.iter().copied().filter(|&(f, g)| may_differ(&sources[f], g, &old, &filter)).collect());
         let side = 1usize << leaf;
         let touched: Vec<AtomicBits> = (0..(side * side).div_ceil(64)).map(|_| AtomicBits::new(0)).collect();
         let atoms = grid.atomics();
-        visit(&groups, &old, u32::MAX, atoms, Some(&touched));
-        visit(&groups, &filter, 1, atoms, Some(&touched));
+        // Coarse first, as a full pass: a share of the groups, then the base's coarse levels
+        // with the change seen there scaled up to all of them, as the first picture.
+        let first = groups.len().div_ceil(SAMPLE_SHARE).max(1).min(groups.len());
+        visit(&groups[..first], &old, u32::MAX, atoms, Some(&touched));
+        visit(&groups[..first], &filter, 1, atoms, Some(&touched));
+        if first < groups.len() && failed.lock().unwrap().is_none() {
+            let rows = |gs: &[(usize, usize)]| gs.iter().map(|&(f, g)| sources[f].file.group_rows(g)).sum::<u64>();
+            let scale = rows(&groups) as f64 / rows(&groups[..first]).max(1) as f64;
+            let (est, est_levels, level_max) = delta_estimate(&grid, scale, bm, bdir)?;
+            *build.estimate.write().unwrap() = est;
+            let mut st = build.status.lock().unwrap();
+            st.estimate_levels = est_levels;
+            st.meta.first_ms = t0.elapsed().as_secs_f64() * 1e3;
+            st.meta.level_max = level_max;
+            meta.first_ms = st.meta.first_ms;
+        }
+        visit(&groups[first..], &old, u32::MAX, atoms, Some(&touched));
+        visit(&groups[first..], &filter, 1, atoms, Some(&touched));
         meta.groups_read = groups.len() as u64;
         if let Some(e) = failed.lock().unwrap().take() {
             return Err(e);
@@ -771,6 +802,58 @@ fn pack_full(levels: Vec<Vec<u32>>, channels: usize) -> Packed {
         out.index.push(idx);
     }
     out
+}
+
+/// A delta's first picture (estimate levels): the base's coarse levels plus `diff` (the leaf
+/// grid's change so far, wrapping) times `scale`, cells below zero held at zero.
+fn delta_estimate(diff: &Grid, scale: f64, bm: &Meta, bdir: &Path) -> Result<(HashMap<u64, Bytes>, u32, Vec<u32>)> {
+    let base = crate::source::map(&bdir.join("tiles.bin"))?;
+    delta_estimate_from(diff, scale, bm, &base)
+}
+
+fn delta_estimate_from(diff: &Grid, scale: f64, bm: &Meta, base: &[u8]) -> Result<(HashMap<u64, Bytes>, u32, Vec<u32>)> {
+    let leaf = bm.leaf_level;
+    let channels = diff.channels;
+    let est_levels = ESTIMATE_LEVELS.min(leaf + 1);
+    let top = est_levels - 1;
+    let (nt, n, f) = (TILE << top, diff.n, 1usize << (leaf - top));
+    let mut cells = vec![0u32; nt * nt * channels];
+    let tiles = 1u32 << top;
+    for (&t, &[o, len]) in bm.index.get(top as usize).into_iter().flatten() {
+        let tile = decode_tile(&base[o as usize..(o + len) as usize])?;
+        let (tx, ty) = ((t % tiles) as usize, (t / tiles) as usize);
+        for c in 0..channels.min(tile.channels) {
+            for row in 0..TILE {
+                let src = &tile.cells[c * TILE * TILE + row * TILE..c * TILE * TILE + (row + 1) * TILE];
+                let at = c * nt * nt + (ty * TILE + row) * nt + tx * TILE;
+                cells[at..at + TILE].copy_from_slice(src);
+            }
+        }
+    }
+    let change = &diff.cells;
+    cells.par_chunks_mut(nt).enumerate().for_each(|(r, dst)| {
+        let (c, y) = (r / nt, r % nt);
+        let plane = c * n * n;
+        for (x, d) in dst.iter_mut().enumerate() {
+            let mut sum = 0i64;
+            for k in 0..f {
+                let at = plane + (y * f + k) * n + x * f;
+                sum += change[at..at + f].iter().map(|&v| v as i32 as i64).sum::<i64>();
+            }
+            if sum != 0 {
+                *d = (*d as f64 + sum as f64 * scale).round().clamp(0.0, u32::MAX as f64) as u32;
+            }
+        }
+    });
+    let levels = pyramid(cells, top, channels);
+    let level_max = levels.iter().map(|l| l.iter().copied().max().unwrap_or(0)).collect();
+    let mut est = HashMap::new();
+    for l in 0..est_levels {
+        for (x, y, b) in encode_level(&levels[l as usize], l, channels, true, 1.0) {
+            est.insert(tile_id(l, x, y), Bytes::from(b));
+        }
+    }
+    Ok((est, est_levels, level_max))
 }
 
 /// A delta's pyramid: `diff` (the leaf grid's change, wrapping) added to the
@@ -1256,5 +1339,25 @@ mod tests {
         assert_eq!(tiles_of(&delta), tiles_of(&full));
         // Two leaf tiles and their ancestors: (1,2) and (0,0) at level 2, their parents (0,1) and (0,0) at 1, the root.
         assert_eq!(delta.written, 2 + 2 + 1);
+        // The first picture with the whole change seen (scale 1): the full pyramid's levels, as estimates.
+        let (est, levels, level_max) = delta_estimate_from(&diff, 1.0, &bm, &base.pack).unwrap();
+        assert_eq!(levels, leaf + 1);
+        assert_eq!(level_max, full.level_max);
+        let want = tiles_of(&full);
+        let mut got: Vec<HashMap<u32, Vec<u32>>> = vec![HashMap::new(); levels as usize];
+        for (id, b) in &est {
+            let t = decode_tile(b).unwrap();
+            assert!(t.estimate);
+            let (l, y, x) = tile_of(*id);
+            got[l as usize].insert(y * (1 << l) + x, t.cells);
+        }
+        assert_eq!(got, want);
+        // Half the change seen, scaled by 2: a removal can't take a cell under zero.
+        let mut half = Grid::new(n, ch);
+        for (h, d) in half.cells.iter_mut().zip(&diff.cells) {
+            *h = ((*d as i32) / 2) as u32;
+        }
+        let (est, _, _) = delta_estimate_from(&half, 2.0, &bm, &base.pack).unwrap();
+        assert!(est.values().all(|b| decode_tile(b).is_ok()));
     }
 }

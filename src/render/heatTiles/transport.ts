@@ -32,6 +32,7 @@ export function heatTileTransport(at: CoreEndpoint, query: HeatTileQueryInit): T
         error: p.error,
         channelNames: p.channelNames,
         otherChannel: p.otherChannel,
+        zRange: p.hasZ ? [p.zMin, p.zMax] : undefined,
       };
     },
     async read(key: string, ids: bigint[], budgetBytes: number): Promise<TileBatch> {

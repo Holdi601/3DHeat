@@ -24,6 +24,8 @@ export interface PyramidInfo extends PyramidFrame {
   channelNames?: string[];
   /** The last channel holds the split's rows of any other value (or none); its name is empty. */
   otherChannel?: boolean;
+  /** The query's vertical column over the files (lowest, highest), when it named one: the ground. */
+  zRange?: [number, number];
 }
 
 export interface TileBatch {

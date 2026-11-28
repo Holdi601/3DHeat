@@ -121,13 +121,21 @@ function publish(src: HeatTileSource, from: 'files' | 'session'): void {
  * camera frames the pyramid once its square is known. `share` puts it in the
  * session document for the members (files only).
  */
-export function startTileHeat(engine: TileEngine, transport: TileTransport, place: TilePlacement, from: 'files' | 'session', share = false, frame = true): HeatTileSource {
+export function startTileHeat(engine: TileEngine, transport: TileTransport, place: TilePlacement, from: 'files' | 'session', share = false, frame = true, sv?: number): HeatTileSource {
   stopTileHeat();
   const src = new HeatTileSource(transport, place, {}, () => engine.invalidate(1));
   let framed = !frame;
+  let grounded = sv === undefined;
   const tick = () => {
     if (current?.src !== src) return;
     const i = src.info;
+    // The ground from every row's height (`sv` the vertical axis's scale and flip), before the camera frames it.
+    if (!grounded && i?.zRange) {
+      grounded = true;
+      place.ground = Math.min(i.zRange[0] * sv!, i.zRange[1] * sv!);
+      if (current.share) current.share.ground = place.ground;
+      engine.invalidate(1);
+    }
     if (!framed && i && i.key && i.size > 0) {
       framed = true;
       const cx = place.sx * (i.x0 + i.size / 2);
@@ -159,7 +167,7 @@ export function stopTileHeat(): void {
 }
 
 /** The two horizontal columns, and where the data's plane lies in the world (as `remapAxesInPlace` puts rows). */
-export function tilePlacement(mapping: ColumnMapping, preview: SourcePreview | null): { x: string; y: string; place: TilePlacement } | null {
+export function tilePlacement(mapping: ColumnMapping, preview: SourcePreview | null): { x: string; y: string; place: TilePlacement; vertical: string | null; sv: number } | null {
   const a = mapping.axes;
   const s = a.scale || 1;
   const upZ = a.up === 'z';
@@ -170,7 +178,8 @@ export function tilePlacement(mapping: ColumnMapping, preview: SourcePreview | n
   const sx = (a.flipX ? -1 : 1) * s;
   const sz = (upZ ? (a.flipY ? -1 : 1) : (a.flipZ ? -1 : 1)) * s;
   const sv = (upZ ? (a.flipZ ? -1 : 1) : (a.flipY ? -1 : 1)) * s;
-  // The ground under the heat: the lowest height in the file's sample (rows give it exactly; tiles have none).
+  // The ground under the heat until the core answers the vertical column's span over every row
+  // group (`zRange`): the lowest height in the file's sample.
   let ground = 0;
   const col = vertical && preview ? preview.columns.indexOf(vertical) : -1;
   if (col >= 0 && preview) {
@@ -181,7 +190,7 @@ export function tilePlacement(mapping: ColumnMapping, preview: SourcePreview | n
     }
     if (Number.isFinite(lo)) ground = lo;
   }
-  return { x, y, place: { sx, sz, ground } };
+  return { x, y, place: { sx, sz, ground }, vertical: vertical || null, sv };
 }
 
 /** Whether a pick can be drawn from tiles: the native app's core, Parquet tables, both horizontal columns. */
@@ -194,7 +203,7 @@ export function tilesPossible(native: boolean, preview: SourcePreview | null, ma
  * load's pre-filter; with `split`, a channel per value of the group column (the
  * core finds the values, the rest in an "other" channel).
  */
-export async function pickQuery(files: File[], mapping: ColumnMapping, preview: SourcePreview | null, share: boolean, split = false): Promise<{ query: HeatTileQueryInit; place: TilePlacement } | null> {
+export async function pickQuery(files: File[], mapping: ColumnMapping, preview: SourcePreview | null, share: boolean, split = false): Promise<{ query: HeatTileQueryInit; place: TilePlacement; sv?: number } | null> {
   const p = tilePlacement(mapping, preview);
   if (!p) return null;
   const { nativeRefs } = await import('../../data/native/files');
@@ -208,9 +217,11 @@ export async function pickQuery(files: File[], mapping: ColumnMapping, preview: 
       y: p.y,
       filter: activeClauses(mapping.rowFilter).map(clauseOf),
       share,
+      z: p.vertical ?? '',
       ...(split && mapping.teamId ? { split: mapping.teamId, splitValues: [] } : {}),
     },
     place: p.place,
+    sv: p.vertical ? p.sv : undefined,
   };
 }
 
@@ -242,7 +253,7 @@ export async function startPickTileHeat(
   if (!q) return false;
   const { coreEndpoint } = await import('../../data/native/core');
   const { heatTileTransport } = await import('./transport');
-  const src = startTileHeat(engine, heatTileTransport(await coreEndpoint(), q.query), q.place, 'files', share, frame);
+  const src = startTileHeat(engine, heatTileTransport(await coreEndpoint(), q.query), q.place, 'files', share, frame, q.sv);
   if (current?.src !== src) return true;
   const pick: Pick = { files, mapping, preview, share, split: wantSplit };
   current.pick = pick;

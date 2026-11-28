@@ -794,7 +794,7 @@ impl Core {
                 bail!(Denied("a heat pyramid not shared with the session".into()));
             }
             let st = self.tile_store()?.status_of(&q.key).ok_or_else(|| anyhow!("no heat pyramid {}", q.key))?;
-            return Ok(pyramid_of(st));
+            return Ok(pyramid_of(st, None));
         }
         let mut refs: Vec<(PathBuf, String)> = Vec::new();
         for f in &q.files {
@@ -819,6 +819,8 @@ impl Core {
             level = level.min(TILE_LEVEL_REMOTE);
         }
         let split = (!q.split.is_empty()).then(|| crate::tiles::Split { column: q.split.clone(), values: q.split_values.iter().take(crate::tiles::SPLIT_NAMED).cloned().collect() });
+        // The ground under the heat: the vertical column's span (statistics only, no rows read).
+        let z = if q.z.is_empty() { None } else { crate::tiles::column_span(&files, &q.z) };
         let query = crate::tiles::TileQuery { files, x: q.x, y: q.y, filter: clauses_of(&q.filter), split, leaf_level: level };
         let store = self.tile_store()?;
         if !access.paths && store.build_of(&query.key()).is_none() && store.builds_running() >= TILE_BUILDS_REMOTE {
@@ -828,7 +830,7 @@ impl Core {
         if !access.paths || q.share {
             self.tiles_shared.lock().unwrap().insert(st.meta.key.clone());
         }
-        Ok(pyramid_of(st))
+        Ok(pyramid_of(st, z))
     }
 
     fn read_heat_tiles(&self, r: v1::ReadHeatTiles, out: &mut Payload, access: Access) -> Result<Body> {
@@ -851,7 +853,7 @@ impl Core {
 }
 
 /// A build's state as the protocol says it.
-fn pyramid_of(st: crate::tiles::Status) -> Body {
+fn pyramid_of(st: crate::tiles::Status, z: Option<(f64, f64)>) -> Body {
     let m = st.meta;
     Body::HeatPyramid(v1::HeatPyramid {
         key: m.key,
@@ -862,6 +864,9 @@ fn pyramid_of(st: crate::tiles::Status) -> Body {
         channels: m.channels,
         channel_names: m.channel_names,
         other_channel: m.other,
+        has_z: z.is_some(),
+        z_min: z.map_or(0.0, |z| z.0),
+        z_max: z.map_or(0.0, |z| z.1),
         rows_total: m.rows_total,
         rows_counted: m.rows_counted,
         fraction: st.fraction,
