@@ -757,6 +757,7 @@
   max-width: 100%;
   white-space: normal;
   text-align: left;
+}
 
 /* A narrow view: the quick bar stands down the left edge; the requests sit clear of it. */
 @container stage (max-width: 760px) {
