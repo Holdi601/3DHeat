@@ -21,6 +21,8 @@ heat3d-server.workspace = true
 heat3d-library.workspace = true
 # The native viewport (Stage 5 preview): wgpu under the page.
 heat3d-viewport.workspace = true
+# The video fallback (Stage 8): members' views from the viewport, encoded and sent over WebRTC.
+heat3d-video.workspace = true
 # The folder picker of the Library (Windows' own dialog; the desktop portal on Wayland).
 rfd = "0.18"
 tauri = { version = "2", features = [] }

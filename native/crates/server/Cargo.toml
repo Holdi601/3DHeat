@@ -15,6 +15,7 @@ heat3d-core.workspace = true
 heat3d-library.workspace = true
 heat3d-session.workspace = true
 heat3d-extractors.workspace = true
+heat3d-video.workspace = true
 heat3d-sandbox = { path = "../sandbox" }
 anyhow.workspace = true
 serde.workspace = true

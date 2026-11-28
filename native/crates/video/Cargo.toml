@@ -1,0 +1,27 @@
+[package]
+name = "heat3d-video"
+description = "3DHeat's video fallback (Stage 8): a member's view drawn by the host, hardware-encoded and sent over WebRTC"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+# WebRTC, sans-IO; RustCrypto for DTLS/SRTP (pure Rust: no OpenSSL, no CMake/NASM).
+str0m = { version = "0.26", default-features = false, features = ["rust-crypto"] }
+axum = { version = "0.8", default-features = false, features = ["json", "tokio", "http1"] }
+tokio = { version = "1", features = ["rt", "sync", "time"] }
+if-addrs = "0.13"
+parking_lot = "0.12"
+
+[target.'cfg(windows)'.dependencies]
+# Media Foundation's encoders: the GPU makers' hardware ones (NVENC, AMF, QSV), Microsoft's software H.264 otherwise.
+windows = { version = "0.62", features = ["Win32_Foundation", "Win32_System_Com", "Win32_System_Com_StructuredStorage", "Win32_System_Variant", "Win32_System_Ole", "Win32_Media_MediaFoundation", "Win32_Media_DirectShow"] }
+windows-core = "0.62"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+tower = { version = "0.5", features = ["util"] }

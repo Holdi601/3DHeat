@@ -95,6 +95,10 @@ pub struct ServeConfig {
     /// usage statistics at `/__heat3d/usage`): the gateway forwards them with the
     /// host's token only; they see such a request as from this machine.
     pub host_mount: Vec<(String, Router)>,
+    /// Services for joined members that need to know who asks (the video fallback's
+    /// signalling at `/__heat3d/video`): the gateway forwards them with a member's token
+    /// only, naming member, role, the role's video limit and the member's address.
+    pub member_mount: Vec<(String, Router)>,
     /// The network's limits.
     pub limits: NetLimits,
     /// The gateway as a locked-down process of its own; None: in this process.
@@ -130,6 +134,7 @@ impl ServeConfig {
             max_upload: 8 * 1024 * 1024 * 1024,
             mount: Vec::new(),
             host_mount: Vec::new(),
+            member_mount: Vec::new(),
             limits: NetLimits::default(),
             gateway: None,
             proxies: TrustedProxies::default(),
@@ -354,7 +359,7 @@ pub async fn start(cfg: ServeConfig) -> Result<Running, String> {
     // Sharing from the catalogue: the host's browser only (the gateway forwards it with the host's token).
     let mut host_mount = cfg.host_mount.clone();
     host_mount.push((SHARE_ROUTE.into(), share_router(store.clone(), audit.clone(), cfg.share.clone())));
-    let core = core_router(store, cfg.web_root.clone(), &cfg.mount, &host_mount);
+    let core = core_router(store, cfg.web_root.clone(), &cfg.mount, &host_mount, &cfg.member_mount);
     let gcfg = GatewayConfig {
         expose: cfg.expose,
         allow_origins: cfg.allow_origins.clone(),
@@ -367,6 +372,7 @@ pub async fn start(cfg: ServeConfig) -> Result<Running, String> {
         hsts: matches!(cfg.tls, TlsMode::Files { .. }),
         mounts: cfg.mount.iter().map(|(p, _)| p.clone()).collect(),
         host_mounts: host_mount.iter().map(|(p, _)| p.clone()).collect(),
+        member_mounts: cfg.member_mount.iter().map(|(p, _)| p.clone()).collect(),
         limits: cfg.limits.clone(),
         proxies: cfg.proxies.clone(),
         local_claim: cfg.local_claim && !cfg.expose,
@@ -580,7 +586,7 @@ async fn serve_core(io: tokio::io::DuplexStream, core: Router) {
 /// What the core serves the gateway: the web build, published files by
 /// hash, uploads, and the mounted services, which see every request as a
 /// remote one (no address of this machine: never files by path).
-fn core_router(store: Arc<Store>, web_root: Option<PathBuf>, mounts: &[(String, Router)], host_mounts: &[(String, Router)]) -> Router {
+fn core_router(store: Arc<Store>, web_root: Option<PathBuf>, mounts: &[(String, Router)], host_mounts: &[(String, Router)], member_mounts: &[(String, Router)]) -> Router {
     let mut r = Router::new()
         .route("/a/{hash}", get(asset))
         .route("/api/publish", post(publish).layer(axum::extract::DefaultBodyLimit::disable()))
@@ -591,6 +597,9 @@ fn core_router(store: Arc<Store>, web_root: Option<PathBuf>, mounts: &[(String, 
     }
     for (path, service) in host_mounts {
         r = r.nest_service(path, service.clone().layer(middleware::from_fn(host_marked)));
+    }
+    for (path, service) in member_mounts {
+        r = r.nest_service(path, service.clone().layer(middleware::from_fn(member_marked)));
     }
     r = match web_root {
         Some(root) => r.fallback_service(
@@ -611,6 +620,15 @@ async fn host_marked(mut req: Request, next: Next) -> Response {
         return StatusCode::FORBIDDEN.into_response();
     }
     req.extensions_mut().insert(ConnectInfo(SocketAddr::from(([127, 0, 0, 1], 0))));
+    next.run(req).await
+}
+
+/// A service for joined members: only what the gateway named (after checking the member's
+/// token) reaches it; anything else is refused.
+async fn member_marked(req: Request, next: Next) -> Response {
+    if !req.headers().contains_key(gateway::MEMBER_MARK) || !req.headers().contains_key(gateway::VIDEO_LIMIT_MARK) {
+        return StatusCode::FORBIDDEN.into_response();
+    }
     next.run(req).await
 }
 
@@ -929,7 +947,7 @@ pub fn test_gateway(web_root: PathBuf, state_dir: PathBuf, host_token: String, p
         uploaded: std::sync::atomic::AtomicU64::new(0),
         shared: RwLock::new(Vec::new()),
     });
-    let core = core_router(store, Some(web_root), &[], &[]);
+    let core = core_router(store, Some(web_root), &[], &[], &[]);
     let mut session = Config::default();
     session.cost = auth::Cost::TEST;
     let gcfg = GatewayConfig {
@@ -944,6 +962,7 @@ pub fn test_gateway(web_root: PathBuf, state_dir: PathBuf, host_token: String, p
         hsts: false,
         mounts: vec![],
         host_mounts: vec![],
+        member_mounts: vec![],
         limits: NetLimits { requests_burst: 1e12, requests_per_sec: 1e12, ..NetLimits::default() },
         proxies: TrustedProxies::default(),
         local_claim: true,

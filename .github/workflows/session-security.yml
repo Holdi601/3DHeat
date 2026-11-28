@@ -63,7 +63,7 @@ jobs:
           workspaces: native
       - name: The gateway's sandbox holds, and the session server's tests
         working-directory: native
-        run: cargo test -p heat3d-sandbox -p heat3d-session -p heat3d-server
+        run: cargo test -p heat3d-sandbox -p heat3d-session -p heat3d-server -p heat3d-video
       - name: What a taken-over gateway could still do (each line must say blocked)
         working-directory: native
         run: cargo run -q -p heat3d-server --bin 3dheat -- sandbox-check

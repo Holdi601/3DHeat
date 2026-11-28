@@ -20,9 +20,12 @@ pub mod packet;
 pub mod renderer;
 pub mod terrain;
 pub mod tracks;
+pub mod video;
 pub mod viewport;
 
 pub use renderer::{Captured, LevelMesh, Renderer};
+pub use renderer::member_view::MemberCamera;
+pub use video::{VideoFrame, VideoSink};
 
 /// A line about something that went wrong, on stderr and, with `HEAT3D_VIEWPORT_LOG` set to a file,
 /// appended there too: the released app has no console, so its stderr goes nowhere.

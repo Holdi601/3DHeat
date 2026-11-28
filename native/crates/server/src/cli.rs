@@ -54,6 +54,10 @@ OPTIONS:
     --local-config FILE    This machine's settings for going public and sharing (default:
                            local.json in the state folder; never put it in a repository)
     --catalog DIR          The catalogue folder items may be shared from (default: HEAT3D_LEVELS)
+    --video-streams N      Video views of their own for members whose device cannot draw
+                           the data, at most (default: as many as the GPU and encoders take;
+                           followers of the host share one; 0: none). Needs the app's native
+                           viewport; LAN only
     --auto-update          Update by itself when a newer release is out (signature checked;
                            used from the next start). Without it the server only says so.
                            Also `\"autoUpdate\": true` in the local config
@@ -424,6 +428,10 @@ pub async fn serve(rest: Vec<String>, core: Arc<Core>, default_web: Option<PathB
             "--trust-cloudflared" => trust_cloudflared = true,
             "--local-config" => local_config = Some(PathBuf::from(val(&mut i, "--local-config"))),
             "--catalog" => catalog = Some(PathBuf::from(val(&mut i, "--catalog"))),
+            "--video-streams" => {
+                let n: usize = val(&mut i, "--video-streams").parse().unwrap_or_else(|_| fail("--video-streams: a number"));
+                heat3d_video::host().set_max_streams(n);
+            }
             "--auto-update" => auto_update = true,
             "--no-update-check" => update_check = false,
             "--open" => open = true,
@@ -498,6 +506,10 @@ pub async fn serve(rest: Vec<String>, core: Arc<Core>, default_web: Option<PathB
         "/__heat3d/extractors".into(),
         heat3d_extractors::router(heat3d_extractors::Manager::shared(), heat3d_extractors::Auth::Host),
     ));
+    // The video fallback's signalling (Stage 8, docs/multiplayer.md): joined members only, the
+    // gateway naming member, role and limit; the pictures come from the app's native viewport
+    // (headless there is none, and offers are refused).
+    cfg.member_mount.push(("/__heat3d/video".into(), heat3d_video::router::router(heat3d_video::host())));
     if no_sandbox && cfg.expose {
         fail("--no-sandbox and --expose-internet do not go together");
     }

@@ -30,6 +30,7 @@ mod protocol;
 mod requirements;
 mod shared;
 mod update;
+mod video;
 mod viewport;
 mod window_layer;
 
@@ -227,6 +228,9 @@ fn main() {
                 .disable_drag_drop_handler()
                 .build()?;
             files::attach(&window, core.clone());
+            // Session members whose device cannot draw the data get their view as video, drawn by
+            // this window's native viewport (Stage 8; offers are refused while it is off).
+            heat3d_video::host().set_source(Some(Arc::new(video::AppVideo { app: app.handle().clone() })));
             // Columns and chunks into the page with no copy on the way (Windows).
             #[cfg(windows)]
             shared::sink::attach(&window, &core);

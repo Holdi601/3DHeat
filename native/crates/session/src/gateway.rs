@@ -125,6 +125,11 @@ pub struct GatewayConfig {
     /// statistics): forwarded with the host's token only, marked as the host's.
     #[serde(default)]
     pub host_mounts: Vec<String>,
+    /// Paths of services for joined members that need to know who asks (the video
+    /// fallback): forwarded with a member's token only, naming member, role, the
+    /// role's video limit and the member's address.
+    #[serde(default)]
+    pub member_mounts: Vec<String>,
     pub limits: NetLimits,
     /// Reverse proxies and tunnels trusted to name the client (`proxy.rs`).
     #[serde(default)]
@@ -228,6 +233,8 @@ pub struct Gateway {
     next_live: AtomicU64,
     /// Who may name the client (changes while the server runs: the tunnel starts and stops).
     proxies: std::sync::RwLock<TrustedProxies>,
+    /// Requests to member services, per member: (offers, everything) a minute.
+    member_budget: Mutex<HashMap<crate::session::MemberId, (crate::limits::Bucket, crate::limits::Bucket)>>,
 }
 
 /// Where a connection is: what decides whether it may be ended to make room.
@@ -316,6 +323,7 @@ impl Gateway {
             live: Mutex::new(HashMap::new()),
             next_live: AtomicU64::new(1),
             proxies: std::sync::RwLock::new(TrustedProxies::default()),
+            member_budget: Mutex::new(HashMap::new()),
         });
         gw.set_proxies(gw.cfg.proxies.clone());
         *gw.router.lock().unwrap() = Some(router(gw.clone()));
@@ -710,6 +718,11 @@ fn router(gw: Arc<Gateway>) -> Router {
         r = r
             .route(m, any(host_mounted))
             .route(&format!("{m}/{{*rest}}"), any(host_mounted));
+    }
+    for m in &gw.cfg.member_mounts {
+        r = r
+            .route(m, any(member_mounted))
+            .route(&format!("{m}/{{*rest}}"), any(member_mounted));
     }
     r = r.fallback(static_file);
     secured(r, gw.cfg.hsts)
@@ -1293,6 +1306,62 @@ async fn host_mounted(State(gw): State<Arc<Gateway>>, req: Request) -> Response 
         r.headers_mut().insert(HeaderName::from_static("x-heat3d-usage"), v.clone());
     }
     r.headers_mut().insert(HeaderName::from_static(HOST_MARK), HeaderValue::from_static("1"));
+    gw.host.http(r).await
+}
+
+/// The headers by which a member service knows who asks. Only the gateway sets them, after
+/// checking the member's token; `to_core` copies no client header of these names.
+pub const MEMBER_MARK: &str = "x-heat3d-member";
+pub const ROLE_MARK: &str = "x-heat3d-role";
+pub const VIDEO_LIMIT_MARK: &str = "x-heat3d-video-limit";
+pub const PEER_MARK: &str = "x-heat3d-peer";
+pub const LAN_MARK: &str = "x-heat3d-lan";
+/// A member service's request body, at most.
+pub const MAX_MEMBER_BODY: usize = 64 * 1024;
+
+/// A service for joined members that needs to know who asks (the video fallback's
+/// signalling): POST only, a member's token, a small body, a budget per member (offers six a
+/// minute, all requests sixty); forwarded naming member, role, the role's video limit and the
+/// member's address (and whether it is on the local network, not through a proxy or tunnel).
+async fn member_mounted(State(gw): State<Arc<Gateway>>, ConnectInfo(peer): ConnectInfo<SocketAddr>, req: Request) -> Response {
+    let via = req.extensions().get::<Via>().copied().unwrap_or(Via::Direct);
+    let (parts, body) = req.into_parts();
+    if parts.method != Method::POST {
+        return StatusCode::METHOD_NOT_ALLOWED.into_response();
+    }
+    let who = gw.session.lock().unwrap().member_by_token(&bearer(&parts.headers));
+    let Some((member, role)) = who else {
+        return StatusCode::UNAUTHORIZED.into_response();
+    };
+    let Some((w, h, fps, kbps)) = crate::roles::video_limit(role) else {
+        return StatusCode::FORBIDDEN.into_response();
+    };
+    let pq = parts.uri.path_and_query().map(|p| p.as_str()).unwrap_or("/").to_owned();
+    {
+        let now = now_ms();
+        let mut b = gw.member_budget.lock().unwrap();
+        let (offers, all) = b
+            .entry(member)
+            .or_insert_with(|| (crate::limits::Bucket::per_minute(6.0, now), crate::limits::Bucket::per_minute(60.0, now)));
+        let offer = parts.uri.path().ends_with("/offer");
+        let ok = all.take(1.0, now).and_then(|_| if offer { offers.take(1.0, now) } else { Ok(()) });
+        if let Err(retry_ms) = ok {
+            let secs = (retry_ms / 1000).max(1).to_string();
+            return (StatusCode::TOO_MANY_REQUESTS, [(header::RETRY_AFTER, secs)]).into_response();
+        }
+    }
+    let Ok(bytes) = axum::body::to_bytes(body, MAX_MEMBER_BODY).await else {
+        return StatusCode::PAYLOAD_TOO_LARGE.into_response();
+    };
+    let mut r = to_core(Method::POST, &pq, &parts.headers, Body::from(bytes));
+    let lan = via == Via::Direct && lan::is_local(peer.ip());
+    let hv = |s: String| HeaderValue::from_str(&s).unwrap_or_else(|_| HeaderValue::from_static("0"));
+    let hd = r.headers_mut();
+    hd.insert(HeaderName::from_static(MEMBER_MARK), hv(member.to_string()));
+    hd.insert(HeaderName::from_static(ROLE_MARK), HeaderValue::from_static(crate::roles::name(role)));
+    hd.insert(HeaderName::from_static(VIDEO_LIMIT_MARK), hv(format!("{w},{h},{fps},{kbps}")));
+    hd.insert(HeaderName::from_static(PEER_MARK), hv(peer.ip().to_string()));
+    hd.insert(HeaderName::from_static(LAN_MARK), HeaderValue::from_static(if lan { "1" } else { "0" }));
     gw.host.http(r).await
 }
 

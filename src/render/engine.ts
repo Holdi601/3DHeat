@@ -2734,6 +2734,15 @@ export class Engine {
   // ---------------------------------------------------------------- inspect
 
   /**
+   * The view as the video fallback sends it to the host (Stage 8, session/video.ts): world to
+   * camera with the mirror in it, as this engine drew its last frame, and the projection's settings.
+   */
+  videoCamera(): { view: Float32Array; fov: number; ortho: boolean; orthoHeight: number } {
+    const cam = useStore.getState().camera;
+    return { view: this.viewArr.slice(), fov: cam.fov, ortho: cam.projection === 'orthographic', orthoHeight: Math.max(0, this.camera.orthoHeight || 0) };
+  }
+
+  /**
    * The camera in world terms: where it is and the way it looks.
    *
    * Through the axis mirror, both of them. The camera's own yaw lives in

@@ -789,3 +789,15 @@
 .share-toggle.private .share-state {
   color: var(--warn, var(--accent));
 }
+
+/* Video mode (Stage 8): the host's picture of this member's view, over the canvas and below
+   every panel and label; input goes through it to the canvas, which still moves the camera. */
+.session-video {
+  position: absolute;
+  object-fit: fill;
+  pointer-events: none;
+  background: #000;
+}
+.session-video-stats {
+  font-variant-numeric: tabular-nums;
+}

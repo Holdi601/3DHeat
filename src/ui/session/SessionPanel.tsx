@@ -21,6 +21,7 @@ import type { Engine } from '../../render/engine';
 import { useStore } from '../../state/store';
 import { rankOf, ROLES, useSessionStore, type SessionMember, type SessionRole } from '../../session/store';
 import { useEngine } from '../EngineContext';
+import { VideoSection } from './VideoSection';
 import { Icon } from '../shell/Icon';
 import { confirmDialog, toast } from '../shell/kit';
 import { openSection } from '../shell/sections';
@@ -1004,6 +1005,7 @@ export function SessionPanel() {
             </section>
             <WaitingRoom />
             <SyncSection />
+            <VideoSection />
             <LookHere />
             <MarkTools />
             <HostData />

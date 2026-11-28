@@ -112,6 +112,7 @@ import { typesCharacter, typing, viewHasKeys } from './ui/viewKeys';
 import { ProjectionBadge } from './ui/ProjectionBadge';
 import { ViewHint } from './ui/ViewHint';
 import { SessionLayer } from './ui/session/SessionLayer';
+import { useVideoStore } from './session/video';
 import { installShellKeys } from './ui/shell/keys';
 import { taskOf, useShell } from './ui/shell/shellStore';
 
@@ -184,6 +185,8 @@ export function App() {
   const pendingPick = usePendingLoad((s) => !!s.pending);
   // Heat from tiles draws without rows: the start screen stands down as for a load.
   const tileHeat = useTileHeat((s) => s.on);
+  // Watching the host's picture: the view is not empty, so no start screen over it.
+  const watching = useVideoStore((s) => s.state === 'on');
   const setPlaying = useStore((s) => s.setPlaying);
   const tab = useRaceStore((s) => s.tab);
   const raceTab = tab === 'race';
@@ -752,7 +755,7 @@ export function App() {
               <InspectHud />
               <NotesLayer />
               {/* Nothing loaded: open real data (ui/panels/OpenData.tsx); a pick waiting: load it (LoadCard.tsx). */}
-              {!dataset && !pendingPick && !tileHeat && <StartScreen />}
+              {!dataset && !pendingPick && !tileHeat && !watching && <StartScreen />}
               <LoadCard />
               <AutoLevelChip />
               <TileHeatStatus />

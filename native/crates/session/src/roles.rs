@@ -75,6 +75,18 @@ pub fn may_moderate(actor: Role, target: Role) -> bool {
     at_least(actor, Role::Admin) && rank(actor) > rank(target)
 }
 
+/// What the host may send a role as video (Stage 8's fallback for weak devices): the picture's
+/// size at most, frames a second, kbit/s. Every member may ask; the host keeps the cost in check
+/// (at most four streams in all, one each, a bigger picture for the roles that work with it).
+pub fn video_limit(r: Role) -> Option<(u32, u32, u32, u32)> {
+    match r {
+        Role::Unspecified => None,
+        Role::Viewer => Some((1280, 720, 30, 4_000)),
+        Role::Draw => Some((1920, 1080, 30, 8_000)),
+        Role::Elevated | Role::Admin | Role::Host => Some((1920, 1080, 60, 12_000)),
+    }
+}
+
 /// A role's name, for the audit log.
 pub fn name(r: Role) -> &'static str {
     match r {

@@ -28,6 +28,7 @@ import { restoreSession } from '../../session/sessionOpen';
 import { urlIntent } from './sessionUrl';
 import { registerRoomDoc } from '../../session/room';
 import { RoomPrompts } from './RoomPrompts';
+import { useVideoAuto } from './VideoSection';
 import './session.css';
 
 type V3 = { x: number; y: number; z: number };
@@ -639,6 +640,8 @@ export function SessionLayer() {
   const looks = useSessionStore((s) => s.looks);
   const state = useSessionStore((s) => s.state);
   const role = useSessionStore((s) => s.role);
+  // Video mode by itself when this device cannot draw the session's data (Stage 8).
+  useVideoAuto(engine);
 
   useEffect(() => {
     registerBuiltInDocs();

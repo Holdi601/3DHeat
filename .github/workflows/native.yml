@@ -48,7 +48,7 @@ jobs:
           git diff --exit-code -- ../src/data/native/gen
       - name: Core tests
         working-directory: native
-        run: cargo test -p heat3d-core -p heat3d-proto -p heat3d-library -p heat3d-session -p heat3d-server -p heat3d-extractors -p heat3d-viewport
+        run: cargo test -p heat3d-core -p heat3d-proto -p heat3d-library -p heat3d-session -p heat3d-server -p heat3d-extractors -p heat3d-viewport -p heat3d-video
       - name: Native viewport on lavapipe (software Vulkan)
         if: runner.os == 'Linux'
         working-directory: native

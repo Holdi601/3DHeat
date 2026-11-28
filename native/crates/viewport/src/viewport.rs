@@ -66,6 +66,11 @@ pub enum Msg {
     /// The core's heat-tile store: the tiles a frame's `SECTION_HEAT_TILES` names are read there.
     TileStore(Arc<heat3d_core::tiles::TileStore>),
     Hide(bool),
+    /// A session member's view for the video fallback (`video.rs`): drawn at up to `fps`, frames to `sink`.
+    VideoOpen { id: u64, cam: crate::MemberCamera, seq: u32, sent_ms: f64, fps: u32, sink: crate::VideoSink },
+    VideoCamera { id: u64, cam: crate::MemberCamera, seq: u32, sent_ms: f64 },
+    VideoFps(u64, u32),
+    VideoClose(u64),
     Stop,
     // Internal: from the loader threads.
     Chunk(u64, GpuChunk),
@@ -77,6 +82,10 @@ pub enum Msg {
 #[derive(Default, Clone)]
 pub struct Snapshot {
     pub json: String,
+    /// The host's present intervals (p50, p99, max ms) while members' views are drawn (`video.rs`).
+    pub host_frames: Option<(f32, f32, f32)>,
+    /// No room for another member's view (`video.rs`: the fewest views at the smallest pictures still make the host late).
+    pub video_saturated: bool,
 }
 
 pub struct Viewport {
@@ -225,8 +234,14 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
     // Time waited for messages since the last present, and per present (`Msg::Times`).
     let mut idle = 0f32;
     let mut idles: Vec<f32> = Vec::new();
+    // Session members' views for the video fallback, drawn between the host's frames.
+    let mut videos = crate::video::Videos::default();
+    // When the page last sent frames (any present mode): while it does, members' views are drawn
+    // only right after a host frame, as the governor allows, never on their own clock.
+    let mut page_drawing_until = std::time::Instant::now();
     loop {
         let active = std::time::Instant::now() < active_until;
+        let page_drawing = std::time::Instant::now() < page_drawing_until;
         let first = if active {
             match rx.try_recv() {
                 Ok(m) => Some(m),
@@ -236,9 +251,16 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
         } else {
             // A read-back on its way (a video render's picture, a heat read) is handed over at the
             // next poll: polled again within a couple of milliseconds rather than at the next packet.
-            let wait = if r.readbacks_pending() { 2 } else { 50 };
+            // Members' views (the video fallback) wake it when one is due, unless the page draws.
+            let wait = if r.readbacks_pending() {
+                Duration::from_millis(2)
+            } else if page_drawing {
+                Duration::from_millis(50)
+            } else {
+                videos.wait().unwrap_or(Duration::from_millis(50)).min(Duration::from_millis(50))
+            };
             let t = std::time::Instant::now();
-            let got = rx.recv_timeout(Duration::from_millis(wait));
+            let got = rx.recv_timeout(wait);
             idle += t.elapsed().as_secs_f32() * 1e3;
             match got {
                 Ok(m) => Some(m),
@@ -417,6 +439,15 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                     r.request_probe(x, y, reply);
                     want_capture = true;
                 }
+                Msg::VideoOpen { id, cam, seq, sent_ms, fps, sink } => videos.open(id, cam, seq, sent_ms, fps, sink),
+                Msg::VideoCamera { id, cam, seq, sent_ms } => videos.camera(id, cam, seq, sent_ms),
+                Msg::VideoFps(id, fps) => videos.fps(id, fps),
+                Msg::VideoClose(id) => {
+                    videos.close(id);
+                    if !videos.active() {
+                        snap.lock().video_saturated = false;
+                    }
+                }
                 Msg::Times(reply) => {
                     let (iv, cpu) = r.take_times();
                     let list = |v: &[f32]| v.iter().map(|x| format!("{x:.3}")).collect::<Vec<_>>().join(",");
@@ -464,7 +495,15 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
         if r.world_pending() {
             dirty = true;
         }
+        if !packets.is_empty() {
+            page_drawing_until = std::time::Instant::now() + Duration::from_millis(500);
+        }
         if packets.is_empty() && !want_capture && !dirty && !active && !r.heat_overdue() && !r.capture_overdue() {
+            // The page idle: members' views on their own clock. The page drawing: only after its frames.
+            if videos.active() && !page_drawing {
+                videos.tick(&mut r, false);
+                r.poll();
+            }
             continue;
         }
         dirty = false;
@@ -517,6 +556,7 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
                 idles.push(idle);
             }
             idle = 0.0;
+            videos.host_presented();
         }
         r.poll();
         let s = &r.stats;
@@ -524,5 +564,15 @@ fn run(mut r: Renderer, surface: wgpu::Surface<'static>, mut config: wgpu::Surfa
             "{{\"residentRows\":{},\"droppedRows\":{},\"gpuBytes\":{},\"levelBytes\":{},\"frames\":{},\"binned\":{},\"filtersPending\":{},\"tilesPending\":{},\"lastSeq\":{},\"dataGen\":{},\"rowsTaken\":{},\"tracksBytes\":{},\"tracksReady\":{},\"backend\":{:?},\"adapter\":{:?},\"heatFormat\":{:?}}}",
             r.resident_rows, r.dropped_rows, r.gpu_bytes, r.level_bytes(), s.frames, s.binned, s.filters_pending, r.tiles.pending, s.last_seq, data.page_gen, r.modes.taken, r.tracks.bytes(), r.tracks.ready_id(), s.backend, s.adapter, s.heat_format
         );
+        if videos.active() {
+            {
+                let mut s = snap.lock();
+                s.host_frames = videos.host_frames();
+                s.video_saturated = videos.saturated();
+            }
+            // A member's view after the host's frame, in the gap before the next.
+            videos.tick(&mut r, std::time::Instant::now() < page_drawing_until);
+            r.poll();
+        }
     }
 }

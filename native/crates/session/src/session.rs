@@ -380,6 +380,17 @@ impl Session {
             .map(|m| m.role)
     }
 
+    /// The joined member whose token this is, and its role (a member service's caller).
+    pub fn member_by_token(&self, t: &str) -> Option<(MemberId, Role)> {
+        if t.is_empty() {
+            return None;
+        }
+        self.members
+            .values()
+            .find(|m| m.conn.is_some() && auth::same_token(&m.resume, t))
+            .map(|m| (m.id, m.role))
+    }
+
     /// Whether a token may fetch published assets: a joined member's, or the host's.
     pub fn asset_token_ok(&self, t: &str) -> bool {
         !t.is_empty()

@@ -21,6 +21,9 @@ use crate::generated::*;
 use crate::overlays::ZoneSlot;
 use crate::packet::{FilterSet, Packet};
 
+/// A member's own view for the video fallback (Stage 8): its targets, drawn with the host's packet.
+pub mod member_view;
+
 pub const SCENE_FORMAT: wgpu::TextureFormat = wgpu::TextureFormat::Rgba8Unorm;
 pub const DEPTH_FORMAT: wgpu::TextureFormat = wgpu::TextureFormat::Depth32Float;
 /// What the scene clears to (`SCENE_CLEAR` in the WebGPU renderer).
@@ -359,6 +362,8 @@ pub struct Renderer {
     value_cols: (String, String),
     // State carried between packets.
     last_frame: Option<Packet>,
+    /// The size of the host's last frame (a shared stream keeps its shape).
+    pub last_size: (u32, u32),
     curve_dirty: bool,
     binned: bool,
     readbacks: Vec<Readback>,
@@ -686,6 +691,7 @@ impl Renderer {
             has_time: false,
             value_cols: (String::new(), String::new()),
             last_frame: None,
+            last_size: (0, 0),
             curve_dirty: true,
             binned: false,
             readbacks: Vec::new(),
@@ -1184,6 +1190,7 @@ impl Renderer {
         self.queue.submit(Some(encoder.finish()));
         self.map_readbacks();
         self.last_frame = Some(p);
+        self.last_size = out_size;
         let now = Instant::now();
         self.stats.cpu.push((now - t0).as_secs_f32() * 1e3);
         self.stats.frames += 1;

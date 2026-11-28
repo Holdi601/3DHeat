@@ -17,7 +17,7 @@ use tauri::{Manager, WebviewWindow};
 
 /// The running viewports, by window label.
 #[derive(Default)]
-pub struct Viewports(Mutex<HashMap<String, Viewport>>);
+pub struct Viewports(pub(crate) Mutex<HashMap<String, Viewport>>);
 
 fn with<R>(window: &WebviewWindow, f: impl FnOnce(&Viewport) -> R) -> Option<R> {
     let all = window.state::<Viewports>();

@@ -282,9 +282,9 @@ pub struct Occlusion {
     pub seal: wgpu::RenderPipeline,
     pub wire: wgpu::RenderPipeline,
     pub peel: wgpu::RenderPipeline,
-    /// The peeled layers' targets, at the canvas's size.
-    layers: Vec<(wgpu::Texture, wgpu::TextureView)>,
-    layers_size: (u32, u32),
+    /// The peeled layers' targets, at the canvas's size (a member's video view swaps in its own).
+    pub(crate) layers: Vec<(wgpu::Texture, wgpu::TextureView)>,
+    pub(crate) layers_size: (u32, u32),
 }
 
 fn alpha_blend() -> wgpu::BlendState {
