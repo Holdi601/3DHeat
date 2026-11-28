@@ -118,6 +118,11 @@ const longTasks = await page.evaluate(() => globalThis.__longTasks);
 console.log(`server + gateway: ${(((cpu1 - cpu0) / ((performance.now() - t0) / 1000)) * 100).toFixed(1)} % of one core, ${mem1.toFixed(0)} MiB; host page long tasks ${longTasks.length} (max ${Math.max(0, ...longTasks).toFixed(0)} ms)`);
 const marks = await page.evaluate(() => globalThis.__heat3dSession.marks.getState().doc.pins.length);
 console.log(`in session: ${fmt(loaded)}  (${peers} others' cameras shown, ${marks} marks arrived)`);
+// The same with the marks hidden: what the others' cameras cost alone.
+await page.evaluate(() => globalThis.__heat3dSession.marks.getState().setVisible(false));
+const noMarks = await measure(SECONDS * 60);
+console.log(`marks hidden: ${fmt(noMarks)}`);
+await page.evaluate(() => globalThis.__heat3dSession.marks.getState().setVisible(true));
 await new Promise((r) => gen.on('exit', r));
 console.log(`loadgen: ${genOut.trim()}`);
 await browser.close();

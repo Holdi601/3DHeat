@@ -72,7 +72,7 @@ The button at the top of the side panel shows the connection: green connected, a
 |---|---|
 | **Presence**: each member's camera (a frustum with their name, in their colour) and pointer, in the same workspace | Everyone, by moving |
 | **The view** (for those who keep it in sync): the workspace, the mode, heat, difference and team settings, the figures, lines, filters, the slice, layers, the replay display, the race, match, tactics and vehicle views, and playback | Everyone (the host's changes are asked about) |
-| **Marks**: notes set on the scene and freehand drawings (the panel's *Marks*, or the command palette) | Draw-only and up: their own; elevated and up: anyone's |
+| **Marks**: notes set on the scene and freehand drawings (the panel's *Marks*, or the command palette); with hundreds on screen the nearest 300 are drawn and the nearest 40 show their text, so a big team's marks never cost the frame rate | Draw-only and up: their own; elevated and up: anyone's |
 | **The tactics board**: figures, routes, tasks, layers, keyframes, notes, drawings | Elevated and up; draw-only: their own drawings and notes on it |
 | **Data notes and analysis documents**, chart signs, BI dashboards, volumes, replay bookmarks, and any other layer that registers itself; each note, analysis, dashboard or chart is shared or private | As for marks: draw-only and up their own, elevated and up anyone's |
 | **Follow me** for everyone (each member says yes or no) | Admin and host |

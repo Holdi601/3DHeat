@@ -200,6 +200,10 @@ function PresenceOverlay({ engine }: { engine: Engine }) {
 }
 
 /** The marks over the view, and the tool that sets, draws and erases them. */
+/** Marks drawn at most at once (the nearest on screen), and of them, those with their text. */
+const MAX_PINS = 300;
+const MAX_LABELS = 40;
+
 function MarksOverlay({ engine }: { engine: Engine }) {
   useLang();
   const svg = useRef<SVGSVGElement>(null);
@@ -267,7 +271,21 @@ function MarksOverlay({ engine }: { engine: Engine }) {
       return p;
     });
     d.setAttribute('d', draft.current ? line(draft.current) : '');
+    // A big room's marks (hundreds): only those on screen are drawn, the nearest MAX_PINS of them, and only the
+    // nearest MAX_LABELS carry their text; the rest are the glyph alone. Text is what costs a frame, and a
+    // hundred members marking would otherwise cost the host its frame rate.
+    const w = engine.canvas.clientWidth;
+    const h = engine.canvas.clientHeight;
+    const cam = engine.cameraPose().position;
+    const placed: { pin: (typeof doc.pins)[number]; x: number; y: number; d: number }[] = [];
     for (const pin of doc.pins) {
+      const at = engine.project(pin.at.x, pin.at.y, pin.at.z);
+      if (!at || at.x < -40 || at.y < -40 || at.x > w + 240 || at.y > h + 40) continue;
+      placed.push({ pin, x: at.x, y: at.y, d: (pin.at.x - cam.x) ** 2 + (pin.at.y - cam.y) ** 2 + (pin.at.z - cam.z) ** 2 });
+    }
+    if (placed.length > MAX_LABELS) placed.sort((a, b) => a.d - b.d);
+    for (const [k, { pin, x, y }] of placed.entries()) {
+      if (k >= MAX_PINS) break;
       const g = el(pin.id, () => {
         const g = document.createElementNS(SVG, 'g');
         g.setAttribute('class', 'mark-pin');
@@ -281,12 +299,10 @@ function MarksOverlay({ engine }: { engine: Engine }) {
         return g;
       });
       // As text, never markup: a note is someone else's words.
-      const text = pin.text + (pin.author ? ` — ${pin.author}` : '');
+      const text = k < MAX_LABELS ? pin.text + (pin.author ? ` — ${pin.author}` : '') : '';
       const label = g.lastChild as SVGTextElement;
       if (label.textContent !== text) label.textContent = text;
-      const s = engine.project(pin.at.x, pin.at.y, pin.at.z);
-      if (s) g.setAttribute('transform', `translate(${s.x.toFixed(1)} ${s.y.toFixed(1)})`);
-      (g as SVGGElement).style.display = s ? '' : 'none';
+      g.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)})`);
     }
     for (const [id, e] of pool) {
       if (!seen.has(id)) {
