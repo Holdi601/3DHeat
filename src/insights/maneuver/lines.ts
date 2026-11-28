@@ -10,6 +10,7 @@
 
 import { create } from 'zustand';
 import type { Maneuver, ManeuverKind, PathOwner } from './types';
+import { viewOf } from './view';
 
 type Lines = { data: Float32Array; count: number } | null;
 type Rgb = [number, number, number];
@@ -95,13 +96,27 @@ export function maneuverTags(m: Maneuver | undefined, paint: Paint): ManeuverTag
 /** The lines of maneuvers, `focus` full and the rest at `faint`. */
 export function maneuverLines(list: Maneuver[], focus: string | null, paint: Paint = plainPaint(), faint = 0.3): Lines {
   const out: number[] = [];
-  const seg = (a: [number, number, number], b: [number, number, number], c: [number, number, number], alpha: number) => out.push(a[0], a[1], a[2], c[0], c[1], c[2], alpha, b[0], b[1], b[2], c[0], c[1], c[2], alpha);
+  const one = (a: [number, number, number], b: [number, number, number], c: [number, number, number], alpha: number) => out.push(a[0], a[1], a[2], c[0], c[1], c[2], alpha, b[0], b[1], b[2], c[0], c[1], c[2], alpha);
+  // The picked maneuver's lines drawn thick: beside each, four more offset across it and up by `w` (a
+  // 300th of the view the camera is fitted to it with), some 3 px wide at that view; the others hairlines.
+  let w = 0;
+  const seg = (a: [number, number, number], b: [number, number, number], c: [number, number, number], alpha: number) => {
+    one(a, b, c, alpha);
+    if (!(w > 0)) return;
+    const dx = b[0] - a[0];
+    const dz = b[2] - a[2];
+    const d = Math.hypot(dx, dz);
+    // Across the segment on the ground (any way for an upright one), and up.
+    const [ox, oz] = d > 1e-9 ? [(-dz / d) * w, (dx / d) * w] : [w, 0];
+    for (const [x, y, z] of [[ox, 0, oz], [-ox, 0, -oz], [0, w, 0], [0, -w, 0]]) one([a[0] + x, a[1] + y, a[2] + z], [b[0] + x, b[1] + y, b[2] + z], c, alpha);
+  };
   // The others faint, each with its first four ways thinned to 12 points and no outlines, so the
   // picked one stands out. The engine hands the set to the GPU once (`FrameParams.topStatic`).
   const picked = list.find((m) => m.id === focus);
   const rest = list.filter((m) => m !== picked);
   for (const m of picked ? [picked, ...rest] : rest) {
     const full = m === picked;
+    w = full ? viewOf(m, 1).r / 300 : 0;
     const alpha = focus === null || focus === m.id ? 0.95 : faint;
     const own = paint.team(m.team);
     const lift = 0.5;
