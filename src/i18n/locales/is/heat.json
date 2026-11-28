@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "Hleð {name}",
   "heat.levelPanel.entryGone": "Sú færsla er ekki lengur í safninu.",
   "heat.levelPanel.entryEmpty": "Sú færsla hefur engin nothæf gögn.",
-  "heat.levelPanel.title": "Bakgrunnur / borð",
+  "heat.levelPanel.title": "Kort og bakgrunnur",
   "heat.levelPanel.nothingLoaded": "Ekkert hlaðið — senan sýnir hnitanet og ása. Bættu við kortamynd eða möskva borðs til að gefa hitanum samhengi.",
   "heat.levelPanel.mapImage": "Kortamynd…",
   "heat.levelPanel.model": "Þrívíddarlíkan…",

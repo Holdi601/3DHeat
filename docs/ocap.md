@@ -58,7 +58,7 @@ Positions are the game's own metres from the map's south-west corner.
 - **Arma 3**: north is up on the map, as in OCAP's own player.
 - **Arma Reforger**: the recorder writes the engine's frame (x east, y up, z north); the reader turns it into east, north and height for the table and shows it in the engine's frame, the frame of the levels the Reforger extractor writes. Like those levels, it shows mirrored until **Invert world axis** (under **Camera & scene**) is on.
 
-The level is picked by the world's name from the levels folder (the **Levels folder** list in the **Background / level** panel), by itself while no other level is loaded:
+The level is picked by the world's name from the levels folder (the **Game** and **Map** lists in the **Map and background** panel), by itself while no other level is loaded:
 
 - Reforger worlds (Everon, Arland, Kolguyev) use the levels in the folder's `arma-reforger` section, named after the world's terrain (`Eden`, `Arland`, `Cain`) or after the island.
 - Arma 3 worlds use the levels in the folder's `arma3` section, named after the world's config class as the recording gives it (`Altis`, `Stratis`, `Tanoa`, `Malden`, `Enoch` for Livonia, `VR`), in the frame OCAP uses (north up).

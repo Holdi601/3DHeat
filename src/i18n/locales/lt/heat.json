@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "Įkeliama: {name}",
   "heat.levelPanel.entryGone": "Šio įrašo bibliotekoje nebėra.",
   "heat.levelPanel.entryEmpty": "Šis įrašas neturi tinkamų duomenų.",
-  "heat.levelPanel.title": "Fonas / lygis",
+  "heat.levelPanel.title": "Žemėlapis ir fonas",
   "heat.levelPanel.nothingLoaded": "Nieko neįkelta — scenoje rodomas tinklelis ir ašys. Pridėkite žemėlapio vaizdą arba lygio tinklą, kad šiluma turėtų kontekstą.",
   "heat.levelPanel.mapImage": "Žemėlapio vaizdas…",
   "heat.levelPanel.model": "3D modelis…",

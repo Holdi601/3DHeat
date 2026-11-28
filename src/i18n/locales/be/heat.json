@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "Загрузка {name}",
   "heat.levelPanel.entryGone": "Гэтага запісу ўжо няма ў бібліятэцы.",
   "heat.levelPanel.entryEmpty": "У гэтым запісе няма прыдатнага змесціва.",
-  "heat.levelPanel.title": "Фон / узровень",
+  "heat.levelPanel.title": "Карта і фон",
   "heat.levelPanel.nothingLoaded": "Нічога не загружана — сцэна паказвае сетку і восі. Дадайце выяву карты або сетку ўзроўню, каб даць цяплу кантэкст.",
   "heat.levelPanel.mapImage": "Выява карты…",
   "heat.levelPanel.model": "3D-мадэль…",

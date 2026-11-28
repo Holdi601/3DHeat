@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "Cargando {name}",
   "heat.levelPanel.entryGone": "Esa entrada ya no está en la biblioteca.",
   "heat.levelPanel.entryEmpty": "Esa entrada no tiene contenido utilizable.",
-  "heat.levelPanel.title": "Fondo / nivel",
+  "heat.levelPanel.title": "Mapa y fondo",
   "heat.levelPanel.nothingLoaded": "No hay nada cargado: la escena muestra una cuadrícula y unos ejes. Añade una imagen de mapa o una malla de nivel para dar contexto al calor.",
   "heat.levelPanel.mapImage": "Imagen de mapa…",
   "heat.levelPanel.model": "Modelo 3D…",

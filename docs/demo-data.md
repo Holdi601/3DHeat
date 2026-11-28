@@ -33,7 +33,7 @@ Each table names its own columns in its footer, so it loads without any mapping.
 ## Try it
 
 1. Start the viewer (`start.bat` on Windows, or `npm install` once and then `npm run dev` on any system) and open `http://127.0.0.1:5273/`.
-2. **Background / level → 3D model…** and pick `demo-valley.glb`.
+2. **Map and background → 3D model…** and pick `demo-valley.glb`.
 3. **Source → Files…** and pick `tanks.parquet`.
 4. Press `F` to frame the data. You see the [heat](heat.md) of ten matches.
 5. Try the mode bar: **Difference** (Blue against Red), **Team heat**, **Lines**.

@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "Зареждане на {name}",
   "heat.levelPanel.entryGone": "Този запис вече не е в библиотеката.",
   "heat.levelPanel.entryEmpty": "Този запис няма използваемо съдържание.",
-  "heat.levelPanel.title": "Фон / ниво",
+  "heat.levelPanel.title": "Карта и фон",
   "heat.levelPanel.nothingLoaded": "Нищо не е заредено – сцената показва мрежа и оси. Добавете изображение на карта или мрежа на ниво, за да дадете контекст на топлината.",
   "heat.levelPanel.mapImage": "Изображение на карта…",
   "heat.levelPanel.model": "3D модел…",

@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "Завантаження: {name}",
   "heat.levelPanel.entryGone": "Цього запису більше немає в бібліотеці.",
   "heat.levelPanel.entryEmpty": "У цьому записі немає придатних даних.",
-  "heat.levelPanel.title": "Тло / рівень",
+  "heat.levelPanel.title": "Мапа і тло",
   "heat.levelPanel.nothingLoaded": "Нічого не завантажено — сцена показує сітку й осі. Додайте зображення карти або меш рівня, щоб дати теплу контекст.",
   "heat.levelPanel.mapImage": "Зображення карти…",
   "heat.levelPanel.model": "3D-модель…",

@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "{name} gëtt gelueden",
   "heat.levelPanel.entryGone": "Dësen Entrag ass net méi an der Bibliothéik.",
   "heat.levelPanel.entryEmpty": "Dësen Entrag huet keng brauchbar Donnéeën.",
-  "heat.levelPanel.title": "Hannergrond / Level",
+  "heat.levelPanel.title": "Kaart an Hannergrond",
   "heat.levelPanel.nothingLoaded": "Näischt gelueden — d’Zeen weist e Gitter an Achsen. Setzt e Kaartebild oder e Level-Mesh derbäi, fir der Heat e Kontext ze ginn.",
   "heat.levelPanel.mapImage": "Kaartebild…",
   "heat.levelPanel.model": "3D-Modell…",

@@ -38,6 +38,7 @@ import { trackGround } from '../../data/trackGround';
 import type { LoadedModel } from '../../data/modelLoader';
 import { reveal } from '../shell/commands';
 import { CATALOG_ROUTE, terrainLevelOf } from './CatalogSection';
+import { notePickedLevel } from '../../state/catalogSelection';
 import { modelLevelFrom, worldLevelFrom } from './LevelPanel';
 import { dcsLabels, streamedLevel, type DcsLevelMeta } from './WorldBackdrop';
 
@@ -108,6 +109,7 @@ export async function loadCatalogLevel(item: CatalogItem, replace = false): Prom
         return;
       }
       useStore.getState().setLevel(tiled);
+      notePickedLevel(item);
       useAutoLevel.setState({ status: 'loaded', level: tiled.name });
       return;
     }
@@ -120,6 +122,7 @@ export async function loadCatalogLevel(item: CatalogItem, replace = false): Prom
     }
     const lv = modelLevelFrom(f.name, m);
     useStore.getState().setLevel(lv);
+    notePickedLevel(item);
     useAutoLevel.setState({ status: 'loaded', level: lv.name });
   } catch {
     // The folder's level could not be read: the panel still lists it.

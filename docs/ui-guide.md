@@ -16,7 +16,7 @@ With nothing loaded, the Heatmap and Match views show the start screen:
 
 1. Press **Open files…** (or **Open folder…** for a folder of matches), or drop files or a folder anywhere on the view. Parquet and CSV tables, replays converted with the 3DHeat tools (`.3dheat`), Tacview `.acmi` and GPS tracks open; the full list is in [Data formats](data-formats.md#files).
 2. The files go to the **Source** panel, the first in the side panel: check the **Column mapping** (usually filled in already) and the **Memory estimate**, then press **Load**. See [Loading files](loading-files.md).
-3. To put a level under the data, open **Background / level**. The start screen says how many levels are ready, in your library and in the levels folder the map tools write into.
+3. To put a level under the data, open **Map and background**. The start screen says how many levels are ready, in your library and in the levels folder the map tools write into.
 
 **Open session…** opens a saved `.3dheat-session` (views, notes, the board, and the data it was made on by name); **Take up the last session** appears when this browser kept one. No data yet? The [demo data](demo-data.md) makes some, and the small link **No data yet? Try a generated sample** loads a made-up match for a first look.
 
@@ -37,7 +37,7 @@ On every workspace the panels are grouped by what you are doing. Heatmap and Mat
 
 | Group | Panels |
 |---|---|
-| **Load** | Source (what is loaded, **Open files…**, **Open folder…**, **Open session…**), Background / level, matches and series (Match). Under **More**: Many matches at once, and the developer tools when they are on |
+| **Load** | Source (what is loaded, **Open files…**, **Open folder…**, **Open session…**), Map and background, matches and series (Match). Under **More**: Many matches at once, and the developer tools when they are on |
 | **Explore** | The heat or the figures, lines, teams, entities, filters, slice, the match's units, objectives and scoreboards |
 | **Compare** | Difference split, volumes, insights, mass analysis, the ruler |
 | **Present** | Saved views, camera path and video, Camera & scene. Under **More**: Performance |
@@ -46,8 +46,8 @@ The other workspaces:
 
 | Workspace | Groups |
 |---|---|
-| **Race analysis** | **Load**: Laps, Background / level · **Analyse**: Course statistics, Where to improve, Corner by corner, Car control, Cars compared · **Present**: View, Camera & scene |
-| **Tactics** | **Draw**: Tools (with the options of the tool in hand under them), the selection, Figures, Layers · **Plan**: Tasks, Timing, Compare with match data · **Load**: File (save, open, import a mission, clear), Background / level, the level's layouts (Objectives) · **Present**: Camera & scene. The game, the plan's name and the side stay above the task bar |
+| **Race analysis** | **Load**: Laps, Map and background · **Analyse**: Course statistics, Where to improve, Corner by corner, Car control, Cars compared · **Present**: View, Camera & scene |
+| **Tactics** | **Draw**: Tools (with the options of the tool in hand under them), the selection, Figures, Layers · **Plan**: Tasks, Timing, Compare with match data · **Load**: File (save, open, import a mission, clear), Map and background, the level's layouts (Objectives) · **Present**: Camera & scene. The game, the plan's name and the side stay above the task bar |
 | **Vehicles** | **Load**: Source · **Explore**: Vehicle heatmap, hit areas, Look, Filter · **Analyse**: the tallies (penetration, hit areas, sides, body parts, modules) · **Present**: Camera & scene |
 
 **All** shows every group, each under its name. A group only hides the others' panels; nothing is reset, and a filter or setting in a hidden panel keeps working. The task picked is kept per workspace.

@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "Laster inn {name}",
   "heat.levelPanel.entryGone": "Den oppføringen finnes ikke lenger i biblioteket.",
   "heat.levelPanel.entryEmpty": "Den oppføringen har ikke noe brukbart innhold.",
-  "heat.levelPanel.title": "Bakgrunn / nivå",
+  "heat.levelPanel.title": "Kart og bakgrunn",
   "heat.levelPanel.nothingLoaded": "Ingenting lastet inn — scenen viser et rutenett og akser. Legg til et kartbilde eller et nivå-mesh for å gi varmen kontekst.",
   "heat.levelPanel.mapImage": "Kartbilde…",
   "heat.levelPanel.model": "3D-modell…",

@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "S'està carregant {name}",
   "heat.levelPanel.entryGone": "Aquesta entrada ja no és a la biblioteca.",
   "heat.levelPanel.entryEmpty": "Aquesta entrada no té cap contingut utilitzable.",
-  "heat.levelPanel.title": "Fons / nivell",
+  "heat.levelPanel.title": "Mapa i fons",
   "heat.levelPanel.nothingLoaded": "No hi ha res carregat: l'escena mostra una quadrícula i els eixos. Afegeix una imatge de mapa o una malla de nivell per donar context a la calor.",
   "heat.levelPanel.mapImage": "Imatge de mapa…",
   "heat.levelPanel.model": "Model 3D…",

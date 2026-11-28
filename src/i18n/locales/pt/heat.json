@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "A carregar {name}",
   "heat.levelPanel.entryGone": "Essa entrada já não está na biblioteca.",
   "heat.levelPanel.entryEmpty": "Essa entrada não tem conteúdo utilizável.",
-  "heat.levelPanel.title": "Fundo / nível",
+  "heat.levelPanel.title": "Mapa e fundo",
   "heat.levelPanel.nothingLoaded": "Nada carregado: a cena mostra uma grelha e eixos. Adicione uma imagem de mapa ou uma malha de nível para dar contexto ao calor.",
   "heat.levelPanel.mapImage": "Imagem de mapa…",
   "heat.levelPanel.model": "Modelo 3D…",

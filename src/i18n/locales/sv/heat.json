@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "Läser in {name}",
   "heat.levelPanel.entryGone": "Den posten finns inte längre i biblioteket.",
   "heat.levelPanel.entryEmpty": "Den posten har inget användbart innehåll.",
-  "heat.levelPanel.title": "Bakgrund / nivå",
+  "heat.levelPanel.title": "Karta och bakgrund",
   "heat.levelPanel.nothingLoaded": "Inget inläst — scenen visar ett rutnät och axlar. Lägg till en kartbild eller ett nivånät för att ge värmen ett sammanhang.",
   "heat.levelPanel.mapImage": "Kartbild…",
   "heat.levelPanel.model": "3D-modell…",

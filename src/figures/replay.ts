@@ -22,6 +22,7 @@ import { CUBE_STRIDE } from '../data/tracks';
 import { CATALOG } from './catalog';
 import { placeFrame, poseFrame, TemplateCache, type Template } from './kit';
 import { modelPackIndexStamp, ownGameModel, ownGameModelNamed, packFigurePending, packGameOf } from './figurepack';
+import { chooseModel, modelChoiceStamp } from './modelChoice';
 import { gearUpPitch, hasJoints, InstanceBatches, meshOf, NO_PITCH, spinPitch } from './instances';
 import { GEAR_UP_HELI, GEAR_UP_PLANE, gearUpRows } from './gearstate';
 import { aimOf, type AimNow } from './aim';
@@ -138,6 +139,15 @@ function longest(t: Template): number {
   return Math.max(t.max[0] - t.min[0], t.max[1] - t.min[1], t.max[2] - t.min[2], 0.1);
 }
 
+/**
+ * The game a dataset is of, as the model packs tell it (`packGameOf` over its name columns, as `FigureReplay` asks):
+ * null when no pack has its units, or before the packs' index is here.
+ */
+export function dataPackGame(d: Dataset): string | null {
+  const names = d.attrs.filter((a) => a.kind === 'category' && a.categories && NAME_COLUMN.test(a.name.trim()));
+  return packGameOf(names.flatMap((a) => a.categories ?? []));
+}
+
 export class FigureReplay {
   private dataset: Dataset | null = null;
   private names: AttributeColumn[] = [];
@@ -228,6 +238,8 @@ export class FigureReplay {
   /** The game the data is of, as the model packs tell it (`packGameOf`), and the packs' index it was told by. */
   private packGame: string | null = null;
   private packStamp = -1;
+  private choiceStamp = -1;
+
 
   private attach(d: Dataset): void {
     this.dataset = d;
@@ -317,8 +329,9 @@ export class FigureReplay {
     }
     if (!this.names.length && !this.types.length) return null;
     // The model packs' index arrived after the data: kinds worked out without it are worked out again.
-    if (this.packStamp !== modelPackIndexStamp()) {
+    if (this.packStamp !== modelPackIndexStamp() || this.choiceStamp !== modelChoiceStamp()) {
       this.packStamp = modelPackIndexStamp();
+      this.choiceStamp = modelChoiceStamp();
       this.kinds.clear();
       this.packGame = packGameOf(this.names.flatMap((a) => a.categories ?? []));
     }
@@ -332,6 +345,8 @@ export class FigureReplay {
       const g = this.packGame;
       const own = g ? (names.map((n) => ownGameModel(g, n)).find((x) => x && CATALOG[x]) ?? names.map((n) => ownGameModelNamed(g, n)).find((x) => x && CATALOG[x])) : undefined;
       k = own ?? figureFor(names, types);
+      // The unit models chosen for this game (the level panel): its own, the built-in figures, or another game's.
+      k = chooseModel(k, g, names, (n) => CATALOG[n]);
       this.kinds.set(key, k);
     }
     return k;

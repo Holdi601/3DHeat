@@ -8,7 +8,7 @@ nav_order: 4
 
 The library keeps your levels in this browser so you do not have to load and simplify them again. **Clearing the site's data in the browser deletes the library, and there is no export.** Keep your original files.
 
-Processing a level - parse, classify, weld, decimate, pack textures - is slow, and the result is the same every time. The **Library** at the bottom of the Background / level panel keeps processed levels in this browser, so a decimated mesh is never rebuilt twice ([`levelLibrary.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/levelLibrary.ts)).
+Processing a level - parse, classify, weld, decimate, pack textures - is slow, and the result is the same every time. The **Library** at the bottom of the Map and background panel keeps processed levels in this browser, so a decimated mesh is never rebuilt twice ([`levelLibrary.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/data/levelLibrary.ts)).
 
 ## Save and reload a level
 

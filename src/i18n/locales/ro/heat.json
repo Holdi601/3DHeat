@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "Se încarcă {name}",
   "heat.levelPanel.entryGone": "Intrarea nu mai există în bibliotecă.",
   "heat.levelPanel.entryEmpty": "Intrarea nu are conținut utilizabil.",
-  "heat.levelPanel.title": "Fundal / nivel",
+  "heat.levelPanel.title": "Hartă și fundal",
   "heat.levelPanel.nothingLoaded": "Nimic încărcat – scena arată o grilă și axe. Adăugați o imagine de hartă sau un mesh de nivel pentru a da context căldurii.",
   "heat.levelPanel.mapImage": "Imagine de hartă…",
   "heat.levelPanel.model": "Model 3D…",

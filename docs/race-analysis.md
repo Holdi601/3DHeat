@@ -10,7 +10,7 @@ You drove the same track twice. The **Race analysis** tab plays both drives toge
 
 ![The Race analysis tab with demo laps: the sidebar with Laps and Where to improve, the cars on the course, the charts under the view](assets/img/en/race-analysis-overview.webp)
 
-The tab compares two or more laps of one course. It shares the canvas, the camera and the loaded course model (**Background / level**) with the heatmap; everything else is its own: its own sidebar and its own bar under the view. Words like *lap*, *reference* and *apex* are in the [glossary](glossary.md).
+The tab compares two or more laps of one course. It shares the canvas, the camera and the loaded course model (**Map and background**) with the heatmap; everything else is its own: its own sidebar and its own bar under the view. Words like *lap*, *reference* and *apex* are in the [glossary](glossary.md).
 
 This page is the map of the tab. Each part has its own page:
 

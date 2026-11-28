@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "Φόρτωση {name}",
   "heat.levelPanel.entryGone": "Αυτή η καταχώριση δεν υπάρχει πλέον στη βιβλιοθήκη.",
   "heat.levelPanel.entryEmpty": "Αυτή η καταχώριση δεν έχει αξιοποιήσιμο περιεχόμενο.",
-  "heat.levelPanel.title": "Φόντο / πίστα",
+  "heat.levelPanel.title": "Χάρτης και φόντο",
   "heat.levelPanel.nothingLoaded": "Δεν έχει φορτωθεί τίποτα — η σκηνή δείχνει κάνναβο και άξονες. Προσθέστε μια εικόνα χάρτη ή ένα πλέγμα πίστας για να δώσετε πλαίσιο στη θερμότητα.",
   "heat.levelPanel.mapImage": "Εικόνα χάρτη…",
   "heat.levelPanel.model": "3D μοντέλο…",

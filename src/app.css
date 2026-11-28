@@ -2049,3 +2049,18 @@ html.native-viewport .stage {
 .auto-level + .tile-heat-status {
   top: 86px;
 }
+
+/* The levels folder's map picker (ui/panels/CatalogSection.tsx). */
+.catalog-thumb {
+  display: block;
+  width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  margin: 4px 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel-2);
+}
+.catalog [data-unit-models] {
+  margin-top: 10px;
+}

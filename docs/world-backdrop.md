@@ -12,7 +12,7 @@ A world backdrop puts the real ground under a flight recording: hills, roads, ri
 ## Build one
 
 1. Load a flight recording that says where on the earth it is (a Tacview `.acmi` file), or load nothing and pick a theatre in step 3. See [Getting data in](getting-data-in.md).
-2. Open **Background / level** in the sidebar.
+2. Open **Map and background** in the sidebar.
 3. Press **World backdrop** to build the ground under your data. Or pick a game map in **Theatre** and press **Build theatre backdrop** (or **Stream theatre**).
 4. Wait. The panel shows the progress (*Elevation tiles*, *Map tiles*, *Building the backdrop*); **Cancel** stops it.
 5. Fly around. The credit line for the map data is written at the bottom right of the view.

@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "Po ngarkohet {name}",
   "heat.levelPanel.entryGone": "Ky element nuk është më në bibliotekë.",
   "heat.levelPanel.entryEmpty": "Ky element nuk ka përmbajtje të përdorshme.",
-  "heat.levelPanel.title": "Sfondi / niveli",
+  "heat.levelPanel.title": "Harta dhe sfondi",
   "heat.levelPanel.nothingLoaded": "Asgjë e ngarkuar — skena shfaq një rrjetë dhe boshte. Shto një imazh harte ose një model 3D të nivelit për t'i dhënë kontekst nxehtësisë.",
   "heat.levelPanel.mapImage": "Imazh harte…",
   "heat.levelPanel.model": "Model 3D…",

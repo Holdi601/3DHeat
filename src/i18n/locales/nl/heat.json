@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "{name} laden",
   "heat.levelPanel.entryGone": "Dat item staat niet meer in de bibliotheek.",
   "heat.levelPanel.entryEmpty": "Dat item heeft geen bruikbare inhoud.",
-  "heat.levelPanel.title": "Achtergrond / level",
+  "heat.levelPanel.title": "Kaart en achtergrond",
   "heat.levelPanel.nothingLoaded": "Niets geladen – de scène toont een raster en assen. Voeg een kaartafbeelding of een levelmesh toe om de heatmap context te geven.",
   "heat.levelPanel.mapImage": "Kaartafbeelding…",
   "heat.levelPanel.model": "3D-model…",

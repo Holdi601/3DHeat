@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "Caricamento di {name}",
   "heat.levelPanel.entryGone": "Questa voce non è più nella libreria.",
   "heat.levelPanel.entryEmpty": "Questa voce non ha contenuti utilizzabili.",
-  "heat.levelPanel.title": "Sfondo / livello",
+  "heat.levelPanel.title": "Mappa e sfondo",
   "heat.levelPanel.nothingLoaded": "Niente di caricato — la scena mostra una griglia e gli assi. Aggiungi un’immagine della mappa o una mesh del livello per dare un contesto al calore.",
   "heat.levelPanel.mapImage": "Immagine della mappa…",
   "heat.levelPanel.model": "Modello 3D…",

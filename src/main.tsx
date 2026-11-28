@@ -71,6 +71,8 @@ if (import.meta.env.DEV) {
       'data/groundFitRun': () => import('./data/groundFitRun'),
       'ui/heatInspect/jump': () => import('./ui/heatInspect/jump'),
       'state/raceStore': () => import('./state/raceStore'),
+      'state/catalogSelection': () => import('./state/catalogSelection'),
+      'figures/modelChoice': () => import('./figures/modelChoice'),
       'mass/client': () => import('./mass/client'),
       'mass/outcomeClient': () => import('./mass/outcomeClient'),
       'data/sourcePreview': () => import('./data/sourcePreview'),

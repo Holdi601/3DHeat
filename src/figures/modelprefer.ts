@@ -35,6 +35,15 @@ export function setModelPreference(game: string): void {
   document.cookie = `${MODEL_PREFER_COOKIE}=${v}; path=/; max-age=${v ? 31536000 : 0}; SameSite=Strict`;
 }
 
+/**
+ * Forgets a preference set in an earlier version (one game's models first for every game's recordings, swapped by the
+ * server): the unit models are chosen per game in the page now (`modelChoice.ts`), and a preference left over from
+ * then drew another game's models on a recording of a game with its own.
+ */
+export function clearLegacyModelPreference(): void {
+  if (typeof document !== "undefined" && preferFromCookie(document.cookie)) setModelPreference("");
+}
+
 /** The preferred game this browser has set, or ''. */
 export function modelPreference(): string {
   return typeof document === "undefined"

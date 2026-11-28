@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "Ladataan: {name}",
   "heat.levelPanel.entryGone": "Tätä merkintää ei enää ole kirjastossa.",
   "heat.levelPanel.entryEmpty": "Tällä merkinnällä ei ole käyttökelpoista sisältöä.",
-  "heat.levelPanel.title": "Tausta / kenttä",
+  "heat.levelPanel.title": "Kartta ja tausta",
   "heat.levelPanel.nothingLoaded": "Mitään ei ole ladattu — näkymässä on ruudukko ja akselit. Lisää karttakuva tai kenttäverkko antaaksesi lämmölle asiayhteyden.",
   "heat.levelPanel.mapImage": "Karttakuva…",
   "heat.levelPanel.model": "3D-malli…",

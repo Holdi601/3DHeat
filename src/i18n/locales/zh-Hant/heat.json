@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "正在載入 {name}",
   "heat.levelPanel.entryGone": "該項目已不在關卡庫中。",
   "heat.levelPanel.entryEmpty": "該項目沒有可用的內容。",
-  "heat.levelPanel.title": "背景／關卡",
+  "heat.levelPanel.title": "地圖與背景",
   "heat.levelPanel.nothingLoaded": "尚未載入任何內容——場景顯示格線與座標軸。加入地圖影像或關卡網格，為熱度提供背景脈絡。",
   "heat.levelPanel.mapImage": "地圖影像…",
   "heat.levelPanel.model": "3D 模型…",

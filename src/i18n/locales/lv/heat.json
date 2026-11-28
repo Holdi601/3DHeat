@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "Ielādē {name}",
   "heat.levelPanel.entryGone": "Šis ieraksts vairs nav bibliotēkā.",
   "heat.levelPanel.entryEmpty": "Šim ierakstam nav izmantojama satura.",
-  "heat.levelPanel.title": "Fons / līmenis",
+  "heat.levelPanel.title": "Karte un fons",
   "heat.levelPanel.nothingLoaded": "Nekas nav ielādēts — ainā redzams režģis un asis. Pievieno kartes attēlu vai līmeņa tīklu, lai siltumam dotu kontekstu.",
   "heat.levelPanel.mapImage": "Kartes attēls…",
   "heat.levelPanel.model": "3D modelis…",

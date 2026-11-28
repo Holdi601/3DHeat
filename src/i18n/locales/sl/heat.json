@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "Nalaganje: {name}",
   "heat.levelPanel.entryGone": "Tega vnosa ni več v knjižnici.",
   "heat.levelPanel.entryEmpty": "Ta vnos nima uporabne vsebine.",
-  "heat.levelPanel.title": "Ozadje / nivo",
+  "heat.levelPanel.title": "Zemljevid in ozadje",
   "heat.levelPanel.nothingLoaded": "Nič ni naloženo – prizor prikazuje mrežo in osi. Dodajte sliko zemljevida ali mrežo nivoja, da toplota dobi kontekst.",
   "heat.levelPanel.mapImage": "Slika zemljevida…",
   "heat.levelPanel.model": "3D-model…",

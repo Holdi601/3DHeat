@@ -45,11 +45,11 @@ The Heatmap tab's sidebar, from top to bottom:
 6. Teams
 7. Entities
 8. Filters
-9. Background / level
+9. Map and background
 10. Slice
 11. Measure
 12. Camera path & render
 13. Performance
 14. Camera & scene
 
-The Match tab shows the mode bar, the session picker, its own panel, Filters, Background / level and Camera & scene.
+The Match tab shows the mode bar, the session picker, its own panel, Filters, Map and background and Camera & scene.

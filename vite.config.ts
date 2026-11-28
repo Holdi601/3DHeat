@@ -10,7 +10,7 @@ import { brotliCompressSync, constants as zlibConstants, gzipSync } from 'node:z
 import { encodePackFigure, type PackFigure } from './src/figures/figurepackBin.ts';
 import { figureFromModelGlb, platesFromModelGlb } from './src/figures/modelpack.ts';
 import { preferFromCookie, preferredModels } from './src/figures/modelprefer.ts';
-import { classify, glbExtras, jsonExtras, linkLayouts, TERRAIN_BIN, type CatalogIndex, type CatalogItem } from './src/data/catalogIndex.ts';
+import { classify, glbExtras, jsonExtras, LEVEL_IMAGE, linkLayouts, linkThumbs, TERRAIN_BIN, type CatalogIndex, type CatalogItem } from './src/data/catalogIndex.ts';
 import { buildCommandIndex } from './tools/commandIndex.ts';
 import { checkBatch, LIMITS } from './src/usage/schema.ts';
 
@@ -766,12 +766,13 @@ function catalogFolder(): Plugin {
       }
       if (url.pathname === '/file') {
         const path = (url.searchParams.get('path') ?? '').replace(/\\/g, '/');
-        if (!path || path.split('/').some((p) => p === '..' || p.startsWith('.')) || !(classify(path) || TERRAIN_BIN.test(path)) || !existsSync(`${root}/${path}`)) {
+        if (!path || path.split('/').some((p) => p === '..' || p.startsWith('.')) || !(classify(path) || TERRAIN_BIN.test(path) || LEVEL_IMAGE.test(path)) || !existsSync(`${root}/${path}`)) {
           res.statusCode = 404;
           res.end();
           return;
         }
-        res.setHeader('Content-Type', /\.json$/i.test(path) ? 'application/json' : 'application/octet-stream');
+        const image = /\.(png|jpe?g|webp)$/i.exec(path)?.[1].toLowerCase();
+        res.setHeader('Content-Type', /\.json$/i.test(path) ? 'application/json' : image ? `image/${image === 'jpg' ? 'jpeg' : image}` : 'application/octet-stream');
         res.setHeader('Accept-Ranges', 'bytes');
         const size = statSync(`${root}/${path}`).size;
         // A byte range (a tiled terrain's tile: src/world/terrainFormat.ts), else the whole file.
@@ -796,7 +797,8 @@ function catalogFolder(): Plugin {
         return;
       }
       const have = loadKnown(root);
-      const files = walk(root).filter((f) => classify(f.path));
+      const all = walk(root);
+      const files = all.filter((f) => classify(f.path));
       const items: CatalogItem[] = files.map((f) => {
         const k = have[f.path];
         const fresh = k && k.bytes === f.bytes && k.mtime === f.mtime;
@@ -811,7 +813,7 @@ function catalogFolder(): Plugin {
       todo = files.filter((f) => !(have[f.path] && have[f.path].bytes === f.bytes && have[f.path].mtime === f.mtime));
       // The index first; the hashing follows, a file at a time.
       setTimeout(() => hashNext(root, todo), 0);
-      const index: CatalogIndex = { version: 1, root, items: linkLayouts(items), pending: todo.length };
+      const index: CatalogIndex = { version: 1, root, items: linkThumbs(linkLayouts(items), all.filter((f) => LEVEL_IMAGE.test(f.path)).map((f) => f.path)), pending: todo.length };
       res.setHeader('Content-Type', 'application/json');
       res.setHeader('Cache-Control', 'no-cache');
       res.end(JSON.stringify(index));

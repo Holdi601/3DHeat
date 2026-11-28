@@ -25,6 +25,7 @@ import { buildMeshFigure } from './meshfig';
 import { MESH_FIGURES } from './meshes';
 import { fetchFigurePackIndex, installFigurePackIndex, installModelPackIndex } from './figurepack';
 import { fetchModelPackIndex } from './modelpack';
+import { clearLegacyModelPreference } from './modelprefer';
 import { fetchUnitCatalogs, installUnitCatalogs, lendCatalogModels } from './unitcatalog';
 
 export type FigureDomain = 'person' | 'ground' | 'air' | 'heli' | 'missile' | 'sea' | 'marker';
@@ -210,6 +211,9 @@ for (const [n, m] of Object.entries(MESH_FIGURES)) {
 
 /** Every figure's builder by name: what the contact sheet and the tests walk. */
 export const FIGURES: Record<string, () => Template> = Object.fromEntries(Object.entries(CATALOG).map(([n, e]) => [n, e.build]));
+
+// A preference an earlier version kept in a cookie, before the packs' index is asked for (`modelprefer.ts`).
+clearLegacyModelPreference();
 
 /**
  * The local figure pack (`figurepack.ts`) when the page's server has one, put in place of the figures of the same

@@ -224,6 +224,9 @@ export function installModelPackIndex<E extends Entry & { domain?: string; cls?:
   // counts: Arma 3's "HEMTT Repair" shares its file with "HEMTT Box", which lists it, and keeps its own names).
   const seen = new Set<string>();
   namesByGame.clear();
+  vehiclesByGame.clear();
+  realNames.clear();
+  packGameList = index.packs.filter((p) => p && typeof p.game === 'string').map((p) => p.game);
   for (const [pi, pack] of index.packs.entries()) {
     if (!pack || typeof pack.game !== 'string' || typeof pack.units !== 'object') continue;
     for (const [unit, info] of Object.entries(pack.units)) {
@@ -237,6 +240,15 @@ export function installModelPackIndex<E extends Entry & { domain?: string; cls?:
       const ix = { tag: info.tag, at: `${MODEL_PACK_ROUTE}/u/${encodeURIComponent(pack.game)}/${encodeURIComponent(id)}` };
       indexed.set(name, ix);
       names.push(name);
+      // The pack's vehicles by their real names, for recordings of another game drawn with this game's models
+      // (`modelOfVehicleIn`, the unit models choice).
+      const real = [info.name, ...(info.names ?? [])].filter((n): n is string => typeof n === 'string' && n.trim() !== '');
+      if (real.length) {
+        let vn = vehiclesByGame.get(pack.game);
+        if (!vn) vehiclesByGame.set(pack.game, (vn = new VehicleNames<string>()));
+        vn.add(real, name, vehicleSide(info.domain, `${info.kind ?? ''} ${info.type ?? ''}`));
+        realNames.set(name, real);
+      }
       // The vehicle's names in its own game's recordings (an Arma 3 vehicle without a real counterpart: "Motorboat").
       let named = namesByGame.get(pack.game);
       if (!named) namesByGame.set(pack.game, (named = new Map()));
@@ -314,6 +326,32 @@ const idsByGame = new Map<string, Set<string>>();
 /** Each pack's vehicle names (real and display names, lower case), by game: the first unit of each name. */
 const namesByGame = new Map<string, Map<string, string>>();
 let packIndexStamp = 0;
+/** Each pack's vehicles by their real names (`name`, `names`): the unit's variant. */
+const vehiclesByGame = new Map<string, VehicleNames<string>>();
+/** A pack unit's variant -> its real vehicle names. */
+const realNames = new Map<string, string[]>();
+/** The games of the installed packs, in the index's order. */
+let packGameList: string[] = [];
+
+/** The games whose model packs are installed, in the packs' order of precedence. */
+export function packGames(): readonly string[] {
+  return packGameList;
+}
+
+/** A pack model's real vehicle names (`name`, `names`); [] for anything else. */
+export function packVehicleNames(variant: string): readonly string[] {
+  return realNames.get(variant) ?? [];
+}
+
+/**
+ * `game`'s pack model of the vehicle one of `names` stands for (the same vehicle, else the nearest of its family, as
+ * `vehiclenames.ts` matches names across games), of the same side ('air', 'heli', 'ground', 'sea'): the variant it is
+ * drawn as in `game`'s own recordings, so every thread that installed the packs can build it. Undefined for none.
+ */
+export function modelOfVehicleIn(game: string, names: readonly string[], side: string): string | undefined {
+  if (!side) return undefined;
+  return vehiclesByGame.get(game)?.find(names, side, ['same', 'family'])?.value;
+}
 
 /** Changes whenever a model packs' index is installed: what `packGameOf` and `ownModelIn` answered may have changed. */
 export function modelPackIndexStamp(): number {
@@ -480,6 +518,9 @@ export function removeFigurePack<E extends Entry>(catalog: Record<string, E>, bu
   ownByGame.clear();
   idsByGame.clear();
   namesByGame.clear();
+  vehiclesByGame.clear();
+  realNames.clear();
+  packGameList = [];
   indexed.clear();
   fetched.clear();
   fetching.clear();

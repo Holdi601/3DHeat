@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "Chargement de {name}",
   "heat.levelPanel.entryGone": "Cette entrée n’est plus dans la bibliothèque.",
   "heat.levelPanel.entryEmpty": "Cette entrée n’a aucun contenu utilisable.",
-  "heat.levelPanel.title": "Arrière-plan / niveau",
+  "heat.levelPanel.title": "Carte et arrière-plan",
   "heat.levelPanel.nothingLoaded": "Rien de chargé — la scène affiche une grille et des axes. Ajoutez une image de carte ou un maillage de niveau pour donner du contexte à la chaleur.",
   "heat.levelPanel.mapImage": "Image de carte…",
   "heat.levelPanel.model": "Modèle 3D…",

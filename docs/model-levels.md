@@ -11,7 +11,7 @@ A 3D level is a model of the place - hills, streets, buildings - that your data 
 ## Load a 3D level
 
 1. Load your data first ([Getting data in](getting-data-in.md)). The model must use the same world space and unit as the data, Y up.
-2. In **Background / level**, choose a **Simplification target**. Leave it at *Full - no simplification* unless the model is huge.
+2. In **Map and background**, choose a **Simplification target**. Leave it at *Full - no simplification* unless the model is huge.
 3. Press **3D model…** and pick a `.glb`, `.gltf`, `.obj`, `.stl` or `.ply` file.
 4. Wait for the progress line. **Cancel** stops it.
 5. Press **F** in the view. Ground is solid, structures are see-through shells, water is flat.

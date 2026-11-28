@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "Učitavanje: {name}",
   "heat.levelPanel.entryGone": "Taj unos više nije u biblioteci.",
   "heat.levelPanel.entryEmpty": "Taj unos nema upotrebljiv sadržaj.",
-  "heat.levelPanel.title": "Pozadina / razina",
+  "heat.levelPanel.title": "Karta i pozadina",
   "heat.levelPanel.nothingLoaded": "Ništa nije učitano – scena prikazuje rešetku i osi. Dodajte sliku karte ili mrežu razine da biste toplini dali kontekst.",
   "heat.levelPanel.mapImage": "Slika karte…",
   "heat.levelPanel.model": "3D model…",

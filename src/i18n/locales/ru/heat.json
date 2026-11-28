@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "Загрузка: {name}",
   "heat.levelPanel.entryGone": "Этой записи больше нет в библиотеке.",
   "heat.levelPanel.entryEmpty": "В этой записи нет пригодных данных.",
-  "heat.levelPanel.title": "Фон / уровень",
+  "heat.levelPanel.title": "Карта и фон",
   "heat.levelPanel.nothingLoaded": "Ничего не загружено — сцена показывает сетку и оси. Добавьте изображение карты или меш уровня, чтобы дать теплу контекст.",
   "heat.levelPanel.mapImage": "Изображение карты…",
   "heat.levelPanel.model": "3D-модель…",

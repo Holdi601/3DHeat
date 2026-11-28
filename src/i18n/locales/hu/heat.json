@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "Betöltés: {name}",
   "heat.levelPanel.entryGone": "Ez a bejegyzés már nincs a könyvtárban.",
   "heat.levelPanel.entryEmpty": "Ennek a bejegyzésnek nincs használható tartalma.",
-  "heat.levelPanel.title": "Háttér / pálya",
+  "heat.levelPanel.title": "Térkép és háttér",
   "heat.levelPanel.nothingLoaded": "Nincs betöltve semmi — a jelenet rácsot és tengelyeket mutat. Adj hozzá térképképet vagy pályahálót, hogy a hőnek legyen környezete.",
   "heat.levelPanel.mapImage": "Térképkép…",
   "heat.levelPanel.model": "3D-modell…",

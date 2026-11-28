@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "{name} yükleniyor",
   "heat.levelPanel.entryGone": "Bu kayıt artık kitaplıkta değil.",
   "heat.levelPanel.entryEmpty": "Bu kaydın kullanılabilir içeriği yok.",
-  "heat.levelPanel.title": "Arka plan / bölüm",
+  "heat.levelPanel.title": "Harita ve arka plan",
   "heat.levelPanel.nothingLoaded": "Hiçbir şey yüklenmedi — sahne bir ızgara ve eksenler gösteriyor. Isıya bağlam katmak için bir harita görüntüsü veya bölüm mesh'i ekleyin.",
   "heat.levelPanel.mapImage": "Harita görüntüsü…",
   "heat.levelPanel.model": "3B model…",

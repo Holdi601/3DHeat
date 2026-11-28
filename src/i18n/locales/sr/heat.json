@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "Учитавање: {name}",
   "heat.levelPanel.entryGone": "Тај унос више није у библиотеци.",
   "heat.levelPanel.entryEmpty": "Тај унос нема употребљив садржај.",
-  "heat.levelPanel.title": "Позадина / ниво",
+  "heat.levelPanel.title": "Мапа и позадина",
   "heat.levelPanel.nothingLoaded": "Ништа није учитано – сцена приказује решетку и осе. Додајте слику мапе или мрежу нивоа да топлота добије контекст.",
   "heat.levelPanel.mapImage": "Слика мапе…",
   "heat.levelPanel.model": "3D модел…",

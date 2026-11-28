@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "{name}を読み込み中",
   "heat.levelPanel.entryGone": "その項目はもうライブラリにありません。",
   "heat.levelPanel.entryEmpty": "その項目には使えるデータがありません。",
-  "heat.levelPanel.title": "背景/レベル",
+  "heat.levelPanel.title": "マップと背景",
   "heat.levelPanel.nothingLoaded": "何も読み込まれていません — シーンにはグリッドと軸が表示されています。マップ画像かレベルのメッシュを追加して、ヒートに文脈を与えましょう。",
   "heat.levelPanel.mapImage": "マップ画像…",
   "heat.levelPanel.model": "3Dモデル…",

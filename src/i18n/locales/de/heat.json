@@ -259,7 +259,7 @@
   "heat.levelPanel.loading": "Lade {name}",
   "heat.levelPanel.entryGone": "Dieser Eintrag ist nicht mehr in der Bibliothek.",
   "heat.levelPanel.entryEmpty": "Dieser Eintrag hat keine verwendbaren Daten.",
-  "heat.levelPanel.title": "Hintergrund / Level",
+  "heat.levelPanel.title": "Karte und Hintergrund",
   "heat.levelPanel.nothingLoaded": "Nichts geladen – die Szene zeigt ein Raster und Achsen. Füge ein Kartenbild oder ein Level-Mesh hinzu, um der Heatmap Kontext zu geben.",
   "heat.levelPanel.mapImage": "Kartenbild…",
   "heat.levelPanel.model": "3D-Modell…",

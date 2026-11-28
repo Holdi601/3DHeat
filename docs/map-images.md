@@ -11,7 +11,7 @@ A map image is a flat picture - a minimap, a satellite photo, a floor plan - lai
 ## Load and place a map image
 
 1. Load your data first ([Getting data in](getting-data-in.md)).
-2. In **Background / level**, press **Map image…** and pick the picture. It is stretched over the data's area.
+2. In **Map and background**, press **Map image…** and pick the picture. It is stretched over the data's area.
 3. Press **Fit to data bounds** if the picture was moved. Anchor 1 goes to the picture's top-left corner, anchor 2 to its bottom-right corner, at the data's edges.
 4. If the heat does not line up with the picture, pick two landmarks that are far apart (for example two opposite corners of a building or two crossroads). Read each one's pixel on the picture and its world position (hover with the [ruler](measure.md) to read **X** and **Z**).
 5. Type them into **Placement**: for **Anchor 1** the landmark's **px**, **py**, **world X**, **world Z**; the same for **Anchor 2**.

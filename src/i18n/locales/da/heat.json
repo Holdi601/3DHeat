@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "Indlæser {name}",
   "heat.levelPanel.entryGone": "Den post findes ikke længere i biblioteket.",
   "heat.levelPanel.entryEmpty": "Den post har intet brugbart indhold.",
-  "heat.levelPanel.title": "Baggrund / bane",
+  "heat.levelPanel.title": "Kort og baggrund",
   "heat.levelPanel.nothingLoaded": "Intet indlæst — scenen viser et gitter og akser. Tilføj et kortbillede eller et banemesh for at give varmen en sammenhæng.",
   "heat.levelPanel.mapImage": "Kortbillede …",
   "heat.levelPanel.model": "3D-model …",

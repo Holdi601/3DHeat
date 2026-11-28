@@ -21,13 +21,13 @@ No game data comes with it. Levels, maps and recordings are made on your own mac
    npm run dev                  # open http://127.0.0.1:5273
    ```
 3. Make some made-up demo data: `node tools/demo-data.mjs` (in a second window). It lands in `tools/.shots/demo/`.
-4. In the viewer: **Background / level → 3D model…** and pick `demo-valley.glb`, then **Source → Files…** and pick `tanks.parquet` from the same folder (or drop it on the Source panel).
+4. In the viewer: **Map and background → 3D model…** and pick `demo-valley.glb`, then **Source → Files…** and pick `tanks.parquet` from the same folder (or drop it on the Source panel).
 
 The [demo data](https://holdi601.github.io/3DHeat/demo-data.html) page takes it from there.
 
 ## Getting started with your own games
 
-The viewer only reads files; a small tool per game makes them from your own install, replays or recordings. Each tool's README starts with a **Quick start for new users**: what it needs, the one install line (Python 3.10 or later; no Git for the `pip` ones), the command and where its output goes. Then load the output in the viewer: a level (`.glb`) with **Background / level -> 3D model...**, a table or match (`.3dheat`, `.parquet`, `.csv`) with **Source -> Files...** (and the **Match** tab's **Load match files...** for scoreboards and rounds).
+The viewer only reads files; a small tool per game makes them from your own install, replays or recordings. Each tool's README starts with a **Quick start for new users**: what it needs, the one install line (Python 3.10 or later; no Git for the `pip` ones), the command and where its output goes. Then load the output in the viewer: a level (`.glb`) with **Map and background -> 3D model...**, a table or match (`.3dheat`, `.parquet`, `.csv`) with **Source -> Files...** (and the **Match** tab's **Load match files...** for scoreboards and rounds).
 
 | Game | Tool | Makes |
 |---|---|---|

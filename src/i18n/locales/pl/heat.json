@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "Wczytywanie: {name}",
   "heat.levelPanel.entryGone": "Tego wpisu nie ma już w bibliotece.",
   "heat.levelPanel.entryEmpty": "Ten wpis nie zawiera użytecznych danych.",
-  "heat.levelPanel.title": "Tło / poziom",
+  "heat.levelPanel.title": "Mapa i tło",
   "heat.levelPanel.nothingLoaded": "Nic nie wczytano – scena pokazuje siatkę i osie. Dodaj obraz mapy albo siatkę poziomu, aby nadać ciepłu kontekst.",
   "heat.levelPanel.mapImage": "Obraz mapy…",
   "heat.levelPanel.model": "Model 3D…",

@@ -6,7 +6,7 @@ has_children: true
 
 # Levels and background geometry
 
-A level is the 3D place where the game happened - a map, a town, a track. Put one behind your data and you can see *where* the heat is. The **Background / level** panel (see [Glossary](glossary.md) for "level") gives you three kinds of context:
+A level is the 3D place where the game happened - a map, a town, a track. Put one behind your data and you can see *where* the heat is. The **Map and background** panel (see [Glossary](glossary.md) for "level") gives you three kinds of context:
 
 - a **map image**, georeferenced by two anchors - see [Map images](map-images.md);
 - a **3D level** - `.glb`, `.gltf`, `.obj`, `.stl` or `.ply` - split into ground, structures and water and simplified on import - see [3D levels](model-levels.md) and [Level appearance](level-appearance.md).
@@ -16,16 +16,27 @@ With nothing loaded, the scene is dark with a grid and coloured axes (**Grid** a
 
 The level is shared by all three tabs: a course loaded in the Race analysis tab is the same level the heatmap shows.
 
-![The Background / level panel with a level loaded: Map image and 3D model buttons, Theatre, Opacity, Brightness, Save to library and the Library list](assets/img/en/level-panel.webp)
+![The Map and background panel with a level loaded: Map image and 3D model buttons, Theatre, Opacity, Brightness, Save to library and the Library list](assets/img/en/level-panel.webp)
 
 ## Put a level behind your data
 
 1. Load your data first ([Getting data in](getting-data-in.md)), so the level is fitted to it.
-2. Open **Background / level** in the sidebar.
-3. Press **Map image…** for a picture or **3D model…** for a 3D level, and pick the file. For a real-world recording, use **World backdrop** or **Theatre** instead.
+2. Open **Map and background** in the sidebar.
+3. Pick the **Game**, then the **Map**, and press **Show this map**. Only maps the map tools have made from your games are listed (the levels folder, see below), each by its name and, where the tool left one, with a picture of it. Data on a map that is there gets it by itself.
+   Without a map tool's map, press **Map image…** for a picture or **3D model…** for a 3D level, and pick the file. For a real-world recording, use **World backdrop** or **Theatre** instead.
 4. Wait for the progress line to finish. A big model is simplified first (see **Simplification target** below).
 5. Press **F** in the view to frame everything. Use **Opacity** and **Brightness** until the heat stands out from the level.
 6. Press **Save to library** if you will use the level again ([Level library](level-library.md)).
+
+## Unit models
+
+Under the maps, **Unit models** says how the units of the loaded data are drawn, chosen for each game on its own:
+
+- **<Game> models (its own)**, the default: the game's own model pack, made from your install by its tool. A vehicle the pack lacks borrows another game's model of the same vehicle, else gets a built-in figure.
+- **Simple built-in figures**: no game's models at all.
+- **<Other game> models**: that game's models wherever it has the same or a similar vehicle (matched by the real vehicle's name, an aircraft only for an aircraft), for example War Thunder's models on a DCS recording. The rest keep their usual look.
+
+The choice is kept in this browser and applies at once. A choice for one game never changes another game's recordings.
 
 ## What a level does for the heat
 

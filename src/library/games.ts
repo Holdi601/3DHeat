@@ -32,6 +32,7 @@ const GAMES: Record<string, GameInfo> = {
   acevo: { name: 'Assetto Corsa EVO', mark: 'ACE', hue: 4 },
   beamng: { name: 'BeamNG.drive', mark: 'BNG', hue: 25 },
   reforger: { name: 'Arma Reforger', mark: 'AR', hue: 80 },
+  arma3: { name: 'Arma 3', mark: 'A3', hue: 70 },
   hllv: { name: 'Hell Let Loose: Vietnam', mark: 'HLL', hue: 60 },
   lol: { name: 'League of Legends', mark: 'LoL', hue: 45 },
   valorant: { name: 'VALORANT', mark: 'VAL', hue: 350 },
@@ -48,6 +49,7 @@ export function canonGame(raw: string | null | undefined): string {
     'rainbow-six-siege': 'r6', siege: 'r6', 'world-of-warships': 'wows', 'world-of-tanks': 'wot', 'il-2': 'il2', 'il-2-sturmovik': 'il2',
     'battlefield-6': 'bf6', 'battlefield-4': 'bf4', 'battlefield-1': 'bf1', 'forza-horizon': 'forza', 'forza-motorsport': 'forza',
     'assetto-corsa-rally': 'acrally', 'assetto-corsa': 'ac', 'assetto-corsa-competizione': 'acc', 'assetto-corsa-evo': 'acevo', 'beamng-drive': 'beamng', 'arma-reforger': 'reforger', 'league-of-legends': 'lol',
+    'arma-3': 'arma3', 'hell-let-loose-vietnam': 'hllv',
   };
   if (alias[s]) return alias[s];
   return GAMES[s] ? s : '';

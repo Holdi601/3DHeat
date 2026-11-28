@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "正在加载 {name}",
   "heat.levelPanel.entryGone": "该条目已不在库中。",
   "heat.levelPanel.entryEmpty": "该条目没有可用的数据。",
-  "heat.levelPanel.title": "背景/关卡",
+  "heat.levelPanel.title": "地图和背景",
   "heat.levelPanel.nothingLoaded": "未加载任何内容——场景中显示网格和坐标轴。添加地图图像或关卡网格，为热度提供背景。",
   "heat.levelPanel.mapImage": "地图图像…",
   "heat.levelPanel.model": "3D 模型…",

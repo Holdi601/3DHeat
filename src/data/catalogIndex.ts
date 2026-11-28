@@ -52,6 +52,8 @@ export interface CatalogItem {
    * loaded instead of the level's glb, which is then only for other tools.
    */
   terrain?: string;
+  /** A picture of a level or course beside it (its map, an overview the extractor drew), by path: shown when picking it. */
+  thumb?: string;
 }
 
 export interface CatalogIndex {
@@ -99,6 +101,41 @@ export function classify(path: string): Pick<CatalogItem, 'game' | 'kind' | 'nam
 export function fingerprint(item: Pick<CatalogItem, 'sha256' | 'extractor' | 'gameBuild'>): string | null {
   if (!item.sha256) return null;
   return `sha256:${item.sha256}|${item.extractor ?? ''}|${item.gameBuild ?? ''}`;
+}
+
+/** Pictures the extractors write beside a level (a game's own map image, an overview): served, never listed. */
+export const LEVEL_IMAGE = /\.(png|jpe?g|webp)$/i;
+
+/**
+ * A picture of the level at `path` among `files` (every file under the root, by path), or null: the game's map of it
+ * (`<Level>_tankmap.png`, `<Level>_map.png`, as War Thunder's tool writes them), an overview or top view the
+ * extractor drew (`<Level>-overview.png`, `preview/<Level>-top.png`), or an image of the level's own name.
+ */
+export function thumbFor(path: string, files: ReadonlySet<string>): string | null {
+  const dir = path.includes('/') ? path.slice(0, path.lastIndexOf('/') + 1) : '';
+  const stem = path.slice(dir.length).replace(/\.[^.]+$/, '');
+  const base = stem.replace(/-\d+m-preview$/i, '');
+  const up = /\/preview\/$/i.test(dir) ? dir.slice(0, -'preview/'.length) : dir;
+  const names = [`${base}_tankmap`, `${base}_map`, `${base}-overview`, `${base}-top`, `${base}-viewer`, base, `${base}.thumb`, `${base}.preview`];
+  for (const d of [dir, `${up}preview/`, up]) {
+    for (const n of names) {
+      for (const ext of ['png', 'jpg', 'webp']) {
+        const p = `${d}${n}.${ext}`;
+        if (files.has(p)) return p;
+      }
+    }
+  }
+  return null;
+}
+
+/** Each level's and course's picture among `files` (`thumbFor`). */
+export function linkThumbs(items: CatalogItem[], files: Iterable<string>): CatalogItem[] {
+  const all = new Set(files);
+  return items.map((it) => {
+    if (it.kind !== 'level' && it.kind !== 'course') return it;
+    const thumb = thumbFor(it.path, all);
+    return thumb ? { ...it, thumb } : it;
+  });
 }
 
 /** A tiled terrain's tiles: beside its index, served with it, never listed. */

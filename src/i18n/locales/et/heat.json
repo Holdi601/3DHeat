@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "Laadimine: {name}",
   "heat.levelPanel.entryGone": "Seda kirjet teegis enam pole.",
   "heat.levelPanel.entryEmpty": "Sellel kirjel pole kasutatavat sisu.",
-  "heat.levelPanel.title": "Taust / tase",
+  "heat.levelPanel.title": "Kaart ja taust",
   "heat.levelPanel.nothingLoaded": "Midagi pole laaditud — stseenis on ruudustik ja teljed. Lisa kaardipilt või taseme võrk, et anda soojusele kontekst.",
   "heat.levelPanel.mapImage": "Kaardipilt…",
   "heat.levelPanel.model": "3D-mudel…",

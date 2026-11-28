@@ -85,7 +85,7 @@ A unit is drawn as the first of:
 2. another pack's model of the same vehicle: a unit that stands for the same catalogue figure, or whose real vehicle name matches the unit's (see [Names across games](#names-across-games)), drawn on the unit's own figure;
 3. its figure.
 
-**Unit models from** (under the figure size in the **Figures** settings, shown when two or more packs are loaded) picks one game whose model is drawn wherever it has the same vehicle as another game's pack: with **DCS first**, an IL-2 Bf 109 K-4 is drawn with the DCS model; with **IL-2 first**, a DCS Ju 88 A-4 with IL-2's. Vehicles the chosen game has no model of keep their own game's. The choice is kept in the browser and applies when the page is loaded again.
+**Unit models** (in **Map and background** and under the figure size in the **Figures** settings, shown when the local server has any model pack) picks, for the loaded data's game, its own models (the default), the simple built-in figures, or another game's models wherever that game has the same or a similar vehicle: with **DCS World models** on an IL-2 recording, an IL-2 Bf 109 K-4 is drawn with the DCS model. Vehicles the chosen game has no model of keep their own game's. The choice is kept per game in the browser and applies at once ([Levels](levels.md#unit-models)).
 
 A model is lent only to a unit of its kind: an aircraft's to an aircraft, a helicopter's to a helicopter, a drone's to a drone, a ground vehicle's to a ground vehicle, a ship's to a ship. A helicopter's model never stands on a fighter's figure, nor the other way round. Units a pack marks as `static` (barriers, buildings, containers, sandbags) stand for no unit and are never offered as a model.
 

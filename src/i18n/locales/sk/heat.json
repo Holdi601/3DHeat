@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "Načítava sa {name}",
   "heat.levelPanel.entryGone": "Táto položka už v knižnici nie je.",
   "heat.levelPanel.entryEmpty": "Táto položka nemá použiteľný obsah.",
-  "heat.levelPanel.title": "Pozadie / level",
+  "heat.levelPanel.title": "Mapa a pozadie",
   "heat.levelPanel.nothingLoaded": "Nič nie je načítané – scéna ukazuje mriežku a osi. Pridajte obrázok mapy alebo sieť levelu, aby malo teplo kontext.",
   "heat.levelPanel.mapImage": "Obrázok mapy…",
   "heat.levelPanel.model": "3D model…",

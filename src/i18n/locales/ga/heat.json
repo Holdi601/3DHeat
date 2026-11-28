@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "Ag lódáil {name}",
   "heat.levelPanel.entryGone": "Níl an iontráil sin sa leabharlann a thuilleadh.",
   "heat.levelPanel.entryEmpty": "Níl aon ábhar inúsáidte san iontráil sin.",
-  "heat.levelPanel.title": "Cúlra / leibhéal",
+  "heat.levelPanel.title": "Léarscáil agus cúlra",
   "heat.levelPanel.nothingLoaded": "Níl aon rud lódáilte — taispeánann an radharc greille agus aiseanna. Cuir íomhá léarscáile nó mogalra leibhéil leis chun comhthéacs a thabhairt don teas.",
   "heat.levelPanel.mapImage": "Íomhá léarscáile…",
   "heat.levelPanel.model": "Samhail 3T…",

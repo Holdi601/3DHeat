@@ -43,7 +43,7 @@ Keys 1-4 are checked against the data the same way: a key for a greyed-out mode 
 | Direction ([directional heat](directional-heat.md)), Value ([value weighting](value-weighting.md)) | yes | yes | yes | | yes |
 | Team viewer ([figure overlay](box-replay.md)) | | | | yes | |
 | Difference split ([difference](difference.md)) | | yes | | | |
-| [Teams](teams-list.md), [Entities](entities.md), [Filters](filters.md), Background / level, [Slice](slice.md), [Measure](measure.md), Camera path & render, Performance, Camera & scene | yes | yes | yes | yes | yes |
+| [Teams](teams-list.md), [Entities](entities.md), [Filters](filters.md), Map and background, [Slice](slice.md), [Measure](measure.md), Camera path & render, Performance, Camera & scene | yes | yes | yes | yes | yes |
 
 ## What every heat mode shares
 

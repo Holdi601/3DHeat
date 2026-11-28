@@ -266,7 +266,7 @@
   "heat.levelPanel.loading": "Loading {name}",
   "heat.levelPanel.entryGone": "That entry is no longer in the library.",
   "heat.levelPanel.entryEmpty": "That entry has no usable payload.",
-  "heat.levelPanel.title": "Background / level",
+  "heat.levelPanel.title": "Map and background",
   "heat.levelPanel.nothingLoaded": "Nothing loaded — the scene shows a grid and axes. Add a map image or a level mesh to give the heat context.",
   "heat.levelPanel.mapImage": "Map image…",
   "heat.levelPanel.model": "3D model…",

@@ -258,7 +258,7 @@
   "heat.levelPanel.loading": "Qed jitgħabba {name}",
   "heat.levelPanel.entryGone": "Dik l-entrata m'għadhiex fil-librerija.",
   "heat.levelPanel.entryEmpty": "Dik l-entrata m'għandha ebda kontenut li jista' jintuża.",
-  "heat.levelPanel.title": "Sfond / livell",
+  "heat.levelPanel.title": "Mappa u sfond",
   "heat.levelPanel.nothingLoaded": "Xejn mgħobbi — ix-xena turi grilja u assi. Żid immaġni ta' mappa jew mesh ta' livell biex tagħti kuntest lis-sħana.",
   "heat.levelPanel.mapImage": "Immaġni tal-mappa…",
   "heat.levelPanel.model": "Mudell 3D…",
