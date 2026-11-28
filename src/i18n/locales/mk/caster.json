@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "Прво уништување на мечот",
+  "caster.cap.firstBloodRound": "Прво уништување во рунда {round}",
+  "caster.cap.multiKill": "Уништување {i} од {n}",
+  "caster.cap.tradeFirst": "Пука прв",
+  "caster.cap.tradeBack": "Возвраќа {secs} подоцна",
+  "caster.cap.clutch": "Сам против {against}",
+  "caster.cap.swing": "Веднаш го враќа",
+  "caster.cap.objective": "Ја зазема целта",
+  "caster.cap.comeback": "Го носи тимот во водство",
+  "caster.cap.standout": "Уништувања на овој меч: {kills}",
+  "caster.cap.struggle": "Уништен на овој меч: {deaths} пати",
+  "caster.cap.longRange": "Погодува од {distance}",
+  "caster.cap.turning": "Шанса за победа: {fromPct} → {toPct}",
+  "caster.soon": "за {s} s",
+  "caster.down": "уништен"
+}

@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "První sestřel zápasu",
+  "caster.cap.firstBloodRound": "První sestřel v kole {round}",
+  "caster.cap.multiKill": "Sestřel {i} z {n}",
+  "caster.cap.tradeFirst": "Střílí první",
+  "caster.cap.tradeBack": "Oplácí o {secs} později",
+  "caster.cap.clutch": "Sám proti {against}",
+  "caster.cap.swing": "Hned ho bere zpět",
+  "caster.cap.objective": "Obsazuje cíl",
+  "caster.cap.comeback": "Dostává tým do vedení",
+  "caster.cap.standout": "Sestřely v tomto zápase: {kills}",
+  "caster.cap.struggle": "Zničen v tomto zápase: {deaths}×",
+  "caster.cap.longRange": "Zasahuje ze vzdálenosti {distance}",
+  "caster.cap.turning": "Šance na výhru: {fromPct} → {toPct}",
+  "caster.soon": "za {s} s",
+  "caster.down": "zničen"
+}

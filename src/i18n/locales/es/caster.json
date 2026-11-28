@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "Primera baja de la partida",
+  "caster.cap.firstBloodRound": "Primera baja de la ronda {round}",
+  "caster.cap.multiKill": "Baja {i} de {n}",
+  "caster.cap.tradeFirst": "Dispara primero",
+  "caster.cap.tradeBack": "Responde {secs} después",
+  "caster.cap.clutch": "Solo contra {against}",
+  "caster.cap.swing": "Lo recupera enseguida",
+  "caster.cap.objective": "Toma el objetivo",
+  "caster.cap.comeback": "Pone al equipo por delante",
+  "caster.cap.standout": "{kills} bajas en esta partida",
+  "caster.cap.struggle": "Destruido {deaths} veces en esta partida",
+  "caster.cap.longRange": "Acierta desde {distance}",
+  "caster.cap.turning": "Opciones de ganar: {fromPct} → {toPct}",
+  "caster.soon": "en {s} s",
+  "caster.down": "destruido"
+}

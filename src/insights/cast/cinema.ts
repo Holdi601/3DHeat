@@ -114,6 +114,22 @@ export class CameraSpring {
   }
 
   /**
+   * Move along with what is filmed: the eye and the look-at point shifted by
+   * the subjects' own move since the last frame, so a fast unit is followed
+   * without the springs' lag (and its ripple); the springs then only change
+   * the framing.
+   */
+  carry(dx: number, dy: number, dz: number): void {
+    if (!this.pos || !this.look) return;
+    this.pos.x += dx;
+    this.pos.y += dy;
+    this.pos.z += dz;
+    this.look.x += dx;
+    this.look.y += dy;
+    this.look.z += dz;
+  }
+
+  /**
    * Towards `target` looking at `at`, `dt` seconds on. `smooth` is the spring's
    * time (about the time to cover most of the way); `maxSpeed` caps the
    * position's speed, data units a second.
@@ -151,7 +167,8 @@ export class CameraSpring {
 /** How long the spring takes for a move of `distance` (data units) against the framing distance: longer moves glide longer. */
 export function smoothFor(distance: number, framing: number): number {
   const r = distance / Math.max(1e-9, framing);
-  return Math.min(1.6, 0.45 + 0.25 * Math.log2(1 + r));
+  // Most of the way in about two seconds even across the map: the replay waits while it moves.
+  return Math.min(0.9, 0.35 + 0.15 * Math.log2(1 + r));
 }
 
 /** Whether a pose differs from the one set, beyond rounding: someone else moved the camera. */
@@ -159,4 +176,162 @@ export function poseMoved(a: Pose, b: Pose, scale: number): boolean {
   const dp = Math.hypot(a.position.x - b.position.x, a.position.y - b.position.y, a.position.z - b.position.z);
   const df = Math.hypot(a.forward.x - b.forward.x, a.forward.y - b.forward.y, a.forward.z - b.forward.z);
   return dp > Math.max(1e-3, scale * 1e-4) || df > 1e-3;
+}
+
+/** A unit the camera frames: where it is and how big it is (its length, data units). */
+export interface Subject extends Vec3 {
+  size: number;
+}
+
+/** The view the shot is for: vertical field of view (degrees), width over height, height in pixels. */
+export interface ViewSpec {
+  fov: number;
+  aspect: number;
+  heightPx: number;
+}
+
+/**
+ * A shot: where the camera stands, the point it looks at and the field of
+ * view it wants. `single` circles one unit; `pair` looks at two from the side,
+ * both in the picture and apart; `shoulder` stands behind the first (the
+ * shooter) looking past it at the second, for two too far apart to both be
+ * seen from the side.
+ */
+export interface Shot {
+  kind: 'single' | 'pair' | 'shoulder';
+  position: Vec3;
+  look: Vec3;
+  fov: number;
+}
+
+/** Field of view of each kind of shot, degrees: a little longer than the usual wide view, and longer still past a shooter's shoulder. */
+export const SHOT_FOV = { single: 50, pair: 50, shoulder: 40 } as const;
+/** Part of the picture's height a single unit fills. */
+const SINGLE_FILL = 0.16;
+/** Part of the picture's half-width (and half-height) two units and their size may take from the middle. */
+const PAIR_FILL = 0.72;
+/** Part of the field of view a shot past the shooter's shoulder is tipped down by, so the two sit above the subtitle. */
+const LIFT = 0.1;
+/** The widest field of view a shot takes, degrees. */
+const MAX_FOV = 80;
+/** Pixels a unit must at least be for a side view of two; smaller, and the camera goes behind the shooter. */
+export const MIN_UNIT_PX = 14;
+/** Degrees above the horizon the camera looks down from. */
+/** Steep enough to see over houses and trees onto units on the ground. */
+const SINGLE_ELEVATION = 34;
+const PAIR_ELEVATION = 38;
+
+const len = (x: number, y: number, z: number) => Math.hypot(x, y, z);
+const tanHalf = (deg: number) => Math.tan((deg * Math.PI) / 360);
+
+function lookFrom(look: Vec3, azimuth: number, elevationDeg: number, dist: number): Vec3 {
+  const el = (elevationDeg * Math.PI) / 180;
+  const f = { x: -Math.sin(azimuth) * Math.cos(el), y: -Math.sin(el), z: -Math.cos(azimuth) * Math.cos(el) };
+  return { x: look.x - f.x * dist, y: look.y - f.y * dist, z: look.z - f.z * dist };
+}
+
+/** The angle between two directions from `from`, radians. */
+function apart(from: Vec3, a: Vec3, b: Vec3): number {
+  const ax = a.x - from.x, ay = a.y - from.y, az = a.z - from.z;
+  const bx = b.x - from.x, by = b.y - from.y, bz = b.z - from.z;
+  const c = (ax * bx + ay * by + az * bz) / Math.max(1e-12, len(ax, ay, az) * len(bx, by, bz));
+  return Math.acos(Math.max(-1, Math.min(1, c)));
+}
+
+/**
+ * The shot for the subjects now: one or two units (the first the one acting,
+ * the second the one acted on). `azimuth` is where the camera is round them
+ * now (radians, as `azimuthTo`): a single unit is circled from there, and a
+ * pair seen from the side nearer to it, so a moving fight does not swing the
+ * camera round. Distances follow from the field of view: a unit is never a
+ * dot, and two are both in the picture. `was`, the kind of shot last frame:
+ * a pair near the size limit keeps its kind rather than swing between the two.
+ */
+export function shotFor(subjects: Subject[], azimuth: number, view: ViewSpec, unitsPerMetre = 1, was: Shot['kind'] | null = null): Shot {
+  const k = unitsPerMetre;
+  if (!subjects.length) return { kind: 'single', position: lookFrom({ x: 0, y: 0, z: 0 }, azimuth, SINGLE_ELEVATION, 60 * k), look: { x: 0, y: 0, z: 0 }, fov: SHOT_FOV.single };
+  const a = subjects[0];
+  const b = subjects.length > 1 ? subjects[1] : null;
+  const size = Math.max(a.size, b?.size ?? 0, 1e-6);
+  const gap = b ? len(b.x - a.x, b.y - a.y, b.z - a.z) : 0;
+  if (!b || gap < size) {
+    const fov = SHOT_FOV.single;
+    const c = b ? { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, z: (a.z + b.z) / 2 } : { x: a.x, y: a.y, z: a.z };
+    const dist = Math.max(25 * k, size / (2 * tanHalf(fov) * SINGLE_FILL));
+    return { kind: 'single', position: lookFrom(c, azimuth, SINGLE_ELEVATION, dist), look: c, fov };
+  }
+  // From the side: the view across the line between them, on the side the camera is on.
+  const fov = SHOT_FOV.pair;
+  const c = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, z: (a.z + b.z) / 2 };
+  const flat = Math.hypot(b.x - a.x, b.z - a.z);
+  let side = azimuth;
+  if (flat > 1e-9) {
+    // Azimuth looking along the line, then a quarter turn either way: the one nearer the camera's own.
+    const along = Math.atan2(-(b.x - a.x), -(b.z - a.z));
+    const s1 = along + Math.PI / 2;
+    const s2 = along - Math.PI / 2;
+    const off = (x: number) => Math.abs(Math.atan2(Math.sin(x - azimuth), Math.cos(x - azimuth)));
+    side = off(s1) <= off(s2) ? s1 : s2;
+  }
+  const tv = tanHalf(fov);
+  const th = tv * view.aspect;
+  const dist = Math.max(25 * k, (flat / 2 + size) / (PAIR_FILL * th), (Math.abs(b.y - a.y) / 2 + size) / (PAIR_FILL * tv));
+  const px = (size / dist) * (view.heightPx / (2 * tv));
+  const limit = MIN_UNIT_PX * (was === 'shoulder' ? 1.25 : was === 'pair' ? 0.8 : 1);
+  if (px >= limit) return { kind: 'pair', position: lookFrom(c, side, PAIR_ELEVATION, dist), look: c, fov };
+
+  // Too far apart for both to be seen from the side: behind the shooter, looking past it at the other.
+  let sf: number = SHOT_FOV.shoulder;
+  const ux = flat > 1e-9 ? (b.x - a.x) / flat : -Math.sin(azimuth);
+  const uz = flat > 1e-9 ? (b.z - a.z) / flat : -Math.cos(azimuth);
+  let back = 4 * a.size + 12 * k;
+  let pos = { x: a.x, y: a.y, z: a.z };
+  let fwd = { x: ux, y: 0, z: uz };
+  let gapAngle = 0;
+  for (let i = 0; i < 4; i++) {
+    pos = { x: a.x - ux * back, y: a.y + back * 0.35, z: a.z - uz * back };
+    const da = { x: a.x - pos.x, y: a.y - pos.y, z: a.z - pos.z };
+    const db = { x: b.x - pos.x, y: b.y - pos.y, z: b.z - pos.z };
+    const na = len(da.x, da.y, da.z);
+    const nb = len(db.x, db.y, db.z);
+    fwd = { x: da.x / na + db.x / nb, y: da.y / na + db.y / nb, z: da.z / na + db.z / nb };
+    // Both inside the picture with a margin: the angle between them within most of the field of view.
+    gapAngle = (apart(pos, a, b) * 180) / Math.PI;
+    if (gapAngle <= sf * 0.7) break;
+    back *= 1.5;
+  }
+  // Still too far apart (an aircraft high above the shooter): a wider view rather than further back.
+  sf = Math.min(MAX_FOV, Math.max(sf, gapAngle / 0.7));
+  // Between the two, the view tipped down a little: the pair sits higher in the picture, the shooter clear of the subtitle at the bottom.
+  const n = len(fwd.x, fwd.y, fwd.z) || 1;
+  const f = { x: fwd.x / n, y: fwd.y / n, z: fwd.z / n };
+  const upx = -f.y * f.x;
+  const upy = 1 - f.y * f.y;
+  const upz = -f.y * f.z;
+  const un = len(upx, upy, upz) || 1;
+  const tip = Math.tan(((sf * LIFT) * Math.PI) / 180);
+  const g = { x: f.x - (upx / un) * tip, y: f.y - (upy / un) * tip, z: f.z - (upz / un) * tip };
+  const gn = len(g.x, g.y, g.z) || 1;
+  const reach = len(a.x - pos.x, a.y - pos.y, a.z - pos.z);
+  return { kind: 'shoulder', position: pos, look: { x: pos.x + (g.x / gn) * reach, y: pos.y + (g.y / gn) * reach, z: pos.z + (g.z / gn) * reach }, fov: sf };
+}
+
+/**
+ * Height to add to the camera's target while it is still far from it: a long
+ * move rises over the ground and comes down onto the shot, rather than
+ * skimming through hills and houses. Nothing once it is near.
+ */
+export function craneLift(remaining: number, framing: number): number {
+  const over = Math.max(0, remaining - 2 * framing);
+  return Math.min(0.25 * over, 10 * framing);
+}
+
+/** Pixels across a unit of `size` at `distance`, for the vertical field of view and the view's height. */
+export function pixelsAcross(size: number, distance: number, fovDeg: number, heightPx: number): number {
+  return (size / Math.max(1e-9, distance)) * (heightPx / (2 * tanHalf(fovDeg)));
+}
+
+/** The field of view a step closer to `target`: eased, `smooth` seconds for most of the way. */
+export function easeFov(cur: number, target: number, dt: number, smooth = 0.6): number {
+  return cur + (target - cur) * (1 - Math.exp(-dt / Math.max(1e-3, smooth)));
 }

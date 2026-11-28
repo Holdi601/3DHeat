@@ -61,6 +61,21 @@ export interface CastInput {
   kills: CastKill[];
   captures: CastCapture[];
   rounds: CastRound[];
+  /**
+   * Whether the data names the victim of most kills. Then a kill without one
+   * (a kill credit with nothing seen dying) is not shown as a kill on screen:
+   * it neither chains into a multi-kill nor opens the match.
+   */
+  victimsNamed?: boolean;
+}
+
+/** One kill a moment is made of: who shot whom, when, and in what. The camera frames each in turn. */
+export interface Beat {
+  time: number;
+  killer: number;
+  victim: number;
+  killerClass: string;
+  victimClass: string;
 }
 
 export const MOMENT_KINDS = ['firstBlood', 'multiKill', 'trade', 'clutch', 'swing', 'objective', 'comeback', 'standout', 'struggle', 'longRange', 'turning'] as const;
@@ -84,6 +99,8 @@ export interface Moment {
   round: number;
   /** 0..1, how much it matters. */
   weight: number;
+  /** The kills it is made of, in time order (none for a capture). */
+  beats?: Beat[];
   /** Values of its sentence: counts, seconds, metres; persons and teams by index under `actor`/`other`/`team`/`victim`. */
   params: Record<string, number | string>;
 }
@@ -93,22 +110,31 @@ export interface MomentOptions {
   chainGap: number;
   /** Seconds within which a kill trades the one before. */
   tradeWindow: number;
-  /** Seconds played before a moment's action. */
+  /** Seconds played before a moment's action: `lead` for the least of them, up to `maxLead` for the weightiest. */
   lead: number;
+  maxLead: number;
   /** Seconds played after it. */
   tail: number;
   /** At most this many moments, the weightiest. */
   max: number;
 }
 
-export const MOMENT_DEFAULTS: MomentOptions = { chainGap: 8, tradeWindow: 5, lead: 4, tail: 3, max: 40 };
+export const MOMENT_DEFAULTS: MomentOptions = { chainGap: 8, tradeWindow: 5, lead: 4, maxLead: 8, tail: 3, max: 40 };
 
 const isTeamkill = (k: CastKill) => k.killerTeam >= 0 && k.killerTeam === k.victimTeam;
 const fair = (k: CastKill) => k.killer >= 0 && k.killer !== k.victim && !isTeamkill(k);
 const round1 = (v: number) => Math.round(v * 10) / 10;
+const beat = (k: CastKill): Beat => ({ time: k.time, killer: k.killer, victim: k.victim, killerClass: k.killerClass, victimClass: k.victimClass });
+/** Fixed-wing aircraft (`VEHICLE_CLASSES`): their bombs and rockets fall a long way before they kill. */
+const WINGS = new Set(['fighter', 'attack', 'bomber', 'otherAir']);
+const AIR = new Set([...WINGS, 'helicopter']);
+/** Seconds of lead-in before a moment's first action: longer for the ones that matter more. */
+export const leadFor = (weight: number, opt: MomentOptions = MOMENT_DEFAULTS) => opt.lead + (opt.maxLead - opt.lead) * Math.max(0, Math.min(1, weight));
 
 export function findMoments(input: CastInput, opt: MomentOptions = MOMENT_DEFAULTS): Moment[] {
   const kills = [...input.kills].sort((a, b) => a.round - b.round || a.time - b.time);
+  // A kill seen on screen: a fair one, with its victim where the data names victims.
+  const seen = (k: CastKill) => fair(k) && (k.victim >= 0 || !input.victimsNamed);
   const out: Omit<Moment, 'id'>[] = [];
   const at = (k: CastKill) => ({ x: k.x, y: k.y, z: k.z, round: k.round });
   const win = (t0: number, t1 = t0) => ({ from: t0 - opt.lead, to: t1 + opt.tail });
@@ -116,19 +142,19 @@ export function findMoments(input: CastInput, opt: MomentOptions = MOMENT_DEFAUL
 
   // First blood: of the match, and of each round where there are rounds.
   const firstOf = new Map<number, CastKill>();
-  for (const k of kills) if (fair(k) && !firstOf.has(k.round)) firstOf.set(k.round, k);
+  for (const k of kills) if (seen(k) && !firstOf.has(k.round)) firstOf.set(k.round, k);
   let firstEver = true;
   for (const [r, k] of [...firstOf].sort((a, b) => a[0] - b[0])) {
     out.push({
       kind: 'firstBlood', time: k.time, ...win(k.time), actor: k.killer, other: k.victim, team: k.killerTeam, ...at(k),
-      weight: firstEver ? 0.55 : 0.3, params: { round: multiRound ? r + 1 : 0 },
+      weight: firstEver ? 0.55 : 0.3, params: { round: multiRound ? r + 1 : 0 }, beats: [beat(k)],
     });
     firstEver = false;
   }
 
   // Multi-kills: one player's kills each within `chainGap` of the last, in one round.
   const byKiller = new Map<number, CastKill[]>();
-  for (const k of kills) if (fair(k)) (byKiller.get(k.killer) ?? byKiller.set(k.killer, []).get(k.killer)!).push(k);
+  for (const k of kills) if (seen(k)) (byKiller.get(k.killer) ?? byKiller.set(k.killer, []).get(k.killer)!).push(k);
   for (const [p, ks] of byKiller) {
     let s = 0;
     for (let i = 1; i <= ks.length; i++) {
@@ -139,7 +165,7 @@ export function findMoments(input: CastInput, opt: MomentOptions = MOMENT_DEFAUL
         const b = ks[i - 1];
         out.push({
           kind: 'multiKill', time: a.time, ...win(a.time, b.time), actor: p, other: b.victim, team: a.killerTeam, ...at(b),
-          weight: Math.min(1, 0.25 + 0.25 * (n - 1)), params: { n, secs: round1(b.time - a.time) },
+          weight: Math.min(1, 0.25 + 0.25 * (n - 1)), params: { n, secs: round1(b.time - a.time) }, beats: ks.slice(s, i).map(beat),
         });
       }
       s = i;
@@ -149,14 +175,14 @@ export function findMoments(input: CastInput, opt: MomentOptions = MOMENT_DEFAUL
   // Trades: A kills B, and a teammate of B kills A soon after.
   for (let i = 0; i < kills.length; i++) {
     const a = kills[i];
-    if (!fair(a)) continue;
+    if (!seen(a)) continue;
     for (let j = i + 1; j < kills.length && kills[j].time - a.time <= opt.tradeWindow; j++) {
       const b = kills[j];
-      if (!fair(b) || b.round !== a.round || b.victim !== a.killer || b.killer === a.victim) continue;
+      if (!seen(b) || b.round !== a.round || b.victim !== a.killer || b.killer === a.victim) continue;
       if (a.victimTeam < 0 || b.killerTeam !== a.victimTeam) continue;
       out.push({
         kind: 'trade', time: b.time, ...win(a.time, b.time), actor: b.killer, other: a.killer, team: b.killerTeam, ...at(b),
-        weight: 0.35, params: { victim: a.victim, secs: round1(b.time - a.time) },
+        weight: 0.35, params: { victim: a.victim, secs: round1(b.time - a.time) }, beats: [beat(a), beat(b)],
       });
       break;
     }
@@ -187,9 +213,14 @@ export function findMoments(input: CastInput, opt: MomentOptions = MOMENT_DEFAUL
         let outcome = 'open';
         let end = r.end;
         let took = 0;
+        const beats: Beat[] = [];
         for (let j = i + 1; j < rk.length; j++) {
           const q = rk[j];
-          if (q.killer === actor && fair(q)) took++;
+          if (q.killer === actor && fair(q)) {
+            took++;
+            if (seen(q)) beats.push(beat(q));
+          }
+          if (q.victim === actor) beats.push(beat(q));
           if (q.victim < 0) continue;
           left.get(q.victimTeam)?.delete(q.victim);
           if (q.victim === actor) {
@@ -204,7 +235,7 @@ export function findMoments(input: CastInput, opt: MomentOptions = MOMENT_DEFAUL
           }
         }
         out.push({
-          kind: 'clutch', time: k.time, from: k.time - 1, to: Math.min(r.end, end) + opt.tail, actor, other: -1, team, ...at(k),
+          kind: 'clutch', time: k.time, from: k.time - opt.lead, to: Math.min(r.end, end) + opt.tail, actor, other: -1, team, ...at(k), beats,
           weight: Math.min(1, (against >= 2 ? 0.45 : 0.3) + 0.1 * (against - 1) + (outcome === 'won' ? 0.25 : 0)),
           params: { against, outcome, kills: took },
         });
@@ -219,7 +250,7 @@ export function findMoments(input: CastInput, opt: MomentOptions = MOMENT_DEFAUL
     const swing = !!prev && prev.round === c.round && prev.team >= 0 && c.team >= 0 && prev.team !== c.team && c.time - prev.time <= 90;
     out.push({
       kind: swing ? 'swing' : 'objective', time: c.time, ...win(c.time), actor: c.person, other: -1, team: c.team, x: c.x, y: c.y, z: c.z, round: c.round,
-      weight: swing ? 0.5 : 0.25, params: swing ? { secs: Math.round(c.time - prev!.time) } : {},
+      weight: swing ? 0.5 : 0.25, params: swing ? { secs: Math.round(c.time - prev!.time) } : {}, beats: [],
     });
   });
 
@@ -227,26 +258,30 @@ export function findMoments(input: CastInput, opt: MomentOptions = MOMENT_DEFAUL
   const comeback = findComeback(kills, input.rounds);
   if (comeback) out.push({ ...comeback, ...win(comeback.time) });
 
-  out.push(...players(kills, win));
+  out.push(...players(kills, win, seen));
 
   // Long shots: the farthest kills, where the data gives both places.
-  const dist = kills.filter((k) => fair(k) && k.distance !== null).map((k) => k.distance!) as number[];
+  // How far apart the two were when the kill was written is the length of the shot only for a target that went
+  // down where it was hit and a shooter that stayed where it fired: not an aircraft shot down (it flies on, or falls,
+  // before it counts), nor an aeroplane's bomb or rocket (it fell a long way while the aeroplane flew on).
+  const shot = (k: CastKill) => seen(k) && k.distance !== null && !AIR.has(k.victimClass) && !WINGS.has(k.killerClass);
+  const dist = kills.filter(shot).map((k) => k.distance!) as number[];
   if (dist.length >= 3) {
     const sorted = [...dist].sort((a, b) => a - b);
     const median = sorted[sorted.length >> 1];
     const p90 = sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * 0.9))];
     const cut = Math.max(p90, median * 2);
-    const far = kills.filter((k) => fair(k) && k.distance !== null && k.distance >= cut && k.distance > 0).sort((a, b) => b.distance! - a.distance!).slice(0, 3);
+    const far = kills.filter((k) => shot(k) && k.distance! >= cut && k.distance! > 0).sort((a, b) => b.distance! - a.distance!).slice(0, 3);
     const top = far[0]?.distance ?? 1;
     for (const k of far) {
       out.push({
         kind: 'longRange', time: k.time, ...win(k.time), actor: k.killer, other: k.victim, team: k.killerTeam, ...at(k),
-        weight: 0.25 + 0.3 * (k.distance! / top), params: { distance: Math.round(k.distance!) },
+        weight: 0.25 + 0.3 * (k.distance! / top), params: { distance: Math.round(k.distance!) }, beats: [beat(k)],
       });
     }
   }
 
-  out.push(...turningPoints(kills, input.rounds, win));
+  out.push(...turningPoints(kills, input.rounds, win, seen));
 
   // The outcome weighs: a moment of the side that went on to win its round counts for more, and says so.
   for (const m of out) {
@@ -257,10 +292,17 @@ export function findMoments(input: CastInput, opt: MomentOptions = MOMENT_DEFAUL
     if (won) m.weight = Math.min(1, m.weight + WON_BONUS);
   }
 
+  // The lead-in: a few seconds before the first action, more for the moments that matter more.
+  for (const m of out) m.from = m.from + opt.lead - leadFor(m.weight, opt);
+
   // The weightiest, no kind taking more than a third: a match of rounds has a clutch in most of them.
   const perKind = Math.max(3, Math.ceil(opt.max / 3));
   const taken = new Map<MomentKind, number>();
+  // One clip a spell: a multi-kill that opens a standout's busiest spell (the same player, the same first kill) is told by the standout.
+  const spell = (m: Omit<Moment, 'id'>) => (m.beats?.length ? `${m.actor}:${m.round}:${m.beats[0].time}` : '');
+  const spells = new Set(out.filter((m) => m.kind === 'standout').map(spell));
   return out
+    .filter((m) => m.kind !== 'multiKill' || !spells.has(spell(m)))
     .sort((a, b) => b.weight - a.weight || a.time - b.time)
     .filter((m) => {
       const n = taken.get(m.kind) ?? 0;
@@ -291,7 +333,7 @@ export function aliveWinChance(own: number, enemy: number): number {
 }
 
 /** The kills that moved a side's chance to win its round the most: in rounds without respawns, by the men left alive. */
-function turningPoints(kills: CastKill[], rounds: CastRound[], win: (t0: number, t1?: number) => { from: number; to: number }): Omit<Moment, 'id'>[] {
+function turningPoints(kills: CastKill[], rounds: CastRound[], win: (t0: number, t1?: number) => { from: number; to: number }, seen: (k: CastKill) => boolean): Omit<Moment, 'id'>[] {
   const all: Omit<Moment, 'id'>[] = [];
   rounds.forEach((r, ri) => {
     const rk = kills.filter((k) => k.round === ri && k.victim >= 0);
@@ -312,13 +354,13 @@ function turningPoints(kills: CastKill[], rounds: CastRound[], win: (t0: number,
       const after = aliveWinChance(own, enemy - 1);
       alive.set(k.victimTeam, Math.max(0, enemy - 1));
       const delta = after - before;
-      if (delta < TURN_MIN) continue;
+      if (delta < TURN_MIN || !seen(k)) continue;
       const result = r.winner === undefined ? undefined : r.winner === k.killerTeam ? 'won' : 'lost';
       all.push({
         kind: 'turning', time: k.time, ...win(k.time), actor: k.killer, other: k.victim, team: k.killerTeam, x: k.x, y: k.y, z: k.z, round: ri,
         // A kill that turned the round its side then won is the moment; one that did not hold, less so.
         weight: Math.min(1, 0.3 + delta + (result === 'won' ? WON_BONUS : 0)),
-        params: { victim: k.victim, fromPct: Math.round(before * 100), toPct: Math.round(after * 100), ...(result ? { result } : {}) },
+        params: { victim: k.victim, fromPct: Math.round(before * 100), toPct: Math.round(after * 100), ...(result ? { result } : {}) }, beats: [beat(k)],
       });
     }
   });
@@ -373,12 +415,12 @@ function findComeback(kills: CastKill[], rounds: CastRound[]): Omit<Moment, 'id'
   const k = leadAt.s.k;
   return {
     kind: 'comeback', time: leadAt.s.time, actor: k.killer, other: -1, team: leadAt.team, x: k.x, y: k.y, z: k.z, round: k.round,
-    weight: Math.min(1, 0.5 + 0.05 * leadAt.deficit), params: { deficit: leadAt.deficit, unit },
+    weight: Math.min(1, 0.5 + 0.05 * leadAt.deficit), params: { deficit: leadAt.deficit, unit }, beats: k.killer >= 0 && k.victim >= 0 ? [beat(k)] : [],
   };
 }
 
 /** Each player against others in the same vehicle class: who stands out, who struggles. */
-function players(kills: CastKill[], win: (t0: number, t1?: number) => { from: number; to: number }): Omit<Moment, 'id'>[] {
+function players(kills: CastKill[], win: (t0: number, t1?: number) => { from: number; to: number }, seen: (k: CastKill) => boolean): Omit<Moment, 'id'>[] {
   const st = new Map<number, { kills: CastKill[]; deaths: CastKill[]; classes: Map<string, number>; team: number }>();
   const get = (p: number, team: number) => {
     let s = st.get(p);
@@ -408,18 +450,21 @@ function players(kills: CastKill[], win: (t0: number, t1?: number) => { from: nu
   }
   const all = [...st.keys()];
   const out: Omit<Moment, 'id'>[] = [];
-  const seen = new Set<string>();
+  const done = new Set<string>();
+  // One standout and one hard match a player: the same player against their class and against everyone is one story.
+  const told = new Set<string>();
   for (const [c, members] of groups) {
     const peers = members.length >= 3 ? members : all;
     const cls = members.length >= 3 ? c : '';
-    if (seen.has(cls)) continue;
-    seen.add(cls);
+    if (done.has(cls)) continue;
+    done.add(cls);
     const ks = peers.map((p) => st.get(p)!.kills.length);
     const mean = ks.reduce((a, b) => a + b, 0) / ks.length;
     const sd = Math.max(1, Math.sqrt(ks.reduce((a, b) => a + (b - mean) ** 2, 0) / ks.length));
     const ranked = [...peers].sort((a, b) => st.get(b)!.kills.length - st.get(a)!.kills.length);
     const best = st.get(ranked[0])!;
-    if (best.kills.length >= 3 && best.kills.length >= mean + 1.5 * sd) {
+    if (best.kills.length >= 3 && best.kills.length >= mean + 1.5 * sd && !told.has(`s${ranked[0]}`)) {
+      told.add(`s${ranked[0]}`);
       // Their busiest half-minute.
       let bi = 0;
       let bn = 0;
@@ -429,21 +474,24 @@ function players(kills: CastKill[], win: (t0: number, t1?: number) => { from: nu
         if (j - i + 1 > bn) [bi, bn] = [i, j - i + 1];
       }
       const k = best.kills[bi];
+      const busy = best.kills.slice(bi, bi + bn);
       out.push({
-        kind: 'standout', time: k.time, ...win(k.time, best.kills[bi + bn - 1].time), actor: ranked[0], other: -1, team: best.team, x: k.x, y: k.y, z: k.z, round: k.round,
+        kind: 'standout', time: k.time, ...win(k.time, busy[busy.length - 1].time), actor: ranked[0], other: -1, team: best.team, x: k.x, y: k.y, z: k.z, round: k.round,
         weight: Math.min(1, 0.4 + 0.1 * ((best.kills.length - mean) / sd)), params: { kills: best.kills.length, deaths: best.deaths.length, mean: round1(mean), class: cls },
+        beats: busy.filter(seen).map(beat),
       });
     }
     const deathsMean = peers.reduce((a, p) => a + st.get(p)!.deaths.length, 0) / peers.length;
     const worst = [...peers]
       .filter((p) => st.get(p)!.deaths.length >= Math.max(3, deathsMean + 1) && st.get(p)!.kills.length <= Math.max(0, mean - sd))
       .sort((a, b) => st.get(b)!.deaths.length - st.get(a)!.deaths.length)[0];
-    if (worst !== undefined && mean >= 1) {
+    if (worst !== undefined && mean >= 1 && !told.has(`w${worst}`)) {
+      told.add(`w${worst}`);
       const s = st.get(worst)!;
       const k = s.deaths[s.deaths.length - 1];
       out.push({
         kind: 'struggle', time: k.time, ...win(k.time), actor: worst, other: k.killer, team: s.team, x: k.x, y: k.y, z: k.z, round: k.round,
-        weight: 0.2, params: { kills: s.kills.length, deaths: s.deaths.length, mean: round1(mean), class: cls },
+        weight: 0.2, params: { kills: s.kills.length, deaths: s.deaths.length, mean: round1(mean), class: cls }, beats: [beat(k)],
       });
     }
   }

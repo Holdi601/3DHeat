@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "Eerste kill van de wedstrijd",
+  "caster.cap.firstBloodRound": "Eerste kill van ronde {round}",
+  "caster.cap.multiKill": "Kill {i} van {n}",
+  "caster.cap.tradeFirst": "Schiet als eerste",
+  "caster.cap.tradeBack": "Slaat {secs} later terug",
+  "caster.cap.clutch": "Alleen tegen {against}",
+  "caster.cap.swing": "Pakt het meteen terug",
+  "caster.cap.objective": "Neemt het doel in",
+  "caster.cap.comeback": "Zet het team op voorsprong",
+  "caster.cap.standout": "{kills} kills deze wedstrijd",
+  "caster.cap.struggle": "{deaths} keer vernietigd deze wedstrijd",
+  "caster.cap.longRange": "Raakt van {distance} afstand",
+  "caster.cap.turning": "Kans om te winnen: {fromPct} → {toPct}",
+  "caster.soon": "over {s} s",
+  "caster.down": "vernietigd"
+}

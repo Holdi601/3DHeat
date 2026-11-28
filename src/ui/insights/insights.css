@@ -324,46 +324,101 @@
   display: flex;
   gap: 6px;
 }
-.cast-rings {
+.cast-overlay {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
   overflow: hidden;
   z-index: calc(var(--z-units) + 1);
 }
-.cast-ring {
+.cast-overlay circle.actor,
+.cast-overlay circle.other {
+  fill: none;
+  stroke-width: 3;
+}
+.cast-overlay circle.actor {
+  stroke: var(--highlight);
+  filter: drop-shadow(0 0 4px rgba(255, 207, 110, 0.8));
+}
+.cast-overlay circle.other {
+  stroke: var(--bad);
+  filter: drop-shadow(0 0 4px rgba(255, 107, 107, 0.8));
+}
+.cast-overlay circle.other.down {
+  stroke-dasharray: 6 5;
+}
+.cast-aim {
+  stroke: var(--bad);
+  stroke-width: 2;
+  stroke-dasharray: 10 7;
+  opacity: 0.85;
+}
+.cast-tags {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: calc(var(--z-units) + 2);
+}
+.cast-tag {
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--glass);
+  color: var(--highlight);
+  border: 1px solid currentColor;
+}
+.cast-tag.other {
+  color: var(--bad);
+}
+.cast-tag-state {
+  margin-left: 6px;
+  font-weight: 400;
+}
+.cast-caption {
   position: absolute;
   left: 0;
   top: 0;
   width: 0;
   height: 0;
 }
-.cast-ring::before {
-  content: '';
+.cast-caption-box {
   position: absolute;
-  left: -16px;
-  top: -16px;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 2px solid var(--highlight);
-  box-shadow: 0 0 8px rgba(255, 207, 110, 0.6);
-}
-.cast-ring.other::before {
-  border-color: var(--bad);
-  box-shadow: 0 0 8px rgba(255, 107, 107, 0.6);
-}
-.cast-ring span {
-  position: absolute;
-  left: 18px;
-  top: -24px;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  max-width: 260px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  background: var(--bg);
+  border: 1px solid var(--highlight);
+  color: var(--text);
   white-space: nowrap;
-  font-size: 11px;
-  padding: 0 4px;
-  border-radius: 3px;
-  background: var(--glass);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+}
+.cast-caption-kind {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   color: var(--highlight);
 }
-.cast-ring.other span {
-  color: var(--bad);
+.cast-caption-line {
+  font-size: 15px;
+  font-weight: 600;
 }
+.cast-caption-count {
+  font-size: 12px;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+}
+

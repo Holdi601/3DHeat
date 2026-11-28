@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "Fyrsta fellan í leiknum",
+  "caster.cap.firstBloodRound": "Fyrsta fellan í lotu {round}",
+  "caster.cap.multiKill": "Fella {i} af {n}",
+  "caster.cap.tradeFirst": "Skýtur fyrst",
+  "caster.cap.tradeBack": "Svarar {secs} síðar",
+  "caster.cap.clutch": "Einn gegn {against}",
+  "caster.cap.swing": "Tekur það strax aftur",
+  "caster.cap.objective": "Tekur markmiðið",
+  "caster.cap.comeback": "Kemur liðinu yfir",
+  "caster.cap.standout": "{kills} fellur í þessum leik",
+  "caster.cap.struggle": "Eyðilagður {deaths} sinnum í þessum leik",
+  "caster.cap.longRange": "Hittir úr {distance} fjarlægð",
+  "caster.cap.turning": "Líkur á sigri: {fromPct} → {toPct}",
+  "caster.soon": "eftir {s} s",
+  "caster.down": "eyðilagður"
+}

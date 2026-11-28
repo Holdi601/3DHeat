@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "A meccs első kilövése",
+  "caster.cap.firstBloodRound": "A(z) {round}. kör első kilövése",
+  "caster.cap.multiKill": "{i}. kilövés a(z) {n}-ból",
+  "caster.cap.tradeFirst": "Elsőként lő",
+  "caster.cap.tradeBack": "{secs} múlva visszavág",
+  "caster.cap.clutch": "Egyedül {against} ellen",
+  "caster.cap.swing": "Azonnal visszaveszi",
+  "caster.cap.objective": "Elfoglalja a célt",
+  "caster.cap.comeback": "Vezetéshez juttatja a csapatot",
+  "caster.cap.standout": "Kilövések ezen a meccsen: {kills}",
+  "caster.cap.struggle": "Kilőve ezen a meccsen: {deaths} alkalommal",
+  "caster.cap.longRange": "Eltalálja {distance} távolságból",
+  "caster.cap.turning": "Győzelmi esély: {fromPct} → {toPct}",
+  "caster.soon": "{s} s múlva",
+  "caster.down": "kilőve"
+}

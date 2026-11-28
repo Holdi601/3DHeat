@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "Matši esimene hävitus",
+  "caster.cap.firstBloodRound": "Vooru {round} esimene hävitus",
+  "caster.cap.multiKill": "Hävitus {i}/{n}",
+  "caster.cap.tradeFirst": "Tulistab esimesena",
+  "caster.cap.tradeBack": "Vastab {secs} hiljem",
+  "caster.cap.clutch": "Üksi {against} vastu",
+  "caster.cap.swing": "Võtab kohe tagasi",
+  "caster.cap.objective": "Vallutab eesmärgi",
+  "caster.cap.comeback": "Viib meeskonna juhtima",
+  "caster.cap.standout": "Hävitusi selles matšis: {kills}",
+  "caster.cap.struggle": "Hävitatud selles matšis: {deaths} korda",
+  "caster.cap.longRange": "Tabab {distance} kauguselt",
+  "caster.cap.turning": "Võiduvõimalus: {fromPct} → {toPct}",
+  "caster.soon": "{s} s pärast",
+  "caster.down": "hävitatud"
+}

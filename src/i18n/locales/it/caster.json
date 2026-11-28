@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "Prima uccisione della partita",
+  "caster.cap.firstBloodRound": "Prima uccisione del round {round}",
+  "caster.cap.multiKill": "Uccisione {i} di {n}",
+  "caster.cap.tradeFirst": "Spara per primo",
+  "caster.cap.tradeBack": "Risponde {secs} dopo",
+  "caster.cap.clutch": "Da solo contro {against}",
+  "caster.cap.swing": "Lo riprende subito",
+  "caster.cap.objective": "Prende l'obiettivo",
+  "caster.cap.comeback": "Porta la squadra in vantaggio",
+  "caster.cap.standout": "{kills} uccisioni in questa partita",
+  "caster.cap.struggle": "Distrutto {deaths} volte in questa partita",
+  "caster.cap.longRange": "Colpisce da {distance}",
+  "caster.cap.turning": "Probabilità di vittoria: {fromPct} → {toPct}",
+  "caster.soon": "tra {s} s",
+  "caster.down": "distrutto"
+}

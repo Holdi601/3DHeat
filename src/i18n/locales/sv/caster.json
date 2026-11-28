@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "Matchens första kill",
+  "caster.cap.firstBloodRound": "Första killen i runda {round}",
+  "caster.cap.multiKill": "Kill {i} av {n}",
+  "caster.cap.tradeFirst": "Skjuter först",
+  "caster.cap.tradeBack": "Slår tillbaka {secs} senare",
+  "caster.cap.clutch": "Ensam mot {against}",
+  "caster.cap.swing": "Tar tillbaka det direkt",
+  "caster.cap.objective": "Tar målet",
+  "caster.cap.comeback": "Sätter laget i ledning",
+  "caster.cap.standout": "{kills} kills den här matchen",
+  "caster.cap.struggle": "Förstörd {deaths} gånger den här matchen",
+  "caster.cap.longRange": "Träffar från {distance} bort",
+  "caster.cap.turning": "Chans att vinna: {fromPct} → {toPct}",
+  "caster.soon": "om {s} s",
+  "caster.down": "förstörd"
+}

@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "試合最初の撃破",
+  "caster.cap.firstBloodRound": "ラウンド{round}最初の撃破",
+  "caster.cap.multiKill": "撃破 {i}/{n}",
+  "caster.cap.tradeFirst": "先に撃つ",
+  "caster.cap.tradeBack": "{secs}後に反撃",
+  "caster.cap.clutch": "{against}人を相手に一人",
+  "caster.cap.swing": "すぐに取り返す",
+  "caster.cap.objective": "目標を占領",
+  "caster.cap.comeback": "チームをリードに導く",
+  "caster.cap.standout": "この試合で{kills}撃破",
+  "caster.cap.struggle": "この試合で{deaths}回撃破された",
+  "caster.cap.longRange": "{distance}先から命中",
+  "caster.cap.turning": "勝つ確率: {fromPct} → {toPct}",
+  "caster.soon": "あと{s}秒",
+  "caster.down": "撃破された"
+}

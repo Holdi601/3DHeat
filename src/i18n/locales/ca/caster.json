@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "Primera baixa de la partida",
+  "caster.cap.firstBloodRound": "Primera baixa de la ronda {round}",
+  "caster.cap.multiKill": "Baixa {i} de {n}",
+  "caster.cap.tradeFirst": "Dispara primer",
+  "caster.cap.tradeBack": "Respon {secs} després",
+  "caster.cap.clutch": "Sol contra {against}",
+  "caster.cap.swing": "El recupera de seguida",
+  "caster.cap.objective": "Pren l'objectiu",
+  "caster.cap.comeback": "Posa l'equip al davant",
+  "caster.cap.standout": "{kills} baixes en aquesta partida",
+  "caster.cap.struggle": "Destruït {deaths} vegades en aquesta partida",
+  "caster.cap.longRange": "Encerta des de {distance}",
+  "caster.cap.turning": "Probabilitat de guanyar: {fromPct} → {toPct}",
+  "caster.soon": "en {s} s",
+  "caster.down": "destruït"
+}

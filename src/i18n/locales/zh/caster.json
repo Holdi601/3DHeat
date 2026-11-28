@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "本场第一个击毁",
+  "caster.cap.firstBloodRound": "第{round}回合第一个击毁",
+  "caster.cap.multiKill": "第{i}/{n}个击毁",
+  "caster.cap.tradeFirst": "先开火",
+  "caster.cap.tradeBack": "{secs}后反击",
+  "caster.cap.clutch": "独自对抗{against}人",
+  "caster.cap.swing": "立刻夺回",
+  "caster.cap.objective": "占领目标",
+  "caster.cap.comeback": "让队伍领先",
+  "caster.cap.standout": "本场击毁{kills}次",
+  "caster.cap.struggle": "本场被击毁{deaths}次",
+  "caster.cap.longRange": "从{distance}外命中",
+  "caster.cap.turning": "获胜机会：{fromPct} → {toPct}",
+  "caster.soon": "{s}秒后",
+  "caster.down": "已被击毁"
+}

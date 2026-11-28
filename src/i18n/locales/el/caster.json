@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "Πρώτη κατάρριψη του αγώνα",
+  "caster.cap.firstBloodRound": "Πρώτη κατάρριψη του γύρου {round}",
+  "caster.cap.multiKill": "Κατάρριψη {i} από {n}",
+  "caster.cap.tradeFirst": "Πυροβολεί πρώτος",
+  "caster.cap.tradeBack": "Ανταποδίδει {secs} μετά",
+  "caster.cap.clutch": "Μόνος εναντίον {against}",
+  "caster.cap.swing": "Το παίρνει πίσω αμέσως",
+  "caster.cap.objective": "Καταλαμβάνει τον στόχο",
+  "caster.cap.comeback": "Βάζει την ομάδα μπροστά",
+  "caster.cap.standout": "Καταρρίψεις σε αυτόν τον αγώνα: {kills}",
+  "caster.cap.struggle": "Καταστράφηκε σε αυτόν τον αγώνα: {deaths} φορές",
+  "caster.cap.longRange": "Πετυχαίνει από {distance}",
+  "caster.cap.turning": "Πιθανότητα νίκης: {fromPct} → {toPct}",
+  "caster.soon": "σε {s} s",
+  "caster.down": "κατεστραμμένο"
+}

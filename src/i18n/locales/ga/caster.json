@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "An chéad mharú sa chluiche",
+  "caster.cap.firstBloodRound": "An chéad mharú i mbabhta {round}",
+  "caster.cap.multiKill": "Marú {i} as {n}",
+  "caster.cap.tradeFirst": "Scaoileann sé ar dtús",
+  "caster.cap.tradeBack": "Buaileann sé ar ais {secs} ina dhiaidh",
+  "caster.cap.clutch": "Ina aonar in aghaidh {against}",
+  "caster.cap.swing": "Tógann sé ar ais é láithreach",
+  "caster.cap.objective": "Tógann sé an sprioc",
+  "caster.cap.comeback": "Cuireann sé an fhoireann chun tosaigh",
+  "caster.cap.standout": "{kills} marú sa chluiche seo",
+  "caster.cap.struggle": "Scriosta {deaths} uair sa chluiche seo",
+  "caster.cap.longRange": "Buaileann sé ó {distance} uaidh",
+  "caster.cap.turning": "Seans buachan: {fromPct} → {toPct}",
+  "caster.soon": "i gceann {s} s",
+  "caster.down": "scriosta"
+}

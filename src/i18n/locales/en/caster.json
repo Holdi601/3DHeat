@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "First kill of the match",
+  "caster.cap.firstBloodRound": "First kill of round {round}",
+  "caster.cap.multiKill": "Kill {i} of {n}",
+  "caster.cap.tradeFirst": "Shoots first",
+  "caster.cap.tradeBack": "Hits back {secs} later",
+  "caster.cap.clutch": "Alone against {against}",
+  "caster.cap.swing": "Takes it straight back",
+  "caster.cap.objective": "Takes the objective",
+  "caster.cap.comeback": "Puts the team ahead",
+  "caster.cap.standout": "{kills} kills this match",
+  "caster.cap.struggle": "Destroyed {deaths} times this match",
+  "caster.cap.longRange": "Hits from {distance} away",
+  "caster.cap.turning": "Chance to win: {fromPct} → {toPct}",
+  "caster.soon": "in {s} s",
+  "caster.down": "destroyed"
+}

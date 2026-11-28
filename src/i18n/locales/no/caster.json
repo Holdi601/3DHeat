@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "Kampens første drap",
+  "caster.cap.firstBloodRound": "Første drap i runde {round}",
+  "caster.cap.multiKill": "Drap {i} av {n}",
+  "caster.cap.tradeFirst": "Skyter først",
+  "caster.cap.tradeBack": "Slår tilbake {secs} senere",
+  "caster.cap.clutch": "Alene mot {against}",
+  "caster.cap.swing": "Tar det straks tilbake",
+  "caster.cap.objective": "Tar målet",
+  "caster.cap.comeback": "Setter laget i ledelsen",
+  "caster.cap.standout": "{kills} drap denne kampen",
+  "caster.cap.struggle": "Ødelagt {deaths} ganger denne kampen",
+  "caster.cap.longRange": "Treffer fra {distance} unna",
+  "caster.cap.turning": "Sjanse til å vinne: {fromPct} → {toPct}",
+  "caster.soon": "om {s} s",
+  "caster.down": "ødelagt"
+}

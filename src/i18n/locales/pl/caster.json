@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "Pierwsze zniszczenie w meczu",
+  "caster.cap.firstBloodRound": "Pierwsze zniszczenie w rundzie {round}",
+  "caster.cap.multiKill": "Zniszczenie {i} z {n}",
+  "caster.cap.tradeFirst": "Strzela pierwszy",
+  "caster.cap.tradeBack": "Odpowiada {secs} później",
+  "caster.cap.clutch": "Sam przeciw {against}",
+  "caster.cap.swing": "Od razu je odbija",
+  "caster.cap.objective": "Zdobywa cel",
+  "caster.cap.comeback": "Wyprowadza drużynę na prowadzenie",
+  "caster.cap.standout": "Zniszczenia w tym meczu: {kills}",
+  "caster.cap.struggle": "Zniszczony w tym meczu: {deaths} razy",
+  "caster.cap.longRange": "Trafia z odległości {distance}",
+  "caster.cap.turning": "Szansa na wygraną: {fromPct} → {toPct}",
+  "caster.soon": "za {s} s",
+  "caster.down": "zniszczony"
+}

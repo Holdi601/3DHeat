@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "Prvi uboj tekme",
+  "caster.cap.firstBloodRound": "Prvi uboj v krogu {round}",
+  "caster.cap.multiKill": "Uboj {i} od {n}",
+  "caster.cap.tradeFirst": "Strelja prvi",
+  "caster.cap.tradeBack": "Vrne {secs} pozneje",
+  "caster.cap.clutch": "Sam proti {against}",
+  "caster.cap.swing": "Takoj ga vzame nazaj",
+  "caster.cap.objective": "Zavzame cilj",
+  "caster.cap.comeback": "Popelje ekipo v vodstvo",
+  "caster.cap.standout": "Uboji na tej tekmi: {kills}",
+  "caster.cap.struggle": "Uničen na tej tekmi: {deaths}-krat",
+  "caster.cap.longRange": "Zadene z razdalje {distance}",
+  "caster.cap.turning": "Možnost zmage: {fromPct} → {toPct}",
+  "caster.soon": "čez {s} s",
+  "caster.down": "uničen"
+}

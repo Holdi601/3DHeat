@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "Ottelun ensimmäinen tappo",
+  "caster.cap.firstBloodRound": "Kierroksen {round} ensimmäinen tappo",
+  "caster.cap.multiKill": "Tappo {i}/{n}",
+  "caster.cap.tradeFirst": "Ampuu ensin",
+  "caster.cap.tradeBack": "Iskee takaisin {secs} myöhemmin",
+  "caster.cap.clutch": "Yksin {against} vastaan",
+  "caster.cap.swing": "Ottaa sen heti takaisin",
+  "caster.cap.objective": "Valtaa tavoitteen",
+  "caster.cap.comeback": "Vie joukkueen johtoon",
+  "caster.cap.standout": "{kills} tappoa tässä ottelussa",
+  "caster.cap.struggle": "Tuhottu {deaths} kertaa tässä ottelussa",
+  "caster.cap.longRange": "Osuu {distance} päästä",
+  "caster.cap.turning": "Voiton mahdollisuus: {fromPct} → {toPct}",
+  "caster.soon": "{s} s päästä",
+  "caster.down": "tuhottu"
+}

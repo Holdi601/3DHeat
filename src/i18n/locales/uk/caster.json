@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "Перше знищення в матчі",
+  "caster.cap.firstBloodRound": "Перше знищення в раунді {round}",
+  "caster.cap.multiKill": "Знищення {i} з {n}",
+  "caster.cap.tradeFirst": "Стріляє першим",
+  "caster.cap.tradeBack": "Відповідає через {secs}",
+  "caster.cap.clutch": "Сам проти {against}",
+  "caster.cap.swing": "Одразу відбиває назад",
+  "caster.cap.objective": "Захоплює ціль",
+  "caster.cap.comeback": "Виводить команду вперед",
+  "caster.cap.standout": "Знищень за матч: {kills}",
+  "caster.cap.struggle": "Знищено за матч: {deaths} разів",
+  "caster.cap.longRange": "Влучає з {distance}",
+  "caster.cap.turning": "Шанс на перемогу: {fromPct} → {toPct}",
+  "caster.soon": "через {s} с",
+  "caster.down": "знищено"
+}

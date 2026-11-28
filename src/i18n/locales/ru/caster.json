@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "Первое уничтожение в матче",
+  "caster.cap.firstBloodRound": "Первое уничтожение в раунде {round}",
+  "caster.cap.multiKill": "Уничтожение {i} из {n}",
+  "caster.cap.tradeFirst": "Стреляет первым",
+  "caster.cap.tradeBack": "Отвечает через {secs}",
+  "caster.cap.clutch": "Один против {against}",
+  "caster.cap.swing": "Сразу отбивает обратно",
+  "caster.cap.objective": "Захватывает цель",
+  "caster.cap.comeback": "Выводит команду вперёд",
+  "caster.cap.standout": "Уничтожений за матч: {kills}",
+  "caster.cap.struggle": "Уничтожен за матч: {deaths} раз",
+  "caster.cap.longRange": "Попадает с {distance}",
+  "caster.cap.turning": "Шанс на победу: {fromPct} → {toPct}",
+  "caster.soon": "через {s} с",
+  "caster.down": "уничтожен"
+}

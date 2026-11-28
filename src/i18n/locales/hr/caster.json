@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "Prvo uništenje meča",
+  "caster.cap.firstBloodRound": "Prvo uništenje u rundi {round}",
+  "caster.cap.multiKill": "Uništenje {i} od {n}",
+  "caster.cap.tradeFirst": "Puca prvi",
+  "caster.cap.tradeBack": "Uzvraća {secs} kasnije",
+  "caster.cap.clutch": "Sam protiv {against}",
+  "caster.cap.swing": "Odmah ga vraća",
+  "caster.cap.objective": "Zauzima cilj",
+  "caster.cap.comeback": "Dovodi tim u vodstvo",
+  "caster.cap.standout": "Uništenja u ovom meču: {kills}",
+  "caster.cap.struggle": "Uništen u ovom meču: {deaths} puta",
+  "caster.cap.longRange": "Pogađa s udaljenosti {distance}",
+  "caster.cap.turning": "Šansa za pobjedu: {fromPct} → {toPct}",
+  "caster.soon": "za {s} s",
+  "caster.down": "uništen"
+}

@@ -2,9 +2,10 @@
  * Caster mode: one replay's moments on a timeline - first blood, multi-kills,
  * trades, clutches, objectives, the comeback, who stands out and who has a
  * hard match, the long shots - each with a commentator's line. A click goes
- * there: the playhead just before it, the replay on, the camera flown to the
- * action and then following the player. Played as a list, each moment runs
- * to its end and the next follows. The lines are the viewer's own; on request
+ * there: the playhead a few seconds before it, the caster's camera moving to
+ * the units in it while the replay waits, then the lead-in and the moment
+ * played, the camera on them, to the moment's end. Played as a list, each
+ * moment runs to its end and the next follows. The lines are the viewer's own; on request
  * the external model writes them instead.
  */
 
@@ -29,7 +30,7 @@ import { useSort, useSorted } from '../sort/useSort';
 import { AiSettingsButton } from './AiSettings';
 import { labelOf } from './say';
 import { useAiStream } from './useAiStream';
-import { startCinema, stopCinema, useCinema } from './cinemaStore';
+import { resumeCinema, startCinema, stopCinema, useCinema } from './cinemaStore';
 
 interface CastState {
   key: string | null;
@@ -74,6 +75,8 @@ export function momentLine(m: Moment, src: CastSource, d: Dataset): string {
  * flight also holds the tactical display's director (`flyTo`).
  */
 let followTimer = 0;
+/** The moment picked by hand that has played to its end (stopped once; playing on from there is the viewer's choice). */
+let clipEnded = -1;
 /** When the last moment was gone to: the playhead is the old one until the engine takes the seek. */
 let wentAt = 0;
 export function goToMoment(m: Moment, src: CastSource, d: Dataset, engine: Engine | null, follow = true): void {
@@ -94,11 +97,14 @@ export function goToMoment(m: Moment, src: CastSource, d: Dataset, engine: Engin
     const col = 'column' in f ? f.column : '';
     st.setFilters([...st.filters.filter((x) => !('column' in x && x.column === col)), f]);
   }
+  // The playhead counts: in "all" the replay shows every row at once and no unit where it is.
+  if (st.timeline.mode === 'all') st.patchTimeline({ mode: 'play', window: 'lifetime' });
   st.seek(m.from);
   clearTimeout(followTimer);
-  // The caster's own camera: a move without a cut, subtitles and the subjects ringed (CasterCinema.tsx).
+  // The caster's own camera: a move without a cut, subtitles and the subjects ringed (CasterCinema.tsx);
+  // the replay waits while the camera moves, then plays the lead-in and the moment.
   if (useCinema.getState().on) {
-    startCinema(m, src);
+    startCinema(m, src, true);
     return;
   }
   if (engine) flyTo(engine, d, { x: m.x, y: m.y, z: m.z }, 120);
@@ -126,7 +132,7 @@ function CinemaControls() {
         </label>
       )}
       {on && held && moment && (
-        <button onClick={() => useCinema.getState().set({ held: false, shot: useCinema.getState().shot + 1 })} title={t('analysis.cinema.resumeTitle')}>
+        <button onClick={resumeCinema} title={t('analysis.cinema.resumeTitle')}>
           {t('analysis.cinema.resume')}
         </button>
       )}
@@ -180,6 +186,23 @@ export function Caster() {
     return () => window.clearInterval(id);
   }, [cast.playing, engine, dataset, cast.src]);
 
+  // One moment picked by hand plays to its end and stops there, the camera on it.
+  useEffect(() => {
+    if (cast.playing || !engine || cast.current < 0) return;
+    const id = window.setInterval(() => {
+      const s = useCast.getState();
+      const m = s.moments[s.current];
+      const c = useCinema.getState();
+      if (!m || s.playing || c.moment !== m || c.held || clipEnded === s.current) return;
+      if (performance.now() - wentAt < SETTLE_MS) return;
+      if (useStore.getState().timeline.playing && engine.live.playhead >= m.to) {
+        clipEnded = s.current;
+        useStore.getState().setPlaying(false);
+      }
+    }, 100);
+    return () => window.clearInterval(id);
+  }, [cast.playing, cast.current, engine]);
+
   // The current moment in view in the list.
   useEffect(() => {
     listRef.current?.querySelector('.ins-moment.on')?.scrollIntoView({ block: 'nearest' });
@@ -220,11 +243,13 @@ export function Caster() {
   if (!src || cast.key !== key) return null;
   if (!cast.moments.length) return <div className="hint">{t('insights.cast.none')}</div>;
 
-  // Playing the list, each moment then follows its player; a moment picked by hand keeps the camera where it went.
+  // A moment picked by hand plays to its end and stops; playing the list, the next follows.
   const go = (i: number, play = cast.playing) => {
     cast.set({ current: i, playing: play });
+    clipEnded = -1;
     goToMoment(cast.moments[i], src, dataset, engine, play);
-    if (play) useStore.getState().setPlaying(true);
+    // The caster's camera starts the replay itself once it is there.
+    if (play && !useCinema.getState().on) useStore.getState().setPlaying(true);
   };
   const mine = stream.about === key;
   const aiLines = parseCastLines(mine ? stream.text : '');

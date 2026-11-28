@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "Erster Abschuss des Spiels",
+  "caster.cap.firstBloodRound": "Erster Abschuss in Runde {round}",
+  "caster.cap.multiKill": "Abschuss {i} von {n}",
+  "caster.cap.tradeFirst": "Schießt zuerst",
+  "caster.cap.tradeBack": "Schlägt {secs} später zurück",
+  "caster.cap.clutch": "Allein gegen {against}",
+  "caster.cap.swing": "Holt es sofort zurück",
+  "caster.cap.objective": "Nimmt das Ziel ein",
+  "caster.cap.comeback": "Bringt das Team in Führung",
+  "caster.cap.standout": "{kills} Abschüsse in diesem Spiel",
+  "caster.cap.struggle": "{deaths}-mal zerstört in diesem Spiel",
+  "caster.cap.longRange": "Trifft aus {distance} Entfernung",
+  "caster.cap.turning": "Siegchance: {fromPct} → {toPct}",
+  "caster.soon": "in {s} s",
+  "caster.down": "zerstört"
+}

@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "Prima eliminare a meciului",
+  "caster.cap.firstBloodRound": "Prima eliminare din runda {round}",
+  "caster.cap.multiKill": "Eliminarea {i} din {n}",
+  "caster.cap.tradeFirst": "Trage primul",
+  "caster.cap.tradeBack": "Răspunde {secs} mai târziu",
+  "caster.cap.clutch": "Singur împotriva a {against}",
+  "caster.cap.swing": "Îl ia înapoi imediat",
+  "caster.cap.objective": "Cucerește obiectivul",
+  "caster.cap.comeback": "Duce echipa în frunte",
+  "caster.cap.standout": "{kills} eliminări în acest meci",
+  "caster.cap.struggle": "Distrus de {deaths} ori în acest meci",
+  "caster.cap.longRange": "Lovește de la {distance}",
+  "caster.cap.turning": "Șansa de a câștiga: {fromPct} → {toPct}",
+  "caster.soon": "în {s} s",
+  "caster.down": "distrus"
+}

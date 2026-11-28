@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "Mača pirmā iznīcināšana",
+  "caster.cap.firstBloodRound": "Pirmā iznīcināšana {round}. raundā",
+  "caster.cap.multiKill": "Iznīcināšana {i} no {n}",
+  "caster.cap.tradeFirst": "Šauj pirmais",
+  "caster.cap.tradeBack": "Atbild pēc {secs}",
+  "caster.cap.clutch": "Viens pret {against}",
+  "caster.cap.swing": "Uzreiz atgūst",
+  "caster.cap.objective": "Ieņem mērķi",
+  "caster.cap.comeback": "Izved komandu vadībā",
+  "caster.cap.standout": "Iznīcināšanas šajā mačā: {kills}",
+  "caster.cap.struggle": "Iznīcināts šajā mačā: {deaths} reizes",
+  "caster.cap.longRange": "Trāpa no {distance}",
+  "caster.cap.turning": "Uzvaras iespēja: {fromPct} → {toPct}",
+  "caster.soon": "pēc {s} s",
+  "caster.down": "iznīcināts"
+}

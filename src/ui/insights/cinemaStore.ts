@@ -9,6 +9,7 @@ import { create } from 'zustand';
 import type { Moment } from '../../insights/cast/moments';
 import type { CastSource } from '../../insights/cast/source';
 import { useReplayStore } from '../../state/replayStore';
+import { useStore } from '../../state/store';
 
 interface CinemaState {
   /** The caster moves the camera itself (remembered in this browser). */
@@ -21,6 +22,8 @@ interface CinemaState {
   held: boolean;
   /** Bumped on every new moment, so the driver starts a new move. */
   shot: number;
+  /** Play the moment once the camera has arrived (the replay waits while it moves). */
+  pendingPlay: boolean;
   set: (p: Partial<Omit<CinemaState, 'set'>>) => void;
 }
 
@@ -42,6 +45,7 @@ export const useCinema = create<CinemaState>((set, get) => ({
   src: null,
   held: false,
   shot: 0,
+  pendingPlay: false,
   set: (p) => {
     set(p);
     if ('on' in p || 'subtitles' in p) {
@@ -61,26 +65,46 @@ export const useCinema = create<CinemaState>((set, get) => ({
  */
 export const castTracks = new Set<number>();
 
-/** Film a moment: the camera moves there on its own, the subtitles say it. */
-export function startCinema(m: Moment, src: CastSource): void {
+/** The viewer's own field of view while the caster's camera changes it; null when it does not. */
+let fovBefore: number | null = null;
+
+/** The caster's camera sets the field of view: the viewer's own is kept to give back. */
+export function setCinemaFov(fov: number): void {
+  const st = useStore.getState();
+  if (fovBefore === null) fovBefore = st.camera.fov;
+  if (Math.abs(st.camera.fov - fov) > 0.02) st.patchCamera({ fov });
+}
+
+/** The viewer's field of view back, as it was before the caster's camera. */
+function restoreFov(): void {
+  if (fovBefore === null) return;
+  const v = fovBefore;
+  fovBefore = null;
+  if (Math.abs(useStore.getState().camera.fov - v) > 1e-6) useStore.getState().patchCamera({ fov: v });
+}
+
+/** Film a moment: the camera moves there on its own, the subtitles say it; with `play`, the replay plays it once the camera is there. */
+export function startCinema(m: Moment, src: CastSource, play = false): void {
   const r = useReplayStore.getState();
   r.stopFollow();
   // The tactical display's director waits while the caster films.
   if (r.look.on && r.look.director) r.holdDirector(true);
   const s = useCinema.getState();
-  s.set({ moment: m, src, held: false, shot: s.shot + 1 });
+  s.set({ moment: m, src, held: false, shot: s.shot + 1, pendingPlay: play });
 }
 
 /** Stop filming: the camera stays where it is. */
 export function stopCinema(): void {
   castTracks.clear();
-  useCinema.getState().set({ moment: null, src: null, held: false });
+  restoreFov();
+  useCinema.getState().set({ moment: null, src: null, held: false, pendingPlay: false });
 }
 
 /** The viewer took over. */
 export function holdCinema(): void {
   castTracks.clear();
-  if (!useCinema.getState().held) useCinema.getState().set({ held: true });
+  restoreFov();
+  if (!useCinema.getState().held) useCinema.getState().set({ held: true, pendingPlay: false });
 }
 
 /** Back to the caster's camera on the current moment. */
@@ -88,5 +112,5 @@ export function resumeCinema(): void {
   const s = useCinema.getState();
   if (!s.moment) return;
   useReplayStore.getState().stopFollow();
-  s.set({ held: false, shot: s.shot + 1 });
+  s.set({ held: false, shot: s.shot + 1, pendingPlay: false });
 }

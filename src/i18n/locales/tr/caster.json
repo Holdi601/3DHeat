@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "Maçın ilk imhası",
+  "caster.cap.firstBloodRound": "{round}. raundun ilk imhası",
+  "caster.cap.multiKill": "İmha {i}/{n}",
+  "caster.cap.tradeFirst": "İlk o ateş ediyor",
+  "caster.cap.tradeBack": "{secs} sonra karşılık veriyor",
+  "caster.cap.clutch": "{against} rakibe karşı tek başına",
+  "caster.cap.swing": "Hemen geri alıyor",
+  "caster.cap.objective": "Hedefi ele geçiriyor",
+  "caster.cap.comeback": "Takımı öne geçiriyor",
+  "caster.cap.standout": "Bu maçta imha: {kills}",
+  "caster.cap.struggle": "Bu maçta imha edildi: {deaths} kez",
+  "caster.cap.longRange": "{distance} uzaktan vuruyor",
+  "caster.cap.turning": "Kazanma şansı: {fromPct} → {toPct}",
+  "caster.soon": "{s} sn sonra",
+  "caster.down": "imha edildi"
+}

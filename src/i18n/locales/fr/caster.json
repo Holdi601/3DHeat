@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "Première élimination du match",
+  "caster.cap.firstBloodRound": "Première élimination de la manche {round}",
+  "caster.cap.multiKill": "Élimination {i} sur {n}",
+  "caster.cap.tradeFirst": "Tire en premier",
+  "caster.cap.tradeBack": "Riposte {secs} plus tard",
+  "caster.cap.clutch": "Seul contre {against}",
+  "caster.cap.swing": "Le reprend aussitôt",
+  "caster.cap.objective": "Prend l'objectif",
+  "caster.cap.comeback": "Met l'équipe en tête",
+  "caster.cap.standout": "{kills} éliminations ce match",
+  "caster.cap.struggle": "Détruit {deaths} fois ce match",
+  "caster.cap.longRange": "Touche à {distance}",
+  "caster.cap.turning": "Chance de gagner : {fromPct} → {toPct}",
+  "caster.soon": "dans {s} s",
+  "caster.down": "détruit"
+}

@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "Prvý zostrel zápasu",
+  "caster.cap.firstBloodRound": "Prvý zostrel v kole {round}",
+  "caster.cap.multiKill": "Zostrel {i} z {n}",
+  "caster.cap.tradeFirst": "Strieľa prvý",
+  "caster.cap.tradeBack": "Oplácá o {secs} neskôr",
+  "caster.cap.clutch": "Sám proti {against}",
+  "caster.cap.swing": "Hneď ho berie späť",
+  "caster.cap.objective": "Obsadzuje cieľ",
+  "caster.cap.comeback": "Dostáva tím do vedenia",
+  "caster.cap.standout": "Zostrely v tomto zápase: {kills}",
+  "caster.cap.struggle": "Zničený v tomto zápase: {deaths}×",
+  "caster.cap.longRange": "Zasahuje zo vzdialenosti {distance}",
+  "caster.cap.turning": "Šanca na výhru: {fromPct} → {toPct}",
+  "caster.soon": "o {s} s",
+  "caster.down": "zničený"
+}

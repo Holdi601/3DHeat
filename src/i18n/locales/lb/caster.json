@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "Éischten Ofschoss vum Match",
+  "caster.cap.firstBloodRound": "Éischten Ofschoss an der Ronn {round}",
+  "caster.cap.multiKill": "Ofschoss {i} vun {n}",
+  "caster.cap.tradeFirst": "Schéisst als Éischten",
+  "caster.cap.tradeBack": "Schléit {secs} méi spéit zréck",
+  "caster.cap.clutch": "Eleng géint {against}",
+  "caster.cap.swing": "Hëlt et direkt zréck",
+  "caster.cap.objective": "Hëlt d'Zil an",
+  "caster.cap.comeback": "Bréngt d'Team a Féierung",
+  "caster.cap.standout": "{kills} Ofschëss an dësem Match",
+  "caster.cap.struggle": "{deaths} Mol zerstéiert an dësem Match",
+  "caster.cap.longRange": "Trëfft vun {distance} wäit",
+  "caster.cap.turning": "Chance ze gewannen: {fromPct} → {toPct}",
+  "caster.soon": "an {s} s",
+  "caster.down": "zerstéiert"
+}

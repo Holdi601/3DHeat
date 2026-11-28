@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "Eliminimi i parë i ndeshjes",
+  "caster.cap.firstBloodRound": "Eliminimi i parë i raundit {round}",
+  "caster.cap.multiKill": "Eliminimi {i} nga {n}",
+  "caster.cap.tradeFirst": "Qëllon i pari",
+  "caster.cap.tradeBack": "Kthen përgjigje {secs} më vonë",
+  "caster.cap.clutch": "I vetëm kundër {against}",
+  "caster.cap.swing": "E merr menjëherë mbrapsht",
+  "caster.cap.objective": "Merr objektivin",
+  "caster.cap.comeback": "E çon ekipin përpara",
+  "caster.cap.standout": "Eliminime në këtë ndeshje: {kills}",
+  "caster.cap.struggle": "I shkatërruar në këtë ndeshje: {deaths} herë",
+  "caster.cap.longRange": "Godet nga {distance}",
+  "caster.cap.turning": "Shansi për fitore: {fromPct} → {toPct}",
+  "caster.soon": "pas {s} s",
+  "caster.down": "i shkatërruar"
+}

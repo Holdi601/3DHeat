@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "L-ewwel qtil tal-logħba",
+  "caster.cap.firstBloodRound": "L-ewwel qtil tar-round {round}",
+  "caster.cap.multiKill": "Qtil {i} minn {n}",
+  "caster.cap.tradeFirst": "Jispara l-ewwel",
+  "caster.cap.tradeBack": "Jirrispondi {secs} wara",
+  "caster.cap.clutch": "Waħdu kontra {against}",
+  "caster.cap.swing": "Jerġa' jieħdu minnufih",
+  "caster.cap.objective": "Jieħu l-objettiv",
+  "caster.cap.comeback": "Ipoġġi lit-tim fuq quddiem",
+  "caster.cap.standout": "{kills} qtil f'din il-logħba",
+  "caster.cap.struggle": "Meqrud {deaths} darbiet f'din il-logħba",
+  "caster.cap.longRange": "Jolqot minn {distance} 'il bogħod",
+  "caster.cap.turning": "Ċans li jirbaħ: {fromPct} → {toPct}",
+  "caster.soon": "f'{s} s",
+  "caster.down": "meqrud"
+}

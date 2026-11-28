@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "Primeira eliminação da partida",
+  "caster.cap.firstBloodRound": "Primeira eliminação da ronda {round}",
+  "caster.cap.multiKill": "Eliminação {i} de {n}",
+  "caster.cap.tradeFirst": "Dispara primeiro",
+  "caster.cap.tradeBack": "Responde {secs} depois",
+  "caster.cap.clutch": "Sozinho contra {against}",
+  "caster.cap.swing": "Recupera-o logo",
+  "caster.cap.objective": "Toma o objetivo",
+  "caster.cap.comeback": "Põe a equipa à frente",
+  "caster.cap.standout": "{kills} eliminações nesta partida",
+  "caster.cap.struggle": "Destruído {deaths} vezes nesta partida",
+  "caster.cap.longRange": "Acerta a {distance}",
+  "caster.cap.turning": "Hipótese de ganhar: {fromPct} → {toPct}",
+  "caster.soon": "em {s} s",
+  "caster.down": "destruído"
+}

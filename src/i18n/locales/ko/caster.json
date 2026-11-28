@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "경기 첫 격파",
+  "caster.cap.firstBloodRound": "{round}라운드 첫 격파",
+  "caster.cap.multiKill": "격파 {i}/{n}",
+  "caster.cap.tradeFirst": "먼저 쏜다",
+  "caster.cap.tradeBack": "{secs} 뒤 반격",
+  "caster.cap.clutch": "혼자서 {against}명 상대",
+  "caster.cap.swing": "곧바로 되찾는다",
+  "caster.cap.objective": "목표를 점령",
+  "caster.cap.comeback": "팀을 앞서게 한다",
+  "caster.cap.standout": "이번 경기 격파 {kills}",
+  "caster.cap.struggle": "이번 경기 {deaths}번 격파됨",
+  "caster.cap.longRange": "{distance} 거리에서 명중",
+  "caster.cap.turning": "승리 확률: {fromPct} → {toPct}",
+  "caster.soon": "{s}초 후",
+  "caster.down": "격파됨"
+}

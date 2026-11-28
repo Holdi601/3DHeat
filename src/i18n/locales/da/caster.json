@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "Kampens første drab",
+  "caster.cap.firstBloodRound": "Første drab i runde {round}",
+  "caster.cap.multiKill": "Drab {i} af {n}",
+  "caster.cap.tradeFirst": "Skyder først",
+  "caster.cap.tradeBack": "Slår igen {secs} senere",
+  "caster.cap.clutch": "Alene mod {against}",
+  "caster.cap.swing": "Tager det straks tilbage",
+  "caster.cap.objective": "Tager målet",
+  "caster.cap.comeback": "Bringer holdet foran",
+  "caster.cap.standout": "{kills} drab i denne kamp",
+  "caster.cap.struggle": "Ødelagt {deaths} gange i denne kamp",
+  "caster.cap.longRange": "Rammer fra {distance} væk",
+  "caster.cap.turning": "Chance for at vinde: {fromPct} → {toPct}",
+  "caster.soon": "om {s} s",
+  "caster.down": "ødelagt"
+}

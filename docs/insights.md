@@ -161,16 +161,20 @@ Where the data says who won each round, every moment says it: *"Anna takes down 
 
 ![The caster's moments for one round of the shooter demo](assets/img/en/caster.webp)
 
-- Click a moment: the view switches to the replay and jumps to just before it. With **Caster camera** on (the default) the caster films it (below); off, the camera flies there and stays where it went: your jump is not undone by following a player or by the tactical display's **Director** (which waits until you press **Resume director**).
+- Click a moment: the view switches to the replay and jumps a few seconds before it - 4 s for a small moment, up to 8 s for the biggest - so you see it coming. With **Caster camera** on (the default) the caster films it (below) and stops at the moment's end; off, the camera flies there and stays where it went: your jump is not undone by following a player or by the tactical display's **Director** (which waits until you press **Resume director**).
 - **Play the moments** plays each one to its end and moves on; **Previous** / **Next** step through them. Without the caster camera the camera follows each moment's player.
+
+A kill is counted once however the data writes it: a War Thunder destruction is a `dead`, a `kill` and a `death` row at the same instant plus more `dead` rows while the wreck falls, and a missile battery's launcher and radar going down with their player are one kill, not three. A kill credit with nobody seen dying does not make a multi-kill. A long shot is a ground target hit from far away by a ground unit or a helicopter: an aircraft shot down flies on or falls before the kill counts, and an aeroplane's bomb falls a long way, so neither is measured.
 
 ### Caster camera and subtitles
 
 With **Caster camera** on, the caster moves the camera itself:
 
-- **No cuts.** The camera's position and the point it looks at each follow their target on a critically damped spring: a moment across the map is a dolly that accelerates, glides and settles (longer moves take longer, up to about 1.6 s of spring time), a moment nearby a short drift. It keeps its heading towards the subject, so a move does not swing round.
-- **Framing.** The target frames the moment's player and the other party where they are now, from 24° above, at a distance that holds both (1.7 times their spread, at least 60 m); while the replay plays it circles them at 6° a second.
-- **Subtitles** (on by default): a bar at the bottom of the view with the moment's kind, its time (and round, and distance where it has one) and the caster's line; the player is ringed in amber and the other party in red, with their names.
+- **No cuts.** The replay waits while the camera moves to a new moment, then plays the lead-in and the moment. The camera's position and the point it looks at each follow their target on a critically damped spring - a move across the map rises over the ground and comes down onto the shot in about two seconds - and while it films it moves along with the units, so a fast unit is followed without lag or wobble. The field of view eases from shot to shot and goes back to yours when the caster stops.
+- **Framing.** Each kill of a moment is filmed in turn, a second and a half kept on each after it: the shooter and the one shot seen from the side, both in the picture and big enough to make out; when they are too far apart for that, from just behind and above the shooter, looking past it at the target (a long shot, a helicopter's missile); a single unit circled from above.
+- **Highlight.** The shooter is ringed in amber, the one shot in red (a dashed ring once it is down), each with its name; a dashed line joins them in the seconds before the kill; the rest of the view dims.
+- **Caption.** Next to the shooter a short caption says what happens (*First kill of the match*, *Kill 2 of 3*, *Shoots first* / *Hits back 3 s later*, *Hits from 2,400 m away*), with a countdown (*in 3 s*) before the kill.
+- **Subtitles** (on by default): a bar at the bottom of the view with the moment's kind, its time (and round, and distance where it has one) and the caster's line.
 - **You take over** by moving the camera or following a unit: the caster lets go at once and the bar and the panel offer **Resume caster camera**, which flies back to the moment. **×** on the bar stops the caster's camera and subtitles; **Stop** in the panel does too.
 
 The settings are remembered in this browser ([`cinema.ts`](https://github.com/Holdi601/3DHeat/blob/main/src/insights/cast/cinema.ts), [`CasterCinema.tsx`](https://github.com/Holdi601/3DHeat/blob/main/src/ui/insights/CasterCinema.tsx)).

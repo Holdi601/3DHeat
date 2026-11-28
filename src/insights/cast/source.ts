@@ -11,6 +11,7 @@
  */
 
 import { CANON } from '../../data/canonical';
+import { deadAt, deathsOf, SETTLE, type Deaths } from '../../data/deaths';
 import { otherColumn } from '../../render/direction';
 import type { Dataset, FilterSpec } from '../../state/types';
 import { matchesOf, pickedMatches, type MatchEntry } from '../../match/matches';
@@ -26,6 +27,8 @@ export interface CastSource {
   players: CastPlayer[];
   /** Per person (track): first and last time seen in the match, to follow the life a moment falls in. */
   span: Map<number, [number, number]>;
+  /** When each person (track) is dead: a wreck's rows go on after its death, into the player's next life. */
+  deaths?: Deaths;
 }
 
 export interface CastPlayer {
@@ -59,6 +62,8 @@ function inMatch(d: Dataset, m: MatchEntry): (row: number) => boolean {
 }
 
 const KILL = new Set(['kill']);
+/** Seconds within which one killer's kills are the same shot. */
+const SAME_SHOT = 0.25;
 const DEATH = new Set(['death', 'destroyed']);
 const CAPTURE = new Set(['capture']);
 
@@ -199,6 +204,10 @@ export function castSource(d: Dataset, m: MatchEntry): CastSource | null {
   const byTime = (a: number, b: number) => time[a] - time[b];
   kills.sort(byTime);
   deaths.sort(byTime);
+  // One death a death: a wreck's later rows (War Thunder's falling wreck) and the death's twin rows are not more deaths.
+  const dead = oneRowADeath(d, deaths, (r) => otherOf(r) >= 0);
+  deaths.length = 0;
+  deaths.push(...dead);
 
   const out: CastKill[] = [];
   const usedDeath = new Uint8Array(deaths.length);
@@ -247,25 +256,89 @@ export function castSource(d: Dataset, m: MatchEntry): CastSource | null {
     });
   });
   out.sort((a, b) => a.round - b.round || a.time - b.time);
+  // One shot that destroys a player's vehicle and the parts of it the data lists apart (a missile battery's
+  // launcher and radar, AI units of their own) is one kill: kills by one killer at one instant where one of the
+  // victims is a player keep the players only, and a player whose two tracks go down together is one kill. Two
+  // players at once stay two.
+  const isPlayer = (pl: number) => pl >= 0 && players[pl].units.some((u) => units.units[u].kind === 'player');
+  const kept = out.filter((x, i) => {
+    if (x.killer < 0) return true;
+    for (let j = i - 1; j >= 0 && x.time - out[j].time <= SAME_SHOT; j--) if (out[j].killer === x.killer && x.victim >= 0 && out[j].victim === x.victim) return false;
+    if (isPlayer(x.victim)) return true;
+    for (let j = i - 1; j >= 0 && x.time - out[j].time <= SAME_SHOT; j--) if (out[j].killer === x.killer && isPlayer(out[j].victim)) return false;
+    for (let j = i + 1; j < out.length && out[j].time - x.time <= SAME_SHOT; j++) if (out[j].killer === x.killer && isPlayer(out[j].victim)) return false;
+    return true;
+  });
+  out.length = 0;
+  out.push(...kept);
   const captures: CastCapture[] = caps.map((r) => {
     const u = unitOf(pid[r]);
     return { time: time[r], round: roundAt(r), person: u, team: rowTeam(r), x: d.px[r], y: d.py[r], z: d.pz[r] };
   });
-  return { match: m, input: { kills: out, captures, rounds: sortedRounds }, units, players, span };
+  // Whether the data names its victims: then a kill credit with nobody seen dying is not a kill on screen.
+  const named = out.filter((x) => x.killer >= 0 && x.victim >= 0).length;
+  const victimsNamed = named > 0 && named >= 0.5 * kills.length;
+  return { match: m, input: { kills: out, captures, rounds: sortedRounds, victimsNamed }, units, players, span, deaths: deathsOf(d) };
 }
 
-/** The unit and track (person) of a player at `time`: the life it falls in, else the nearest. */
+/**
+ * The death rows that are deaths: one a person's dead span (`deathsOf`), the
+ * one naming the other party where one does (`named`), else the first. Rows
+ * outside any span (data the spans do not read) each stay a death. In time order.
+ */
+export function oneRowADeath(d: Dataset, rows: number[], named: (row: number) => boolean): number[] {
+  const pid = d.personId;
+  const time = d.time;
+  if (!pid || !time) return rows;
+  const spans = deathsOf(d);
+  const chosen = new Map<string, number>();
+  const out: number[] = [];
+  for (const r of rows) {
+    const p = pid[r];
+    const t = time[r];
+    let span = -1;
+    if (spans.any && p + 1 < spans.start.length) {
+      for (let k = spans.start[p]; k < spans.start[p + 1]; k++) {
+        if (t >= spans.from[k] - SETTLE && t < spans.to[k]) {
+          span = k;
+          break;
+        }
+      }
+    }
+    if (span < 0) {
+      out.push(r);
+      continue;
+    }
+    const key = String(span);
+    const had = chosen.get(key);
+    if (had === undefined) chosen.set(key, r);
+    // A later row of the same death names the other party where the first did not: that one, if it is the same moment.
+    else if (!named(had) && named(r) && time[r] - time[had] <= 1) chosen.set(key, r);
+  }
+  out.push(...chosen.values());
+  return out.sort((a, b) => time[a] - time[b] || a - b);
+}
+
+/**
+ * The unit and track (person) of a player at `time`: the life it falls in,
+ * else the nearest. Where lives overlap - a wreck's rows go on after its death
+ * while the player has spawned again - the one alive then, else the latest
+ * to start (the life that has just ended).
+ */
 export function trackAt(src: CastSource, player: number, time: number): { unit: number; track: number } | null {
   const pl = src.players[player];
   if (!pl) return null;
   let best: { unit: number; track: number } | null = null;
   let gap = Infinity;
+  let dead = true;
+  let start = -Infinity;
   for (const u of pl.units) {
     for (const p of src.units.units[u].persons) {
       const s = src.span.get(p);
       if (!s) continue;
       const g = time < s[0] ? s[0] - time : time > s[1] ? time - s[1] : 0;
-      if (g < gap) [gap, best] = [g, { unit: u, track: p }];
+      const dd = !!src.deaths && deadAt(src.deaths, p, time);
+      if (g < gap || (g === gap && ((dead && !dd) || (dead === dd && s[0] > start)))) [gap, dead, start, best] = [g, dd, s[0], { unit: u, track: p }];
     }
   }
   return best;

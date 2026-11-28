@@ -1,0 +1,17 @@
+{
+  "caster.cap.firstBlood": "Pirmas rungtynių sunaikinimas",
+  "caster.cap.firstBloodRound": "Pirmas {round} raundo sunaikinimas",
+  "caster.cap.multiKill": "Sunaikinimas {i} iš {n}",
+  "caster.cap.tradeFirst": "Šauna pirmas",
+  "caster.cap.tradeBack": "Atsako po {secs}",
+  "caster.cap.clutch": "Vienas prieš {against}",
+  "caster.cap.swing": "Iškart atsiima",
+  "caster.cap.objective": "Užima tikslą",
+  "caster.cap.comeback": "Išveda komandą į priekį",
+  "caster.cap.standout": "Sunaikinimų šiose rungtynėse: {kills}",
+  "caster.cap.struggle": "Sunaikintas šiose rungtynėse: {deaths} kart.",
+  "caster.cap.longRange": "Pataiko iš {distance}",
+  "caster.cap.turning": "Tikimybė laimėti: {fromPct} → {toPct}",
+  "caster.soon": "po {s} s",
+  "caster.down": "sunaikintas"
+}
