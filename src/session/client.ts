@@ -34,6 +34,7 @@ import {
 } from './proto/heat3d/session/v1/session_pb';
 import { capturePose, pointUnder, poseMoved, presence, presenceClock } from './presence';
 import { browserKey } from './marks';
+import { clearLacks, keepLacksOf, myLacks, noteLacks } from './lacks';
 import { identity, signChallenge } from './identity';
 import { readDocState, SharedSync, type DocState, type OutBatch } from './shared';
 import { useSessionStore, type FollowModeName, type LookRequest, type Pose, type SessionRole } from './store';
@@ -203,6 +204,7 @@ class SessionClient {
     this.queue = [];
     this.acks.clear();
     presence.clear();
+    clearLacks();
     if (say) useSessionStore.getState().patch({ state: 'off', me: null, role: null, members: [], looks: [], pending: 0, followPeer: null });
   }
 
@@ -327,6 +329,8 @@ class SessionClient {
           ...(cursor ? { cursor: v3(cursor) } : {}),
           tab: useRaceStore.getState().tab.slice(0, 24),
           mode: useStore.getState().mode.slice(0, 24),
+          // What of the host's room this viewer lacks (room.ts): the host is asked to share it.
+          lacks: myLacks(),
         },
       });
     }
@@ -389,6 +393,7 @@ class SessionClient {
           // Presence of members no longer here.
           const here = new Set(b.value.members.filter((x) => x.connected).map((x) => x.id));
           for (const id of [...presence.keys()]) if (!here.has(id)) presence.delete(id);
+          keepLacksOf(here);
           presenceClock.v++;
         }
         break;
@@ -405,6 +410,7 @@ class SessionClient {
             mode: it.presence.mode,
             at: now,
           });
+          noteLacks(it.member, it.presence.lacks);
         }
         for (const id of b.value.gone) presence.delete(id);
         presenceClock.v++;

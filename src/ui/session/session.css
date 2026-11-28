@@ -614,3 +614,92 @@
 .source-session-report {
   margin-top: var(--sp-2);
 }
+
+/* The room's questions (RoomPrompts.tsx): the view's top left, under the camera readout, clear of the session panel. */
+.session-room {
+  position: absolute;
+  top: 96px;
+  left: var(--sp-3);
+  z-index: var(--z-panel);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  width: 380px;
+  max-width: calc(100% - 2 * var(--sp-3));
+  pointer-events: none;
+}
+
+.session-room-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+  background: var(--panel);
+  border: 1px solid var(--line-strong);
+  border-left: 3px solid var(--warm);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-3);
+  color: var(--text);
+  font-size: var(--fs-sm);
+  pointer-events: auto;
+}
+
+.session-room-card p {
+  margin: 0;
+}
+
+.session-room-card.info {
+  border-left-color: var(--warn);
+}
+
+.session-room-card.bad {
+  border-left-color: var(--bad);
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.session-room-list {
+  margin: 0;
+  padding-left: var(--sp-4);
+}
+
+/* Invite people: its steps, one under the other. */
+.session-invite-toggle {
+  align-self: flex-start;
+  font-weight: var(--fw-bold);
+}
+
+.session-step-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-2) 0;
+  border-top: 1px solid var(--line-soft);
+}
+
+.session-more > summary {
+  cursor: pointer;
+  padding: var(--sp-1) 0;
+  font-size: var(--fs-sm);
+}
+
+.session-pick {
+  flex: 1;
+  min-width: 0;
+}
+
+.session-host-here {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  padding-top: var(--sp-2);
+  border-top: 1px solid var(--line-soft);
+}
+
+/* Long share buttons (a level's name and size) wrap inside the panel. */
+.session-sec .session-actions > button {
+  max-width: 100%;
+  white-space: normal;
+  text-align: left;
+}

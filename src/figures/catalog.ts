@@ -24,9 +24,9 @@ import { fitDetails } from './specs/detail-fit';
 import { buildMeshFigure } from './meshfig';
 import { MESH_FIGURES } from './meshes';
 import { fetchFigurePackIndex, installFigurePackIndex, installModelPackIndex } from './figurepack';
-import { fetchModelPackIndex } from './modelpack';
+import { fetchModelPackIndex, type ModelPackIndex } from './modelpack';
 import { clearLegacyModelPreference } from './modelprefer';
-import { fetchUnitCatalogs, installUnitCatalogs, lendCatalogModels } from './unitcatalog';
+import { fetchUnitCatalogs, installUnitCatalogs, lendCatalogModels, type UnitCatalogIndex } from './unitcatalog';
 
 export type FigureDomain = 'person' | 'ground' | 'air' | 'heli' | 'missile' | 'sea' | 'marker';
 
@@ -222,12 +222,31 @@ clearLegacyModelPreference();
  * install a pack themselves). Only the packs' indexes come here: a figure's data is fetched when a thread is about to
  * build it (`loadPackFigures`).
  */
+/** The packs and catalogues this page's server handed out, kept for `installSessionPacks`. */
+let served: { models: ModelPackIndex | null; catalogs: UnitCatalogIndex | null } = { models: null, catalogs: null };
+
 export const figurePackReady: Promise<number> =
   typeof location === 'undefined'
     ? Promise.resolve(0)
     : Promise.all([fetchFigurePackIndex(), fetchModelPackIndex(), fetchUnitCatalogs()]).then(([p, m, c]) => {
+        served = { models: m, catalogs: c };
         const n = (p ? installFigurePackIndex(CATALOG, p, FIGURES, ALIASES) : 0) + (m ? installModelPackIndex(CATALOG, m, FIGURES, ALIASES) : 0);
         // The games' unit catalogues: names for the unit list, and other games' models for units by their real vehicle.
         installUnitCatalogs(c);
         return n + lendCatalogModels(c, m, ALIASES);
       });
+
+/**
+ * Model packs and unit catalogues a session's host shared (`session/sharedPacks.ts`), installed beside the server's
+ * own: a game the server already has keeps its own. Replaces what was shared before; returns how many units.
+ */
+export async function installSessionPacks(models: ModelPackIndex | null, catalogs: UnitCatalogIndex | null): Promise<number> {
+  await figurePackReady;
+  const games = (xs: { game: string }[] | undefined) => new Set((xs ?? []).map((x) => x.game));
+  const own = { m: games(served.models?.packs), c: games(served.catalogs?.games) };
+  const m: ModelPackIndex = { version: 1, packs: [...(served.models?.packs ?? []), ...(models?.packs ?? []).filter((p) => !own.m.has(p.game))] };
+  const c: UnitCatalogIndex = { version: 1, games: [...(served.catalogs?.games ?? []), ...(catalogs?.games ?? []).filter((g) => !own.c.has(g.game))] };
+  const n = m.packs.length ? installModelPackIndex(CATALOG, m, FIGURES, ALIASES) : 0;
+  installUnitCatalogs(c.games.length ? c : null);
+  return n + lendCatalogModels(c.games.length ? c : null, m.packs.length ? m : null, ALIASES);
+}

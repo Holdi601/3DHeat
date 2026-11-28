@@ -304,10 +304,20 @@ pub fn files_of(
                 .map(|(s, _)| s)
                 .unwrap_or(&file)
                 .to_string();
-            for side in [format!("{stem}.layouts.json"), format!("{stem}.json")] {
+            for side in side_files(&dir, &stem, &file) {
                 let p = dir.join(&side);
-                if p.is_file() {
-                    out.push((side, p));
+                out.push((side, p));
+            }
+            // A .gltf's own buffers and images, where it names them beside or below it.
+            if file.to_lowercase().ends_with(".gltf") {
+                for uri in gltf_uris(&main) {
+                    if out.iter().any(|(n, _)| *n == uri) {
+                        continue;
+                    }
+                    let p = dir.join(&uri);
+                    if p.is_file() {
+                        out.push((uri, p));
+                    }
                 }
             }
         }
@@ -331,6 +341,97 @@ pub fn files_of(
         return Err("too-many-files");
     }
     Ok((out, confidential))
+}
+
+/// The files beside a level that are its own: its layouts, its side file,
+/// its map pictures, its tiled terrain (`<stem>.json`, `<stem>.layouts.json`,
+/// `<stem>_map.png`, `<stem>.terrain.bin`, ...), sorted. A file that belongs to
+/// another level of the same folder with a longer name (`dust_old.json`
+/// beside `dust.glb` and `dust_old.glb`) is that level's, not this one's;
+/// hidden files and other models are left out.
+pub fn side_files(dir: &Path, stem: &str, main: &str) -> Vec<String> {
+    let Ok(rd) = std::fs::read_dir(dir) else {
+        return Vec::new();
+    };
+    let names: Vec<String> = rd
+        .flatten()
+        .filter(|e| e.file_type().is_ok_and(|t| t.is_file()))
+        .map(|e| e.file_name().to_string_lossy().to_string())
+        .filter(|n| !n.starts_with('.'))
+        .collect();
+    let is_model = |n: &str| {
+        let l = n.to_lowercase();
+        l.ends_with(".glb") || l.ends_with(".gltf")
+    };
+    let stem_of = |n: &str| n.rsplit_once('.').map(|(s, _)| s.to_string()).unwrap_or_else(|| n.to_string());
+    // The level stems of this folder: what a side file may belong to.
+    let stems: Vec<String> = names.iter().filter(|n| is_model(n)).map(|n| stem_of(n)).collect();
+    let belongs = |n: &str, s: &str| n.len() > s.len() && n.starts_with(s) && matches!(n.as_bytes()[s.len()], b'.' | b'_');
+    let mut out: Vec<String> = names
+        .iter()
+        .filter(|n| n.as_str() != main && !is_model(n) && belongs(n, stem))
+        // The longest level stem it matches is the level it belongs to.
+        .filter(|n| !stems.iter().any(|o| o.len() > stem.len() && belongs(n, o)))
+        .cloned()
+        .collect();
+    out.sort();
+    out
+}
+
+/// The relative file names a .gltf names for its buffers and images (no data:
+/// URIs, nothing up a folder, no absolute paths: only files beside or below it).
+fn gltf_uris(p: &Path) -> Vec<String> {
+    let Ok(text) = std::fs::read_to_string(p) else {
+        return Vec::new();
+    };
+    let Ok(v) = serde_json::from_str::<serde_json::Value>(&text) else {
+        return Vec::new();
+    };
+    let mut out: Vec<String> = Vec::new();
+    for key in ["buffers", "images"] {
+        for it in v.get(key).and_then(|x| x.as_array()).into_iter().flatten() {
+            let Some(uri) = it.get("uri").and_then(|u| u.as_str()) else {
+                continue;
+            };
+            if uri.len() > 512 || uri.contains(':') || uri.contains('\\') || uri.contains('%') || uri.contains('\0') {
+                continue;
+            }
+            if Path::new(uri).components().all(|c| matches!(c, Component::Normal(_))) && !out.iter().any(|o| o == uri) {
+                out.push(uri.to_string());
+            }
+        }
+    }
+    out
+}
+
+/// What sharing `rel` would send in all, bytes: a level with its side files, a
+/// pack with its folder; the file alone for anything else.
+pub fn total_size(root: &Path, rel: &str, kind: Kind, size: u64) -> u64 {
+    let Some(main) = inside(root, rel) else {
+        return size;
+    };
+    let (Some(dir), Some(file)) = (main.parent(), main.file_name()) else {
+        return size;
+    };
+    match kind {
+        Kind::Level | Kind::Course => {
+            let file = file.to_string_lossy().to_string();
+            let stem = file.rsplit_once('.').map(|(s, _)| s).unwrap_or(&file).to_string();
+            size + side_files(dir, &stem, &file)
+                .iter()
+                .filter_map(|n| std::fs::metadata(dir.join(n)).ok())
+                .map(|m| m.len())
+                .sum::<u64>()
+        }
+        Kind::ModelPack => {
+            let mut files = Vec::new();
+            if walk(dir, "", &mut files, 0).is_err() {
+                return size;
+            }
+            files.iter().filter_map(|(_, p)| std::fs::metadata(p).ok()).map(|m| m.len()).sum()
+        }
+        _ => size,
+    }
 }
 
 fn walk(
@@ -404,6 +505,7 @@ pub fn list(blocks: &Blocklist, root: &Path) -> (Vec<serde_json::Value>, usize) 
             Verdict::Blocked(_) => blocked += 1,
             _ => items.push(serde_json::json!({
                 "path": rel, "kind": kind, "game": game, "name": name, "size": size,
+                "total": total_size(root, &rel, kind, size),
                 "extracted": kind.extracted(),
                 "confidential": matches!(v, Verdict::Confidential(_)),
             })),
@@ -456,6 +558,18 @@ mod tests {
             ("warthunder/alpha/alpha.glb", "glTF level"),
             ("warthunder/alpha/alpha.layouts.json", "{}"),
             ("warthunder/alpha/alpha.json", "{}"),
+            ("warthunder/alpha/alpha.terrain.bin", "terrain"),
+            ("warthunder/alpha/alpha_map.png", "png"),
+            ("cs2/dust/dust.glb", "a"),
+            ("cs2/dust/dust.layouts.json", "{}"),
+            ("cs2/dust/dust_old.glb", "b"),
+            ("cs2/dust/dust_old.layouts.json", "{}"),
+            (
+                "il2/moscow/moscow.gltf",
+                r#"{"buffers":[{"uri":"geo.bin"},{"uri":"data:application/octet-stream;base64,AA=="}],"images":[{"uri":"tex/ground.png"},{"uri":"../../secret.png"},{"uri":"C:/x.png"}]}"#,
+            ),
+            ("il2/moscow/geo.bin", "bin"),
+            ("il2/moscow/tex/ground.png", "png"),
             ("warthunder/ranges.json", "{}"),
             ("forza/courses/ring.glb", "course"),
             ("forza/forza.h3dcars", "cars"),
@@ -579,7 +693,20 @@ mod tests {
         let (f, conf) = files_of(&bl, &root, "warthunder/alpha/alpha.glb", Kind::Level).unwrap();
         assert_eq!(conf, None);
         let names: Vec<&str> = f.iter().map(|(n, _)| n.as_str()).collect();
-        assert_eq!(names, ["alpha.glb", "alpha.layouts.json", "alpha.json"]);
+        assert_eq!(names, ["alpha.glb", "alpha.json", "alpha.layouts.json", "alpha.terrain.bin", "alpha_map.png"]);
+        // Two levels in one folder: each takes its own side files only.
+        let (f, _) = files_of(&bl, &root, "cs2/dust/dust.glb", Kind::Level).unwrap();
+        let names: Vec<&str> = f.iter().map(|(n, _)| n.as_str()).collect();
+        assert_eq!(names, ["dust.glb", "dust.layouts.json"]);
+        let (f, _) = files_of(&bl, &root, "cs2/dust/dust_old.glb", Kind::Level).unwrap();
+        let names: Vec<&str> = f.iter().map(|(n, _)| n.as_str()).collect();
+        assert_eq!(names, ["dust_old.glb", "dust_old.layouts.json"]);
+        // A .gltf takes the buffers and images it names, nothing outside its folder.
+        let (f, _) = files_of(&bl, &root, "il2/moscow/moscow.gltf", Kind::Level).unwrap();
+        let names: Vec<&str> = f.iter().map(|(n, _)| n.as_str()).collect();
+        assert_eq!(names, ["moscow.gltf", "geo.bin", "tex/ground.png"]);
+        // What the host is told it would send: the level with its side files.
+        assert_eq!(total_size(&root, "warthunder/alpha/alpha.glb", Kind::Level, 10), 10 + 2 + 2 + 7 + 3);
         let (pack, conf) = files_of(
             &bl,
             &root,

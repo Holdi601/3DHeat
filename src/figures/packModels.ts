@@ -63,6 +63,13 @@ function load(names: string[]): Promise<void> {
   return Promise.all(waits).then(() => undefined);
 }
 
+/** Hands the pack worker the packs a session's host shared (`session/sharedPacks.ts`); false without a worker. */
+export function postSessionPacks(msg: import("./packWorker").PackInstall): boolean {
+  if (!worker) return false;
+  worker.postMessage(msg);
+  return true;
+}
+
 /** How many pack figures were asked of the worker, and how many of them are here whole (for probes). */
 export function packModelsState(): {
   asked: number;

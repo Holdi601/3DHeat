@@ -128,6 +128,10 @@ pub struct GatewayConfig {
     /// Reverse proxies and tunnels trusted to name the client (`proxy.rs`).
     #[serde(default)]
     pub proxies: TrustedProxies,
+    /// The host's own browser on this machine may take the host's place without the host
+    /// address (`host_claim`); off for a server reachable from the internet.
+    #[serde(default)]
+    pub local_claim: bool,
 }
 
 /// The way to what needs the user's rights: the core's router in this
@@ -692,6 +696,7 @@ fn router(gw: Arc<Gateway>) -> Router {
         .route("/ws", get(ws))
         .route("/a/{hash}", get(asset))
         .route("/api/shared", get(shared_items))
+        .route("/api/host-claim", post(host_claim))
         .route("/api/docs", get(docs_get))
         .route("/api/load", post(docs_load))
         .route("/api/publish", post(publish));
@@ -801,6 +806,57 @@ fn origin_ok(gw: &Gateway, h: &HeaderMap, via: Via) -> bool {
     let scheme = if gw.tls.is_none() { "http" } else { "https" };
     // Through a proxy or tunnel the browser's page is HTTPS whatever the last hop is.
     origin == format!("{scheme}://{host}") || (via != Via::Direct && origin == format!("https://{host}"))
+}
+
+/// Whether a host name (of a `Host` or `Origin` header) is this machine's loopback.
+fn loopback_host(h: &str) -> bool {
+    let name = if let Some(rest) = h.strip_prefix('[') {
+        rest.split(']').next().unwrap_or("")
+    } else {
+        h.rsplit_once(':').map(|(n, _)| n).unwrap_or(h)
+    };
+    matches!(name, "localhost" | "127.0.0.1" | "::1")
+}
+
+/// The host's own browser, on the machine the server runs on, takes the
+/// host's place without the host address (a host who closed the tab, or
+/// opened the server's page by hand): "Host this session" in the panel.
+///
+/// Only a browser page on this machine gets it: the connection from loopback
+/// straight (no proxy or tunnel, no forwarding header of any kind, so a
+/// request a local proxy or `cloudflared` carried in is refused), the page's
+/// origin and the address asked both loopback (a proxy may rewrite `Host`, not
+/// a browser's `Origin`), a JSON POST from that same page (a page of any other
+/// site needs a preflight nobody answers it), and not on a server reachable
+/// from the internet. The answer is the host's token, the same the host
+/// address carries; the audit log has a line for it.
+async fn host_claim(State(gw): State<Arc<Gateway>>, ConnectInfo(peer): ConnectInfo<SocketAddr>, via: Option<axum::Extension<Via>>, headers: HeaderMap) -> Response {
+    let direct = via.map(|v| v.0).unwrap_or(Via::Direct) == Via::Direct;
+    let forwarded = ["forwarded", "x-forwarded-for", "x-forwarded-host", "x-real-ip", "cf-connecting-ip", "cf-ray", "true-client-ip"]
+        .iter()
+        .any(|h| headers.contains_key(*h));
+    let host_ok = headers.get(header::HOST).and_then(|v| v.to_str().ok()).is_some_and(loopback_host);
+    let origin = headers.get(header::ORIGIN).and_then(|v| v.to_str().ok()).unwrap_or("");
+    let origin_host = origin.split_once("://").map(|(_, h)| h).unwrap_or("");
+    let same_page = origin_ok(&gw, &headers, Via::Direct) && loopback_host(origin_host);
+    let json_post = headers
+        .get(header::CONTENT_TYPE)
+        .and_then(|v| v.to_str().ok())
+        .is_some_and(|v| v.starts_with("application/json"));
+    let fetch_site_ok = headers
+        .get("sec-fetch-site")
+        .and_then(|v| v.to_str().ok())
+        .is_none_or(|v| v == "same-origin" || v == "same-site");
+    if !gw.cfg.local_claim || gw.cfg.expose || !direct || forwarded || !peer.ip().is_loopback() || !host_ok || !same_page || !json_post || !fetch_site_ok {
+        return StatusCode::FORBIDDEN.into_response();
+    }
+    let token = gw.session.lock().unwrap().host_token().to_string();
+    gw.host.audit(serde_json::json!({ "t": now_ms(), "event": "host_claim", "addr": peer.ip().to_string() }).to_string());
+    (
+        [(header::CONTENT_TYPE, "application/json"), (header::CACHE_CONTROL, "no-store")],
+        serde_json::json!({ "token": token }).to_string(),
+    )
+        .into_response()
 }
 
 async fn ws(

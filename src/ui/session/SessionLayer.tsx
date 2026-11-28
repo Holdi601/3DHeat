@@ -23,6 +23,8 @@ import { chooseSessionFile, SessionPanel } from './SessionPanel';
 import { readAutosave } from '../../session/sessionFile';
 import { restoreSession } from '../../session/sessionOpen';
 import { urlIntent } from './sessionUrl';
+import { registerRoomDoc } from '../../session/room';
+import { RoomPrompts } from './RoomPrompts';
 import './session.css';
 
 type V3 = { x: number; y: number; z: number };
@@ -418,6 +420,8 @@ export function SessionLayer() {
 
   useEffect(() => {
     registerBuiltInDocs();
+    // The host's room (its map, catalogue, packs, data): members follow it.
+    registerRoomDoc();
     // For the multi-client smoke test (tools/smoke-session.mjs) and the console.
     const hook = (window as unknown as { __heat3dSession?: Record<string, unknown> }).__heat3dSession;
     if (hook) Object.assign(hook, { marks: useMarks, plan: usePlanStore });
@@ -489,6 +493,7 @@ export function SessionLayer() {
         </div>
       )}
       <SessionPanel />
+      <RoomPrompts />
       <Notices />
     </>
   );

@@ -74,6 +74,9 @@ pub struct ServeConfig {
     pub expose: bool,
     /// Origins besides the server's own allowed to open the WebSocket (a dev server).
     pub allow_origins: Vec<String>,
+    /// The host's browser on this machine may take the host's place without the host
+    /// address ("Host this session" in the panel; `gateway::host_claim`). On by default.
+    pub local_claim: bool,
     pub session: Config,
     pub password: Option<String>,
     /// The host's token; a random one when none.
@@ -118,6 +121,7 @@ impl ServeConfig {
             tls: TlsMode::SelfSigned(state_dir.join("tls")),
             expose: false,
             allow_origins: Vec::new(),
+            local_claim: true,
             session: Config::default(),
             password: None,
             host_token: None,
@@ -244,6 +248,9 @@ struct Shared {
     confidential: bool,
     #[serde(skip)]
     hashes: Vec<String>,
+    /// Where it is under the catalogue folder: the host's own list only, never a member's.
+    #[serde(skip)]
+    path: String,
 }
 
 /// What may be uploaded in all while the server runs, bytes.
@@ -362,6 +369,7 @@ pub async fn start(cfg: ServeConfig) -> Result<Running, String> {
         host_mounts: host_mount.iter().map(|(p, _)| p.clone()).collect(),
         limits: cfg.limits.clone(),
         proxies: cfg.proxies.clone(),
+        local_claim: cfg.local_claim && !cfg.expose,
     };
     let control = Control::new(cfg.proxies.clone());
 
@@ -714,7 +722,19 @@ fn json(v: serde_json::Value) -> Response {
 
 /// The catalogue's items the host could share (blocked ones only counted), and what is shared.
 async fn share_index(State(st): State<ShareState>) -> Response {
-    let shared = st.store.shared.read().unwrap().clone();
+    // The host's own list: with each shared item's place, so the panel can tell what is shared already.
+    let shared: Vec<serde_json::Value> = st
+        .store
+        .shared
+        .read()
+        .unwrap()
+        .iter()
+        .map(|s| {
+            let mut v = serde_json::to_value(s).unwrap_or_default();
+            v["path"] = serde_json::Value::String(s.path.clone());
+            v
+        })
+        .collect();
     let Some(cfg) = st.cfg.clone() else {
         return json(serde_json::json!({ "available": false, "items": [], "blocked": 0, "shared": shared }));
     };
@@ -822,6 +842,7 @@ async fn share_item(State(st): State<ShareState>, body: axum::body::Bytes) -> Re
         manifest: mhash.clone(),
         confidential,
         hashes: files.iter().map(|f| f.2.clone()).chain([mhash.clone()]).collect(),
+        path: req.path.clone(),
     };
     {
         let mut assets = st.store.assets.write().unwrap();
@@ -925,6 +946,7 @@ pub fn test_gateway(web_root: PathBuf, state_dir: PathBuf, host_token: String, p
         host_mounts: vec![],
         limits: NetLimits { requests_burst: 1e12, requests_per_sec: 1e12, ..NetLimits::default() },
         proxies: TrustedProxies::default(),
+        local_claim: true,
     };
     Gateway::new(gcfg, HostLink::Local { router: core, audit: Arc::new(|_| {}) })
 }

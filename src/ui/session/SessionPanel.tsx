@@ -6,9 +6,12 @@
  * server checks again anyway.
  */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { create } from 'zustand';
 import { int, t, useLang } from '../../i18n';
-import { session } from '../../session/client';
+import { httpUrl, session } from '../../session/client';
+import { publishData } from '../../session/assets';
+import { appInvoke } from '../../appHost';
 import { loadedData, handData } from '../../session/dataRefs';
 import { useLevelRequest } from '../../session/levelRequest';
 import { useMarks, browserKey, type MarkTool } from '../../session/marks';
@@ -64,13 +67,29 @@ function JoinForm() {
   const error = useSessionStore((s) => s.error);
   const retryMs = useSessionStore((s) => s.retryMs);
   const state = useSessionStore((s) => s.state);
-  const join = () => {
+  const keepName = () => {
     try {
       localStorage.setItem('heat3d.session.name', name);
     } catch {
       /* not kept */
     }
+  };
+  const join = () => {
+    keepName();
     session.join({ url: server || undefined, name, password, invite });
+  };
+  const canHost = useLocalHost(server);
+  const host = async () => {
+    keepName();
+    try {
+      const res = await fetch(`${httpUrl(server || undefined)}/api/host-claim`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+      if (!res.ok) throw new Error(String(res.status));
+      const { token } = (await res.json()) as { token?: string };
+      if (!token) throw new Error('token');
+      session.join({ url: server || undefined, name: name.trim() || 'Host', hostToken: token });
+    } catch {
+      toast(t('session.host.claimFailed'), 'bad', 5000);
+    }
   };
   return (
     <form
@@ -106,9 +125,78 @@ function JoinForm() {
       <button type="submit" className="primary" disabled={state === 'connecting' || !name.trim()}>
         {t('session.join.button')}
       </button>
+      {canHost && !invite && (
+        <div className="session-host-here">
+          <p className="session-hint">{t('session.host.hereHint')}</p>
+          <button type="button" disabled={state === 'connecting'} onClick={() => void host()} data-testid="session-host-here">
+            {t('session.host.here')}
+          </button>
+        </div>
+      )}
       <p className="session-hint">{serverHint()}</p>
     </form>
   );
+}
+
+/**
+ * The desktop app: "Host a session" starts the session server inside the app
+ * and opens the host page in the browser, where the host invites people.
+ */
+function HostFromApp() {
+  const [busy, setBusy] = useState(false);
+  const invoke = appInvoke();
+  if (!invoke) return null;
+  const start = async () => {
+    setBusy(true);
+    try {
+      await invoke('host_session');
+      toast(t('session.host.appStarted'), 'good', 6000);
+    } catch (e) {
+      toast(t('session.host.appFailed', { why: String(e) }), 'bad', 8000);
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <div className="session-host-here">
+      <button type="button" className="primary" disabled={busy} onClick={() => void start()}>
+        {t('session.host.app')}
+      </button>
+      <p className="session-hint">{t('session.host.appHint')}</p>
+    </div>
+  );
+}
+
+/**
+ * Whether this page is on the machine the session server runs on (its page,
+ * or a dev server beside it, on loopback): the host may then take the host's
+ * place without the host address ("Host this session").
+ */
+function useLocalHost(server: string): boolean {
+  const [ok, setOk] = useState(false);
+  useEffect(() => {
+    let stop = false;
+    const loop = (h: string) => h === 'localhost' || h === '127.0.0.1' || h === '[::1]';
+    let target: URL;
+    try {
+      target = new URL(httpUrl(server || undefined));
+    } catch {
+      setOk(false);
+      return;
+    }
+    if (!loop(location.hostname) || !loop(target.hostname)) {
+      setOk(false);
+      return;
+    }
+    fetch(`${target.origin}/session.json`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j: { app?: string } | null) => !stop && setOk(j?.app === '3dheat'))
+      .catch(() => !stop && setOk(false));
+    return () => {
+      stop = true;
+    };
+  }, [server]);
+  return ok;
 }
 
 const DURATIONS: { ms: number; key: string }[] = [
@@ -336,10 +424,131 @@ export function MarkTools() {
   );
 }
 
+/** The host's password for people without a link (at least 12 characters), and the waiting room. */
+function PasswordSetting() {
+  const role = useSessionStore((s) => s.role);
+  const info = useSessionStore((s) => s.info);
+  const [pw, setPw] = useState('');
+  if (role !== 'host' || !info) return null;
+  return (
+    <div className="session-step-block">
+      <div className="session-step">
+        <span className="session-step-n" aria-hidden="true">1</span>
+        {t('session.invite.stepPassword')}
+      </div>
+      <p className="session-hint">{info.passwordSet ? t('session.invite.passwordIsSet') : t('session.host.noPassword')}</p>
+      <form
+        className="session-link"
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (pw.length < 12) {
+            toast(t('session.host.passwordShort'), 'bad');
+            return;
+          }
+          session.settings({ password: pw });
+          setPw('');
+          toast(t('session.host.passwordSet'), 'good');
+        }}
+      >
+        <input type="password" value={pw} onChange={(e) => setPw(e.target.value)} placeholder={t('session.host.password')} aria-label={t('session.host.password')} autoComplete="new-password" data-testid="invite-password" />
+        <button type="submit" className="small">
+          {t('session.host.setPassword')}
+        </button>
+      </form>
+      <label className="session-check">
+        <input type="checkbox" checked={info.waitingRoom} disabled={!info.passwordSet} onChange={(e) => session.settings({ waitingRoom: e.target.checked })} />
+        {t('session.host.waitingRoom')}
+      </label>
+    </div>
+  );
+}
+
+/** "Invite people": the password, a time-limited invite link to copy, the network's join address and going public, in one place. */
+function InvitePeople() {
+  const role = useSessionStore((s) => s.role);
+  const [open, setOpen] = useState(true);
+  if (rankOf(role) < rankOf('admin')) return null;
+  return (
+    <section className="session-sec session-invite-sec" data-testid="invite-people">
+      <button type="button" className={`session-invite-toggle${open ? ' on' : ''}`} aria-expanded={open} onClick={() => setOpen(!open)}>
+        {t('session.invite.people')}
+      </button>
+      {open && (
+        <>
+          <PasswordSetting />
+          <Invites />
+          <ServerCard />
+          <details className="session-more">
+            <summary>{t('session.invite.fromInternet')}</summary>
+            <GoPublic />
+          </details>
+        </>
+      )}
+    </section>
+  );
+}
+
+/** The server's card (`/__heat3d/server`, the host's token): its join addresses on this network; null before it is read or without one. */
+const useServerCard = create<{ card: { joins: string[] } | null; token: string }>(() => ({ card: null, token: '' }));
+
+function useServerCardRead(): { joins: string[] } | null {
+  const role = useSessionStore((s) => s.role);
+  const card = useServerCard((s) => s.card);
+  useEffect(() => {
+    if (role !== 'host' || useServerCard.getState().token === session.hostToken()) return;
+    useServerCard.setState({ token: session.hostToken() });
+    const base = session.serverUrl() ? new URL(session.serverUrl()!, location.href).origin : location.origin;
+    fetch(`${base}/__heat3d/server`, { headers: { Authorization: `Bearer ${session.hostToken()}` } })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j: { joins?: unknown } | null) => useServerCard.setState({ card: j && Array.isArray(j.joins) ? { joins: j.joins.filter((x): x is string => typeof x === 'string') } : null }))
+      .catch(() => undefined);
+  }, [role]);
+  return role === 'host' ? card : null;
+}
+
+function useServerJoins(): string[] {
+  return useServerCardRead()?.joins ?? [];
+}
+
+/** The server's card (the host's): the join addresses on this network to copy, and stopping the server. */
+function ServerCard() {
+  const role = useSessionStore((s) => s.role);
+  const card = useServerCardRead();
+  if (role !== 'host' || !card) return null;
+  const stopServer = async () => {
+    if (!(await confirmDialog(t('session.server.stopConfirm'), t('session.server.stop')))) return;
+    const base = session.serverUrl() ? new URL(session.serverUrl()!, location.href).origin : location.origin;
+    await fetch(`${base}/__heat3d/server/stop`, { method: 'POST', headers: { Authorization: `Bearer ${session.hostToken()}` } }).catch(() => undefined);
+    session.leave();
+    toast(t('session.server.stopped'), 'good');
+  };
+  return (
+    <div className="session-step-block" data-testid="server-card">
+      <div className="session-step">
+        <span className="session-step-n" aria-hidden="true">3</span>
+        {t('session.server.lan')}
+      </div>
+      {card.joins.length === 0 && <p className="session-hint">{t('session.server.noLan')}</p>}
+      {card.joins.map((j) => (
+        <div key={j} className="session-link">
+          <input readOnly value={j} aria-label={t('session.public.link')} onFocus={(e) => e.target.select()} />
+          <button type="button" className="small" onClick={() => void navigator.clipboard?.writeText(j).then(() => toast(t('session.invite.copied'), 'good'))}>
+            {t('session.invite.copy')}
+          </button>
+        </div>
+      ))}
+      <button type="button" className="danger small" onClick={() => void stopServer()}>
+        {t('session.server.stop')}
+      </button>
+    </div>
+  );
+}
+
 function Invites() {
   const role = useSessionStore((s) => s.role);
   const invites = useSessionStore((s) => s.invites);
   const last = useSessionStore((s) => s.lastInvite);
+  const joins = useServerJoins();
   const [give, setGive] = useState<SessionRole>('draw');
   const [uses, setUses] = useState(1);
   const [hours, setHours] = useState(24);
@@ -348,10 +557,16 @@ function Invites() {
   const pub = usePublic((s) => (s.status?.phase === 'on' ? s.status.url : null));
   if (rankOf(role) < rankOf('admin')) return null;
   const grantable = ROLES.filter((r) => r !== 'host' && (role === 'host' ? true : rankOf(r) < rankOf('admin')));
-  const link = last?.token ? `${pub ? `${pub.replace(/\/+$/, '')}/` : `${location.origin}${location.pathname}`}#invite=${last.token}` : '';
+  // A host page on this PC's loopback (the page the server opened) gives others the network address, which they can reach.
+  const local = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
+  const lan = local && joins[0] ? joins[0].replace(/#join$/, '') : '';
+  const link = last?.token ? `${pub ? `${pub.replace(/\/+$/, '')}/` : lan || `${location.origin}${location.pathname}`}#invite=${last.token}` : '';
   return (
-    <section className="session-sec">
-      <h3>{t('session.invite.title')}</h3>
+    <div className="session-step-block">
+      <div className="session-step">
+        <span className="session-step-n" aria-hidden="true">2</span>
+        {t('session.invite.stepLink')}
+      </div>
       <div className="session-grid">
         <label className="session-field">
           <span>{t('session.invite.for')}</span>
@@ -380,7 +595,7 @@ function Invites() {
         {t('session.invite.make')}
       </button>
       {link && (
-        <div className="session-link">
+        <div className="session-link" data-testid="invite-link">
           <input readOnly value={link} aria-label={t('session.invite.link')} onFocus={(e) => e.target.select()} />
           <button
             type="button"
@@ -393,6 +608,7 @@ function Invites() {
           </button>
         </div>
       )}
+      {link && last && last.expires > 0 && <p className="session-hint">{t('session.invite.until', { time: new Date(last.expires).toLocaleString() })}</p>}
       {invites.length > 0 && (
         <ul className="session-list">
           {invites.map((i) => (
@@ -407,7 +623,7 @@ function Invites() {
           ))}
         </ul>
       )}
-    </section>
+    </div>
   );
 }
 
@@ -436,7 +652,6 @@ function Bans() {
 function HostSettings() {
   const role = useSessionStore((s) => s.role);
   const info = useSessionStore((s) => s.info);
-  const [pw, setPw] = useState('');
   const [rights, setRights] = useState(false);
   const [busy, setBusy] = useState(false);
   if (role !== 'host' || !info) return null;
@@ -448,12 +663,7 @@ function HostSettings() {
     }
     setBusy(true);
     try {
-      const f = files[0];
-      const base = session.serverUrl() ? new URL(session.serverUrl()!, location.href).origin : location.origin;
-      const res = await fetch(`${base}/api/publish?name=${encodeURIComponent(f.name)}`, { method: 'POST', headers: { Authorization: `Bearer ${session.hostToken()}` }, body: f });
-      if (!res.ok) throw new Error(String(res.status));
-      const { hash, size } = (await res.json()) as { hash: string; size: number };
-      session.dataset({ name: f.name, hash, size, published: true });
+      await publishData();
       toast(t('session.data.published'), 'good');
     } catch {
       toast(t('session.data.publishFailed'), 'bad');
@@ -463,31 +673,7 @@ function HostSettings() {
   };
   return (
     <section className="session-sec">
-      <h3>{t('session.host.title')}</h3>
-      <label className="session-check">
-        <input type="checkbox" checked={info.waitingRoom} disabled={!info.passwordSet} onChange={(e) => session.settings({ waitingRoom: e.target.checked })} />
-        {t('session.host.waitingRoom')}
-      </label>
-      {!info.passwordSet && <p className="session-hint">{t('session.host.noPassword')}</p>}
-      <form
-        className="session-link"
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (pw.length < 12) {
-            toast(t('session.host.passwordShort'), 'bad');
-            return;
-          }
-          session.settings({ password: pw });
-          setPw('');
-          toast(t('session.host.passwordSet'), 'good');
-        }}
-      >
-        <input type="password" value={pw} onChange={(e) => setPw(e.target.value)} placeholder={t('session.host.password')} aria-label={t('session.host.password')} autoComplete="new-password" />
-        <button type="submit" className="small">
-          {t('session.host.setPassword')}
-        </button>
-      </form>
-      <h4>{t('session.data.title')}</h4>
+      <h3>{t('session.data.title')}</h3>
       <label className="session-check">
         <input type="checkbox" checked={rights} onChange={(e) => setRights(e.target.checked)} />
         {t('session.data.rights')}
@@ -748,6 +934,7 @@ export function SessionPanel() {
             <section className="session-sec session-server-sec" aria-label={t('session.server.title')}>
               <h3>{t('session.server.title')}</h3>
               <p className="session-hint">{t('session.server.hint')}</p>
+              <HostFromApp />
               <JoinForm />
             </section>
             <MarkTools />
@@ -758,6 +945,8 @@ export function SessionPanel() {
           </section>
         ) : (
           <>
+            <InvitePeople />
+            <ShareAssets />
             <section className="session-sec">
               <h3>
                 {t('session.members', { n: members.filter((m) => m.connected).length })} {role && <RoleBadge role={role} />}
@@ -774,11 +963,8 @@ export function SessionPanel() {
             <MarkTools />
             <HostData />
             <SharedByHost />
-            <Invites />
             <Bans />
-            <GoPublic />
             <HostSettings />
-            <ShareAssets />
             <SessionFiles />
           </>
         )}

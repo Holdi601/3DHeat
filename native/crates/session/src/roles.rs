@@ -32,8 +32,17 @@ fn draw_colls(doc: &str) -> Option<&'static [&'static str]> {
     }
 }
 
+/// A document only the host writes (`host-...`: the room's state, which every member's viewer follows).
+pub fn host_doc(name: &str) -> bool {
+    name.starts_with("host-")
+}
+
 /// Whether a member of role `role` and client key `me` may apply `op` to `doc` (named `name`).
 pub fn may_op(role: Role, me: &str, name: &str, doc: Option<&Doc>, op: &Checked) -> bool {
+    // The host's own documents (what map it has loaded, what it shares): the host's alone.
+    if host_doc(name) {
+        return role == Role::Host;
+    }
     if at_least(role, Role::Elevated) {
         return true;
     }
@@ -119,6 +128,19 @@ mod tests {
             ..Default::default()
         })
         .unwrap()
+    }
+
+    #[test]
+    fn host_documents_are_the_hosts_alone() {
+        let d = Doc::default();
+        for role in [Role::Viewer, Role::Draw, Role::Elevated, Role::Admin] {
+            assert!(!may_op(role, "x", "host-room", Some(&d), &add("needs", "n1")), "{role:?}");
+            assert!(!may_op(role, "x", "host-room", Some(&d), &meta()), "{role:?}");
+        }
+        assert!(may_op(Role::Host, "x", "host-room", Some(&d), &add("needs", "n1")));
+        assert!(may_op(Role::Host, "x", "host-room", Some(&d), &meta()));
+        // Other documents keep their rules.
+        assert!(may_op(Role::Elevated, "x", "hostile", Some(&d), &meta()));
     }
 
     #[test]

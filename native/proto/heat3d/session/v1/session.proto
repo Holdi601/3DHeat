@@ -109,6 +109,9 @@ message Presence {
   // The workspace and view mode, short ids.
   string tab = 4;
   string mode = 5;
+  // What of the host's room (its map, catalogues, packs: the ids of the
+  // host's "host-room" document) this member does not have, comma-separated.
+  string lacks = 6;
 }
 
 enum OpKind {

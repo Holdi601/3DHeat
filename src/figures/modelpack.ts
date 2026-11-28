@@ -86,6 +86,8 @@ export interface ModelPackUnit {
   names?: string[];
   /** Further unit ids drawn with the same file. */
   aliases?: string[];
+  /** Where its model is, when not at the server's route: `shared:<sha256>:<scale>` for a pack a session's host shared. */
+  at?: string;
 }
 
 /**

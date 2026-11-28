@@ -11,6 +11,10 @@ A session has a **host**: the session server runs on the host's machine and deci
 
 ## Host from the browser version: `3dheat serve`
 
+**Without a terminal (Windows):** double-click `3dheat.exe` and answer **Yes** to "Host a 3DHeat session from this PC now?". The server starts, the host page opens in your browser, and a small window says where others join; its **Yes** opens the host page again, **No** stops the server. Anyone who opens the server's page on the same PC (it lost the host page, say) gets **Host this session** in the session panel instead of the join form: only a page on this PC, straight over loopback, with no proxy or tunnel in between, and never on a server started with `--expose-internet` (`--no-local-claim` turns it off).
+
+In the session, **Invite people** (at the top of the panel) holds everything to let others in: a password for people without a link, an **invite link** to copy (for one person or more, valid for so many hours), the server's address on your network to copy, **Make session public** for people outside your network, and **Stop the server**.
+
 The session server is one program, `3dheat` (built in `native/` with `cargo build --release -p heat3d-server`; the desktop app's `3dheat-app serve` is the same). It also answers the native core's data API at `/v1` ([The native app](native-app.md)). It serves the viewer itself, so the others need nothing but a browser.
 
 1. Build the viewer once: `npm run build` (makes `dist/`).
@@ -234,14 +238,26 @@ Behind a proxy or a tunnel every connection comes from the proxy, so every limit
 
 A forwarded address that is this machine, no address or garbage is not believed (it would earn the host's own exemptions): such requests count as one unknown address together. A trusted proxy's connections count against the server's total only, and each request's client is then held to the per-address limits (requests, upgrades, waiting hellos, members per address, lockouts, bans), each request on its own (a proxy may carry several clients on one connection). Through a trusted proxy or tunnel the session says it is reachable from the internet.
 
+## The host's room: everyone on the same map
+
+The host's viewer keeps a small document only the host may write (`host-room`): the map it has loaded, that game's unit catalogue and model pack, and the loaded data, with what of it is shared. Every member's viewer follows it:
+
+- **The host loads a map: every member loads it.** From the member's own levels folder when it has the map, else from what the host shares.
+- A member who lacks something is told so ("The host has the map X, but you do not"), and the host is asked - when such a member joins and whenever the map changes - **"Share your map with the others?"**, with who lacks what and how big it is. Nothing is shared unless the host says so; **Not now** holds until someone new lacks something or the map changes.
+- What the host shares and a member lacks: the member is asked once, **"The host shared these. Download them?"**. After **Yes** every file is fetched, checked by its hash and loaded by itself: the map becomes the level, the unit catalogue names the units, the model pack draws them as their own models. What is already in the browser's cache loads without asking.
+- The same works for the host's data: once the host shares it, members download and load it.
+
+What a member lacks goes back to the host with the member's presence (a list of short ids of the room's items, never names or paths).
+
 ## Sharing assets
 
-The host can share **levels, the catalogue and figure or model packs** from the catalogue folder (the levels folder the extractors write into; `--catalog`, `share.catalog` in the local configuration, or `HEAT3D_LEVELS`) with the members, by content hash. Off until the host switches it on in the session panel (**Share assets**), and then only the items the host shares, one at a time:
+The host can share **levels, the catalogue and figure or model packs** from the catalogue folder (the levels folder the extractors write into; `--catalog`, `share.catalog` in the local configuration, or `HEAT3D_LEVELS`) with the members, by content hash. Nothing is shared until the host presses a Share button in the session panel (**Share with the others**):
 
-- **The host confirms the rights** for each item before it is shared; the server logs the confirmation with the time (in the audit log: what was shared, never where it lies).
+- **Share the loaded level** shares the whole level in one press: its model with everything beside it that belongs to it (layouts, side file, map pictures, tiled terrain; a `.gltf`'s buffers and images), and with the game's unit catalogue and model pack when the folder has them. Further items are ticked in a list and shared with one **Share** press. Shared items leave that list for the **Shared** list, where each can be stopped.
+- **The host confirms the rights**: by the tick "I may share what I pick here" in the panel or the room's question, or in a confirmation before the share; the server logs it with the time for each item (in the audit log: what was shared, never where it lies). Anything over 512 MiB in all is warned about first: everyone downloads it from the host's machine.
 - **Confidential items** are recognised and marked in the panel: anything under a folder named in the local configuration (`"share": { "blocked": ["D:/levels/licensed"], "blockedWords": ["codename"] }`), anything in or under a folder holding a file named `.3dheat-confidential`, and anything whose path has a word that marks confidential material. Links are followed before the check. Whether such data may go to the people in a session (colleagues under the same agreement, say) is the host's call: sharing one needs a second, explicit confirmation with a clear warning, is logged as such in the audit log, and members see the item marked confidential. For such a session the panel suggests invite links only and the waiting room. Nothing outside the catalogue folder is ever shared.
 - **Packs made from a game's own model files** (model packs, car packs, local figure packs) stay on the host's machine: sharing one needs a second confirmation for that pack, with a warning.
-- **Members** see each shared item's name, kind and size - never a path - and **Load** it: its manifest first, then every file by its SHA-256, each checked before it is used. A level goes to the level panel (with its layouts); a single-file item is saved for the member; files are kept in the browser's cache by hash and checked again when taken from it.
+- **Members** see each shared item's name, kind and size - never a path - and are asked to download what they lack (see the room above), or **Load** it from the list: its manifest first, then every file by its SHA-256, each checked before it is used. A level becomes the level (with its layouts and tiled terrain), a unit catalogue or model pack is installed in the figures, another single-file item is saved for the member; files are kept in the browser's cache by hash and checked again when taken from it.
 - Members fetch the files from the host's server: through your own domain or a port forward they can see its address, which the panel asks the host to agree to before sharing; through a Cloudflare Tunnel the address stays hidden.
 
 ## For developers

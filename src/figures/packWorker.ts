@@ -7,13 +7,19 @@
  * them arrived while a recording played.
  */
 
-import { CATALOG, figurePackReady } from "./catalog";
-import { loadPackFigures, packFigureLoaded } from "./figurepack";
+import { CATALOG, figurePackReady, installSessionPacks } from "./catalog";
+import { loadPackFigures, packFigureLoaded, setSharedFigureSource } from "./figurepack";
+import { sharedFigureBytes } from "./sharedFigure";
 import { meshOf } from "./instances";
 import type { Template } from "./kit";
 
 export interface PackAsk {
   name: string;
+}
+
+/** Packs a session's host shared, installed here as on the page (`session/sharedPacks.ts`). */
+export interface PackInstall {
+  session: { models: import("./modelpack").ModelPackIndex | null; catalogs: import("./unitcatalog").UnitCatalogIndex | null };
 }
 
 /** A template without its coarse and far builds (those come as their own). */
@@ -41,7 +47,13 @@ export interface PackAnswer {
 
 const ARRAYS = ["team", "fixed", "teamN", "fixedN", "teamJ", "fixedJ"] as const;
 
-self.onmessage = async (e: MessageEvent<PackAsk>) => {
+setSharedFigureSource(sharedFigureBytes);
+
+self.onmessage = async (e: MessageEvent<PackAsk | PackInstall>) => {
+  if ("session" in e.data) {
+    await installSessionPacks(e.data.session.models, e.data.session.catalogs);
+    return;
+  }
   const name = e.data.name;
   const post = (a: PackAnswer, transfer: Transferable[] = []) =>
     (self as unknown as Worker).postMessage(a, transfer);

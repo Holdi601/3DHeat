@@ -59,6 +59,32 @@ async fn pick_folder() -> Option<String> {
 struct ViewerBase {
     url: Option<String>,
     core: Arc<Core>,
+    /// The viewer as the app bundles it, which a session it hosts hands out.
+    web: Option<std::path::PathBuf>,
+}
+
+/// Whether this app hosts a session already (`host_session`).
+static HOSTING: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+
+/// "Host a session" in the session panel: the session server starts inside
+/// the app, on this window's core, and the host page opens in the browser
+/// (where the host invites people); no terminal. Says why when it cannot
+/// start (the port is taken, say) instead of ending the app.
+#[tauri::command]
+async fn host_session(base: tauri::State<'_, ViewerBase>) -> Result<String, String> {
+    if HOSTING.swap(true, std::sync::atomic::Ordering::SeqCst) {
+        return Ok("running".into());
+    }
+    if let Err(e) = heat3d_server::cli::can_serve(7878, base.web.as_deref()) {
+        HOSTING.store(false, std::sync::atomic::Ordering::SeqCst);
+        return Err(e);
+    }
+    let (core, web) = (base.core.clone(), base.web.clone());
+    tauri::async_runtime::spawn(async move {
+        heat3d_server::cli::serve(vec!["--open".into()], core, web).await;
+        HOSTING.store(false, std::sync::atomic::Ordering::SeqCst);
+    });
+    Ok("started".into())
 }
 
 /// A viewer window of its own, for items the Library's window opens
@@ -144,6 +170,7 @@ fn main() {
             update::update_settings,
             pick_folder,
             open_viewer,
+            host_session,
             viewport::viewport_start,
             viewport::viewport_stop,
             viewport::viewport_frame,
@@ -185,7 +212,7 @@ fn main() {
                 (Some(a), Some(_)) => Some(format!("http://{a}/")),
                 _ => None,
             };
-            app.manage(ViewerBase { url: served.clone(), core: core.clone() });
+            app.manage(ViewerBase { url: served.clone(), core: core.clone(), web: web.clone() });
             let query = if library_window { "?library" } else { "" };
             let url = match &served {
                 Some(u) => tauri::WebviewUrl::External(format!("{u}{query}").parse().expect("a loopback URL")),

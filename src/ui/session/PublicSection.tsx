@@ -8,16 +8,18 @@
  */
 
 import { useEffect, useMemo, useState } from 'react';
-import { int, t } from '../../i18n';
+import { t, useLang } from '../../i18n';
 import { session } from '../../session/client';
-import { loadShared, shareIndex, shareItem, sharedItems, unshare, type CatalogEntry, type ShareIndex, type SharedItem } from '../../session/assets';
+import { itemBytes, loadShared, refreshShareIndex, sharedItems, unshare, useShareIndex, type CatalogEntry, type SharedItem } from '../../session/assets';
+import { useLoadedRefs } from '../../session/dataRefs';
+import { needSource, refreshHostRoom, useRoom } from '../../session/room';
+import { shareEntries, sizeText } from './shareFlow';
 import { goPublic, refreshPublic, stopPublic, usePublic, type PublicMode } from '../../session/public';
 import { useSessionStore } from '../../session/store';
-import { confirmDialog, toast } from '../shell/kit';
+import { toast } from '../shell/kit';
 
 const MODES: PublicMode[] = ['own-domain', 'cloudflare', 'port-forward'];
 
-const kib = (n: number) => (n >= 1 << 30 ? `${(n / (1 << 30)).toFixed(1)} GiB` : n >= 1 << 20 ? `${(n / (1 << 20)).toFixed(1)} MiB` : `${int(Math.ceil(n / 1024))} KiB`);
 
 function hostOf(url: string | null | undefined): string {
   try {
@@ -141,121 +143,163 @@ export function GoPublic() {
   );
 }
 
-/** The host: share items of the catalogue folder with the members. Off until switched on. */
-/** The host: share items of the catalogue folder with the members. Off until switched on. */
+/** The rights tick, for this tab's session: "I may share what I pick here". */
+const RIGHTS_KEY = 'heat3d.session.shareRights';
+function readRights(): boolean {
+  try {
+    return sessionStorage.getItem(RIGHTS_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+export function useShareRights(): [boolean, (v: boolean) => void] {
+  const [v, set] = useState(readRights);
+  return [
+    v,
+    (x: boolean) => {
+      set(x);
+      try {
+        sessionStorage.setItem(RIGHTS_KEY, x ? '1' : '0');
+      } catch {
+        /* this time only */
+      }
+    },
+  ];
+}
+
+/**
+ * The host: share with the others. The loaded level (with its textures,
+ * terrain and layouts), the data, or any items of the catalogue folder ticked
+ * and shared with one press; what is shared moves to its own list.
+ */
 export function ShareAssets() {
+  useLang();
   const role = useSessionStore((s) => s.role);
   const status = usePublic((s) => s.status);
-  const [on, setOn] = useState(false);
-  const [index, setIndex] = useState<ShareIndex | null>(null);
+  const index = useShareIndex((s) => s.index);
+  const room = useRoom((s) => s.doc);
+  const dataset = useSessionStore((s) => s.info?.dataset ?? null);
+  useLoadedRefs((s) => s.version);
   const [filter, setFilter] = useState('');
-  const [busy, setBusy] = useState<string | null>(null);
+  const [picked, setPicked] = useState<Set<string>>(new Set());
+  const [busy, setBusy] = useState(false);
   const [consent, setConsent] = useState(false);
+  const [rights, setRights] = useShareRights();
   useEffect(() => {
-    if (!on || role !== 'host') return;
-    shareIndex()
-      .then(setIndex)
-      .catch(() => setIndex({ available: false, items: [], blocked: 0, shared: [] }));
-  }, [on, role]);
+    if (role === 'host') void refreshShareIndex();
+  }, [role]);
+  const sharedPaths = useMemo(() => new Set((index?.shared ?? []).map((s) => s.path ?? '')), [index]);
+  const open = useMemo(() => (index?.items ?? []).filter((i) => !sharedPaths.has(i.path)), [index, sharedPaths]);
   const shown = useMemo(() => {
     const f = filter.trim().toLowerCase();
-    return (index?.items ?? []).filter((i) => !f || `${i.game} ${i.name} ${i.kind}`.toLowerCase().includes(f)).slice(0, 40);
-  }, [index, filter]);
+    return open.filter((i) => !f || `${i.game} ${i.name} ${i.kind}`.toLowerCase().includes(f)).slice(0, 60);
+  }, [open, filter]);
   if (role !== 'host') return null;
   // Members fetch shared files from this server: through the own domain or a port forward they see its address.
   const publicMode = status?.phase === 'on' ? status.mode : null;
   const showsAddress = publicMode === 'own-domain' || publicMode === 'port-forward';
-  const share = async (it: CatalogEntry) => {
+  const levelNeed = room.needs.find((n) => n.id === room.level);
+  const levelItem = levelNeed ? needSource(levelNeed.id) : undefined;
+  const levelShared = !!levelNeed && room.offers.some((o) => o.need === levelNeed.id);
+  const gameItems = levelItem
+    ? room.needs.filter((n) => (n.kind === 'catalog' || n.kind === 'model-pack') && !room.offers.some((o) => o.need === n.id)).map((n) => needSource(n.id)).filter((x): x is CatalogEntry => !!x)
+    : [];
+  const dataNeed = room.needs.find((n) => n.kind === 'data');
+  const dataShared = !!dataNeed && !!dataset?.published && dataset.name === dataNeed.name;
+  const go = async (items: CatalogEntry[], data: { name: string; size: number } | null = null) => {
     if (showsAddress && !consent) {
       toast(t('session.share.needConsent'), 'bad');
       return;
     }
-    if (!(await confirmDialog(t('session.share.rightsConfirm', { name: it.name }), t('session.share.share')))) return;
-    let allow = false;
-    if (it.extracted) {
-      allow = await confirmDialog(t('session.share.extractedWarn', { name: it.name }), t('session.share.shareAnyway'));
-      if (!allow) return;
-    }
-    // Marked confidential: the host decides who is entitled to it, after a clear warning.
-    let confidential = false;
-    if (it.confidential) {
-      confidential = await confirmDialog(t('session.share.confidentialWarn', { name: it.name }), t('session.share.shareConfidential'));
-      if (!confidential) return;
-    }
-    setBusy(it.path);
+    setBusy(true);
     try {
-      await shareItem(it.path, true, allow, confidential);
-      setIndex(await shareIndex());
-      toast(t('session.share.shared', { name: it.name }), 'good');
-    } catch (e) {
-      toast(t('session.share.refused', { why: e instanceof Error ? e.message : String(e) }), 'bad');
+      await shareEntries(items, { rightsGiven: rights, data });
+      setPicked(new Set());
     } finally {
-      setBusy(null);
+      setBusy(false);
     }
   };
+  const pickedItems = open.filter((i) => picked.has(i.path));
+  const pickedBytes = pickedItems.reduce((a, i) => a + itemBytes(i), 0);
+  const toggle = (path: string) => {
+    const next = new Set(picked);
+    if (next.has(path)) next.delete(path);
+    else next.add(path);
+    setPicked(next);
+  };
   return (
-    <section className="session-sec">
+    <section className="session-sec" data-testid="share-assets">
       <h3>{t('session.share.title')}</h3>
+      <p className="session-hint">{t('session.share.lead')}</p>
       <label className="session-check">
-        <input type="checkbox" checked={on} onChange={(e) => setOn(e.target.checked)} />
-        {t('session.share.enable')}
+        <input type="checkbox" checked={rights} onChange={(e) => setRights(e.target.checked)} data-testid="share-rights" />
+        {t('session.share.rightsTick')}
       </label>
-      {on && index && !index.available && <p className="session-hint">{t('session.share.noCatalog')}</p>}
-      {on && index?.available && (
-        <>
-          <p className="session-hint">{t('session.share.hint')}</p>
-          {showsAddress && (
-            <label className="session-check">
-              <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
-              {t('session.share.addressConsent')}
-            </label>
-          )}
-          {index.items.some((i) => i.confidential) && <p className="session-hint">{t('session.share.confidentialHint')}</p>}
+      {showsAddress && (
+        <label className="session-check">
+          <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
+          {t('session.share.addressConsent')}
+        </label>
+      )}
+      <div className="session-actions">
+        {levelItem && !levelShared && (
+          <button type="button" className="primary" disabled={busy} data-testid="share-level" onClick={() => void go([levelItem, ...gameItems])}>
+            {t(gameItems.length ? 'session.share.levelWithPacks' : 'session.share.level', { name: levelItem.name, size: sizeText(itemBytes(levelItem) + gameItems.reduce((a, i) => a + itemBytes(i), 0)) })}
+          </button>
+        )}
+        {levelNeed && !levelItem && <p className="session-hint">{t('session.share.levelNotInFolder', { name: levelNeed.name })}</p>}
+        {levelShared && <p className="session-hint">{t('session.share.levelShared', { name: levelNeed!.name })}</p>}
+        {dataNeed && !dataShared && (
+          <button type="button" disabled={busy} data-testid="share-data" onClick={() => void go([], { name: dataNeed.name, size: dataNeed.size })}>
+            {t('session.share.data', { name: dataNeed.name, size: sizeText(dataNeed.size) })}
+          </button>
+        )}
+      </div>
+      {index && !index.available && <p className="session-hint">{t('session.share.noCatalog')}</p>}
+      {index?.available && (
+        <details className="session-more" open={picked.size > 0 || undefined}>
+          <summary>{t('session.share.pickTitle', { n: open.length })}</summary>
+          {open.some((i) => i.confidential) && <p className="session-hint">{t('session.share.confidentialHint')}</p>}
           <input type="search" value={filter} onChange={(e) => setFilter(e.target.value)} placeholder={t('session.share.filter')} aria-label={t('session.share.filter')} />
-          <ul className="session-list">
+          <ul className="session-list" data-testid="share-can">
             {shown.map((it) => (
               <li key={it.path} className="session-member-row">
-                <span className="session-name" title={`${it.game} · ${t(`session.share.kind.${it.kind}`)}`}>
-                  {it.name}
-                </span>
+                <label className="session-check session-pick">
+                  <input type="checkbox" checked={picked.has(it.path)} onChange={() => toggle(it.path)} />
+                  <span className="session-name" title={`${it.game} · ${t(`session.share.kind.${it.kind}`)}`}>
+                    {it.name}
+                  </span>
+                </label>
                 <span className="session-flag">
                   {it.game ? `${it.game} · ` : ''}
-                  {t(`session.share.kind.${it.kind}`)} · {kib(it.size)}
+                  {t(`session.share.kind.${it.kind}`)} · {sizeText(itemBytes(it))}
                   {it.extracted ? ` · ${t('session.share.extracted')}` : ''}
                   {it.confidential ? ` · ${t('session.share.confidential')}` : ''}
                 </span>
-                <button type="button" className="ghost small" disabled={busy !== null} onClick={() => void share(it)}>
-                  {busy === it.path ? t('session.share.sharing') : t('session.share.share')}
+              </li>
+            ))}
+          </ul>
+          <button type="button" className="primary" disabled={busy || !picked.size} data-testid="share-picked" onClick={() => void go(pickedItems)}>
+            {busy ? t('session.share.sharing') : t('session.share.sharePicked', { n: picked.size, size: sizeText(pickedBytes) })}
+          </button>
+        </details>
+      )}
+      {(index?.shared.length ?? 0) > 0 && (
+        <>
+          <h4>{t('session.share.sharedTitle')}</h4>
+          <ul className="session-list" data-testid="share-done">
+            {index!.shared.map((s) => (
+              <li key={s.id} className="session-member-row">
+                <span className="session-name">{s.name}</span>
+                <span className="session-flag">
+                  {t(`session.share.kind.${s.kind}`)} · {sizeText(s.size)}
+                </span>
+                <button type="button" className="ghost small" onClick={() => void unshare(s.id).then(refreshHostRoom)}>
+                  {t('session.share.stop')}
                 </button>
               </li>
             ))}
           </ul>
-          {index.shared.length > 0 && (
-            <>
-              <h4>{t('session.share.sharedTitle')}</h4>
-              <ul className="session-list">
-                {index.shared.map((s) => (
-                  <li key={s.id} className="session-member-row">
-                    <span className="session-name">{s.name}</span>
-                    <span className="session-flag">
-                      {t(`session.share.kind.${s.kind}`)} · {kib(s.size)}
-                    </span>
-                    <button
-                      type="button"
-                      className="ghost small"
-                      onClick={() =>
-                        void unshare(s.id)
-                          .then(() => shareIndex())
-                          .then(setIndex)
-                      }
-                    >
-                      {t('session.share.stop')}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
         </>
       )}
     </section>
@@ -264,8 +308,10 @@ export function ShareAssets() {
 
 /** A member: what the host shares, each loaded with every file checked by hash. */
 export function SharedByHost() {
+  useLang();
   const role = useSessionStore((s) => s.role);
   const state = useSessionStore((s) => s.state);
+  const offers = useRoom((s) => s.doc.offers);
   const [items, setItems] = useState<SharedItem[]>([]);
   const [busy, setBusy] = useState<{ id: string; done: number; all: number } | null>(null);
   useEffect(() => {
@@ -278,13 +324,13 @@ export function SharedByHost() {
       stop = true;
       clearInterval(timer);
     };
-  }, [role, state]);
+  }, [role, state, offers.length]);
   if (role === 'host' || !items.length) return null;
   const load = async (it: SharedItem) => {
     setBusy({ id: it.id, done: 0, all: it.files });
     try {
       const where = await loadShared(it, (done, all) => setBusy({ id: it.id, done, all }));
-      toast(t(where === 'level' ? 'session.share.loadedLevel' : 'session.share.kept', { name: it.name }), 'good');
+      toast(t(where === 'level' ? 'session.share.loadedLevel' : where === 'pack' ? 'session.share.loadedPack' : 'session.share.kept', { name: it.name }), 'good');
     } catch {
       toast(t('session.share.loadFailed', { name: it.name }), 'bad');
     } finally {
@@ -299,7 +345,7 @@ export function SharedByHost() {
           <li key={it.id} className="session-member-row">
             <span className="session-name">{it.name}</span>
             <span className="session-flag">
-              {t(`session.share.kind.${it.kind}`)} · {kib(it.size)}
+              {t(`session.share.kind.${it.kind}`)} · {sizeText(it.size)}
               {it.confidential ? ` · ${t('session.share.confidential')}` : ''}
             </span>
             <button type="button" className="ghost small" disabled={busy !== null} onClick={() => void load(it)}>

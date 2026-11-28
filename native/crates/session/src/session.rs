@@ -250,6 +250,11 @@ fn short_id(s: &str) -> bool {
     s.is_empty() || text::ident(s, 24)
 }
 
+/// A member's list of what it lacks of the host's room: at most 32 short ids, comma-separated.
+fn lacks_ok(s: &str) -> bool {
+    s.is_empty() || (s.len() <= 32 * 25 && s.split(',').count() <= 32 && s.split(',').all(|x| text::ident(x, 24)))
+}
+
 fn hexish(s: &str, max: usize) -> bool {
     s.len() <= max && s.bytes().all(|b| b.is_ascii_hexdigit())
 }
@@ -858,6 +863,7 @@ impl Session {
             || !cursor_ok
             || !short_id(&p.tab)
             || !short_id(&p.mode)
+            || !lacks_ok(&p.lacks)
         {
             return vec![ack(conn, 0, proto::Err::Invalid, 0)];
         }

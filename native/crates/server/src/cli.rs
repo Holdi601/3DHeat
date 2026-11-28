@@ -54,6 +54,9 @@ OPTIONS:
                            used from the next start). Without it the server only says so.
                            Also `\"autoUpdate\": true` in the local config
     --no-update-check      Do not ask GitHub for a newer release (also HEAT3D_NO_UPDATE=1)
+    --open                 Open the host page in this machine's browser once the server runs
+    --no-local-claim       The host's browser on this machine may not take the host's place
+                           without the host address (Host this session, in the panel)
 
 OTHER COMMANDS:
     3dheat --check-update  Say whether a newer release is out
@@ -64,6 +67,97 @@ OTHER COMMANDS:
 ";
 
 pub const HELP: &str = USAGE;
+
+/// Where the host's panel reads the server's card (join links) and stops the server: the host's token only.
+pub const SERVER_ROUTE: &str = "/__heat3d/server";
+
+/// The join addresses of a server on `ip`: every local network's when it listens on all of them.
+pub fn join_links(scheme: &str, ip: IpAddr, port: u16) -> Vec<String> {
+    let fmt = |a: IpAddr| if a.is_ipv6() { format!("[{a}]") } else { a.to_string() };
+    if ip.is_unspecified() {
+        let mut v: Vec<IpAddr> = local_ips().into_iter().filter(|a| !a.is_loopback() && heat3d_session::lan::is_local(*a)).collect();
+        // IPv4 first: the address people type and read out.
+        v.sort_by_key(|a| a.is_ipv6());
+        v.into_iter().map(|a| format!("{scheme}://{}:{port}/#join", fmt(a))).collect()
+    } else {
+        vec![format!("{scheme}://{}:{port}/#join", fmt(ip))]
+    }
+}
+
+/// The server's card for the host's panel: its name and join links (GET), and Stop (POST `/stop`).
+fn server_router(name: String, joins: Vec<String>, stop: Arc<tokio::sync::Notify>) -> axum::Router {
+    use axum::routing::{get, post};
+    let info = serde_json::json!({ "name": name, "joins": joins, "version": crate::update::current() }).to_string();
+    axum::Router::new()
+        .route(
+            "/",
+            get(move || {
+                let info = info.clone();
+                async move { ([(axum::http::header::CONTENT_TYPE, "application/json"), (axum::http::header::CACHE_CONTROL, "no-store")], info) }
+            }),
+        )
+        .route(
+            "/stop",
+            post(move || {
+                let stop = stop.clone();
+                async move {
+                    // After the answer is out: the page is told before the connection goes.
+                    tokio::spawn(async move {
+                        tokio::time::sleep(std::time::Duration::from_millis(300)).await;
+                        stop.notify_one();
+                    });
+                    axum::http::StatusCode::NO_CONTENT
+                }
+            }),
+        )
+}
+
+/// Opens an address in this machine's browser (the host page: the server's own machine only).
+pub fn open_in_browser(url: &str) {
+    #[cfg(windows)]
+    let r = std::process::Command::new("explorer").arg(url).spawn();
+    #[cfg(target_os = "macos")]
+    let r = std::process::Command::new("open").arg(url).spawn();
+    #[cfg(all(unix, not(target_os = "macos")))]
+    let r = std::process::Command::new("xdg-open").arg(url).spawn();
+    if let Err(e) = r {
+        eprintln!("3dheat: could not open the browser ({e}); open the host address yourself");
+    }
+}
+
+/// The server's small window (Windows, started by a double-click): what runs,
+/// the join address, the host page again, and Stop. A message box on its own
+/// thread, shown again after each "open the host page".
+#[cfg(windows)]
+fn server_window(name: String, host_url: String, join: String, stop: Arc<tokio::sync::Notify>) {
+    #[link(name = "user32")]
+    unsafe extern "system" {
+        fn MessageBoxW(owner: *mut std::ffi::c_void, text: *const u16, caption: *const u16, kind: u32) -> i32;
+    }
+    let wide = |s: &str| s.encode_utf16().chain(std::iter::once(0)).collect::<Vec<u16>>();
+    std::thread::spawn(move || loop {
+        let text = wide(&format!(
+            "Your 3DHeat session \"{name}\" is running on this PC.\n\n\
+             The host page is open in your browser. Invite people from there: \
+             open the Session panel and press Invite people.\n\n\
+             Others on your network can also join at:\n{join}\n\n\
+             Yes: open the host page again.\nNo: stop the session server."
+        ));
+        let caption = wide("3DHeat session server");
+        // MB_YESNO | MB_ICONINFORMATION
+        // SAFETY: both strings are NUL-terminated UTF-16 that outlive the call; no owner window.
+        let answer = unsafe { MessageBoxW(std::ptr::null_mut(), text.as_ptr(), caption.as_ptr(), 0x4 | 0x40) };
+        if answer == 6 {
+            open_in_browser(&host_url);
+            continue;
+        }
+        stop.notify_one();
+        break;
+    });
+}
+
+#[cfg(not(windows))]
+fn server_window(_name: String, _host_url: String, _join: String, _stop: Arc<tokio::sync::Notify>) {}
 
 /// `healthcheck [--port N]`: whether a server listens on this machine's port.
 pub fn healthcheck(args: &[String]) -> ! {
@@ -122,6 +216,12 @@ pub fn preflight(bind: SocketAddr, tls: &TlsMode, web: Option<&std::path::Path>,
         }
     }
     Ok(())
+}
+
+/// Whether a session could start on `port` (all addresses) with this web build: what would stop it, said plainly.
+/// For the app's "Host a session", which must not end the app the way `serve` ends `3dheat` on such an error.
+pub fn can_serve(port: u16, web: Option<&std::path::Path>) -> Result<(), String> {
+    preflight(SocketAddr::from(([0, 0, 0, 0], port)), &TlsMode::Off, web, false)
 }
 
 /// `gateway`: the session server's network gateway, started by `serve` only
@@ -232,6 +332,8 @@ pub async fn serve(rest: Vec<String>, core: Arc<Core>, default_web: Option<PathB
     let mut catalog: Option<PathBuf> = None;
     let mut auto_update = false;
     let mut update_check = true;
+    let mut open = false;
+    let mut window = false;
     let (mut cert, mut key) = (None, None);
     let mut cfg = ServeConfig::new("0.0.0.0:7878".parse().unwrap(), state_dir());
     let mut i = 0;
@@ -315,6 +417,13 @@ pub async fn serve(rest: Vec<String>, core: Arc<Core>, default_web: Option<PathB
             "--catalog" => catalog = Some(PathBuf::from(val(&mut i, "--catalog"))),
             "--auto-update" => auto_update = true,
             "--no-update-check" => update_check = false,
+            "--open" => open = true,
+            // Started by a double-click: a small window instead of a console (Windows).
+            "--window" => {
+                window = true;
+                open = true;
+            }
+            "--no-local-claim" => cfg.local_claim = false,
             // Tests only: a cheap password hash.
             "--test-cost" => cfg.session.cost = Cost::TEST,
             "-h" | "--help" => {
@@ -399,6 +508,11 @@ pub async fn serve(rest: Vec<String>, core: Arc<Core>, default_web: Option<PathB
         },
     );
     cfg.host_mount.push((crate::public::PUBLIC_ROUTE.into(), public.router()));
+    // The server's own card in the host's panel: the join links to copy, and Stop.
+    let scheme = if matches!(cfg.tls, TlsMode::Off) { "http" } else { "https" };
+    let joins = join_links(scheme, ip, port);
+    let stop = Arc::new(tokio::sync::Notify::new());
+    cfg.host_mount.push((SERVER_ROUTE.into(), server_router(cfg.session.name.clone(), joins.clone(), stop.clone())));
     if cfg.web_root.is_none() {
         eprintln!("3dheat: no web build found (run `npm run build`, then pass --web dist); serving the session only");
     }
@@ -428,20 +542,8 @@ pub async fn serve(rest: Vec<String>, core: Arc<Core>, default_web: Option<PathB
         "  Host (open this yourself, keep it private): {}",
         running.host_url(&host)
     );
-    if ip.is_unspecified() {
-        for a in local_ips()
-            .into_iter()
-            .filter(|a| !a.is_loopback() && heat3d_session::lan::is_local(*a))
-        {
-            let h = if a.is_ipv6() {
-                format!("[{a}]")
-            } else {
-                a.to_string()
-            };
-            println!("  Join: {}", running.join_url(&h));
-        }
-    } else {
-        println!("  Join: {}", running.join_url(&host));
+    for j in &joins {
+        println!("  Join: {j}");
     }
     match &running.sandbox {
         Some(how) => println!("  Gateway sandbox: {how}"),
@@ -467,9 +569,17 @@ pub async fn serve(rest: Vec<String>, core: Arc<Core>, default_web: Option<PathB
     if cfg.share.is_some() {
         println!("  Sharing: catalogue items the host confirms (session panel); confidential ones only after a warning");
     }
+    let host_url = running.host_url(&host);
+    if open {
+        open_in_browser(&host_url);
+    }
+    if window {
+        server_window(cfg.session.name.clone(), host_url.clone(), joins.first().cloned().unwrap_or_default(), stop.clone());
+    }
     let code = tokio::select! {
         r = running.wait() => match r { Err(e) => { eprintln!("3dheat: {e}"); 1 } Ok(()) => 0 },
         _ = tokio::signal::ctrl_c() => { println!("stopping"); 0 }
+        _ = stop.notified() => { println!("stopped from the host's panel"); 0 }
     };
     // Nothing stays public after the server: the proxy or tunnel ends with it.
     public.shut().await;

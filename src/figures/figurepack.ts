@@ -237,7 +237,8 @@ export function installModelPackIndex<E extends Entry & { domain?: string; cls?:
       const kin = kinFor(id, info, entry, aliases, byClass);
       if (!kin) continue;
       const name = modelVariantName(kin, pack.game, id);
-      const ix = { tag: info.tag, at: `${MODEL_PACK_ROUTE}/u/${encodeURIComponent(pack.game)}/${encodeURIComponent(id)}` };
+      // A pack a session's host shared names where each unit's model is (`session/sharedPacks.ts`).
+      const ix = { tag: info.tag, at: info.at ?? `${MODEL_PACK_ROUTE}/u/${encodeURIComponent(pack.game)}/${encodeURIComponent(id)}` };
       indexed.set(name, ix);
       names.push(name);
       // The pack's vehicles by their real names, for recordings of another game drawn with this game's models
@@ -440,8 +441,20 @@ export function packFigureLoaded(name: string): boolean {
   return here(name);
 }
 
+/** Where a shared pack's unit model is made into its figure (`session/sharedPacks.ts`; the page and the pack worker each register it). */
+let sharedFigure: ((at: string) => Promise<ArrayBuffer | Uint8Array | null>) | null = null;
+
+export function setSharedFigureSource(f: typeof sharedFigure): void {
+  sharedFigure = f;
+}
+
 async function fetchPackFigure(at: string, tag: string): Promise<MeshFigureData | null> {
   try {
+    if (at.startsWith('shared:')) {
+      const bytes = sharedFigure ? await sharedFigure(at) : null;
+      const m = bytes ? decodePackFigure(bytes) : null;
+      return m && valid(m) ? m : null;
+    }
     const r = await fetch(`${at}?v=${encodeURIComponent(tag)}`);
     if (!r.ok) return null;
     const m = decodePackFigure(await r.arrayBuffer());
