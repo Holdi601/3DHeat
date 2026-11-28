@@ -27,7 +27,7 @@ tauri = { version = "2", features = [] }
 serde.workspace = true
 serde_json.workspace = true
 anyhow.workspace = true
-getrandom = "0.3"
+getrandom = "0.4"
 tokio = { version = "1", features = ["rt-multi-thread", "time"] }
 # The card's memory budget (VK_EXT_memory_budget) and the system check's Vulkan device, the loader found at run time.
 ash = { version = "0.38", default-features = false, features = ["loaded", "std"] }
